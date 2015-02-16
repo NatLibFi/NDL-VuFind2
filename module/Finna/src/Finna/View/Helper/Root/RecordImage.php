@@ -109,6 +109,10 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      */  
     public function render($type = 'list', $params = null)
     {
+        if ($this->record->getSourceIdentifier() !== 'Solr') {
+            return;
+        }
+
         if ($params) {
             foreach ($params as $size => $sizeParams) {
                 $this->params[$size] 
