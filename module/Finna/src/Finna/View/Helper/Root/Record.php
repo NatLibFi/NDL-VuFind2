@@ -67,4 +67,14 @@ class Record extends \VuFind\View\Helper\Root\Record
         $images = $this->driver->trymethod('getAllThumbnails', array($size));
         return count($images);
     }
+
+    /**
+     * Return the source backend identifier.
+     *
+     * @return string
+     */
+    public function getSourceIdentifier()
+    {
+        return $this->driver->getSourceIdentifier();
+    }
 }
