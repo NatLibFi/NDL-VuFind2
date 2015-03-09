@@ -80,15 +80,19 @@ h1.content-header { padding: 5px 0; }
     & h1 {
         font-size: @content-headings-font-size-h1;
     }
-    & h2, h3, h4 {   
+    & h2, h2.first, h3, h4 {   
         line-height: (@content-headings-line-height * 1.1); 
     }
     & h5, h6 {
         line-height: @content-line-height-base;    
     }
-    & h2 { 
+    & h2.first { 
         font-size: @content-headings-font-size-h2;
         padding-top: 1em; padding-bottom: 0;
+    }
+    & h2 { 
+        font-size: @content-headings-font-size-h2;
+        padding-top: 0.25em; padding-bottom: 0;
     }
     & h3 {
         font-size: @content-headings-font-size-h3;
