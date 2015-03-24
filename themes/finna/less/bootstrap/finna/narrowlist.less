@@ -1,0 +1,40 @@
+.row.result.narrow-list-view {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    .narrow-collapse-toggle {
+        transition: background .1s linear;
+        &:hover {
+            background: whitesmoke;
+        }
+        & a:hover {
+                background: transparent;   
+        }
+        .fa-arrow-right {
+            font-size: 1.2em;
+            margin-left: -5px;
+            margin-right: 5px;
+            color: @gray-light;
+        }
+        .resultItemFormat, .available-online-links, .resultOtherLinks {
+            margin-left: 20px;   
+        }
+        .available-online-links {
+            margin-bottom: 0px;
+            margin-top: 0px;
+            @media(max-width:400px) {
+                margin: 0px;
+                margin-left: 20px;
+            }
+            strong {
+                display: none; 
+            }
+        }
+        .resultOtherLinks {
+            display: inline-block;
+            .date-and-year();
+        }
+    }
+    .narrow-collapse-data {
+        margin-top: 15px; 
+    }
+}

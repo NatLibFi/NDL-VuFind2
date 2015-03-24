@@ -170,7 +170,15 @@ finna.layout = (function() {
         });
       }
     };
-
+    
+    var initNarrowList = function () {
+        $('.narrow-collapse-toggle').click(function(event) {
+            if ((event.target.nodeName) != 'A' && (event.target.nodeName) != 'MARK') {
+              $(this).nextAll('.narrow-collapse-data').first().toggleClass('hidden');
+              $('.fa-arrow-right', this).toggleClass('fa-rotate-90');
+            }
+        });
+    };
 
     var my = {
         isTouchDevice: isTouchDevice,
@@ -186,6 +194,7 @@ finna.layout = (function() {
             initTruncatedRecordImageNavi();
             initTruncate();
             initContentNavigation();
+            initNarrowList();
         },
     };
 
