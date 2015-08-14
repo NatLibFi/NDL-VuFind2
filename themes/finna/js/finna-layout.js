@@ -1,4 +1,17 @@
 finna.layout = (function() {
+    var initResizeListener = function() {
+        var intervalId = false;
+        $(window).on("resize", function(e) {
+            clearTimeout(intervalId);
+            intervalId = setTimeout(function() {
+                var data = {
+                    w: $(window).width(),
+                    h: $(window).height()
+                };
+                $(window).trigger("resize.screen.finna", data);
+            }, 100);
+        });
+    };
 
     var isTouchDevice = function() {
         return !!('ontouchstart' in window)
@@ -339,6 +352,7 @@ finna.layout = (function() {
 
     var my = {
         isTouchDevice: isTouchDevice,
+
         initTruncate: initTruncate,
         init: function() {
             $('select.jumpMenu').unbind('change').change(function() { $(this).closest('form').submit(); });
@@ -356,6 +370,7 @@ finna.layout = (function() {
             initMultiSelect();
             initMobileNarrowSearch();
             initCheckboxClicks();
+            initResizeListener();
             initScrollLinks();
             initSearchboxFunctions();
         },
