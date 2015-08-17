@@ -106,9 +106,13 @@ class Bootstrapper extends \VuFind\Bootstrapper
             $viewModel = $sm->get('viewmanager')->getViewModel();
             $viewModel->setVariable('userLang', $language);
             $viewModel->setVariable('allLangs', $config->Languages);
+            $rtlLangs = array_map(
+                'trim', explode(',', $config->LanguageSettings->rtl_langs)
+            );
+            $viewModel->setVariable('rtl', in_array($language, $rtlLangs));
         };
-        $this->events->attach('dispatch.error', $callback, 9000);
-        $this->events->attach('dispatch', $callback, 9000);
+        $this->events->attach('dispatch.error', $callback, 10000);
+        $this->events->attach('dispatch', $callback, 10000);
     }
 
     /**
@@ -132,7 +136,7 @@ class Bootstrapper extends \VuFind\Bootstrapper
             $theme = new \FinnaTheme\Initializer($config, $event);
             $theme->init();
         };
-        $this->events->attach('dispatch.error', $callback, 10000);
-        $this->events->attach('dispatch', $callback, 10000);
+        $this->events->attach('dispatch.error', $callback, 9000);
+        $this->events->attach('dispatch', $callback, 9000);
     }
 }
