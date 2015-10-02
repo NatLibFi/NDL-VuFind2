@@ -92,6 +92,7 @@
     <? if ($template = $this->content()->findTemplateForLng("layout/Additions/general-post-head")): ?>
       <?=$this->render($template)?>
     <? endif; ?>
+    <link rel="shortcut icon" href="<?=$this->imageLink('favicon.ico') ?>" />
   </head>
   <body>
     <? // Set up the search box -- there are three possible cases:
