@@ -121,6 +121,16 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Return record driver
+     *
+     * @return Finna\RecordDriver\SolrDefault
+     */
+    public function getDriver()
+    {
+        return $this->driver;
+    }
+
+    /**
      * Return record image URL.
      *
      * @param string $size Size of requested image

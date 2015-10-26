@@ -127,18 +127,12 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
             $numOfImages = min(1, $numOfImages);
         }
 
-        $params = $this->record->getRecordImage('small');
-        if (is_array($params)) {
-            unset($params['url']);
-            unset($params['size']);
+        if ($numOfImages || $this->record->getDriver()->getCleanISBN()) {
             $view->smallImage = $urlHelper('cover-show') . '?' .
                 http_build_query(array_merge($params, $this->params['small']));
-        } else {
-            $view->smallImage = $params;
-        }
+            ;
 
-        $params = $this->record->getRecordImage('large');
-        if (is_array($params)) {
+            $params = $this->record->getRecordImage('large');
             unset($params['url']);
             unset($params['size']);
 
@@ -148,7 +142,9 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
             $view->largeImage = $urlHelper('cover-show') . '?' .
                 http_build_query(array_merge($params, $this->params['large']));
         } else {
-            $view->mediumImage = $view->largeImage = $params;
+            $view->smallImage = false;
+            $view->mediumImage = false;
+            $view->largeImage = false;
         }
 
         $images = [];
