@@ -27,7 +27,8 @@
  */
 namespace Finna\Controller;
 
-use VuFindCode\ISBN;
+use Finna\Search\Solr\Options,
+    VuFindCode\ISBN;
 
 /**
  * Redirects the user to the appropriate default VuFind action.
@@ -184,6 +185,11 @@ class SearchController extends \VuFind\Controller\SearchController
             throw new \Exception("Missing configuration for browse action: $type");
         }
 
+        // Preserve last result view
+        $configLoader = $this->getServiceLocator()->get('VuFind\Config');
+        $options = new Options($configLoader);
+        $lastView = $options->getLastView();
+
         $config = $config[$type];
         $query = $this->getRequest()->getQuery();
         $query->set('view', 'condensed');
@@ -219,6 +225,9 @@ class SearchController extends \VuFind\Controller\SearchController
         $this->rememberSearch($view->results);
 
         $view->results->getParams()->getQuery()->setHandler($queryType);
+
+        // Restore last result view
+        $view->results->getOptions()->rememberLastView($lastView);
         return $view;
     }
 
