@@ -190,44 +190,49 @@ class SearchController extends \VuFind\Controller\SearchController
         $options = new Options($configLoader);
         $lastView = $options->getLastView();
 
-        $config = $config[$type];
-        $query = $this->getRequest()->getQuery();
-        $query->set('view', 'condensed');
-        if (!$query->get('limit')) {
-            $query->set('limit', $config['resultLimit'] ?: 100);
+        try {
+            $config = $config[$type];
+            $query = $this->getRequest()->getQuery();
+            $query->set('view', 'condensed');
+            if (!$query->get('limit')) {
+                $query->set('limit', $config['resultLimit'] ?: 100);
+            }
+            if (!$query->get('sort')) {
+                $query->set('sort', $config['sort'] ?: 'title');
+            }
+            if (!$query->get('type')) {
+                $query->set('type', $config['type'] ?: 'Title');
+            }
+            $queryType = $query->get('type');
+
+            $query->set('hiddenFilters', $config['filter']->toArray() ?: []);
+            $query->set(
+                'recommendOverride',
+                ['side' => ["SideFacets:Browse{$type}:CheckboxFacets:facets-browse"]]
+            );
+
+            $view = $this->forwardTo('Search', 'Results');
+
+            $view->overrideTitle = "browse_extended_$type";
+            $type = strtolower($type);
+            $view->browse = $type;
+            $view->defaultBrowseHandler = $config['type'];
+
+            $view->results->getParams()->setBrowseHandler($queryType);
+
+            // Update last search URL
+            $view->results->getParams()->getOptions()->setBrowseAction("browse-$type");
+            $this->getSearchMemory()->forgetSearch();
+            $this->rememberSearch($view->results);
+
+            $view->results->getParams()->getQuery()->setHandler($queryType);
+        } catch (\Exception $e) {
+            $view->results->getOptions()->rememberLastView($lastView);
         }
-        if (!$query->get('sort')) {
-            $query->set('sort', $config['sort'] ?: 'title');
-        }
-        if (!$query->get('type')) {
-            $query->set('type', $config['type'] ?: 'Title');
-        }
-        $queryType = $query->get('type');
-
-        $query->set('hiddenFilters', $config['filter']->toArray() ?: []);
-        $query->set(
-            'recommendOverride',
-            ['side' => ["SideFacets:Browse{$type}:CheckboxFacets:facets-browse"]]
-        );
-
-        $view = $this->forwardTo('Search', 'Results');
-
-        $view->overrideTitle = "browse_extended_$type";
-        $type = strtolower($type);
-        $view->browse = $type;
-        $view->defaultBrowseHandler = $config['type'];
-
-        $view->results->getParams()->setBrowseHandler($queryType);
-
-        // Update last search URL
-        $view->results->getParams()->getOptions()->setBrowseAction("browse-$type");
-        $this->getSearchMemory()->forgetSearch();
-        $this->rememberSearch($view->results);
-
-        $view->results->getParams()->getQuery()->setHandler($queryType);
 
         // Restore last result view
         $view->results->getOptions()->rememberLastView($lastView);
+
         return $view;
     }
 
