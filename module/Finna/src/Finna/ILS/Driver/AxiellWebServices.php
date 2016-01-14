@@ -130,6 +130,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         $this->debugLog("getMyProfile called");
 
+        $patron = $this->patronLogin($patron['cat_username'], $patron['cat_password']);
+
         return $patron;
     }
 
@@ -1225,10 +1227,24 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $fine['fine'] = $debt->debtType . ' - ' . $debt->debtNote;
             $fine['balance'] = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             // Convert Axiell format to display date format
-            $fine['createdate'] = $this->formatDate($debt->debtDate);
-            $fine['duedate'] = $this->formatDate($debt->debtDate);
+            $fine['createdate'] = '';
+            $fine['duedate'] = $debt->debtDate;
             $finesList[] = $fine;
         }
+
+        // Sort the Fines
+        $date = [];
+        foreach ($finesList as $key => $row) {
+            $date[$key] = $row['duedate'];
+        }
+
+        array_multisort($date, SORT_DESC, $finesList);
+
+        // Convert Axiell format to display date format
+        foreach ($transList as &$row) {
+            $row['duedate'] = $this->formatDate($row['duedate']);
+        }
+
         return $finesList;
      }
 
@@ -1428,18 +1444,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             if ($message == 'ils_connection_failed') {
                 throw new ILSException('ils_offline_status');
             }
-            return  [
-                'success' => false,
-                'status' => 'Changing the phone number failed',
-                'sys_message' => $statusAWS->message
-            ];
+            return false;
         }
+//         $this->putCachedData('phone', $phone);
 
-        return [
-                'success' => true,
-                'status' => 'Phone number changed',
-                'sys_message' => ''
-            ];
+        return true;
     }
 
     /**
