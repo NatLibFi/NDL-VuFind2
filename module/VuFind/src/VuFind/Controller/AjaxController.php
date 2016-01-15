@@ -537,6 +537,7 @@ class AjaxController extends AbstractBase
             if ('development' == APPLICATION_ENV && count(self::$php_errors) > 0) {
                 $output['php_errors'] = self::$php_errors;
             }
+            ini_set('memory_limit', '512M');
             $response->setContent(json_encode($output));
             return $response;
         } else if ($this->outputMode == 'plaintext') {
