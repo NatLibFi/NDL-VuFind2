@@ -1704,4 +1704,22 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
         return $facetList;
     }
+
+    /**
+     * Send output data and exit.
+     *
+     * @param mixed  $data     The response data
+     * @param string $status   Status of the request
+     * @param int    $httpCode A custom HTTP Status Code
+     *
+     * @return \Zend\Http\Response
+     * @throws \Exception
+     */
+    protected function output($data, $status, $httpCode = null)
+    {
+        if ($this->outputMode == 'json') {
+            ini_set('memory_limit', '512M');
+        }
+        return parent::output($data, $status, $httpCode = null);
+    }
 }

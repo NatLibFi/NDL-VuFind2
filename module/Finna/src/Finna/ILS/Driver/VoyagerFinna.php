@@ -44,6 +44,75 @@ use VuFind\Exception\ILS as ILSException,
 trait VoyagerFinna
 {
     /**
+     * Annotate holdings items with summary counts.
+     *
+     * @param array $holdings Parsed holdings items
+     *
+     * @return array Annotated holdings
+     */
+    protected function addHoldingsSummary($holdings)
+    {
+        $availableTotal = $itemsTotal = $reservationsTotal = 0;
+        $locations = [];
+
+        foreach ($holdings as $item) {
+            if (!empty($item['availability'])) {
+                $availableTotal++;
+            }
+            $locations[$item['location']] = true;
+        }
+
+        foreach ($holdings as &$item) {
+            $item['summaryCounts'] = [
+                'available' => $availableTotal,
+                'total' => count($holdings),
+                'locations' => count($locations)
+            ];
+        }
+        return $holdings;
+    }
+
+    /**
+     * Protected support method for getHolding.
+     *
+     * @param array  $data   Item Data
+     * @param string $id     The BIB record id
+     * @param array  $patron Patron Data
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array Keyed data
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function processHoldingData($data, $id, $patron = false)
+    {
+        $data = parent::processHoldingData($data, $id, $patron);
+        if (!empty($data)) {
+            $data = $this->addHoldingsSummary($data);
+        }
+        return $data;
+    }
+
+    /**
+     * Protected support method for getStatus -- process all details collected by
+     * getStatusData().
+     *
+     * @param array $data SQL Row Data
+     *
+     * @throws ILSException
+     * @return array Keyed data
+     */
+    protected function processStatusData($data)
+    {
+        $data = parent::processStatusData($data);
+        if (!empty($data)) {
+            $data = $this->addHoldingsSummary($data);
+        }
+        return $data;
+    }
+
+    /**
      * Check if patron is authorized (e.g. to access licensed electronic material).
      *
      * @param array $patron The patron array from patronLogin
