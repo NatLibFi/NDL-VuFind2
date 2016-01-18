@@ -34,6 +34,7 @@ use SoapClient, SoapFault, SoapHeader, File_MARC, PDO, PDOException, DOMDocument
     VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface,
     Zend\Validator\EmailAddress as EmailAddressValidator,
     Zend\Session\Container as SessionContainer;
+use VuFind\Exception\Date;
 
 /**
  * Axiell Web Services ILS Driver
@@ -335,7 +336,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @throws ILSException
      *
-     * @return array      Array of the patron's fines on success
+     * @return array Array of the patron's fines on success
      */
     public function getPickUpLocations($user, $holdDetails)
     {
@@ -478,7 +479,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @throws ILSException
      *
-     * @return mixed           True if successful, false if unsuccessful
+     * @return array Associative array of the results
      */
     public function placeHold($holdDetails)
     {
@@ -543,7 +544,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 throw new ILSException('ils_offline_status');
             }
             return [
-               'success' => false
+               'success' => false,
+               'sysMessage' => $message
             ];
         }
 
@@ -632,7 +634,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @param string $patron      Patron array
      * @param string $holdDetails The request details
      *
-     * @return array Response
+     * @return array Associative array of the results
      */
     public function changePickupLocation($patron, $holdDetails)
     {
@@ -1277,7 +1279,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @param array $user The patron array from patronLogin
      *
-     * @throws DateException
      * @throws ILSException
      * @return array        Array of the patron's fines on success.
      */
@@ -1530,7 +1531,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @throws ILSException
      *
-     * @return array Response
+     * @return array Associative array of the results
      */
     public function updatePhone($patron, $phone)
     {
@@ -1599,7 +1600,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @throws ILSException
      *
-     * @return array Response
+     * @return array Associative array of the results
      */
     public function updateEmail($patron, $email)
     {
@@ -1662,7 +1663,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @throws ILSException
      *
-     * @return array Response
+     * @return array Associative array of the results
      */
     public function changePassword($cardDetails)
     {
@@ -1799,7 +1800,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @param string $function Function name
      * @param string $message  Error message
-     * @param string $id       TODO
+     * @param string $id       Holding Id or patron barcode
      *
      * @return string    Error message as string
      */
