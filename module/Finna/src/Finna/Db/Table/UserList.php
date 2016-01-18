@@ -1,10 +1,10 @@
 <?php
 /**
- * Factory for DB tables.
+ * Table Definition for user_list
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2016.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,35 +23,30 @@
  * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     http://www.vufind.org  Main Page
  */
 namespace Finna\Db\Table;
-use Zend\ServiceManager\ServiceManager;
+use VuFind\Exception\LoginRequired as LoginRequiredException,
+    VuFind\Exception\RecordMissing as RecordMissingException,
+    Zend\Db\Sql\Expression;
 
 /**
- * Factory for DB tables.
+ * Table Definition for user_list
  *
  * @category VuFind2
  * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
- *
- * @codeCoverageIgnore
+ * @link     http://www.vufind.org  Main Page
  */
-class Factory
+class UserList extends \VuFind\Db\Table\UserList
 {
     /**
-     * Construct the User table.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return User
+     * Constructor
      */
-    public static function getUser(ServiceManager $sm)
+    public function __construct()
     {
-        return new User(
-            $sm->getServiceLocator()->get('VuFind\Config')->get('config')
-        );
+        parent::__construct();
+        $this->rowClass = 'Finna\Db\Row\UserList';
     }
 }
