@@ -154,7 +154,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         $this->debugLog("getMyProfile called");
 
-        $patron = $this->patronLogin($patron['cat_username'], $patron['cat_password']);
+        //TODO: implement getCachedData/putCachedData
+
+        $patron
+            = $this->patronLogin($patron['cat_username'], $patron['cat_password']);
 
         return $patron;
     }
@@ -291,7 +294,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @return mixed|null Cached entry or null if not cached or expired
      */
 
-    //TODO: implement for getMyProfile/patronLogin/updateEmail/updatePhone
     protected function getCachedData($id)
     {
         if (isset($this->session->cache[$id])) {
@@ -314,7 +316,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @return void
      */
-    //TODO: implement for getMyProfile/updateEmail/updatePhone
+
     protected function putCachedData($id, $entry)
     {
         if (!isset($this->session->cache)) {
@@ -1164,6 +1166,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             }
         }
 
+        //TODO: implement putCachedData
+
         return $user;
     }
 
@@ -1649,6 +1653,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ];
         }
 
+        //TODO: implement putCachedData
         return [
                 'success' => true,
                 'status' => 'Email address changed',
@@ -1698,6 +1703,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ];
         }
 
+        //TODO: implement putCachedData
         return  [
                 'success' => true,
                 'status' => 'change_password_ok',
