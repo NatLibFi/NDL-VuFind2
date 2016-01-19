@@ -69,8 +69,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
      *
      * Attempts to update patron's phone number
      *
-     * @param array $patron The patron array from patronLogin
-     * @param array $details new phone number
+     * @param array $patron  The patron array from patronLogin
+     * @param array $details New phone number
      *
      * @return mixed An array of data on the request including
      * whether or not it was successful and a system message (if available)
@@ -94,8 +94,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
      *
      * Attempts to update patron's email address
      *
-     * @param array $patron The patron array from patronLogin
-     * @param array $details new email address
+     * @param array $patron  The patron array from patronLogin
+     * @param array $details New email address
      *
      * @return mixed An array of data on the request including
      * whether or not it was successful and a system message (if available)
