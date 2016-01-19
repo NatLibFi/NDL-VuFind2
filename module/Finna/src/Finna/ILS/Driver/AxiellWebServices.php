@@ -293,7 +293,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @return mixed|null Cached entry or null if not cached or expired
      */
-
     protected function getCachedData($id)
     {
         if (isset($this->session->cache[$id])) {
@@ -316,7 +315,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @return void
      */
-
     protected function putCachedData($id, $entry)
     {
         if (!isset($this->session->cache)) {
