@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2015-2016.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -35,6 +35,8 @@ use SoapClient, SoapFault, SoapHeader, File_MARC, PDO, PDOException, DOMDocument
     Zend\Validator\EmailAddress as EmailAddressValidator,
     Zend\Session\Container as SessionContainer;
 use VuFind\Exception\Date;
+use Zend\Db\Sql\Ddl\Column\Boolean;
+use Zend\Stdlib\ArrayStack;
 
 /**
  * Axiell Web Services ILS Driver
@@ -78,18 +80,81 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected $defaultPickUpLocation;
 
+    /**
+     * Arena Member code of the institution
+     *
+     * @var string
+     */
     protected $arenaMember = '';
 
+    /**
+     * Wsdl-file for accessing the catalgue section of AWS
+     *
+     * @var string
+     */
     protected $catalogue_wsdl = '';
+
+    /**
+     * Wsdl-file for accessing the patron section of AWS
+     *
+     * @var string
+     */
     protected $patron_wsdl = '';
+
+    /**
+     * Wsdl-file for accessing the loans section of AWS
+     *
+     * @var string
+     */
     protected $loans_wsdl = '';
+
+    /**
+     * Wsdl-file for accessing the payment section of AWS
+     *
+     * @var string
+     */
     protected $payments_wsdl = '';
+
+    /**
+     * Wsdl-file for accessing the reservation section of AWS
+     *
+     * @var string
+     */
     protected $reservations_wsdl = '';
 
+    /**
+     * Path of the AWS debug log-file
+     *
+     * @var string
+     */
     protected $logFile = '';
+
+    /**
+     * Pathname with prefix for logging the duration of AWS calls
+     *
+     * @var string
+     */
     protected $durationLogPrefix = '';
+
+    /**
+     * Verbose debug-mode
+     *
+     * @var Boolean
+     */
     protected $verbose = false;
+
+    /**
+     * Institution settings for the order of organisations
+     *
+     * @var string
+     */
     protected $holdingsOrganisationOrder;
+
+    /**
+     * Institution settings for the order of branches
+     *
+     * @var string
+     */
     protected $holdingsBranchOrder;
 
     /**
@@ -99,6 +164,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected $session;
 
+    /**
+     * Container for storing cached ILS data.
+     *
+     * @var array
+     */
     protected $soapOptions = [
         'soap_version' => SOAP_1_1,
         'exceptions' => true,
@@ -163,48 +233,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Check Account Blocks
-     *
-     * Checks if a user has any blocks against their account which may prevent them
-     * performing certain operations
-     *
-     * @param string $patronId A Patron ID
-     *
-     * @return mixed           A boolean false if no blocks are in place and an array
-     * of block reasons if blocks are in place
-     */
-    protected function checkAccountBlocks($patronId)
-    {
-        // There's currently not much that can be checked here with AWS.
-
-        $blockReason = [];
-
-        return empty($blockReason) ? false : $blockReason;
-    }
-
-    /**
-     * Return configuration for the patron's active library card driver.
-     *
-     * @param array $patron Patron
-     *
-     * @return bool|array False if no driver configuration was found,
-     * or configuration.
-     */
-    protected function getPatronDriverConfig($patron)
-    {
-        if (isset($patron['cat_username'])
-            && ($pos = strpos($patron['cat_username'], '.')) > 0
-        ) {
-            $source = substr($patron['cat_username'], 0, $pos);
-
-            $config = $this->configReader->get($source);
-            return is_object($config) ? $config->toArray() : [];
-        }
-
-        return false;
-    }
-
-    /**
      * Write to debug log, if defined
      *
      * @param string $msg Message to write
@@ -251,7 +279,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $this->defaultPickUpLocation
             = (isset($this->config['Holds']['defaultPickUpLocation']))
-        ? $this->config['Holds']['defaultPickUpLocation'] : false;
+            ? $this->config['Holds']['defaultPickUpLocation'] : false;
         if ($this->defaultPickUpLocation == '0') {
             $this->defaultPickUpLocation = false;
         }
@@ -344,7 +372,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $password = $user['cat_password'];
 
         $id = !empty($holdDetails['item_id'])
-        ? $holdDetails['item_id'] : $holdDetails['id'];
+            ? $holdDetails['item_id'] : $holdDetails['id'];
 
         $function = 'getReservationBranches';
         $functionResult = 'getReservationBranchesResult';
@@ -358,11 +386,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'reservationType' => 'normal'
         ];
 
-        $result
-            = $this->doSOAPRequest(
-                $this->reservations_wsdl, $function, $functionResult, $username,
-                ['getReservationBranchesParam' => $conf]
-            );
+        $result = $this->doSOAPRequest(
+            $this->reservations_wsdl, $function, $functionResult, $username,
+            ['getReservationBranchesParam' => $conf]
+        );
 
         $locationsList = [];
         if (!isset($result->$functionResult->organisations->organisation)) {
@@ -376,9 +403,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             return $locationsList;
         }
         $organisations
-            = is_object($result->$functionResult->organisations->organisation)
-        ? [$result->$functionResult->organisations->organisation]
-        : $result->$functionResult->organisations->organisation;
+            = (array)$result->$functionResult->organisations->organisation;
 
         foreach ($organisations as $organisation) {
             if (!isset($organisation->branches->branch)) {
@@ -389,9 +414,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
             // TODO: Make it configurable whether organisation names
             // should be included in the location name
-            $branches = is_object($organisation->branches->branch)
-            ? [$organisation->branches->branch]
-            : $organisation->branches->branch;
+            $branches = (array)$organisation->branches->branch;
 
             if (is_object($organisation->branches->branch)) {
                 $locationsList[] = [
@@ -769,23 +792,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $holdings
-            = is_object($result->$functionResult->catalogueRecord->compositeHolding)
-            ? [$result->$functionResult->catalogueRecord->compositeHolding]
-            : $result->$functionResult->catalogueRecord->compositeHolding;
+            = (array)$result->$functionResult->catalogueRecord->compositeHolding;
 
         if (isset($holdings[0]->type) && $holdings[0]->type == 'year') {
             $result = [];
             foreach ($holdings as $holding) {
                 $year = $holding->value;
-                $holdingsEditions = is_object($holding->compositeHolding)
-                    ? [$holding->compositeHolding]
-                    : $holding->compositeHolding;
+                $holdingsEditions = (array)$holding->compositeHolding;
                 foreach ($holdingsEditions as $holdingsEdition) {
                     $edition = $holdingsEdition->value;
                     $holdingsOrganisations
-                        = is_object($holdingsEdition->compositeHolding)
-                        ? [$holdingsEdition->compositeHolding]
-                        : $holdingsEdition->compositeHolding;
+                        = (array)$holdingsEdition->compositeHolding;
 
                     $journalInfo = [
                         'year' => $year,
@@ -836,23 +853,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         foreach ($organisationHoldings as $organisation) {
             $organisationName = $group = $organisation->value;
             $organisationId = $organisation->id;
-            $holdingsBranch = is_object($organisation->compositeHolding) ?
-                [$organisation->compositeHolding] :
-                $organisation->compositeHolding;
+            $holdingsBranch = (array)$organisation->compositeHolding;
             if ($holdingsBranch[0]->type == 'branch') {
                 foreach ($holdingsBranch as $branch) {
                     $branchName = $branch->value;
                     $branchId = $branch->id;
                     $reservableId = isset($branch->reservable)
                         ? $branch->reservable : '';
-                    // This holding is only holdable if it has a reservable id
-                    // different from the record id
                     $holdable = $branch->reservationButtonStatus == 'reservationOk';
-                    //                         && $reservableId != $id;
-                    $departments = is_object($branch->holdings->holding)
-                        ? [$branch->holdings->holding]
-                        : $branch->holdings->holding;
-
+                    $departments = (array)$branch->holdings->holding;
                     foreach ($departments as $department) {
                         // Get holding data
                         $dueDate = isset($department->firstLoanDueDate)
@@ -865,7 +874,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                             ? $department->location : '';
 
                         if (!empty($locationName)) {
-                            $departmentName = "{$departmentName}, $locationName";
+                            $departmentName .= ", $locationName";
                         }
 
                         $nofAvailableForLoan
@@ -896,19 +905,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
                         // Status & availability
                         $status = $department->status;
-                        $available = false;
-                        if ($status == 'availableForLoan'
-                            || $status == 'returnedToday'
-                        ) {
-                            $available = true;
-                        }
+                        $available
+                            = $status == 'availableForLoan'
+                                || $status == 'returnedToday';
 
                         // Special status: On reference desk
                         if ($status == 'nonAvailableForLoan'
                             && isset($department->nofReference)
-                            && $department->nofReference == 0
+                            && $department->nofReference != 0
                         ) {
                             $status = 'onRefDesk';
+                            $available = true;
                         }
 
                         // Status table
@@ -944,7 +951,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                                'available' => $nofAvailableForLoan,
                                'displayText' => $status,
                                'reservations' => isset($branch->nofReservations)
-                                  ? $branch->nofReservations : 0,
+                                   ? $branch->nofReservations : 0,
                                'ordered' => $nofOrdered,
                                'total' => $nofTotal,
                             ],
@@ -957,7 +964,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                            'duedate' => $dueDate,
                            'addLink' => $journalInfo,
                            'callnumber' => isset($department->shelfMark)
-                              ? ($department->shelfMark) : '',
+                               ? ($department->shelfMark) : '',
                            'is_holdable'
                               => $branch->reservationButtonStatus == 'reservationOk',
                            'collapsed' => true,
@@ -1048,11 +1055,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function patronLogin($username, $password)
     {
-        // Secondary login field not supported
-        if (is_array($password)) {
-            $password = $password[0];
-        }
-
         $function = 'getPatronInformation';
         $functionResult = 'patronInformationResult';
         $conf = [
@@ -1080,34 +1082,35 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $info = $result->$functionResult->patronInformation;
 
-        $user = [];
-        $user['id'] = $username;
-        $user['cat_username'] = $username;
-        $user['cat_password'] = $password;
+        $user = [
+            'id' => $username,
+            'cat_username' => $username,
+            'cat_password' => $password,
+            'lastname' => '',
+            'firstname' => '',
+            'email' => '',
+            'emailId' => '',
+            'address1' => '',
+            'zip' => '',
+            'phone' => '',
+            'phoneId' => '',
+            'phoneLocalCode' => '',
+            'phoneAreaCode' => '',
+            'major' => null,
+            'college' => null
+
+        ];
+
         $names = explode(' ', $info->patronName);
         $user['lastname'] = array_pop($names);
         $user['firstname'] = implode(' ', $names);
-        $user['email'] = '';
-        $user['emailId'] = '';
-        $user['address1'] = '';
-        $user['zip'] = '';
-        $user['phone'] = '';
-        $user['phoneId'] = '';
-        $user['phoneLocalCode'] = '';
-        $user['phoneAreaCode'] = '';
-        $user['major'] = null;
-        $user['college'] = null;
 
         if (isset($info->emailAddresses) && $info->emailAddresses->emailAddress) {
-            $emailAddresses
-                = is_object($info->emailAddresses->emailAddress)
-                ? [$info->emailAddresses->emailAddress]
-                : $info->emailAddresses->emailAddress;
+            $emailAddresses = (array)$info->emailAddresses->emailAddress;
 
             foreach ($emailAddresses as $emailAddress) {
                 if ($emailAddress->isActive == 'yes') {
-                    $user['email']
-                        = isset($emailAddress->address)
+                    $user['email'] = isset($emailAddress->address)
                         ? $emailAddress->address : '';
                     $user['emailId']
                         = isset($emailAddress->id) ? $emailAddress->id : '';
@@ -1116,16 +1119,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         if (isset($info->addresses)) {
-            $addresses
-                = is_object($info->addresses->address)
-                ? [$info->addresses->address] : $info->addresses->address;
+            $addresses = (array)$info->addresses->address;
             foreach ($addresses as $address) {
                 if ($address->isActive == 'yes') {
-                    $user['address1']
-                        = isset($address->streetAddress)
+                    $user['address1'] = isset($address->streetAddress)
                         ? $address->streetAddress : '';
-                    $user['zip']
-                        = isset($address->zipCode) ? $address->zipCode : '';
+                    $user['zip'] = isset($address->zipCode) ? $address->zipCode : '';
                     if (isset($address->city)) {
                         if ($user['zip']) {
                             $user['zip'] .= ', ';
@@ -1143,14 +1142,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         if (isset($info->phoneNumbers)) {
-            $phoneNumbers
-                = is_object($info->phoneNumbers->phoneNumber)
-                ? [$info->phoneNumbers->phoneNumber]
-                : $info->phoneNumbers->phoneNumber;
+            $phoneNumbers = (array)$info->phoneNumbers->phoneNumber;
             foreach ($phoneNumbers as $phoneNumber) {
                 if ($phoneNumber->sms->useForSms == 'yes') {
-                    $user['phone']
-                        = isset($phoneNumber->areaCode)
+                    $user['phone'] = isset($phoneNumber->areaCode)
                         ? $phoneNumber->areaCode : '';
                     $user['phoneAreaCode'] = $user['phone'];
                     if (isset($phoneNumber->localCode)) {
@@ -1232,10 +1227,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (!isset($result->$functionResult->loans->loan)) {
             return $transList;
         }
-        $loans
-            = is_object($result->$functionResult->loans->loan)
-            ? [$result->$functionResult->loans->loan]
-            : $result->$functionResult->loans->loan;
+        $loans = (array)$result->$functionResult->loans->loan;
 
         foreach ($loans as $loan) {
             $title = $loan->catalogueRecord->title;
@@ -1243,19 +1235,22 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $title .= ' (' . $loan->note . ')';
             }
 
-            $trans = [];
-            $trans['id'] = $loan->catalogueRecord->id;
-            $trans['item_id'] = $loan->id;
-            $trans['title'] = $title;
-            $trans['duedate'] = $loan->loanDueDate;
-            $trans['renewable'] = (string)$loan->loanStatus->isRenewable == 'yes';
-            $trans['message'] = $this->mapStatus($loan->loanStatus->status);
-            $trans['barcode'] = $loan->id;
-            $trans['renewalCount'] = max(
-                [0,
-                 $this->config['Loans']['renewalLimit'] - $loan->remainingRenewals]
-            );
-            $trans['renewalLimit'] = $this->config['Loans']['renewalLimit'];
+            $trans = [
+                'id' => $loan->catalogueRecord->id,
+                'item_id' => $loan->id,
+                'title' => $title,
+                'duedate' => $loan->loanDueDate,
+                'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
+                'message' => $this->mapStatus($loan->loanStatus->status),
+                'barcode' => $loan->id,
+                'renewalCount' => max(
+                    [0,
+                        $this->config['Loans']['renewalLimit']
+                        - $loan->remainingRenewals]
+                ),
+                'renewalLimit' => $this->config['Loans']['renewalLimit']
+            ];
+
             $transList[] = $trans;
         }
 
@@ -1319,23 +1314,18 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (!isset($result->$functionResult->debts->debt)) {
             return $finesList;
         }
-        $debts
-            = is_object($result->$functionResult->debts->debt)
-            ? [$result->$functionResult->debts->debt]
-            : $result->$functionResult->debts->debt;
+        $debts = (array)$result->$functionResult->debts->debt;
 
         foreach ($debts as $debt) {
-            $fine = [];
-            $fine['debt_id'] = $debt->id;
-            $fine['amount']
-                = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
-            $fine['checkout'] = '';
-            $fine['fine'] = $debt->debtType . ' - ' . $debt->debtNote;
-            $fine['balance']
-                = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
-            // Convert Axiell format to display date format
-            $fine['createdate'] = $this->formatDate($debt->debtDate);
-            $fine['duedate'] = $this->formatDate($debt->debtDate);
+            $fine = [
+                'debt_id' => $debt->id,
+                'amount' => str_replace(',', '.', $debt->debtAmountFormatted) * 100,
+                'checkout' => '',
+                'fine' => $debt->debtType . ' - ' . $debt->debtNote,
+                'balance' => str_replace(',', '.', $debt->debtAmountFormatted) * 100,
+                'createdate' => $this->formatDate($debt->debtDate),
+                'duedate' => $debt->debtDate,
+            ];
             $finesList[] = $fine;
         }
 
@@ -1348,7 +1338,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         array_multisort($date, SORT_DESC, $finesList);
 
         // Convert Axiell format to display date format
-        foreach ($transList as &$row) {
+        foreach ($finesList as &$row) {
             $row['duedate'] = $this->formatDate($row['duedate']);
         }
 
@@ -1401,17 +1391,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (!isset($result->$functionResult->reservations->reservation)) {
             return $holdsList;
         }
-        $reservations
-            = is_object($result->$functionResult->reservations->reservation)
-            ? [$result->$functionResult->reservations->reservation]
-            : $result->$functionResult->reservations->reservation;
+        $reservations = (array)$result->$functionResult->reservations->reservation;
 
         foreach ($reservations as $reservation) {
-            $expireDate
-                = $reservation->reservationStatus == 'fetchable'
+            $expireDate = $reservation->reservationStatus == 'fetchable'
                 ? $reservation->pickUpExpireDate : $reservation->validToDate;
-            $title
-                = isset($reservation->catalogueRecord->title)
+            $title = isset($reservation->catalogueRecord->title)
                 ? $reservation->catalogueRecord->title : '';
             if (isset($reservation->note)) {
                 $title .= ' (' . $reservation->note . ')';
@@ -1422,8 +1407,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'type' => $reservation->reservationStatus,
                 'location' => $reservation->pickUpBranchId,
                 'reqnum' =>
-                   ($reservation->isDeletable == 'yes' && isset($reservation->id))
-                   ? $reservation->id : '',
+                   ($reservation->isDeletable == 'yes' &&
+                       isset($reservation->id)) ? $reservation->id : '',
                 'pickupnum' =>
                    isset($reservation->pickUpNo) ? $reservation->pickUpNo : '',
                 'expire' => $this->formatDate($expireDate),
@@ -1436,10 +1421,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'reservation_id' => $reservation->id,
                 'volume' =>
                    isset($reservation->catalogueRecord->volume)
-                ? $reservation->catalogueRecord->volume : '',
+                       ? $reservation->catalogueRecord->volume : '',
                 'publication_year' =>
                    isset($reservation->catalogueRecord->publicationYear)
-                   ? $reservation->catalogueRecord->publicationYear : '',
+                       ? $reservation->catalogueRecord->publicationYear : '',
                 'title' => $title
             ];
             $holdsList[] = $hold;
@@ -1478,10 +1463,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         $succeeded = 0;
         $results = ['blocks' => [], 'details' => []];
-        foreach ($renewDetails['details'] as $id) {
-            $username = $renewDetails['patron']['cat_username'];
-            $password = $renewDetails['patron']['cat_password'];
 
+        $username = $renewDetails['patron']['cat_username'];
+        $password = $renewDetails['patron']['cat_password'];
+
+        foreach ($renewDetails['details'] as $id) {
             $function = 'RenewLoans';
             $functionResult = 'renewLoansResponse';
 
@@ -1508,8 +1494,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
             $status
                 = trim($result->$functionResult->loans->loan->loanStatus->status);
-            $success
-                = $status === 'isRenewedToday';
+            $success = $status === 'isRenewedToday';
 
             $results['details'][$id] = [
                 'success' => $success,
@@ -1539,9 +1524,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
-        $phoneCountry
-            = isset($patron['phoneCountry']) ? $patron['phoneCountry'] : 'FI';
-        $areaCode = '';
+
         $function = '';
         $functionResult = '';
         $functionParam = '';
@@ -1551,8 +1534,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'language'     => 'en',
             'user'         => $username,
             'password'     => $password,
-            'areaCode'     => $areaCode,
-            'country'      => $phoneCountry,
+            'areaCode'     => '',
+            'country'      => isset($patron['phoneCountry'])
+                ? $patron['phoneCountry'] : 'FI',
             'localCode'    => $phone,
             'useForSms'    => 'yes'
         ];
@@ -1926,10 +1910,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     = $b['location'] . ' ' . $b['branch'] . ' ' . $b['department'];
         }
 
-        $orderA
-            = isset($sortOrder[$a[$key]]) ? $sortOrder[$a[$key]] : null;
-        $orderB
-            = isset($sortOrder[$b[$key]]) ? $sortOrder[$b[$key]] : null;
+        $orderA = isset($sortOrder[$a[$key]]) ? $sortOrder[$a[$key]] : null;
+        $orderB = isset($sortOrder[$b[$key]]) ? $sortOrder[$b[$key]] : null;
 
         if ($orderA !== null) {
             if ($orderB !== null) {
@@ -1955,8 +1937,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function pickUpLocationsSortFunction($a, $b)
     {
-        $pickUpLocationOrder
-            = isset($this->config['Holds']['pickUpLocationOrder'])
+        $pickUpLocationOrder = isset($this->config['Holds']['pickUpLocationOrder'])
             ? explode(":", $this->config['Holds']['pickUpLocationOrder']) : [];
         $pickUpLocationOrder = array_flip($pickUpLocationOrder);
         if (isset($pickUpLocationOrder[$a['locationID']])) {
