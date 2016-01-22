@@ -36,7 +36,6 @@ use SoapClient, SoapFault, SoapHeader, File_MARC, PDO, PDOException, DOMDocument
     Zend\Session\Container as SessionContainer;
 use VuFind\Exception\Date;
 use Zend\Db\Sql\Ddl\Column\Boolean;
-use Zend\Stdlib\ArrayStack;
 
 /**
  * Axiell Web Services ILS Driver
@@ -1134,7 +1133,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'college' => null
         ];
 
-
         if (isset($info->emailAddresses) && $info->emailAddresses->emailAddress) {
             $emailAddresses = (array)$info->emailAddresses->emailAddress;
 
@@ -1424,7 +1422,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
         $reservations
             = is_object($result->$functionResult->reservations->reservation)
-            ? array($result->$functionResult->reservations->reservation)
+            ? [$result->$functionResult->reservations->reservation]
             : $result->$functionResult->reservations->reservation;
 
         foreach ($reservations as $reservation) {
