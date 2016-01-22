@@ -222,30 +222,19 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function getMyProfile($patron)
     {
-        $this->debugLog("getMyProfile called");
+        $this->debug("getMyProfile called");
 
-        //TODO: implement getCachedData/putCachedData
+        $username = $patron['cat_username'];
+        $cacheId = "patron_" . $username;
 
-        $patron
-            = $this->patronLogin($patron['cat_username'], $patron['cat_password']);
+        $userCached = $this->getCachedData($cacheId);
 
-        return $patron;
-    }
-
-    /**
-     * Write to debug log, if defined
-     *
-     * @param string $msg Message to write
-     *
-     * @return void
-     */
-    protected function debugLog($msg)
-    {
-        if (!$this->logFile) {
-            return;
+        if (null === $userCached) {
+            $this->patronLogin($username, $patron['cat_password']);
+            return $this->getCachedData($cacheId);
         }
-        $msg = date('Y-m-d H:i:s') . ' [' . getmypid() . "] $msg\n";
-        file_put_contents($this->logFile, $msg, FILE_APPEND);
+
+        return $userCached;
     }
 
     /**
@@ -263,19 +252,47 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             throw new ILSException('Configuration needs to be set.');
         }
 
-        //TODO: isset for all configuration files?
+        if (isset($this->config['Catalog']['arena_member'])) {
+            $this->arenaMember = $this->config['Catalog']['arena_member'];
+        } else {
+            throw new ILSException('arena_member configuration needs to be set.');
+        }
 
-        $this->arenaMember = $this->config['Catalog']['arena_member'];
-        $this->catalogue_wsdl
-            = 'local/config/vufind/' . $this->config['Catalog']['catalogue_wsdl'];
-        $this->patron_wsdl
-            = 'local/config/vufind/' . $this->config['Catalog']['patron_wsdl'];
-        $this->loans_wsdl
-            = 'local/config/vufind/' . $this->config['Catalog']['loans_wsdl'];
-        $this->payments_wsdl
-            = 'local/config/vufind/' . $this->config['Catalog']['payments_wsdl'];
-        $this->reservations_wsdl
-            = 'local/config/vufind/' . $this->config['Catalog']['reservations_wsdl'];
+        $confDir = realpath('local/config/vufind/') . '/';
+
+        if (isset($this->config['Catalog']['catalogue_wsdl'])) {
+            $this->catalogue_wsdl
+                = $confDir . $this->config['Catalog']['catalogue_wsdl'];
+        } else {
+            throw new ILSException('catalogue_wsdl configuration needs to be set.');
+        }
+
+        if (isset($this->config['Catalog']['patron_wsdl'])) {
+            $this->patron_wsdl = $confDir . $this->config['Catalog']['patron_wsdl'];
+        } else {
+            throw new ILSException('patron_wsdl configuration needs to be set.');
+        }
+
+        if (isset($this->config['Catalog']['loans_wsdl'])) {
+            $this->loans_wsdl = $confDir . $this->config['Catalog']['loans_wsdl'];
+        } else {
+            throw new ILSException('loans_wsdl configuration needs to be set.');
+        }
+
+        if (isset($this->config['Catalog']['payments_wsdl'])) {
+            $this->payments_wsdl
+                = $confDir . $this->config['Catalog']['payments_wsdl'];
+        } else {
+            throw new ILSException('payments_wsdl configuration needs to be set.');
+        }
+
+        if (isset($this->config['Catalog']['reservations_wsdl'])) {
+            $this->reservations_wsdl
+                = $confDir . $this->config['Catalog']['reservations_wsdl'];
+        } else {
+            throw new
+                ILSException('reservations_wsdl configuration needs to be set.');
+        }
 
         $this->defaultPickUpLocation
             = (isset($this->config['Holds']['defaultPickUpLocation']))
@@ -769,7 +786,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $conf = [
             'arenaMember' => $this->arenaMember,
             'id' => $id,
-            'language' => 'fi'
+            'language' => $this->getLanguage()
         ];
 
         $result = $this->doSOAPRequest(
@@ -934,9 +951,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                         if (isset($statusArray[$status])) {
                             $status = $statusArray[$status];
                         } else {
-                            $this->debugLog(
+                            $this->debug(
                                 'Unhandled status ' +
-                                $department->status + " for $id"
+                                $department->status +
+                                " for '$this->arenaMember'.'$id'"
                             );
                         }
 
@@ -1055,10 +1073,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function patronLogin($username, $password)
     {
+        $arenaMember = $this->arenaMember;
+        $cacheId = "patron_" . $username;
         $function = 'getPatronInformation';
         $functionResult = 'patronInformationResult';
         $conf = [
-            'arenaMember' => $this->arenaMember,
+            'arenaMember' => $arenaMember,
             'user' => $username,
             'password' => $password,
             'language' => $this->getLanguage()
@@ -1082,12 +1102,26 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $info = $result->$functionResult->patronInformation;
 
+        $names = explode(' ', $info->patronName);
+        $lastname = array_pop($names);
+        $firstname = implode(' ', $names);
+
         $user = [
             'id' => $username,
             'cat_username' => $username,
             'cat_password' => $password,
-            'lastname' => '',
-            'firstname' => '',
+            'lastname' => $lastname,
+            'firstname' => $firstname,
+            'major' => null,
+            'college' => null
+        ];
+
+        $userCached = [
+            'id' => $username,
+            'cat_username' => $username,
+            'cat_password' => $password,
+            'lastname' => $lastname,
+            'firstname' => $firstname,
             'email' => '',
             'emailId' => '',
             'address1' => '',
@@ -1098,21 +1132,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'phoneAreaCode' => '',
             'major' => null,
             'college' => null
-
         ];
 
-        $names = explode(' ', $info->patronName);
-        $user['lastname'] = array_pop($names);
-        $user['firstname'] = implode(' ', $names);
 
         if (isset($info->emailAddresses) && $info->emailAddresses->emailAddress) {
             $emailAddresses = (array)$info->emailAddresses->emailAddress;
 
             foreach ($emailAddresses as $emailAddress) {
                 if ($emailAddress->isActive == 'yes') {
-                    $user['email'] = isset($emailAddress->address)
+                    $userCached['email'] = isset($emailAddress->address)
                         ? $emailAddress->address : '';
-                    $user['emailId']
+                    $userCached['emailId']
                         = isset($emailAddress->id) ? $emailAddress->id : '';
                 }
             }
@@ -1122,20 +1152,21 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $addresses = (array)$info->addresses->address;
             foreach ($addresses as $address) {
                 if ($address->isActive == 'yes') {
-                    $user['address1'] = isset($address->streetAddress)
+                    $userCached['address1'] = isset($address->streetAddress)
                         ? $address->streetAddress : '';
-                    $user['zip'] = isset($address->zipCode) ? $address->zipCode : '';
+                    $userCached['zip'] = isset($address->zipCode)
+                        ? $address->zipCode : '';
                     if (isset($address->city)) {
-                        if ($user['zip']) {
-                            $user['zip'] .= ', ';
+                        if ($userCached['zip']) {
+                            $userCached['zip'] .= ', ';
                         }
-                        $user['zip'] .= $address->city;
+                        $userCached['zip'] .= $address->city;
                     }
                     if (isset($address->country)) {
-                        if ($user['zip']) {
-                            $user['zip'] .= ', ';
+                        if ($userCached['zip']) {
+                            $userCached['zip'] .= ', ';
                         }
-                        $user['zip'] .= $address->country;
+                        $userCached['zip'] .= $address->country;
                     }
                 }
             }
@@ -1145,21 +1176,21 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $phoneNumbers = (array)$info->phoneNumbers->phoneNumber;
             foreach ($phoneNumbers as $phoneNumber) {
                 if ($phoneNumber->sms->useForSms == 'yes') {
-                    $user['phone'] = isset($phoneNumber->areaCode)
+                    $userCached['phone'] = isset($phoneNumber->areaCode)
                         ? $phoneNumber->areaCode : '';
-                    $user['phoneAreaCode'] = $user['phone'];
+                    $userCached['phoneAreaCode'] = $userCached['phone'];
                     if (isset($phoneNumber->localCode)) {
-                        $user['phone'] .= $phoneNumber->localCode;
-                        $user['phoneLocalCode'] = $phoneNumber->localCode;
+                        $userCached['phone'] .= $phoneNumber->localCode;
+                        $userCached['phoneLocalCode'] = $phoneNumber->localCode;
                     }
                     if (isset($phoneNumber->id)) {
-                        $user['phoneId'] = $phoneNumber->id;
+                        $userCached['phoneId'] = $phoneNumber->id;
                     }
                 }
             }
         }
 
-        //TODO: implement putCachedData
+        $this->putCachedData($cacheId, $userCached);
 
         return $user;
     }
@@ -1525,6 +1556,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
 
+        $user = $this->getMyProfile($patron);
+
         $function = '';
         $functionResult = '';
         $functionParam = '';
@@ -1535,14 +1568,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'user'         => $username,
             'password'     => $password,
             'areaCode'     => '',
-            'country'      => isset($patron['phoneCountry'])
-                ? $patron['phoneCountry'] : 'FI',
+            'country'      => isset($user['phoneCountry'])
+                ? $user['phoneCountry'] : 'FI',
             'localCode'    => $phone,
             'useForSms'    => 'yes'
         ];
 
-        if (!empty($patron['phoneId'])) {
-            $conf['id'] = $patron['phoneId'];
+        if (!empty($user['phoneId'])) {
+            $conf['id'] = $user['phoneId'];
             $function = 'changePhone';
             $functionResult = 'changePhoneNumberResult';
             $functionParam = 'changePhoneNumberParam';
@@ -1571,6 +1604,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ];
         }
 
+        // Clear patron cache
+        $cacheId = "patron_" . $username;
+        unset($this->session->cache[$cacheId]);
+
         return [
                 'success' => true,
                 'status' => 'Phone number changed',
@@ -1592,6 +1629,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
+
+        $user = $this->getMyProfile($patron);
+
         $function = '';
         $functionResult = '';
         $functionParam = '';
@@ -1605,8 +1645,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'isActive'     => 'yes'
         ];
 
-        if (!empty($patron['emailId'])) {
-            $conf['id'] = $patron['emailId'];
+        if (!empty($user['emailId'])) {
+            $conf['id'] = $user['emailId'];
             $function = 'changeEmail';
             $functionResult = 'changeEmailAddressResult';
             $functionParam = 'changeEmailAddressParam';
@@ -1635,7 +1675,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ];
         }
 
-        //TODO: implement putCachedData
+        // Clear patron cache
+        $cacheId = "patron_" . $username;
+        unset($this->session->cache[$cacheId]);
+
         return [
                 'success' => true,
                 'status' => 'Email address changed',
@@ -1655,14 +1698,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     public function changePassword($cardDetails)
     {
         $username = $cardDetails['patron']['cat_username'];
-        $password = $cardDetails['patron']['cat_password'];
 
         $function = 'changeCardPin';
         $functionResult = 'changeCardPinResult';
 
         $conf = [
             'arenaMember'  => $this->arenaMember,
-            'cardNumber'   => $cardDetails['patron']['cat_username'],
+            'cardNumber'   => $username,
             'cardPin'      => $cardDetails['oldPassword'],
             'newCardPin'   => $cardDetails['newPassword'],
         ];
@@ -1685,7 +1727,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ];
         }
 
-        //TODO: implement putCachedData
+        // Clear patron cache
+        $cacheId = "patron_" . $username;
+        unset($this->session->cache[$cacheId]);
+
         return  [
                 'success' => true,
                 'status' => 'change_password_ok',
@@ -1707,7 +1752,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         $client = new SoapClient($wsdl, $this->soapOptions);
 
-        $this->debugLog("$function Request for '$id'");
+        $this->debug("$function Request for '$this->arenaMember'.'$id'");
 
         $startTime = microtime(true);
         $result = $client->$function($params);
@@ -1721,10 +1766,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         if ($this->verbose) {
-            $this->debugLog(
+            $this->debug(
                 "$function Request: " . $this->formatXML($client->__getLastRequest())
             );
-            $this->debugLog(
+            $this->debug(
                 "$function Response: "
                 . $this->formatXML($client->__getLastResponse())
             );
@@ -1775,8 +1820,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     protected function getLanguage()
     {
         global $interface;
-        //$language = $interface->getLanguage();
-        $language = 'fi';
+        $language = $this->getTranslatorLocale();
+
         if (!in_array($language, ['en', 'sv', 'fi'])) {
             $language = 'en';
         }
@@ -1802,8 +1847,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         if (isset($status[$message])) {
-            $this->debugLog("$function Request failed for '$id'");
-            $this->debugLog("AWS error: '$message'");
+            $this->debug("$function Request failed for '$this->arenaMember'.'$id'");
+            $this->debug("AWS error: '$message'");
+
+            $this->error("$function Request failed for '$this->arenaMember'.'$id'");
+            $this->error("AWS error: '$message'");
             return $status[$message];
         } return $message;
     }
