@@ -36,6 +36,7 @@ use SoapClient, SoapFault, SoapHeader, File_MARC, PDO, PDOException, DOMDocument
     Zend\Session\Container as SessionContainer;
 use VuFind\Exception\Date;
 use Zend\Db\Sql\Ddl\Column\Boolean;
+use Zend\Stdlib\ArrayStack;
 
 /**
  * Axiell Web Services ILS Driver
