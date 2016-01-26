@@ -36,7 +36,7 @@ use SoapClient, SoapFault, SoapHeader, File_MARC, PDO, PDOException, DOMDocument
     Zend\Session\Container as SessionContainer;
 use VuFind\Exception\Date;
 use Zend\Db\Sql\Ddl\Column\Boolean;
-use Zend\Stdlib\ArrayStack;
+use VuFind\Config\Locator;
 
 /**
  * Axiell Web Services ILS Driver
@@ -258,37 +258,38 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             throw new ILSException('arena_member configuration needs to be set.');
         }
 
-        $confDir = realpath('local/config/vufind/') . '/';
-
         if (isset($this->config['Catalog']['catalogue_wsdl'])) {
             $this->catalogue_wsdl
-                = $confDir . $this->config['Catalog']['catalogue_wsdl'];
+                = Locator::getConfigPath($this->config['Catalog']['catalogue_wsdl']);
         } else {
             throw new ILSException('catalogue_wsdl configuration needs to be set.');
         }
 
         if (isset($this->config['Catalog']['patron_wsdl'])) {
-            $this->patron_wsdl = $confDir . $this->config['Catalog']['patron_wsdl'];
+            $this->patron_wsdl
+                = Locator::getConfigPath($this->config['Catalog']['patron_wsdl']);
         } else {
             throw new ILSException('patron_wsdl configuration needs to be set.');
         }
 
         if (isset($this->config['Catalog']['loans_wsdl'])) {
-            $this->loans_wsdl = $confDir . $this->config['Catalog']['loans_wsdl'];
+            $this->loans_wsdl
+                = Locator::getConfigPath($this->config['Catalog']['loans_wsdl']);
         } else {
             throw new ILSException('loans_wsdl configuration needs to be set.');
         }
 
         if (isset($this->config['Catalog']['payments_wsdl'])) {
             $this->payments_wsdl
-                = $confDir . $this->config['Catalog']['payments_wsdl'];
+                = Locator::getConfigPath($this->config['Catalog']['payments_wsdl']);
         } else {
             throw new ILSException('payments_wsdl configuration needs to be set.');
         }
 
         if (isset($this->config['Catalog']['reservations_wsdl'])) {
             $this->reservations_wsdl
-                = $confDir . $this->config['Catalog']['reservations_wsdl'];
+                = Locator::getConfigPath
+                ($this->config['Catalog']['reservations_wsdl']);
         } else {
             throw new
                 ILSException('reservations_wsdl configuration needs to be set.');
