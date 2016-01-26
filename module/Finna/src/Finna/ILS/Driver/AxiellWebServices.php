@@ -288,8 +288,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         if (isset($this->config['Catalog']['reservations_wsdl'])) {
             $this->reservations_wsdl
-                = Locator::getConfigPath
-                ($this->config['Catalog']['reservations_wsdl']);
+                = Locator::getConfigPath($this->config['Catalog']['reservations_wsdl']);
         } else {
             throw new
                 ILSException('reservations_wsdl configuration needs to be set.');
