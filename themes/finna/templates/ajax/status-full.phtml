@@ -1,5 +1,6 @@
 <!-- START of: finna - ajax/status-full.phtml -->
 <?
+$locations = false;
 $holdings = $this->statusItems;
 $summary = array_pop($holdings);
 if (isset($summary['total'])) {
@@ -17,7 +18,7 @@ $groupBranches = isset($this->statusItems[0]['branch']);
 $journal = isset($this->statusItems[0]['journalInfo']);
 
 if ($groupBranches) {
-  $locations = $availableLocations = $closestDueDateInLocation = [];
+  $availableLocations = $closestDueDateInLocation = [];
   $illRequestLink = false;
 
   foreach ($this->statusItems as $item) {
