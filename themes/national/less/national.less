@@ -5,6 +5,9 @@ header {
     & ul.navbar-nav > li > a {
         padding: 0 11px;
     }
+    & ul.navbar-nav.language:nth-child(3)::before {
+        border-left: 0;
+    }
     & ul.navbar-nav.language:nth-child(3) > li > a {
         padding-right: 9px;
     }
@@ -16,6 +19,74 @@ header {
         & ul.navbar-nav.language.lang-1 {
             margin-left: 0;
         }
+    }
+}
+// fine-tune front page carousel layout
+.home-2 > .container {
+    & .carousel .slick-prev, .carousel .slick-next {
+        width: 28px;
+        background-color: transparent;
+    }
+    & .carousel .slick-prev {
+        left: -22px;
+    }
+    & .carousel .slick-next {
+        right: -22px;
+    }
+    & .carousel .carousel-slide-header p {
+        min-height: 68px;
+        padding-top: 10px;
+    }
+    & .carousel.carousel-not-touch-device .carousel-hover-title::after {
+        	content: " »";
+    }
+    // carousel slide max width for xs
+    @media (max-width: @screen-xs-max) {
+        .carousel-national {
+            max-width: 300px;
+            margin-left: -7px;
+        }
+        & .carousel-header {
+            margin-left: 6px;
+        }
+    }
+    // compensate slick internal margins in order to left align to grid
+    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+        & .carousel-national {
+            margin-left: -5px;
+        }
+        & .carousel-header {
+            margin-left: 6px;
+        }
+    }
+    @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+        & .carousel-national {
+            margin-left: -9px;
+        }
+        & .carousel-header {
+            margin-left: 5px;
+        }
+    }
+    @media (min-width: @screen-lg-min) {
+        & .carousel-national {
+            margin-left: -7px;
+        }
+        & .carousel-header {
+            margin-left: 6px;
+        }
+    }
+    // fix slick horizontal scrollbar bug ALLI-4243
+    @media (min-width: @screen-lg-min) and (max-width: ((@screen-lg-min+30px)) ) {
+        overflow: hidden;
+        & .carousel .slick-prev {
+            left: -18px;
+        }
+    }
+}
+// fix slick horizontal scrollbar bug ALLI-4243
+@media (min-width: @screen-md) and (max-width: ((@screen-md+20px)) ) {
+    body {
+        overflow-x: hidden;
     }
 }
 @media (max-width: @screen-xs-max) {
@@ -60,9 +131,6 @@ header {
 @media (min-width: @screen-lg-min) {
     header .navbar { 
         max-width: (@screen-lg-min - @grid-gutter-width);
-        & #loginOptions, .logoutOptions {
-            margin-right: -15px;
-        }
     }
 }
 // fine-tune tablet and medium layouts 
@@ -74,16 +142,22 @@ header {
 }
 // fine-tune tablet and larger layouts 
 @media (min-width: @screen-sm-min) {
+    header .navbar { 
+        & #loginOptions, .logoutOptions {
+            margin-right: -15px;
+        }
+    }
     header .navbar .dropdown .dropdown-menu { 
         & li {
-            width: 280px;
-        }
-        & li div.description {
-            padding-top: 2px;
+            min-width: 260px;
+            max-width: 280px;
         }
         & li a {
             white-space: initial;
             padding: 9px 10px;
+        }
+        & li div.description {
+            padding-top: 2px;
         }
     }
     .searchLayout .introduction {

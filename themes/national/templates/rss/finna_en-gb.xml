@@ -1,62 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
-<channel>
-<atom:link href="" rel="self" type="application/rss+xml" /><title>Collection highlights</title>
-<item>
-<title>Children’s new media culture: babies on the net</title>
-<link><![CDATA[Search/Results?lookfor=lapset+media+muutokset&SearchForm_submit=Hae&filter[]=format%3A"1%2FBook%2FBook%2F"&filter[]=language%3A"fin"&view=list&limit=20&sort=relevance]]></link>
-<description>Digital media is part of the everyday life of babies, too, and children’s media culture is changing quickly, say sources at the Finna service. For instance, according to the 2013 Youth Barometer, 40% of 0–2-year-old children use the Internet weekly. </description>
-<media:thumbnail url="themes/national/images/carousel-images/01lapset.jpg"/>
-<enclosure type="image/jpeg" length="4774" url="themes/national/images/carousel-images/01lapset.jpg"/>
-</item>
-<item>
-<title>Items from the Seurasaari Open-Air Museum</title>
-<link><![CDATA[Search/Results?lookfor=Seurasaari&type=AllFields&view=grid&filter%5B%5D=~format%3A"0%2FImage%2F"&filter%5B%5D=~format%3A"0%2FPhysicalObject%2F"&filter%5B%5D=online_boolean%3A1]]></link>
-<description>Objects from and photos of buildings in Seurasaari have been digitised. Visitors can explore objects from the Kurssi, Ivars, Pertinotsa, Halla and Kaukola cottages. The photos show the buildings in their original locations, the transfer of the buildings to Seurasaari, and earlier museum activities. More recent photos show the museum buildings and their interiors.</description>
-<media:thumbnail url="themes/national/images/carousel-images/03ss.jpg"/>
-<enclosure type="image/jpeg" length="4774" url="themes/national/images/carousel-images/03ss.jpg"/>
-</item>
-<item>
-<title>History of public transport in Helsinki</title>
-<link>Search/Results?lookfor=liikennelaitos&amp;type=AllFields&amp;filter[]=building%3A%220%2FHKM%2F%22&amp;sort=relevance&amp;view=grid&amp;limit=100</link>
-<description>Tickets, modes of transport, and photographs from the collections of the Helsinki City Museum... What did trams look like in the 1920s? And do you remember bus tickets from 1986? The material related to public transport in the Metropolitan area covers the period from the early 1900s to the present.</description>
-<media:thumbnail url="themes/national/images/carousel-images/02hkl.jpg"/>
-<enclosure type="image/jpeg" length="4774" url="themes/national/images/carousel-images/02hkl.jpg"/>
-</item>
-<item>
-<title>Pictures from Finland's Winter, Continuation and Lapland Wars</title>
-<link><![CDATA[Search/Results?type=AllFields&limit=100&view=grid&filter%5B%5D=~building%3A"0%2FSA-kuva%2F"]]></link>
-<description>What you have in front of you is a unique collection of photographs from the Wartime Photograph Archives ("SA-kuva-arkisto" in Finnish). It contains some 160,000 photographs from Finland's Winter War, Continuation War and Lapland War. Most of the pictures were taken by Information Company (IC) photographers.</description>            
-<media:thumbnail url="themes/national/images/carousel-images/07sakuvat.jpg"/>
-<enclosure type="image/jpeg" length="4774" url="themes/national/images/carousel-images/07sakuvat.jpg"/>
-</item>
-<item>
-<title>Finnish rail travel posters</title>
-<link><![CDATA[Search/Results?lookfor=junamatkailu+matkailujulisteet+&type=AllFields&limit=100&view=grid&filter%5B%5D=~building%3A"0%2FSRM%2F"]]></link>
-<description>The poster collection of the Finnish Railway Museum is from the 1930s to the 2000s. The posters have been used at stations, in trains and at various events, and exchanged with international partners. The drawings and illustrations have been created by artists including Erik Bruun, Osmo K. Oksanen and Juha Anttinen, as well as photographers Fred Runeberg, E. Tolvanen and Yrjö Metsälä.</description>
-<media:thumbnail url="themes/national/images/carousel-images/08vr.jpg"/>
-<enclosure type="image/jpeg" length="4774" url="themes/national/images/carousel-images/08vr.jpg"/>
-</item>
-<item>
-<title>Life management and drugs: fact and fiction</title>
-<link><![CDATA[Search/Results?lookfor=elämänhallinta+huumeet&type=AllFields&limit=100&filter%5B%5D=~language%3A"fin"&filter%5B%5D=~format%3A"0%2FBook%2F"&filter%5B%5D=publishDate%3A"%5B2005+TO+%2A%5D"]]></link>
-<description>Finna has material on the effects of drug use on life management. For instance, the Ministry of Social Affairs and Health designed a related test for young men in 2006, and Mikhail Bulgakov wrote about his personal experiences with drugs in the 1920s. The Ministry’s test is available online, while Bulgakov’s short stories can be borrowed.</description>
-<media:thumbnail url="themes/national/images/carousel-images/06jumissa.jpg"/>
-<enclosure type="image/jpeg" length="4774" url="themes/national/images/carousel-images/06jumissa.jpg"/>
-</item>
-<item>
-<title>Edith Södergran’s photographs (by Svenska litteratursällskapet)</title>
-<link><![CDATA[Collection/sls.SLSA+566/Home?type=AllFields&limit=100&view=grid&sort=year+asc]]></link>
-<description>Poet Edith Södergran (1892–1923) is one of Finland’s most translated writers, whose poems in Swedish are regularly republished. Since the 1990s she has also been known for her photographs, of which about 400 taken in Davos in Switzerland and Raivola on the Karelian Isthmus have been preserved. One of her favourite subjects is her cats.</description>
-<media:thumbnail url="themes/national/images/carousel-images/04ediths.jpg"/>
-<enclosure type="image/jpeg" length="4774" url="themes/national/images/carousel-images/04ediths.jpg"/>
-</item>
-<item>
-<title>Helsinki Hall of Culture: built by volunteers</title>
-<link><![CDATA[Search/Results?lookfor=Kulttuuritalon+rakentaminen+1955&type=AllFields&prefiltered=-&filter[]=online_boolean%3A"1"&sort=relevance&view=grid&limit=100]]></link>
-<description> Designed by Alvar Aalto, the Helsinki Hall of Culture was a labour movement feat of strength. The building project register contains the names of over 5,000 volunteers, whose contributions extended from a few hours’ work to a maximum of 400. Finished in 1958, the building became the city’s first concert hall. (Malmberg, Aleksi: Kulttuuritalo. Puoli vuosisataa tarinoita ja tapahtumia)</description>
-<media:thumbnail url="themes/national/images/carousel-images/05kultsa.jpg"/>
-<enclosure type="image/jpeg" length="4774" url="themes/national/images/carousel-images/05kultsa.jpg"/>
-</item>
-</channel>
+  <channel>
+    <atom:link href="" rel="self" type="application/rss+xml" />
+    <title>Collection highlights</title>
+    <item>
+      <enclosure type="image/jpeg" url="themes/national/images/carousel-images/01finlandia.jpg"/>
+      <title>Karhula glassware</title>
+      <description>Karhula jars, works by Gunnel Nyman and Göran Hongell from the 1930s, Tapio Wirkkala’s Finlandia Vodka bottles. The collections of the now closed Karhula Glass Museum include familiar containers, unique hand-blown pieces and obscure designer gems. The Karhula collection of the Museum of Kymenlaakso has now been partly digitised.</description>
+      <media:thumbnail url="themes/national/images/carousel-images/01finlandia.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=wirkkala+OR+"gunnel+nyman"+OR+käsityö&prefiltered=-&SearchForm_submit=Hae&filter[]=building%3A"1%2FKYMIMUSEO%2FKarhulan+lasikokoelma%2F"&filter[]=online_boolean%3A1&limit=100&sort=relevance&view=grid&retainFilters=1]]>
+      </link>
+    </item>
+    <item>
+       <enclosure type="image/jpeg" url="themes/national/images/carousel-images/02kiasma.jpg"/>
+       <title>1980s prints from the Kiasma collections</title>
+      <description>Finna contains thousands of works of art from the collections of the Museum of Contemporary Art Kiasma, such as beautiful and thought-provoking prints. Prints from the 1980s are based on various printmaking methods and techniques.</description>
+      <media:thumbnail url="themes/national/images/carousel-images/02kiasma.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=syövytys&prefiltered=-&SearchForm_submit=Hae&filter%5B%5D=search_sdaterange_mv%3A%22%5B%22-4371587+3652%22+TO+%227304+2932896%22%5D%22&filter%5B%5D=building%3A%220%2FNykytaiteen+museo+Kiasma%2F%22&filter%5B%5D=format%3A%221%2FWorkOfArt%2FGraphic%2F%22&filter%5B%5D=online_boolean%3A1&search_sdaterange_mvtype=overlap&limit=100&sort=relevance&view=grid&retainFilters=1]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/national/images/carousel-images/03nobel.jpg"/>
+       <title>The works of the 2015 Nobel laureate in literature</title>
+      <description>The 2015 Nobel Prize in Literature was awarded to Svetlana Alexievich from Belarus, the author of, e.g., Voices from Chernobyl. A radio play based on the Finnish translation of the work can be accessed through Finna. Also translated into Finnish is Alexievich’s book <em>Sodalla ei ole naisen kasvoja</em> (English title: <em>War’s Unwomanly Face</em>).</description>
+      <media:thumbnail url="themes/national/images/carousel-images/03nobel.jpg"/>
+      <link>       <![CDATA[Search/Results?join=AND&bool0%5B%5D=OR&lookfor0%5B%5D=Aleksijevitš%2C+Svetlana&type0%5B%5D=Author&lookfor0%5B%5D=Aleksijevits%2C+Svetlana&type0%5B%5D=Author&filter%5B%5D=format%3A%220%2FBook%2F%22&sort=relevance&view=list]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/national/images/carousel-images/04uuni.jpg"/>
+      <title>Lost in the woods</title>
+      <description>Photos from 2010−2015 by Metsähallitus depict cultural heritage sites on public land, from the Stone Age to the 1960s on topics such as forestry, log floating, tree markings, reindeer roundup and warfare. Saunas are commonly featured. For details, see kantapuu.fi (Finnish Forest Museum Lusto).</description>
+      <media:thumbnail url="themes/national/images/carousel-images/04uuni.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=sauna+%22Metsähallituksen+metsätalouden+kulttuuriperintöinventointikokoelma%22&prefiltered=-&SearchForm_submit=Hae&filter%5B%5D=building%3A%220%2FLusto%2F%22&limit=100&sort=relevance&view=grid&retainFilters=1]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/national/images/carousel-images/05sakuvat.jpg"/>
+      <title>Pictures from Finland's winter, continuation and Lapland wars</title>
+      <description>What you have in front of you is a unique collection of photographs from the Wartime Photograph Archives ("SA-kuva-arkisto" in Finnish). It contains some 160,000 photographs from Finland's Winter War, Continuation War and Lapland War. Most of the pictures were taken by Information Company (IC) photographers.</description>
+      <media:thumbnail url="themes/national/images/carousel-images/05sakuvat.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=&type=AllFields&filter%5B%5D=building%3A"1%2FSA-kuva%2FSA-kuva%2F"&sort=relevance&view=grid&limit=100]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/national/images/carousel-images/06ss.jpg"/>
+      <title>Items from the Seurasaari open-air museum</title>
+      <description>Objects from and photos of buildings in Seurasaari have been digitised. Visitors can explore objects from the Kurssi, Ivars, Pertinotsa, Halla and Kaukola cottages. The photos show the buildings in their original locations, the transfer of the buildings to Seurasaari, and earlier museum activities. More recent photos show the museum buildings and their interiors.</description>
+      <media:thumbnail url="themes/national/images/carousel-images/06ss.jpg"/>
+      <link>       <![CDATA[Search/Results?join=AND&bool0%5B%5D=AND&lookfor0%5B%5D=Seurasaari&type0%5B%5D=AllFields&filter%5B%5D=sector_str_mv%3A%220%2Fmus%2F%22&orfilter%5B%5D=format%3A%220%2FImage%2F%22&orfilter%5B%5D=format%3A%220%2FPhysicalObject%2F%22&sort=last_indexed+desc&view=grid&limit=100]]>
+      </link>
+    </item>
+    <item>
+        <enclosure type="image/jpeg" url="themes/national/images/carousel-images/07lapset.jpg"/>
+      <title>Children’s new media culture: babies on the net</title>
+      <description>Digital media is part of the everyday life of babies, too, and children’s media culture is changing quickly, say sources at the Finna service. For instance, according to the 2013 Youth Barometer, 40% of 0–2-year-old children use the Internet weekly. </description>
+      <media:thumbnail url="themes/national/images/carousel-images/07lapset.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=lapset+media+muutokset&SearchForm_submit=Hae&filter[]=format%3A%221%2FBook%2FBook%2F%22&filter[]=language%3A%22fin%22&view=list&limit=20&sort=relevance]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/national/images/carousel-images/08ediths.jpg"/>
+      <title>Edith Södergran’s photographs (by Svenska litteratursällskapet)</title>
+      <description>Poet Edith Södergran (1892–1923) is one of Finland’s most translated writers, whose poems in Swedish are regularly republished. Since the 1990s she has also been known for her photographs, of which about 400 taken in Davos in Switzerland and Raivola on the Karelian Isthmus have been preserved. One of her favourite subjects is her cats.</description>
+      <media:thumbnail url="themes/national/images/carousel-images/08ediths.jpg"/>
+      <link>       <![CDATA[Collection/sls.SLSA+566/Home?lookfor=&type=AllFields&page=1&view=grid&limit=100]]>
+      </link>
+    </item>  
+  </channel>
 </rss>
