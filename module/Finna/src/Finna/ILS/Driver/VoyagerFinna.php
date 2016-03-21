@@ -46,6 +46,35 @@ trait VoyagerFinna
     /**
      * Protected support method for getHolding.
      *
+     * @param array $sqlRows Sql Data
+     *
+     * @return array Keyed data
+     */
+    protected function getHoldingData($sqlRows)
+    {
+        $data = parent::getHoldingData($sqlRows);
+
+        foreach ($data as $id => $item) {
+            foreach ($item as $year => $row) {
+                // Determine Copy Number
+                $number = '';
+                if (isset($row['YEAR'])) {
+                    $number .= utf8_encode($row['YEAR']) . ' ';
+                }
+                if (isset($row['ITEM_ENUM'])) {
+                    $number .= utf8_encode($row['ITEM_ENUM']);
+                }
+                $number = trim($number);
+                
+                $data[$id] = [$number => $row];
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Protected support method for getHolding.
+     *
      * @param array $id A Bibliographic id
      *
      * @return array Keyed data for use in an sql query
@@ -54,6 +83,7 @@ trait VoyagerFinna
     {
         $sqlArray = parent::getHoldingItemsSQL($id);
         $sqlArray['expressions'][] = "LOCATION.LOCATION_CODE";
+        $sqlArray['expressions'][] = "MFHD_ITEM.YEAR";
 
         return $sqlArray;
     }
