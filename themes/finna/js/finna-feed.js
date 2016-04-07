@@ -172,6 +172,14 @@ finna.feed = (function() {
                     // Force refresh to make sure that the layout is ok
                     obj.slickGoTo(0, true);
                 }
+
+                // Bind lightbox if feed content is shown in modal
+                if (typeof settings['modal'] != 'undefined' && settings['modal']) {
+                    holder.find('a').click(function() {
+                        $('#modal').addClass('feed-content');
+                    });
+                    VuFind.lightbox.bind(holder);
+                }
             }
         })
         .fail(function(response, textStatus, err) {
