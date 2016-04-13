@@ -5,7 +5,7 @@
  * PHP version 5
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2012-2015.
+ * Copyright (C) The National Library of Finland 2012-2016.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -77,6 +77,22 @@ class Primo extends \VuFind\RecordDriver\Primo
             'trim', explode(',', $this->mainConfig->Record->citation_formats)
         );
         return array_intersect($whitelist, $this->getSupportedCitationFormats());
+    }
+
+    /**
+     * Get a full, free-form reference to the context of the item that contains this
+     * record (i.e. volume, year, issue, pages).
+     *
+     * @return string
+     */
+    public function getContainerReference()
+    {
+        $partOf = $this->getIsPartOf();
+        $containerTitle = $this->getContainerTitle();
+        // Try to take the part after the title. Account for any 'The' etc. in the
+        // beginning.
+        $parts = explode($containerTitle, $partOf);
+        return isset($parts[1]) ? trim($parts[1], " \t\n\r,") : $partOf;
     }
 
     /**
@@ -164,8 +180,8 @@ class Primo extends \VuFind\RecordDriver\Primo
     public function getPublicationDates()
     {
         $rec = $this->getSimpleXML();
-        if (isset($rec->search->creationdate)) {
-            return (array)($rec->search->creationdate);
+        if (isset($rec->facets->creationdate)) {
+            return (array)($rec->facets->creationdate);
         }
     }
 
@@ -186,11 +202,11 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Get highlighted authors, if available.
+     * Get primary author information with highlights applied (if applicable)
      *
      * @return array
      */
-    public function getHighlightedAuthors()
+    public function getPrimaryAuthorsWithHighlighting()
     {
         $authors = $this->getCreators();
         // Don't check for highlighted values if highlighting is disabled or we
@@ -317,7 +333,8 @@ class Primo extends \VuFind\RecordDriver\Primo
             ? $this->mainConfig->OpenURL->rfr_id
             : '';
         if ($dates = $this->getPublicationDates()) {
-            $params['rft.date'] = implode('', $this->getPublicationDates());
+            $params['rft.date'] = $params['rft_date']
+                = implode('', $this->getPublicationDates());
         }
         if (!isset($params['rft.title'])) {
             $params['rft.title'] = $this->getTitle();

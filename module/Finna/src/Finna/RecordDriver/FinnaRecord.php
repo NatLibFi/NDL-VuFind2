@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library 2015.
+ * Copyright (C) The National Library 2015-2016.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -51,5 +51,37 @@ trait FinnaRecord
         return $table->getForRecord(
             $userId, $this->getUniqueID()
         );
+    }
+
+    /**
+     * Get OpenURL parameters for a book section.
+     *
+     * @return array
+     */
+    protected function getBookSectionOpenUrlParams()
+    {
+        $params = $this->getBookOpenUrlParams();
+        $params['rft.volume'] = $this->getContainerVolume();
+        $params['rft.issue'] = $this->getContainerIssue();
+        $params['rft.spage'] = $this->getContainerStartPage();
+        unset($params['rft.title']);
+        $params['rft.btitle'] = $this->getContainerTitle();
+        $params['rft.atitle'] = $this->getTitle();
+
+        return $params;
+    }
+
+    /**
+     * Get OpenURL parameters for a journal.
+     *
+     * @return array
+     */
+    protected function getJournalOpenUrlParams()
+    {
+        $params = parent::getJournalOpenUrlParams();
+        if ($objectId = $this->getSfxObjectId()) {
+            $params['rft.object_id'] = $objectId;
+        }
+        return $params;
     }
 }

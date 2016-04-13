@@ -77,9 +77,9 @@ class SearchTabs extends \Zend\View\Helper\AbstractHelper
     /**
      * Cached hidden filter url params
      *
-     * @var null|string
+     * @var array
      */
-    protected $cachedHiddenFilterParams = null;
+    protected $cachedHiddenFilterParams = [];
 
     /**
      * Constructor
@@ -171,37 +171,36 @@ class SearchTabs extends \Zend\View\Helper\AbstractHelper
      * @param string $searchClassId         Active search class
      * @param bool   $returnDefaultsIfEmpty Whether to return default tab filters if
      * no filters are currently active
+     * @param bool   $ignoreCurrentRequest  Whether to ignore hidden filters in
+     * the current request
      *
      * @return array
      */
-    public function getHiddenFilters($searchClassId, $returnDefaultsIfEmpty = true)
-    {
-        return $this->helper
-            ->getHiddenFilters($searchClassId, $returnDefaultsIfEmpty);
+    public function getHiddenFilters($searchClassId, $returnDefaultsIfEmpty = true,
+        $ignoreCurrentRequest = false
+    ) {
+        return $this->helper->getHiddenFilters(
+            $searchClassId, $returnDefaultsIfEmpty, $ignoreCurrentRequest
+        );
     }
 
     /**
      * Get current hidden filters as a string suitable for search URLs
      *
-     * @param string $prepend String to prepend to the hidden filters if they're not
-     * empty
+     * @param string $searchClassId            Active search class
+     * @param bool   $ignoreHiddenFilterMemory Whether to ignore hidden filters in
+     * search memory
+     * @param string $prepend                  String to prepend to the hidden
+     * filters if they're not empty
      *
      * @return string
      */
-    public function getCurrentHiddenFilterParams($prepend = '&amp;')
-    {
-        if (null === $this->cachedHiddenFilterParams) {
+    public function getCurrentHiddenFilterParams($searchClassId,
+        $ignoreHiddenFilterMemory = false, $prepend = '&amp;'
+    ) {
+        if (!isset($this->cachedHiddenFilterParams[$searchClassId])) {
             $view = $this->getView();
-            $layout = $view->plugin('layout');
             $searchTabs = $view->plugin('searchTabs');
-            $searchClassId = 'Solr';
-            if (isset($view->searchClassId)) {
-                $searchClassId = $view->searchClassId;
-            } elseif (isset($view->results->searchClassId)) {
-                $searchClassId = $view->results->searchClassId;
-            }
-            $ignoreHiddenFilterMemory = isset($layout->ignoreHiddenFilterMemory)
-                && $layout->ignoreHiddenFilterMemory;
             $hiddenFilters = $searchTabs->getHiddenFilters(
                 $searchClassId, $ignoreHiddenFilterMemory
             );
@@ -219,10 +218,11 @@ class SearchTabs extends \Zend\View\Helper\AbstractHelper
                         . urlencode("$key:$value");
                 }
             }
-            $this->cachedHiddenFilterParams = implode('&amp;', $hiddenFilterParams);
+            $this->cachedHiddenFilterParams[$searchClassId]
+                = implode('&amp;', $hiddenFilterParams);
         }
-        return $this->cachedHiddenFilterParams
-            ? $prepend . $this->cachedHiddenFilterParams : '';
+        return $this->cachedHiddenFilterParams[$searchClassId]
+            ? $prepend . $this->cachedHiddenFilterParams[$searchClassId] : '';
     }
 
     /**
