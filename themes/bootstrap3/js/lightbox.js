@@ -145,7 +145,7 @@ VuFind.register('lightbox', function() {
         }
         // Place Hold error isolation
         if (obj.url.match(/\/Record/) && (obj.url.match(/Hold\?/) || obj.url.match(/Request\?/))) {
-          var testDiv = $('<div/>').html(html)
+          var testDiv = $('<div/>').html(html);
           var error = testDiv.find('.flash-message.alert-danger');
           if (error.length && testDiv.find('.record').length) {
             showAlert(error[0].innerHTML, 'danger');
@@ -203,7 +203,7 @@ VuFind.register('lightbox', function() {
    * data-lightbox-title = Lightbox title (overrides any title the page provides)
    */
   var _constrainLink = function(event) {
-    if (typeof $(this).data('lightboxIgnore') != 'undefined') {
+    if (typeof $(this).data('lightboxIgnore') != 'undefined' || this.attributes.href.value.charAt(0) === '#') {
       return true;
     }
     if (this.href.length > 1) {
@@ -268,7 +268,7 @@ VuFind.register('lightbox', function() {
       }, false);
     }
     // Loading
-    _modalBody.prepend('<i class="fa fa-spinner fa-spin pull-right"></i>');
+    _modalBody.prepend('<i class="fa fa-spinner fa-spin pull-right" title="'+VuFind.translate('loading')+'"></i>');
     // Prevent multiple submission of submit button in lightbox
     if (submit.closest(_modal).length > 0) {
       submit.attr('disabled', 'disabled');
