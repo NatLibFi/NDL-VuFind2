@@ -132,6 +132,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         if ($result !== null) {
             foreach ($result as &$link) {
                 if (isset($link['value'])) {
+                    $length = strlen($link['title']);                         
+                    if (substr($link['value'], 0, $length) === $link['title']) {
+                            $link['value'] = substr($link['value'], $length); 
+                    }
+                    $link['title'] = $this->stripTrailingPunctuation($link['title']);
                     $link['value'] = $this->stripTrailingPunctuation($link['value']);
                 }
             }
