@@ -209,7 +209,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $type = $url->getSubfield('q');
             if ($type) {
                 $type = $type->getData();
-                if ("IMAGE" == $type || "image/jpeg" == $type) {
+                if ('image' == strtolower($type) || 'image/jpeg' == $type) {
                     $address = $url->getSubfield('u');
                     if ($address && $this->urlAllowed($address->getData())) {
                         $address = $address->getData();
