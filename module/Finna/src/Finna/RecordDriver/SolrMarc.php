@@ -1140,12 +1140,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 break;
             }
         }
-        $note = $this->stripTrailingPunctuation($this->getRecordLinkNote($field));
         // Make sure we have something to display:
         return !isset($link) ? false : [
-            'title' => $note,
-            'value' => $title,
-            'link'  => $link
+        'title' => $this->stripTrailingPunctuation($this->getRecordLinkNote($field)),
+        'value' => $title,
+        'link'  => $link
         ];
     }
 
