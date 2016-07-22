@@ -5,6 +5,7 @@
 <html lang="<?=$this->layout()->userLang?>">
   <head>
     <?$this->headThemeResources()?>
+    <? $this->body() ?>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
@@ -189,7 +190,7 @@ JS;
       <?=$this->render($template)?>
     <? endif; ?>
   </head>
-  <body>
+  <body<? if (!empty($this->body()->getClasses())): ?> class="<?=implode(' ', $this->body()->getClasses())?>"<? endif; ?>>
     <? // Set up the search box -- there are three possible cases:
       // 1. No search box was set; we should default to the normal box
       // 2. It was set to false; we should display nothing

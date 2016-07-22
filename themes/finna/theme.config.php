@@ -41,6 +41,7 @@ return array(
             'proxyurl' => 'Finna\View\Helper\Root\Factory::getProxyUrl',
         ),
         'invokables' => array(
+            'body' => 'Finna\View\Helper\Root\Body',
             'checkboxFacetCounts' =>
                 'Finna\View\Helper\Root\CheckboxFacetCounts',
             'resultfeed' => 'Finna\View\Helper\Root\ResultFeed',
