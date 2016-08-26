@@ -6,8 +6,10 @@
     h1 {
         display: inline-block;
     }
-    .finna-main-header .form-inline {
-        margin-left: 20px;
+    .finna-main-header {
+        & .form-inline {
+            margin-left: 20px;
+        }
     }
     & .useraccount-header {
         font-weight: bold;
@@ -32,6 +34,9 @@
             left: -40px;
             right: auto;
         }
+    }
+    & #card_name {
+        width: 205px;   
     }
     & .myresearch-profile-list {
         padding: 0px 6px 20px;
@@ -58,6 +63,7 @@
         background: linear-gradient( @gray-light, darken(@gray-light,8%));
         color: @body-bg;
     }
+
     & .online-payment-data {
         font-size: 1.2em;
         margin-bottom: 40px;
@@ -147,9 +153,7 @@
         line-height: 1.1em;
         margin-top: 15px;
     }
-    & select#library_card {
-        display: inline-block;   
-    }
+
     & .useraccount-table {
         margin-bottom: 40px;
         border: 1px solid @gray-lighter;
@@ -631,6 +635,9 @@
     & .search-controls {
         margin-top: 10px;
         margin-bottom: 0px;
+        & hr {
+            border-top: 1px solid @gray-lighter;
+        }
     }
     & i.fa.fa-pen {
         margin-left: 10px;

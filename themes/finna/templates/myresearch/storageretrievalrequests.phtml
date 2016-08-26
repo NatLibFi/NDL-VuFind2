@@ -26,6 +26,9 @@
         </div>
       <? endif; ?>
     <? else: ?>
+    <? if ($template = $this->content()->findTemplateForLng("content/Additions/storageretrievalrequests-pre-list")): ?>
+      <div class="storageretrievalrequests-pre-list"><?=$this->render($template)?></div>
+    <? endif; ?>
     <? if (!empty($this->recordList)): ?>
       <? if ($this->cancelForm): ?>
       <form name="cancelForm" class="inline" method="post" id="cancelStorageRetrievalRequest">
@@ -67,6 +70,7 @@
             <div class="checkboxFilter">
               <div class="checkbox">
                 <label>
+                  <span class="sr-only"><?=$this->transEsc('Select');?></span>
                   <input type="checkbox" name="cancelSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?=$safeId?>" />
                 </label>
               </div>
@@ -99,7 +103,7 @@
             <div class="record-authors">
 
             <? $formats = $resource->getFormats(); if (count($formats) > 0): ?>
-              <?=str_replace('class="', 'class="label label-info ', $this->record($resource)->getFormatList())?>
+              <?=$this->record($resource)->getFormatList() ?>
               <br/>
             <? endif; ?>
 
@@ -175,6 +179,9 @@
         </div>
       <? endforeach; ?>
       <? if ($this->cancelForm): ?></form><? endif; ?>
+      <? if ($template = $this->content()->findTemplateForLng("content/Additions/storageretrievalrequests-post-list")): ?>
+        <div class="storageretrievalrequests-post-list"><?=$this->render($template)?></div>
+      <? endif; ?>
     <? else: ?>
       <h4><?=$this->transEsc('You do not have any storage retrieval requests placed') ?>.</h4>
     <? endif; ?>

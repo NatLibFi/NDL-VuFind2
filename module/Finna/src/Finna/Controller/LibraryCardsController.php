@@ -181,6 +181,25 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         }
 
         $id = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
+
+        if (!empty($cardName)) {
+            list($cardInstitution) = explode('.', $username,  2);
+            foreach ($user->getLibraryCards() as $otherCard) {
+                if ($otherCard->id == $id) {
+                    continue;
+                }
+                list($otherInstitution) = explode('.', $otherCard->cat_username, 2);
+                if ($cardInstitution == $otherInstitution
+                    && strcasecmp($cardName, $otherCard->card_name) == 0
+                ) {
+                    $this->flashMessenger()->addMessage(
+                        'library_card_name_exists', 'error'
+                    );
+                    return false;
+                }
+            }
+        }
+
         try {
             $user->saveLibraryCard(
                 $id == 'NEW' ? null : $id, $cardName, $username, $password
@@ -251,7 +270,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 'newPassword' => $password
             ]
         );
-        if (!$result['success']) {
+        if (!$result['success']
+            && $result['status'] == 'authentication_error_invalid'
+            && !empty($oldPassword)
+        ) {
             // Try again with empty old password just in case this was a user that
             // was logged in with the fallback login field
             $result = $catalog->changePassword(
@@ -261,10 +283,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     'newPassword' => $password
                 ]
             );
-            if (!$result['success']) {
-                $this->flashMessenger()->addMessage($result['status'], 'error');
-                return false;
-            }
+        }
+        if (!$result['success']) {
+            $this->flashMessenger()->addMessage($result['status'], 'error');
+            return false;
         }
         $user->saveLibraryCard(
             $card->id, $card->card_name, $card->cat_username, $password

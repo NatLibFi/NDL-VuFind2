@@ -27,6 +27,9 @@
         </div>
       <? endif; ?>
     <? else: ?>
+    <? if ($template = $this->content()->findTemplateForLng("content/Additions/checkedout-pre-list")): ?>
+      <div class="checkedout-pre-list"><?=$this->render($template)?></div>
+    <? endif; ?>
     <? if (!empty($this->transactions)): ?>
       <? if ($this->renewForm): ?>
       <form name="renewals" method="post" id="renewals">
@@ -67,6 +70,7 @@
               <div class="checkboxFilter">
                 <div class="checkbox">
                   <label>
+                  <span class="sr-only"><?=$this->transEsc('Select');?></span>
                   <input class="checkbox-select-item" type="checkbox" name="renewSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['renew_details'])?>" id="checkbox_<?=$safeId?>" />
                   </label>
                 </div>
@@ -108,7 +112,7 @@
             ?>
             <div class="record-authors">
             <? $formats = $resource->getFormats(); if (count($formats) > 0): ?>
-              <?=str_replace('class="', 'class="label label-info ', $this->record($resource)->getFormatList())?>
+              <?=$this->record($resource)->getFormatList() ?>
               <br/>
             <? endif; ?>
             <? $listAuthor = $resource->getPrimaryAuthor(); if (!empty($listAuthor)): ?>
@@ -205,6 +209,9 @@
         </div>
         <? endif;?>
       </form>
+      <? endif; ?>
+      <? if ($template = $this->content()->findTemplateForLng("content/Additions/checkedout-post-list")): ?>
+        <div class="checkedout-post-list"><?=$this->render($template)?></div>
       <? endif; ?>
     <? else: ?>
       <h4><?=$this->transEsc('You do not have any items checked out')?>.</h4>

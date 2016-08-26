@@ -24,6 +24,12 @@
   $this->headScript()->appendFile("vendor/jquery.editable.min.js");
   $this->headScript()->appendFile("finna-item-status.js");
 
+  // Load Javascript only if list view parameter is NOT full:
+  if ($this->params->getOptions()->getListViewOption()!="full") {
+    $this->headScript()->appendFile("record.js");
+    $this->headScript()->appendFile("embedded_record.js");
+  }
+
   $this->jsTranslations()->addStrings(['add_note' => 'Add note', 'add_list_description' => 'Add list description', 'loading' => 'Loading']);
 
   $recordTotal = $this->results->getResultTotal();
@@ -87,11 +93,19 @@
       <p><?=$this->transEsc('You do not have any saved resources')?></p>
       <? endif; ?>
     </div>
+    <? if ($recordTotal > 0): ?>
+    <div class="search-controls row">
+      <div class="col-xs-12 text-center">
+        <hr>
+        <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', array('results' => $this->results))?>
+      </div>
+    </div>
+    <? endif;?>
   </div>
   </div>
   <div class="col-sm-3 col-sm-pull-9 sidebar mylist-bar">
   <? if ($this->userlist()->getMode() !== 'disabled' && $user = $this->auth()->isLoggedIn()): ?>
-  <?= $this->partial('myresearch/mylist-navi.phtml', array('user' => $user, 'isDefaultList' => $isDefaultList, 'activeId' => $activeId, 'activePublic' => $activePublic, 'lists' => $lists)); ?>
+  <?= $this->partial('myresearch/mylist-navi.phtml', array('user' => $user, 'isDefaultList' => $isDefaultList, 'activeId' => $activeId, 'activePublic' => $activePublic, 'lists' => $lists, 'results' => $this->results)); ?>
   <? endif ?>
   </div>
 </div>

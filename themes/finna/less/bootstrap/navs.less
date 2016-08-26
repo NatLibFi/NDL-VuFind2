@@ -380,11 +380,24 @@
     }
 }
 // fix navbar for logoutoptions
-.navbar .logoutOptions .dropdown-menu {
+.navbar .logoutOptions {
+    & .dropdown-menu {
     right: 5px;
     left: auto;
-    & > li > a {
-        width: 250px; 
+        & > li > a {
+            width: 250px; 
+        }
+    }
+    &.card-selection {
+        & h5 {
+            padding-left: 15px;   
+        }
+        & > a {
+            padding-left: 32px;
+        }
+        & i.fa-check {
+            margin-left: -17px;
+        }   
     }
 }
 
