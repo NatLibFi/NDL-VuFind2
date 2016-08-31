@@ -144,12 +144,7 @@
         <? endforeach; ?>
       <? endif; ?>
     </div>
-  <? if ($thumbnailAlignment == 'left'): ?>
-    <div class="media-<?=$thumbnailAlignment ?> col-xs-3 <?= $combinedView ? 'col-sm-2 col-sm-pull-10' : 'col-sm-3 col-sm-pull-8 col-md-2 col-md-pull-9' ?> resultThumb">
-  <? endif; ?>
-  <? if ($thumbnailAlignment == 'right'): ?>
-    <div class="media-<?=$thumbnailAlignment ?> col-xs-3 <?= $combinedView ? 'col-sm-2 col-sm-push-10' : 'col-sm-3 col-sm-push-8 col-md-2 col-md-push-9' ?> resultThumb">
-  <? endif; ?>
+    <div class="media-<?=$thumbnailAlignment ?> col-xs-3 <? if ($thumbnailAlignment == 'left'): ?><?= $combinedView ? 'col-sm-2 col-sm-pull-10' : 'col-sm-3 col-sm-pull-8 col-md-2 col-md-pull-9' ?><? elseif ($thumbnailAlignment == 'right'): ?><?= $combinedView ? 'col-sm-2' : 'col-sm-3 col-md-2' ?><? endif; ?> resultThumb">
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
     <? if ($thumbnail): ?>
