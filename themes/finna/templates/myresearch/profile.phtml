@@ -38,14 +38,11 @@
                 $selected = (isset($this->profile['home_library']) && $this->profile['home_library'] != "")
                   ? $this->profile['home_library'] : $this->defaultPickupLocation
               ?>
-              <select id="home_library" name="home_library" class="form-control">
+              <select id="home_library" name="home_library" class="jumpMenu form-control">
                 <? foreach ($this->pickup as $lib): ?>
-                  <option value="<?=$this->escapeHtmlAttr($lib['locationID'])?>"<?=($selected == $lib['locationID'])?' selected="selected"':''?>><?=$this->escapeHtml($lib['locationDisplay'])?></option>
+                  <option value="<?=$this->escapeHtmlAttr($lib['locationID'])?>"<?=($selected == $lib['locationID'])?' selected="selected"':''?>><?=$this->transEsc('location_' . $lib['locationDisplay'], null, $lib['locationDisplay'])?></option>
                 <? endforeach; ?>
               </select>
-          </div>
-          <div class="col-xs-12">
-            <input class="btn btn-primary" type="submit" value="<?=$this->transEsc('Save')?>" name="save_home_library" />
           </div>
         </form>
       <? elseif (!empty($this->pickup)): ?>
@@ -60,13 +57,13 @@
       <?
         $selectedCard = null;
         foreach ($cards as $card) {
-            if ($card['cat_username'] === $user->cat_username) {
+            if ($card->cat_username === $user->cat_username) {
                 $selectedCard = $card;
                 break;
             }
         }
       ?>
-      <? if ($selectedCard !== null): ?>
+      <? if ($selectedCard !== null && $this->ils()->checkFunction('changePassword', $selectedCard->toArray())): ?>
         <div class="col-xs-12">
           <span class="myresearch-profile-middle-header"><?=$this->transEsc('change_password_heading') ?></span>
         </div>
@@ -129,7 +126,7 @@
           <? if ($updatePhone): ?>
             <div class="col-sm-4 profile-title"><?=$this->transEsc('Phone') ?>:</div>
             <div class="col-sm-8">
-              <input class="form-control" type="tel" name="profile_tel" value="<?=$this->escapeHtml($this->profile['phone']) ?>"/>
+              <input class="form-control" type="tel" name="profile_tel" value="<?=$this->escapeHtml($this->profile['phone']) ?>" title="<?=$this->transEsc('Phone') ?>" />
             </div>
           <? else: ?>
             <div class="col-sm-4 profile-title"><?=$this->transEsc('Phone') ?>:</div>
@@ -140,7 +137,7 @@
           <div class="col-sm-4 profile-title"><?=$this->transEsc('Email') ?>:</div>
           <? if ($updateEmail): ?>
             <div class="col-sm-8">
-              <input class="form-control" type="email" name="profile_email" value="<?=$this->escapeHtml($this->profile['email']) ?>"/>
+              <input class="form-control" type="email" name="profile_email" value="<?=$this->escapeHtml($this->profile['email']) ?>" title="<?=$this->transEsc('Email') ?>" />
             </div>
           <? else: ?>
             <div class="col-sm-8 profile-text-value"><?=$this->escapeHtml($this->profile['email']) ?></div>

@@ -74,6 +74,7 @@
               <div class="checkboxFilter">
                 <div class="checkbox">
                   <label>
+                    <span class="sr-only"><?=$this->transEsc('Select');?></span>
                     <input type="checkbox" name="cancelSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?=$safeId?>" />
                   </label>
                 </div>
@@ -113,7 +114,7 @@
               <div class="record-authors">
 
                <? $formats = $resource->getFormats(); if (count($formats) > 0): ?>
-                <?=$this->record($this->driver)->getFormatList() ?>
+                <?=$this->record($resource)->getFormatList() ?>
                 <br/>
               <? endif; ?>
 

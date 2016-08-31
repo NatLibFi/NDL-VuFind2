@@ -42,6 +42,17 @@ namespace Finna\RecordTab;
 class Map extends \VuFind\RecordTab\Map
 {
     /**
+     * Can this tab be loaded via AJAX?
+     *
+     * @return bool
+     */
+    public function supportsAjax()
+    {
+        // Yes, no magic required
+        return true;
+    }
+
+    /**
      * Get all map markers (points, polygons etc.)
      *
      * @return string
@@ -67,9 +78,6 @@ class Map extends \VuFind\RecordTab\Map
      */
     public function isActive()
     {
-        if (!$this->enabled) {
-            return false;
-        }
         $locations = $this->getRecordDriver()->tryMethod('getGeoLocations');
         return !empty($locations);
     }
@@ -86,17 +94,12 @@ class Map extends \VuFind\RecordTab\Map
         $array = [];
         $envelope = preg_replace('/.*\((.+)\).*/', '\\1', $envelope);
         list($minX, $maxX, $maxY, $minY) = explode(' ', trim($envelope));
-        // Workaround for jquery geo issue preventing polygon with longitude
-        // -180.0 from being displayed (https://github.com/AppGeo/geo/issues/128)
-        if ((float)$minX === -180) {
-            $minX = -179.9999999;
-        }
         return [
-            [(float)$minX, (float)$minY],
-            [(float)$minX, (float)$maxY],
-            [(float)$maxX, (float)$maxY],
-            [(float)$maxX, (float)$minY],
-            [(float)$minX, (float)$minY]
+            [(float)$minY, (float)$minX],
+            [(float)$minY, (float)$maxX],
+            [(float)$maxY, (float)$maxX],
+            [(float)$maxY, (float)$minX],
+            [(float)$minY, (float)$minX]
         ];
     }
 
@@ -113,12 +116,7 @@ class Map extends \VuFind\RecordTab\Map
         $polygon = preg_replace('/.*\((.+)\).*/', '\\1', $polygon);
         foreach (explode(',', $polygon) as $point) {
             list($lon, $lat) = explode(' ', trim($point), 2);
-            // Workaround for jquery geo issue preventing polygon with longitude
-            // -180.0 from being displayed (https://github.com/AppGeo/geo/issues/128)
-            if ((float)$lon === -180) {
-                $lon = -179.9999999;
-            }
-            $array[] = [(float)$lon, (float)$lat];
+            $array[] = [(float)$lat, (float)$lon];
         }
         return $array;
     }
@@ -191,11 +189,11 @@ class Map extends \VuFind\RecordTab\Map
             $lat = (float)$coordinates[1];
             $lon2 = (float)$coordinates[2];
             $lat2 = (float)$coordinates[3];
-            $polygon[] = [$lon, $lat];
-            $polygon[] = [$lon2, $lat];
-            $polygon[] = [$lon2, $lat2];
-            $polygon[] = [$lon, $lat2];
-            $polygon[] = [$lon, $lat];
+            $polygon[] = [$lat, $long];
+            $polygon[] = [$lat, $lon2];
+            $polygon[] = [$lat2, $lon2];
+            $polygon[] = [$lat2, $lon];
+            $polygon[] = [$lat, $lon];
             return [
                 'polygon' => [$polygon]
             ];
