@@ -1332,7 +1332,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         foreach ($loans as $loan) {
             $title = $loan->catalogueRecord->title;
-            if (empty($loan->note)) {
+            if (!empty($loan->note)) {
                 $title .= ' (' . $loan->note . ')';
             }
 
