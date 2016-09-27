@@ -307,13 +307,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $this->defaultPickUpLocation
-            = (isset($this->config['Holds']['defaultPickUpLocation']))
+            = isset($this->config['Holds']['defaultPickUpLocation'])
             ? $this->config['Holds']['defaultPickUpLocation'] : false;
         if ($this->defaultPickUpLocation == '0') {
             $this->defaultPickUpLocation = false;
         }
 
-        $this->regionalHold = (isset($this->config['Holds']['regionalHold']))
+        $this->regionalHold = isset($this->config['Holds']['regionalHold'])
           ? $this->config['Holds']['regionalHold'] : false;
 
         if (isset($this->config['Debug']['durationLogPrefix'])) {
