@@ -558,7 +558,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             [$functionParam => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message
@@ -608,7 +612,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 ]
             );
 
-            $statusAWS = $result->$functionResult->status;
+            if (isset($result->$functionResult->status)) {
+                $statusAWS = $result->$functionResult->status;
+            } else {
+                throw new ILSException('ils_offline_status');
+            }
 
             if ($statusAWS->type != 'ok') {
                 $message
@@ -700,7 +708,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ['changeReservationsParam' => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $username);
@@ -789,7 +801,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $id);
-            if ($message == 'catalog_connection_failed') {
+            if ($message == 'ils_connection_failed') {
                 throw new ILSException('ils_offline_holdings_message');
             }
             return [];
@@ -1092,7 +1104,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ['patronInformationParam' => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $username);
@@ -1324,11 +1340,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ['loansRequest' => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $username);
-            if ($message == 'catalog_connection_failed') {
+            if ($message == 'ils_connection_failed') {
                 throw new ILSException($message);
             }
             return [];
@@ -1414,11 +1434,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ['debtsRequest' => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $username);
-            if ($message == 'catalog_connection_failed') {
+            if ($message == 'ils_connection_failed') {
                 throw new ILSException($message);
             }
             return [];
@@ -1490,11 +1514,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ['getReservationsParam' => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $username);
-            if ($message == 'catalog_connection_failed') {
+            if ($message == 'ils_connection_failed') {
                 throw new ILSException($message);
             }
             return [];
@@ -1607,7 +1635,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ['renewLoansRequest' => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message
@@ -1687,7 +1719,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             [$functionParam => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $username);
@@ -1758,7 +1794,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             [$functionParam => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $username);
@@ -1811,7 +1851,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ['changeCardPinParam' => $conf]
         );
 
-        $statusAWS = $result->$functionResult->status;
+        if (isset($result->$functionResult->status)) {
+            $statusAWS = $result->$functionResult->status;
+        } else {
+            throw new ILSException('ils_offline_status');
+        }
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS->message, $username);
