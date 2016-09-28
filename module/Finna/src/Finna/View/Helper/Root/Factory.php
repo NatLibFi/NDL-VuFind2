@@ -302,6 +302,20 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     }
 
     /**
+     * Construct the StreetSearch view helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return StreetSearch
+     */
+    public static function getStreetSearch(ServiceManager $sm)
+    {
+        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('StreetSearch');
+
+        return new StreetSearch($config);
+    }
+
+    /**
      * Construct Headtitle helper
      *
      * @param ServiceManager $sm Service manager.

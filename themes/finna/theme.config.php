@@ -36,6 +36,7 @@ return array(
             'searchbox' => 'Finna\View\Helper\Root\Factory::getSearchBox',
             'searchTabs' => 'Finna\View\Helper\Root\Factory::getSearchTabs',
             'searchTabsRecommendations' => 'Finna\View\Helper\Root\Factory::getSearchTabsRecommendations',
+            'streetSearch' => 'Finna\View\Helper\Root\Factory::getStreetSearch',
             'systemMessages' => 'Finna\View\Helper\Root\Factory::getSystemMessages',
             'translation' => 'Finna\View\Helper\Root\Factory::getTranslation',
             'proxyurl' => 'Finna\View\Helper\Root\Factory::getProxyUrl',

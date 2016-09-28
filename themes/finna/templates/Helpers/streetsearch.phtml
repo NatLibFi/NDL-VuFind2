@@ -1,0 +1,33 @@
+<!-- START of: finna - Helpers/streetsearch.phtml -->
+<?
+    $this->headScript()->appendFile("finna-street-search.js");
+    $this->jsTranslations()->addStrings(
+      array(
+        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
+        'street_search_checking_for_geolocation' => 'street_search_checking_for_geolocation',
+        'street_search_geolocation_available' => 'street_search_geolocation_available',
+        'street_search_other_error' => 'street_search_other_error',
+        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
+        'street_search_timeout' => 'street_search_timeout',
+        'street_search_no_streetname_found' => 'street_search_no_streetname_found',
+        'street_search_reversegeocode_unavailable' => 'street_search_reversegeocode_unavailable',
+        'street_search_searching_for' => 'street_search_searching_for',
+        'street_search_coordinates_found' => 'street_search_coordinates_found',
+        'street_search_coordinates_found' => 'street_search_coordinates_found',
+        'street_search_coordinates_found_accuracy_bad' => 'street_search_coordinates_found_accuracy_bad'
+      )
+    );
+
+    $streetJS = '<script type="text/javascript" src="/vufind2/themes/finna/js/finna-street-search.js"></script>';
+    $streetJS .= '<script>VuFind.addTranslations(' . $this->jsTranslations()->getJSON()  . ');';
+    $streetJS .= '</script>';
+
+    $html = '<div id="street-search-button-area"><button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>' .
+            '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div><div class="infoBox"><div><div class="info"></div>' .
+            '<button id="street-search-terminate">' . $this->transEsc('street_search_abort') . '</button></div></div></div></div>';
+    $html .= $streetJS;
+
+    $this->layout()->content = $html;
+?>
+
+<!-- END of: finna - Helpers/streetsearch.phtml -->
