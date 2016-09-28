@@ -354,6 +354,16 @@ trait VoyagerFinna
                 }
             }
         }
+        if (!empty($sqlRow['DUEDATE'])
+            && !empty($this->config['Holdings']['ignore_due_date_in_statuses'])
+        ) {
+            $statuses = explode(
+                ':', $this->config['Holdings']['ignore_due_date_in_statuses']
+            );
+            $data['ignoreDueDate'] = !empty(
+                array_intersect($statuses, $sqlRow['STATUS_ARRAY'])
+            );
+        }
         return $data;
     }
 
