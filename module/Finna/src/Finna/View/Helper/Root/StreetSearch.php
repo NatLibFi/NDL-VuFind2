@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Helper to check if current user is authenticated with Mozilla Persona
+ * Helper for Street Search
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2016.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,46 +23,30 @@
  * @category VuFind
  * @package  View_Helpers
  * @author   Jyrki Messo <jyrki.messo@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\View\Helper\Root;
 
 /**
- * Helper to check if current user is authenticated with Mozilla Persona
+ * Helper for Street Search
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Jyrki Messo <jyrki.messo@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 class StreetSearch extends \Zend\View\Helper\AbstractHelper
 {
     /**
-     * Configuration
+     * This component outputs code for Finna Street
      *
-     * @var \Zend\Config\Config
+     * @return string
      */
-    
-    protected $config;
-
-    /**
-     * Constructor
-     *
-     * @param type $serviceLocator Service locator
-     */
-    public function __construct(\Zend\Config\Config $config)
-    {
-        $this->config = $config;
-    }
-
-    /**
-     * This component outputs code Finna Street launch button
-     *
-     * @return null|string 
-     */
-    public function renderStreetSearchButton()
+    public function __invoke()
     {
         return $this->getView()->render('Helpers/streetsearch.phtml');
     }

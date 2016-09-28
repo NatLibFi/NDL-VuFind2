@@ -3,30 +3,8 @@
     $this->headTitle($this->translate('street_search'));
     $this->content()->setHeading = false;
     $this->layout()->finnaMainHeader = false;
-    $this->headScript()->appendFile('finna-street-search.js', 'text/javascript', '');
 
-    $html = '<div class="introduction"><h1 class="introductionText"><span>' . $this->translate('street_search_header_html') . '</h1></div>' .
-            '<div id="street-search-button-area"><button class="btn btn-primary" id="street-search-button">' . $this->transEsc('street_search_button') . '</button>' .
-            '<div id="street-search-spinner" class="alert alert-info"><div class="fa fa-spinner fa-spin"></div><div class="infoBox"><div><div class="info"></div>' .
-            '<button id="street-search-terminate">' . $this->transEsc('street_search_abort') . '</button></div></div></div></div>';
-
-    $this->layout()->searchbox = $html;
-       
-    $this->jsTranslations()->addStrings(
-      array(
-        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
-        'street_search_checking_for_geolocation' => 'street_search_checking_for_geolocation',
-        'street_search_geolocation_available' => 'street_search_geolocation_available',
-        'street_search_other_error' => 'street_search_other_error',
-        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
-        'street_search_timeout' => 'street_search_timeout',
-        'street_search_no_streetname_found' => 'street_search_no_streetname_found',
-        'street_search_reversegeocode_unavailable' => 'street_search_reversegeocode_unavailable',
-        'street_search_searching_for' => 'street_search_searching_for',
-        'street_search_coordinates_found' => 'street_search_coordinates_found',
-        'street_search_coordinates_found_accuracy_bad' => 'street_search_coordinates_found_accuracy_bad'
-      )
-    );
+    $this->layout()->searchbox = $this->streetSearch();
 ?>
 
 <div class="row">

@@ -1,35 +1,32 @@
 finna.StreetSearch = (function() {
-    var ssButton, terminateButton, spinner, spinnerContainer, getPositionSuccess, xhr;
+    var startButton, terminateButton, progressContainer, getPositionSuccess, xhr;
 
     var reverseGeocodeService = 'https://api.digitransit.fi/geocoding/v1/reverse';
     var geolocationAccuracyTreshold = 20; // If accuracy >= treshold then give a warning for the user
 
     var doStreetSearch = function() {
-        spinnerContainer.show();
-        spinnerContainer.find('.fa-spinner').show();
+        progressContainer.removeClass('hidden');
         terminate = false;
-        terminateButton.show();
-        ssButton.hide(); 
+        startButton.addClass('hidden'); 
 
-        ssInfo(VuFind.translate('street_search_checking_for_geolocation'), 'continues');
+        info(VuFind.translate('street_search_checking_for_geolocation'));
 
         if (navigator.geolocation) {
-            ssInfo(VuFind.translate('street_search_geolocation_available'), 'continues');
+            info(VuFind.translate('street_search_geolocation_available'));
             navigator.geolocation.getCurrentPosition(reverseGeocode, geoLocationError, { timeout: 10000, maximumAge: 10000 });
         } else {
             geoLocationError();
         }
-    }
+    };
 
     var terminateStreetSearch = function() {
         terminate = true;
-        terminateButton.hide();
-        spinnerContainer.hide();
-        ssButton.show();
+        progressContainer.addClass('hidden');
+        startButton.removeClass('hidden');
         if (typeof xhr !== 'undefined') {
             xhr.abort();
         }
-    }
+    };
    
     var geoLocationError = function(error) {
         if (!getPositionSuccess) {
@@ -47,52 +44,53 @@ finna.StreetSearch = (function() {
                         break;
                 }
             }
-            ssInfo(VuFind.translate(errorString), 'stopped');
+            info(VuFind.translate(errorString), 1);
         }
-    }
+    };
 
     var reverseGeocode = function(position) {
+        if (terminate) {
+            return;
+        }
         getPositionSuccess = true;
-	
+    
         if (position.coords.accuracy >= geolocationAccuracyTreshold) {
-            ssInfo(VuFind.translate('street_search_coordinates_found_accuracy_bad'), 'continues');
+            info(VuFind.translate('street_search_coordinates_found_accuracy_bad'));
         } else {
-            ssInfo(VuFind.translate('street_search_coordinates_found'), 'continues');
-	}
+            info(VuFind.translate('street_search_coordinates_found'));
+        }
 
-	queryParameters = {
-	    'point.lat': position.coords.latitude,
-	    'point.lon': position.coords.longitude,
-	    'size': '1'
+        queryParameters = {
+            'point.lat': position.coords.latitude,
+            'point.lon': position.coords.longitude,
+            'size': '1'
         };
-	
+    
         url = reverseGeocodeService + '?' + $.param(queryParameters);
-	
+    
         xhr = $.ajax({
             method: "GET",
             dataType: "json",
             url: url
         })
-	    .done(function(data) {
-		if (data.features[0] && (street = data.features[0].properties.street) &&
-		    (city = data.features[0].properties.locality)) {
-		    buildSearch(street, city);
-		} else {
-		    ssInfo(VuFind.translate('street_search_no_streetname_found'), 'stopped');
-		}
-	    })
-	    .fail(function() {
-		ssInfo(VuFind.translate('street_search_reversegeocode_unavailable'), 'stopped');          
-	    });
-    }
+        .done(function(data) {
+            if (data.features[0] && (street = data.features[0].properties.street) 
+                && (city = data.features[0].properties.locality)
+            ) {
+                buildSearch(street, city);
+            } else {
+                info(VuFind.translate('street_search_no_streetname_found'), 1, 1);
+            }
+        })
+        .fail(function() {
+            info(VuFind.translate('street_search_reversegeocode_unavailable'), 1, 1);          
+        });
+    };
  
     var buildSearch = function(street, city) {
         if (!terminate) {
-            ssInfo(VuFind.translate('street_search_searching_for') + ' ' + street + ' ' + city, 'stopped');
+            info(VuFind.translate('street_search_searching_for') + ' ' + street + ' ' + city, 1, 1);
 
-            // resultsUrl = VuFind.path + '/Search/Results';
-            resultsUrl = (VuFind.path.match(/vufind/)) ? "https://finna.fi/Search/Results" : VuFind.path + '/Search/Results';
-            
             queryParameters = {
                 'lookfor': street + ' ' + city,
                 'type': 'AllFields',
@@ -104,45 +102,38 @@ finna.StreetSearch = (function() {
                     'online_boolean:"1"'
                 ]
             };
-        
-            url = resultsUrl + '?' + $.param(queryParameters);
+            url = VuFind.path + '/Search/Results?' + $.param(queryParameters);
             window.location.href = url;
         }
-    }
+    };
 
-    var ssInfo = function(message, type) {
-        if (type) {
-            if (type === 'stopped') {
-                spinnerContainer.find('.fa-spinner').hide();
-                terminateButton.hide();
-            }
+    var info = function(message, stopped, keepPrevious) {
+        if (typeof stop !== 'undefined' && stopped) {
+            terminateButton.addClass('hidden');
         }
-        spinnerContainer.find('.info').text(message);        
-    }
+        if (typeof keepPrevious === 'undefined' || !keepPrevious) {
+            progressContainer.find('.info').empty();
+        }
+        var div = $('<div></div>').text(message);
+        progressContainer.find('.info').append(div);        
+    };
 
     var initPageElements = function () {
-        ssButton = $("#street-search-button");
-        terminateButton = $("#street-search-terminate");
-        terminateButton.hide();
-        spinnerContainer = $("#street-search-spinner");
-        spinnerContainer.hide();
-
+        startButton = $('.street-search-button');
+        terminateButton = $('.street-search-terminate');
+        progressContainer = $('.street-search-progress');
         terminate = false;
+        startButton.click(doStreetSearch);
+        terminateButton.click(terminateStreetSearch);
+    };
 
-        ssButton.click(function() {
-            doStreetSearch();
-        });
-        
-        terminateButton.click(function() {
-            terminateStreetSearch();
-        });
-    }
-
+    var init = function () {
+        getPositionSuccess = false;
+        initPageElements();
+    };
+    
     var my = {
-        init: function() {
-            getPositionSuccess = false;
-            initPageElements();
-        }
+        init: init
     };
     return my;
 
