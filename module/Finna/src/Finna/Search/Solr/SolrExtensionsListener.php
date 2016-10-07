@@ -152,6 +152,7 @@ class SolrExtensionsListener
                 $this->limitHierarchicalFacets($event);
                 $this->addHiddenComponentPartFilter($event);
                 $this->handleOnlineBoolean($event);
+                $this->addGeoFilterBoost($event);
             }
         }
         return $event;
@@ -193,6 +194,42 @@ class SolrExtensionsListener
                     'fq',
                     'source_str_mv:(' . implode(' OR ', $sources) . ')'
                 );
+            }
+        }
+    }
+
+    /**
+     * Add a boost query for boosting the geo filter
+     *
+     * @param EventInterface $event Event
+     *
+     * @return void
+     */
+    protected function addGeoFilterBoost(EventInterface $event)
+    {
+        $params = $event->getParam('params');
+        if ($params) {
+            $filters = $params->get('fq');
+            if (null !== $filters) {
+                foreach ($filters as $value) {
+                    if (strncmp($value, '{!geofilt ', 10) == 0) {
+                        // There may be multiple filters. Add bq for all.
+                        $boosts = $params->get('bq');
+                        if (null === $boosts) {
+                            $boosts = [];
+                        }
+                        foreach (preg_split('/\s+OR\s+/', $value) as $filter) {
+                            $bq = substr_replace(
+                                $filter, 'score=recipDistance ', 10, 0
+                            );
+                            $boosts[] = $bq;
+                        }
+                        $params->set('bq', $boosts);
+                        // Set also default query type since bq only works with
+                        // DisMax and eDisMax.
+                        $params->set('defType', 'edismax');
+                    }
+                }
             }
         }
     }

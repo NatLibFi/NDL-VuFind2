@@ -1,5 +1,20 @@
-/*global VuFind,checkSaveStatuses*/
+/*global VuFind,checkSaveStatuses,action*/
 finna.layout = (function() {
+    var initMap = function(map) {
+        // Add zoom control with translated tooltips
+        L.control.zoom({
+            position:'topleft',
+            zoomInTitle: VuFind.translate('map_zoom_in'),
+            zoomOutTitle: VuFind.translate('map_zoom_out')            
+        }).addTo(map);
+
+        // Enable mouseWheel zoom on click
+        map.once('focus', function() {
+            map.scrollWheelZoom.enable();
+        });
+        map.scrollWheelZoom.disable();
+    };
+    
     var initResizeListener = function() {
         var intervalId = false;
         $(window).on("resize", function(e) {
@@ -462,7 +477,8 @@ finna.layout = (function() {
         if ($('.result-view-grid')[0] != null && isTouchDevice()) {
             $('.result-view-grid').addClass('touch-device');
         }
-    }
+    };
+    
     var initImageCheck = function() {
         $(".image-popup-trigger img").each(function() {
             $(this).one("load",function() {
@@ -508,7 +524,7 @@ finna.layout = (function() {
         }
         holder.find('select.jumpMenu').unbind('change').change(function() { $(this).closest('form').submit(); });
         holder.find('select.jumpMenuUrl').unbind('change').change(function(e) { window.location.href = $(e.target).val(); });
-    }
+    };
 
     var initSecondaryLoginField = function(labels, topClass) {
         $('#login_target').change(function() {
@@ -523,7 +539,7 @@ finna.layout = (function() {
                 group.show();
             }
         }).change();
-    }
+    };
 
     var initSideFacets = function() {
         var $container = $('.side-facets-container');
@@ -544,7 +560,7 @@ finna.layout = (function() {
             $container.find('.facet-load-indicator').addClass('hidden');
             $container.find('.facet-load-failed').removeClass('hidden');
         });
-    }
+    };
 
     var initPiwikPopularSearches = function() {
         var $container = $('.piwik-popular-searches');
@@ -560,7 +576,7 @@ finna.layout = (function() {
             $container.find('.load-indicator').addClass('hidden');
             $container.find('.load-failed').removeClass('hidden');
         });
-    }
+    };
 
     var initAutoScrollTouch = function() {
       if (!navigator.userAgent.match(/iemobile/i) && isTouchDevice() && $(window).width() < 1025) {
@@ -616,19 +632,19 @@ finna.layout = (function() {
             }
         });
       });
-    }
+    };
 
     var initLoginRedirect = function() {
       if (!document.addEventListener) {
         return;
       }
       document.addEventListener('VuFind.lightbox.login', function(e) {
-        if (!e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
+        if (typeof action !== 'undefined' && action == 'home' && !e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
           window.location.href = VuFind.path + '/MyResearch/Home';
           e.preventDefault();
         }
       });
-    }
+    };
 
     var initLoadMasonry = function() {
       var ie = detectIe();
@@ -646,9 +662,52 @@ finna.layout = (function() {
       }
     };
 
+    var initOrganisationPageLinks = function() {
+        $('.organisation-page-link').not('.done').map(function() {
+            $(this).one('inview', function() {
+                var holder = $(this);
+                var organisation = $(this).data('organisation');
+                var link = $(this).data('link');
+                getOrganisationPageLink(organisation, link, function(response) {
+                    holder.toggleClass('done', true);
+                    if (response) {
+                        var data = response[organisation];
+                        if (link === '1') {
+                            holder.wrap($('<a/>').attr('href', data));
+                        } else {
+                            holder.html(data);
+                        }
+                    }
+                });
+            });
+        });
+    };
+
+    var getOrganisationPageLink = function(organisation, link, callback) {
+        var url = VuFind.path + '/AJAX/JSON?method=getOrganisationInfo';
+        url += '&params[action]=lookup&link=' + link + '&parent=' + organisation;
+        $.getJSON(url)
+            .done(function(response) {
+                callback(response.data.items);
+            })
+            .fail(function() {
+            });
+        return callback(false);
+    };
+
+    var initOrganisationInfoWidgets = function() {
+        $('.organisation-info[data-init="1"]').map(function() {
+            var service = finna.organisationInfo();
+            var widget = finna.organisationInfoWidget();
+            widget.init($(this), service);
+            widget.loadOrganisationList();
+        });
+    };
 
     var my = {
+        getOrganisationPageLink: getOrganisationPageLink,
         isTouchDevice: isTouchDevice,
+        initMap: initMap,
         initTruncate: initTruncate,
         initLocationService: initLocationService,
         initHierarchicalFacet: initHierarchicalFacet,
@@ -682,6 +741,8 @@ finna.layout = (function() {
             initIpadCheck();
             initLoginRedirect();
             initLoadMasonry();
+            initOrganisationInfoWidgets();
+            initOrganisationPageLinks();
         }
     };
 

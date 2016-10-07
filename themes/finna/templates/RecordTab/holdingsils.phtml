@@ -65,15 +65,7 @@
     $ilsLoginAvailable = $this->ils()->loginAvailable();
 ?>
 
-<? if ($offlineMode == "ils-offline"): ?>
-  <div class="alert alert-warning">
-    <h2><?=$this->transEsc('ils_offline_title')?></h2>
-    <p><strong><?=$this->transEsc('ils_offline_status')?></strong></p>
-    <p><?=$this->transEsc('ils_offline_holdings_message')?></p>
-    <? $supportEmail = $this->escapeHtmlAttr($this->systemEmail()); ?>
-    <p><a href="mailto:<?=$supportEmail?>"><?=$supportEmail?></a></p>
-  </div>
-<? endif; ?>
+<?=($offlineMode == "ils-offline") ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
 <? if ($holdsAllowed && !$disableTitleHold && (($this->ils()->getHoldsMode() == 'driver' && !empty($holdings)) || $this->ils()->getTitleHoldsMode() == 'driver') ): ?>
   <? if ($account->loginEnabled() && $offlineMode != 'ils-offline' && $ilsLoginAvailable): ?>
     <? if (!$user): ?>
@@ -171,9 +163,9 @@
       if ($row['availability']) {
         ++$available;
       }
-      if ($row['duedate']) {
+      if ($row['duedate'] && empty($row['ignoreDueDate'])) {
         $date = strtotime($row['duedate']);
-        if (!$firstDueDate || $date < $firstDueDate) {
+        if ((!$firstDueDate || abs(time() - $date) < abs(time() - $firstDueDate))) {
           $firstDueDate = $date;
           $firstDueStr = $row['duedate'];
         }
@@ -208,13 +200,21 @@
     $callnumbers = [];
     foreach ($this->tab->getUniqueCallNumbers($holding['items']) as $callNo) {
        $collection = null;
+       $location = null;
        foreach ($holding['items'] as $item) {
-          if (isset($item['collection']) && $item['callnumber'] === $callNo) {
-             $collection = $item['collection'];
-             break;
+          if ($item['callnumber'] === $callNo) {
+             if (!$collection && isset($item['collection'])) {
+                $collection = $item['collection'];
+             }
+             if (!$location && isset($item['location'])) {
+                $location = $item['location'];
+             }
+             if ($collection && $location) {
+                break;
+             }
           }
        }
-       $callnumbers[] = ['callNo' => $callNo, 'collection' => $collection];
+       $callnumbers[] = ['callNo' => $callNo, 'collection' => $collection, 'location' => $location];
     }
     $dialogTitle = ': ' . $this->driver->getTitle();
     $titleLocation = $this->transEsc('location_' . $holding['location'], array(), $holding['location']);
@@ -243,7 +243,7 @@
     <div class="holdings-details col-sm-3 col-xs-6"><?=$holdingSummary ?></div>
     <div class="location-link col-sm-3 col-xs-12 text-right">
       <? foreach ($callnumbers as $data): ?>
-        <?=$this->callnumber()->callnumber($currentSource, $data['callNo'], $data['collection'], $this->layout()->userLang)?>
+        <?=$this->callnumber()->callnumber($currentSource, $this->driver->getFullTitle(), $data['callNo'], $data['collection'], $data['location'], $this->layout()->userLang)?>
       <? endforeach; ?>
       <? if ($holdsAllowed && isset($holdLinksLocation[$holding['location']])): ?>
         <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->recordLink()->getRequestUrl($holdLinksLocation[$holding['location']])?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc("request_place_text")?></a>
@@ -296,6 +296,9 @@
           <? if ($row['availability']): ?>
             <? /* Begin Available Items (Holds) */ ?>
             <span class="text-success"><i class="fa fa-ok" aria-hidden="true"></i> <?=$this->transEsc(isset($row['availabilityInfo']['displayText']) ? 'status_' . $row['availabilityInfo']['displayText'] : 'Available')?><link property="availability" href="http://schema.org/InStock" /></span>
+            <? if (isset($row['requests_placed']) && $row['requests_placed'] > 0): ?>
+              &ndash; <span class="small"><?=$this->transEsc("Requests")?>: <?=$this->escapeHtml($row['requests_placed'])?></span>
+            <? endif; ?>
             <div class="pull-right">
             <? if (!$journal): ?>
               <? if (!$block && isset($row['link']) && $row['link'] && $holdsAllowed): ?>
@@ -317,7 +320,7 @@
               &ndash; <span class="small"><?=$this->transEsc("Due")?>: <?=$this->escapeHtml($row['duedate'])?></span>
             <? endif; ?>
             <? if (isset($row['requests_placed']) && $row['requests_placed'] > 0): ?>
-              <span><?=$this->transEsc("Requests")?>: <?=$this->escapeHtml($row['requests_placed'])?></span>
+              &ndash; <span class="small"><?=$this->transEsc("Requests")?>: <?=$this->escapeHtml($row['requests_placed'])?></span>
             <? endif; ?>
             <? if (!$journal && !$block && isset($row['link']) && $row['link'] && $holdsAllowed): ?>
               <div class="pull-right">

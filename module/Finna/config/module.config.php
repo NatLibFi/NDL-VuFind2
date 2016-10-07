@@ -61,10 +61,9 @@ $config = [
             'feed-content-page' => [
                 'type'    => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/FeedContent/[:page]/[:element]',
+                    'route'    => '/FeedContent[/:page][/:element]',
                     'constraints' => [
-                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'element'     => '[0-9]*'
+                        'page'     => '[a-zA-Z][a-zA-Z0-9_-]*'
                     ],
                     'defaults' => [
                         'controller' => 'Feedcontentpage',
@@ -163,6 +162,7 @@ $config = [
             'metalib' => 'Finna\Controller\MetaLibController',
             'metalibrecord' => 'Finna\Controller\MetaLibrecordController',
             'my-research' => 'Finna\Controller\MyResearchController',
+            'organisationInfo' => 'Finna\Controller\OrganisationInfoController',
             'pci' => 'Finna\Controller\PCIController',
             'primo' => 'Finna\Controller\PrimoController',
             'primorecord' => 'Finna\Controller\PrimorecordController',
@@ -204,10 +204,10 @@ $config = [
                 'factories' => [
                     'ils' => 'Finna\Auth\Factory::getILS',
                     'multiils' => 'Finna\Auth\Factory::getMultiILS',
+                    'shibboleth' => 'Finna\Auth\Factory::getShibboleth'
                 ],
                 'invokables' => [
-                    'mozillapersona' => 'Finna\Auth\MozillaPersona',
-                    'shibboleth' => 'Finna\Auth\Shibboleth',
+                    'mozillapersona' => 'Finna\Auth\MozillaPersona'
                 ],
             ],
             'autocomplete' => [
@@ -217,7 +217,6 @@ $config = [
             ],
             'db_table' => [
                 'factories' => [
-                    'resource' => 'Finna\Db\Table\Factory::getResource',
                     'user' => 'Finna\Db\Table\Factory::getUser',
                     'userlist' => 'Finna\Db\Table\Factory::getUserList',
                 ],
@@ -419,6 +418,7 @@ $staticRoutes = [
     'Browse/Database', 'Browse/Journal',
     'LocationService/Modal',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
+    'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record'
 ];
 
@@ -430,16 +430,18 @@ $routeGenerator->addStaticRoutes($config, $staticRoutes);
 // API routes
 $config['router']['routes']['searchApi'] = [
     'type' => 'Zend\Mvc\Router\Http\Literal',
+    'verb' => 'get,post,options',
     'options' => [
         'route'    => '/api/search',
         'defaults' => [
             'controller' => 'SearchApi',
             'action'     => 'search',
         ]
-    ]
+    ],
 ];
 $config['router']['routes']['searchApiv1'] = [
     'type' => 'Zend\Mvc\Router\Http\Literal',
+    'verb' => 'get,post,options',
     'options' => [
         'route'    => '/v1/search',
         'defaults' => [

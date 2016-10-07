@@ -18,11 +18,12 @@ var finna = (function() {
                 'metalibLinks',
                 'myList',
                 'openUrl',
-                'organisationInfo',
+                'organisationList',
                 'persona',
                 'primoAdvSearch',
                 'record',
                 'searchTabsRecommendations',
+                'StreetSearch'
             ];
 
             $.each(modules, function(ind, module) {

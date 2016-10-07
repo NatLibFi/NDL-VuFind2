@@ -55,6 +55,7 @@ finna.advSearch = (function() {
      *   tileLayer     L.tileLayer Tile layer
      *   center        L.LatLng    Map center point
      *   zoom          int         Initial zoom level
+     *   items         array       Items to draw on the map
      */
     var initMap = function(options) {
       var mapCanvas = $('.selection-map-canvas');
@@ -66,26 +67,44 @@ finna.advSearch = (function() {
       L.drawLocal.draw.handlers.circle.radius = VuFind.translate('radiusPrefix');
 
       var defaults = {
-        tileLayer: L.tileLayer('//api.digitransit.fi/map/v1/{id}/{z}/{x}/{y}.png', {
-          id: 'hsl-map',
+        tileLayer: L.tileLayer('http://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
           maxZoom: 18,
-          tileSize: 512,
-          zoomOffset: -1,
-          // bounds: L.latLngBounds(L.latLng(60, 19.5), L.latLng(70, 30)),
+          tileSize: 256,
           attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
         }),
         center: new L.LatLng(64.8, 26),
-        zoom: 5
+        zoom: 5,
+        items: []
       };
       options = $.extend(defaults, options);
       
-
       var drawnItems = new L.FeatureGroup();
+      $.each(options.items, function (idx, item) {
+        var matches = item.match(/pt=([\d.]+),([\d.]+) d=([\d.]+)/);
+        if (matches) {
+          var circle = new L.Circle([matches[1], matches[2]], matches[3] * 1000); 
+          addRemoveButton(circle, drawnItems);
+          drawnItems.addLayer(circle);
+        }
+      });
+      
       map = new L.Map(mapCanvas.get(0), {
         layers: [options.tileLayer, drawnItems],
         center: options.center,
-        zoom: options.zoom
+        zoom: options.zoom,
+        zoomControl: false
       });
+      
+      finna.layout.initMap(map);
+
+      if (options.items.length > 0) {
+        var onLoad = function() {
+          var bounds = drawnItems.getBounds();
+          map.fitBounds(bounds, {maxZoom: 11});
+          options.tileLayer.off('load', onLoad);
+        };
+        options.tileLayer.on('load', onLoad);
+      }
       
       FinnaMapButton = L.Control.extend({
         options: {
@@ -126,15 +145,8 @@ finna.advSearch = (function() {
       map.addControl(new CircleButton());
 
       map.on('draw:created', function(e) {
-        var type = e.layerType,
-        layer = e.layer;
-        var button = $('<a/>')
-          .html('<i class="fa fa-times" aria-hidden="true"></i>')
-          .click(function(e) {
-            drawnItems.removeLayer(layer);
-          });
-        $('<span/>').text(VuFind.translate('removeCaption')).appendTo(button);
-        layer.bindPopup(button.get(0), {closeButton: false});
+        var layer = e.layer;
+        addRemoveButton(layer, drawnItems);
         drawnItems.addLayer(layer);
       });
       
@@ -162,11 +174,21 @@ finna.advSearch = (function() {
       });
     };
 
+    var addRemoveButton = function(layer, featureGroup) {
+      var button = $('<a/>')
+        .html('<i class="fa fa-times" aria-hidden="true"></i>')
+        .click(function(e) {
+          featureGroup.removeLayer(layer);
+      });
+      $('<span/>').text(VuFind.translate('removeCaption')).appendTo(button);
+      layer.bindPopup(button.get(0), {closeButton: false});
+    };
+    
     var my = {
         init: function() {
             initForm();
-            initMap();
-        }
+        },
+        initMap: initMap
     };
 
     return my;

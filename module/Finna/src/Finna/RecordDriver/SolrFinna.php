@@ -152,6 +152,17 @@ trait SolrFinna
     }
 
     /**
+     * Get the full title of the record.
+     *
+     * @return string
+     */
+    public function getFullTitle()
+    {
+        return isset($this->fields['title_full']) ?
+            $this->fields['title_full'] : '';
+    }
+
+    /**
      * Return genres
      *
      * @return array
@@ -326,6 +337,25 @@ trait SolrFinna
         return $raw ? $this->fields['online_urls_str_mv'] : $this->mergeURLArray(
             $this->fields['online_urls_str_mv'], true
         );
+    }
+
+    /**
+     * Get organisation info ID (Kirjastohakemisto Finna ID).
+     *
+     * @return string
+     */
+    public function getOrganisationInfoId()
+    {
+        $building = $this->getBuilding();
+        if (is_array($building)) {
+            $building = $building[0];
+        }
+
+        if (preg_match('/^0\/([a-zA-z0-9]*)\/$/', $building, $matches)) {
+            // strip leading '0/' and trailing '/' from top-level building code
+            return $matches[1];
+        }
+        return null;
     }
 
     /**

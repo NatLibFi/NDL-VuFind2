@@ -185,12 +185,45 @@ class Feed implements \Zend\Log\LoggerAwareInterface
      */
     public function readFeed($id, $urlHelper, $viewUrl)
     {
-        if (!$result = $this->getFeedConfig($id)) {
+        if (!$config = $this->getFeedConfig($id)) {
             throw new \Exception('Error reading feed');
         }
+        return $this->processReadFeed($config, $urlHelper, $viewUrl, $id);
+    }
 
-        $config = $result['result'];
-        $url = $result['url'];
+    /**
+     * Return feed content from a URL.
+     * See readFeed for a description of the return object.
+     *
+     * @param string                         $id        Feed id
+     * @param string                         $url       Feed URL
+     * @param array                          $config    Configuration
+     * @param Zend\Mvc\Controller\Plugin\Url $urlHelper Url helper
+     * @param string                         $viewUrl   View URL
+     *
+     * @return mixed null|array
+     */
+    public function readFeedFromUrl($id, $url, $config, $urlHelper, $viewUrl)
+    {
+        $config = new \Zend\Config\Config($config);
+        return $this->processReadFeed($config, $urlHelper, $viewUrl, $id);
+    }
+
+    /**
+     * Utility function for processing a feed (see readFeed, readFeedFromUrl).
+     *
+     * @param array                          $feedConfig Configuration
+     * @param Zend\Mvc\Controller\Plugin\Url $urlHelper  Url helper
+     * @param string                         $viewUrl    View URL
+     * @param string                         $id         Feed id (needed when the
+     * feed content is shown on a content page or in a modal)
+     *
+     * @return mixed null|array
+     */
+    protected function processReadFeed($feedConfig, $urlHelper, $viewUrl, $id = null)
+    {
+        $config = $feedConfig['result'];
+        $url = $feedConfig['url'];
 
         $type = $config->type;
 
@@ -247,7 +280,7 @@ class Feed implements \Zend\Log\LoggerAwareInterface
             } else {
                 // Local file
                 if (!is_file($url)) {
-                    $this->logError("File $url could not be found (id $id)");
+                    $this->logError("File $url could not be found");
                     throw new \Exception('Error reading feed');
                 }
                 $channel = Reader::importFile($url);
@@ -262,6 +295,7 @@ class Feed implements \Zend\Log\LoggerAwareInterface
         }
 
         $content = [
+            'id' => 'getId',
             'title' => 'getTitle',
             'text' => 'getContent',
             'image' => 'getEnclosure',
@@ -278,7 +312,6 @@ class Feed implements \Zend\Log\LoggerAwareInterface
         $cnt = 0;
         $xpath = null;
 
-        $cnt = 0;
         foreach ($channel as $item) {
             if (!$xpath) {
                 $xpath = $item->getXpath();
@@ -318,11 +351,18 @@ class Feed implements \Zend\Log\LoggerAwareInterface
                             }
                         }
                     } else if ($setting == 'link' && $showFullContentOnSite) {
+                        if (!$itemId = $item->getId()) {
+                            $itemId = $cnt;
+                        }
                         $link = $urlHelper->fromRoute(
                             'feed-content-page',
-                            ['page' => $id, 'element' => $cnt]
+                            ['page' => $id, 'element' => urlencode($itemId)]
                         );
                         $value = $link;
+                    } else if ($setting == 'id') {
+                        if (!$value) {
+                            $value = $cnt;
+                        }
                     } else {
                         if (is_string($value)) {
                             $value = strip_tags($value);

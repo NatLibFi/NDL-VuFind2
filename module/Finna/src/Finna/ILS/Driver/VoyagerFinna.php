@@ -274,6 +274,31 @@ trait VoyagerFinna
     }
 
     /**
+     * Protected support method to take an array of status strings and determine
+     * whether or not this indicates an available item.  Returns an array with
+     * two keys: 'available', the boolean availability status, and 'otherStatuses',
+     * every status code found other than "Not Charged" - for use with
+     * pickStatus().
+     *
+     * @param array $statusArray The status codes to analyze.
+     *
+     * @return array             Availability and other status information.
+     */
+    protected function determineAvailability($statusArray)
+    {
+        $result = parent::determineAvailability($statusArray);
+        // Treat non-charged items that have 'Hold Request' as the only other status
+        // as available.
+        if (!$result['available'] && count($statusArray) == 2
+            && in_array('Not Charged', $statusArray)
+            && in_array('Hold Request', $statusArray)
+        ) {
+            $result['available'] = true;
+        }
+        return $result;
+    }
+
+    /**
      * Protected support method for getHolding.
      *
      * @param array  $data   Item Data
@@ -330,6 +355,16 @@ trait VoyagerFinna
                     }
                 }
             }
+        }
+        if (!empty($sqlRow['DUEDATE'])
+            && !empty($this->config['Holdings']['ignore_due_date_in_statuses'])
+        ) {
+            $statuses = explode(
+                ':', $this->config['Holdings']['ignore_due_date_in_statuses']
+            );
+            $data['ignoreDueDate'] = !empty(
+                array_intersect($statuses, $sqlRow['STATUS_ARRAY'])
+            );
         }
         return $data;
     }
@@ -527,9 +562,14 @@ trait VoyagerFinna
             }
         }
         $currency = $this->config['OnlinePayment']['currency'];
+        $userId = $patron['id'];
         $patronId = $patron['cat_username'];
-        $errFun = function ($patronId, $error) {
-            $this->error("SIP2 payment error (patron $patronId): $error");
+        $errFun = function ($userId, $patronId, $error) {
+            $this->error(
+                "SIP2 payment error (user: $userId, driver: "
+                . $this->dbName . ", patron: $patronId): "
+                . $error
+            );
             throw new ILSException($error);
         };
 
@@ -568,22 +608,24 @@ trait VoyagerFinna
                             return true;
                         } else {
                             $sip->disconnect();
-                            $errFun($patronId, 'payment rejected');
+                            $errFun(
+                                $userId, $patronId, 'payment rejected'
+                            );
                         }
                     } else {
                         $sip->disconnect();
-                        $errFun($patronId, 'payment failed');
+                        $errFun($userId, $patronId, 'payment failed');
                     }
                 } else {
                     $sip->disconnect();
-                    $errFun($patronId, 'login failed');
+                    $errFun($userId, $patronId, 'login failed');
                 }
             } else {
                 $sip->disconnect();
-                $errFun($patronId, 'login failed');
+                $errFun($userId, $patronId, 'login failed');
             }
         } else {
-            $errFun($patronId, 'connection error');
+            $errFun($userId, $patronId, 'connection error');
         }
         return false;
     }
