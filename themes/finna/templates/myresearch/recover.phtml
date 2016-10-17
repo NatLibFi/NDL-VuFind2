@@ -1,0 +1,11 @@
+<!-- START of: finna - myresearch/recover.phtml -->
+<h2><?=$this->transEsc('recovery_title') ?></h2>
+<?=$this->flashmessages()?>
+<? if (!$this->auth()->getManager()->supportsRecovery()): ?>
+  <div class="error"><?=$this->transEsc('recovery_disabled') ?></div>
+<? else: ?>
+  <form class="form-vertical" method="post">
+    <?=$this->auth()->getPasswordRecoveryForm() ?>
+  </form>
+<? endif; ?>
+<!-- END of: finna - myresearch/recover.phtml -->
