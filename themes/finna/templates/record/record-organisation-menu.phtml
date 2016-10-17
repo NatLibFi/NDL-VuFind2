@@ -1,6 +1,9 @@
 <!-- START of: finna - record/record-organisation-menu.phtml -->
 <? $currentSource = $this->driver->tryMethod('getDataSource');
    $mergedData = $this->driver->tryMethod('getMergedRecordData');
+   if ($this->driver->getRecordType() === 'ead' || $this->driver->getRecordType() === 'lido') {
+      $this->headScript()->appendFile('finna-organisation-list.js');
+   }
 ?>
 <? $dedupData = $this->driver->getDedupData(); ?>
 <div class="recordProvidedBy">
@@ -12,7 +15,12 @@
     <? endif; ?>
   </h4>
   <ul class="<?=(!in_array($this->driver->getRecordType(), ['ead','lido','qdc'])) ? 'list-group organisations' : 'record-type organisations'?>">
-    <li class="record-organisation"><?=$this->transEsc("source_$currentSource", null, $currentSource) ?>
+    <li class="record-organisation">
+      <? if ($this->driver->getRecordType() === 'ead' || $this->driver->getRecordType() === 'lido'): ?>
+        <span class="page-link" data-organisation="<?=$this->driver->getOrganisationInfoId()?>"><?=$this->translate('0/' . $this->driver->getOrganisationInfoId() . '/')?></span>
+      <? else: ?>
+        <?=$this->transEsc("source_$currentSource", null, $currentSource) ?>
+      <? endif; ?>
       <ul class="record-organisation-info">
       <? if (isset($currentSource['imageUrl'])): ?>
         <li><img src="<?=$currentSource['imageUrl']?>"/></li>
