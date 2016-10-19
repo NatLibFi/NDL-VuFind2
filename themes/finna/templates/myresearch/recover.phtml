@@ -1,4 +1,10 @@
 <!-- START of: finna - myresearch/recover.phtml -->
+<?
+    // Set up page title:
+    $this->headTitle($this->translate('recovery_title'));
+
+    $this->layout()->finnaMainTabs = $this->context($this)->renderInContext("myresearch/menu.phtml", array('active' => 'recovery'));
+?>
 <h2><?=$this->transEsc('recovery_title') ?></h2>
 <?=$this->flashmessages()?>
 <? if (!$this->auth()->getManager()->supportsRecovery()): ?>

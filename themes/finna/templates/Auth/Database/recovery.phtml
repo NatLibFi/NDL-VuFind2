@@ -1,4 +1,6 @@
-<p><?=$this->translate('recovery_help_html') ?></p>
+<? if (!$this->translationEmpty('recovery_help_html')): ?>
+  <p><?=$this->translate('recovery_help_html') ?></p>
+<? endif; ?>
 <div class="form-group">
   <label class="control-label"><?=$this->transEsc('recovery_by_username') ?>:</label>
   <input type="text" name="username" class="form-control"/>
