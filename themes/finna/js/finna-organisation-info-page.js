@@ -240,10 +240,10 @@ finna.organisationInfoPage = (function() {
     };
 
     var updateSelectedOrganisation = function(id) {
+        setOfficeInformationLoader(true);
         holder.find('.error, .info-element').hide();
         infoWidget.showDetails(id, '', true);
         $('#office-search').val('');
-        setOfficeInformationLoader(true);
         
         var notification = holder.find('.office-search-notifications .notification');
         if (id in organisationList) {
@@ -331,7 +331,7 @@ finna.organisationInfoPage = (function() {
             && data.openTimes.schedules.length > 0;
 
         if (hasSchedules) {
-            holder.find('.open-or-closed > span.library-is-' + (data.openTimes.openNow ? 'open' : 'closed')).show();
+            holder.find('.open-or-closed > span.library-is-' + (data.openNow ? 'open' : 'closed')).show();
         }
 
         var img = holder.find('.building-image');
@@ -435,7 +435,7 @@ finna.organisationInfoPage = (function() {
         parent = finna.common.getField(options, 'id');
         consortiumInfo = finna.common.getField(options, 'consortiumInfo') === 1;
         var buildings = finna.common.getField(options, 'buildings');
-        var mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
+        var mapTileUrl = '//map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
         var attribution = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>';
 
         if (typeof parent == 'undefined') {

@@ -119,7 +119,7 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
 
         $this->language = $this->validateLanguage($language, $allLanguages);
 
-        if (isset($config->General->fallbackLanguage)) {
+        if (!empty($config->General->fallbackLanguage)) {
             $fallback = $config->General->fallbackLanguage;
             $fallback = $this->validateLanguage($fallback, $allLanguages);
             if ($fallback != $this->language) {
@@ -163,7 +163,7 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             $building = $building[0];
         }
 
-        if (preg_match('/^0\/([a-zA-z0-9]*)\/$/', $building, $matches)) {
+        if (preg_match('/^0\/([^\/]*)\/$/', $building, $matches)) {
             // strip leading '0/' and trailing '/' from top-level building code
             return $matches[1];
         }
@@ -471,29 +471,6 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
         $result = ['consortium' => $consortium];
         $result['list'] = $this->parseList($target, $response);
 
-        // References
-        if (isset($response['references']['period'])) {
-            $scheduleDescriptions = [];
-            foreach ($response['references']['period'] as $key => $period) {
-                $id = $period['organisation'];
-                $scheduleDesc = $this->getField($period, 'description');
-                if (!empty($scheduleDesc)) {
-                    if (!isset($scheduleDescriptions[$id])) {
-                        $scheduleDescriptions[$id] = [];
-                    }
-                    $scheduleDescriptions[$id][] = $scheduleDesc;
-                }
-            }
-            foreach ($scheduleDescriptions as $id => $descriptions) {
-                foreach ($result['list'] as &$item) {
-                    if ($item['id'] == $id) {
-                        $item['schedule-descriptions']
-                            = array_unique($descriptions);
-                        continue;
-                    }
-                }
-            }
-        }
         return $result;
     }
 
@@ -518,9 +495,9 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             return false;
         }
 
-        $with = $schedules ? 'schedules,' : '';
+        $with = 'schedules';
         if ($fullDetails) {
-            $with .= 'extra,phone_numbers,pictures,links,services';
+            $with .= ',extra,phone_numbers,pictures,links,services';
         }
 
         $params = [
@@ -543,6 +520,18 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             return false;
         }
 
+        // References
+        $scheduleDescriptions = null;
+        if (isset($response['references']['period'])) {
+            $scheduleDescriptions = [];
+            foreach ($response['references']['period'] as $key => $period) {
+                $scheduleDesc = $this->getField($period, 'description');
+                if (!empty($scheduleDesc)) {
+                    $scheduleDescriptions[] = $scheduleDesc;
+                }
+            }
+        }
+
         // Details
         $response = $response['items'][0];
         $result = $this->parseDetails(
@@ -551,6 +540,9 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
 
         $result['id'] = $id;
         $result['periodStart'] = $startDate;
+        if ($scheduleDescriptions) {
+            $result['scheduleDescriptions'] = $scheduleDescriptions;
+        }
 
         return $result;
     }
@@ -718,6 +710,9 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
 
             $data['openTimes'] = $this->parseSchedules($item['schedules']);
 
+            $data['openNow'] = isset($data['openTimes']['openNow'])
+                ? $data['openTimes']['openNow'] : false
+            ;
             $result[] = $data;
         }
         usort($result, [$this, 'sortList']);
@@ -888,7 +883,7 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             'friday', 'saturday', 'sunday'
         ];
 
-        $openNow = false;
+        $openNow = null;
         $openToday = false;
         $currentWeek = false;
         foreach ($data as $day) {
@@ -932,8 +927,8 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             if (!empty($day['sections']['selfservice']['times'])) {
                 foreach ($day['sections']['selfservice']['times'] as $time) {
                     $res = $this->extractDayTime($now, $time, $today, true);
-                    if (!empty($res['openNow'])) {
-                        $openNow = true;
+                    if (isset($res['openNow'])) {
+                        $openNow = $res['openNow'];
                     }
                     if (empty($day['times'])) {
                         $res['result']['selfserviceOnly'] = true;
@@ -949,8 +944,8 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             // Staff times
             foreach ($day['times'] as $time) {
                 $res = $this->extractDayTime($now, $time, $today);
-                if (!empty($res['openNow'])) {
-                    $openNow = true;
+                if (isset($res['openNow'])) {
+                    $openNow = $res['openNow'];
                 }
                 if (!empty($info)) {
                     $res['result']['info'] = $info;
@@ -992,7 +987,11 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
             }
         }
 
-        return compact('schedules', 'openNow', 'openToday', 'currentWeek');
+        $result = compact('schedules', 'openToday', 'currentWeek');
+        if ($openNow !== null) {
+            $result['openNow'] = $openNow;
+        }
+        return $result;
     }
 
     /**
@@ -1026,7 +1025,11 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
                 $result['openNow'] = true;
             }
         }
-        return compact('result', 'openNow');
+        $result = ['result' => $result];
+        if ($today) {
+            $result['openNow'] = $openNow;
+        }
+        return $result;
     }
 
     /**

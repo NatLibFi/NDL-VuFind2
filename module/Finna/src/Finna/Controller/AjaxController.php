@@ -30,8 +30,7 @@ use VuFindSearch\ParamBag as ParamBag,
     VuFindSearch\Query\Query as Query,
     VuFind\Search\RecommendListener,
     Finna\MetaLib\MetaLibIrdTrait,
-    Zend\Cache\StorageFactory,
-    Zend\Session\Container as SessionContainer;
+    Zend\Cache\StorageFactory;
 
 use Finna\Search\Solr\Params;
 
@@ -989,16 +988,18 @@ class AjaxController extends \VuFind\Controller\AjaxController
      */
     public function getOrganisationInfoAjax()
     {
-        // Session is required here, so don't call disableSessionWrites.
+        $this->disableSessionWrites();  // avoid session write timing bug
+
         if (null === ($parent = $this->params()->fromQuery('parent'))) {
             return $this->handleError('getOrganisationInfo: missing parent');
         }
 
         $params = $this->params()->fromQuery('params');
-        $session = new SessionContainer(
-            'OrganisationInfo',
-            $this->getServiceLocator()->get('VuFind\SessionManager')
-        );
+
+        $cookieName = 'organisationInfoId';
+        $cookieManager = $this->serviceLocator->get('VuFind\CookieManager');
+        $cookie = $cookieManager->get($cookieName);
+
         $action = $params['action'];
         $buildings = isset($params['buildings'])
             ? explode(',', $params['buildings']) : null;
@@ -1010,12 +1011,13 @@ class AjaxController extends \VuFind\Controller\AjaxController
             }
             if (isset($params['id'])) {
                 $id = $params['id'];
-                $session[$key] = $params['id'];
+                $expire = time() + 365 * 60 * 60 * 24; // 1 year
+                $cookieManager->set($cookieName, $id, $expire);
             }
         }
 
-        if (!isset($params['id']) && isset($session[$key])) {
-            $params['id'] = $session[$key];
+        if (!isset($params['id']) && $cookie) {
+            $params['id'] = $cookie;
         }
 
         if ($action == 'lookup') {
@@ -1493,15 +1495,20 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
         $searchPhrases = [];
         foreach ($response as $item) {
-            if (substr($item['label'], 0, 1) == '(') {
+            $label = $item['label'];
+            // Strip index from the terms
+            $pos = strpos($label, '|');
+            if ($pos > 0) {
+                $label = substr($label, $pos + 1);
+            }
+            $label = trim($label);
+            if (strncmp($label, '(', 1) == 0) {
                 // Ignore searches that begin with a parenthesis
                 // because they are likely to be advanced searches
                 continue;
-            } else if ($item['label'] === '-') {
+            } elseif ($label === '-' || $label === '') {
                 // Ignore empty searches
                 continue;
-            } else {
-                $label = $item['label'];
             }
             $searchPhrases[$label]
                 = !isset($item['nb_actions']) || null === $item['nb_actions']

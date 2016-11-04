@@ -10,7 +10,7 @@
         <div class="cover-wrapper">
           <? /* Display thumbnail if appropriate: */ ?>
           <? if ($img): ?>
-            <?= $img->render('record', array('small' => array('w' => 50, 'h' => 50), 'medium' => array('w' => 1200, 'h' => 1200))) ?>
+            <?= $img->render('record', ['small' => ['w' => 50, 'h' => 50], 'medium' => ['w' => 1200, 'h' => 1200]]) ?>
           <? endif;?>
           <? /* Display qrcode if appropriate: */ ?>
           <? $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
@@ -81,7 +81,7 @@
         <div class="local-available-online-record recordURLs">
           <div class="truncate-field">
           <? foreach ($urls as $current): ?>
-            <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>"><i class="fa fa-external-link"></i> <?=$this->escapeHtml($this->translate('link_' . $current['desc'], null, $current['desc']))?></a><br/>
+            <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><i class="fa fa-external-link"></i> <?=$this->escapeHtml($this->translate('link_' . $current['desc'], null, $current['desc']))?></a><br/>
           <? endforeach; ?>
           </div>
         </div>
