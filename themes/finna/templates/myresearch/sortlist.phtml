@@ -1,0 +1,43 @@
+<!-- START of: finna - myresearch/sortlist.phtml -->
+<?
+  $this->headScript()->appendFile('vendor/jquery-ui-custom.min.js');
+  $this->headScript()->appendFile('finna-mylist.js');
+  $list = $this->results->getListObject();
+  $user = $this->auth()->isLoggedIn();
+?>
+
+<h2><?=$this->transEsc('Sort manually');?></h2>
+  <form method="POST" action="<?=$this->url('home') ?>MyResearch/SaveCustomOrder">
+  <input type="hidden" name="user_id" value="<?=$user->id ?>">
+  <input type="hidden" name="list_id" value="<?=$list->id ?>">
+  <input type="hidden" id="orderedList" name="orderedList" value="">
+  <input type="hidden" id="opcode" name="opcode" value="">
+
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="own-favorite-list-button-area">
+        <div class="own-favorite-list-spinner"><div class="fa fa-spinner fa-spin"></div></div>
+        <button type="button" id="save_order_btn" class="btn btn-primary"><?=$this->transEsc('Save Order');?></button>
+        <button type="button" id="reset_order_btn" class="btn btn-primary" data-dismiss="modal" aria-hidden="false"><?=$this->transEsc('Reset');?></button>
+      </div>
+    </div>
+    <div id="error-message" class="col-xs-12" style="display: none;">
+        <?=$this->transEsc('An error has occurred');?>
+    </div>
+  </div>
+  <ol id="sortable" class="sortable-favorite-list">
+    <? foreach ($this->results->getResults() as $i=>$current): ?>
+      <li id="<?=$current->getUniqueID() ?>"><input hidden value="<?=$current->getUniqueID() ?>"><h4><?=$current->getTitle()?><i class="fa fa-arrow-down"></i><i class="fa fa-arrow-up"></i></h4><p><?=$this->record($current)->getFormatList() ?></p></li> 
+    <? endforeach; ?>
+  </ol>
+  </form>
+<?
+  $script = <<<EOT
+  finna.myList.initFavoriteOrderingFunctionality();
+EOT;
+
+// Inline the script for lightbox compatibility
+echo $this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+?>
+<!-- END of: finna - myresearch/sortlist.phtml -->
+

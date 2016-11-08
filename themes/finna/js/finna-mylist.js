@@ -349,6 +349,39 @@ finna.myList = (function() {
         };
     };
 
+    var initFavoriteOrderingFunctionality = function() {
+	$('#sortable').sortable({cursor: "move", opacity: 0.7});
+	$('.own-favorite-list-spinner').hide();
+
+	$("#save_order_btn, #reset_order_btn").click( function(event) {
+	    $('.own-favorite-list-spinner').show();
+	    $('.btn-primary').hide();
+
+	    var userID = $('input[name=user_id]').val();
+	    var listID = $('input[name=list_id]').val();
+
+	    var listOfItems = $('#sortable').sortable('toArray').toString();
+	    $('input[name="orderedList"]').val(listOfItems);
+
+	    if (event.target.id == "save_order_btn") {
+		$('input[name="opcode"]').val("save_order");
+	    } 
+	    
+	    if (userID > 0 && listID > 0 && listOfItems.length > 0) {
+		event.target.form.submit();
+	    } else {
+		failAction();
+	    }
+	});
+
+	var failAction = function () {
+	    $('#error-message').show();
+	    $('.own-favorite-list-spinner').hide();
+	    $('.save_order').show();
+	    $('.btn-primary').show();
+	}
+    };
+    
     var initEditableMarkdownField = function(element, callback) {
         element.find('.editable').unbind('click').click(function(e) {
             if (save) {
@@ -459,6 +492,7 @@ finna.myList = (function() {
     };
 
     var my = {
+        initFavoriteOrderingFunctionality: initFavoriteOrderingFunctionality,
         init: function() {
             initEditComponents();
         }
