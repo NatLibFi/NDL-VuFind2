@@ -51,7 +51,7 @@ class Resource extends \VuFind\Db\Table\Resource
      * @param int    $limit  Limit for results (null for none)
      *
      * @return \Zend\Db\ResultSet\AbstractResultSet
-     * @todo Refactor to avoid duplication
+     * @todo   Refactor to avoid duplication
      */
     public function getFavorites($user, $list = null, $tags = [],
         $sort = null, $offset = 0, $limit = null
