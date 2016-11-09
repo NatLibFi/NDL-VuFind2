@@ -51,6 +51,7 @@ class Resource extends \VuFind\Db\Table\Resource
      * @param int    $limit  Limit for results (null for none)
      *
      * @return \Zend\Db\ResultSet\AbstractResultSet
+     * @todo Refactor to avoid duplication
      */
     public function getFavorites($user, $list = null, $tags = [],
         $sort = null, $offset = 0, $limit = null
@@ -99,11 +100,7 @@ class Resource extends \VuFind\Db\Table\Resource
                 }
 
                 if (!empty($sort)) {
-                    if ($sort == 'custom_order') {
-                        Resource::applySort($s, $sort, 'ur');
-                    } else {
-                        Resource::applySort($s, $sort);
-                    }
+                    Resource::applySort($s, $sort);
                 }
             }
         );
@@ -122,22 +119,12 @@ class Resource extends \VuFind\Db\Table\Resource
      */
     public static function applySort($query, $sort, $alias = 'resource')
     {
-        // Apply sorting, if necessary:
-        $legalSorts = [
-            'custom_order'
-        ];
-        if (!empty($sort) && in_array(strtolower($sort), $legalSorts)) {
-            $rawField = $sort = 'finna_custom_order_index';
-
+        if (!empty($sort) && strtolower($sort) == 'custom_order') {
             $order[] = new Expression(
-                'isnull(?)', [$alias . '.' . $rawField],
+                'isnull(?)', ['resource.id'],
                 [Expression::TYPE_IDENTIFIER]
             );
-
-            // Apply the user-specified sort:
-            $order[] = $alias . '.' . $sort;
-
-            // Inject the sort preferences into the query object:
+            $order[] = 'ur.finna_custom_order_index';
             $query->order($order);
         } else {
             parent::applySort($query, $sort, $alias);

@@ -230,9 +230,40 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             throw new ForbiddenException('Lists disabled');
         }
 
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
+
         $listId = $this->params()->fromRoute('id');
         if (null === $listId) {
             throw new ListPermissionException('Cannot sort all favorites list');
+        }
+
+        if ($this->formWasSubmitted('cancelOrdering')) {
+            return $this->redirect()->toRoute('userList', ['id' => $listID]);
+        }
+        if ($this->formWasSubmitted('saveOrdering')) {
+            $orderedList = json_decode(
+                $this->params()->fromPost('orderedList'), true
+            );
+            $table = $this->getTable('UserResource');
+            $listID = $this->params()->fromPost('list_id');
+            if (empty($listID) || empty($orderedList)
+                || !$table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
+            ) {
+                $this->flashMessenger()->addErrorMessage('An error has occurred');
+            } else {
+                // inLightbox (only instance)
+                if ($this->getRequest()->getQuery('layout', 'no') === 'lightbox'
+                    || 'layout/lightbox' == $this->layout()->getTemplate()
+                ) {
+                    $response = $this->getResponse();
+                    $response->setStatusCode(205);
+                    return $response;
+                }
+                return $this->redirect()->toRoute('userList', ['id' => $listID]);
+            }
         }
 
         // If we got this far, we just need to display the favorites:
@@ -242,14 +273,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             // We want to merge together GET, POST and route parameters to
             // initialize our search object:
             $request = $this->getRequest()->getQuery()->toArray()
-                     + $this->getRequest()->getPost()->toArray()
-                     + ['id' => $listId];
+                + $this->getRequest()->getPost()->toArray()
+                + ['id' => $listId];
 
             $setupCallback = function ($runner, $params, $searchId) {
                 $params->setLimit(1000);
             };
             $results = $runner->run($request, 'Favorites', $setupCallback);
-        
+
             return $this->createViewModel(
                 ['params' => $results->getParams(), 'results' => $results]
             );
@@ -562,20 +593,27 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      */
     public function saveCustomOrderAction()
     {
-       
-        $listID = $this->params()->fromPost('list_id');
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
 
         if ($this->formWasSubmitted('opcode')
             && $this->params()->fromPost('opcode') == 'save_order'
         ) {
             $this->session->url = empty($listID)
-                                ? $this->url()->fromRoute('myresearch-favorites')
-                                : $this->url()->fromRoute(
-                                    'userList', ['id' => $listID]
-                                );
-            $controller = 'MyResearch';
-            $action = 'SaveCustomFavoritesOrder';
-            return $this->forwardTo($controller, $action);
+                ? $this->url()->fromRoute('myresearch-favorites')
+                : $this->url()->fromRoute('userList', ['id' => $listID]);
+
+            $orderedList = $this->params()->fromPost('orderedList');
+            $table = $this->getTable('UserResource');
+            $listID = $this->params()->fromPost('list_id');
+            if (empty($listID) || empty($orderedList)
+                || !$table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
+            ) {
+                $this->flashMessenger()->addErrorMessage('An error has occurred');
+            }
+            return $this->redirect()->toRoute('userList', ['id' => $listID]);
         } else {
             return $this->redirect()->toRoute('userList', ['id' => $listID]);
         }
@@ -759,7 +797,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $view = parent::mylistAction();
         $user = $this->getUser();
         $table = $this->getTable('UserResource');
-        
+
         if (empty($list) && $results = $view->results) {
             $list = $results->getListObject();
         }
@@ -980,29 +1018,4 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         );
     }
 
-    /**
-     * Save ordering of the items in user's own favorite lists to the DB.
-     *
-     * @return mixed
-     */
-    public function saveCustomFavoritesOrderAction()
-    {
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->forceLogin();
-        }
-
-        $listID = $this->params()->fromPost('list_id');
-        $orderedList = $this->params()->fromPost('orderedList');
-        $table = $this->getTable('UserResource');
-
-        if (! empty($listID)
-            && ! empty($orderedList)
-            && $table->saveCustomFavoriteOrder($user->id, $listID, $orderedList)
-        ) {
-            return $this->redirect()->toRoute('userList', ['id' => $listID]);
-        } else {
-            return false;
-        }
-    }
 }

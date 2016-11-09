@@ -317,7 +317,9 @@ finna.myList = (function() {
             }
         };
         target = $('.add-new-list .name');
-        target.editable({action: 'click', triggers: [target, $('.add-new-list .icon')]}, newListCallBack, editableSettings);
+        if (target.length > 0) {
+            target.editable({action: 'click', triggers: [target, $('.add-new-list .icon')]}, newListCallBack, editableSettings);
+        }
 
         $('.myresearch-row').each(function(ind, obj) {
             var target = $(obj).find('.myresearch-notes .resource-note');
@@ -350,38 +352,15 @@ finna.myList = (function() {
     };
 
     var initFavoriteOrderingFunctionality = function() {
-	$('#sortable').sortable({cursor: "move", opacity: 0.7});
-	$('.own-favorite-list-spinner').hide();
-
-	$("#save_order_btn, #reset_order_btn").click( function(event) {
-	    $('.own-favorite-list-spinner').show();
-	    $('.btn-primary').hide();
-
-	    var userID = $('input[name=user_id]').val();
-	    var listID = $('input[name=list_id]').val();
-
-	    var listOfItems = $('#sortable').sortable('toArray').toString();
-	    $('input[name="orderedList"]').val(listOfItems);
-
-	    if (event.target.id == "save_order_btn") {
-		$('input[name="opcode"]').val("save_order");
-	    } 
-	    
-	    if (userID > 0 && listID > 0 && listOfItems.length > 0) {
-		event.target.form.submit();
-	    } else {
-		failAction();
-	    }
-	});
-
-	var failAction = function () {
-	    $('#error-message').show();
-	    $('.own-favorite-list-spinner').hide();
-	    $('.save_order').show();
-	    $('.btn-primary').show();
-	}
+    	$('#sortable').sortable({cursor: 'move', opacity: 0.7});
+    	
+    	$('#sort_form').submit(function(event) {
+    	    var listOfItems = $('#sortable').sortable('toArray');
+    	    $('#sort_form input[name="orderedList"]').val(JSON.stringify(listOfItems));
+    	    return true;
+    	});
     };
-    
+
     var initEditableMarkdownField = function(element, callback) {
         element.find('.editable').unbind('click').click(function(e) {
             if (save) {

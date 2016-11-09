@@ -33,7 +33,6 @@ ALTER TABLE `user` ADD COLUMN `finna_language` varchar(30) NOT NULL DEFAULT '';
 ALTER TABLE `user` ADD COLUMN `finna_due_date_reminder` int(11) NOT NULL DEFAULT 0;
 ALTER TABLE `user` ADD COLUMN `finna_last_login` datetime NOT NULL DEFAULT '0000-00-00 00:00:00';
 ALTER TABLE `user` ADD COLUMN `finna_auth_method` varchar(50) DEFAULT NULL;
-ALTER TABLE `user_resource` ADD COLUMN `finna_custom_order_index` int DEFAULT NULL AFTER `list_id`;
 CREATE INDEX `finna_user_due_date_reminder_key` ON user (`finna_due_date_reminder`);
 CREATE INDEX `finna_user_email` ON user (`email`);
 
@@ -42,7 +41,14 @@ CREATE INDEX `finna_user_email` ON user (`email`);
 --
 ALTER TABLE user_list ADD COLUMN `finna_updated` datetime DEFAULT NULL;
 
+--
+-- Additional columns for user_resource
+--
+ALTER TABLE `user_resource` ADD COLUMN `finna_custom_order_index` int DEFAULT NULL;
 
+--
+-- Additional tables
+--
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `finna_comments_record` (

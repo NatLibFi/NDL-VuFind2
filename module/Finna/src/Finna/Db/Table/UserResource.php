@@ -80,21 +80,15 @@ class UserResource extends \VuFind\Db\Table\UserResource
     /**
      * Add custom favorite list order
      *
-     * @param int    $userId       User_id
-     * @param int    $listId       List_id
-     * @param string $resourceList Ordered List of Resources
+     * @param int   $userId       User id
+     * @param int   $listId       List id
+     * @param array $resourceList Ordered List of Resources
      *
      * @return boolean
      */
-    public function saveCustomFavoriteOrder($userId,$listId,$resourceList)
+    public function saveCustomFavoriteOrder($userId, $listId, $resourceList)
     {
-        $index_counter = 0;
-        $resource_index = [];
-
-        foreach (explode(',', $resourceList) as $resource) {
-            $index_counter++;
-            $resource_index[$resource] = $index_counter;
-        }
+        $resourceIndex = array_flip(array_values($resourceList));
 
         $callback = function ($select) use ($listId, $userId) {
             $select->join(
@@ -106,21 +100,19 @@ class UserResource extends \VuFind\Db\Table\UserResource
             $select->where->equalTo('user_id', $userId);
         };
 
-        try {
-            foreach ($this->select($callback) as $row) {
-                if ($row_to_update = $this->select(
-                    ['user_id' => $userId, 'list_id' => $listId,
-                     'resource_id' => $row->resource_id]
-                )->current()) {
-                    $row_to_update->finna_custom_order_index
-                        = $resource_index[$row->record_id];
-                    $row_to_update->save();
-                } else {
-                    return false;
-                }
+        foreach ($this->select($callback) as $row) {
+            if ($rowToUpdate = $this->select(
+                [
+                    'user_id' => $userId,
+                    'list_id' => $listId,
+                    'resource_id' => $row->resource_id
+                ]
+            )->current()) {
+                $rowToUpdate->finna_custom_order_index
+                    = isset($resourceIndex[$row->record_id])
+                    ? $resourceIndex[$row->record_id] : 0;
+                $rowToUpdate->save();
             }
-        } catch (Exception $e) {
-            return false;
         }
         return true;
     }
