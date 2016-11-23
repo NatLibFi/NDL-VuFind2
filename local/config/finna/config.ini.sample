@@ -1368,3 +1368,9 @@ fi['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 sv['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 en-gb['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 
+; Terms of Service version number.
+; The user is prompted to accept the Terms of Service before the login screen is shown 
+; when the current version number differs from the version saved to the browser cookie.
+[TermsOfService]
+enabled = false
+version = 1.0

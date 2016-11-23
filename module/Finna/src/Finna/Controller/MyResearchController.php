@@ -27,6 +27,7 @@
  * @link     http://vufind.org   Main Site
  */
 namespace Finna\Controller;
+use Zend\Http\Header\SetCookie;
 
 /**
  * Controller for the user account area.
@@ -185,6 +186,48 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         usort($transactions, $sortFunc);
         $view->transactions = $transactions;
         $view->blocks = $this->getILS()->getAccountBlocks($patron);
+        return $view;
+    }
+
+    /**
+     * Login Action
+     *
+     * @return mixed
+     */
+    public function loginAction()
+    {
+        $conf = $this->serviceLocator->get('VuFind\Config')->get('config');
+        
+        if (empty($conf->TermsOfService->enabled)
+            || !isset($conf->TermsOfService->version)
+        ) {
+            return parent::loginAction();
+        }
+
+        $termsOfServiceVersion = $conf->TermsOfService->version;
+        $cookieName = 'finnaTermsOfService';
+
+        $cookieManager = $this->serviceLocator->get('VuFind\CookieManager');
+        $cookie = $cookieManager->get($cookieName);
+
+        if ($cookie && $cookie === $termsOfServiceVersion) {
+            return parent::loginAction();
+        }
+
+        if ($this->formWasSubmitted('submit', false)) {
+            if ($this->params()->fromPost('acceptTerms', false) === '1') {
+                $expire = time() + 5 * 365 * 60 * 60 * 24; // 5 years
+                $cookieManager->set($cookieName, $termsOfServiceVersion, $expire);
+            }
+            $this->getRequest()->getPost()->offsetUnset('submit');
+            return $this->forwardTo('MyResearch', 'UserLogin');
+        }
+        
+        $view = $this->createViewModel();
+        $view->setTemplate('myresearch/terms.phtml');
+        $view->lightbox
+            = $this->getRequest()->getQuery('layout', 'no') === 'lightbox';
+
         return $view;
     }
 
