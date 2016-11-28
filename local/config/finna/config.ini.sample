@@ -1368,3 +1368,7 @@ fi['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 sv['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 en-gb['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 
+; Finna survey
+[FinnaSurvey]
+enabled = false
+url = "https://my.surveypal.com/Finnasurvey"
