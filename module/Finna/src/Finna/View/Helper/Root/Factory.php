@@ -26,6 +26,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\View\Helper\Root;
+
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -59,7 +60,7 @@ class Factory extends \VuFind\View\Helper\Root\Factory
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return MetaLib
+     * @return Browse
      */
     public static function getBrowse(ServiceManager $sm)
     {
@@ -190,18 +191,6 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     }
 
     /**
-     * Construct the RecordLink helper.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return RecordLink
-     */
-    public static function getRecordLink(ServiceManager $sm)
-    {
-        return new RecordLink($sm->getServiceLocator()->get('VuFind\RecordRouter'));
-    }
-
-    /**
      * Construct the Navibar view helper.
      *
      * @param ServiceManager $sm Service manager.
@@ -240,6 +229,31 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     public static function getContent(ServiceManager $sm)
     {
         return new Content();
+    }
+
+    /**
+     * Construct a dummy MetaLib view helper (for legacy code).
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return MetaLib
+     */
+    public static function getMetaLib(ServiceManager $sm)
+    {
+        return new MetaLib();
+    }
+
+    /**
+     * Construct the Finna survey helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return FinnaSurvey
+     */
+    public static function getFinnaSurvey(ServiceManager $sm)
+    {
+        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
+        return new FinnaSurvey($config);
     }
 
     /**
@@ -312,19 +326,6 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     {
         $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
         return new HeadTitle($config);
-    }
-
-    /**
-     * Construct MetaLib view helper.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return MetaLib
-     */
-    public static function getMetaLib(ServiceManager $sm)
-    {
-        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('MetaLib');
-        return new MetaLib($config);
     }
 
     /**
@@ -413,19 +414,6 @@ class Factory extends \VuFind\View\Helper\Root\Factory
         return new Translation(
             isset($config['Site']['language']) ? $config['Site']['language'] : 'en'
         );
-    }
-
-    /**
-     * Construct the PersonaAuth view helper.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return \Finna\View\Helper\Root\PersonaAuth
-     */
-    public static function getPersonaAuth(ServiceManager $sm)
-    {
-        $locator = $sm->getServiceLocator();
-        return new PersonaAuth($locator);
     }
 
     /**

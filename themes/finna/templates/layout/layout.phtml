@@ -34,7 +34,13 @@
       $this->headScript()->appendFile('vendor/respond.js', 'text/javascript', ['conditional' => 'lt IE 9']);
       $this->headScript()->appendFile("vendor/imagesloaded.pkgd.min.js");
       $this->headScript()->appendFile("vendor/masonry.pkgd.min.js");
+      $finnaSurvey
+        = in_array($this->layout()->templateDir, ['search', 'record'])
+        && $this->finnaSurvey()->isEnabled();
 
+      if ($finnaSurvey) {
+        $this->headScript()->appendFile('finna-survey.js');
+      }
     ?>
     <?=$this->headLink()?>
     <?=$this->headStyle()?>
@@ -44,8 +50,6 @@
          "path = '" . rtrim($this->url('home'), '/') . "';"
          . "module = '" . $this->layout()->templateDir . "';"
          . "action = '" . $this->layout()->templateName . "';"
-         . "mozillaPersonaCurrentUser = '" . $this->personaAuth()->getUser() . "';"
-         . "mozillaPersonaAutoLogout = '" . $this->personaAuth()->getAutoLogout() . "';"
       );
 
       if (!isset($this->renderingError)) {
@@ -349,6 +353,10 @@ JS;
           </div>
         </div>
       </div>
+    <? endif; ?>
+
+    <? if ($finnaSurvey): ?>
+      <?=$this->finnaSurvey()->render()?>
     <? endif; ?>
   </body>
 </html>

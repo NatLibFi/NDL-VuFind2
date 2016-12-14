@@ -15,15 +15,14 @@ var finna = (function() {
                 'imagePopup',
                 'itemStatus',
                 'layout',
-                'metalibLinks',
                 'myList',
                 'openUrl',
                 'organisationList',
-                'persona',
                 'primoAdvSearch',
                 'record',
                 'searchTabsRecommendations',
-                'StreetSearch'
+                'StreetSearch',
+                'finnaSurvey'
             ];
 
             $.each(modules, function(ind, module) {
@@ -39,7 +38,7 @@ var finna = (function() {
 
 $(document).ready(function() {
     finna.init();
-    
+
     // init custom.js for custom theme
     if (typeof finnaCustomInit !== 'undefined') {
         finnaCustomInit();

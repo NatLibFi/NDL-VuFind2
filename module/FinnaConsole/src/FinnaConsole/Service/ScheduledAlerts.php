@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  Service
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -31,7 +32,7 @@ use Finna\Db\Row\User;
 use Finna\Db\Table\Search;
 use Finna\Search\Solr\Options;
 use Finna\Search\Solr\Params;
-use Finna\Search\UrlQueryHelper;
+use Finna\Search\Factory\UrlQueryHelperFactory;
 use VuFind\Date\Converter as DateConverter;
 use Zend\Config\Config;
 use Zend\Config\Reader\Ini as IniReader;
@@ -56,6 +57,7 @@ use Zend\Stdlib\Parameters;
  * @category VuFind
  * @package  Service
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -259,17 +261,16 @@ class ScheduledAlerts extends AbstractService
     protected function switchInstitution($localDir, $scheduleBaseUrl = false)
     {
         $appDir = substr($localDir, 0, strrpos($localDir, "/{$this->confDir}"));
-        $script = "$appDir/util/scheduled_alerts.php";
+        $script = "$appDir/public/index.php";
 
-        $args = [];
-        $args[] = $this->viewBaseDir;
-        $args[] = $localDir;
+        $args = ['util', 'scheduled_alerts', $this->viewBaseDir, $localDir];
         if ($scheduleBaseUrl) {
             $args[] = "'$scheduleBaseUrl'";
         }
 
         $cmd = "VUFIND_LOCAL_DIR='$localDir'";
-        $cmd .= " php -d short_open_tag=1 '$script' " . implode(' ', $args);
+        $cmd .= " php -d short_open_tag=1 -d display_errors=1 '$script' "
+            . implode(' ', $args);
         $this->msg("  Switching to institution configuration $localDir");
         $this->msg("    $cmd");
         $res = system($cmd, $retval);
@@ -416,7 +417,7 @@ class ScheduledAlerts extends AbstractService
 
             $query = $params->getQuery();
             $searchParams = $params->getBackendParameters();
-            $searchTime = gmdate($iso8601, time());
+            $searchTime = date('Y-m-d H:i:s');
 
             try {
                 $collection = $searchService
@@ -446,6 +447,11 @@ class ScheduledAlerts extends AbstractService
                 continue;
             }
 
+            $this->msg(
+                '      New results for search ' . $s->id
+                . ": $newestRecordDate >= $lastExecutionDate"
+            );
+
             // Collect records that have been indexed (for the first time)
             // after previous scheduled alert run
             $newRecords = [];
@@ -461,9 +467,9 @@ class ScheduledAlerts extends AbstractService
             $viewBaseUrl = $searchUrl = $s->finna_schedule_base_url;
             $searchUrl .= $urlHelper->__invoke($options->getSearchAction());
 
-            $urlQueryHelper = new UrlQueryHelper($params);
-            $searchUrl .=
-                str_replace('&amp;', '&', $urlQueryHelper->getParams());
+            $urlQueryHelperFactory = new UrlQueryHelperFactory();
+            $urlQueryHelper = $urlQueryHelperFactory->fromParams($params);
+            $searchUrl .= $urlQueryHelper->getParams(false);
 
             $secret = $s->getUnsubscribeSecret($hmac, $user);
 
@@ -508,6 +514,7 @@ class ScheduledAlerts extends AbstractService
                 $this->msg('Error updating last_executed date for search ' . $s->id);
             }
         }
+        $this->msg('    Done processing searches');
     }
 
     /**
@@ -559,8 +566,8 @@ class ScheduledAlerts extends AbstractService
 Usage:
   VUFIND_LOCAL_MODULES='FinnaTheme,FinnaSearch,Finna,FinnaConsole'
   php $appPath/util/scheduled_alerts.php
-    [view base directory]
-    [VuFind local configuration directory]
+    <view base directory>
+    <VuFind local configuration directory>
 
             For example:
   VUFIND_LOCAL_MODULES='FinnaTheme,FinnaSearch,Finna,FinnaConsole'

@@ -88,35 +88,35 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     protected $arenaMember = '';
 
     /**
-     * Wsdl-file for accessing the catalgue section of AWS
+     * Wsdl file name or url for accessing the catalogue section of AWS
      *
      * @var string
      */
     protected $catalogue_wsdl = '';
 
     /**
-     * Wsdl-file for accessing the patron section of AWS
+     * Wsdl file name or url for accessing the patron section of AWS
      *
      * @var string
      */
     protected $patron_wsdl = '';
 
     /**
-     * Wsdl-file for accessing the loans section of AWS
+     * Wsdl file name or url for accessing the loans section of AWS
      *
      * @var string
      */
     protected $loans_wsdl = '';
 
     /**
-     * Wsdl-file for accessing the payment section of AWS
+     * Wsdl file name or url for accessing the payment section of AWS
      *
      * @var string
      */
     protected $payments_wsdl = '';
 
     /**
-     * Wsdl-file for accessing the reservation section of AWS
+     * Wsdl file name or url for accessing the reservation section of AWS
      *
      * @var string
      */
@@ -482,14 +482,18 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Get request groups
      *
-     * @param integer $bibId    BIB ID
-     * @param array   $patronId Patron information returned by the patronLogin
+     * @param integer $bibId       BIB ID
+     * @param array   $patronId    Patron information returned by the patronLogin
      * method.
+     * @param array   $holdDetails Optional array, only passed in when getting a list
+     * in the context of placing a hold; contains most of the same values passed to
+     * placeHold, minus the patron data.  May be used to limit the request group
+     * options or may be ignored.
      *
      * @return array  False if request groups not in use or an array of
      * associative arrays with id and name keys
      */
-    public function getRequestGroups($bibId, $patronId)
+    public function getRequestGroups($bibId, $patronId, $holdDetails = null)
     {
         // Request Groups are not used for reservations
         return false;
@@ -546,7 +550,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'language'     => 'en',
             'reservationEntities' => $entityId,
             'reservationSource' => $reservationSource,
-            'reservationType' => 'normal',
+            'reservationType' => $this->regionalHold ? 'regional' : 'normal',
             'organisationId' => $organisation,
             'pickUpBranchId' => $branch,
             'validFromDate' => $validFromDate,
@@ -875,10 +879,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     foreach ($departments as $department) {
                         // Get holding data
                         $dueDate = isset($department->firstLoanDueDate)
-                            ? $this->dateFormat->convertToDisplayDate(
-                                '* M d G:i:s e Y',
-                                $department->firstLoanDueDate
-                            ) : '';
+                            ? $this->formatDate($department->firstLoanDueDate) : '';
                         $departmentName = $department->department;
                         $locationName = isset($department->location)
                             ? $department->location : '';
@@ -931,13 +932,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                         // Status table
                         $statusArray = [
                            'availableForLoan' => 'Available',
+                           'fetchnoteSent' => 'On Hold',
                            'onLoan' => 'Charged',
                            //'nonAvailableForLoan' => 'Not Available',
                            'nonAvailableForLoan' => 'On Reference Desk',
                            'onRefDesk' => 'On Reference Desk',
                            'overdueLoan' => 'overdueLoan',
                            'ordered' => 'Ordered',
-                           'returnedToday' => 'returnedToday'
+                           'returnedToday' => 'returnedToday',
+                           'inTransfer' => 'In Transit'
                         ];
 
                         // Convert status text
@@ -1922,10 +1925,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function formatDate($dateString)
     {
+        // Support also the more complex date format of the old AWS version
+        if (!preg_match('/^(\d{4}-\d{2}-\d{2})/', $dateString, $matches)) {
+            return $this->dateFormat->convertToDisplayDate(
+                '* M d G:i:s e Y', $dateString
+            );
+        }
         // remove timezone from Axiell obscure dateformat
-        $date = substr($dateString, 0, strpos("$dateString*", "+"));
-
-        return $this->dateFormat->convertToDisplayDate("Y-m-d", $date);
+        $date = $matches[1];
+        return $this->dateFormat->convertToDisplayDate('Y-m-d', $date);
     }
 
     /**
@@ -2241,6 +2249,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function getWsdlPath($wsdl)
     {
+        if (preg_match('/^https?:/', $wsdl)) {
+            // Don't mangle a URL
+            return $wsdl;
+        }
         $file = Locator::getConfigPath($wsdl);
         if (!file_exists($file)) {
             $file = Locator::getConfigPath($wsdl, 'config/finna');

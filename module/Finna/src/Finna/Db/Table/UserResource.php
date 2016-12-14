@@ -78,22 +78,83 @@ class UserResource extends \VuFind\Db\Table\UserResource
     }
 
     /**
+     * Add custom favorite list order
+     *
+     * @param int   $userId       User id
+     * @param int   $listId       List id
+     * @param array $resourceList Ordered List of Resources
+     *
+     * @return boolean
+     */
+    public function saveCustomFavoriteOrder($userId, $listId, $resourceList)
+    {
+        $resourceIndex = array_flip(array_values($resourceList));
+
+        $callback = function ($select) use ($listId, $userId) {
+            $select->join(
+                ['r' => 'resource'],
+                'r.id = user_resource.resource_id',
+                ['record_id']
+            );
+            $select->where->equalTo('list_id', $listId);
+            $select->where->equalTo('user_id', $userId);
+        };
+
+        foreach ($this->select($callback) as $row) {
+            if ($rowToUpdate = $this->select(
+                [
+                    'user_id' => $userId,
+                    'list_id' => $listId,
+                    'resource_id' => $row->resource_id
+                ]
+            )->current()) {
+                $rowToUpdate->finna_custom_order_index
+                    = isset($resourceIndex[$row->record_id])
+                    ? $resourceIndex[$row->record_id] : 0;
+                $rowToUpdate->save();
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if custom favorite order is used in a list
+     *
+     * @param int $listId List id
+     *
+     * @return bool
+     */
+    public function isCustomOrderAvailable($listId)
+    {
+        $callback = function ($select) use ($listId) {
+            $select->where->equalTo('list_id', $listId);
+            $select->join(
+                ['r' => 'resource'],
+                'user_resource.resource_id = r.id',
+                ['record_id']
+            );
+            $select->where->isNotNull('finna_custom_order_index');
+        };
+        return $this->select($callback)->count() > 0;
+    }
+
+    /**
      * Update the date of a list
      *
-     * @param string $list_id ID of list to unlink
-     * @param string $user_id ID of user removing links
+     * @param string $listId ID of list to unlink
+     * @param string $userId ID of user removing links
      *
      * @return void
      */
-    protected function updateListDate($list_id, $user_id)
+    protected function updateListDate($listId, $userId)
     {
         $userTable = $this->getDbTable('User');
-        $user = $userTable->select(['id' => $user_id])->current();
+        $user = $userTable->select(['id' => $userId])->current();
         if (empty($user)) {
             return;
         }
         $listTable = $this->getDbTable('UserList');
-        $list = $listTable->getExisting($list_id);
+        $list = $listTable->getExisting($listId);
         $list->save($user);
     }
 }

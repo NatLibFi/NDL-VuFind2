@@ -37,7 +37,7 @@ use Zend\Console\Adapter\AdapterInterface as Console;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://github.com/dmj/vf2-proxy
  */
-class Module
+class Module implements \Zend\ModuleManager\Feature\ConsoleUsageProviderInterface
 {
     /**
      * Get module configuration
@@ -77,7 +77,6 @@ class Module
     public function getConsoleUsage(Console $console)
     {
         return [
-            'util clear_metalib_search' => 'Removes old metalib search entries',
             'util due_date_reminders' => 'Send due date reminders',
             'util encrypt_catalog_passwords' => 'Encrypt ILS passwords in database',
             'util expire_users' => 'Anonymizes expired user accounts',

@@ -46,13 +46,26 @@ class Results extends \VuFind\Search\Favorites\Results
      */
     protected function performSearch()
     {
+        $authManager = $this->serviceLocator->get('VuFind\AuthManager');
+        $table = $this->getTable('UserResource');
+        $list = $this->getListObject();
         $sort = $this->getParams()->getSort();
+
+        if ($sort == 'custom_order'
+            && (empty($list)
+            || !$table->isCustomOrderAvailable($list->id))
+        ) {
+            $sort = 'id desc';
+        }
+
         $sortNewestAddedFirst = $sort == 'id desc';
         if ($sortNewestAddedFirst) {
             // Set sort option to 'id' (ascending), since we reverse the
             // results to a descending (newest first) order (see below).
             $this->getParams()->setSort('id');
         }
+
+        $this->getParams()->setSort($sort);
 
         parent::performSearch();
 
@@ -100,6 +113,7 @@ class Results extends \VuFind\Search\Favorites\Results
             // if one is found:
             $filters = $this->getParams()->getFilters();
             $listId = isset($filters['lists'][0]) ? $filters['lists'][0] : null;
+
             if (null === $listId) {
                 $this->list = null;
             } else {

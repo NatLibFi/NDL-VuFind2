@@ -128,7 +128,7 @@ indexBasedNewItems = true
 ; Whether to hide email address in patron profile. Default is false
 ;hideProfileEmailAddress = true
 ; Scale for advanced search year slider. Current year + 1 is always added to the end.
-; Default scale is "0,900,1800,1910" 
+; Default scale is "0,900,1800,1910"
 ;advSearchYearScale = "1600,1800,2000,2010"
 
 ; This section allows you to configure the mechanism used for storing user
@@ -262,7 +262,7 @@ library_cards = true
 
 ; The number of checked out items to display per page; 0 for no limit (may cause
 ; memory problems for users with huge numbers of items). Default = 50.
-; N.B. Values other than 0 are not supported in the finna theme. 
+; N.B. Values other than 0 are not supported in the finna theme.
 checked_out_page_size = 0
 
 ; This section allows you to determine how the users will authenticate.
@@ -328,7 +328,7 @@ maximum_password_length = 32
 ;password_hint = "local_login_password_hint"
 
 [ChoiceAuth]
-choice_order = MozillaPersona,Shibboleth,MultiILS
+choice_order = Database,Shibboleth,MultiILS
 
 ; See the comments in library/VF/Auth/MultiAuth.php for full details
 ; on using multiple authentication methods.  Note that MultiAuth assumes login
@@ -390,6 +390,8 @@ default_core    = biblio
 maxBooleanClauses = 1024
 ; This is the timeout in seconds when communicating with the Solr server.
 timeout = 30
+; Whether to shuffle Solr URLs when an array of them is defined. Default is false.
+;shuffle = true
 
 ; Enable/Disable searching reserves using the "reserves" Solr core.  When enabling
 ; this feature, you also need to uncomment the relevant line in solr/solr.xml and
@@ -803,8 +805,8 @@ url             = https://www.myendnoteweb.com/EndNoteWeb.html
 [Http]
 ;sslcapath = "/etc/ssl/certs"
 sslcafile = "/etc/ssl/certs/ca-bundle.crt"
-; This is required on RHEL6 with PHP 5.6 for unknown reasons. Otherwise e.g. Persona
-; login fails.
+; This is required on RHEL6 with PHP 5.6 for unknown reasons. Otherwise SSL
+; connections may fail.
 ssltransport = tls
 
 ; Spelling Suggestions
@@ -951,7 +953,7 @@ alphabet_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ"
 ; <result_limit> most popular entries -- it only affects display order.
 ;alphabetical_order = true
 
-; This section controls the availability of export methods. 
+; This section controls the availability of export methods.
 ;
 ; Each entry may be a comma-separated list of contexts in which the export
 ; option will be presented. Valid options:
@@ -1135,7 +1137,7 @@ ead_external_link_template[narc] = "http://www.narc.fi:8080/VakkaWWW/Selaus.acti
 ead_document_order_link_template[narc] = "https://testavapaingest.narc.fi/astiaUi/palvelut/kdk_checkout.php?id={id}"
 ead_usage_permission_request_link_template[narc] = "https://testavapaingest.narc.fi/astiaUi/palvelut/kdk_askpermission.php?id={id}"
 
-; Blacklisting regexp's for record URLs 
+; Blacklisting regexp's for record URLs
 url_blacklist[] = '/btj\.com\/btjcgi\/arvo\/get_add_info\.cgi\?type=(PRES|IMAGE)/'
 url_blacklist[] = '/data\.kirjavalitys\.fi\/data\/servlets\/ProductRequestServlet/'
 url_blacklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
@@ -1297,7 +1299,6 @@ case_sensitive_tags = false
 Solr = tabs_local
 Primo = tabs_pci
 Combined = tabs_combined
-MetaLib = tabs_metalib
 
 ; Recommendations that include a couple of results from other tabs when doing a
 ; basic search (first result page only).
@@ -1361,10 +1362,14 @@ sv['CC BY-NC-SA 4.0'] = "http://creativecommons.org/licenses/by-nc-sa/4.0/deed.s
 en-gb['CC BY-NC-SA 4.0'] = "http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en"
 
 fi['CC BY-NC-ND 4.0'] = "http://creativecommons.org/licenses/by-nc-nd/4.0/deed.fi"
-sv['CC BY-NC_ND 4.0'] = "http://creativecommons.org/licenses/by-nc-nd/4.0/deed.sv"
+sv['CC BY-NC-ND 4.0'] = "http://creativecommons.org/licenses/by-nc-nd/4.0/deed.sv"
 en-gb['CC BY-NC-ND 4.0'] = "http://creativecommons.org/licenses/by-nc-nd/4.0/deed.en"
 
 fi['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 sv['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 en-gb['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 
+; Finna survey
+[FinnaSurvey]
+enabled = false
+url = "https://my.surveypal.com/Finnasurvey"

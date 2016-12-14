@@ -39,16 +39,6 @@ namespace FinnaConsole\Controller;
 class UtilController extends \VuFindConsole\Controller\UtilController
 {
     /**
-     * Clears expired MetaLib searches from the database.
-     *
-     * @return \Zend\Console\Response
-     */
-    public function clearMetaLibSearchAction()
-    {
-        return $this->runService('Finna\ClearMetaLibSearch');
-    }
-
-    /**
      * Sends due date reminders.
      *
      * @return \Zend\Console\Response
@@ -127,7 +117,8 @@ class UtilController extends \VuFindConsole\Controller\UtilController
      */
     protected function runService($service)
     {
-        $arguments = $this->consoleOpts->getRemainingArgs();
+        $arguments = $this->getRequest()->getParams()->toArray();
+        $arguments = array_splice($arguments, 2);
         $sl = $this->getServiceLocator();
         // Disable sharing of mailer so that every time an instance is requested a
         // new one is created. This avoids sharing an SMTP connection that might time

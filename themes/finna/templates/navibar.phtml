@@ -17,13 +17,13 @@
         <ul role="presentation" class="dropdown-menu">
           <? foreach ($val['items'] as $itemKey => $itemVal): ?>
           <?
-          if (!($itemUrl = $this->navibar()->getMenuItemUrl($itemVal))) {
+            if (!($itemUrl = $this->navibar()->getMenuItemUrl($itemVal))) {
              continue;
-          }
-          $url = $itemUrl['url'];
-          $target = !empty($itemUrl['target']) ? $itemUrl['target'] : null;
-          $label = $itemVal['label'];
-          $desc = !empty($itemVal['desc']) ? $itemVal['desc'] : null;
+            }
+            $url = $itemUrl['url'];
+            $target = !empty($itemUrl['target']) ? $itemUrl['target'] : null;
+            $label = $itemVal['label'];
+            $desc = !empty($itemVal['desc']) ? $itemVal['desc'] : null;
           ?>
           <li role="menuitem">
             <a<?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$url?>">
@@ -110,8 +110,7 @@
         </li>
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true']);?>
         <li role="menuitem" class="logoutOptions<? if (!$user): ?> hidden<? endif ?>">
-          <? $logoutClass = $this->personaAuth()->getUser() === null ? '' : ' persona-logout' ?>
-          <a href="<?=$this->url('myresearch-logout')?>" class="logout<?=$logoutClass?>" title="<?=$this->transEsc("Log Out")?>"><strong><i class="fa fa-sign-out" aria-hidden="true"></i> <?=$this->transEsc("Log Out")?></strong></a>
+          <a href="<?=$this->url('myresearch-logout')?>" class="logout" title="<?=$this->transEsc("Log Out")?>"><strong><i class="fa fa-sign-out" aria-hidden="true"></i> <?=$this->transEsc("Log Out")?></strong></a>
         </li>
       </ul>
     </li>

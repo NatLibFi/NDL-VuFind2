@@ -70,12 +70,8 @@ finna.layout = (function() {
                     $('footer').height('auto');
                     var detectHeight = $(window).height() - $('body').height();
                     if (detectHeight > 0) {
-                        var expandedFooter = $('footer').outerHeight() + detectHeight;
-                        $('footer').outerHeight(expandedFooter);
-                        $('body').css('overflow-y', 'hidden');
-                    }
-                    else {
-                        $('body').css('overflow-y', '');
+                        var expandedFooter = $('footer').height() + detectHeight;
+                        $('footer').height(expandedFooter);
                     }
                 }, 50);
             }
@@ -656,25 +652,24 @@ finna.layout = (function() {
             $(this).one('inview', function() {
                 var holder = $(this);
                 var organisation = $(this).data('organisation');
-                var link = $(this).data('link');
-                getOrganisationPageLink(organisation, link, function(response) {
+                var organisationName = $(this).data('organisationName');
+                getOrganisationPageLink(organisation, organisationName, true, function(response) {
                     holder.toggleClass('done', true);
                     if (response) {
                         var data = response[organisation];
-                        if (link === '1') {
-                            holder.wrap($('<a/>').attr('href', data));
-                        } else {
-                            holder.html(data);
-                        }
+                        holder.html(data).closest('li.record-organisation').toggleClass('organisation-page-link-visible', true);
                     }
                 });
             });
         });
     };
 
-    var getOrganisationPageLink = function(organisation, link, callback) {
+    var getOrganisationPageLink = function(organisation, organisationName, link, callback) {
         var url = VuFind.path + '/AJAX/JSON?method=getOrganisationInfo';
-        url += '&params[action]=lookup&link=' + link + '&parent=' + organisation;
+        url += '&params[action]=lookup&link=' + (link ? '1' : '0') + '&parent=' + organisation;
+        if (organisationName) {
+           url += '&parentName=' + organisationName;
+        }
         $.getJSON(url)
             .done(function(response) {
                 callback(response.data.items);
@@ -738,6 +733,7 @@ finna.layout = (function() {
         initHierarchicalFacet: initHierarchicalFacet,
         initJumpMenus: initJumpMenus,
         initMobileNarrowSearch: initMobileNarrowSearch,
+        initOrganisationPageLinks: initOrganisationPageLinks,
         initSecondaryLoginField: initSecondaryLoginField,
         initIframeEmbed: initIframeEmbed, 
         init: function() {

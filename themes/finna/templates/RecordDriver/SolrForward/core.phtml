@@ -92,20 +92,7 @@
 
     <?
       $formats = $this->driver->getFormats();
-      $metalib = $this->metalib()->isAvailable() && !empty($formats) && strstr((string)$formats[0], '0/Database') !== false;
     ?>
-    <? if ($metalib): ?>
-       <? $this->headScript()->appendFile("finna-metalib-links.js"); ?>
-       <?= $this->partial('RecordDriver/MetaLib/search-link.phtml', ['id' => $this->driver->getUniqueID()]); ?>
-       <?
-       $script = '
-       $(document).ready(function() {
-          finna.metalibLinks.init();
-       });';
-       ?>
-       <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET');?>
-    <? endif; ?>
-
     <?
       $openUrl = $this->openUrl($this->driver, 'record');
       $openUrlActive = $openUrl->isActive();
@@ -113,7 +100,7 @@
       $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
     ?>
     <? $onlineURLs = $this->driver->getOnlineURLs(); $mergedData = $this->driver->tryMethod('getMergedRecordData'); ?>
-    <? if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls']) || strncmp($this->driver->getUniqueID(), 'metalib_', 8) == 0): ?>
+    <? if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
       <div class="recordURLs local-available-online-record">
         <div class="truncate-field">
           <? $renderedURLs = []; ?>
@@ -153,7 +140,7 @@
     <div class="record-authors" property="author">
       <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
         <span class="recordFormat">
-          <?=$this->record($this->driver)->getFormatList()?><br>
+          <?=$this->record($this->driver)->getFormatList() ?> <?=$this->escapeHtml($this->driver->getType()) ?><br>
         </span>
       <? endif; ?>
       <? $results = $this->driver->getNonPresenterAuthors(); $containerTitle = $this->driver->getContainerTitle(); ?>
@@ -281,13 +268,6 @@
       <? if ($result = $this->driver->getCountry()): ?>
         <tr class="record-country">
           <th><?=$this->transEsc('Country') ?>: </th>
-          <td><?=$this->escapeHtml($result) ?></td>
-        </tr>
-      <? endif; ?>
-
-      <? if ($result = $this->driver->getType()): ?>
-        <tr class="record-type">
-          <th><?=$this->transEsc('Type') ?>: </th>
           <td><?=$this->escapeHtml($result) ?></td>
         </tr>
       <? endif; ?>
