@@ -95,8 +95,7 @@ defaultAccountPage = Favorites
 admin_enabled = false
 ; Show sidebar on the left side instead of right. This only affects on facet sidebar in search result view
 sidebarOnLeft = true
-; Show (true) / Hide (false) Book Bag - Default is Hide.  The Book Bag is currently
-; only supported by the blueprint theme; other themes will ignore this setting.
+; Show (true) / Hide (false) Book Bag - Default is Hide.
 showBookBag = false
 ; Set the maximum amount of items allowed in the Book Bag - Default is 100
 bookBagMaxSize = 100
@@ -976,6 +975,12 @@ MARCXML = false
 RDF = false
 BibTeX = false
 
+[BulkExport]
+; Export behavior to use when no bulkExportType setting is found in the matching
+; format section of export.ini; default is 'link' if not overridden below. See
+; export.ini for more details on available options.
+;defaultType = download
+
 ;AddThis is optional. It uses the Add This tool available from www.addthis.com
 ; and requires the username generated when an analytics account is registered.
 [AddThis]
@@ -1373,3 +1378,11 @@ en-gb['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.ht
 [FinnaSurvey]
 enabled = false
 url = "https://my.surveypal.com/Finnasurvey"
+
+; Terms of service dialog displayed before login
+[TermsOfService]
+; Whether the dialog is active
+enabled = 1
+; Version of the terms of service. A new acceptance is required if the version is
+; updated.
+version = 1

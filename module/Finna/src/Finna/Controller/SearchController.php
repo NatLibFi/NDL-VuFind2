@@ -207,6 +207,8 @@ class SearchController extends \VuFind\Controller\SearchController
         $view = parent::resultsAction();
         $view->browse = false;
         $this->initSavedTabs();
+        $view->fromStreetSearch = $this->getRequest()->getQuery()
+            ->get('streetsearch', false);
         return $view;
     }
 
@@ -218,6 +220,16 @@ class SearchController extends \VuFind\Controller\SearchController
     public function streetSearchAction()
     {
         return $this->createViewModel();
+    }
+
+    /**
+     * StreetSearch action alias.
+     *
+     * @return \Zend\View\Model\ViewModel
+     */
+    public function streetAction()
+    {
+        return $this->forwardTo('Search', 'StreetSearch');
     }
 
     /**

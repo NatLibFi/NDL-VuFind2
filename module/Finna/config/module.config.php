@@ -133,12 +133,10 @@ $config = [
             'record' => 'Finna\Controller\Factory::getRecordController',
         ],
         'invokables' => [
-            'adminapi' => 'Finna\Controller\AdminApiController',
             'ajax' => 'Finna\Controller\AjaxController',
-            'searchapi' => 'Finna\Controller\SearchApiController',
             'combined' => 'Finna\Controller\CombinedController',
             'comments' => 'Finna\Controller\CommentsController',
-            'contentpage' => 'Finna\Controller\ContentController',
+            'content' => 'Finna\Controller\ContentController',
             'cover' => 'Finna\Controller\CoverController',
             'error' => 'Finna\Controller\ErrorController',
             'externalauth' => 'Finna\Controller\ExternalAuthController',
@@ -176,6 +174,7 @@ $config = [
             'VuFind\SearchResultsPluginManager' => 'Finna\Service\Factory::getSearchResultsPluginManager',
             'VuFind\SearchSpecsReader' => 'Finna\Service\Factory::getSearchSpecsReader',
             'VuFind\SearchTabsHelper' => 'Finna\Service\Factory::getSearchTabsHelper',
+            'VuFind\YamlReader' => 'Finna\Service\Factory::getYamlReader',
         ],
         'invokables' => [
             'VuFind\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
@@ -398,7 +397,8 @@ $staticRoutes = [
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
     'MyResearch/SaveCustomOrder',
     'OrganisationInfo/Home',
-    'PCI/Home', 'PCI/Search', 'PCI/Record'
+    'PCI/Home', 'PCI/Search', 'PCI/Record',
+    'Search/StreetSearch'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
@@ -406,20 +406,8 @@ $routeGenerator->addRecordRoutes($config, $recordRoutes);
 $routeGenerator->addDynamicRoutes($config, $dynamicRoutes);
 $routeGenerator->addStaticRoutes($config, $staticRoutes);
 
-// Route alias for Search/StreetSearch
-$config['router']['routes']['Street'] = [
-    'type' => 'Zend\Mvc\Router\Http\Literal',
-    'options' => [
-        'route'    => '/Search/Street',
-        'defaults' => [
-            'controller' => 'Search',
-            'action'     => 'StreetSearch',
-        ]
-    ]
-];
-
 // API routes
-$config['router']['routes']['searchApi'] = [
+/*$config['router']['routes']['searchApi'] = [
     'type' => 'Zend\Mvc\Router\Http\Literal',
     'verb' => 'get,post,options',
     'options' => [
@@ -460,6 +448,6 @@ $config['router']['routes']['searchApiRecordv1'] = [
             'action'     => 'record',
         ]
     ]
-];
+];*/
 
 return $config;
