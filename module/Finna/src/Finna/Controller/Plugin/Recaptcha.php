@@ -57,10 +57,14 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
     {
         parent::__construct($r, $config);
         if (!empty($config->Captcha->byPassCaptcha)) {
+            $trimLowercase = function ($str) {
+                return strtolower(trim($str));
+            };
+
             $byPassCaptcha = $config->Captcha->byPassCaptcha->toArray();
             foreach ($byPassCaptcha as $domain => $authMethods) {
                 $this->byPassCaptcha[$domain] = array_map(
-                    'trim',
+                    $trimLowercase,
                     explode(',', $authMethods)
                 );
             }
@@ -86,7 +90,10 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
             ->get('VuFind\AuthManager');
         $user = $authManager->isLoggedIn();
         return $user
-            ? !in_array($user->finna_auth_method, $this->byPassCaptcha[$domain])
+            ? !in_array(
+                strtolower($user->finna_auth_method),
+                $this->byPassCaptcha[$domain]
+            )
             : parent::active($domain);
     }
 }
