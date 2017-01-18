@@ -73,7 +73,7 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
 
     /**
      * Return whether a specific form is set for Captcha in the config. Takes into
-     * account authentication types which should be bypassed.
+     * account authentication methods which should be bypassed.
      *
      * @param string|bool $domain The specific config term are we checking; ie. "sms"
      *
