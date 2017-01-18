@@ -43,7 +43,7 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
      *
      * @var array
      */
-    protected $byPassCaptcha = [];
+    protected $bypassCaptcha = [];
 
     /**
      * Recaptcha constructor.
@@ -56,14 +56,14 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
     public function __construct($r, $config)
     {
         parent::__construct($r, $config);
-        if (!empty($config->Captcha->byPassCaptcha)) {
+        if (!empty($config->Captcha->bypassCaptcha)) {
             $trimLowercase = function ($str) {
                 return strtolower(trim($str));
             };
 
-            $byPassCaptcha = $config->Captcha->byPassCaptcha->toArray();
-            foreach ($byPassCaptcha as $domain => $authMethods) {
-                $this->byPassCaptcha[$domain] = array_map(
+            $bypassCaptcha = $config->Captcha->bypassCaptcha->toArray();
+            foreach ($bypassCaptcha as $domain => $authMethods) {
+                $this->bypassCaptcha[$domain] = array_map(
                     $trimLowercase,
                     explode(',', $authMethods)
                 );
@@ -81,7 +81,7 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
      */
     public function active($domain = false)
     {
-        if (!$domain || empty($this->byPassCaptcha[$domain])) {
+        if (!$domain || empty($this->bypassCaptcha[$domain])) {
             return parent::active($domain);
         }
 
@@ -92,7 +92,7 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
         return $user
             ? !in_array(
                 strtolower($user->finna_auth_method),
-                $this->byPassCaptcha[$domain]
+                $this->bypassCaptcha[$domain]
             )
             : parent::active($domain);
     }
