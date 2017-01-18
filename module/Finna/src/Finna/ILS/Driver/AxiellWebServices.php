@@ -530,11 +530,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $requestGroups = [
             [
                 'id'   => 'normal',
-                'name' => 'normal'
+                'name' => 'axiell_normal'
             ],
             [
                 'id'   => 'regional',
-                'name' => 'regional'
+                'name' => 'axiell_regional'
             ]
         ];
         return $requestGroups;
