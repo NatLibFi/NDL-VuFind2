@@ -89,11 +89,11 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
             ->getServiceLocator()
             ->get('VuFind\AuthManager');
         $user = $authManager->isLoggedIn();
-        return $user
-            ? !in_array(
-                strtolower($user->finna_auth_method),
-                $this->bypassCaptcha[$domain]
-            )
-            : parent::active($domain);
+
+        $bypassCaptcha = $user && in_array(
+            strtolower($user->finna_auth_method),
+            $this->bypassCaptcha[$domain]
+        );
+        return $bypassCaptcha ? false : parent::active($domain);
     }
 }
