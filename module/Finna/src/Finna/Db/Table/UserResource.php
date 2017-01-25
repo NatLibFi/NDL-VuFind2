@@ -138,6 +138,18 @@ class UserResource extends \VuFind\Db\Table\UserResource
         return $this->select($callback)->count() > 0;
     }
 
+    public function getByListId($listId)
+    {
+        if (!is_numeric($listId)) {
+            return [];
+        }
+
+        $callback = function ($select) use ($listId) {
+            $select->where('list_id', $listId);
+        };
+        return $this->select($callback);
+    }
+
     /**
      * Update the date of a list
      *

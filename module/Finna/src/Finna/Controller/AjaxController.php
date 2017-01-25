@@ -1366,6 +1366,74 @@ class AjaxController extends \VuFind\Controller\AjaxController
     }
 
     /**
+     * T H I S     M E T H O D     S H O U L D     B E      M O V E D ! ! !
+     *
+     * @return \Zend\Http\Response
+     */
+    public function exportAjax()
+    {
+        $USER_ID = 2;
+        $result = [
+            'searches' => $this->getSavedSearches($USER_ID)
+        ];
+        return $this->output($result, self::STATUS_OK);
+    }
+
+    /**
+     * T H I S     M E T H O D     S H O U L D     B E      M O V E D ! ! !
+     *
+     * @return \Zend\Http\Response
+     */
+    public function importAjax()
+    {
+        $USER_ID = 3;
+        $data = json_decode($this->request->getContent(), true);
+        if (!$data) {
+            return $this->output('Empty request body', self::STATUS_ERROR);
+        }
+
+        $searchTable = $this->getTable('Search');
+
+        foreach ($data['data']['searches'] as $search) {
+            $row = $searchTable->createRow();
+            $row->user_id = $USER_ID;
+            $row->folder_id = $search['folder_id'];
+            $row->created = $search['created'];
+            $row->title = $search['title'];
+            $row->saved = 1;
+            $row->search_object = base64_decode($search['search_object']);
+            $row->checksum = $search['checksum'];
+            $row->finna_schedule = $search['finna_schedule'];
+            $row->finna_last_executed = $search['finna_last_executed'];
+            $row->finna_schedule_base_url = $search['finna_schedule_base_url'];
+            $row->save();
+        }
+
+        return $this->output(null, self::STATUS_OK);
+    }
+
+    protected function getSavedSearches($userId)
+    {
+        $savedSearches = $this->getTable('Search')->getSavedSearches($userId);
+        $searches = [];
+
+        foreach ($savedSearches as $search) {
+            $searches[] = [
+                'folder_id' => $search->folder_id,
+                'created' => $search->created,
+                'title' => $search->title,
+                'search_object' => base64_encode($search->search_object),
+                'checksum' => $search->checksum,
+                'finna_schedule' => $search->finna_schedule,
+                'finna_last_executed' => $search->finna_last_executed,
+                'finna_schedule_base_url' => $search->finna_schedule_base_url
+            ];
+        }
+
+        return $searches;
+    }
+
+    /**
      * Get Autocomplete suggestions.
      *
      * @return \Zend\Http\Response
