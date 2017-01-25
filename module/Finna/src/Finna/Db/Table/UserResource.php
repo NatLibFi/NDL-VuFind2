@@ -145,7 +145,7 @@ class UserResource extends \VuFind\Db\Table\UserResource
         }
 
         $callback = function ($select) use ($listId) {
-            $select->where('list_id', $listId);
+            $select->where->equalTo('list_id', $listId);
         };
         return $this->select($callback);
     }

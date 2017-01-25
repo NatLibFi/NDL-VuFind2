@@ -134,4 +134,17 @@ class Resource extends \VuFind\Db\Table\Resource
             parent::applySort($query, $sort, $alias);
         }
     }
+
+    public function getById($id)
+    {
+        if (!is_numeric($id)) {
+            return false;
+        }
+
+        $callback = function ($select) use ($id) {
+            $select->where->equalTo('id', $id);
+        };
+        $resource = $this->select($callback);
+        return $resource->current();
+    }
 }

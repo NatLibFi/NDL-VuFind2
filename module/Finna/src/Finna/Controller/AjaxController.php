@@ -1374,7 +1374,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
     {
         $USER_ID = 2;
         $result = [
-            'searches' => $this->getSavedSearches($USER_ID)
+            'searches' => $this->getSavedSearches($USER_ID),
+            'lists' => $this->getUserLists($USER_ID)
         ];
         return $this->output($result, self::STATUS_OK);
     }
@@ -1431,6 +1432,88 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         return $searches;
+    }
+
+    protected function getUserLists($userId)
+    {
+        $userLists = $this->getTable('UserList')->getByUserId($userId);
+        $lists = [];
+
+        foreach ($userLists as $list) {
+            $lists[] = [
+                'title' => $list->title,
+                'description' => $list->description,
+                'created' => $list->created,
+                'public' => $list->public,
+                'finna_updated' => $list->finna_updated,
+                'resources' => $this->getUserListResources($list->id)
+            ];
+        }
+
+        return $lists;
+    }
+
+    protected function getUserListResources($listId)
+    {
+        $listResources = $this->getTable('UserResource')->getByListId($listId);
+        $resources = [];
+
+        foreach ($listResources as $resource) {
+            $resourceData = $this->getResource($resource->resource_id);
+
+            if (!$resourceData) {
+                continue;
+            }
+
+            $resources[] = [
+                'notes' => $resource->notes,
+                'saved' => $resource->saved,
+                'finna_custom_order_index' => $resource->finna_custom_order_index,
+                'resource' => $resourceData
+            ];
+        }
+
+        return $resources;
+    }
+
+    protected function getResource($resourceId)
+    {
+        $resource = $this->getTable('Resource')->getById($resourceId);
+
+        if (!$resource) {
+            return false;
+        }
+
+        $record = $this->getRecord($resource->record_id, $resource->source);
+
+        if (!$record) {
+            return false;
+        }
+
+        return [
+            'title' => $resource->title,
+            'author' => $resource->author,
+            'year' => $resource->year,
+            'source' => $resource->source,
+            'record' => $this->getRecord($resource->record_id, $resource->source)
+        ];
+    }
+
+    protected function getRecord($recordId, $source)
+    {
+        $record = $this->getTable('Record')->findRecord($recordId, $source);
+
+        if (!$record) {
+            return false;
+        }
+
+        return [
+            'record_id' => $record->record_id,
+            'source' => $record->source,
+            'version' => $record->version,
+            'data' => base64_encode($record->data),
+            'updated' => $record->updated
+        ];
     }
 
     /**
