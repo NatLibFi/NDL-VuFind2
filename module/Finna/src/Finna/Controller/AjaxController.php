@@ -1393,11 +1393,22 @@ class AjaxController extends \VuFind\Controller\AjaxController
             return $this->output('Empty request body', self::STATUS_ERROR);
         }
 
-        $searchTable = $this->getTable('Search');
+        $searchesAdded = $this->importSearches($data['data']['searches'], $USER_ID);
+        $result = [
+            'searchesAdded' => $searchesAdded
+        ];
 
-        foreach ($data['data']['searches'] as $search) {
+        return $this->output($result, self::STATUS_OK);
+    }
+
+    protected function importSearches($searches, $userId)
+    {
+        $searchTable = $this->getTable('Search');
+        $rowsAdded = 0;
+
+        foreach ($searches as $search) {
             $row = $searchTable->createRow();
-            $row->user_id = $USER_ID;
+            $row->user_id = $userId;
             $row->folder_id = $search['folder_id'];
             $row->created = $search['created'];
             $row->title = $search['title'];
@@ -1407,10 +1418,13 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $row->finna_schedule = $search['finna_schedule'];
             $row->finna_last_executed = $search['finna_last_executed'];
             $row->finna_schedule_base_url = $search['finna_schedule_base_url'];
-            $row->save();
+
+            if ($row->save() > 0) {
+                $rowsAdded++;
+            }
         }
 
-        return $this->output(null, self::STATUS_OK);
+        return $rowsAdded;
     }
 
     protected function getSavedSearches($userId)
