@@ -1394,8 +1394,10 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         $searchesAdded = $this->importSearches($data['data']['searches'], $USER_ID);
+        $listsAdded = $this->importLists($data['data']['lists'], $USER_ID);
         $result = [
-            'searchesAdded' => $searchesAdded
+            'searchesAdded' => $searchesAdded,
+            'listsAdded' => $listsAdded
         ];
 
         return $this->output($result, self::STATUS_OK);
@@ -1425,6 +1427,96 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         return $rowsAdded;
+    }
+
+    protected function importLists($lists, $userId)
+    {
+        $userListTable = $this->getTable('UserList');
+        $rowsAdded = 0;
+
+        foreach ($lists as $list) {
+            $row = $userListTable->createRow();
+            $row->user_id = $userId;
+            $row->title = $list['title'];
+            $row->description = $list['description'];
+            $row->created = $list['created'];
+            $row->public = $list['public'];
+            $row->finna_updated = $list['finna_updated'];
+
+            if ($row->save() > 0) {
+                $this->importUserResources($list['resources'], $userId, $row->id);
+                $rowsAdded++;
+            }
+        }
+
+        return $rowsAdded;
+    }
+
+    protected function importUserResources($resources, $userId, $listId)
+    {
+        $userResourceTable = $this->getTable('UserResource');
+
+        foreach ($resources as $userResource) {
+            $resource = $this->importResource($userResource['resource']);
+            if (!$resource) {
+                continue;
+            }
+
+            $row = $userResourceTable->createRow();
+            $row->resource_id = $resource->id;
+            $row->list_id = $listId;
+            $row->user_id = $userId;
+            $row->notes = $userResource['notes'];
+            $row->saved = $userResource['saved'];
+            $row->finna_custom_order_index
+                = $userResource['finna_custom_order_index'];
+            $row->save();
+        }
+    }
+
+    protected function importResource($resource)
+    {
+        $resourceTable = $this->getTable('Resource');
+        $resource = $resourceTable->findResource(
+            $resource['record_id'],
+            $resource['source'],
+            false
+        );
+
+        if ($resource) {
+            return $resource;
+        }
+
+        $record = $this->importRecord($resource['record']);
+        if (!$record) {
+            return false;
+        }
+
+        $row = $resourceTable->createRow();
+        $row->record_id = $resource['record_id'];
+        $row->title = $resource['title'];
+        $row->author = $resource['author'];
+        $row->year = $resource['year'];
+        $row->source = $resource['source'];
+        return $row->save() > 0 ? $row : false;
+    }
+
+    protected function importRecord($record)
+    {
+        $recordTable = $this->getTable('Record');
+        $record = $recordTable->findRecord($record['record_id'], $record['source']);
+
+        if ($record) {
+            return $record;
+        }
+
+        $row = $recordTable->createRow();
+        $row->record_id = $record['record_id'];
+        $row->source = $record['source'];
+        $row->version = $record['version'];
+        $row->data = base64_decode($record['data']);
+        $row->updated = $record['updated'];
+        return $row->save() > 0 ? $row : false;
     }
 
     protected function getSavedSearches($userId)
@@ -1509,6 +1601,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             'author' => $resource->author,
             'year' => $resource->year,
             'source' => $resource->source,
+            'record_id' => $resource->record_id,
             'record' => $this->getRecord($resource->record_id, $resource->source)
         ];
     }
