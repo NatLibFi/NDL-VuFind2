@@ -128,8 +128,8 @@ trait OnlinePaymentControllerTrait
 
         $catalog = $this->getILS();
 
-        // Check if online payment configuration exists for ILS-driver
-        $paymentConfig = $catalog->getConfig('onlinePayment');
+        // Check if online payment configuration exists for the ILS driver
+        $paymentConfig = $catalog->getConfig('onlinePayment', $patron);
         if (empty($paymentConfig)) {
             return;
         }
@@ -140,10 +140,20 @@ trait OnlinePaymentControllerTrait
             return;
         }
 
-        // Check if online payment is enabled for ILS-driver
+        // Check if online payment is enabled for the ILS driver
         if (!$catalog->checkFunction('markFeesAsPaid', $patron)) {
             return;
         }
+
+        // Check that mandatory settings exist
+        if (!isset($paymentConfig['currency'])) {
+            $this->handleError(
+                "Mandatory setting 'currency' missing from ILS driver for"
+                . " '{$patron['source']}'"
+            );
+            return false;
+        }
+
         $payableOnline = $catalog->getOnlinePayableAmount($patron);
 
         // Check if there is a payment in progress
@@ -336,7 +346,7 @@ trait OnlinePaymentControllerTrait
                 = $userTable->select(
                     ['cat_username' => $t['cat_username'], 'id' => $t['user_id']]
                 )->current();
-            
+
             try {
                 $patron = $catalog->patronLogin(
                     $user['cat_username'], $user->getCatPassword()
@@ -394,7 +404,7 @@ trait OnlinePaymentControllerTrait
         }
 
         try {
-            $catalog->markFeesAsPaid($patron, $res['amount']);
+            $catalog->markFeesAsPaid($patron, $res['amount'], $tId);
             if (!$transactionTable->setTransactionRegistered($tId)) {
                 $this->handleError(
                     "Error updating transaction $transactionId status: registered"

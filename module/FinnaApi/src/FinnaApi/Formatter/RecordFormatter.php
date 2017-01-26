@@ -62,18 +62,29 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get extended subject headings
+     * Get extended image information
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
-     * @return array|null
+     * @return array
      */
-    protected function getExtendedSubjectHeadings($record)
+    protected function getExtendedImages($record)
     {
-        $result = $record->getAllSubjectHeadings(true);
-        // Make sure that the record driver returned the additional information and
-        // return data only if it did
-        return $result && isset($result[0]['heading']) ? $result : null;
+        $lang = $this->translator->getLocale();
+        $imageHelper = $this->helperManager->get('recordImage');
+        $recordHelper = $this->helperManager->get('record');
+        $translate = $this->helperManager->get('translate');
+        $images = $imageHelper($recordHelper($record))->getAllImagesAsCoverLinks(
+            $lang, [], false
+        );
+        foreach ($images as &$image) {
+            if (empty($image['rights'])) {
+                $image['rights'] = [
+                    'copyright' => $translate('Image Rights Default')
+                ];
+            }
+        }
+        return $images;
     }
 
     /**

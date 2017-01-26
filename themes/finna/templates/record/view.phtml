@@ -27,8 +27,11 @@
   $this->headMeta()->appendName('format-detection', 'telephone=no');
 
   // Set page title.
-  $dataSource = $this->driver->tryMethod('getDataSource');
-  $headText = $this->driver->getBreadcrumb() . (isset($dataSource) ? ' | ' . $this->transEsc('default::source_'. $dataSource, null, $dataSource) : '');
+  $headText = $this->driver->getBreadcrumb();
+  $organisationName = $this->organisationDisplayName($this->driver);
+  if (!empty($organisationName)) {
+     $headText .= " | $organisationName";
+  }
   $this->headTitle($headText);
 
   // Add map css if necessary:
@@ -157,7 +160,7 @@
   </div>
 
   <div class="col-sm-3 sidebar">
-    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && $this->driver->getRecordType() != 'lido' && $this->driver->getRecordType() != 'ead'): ?>
+    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'ead', 'forward'])): ?>
       <?=$this->render('record/record-organisation-menu.phtml') ?>
     <? endif; ?>
     <? foreach ($this->related()->getList($this->driver) as $current): ?>

@@ -143,34 +143,112 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return an associative array of image URLs associated with this record
-     * (key = URL, value = description).
+     * Return an array of image URLs associated with this record with keys:
+     * - urls        Image URLs
+     *   - small     Small image (mandatory)
+     *   - medium    Medium image (mandatory)
+     *   - large     Large image (optional)
+     * - description Description text
+     * - rights      Rights
+     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
+     *   - description Human readable description (array)
+     *   - link        Link to copyright info
      *
-     * @param string $size Size of requested images
+     * @param string $language Language for copyright information
      *
      * @return array
      */
-    public function getAllThumbnails($size = 'large')
+    public function getAllImages($language = 'fi')
     {
-        $urls = [];
-        $url = '';
+        $result = [];
+        $defaultRights = $this->getImageRights($language, true);
         foreach ($this->getSimpleXML()->xpath(
             '/lidoWrap/lido/administrativeMetadata/'
-            . 'resourceWrap/resourceSet/resourceRepresentation'
-        ) as $node) {
-            if ($node->linkResource) {
-                $attributes = $node->attributes();
-                if (!$attributes->type
-                    || (($size != 'large' && $attributes->type == 'thumb')
-                    || $size == 'large' && $attributes->type == 'large'
-                    || $attributes->type == 'zoomview')
-                ) {
-                    $url = (string)$node->linkResource;
-                    $urls[$url] = '';
+            . 'resourceWrap/resourceSet'
+        ) as $resourceSet) {
+            if (empty($resourceSet->resourceRepresentation->linkResource)) {
+                continue;
+            }
+
+            // Process rights first since we may need to duplicate them if there
+            // are multiple images in the set (non-standard)
+            $rights = [];
+            if (!empty($resourceSet->rightsResource->rightsType->conceptID)) {
+                $conceptID = $resourceSet->rightsResource->rightsType
+                    ->conceptID;
+                $type = strtolower((string)$conceptID->attributes()->type);
+                if ($type == 'copyright') {
+                    $rights['copyright'] = (string)$conceptID;
+                    $link = $this->getRightsLink(
+                        $rights['copyright'], $language
+                    );
+                    if ($link) {
+                        $rights['link'] = $link;
+                    }
                 }
             }
+            if (!empty($resourceSet->rightsResource->rightsType->term)) {
+                $term = (string)$resourceSet->rightsResource->rightsType->term;
+                if (!isset($rights['copyright']) || $rights['copyright'] !== $term) {
+                    $rights['description'][] = $term;
+                }
+            }
+
+            if (empty($rights)) {
+                $rights = $defaultRights;
+            }
+
+            $urls = [];
+            foreach ($resourceSet->resourceRepresentation as $representation) {
+                $attributes = $representation->attributes();
+                $size = '';
+                switch ($attributes->type)
+                {
+                case 'image_thumb':
+                case 'thumb':
+                    $size = 'small';
+                    break;
+                case 'image_master':
+                case 'large':
+                case 'zoomview':
+                    $size = 'large';
+                    break;
+                }
+
+                $url = (string)$representation->linkResource;
+                if (!$size) {
+                    if ($urls) {
+                        // We already have URL's, store them in the results first.
+                        // This shouldn't happen unless there are multiple images
+                        // without type in the same set.
+                        $result[] = [
+                            'urls' => $urls,
+                            'description' => '',
+                            'rights' => $rights
+                        ];
+                    }
+                    $urls['small'] = $urls['medium'] = $urls['large'] = $url;
+                } else {
+                    $urls[$size] = $url;
+                }
+            }
+
+            if (!isset($urls['small'])) {
+                $urls['small'] = isset($urls['medium']) ? $urls['medium']
+                    : $urls['large'];
+            }
+            if (!isset($urls['medium'])) {
+                $urls['medium'] = isset($urls['small']) ? $urls['small']
+                    : $urls['large'];
+            }
+
+            $result[] = [
+                'urls' => $urls,
+                'description' => '',
+                'rights' => $rights
+            ];
         }
-        return $urls;
+        return $result;
     }
 
     /**
@@ -426,7 +504,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Return image rights.
      *
-     * @param string $language Language
+     * @param string $language       Language
+     * @param bool   $skipImageCheck Whether to check that images exist
      *
      * @return mixed array with keys:
      *   'copyright'  Copyright (e.g. 'CC BY 4.0') (optional)
@@ -434,9 +513,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *   'link'       Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language)
+    public function getImageRights($language, $skipImageCheck = false)
     {
-        if (!count($this->getAllThumbnails())) {
+        if (!$skipImageCheck && !$this->getAllImages()) {
             return false;
         }
 

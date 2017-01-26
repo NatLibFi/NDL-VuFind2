@@ -10,7 +10,7 @@
         <div class="cover-wrapper">
           <? /* Display thumbnail if appropriate: */ ?>
           <? if ($img): ?>
-            <?= $img->render('record', ['small' => ['w' => 50, 'h' => 50], 'medium' => ['w' => 1200, 'h' => 1200]]) ?>
+            <?=$img->render('record', ['small' => ['w' => 50, 'h' => 50], 'medium' => ['w' => 1200, 'h' => 1200]]) ?>
           <? endif;?>
           <? /* Display qrcode if appropriate: */ ?>
           <? $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
@@ -18,13 +18,14 @@
             <div class="visible-print inline-block"><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"/></div>
           <? endif; ?>
         </div>
-      <? // if you have a preview tab but want to move or remove the preview link
-         // from this area of the record view, this can be split into
-         // getPreviewData() (should stay here) and
-         // getPreviewLink() (can go in your desired tab) ?>
-      <?=$this->record($this->driver)->getPreviews()?>
+        <? // if you have a preview tab but want to move or remove the preview link
+           // from this area of the record view, this can be split into
+           // getPreviewData() (should stay here) and
+           // getPreviewLink() (can go in your desired tab) ?>
+        <?=$this->record($this->driver)->getPreviews()?>
       </div>
     </div>
+
     <div class="row record-rating">
       <div class="col-xs-12 rating-stars">
         <div onclick="$('a.usercomments').click();">
@@ -602,6 +603,27 @@
           <td>
             <? foreach ($access as $field): ?>
               <?=$this->escapeHtml($field)?><br/>
+            <? endforeach; ?>
+          </td>
+        </tr>
+      <? endif; ?>
+
+      <? if ($terms = $this->driver->tryMethod('getTermsOfUse')): ?>
+        <? $contentDisplayed = true; ?>
+        <tr class="extendedTermsOfUse">
+          <th><?=$this->transEsc('Terms of Use')?>: </th>
+          <td>
+            <? foreach ($terms as $field): ?>
+              <?=!empty($field['material']) ? $this->escapeHtml($field['material']) . ': ' : '' ?>
+              <?=!empty($field['terms']) ? $this->escapeHtml($field['terms']) : '' ?>
+              <? if (!empty($field['url'])): ?>
+                <a href="<?=$this->escapeHtmlAttr($field['url']) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($field['url']) ?>">
+              <? endif; ?>
+              <?=$this->escapeHtml(!empty($field['source']) ? $field['source'] : $this->truncateUrl($field['url'])) ?>
+              <? if (!empty($field['url'])): ?>
+                </a>
+              <? endif; ?>
+              <br/>
             <? endforeach; ?>
           </td>
         </tr>

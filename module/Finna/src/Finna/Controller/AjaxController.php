@@ -587,10 +587,19 @@ class AjaxController extends \VuFind\Controller\AjaxController
                     return $this->output($content, self::STATUS_OK);
                 }
             }
-            if ($summary = $driver->getSummary()) {
-                return $this->output(
-                    implode('<br><br>', $summary), self::STATUS_OK
-                );
+            $language = $this->getServiceLocator()->get('VuFind\Translator')
+                ->getLocale();
+            if ($summary = $driver->getSummary($language)) {
+                $summary = implode('<br><br>', $summary);
+
+                // Replace double hash with a <br>
+                $summary = str_replace('##', '<br>', $summary);
+
+                // Process markdown
+                $summary = $this->getViewRenderer()->plugin('markdown')
+                    ->toHtml($summary);
+
+                return $this->output($summary, self::STATUS_OK);
             }
         }
         return $this->output('', self::STATUS_OK);

@@ -11,9 +11,14 @@ accessRestrictions:
   type: array
   items:
     type: string
+alternativeTitles:
+  vufind.method: getAlternativeTitles
+  description: Alternative titles
+  type: array
+  items:
+    type: string
 authors:
   vufind.method: getDeduplicatedAuthors
-  vufind.default: true
   description: >-
     Deduplicated author information including main, corporate and secondary
     authors
@@ -44,6 +49,13 @@ bibliographyNotes:
   type: array
   items:
     type: string
+buildings:
+  vufind.method: getBuilding
+  vufind.default: true
+  description: Locations (hierarchical)
+  type: array
+  items:
+    $ref: '#/definitions/TranslatedField'
 callNumbers:
   vufind.method: getCallNumbers
   description: Call numbers
@@ -54,6 +66,14 @@ childRecordCount:
   vufind.method: getChildRecordCount
   description: Number of child records
   type: integer
+classifications:
+  vufind.method: getClassifications
+  description: Classifications keyed by source (ykl, udk, nlm etc.)
+  type: array
+  items:
+    type: array
+    items:
+      type: string
 cleanDoi:
   vufind.method: getCleanDOI
   description: First valid DOI
@@ -70,6 +90,12 @@ cleanOclcNumber:
   vufind.method: getCleanOCLCNum
   description: First OCLC number
   type: string
+collections:
+  vufind.method: getCollections
+  description: Collections the record belongs to (used in museum material)
+  type: array
+  items:
+    type: string
 containerEndPage:
   vufind.method: getContainerEndPage
   description: End page in the containing item
@@ -106,10 +132,25 @@ dedupIds:
   type: array
   items:
     type: string
+dissertationNote:
+  vufind.method: getDissertationNote
+  description: Dissertation note
+  type: string
 edition:
   vufind.method: getEdition
   description: Edition
   type: string
+embeddedComponentParts:
+  vufind.method: getEmbeddedComponentParts
+  description: >
+    Embedded component parts (e.g. pieces of music in a recording) -- requesting this
+    may slow down the response and increase the response size significantly
+  type: array
+  items:
+    $ref: '#/definitions/ComponentPart'
+events:
+  vufind.method: getEvents
+  $ref: '#/definitions/Events'
 findingAids:
   vufind.method: getFindingAids
   description: Finding aids
@@ -122,7 +163,7 @@ formats:
   description: Formats
   type: array
   items:
-    type: string
+    $ref: '#/definitions/TranslatedField'
 fullRecord:
   vufind.method: "Formatter::getFullRecord"
   description: Full metadata record (typically XML)
@@ -132,6 +173,12 @@ fullRecord:
 generalNotes:
   vufind.method: getGeneralNotes
   description: General notes
+  type: array
+  items:
+    type: string
+genres:
+  vufind.method: getGenres
+  description: Genres
   type: array
   items:
     type: string
@@ -182,15 +229,52 @@ id:
   vufind.default: true
   description: Record unique ID (can be used in the record endpoint)
   type: string
-institutions:
-  vufind.method: getInstitutions
-  description: Institutions the record belongs to
+identifierString:
+  vufind.method: "Formatter::getIdentifier"
+  description: >
+    Record identifier (e.g. inventory ID in museum material) -- not guaranteed to be
+    unique
+  type: string
+imageRights:
+  vufind.method: "Formatter::getImageRights"
+  vufind.default: true
+  description: Image rights
+  type: object
+  properties:
+    copyright:
+      description: License type
+      type: string
+    link:
+      description: Link to license
+      type: string
+    description:
+      description: Description text
+      type: string
+images:
+  vufind.method: "Formatter::getImages"
+  vufind.default: true
+  description: >
+    Links to record images without the domain name -- prepend with the correct
+    domain
   type: array
   items:
     type: string
+imagesExtended:
+  vufind.method: "Formatter::getExtendedImages"
+  description: >
+    Record images, their descriptions and rights
+  type: array
+  items:
+    $ref: '#/definitions/Image'
+institutions:
+  vufind.method: "Formatter::getInstitutions"
+  description: Institutions the record belongs to (see also **buildings**)
+  type: array
+  items:
+    $ref: '#/definitions/TranslatedField'
 isbns:
   vufind.method: getISBNs
-  description: ISBNs
+  description: ISBNs (see also **cleanIsbn**)
   type: array
   items:
     type: string
@@ -198,9 +282,17 @@ isCollection:
   vufind.method: isCollection
   description: Whether the record is a collection node in a hierarchy
   type: boolean
+isDigitized:
+  vufind.method: isDigitized
+  description: Whether the record is digitized
+  type: boolean
+isPartOfArchiveSeries:
+  vufind.method: isPartOfArchiveSeries
+  description: Whether the record is part of an archive series
+  type: boolean
 issns:
   vufind.method: getISSNs
-  description: ISSNs
+  description: ISSNs (see also **cleanIssn**)
   type: array
   items:
     type: string
@@ -217,25 +309,67 @@ lccn:
   type: array
   items:
     type: string
+manufacturer:
+  vufind.method: getManufacturer
+  description: manufacturer
+  type: string
+measurements:
+  vufind.method: getMeasurements
+  description: Physical measurements
+  type: array
+  items:
+    type: string
 newerTitles:
   vufind.method: getNewerTitles
   description: Successor titles
   type: array
   items:
     type: string
+nonPresenterAuthors:
+  vufind.method: getNonPresenterAuthors
+  vufind.default: true
+  description: Non-presenter authors
+  type: array
+  items:
+    $ref: '#/definitions/AuthorWithRoleAndDate'
 oclc:
   vufind.method: getOCLC
   description: OCLC numbers
   type: array
   items:
     type: string
+onlineUrls:
+  vufind.method: "Formatter::getOnlineURLs"
+  vufind.default: true
+  description: "Online links"
+  type: array
+  items:
+    $ref: '#/definitions/OnlineLink'
 openUrl:
   vufind.method: getOpenUrl
   description: OpenURL
   type: string
+originalLanguages:
+  vufind.method: getOriginalLanguages
+  description: Original languages (see also **languages**)
+  type: array
+  items:
+    type: string
+otherLinks:
+  vufind.method: getOtherLinks
+  description: Other links between records
+  type: array
+  items:
+    $ref: '#/definitions/OtherRecordLink'
 physicalDescriptions:
   vufind.method: getPhysicalDescriptions
   description: Physical dimensions etc.
+  type: array
+  items:
+    type: string
+physicalLocations:
+  vufind.method: getPhysicalLocations
+  description: Physical locations (archive material)
   type: array
   items:
     type: string
@@ -251,6 +385,13 @@ playingTimes:
   type: array
   items:
     type: string
+presenters:
+  vufind.method: getPresenters
+  vufind.default: true
+  description: Presenters
+  type: array
+  items:
+    $ref: '#/definitions/AuthorWithRoleAndDate'
 previousTitles:
   vufind.method: getPreviousTitles
   description: Predecessor titles
@@ -269,9 +410,27 @@ productionCredits:
   type: array
   items:
     type: string
+projectedPublicationDate:
+  vufind.method: getProjectedPublicationDate
+  description: Projected (estimated) publication date
+  type: string
 publicationDates:
   vufind.method: getPublicationDates
   description: Publication dates
+  type: array
+  items:
+    type: string
+publicationEndDate:
+  vufind.method: getPublicationEndDate
+  description: End date of publication (continuing publication often marked as 9999)
+  type: string
+publicationFrequency:
+  vufind.method: getPublicationFrequency
+  description: Publication frequency
+  type: string
+publicationInfo:
+  vufind.method: getPublicationInfo
+  description: Publication information
   type: array
   items:
     type: string
@@ -281,12 +440,16 @@ publishers:
   type: array
   items:
     type: string
+rating:
+  vufind.method: getAverageRating
+  vufind.default: true
+  $ref: '#/definitions/AverageRating'
 rawData:
   vufind.method: "Formatter::getRawData"
   description: All data in the index fields
   type: string
 recordLinks:
-  vufind.method: getAllRecordLinks
+  vufind.method: "Formatter::getRecordLinks"
   description: Links to other related records
   type: array
   items:
@@ -307,6 +470,12 @@ secondaryAuthors:
   type: array
   items:
     type: string
+sectors:
+  vufind.method: "Formatter::getSectors"
+  description: Record sector (archive, museum, library and library sector)
+  type: array
+  items:
+    $ref: '#/definitions/TranslatedField'
 series:
   vufind.method: getSeries
   vufind.default: true
@@ -314,20 +483,28 @@ series:
   type: array
   items:
     type: string
+sfxObjectId:
+  vufind.method: "getSfxObjectId"
+  description: ID of the record in SFX (only for records from SFX)
+  type: string
 shortTitle:
   vufind.method: getShortTitle
   description: Short title (title excluding any subtitle)
   type: string
+source:
+  vufind.method: "Formatter::getSource"
+  description: Record source
+  type: array
+  items:
+    $ref: '#/definitions/TranslatedField'
 subjects:
   vufind.method: getAllSubjectHeadings
   vufind.default: true
-  description: >
+  description:  >
     Subject headings as an array from the least specific to the most specific
   type: array
   items:
-    type: array
-    items:
-      type: string
+    type: string
 subjectsExtended:
   vufind.method: "Formatter::getExtendedSubjectHeadings"
   description: Subject headings with type and source information
@@ -375,6 +552,16 @@ toc:
   type: array
   items:
     type: string
+uniformTitles:
+  vufind.method: getUniformTitles
+  description: Uniform titles
+  type: array
+  items:
+    type: string
+unitId:
+  vufind.method: getUnitID
+  description: Archival unit ID
+  type: string
 urls:
   vufind.method: "Formatter::getURLs"
   vufind.default: true
@@ -382,3 +569,8 @@ urls:
   type: array
   items:
     $ref: '#/definitions/Url'
+year:
+  vufind.method: getYear
+  description: >
+    Main year (publication, production etc.) -- used also in main_date_str facet
+  type: string

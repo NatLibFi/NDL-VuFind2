@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2016-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -164,12 +164,12 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getAllSubjectHeadings($extended)
+    public function getAllSubjectHeadings($extended = false)
     {
         $results = [];
         foreach ($this->getRecordXML()->SubjectTerms as $subjectTerms) {
             foreach ($subjectTerms->Term as $term) {
-                if ($extended) {
+                if (!$extended) {
                     $results[] = [$term];
                 } else {
                     $results[] = [
@@ -184,31 +184,54 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return an associative array of image URLs associated with this record
-     * (key = URL, value = description).
+     * Return an array of image URLs associated with this record with keys:
+     * - url         Image URL
+     * - description Description text
+     * - rights      Rights
+     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
+     *   - description Human readable description (array)
+     *   - link        Link to copyright info
      *
-     * @param string $size Size of requested images
+     * @param string $language Language for copyright information
      *
      * @return array
      */
-    public function getAllThumbnails($size = 'large')
+    public function getAllImages($language = 'fi')
     {
         $images = [];
 
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
                 $attributes = $event->ProductionEventType->attributes();
-                if (!empty($attributes{'elokuva-elonet-materiaali-kuva-url'})) {
-                    $url = (string)$attributes{'elokuva-elonet-materiaali-kuva-url'};
-                    if (!empty($xml->Title->PartDesignation->Value)) {
-                        $attributes = $xml->Title->PartDesignation->Value
-                            ->attributes();
-                        $desc = (string)$attributes{'kuva-kuvateksti'};
-                    } else {
-                        $desc = '';
-                    }
-                    $images[$url] = $desc;
+                if (empty($attributes{'elokuva-elonet-materiaali-kuva-url'})) {
+                    continue;
                 }
+                $url = (string)$attributes{'elokuva-elonet-materiaali-kuva-url'};
+                if (!empty($xml->Title->PartDesignation->Value)) {
+                    $partAttrs = $xml->Title->PartDesignation->Value->attributes();
+                    $desc = (string)$partAttrs{'kuva-kuvateksti'};
+                } else {
+                    $desc = '';
+                }
+                $rights = [];
+                if (!empty($attributes{'finna-kayttooikeus'})) {
+                    $rights['copyright'] = (string)$attributes{'finna-kayttooikeus'};
+                    $link = $this->getRightsLink(
+                        strtoupper($rights['copyright']), $language
+                    );
+                    if ($link) {
+                        $rights['link'] = $link;
+                    }
+                }
+                $images[] = [
+                    'urls' => [
+                        'small' => $url,
+                        'medium' => $url,
+                        'large' => $url
+                    ],
+                    'description' => $desc,
+                    'rights' => $rights
+                ];
             }
         }
         return $images;
@@ -274,7 +297,29 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAlternativeTitles()
     {
-        return isset($this->fields['title_alt']) ? $this->fields['title_alt'] : [];
+        $xml = $this->getRecordXML();
+        $identifyingTitle = (string)$xml->IdentifyingTitle;
+        $result = [];
+        foreach ($xml->Title as $title) {
+            $titleText = (string)$title->TitleText;
+            if ($titleText == $identifyingTitle) {
+                continue;
+            }
+            $rel = $title->TitleRelationship;
+            if ($rel && (string)$rel == 'translated') {
+                $lang = $title->TitleText->attributes()->lang;
+                if ($lang) {
+                    $lang = $this->translate($lang);
+                    $titleText .= " ($lang)";
+                }
+            } elseif ($rel
+                && $type = $rel->attributes()->{'elokuva-elonimi-tyyppi'}
+            ) {
+                $titleText .= " ($type)";
+            }
+            $result[] = $titleText;
+        }
+        return $result;
     }
 
     /**
@@ -369,9 +414,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         list($locale) = explode('-', $this->getTranslatorLocale());
 
-        $result = $this->getDescriptionData('Synopsis', $locale);
+        $result = $this->getDescriptionData('Content description', $locale);
         if (empty($result)) {
-            $result = $this->getDescriptionData('Synopsis');
+            $result = $this->getDescriptionData('Content description');
         }
         return $result;
     }
@@ -425,25 +470,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return image description.
-     *
-     * @param int $index Image index
-     *
-     * @return string
-     */
-    public function getImageDescription($index = 0)
-    {
-        $images = array_values($this->getAllThumbnails());
-        if (!empty($images[$index])) {
-            return $images[$index];
-        }
-        return '';
-    }
-
-    /**
      * Return image rights.
      *
-     * @param string $language Language
+     * @param string $language       Language
+     * @param bool   $skipImageCheck Whether to check that images exist
      *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0') (optional)
@@ -451,9 +481,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      *   'link'        Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language)
+    public function getImageRights($language, $skipImageCheck = false)
     {
-        if (!$this->getAllThumbnails()) {
+        if (!$skipImageCheck && !$this->getAllImages()) {
             return false;
         }
 
@@ -597,9 +627,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         list($locale) = explode('-', $this->getTranslatorLocale());
 
-        $result = $this->getDescriptionData('Content description', $locale);
+        $result = $this->getDescriptionData('Synopsis', $locale);
         if (empty($result)) {
-            $result = $this->getDescriptionData('Content description');
+            $result = $this->getDescriptionData('Synopsis');
         }
         return $result;
     }
@@ -689,12 +719,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $result = [];
         $xml = $this->getRecordXML();
+        $idx = 0;
         foreach ($xml->HasAgent as $agent) {
             $relator = (string)$agent->Activity;
             if (!in_array($relator, $relators)) {
                 continue;
             }
             $normalizedRelator = mb_strtoupper($relator, 'UTF-8');
+            $primary = $normalizedRelator == 'D02'; // Director
             $role = isset($this->roleMap[$normalizedRelator])
                     ? $this->roleMap[$normalizedRelator] : $relator;
 
@@ -739,13 +771,24 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $name = (string)$nameAttrs->{'elokuva-elokreditoimatontekija-nimi'};
             }
 
+            ++$idx;
             $result[] = [
                 'name' => $name,
                 'role' => $role,
                 'roleName' => $roleName,
-                'uncredited' => $uncredited
+                'uncredited' => $uncredited,
+                'idx' => $primary ? $idx : 10000 * $idx
             ];
         }
+
+        // Sort the primary authors first using the idx
+        usort(
+            $result,
+            function ($a, $b) {
+                return $a['idx'] - $b['idx'];
+            }
+        );
+
         return $result;
     }
 

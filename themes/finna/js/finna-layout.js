@@ -153,14 +153,14 @@ finna.layout = (function() {
               $(this).hide();
               $(this).next('.less-link').show();
               $(this).prev('.truncate-field').css('height', 'auto');
-              notifyTruncateChange($(this));
+              notifyTruncateChange(self);
             });
 
             self.nextAll('.less-link').first().click(function(event) {
               $(this).hide();
               $(this).prev('.more-link').show();
               $(this).prevAll('.truncate-field').first().css('height', truncation[index]-1+'px');
-              notifyTruncateChange($(this));
+              notifyTruncateChange(self);
             });
             self.addClass('truncated');
           }
@@ -464,13 +464,18 @@ finna.layout = (function() {
     };
 
     var initImageCheck = function() {
-        $(".image-popup-trigger img").each(function() {
-            $(this).one("load",function() {
-
+        $('.image-popup-trigger img').each(function() {
+            $(this).one('load',function() {
+                // Don't hide anything if we have multiple images
+                var navi = $(this).closest('.image-popup-navi');
+                if (navi && navi.length > 1) {
+                    return;
+                }
                 if (this.naturalWidth && this.naturalWidth == 10 && this.naturalHeight == 10) {
                     $(this).parent().addClass('no-image');
                     $(this).parents('.grid').addClass('no-image');
                     $('.rating-stars').addClass('hidden-xs');
+                    $(this).parents('.record-image-container').find('.image-text-container').addClass('hidden');
                 }
             }).each(function() {
                 if (this.complete) {

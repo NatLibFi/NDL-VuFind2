@@ -49,7 +49,16 @@ finna.imagePopup = (function(finna) {
             var trigger = $(this).closest('.recordcover-holder').find('.image-popup-trigger');
             trigger.data('ind', $(this).data('ind'));
             trigger.data('thumbInd', $(this).data('thumbInd'));
-            trigger.find('img').attr('src', $(this).attr('href'));
+            // Temporarily adjust the image so that the user sees something is happening
+            var img = trigger.find('img');
+            img.css('opacity', 0.5);
+            img.one('load', function() {
+                img.css('opacity', '');
+            });
+            img.attr('src', $(this).attr('href'));
+            var textContainers = $(this).closest('.record-image-container').find('.image-text-container');
+            textContainers.addClass('hidden');
+            textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
         });
 
         // Open image-popup from medium size record image.
@@ -215,7 +224,7 @@ finna.imagePopup = (function(finna) {
                             finna.layout.initTruncate(summaryHolder);
                             summaryHolder.removeClass('loading');
                         }
-                        
+
                         // Init embedding
                         finna.layout.initIframeEmbed(popup);
                     },
@@ -235,17 +244,22 @@ finna.imagePopup = (function(finna) {
     };
 
     var resolveRecordImageSize = function() {
-        $(".image-popup-trigger img").one('load', function() {
-            if (this.naturalWidth > 10 && this.naturalHeight > 10) {
-                initThumbnailNavi();
-                initRecordImage();
-            } else {
-                $(this).closest('a.image-popup-trigger')
-                    .addClass('disable')
-                    .unbind('click').on('click', function() { return false; }
-                );
-            }
-        });
+        if ($('.image-popup-navi').length > 1) {
+            initThumbnailNavi();
+            initRecordImage();
+        } else {
+            $('.image-popup-trigger img').one('load', function() {
+                if (this.naturalWidth > 10 && this.naturalHeight > 10) {
+                    initThumbnailNavi();
+                    initRecordImage();
+                } else {
+                    $(this).closest('a.image-popup-trigger')
+                        .addClass('disable')
+                        .unbind('click').on('click', function() { return false; }
+                    );
+                }
+            });
+        }
     };
 
     var initDimensions = function() {
@@ -262,7 +276,7 @@ finna.imagePopup = (function(finna) {
             }
         }
     };
-    
+
     var init = function() {
         if (module != 'record') {
             initThumbnailNavi();
@@ -275,13 +289,12 @@ finna.imagePopup = (function(finna) {
             openPopup($('.image-popup-trigger'));
         }
         $.extend(true, $.magnificPopup.defaults, {
-            
             tLoading: VuFind.translate('loading') + '...'
         });
     };
-    
+
     var my = {
-        init: init    
+        init: init
     };
 
     return my;

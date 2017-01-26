@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2014.
+ * Copyright (C) The National Library of Finland 2014-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -46,6 +46,23 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      * @var \Zend\Config\Config
      */
     protected $datasourceConfig;
+
+    /**
+     * Fields that may contain subject headings, and their descriptions
+     *
+     * @var array
+     */
+    protected $subjectFields = [
+        '600' => 'personal name',
+        '610' => 'corporate name',
+        '611' => 'meeting name',
+        '630' => 'uniform title',
+        '648' => 'chronological',
+        '650' => 'topic',
+        '651' => 'geographic',
+        '653' => '',
+        '656' => 'occupation'
+    ];
 
     /**
      * Constructor
@@ -141,111 +158,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get all subject headings associated with this record.  Each heading is
-     * returned as an array of chunks, increasing from least specific to most
-     * specific.
+     * Return an array of image URLs associated with this record with keys:
+     * - urls        Image URLs
+     *   - small     Small image (mandatory)
+     *   - medium    Medium image (mandatory)
+     *   - large     Large image (optional)
+     * - description Description text
+     * - rights      Rights
+     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
+     *   - description Human readable description (array)
+     *   - link        Link to copyright info
      *
-     * @param bool $extended Whether to return a keyed array with the following
-     * keys:
-     * - heading: the actual subject heading
-     * - type: heading type
-     * - source: source vocabulary
-     *
-     * @return array
-     */
-    public function getAllSubjectHeadings($extended = false)
-    {
-        // These are the fields that may contain subject headings:
-        $fields = [
-            '600' => 'personal name',
-            '610' => 'corporate name',
-            '611' => 'meeting name',
-            '630' => 'uniform title',
-            '648' => 'chronological term',
-            '650' => 'topical term',
-            '651' => 'geographic term',
-            '653' => '',
-            '656' => 'occupation'
-        ];
-
-        // This is all the collected data:
-        $retval = [];
-
-        // Try each MARC field one at a time:
-        foreach ($fields as $field => $fieldType) {
-            // Do we have any results for the current field?  If not, try the next.
-            $results = $this->getMarcRecord()->getFields($field);
-            if (!$results) {
-                continue;
-            }
-
-            // If we got here, we found results -- let's loop through them.
-            foreach ($results as $result) {
-                // Start an array for holding the chunks of the current heading:
-                $current = [];
-
-                // Get all the chunks and collect them together:
-                $subfields = $result->getSubfields();
-                if ($subfields) {
-                    foreach ($subfields as $subfield) {
-                        // Numeric subfields are for control purposes and should not
-                        // be displayed:
-                        if (!is_numeric($subfield->getCode())) {
-                            $current[] = $subfield->getData();
-                        }
-                    }
-                    // If we found at least one chunk, add a heading to our result:
-                    if (!empty($current)) {
-                        if ($extended) {
-                            $sources = [
-                                '0' => 'lcsh',
-                                '1' => 'lcshac',
-                                '2' => 'mesh',
-                                '3' => 'nal',
-                                '4' => 'unknown',
-                                '5' => 'cash',
-                                '6' => 'rvm'
-                            ];
-                            $sourceIndicator = $result->getIndicator(2);
-                            $source = '';
-                            if (isset($sources[$sourceIndicator])) {
-                                $source = $sources[$sourceIndicator];
-                            } else {
-                                $source = $result->getSubfield('2');
-                                if ($source) {
-                                    $source = $source->getData();
-                                }
-                            }
-                            $retval[] = [
-                                'heading' => $current,
-                                'type' => $fieldType,
-                                'source' => $source ?: 'unknown'
-                            ];
-                        } else {
-                            $retval[] = $current;
-                        }
-                    }
-                }
-            }
-        }
-
-        // Send back everything we collected:
-        return $retval;
-    }
-
-    /**
-     * Return an associative array of image URLs associated with this record
-     * (key = URL, value = description).
-     *
-     * @param string $size Size of requested images
+     * @param string $language Language for copyright information
      *
      * @return array
      */
-    public function getAllThumbnails($size = 'large')
+    public function getAllImages($language = 'fi')
     {
-        $urls = [];
-        $url = '';
-        $type = '';
+        $result = [];
         foreach ($this->getMarcRecord()->getFields('856') as $url) {
             $type = $url->getSubfield('q');
             if ($type) {
@@ -254,12 +184,20 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     $address = $url->getSubfield('u');
                     if ($address && $this->urlAllowed($address->getData())) {
                         $address = $address->getData();
-                        $urls[$address] = '';
+                        $result[] = [
+                            'urls' => [
+                                'small' => $address,
+                                'medium' => $address,
+                                'large' => $address
+                            ],
+                            'description' => '',
+                            'rights' => []
+                        ];
                     }
                 }
             }
         }
-        return $urls;
+        return $result;
     }
 
     /**
@@ -945,11 +883,100 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $field001 = $this->getMarcRecord()->getField('001');
         $id = $field001 ? $field001->getData() : '';
         $field090 = $this->getMarcRecord()->getField('090');
-        $objectId = $field090 ? $field090->getSubfield('a')->getData() : '';
+        $objectId = $field090 ? $field090->getSubfield('a') : '';
+        if ($objectId) {
+            $objectId = $objectId->getData();
+        }
         if ($id == $objectId) {
             return $objectId;
         }
         return '';
+    }
+
+    /**
+     * Get an array of summary strings for the record.
+     *
+     * @param string $language Language to return, if available
+     *
+     * @return array
+     */
+    public function getSummary($language = '')
+    {
+        $languageMappings = ['fin' => 'fi', 'swe' => 'sv', 'eng' => 'en-gb'];
+        $languages = [];
+        $marc = $this->getMarcRecord();
+        foreach ($marc->getFields('886') as $field) {
+            $scope = $field->getSubfield('2');
+            if (!$scope || 'local' !== $scope->getData()) {
+                continue;
+            }
+            $item = $field->getSubfield('a');
+            if (!$item
+                || !in_array($item->getData(), ['kieli', 'språk', 'language'])
+            ) {
+                continue;
+            }
+            $link = $field->getSubfield('8');
+            $lng = $field->getSubfield('l');
+            if ($link && $lng) {
+                $lng = $lng->getData();
+                if (isset($languageMappings[$lng])) {
+                    $lng = $languageMappings[$lng];
+                }
+                $languages[$link->getData()] = $lng;
+            }
+        }
+        $summaries = [];
+        foreach ($marc->getFields('520') as $field) {
+            $summary = $field->getSubfield('a');
+            if (!$summary) {
+                continue;
+            }
+            $link = $field->getSubfield('8');
+            if ($link) {
+                $link = $link->getData();
+            }
+            $lng = $link && isset($languages[$link]) ? $languages[$link] : '-';
+            $summaries[$lng][] = $summary->getData();
+        }
+        if ($language && isset($summaries[$language])) {
+            return $summaries[$language];
+        }
+        $result = [];
+        foreach ($summaries as $languageSummaries) {
+            $result = array_merge($result, $languageSummaries);
+        }
+        return $result;
+    }
+
+    /**
+     * Return terms governing use and reproduction as an array with the following
+     * keys:
+     * - material  Part of the material to which the field applies
+     * - terms     Terms as text
+     * - source    Source of authority for the restriction
+     * - url       URL to terms
+     *
+     * @return string
+     */
+    public function getTermsOfUse()
+    {
+        $result = [];
+        foreach ($this->getMarcRecord()->getFields('540') as $field) {
+            $material = $field->getSubfield('3');
+            $terms = $field->getSubfield('a');
+            $source = $field->getSubfield('c');
+            $url = $field->getSubfield('u');
+            if ($terms || $source || $url) {
+                $result[] = [
+                    'material' => $material ? $material->getData() : '',
+                    'terms' => $terms ? $terms->getData() : '',
+                    'source' => $source ? $source->getData() : '',
+                    'url' => $url ? $url->getData() : ''
+                ];
+            }
+        }
+        return $result;
     }
 
     /**
