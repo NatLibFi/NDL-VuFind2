@@ -526,6 +526,18 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get use restriction
+     *
+     * @return string
+     */
+    public function getUseRestriction()
+    {
+        $record = $this->getSimpleXML();
+        return isset($record->userestrict)
+            ? (string)$record->userestrict->p : '';
+    }
+
+    /**
      * Get the original record as a SimpleXML object
      *
      * @return SimpleXMLElement The record as SimpleXML
