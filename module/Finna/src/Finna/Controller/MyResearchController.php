@@ -830,6 +830,25 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         return $view;
     }
 
+    public function exportAction()
+    {
+        $response = $this->getResponse();
+        $response->setContent('foo');
+
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', 'application/json')
+            ->addHeaderLine('Content-Disposition', 'attachment; filename="foo.txt"')
+            ->addHeaderLine('Content-Length', strlen('foo'));
+
+        return $this->response;
+    }
+
+    public function importAction()
+    {
+        $view = $this->createViewModel();
+        return $view;
+    }
+
     /**
      * Add account blocks to the flash messenger as errors.
      *
