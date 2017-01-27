@@ -1374,8 +1374,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
     {
         $USER_ID = 2;
         $result = [
-            'searches' => $this->getSavedSearches($USER_ID),
-            'lists' => $this->getUserLists($USER_ID)
+            'searches' => $this->exportSavedSearches($USER_ID),
+            'lists' => $this->exportUserLists($USER_ID)
         ];
         return $this->output($result, self::STATUS_OK);
     }
@@ -1407,7 +1407,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
     protected function importSearches($searches, $userId)
     {
         $searchTable = $this->getTable('Search');
-        $rowsAdded = 0;
+        $searchCount = 0;
 
         foreach ($searches as $search) {
             // TODO: is this correct way of doing this?
@@ -1431,18 +1431,18 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $row->finna_schedule_base_url = $search['finna_schedule_base_url'];
 
             if ($row->save() > 0) {
-                $rowsAdded++;
+                $searchCount++;
             }
         }
 
-        return $rowsAdded;
+        return $searchCount;
     }
 
     protected function importLists($lists, $userId)
     {
         $userListTable = $this->getTable('UserList');
-        $rowsAdded = 0;
-        $userResourcesAdded = 0;
+        $userListCount = 0;
+        $userResourceCount = 0;
 
         foreach ($lists as $list) {
             $existingList = $userListTable->getByTitle($userId, $list['title']);
@@ -1457,19 +1457,20 @@ class AjaxController extends \VuFind\Controller\AjaxController
             if ($row->save() > 0) {
                 $newResources = $this->importUserResources(
                     $list['resources'],
-                    $userId, $row->id
+                    $userId,
+                    $row->id
                 );
-                $userResourcesAdded += $newResources;
+                $userResourceCount += $newResources;
 
                 if (!$existingList) {
-                    $rowsAdded++;
+                    $userListCount++;
                 }
             }
         }
 
         return [
-            'userLists' => $rowsAdded,
-            'userResources' => $userResourcesAdded
+            'userLists' => $userListCount,
+            'userResources' => $userResourceCount
         ];
     }
 
@@ -1552,7 +1553,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         return $row->save() > 0 ? $row : false;
     }
 
-    protected function getSavedSearches($userId)
+    protected function exportSavedSearches($userId)
     {
         $savedSearches = $this->getTable('Search')->getSavedSearches($userId);
         $searches = [];
@@ -1573,7 +1574,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         return $searches;
     }
 
-    protected function getUserLists($userId)
+    protected function exportUserLists($userId)
     {
         $userLists = $this->getTable('UserList')->getByUserId($userId);
         $lists = [];
@@ -1585,20 +1586,20 @@ class AjaxController extends \VuFind\Controller\AjaxController
                 'created' => $list->created,
                 'public' => $list->public,
                 'finna_updated' => $list->finna_updated,
-                'resources' => $this->getUserListResources($list->id)
+                'resources' => $this->exportUserListResources($list->id)
             ];
         }
 
         return $lists;
     }
 
-    protected function getUserListResources($listId)
+    protected function exportUserListResources($listId)
     {
-        $listResources = $this->getTable('UserResource')->getByListId($listId);
+        $userListResources = $this->getTable('UserResource')->getByListId($listId);
         $resources = [];
 
-        foreach ($listResources as $resource) {
-            $resourceData = $this->getResource($resource->resource_id);
+        foreach ($userListResources as $resource) {
+            $resourceData = $this->exportResource($resource->resource_id);
 
             if (!$resourceData) {
                 continue;
@@ -1616,7 +1617,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         return $resources;
     }
 
-    protected function getResource($resourceId)
+    protected function exportResource($resourceId)
     {
         $resource = $this->getTable('Resource')->getById($resourceId);
 
@@ -1624,7 +1625,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             return false;
         }
 
-        $record = $this->getRecord($resource->record_id, $resource->source);
+        $record = $this->exportRecord($resource->record_id, $resource->source);
 
         if (!$record) {
             return false;
@@ -1636,11 +1637,11 @@ class AjaxController extends \VuFind\Controller\AjaxController
             'year' => $resource->year,
             'source' => $resource->source,
             'record_id' => $resource->record_id,
-            'record' => $this->getRecord($resource->record_id, $resource->source)
+            'record' => $record
         ];
     }
 
-    protected function getRecord($recordId, $source)
+    protected function exportRecord($recordId, $source)
     {
         $record = $this->getTable('Record')->findRecord($recordId, $source);
 
