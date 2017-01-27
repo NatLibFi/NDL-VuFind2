@@ -1397,7 +1397,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $listsAdded = $this->importLists($data['data']['lists'], $USER_ID);
         $result = [
             'searchesAdded' => $searchesAdded,
-            'listsAdded' => $listsAdded
+            'listsAdded' => $listsAdded['userLists'],
+            'resourcesAdded' => $listsAdded['userResources']
         ];
 
         return $this->output($result, self::STATUS_OK);
@@ -1409,6 +1410,14 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $rowsAdded = 0;
 
         foreach ($searches as $search) {
+            // TODO: is this correct way of doing this?
+            $savedSearches = $searchTable->getByChecksum(
+                $userId, $search['checksum']
+            );
+            if ($savedSearches->count() > 0) {
+                continue;
+            }
+
             $row = $searchTable->createRow();
             $row->user_id = $userId;
             $row->folder_id = $search['folder_id'];
@@ -1433,9 +1442,11 @@ class AjaxController extends \VuFind\Controller\AjaxController
     {
         $userListTable = $this->getTable('UserList');
         $rowsAdded = 0;
+        $userResourcesAdded = 0;
 
         foreach ($lists as $list) {
-            $row = $userListTable->createRow();
+            $existingList = $userListTable->getByTitle($userId, $list['title']);
+            $row = $existingList ? $existingList : $userListTable->createRow();
             $row->user_id = $userId;
             $row->title = $list['title'];
             $row->description = $list['description'];
@@ -1444,19 +1455,36 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $row->finna_updated = $list['finna_updated'];
 
             if ($row->save() > 0) {
-                $this->importUserResources($list['resources'], $userId, $row->id);
-                $rowsAdded++;
+                $newResources = $this->importUserResources(
+                    $list['resources'],
+                    $userId, $row->id
+                );
+                $userResourcesAdded += $newResources;
+
+                if (!$existingList) {
+                    $rowsAdded++;
+                }
             }
         }
 
-        return $rowsAdded;
+        return [
+            'userLists' => $rowsAdded,
+            'userResources' => $userResourcesAdded
+        ];
     }
 
     protected function importUserResources($resources, $userId, $listId)
     {
         $userResourceTable = $this->getTable('UserResource');
+        $rowsAdded = 0;
 
         foreach ($resources as $userResource) {
+            if ($userResourceTable->resourceInList(
+                $userResource['resource_id'], $listId
+            )) {
+                continue;
+            }
+
             $resource = $this->importResource($userResource['resource']);
             if (!$resource) {
                 continue;
@@ -1470,8 +1498,13 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $row->saved = $userResource['saved'];
             $row->finna_custom_order_index
                 = $userResource['finna_custom_order_index'];
-            $row->save();
+
+            if ($row->save() > 0) {
+                $rowsAdded++;
+            }
         }
+
+        return $rowsAdded;
     }
 
     protected function importResource($resource)
@@ -1572,6 +1605,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             }
 
             $resources[] = [
+                'resource_id' => $resource->resource_id,
                 'notes' => $resource->notes,
                 'saved' => $resource->saved,
                 'finna_custom_order_index' => $resource->finna_custom_order_index,

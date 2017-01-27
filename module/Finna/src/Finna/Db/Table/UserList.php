@@ -64,4 +64,16 @@ class UserList extends \VuFind\Db\Table\UserList
         };
         return $this->select($callback);
     }
+
+    public function getByTitle($userId, $title)
+    {
+        if (!is_numeric($userId)) {
+            return false;
+        }
+
+        $callback = function ($select) use ($userId, $title) {
+            $select->where->equalTo('user_id', $userId)->equalTo('title', $title);
+        };
+        return $this->select($callback)->current();
+    }
 }

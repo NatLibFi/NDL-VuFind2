@@ -106,4 +106,12 @@ class Search extends \VuFind\Db\Table\Search
         };
         return $this->select($callback);
     }
+
+    public function getByChecksum($uid, $checksum)
+    {
+        $callback = function ($select) use ($uid, $checksum) {
+            $select->where->equalTo('user_id', $uid)->equalTo('checksum', $checksum);
+        };
+        return $this->select($callback);
+    }
 }
