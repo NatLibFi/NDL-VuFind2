@@ -832,13 +832,25 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
     public function exportAction()
     {
-        $response = $this->getResponse();
-        $response->setContent('foo');
+        $user = $this->getUser();
+        if (!$user || !is_object($user)) {
+            // TODO: handle the case if user is not logged in.
+            return;
+        }
 
+        $exportData = [
+            'searches' => $this->exportSavedSearches($user->id),
+        ];
+        $json = json_encode($exportData);
+
+        $response = $this->getResponse();
+        $response->setContent($json);
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-Type', 'application/json')
-            ->addHeaderLine('Content-Disposition', 'attachment; filename="foo.txt"')
-            ->addHeaderLine('Content-Length', strlen('foo'));
+            ->addHeaderLine(
+                'Content-Disposition', 'attachment; filename="finna-export.json"'
+            )
+            ->addHeaderLine('Content-Length', strlen($json));
 
         return $this->response;
     }
@@ -1086,4 +1098,31 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         );
     }
 
+    /**
+     * Exports user's saved searches into an array.
+     *
+     * @param int $userId User id
+     *
+     * @return array Saved searches
+     */
+    protected function exportSavedSearches($userId)
+    {
+        $savedSearches = $this->getTable('Search')->getSavedSearches($userId);
+        $searches = [];
+
+        foreach ($savedSearches as $search) {
+            $searches[] = [
+                'folder_id' => $search->folder_id,
+                'created' => $search->created,
+                'title' => $search->title,
+                'search_object' => base64_encode($search->search_object),
+                'checksum' => $search->checksum,
+                'finna_schedule' => $search->finna_schedule,
+                'finna_last_executed' => $search->finna_last_executed,
+                'finna_schedule_base_url' => $search->finna_schedule_base_url
+            ];
+        }
+
+        return $searches;
+    }
 }
