@@ -1406,29 +1406,30 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
     protected function importSearches($searches, $userId)
     {
-        $searchTable = $this->getTable('Search');
         $searchCount = 0;
+        $searchTable = $this->getTable('Search');
+        $sessId = $this->getServiceLocator()->get('VuFind\SessionManager')->getId();
 
         foreach ($searches as $search) {
-            // TODO: is this correct way of doing this?
-            $savedSearches = $searchTable->getByChecksum(
-                $userId, $search['checksum']
+            $minifiedSO = unserialize(base64_decode($search['search_object']));
+            $row = $searchTable->saveSearch(
+                $this->getResultsManager(),
+                $minifiedSO->deminify($this->getResultsManager()),
+                $sessId,
+                $userId
             );
-            if ($savedSearches->count() > 0) {
-                continue;
-            }
 
-            $row = $searchTable->createRow();
-            $row->user_id = $userId;
-            $row->folder_id = $search['folder_id'];
-            $row->created = $search['created'];
             $row->title = $search['title'];
+            $row->folder_id = $search['folder_id'];
+            $row->user_id = $userId;
             $row->saved = 1;
-            $row->search_object = base64_decode($search['search_object']);
-            $row->checksum = $search['checksum'];
-            $row->finna_schedule = $search['finna_schedule'];
-            $row->finna_last_executed = $search['finna_last_executed'];
-            $row->finna_schedule_base_url = $search['finna_schedule_base_url'];
+
+            if ($search['finna_schedule']) {
+                $row->setSchedule(
+                    $search['finna_schedule'],
+                    $search['finna_schedule_base_url']
+                );
+            }
 
             if ($row->save() > 0) {
                 $searchCount++;
