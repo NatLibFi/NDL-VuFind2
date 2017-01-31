@@ -53,18 +53,6 @@ class UserList extends \VuFind\Db\Table\UserList
         $this->rowClass = 'Finna\Db\Row\UserList';
     }
 
-    public function getByUserId($userId)
-    {
-        if (!is_numeric($userId)) {
-            return [];
-        }
-
-        $callback = function ($select) use ($userId) {
-            $select->where->equalTo('user_id', $userId);
-        };
-        return $this->select($callback);
-    }
-
     public function getByTitle($userId, $title)
     {
         if (!is_numeric($userId)) {
