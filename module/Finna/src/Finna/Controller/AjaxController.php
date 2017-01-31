@@ -1372,7 +1372,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
      */
     public function exportAjax()
     {
-        $USER_ID = 2;
+        $USER_ID = 3;
         $result = [
             'searches' => $this->exportSavedSearches($USER_ID),
             'lists' => $this->exportUserLists($USER_ID)
@@ -1394,7 +1394,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         $searchesAdded = $this->importSearches($data['data']['searches'], $USER_ID);
-        $listsAdded = $this->importLists($data['data']['lists'], $USER_ID);
+        $listsAdded = $this->importUserLists($data['data']['lists'], $USER_ID);
         $result = [
             'searchesAdded' => $searchesAdded,
             'listsAdded' => $listsAdded['userLists'],
@@ -1439,119 +1439,43 @@ class AjaxController extends \VuFind\Controller\AjaxController
         return $searchCount;
     }
 
-    protected function importLists($lists, $userId)
+    protected function importUserLists($lists, $userId)
     {
+        $user = $this->getTable('User')->getById($userId);
         $userListTable = $this->getTable('UserList');
-        $userListCount = 0;
-        $userResourceCount = 0;
+        $recordLoader = $this->getRecordLoader();
+        $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
+        $existingFavoritesCount = $runner->run([], 'Favorites')->getResultTotal();
+        $existingUserListCount = count($user->getLists());
 
         foreach ($lists as $list) {
             $existingList = $userListTable->getByTitle($userId, $list['title']);
-            $row = $existingList ? $existingList : $userListTable->createRow();
-            $row->user_id = $userId;
-            $row->title = $list['title'];
-            $row->description = $list['description'];
-            $row->created = $list['created'];
-            $row->public = $list['public'];
-            $row->finna_updated = $list['finna_updated'];
+            foreach ($list['records'] as $record) {
+                $params = [
+                    'notes' => $record['notes'],
+                    'list' => $existingList ? $existingList->id : null
+                ];
 
-            if ($row->save() > 0) {
-                $newResources = $this->importUserResources(
-                    $list['resources'],
-                    $userId,
-                    $row->id
-                );
-                $userResourceCount += $newResources;
+                $driver = $recordLoader->load($record['id'], $record['source']);
+                $listId = $driver->saveToFavorites($params, $user)['listId'];
 
                 if (!$existingList) {
-                    $userListCount++;
+                    $existingList = $userListTable->getExisting($listId);
+                    $existingList->title = $list['title'];
+                    $existingList->description = $list['description'];
+                    $existingList->public = $list['public'];
+                    $existingList->save();
                 }
             }
         }
 
+        $newFavoritesCount = $runner->run([], 'Favorites')->getResultTotal();
+        $newUserListCount = count($user->getLists());
+
         return [
-            'userLists' => $userListCount,
-            'userResources' => $userResourceCount
+            'userLists' => $newUserListCount - $existingUserListCount,
+            'userResources' => $newFavoritesCount - $existingFavoritesCount
         ];
-    }
-
-    protected function importUserResources($resources, $userId, $listId)
-    {
-        $userResourceTable = $this->getTable('UserResource');
-        $rowsAdded = 0;
-
-        foreach ($resources as $userResource) {
-            if ($userResourceTable->resourceInList(
-                $userResource['resource_id'], $listId
-            )) {
-                continue;
-            }
-
-            $resource = $this->importResource($userResource['resource']);
-            if (!$resource) {
-                continue;
-            }
-
-            $row = $userResourceTable->createRow();
-            $row->resource_id = $resource->id;
-            $row->list_id = $listId;
-            $row->user_id = $userId;
-            $row->notes = $userResource['notes'];
-            $row->saved = $userResource['saved'];
-            $row->finna_custom_order_index
-                = $userResource['finna_custom_order_index'];
-
-            if ($row->save() > 0) {
-                $rowsAdded++;
-            }
-        }
-
-        return $rowsAdded;
-    }
-
-    protected function importResource($resource)
-    {
-        $resourceTable = $this->getTable('Resource');
-        $resource = $resourceTable->findResource(
-            $resource['record_id'],
-            $resource['source'],
-            false
-        );
-
-        if ($resource) {
-            return $resource;
-        }
-
-        $record = $this->importRecord($resource['record']);
-        if (!$record) {
-            return false;
-        }
-
-        $row = $resourceTable->createRow();
-        $row->record_id = $resource['record_id'];
-        $row->title = $resource['title'];
-        $row->author = $resource['author'];
-        $row->year = $resource['year'];
-        $row->source = $resource['source'];
-        return $row->save() > 0 ? $row : false;
-    }
-
-    protected function importRecord($record)
-    {
-        $recordTable = $this->getTable('Record');
-        $record = $recordTable->findRecord($record['record_id'], $record['source']);
-
-        if ($record) {
-            return $record;
-        }
-
-        $row = $recordTable->createRow();
-        $row->record_id = $record['record_id'];
-        $row->source = $record['source'];
-        $row->version = $record['version'];
-        $row->data = base64_decode($record['data']);
-        $row->updated = $record['updated'];
-        return $row->save() > 0 ? $row : false;
     }
 
     protected function exportSavedSearches($userId)
@@ -1562,12 +1486,9 @@ class AjaxController extends \VuFind\Controller\AjaxController
         foreach ($savedSearches as $search) {
             $searches[] = [
                 'folder_id' => $search->folder_id,
-                'created' => $search->created,
                 'title' => $search->title,
                 'search_object' => base64_encode($search->search_object),
-                'checksum' => $search->checksum,
                 'finna_schedule' => $search->finna_schedule,
-                'finna_last_executed' => $search->finna_last_executed,
                 'finna_schedule_base_url' => $search->finna_schedule_base_url
             ];
         }
@@ -1577,86 +1498,31 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
     protected function exportUserLists($userId)
     {
-        $userLists = $this->getTable('UserList')->getByUserId($userId);
-        $lists = [];
+        $user = $this->getTable('User')->getById($userId);
+        $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
 
-        foreach ($userLists as $list) {
-            $lists[] = [
+        $userLists = [];
+        foreach ($user->getLists() as $list) {
+            $listRecords = $runner->run(['id' => $list->id], 'Favorites');
+            $outputList = [
                 'title' => $list->title,
                 'description' => $list->description,
-                'created' => $list->created,
-                'public' => $list->public,
-                'finna_updated' => $list->finna_updated,
-                'resources' => $this->exportUserListResources($list->id)
+                'public' => $list->public
             ];
-        }
 
-        return $lists;
-    }
-
-    protected function exportUserListResources($listId)
-    {
-        $userListResources = $this->getTable('UserResource')->getByListId($listId);
-        $resources = [];
-
-        foreach ($userListResources as $resource) {
-            $resourceData = $this->exportResource($resource->resource_id);
-
-            if (!$resourceData) {
-                continue;
+            foreach ($listRecords->getResults() as $record) {
+                $notes = $record->getListNotes($list->id, $user->id);
+                $outputList['records'][] = [
+                    'id' => $record->getUniqueID(),
+                    'source' => $record->getSourceIdentifier(),
+                    'notes' => !empty($notes) ? $notes[0] : null
+                ];
             }
 
-            $resources[] = [
-                'resource_id' => $resource->resource_id,
-                'notes' => $resource->notes,
-                'saved' => $resource->saved,
-                'finna_custom_order_index' => $resource->finna_custom_order_index,
-                'resource' => $resourceData
-            ];
+            $userLists[] = $outputList;
         }
 
-        return $resources;
-    }
-
-    protected function exportResource($resourceId)
-    {
-        $resource = $this->getTable('Resource')->getById($resourceId);
-
-        if (!$resource) {
-            return false;
-        }
-
-        $record = $this->exportRecord($resource->record_id, $resource->source);
-
-        if (!$record) {
-            return false;
-        }
-
-        return [
-            'title' => $resource->title,
-            'author' => $resource->author,
-            'year' => $resource->year,
-            'source' => $resource->source,
-            'record_id' => $resource->record_id,
-            'record' => $record
-        ];
-    }
-
-    protected function exportRecord($recordId, $source)
-    {
-        $record = $this->getTable('Record')->findRecord($recordId, $source);
-
-        if (!$record) {
-            return false;
-        }
-
-        return [
-            'record_id' => $record->record_id,
-            'source' => $record->source,
-            'version' => $record->version,
-            'data' => base64_encode($record->data),
-            'updated' => $record->updated
-        ];
+        return $userLists;
     }
 
     /**
