@@ -1366,45 +1366,6 @@ class AjaxController extends \VuFind\Controller\AjaxController
     }
 
     /**
-     * T H I S     M E T H O D     S H O U L D     B E      M O V E D ! ! !
-     *
-     * @return \Zend\Http\Response
-     */
-    public function exportAjax()
-    {
-        $USER_ID = 3;
-        $result = [
-            'searches' => $this->exportSavedSearches($USER_ID),
-            'lists' => $this->exportUserLists($USER_ID)
-        ];
-        return $this->output($result, self::STATUS_OK);
-    }
-
-    /**
-     * T H I S     M E T H O D     S H O U L D     B E      M O V E D ! ! !
-     *
-     * @return \Zend\Http\Response
-     */
-    public function importAjax()
-    {
-        $USER_ID = 3;
-        $data = json_decode($this->request->getContent(), true);
-        if (!$data) {
-            return $this->output('Empty request body', self::STATUS_ERROR);
-        }
-
-        $searchesAdded = $this->importSearches($data['data']['searches'], $USER_ID);
-        $listsAdded = $this->importUserLists($data['data']['lists'], $USER_ID);
-        $result = [
-            'searchesAdded' => $searchesAdded,
-            'listsAdded' => $listsAdded['userLists'],
-            'resourcesAdded' => $listsAdded['userResources']
-        ];
-
-        return $this->output($result, self::STATUS_OK);
-    }
-
-    /**
      * Get Autocomplete suggestions.
      *
      * @return \Zend\Http\Response
