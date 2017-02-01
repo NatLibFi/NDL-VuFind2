@@ -505,15 +505,6 @@
           </td>
         </tr>
       <? endif; ?>
-
-      <? if ($this->escapeHtml($this->driver->getOrigination()) == 'Kotimaisten kielten keskus'): ?>
-        <? if ($useRestriction = $this->driver->getUseRestriction()): ?>
-        <tr class="recordUseRestriction">
-          <th><?=$this->transEsc('Use Restriction')?>:</th>
-          <td><?=$this->escapeHtml($useRestriction)?></td>
-        </tr>
-        <? endif; ?>     
-      <? endif; ?>
     </table>
     <?/* End Main Details */?>
     <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>

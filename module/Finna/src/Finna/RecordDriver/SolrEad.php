@@ -61,9 +61,15 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAccessRestrictions()
     {
+        $origination = $this->getOrigination();
         $record = $this->getSimpleXML();
-        return isset($record->accessrestrict->p)
-            ? $record->accessrestrict->p : [];
+        if ($origination == 'Kotimaisten kielten keskus') {
+            return isset($record->userestrict->p)
+                ? $record->userestrict->p : [];
+        } else {
+            return isset($record->accessrestrict->p)
+                ? $record->accessrestrict->p : [];
+        }
     }
 
     /**
@@ -523,18 +529,6 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
     {
         parent::setRawData($data);
         $this->simpleXML = null;
-    }
-
-    /**
-     * Get use restriction
-     *
-     * @return string
-     */
-    public function getUseRestriction()
-    {
-        $record = $this->getSimpleXML();
-        return isset($record->userestrict)
-            ? (string)$record->userestrict->p : '';
     }
 
     /**
