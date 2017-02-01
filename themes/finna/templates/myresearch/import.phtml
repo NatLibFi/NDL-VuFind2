@@ -1,5 +1,17 @@
 <!-- START of: finna - myresearch/import.phtml -->
 <h1>Tuo suosikit ja haut tiedostosta</h1>
+<form method="post" enctype="multipart/form-data"  class="form-horizontal" data-lightbox-ignore>
+    <label>Tiedosto</label>
+    <div class="form-group">
+        <input type="text" class="form-control col-sm-7">
+        <label class="btn btn-primary btn-file col-sm-3">
+            Valitse tiedosto...
+            <input type="file" style="display: none;" name="favorites-file">
+        </label>
+    </div>
 
-<input type="text" class="form-control" placeholder="Lisää tiedosto...">
+    <div class="form-group">
+        <button class="btn btn-primary">Lisää suosikit ja haut</button>
+    </div>
+</form>
 <!-- END of: finna - myresearch/import.phtml -->

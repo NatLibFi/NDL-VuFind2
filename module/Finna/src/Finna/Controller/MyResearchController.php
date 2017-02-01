@@ -862,9 +862,27 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         return $this->response;
     }
 
+    /**
+     * Imports saved searches and lists from uploaded file as logged in user's
+     * saved searches and lists.
+     *
+     * @return mixed
+     */
     public function importAction()
     {
         $view = $this->createViewModel();
+        $request = $this->getRequest();
+        $user = $this->getUser();
+
+        if (count($request->getFiles()) > 0) {
+            // TODO: Validation for the uploaded file
+            $fileInfo = $request->getFiles('favorites-file');
+            $filePath = $fileInfo['tmp_name'];
+            $data = json_decode(file_get_contents($filePath), true);
+            $this->importSearches($data['searches'], $user->id);
+            $this->importUserLists($data['lists'], $user->id);
+        }
+
         return $view;
     }
 
@@ -1188,12 +1206,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $searchCount = 0;
         $searchTable = $this->getTable('Search');
         $sessId = $this->getServiceLocator()->get('VuFind\SessionManager')->getId();
+        $resultsManager = $this->getServiceLocator()->get(
+            'VuFind\SearchResultsPluginManager'
+        );
 
         foreach ($searches as $search) {
             $minifiedSO = unserialize(base64_decode($search['search_object']));
             $row = $searchTable->saveSearch(
-                $this->getResultsManager(),
-                $minifiedSO->deminify($this->getResultsManager()),
+                $resultsManager,
+                $minifiedSO->deminify($resultsManager),
                 $sessId,
                 $userId
             );
@@ -1266,7 +1287,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $existingList->title = $list['title'];
                     $existingList->description = $list['description'];
                     $existingList->public = $list['public'];
-                    $existingList->save();
+                    $existingList->save($user);
                 }
             }
         }
