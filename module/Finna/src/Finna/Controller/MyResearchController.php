@@ -863,27 +863,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Imports saved searches and lists from uploaded file as logged in user's
-     * saved searches and lists.
+     * Display dialog for importing favorites.
      *
      * @return mixed
      */
     public function importAction()
     {
-        $view = $this->createViewModel();
-        $request = $this->getRequest();
-        $user = $this->getUser();
-
-        if (count($request->getFiles()) > 0) {
-            // TODO: Validation for the uploaded file
-            $fileInfo = $request->getFiles('favorites-file');
-            $filePath = $fileInfo['tmp_name'];
-            $data = json_decode(file_get_contents($filePath), true);
-            $this->importSearches($data['searches'], $user->id);
-            $this->importUserLists($data['lists'], $user->id);
-        }
-
-        return $view;
     }
 
     /**
@@ -1182,122 +1167,5 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         return $userLists;
-    }
-
-    /**
-     * Imports an array of searches into database as saved searches for the user.
-     * A single search array is expected to be in following format:
-     *
-     *   [
-     *     title: string
-     *     search_object: base64 encoded serialized minSO object
-     *     folder_id: int
-     *     finna_schedule: int
-     *     finna_schedule_base_url: string
-     *   ]
-     *
-     * @param array $searches Array of searches
-     * @param int   $userId   User id
-     *
-     * @return int Number of searches saved
-     */
-    protected function importSearches($searches, $userId)
-    {
-        $searchCount = 0;
-        $searchTable = $this->getTable('Search');
-        $sessId = $this->getServiceLocator()->get('VuFind\SessionManager')->getId();
-        $resultsManager = $this->getServiceLocator()->get(
-            'VuFind\SearchResultsPluginManager'
-        );
-
-        foreach ($searches as $search) {
-            $minifiedSO = unserialize(base64_decode($search['search_object']));
-            $row = $searchTable->saveSearch(
-                $resultsManager,
-                $minifiedSO->deminify($resultsManager),
-                $sessId,
-                $userId
-            );
-
-            $row->title = $search['title'];
-            $row->folder_id = $search['folder_id'];
-            $row->user_id = $userId;
-            $row->saved = 1;
-
-            if ($search['finna_schedule']) {
-                $row->setSchedule(
-                    $search['finna_schedule'],
-                    $search['finna_schedule_base_url']
-                );
-            }
-
-            if ($row->save() > 0) {
-                $searchCount++;
-            }
-        }
-
-        return $searchCount;
-    }
-
-    /**
-     * Imports an array of user lists into database. A single user list is expected
-     * to be in following format:
-     *
-     *   [
-     *     title: string
-     *     description: string
-     *     public: int (0|1)
-     *     records: [
-     *       notes: string
-     *       source: string
-     *       id: string
-     *     ]
-     *   ]
-     *
-     * Returns an array of form
-     *
-     * @param array $lists  User lists
-     * @param int   $userId User id
-     *
-     * @return array [userLists => int, userResources => int], number of new user
-     * lists created and number of records to saved into user lists.
-     */
-    protected function importUserLists($lists, $userId)
-    {
-        $user = $this->getTable('User')->getById($userId);
-        $userListTable = $this->getTable('UserList');
-        $recordLoader = $this->getRecordLoader();
-        $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
-        $existingFavoritesCount = $runner->run([], 'Favorites')->getResultTotal();
-        $existingUserListCount = count($user->getLists());
-
-        foreach ($lists as $list) {
-            $existingList = $userListTable->getByTitle($userId, $list['title']);
-            foreach ($list['records'] as $record) {
-                $params = [
-                    'notes' => $record['notes'],
-                    'list' => $existingList ? $existingList->id : null
-                ];
-
-                $driver = $recordLoader->load($record['id'], $record['source']);
-                $listId = $driver->saveToFavorites($params, $user)['listId'];
-
-                if (!$existingList) {
-                    $existingList = $userListTable->getExisting($listId);
-                    $existingList->title = $list['title'];
-                    $existingList->description = $list['description'];
-                    $existingList->public = $list['public'];
-                    $existingList->save($user);
-                }
-            }
-        }
-
-        $newFavoritesCount = $runner->run([], 'Favorites')->getResultTotal();
-        $newUserListCount = count($user->getLists());
-
-        return [
-            'userLists' => $newUserListCount - $existingUserListCount,
-            'userResources' => $newFavoritesCount - $existingFavoritesCount
-        ];
     }
 }
