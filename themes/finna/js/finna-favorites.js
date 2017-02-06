@@ -25,7 +25,7 @@ finna.favorites = (function() {
         var spinner = $('<i>').addClass('fa fa-spinner fa-spin');
         submitBtn.attr('disabled', true);
         modalBody.prepend(spinner);
-        modalBody.find('.jumbotron').remove();
+        modalBody.find('.alert').remove();
 
         var formData = new FormData(form.get(0));
         $.ajax({
