@@ -1,12 +1,12 @@
 <!-- START of: finna - myresearch/import-success.phtml -->
 <div class="jumbotron success">
-    <strong>Lisääminen onnistui</strong>
+    <strong><?=$this->transEsc('import_favorites_success') ?></strong>
     <br><br>
-    <strong>Omaan tiliin lisättiin:</strong>
+    <strong><?=$this->transEsc('import_favorites_results_header') ?>:</strong>
     <ul>
-        <li><?=$this->lists ?> uutta listaa</li>
-        <li><?=$this->resources ?> uutta omaa suosikkia</li>
-        <li><?=$this->searches ?> tallennettua hakua</li>
+        <li><?=$this->lists ?> <?= $this->transEsc('import_favorites_results_new_lists') ?></li>
+        <li><?=$this->resources ?> <?= $this->transEsc('import_favorites_results_new_resources') ?></li>
+        <li><?=$this->searches ?> <?= $this->transEsc('import_favorites_results_new_searches') ?></li>
     </ul>
 </div>
 <!-- END of: finna - myresearch/import-success.phtml -->

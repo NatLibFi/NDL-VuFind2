@@ -1,13 +1,13 @@
 <!-- START of: finna - myresearch/import.phtml -->
-<h1>Tuo suosikit ja haut tiedostosta</h1>
+<h1><?=$this->transEsc('import_favorites') ?></h1>
 <div class="favorites-import-dialog">
     <form id="favorites-import-form" class="form-inline" method="post" enctype="multipart/form-data"  data-lightbox-ignore>
         <input id="filename" type="text" class="form-control col-sm-7">
         <label class="btn btn-primary btn-file">
-            Valitse tiedosto...
+            <?=$this->transEsc('import_favorites_select_file') ?>
             <input type="file" style="display: none;" name="favorites-file">
         </label>
-        <button class="btn btn-primary" onclick="finna.favorites.upload()">Lisää suosikit ja haut</button>
+        <button class="btn btn-primary" onclick="finna.favorites.upload()"><?=$this->transEsc('import_favorites_upload') ?></button>
     </form>
 </div>
 <?
