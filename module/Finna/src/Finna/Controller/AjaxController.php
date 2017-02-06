@@ -1376,12 +1376,10 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $request = $this->getRequest();
         $user = $this->getUser();
         $file = $request->getFiles('favorites-file');
+        $fileExists = !empty($file['tmp_name']) && file_exists($file['tmp_name']);
 
-        if (!empty($file['size'])) {
-            // TODO: Validation for the uploaded file
-            $fileInfo = $request->getFiles('favorites-file');
-            $filePath = $fileInfo['tmp_name'];
-            $data = json_decode(file_get_contents($filePath), true);
+        if ($fileExists) {
+            $data = json_decode(file_get_contents($file['tmp_name']), true);
             $searches = $this->importSearches($data['searches'], $user->id);
             $lists = $this->importUserLists($data['lists'], $user->id);
 

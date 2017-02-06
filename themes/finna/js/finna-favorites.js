@@ -1,9 +1,9 @@
 finna.favorites = (function() {
-    var form = $('#favorites-import-form');
-    var selectFileInput = $('input[name=favorites-file]');
-    var filenameInput = $('#filename');
+    var dialog = $('#favorites-import-dialog');
+    var form = dialog.find('#favorites-import-form');
     var submitBtn = form.find('button');
-    var modalBody = form.parents('.modal-body');
+    var selectFileInput = dialog.find('input[name=favorites-file]');
+    var filenameInput = dialog.find('#filename');
 
     submitBtn.attr('disabled', true);
 
@@ -18,14 +18,15 @@ finna.favorites = (function() {
     });
 
     var showInfo = function(response) {
-        form.after(response.data);
+        form.remove();
+        dialog.append(response.data);
     };
 
     var upload = function() {
         var spinner = $('<i>').addClass('fa fa-spinner fa-spin');
         submitBtn.attr('disabled', true);
-        modalBody.prepend(spinner);
-        modalBody.find('.alert').remove();
+        dialog.prepend(spinner);
+        dialog.find('.alert').remove();
 
         var formData = new FormData(form.get(0));
         $.ajax({
