@@ -51,11 +51,6 @@
   </div>
   <div class="col-xs-12 myresearch-profile-list">
     <div class="col-xs-12">
-
-<!--        TODO: move the buttons to a correct place -->
-        <a href="<?=$this->url('myresearch-export') ?>" target="_blank" class="btn btn-primary"><i class="fa fa-arrow-down"></i> Lataa suosikit ja haut</a>
-        <a href="<?=$this->url('myresearch-import') ?>" class="btn btn-primary" data-lightbox><i class="fa fa-arrow-up"></i> Tuo suosikit ja haut tiedostosta</a>
-
       <? if ($this->auth()->isLoggedIn() && !in_array($this->auth()->getManager()->getAuthClassForTemplateRendering(), ['Finna\Auth\ILS', 'Finna\Auth\MultiILS']) && $this->auth()->getManager()->supportsPasswordChange()): ?>
         <a href="<?=$this->url('myresearch-changepassword') ?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('Change Password') ?></a>
       <? endif; ?>
