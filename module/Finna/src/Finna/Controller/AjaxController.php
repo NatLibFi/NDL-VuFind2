@@ -1582,12 +1582,12 @@ class AjaxController extends \VuFind\Controller\AjaxController
      */
     protected function importSearches($searches, $userId)
     {
-        $searchCount = 0;
         $searchTable = $this->getTable('Search');
         $sessId = $this->getServiceLocator()->get('VuFind\SessionManager')->getId();
         $resultsManager = $this->getServiceLocator()->get(
             'VuFind\SearchResultsPluginManager'
         );
+        $initialSearchCount = count($searchTable->getSavedSearches($userId));
 
         foreach ($searches as $search) {
             $minifiedSO = unserialize(base64_decode($search['search_object']));
@@ -1610,10 +1610,10 @@ class AjaxController extends \VuFind\Controller\AjaxController
                 );
             }
 
-            $searchCount++;
+            $row->save();
         }
 
-        return $searchCount;
+        return count($searchTable->getSavedSearches($userId)) - $initialSearchCount;
     }
 
     /**
