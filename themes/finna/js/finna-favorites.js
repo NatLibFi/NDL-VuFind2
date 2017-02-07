@@ -18,6 +18,7 @@ finna.favorites = (function() {
     });
 
     var showInfo = function(response) {
+        dialog.siblings('h1').remove();
         form.remove();
         dialog.append(response.data);
     };

@@ -1366,8 +1366,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
     }
 
     /**
-     * Imports saved searches and lists from uploaded file as logged in user's
-     * saved searches and lists.
+     * Imports searches and lists from uploaded file as logged in user's favorites.
      *
      * @return mixed
      */
@@ -1375,6 +1374,11 @@ class AjaxController extends \VuFind\Controller\AjaxController
     {
         $request = $this->getRequest();
         $user = $this->getUser();
+
+        if (!$user) {
+            // TODO: show error
+        }
+
         $file = $request->getFiles('favorites-file');
         $fileExists = !empty($file['tmp_name']) && file_exists($file['tmp_name']);
 
@@ -1562,8 +1566,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
     }
 
     /**
-     * Imports an array of searches into database as saved searches for the user.
-     * A single search array is expected to be in following format:
+     * Imports an array of searches as user's saved searches.
+     * A single search is expected to be in following format:
      *
      *   [
      *     title: string
@@ -1597,7 +1601,6 @@ class AjaxController extends \VuFind\Controller\AjaxController
             );
 
             $row->title = $search['title'];
-            $row->folder_id = $search['folder_id'];
             $row->user_id = $userId;
             $row->saved = 1;
 
@@ -1622,13 +1625,12 @@ class AjaxController extends \VuFind\Controller\AjaxController
      *     title: string
      *     description: string
      *     public: int (0|1)
-     *     records: [
+     *     records: array of [
      *       notes: string
      *       source: string
      *       id: string
      *     ]
      *   ]
-     *
      *
      * @param array $lists  User lists
      * @param int   $userId User id

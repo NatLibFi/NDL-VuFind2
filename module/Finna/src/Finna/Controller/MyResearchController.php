@@ -849,7 +849,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'lists' => $this->exportUserLists($user->id)
         ];
         $json = json_encode($exportData);
-
         $response = $this->getResponse();
         $response->setContent($json);
         $headers = $response->getHeaders();
@@ -1122,7 +1121,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         foreach ($savedSearches as $search) {
             $searches[] = [
-                'folder_id' => $search->folder_id,
                 'title' => $search->title,
                 'search_object' => base64_encode($search->search_object),
                 'finna_schedule' => $search->finna_schedule,
