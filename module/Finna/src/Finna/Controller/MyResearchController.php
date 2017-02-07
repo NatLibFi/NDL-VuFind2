@@ -1145,6 +1145,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $user = $this->getTable('User')->getById($userId);
         $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
 
+        $getTag = function ($tag) {
+            return $tag['tag'];
+        };
+
         $userLists = [];
         foreach ($user->getLists() as $list) {
             $listRecords = $runner->run(['id' => $list->id], 'Favorites');
@@ -1156,10 +1160,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
             foreach ($listRecords->getResults() as $record) {
                 $notes = $record->getListNotes($list->id, $user->id);
+                $tags = $record->getTags($list->id, $user->id);
                 $outputList['records'][] = [
                     'id' => $record->getUniqueID(),
                     'source' => $record->getSourceIdentifier(),
-                    'notes' => !empty($notes) ? $notes[0] : null
+                    'notes' => !empty($notes) ? $notes[0] : null,
+                    'tags' => array_map($getTag, $tags->toArray())
                 ];
             }
 

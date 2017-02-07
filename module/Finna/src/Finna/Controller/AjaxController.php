@@ -1650,7 +1650,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
             foreach ($list['records'] as $record) {
                 $params = [
                     'notes' => $record['notes'],
-                    'list' => $existingList ? $existingList->id : null
+                    'list' => $existingList ? $existingList->id : null,
+                    'mytags' => $record['tags']
                 ];
 
                 $driver = $recordLoader->load($record['id'], $record['source']);
