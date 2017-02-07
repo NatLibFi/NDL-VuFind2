@@ -1642,6 +1642,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
     {
         $user = $this->getTable('User')->getById($userId);
         $userListTable = $this->getTable('UserList');
+        $userResourceTable = $this->getTable('UserResource');
         $recordLoader = $this->getRecordLoader();
         $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
         $existingFavoritesCount = $runner->run([], 'Favorites')->getResultTotal();
@@ -1656,8 +1657,23 @@ class AjaxController extends \VuFind\Controller\AjaxController
                     'mytags' => $record['tags']
                 ];
 
+
                 $driver = $recordLoader->load($record['id'], $record['source']);
                 $listId = $driver->saveToFavorites($params, $user)['listId'];
+
+                $userResource = $user->getSavedData(
+                    $record['id'],
+                    $listId,
+                    $record['source']
+                )->current();
+
+                $userResourceTable->createOrUpdateLink(
+                    $userResource->resource_id,
+                    $userId,
+                    $listId,
+                    $record['notes'],
+                    $record['order']
+                );
 
                 if (!$existingList) {
                     $existingList = $userListTable->getExisting($listId);
