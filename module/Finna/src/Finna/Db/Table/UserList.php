@@ -53,6 +53,14 @@ class UserList extends \VuFind\Db\Table\UserList
         $this->rowClass = 'Finna\Db\Row\UserList';
     }
 
+    /**
+     * Retrieve user's list object by title.
+     *
+     * @param int    $userId User id
+     * @param string $title  Title of the list to retrieve
+     *
+     * @return \Finna\Db\Row\UserList|false User list row or false if not found
+     */
     public function getByTitle($userId, $title)
     {
         if (!is_numeric($userId)) {

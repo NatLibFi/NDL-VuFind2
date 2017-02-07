@@ -1159,13 +1159,22 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             ];
 
             foreach ($listRecords->getResults() as $record) {
+                $userResource = $user->getSavedData(
+                    $record->getUniqueID(),
+                    $list->id,
+                    $record->getSourceIdentifier()
+                )->current();
+
                 $notes = $record->getListNotes($list->id, $user->id);
                 $tags = $record->getTags($list->id, $user->id);
                 $outputList['records'][] = [
                     'id' => $record->getUniqueID(),
                     'source' => $record->getSourceIdentifier(),
                     'notes' => !empty($notes) ? $notes[0] : null,
-                    'tags' => array_map($getTag, $tags->toArray())
+                    'tags' => array_map($getTag, $tags->toArray()),
+                    'order' => $userResource
+                        ? $userResource->finna_custom_order_index
+                        : null
                 ];
             }
 
