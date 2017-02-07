@@ -365,39 +365,29 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
         // information right away (makeRequest renews the access token as necessary
         // which verifies the PIN code).
 
-        // First try as is
-        $username = str_replace(' ', '', $username);
         $result = $this->makeRequest(
-            ['v3', 'patrons', 'find'],
-            ['barcode' => $username, 'fields' => 'names,emails'],
+            ['v3', 'info', 'token'],
+            [],
+            'GET',
+            ['cat_username' => $username, 'cat_password' => $password]
+        );
+        if (null === $result) {
+            return null;
+        }
+        if (empty($result['patronId'])) {
+            throw new ILSException('No patronId in token response');
+        }
+        $patronId = $result['patronId'];
+
+        $result = $this->makeRequest(
+            ['v3', 'patrons', $patronId],
+            [],
             'GET',
             ['cat_username' => $username, 'cat_password' => $password]
         );
 
         if (null === $result || !empty($result['code'])) {
-            // Try removing spaces
-            $username = str_replace(' ', '', $username);
-            $result = $this->makeRequest(
-                ['v3', 'patrons', 'find'],
-                ['barcode' => $username, 'fields' => 'names,emails'],
-                'GET',
-                ['cat_username' => $username, 'cat_password' => $password]
-            );
-            if (null === $result || !empty($result['code'])) {
-                // Try adding spaces
-                $username = substr_replace($username, ' ', -4, 0);
-                $username = substr_replace($username, ' ', -10, 0);
-                $username = substr_replace($username, ' ', -15, 0);
-                $result = $this->makeRequest(
-                    ['v3', 'patrons', 'find'],
-                    ['barcode' => $username, 'fields' => 'names,emails'],
-                    'GET',
-                    ['cat_username' => $username, 'cat_password' => $password]
-                );
-                if (null === $result || !empty($result['code'])) {
-                    return null;
-                }
-            }
+            return null;
         }
         $firstname = '';
         $lastname = '';
@@ -548,7 +538,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
             // Fetch item information
             $item = $this->makeRequest(
                 ['v3', 'items', $transaction['item_id']],
-                ['fields' => 'bibIds,varFields', 'deleted' => false],
+                ['fields' => 'bibIds,varFields'],
                 'GET',
                 $patron
             );
