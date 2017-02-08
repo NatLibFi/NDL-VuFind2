@@ -1376,7 +1376,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $user = $this->getUser();
 
         if (!$user) {
-            // TODO: show error
+            return $this->output(null, self::STATUS_NEED_AUTH);
         }
 
         $file = $request->getFiles('favorites-file');

@@ -840,8 +840,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     {
         $user = $this->getUser();
         if (!$user) {
-            // TODO: handle the case if user is not logged in.
-            return;
+            return $this->redirect()->toRoute(
+                'default', ['controller' => 'MyResearch', 'action' => 'Login']
+            );
         }
 
         $exportData = [
