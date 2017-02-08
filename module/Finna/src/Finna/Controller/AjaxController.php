@@ -1566,18 +1566,9 @@ class AjaxController extends \VuFind\Controller\AjaxController
     }
 
     /**
-     * Imports an array of searches as user's saved searches.
-     * A single search is expected to be in following format:
+     * Imports an array of serialized search objects as user's saved searches.
      *
-     *   [
-     *     title: string
-     *     search_object: base64 encoded serialized minSO object
-     *     folder_id: int
-     *     finna_schedule: int
-     *     finna_schedule_base_url: string
-     *   ]
-     *
-     * @param array $searches Array of searches
+     * @param array $searches Array of search objects
      * @param int   $userId   User id
      *
      * @return int Number of searches saved
@@ -1592,26 +1583,19 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $initialSearchCount = count($searchTable->getSavedSearches($userId));
 
         foreach ($searches as $search) {
-            $minifiedSO = unserialize(base64_decode($search['search_object']));
-            $row = $searchTable->saveSearch(
-                $resultsManager,
-                $minifiedSO->deminify($resultsManager),
-                $sessId,
-                $userId
-            );
+            $minifiedSO = unserialize($search);
 
-            $row->title = $search['title'];
-            $row->user_id = $userId;
-            $row->saved = 1;
-
-            if ($search['finna_schedule']) {
-                $row->setSchedule(
-                    $search['finna_schedule'],
-                    $search['finna_schedule_base_url']
+            if ($minifiedSO) {
+                $row = $searchTable->saveSearch(
+                    $resultsManager,
+                    $minifiedSO->deminify($resultsManager),
+                    $sessId,
+                    $userId
                 );
+                $row->user_id = $userId;
+                $row->saved = 1;
+                $row->save();
             }
-
-            $row->save();
         }
 
         return count($searchTable->getSavedSearches($userId)) - $initialSearchCount;
@@ -1656,7 +1640,6 @@ class AjaxController extends \VuFind\Controller\AjaxController
                     'list' => $existingList ? $existingList->id : null,
                     'mytags' => $record['tags']
                 ];
-
 
                 $driver = $recordLoader->load($record['id'], $record['source']);
                 $listId = $driver->saveToFavorites($params, $user)['listId'];

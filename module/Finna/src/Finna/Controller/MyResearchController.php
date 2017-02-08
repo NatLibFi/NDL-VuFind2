@@ -1118,18 +1118,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     protected function exportSavedSearches($userId)
     {
         $savedSearches = $this->getTable('Search')->getSavedSearches($userId);
-        $searches = [];
-
-        foreach ($savedSearches as $search) {
-            $searches[] = [
-                'title' => $search->title,
-                'search_object' => base64_encode($search->search_object),
-                'finna_schedule' => $search->finna_schedule,
-                'finna_schedule_base_url' => $search->finna_schedule_base_url
-            ];
-        }
-
-        return $searches;
+        $getSearchObject = function ($search) {
+            return $search['search_object'];
+        };
+        return array_map($getSearchObject, $savedSearches->toArray());
     }
 
     /**
