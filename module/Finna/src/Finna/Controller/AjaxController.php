@@ -1376,34 +1376,46 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $user = $this->getUser();
 
         if (!$user) {
-            return $this->output(null, self::STATUS_NEED_AUTH);
+            return $this->output(
+                $this->translate('You must be logged in first'),
+                self::STATUS_NEED_AUTH
+            );
         }
 
         $file = $request->getFiles('favorites-file');
         $fileExists = !empty($file['tmp_name']) && file_exists($file['tmp_name']);
+        $error = false;
 
         if ($fileExists) {
             $data = json_decode(file_get_contents($file['tmp_name']), true);
-            $searches = $this->importSearches($data['searches'], $user->id);
-            $lists = $this->importUserLists($data['lists'], $user->id);
+            if ($data) {
+                $searches = $this->importSearches($data['searches'], $user->id);
+                $lists = $this->importUserLists($data['lists'], $user->id);
 
-            $html = $this->getViewRenderer()->partial(
-                'myresearch/import-success.phtml',
-                [
+                $templateParams = [
                     'searches' => $searches,
                     'lists' => $lists['userLists'],
                     'resources' => $lists['userResources']
-                ]
-            );
+                ];
+            } else {
+                $error = true;
+                $templateParams = [
+                    'error' => $this->translate(
+                        'import_favorites_error_invalid_file'
+                    )
+                ];
+            }
         } else {
-            $html = $this->getViewRenderer()->partial(
-                'myresearch/import-error.phtml',
-                [
-                    'error' => 'Ei tiedostoa.'
-                ]
-            );
+            $error = true;
+            $templateParams = [
+                'error' => $this->translate('import_favorites_error_no_file')
+            ];
         }
 
+        $template = $error
+            ? 'myresearch/import-error.phtml'
+            : 'myresearch/import-success.phtml';
+        $html = $this->getViewRenderer()->partial($template, $templateParams);
         return $this->output($html, self::STATUS_OK);
     }
 
