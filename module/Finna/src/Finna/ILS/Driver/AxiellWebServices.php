@@ -360,29 +360,29 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
         $this->holdingsOrganisationOrder
             = isset($this->config['Holdings']['holdingsOrganisationOrder'])
-            ? explode(":", $this->config['Holdings']['holdingsOrganisationOrder'])
+            ? explode(':', $this->config['Holdings']['holdingsOrganisationOrder'])
             : [];
         $this->holdingsOrganisationOrder
             = array_flip($this->holdingsOrganisationOrder);
         $this->holdingsBranchOrder
             = isset($this->config['Holdings']['holdingsBranchOrder'])
-            ? explode(":", $this->config['Holdings']['holdingsBranchOrder'])
+            ? explode(':', $this->config['Holdings']['holdingsBranchOrder'])
             : [];
         $this->holdingsBranchOrder = array_flip($this->holdingsBranchOrder);
 
         $this->messagingSettings['pickUpNotice']
             = isset($this->config['messagingSettings']['pickUpNotice'])
-            ? explode(":", $this->config['messagingSettings']['pickUpNotice'])
+            ? explode(':', $this->config['messagingSettings']['pickUpNotice'])
             : [];
 
         $this->messagingSettings['overdueNotice']
             = isset($this->config['messagingSettings']['overdueNotice'])
-            ? explode(":", $this->config['messagingSettings']['overdueNotice'])
+            ? explode(':', $this->config['messagingSettings']['overdueNotice'])
             : [];
 
         $this->messagingSettings['dueDateAlert']
             = isset($this->config['messagingSettings']['dueDateAlert'])
-            ? explode(":", $this->config['messagingSettings']['dueDateAlert'])
+            ? explode(':', $this->config['messagingSettings']['dueDateAlert'])
             : [];
     }
 
@@ -1251,7 +1251,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
            ]
         ];
 
-        foreach (array_keys($validServices) as $service) {
+        foreach ($validServices as $service => $validMethods) {
             $data = [
                 'active' => false,
                 'type' => $this->translate("messaging_settings_type_$service"),
@@ -1259,12 +1259,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ];
             if ($this->messagingSettings[$service]) {
                 foreach ($this->messagingSettings[$service] as $methodKey) {
-                    if (in_array($methodKey, $validServices[$service])
+                    if (in_array($methodKey, $validMethods)
                     ) {
                         $data['sendMethods'] += [
                             "$methodKey" => [
                                 'active' => false,
-                                'type' => "$methodKey"
+                                'type' => $methodKey
                             ]
                         ];
                     } else {
@@ -1273,8 +1273,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                         );
                     }
                 }
-            } else {
-                $this->error("Messaging settings for $service are empty.");
             }
             $userCached['messagingServices'][$service] = $data;
         }

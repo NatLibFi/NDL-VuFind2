@@ -137,9 +137,9 @@ method = driver
 
 ; Settings for messaging Settings
 [messagingSettings]
-; A colon-seperated list used to display messaging settings
+; A colon-separated list used to display messaging settings
 ; Valid options for pickUpNotice and overdueNotice are letter, email, sms and none
 ; Valid options for dueDateAlert are none and email
-pickUpNotice = letter:email:sms
-overdueNotice = letter:email:sms
-dueDateAlert = none:email
+pickUpNotice = "letter:email:sms"
+overdueNotice = "letter:email:sms"
+dueDateAlert = "none:email"
