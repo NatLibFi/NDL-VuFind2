@@ -1647,7 +1647,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
         if (!empty($this->config['Catalog']['id'])) {
             $prefix .= $this->config['Catalog']['id'] . '_';
         }
-        return $this->translate("opacmsg_$code", null, $code);
+        return $this->translate("$prefix$code", null, $code);
     }
 
     /**
