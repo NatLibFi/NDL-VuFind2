@@ -659,7 +659,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 // Fetch bib ID from item
                 $item = $this->makeRequest(
                     ['v3', 'items', $itemId],
-                    ['fields' => 'bibIds,varFields', 'deleted' => false],
+                    ['fields' => 'bibIds,varFields'],
                     'GET',
                     $patron
                 );
@@ -677,6 +677,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 $publicationYear = isset($bib['publishYear']) ? $bib['publishYear']
                     : '';
             }
+            $available = in_array($entry['status']['code'], ['b', 'j', 'i']);
             $holds[] = [
                 'id' => $bibId,
                 'item_id' => $this->extractId($entry['id']),
@@ -684,11 +685,12 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 'create' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d', $entry['placed']
                 ),
-                'expire' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d', $entry['notNeededAfterDate']
-                ),
+                'expire' => $available ? null
+                    : $this->dateConverter->convertToDisplayDate(
+                        'Y-m-d', $entry['notNeededAfterDate']
+                    ),
                 'position' => $entry['priority'],
-                'available' => in_array($entry['status']['code'], ['b', 'j', 'i']),
+                'available' => $available,
                 'in_transit' => $entry['status']['code'] == 't',
                 'volume' => $volume,
                 'publication_year' => $publicationYear,
