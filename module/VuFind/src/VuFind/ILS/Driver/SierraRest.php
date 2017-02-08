@@ -638,8 +638,8 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
             ['v3', 'patrons', $patron['id'], 'holds'],
             [
                 'limit' => 10000,
-                'fields' => 'id,record,frozen,placed,notNeededAfterDate'
-                    . ',location,pickupLocation,status,recordType,priority'
+                'fields' => 'id,record,frozen,placed,location,pickupLocation'
+                    . ',status,recordType,priority'
             ],
             'GET',
             $patron
@@ -685,10 +685,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 'create' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d', $entry['placed']
                 ),
-                'expire' => $available ? null
-                    : $this->dateConverter->convertToDisplayDate(
-                        'Y-m-d', $entry['notNeededAfterDate']
-                    ),
                 'position' => $entry['priority'],
                 'available' => $available,
                 'in_transit' => $entry['status']['code'] == 't',
