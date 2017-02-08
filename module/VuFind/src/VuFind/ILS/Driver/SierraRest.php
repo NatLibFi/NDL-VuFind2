@@ -1245,7 +1245,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     {
         foreach ($item['varFields'] as $varField) {
             if ($varField['fieldTag'] == 'v') {
-                return $varField['content'];
+                return trim($varField['content']);
             }
         }
         return '';
@@ -1576,9 +1576,10 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 && !isset($item['status']['duedate']);
             list($status, $duedate, $notes) = $this->getItemStatus($item);
             // OPAC message
-            foreach ($item['fixedFields'] as $field) {
-                if ($field['label'] == 'OPACMSG' && $field['value'] != '-') {
-                    $notes[] = $this->translateOpacMessage($field['value']);
+            if (isset($item['fixedFields']['108'])) {
+                $opacMsg = $item['fixedFields']['108'];
+                if ($opacMsg['value'] != '-') {
+                    $notes[] = $this->translateOpacMessage($opacMsg['value']);
                     break;
                 }
             }
@@ -1680,7 +1681,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                     \DateTime::ISO8601, $item['fixedFields']['68']['value']
                 );
                 if ($checkedIn == $today) {
-                    $notes[] = $this->translate('Discharged Today');
+                    $notes[] = $this->translate('Returned today');
                 }
             }
         } else {
@@ -1817,7 +1818,8 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
      */
     protected function holdError($msg)
     {
-        $msg = preg_replace('/WebPAC Error\s*:\s*/', '', $msg);
+        // Remove prefix like "WebPAC Error" or "XCirc error"
+        $msg = preg_replace('/.* [eE]rror\s*:\s*/', '', $msg);
         return [
             'success' => false,
             'sysMessage' => $msg
