@@ -1722,24 +1722,27 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
                 $params = [
                     'notes' => $record['notes'],
-                    'list' => $existingList ? $existingList->id : null,
+                    'list' => $existingList->id,
                     'mytags' => $record['tags']
                 ];
-                $driver->saveToFavorites($params, $user)['listId'];
-                $userResource = $user->getSavedData(
-                    $record['id'],
-                    $existingList->id,
-                    $record['source']
-                )->current();
+                $driver->saveToFavorites($params, $user);
 
-                if ($userResource && $record['order'] !== null) {
-                    $userResourceTable->createOrUpdateLink(
-                        $userResource->resource_id,
-                        $userId,
+                if ($record['order'] !== null) {
+                    $userResource = $user->getSavedData(
+                        $record['id'],
                         $existingList->id,
-                        $record['notes'],
-                        $record['order']
-                    );
+                        $record['source']
+                    )->current();
+
+                    if ($userResource) {
+                        $userResourceTable->createOrUpdateLink(
+                            $userResource->resource_id,
+                            $userId,
+                            $existingList->id,
+                            $record['notes'],
+                            $record['order']
+                        );
+                    }
                 }
             }
         }

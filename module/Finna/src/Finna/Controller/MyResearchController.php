@@ -1149,7 +1149,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $outputList = [
                 'title' => $list->title,
                 'description' => $list->description,
-                'public' => $list->public
+                'public' => $list->public,
+                'records' => []
             ];
 
             foreach ($listRecords->getResults() as $record) {
