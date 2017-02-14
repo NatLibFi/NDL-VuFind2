@@ -27,6 +27,7 @@
  */
 namespace Finna\Controller;
 
+use VuFind\RecordDriver\Missing;
 use VuFindSearch\Query\Query as Query;
 use VuFind\Search\RecommendListener;
 use Finna\Search\Solr\Params;
@@ -1699,36 +1700,46 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
         foreach ($lists as $list) {
             $existingList = $userListTable->getByTitle($userId, $list['title']);
+
+            if (!$existingList) {
+                $existingList = $userListTable->getNew($user);
+                $existingList->title = $list['title'];
+                $existingList->description = $list['description'];
+                $existingList->public = $list['public'];
+                $existingList->save($user);
+            }
+
             foreach ($list['records'] as $record) {
+                $driver = $recordLoader->load(
+                    $record['id'],
+                    $record['source'],
+                    true
+                );
+
+                if ($driver instanceof Missing) {
+                    continue;
+                }
+
                 $params = [
                     'notes' => $record['notes'],
                     'list' => $existingList ? $existingList->id : null,
                     'mytags' => $record['tags']
                 ];
-
-                $driver = $recordLoader->load($record['id'], $record['source']);
-                $listId = $driver->saveToFavorites($params, $user)['listId'];
-
+                $driver->saveToFavorites($params, $user)['listId'];
                 $userResource = $user->getSavedData(
                     $record['id'],
-                    $listId,
+                    $existingList->id,
                     $record['source']
                 )->current();
 
-                $userResourceTable->createOrUpdateLink(
-                    $userResource->resource_id,
-                    $userId,
-                    $listId,
-                    $record['notes'],
-                    $record['order']
-                );
-
-                if (!$existingList) {
-                    $existingList = $userListTable->getExisting($listId);
-                    $existingList->title = $list['title'];
-                    $existingList->description = $list['description'];
-                    $existingList->public = $list['public'];
-                    $existingList->save($user);
+                if ($record['order'] !== null) {
+                    $userResourceTable->createOrUpdateLink(
+                        $userResource->resource_id,
+                        $userId,
+                        $existingList->id,
+                        $record['notes'],
+                        $record['order']
+                    );
                 }
             }
         }
