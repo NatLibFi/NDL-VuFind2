@@ -850,12 +850,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'lists' => $this->exportUserLists($user->id)
         ];
         $json = json_encode($exportData);
+        $timestamp = strftime('%Y-%m-%d-%H%M');
+        $filename = "finna-export-$timestamp.json";
         $response = $this->getResponse();
         $response->setContent($json);
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-Type', 'application/json')
             ->addHeaderLine(
-                'Content-Disposition', 'attachment; filename="finna-export.json"'
+                'Content-Disposition',
+                'attachment; filename="' . $filename . '"'
             )
             ->addHeaderLine('Content-Length', strlen($json));
 

@@ -1732,7 +1732,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
                     $record['source']
                 )->current();
 
-                if ($record['order'] !== null) {
+                if ($userResource && $record['order'] !== null) {
                     $userResourceTable->createOrUpdateLink(
                         $userResource->resource_id,
                         $userId,
