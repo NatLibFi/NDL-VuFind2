@@ -1660,7 +1660,10 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     {
         $duedate = '';
         $notes = [];
-        $status = ucwords(strtolower($item['status']['display']));
+        $status = isset($item['status']['display'])
+            ? ucwords(strtolower($item['status']['display']))
+            : '-';
+        $status = trim($status);
         // For some reason at least API v2.0 returns "ON SHELF" even when the
         // item is out. Use duedate to check if it's actually checked out.
         if (isset($item['status']['duedate'])) {
@@ -1669,7 +1672,16 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 $item['status']['duedate']
             );
             $status = 'Charged';
-        } elseif ($status == 'On Shelf') {
+        } else {
+            switch ($status) {
+            case '-':
+                $status = 'On Shelf';
+            case 'Lib Use Only':
+                $status = 'On Reference Desk';
+                break;
+            }
+        }
+        if ($status == 'On Shelf') {
             // Check for checkin date
             $today = $this->dateConverter->convertToDisplayDate('U', time());
             if (isset($item['fixedFields']['68'])) {
@@ -1679,12 +1691,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 if ($checkedIn == $today) {
                     $notes[] = $this->translate('Returned today');
                 }
-            }
-        } else {
-            switch ($status) {
-            case 'Lib Use Only':
-                $status = 'On Reference Desk';
-                break;
             }
         }
         return [$status, $duedate, $notes];
