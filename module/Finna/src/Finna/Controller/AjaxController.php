@@ -1694,9 +1694,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $userListTable = $this->getTable('UserList');
         $userResourceTable = $this->getTable('UserResource');
         $recordLoader = $this->getRecordLoader();
-        $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
-        $existingFavoritesCount = $runner->run([], 'Favorites')->getResultTotal();
-        $existingUserListCount = count($user->getLists());
+        $favoritesCount = 0;
+        $listCount = 0;
 
         foreach ($lists as $list) {
             $existingList = $userListTable->getByTitle($userId, $list['title']);
@@ -1707,6 +1706,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
                 $existingList->description = $list['description'];
                 $existingList->public = $list['public'];
                 $existingList->save($user);
+                $listCount++;
             }
 
             foreach ($list['records'] as $record) {
@@ -1744,15 +1744,14 @@ class AjaxController extends \VuFind\Controller\AjaxController
                         );
                     }
                 }
+
+                $favoritesCount++;
             }
         }
 
-        $newFavoritesCount = $runner->run([], 'Favorites')->getResultTotal();
-        $newUserListCount = count($user->getLists());
-
         return [
-            'userLists' => $newUserListCount - $existingUserListCount,
-            'userResources' => $newFavoritesCount - $existingFavoritesCount
+            'userLists' => $listCount,
+            'userResources' => $favoritesCount
         ];
     }
 }
