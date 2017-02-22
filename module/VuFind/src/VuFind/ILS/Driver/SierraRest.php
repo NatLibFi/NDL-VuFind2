@@ -157,7 +157,8 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
         '$' => 'Lost--Library Applied',
         'p' => '',
         'z' => 'Claims Returned',
-        's' => 'On Search'
+        's' => 'On Search',
+        'd' => 'In Process'
     ];
 
     /**
@@ -250,6 +251,12 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
         $this->pickupLocationsInRequestGroup
             = isset($this->config['Holds']['pickupLocationsInRequestGroup'])
             ? $this->config['Holds']['pickupLocationsInRequestGroup'] : false;
+
+        if (!empty($this->config['ItemStatusMappings'])) {
+            $this->itemStatusMappings = array_merge(
+                $this->itemStatusMappings, $this->config['ItemStatusMappings']
+            );
+        }
 
         // Init session cache for session-specific data
         $namespace = md5(
