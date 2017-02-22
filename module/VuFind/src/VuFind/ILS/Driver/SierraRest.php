@@ -79,6 +79,13 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     protected $sessionCache;
 
     /**
+     * Whether item holds are enabled
+     *
+     * @var bool
+     */
+    protected $itemHoldsEnabled;
+
+    /**
      * Item codes for which item level hold is not allowed
      *
      * @var array
@@ -136,6 +143,24 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     protected $validHoldStatuses;
 
     /**
+     * Mappings from item status codes to VuFind strings
+     *
+     * @var array
+     */
+    protected $itemStatusMappings = [
+        '!' => 'On Holdshelf',
+        't' => 'In Transit',
+        'o' => 'On Reference Desk',
+        'k' => 'In Repair',
+        'm' => 'Missing',
+        'n' => 'Long Overdue',
+        '$' => 'Lost--Library Applied',
+        'p' => '',
+        'z' => 'Claims Returned',
+        's' => 'On Search'
+    ];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter  Date converter object
@@ -187,6 +212,10 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
             = !empty($this->config['Holds']['valid_hold_statuses'])
             ? explode(':', $this->config['Holds']['valid_hold_statuses'])
             : [];
+
+        $this->itemHoldsEnabled
+            = isset($this->config['Holds']['enableItemHolds'])
+            ? $this->config['Holds']['enableItemHolds'] : true;
 
         $this->itemHoldExcludedItemCodes
             = !empty($this->config['Holds']['item_hold_excluded_item_codes'])
@@ -446,9 +475,8 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     public function getMyProfile($patron)
     {
         $result = $this->makeRequest(
-            ['v3', 'patrons', 'find'],
+            ['v3', 'patrons', $patron['id']],
             [
-                'barcode' => $patron['cat_username'],
                 'fields' => 'names,emails,phones,addresses,expirationDate'
             ],
             'GET',
@@ -1568,14 +1596,14 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
         $statuses = [];
         foreach ($result['entries'] as $i => $item) {
             $location = $this->translateLocation($item['location']);
-            $available = in_array($item['status']['code'], $availableStatuses)
+            $available = in_array(trim($item['status']['code']), $availableStatuses)
                 && !isset($item['status']['duedate']);
             list($status, $duedate, $notes) = $this->getItemStatus($item);
             // OPAC message
             if (isset($item['fixedFields']['108'])) {
                 $opacMsg = $item['fixedFields']['108'];
-                if ($opacMsg['value'] != '-') {
-                    $notes[] = $this->translateOpacMessage($opacMsg['value']);
+                if (trim($opacMsg['value']) != '-') {
+                    $notes[] = $this->translateOpacMessage(trim($opacMsg['value']));
                     break;
                 }
             }
@@ -1627,7 +1655,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
             $prefix .= $this->config['Catalog']['id'] . '_';
         }
         return $this->translate(
-            $prefix . $location['code'],
+            $prefix . trim($location['code']),
             null,
             $location['name']
         );
@@ -1660,9 +1688,14 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     {
         $duedate = '';
         $notes = [];
-        $status = isset($item['status']['display'])
-            ? ucwords(strtolower($item['status']['display']))
-            : '-';
+        $statusCode = trim($item['status']['code']);
+        if (isset($this->itemStatusMappings[$statusCode])) {
+            $status = $this->itemStatusMappings[$statusCode];
+        } else {
+            $status = isset($item['status']['display'])
+                ? ucwords(strtolower($item['status']['display']))
+                : '-';
+        }
         $status = trim($status);
         // For some reason at least API v2.0 returns "ON SHELF" even when the
         // item is out. Use duedate to check if it's actually checked out.
@@ -1676,6 +1709,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
             switch ($status) {
             case '-':
                 $status = 'On Shelf';
+                break;
             case 'Lib Use Only':
                 $status = 'On Reference Desk';
                 break;
@@ -1724,6 +1758,9 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
      */
     protected function itemHoldAllowed($item, $bib)
     {
+        if (!$this->itemHoldsEnabled) {
+            return false;
+        }
         if (!empty($this->itemHoldExcludedItemCodes)
             && isset($item['fixedFields']['60'])
         ) {
@@ -1760,9 +1797,10 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 'GET',
                 $patron
             );
-            if (!empty($result['blockInfo']) && $result['blockInfo']['code'] != '-'
+            if (!empty($result['blockInfo'])
+                && trim($result['blockInfo']['code']) != '-'
             ) {
-                $blockReason = [$result['blockInfo']['code']];
+                $blockReason = [trim($result['blockInfo']['code'])];
             } else {
                 $blockReason = [];
             }
