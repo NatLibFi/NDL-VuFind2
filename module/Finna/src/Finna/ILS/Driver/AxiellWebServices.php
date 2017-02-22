@@ -179,22 +179,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     protected $singleReservationQueue = false;
 
     /**
-     * Message Settings
-     *
-     * The Variable method_none determines if "no notification" option is selectable
+     * Messaging settings to be shown in the interface
      *
      * @var array
      */
     protected $messagingSettings = [
-        'pickUpNotice' => [
-            'method_none' => false
-        ],
-        'overdueNotice' => [
-            'method_none' => false
-        ],
-        'dueDateAlert' => [
-            'method_none' => false
-        ]
+        'pickUpNotice' => [],
+        'overdueNotice' => [],
+        'dueDateAlert' => []
      ];
 
     /**
@@ -368,30 +360,30 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
         $this->holdingsOrganisationOrder
             = isset($this->config['Holdings']['holdingsOrganisationOrder'])
-            ? explode(":", $this->config['Holdings']['holdingsOrganisationOrder'])
+            ? explode(':', $this->config['Holdings']['holdingsOrganisationOrder'])
             : [];
         $this->holdingsOrganisationOrder
             = array_flip($this->holdingsOrganisationOrder);
         $this->holdingsBranchOrder
             = isset($this->config['Holdings']['holdingsBranchOrder'])
-            ? explode(":", $this->config['Holdings']['holdingsBranchOrder'])
+            ? explode(':', $this->config['Holdings']['holdingsBranchOrder'])
             : [];
         $this->holdingsBranchOrder = array_flip($this->holdingsBranchOrder);
 
-        if (isset($this->config['messagingSettings']['pickUpNoticeMethodNone'])) {
-            $this->messagingSettings['pickUpNotice']['method_none']
-                = $this->config['messagingSettings']['pickUpNoticeMethodNone'];
-        }
+        $this->messagingSettings['pickUpNotice']
+            = isset($this->config['messagingSettings']['pickUpNotice'])
+            ? explode(':', $this->config['messagingSettings']['pickUpNotice'])
+            : [];
 
-        if (isset($this->config['messagingSettings']['overdueNoticeMethodNone'])) {
-            $this->messagingSettings['overdueNotice']['method_none']
-                = $this->config['messagingSettings']['overdueNoticeMethodNone'];
-        }
+        $this->messagingSettings['overdueNotice']
+            = isset($this->config['messagingSettings']['overdueNotice'])
+            ? explode(':', $this->config['messagingSettings']['overdueNotice'])
+            : [];
 
-        if (isset($this->config['messagingSettings']['dueDateAlertMethodNone'])) {
-            $this->messagingSettings['dueDateAlert']['method_none']
-                = $this->config['messagingSettings']['dueDateAlertMethodNone'];
-        }
+        $this->messagingSettings['dueDateAlert']
+            = isset($this->config['messagingSettings']['dueDateAlert'])
+            ? explode(':', $this->config['messagingSettings']['dueDateAlert'])
+            : [];
     }
 
     /**
@@ -1168,7 +1160,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $firstname = implode(' ', $names);
 
         $user = [
-            'id' => $username,
+            'id' => $info->backendPatronId,
             'cat_username' => $username,
             'cat_password' => $password,
             'lastname' => $lastname,
@@ -1178,7 +1170,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $userCached = [
-            'id' => $username,
+            'id' => $info->backendPatronId,
             'cat_username' => $username,
             'cat_password' => $password,
             'lastname' => $lastname,
@@ -1246,33 +1238,41 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $userCached['messagingServices'] = [];
-        $services = ['pickUpNotice', 'overdueNotice', 'dueDateAlert'];
 
-        foreach ($services as $service) {
+        $validServices = [
+           'pickUpNotice'  => [
+               'letter', 'email', 'sms', 'none'
+           ],
+           'overdueNotice' => [
+               'letter', 'email', 'sms', 'none'
+           ],
+           'dueDateAlert' => [
+               'email', 'none'
+           ]
+        ];
+
+        foreach ($validServices as $service => $validMethods) {
             $data = [
                 'active' => false,
-                'type' => $this->translate("messaging_settings_type_$service")
+                'type' => $this->translate("messaging_settings_type_$service"),
+                'sendMethods' => []
             ];
-            if (isset($this->messagingSettings[$service]['method_none'])
-                && $this->messagingSettings[$service]['method_none']
-            ) {
-                $data['sendMethods'] = [
-                    'none' => ['active' => false, 'type' => 'none']
-                ];
-            } else {
-                $data['sendMethods'] = [];
-            }
-
-            if ($service == 'dueDateAlert') {
-                $data['sendMethods'] += [
-                    'email' => ['active' => false, 'type' => 'email']
-                ];
-            } else {
-                $data['sendMethods'] += [
-                    'letter' => ['active' => false, 'type' => 'letter'],
-                    'email' => ['active' => false, 'type' => 'email'],
-                    'sms' => ['active' => false, 'type' => 'sms']
-                ];
+            if ($this->messagingSettings[$service]) {
+                foreach ($this->messagingSettings[$service] as $methodKey) {
+                    if (in_array($methodKey, $validMethods)
+                    ) {
+                        $data['sendMethods'] += [
+                            "$methodKey" => [
+                                'active' => false,
+                                'type' => $methodKey
+                            ]
+                        ];
+                    } else {
+                        $this->error(
+                            "Messaging settings for $service are invalid: $methodKey"
+                        );
+                    }
+                }
             }
             $userCached['messagingServices'][$service] = $data;
         }
@@ -1289,7 +1289,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
                 foreach ($sendMethods as $method) {
                     $methodType = isset($method->sendMethod->value)
-                        ? $method->sendMethod->value : 'none';
+                        ? $this->mapCode($method->sendMethod->value) : 'none';
                     $userCached['messagingServices'][$serviceType]['sendMethods']
                         [$methodType]['active']
                             = isset($method->sendMethod->isActive)
@@ -2263,6 +2263,27 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             return $statuses[$status];
         }
         return $status;
+    }
+
+    /**
+     * Map codes
+     *
+     * @param string $code as a string
+     *
+     * @return string Mapped code
+     */
+    protected function mapCode($code)
+    {
+        $statuses =  [
+            //Map messaging settings
+            'snailMail'             => 'letter',
+            'ilsDefined'            => 'none'
+        ];
+
+        if (isset($statuses[$code])) {
+            return $statuses[$code];
+        }
+        return $code;
     }
 
     /**
