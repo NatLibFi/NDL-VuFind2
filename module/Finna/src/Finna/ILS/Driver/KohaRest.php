@@ -269,6 +269,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $this->error($error);
             throw new ILSException($error);
         }
+        // Clear patron's block cache
+        $cacheId = 'blocks|' . $patron['id'];
+        $this->removeCachedData($cacheId);
         return true;
     }
 }

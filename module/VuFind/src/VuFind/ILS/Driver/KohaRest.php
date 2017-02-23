@@ -443,7 +443,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'checkout_id' => $entry['issue_id'],
                 'item_id' => $entry['itemnumber'],
                 'duedate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d H:i:s', $entry['date_due']
+                    'Y-m-d\TH:i:sP', $entry['date_due']
                 ),
                 'dueStatus' => $dueStatus,
                 'renew' => $entry['renewals'],
@@ -538,7 +538,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $title = '';
             $volume = '';
             $publicationYear = '';
-            if (null !== $itemId) {
+            if ($itemId) {
                 $item = $this->getItem($itemId);
                 $bibId = $item['biblionumber'];
                 $volume = $item['enumchron'];
@@ -658,7 +658,9 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         $excluded = isset($this->config['Holds']['excludePickupLocations'])
             ? explode(':', $this->config['Holds']['excludePickupLocations']) : [];
         foreach ($result as $location) {
-            if (in_array($location['branchcode'], $excluded)) {
+            if (!$location['pickup_location']
+                || in_array($location['branchcode'], $excluded)
+            ) {
                 continue;
             }
             $locations[] = [
@@ -1190,7 +1192,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $status = $this->pickStatus($statusCodes);
             if (isset($avail['unavailabilities']['Item::CheckedOut']['date_due'])) {
                 $duedate = $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d',
+                    'Y-m-d\TH:i:sP',
                     $avail['unavailabilities']['Item::CheckedOut']['date_due']
                 );
             } else {
@@ -1391,19 +1393,36 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         $cacheId = "blocks|$patronId";
         $blockReason = $this->getCachedData($cacheId);
         if (null === $blockReason) {
-            /* TODO
             $result = $this->makeRequest(
-                ['v1', 'blocks??'],
-                ['borrowernumber' => $patron['id']],
+                ['v1', 'patrons', $patron['id'], 'status'],
+                [],
                 'GET',
                 $patron
             );
             $blockReason = [];
-            if (!empty($result)) {
-                foreach ($result as $line) {
-
+            if (!empty($result['blocks'])) {
+                $blockReason[] = $this->translate('Borrowing Block Message');
+                foreach ($result['blocks'] as $reason => $details) {
+                    $params = [];
+                    if (($reason == 'Patron::Debt'
+                        || $reason == 'Patron::DebtGuarantees')
+                        && !empty($details['current_outstanding'])
+                        && !empty($details['max_outstanding'])
+                    ) {
+                        $params = [
+                            '%%blockCount%%' => $details['current_outstanding'],
+                            '%%blockLimit%%' => $details['max_outstanding']
+                        ];
+                    }
+                    $reason = 'Borrowing Block Koha Reason '
+                        . str_replace('::', '_', $reason);
+                    $translated = $this->translate($reason, $params);
+                    if ($reason !== $translated) {
+                        $reason = $translated;
+                        $blockReason[] = $reason;
+                    }
                 }
-            }*/
+            }
             $this->putCachedData($cacheId, $blockReason);
         }
         return empty($blockReason) ? false : $blockReason;
