@@ -1007,8 +1007,7 @@ class OrganisationInfo implements \Zend\Log\LoggerAwareInterface
         }
 
         $result = compact('schedules', 'openToday', 'currentWeek');
-        $openNow ? 
-            $result['openNow'] = $openNow : $result['openNow'] = false; 
+        $openNow ? $result['openNow'] = $openNow : $result['openNow'] = false; 
         return $result;
     }
 
