@@ -107,28 +107,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     protected $defaultPickUpLocation;
 
     /**
-     * Whether request groups (mapped to Sierra locations) are enabled
-     *
-     * @var bool
-     */
-    protected $requestGroupsEnabled;
-
-    /**
-     * Default request group
-     *
-     * @var bool|string
-     */
-    protected $defaultRequestGroup;
-
-    /**
-     * Whether pickup location must belong to the request group (in practice this
-     * means that pickup location has to be the item location too)
-     *
-     * @var bool
-     */
-    protected $pickupLocationsInRequestGroup;
-
-    /**
      * Whether to check that items exist when placing a hold
      *
      * @var bool
@@ -235,22 +213,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
         if ($this->defaultPickUpLocation === 'user-selected') {
             $this->defaultPickUpLocation = false;
         }
-
-        $this->requestGroupsEnabled
-            = isset($this->config['Holds']['extraHoldFields'])
-            && in_array(
-                'requestGroup',
-                explode(':', $this->config['Holds']['extraHoldFields'])
-            );
-        $this->defaultRequestGroup
-            = isset($this->config['Holds']['defaultRequestGroup'])
-            ? $this->config['Holds']['defaultRequestGroup'] : false;
-        if ($this->defaultRequestGroup === 'user-selected') {
-            $this->defaultRequestGroup = false;
-        }
-        $this->pickupLocationsInRequestGroup
-            = isset($this->config['Holds']['pickupLocationsInRequestGroup'])
-            ? $this->config['Holds']['pickupLocationsInRequestGroup'] : false;
 
         if (!empty($this->config['ItemStatusMappings'])) {
             $this->itemStatusMappings = array_merge(
@@ -828,59 +790,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
         }
 
         return [];
-
-        // This doesn't actually work since branch ID is not the same as the pickup
-        // location code.
-        /*
-        $result = $this->makeRequest(
-            ['v3', 'branches'],
-            ['fields' => 'id,name', 'limit' => 10000],
-            'GET',
-            $patron
-        );
-        if (!isset($result['entries'])) {
-            return [];
-        }
-        $locations = [];
-        $excluded = isset($this->config['Holds']['excludePickupLocations'])
-            ? explode(':', $this->config['Holds']['excludePickupLocations']) : [];
-        foreach ($result['entries'] as $location) {
-            if (in_array($location['id'], $excluded)) {
-                continue;
-            }
-            $locations[] = [
-                'locationID' => $location['id'],
-                'locationDisplay' => $location['name']
-            ];
-        }
-
-        // Do we need to sort pickup locations? If the setting is false, don't
-        // bother doing any more work. If it's not set at all, default to
-        // alphabetical order.
-        $orderSetting = isset($this->config['Holds']['pickUpLocationOrder'])
-            ? $this->config['Holds']['pickUpLocationOrder'] : 'default';
-        if (count($locations) > 1 && !empty($orderSetting)) {
-            $locationOrder = $orderSetting === 'default'
-                ? [] : array_flip(explode(':', $orderSetting));
-            $sortFunction = function ($a, $b) use ($locationOrder) {
-                $aLoc = $a['locationID'];
-                $bLoc = $b['locationID'];
-                if (isset($locationOrder[$aLoc])) {
-                    if (isset($locationOrder[$bLoc])) {
-                        return $locationOrder[$aLoc] - $locationOrder[$bLoc];
-                    }
-                    return -1;
-                }
-                if (isset($locationOrder[$bLoc])) {
-                    return 1;
-                }
-                return strcasecmp($a['locationDisplay'], $b['locationDisplay']);
-            };
-            usort($locations, $sortFunction);
-        }
-
-        return $locations;
-        */
     }
 
     /**
@@ -906,81 +815,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     }
 
     /**
-     * Get Default Request Group
-     *
-     * Returns the default request group set in SierraRest.ini
-     *
-     * @param array $patron      Patron information returned by the patronLogin
-     * method.
-     * @param array $holdDetails Optional array, only passed in when getting a list
-     * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the request group
-     * options or may be ignored.
-     *
-     * @return false|string      The default request group for the patron or false if
-     * the user has to choose.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getDefaultRequestGroup($patron = false, $holdDetails = null)
-    {
-        return $this->defaultRequestGroup;
-    }
-
-    /**
-     * Get request groups
-     *
-     * @param integer $bibId       BIB ID
-     * @param array   $patron      Patron information returned by the patronLogin
-     * method.
-     * @param array   $holdDetails Optional array, only passed in when getting a list
-     * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the request group
-     * options or may be ignored.
-     *
-     * @return array  False if request groups not in use or an array of
-     * associative arrays with id and name keys
-     */
-    public function getRequestGroups($bibId, $patron, $holdDetails = null)
-    {
-        if (!$this->requestGroupsEnabled || null === $holdDetails
-            || !isset($holdDetails['level']) || $holdDetails['level'] !== 'title'
-        ) {
-            return false;
-        }
-
-        $itemLocations = [];
-        if ($this->checkItemsExist) {
-            $result = $this->getBibRecord($bibId, 'location', $patron);
-            if (isset($result['entries'])) {
-                foreach ($result['entries'] as $entry) {
-                    if (!empty($entry['location'])) {
-                        $itemLocations[$entry['location']['code']] = 1;
-                    }
-                }
-            }
-        }
-
-        $groups = [];
-        foreach ($this->getPickUpLocations($patron) as $location) {
-            if ($this->checkItemsExist) {
-                if (!isset($itemLocations[$location['locationID']])) {
-                    continue;
-                }
-            }
-            $groups[] = [
-                'id' => $location['locationID'],
-                'name' => $location['locationDisplay']
-            ];
-        }
-
-        // Sort request groups
-        usort($groups, [$this, 'requestGroupSortFunction']);
-
-        return $groups;
-    }
-
-    /**
      * Check if request is valid
      *
      * This is responsible for determining if an item is requestable
@@ -1003,12 +837,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 || !in_array($bib['bibLevel']['code'], $this->titleHoldBibLevels)
             ) {
                 return false;
-            }
-            if ($this->requestGroupsEnabled) {
-                $groups = $this->getRequestGroups($id, $patron);
-                if ($groups === []) {
-                    return false;
-                }
             }
         }
         return true;
@@ -1071,12 +899,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
         // Make sure pickup location is valid
         if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
             return $this->holdError('hold_invalid_pickup');
-        }
-
-        if ($this->requestGroupsEnabled && !$itemId
-            && empty($holdDetails['requestGroupId'])
-        ) {
-            return $this->holdError('hold_invalid_request_group');
         }
 
         $request = [
@@ -1871,32 +1693,6 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
             'success' => false,
             'sysMessage' => $msg
         ];
-    }
-
-    /**
-     * Sort function for sorting request groups
-     *
-     * @param array $a Request group
-     * @param array $b Request group
-     *
-     * @return number
-     */
-    protected function requestGroupSortFunction($a, $b)
-    {
-        $requestGroupOrder = isset($this->config['Holds']['requestGroupOrder'])
-            ? explode(':', $this->config['Holds']['requestGroupOrder'])
-            : [];
-        $requestGroupOrder = array_flip($requestGroupOrder);
-        if (isset($requestGroupOrder[$a['id']])) {
-            if (isset($requestGroupOrder[$b['id']])) {
-                return $requestGroupOrder[$a['id']] - $requestGroupOrder[$b['id']];
-            }
-            return -1;
-        }
-        if (isset($requestGroupOrder[$b['id']])) {
-            return 1;
-        }
-        return strcasecmp($a['name'], $b['name']);
     }
 
     /**
