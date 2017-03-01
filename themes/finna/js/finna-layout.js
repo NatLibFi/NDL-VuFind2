@@ -177,6 +177,7 @@ finna.layout = (function() {
             $('.more-link').hide();
         }
     };
+
     var initTruncatedRecordImageNavi = function() {
         var displayTruncatedImage = function(placeholder) {
             var img = $('<img/>');
