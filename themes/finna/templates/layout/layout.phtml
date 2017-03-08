@@ -142,13 +142,8 @@
            $browse = isset($browse) ? $browse : false;
            if (!$browse) {
              $activeTab = isset($this->searchClassId) ? $this->searchClassId : DEFAULT_SEARCH_BACKEND;
-             if (isset($searchTabs)) {
-               foreach ($searchTabs as $tab) {
-                 if ($tab['selected']) {
-                   $activeTab = $tab['id'];
-                   break;
-                 }
-               }
+             if (isset($searchTabs['selected'])) {
+               $activeTab = $searchTabs['selected']['id'];
              }
 
              foreach (['suggestion','facet','handler', 'filter', 'phrase'] as $section) {
@@ -236,10 +231,10 @@ JS;
       <div class="container-fluid navbar">
         <div class="row">
           <div class="col-xs-12">
-          <? if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
-            <span class="sr-only"><?=$this->layout()->srmessage ?></span>
-          <? endif; ?>
-          <a class="sr-only" href="#content"><?=$this->transEsc('Skip to content') ?></a>
+            <? if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
+              <span class="sr-only"><?=$this->layout()->srmessage ?></span>
+            <? endif; ?>
+            <a class="sr-only" href="#content"><?=$this->transEsc('Skip to content') ?></a>
             <?=$this->render('navibar.phtml')?>
           </div>
         </div>

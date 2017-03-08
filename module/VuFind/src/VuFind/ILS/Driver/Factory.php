@@ -177,7 +177,8 @@ class Factory
     {
         return new MultiBackend(
             $sm->getServiceLocator()->get('VuFind\Config'),
-            $sm->getServiceLocator()->get('VuFind\ILSAuthenticator')
+            $sm->getServiceLocator()->get('VuFind\ILSAuthenticator'),
+            $sm
         );
     }
 
@@ -212,6 +213,33 @@ class Factory
         );
 
         return $paia;
+    }
+
+    /**
+     * Factory for KohaILSDI driver.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return KohaILSDI
+     */
+    public static function getKohaILSDI(ServiceManager $sm)
+    {
+        return new KohaILSDI($sm->getServiceLocator()->get('VuFind\DateConverter'));
+    }
+
+    /**
+     * Factory for Symphony driver.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Symphony
+     */
+    public static function getSymphony(ServiceManager $sm)
+    {
+        return new Symphony(
+            $sm->getServiceLocator()->get('VuFind\RecordLoader'),
+            $sm->getServiceLocator()->get('VuFind\CacheManager')
+        );
     }
 
     /**
@@ -256,5 +284,29 @@ class Factory
             $sm->getServiceLocator()->get('VuFind\CacheManager')->getCache('object')
         );
         return $vr;
+    }
+
+    /**
+     * Factory for Sierra REST driver.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return SierraRest
+     */
+    public static function getSierraRest(ServiceManager $sm)
+    {
+        $sessionFactory = function ($namespace) use ($sm) {
+            $manager = $sm->getServiceLocator()->get('VuFind\SessionManager');
+            return new \Zend\Session\Container("SierraRest_$namespace", $manager);
+        };
+
+        $driver = new SierraRest(
+            $sm->getServiceLocator()->get('VuFind\DateConverter'),
+            $sessionFactory
+        );
+        $driver->setCacheStorage(
+            $sm->getServiceLocator()->get('VuFind\CacheManager')->getCache('object')
+        );
+        return $driver;
     }
 }

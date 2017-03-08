@@ -191,7 +191,7 @@ trait OnlinePaymentControllerTrait
 
         $paymentParam = 'payment';
         $request = $this->getRequest();
-        $pay = $request->getQuery()->get('pay', $request->getPost('pay'));
+        $pay = $this->formWasSubmitted('pay-confirm');
         $payment = $request->getQuery()->get(
             $paymentParam, $request->getPost($paymentParam)
         );
@@ -215,7 +215,7 @@ trait OnlinePaymentControllerTrait
             }
 
             // Start payment
-            if (!($paymentHandler->startPayment(
+            $result = $paymentHandler->startPayment(
                 $finesUrl,
                 $ajaxUrl,
                 $user,
@@ -226,7 +226,8 @@ trait OnlinePaymentControllerTrait
                 $payableFines,
                 $paymentConfig['currency'],
                 $paymentParam
-            ))) {
+            );
+            if (!$result) {
                 $this->flashMessenger()->addMessage(
                     'online_payment_failed', 'error'
                 );
@@ -277,8 +278,13 @@ trait OnlinePaymentControllerTrait
                     $this->flashMessenger()->addMessage(
                         strip_tags($paymentPermittedForUser), 'error'
                     );
-                } else if (!empty($payableOnline['reason'])) {
+                } elseif (!empty($payableOnline['reason'])) {
                     $view->nonPayableReason = $payableOnline['reason'];
+                } elseif ($this->formWasSubmitted('pay')) {
+                    $view->setTemplate(
+                        'Helpers/OnlinePayment/terms-' . $view->paymentHandler
+                        . '.phtml'
+                    );
                 }
             }
         }
@@ -419,9 +425,10 @@ trait OnlinePaymentControllerTrait
             );
             $this->handleException($e);
 
-            if (!$transactionTable->setTransactionRegistrationFailed(
+            $result = $transactionTable->setTransactionRegistrationFailed(
                 $tId, $e->getMessage()
-            )) {
+            );
+            if (!$result) {
                 $this->handleError(
                     "Error updating transaction $transactionId status: "
                     . 'registering failed'

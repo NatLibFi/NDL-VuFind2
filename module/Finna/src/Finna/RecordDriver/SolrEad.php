@@ -61,9 +61,15 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAccessRestrictions()
     {
+        $origination = $this->getOrigination();
         $record = $this->getSimpleXML();
-        return isset($record->accessrestrict->p)
-            ? $record->accessrestrict->p : [];
+        if ($origination == 'Kotimaisten kielten keskus') {
+            return isset($record->userestrict->p)
+                ? $record->userestrict->p : [];
+        } else {
+            return isset($record->accessrestrict->p)
+                ? $record->accessrestrict->p : [];
+        }
     }
 
     /**
@@ -175,9 +181,10 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
         $bibliography = [];
         foreach ($record->xpath('//bibliography') as $node) {
             // Filter out Portti links since they're displayed in links
-            if (!preg_match(
+            $match = preg_match(
                 '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/', (string)$node->p
-            )) {
+            );
+            if (!$match) {
                 $bibliography[] = (string)$node->p;
             }
         }
@@ -437,10 +444,11 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
         $record = $this->getSimpleXML();
         foreach ($record->xpath('//daoloc') as $node) {
             $url = (string)$node->attributes()->href;
-            if (isset($node->attributes()->role) && in_array(
+            $image = isset($node->attributes()->role) && in_array(
                 $node->attributes()->role,
                 ['image_thumbnail', 'image_reference']
-            )) {
+            );
+            if ($image) {
                 continue;
             }
 
@@ -466,11 +474,12 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
 
         // Portti links parsed from bibliography
         foreach ($record->xpath('//bibliography') as $node) {
-            if (preg_match(
+            $match = preg_match(
                 '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/',
                 (string)$node->p,
                 $matches
-            )) {
+            );
+            if ($match) {
                 $urls[] = [
                     'url' => $matches[2],
                     'desc' => $matches[1]

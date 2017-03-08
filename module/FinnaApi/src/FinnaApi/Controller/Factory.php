@@ -56,7 +56,22 @@ class Factory
         $controller = new \VuFindApi\Controller\ApiController();
         $controller->addApi($sm->get('AdminApi'));
         $controller->addApi($sm->get('SearchApi'));
+        $controller->addApi($sm->get('AuthApi'));
         return $controller;
+    }
+
+    /**
+     * Construct the AuthApiController.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return AuthApiController
+     */
+    public static function getAuthApiController(ServiceManager $sm)
+    {
+        $result = new AuthApiController();
+        $result->setLogger($sm->getServiceLocator()->get('VuFind\Logger'));
+        return $result;
     }
 
     /**
@@ -70,8 +85,7 @@ class Factory
     {
         $recordFields = $sm->getServiceLocator()
             ->get('VuFind\YamlReader')->get('SearchApiRecordFields.yaml');
-        $helperManager = $sm->getServiceLocator()->get('viewmanager')
-            ->getHelperManager();
+        $helperManager = $sm->getServiceLocator()->get('ViewHelperManager');
         $translator = $sm->getServiceLocator()->get('translator');
         $rf = new RecordFormatter($recordFields, $helperManager, $translator);
         $controller = new SearchApiController($rf, new FacetFormatter());

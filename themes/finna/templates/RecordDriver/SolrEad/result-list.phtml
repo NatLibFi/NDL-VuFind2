@@ -25,7 +25,7 @@
           } else {
             echo $this->transEsc('Title not available');
           }
-        ?>
+        ?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
         </a>
       </div>
 
@@ -42,7 +42,7 @@
         <div class="resultHierarchyLinks">
           <? // The funky comparison below is due to Zend translator not supporting empty values (see ExtendedIniReader) ?>
           <? if (!$this->translationEmpty('Archive Repository')): ?><span class="small"><?=$this->transEsc('Archive Repository')?>:</span><? endif; ?>
-          <?= $this->organisationDisplayName($this->driver) ?>
+          <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
           <? if ($origination = $this->driver->getOrigination()): ?>
             <br/><span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
             <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a>
@@ -65,7 +65,14 @@
             <br/><span class="archive-label"><?=$this->transEsc('Archive Series')?>:</span>
             <? $parentIds = $this->driver->getHierarchyParentId(); $parentTitles = $this->driver->getHierarchyParentTitle(); ?>
             <? foreach ($parentIds as $index => $parentId): ?>
-              <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+              <?
+                try {
+                  $parentUrl = $this->recordLink()->getUrl("$parentSource|$parentId");
+                } catch (\Exception $e) {
+                  $parentUrl = '';
+                }
+              ?>
+              <a href="<?=$parentUrl?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
             <? endforeach; ?>
           <? endif; ?>
         </div>
