@@ -207,4 +207,40 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         parent::setRawData($data);
         $this->simpleXML = null;
     }
+
+    /**
+     * Return an array of associative URL arrays with one or more of the following
+     * keys:
+     *
+     * <li>
+     *   <ul>desc: URL description text to display (optional)</ul>
+     *   <ul>url: fully-formed URL (required if 'route' is absent)</ul>
+     *   <ul>route: VuFind route to build URL with (required if 'url' is absent)</ul>
+     *   <ul>routeParams: Parameters for route (optional)</ul>
+     *   <ul>queryString: Query params to append after building route (optional)</ul>
+     * </li>
+    *
+    * @return array
+    */
+    public function getURLs()
+    {
+        $urls = [];
+        $url = '';
+        foreach ($this->getSimpleXML()->xpath('identifier') as $node) {
+            $attributes = $node->attributes();
+            if (isset($attributes->type) && $attributes->type == 'cooluri') {
+                $url = (string)$node;
+                $desc = $url;
+            } else {
+                continue;
+            }
+            if (!$this->urlBlacklisted($url, $desc)) {
+                $urls[] = [
+                    'url' => $url,
+                    'desc' => $desc
+                ];
+            }
+        }
+        return $urls;
+    }
 }
