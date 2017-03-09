@@ -972,6 +972,27 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
+     * Helper method to determine whether or not a certain method can be
+     * called on this driver.  Required method for any smart drivers.
+     *
+     * @param string $method The name of the called method.
+     * @param array  $params Array of passed parameters
+     *
+     * @return bool True if the method can be called with the given parameters,
+     * false otherwise.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function supportsMethod($method, $params)
+    {
+        // Special case: change password is only available if properly configured.
+        if ($method == 'changePassword') {
+            return isset($this->config['changePassword']);
+        }
+        return is_callable([$this, $method]);
+    }
+
+    /**
      * Create a HTTP client
      *
      * @param string $url Request URL
@@ -981,6 +1002,22 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     protected function createHttpClient($url)
     {
         $client = $this->httpService->createClient($url);
+
+        if (isset($this->config['Http']['ssl_verify_peer_name'])
+            && !$this->config['Http']['ssl_verify_peer_name']
+        ) {
+            $adapter = $client->getAdapter();
+            if ($adapter instanceof \Zend\Http\Client\Adapter\Socket) {
+                $context = $adapter->getStreamContext();
+                if (!stream_context_set_option(
+                    $context, 'ssl', 'verify_peer_name', false
+                )) {
+                    throw new \Exception('Unable to set sslverifypeername option');
+                }
+            } elseif ($adapter instanceof \Zend\Http\Client\Adapter\Curl) {
+                $adapter->setCurlOption(CURLOPT_SSL_VERIFYHOST, false);
+            }
+        }
 
         // Set timeout value
         $timeout = isset($this->config['Catalog']['http_timeout'])
@@ -1064,7 +1101,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
 
         // Send request and retrieve response
         $startTime = microtime(true);
-        $response = $client->setMethod($method)->send();
+        $client->setMethod($method);
+        $response = $client->send();
         // If we get a 401, we need to renew the access token and try again
         if ($response->getStatusCode() == 401) {
             if (!$this->renewPatronCookie($patron)) {
