@@ -1009,9 +1009,10 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $adapter = $client->getAdapter();
             if ($adapter instanceof \Zend\Http\Client\Adapter\Socket) {
                 $context = $adapter->getStreamContext();
-                if (!stream_context_set_option(
+                $res = stream_context_set_option(
                     $context, 'ssl', 'verify_peer_name', false
-                )) {
+                );
+                if (!$res) {
                     throw new \Exception('Unable to set sslverifypeername option');
                 }
             } elseif ($adapter instanceof \Zend\Http\Client\Adapter\Curl) {
@@ -1124,6 +1125,12 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             . " $method request $fullUrl" . PHP_EOL . 'response: ' . PHP_EOL
             . $result
         );
+            $this->debug(
+                "$method request for '$apiUrl' with params '$params' and contents '"
+                . $client->getRequest()->getContent() . "': "
+                . $response->getStatusCode() . ': ' . $response->getReasonPhrase()
+                . ', response content: ' . $response->getBody()
+            );
 
         // Handle errors as complete failures only if the API call didn't return
         // valid JSON that the caller can handle
