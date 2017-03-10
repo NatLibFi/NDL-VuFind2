@@ -171,8 +171,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         list($code, $result) = $this->makeRequest(
             ['v1', 'patrons', $patron['id']],
-            json_encode($details),
-            'PUT',
+            json_encode($request),
+            'PATCH',
             $patron,
             true
         );

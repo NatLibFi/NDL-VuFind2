@@ -52,7 +52,7 @@ pattern = "numeric"
 ; Default is address, zip, city and country. Email and phone are included unless
 ; they have their own sections [updateEmail] or [updatePhone] defined. Also custom
 ; fields can be defined.
-;fields[] = Address:address1
+;fields[] = Address:address
 ;fields[] = Zip:zipcode
 ;fields[] = City:city
 ;fields[] = Country:country
