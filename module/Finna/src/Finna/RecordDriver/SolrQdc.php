@@ -225,20 +225,13 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     public function getURLs()
     {
         $urls = [];
-        $url = '';
-        foreach ($this->getSimpleXML()->xpath('identifier') as $node) {
-            $attributes = $node->attributes();
-            if (isset($attributes->type) && $attributes->type == 'cooluri') {
-                $url = (string)$node;
-                $desc = $url;
-            } else {
-                continue;
-            }
-            if (!$this->urlBlacklisted($url, $desc)) {
-                $urls[] = [
-                    'url' => $url,
-                    'desc' => $desc
-                ];
+        foreach (parent::getURLs() as $url) {
+            $blacklisted = $this->urlBlacklisted(
+                isset($url['url']) ? $url['url'] : '',
+                isset($url['desc']) ? $url['desc'] : ''
+            );
+            if (!$blacklisted) {
+                $urls[] = $url;
             }
         }
         return $urls;
