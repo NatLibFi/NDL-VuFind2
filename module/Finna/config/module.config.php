@@ -151,6 +151,7 @@ $config = [
         'factories' => [
             'browse' => 'Finna\Controller\Factory::getBrowseController',
             'record' => 'Finna\Controller\Factory::getRecordController',
+            'cart' => 'Finna\Controller\Factory::getCartController',
         ],
         'invokables' => [
             'ajax' => 'Finna\Controller\AjaxController',
@@ -198,6 +199,7 @@ $config = [
             'VuFind\SearchSpecsReader' => 'Finna\Service\Factory::getSearchSpecsReader',
             'VuFind\SearchTabsHelper' => 'Finna\Service\Factory::getSearchTabsHelper',
             'VuFind\YamlReader' => 'Finna\Service\Factory::getYamlReader',
+            'VuFind\Cart' => 'Finna\Service\Factory::getCart',
         ],
         'invokables' => [
             'VuFind\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
@@ -423,7 +425,9 @@ $staticRoutes = [
     'MyResearch/SaveCustomOrder',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
-    'Search/StreetSearch'
+    'Search/StreetSearch', 'Cart/doExport',
+    'Cart/Email', 'Cart/Export', 'Cart/Home', 'Cart/MyResearchBulk',
+    'Cart/Processor', 'Cart/Save', 'Cart/SearchResultsBulk',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
