@@ -1125,12 +1125,6 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             . " $method request $fullUrl" . PHP_EOL . 'response: ' . PHP_EOL
             . $result
         );
-            $this->debug(
-                "$method request for '$apiUrl' with params '$params' and contents '"
-                . $client->getRequest()->getContent() . "': "
-                . $response->getStatusCode() . ': ' . $response->getReasonPhrase()
-                . ', response content: ' . $response->getBody()
-            );
 
         // Handle errors as complete failures only if the API call didn't return
         // valid JSON that the caller can handle
