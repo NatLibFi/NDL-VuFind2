@@ -200,6 +200,7 @@ $config = [
             'VuFind\SearchTabsHelper' => 'Finna\Service\Factory::getSearchTabsHelper',
             'VuFind\YamlReader' => 'Finna\Service\Factory::getYamlReader',
             'VuFind\Cart' => 'Finna\Service\Factory::getCart',
+            'VuFind\Mailer' => 'Finna\Mailer\Factory',
         ],
         'invokables' => [
             'VuFind\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
@@ -425,9 +426,7 @@ $staticRoutes = [
     'MyResearch/SaveCustomOrder',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
-    'Search/StreetSearch', 'Cart/doExport',
-    'Cart/Email', 'Cart/Export', 'Cart/Home', 'Cart/MyResearchBulk',
-    'Cart/Processor', 'Cart/Save', 'Cart/SearchResultsBulk',
+    'Search/StreetSearch',
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
