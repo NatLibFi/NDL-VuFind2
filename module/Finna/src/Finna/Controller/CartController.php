@@ -43,7 +43,6 @@ use VuFind\Exception\Forbidden as ForbiddenException,
  */
 class CartController extends \VuFind\Controller\CartController
 {
-
     /**
      * Email a batch of records.
      *
@@ -106,7 +105,6 @@ class CartController extends \VuFind\Controller\CartController
                 $this->flashMessenger()->addMessage($e->getMessage(), 'error');
             }
         }
-
         return $view;
     }
 }
