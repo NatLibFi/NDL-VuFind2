@@ -82,13 +82,6 @@ class CartController extends \VuFind\Controller\CartController
 
         // Process form submission:
         if ($this->formWasSubmitted('submit', $view->useRecaptcha)) {
-            // Build the URL to share:
-            $urls = [];
-            foreach ($ids as $current) {
-                $urls[] = $this->getServerUrl('records-home') . '?' .
-                    urlencode('id[]') . '=' . urlencode($current);
-            }
-
             // Attempt to send the email and show an appropriate flash message:
             try {
                 // If we got this far, we're ready to send the email:
