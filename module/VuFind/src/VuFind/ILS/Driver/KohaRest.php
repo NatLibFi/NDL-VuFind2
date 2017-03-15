@@ -381,7 +381,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             'address2' => $result['address2'],
             'zip' => $result['zipcode'],
             'city' => $result['city'],
-            'expiration_date' => $result['dateexpiry']
+            'expiration_date' => $expirationDate
         ];
     }
 
@@ -1111,6 +1111,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             }
             $client->clearCookies();
             $client->addCookie($this->sessionCache->patronCookie);
+            $this->debug('Session renewed');
             $response = $client->send();
         }
 

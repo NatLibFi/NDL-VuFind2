@@ -63,6 +63,40 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
+     * Get Patron Profile
+     *
+     * This is responsible for retrieving the profile for a specific patron.
+     *
+     * @param array $patron The patron array
+     *
+     * @throws ILSException
+     * @return array        Array of the patron's profile data on success.
+     */
+    public function getMyProfile($patron)
+    {
+        $result = $this->makeRequest(
+            ['v1', 'patrons', $patron['id']], false, 'GET', $patron
+        );
+
+        $expirationDate = !empty($result['dateexpiry'])
+            ? $this->dateConverter->convertToDisplayDate(
+                'Y-m-d', $result['dateexpiry']
+            ) : '';
+        return [
+            'firstname' => $result['firstname'],
+            'lastname' => $result['surname'],
+            'phone' => $result['mobile'],
+            'email' => $result['email'],
+            'address1' => $result['address'],
+            'address2' => $result['address2'],
+            'zip' => $result['zipcode'],
+            'city' => $result['city'],
+            'expiration_date' => $expirationDate,
+            'full_data' => $result
+        ];
+    }
+
+    /**
      * Update patron's phone number
      *
      * @param array  $patron Patron array
