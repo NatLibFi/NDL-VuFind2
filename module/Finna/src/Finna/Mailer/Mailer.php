@@ -46,7 +46,7 @@ use VuFind\Exception\Mail as MailException,
  */
 class Mailer  extends \VuFind\Mailer\Mailer
 {
-    /**
+     /**
      * Send an email message representing a record.
      *
      * @param string                            $to      Recipient email address
@@ -54,7 +54,7 @@ class Mailer  extends \VuFind\Mailer\Mailer
      * address
      * @param string                            $msg     User notes to include in
      * message
-     * @param \VuFind\RecordDriver\AbstractBase $record  Record being emailed
+     * @param \VuFind\RecordDriver\AbstractBase $records Record being emailed
      * @param \Zend\View\Renderer\PhpRenderer   $view    View object (used to render
      * email templates)
      * @param string                            $subject Subject for email (optional)
@@ -72,7 +72,8 @@ class Mailer  extends \VuFind\Mailer\Mailer
         $body = $view->partial(
             'Email/records.phtml',
             [
-                'drivers' => $records, 'to' => $to, 'from' => $from, 'message' => $msg
+                'drivers' => $records, 'to' => $to, 'from' => $from,
+                'message' => $msg
             ]
         );
         return $this->send($to, $from, $subject, $body, $cc);
