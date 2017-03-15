@@ -136,18 +136,6 @@ class Factory
     }
 
     /**
-     * Factory for KohaILSDI driver.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return KohaILSDI
-     */
-    public static function getKohaILSDI(ServiceManager $sm)
-    {
-        return new KohaILSDI($sm->getServiceLocator()->get('VuFind\DateConverter'));
-    }
-
-    /**
      * Factory for KohaRest driver.
      *
      * @param ServiceManager $sm Service manager.
@@ -213,6 +201,18 @@ class Factory
         );
 
         return $paia;
+    }
+
+    /**
+     * Factory for KohaILSDI driver.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return KohaILSDI
+     */
+    public static function getKohaILSDI(ServiceManager $sm)
+    {
+        return new KohaILSDI($sm->getServiceLocator()->get('VuFind\DateConverter'));
     }
 
     /**
