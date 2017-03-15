@@ -44,47 +44,8 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  *
  * @codeCoverageIgnore
  */
-class Factory implements \Zend\ServiceManager\FactoryInterface
+class Factory extends \VuFind\Mailer\Factory
 {
-    /**
-     * Build the mail transport object.
-     *
-     * @param \Zend\Config\Config $config Configuration
-     *
-     * @return InMemory|Smtp
-     */
-    protected function getTransport($config)
-    {
-        // In test mode? Return fake object:
-        if (isset($config->Mail->testOnly) && $config->Mail->testOnly) {
-            return new InMemory();
-        }
-
-        // Create mail transport:
-        $settings = [
-            'host' => $config->Mail->host, 'port' => $config->Mail->port
-        ];
-        if (isset($config->Mail->username) && isset($config->Mail->password)) {
-            $settings['connection_class'] = 'login';
-            $settings['connection_config'] = [
-                'username' => $config->Mail->username,
-                'password' => $config->Mail->password
-            ];
-            if (isset($config->Mail->secure)) {
-                // always set user defined secure connection
-                $settings['connection_config']['ssl'] = $config->Mail->secure;
-            } else {
-                // set default secure connection based on configured port
-                if ($settings['port'] == '587') {
-                    $settings['connection_config']['ssl'] = 'tls';
-                } elseif ($settings['port'] == '487') {
-                    $settings['connection_config']['ssl'] = 'ssl';
-                }
-            }
-        }
-        return new Smtp(new SmtpOptions($settings));
-    }
-
     /**
      * Create service
      *

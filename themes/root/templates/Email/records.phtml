@@ -7,10 +7,10 @@
 <? endif; ?>
 
 <?=$this->translate("Online Access")?>:
-<? foreach ($this->driver as $record): ?>
+<? foreach ($this->drivers as $records): ?>
 
 ------------------------------------------------------------
-<?=$this->record($record)->getEmail() ?>
+<?=$this->record($records)->getEmail() ?>
 
 <?endforeach;?>
 
