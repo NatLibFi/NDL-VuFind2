@@ -426,7 +426,7 @@ $staticRoutes = [
     'MyResearch/SaveCustomOrder',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
-    'Search/StreetSearch',
+    'Search/StreetSearch'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

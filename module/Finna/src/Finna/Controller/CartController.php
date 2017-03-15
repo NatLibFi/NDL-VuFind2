@@ -90,8 +90,8 @@ class CartController extends \VuFind\Controller\CartController
                 $cc = $this->params()->fromPost('ccself') && $view->from != $view->to
                     ? $view->from : null;
                 $mailer->sendRecords(
-                    $view->to, $view->from, $view->message,
-                    $view->records, $this->getViewRenderer(), $view->subject, $cc
+                    $view->to, $view->from, $view->message, $view->records,
+                    $this->getViewRenderer(), $view->subject, $cc
                 );
                 return $this->redirectToSource('success', 'bulk_email_success');
             } catch (MailException $e) {

@@ -5,10 +5,10 @@
 <?=$this->message?>
 <? endif; ?>
 
-<? foreach ($this->drivers as $records): ?>
+<? foreach ($this->drivers as $record): ?>
 
 ------------------------------------------------------------
-<?=$this->record($records)->getEmail() ?>
+<?=$this->record($record)->getEmail() ?>
 
 <?endforeach;?>
 
