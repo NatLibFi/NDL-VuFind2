@@ -595,9 +595,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 $patron
             );
             if (!empty($result['code'])) {
-                $msg = preg_replace(
-                    '/WebPAC Error\s*:\s*/', '', $result['description']
-                );
+                $msg = $this->formatErrorMessage($result['description']);
                 $finalResult['details'][$itemId] = [
                     'item_id' => $itemId,
                     'success' => false,
@@ -636,7 +634,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
             [
                 'limit' => 10000,
                 'fields' => 'id,record,frozen,placed,location,pickupLocation'
-                    . ',status,recordType,priority'
+                    . ',status,recordType,priority,priorityQueueLength'
             ],
             'GET',
             $patron
@@ -675,6 +673,14 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                     : '';
             }
             $available = in_array($entry['status']['code'], ['b', 'j', 'i']);
+            if ($entry['priority'] >= $entry['priorityQueueLength']) {
+                // This can happen, no idea why
+                $position = $entry['priorityQueueLength'] . ' / '
+                    . $entry['priorityQueueLength'];
+            } else {
+                $position = ($entry['priority'] + 1) . ' / '
+                    . $entry['priorityQueueLength'];
+            }
             $holds[] = [
                 'id' => $bibId,
                 'item_id' => $this->extractId($entry['id']),
@@ -682,7 +688,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
                 'create' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d', $entry['placed']
                 ),
-                'position' => $entry['priority'],
+                'position' => $position,
                 'available' => $available,
                 'in_transit' => $entry['status']['code'] == 't',
                 'volume' => $volume,
@@ -733,9 +739,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
             );
 
             if (!empty($result['code'])) {
-                $msg = preg_replace(
-                    '/WebPAC Error\s*:\s*/', '', $result['description']
-                );
+                $msg = $this->formatErrorMessage($result['description']);
                 $response[$holdId] = [
                     'item_id' => $holdId,
                     'success' => false,
@@ -1051,7 +1055,8 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
 
         if (isset($result['code']) && $result['code'] != 0) {
             return [
-                'success' => false, 'status' => $result['description']
+                'success' => false,
+                'status' => $this->formatErrorMessage($result['description'])
             ];
         }
         return ['success' => true, 'status' => 'change_password_ok'];
@@ -1072,6 +1077,27 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
     {
         return isset($this->config[$function])
             ? $this->config[$function] : false;
+    }
+
+    /**
+     * Helper method to determine whether or not a certain method can be
+     * called on this driver.  Required method for any smart drivers.
+     *
+     * @param string $method The name of the called method.
+     * @param array  $params Array of passed parameters
+     *
+     * @return bool True if the method can be called with the given parameters,
+     * false otherwise.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function supportsMethod($method, $params)
+    {
+        // Special case: change password is only available if properly configured.
+        if ($method == 'changePassword') {
+            return isset($this->config['changePassword']);
+        }
+        return is_callable([$this, $method]);
     }
 
     /**
@@ -1190,7 +1216,7 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
 
         $this->debug(
             '[' . round(microtime(true) - $startTime, 4) . 's]'
-            . " GET request $apiUrl" . PHP_EOL . 'response: ' . PHP_EOL
+            . " $method request $apiUrl" . PHP_EOL . 'response: ' . PHP_EOL
             . $result
         );
 
@@ -1403,67 +1429,85 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
      */
     protected function getItemStatusesForBib($id)
     {
-        $availableStatuses = ['-'];
-
         $bib = $this->getBibRecord($id, 'bibLevel');
-        $result = $this->makeRequest(
-            ['v3', 'items'],
-            [
-                'bibIds' => $id,
-                'deleted' => 'false',
-                'suppressed' => 'false',
-                'fields' => 'location,status,barcode,callNumber,fixedFields'
-                    . ',varFields',
-                'limit' => 1000
-            ],
-            'GET'
-        );
-        if (empty($result['entries'])) {
-            return [];
+        $offset = 0;
+        $limit = 50;
+        $fields = 'location,status,barcode,callNumber,fixedFields';
+        if ('m' !== $bib['bibLevel']['code']) {
+            // Fetch varFields for volume information
+            $fields .= ',varFields';
         }
-
         $statuses = [];
-        foreach ($result['entries'] as $i => $item) {
-            $location = $this->translateLocation($item['location']);
-            $available = in_array(trim($item['status']['code']), $availableStatuses)
-                && !isset($item['status']['duedate']);
-            list($status, $duedate, $notes) = $this->getItemStatus($item);
-            // OPAC message
-            if (isset($item['fixedFields']['108'])) {
-                $opacMsg = $item['fixedFields']['108'];
-                if (trim($opacMsg['value']) != '-') {
-                    $notes[] = $this->translateOpacMessage(trim($opacMsg['value']));
-                    break;
+        while (!isset($result) || $limit === $result['total']) {
+            $result = $this->makeRequest(
+                ['v3', 'items'],
+                [
+                    'bibIds' => $id,
+                    'deleted' => 'false',
+                    'suppressed' => 'false',
+                    'fields' => $fields,
+                    'limit' => $limit,
+                    'offset' => $offset
+                ],
+                'GET'
+            );
+            if (empty($result['entries'])) {
+                if (!empty($result['httpStatus']) && 404 !== $result['httpStatus']) {
+                    $msg = "Item status request failed: {$result['httpStatus']}";
+                    if (!empty($result['description'])) {
+                        $msg .= " ({$result['description']})";
+                    }
+                    throw new ILSException($msg);
                 }
+                return $statuses;
             }
 
-            $entry = [
-                'id' => $id,
-                'item_id' => $item['id'],
-                'location' => $location,
-                'availability' => $available,
-                'status' => $status,
-                'reserve' => 'N',
-                'callnumber' => isset($item['callNumber'])
-                    ? preg_replace('/^\|a/', '', $item['callNumber']) : '',
-                'duedate' => $duedate,
-                'number' => $this->extractVolume($item),
-                'barcode' => $item['barcode'],
-                'sort' => $i
-            ];
-            if ($notes) {
-                $entry['item_notes'] = $notes;
-            }
+            foreach ($result['entries'] as $i => $item) {
+                $location = $this->translateLocation($item['location']);
+                list($status, $duedate, $notes) = $this->getItemStatus($item);
+                $available = $status == 'On Shelf';
+                // OPAC message
+                if (isset($item['fixedFields']['108'])) {
+                    $opacMsg = $item['fixedFields']['108'];
+                    if (trim($opacMsg['value']) != '-') {
+                        $notes[] = $this->translateOpacMessage(
+                            trim($opacMsg['value'])
+                        );
+                    }
+                }
+                $volume = isset($item['varFields']) ? $this->extractVolume($item)
+                    : '';
 
-            if ($this->isHoldable($item) && $this->itemHoldAllowed($item, $bib)) {
-                $entry['is_holdable'] = true;
-                $entry['level'] = 'copy';
-                $entry['addLink'] = true;
-            } else {
-                $entry['is_holdable'] = false;
-            }
+                $entry = [
+                    'id' => $id,
+                    'item_id' => $item['id'],
+                    'location' => $location,
+                    'availability' => $available,
+                    'status' => $status,
+                    'reserve' => 'N',
+                    'callnumber' => isset($item['callNumber'])
+                        ? preg_replace('/^\|a/', '', $item['callNumber']) : '',
+                    'duedate' => $duedate,
+                    'number' => $volume,
+                    'barcode' => $item['barcode'],
+                    'sort' => $i
+                ];
+                if ($notes) {
+                    $entry['item_notes'] = $notes;
+                }
 
-            $statuses[] = $entry;
+                if ($this->isHoldable($item) && $this->itemHoldAllowed($item, $bib)
+                ) {
+                    $entry['is_holdable'] = true;
+                    $entry['level'] = 'copy';
+                    $entry['addLink'] = true;
+                } else {
+                    $entry['is_holdable'] = false;
+                }
+
+                $statuses[] = $entry;
+            }
+            $offset += $limit;
         }
 
         usort($statuses, [$this, 'statusSortFunction']);
@@ -1687,12 +1731,36 @@ class SierraRest extends AbstractBase implements TranslatorAwareInterface,
      */
     protected function holdError($msg)
     {
-        // Remove prefix like "WebPAC Error" or "XCirc error"
-        $msg = preg_replace('/.* [eE]rror\s*:\s*/', '', $msg);
+        $msg = $this->formatErrorMessage($msg);
         return [
             'success' => false,
             'sysMessage' => $msg
         ];
+    }
+
+    /**
+     * Format an error message received from Sierra
+     *
+     * @param string $msg An error message string
+     *
+     * @return string
+     */
+    protected function formatErrorMessage($msg)
+    {
+        // Remove prefix like "WebPAC Error" or "XCirc error"
+        $msg = preg_replace('/.* [eE]rror\s*:\s*/', '', $msg);
+        // Handle non-ascii characters that are returned in a wrongly encoded format
+        // (e.g. {u00E4} instead of \u00E4)
+        $msg = preg_replace_callback(
+            '/\{u([0-9a-fA-F]{4})\}/',
+            function ($matches) {
+                return mb_convert_encoding(
+                    pack('H*', $matches[1]), 'UTF-8', 'UCS-2BE'
+                );
+            },
+            $msg
+        );
+        return $msg;
     }
 
     /**

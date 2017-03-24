@@ -151,6 +151,7 @@ $config = [
         'factories' => [
             'browse' => 'Finna\Controller\Factory::getBrowseController',
             'record' => 'Finna\Controller\Factory::getRecordController',
+            'cart' => 'Finna\Controller\Factory::getCartController',
         ],
         'invokables' => [
             'ajax' => 'Finna\Controller\AjaxController',
@@ -198,6 +199,8 @@ $config = [
             'VuFind\SearchSpecsReader' => 'Finna\Service\Factory::getSearchSpecsReader',
             'VuFind\SearchTabsHelper' => 'Finna\Service\Factory::getSearchTabsHelper',
             'VuFind\YamlReader' => 'Finna\Service\Factory::getYamlReader',
+            'VuFind\Cart' => 'Finna\Service\Factory::getCart',
+            'VuFind\Mailer' => 'Finna\Mailer\Factory',
         ],
         'invokables' => [
             'VuFind\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
@@ -243,6 +246,7 @@ $config = [
                 'factories' => [
                     'axiellwebservices' => 'Finna\ILS\Driver\Factory::getAxiellWebServices',
                     'demo' => 'Finna\ILS\Driver\Factory::getDemo',
+                    'koharest' => 'Finna\ILS\Driver\Factory::getKohaRest',
                     'multibackend' => 'Finna\ILS\Driver\Factory::getMultiBackend',
                     'voyager' => 'Finna\ILS\Driver\Factory::getVoyager',
                     'voyagerrestful' => 'Finna\ILS\Driver\Factory::getVoyagerRestful'
@@ -430,49 +434,5 @@ $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addRecordRoutes($config, $recordRoutes);
 $routeGenerator->addDynamicRoutes($config, $dynamicRoutes);
 $routeGenerator->addStaticRoutes($config, $staticRoutes);
-
-// API routes
-/*$config['router']['routes']['searchApi'] = [
-    'type' => 'Zend\Mvc\Router\Http\Literal',
-    'verb' => 'get,post,options',
-    'options' => [
-        'route'    => '/api/search',
-        'defaults' => [
-            'controller' => 'SearchApi',
-            'action'     => 'search',
-        ]
-    ],
-];
-$config['router']['routes']['searchApiv1'] = [
-    'type' => 'Zend\Mvc\Router\Http\Literal',
-    'verb' => 'get,post,options',
-    'options' => [
-        'route'    => '/v1/search',
-        'defaults' => [
-            'controller' => 'SearchApi',
-            'action'     => 'search',
-        ]
-    ]
-];
-$config['router']['routes']['searchApiRecord'] = [
-    'type' => 'Zend\Mvc\Router\Http\Literal',
-    'options' => [
-        'route'    => '/api/record',
-        'defaults' => [
-            'controller' => 'SearchApi',
-            'action'     => 'record',
-        ]
-    ]
-];
-$config['router']['routes']['searchApiRecordv1'] = [
-    'type' => 'Zend\Mvc\Router\Http\Literal',
-    'options' => [
-        'route'    => '/v1/record',
-        'defaults' => [
-            'controller' => 'SearchApi',
-            'action'     => 'record',
-        ]
-    ]
-];*/
 
 return $config;
