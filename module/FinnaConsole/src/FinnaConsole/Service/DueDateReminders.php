@@ -227,13 +227,23 @@ class DueDateReminders extends AbstractService
         $this->msg('Processing ' . count($users) . ' users');
 
         foreach ($users as $user) {
-            $remindLoans = $this->getReminders($user);
-            if ($remindCnt = count($remindLoans)) {
+            $results = $this->getReminders($user);
+            $errors = $results['errors'];
+            $remindLoans = $results['remindLoans'];
+            $remindCnt = count($remindLoans);
+            $errorCnt = count($errors);
+            if ($remindCnt) {
                 $this->msg(
                     "$remindCnt new loans to remind for user {$user->username}"
                     . " (id {$user->id})"
                 );
-                $this->sendReminder($user, $remindLoans);
+                if (empty($errors)) {
+                    $this->sendReminder($user, $remindLoans);
+                } else {
+                    $this->sendReminder($user, $remindLoans, $errors);
+                }
+            } else if ($errorCnt) {
+                $this->sendReminder($user, $remindLoans, $errors);
             } else {
                 $this->msg(
                     "No loans to remind for user {$user->username} (id {$user->id})"
@@ -248,7 +258,7 @@ class DueDateReminders extends AbstractService
      *
      * @param \Finna\Db\Table\Row\User $user User.
      *
-     * @return array Array of loans to be reminded.
+     * @return array Array of loans to be reminded and possible login errors.
      */
     protected function getReminders($user)
     {
@@ -261,6 +271,7 @@ class DueDateReminders extends AbstractService
         }
 
         $remindLoans = [];
+        $errors = [];
         foreach ($user->getLibraryCards() as $card) {
             if (!$card['id']) {
                 continue;
@@ -281,7 +292,7 @@ class DueDateReminders extends AbstractService
                     . " (id {$user->id}), card {$card->cat_username}"
                     . " (id {$card->id})"
                 );
-                $this->sendLoginFail($user);
+                $errors[] = ['errors' => $card['cat_username']];
                 continue;
             }
             $todayTime = new \DateTime();
@@ -342,7 +353,7 @@ class DueDateReminders extends AbstractService
                 }
             }
         }
-        return $remindLoans;
+        return ['remindLoans' => $remindLoans, 'errors' => $errors];
     }
 
     /**
@@ -350,10 +361,11 @@ class DueDateReminders extends AbstractService
      *
      * @param \Finna\Db\Table\Row\User $user        User.
      * @param array                    $remindLoans Loans to be reminded.
+     * @param array                    $errors      Possible errors (optional).
      *
      * @return boolean success.
      */
-    protected function sendReminder($user, $remindLoans)
+    protected function sendReminder($user, $remindLoans, $errors = null)
     {
         if (!$user->email || trim($user->email) == '') {
             $this->msg(
@@ -424,13 +436,23 @@ class DueDateReminders extends AbstractService
         if ($urlView != $this::DEFAULT_PATH) {
             $baseUrl .= "/$urlView";
         }
-        $params = [
+        if (!empty($errors)) {
+            $subject = $this->translator->translate('due_date_email_error');
+            $params = [
              'loans' => $remindLoans,
-             'url' => $baseUrl . $this->urlHelper->__invoke('myresearch-checkedout'),
+             'url' => $baseUrl . $this->urlHelper->__invoke('librarycards-home'),
              'unsubscribeUrl' => $baseUrl . $unsubscribeUrl,
-             'baseUrl' => $baseUrl
-        ];
-        $subject = $this->translator->translate('due_date_email_subject');
+             'baseUrl' => $baseUrl, 'errors' => $errors,
+            ];
+        } else {
+            $subject = $this->translator->translate('due_date_email_subject');
+            $params = [
+            'loans' => $remindLoans,
+            'url' => $baseUrl . $this->urlHelper->__invoke('myresearch-checkedout'),
+            'unsubscribeUrl' => $baseUrl . $unsubscribeUrl,
+            'baseUrl' => $baseUrl
+            ];
+        }
         $message = $this->renderer->render("Email/due-date-reminder.phtml", $params);
         try {
             $to = $user->email;
@@ -456,101 +478,6 @@ class DueDateReminders extends AbstractService
             $params['notification_date'] = date($this::DUE_DATE_FORMAT, time());
 
             $this->dueDateReminderTable->insert($params);
-        }
-
-        return true;
-    }
-
-     /**
-     * Send login failure message to user.
-     *
-     * @param \Finna\Db\Table\Row\User $user User.
-     *
-     * @return boolean success.
-     */
-    protected function sendLoginFail($user)
-    {
-        list($userInstitution,) = explode(':', $user['username'], 2);
-
-        if (!$this->currentInstitution
-            || $userInstitution != $this->currentInstitution
-        ) {
-            $templateDirs = [
-                "{$this->baseDir}/themes/finna/templates",
-            ];
-            if (!$viewPath = $this->resolveViewPath($userInstitution)) {
-                $this->err(
-                    "Could not resolve view path for user {$user->username}"
-                    . " (id {$user->id})"
-                );
-                return false;
-            } else {
-                $templateDirs[] = "$viewPath/themes/custom/templates";
-            }
-            $this->currentInstitution = $userInstitution;
-            $this->currentViewPath = $viewPath;
-
-            $resolver = new AggregateResolver();
-            $this->renderer->setResolver($resolver);
-            $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
-            $resolver->attach($stack);
-
-            $siteConfig = $viewPath . '/local/config/vufind/config.ini';
-            $this->currentSiteConfig = parse_ini_file($siteConfig, true);
-        }
-
-        $language = isset($this->currentSiteConfig['Site']['language'])
-            ? $this->currentSiteConfig['Site']['language'] : 'fi';
-        $validLanguages = array_keys($this->currentSiteConfig['Languages']);
-        if (!empty($user->finna_language)
-            && in_array($user->finna_language, $validLanguages)
-        ) {
-            $language = $user->finna_language;
-        }
-        $this->translator
-            ->addTranslationFile('ExtendedIni', null, 'default', $language)
-            ->setLocale($language);
-
-        $key = $this->dueDateReminderTable->getUnsubscribeSecret(
-            $this->hmac, $user, $user->id
-        );
-        $params = [
-            'id' => $user->id,
-            'type' => 'reminder',
-            'key' => $key
-        ];
-        $unsubscribeUrl
-            = $this->urlHelper->__invoke('myresearch-unsubscribe')
-            . '?' . http_build_query($params);
-
-        $urlParts = explode('/', $this->currentViewPath);
-        $urlView = array_pop($urlParts);
-        $urlInstitution = array_pop($urlParts);
-
-        $baseUrl = 'https://' . $urlInstitution . '.finna.fi';
-        if ($urlView != $this::DEFAULT_PATH) {
-            $baseUrl .= "/$urlView";
-        }
-        $params = [
-             'url' => $baseUrl . $this->urlHelper->__invoke('librarycards-home'),
-             'unsubscribeUrl' => $baseUrl . $unsubscribeUrl,
-             'baseUrl' => $baseUrl
-        ];
-        $subject = $this->translator->translate('due_date_login_fail');
-        $message = $this->renderer->render("Email/login-fail.phtml", $params);
-        try {
-            $to = $user->email;
-            $from = $this->currentSiteConfig['Site']['email'];
-            $this->serviceManager->get('VuFind\Mailer')->send(
-                $to, $from, $subject, $message
-            );
-        } catch (\Exception $e) {
-            $this->err(
-                "Failed to send 'login failed' -message to user {$user->username} "
-                . " (id {$user->id})"
-            );
-            $this->err('   ' . $e->getMessage());
-            return false;
         }
 
         return true;
