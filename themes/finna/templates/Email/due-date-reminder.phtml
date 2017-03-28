@@ -1,4 +1,12 @@
+<?= $this->translate('due_date_hello') ?>
+
+<? if (!empty($this->errors)): ?>
+
+<?= $this->translate('due_date_email_txt_only_errors') ?>
+
+<? endif; ?>
 <? if (empty($this->errors) || !empty($this->loans)): ?>
+
 <?= $this->translate('due_date_email_txt' . (count($this->loans) == 1 ? '_singular' : ''), ['%%loancount%%' => count($loans)]) ?>
 
 <? endif; ?>
@@ -23,15 +31,22 @@
 
 <? endforeach; ?>
 <? endif; ?>
-<? if (!empty($this->errors) && empty($this->loans)): ?>
-<?= $this->translate('due_date_email_txt_only_errors') ?>
-
-
-<? endif; ?>
 <?= !empty($this->errors) ? $this->translate('due_date_email_login_error') : $this->translate('due_date_email_link_title') ?>
 
 <?= $this->url ?>
 
+<? if (!empty($this->errors)): ?>
+
+<?= $this->translate('due_date_library') ?>
+<? foreach ($this->errors as $error): ?>
+<? $card = $error['card']; ?>
+<? $target = ''; ?>
+<? list($target, $card) = explode('.', $card, 2); ?>
+
+<?=$target ? $this->transEsc("source_$target", null, $target) : '' ?>
+
+<? endforeach; ?>
+<? endif; ?>
 
 <?= $this->translate('unsubscribe_description') ?>
 

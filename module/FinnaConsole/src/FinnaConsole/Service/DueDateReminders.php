@@ -292,7 +292,7 @@ class DueDateReminders extends AbstractService
                     . " (id {$user->id}), card {$card->cat_username}"
                     . " (id {$card->id})"
                 );
-                $errors[] = ['errors' => $card['cat_username']];
+                $errors[] = ['card' => $card['cat_username']];
                 continue;
             }
             $todayTime = new \DateTime();
