@@ -232,18 +232,12 @@ class DueDateReminders extends AbstractService
             $remindLoans = $results['remindLoans'];
             $remindCnt = count($remindLoans);
             $errorCnt = count($errors);
-            if ($remindCnt) {
+            if ($remindCnt || $errorCnt) {
                 $this->msg(
-                    "$remindCnt new loans to remind for user {$user->username}"
-                    . " (id {$user->id})"
+                    "$remindCnt reminders and $errorCnt errors to send for user"
+                    . "{$user->username}" . " (id {$user->id})"
                 );
-                if (empty($errors)) {
-                    $this->sendReminder($user, $remindLoans);
-                } else {
-                    $this->sendReminder($user, $remindLoans, $errors);
-                }
-            } else if ($errorCnt) {
-                $this->sendReminder($user, $remindLoans, $errors);
+                 $this->sendReminder($user, $remindLoans, $errors);
             } else {
                 $this->msg(
                     "No loans to remind for user {$user->username} (id {$user->id})"
@@ -361,11 +355,11 @@ class DueDateReminders extends AbstractService
      *
      * @param \Finna\Db\Table\Row\User $user        User.
      * @param array                    $remindLoans Loans to be reminded.
-     * @param array                    $errors      Possible errors (optional).
+     * @param array                    $errors      Errors in due date checking.
      *
      * @return boolean success.
      */
-    protected function sendReminder($user, $remindLoans, $errors = null)
+    protected function sendReminder($user, $remindLoans, $errors)
     {
         if (!$user->email || trim($user->email) == '') {
             $this->msg(

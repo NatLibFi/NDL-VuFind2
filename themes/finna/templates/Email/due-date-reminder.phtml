@@ -5,7 +5,7 @@
 <?= $this->translate('due_date_email_txt_only_errors') ?>
 
 <? endif; ?>
-<? if (empty($this->errors) || !empty($this->loans)): ?>
+<? if (!empty($this->loans)): ?>
 
 <?= $this->translate('due_date_email_txt' . (count($this->loans) == 1 ? '_singular' : ''), ['%%loancount%%' => count($loans)]) ?>
 
@@ -31,13 +31,14 @@
 
 <? endforeach; ?>
 <? endif; ?>
+
 <?= !empty($this->errors) ? $this->translate('due_date_email_login_error') : $this->translate('due_date_email_link_title') ?>
 
 <?= $this->url ?>
 
 <? if (!empty($this->errors)): ?>
 
-<?= $this->translate('due_date_library') ?>
+<?= $this->translate('due_date_failed_library') ?>
 <? foreach ($this->errors as $error): ?>
 <? $card = $error['card']; ?>
 <? $target = ''; ?>
