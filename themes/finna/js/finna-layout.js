@@ -120,7 +120,7 @@ finna.layout = (function() {
         self.addClass('truncate-done');
         // check that truncate-field has children, where we can count line-height
         if (self.children().length > 0) {
-          var rowCount = 3;
+          var rowCount = 4;
           if (self.data('rows')) {
             rowCount = self.data('rows');
           }
