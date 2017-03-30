@@ -165,9 +165,17 @@ finna.layout = (function() {
             self.addClass('truncated');
           }
           notifyTruncateChange(self);
+          checkRightsForLink(self);
         }
         self.trigger('truncate-done', [self]);
       });
+    };
+
+    var checkRightsForLink = function(holder) {
+        if($('.truncate-done').find('a[href*="#image_rights"]').length) {
+            $('.copyright').css('height', 'auto');
+            $('.more-link').hide();
+        }
     };
 
     var initTruncatedRecordImageNavi = function() {
