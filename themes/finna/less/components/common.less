@@ -1,0 +1,91 @@
+
+//
+//Alert.less
+//
+//override bootstrap alert class property
+.alert {
+  border: none;
+}
+
+
+//
+//badge.less
+//
+.badge {
+  padding-left: 2px;
+  font-size: @badge-font-size;
+  line-height: inherit;
+  vertical-align: inherit;
+  margin-top: 1px;
+}
+
+// Checkbox facet badges
+.sidebar .checkboxFilter span.badge.cb-facet {
+  display: @display-checkbox-facet-amount;
+}
+span.badge.cb-facet {
+  float: right;
+  margin-right: 10px;
+}
+
+
+//
+// breadcrumbs.less
+//
+.breadcrumb {
+  display: none;
+  margin: 0px;
+  margin-top: 15px;
+
+  > li {
+    background-color: @breadcrumb-bg;
+    margin: 0px -2px;
+    padding: @breadcrumb-padding-vertical @breadcrumb-padding-horizontal;
+    + li:before {
+      content: @breadcrumb-separator;
+      font-size: 12px;
+    }
+  }
+  > li a {
+    color: @breadcrumb-color;
+  }
+}
+
+.carousel-non-touch-device .carousel-hover-title::after {
+  content: " »";
+}
+
+
+.close {
+  text-shadow: none;
+  .opacity(.8);
+
+  &:hover,
+  &:focus {
+    .opacity(1);
+  }
+}
+
+.search-controls .pagination {
+  margin-top: 0px;
+}
+
+.input-group {
+  .form-control {
+    width: 100%;
+  }
+}
+
+@font-face {
+  font-family: 'icomoon';
+}
+
+// Catchall baseclass
+.glyphicon {
+  font-family: 'icomoon';
+}
+
+
+
+
+

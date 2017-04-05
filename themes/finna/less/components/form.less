@@ -1,0 +1,137 @@
+.form-control {
+  width: inherit;
+  padding: inherit;
+  padding: 2px 5px;
+  max-width: 100%; // make sure dropdowns don't overflow elementss
+  vertical-align: middle !important;
+
+  // Disabled and read-only inputs
+  //
+  // HTML5 says that controls under a fieldset > legend:first-child won't be
+  // disabled if the fieldset is disabled. Due to implementation difficulty, we
+  // don't honor that edge case; we style them as disabled anyway.
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] & {
+    background-color: inherit;
+  }
+
+  &:invalid {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
+  }
+  // This is for IE. Keep separate from :invalid so that IE does not drop it
+  &.invalid {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
+  }
+}
+
+
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  margin-left: 0px;
+}
+
+.navbar-form {
+  box-shadow: 0px 0px 2px rgba(100,100,100,0.5) !important;
+  margin-right:0px !important;
+  margin-left:0px !important;
+  & .form-control.search-query {
+    width: percentage(@finna-search-input-width);
+    @media (max-width: @screen-xs-max) {
+      width: percentage((@finna-search-input-width - 0.06));
+    }
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    display: inline-block !important;
+    font-size: @font-size-large;
+    color: @gray;
+    margin-left: 10px;
+    height: 39px;
+  }
+  /* --- Autocomplete and form adjust accordingly --- */
+  &.input-field-only .form-control.search-query {
+    width: 85%;
+    @media (max-width: @screen-xs-max) {
+      width: 80%;
+    }
+  }
+}
+
+
+.form-control {
+  width: inherit;// Prevent labels from stacking above inputs in `.form-group`
+}
+
+
+#side-collapse-first_indexed {
+  & > a {
+    display: inline-block;
+    min-width: 51%;
+  }
+}
+.form-control.date-picker-field {
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px;
+  cursor: pointer;
+}
+
+#first_indexedFilter {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  & label {
+
+    @media (min-width:@screen-sm-min) and (max-width: @screen-sm-max) {
+      display: block;
+    }
+  }
+  & .date-picker-button {
+    margin-left: -12px;
+    padding: 6px 10px;
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px;
+  }
+}
+.datepicker {
+  & .datepicker-switch {
+    color: @link-color;
+    font-size: 1.1em;
+  }
+  & .prev,& .next {
+    font-size: 1.1em;
+  }
+  &.dropdown-menu {
+    padding: 10px;
+  }
+}
+
+.feedback-form {
+  & .form-group {
+    margin-bottom: 20px;
+    & label {
+      clear: both;
+      display: block;
+    }
+    & textarea, & input {
+      max-width: 100%;
+    }
+  }
+  & .feedback-info p,
+  & .captcha {
+    padding-top: 10px;
+    border-top: 1px solid @gray-lighter;
+  }
+}
+
+form[name=feedbackRecord] .feedback-info {
+  border: none;
+}
+.form-horizontal[name=emailRecord] {
+  & input[type=email] {
+    min-width: 200px;
+    max-width: 100%;
+  }
+}
