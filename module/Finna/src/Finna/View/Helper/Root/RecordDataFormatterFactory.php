@@ -42,6 +42,7 @@ namespace Finna\View\Helper\Root;
  * Wiki
  */
 class RecordDataFormatterFactory
+ extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
 {
     /**
      * Create the helper.
@@ -73,40 +74,18 @@ class RecordDataFormatterFactory
         $spec->setLine(
             'Previous Title', 'getPreviousTitles', null, ['recordLink' => 'title']
         );
-        $spec->setTemplateLine(
-            'Main Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
-            [
-                'useCache' => true,
-                'labelFunction' => function ($data) {
-                    return count($data['main']) > 1
-                        ? 'Main Authors' : 'Main Author';
-                },
-                'context' => ['type' => 'main', 'schemaLabel' => 'author'],
-            ]
-        );
-        $spec->setTemplateLine(
-            'Corporate Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
-            [
-                'useCache' => true,
-                'labelFunction' => function ($data) {
-                    return count($data['corporate']) > 1
-                        ? 'Corporate Authors' : 'Corporate Author';
-                },
-                'context' => ['type' => 'corporate', 'schemaLabel' => 'creator'],
-            ]
-        );
-        $spec->setTemplateLine(
-            'Other Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
-            [
-                'useCache' => true,
-                'context' => [
-                    'type' => 'secondary', 'schemaLabel' => 'contributor'
-                ],
-            ]
-        );
         $spec->setLine(
             'Format', 'getFormats', 'RecordHelper',
             ['helperMethod' => 'getFormatList']
+        );
+        $spec->setTemplateLine(
+            'Archive Origination', 'getOrigination', 'data-origination.phtml'
+        );
+        $spec->setTemplateLine(
+            'Archive', 'getSourceIdentifier', 'data-archive.phtml'
+        );
+        $spec->setTemplateLine(
+            'Authors', 'getNonPresenterAuthors', 'data-authors.phtml'
         );
         $spec->setLine('Language', 'getLanguages');
         $spec->setTemplateLine(

@@ -1,0 +1,5 @@
+<? if ($origination = $this->driver->getOrigination()): ?>
+
+  <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a>
+
+<? endif; ?>
