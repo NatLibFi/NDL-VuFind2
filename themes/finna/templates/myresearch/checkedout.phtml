@@ -156,15 +156,12 @@
             <? endif; ?>
 
             <? if (isset($ilsDetails['renew'])): ?>
-              <? $renews = $ilsDetails['renew']; ?>
-              <? $limit = $ilsDetails['renewLimit']; ?>
-              <? $count = $limit - $renews; ?>
-               <? if (isset($limit) && $limit >= 0 && $count >= 0): ?>
-                  <strong><?=$this->transEsc('renewals_remaining', ['%%count%%' => $count])?></strong>
+               <? if (isset($ilsDetails['renewLimit']) && $ilsDetails['renewLimit'] >= $ilsDetails['renew']): ?>
+                  <strong><?=$this->transEsc('renewals_remaining', ['%%count%%' => $ilsDetails['renewLimit'] - $ilsDetails['renew']]);?></strong>
                <? endif; ?>
-               <? if (!isset($limit) || $renews > $limit): ?>
+               <? if (!isset($ilsDetails['renewLimit']) || $ilsDetails['renew'] > $ilsDetails['renewLimit']): ?>
                   <strong><?=$this->transEsc('Renewed')?>:
-                  <?=$this->transEsc($renews)?></strong>
+                  <?=$this->transEsc($ilsDetails['renew'])?></strong>
                <? endif; ?>
               <br />
             <? endif; ?>
