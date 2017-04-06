@@ -42,7 +42,6 @@ namespace Finna\View\Helper\Root;
  * Wiki
  */
 class RecordDataFormatterFactory
- extends \VuFind\View\Helper\Root\RecordDataFormatterFactory
 {
     /**
      * Create the helper.
@@ -51,7 +50,7 @@ class RecordDataFormatterFactory
      */
     public function __invoke()
     {
-        $helper = new RecordDataFormatter();
+        $helper = new \VuFind\View\Helper\Root\RecordDataFormatter();
         $helper->setDefaults('core', $this->getDefaultCoreSpecs());
         $helper->setDefaults('description', $this->getDefaultDescriptionSpecs());
         return $helper;
@@ -64,7 +63,7 @@ class RecordDataFormatterFactory
      */
     public function getDefaultCoreSpecs()
     {
-        $spec = new RecordDataFormatter\SpecBuilder();
+        $spec = new \VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder();
         $spec->setTemplateLine(
             'Published in', 'getContainerTitle', 'data-containerTitle.phtml'
         );
@@ -82,12 +81,20 @@ class RecordDataFormatterFactory
             'Archive Origination', 'getOrigination', 'data-origination.phtml'
         );
         $spec->setTemplateLine(
-            'Archive', 'getSourceIdentifier', 'data-archive.phtml'
+            'Archive', 'isPartOfArchiveSeries', 'data-archive.phtml'
+        );
+        $spec->setTemplateLine(
+            'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml'
+        );
+        $spec->setLine(
+            'Unit ID', 'getUnitID', null
         );
         $spec->setTemplateLine(
             'Authors', 'getNonPresenterAuthors', 'data-authors.phtml'
         );
-        $spec->setLine('Language', 'getLanguages');
+        $spec->setTemplateLine(
+            'Language', 'getLanguages', 'data-language.phtml'
+        );
         $spec->setTemplateLine(
             'Published', 'getPublicationDetails', 'data-publicationDetails.phtml'
         );
@@ -95,9 +102,14 @@ class RecordDataFormatterFactory
             'Edition', 'getEdition', null,
             ['prefix' => '<span property="bookEdition">', 'suffix' => '</span>']
         );
-        $spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
+        $spec->setTemplateLine(
+            'Series', 'getSeries', 'data-series.phtml'
+        );
         $spec->setTemplateLine(
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml'
+        );
+        $spec->setLine(
+            'Location', 'getPhysicalLocations'
         );
         $spec->setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
@@ -118,7 +130,7 @@ class RecordDataFormatterFactory
      */
     public function getDefaultDescriptionSpecs()
     {
-        $spec = new RecordDataFormatter\SpecBuilder();
+        $spec = new \VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder();
         $spec->setLine('Summary', 'getSummary');
         $spec->setLine('Published', 'getDateSpan');
         $spec->setLine('Item Description', 'getGeneralNotes');

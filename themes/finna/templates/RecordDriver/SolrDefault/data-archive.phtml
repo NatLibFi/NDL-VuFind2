@@ -1,6 +1,7 @@
+<!-- START of: finna - RecordDriver/SolrDefault/data-archive.phtml -->
 <? if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>
   <? $parentSource = $this->driver->getSourceIdentifier(); ?>
-  <? if ($this->driver->isPartOfArchiveSeries()): ?>
+  <? if ($data == true): ?>
     <? $topIds = $this->driver->getHierarchyTopId(); $topTitles = $this->driver->getHierarchyTopTitle(); ?>
   <? else: ?>
     <? $topIds = $this->driver->getHierarchyParentId(); $topTitles = $this->driver->getHierarchyParentTitle(); ?>
@@ -18,3 +19,4 @@
       <? endforeach; ?>
   <? endif; ?>
 <? endif; ?>
+<!-- END of: finna - RecordDriver/SolrDefault/data-archive.phtml -->
