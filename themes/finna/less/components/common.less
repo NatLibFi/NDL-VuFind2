@@ -87,5 +87,540 @@ span.badge.cb-facet {
 
 
 
+.input-group {
+  .form-control {
+    width: initial;
+  }
+}
 
+//
+//LIST GROUPS
+//
+.sidebar h4 {
+  padding: 15px;
+  background: @sidebar-background;
+  color: @sidebar-header-text-color;
+  font-size: @font-size-h3;
+  margin-top: 0px;
+  margin-bottom: 5px;
+  word-wrap: break-word;
+}
+
+list-group {
+  // No need to set list-style: none; since .list-group-item is block level
+  margin-bottom: 5px;
+}
+
+.list-group-item {
+  position: relative;
+  font-size: 1.05em;
+  vertical-align: middle;
+  &:first-child {
+    .border-top-radius(0px);
+  }
+  &:last-child {
+    .border-bottom-radius(0px);
+  }
+
+  &:hover {
+
+  }
+
+  // title custom coloring
+  &.title {
+    background: @facet-background;
+    color: @facet-text-color;
+  }
+}
+
+.recordProvidedBy {
+  border-top: 1px solid @gray-lighter;
+  margin-top: 5px;
+}
+.sidebar .recordProvidedBy {
+  border-top: none;
+  margin-top: 0px;
+}
+.record-type.organisations {
+  padding: 0px 0px 10px;
+  font-size: 1.04em;
+  @media (max-width: @screen-xs-max) {
+    border-top: none;
+    border-bottom: 1px solid @gray-lighter;
+  }
+  & > li {
+    font-weight: bold;
+    & ul {
+      font-weight: normal;
+    }
+  }
+
+}
+.list-group {
+  &.record-organisation {
+    & h3 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    padding: 3px 15px 10px;
+    margin-bottom: 0px;
+    & a {
+      font-weight: bold;
+    }
+
+  }
+  &.organisations {
+    padding: 0px;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+    background: #f5f5f5;
+
+    & .record-organisation {
+      background: @body-bg;
+      padding: 5px 10px;
+      font-weight: bold;
+      & .record-organisation-info {
+        font-size: 1em;
+        font-weight: normal;
+      }
+    }
+    & .other-organisation-links a {
+      padding: 0px 10px;
+      font-weight: bold;
+      display: block;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+    & h5 {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      padding: 10px;
+      font-weight: normal;
+    }
+    & a {
+      line-height: 2em;
+    }
+    & .more-link, .less-link {
+      padding-left: 10px;
+      font-weight: bold;
+    }
+  }
+
+}
+#similar-records {
+  & .iconlabel {
+    display: none;
+  }
+}
+
+
+.media,
+.media-body {
+  overflow: visible;
+}
+
+
+//
+//modals.less
+//
+.modal-content {
+  & .comment-inappropriate-form {
+    & label {
+      font-weight: inherit;
+    }
+  }
+}
+
+
+.modal-content .close {
+  color: @body-bg;
+  padding: 0px 7px 6px 7px;
+  font-weight: 500;
+  min-height: 30px;
+  min-width: 30px;
+  font-size: 1.5em;
+  line-height: 1em;
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  z-index: 2;
+  color: #fff;
+  opacity: 0.8;
+  &:after {
+    font-family: 'icomoon';
+    content: '\e02e';
+  }
+  &:hover {
+    opacity: 1;
+  }
+}
+
+
+//
+//Pager.less
+//
+.pager {
+  text-align: right;
+
+  & li {
+    display: inline;
+    & > a,
+    & > span {
+      display: inline-block;
+      padding: 4px 7px 2px;
+      color: #fff;
+      background-color: @pager-bg;
+      border-radius: 50%;
+      font-size: 16px;
+    }
+  }
+  & li.pager-text {
+    background-color: none;
+    margin: 0px 10px;
+    font-size: 1.1em;
+    margin-top: -2px;
+  }
+  & li.disabled i {
+    cursor: initial;
+  }
+  & li:not(.disabled) {
+    & > a:hover, & > a:focus {
+      text-decoration: none;
+      cursor: pointer;
+      background-color: darken(@pager-hover-bg, 8%);
+    }
+  }
+
+  .disabled {
+    > a,
+    > a:hover,
+    > a:focus,
+    > span {
+      background-color: @pager-disabled-color;
+      cursor: not-allowed;
+    }
+  }
+
+}
+
+
+//
+//tables.less
+//
+
+table.content-table {
+  font-size: @content-font-size-base;
+  margin-top: 0;
+  margin-bottom: 2.9em;
+  line-height: 1.4em;
+}
+
+.content-table th, .content-table td {
+  padding: 0.4em 1.5em 0.4em 0;
+  font-weight: normal;
+  border-bottom: 1px solid @gray-lighter;
+}
+.table.table-finna-record {
+  > thead,
+  > tbody,
+  > tfoot {
+    > tr {
+      > th,
+      > td {
+        padding: @table-finna-record-cell-padding;
+      }
+    }
+  }
+  table-layout: initial;
+}
+.table.citation {
+  table-layout: fixed;
+}
+
+table#componentparts {
+  & th {
+    background-color: #f5f5f5;
+    border-right: 2px solid @body-bg;
+    &.sorting_asc,&.sorting_desc,&.sorting {
+      background-position: center left;
+      padding-left: 20px;
+    }
+  }
+  & .even td {
+    background: fade(@nav-tabs-border-color, 5%);
+  }
+  & td a {
+    font-weight: bold;
+  }
+}
+
+//
+//type.less
+//
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+  margin-top: @line-height-computed;
+  margin-bottom: (@line-height-computed);
+}
+
+// Typography for content pages
+// -------------------------------
+
+h1.content-header { padding: 5px 0; }
+.main.template-dir-feedcontent.template-name-content,
+.main.template-dir-content.template-name-content {
+  & .finna-main-header {
+    margin-bottom: 25px;
+  }
+  & h1 {
+    font-size: @content-headings-font-size-h1;
+  }
+  & h2 {
+    font-size: @content-headings-font-size-h2;
+    line-height: @content-headings-line-height;
+    margin-top: 0; padding-top: 0.7em; padding-bottom: 0.1em;
+  }
+  & h3, h4 {
+    line-height: (@content-headings-line-height * 1.1);
+    margin-top: 0;
+  }
+  & h5, h6 {
+    line-height: @content-line-height-base;
+  }
+  & h3 {
+    font-size: @content-headings-font-size-h3;
+    margin: 0; padding-top: 0.2em; padding-bottom: 1em;
+  }
+  & h4 {
+    font-size: @content-headings-font-size-h4;
+    margin: 0; padding-top: 0.6em; padding-bottom: 1.2em;
+  }
+  & h5 {
+    font-size: @content-headings-font-size-h5;
+    margin: 0; padding-top: 0; padding-bottom: 0;
+  }
+  & h6 {
+    font-size: @content-headings-font-size-h6;
+    text-transform: uppercase;
+    margin: 0; padding-top: 0.4em; padding-bottom: 0em;
+  }
+  & p {
+    font-size: @content-font-size-base;
+    line-height: @content-line-height-base;
+    margin-bottom: 15px;
+  }
+}
+
+// Unordered and Ordered lists
+ul,
+ol {
+  padding: 0;
+  & li {
+    list-style-type: none;
+  }
+}
+
+
+// Content pages list options
+// --------------------------------------------------
+
+//Unstyled list
+.list-plain {
+  font-size: @content-font-size-base;
+  line-height: @content-line-height-base;
+  padding-left: 0;
+  padding-bottom: 0.9em;
+
+  > li {
+    list-style-type: none;
+  }
+}
+
+// Bulleted list
+.list-bullets {
+  font-size: @content-font-size-base;
+  line-height: @content-line-height-base;
+  padding-left: 1.2em;
+  padding-bottom: 0.9em;
+
+  > li {
+    list-style-type: disc;
+  }
+}
+
+// Finna text styles
+.finna-main-header h3 {
+  margin: 0;
+}
+// text class styling for author and date
+.date-and-year {
+  font-size: @font-size-base;
+  line-height: 1.35em;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.resultHierarchyLinks {
+  margin-bottom: 6px;
+}
+
+.hierarchyTreeLink {
+  margin-top: 6px;
+}
+
+.archive-label {
+  font-size: @font-size-base;
+  font-weight: 400;
+  letter-spacing: 0px;
+  color: @gray-light;
+}
+
+
+//
+//print.less
+//
+@media print {
+  // Don't show certain links and buttons
+  a.title, .dateyeartype a,.image-popup-trigger, .image-popup-navi, .record-details a, .record-authors a, .recordTabs a, .paginationSimple a {
+    &[href]:after {
+      content: none !important;
+    }
+  }
+  button, a.btn {
+    display: none !important;
+  }
+}
+
+//
+//popovers.less
+//
+.popover {
+  min-width: min(200px, @popover-max-width);
+}
+
+//
+//themes.less
+//
+.navbar-brand,
+.navbar-nav > li > a {
+  color: rgb(246,246,246);
+}
+
+.list-group {
+  border-radius: 0px;
+}
+
+//
+//Tooltips
+//
+.tooltip {
+  // min-width: @tooltip-min-width;
+  max-width: @tooltip-max-width;
+
+  &.top    { margin-top:  -5px; padding: @tooltip-arrow-width 0; }
+  &.right  { margin-left:  5px; padding: 0 @tooltip-arrow-width; }
+  &.bottom { margin-top:   5px; padding: @tooltip-arrow-width 0; }
+  &.left   { margin-left: -5px; padding: 0 @tooltip-arrow-width; }
+
+}
+
+.tooltip-inner {
+  min-width: @tooltip-min-width;
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 1.1em;
+  font-weight: normal;
+  box-shadow: 0px 0px 20px -10px #fff inset;
+  & h4 {
+    font-size: 16px;
+    margin-top: 0;
+    margin: -12px -16px;
+    margin-bottom: 10px;
+    padding: 12px 16px 12px;
+    background-color: @tooltip-arrow-color;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: @tooltip-header-color;
+  }
+}
+
+.tooltip {
+  &.bottom .tooltip-inner{
+    box-shadow: 0px 5px 20px -4px @gray;
+  }
+  &.top .tooltip-inner{
+    box-shadow: 0px -5px 20px -4px @gray;
+  }
+}
+
+//
+// Finna tooltips
+//
+.tooltip-tabs_local {
+  display: @tooltip-tabs-local;
+}
+.tooltip-tabs_pci {
+  display: @tooltip-tabs-pci;
+}
+.tooltip-facet {
+  display: @tooltip-facet;
+  display: block;
+  position: absolute;
+  top: 14px;
+  right: 23px;
+}
+.tooltip-search-pci {
+  display: @tooltip-search-pci;
+}
+.tooltip-search-local {
+  display: @tooltip-search-local;
+}
+.tooltip-myaccount {
+  display: @tooltip-myaccount;
+}
+.tooltip-local-advanced {
+  display: @tooltip-local-advanced;
+}
+.tooltip-pci-advanced {
+  display: @tooltip-pci-advanced;
+}
+.tooltip-tabs_local, .tooltip-tabs_pci, .tooltip-facet, .tooltip-search-pci, .tooltip-search-local, .tooltip-myaccount {
+  color: @tooltip-button-color;
+}
+.tooltip-local-advanced,
+.tooltip-pci-advanced {
+  color: @link-color;
+  font-size: .8em;
+}
+.finna-main-tabs ul.nav-tabs>li.active>a {
+  & .tooltip-tabs_local, .tooltip-tabs_pci {
+    color: @gray;
+  }
+}
+.tooltip-search-pci, .tooltip-search-local {
+  margin-top: 10px;
+  font-size: 1.2em;
+}
+.tooltip-myaccount {
+  margin-left: 10px;
+  color: @gray;
+  & >i {
+    vertical-align: 0px !important;
+    font-size: 2em;
+  }
+}
+.slider {
+  & .tooltip.top .tooltip-inner {
+    min-width: initial;
+    padding: 4px 8px;
+    box-shadow: none;
+    background: @gray-lighter;
+  }
+  & .tooltip.top .tooltip-arrow {
+    border-top-color: @gray-lighter;
+  }
+}
 
