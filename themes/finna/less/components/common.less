@@ -5,6 +5,7 @@
 //override bootstrap alert class property
 .alert {
   border: none;
+  border-radius: 0px;
 }
 
 
@@ -106,7 +107,7 @@ span.badge.cb-facet {
   word-wrap: break-word;
 }
 
-list-group {
+.list-group {
   // No need to set list-style: none; since .list-group-item is block level
   margin-bottom: 5px;
 }
@@ -115,6 +116,7 @@ list-group {
   position: relative;
   font-size: 1.05em;
   vertical-align: middle;
+  border: 1px solid transparent;
   &:first-child {
     .border-top-radius(0px);
   }

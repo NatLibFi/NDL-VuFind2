@@ -1,5 +1,5 @@
 .form-control {
-  width: inherit;
+  width: initial;
   padding: inherit;
   padding: 2px 5px;
   max-width: 100%; // make sure dropdowns don't overflow elementss
@@ -61,9 +61,15 @@
   }
 }
 
+.form-inline {
+  display: inline-block;
+  // Kick in the inline
+  @media (min-width: @screen-sm-min) {
+    .form-control {
+      width: initial;// Prevent labels from stacking above inputs in `.form-group`
 
-.form-control {
-  width: inherit;// Prevent labels from stacking above inputs in `.form-group`
+    }
+  }
 }
 
 
