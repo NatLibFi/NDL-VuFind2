@@ -74,8 +74,52 @@ class RecordDataFormatterFactory
             'Previous Title', 'getPreviousTitles', null, ['recordLink' => 'title']
         );
         $spec->setLine(
-            'Format', 'getFormats', 'RecordHelper',
-            ['helperMethod' => 'getFormatList']
+            'recordFormat', 'getFormats', 'RecordHelper',
+            [
+                'helperMethod' => 'getFormatList'
+            ]
+        );
+        $spec->setLine(
+            'Subject Detail', 'getSubjectDetails', null
+        );
+        $spec->setLine(
+            'Subject Place', 'getSubjectPlaces', null
+        );
+        $spec->setLine(
+            'Subject Date', 'getSubjectDates', null
+        );
+        $spec->setLine(
+            'Subject Actor', 'getSubjectActors', null
+        );
+        $spec->setTemplateLine(
+            'Organisation', true, 'data-organisation.phtml'
+        );
+        $spec->setLine(
+            'Collection', 'getCollection', null
+        );
+        $spec->setLine(
+            'Inventory ID', 'getIdentifier', null
+        );
+        $spec->setLine(
+            'Measurements', 'getMeasurements', null
+        );
+        $spec->setLine(
+            'Inscriptions', 'getInscriptions', null
+        );
+        $spec->setLine(
+            'Other Classification', 'getFormatClassifications', null
+        );
+        $spec->setLine(
+            'Other ID', 'getLocalIdentifiers', null
+        );
+        $spec->setTemplateLine(
+            "", 'getMainFormat',
+            'data-mainFormat.phtml',
+            [
+                'labelFunction'  => function ($data) {
+                    return false;
+                },
+            ]
         );
         $spec->setTemplateLine(
             'Archive Origination', 'getOrigination', 'data-origination.phtml'
@@ -109,17 +153,18 @@ class RecordDataFormatterFactory
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml'
         );
         $spec->setLine(
-            'Location', 'getPhysicalLocations'
+            'Location', 'getPhysicalLocations', null
         );
         $spec->setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             ['allowZero' => false]
         );
-        $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
+        $spec->setTemplateLine(
+            'Online Access', true, 'data-onlineAccess.phtml'
+        );
         $spec->setTemplateLine(
             'Related Items', 'getAllRecordLinks', 'data-allRecordLinks.phtml'
         );
-        $spec->setTemplateLine('Tags', true, 'data-tags.phtml');
         return $spec->getArray();
     }
 
