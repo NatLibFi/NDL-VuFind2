@@ -332,6 +332,7 @@
   border-radius: 0;
 }
 
+
 .navbar-nav {
   margin: (@navbar-padding-vertical / 2) -@navbar-padding-horizontal;
 
@@ -398,6 +399,33 @@
         }
       }
     }
+
+    .open .dropdown-menu {
+      position: absolute;
+      float: left;
+      width: initial;
+      margin-top: 0;
+      background-color: @dropdown-bg;
+      border: 1px solid @dropdown-fallback-border; // IE8 fallback
+      border: 1px solid @dropdown-border;
+      border-radius: @border-radius-base;
+      .box-shadow(0 6px 12px rgba(0,0,0,.275));
+      > li > a,
+      .dropdown-header {
+        padding: 5px 15px 5px 25px;
+      }
+      > li > a {
+        padding: 7px 15px;
+        line-height: @line-height-computed;
+        &:hover,
+        &:focus,
+        &:active {
+          text-decoration: none;
+          color: @dropdown-link-hover-color;
+          background-color: @dropdown-link-hover-bg;
+        }
+      }
+    }
   }
 
   // Uncollapse the nav
@@ -415,12 +443,19 @@
   background-color: @navbar-default-bg;
   border-radius: @border-radius-large;
 
-  @shadow: none; //todo inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.1);
   .box-shadow(none);
 
   /*@media (min-width: @grid-float-breakpoint) {
     width: 100%;         //Tämä pitää vielä fixata TODO
   }*/
+}
+
+// Dropdown menus
+
+// Menu position and menu carets
+.navbar-nav > li > .dropdown-menu {
+  margin-top: 0;
+  .border-top-radius(@border-radius-base);
 }
 
 // Default navbar
