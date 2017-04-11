@@ -278,7 +278,6 @@
 //navbar.less
 //
 .navbar {
-  &:extend(.clearfix all);
   & .dropdown .dropdown-menu > li > a > div:not(.description) {
     font-weight: bold;
   }
@@ -300,36 +299,12 @@
   }
 
   @media (min-width: @grid-float-breakpoint) {
-    width: auto;
     border-top: 0;
     box-shadow: none;
-    &.collapse {
-      display: block !important;
-      height: auto !important;
-      padding-bottom: 0; // Override default setting
-      overflow: visible !important;
-    }
-
     &.in {
-      overflow-y: visible;
       & .dropdown-menu a {
         color: @gray;
         transition: none;
-      }
-    }
-  }
-}
-
-// Dropdown menu items
-.navbar-nav {
-  // Remove background color from open dropdown
-  > .open > a {
-    &,
-    &:hover,
-    &:focus {
-      &:after {
-        font-family: "icomoon";
-        content: 'X';
       }
     }
   }
@@ -350,8 +325,8 @@
 
 .navbar-toggle {
   float: left;
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-top: 0;        //todo tarvitaanko?
+  margin-bottom: 0;     //todo tarvitaanko?
   color: @navbar-toggle-color;
   padding: (@navbar-height/4) 5px (@navbar-height/4) 0px;
   border-radius: 0;
@@ -359,7 +334,10 @@
 
 .navbar-nav {
   margin: (@navbar-padding-vertical / 2) -@navbar-padding-horizontal;
+
   > li > a {
+    padding-top: @navbar-padding-vertical;
+    padding-bottom: @navbar-padding-vertical;
     line-height: @navbar-height;
     color: @navbar-default-link-color;
     font-size: @navbar-font-size;
@@ -422,31 +400,44 @@
     }
   }
 
+  // Uncollapse the nav
   @media (min-width: @grid-float-breakpoint) {
     float: left;
     margin: 0;
-
-    > li {
-      float: left;
-      > a {
-        padding-top: @navbar-padding-vertical;
-        padding-bottom: @navbar-padding-vertical;
-      }
-    }
-
-    &.navbar-right:last-child {
-      margin-right: -@navbar-padding-horizontal;
-    }
   }
 }
 
 .navbar-form {
+  width: 100%;  //Tämä pitää vielä fixata TODO
+  margin-left: 0;   //todo tarkista
+  margin-right: 0;  //todo tarkista
   padding: 0px;
   background-color: @navbar-default-bg;
   border-radius: @border-radius-large;
 
-  @media (min-width: @grid-float-breakpoint) {
+  @shadow: none; //todo inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.1);
+  .box-shadow(none);
+
+  /*@media (min-width: @grid-float-breakpoint) {
     width: 100%;         //Tämä pitää vielä fixata TODO
+  }*/
+}
+
+// Default navbar
+.navbar-default {
+  // Dropdown menu items
+  .navbar-nav {
+    // Remove background color from open dropdown
+    > .open > a {
+      &,
+      &:hover,
+      &:focus {
+        &:after {
+          font-family: "icomoon";
+          content: 'X';
+        }
+      }
+    }
   }
 }
 

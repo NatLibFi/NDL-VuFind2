@@ -1,6 +1,5 @@
 .form-control {
   width: initial;
-  padding: inherit;
   padding: 2px 5px;
   max-width: 100%; // make sure dropdowns don't overflow elementss
   vertical-align: middle !important;
@@ -13,7 +12,7 @@
   &[disabled],
   &[readonly],
   fieldset[disabled] & {
-    background-color: inherit;
+    background-color: transparent;
   }
 
   &:invalid {
@@ -59,6 +58,10 @@
       width: 80%;
     }
   }
+}
+
+.search-controls .pagination {
+  margin-top: 0px;
 }
 
 .form-inline {
