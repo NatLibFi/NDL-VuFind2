@@ -400,7 +400,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     public function getMyTransactions($patron)
     {
         $result = $this->makeRequest(
-            ['v1', 'checkouts'],
+            ['v1', 'checkouts', 'expanded'],
             ['borrowernumber' => $patron['id']],
             'GET',
             $patron
@@ -410,13 +410,6 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         }
         $transactions = [];
         foreach ($result as $entry) {
-            list($renewStatusCode, $renewabilityResult) = $this->makeRequest(
-                ['v1', 'checkouts', $entry['issue_id'], 'renewability'],
-                false,
-                'GET',
-                $patron,
-                true
-            );
             $item = $this->getItem($entry['itemnumber']);
             $volume = isset($item['enumchron'])
                 ? $item['enumchron'] : '';
@@ -424,8 +417,11 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             if (!empty($item['biblionumber'])) {
                 $bib = $this->getBibRecord($item['biblionumber']);
                 if (!empty($bib['title'])) {
-                    // TODO: use this when the full title is available
-                    // $title = $bib['title'];
+                    $title = $bib['title'];
+                }
+                if (!empty($bib['title_remainder'])) {
+                    $title .= ' ' . $bib['title_remainder'];
+                    $title = trim($title);
                 }
             }
 
@@ -439,17 +435,13 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                     $dueStatus = 'due';
                 }
             }
-            $renewable = $renewStatusCode == 200
-                && !empty($renewabilityResult['renewable']);
+
+            $renewable = $entry['renewable'];
             $message = '';
-            if (!$renewable && isset($renewabilityResult['error'])) {
-                switch ($renewabilityResult['error']) {
+            if (!$renewable) {
+                switch ($entry['renewability_error']) {
                 case 'too_soon':
-                    if ($entry['renewals'] > 0) {
-                        $message = 'Renewed today';
-                    } else {
-                        $message = 'Borrowed today';
-                    }
+                    $message = 'Cannot renew yet';
                     break;
                 case 'onsite_checkout':
                     $message = 'Copy has special circulation';
@@ -482,6 +474,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 ),
                 'dueStatus' => $dueStatus,
                 'renew' => $entry['renewals'],
+                'renewLimit' => $entry['max_renewals'],
                 'renewable' => $renewable,
                 'message' => $message
             ];
