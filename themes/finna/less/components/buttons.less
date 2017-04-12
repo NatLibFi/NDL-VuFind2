@@ -2,8 +2,6 @@
 // buttons.less
 //
 .btn {
-  .button-size(@padding-base-vertical; @padding-base-horizontal; @font-size-base; @line-height-base; @finna-button-radius);
-  .user-select(none);
   .transition(background .1s ease-in-out);
 
   &.disabled,
@@ -83,16 +81,16 @@
   clear: none;
   float: left;
   margin: 5px 0 0 12px;
-  background: none repeat scroll 0 0 #FFFFFF;
+  background: none repeat scroll 0 0 @body-bg;
   border-radius: 0px 0px 0px 0px;
-  color: #666666;
+  color: @gray;
   padding: 6px 3px 9px 2px;
   position: absolute;
   top: 41px;
   left: 0px;
   width: 206px;
   height: 35px;
-  box-shadow: 0px 15px 20px -12px #000;
+  box-shadow: 0px 15px 20px -12px black;
   z-index: 1;
   @media (max-width: @screen-sm-min) {
     top: 37px;
@@ -175,7 +173,7 @@
   font-family: 'FontAwesome';
   margin-right: -1px;
   font-size: 21px;
-  background: white;
+  background: @body-bg;
   margin: -4px;
   position: absolute;
   margin-left: -1px;
@@ -398,7 +396,7 @@ button.multiselect {
   & i {
     font-size: 18px;
     vertical-align: middle;
-    color: #fff;
+    color: @body-bg;
     margin-top: -3px;
     margin-right: 3px;
     border-radius: @finna-button-radius;
@@ -497,7 +495,7 @@ button.multiselect {
     & > a {
       padding: 7px 7px;
       background: @brand-primary;
-      color: #fff;
+      color: @body-bg;
       border-radius: 10px;
       display: inline-block;
       margin-top: -7px;
@@ -521,7 +519,7 @@ button.multiselect {
 }
 & .myresearch-profile-header, .useraccount-header {
   .select-card-wrapper .dropdown > a {
-    background: #fff;
+    background: @body-bg;
     color: @gray;
     border: 1px solid @gray-lighter;
 
