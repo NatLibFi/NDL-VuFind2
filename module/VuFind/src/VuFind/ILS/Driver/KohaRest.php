@@ -400,7 +400,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     public function getMyTransactions($patron)
     {
         $result = $this->makeRequest(
-            ['v1', 'checkouts'],
+            ['v1', 'checkouts', 'expanded'],
             ['borrowernumber' => $patron['id']],
             'GET',
             $patron
@@ -410,20 +410,18 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         }
         $transactions = [];
         foreach ($result as $entry) {
-            list($renewStatusCode) = $this->makeRequest(
-                ['v1', 'checkouts', $entry['issue_id'], 'renewability'],
-                false,
-                'GET',
-                $patron,
-                true
-            );
             $item = $this->getItem($entry['itemnumber']);
-            $transaction['volume'] = isset($item['enumchron'])
+            $volume = isset($item['enumchron'])
                 ? $item['enumchron'] : '';
+            $title = '';
             if (!empty($item['biblionumber'])) {
                 $bib = $this->getBibRecord($item['biblionumber']);
                 if (!empty($bib['title'])) {
-                    $transaction['title'] = $bib['title'];
+                    $title = $bib['title'];
+                }
+                if (!empty($bib['title_remainder'])) {
+                    $title .= ' ' . $bib['title_remainder'];
+                    $title = trim($title);
                 }
             }
 
@@ -438,16 +436,47 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 }
             }
 
+            $renewable = $entry['renewable'];
+            $message = '';
+            if (!$renewable) {
+                switch ($entry['renewability_error']) {
+                case 'too_soon':
+                    $message = 'Cannot renew yet';
+                    break;
+                case 'onsite_checkout':
+                    $message = 'Copy has special circulation';
+                    break;
+                case 'on_reserve':
+                    $message = 'renew_item_requested';
+                    break;
+                case 'too_many':
+                    $message = 'renew_item_limit';
+                    break;
+                case 'restriction':
+                    $message = 'Borrowing Block Message';
+                    break;
+                case 'overdue':
+                    $message = 'renew_item_overdue';
+                    break;
+                default:
+                    $message = 'renew_denied';
+                }
+            }
+
             $transaction = [
                 'id' => isset($item['biblionumber']) ? $item['biblionumber'] : '',
                 'checkout_id' => $entry['issue_id'],
                 'item_id' => $entry['itemnumber'],
+                'title' => $title,
+                'volume' => $volume,
                 'duedate' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d\TH:i:sP', $entry['date_due']
                 ),
                 'dueStatus' => $dueStatus,
                 'renew' => $entry['renewals'],
-                'renewable' => $renewStatusCode != 403
+                'renewLimit' => $entry['max_renewals'],
+                'renewable' => $renewable,
+                'message' => $message
             ];
 
             $transactions[] = $transaction;
