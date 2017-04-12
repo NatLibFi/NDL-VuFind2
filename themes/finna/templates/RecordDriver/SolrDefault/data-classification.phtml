@@ -1,0 +1,20 @@
+<? if (!empty($data)): ?>
+<div class="truncate-field">
+  <p>
+  <?
+    $result = '';
+    $i = 0;
+    foreach ($data as $class => $field) {
+      $field = array_unique($field);
+      foreach ($field as $j => $subfield) {
+        $result = $class . ' ' . $subfield;
+        $classForTranslation = 'classification::' . str_replace('::', ' ', $result);
+        ?>
+        <a title="<?=$this->escapeHtmlAttr($result)?>" href="<?=$this->record($this->driver)->getLink('classification', $result)?>"><? if (!$this->translationEmpty($classForTranslation)): ?><?=$this->transEsc($classForTranslation).'<span class="classification-detail"> (' . $this->escapeHtml($result) . ')</span>' ;?><? else: ?><?=$this->escapeHtml($result); ?><? endif; ?></a><br>
+      <?
+      }
+    }
+  ?>
+  </p>
+</div>
+?>

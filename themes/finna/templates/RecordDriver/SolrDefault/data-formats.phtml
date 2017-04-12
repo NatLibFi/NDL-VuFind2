@@ -1,0 +1,8 @@
+<? if (!empty($data)): ?>
+  <?=$this->record($this->driver)->getFormatList()?>
+  <? $physical = $this->driver->getPhysicalDescriptions(); if (!empty($physical)): ?>
+    <? foreach ($physical as $field): ?>
+      <br/><?=$this->escapeHtml($field)?></span>
+    <? endforeach; ?>
+  <? endif; ?>
+<? endif; ?>

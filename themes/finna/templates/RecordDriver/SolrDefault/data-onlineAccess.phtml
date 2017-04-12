@@ -1,10 +1,10 @@
-<!-- START of: finna - RecordDriver/SolrDefault/data-onlineAccess.phtml -->
 <?
   $openUrl = $this->openUrl($this->driver, 'record');
   $openUrlActive = $openUrl->isActive();
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
 ?>
+<div class="truncate-field" data-rows="3">
 <? if (!empty($urls) || $openUrlActive): ?>
   <? foreach ($urls as $current): ?>
     <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>"><?=$this->escapeHtml($current['desc'])?></a><br/>
@@ -13,4 +13,4 @@
     <?=$openUrl->renderTemplate()?><br/>
   <? endif; ?>
 <? endif; ?>
-<!-- END of: finna - RecordDriver/SolrDefault/data-onlineAccess.phtml -->
+</div>

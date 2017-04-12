@@ -1,4 +1,3 @@
-<!-- START of: finna - RecordDriver/SolrDefault/data-archiveSeries.phtml -->
 <? if ( $data == true && !$fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats())
 ): ?>
     <? $parentSource = $this->driver->getSourceIdentifier(); ?>
@@ -14,4 +13,3 @@
       <?=($index > 0 ? ', ' : '')?><a href="<?=$parentUrl?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a>
     <? endforeach; ?>
 <? endif; ?>
-<!-- END of: finna - RecordDriver/SolrDefault/data-archiveSeries.phtml -->

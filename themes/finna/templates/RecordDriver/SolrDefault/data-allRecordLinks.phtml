@@ -1,4 +1,3 @@
-<!-- START of: finna - RecordDriver/SolrDefault/data-allRecordLinks.phtml -->
 <? foreach ($data as $recordLink): ?>
   <?=$this->transEsc($recordLink['title'])?>:
   <a href="<?=$this->recordLink()->related($recordLink['link'])?>"><?=$this->escapeHtml($recordLink['value'])?></a><br />
@@ -10,4 +9,3 @@
       <?=$this->escapeHtml($field)?><br/>
     <? endforeach; ?>
 <? endif; ?>
-<!-- END of: finna - RecordDriver/SolrDefault/data-allRecordLinks.phtml -->

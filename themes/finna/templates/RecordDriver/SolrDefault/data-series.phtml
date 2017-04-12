@@ -1,4 +1,3 @@
-<!-- START of: finna - RecordDriver/SolrDefault/data-series.phtml -->
 <? foreach ($data as $field): ?>
   <?/* Depending on the record driver, $field may either be an array with
      "name" and "number" keys or a flat string containing only the series
@@ -15,4 +14,3 @@
     <a href="<?=$this->record($this->driver)->getLink('series', $field)?>"><?=$this->escapeHtml($field)?></a><br/>
   <? endif; ?>
 <? endforeach; ?>
-<!-- END of: finna - RecordDriver/SolrDefault/data-series.phtml -->

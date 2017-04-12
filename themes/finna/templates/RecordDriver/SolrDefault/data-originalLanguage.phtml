@@ -1,3 +1,5 @@
+<? if (!empty($data)): ?>
 <? foreach ($data as $lang): ?>
     <?= $this->transEsc($lang)?><br/>
 <? endforeach; ?>
+<? endif; ?>

@@ -64,6 +64,9 @@ class RecordDataFormatterFactory
     public function getDefaultCoreSpecs()
     {
         $spec = new \VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder();
+        $spec->setLine(
+            'Original Work', 'getOriginalWork', null
+        );
         $spec->setTemplateLine(
             'Published in', 'getContainerTitle', 'data-containerTitle.phtml'
         );
@@ -73,11 +76,15 @@ class RecordDataFormatterFactory
         $spec->setLine(
             'Previous Title', 'getPreviousTitles', null, ['recordLink' => 'title']
         );
-        $spec->setLine(
-            'recordFormat', 'getFormats', 'RecordHelper',
-            [
-                'helperMethod' => 'getFormatList'
-            ]
+        //TODO add getOtherLinks - SolrDfault core.phtml & SolrForward core.phtml
+        $spec->setTemplateLine(
+            'Presenters', 'getPresenters', 'data-presenters.phtml'
+        );
+        $spec->setTemplateLine(
+            'Other Titles', 'getAlternativeTitles', 'data-alternativeTitles.phtml'
+        );
+        $spec->setTemplateLine(
+            'Format', 'getFormats', 'data-formats.phtml'
         );
         $spec->setLine(
             'Subject Detail', 'getSubjectDetails', null
@@ -91,8 +98,9 @@ class RecordDataFormatterFactory
         $spec->setLine(
             'Subject Actor', 'getSubjectActors', null
         );
+        //TODO organisaatio ei saa näkyy aina
         $spec->setTemplateLine(
-            'Organisation', true, 'data-organisation.phtml'
+            'Organisation', 'getInstitutions', 'data-organisation.phtml'
         );
         $spec->setLine(
             'Collection', 'getCollection', null
@@ -112,6 +120,7 @@ class RecordDataFormatterFactory
         $spec->setLine(
             'Other ID', 'getLocalIdentifiers', null
         );
+        //TODO fix this template:
         $spec->setTemplateLine(
             "", 'getMainFormat',
             'data-mainFormat.phtml',
@@ -140,7 +149,17 @@ class RecordDataFormatterFactory
             'Language', 'getLanguages', 'data-language.phtml'
         );
         $spec->setTemplateLine(
+            'original_work_language', 'getOriginalLanguages',
+            'data-originalLanguage.phtml'
+        );
+        $spec->setTemplateLine(
             'Published', 'getPublicationDetails', 'data-publicationDetails.phtml'
+        );
+        $spec->setLine(
+            'Projected Publication Date', 'getProjectedPublicationDate', null
+        );
+        $spec->setLine(
+            'Dissertation Note', 'getDissertationNote', null
         );
         $spec->setLine(
             'Edition', 'getEdition', null,
@@ -150,7 +169,19 @@ class RecordDataFormatterFactory
             'Series', 'getSeries', 'data-series.phtml'
         );
         $spec->setTemplateLine(
+            'Classification', 'getClassification', 'data-classification.phtml'
+        );
+        $spec->setTemplateLine(
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml'
+        );
+        $spec->setLine(
+            'Manufacturer', 'getManufacturer', null
+        );
+        $spec->setTemplateLine(
+            'Additional Information', 'getTitleStatement', 'data-addInfo.phtml'
+        );
+        $spec->setTemplateLine(
+            'Genre', 'getGenres', 'data-genres.phtml'
         );
         $spec->setLine(
             'Location', 'getPhysicalLocations', null
@@ -159,11 +190,22 @@ class RecordDataFormatterFactory
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             ['allowZero' => false]
         );
+        //TODO AllRecordLinks forward ja default
+        $spec->setTemplateLine(
+            '', 'getAllRecordLinks', 'data-allRecordLinks.phtml'
+        );
+        //TODO Linkit ei saa näkyä aina
         $spec->setTemplateLine(
             'Online Access', true, 'data-onlineAccess.phtml'
         );
         $spec->setTemplateLine(
             'Related Items', 'getAllRecordLinks', 'data-allRecordLinks.phtml'
+        );
+        $spec->setTemplateLine(
+            'Keywords', 'getKeywords', 'data-keywords.phtml'
+        );
+        $spec->setTemplateLine(
+            'Education Programs', 'getEducationPrograms', 'data-education.phtml'
         );
         return $spec->getArray();
     }
