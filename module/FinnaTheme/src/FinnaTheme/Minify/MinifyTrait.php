@@ -27,8 +27,6 @@
  */
 namespace FinnaTheme\Minify;
 use Finna\Db\Table\FinnaCache;
-use VuFindTheme\ThemeInfo;
-use Zend\Http\Request;
 
 /**
  * Minifier wrapper trait
