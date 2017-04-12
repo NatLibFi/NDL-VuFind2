@@ -44,8 +44,8 @@ class CSS extends \MatthiasMullie\Minify\CSS
      * Return a converter to update relative paths to be relative to the new
      * destination.
      *
-     * @param string $source
-     * @param string $target
+     * @param string $source Source path
+     * @param string $target Target path
      *
      * @return ConverterInterface
      */

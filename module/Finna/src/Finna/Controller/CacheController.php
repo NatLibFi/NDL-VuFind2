@@ -56,6 +56,7 @@ class CacheController extends \VuFind\Controller\AbstractBase
      * Constructor
      *
      * @param \Finna\Db\Table\FinnaCache $finnaCache Finna cache table
+     * @param \VuFindTheme\ThemeInfo     $themeInfo  Theme info
      */
     public function __construct(\Finna\Db\Table\FinnaCache $finnaCache,
         \VuFindTheme\ThemeInfo $themeInfo
