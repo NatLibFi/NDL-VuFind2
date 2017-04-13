@@ -1,0 +1,8 @@
+<? //Don't add START and END comments ?>
+<? if(!empty($data)): ?>
+<div class="truncate-field">
+  <? foreach ($data as $field): ?>
+    <?=$field // intentionally left unescaped due to embedded HTML?><br/>
+  <? endforeach; ?>
+</div>
+<? endif; ?>

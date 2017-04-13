@@ -76,54 +76,62 @@ class RecordDataFormatterFactory
         $spec->setLine(
             'Previous Title', 'getPreviousTitles', null, ['recordLink' => 'title']
         );
-        //TODO add getOtherLinks - SolrDfault core.phtml & SolrForward core.phtml
+        $spec->setTemplateLine(
+            'Assistants', 'getAssistants', 'data-assistants.phtml'
+        );
+        $spec->setTemplateLine(
+            'Description', 'getDescription', 'data-description.phtml'
+        );
+        $spec->setTemplateLine(
+            'Press Reviews', 'getPressReview', 'data-pressReview.phtml'
+        );
+        $spec->setTemplateLine(
+            'Music', 'getMusicInfo', 'data-music.phtml'
+        );
+        $spec->setLine(
+            'Projected Publication Date', 'getProjectedPublicationDate'
+        );
+        $spec->setLine(
+            'Dissertation Note', 'getDissertationNote'
+        );
+        //TODO fix this template
+        $spec->setTemplateLine(
+            'link_', 'getOtherLinks', 'data-getOtherLinks.phtml',
+            [
+                'labelFunction'  => function ($data) {
+                    $data = "link_Arvosteltu teos";
+                    return $data;
+                },
+            ]
+        );
         $spec->setTemplateLine(
             'Presenters', 'getPresenters', 'data-presenters.phtml'
         );
         $spec->setTemplateLine(
             'Other Titles', 'getAlternativeTitles', 'data-alternativeTitles.phtml'
         );
-        $spec->setTemplateLine(
-            'Format', 'getFormats', 'data-formats.phtml'
-        );
         $spec->setLine(
-            'Subject Detail', 'getSubjectDetails', null
+            'Format', 'getFormats', 'RecordHelper',
+            ['helperMethod' => 'getFormatList']
         );
-        $spec->setLine(
-            'Subject Place', 'getSubjectPlaces', null
-        );
-        $spec->setLine(
-            'Subject Date', 'getSubjectDates', null
-        );
-        $spec->setLine(
-            'Subject Actor', 'getSubjectActors', null
-        );
-        //TODO organisaatio ei saa näkyy aina
+        $spec->setLine('Physical Description', 'getPhysicalDescriptions');
+        $spec->setLine('Subject Detail', 'getSubjectDetails');
+        $spec->setLine('Subject Place', 'getSubjectPlaces');
+        $spec->setLine('Subject Date', 'getSubjectDates');
+        $spec->setLine('Subject Actor', 'getSubjectActors');
+        //TODO organisaatio ei saa näkyy aina fiksaantuu varmaan tr-luokalla
         $spec->setTemplateLine(
             'Organisation', 'getInstitutions', 'data-organisation.phtml'
         );
-        $spec->setLine(
-            'Collection', 'getCollection', null
-        );
-        $spec->setLine(
-            'Inventory ID', 'getIdentifier', null
-        );
-        $spec->setLine(
-            'Measurements', 'getMeasurements', null
-        );
-        $spec->setLine(
-            'Inscriptions', 'getInscriptions', null
-        );
-        $spec->setLine(
-            'Other Classification', 'getFormatClassifications', null
-        );
-        $spec->setLine(
-            'Other ID', 'getLocalIdentifiers', null
-        );
+        $spec->setLine('Collection', 'getCollection');
+        $spec->setLine('Inventory ID', 'getIdentifier');
+        $spec->setLine('Measurements', 'getMeasurements');
+        $spec->setLine('Inscriptions', 'getInscriptions');
+        $spec->setLine('Other Classification', 'getFormatClassifications');
+        $spec->setLine('Other ID', 'getLocalIdentifiers');
         //TODO fix this template:
         $spec->setTemplateLine(
-            "", 'getMainFormat',
-            'data-mainFormat.phtml',
+            '', 'getMainFormat', 'data-mainFormat.phtml',
             [
                 'labelFunction'  => function ($data) {
                     return false;
@@ -139,9 +147,7 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml'
         );
-        $spec->setLine(
-            'Unit ID', 'getUnitID', null
-        );
+        $spec->setLine('Unit ID', 'getUnitID');
         $spec->setTemplateLine(
             'Authors', 'getNonPresenterAuthors', 'data-authors.phtml'
         );
@@ -153,14 +159,16 @@ class RecordDataFormatterFactory
             'data-originalLanguage.phtml'
         );
         $spec->setTemplateLine(
+            'Item Description', 'getGeneralNotes', 'data-itemDescription.phtml'
+        );
+        $spec->setTemplateLine(
             'Published', 'getPublicationDetails', 'data-publicationDetails.phtml'
         );
-        $spec->setLine(
-            'Projected Publication Date', 'getProjectedPublicationDate', null
+        $spec->setTemplateLine(
+            'Publisher', 'getPublicationDetails', 'data-publisher.phtml'
         );
-        $spec->setLine(
-            'Dissertation Note', 'getDissertationNote', null
-        );
+        $spec->setLine('Projected Publication Date', 'getProjectedPublicationDate');
+        $spec->setLine('Dissertation Note', 'getDissertationNote');
         $spec->setLine(
             'Edition', 'getEdition', null,
             ['prefix' => '<span property="bookEdition">', 'suffix' => '</span>']
@@ -174,8 +182,15 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml'
         );
-        $spec->setLine(
-            'Manufacturer', 'getManufacturer', null
+        $spec->setLine('Manufacturer', 'getManufacturer');
+        $spec->setTemplateLine(
+            'Production', 'getProducers', 'data-producers.phtml'
+        );
+        $spec->setTemplateLine(
+            'Funding', 'getFunders', 'data-funding.phtml'
+        );
+        $spec->setTemplateLine(
+            'Distribution', 'getDistributors', 'data-distribution.phtml'
         );
         $spec->setTemplateLine(
             'Additional Information', 'getTitleStatement', 'data-addInfo.phtml'
@@ -183,18 +198,11 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'Genre', 'getGenres', 'data-genres.phtml'
         );
-        $spec->setLine(
-            'Location', 'getPhysicalLocations', null
-        );
+        $spec->setLine('Location', 'getPhysicalLocations');
         $spec->setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             ['allowZero' => false]
         );
-        //TODO AllRecordLinks forward ja default
-        $spec->setTemplateLine(
-            '', 'getAllRecordLinks', 'data-allRecordLinks.phtml'
-        );
-        //TODO Linkit ei saa näkyä aina
         $spec->setTemplateLine(
             'Online Access', true, 'data-onlineAccess.phtml'
         );
@@ -207,6 +215,25 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'Education Programs', 'getEducationPrograms', 'data-education.phtml'
         );
+        $spec->setLine('Published', 'getDateSpan');
+        $spec->setLine('Publication Frequency', 'getPublicationFrequency');
+        $spec->setLine('Playing Time', 'getPlayingTimes');
+        $spec->setTemplateLine('Color', 'getColor', 'data-colors.phtml');
+        $spec->setTemplateLine('Sound', 'getSound', 'data-sound.phtml');
+        $spec->setLine('Aspect Ratio', 'getAspectRatio');
+        $spec->setLine('Audience', 'getTargetAudienceNotes');
+        $spec->setLine('Awards', 'getAwards');
+        $spec->setLine('Production Credits', 'getProductionCredits');
+        $spec->setLine('Bibliography', 'getBibliographyNotes');
+        $spec->setLine('ISBN', 'getISBNs');
+        $spec->setLine('ISSN', 'getISSNs');
+        $spec->setLine('DOI', 'getCleanDOI');
+        $spec->setTemplateLine(
+            'Terms Of Use', 'getTermsOfUse', 'data-termsOfUse.phtml'
+        );
+        $spec->setLine('Finding Aid', 'getFindingAids');
+        $spec->setLine('Publication_Place', 'getHierarchicalPlaceNames');
+        $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
         return $spec->getArray();
     }
 

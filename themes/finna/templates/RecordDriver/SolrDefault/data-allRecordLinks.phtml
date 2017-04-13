@@ -1,3 +1,4 @@
+<? //Don't add START and END comments ?>
 <? foreach ($data as $recordLink): ?>
   <?=$this->transEsc($recordLink['title'])?>:
   <a href="<?=$this->recordLink()->related($recordLink['link'])?>"><?=$this->escapeHtml($recordLink['value'])?></a><br />
