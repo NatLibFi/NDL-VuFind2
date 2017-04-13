@@ -26,7 +26,6 @@
 .nav {
   margin-bottom: 10px;
   margin-top: 10px;
-  //padding-left: none;    // TODO fix this, pitäisi olla yhtäkuin bootstrap col padding
   > li {
     > a {
       transition: background .2s ease-in-out;
@@ -325,8 +324,8 @@
 
 .navbar-toggle {
   float: left;
-  margin-top: 0;        //todo tarvitaanko?
-  margin-bottom: 0;     //todo tarvitaanko?
+  margin-top: 0;
+  margin-bottom: 0;
   color: @navbar-toggle-color;
   padding: (@navbar-height/4) 5px (@navbar-height/4) 0px;
   border-radius: 0;
@@ -436,18 +435,14 @@
 }
 
 .navbar-form {
-  width: 100%;  //Tämä pitää vielä fixata TODO
-  margin-left: 0;   //todo tarkista
-  margin-right: 0;  //todo tarkista
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
   padding: 0px;
   background-color: @navbar-default-bg;
   border-radius: @border-radius-large;
 
   .box-shadow(none);
-
-  /*@media (min-width: @grid-float-breakpoint) {
-    width: 100%;         //Tämä pitää vielä fixata TODO
-  }*/
 }
 
 // Dropdown menus

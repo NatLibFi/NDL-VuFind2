@@ -1,15 +1,9 @@
-//
-//Alert.less
-//
 .alert {
   border: none;
   border-radius: 0px;
 }
 
 
-//
-//badges.less
-//
 .badge {
   padding: 0 0 0 2px;
   //padding-left: 2px;
@@ -29,9 +23,6 @@ span.badge.cb-facet {
 }
 
 
-//
-// breadcrumbs.less
-//
 .breadcrumb {
   display: none;
   margin: 0px;
@@ -57,9 +48,6 @@ span.badge.cb-facet {
 }
 
 
-//
-//close.less
-//
 .close {
   text-shadow: none;
   .opacity(.8);
@@ -71,9 +59,6 @@ span.badge.cb-facet {
 }
 
 
-//
-//glyphicons.less
-//
 @font-face {
   font-family: 'icomoon';
 }
@@ -84,144 +69,19 @@ span.badge.cb-facet {
 }
 
 
-//
-//input-group.less
-//
 .input-group {
   .form-control {
-    width: initial;
+    width: auto;
   }
 }
 
 
-//
-//list-groups.less
-//
-.sidebar h4 {
-  padding: 15px;
-  background: @sidebar-background;
-  color: @sidebar-header-text-color;
-  font-size: @font-size-h3;
-  margin-top: 0px;
-  margin-bottom: 5px;
-  word-wrap: break-word;
-}
-
-.list-group {
-  // No need to set list-style: none; since .list-group-item is block level
-  margin-bottom: 5px;
-}
-
-.list-group-item {
-  position: relative;
-  font-size: 1.05em;
-  vertical-align: middle;
-  border: none;
-  &:first-child {
-    .border-top-radius(0px);
-  }
-  &:last-child {
-    .border-bottom-radius(0px);
-  }
-  // title custom coloring
-  &.title {
-    background: @facet-background;
-    color: @facet-text-color;
-  }
-}
-
-.recordProvidedBy {
-  border-top: 1px solid @gray-lighter;
-  margin-top: 5px;
-}
-.sidebar .recordProvidedBy {
-  border-top: none;
-  margin-top: 0px;
-}
-.record-type.organisations {
-  padding: 0px 0px 10px;
-  font-size: 1.04em;
-  @media (max-width: @screen-xs-max) {
-    border-top: none;
-    border-bottom: 1px solid @gray-lighter;
-  }
-  & > li {
-    font-weight: bold;
-    & ul {
-      font-weight: normal;
-    }
-  }
-}
-
-.list-group {
-  &.record-organisation {
-    & h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-    }
-    padding: 3px 15px 10px;
-    margin-bottom: 0px;
-    & a {
-      font-weight: bold;
-    }
-  }
-  &.organisations {
-    padding: 0px;
-    font-size: 1.1em;
-    margin-bottom: 10px;
-    background: @list-group-bg;
-    & .record-organisation {
-      background: @body-bg;
-      padding: 5px 10px;
-      font-weight: bold;
-      & .record-organisation-info {
-        font-size: 1em;
-        font-weight: normal;
-      }
-    }
-    & .other-organisation-links a {
-      padding: 0px 10px;
-      font-weight: bold;
-      display: block;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-    & h5 {
-      margin-top: 0px;
-      margin-bottom: 0px;
-      padding: 10px;
-      font-weight: normal;
-    }
-    & a {
-      line-height: 2em;
-    }
-    & .more-link, .less-link {
-      padding-left: 10px;
-      font-weight: bold;
-    }
-  }
-}
-
-#similar-records {
-  & .iconlabel {
-    display: none;
-  }
-}
-
-
-//
-//media.less
-//
 .media,
 .media-body {
   overflow: visible;
 }
 
 
-//
-//modals.less
-//
 .modal-content {
   & .comment-inappropriate-form {
     & label {
@@ -281,9 +141,6 @@ span.badge.cb-facet {
 }
 
 
-//
-//pager.less
-//
 .pager {
   text-align: right;
   & li {
@@ -326,17 +183,11 @@ span.badge.cb-facet {
 }
 
 
-//
-//popovers.less
-//
 .popover {
   min-width: min(200px, @popover-max-width);
 }
 
 
-//
-//print.less
-//
 @media print {
   // Don't show certain links and buttons
   a.title, .dateyeartype a,.image-popup-trigger, .image-popup-navi, .record-details a, .record-authors a, .recordTabs a, .paginationSimple a {
@@ -350,59 +201,6 @@ span.badge.cb-facet {
 }
 
 
-//
-//tables.less
-//
-table.content-table {
-  font-size: @content-font-size-base;
-  margin-top: 0;
-  margin-bottom: 2.9em;
-  line-height: 1.4em;
-}
-
-.content-table th, .content-table td {
-  padding: 0.4em 1.5em 0.4em 0;
-  font-weight: normal;
-  border-bottom: 1px solid @gray-lighter;
-}
-.table.table-finna-record {
-  > thead,
-  > tbody,
-  > tfoot {
-    > tr {
-      > th,
-      > td {
-        padding: @table-finna-record-cell-padding;
-      }
-    }
-  }
-  table-layout: initial;
-}
-.table.citation {
-  table-layout: fixed;
-}
-
-table#componentparts {
-  & th {
-    background-color: @list-group-bg;
-    border-right: 2px solid @body-bg;
-    &.sorting_asc,&.sorting_desc,&.sorting {
-      background-position: center left;
-      padding-left: 20px;
-    }
-  }
-  & .even td {
-    background: fade(@nav-tabs-border-color, 5%);
-  }
-  & td a {
-    font-weight: bold;
-  }
-}
-
-
-//
-//theme.less
-//
 .navbar-brand,
 .navbar-nav > li > a {
   color: rgb(246,246,246);
@@ -413,9 +211,6 @@ table#componentparts {
 }
 
 
-//
-//type.less
-//
 h1, .h1,
 h2, .h2,
 h3, .h3 {
