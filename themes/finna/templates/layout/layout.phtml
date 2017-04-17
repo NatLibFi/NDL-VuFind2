@@ -195,6 +195,15 @@ JS;
     <? if ($template = $this->content()->findTemplateForLng("content/Additions/general-post-head")): ?>
       <?=$this->render($template)?>
     <? endif; ?>
+    <?
+      // Favicon
+      $this->headLink(
+        array(
+          'href' => $this->imageLink('favicon.ico'),
+          'rel' => 'shortcut icon'
+        )
+      );
+    ?>
   </head>
   <body>
     <? // Set up the search box -- there are three possible cases:
