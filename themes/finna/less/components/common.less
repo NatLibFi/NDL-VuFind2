@@ -1,299 +1,49 @@
-.alert {
-  border: none;
-  border-radius: 0px;
-}
+.form-control {
+  width: initial;
+  padding: 2px 5px;
+  max-width: 100%; // make sure dropdowns don't overflow elementss
+  vertical-align: middle !important;
 
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] & {
+    background-color: transparent;
+  }
 
-.badge {
-  padding: 0 0 0 2px;
-  //padding-left: 2px;
-  font-size: @badge-font-size;
-  line-height: inherit;
-  vertical-align: inherit;
-  margin-top: 1px;
-}
-
-.carousel-non-touch-device .carousel-hover-title::after {
-  content: " »";
-}
-
-
-.close {
-  text-shadow: none;
-  .opacity(.8);
-
-  &:hover,
-  &:focus {
-    .opacity(1);
+  &:invalid {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
+  }
+  // This is for IE. Keep separate from :invalid so that IE does not drop it
+  &.invalid {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
   }
 }
 
-
-@font-face {
-  font-family: 'icomoon';
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  margin-left: 0px;
 }
 
-// Catchall baseclass
-.glyphicon {
-  font-family: 'icomoon';
-}
-
-
-.input-group {
-  .form-control {
-    width: auto;
-  }
-}
-
-.media,
-.media-body {
-  overflow: visible;
-}
-
-.modal-content {
-  & .comment-inappropriate-form {
-    & label {
-      font-weight: inherit;
+.form-inline {
+  display: inline-block;
+  @media (min-width: @screen-sm-min) {
+    .form-control {
+      width: auto;
     }
   }
 }
 
-.modal-content .close {
-  color: @body-bg;
-  padding: 0px 7px 6px 7px;
-  font-weight: 500;
-  min-height: 30px;
-  min-width: 30px;
-  font-size: 1.5em;
-  line-height: 1em;
-  position: absolute;
-  right: 14px;
-  top: 14px;
-  z-index: 2;
-  opacity: 0.8;
-  &:after {
-    font-family: 'icomoon';
-    content: '\e02e';
-  }
-  &:hover {
-    opacity: 1;
-  }
-}
-
-.modal-body {
-  overflow: hidden;
-
-  & > h1, & > h2 {
-    background: @modal-header-background;
-    color: @modal-header-color;
-    font-size: @content-headings-font-size-h4;
-    line-height: @modal-title-line-height;
-    border-top-left-radius: @border-radius-large - 1;
-    border-top-right-radius: @border-radius-large - 1;
-    border-bottom: 1px solid @modal-header-border-color;
-    margin: -@modal-inner-padding;
-    margin-bottom: @modal-title-padding;
-    padding: @modal-title-padding;
-    // Account for close button
-    padding-right: 45px;
-    min-height: (@modal-title-padding + @modal-title-line-height);
-  }
-  & .fa-spinner {
-    position: absolute;
-    right: 22px;
-    top: 70px;
-  }
-  & .alert-success {
-    margin-top: @modal-title-padding;
-  }
-}
-
-
-.pager {
-  text-align: right;
-  & li {
-    display: inline;
-    & > a,
-    & > span {
-      display: inline-block;
-      padding: 4px 7px 2px;
-      color: @body-bg;
-      background-color: @pager-bg;
-      border-radius: 50%;
-      font-size: 16px;
-    }
-  }
-  & li.pager-text {
-    background-color: none;
-    margin: 0px 10px;
+.datepicker {
+  & .datepicker-switch {
+    color: @link-color;
     font-size: 1.1em;
-    margin-top: -2px;
   }
-  & li.disabled i {
-    cursor: initial;
+  & .prev,& .next {
+    font-size: 1.1em;
   }
-  & li:not(.disabled) {
-    & > a:hover, & > a:focus {
-      text-decoration: none;
-      cursor: pointer;
-      background-color: darken(@pager-hover-bg, 8%);
-    }
+  &.dropdown-menu {
+    padding: 10px;
   }
-  .disabled {
-    > a,
-    > a:hover,
-    > a:focus,
-    > span {
-      background-color: @pager-disabled-color;
-      color: @body-bg;
-      cursor: not-allowed;
-    }
-  }
-}
-
-
-.popover {
-  min-width: min(200px, @popover-max-width);
-}
-
-
-@media print {
-  // Don't show certain links and buttons
-  a.title, .dateyeartype a,.image-popup-trigger, .image-popup-navi, .record-details a, .record-authors a, .recordTabs a, .paginationSimple a {
-    &[href]:after {
-      content: none !important;
-    }
-  }
-  button, a.btn {
-    display: none !important;
-  }
-}
-
-.list-group {
-  border-radius: 0px;
-}
-
-
-h1, .h1,
-h2, .h2,
-h3, .h3 {
-  margin-top: @line-height-computed;
-  margin-bottom: (@line-height-computed);
-}
-
-// Typography for content pages
-// -------------------------------
-h1.content-header { padding: 5px 0; }
-.main.template-dir-feedcontent.template-name-content,
-.main.template-dir-content.template-name-content {
-  & .finna-main-header {
-    margin-bottom: 25px;
-  }
-  & h1 {
-    font-size: @content-headings-font-size-h1;
-  }
-  & h2 {
-    font-size: @content-headings-font-size-h2;
-    line-height: @content-headings-line-height;
-    margin-top: 0; padding-top: 0.7em; padding-bottom: 0.1em;
-  }
-  & h3, h4 {
-    line-height: (@content-headings-line-height * 1.1);
-    margin-top: 0;
-  }
-  & h5, h6 {
-    line-height: @content-line-height-base;
-  }
-  & h3 {
-    font-size: @content-headings-font-size-h3;
-    margin: 0; padding-top: 0.2em; padding-bottom: 1em;
-  }
-  & h4 {
-    font-size: @content-headings-font-size-h4;
-    margin: 0; padding-top: 0.6em; padding-bottom: 1.2em;
-  }
-  & h5 {
-    font-size: @content-headings-font-size-h5;
-    margin: 0; padding-top: 0; padding-bottom: 0;
-  }
-  & h6 {
-    font-size: @content-headings-font-size-h6;
-    text-transform: uppercase;
-    margin: 0; padding-top: 0.4em; padding-bottom: 0em;
-  }
-  & p {
-    font-size: @content-font-size-base;
-    line-height: @content-line-height-base;
-    margin-bottom: 15px;
-  }
-}
-
-// Unordered and Ordered lists
-ul,
-ol {
-  padding: 0;
-  & li {
-    list-style-type: none;
-  }
-}
-
-// Content pages list options
-// --------------------------------------------------
-
-//Unstyled list
-.list-plain {
-  font-size: @content-font-size-base;
-  line-height: @content-line-height-base;
-  padding-left: 0;
-  padding-bottom: 0.9em;
-
-  > li {
-    list-style-type: none;
-  }
-}
-
-// Bulleted list
-.list-bullets {
-  font-size: @content-font-size-base;
-  line-height: @content-line-height-base;
-  padding-left: 1.2em;
-  padding-bottom: 0.9em;
-
-  > li {
-    list-style-type: disc;
-  }
-}
-
-// Finna text styles
-.finna-main-header h3 {
-  margin: 0;
-}
-// text class styling for author and date
-.date-and-year {
-  font-size: @font-size-base;
-  line-height: 1.35em;
-  letter-spacing: 0.5px;
-  font-weight: 400;
-  margin-bottom: 6px;
-}
-
-.resultHierarchyLinks {
-  margin-bottom: 6px;
-}
-
-.hierarchyTreeLink {
-  margin-top: 6px;
-}
-
-.archive-label {
-  font-size: @font-size-base;
-  font-weight: 400;
-  letter-spacing: 0px;
-  color: @gray-light;
-}
-
-
-.multiselect-container {
-  .dropdown-menu();
-  z-index: 1030;
 }

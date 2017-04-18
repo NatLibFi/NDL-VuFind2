@@ -44,109 +44,6 @@
   }
 }
 
-// Default styling of Finna Jump menus
-.jumpMenuForm {
-  height: 33px;
-  margin-bottom: 10px;
-  & label {
-    font-weight: normal;
-    margin-left: 10px;
-  }
-}
-.jump-menu-style {
-  border: none;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  padding: 0;
-  position: relative;
-  width: auto;
-  z-index: 1;
-  display: inline-block;
-  min-width: 60px;
-  font-weight: 500;
-
-  & select {
-    font-family: "Helvetica Neue", arial;
-    background-color: transparent;
-    border: 0 none;
-    box-shadow: none;
-    color: @body-bg;
-    display: block;
-    font-size: 100%;
-    font-weight: 500;
-    line-height: 1em;
-    margin: 0;
-    padding: 0px 20px 0px 8px;
-    width: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    &:focus {
-      outline: none;
-      box-shadow: none;
-    }
-  }
-  & option {
-    background: @body-bg;
-    color: @gray;
-    padding: 5px;
-    &:hover {
-      background-color: @gray-light;
-    }
-  }
-
-  &:before {
-    display: block;
-    font-size: 1em;
-    height: 100%;
-    padding: 0 20px 0px 2px;
-    position: absolute;
-    top: 0;
-    right: 0px;
-    text-align: center;
-    width: 1em;
-    z-index: -1;
-  }
-  &.controls {
-    border-radius: @finna-button-radius;
-    background-color: @brand-primary;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    margin-bottom: 10px;
-    height: 33px;
-    transition: background-color .1s linear;
-    &:hover, &:active, &:hover:before, &:active:before {
-      background-color: darken(@brand-primary, 6%);
-    }
-    & option:checked {
-      background: @btn-primary-bg;
-      color: @body-bg;
-    }
-  }
-  &.controls:before {
-    transition: background-color .1s linear;
-    background: @btn-primary-bg;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
-    color: @body-bg;
-    line-height: 34px;
-  }
-  &.disabled {
-    .opacity(0.5);
-  }
-}
-.jump-menu-style select::-ms-expand {
-  display: none; /* to ie 10 */
-}
-:-moz-any(.prefilter-select,.jump-menu-style.controls):before {
-  background-color:  @body-bg; /* this is necessary for overcome the caret default browser */
-  pointer-events: none; /* https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events  */
-  z-index: 1; /* this is necessary for overcome the pseudo element */
-}
 button.multiselect {
   height: auto;
   min-height: 33px;
@@ -161,7 +58,7 @@ button.multiselect {
 .dropdown.form-control.type-dropdown {
   border: none;
   display: inline-block;
-  padding-right: 17px;
+  adding-right: 17px;
   position: relative;
   background: transparent;
   height: 39px;

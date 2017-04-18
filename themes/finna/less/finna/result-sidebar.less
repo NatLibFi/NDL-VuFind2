@@ -174,3 +174,18 @@
     border-top-left-radius: 0px;
   }
 }
+
+.record-type.organisations {
+  padding: 0px 0px 10px;
+  font-size: 1.04em;
+  @media (max-width: @screen-xs-max) {
+    border-top: none;
+    border-bottom: 1px solid @gray-lighter;
+  }
+  & > li {
+    font-weight: bold;
+    & ul {
+      font-weight: normal;
+    }
+  }
+}
