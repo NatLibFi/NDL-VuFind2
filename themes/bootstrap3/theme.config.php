@@ -12,6 +12,7 @@ return array(
     'js' => array(
         'vendor/base64.js:lt IE 10', // btoa polyfill
         'vendor/jquery.min.js',
+        'vendor/jquery-1.12.1.min.js:lt IE 9',
         'vendor/bootstrap.min.js',
         'vendor/bootstrap-accessibility.min.js',
         'vendor/validator.min.js',
