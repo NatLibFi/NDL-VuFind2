@@ -2,9 +2,6 @@
 <? if(!empty($data)): ?>
     <? $prevOtherLinkHeading = ''; ?>
     <? foreach ($data as $result): ?>
-        <tr class="recordOtherLink">
-        <th><?=$prevOtherLinkHeading != $result['heading'] ? $this->transEsc('default::link_' . $result['heading'], null, $result['heading']) . ':' : '&nbsp;' ?></th>
-        <td>
         <? if (!empty($result['isn'])): ?>
          <? $otherLinkTitle = !empty($result['title']) ? $result['title'] : $result['isn']; ?>
           <a title="<?=$this->escapeHtmlAttr($otherLinkTitle) ?>" href="<?=$this->record($this->driver)->getLink('isn', $result['isn']) ?>">
@@ -18,6 +15,5 @@
         <? if (!empty($result['author'])): ?>
           (<?=$this->escapeHtml($result['author']); ?>)
         <? endif; ?>
-        </td>
     <? endforeach; ?>
 <? endif; ?>

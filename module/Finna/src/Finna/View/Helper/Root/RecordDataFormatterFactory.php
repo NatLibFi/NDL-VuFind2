@@ -88,19 +88,13 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'Music', 'getMusicInfo', 'data-music.phtml'
         );
-        $spec->setLine(
-            'Projected Publication Date', 'getProjectedPublicationDate'
-        );
-        $spec->setLine(
-            'Dissertation Note', 'getDissertationNote'
-        );
-        //TODO fix this template
+        $spec->setLine('Projected Publication Date', 'getProjectedPublicationDate');
+        $spec->setLine('Dissertation Note', 'getDissertationNote');
         $spec->setTemplateLine(
-            'link_', 'getOtherLinks', 'data-getOtherLinks.phtml',
+            'link_Arvosteltu teos', 'getOtherLinks', 'data-getOtherLinks.phtml',
             [
                 'labelFunction'  => function ($data) {
-                    $data = "link_Arvosteltu teos";
-                    return $data;
+                    return $data[0]['heading'];
                 },
             ]
         );
@@ -119,7 +113,6 @@ class RecordDataFormatterFactory
         $spec->setLine('Subject Place', 'getSubjectPlaces');
         $spec->setLine('Subject Date', 'getSubjectDates');
         $spec->setLine('Subject Actor', 'getSubjectActors');
-        //TODO organisaatio ei saa näkyy aina fiksaantuu varmaan tr-luokalla
         $spec->setTemplateLine(
             'Organisation', 'getInstitutions', 'data-organisation.phtml'
         );
@@ -131,12 +124,8 @@ class RecordDataFormatterFactory
         $spec->setLine('Other ID', 'getLocalIdentifiers');
         //TODO fix this template:
         $spec->setTemplateLine(
-            '', 'getMainFormat', 'data-mainFormat.phtml',
-            [
-                'labelFunction'  => function ($data) {
-                    return false;
-                },
-            ]
+            '', 'getEvents', 'data-mainFormat.phtml',
+            ['allowZero' => false]
         );
         $spec->setTemplateLine(
             'Archive Origination', 'getOrigination', 'data-origination.phtml'
@@ -228,12 +217,15 @@ class RecordDataFormatterFactory
         $spec->setLine('ISBN', 'getISBNs');
         $spec->setLine('ISSN', 'getISSNs');
         $spec->setLine('DOI', 'getCleanDOI');
+        $spec->setLine('Access Restrictions', 'getAccessRestrictions');
         $spec->setTemplateLine(
             'Terms Of Use', 'getTermsOfUse', 'data-termsOfUse.phtml'
         );
         $spec->setLine('Finding Aid', 'getFindingAids');
         $spec->setLine('Publication_Place', 'getHierarchicalPlaceNames');
-        $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
+        $spec->setTemplateLine(
+            'Author Notes', true, 'data-authorNotes.phtml'
+        );
         return $spec->getArray();
     }
 

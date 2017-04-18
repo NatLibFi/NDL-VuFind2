@@ -1,8 +1,9 @@
 <? //Don't add START and END comments ?>
-<? if(!empty($data)): ?>
-<? foreach ($this->driver->getEvents() as $eventType => $events): ?>
+<? if(!empty($mainFormat = $this->driver->getMainFormat())): ?>
+<? foreach ($data as $eventType => $events): ?>
+<? $data =  array($mainFormat, $eventType); ?>
   <tr>
-  <th><?=$this->transEsc("lido_event_type_{$data}_$eventType")?>:</th>
+  <th><?=$this->transEsc("lido_event_type_$data[0]_$data[1]")?>:</th>
     <td>
     <div class="truncate-field">
         <? foreach ($events as $event): ?>
