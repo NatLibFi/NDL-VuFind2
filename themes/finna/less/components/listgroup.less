@@ -1,43 +1,5 @@
-.sidebar h4 {
-  padding: 15px;
-  background: @sidebar-background;
-  color: @sidebar-header-text-color;
-  font-size: @font-size-h3;
-  margin-top: 0px;
-  margin-bottom: 5px;
-  word-wrap: break-word;
-}
+//todo: katso vielä tämä. tämä tulee esim. kuvan alle näkyviin jos kysessä vaikka kuva
 
-.list-group {
-  margin-bottom: 5px;
-}
-
-.list-group-item {
-  position: relative;
-  font-size: 1.05em;
-  vertical-align: middle;
-  border: none;
-  &:first-child {
-    .border-top-radius(0px);
-  }
-  &:last-child {
-    .border-bottom-radius(0px);
-  }
-  // title custom coloring
-  &.title {
-    background: @facet-background;
-    color: @facet-text-color;
-  }
-}
-
-.recordProvidedBy {
-  border-top: 1px solid @gray-lighter;
-  margin-top: 5px;
-}
-.sidebar .recordProvidedBy {
-  border-top: none;
-  margin-top: 0px;
-}
 .record-type.organisations {
   padding: 0px 0px 10px;
   font-size: 1.04em;
@@ -50,61 +12,5 @@
     & ul {
       font-weight: normal;
     }
-  }
-}
-
-.list-group {
-  &.record-organisation {
-    & h3 {
-      margin-top: 0;
-      margin-bottom: 10px;
-    }
-    padding: 3px 15px 10px;
-    margin-bottom: 0px;
-    & a {
-      font-weight: bold;
-    }
-  }
-  &.organisations {
-    padding: 0px;
-    font-size: 1.1em;
-    margin-bottom: 10px;
-    background: @list-group-bg;
-    & .record-organisation {
-      background: @body-bg;
-      padding: 5px 10px;
-      font-weight: bold;
-      & .record-organisation-info {
-        font-size: 1em;
-        font-weight: normal;
-      }
-    }
-    & .other-organisation-links a {
-      padding: 0px 10px;
-      font-weight: bold;
-      display: block;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-    & h5 {
-      margin-top: 0px;
-      margin-bottom: 0px;
-      padding: 10px;
-      font-weight: normal;
-    }
-    & a {
-      line-height: 2em;
-    }
-    & .more-link, .less-link {
-      padding-left: 10px;
-      font-weight: bold;
-    }
-  }
-}
-
-#similar-records {
-  & .iconlabel {
-    display: none;
   }
 }

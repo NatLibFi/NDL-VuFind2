@@ -13,36 +13,6 @@
   margin-top: 1px;
 }
 
-// Checkbox facet badges
-.sidebar .checkboxFilter span.badge.cb-facet {
-  display: @display-checkbox-facet-amount;
-}
-span.badge.cb-facet {
-  float: right;
-  margin-right: 10px;
-}
-
-
-.breadcrumb {
-  display: none;
-  margin: 0px;
-  margin-top: 15px;
-  background-color: transparent;
-
-  > li {
-    background-color: @breadcrumb-bg;
-    margin: 0px -2px;
-    padding: @breadcrumb-padding-vertical @breadcrumb-padding-horizontal;
-    + li:before {
-      content: @breadcrumb-separator;
-      font-size: 12px;
-    }
-  }
-  > li a {
-    color: @breadcrumb-color;
-  }
-}
-
 .carousel-non-touch-device .carousel-hover-title::after {
   content: " »";
 }
@@ -75,12 +45,10 @@ span.badge.cb-facet {
   }
 }
 
-
 .media,
 .media-body {
   overflow: visible;
 }
-
 
 .modal-content {
   & .comment-inappropriate-form {
@@ -199,12 +167,6 @@ span.badge.cb-facet {
   button, a.btn {
     display: none !important;
   }
-}
-
-
-.navbar-brand,
-.navbar-nav > li > a {
-  color: rgb(246,246,246);
 }
 
 .list-group {
@@ -328,4 +290,10 @@ ol {
   font-weight: 400;
   letter-spacing: 0px;
   color: @gray-light;
+}
+
+
+.multiselect-container {
+  .dropdown-menu();
+  z-index: 1030;
 }

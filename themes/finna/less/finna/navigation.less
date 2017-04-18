@@ -1,6 +1,30 @@
-//
-//navs.less
-//
+.swipe-arrow-navigation {
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  background: @link-color;
+  top: 50%;
+  color: @body-bg;
+  border-radius: 50%;
+  &.arrow-navigation-left {
+    left: 0px;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+  }
+  &.arrow-navigation-right {
+    right: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px
+  }
+  & .fa-arrow-right, .fa-arrow-left {
+    color: @body-bg;
+    top: 10px;
+    left: 8px;
+    position: absolute;
+    font-size: 30px;
+  }
+}
+
 .recordTabs.nav {
   margin-top: 20px;
   @media (max-width: @screen-xs-max) {
@@ -8,21 +32,7 @@
     margin-right: -15px;
   }
 }
-// add classes when there are too many tabs to fit on the screen
-.tabs-responsive {
-  width: 100%;
-  overflow-x: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  @media (max-width: @screen-xs-max) {
-    & > .recordTabs {
-      width: 150%;
-      margin-left: 0px;
-      margin-right: 0px;
-    }
-  }
-}
+
 .nav {
   margin-bottom: 10px;
   margin-top: 10px;
@@ -33,183 +43,6 @@
   }
 }
 
-.nav-tabs {
-  border-bottom: 3px solid @nav-tabs-border-color;
-  // style 5 tabs to make sure they stay as tabs
-  li:first-child:nth-last-child(5), li:first-child:nth-last-child(5) ~ li {
-    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
-      max-width: 110px;
-    }
-    @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
-      max-width: 140px;
-      & a {
-        font-size: 1em;
-      }
-
-      & > a > i {
-        display: block;
-        text-align: center;
-      }
-    }
-  }
-
-  > li {
-    // Make the list-items overlay the bottom border
-    margin-bottom: -3px;
-    > a {
-      font-size: 1.1em;
-      font-weight: 500;
-      background-color: @nav-tabs-border-color;
-      color: @nav-tabs-text-color;
-      margin-right: 3px;
-      padding: .6em .5em;
-      border: 2px solid transparent;
-      margin-bottom: -1px;
-      border-radius: @tabs-border-radius @tabs-border-radius 0 0;
-      transition: none;
-      @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
-        max-width: 120px;
-        & i {
-          display: block;
-          text-align: center;
-        }
-      }
-      @media (max-width: @screen-sm-max) {
-        font-size: .9em;
-      }
-      &:hover {
-        color: @nav-tabs-link-hover-color;
-        border-color: @nav-tabs-border-color @nav-tabs-border-color @nav-tabs-border-color;
-      }
-    }
-    // Active state, and its :hover to override normal :hover
-    &.active > a {
-      &,
-      &:hover,
-      &:focus {
-        background-color: @body-bg;
-        border: 3px solid @nav-tabs-border-color;
-        transition: border 0.05s linear;
-      }
-    }
-  }
-
-}
-
-@media (max-width:@screen-xs-max) {
-  .recordTabs > li > a {
-    text-transform: uppercase;
-    color: @gray;
-  }
-  .nav-tabs {
-    text-align: center;
-    border-bottom: 5px solid @gray-lighter;
-    & #details {
-      display: none;
-    }
-    & > li {
-      margin-bottom: -5px;
-      word-wrap: break-word;
-    }
-    & > li > a {
-      padding: 0px 10px 10px;
-      background-color: transparent;
-      border: none;
-      border-bottom: 5px solid transparent;
-      margin:0;
-      & i {
-        display: block;
-        min-height: 14px;
-      }
-    }
-    & > li.active > a {
-      &,
-      &:hover,
-      &:focus {
-        border: none;
-        border-bottom: 5px solid @link-color;
-      }
-    }
-  }
-}
-
-// Pills This is the toolbar
-.nav-pills {
-  padding: 0px;
-  margin: 0px;
-  margin-bottom: 10px;
-  & a:hover {
-    text-decoration: none;
-  }
-  & > li:not(.addthis-share-buttons):not(.whatsapp) {
-    float: left;
-    margin: 5px 20px 5px 0px;
-    @media (max-width: @screen-xs-max) {
-      padding-top: 10px;
-    }
-    &:first-child {
-      margin-left: 0;
-    }
-    // Links rendered as pills
-    & > a {
-      border-radius: @nav-pills-border-radius;
-      padding: 0px;
-    }
-    & + li {
-      margin-left: 0px;
-    }
-  }
-}
-
-// QRCode in record view
-.nav-pills {
-  img.qrcode {
-    border-radius: 8px;
-    min-width: 150px;
-  }
-}
-
-
-// hidden navigation bar
-.nav.searchbox .fixedbar.attached {
-  background: rgba(0, 0, 0, 0.9);
-  position: fixed;
-  z-index: 1000;
-  height: 50px;
-  top: 0px;
-  width: 100%;
-  left: 0px;
-}
-.nav.searchbox .navbar-form {
-
-  &.attached {
-    z-index: 1000;
-    margin: 0px;
-    position: fixed;
-    top: 5px;
-    transition: none;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    & .btn-link {
-      display: none;
-    }
-  }
-  & .nav.searchbox {
-    margin: 0;
-  }
-}
-
-
-
-
-// Fix dropdowns in navbar for wide screen
-@media (min-width: @screen-md-min) {
-  .navbar .dropdown-menu > li > a {
-    width: 280px;
-    white-space: normal;
-    transition: none;
-  }
-}
 // fix navbar for logoutoptions
 .navbar .logoutOptions {
   & .dropdown-menu {
@@ -272,10 +105,6 @@
   }
 }
 
-
-//
-//navbar.less
-//
 .navbar {
   & .dropdown .dropdown-menu > li > a > div:not(.description) {
     font-weight: bold;
@@ -434,50 +263,85 @@
   }
 }
 
-.navbar-form {
-  width: 100%;
-  margin-left: 0;
-  margin-right: 0;
-  padding: 0px;
-  background-color: @navbar-default-bg;
-  border-radius: @border-radius-large;
-
-  .box-shadow(none);
-}
-
-// Dropdown menus
-
 // Menu position and menu carets
 .navbar-nav > li > .dropdown-menu {
   margin-top: 0;
   .border-top-radius(@border-radius-base);
 }
 
-// Default navbar
-.navbar-default {
-  // Dropdown menu items
-  .navbar-nav {
-    // Remove background color from open dropdown
-    > .open > a {
-      &,
-      &:hover,
-      &:focus {
-        &:after {
-          font-family: "icomoon";
-          content: 'X';
-        }
-      }
-    }
-  }
-}
-
 // Specified Finna styles for navbar
-
 .nav.nav-absolute {
   position: absolute;
   top: 0px;
   right: 15px;
   & .dropdown-menu > li > a {
     white-space: normal;
+  }
+}
+
+// Fix dropdowns in navbar for wide screen
+@media (min-width: @screen-md-min) {
+  .navbar .dropdown-menu > li > a {
+    width: 280px;
+    white-space: normal;
+    transition: none;
+  }
+}
+
+.navbar-brand,
+.navbar-nav > li > a {
+  color: rgb(246,246,246);
+}
+
+.breadcrumb {
+  display: none;
+  margin: 0px;
+  margin-top: 15px;
+  background-color: transparent;
+
+  > li {
+    background-color: @breadcrumb-bg;
+    margin: 0px -2px;
+    padding: @breadcrumb-padding-vertical @breadcrumb-padding-horizontal;
+    + li:before {
+      content: @breadcrumb-separator;
+      font-size: 12px;
+    }
+  }
+  > li a {
+    color: @breadcrumb-color;
+  }
+}
+
+.dropdown-menu {
+  padding: 0px 1px;
+  border: 1px solid @dropdown-border;
+  border-radius: @border-radius-base;
+  min-width: 0;
+  .box-shadow(0 6px 12px rgba(0, 0, 0, .275));
+
+  > li {
+    border-bottom: 1px solid @gray-lighter;
+  }
+  & > li:last-child > a, & li:last-child {
+    border-bottom: none;
+    .border-bottom-radius(8px);
+  }
+  & > li:first-child > a, & li:first-child {
+    .border-top-radius(8px);
+  }
+
+  > li > a {
+    padding: 7px 15px;
+  }
+}
+
+.dropdown-menu > li > a {
+  &:hover,
+  &:focus,
+  &:active {
+    text-decoration: none;
+    color: @dropdown-link-hover-color;
+    background-color: @dropdown-link-hover-bg;
   }
 }

@@ -141,3 +141,119 @@
         font-size: 2.5em;
     }
 }
+
+// add classes when there are too many tabs to fit on the screen
+.tabs-responsive {
+    width: 100%;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    @media (max-width: @screen-xs-max) {
+        & > .recordTabs {
+            width: 150%;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+    }
+}
+
+.nav-tabs {
+    border-bottom: 3px solid @nav-tabs-border-color;
+    // style 5 tabs to make sure they stay as tabs
+    li:first-child:nth-last-child(5), li:first-child:nth-last-child(5) ~ li {
+        @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+            max-width: 110px;
+        }
+        @media (min-width: @screen-md-min) and (max-width: @screen-md-max) {
+            max-width: 140px;
+            & a {
+                font-size: 1em;
+            }
+
+            & > a > i {
+                display: block;
+                text-align: center;
+            }
+        }
+    }
+
+    > li {
+        // Make the list-items overlay the bottom border
+        margin-bottom: -3px;
+        > a {
+            font-size: 1.1em;
+            font-weight: 500;
+            background-color: @nav-tabs-border-color;
+            color: @nav-tabs-text-color;
+            margin-right: 3px;
+            padding: .6em .5em;
+            border: 2px solid transparent;
+            margin-bottom: -1px;
+            border-radius: @tabs-border-radius @tabs-border-radius 0 0;
+            transition: none;
+            @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+                max-width: 120px;
+                & i {
+                    display: block;
+                    text-align: center;
+                }
+            }
+            @media (max-width: @screen-sm-max) {
+                font-size: .9em;
+            }
+            &:hover {
+                color: @nav-tabs-link-hover-color;
+                border-color: @nav-tabs-border-color @nav-tabs-border-color @nav-tabs-border-color;
+            }
+        }
+        // Active state, and its :hover to override normal :hover
+        &.active > a {
+            &,
+            &:hover,
+            &:focus {
+                background-color: @body-bg;
+                border: 3px solid @nav-tabs-border-color;
+                transition: border 0.05s linear;
+            }
+        }
+    }
+
+}
+
+@media (max-width:@screen-xs-max) {
+    .recordTabs > li > a {
+        text-transform: uppercase;
+        color: @gray;
+    }
+    .nav-tabs {
+        text-align: center;
+        border-bottom: 5px solid @gray-lighter;
+        & #details {
+            display: none;
+        }
+        & > li {
+            margin-bottom: -5px;
+            word-wrap: break-word;
+        }
+        & > li > a {
+            padding: 0px 10px 10px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 5px solid transparent;
+            margin:0;
+            & i {
+                display: block;
+                min-height: 14px;
+            }
+        }
+        & > li.active > a {
+            &,
+            &:hover,
+            &:focus {
+                border: none;
+                border-bottom: 5px solid @link-color;
+            }
+        }
+    }
+}
