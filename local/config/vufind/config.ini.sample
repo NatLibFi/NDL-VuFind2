@@ -79,10 +79,6 @@ fi = "Finnish"
 ; Allow image links from Kirjavälitys (default is false)
 ;kirjavalitys_links = true
 
-[Feedback]
-recipient_email = ""
-recipient_name = ""
-
 [Security]
 HMACkey = mySuperSecretValue
 

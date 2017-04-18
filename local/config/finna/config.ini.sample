@@ -1274,8 +1274,8 @@ tab_enabled       = true
 ;recipient_name    = "Your Library"
 email_subject     = "Palautetta Finnasta"
 ; This is the information for where feedback emails are sent from.
-sender_email      = "noreply@finna.fi"
-sender_name       = "Finna-palaute"
+recipient_email      = "noreply@finna.fi"
+recipient_name       = "Finna-palaute"
 
 ; Activate Captcha validation on select forms
 ; VuFind will use reCaptcha validation to prevent bots from using certain actions of
