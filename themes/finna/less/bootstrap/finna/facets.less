@@ -1,7 +1,7 @@
 // Finna Facet styling
 
 .list-group.filters {
-    background: #f5f5f5;
+    background: @list-group-bg;
     padding: 10px 0px;
     & .list-group-item.title, .list-group-item.active {
         padding: 5px 10px;
@@ -16,7 +16,7 @@
 }
 
 .list-group.facet {
-        background: #f5f5f5;
+        background: @list-group-bg;
         // style Finna facet headers
         & .list-group-item.title {
             font-size:@font-size-h4;
@@ -103,11 +103,11 @@
 
     & .jstree-node.active, & .list-group-item.active {
         background: @brand-primary;
-        color: #fff;
+        color: @body-bg;
         & a,
         & .badge,
         & .jstree-icon.jstree-ocl {
-            color: #fff;
+            color: @body-bg;
         }
         & .badge {
             padding-right: 3px

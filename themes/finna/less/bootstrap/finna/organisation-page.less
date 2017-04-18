@@ -210,7 +210,7 @@
         padding-bottom: 0px !important;   
     }
     & .fluid-odd {
-        background: #f5f5f5;       
+        background: @infobox-background;
     }
     & .last-section {
         padding-bottom: 25px;   
@@ -330,8 +330,8 @@
 
             #marker-tooltip {
                 position: absolute;
-                color: #464646;
-                background: #fff;
+                color: @gray;
+                background: @body-bg;
                 padding: 5px;
                 border: 1px solid lightgray;
                 opacity: 0.9;
@@ -551,7 +551,7 @@
                     position: fixed;
                     top: 0;
                     z-index: 1000;
-                    background: #fff;
+                    background: @body-bg;
                     height: 40px;
                     width: 100%;
                     
@@ -566,7 +566,7 @@
                     margin-right: 5px;
                     padding: 7px;
                     background: @gray-light;
-                    color: #fff;
+                    color: @body-bg;
                     &:hover {
                         cursor: pointer;   
                     }
@@ -621,7 +621,7 @@
                     margin-bottom: 20px;   
                 }
                 & .list-group-item {
-                    background: #fff;
+                    background: @body-bg;
                     margin-bottom: 0px;
                     padding: 2px 15px;
                     &:first-child {
@@ -693,7 +693,7 @@
         }
     }
     .ui-autocomplete {
-        background: #fff;
+        background: @body-bg;
         width: ~"-webkit-calc(100% - 66px)" !important;
         width: ~"-moz-calc(100% - 66px)" !important;
         width: ~"calc(100% - 66px)" !important;
@@ -713,7 +713,7 @@
         }
         &::-webkit-scrollbar-thumb {
             background-color: rgba(0, 0, 0, 0.3);
-            border: solid white 4px;
+            border: solid @body-bg 4px;
             border-radius: 20px;
         }
         &::-webkit-scrollbar-track {

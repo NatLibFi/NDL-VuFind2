@@ -181,7 +181,7 @@
         & .headers th {
             background: none;
             border: none;
-            border-right: 1px solid #fff;
+            border-right: 1px solid @body-bg;
             &:last-child {
                 border-right: none;   
             }
@@ -307,7 +307,7 @@
     }
     .bulk-action-buttons-col {
         padding: 10px 0;
-        border-right: 10px solid #ffffff;
+        border-right: 10px solid @body-bg;
         & input.btn {
               margin-right: 3px;
         }
@@ -332,7 +332,7 @@
             background: rgba(77,77,77,0.95);
             box-shadow: 0px 19px 15px -13px grey;
             & .checkbox span {
-                color: #ffffff;
+                color: @body-bg;
             }
         }
     }
@@ -378,7 +378,7 @@
             & .preview {
                 position: absolute;
                 right: 40px;
-                background-color: white;
+                background-color: @body-bg;
                 padding: 3px 9px;
             }
         }
@@ -475,7 +475,7 @@
         }
         & li > a:not(.add-new-list) {
             background: @gray-light;
-            color: #fff;
+            color: @body-bg;
             margin-bottom: 5px;
         }
         & li > a.active {
@@ -782,7 +782,7 @@
 
 .sortable-favorite-list {
     & li {
-      	background: #f5f5f5;
+      	background: @list-group-bg;
         padding: 5px 30px 5px 10px;
         margin-top: 5px;
         border-radius: 3px;
