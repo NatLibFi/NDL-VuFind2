@@ -214,11 +214,19 @@
             &:focus {
                 background-color: @body-bg;
                 border: 3px solid @nav-tabs-border-color;
+                border-bottom-color: transparent;
                 transition: border 0.05s linear;
             }
         }
     }
+}
 
+.recordTabs.nav {
+    margin-top: 20px;
+    @media (max-width: @screen-xs-max) {
+        margin-left: -15px;
+        margin-right: -15px;
+    }
 }
 
 @media (max-width:@screen-xs-max) {

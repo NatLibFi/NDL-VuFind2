@@ -1,3 +1,33 @@
+.form-control {
+  width: initial;
+  padding: 2px 5px;
+  max-width: 100%; // make sure dropdowns don't overflow elementss
+  vertical-align: middle !important;
+
+  &[disabled],
+  &[readonly],
+  fieldset[disabled] & {
+    background-color: transparent;
+  }
+
+  &:invalid {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
+  }
+  // This is for IE. Keep separate from :invalid so that IE does not drop it
+  &.invalid {
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
+  }
+}
+
+.form-inline {
+  display: inline-block;
+  @media (min-width: @screen-sm-min) {
+    .form-control {
+      width: auto;
+    }
+  }
+}
+
 // Alternate buttons
 // --------------------------------------------------
 .navbar-form .btn[type="submit"] {
@@ -80,86 +110,66 @@
   }
 }
 
-.nav.searchbox .btn.btn-link {
-  color: @finna-searchbox-link-color;
-  font-size: 1em;
-  font-weight: bold;
-  background: @finna-searchbox-link-background;
-  border-radius: @finna-button-radius;
-  margin-top: 10px;
-  line-height: 25px;
-  padding: 2px 5px 0px;
-  overflow: hidden;
-}
-.searchbox .checkbox {
-  display: block;
-  clear: none;
-  float: left;
-  margin: 5px 0 0 12px;
-  background: none repeat scroll 0 0 @body-bg;
-  border-radius: 0px 0px 0px 0px;
+
+.dropdown.form-control.type-dropdown {
+  border: none;
+  display: inline-block;
+  adding-right: 17px;
+  position: relative;
+  background: transparent;
+  height: 39px;
+  width: 21%;
+  box-shadow: none;
   color: @gray;
-  padding: 6px 3px 9px 2px;
-  position: absolute;
-  top: 41px;
-  left: 0px;
-  width: 206px;
-  height: 35px;
-  box-shadow: 0px 15px 20px -12px black;
-  z-index: 1;
-  @media (max-width: @screen-sm-min) {
-    top: 37px;
+  @media (max-width: @screen-xs-max) {
+    width: 25%;
   }
-}
-.searchbox, .checkboxFilter {
-  & .checkbox label input {
-    display: none;
-  }
-  & .checkbox label {
-    margin-left: 10px;
-    line-height: 24px;
-  }
-  & .checkbox label:before {
-    content: "\f096";
-    font-family: 'Fontawesome';
-    font-size: 20px;
-    vertical-align: -2px;
-  }
-  & .checkbox.checked label:before {
-    font-family: 'Fontawesome';
-    content: "\f14a";
-  }
-}
-
-// hidden navigation bar
-.nav.searchbox .fixedbar.attached {
-  background: rgba(0, 0, 0, 0.9);
-  position: fixed;
-  z-index: 1000;
-  height: 50px;
-  top: 0px;
-  width: 100%;
-  left: 0px;
-}
-.nav.searchbox .navbar-form {
-
-  &.attached {
-    z-index: 1000;
-    margin: 0px;
-    position: fixed;
-    top: 5px;
-    transition: none;
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    & .btn-link {
-      display: none;
+  & a {
+    color: @gray;
+    width: 100%;
+    display: inline-block;
+    line-height: 37px;
+    height: 37px;
+    overflow: hidden;
+    &:hover, &:active, &:focus {
+      text-decoration: none;
     }
   }
-  & .nav.searchbox {
-    margin: 0;
+  & i {
+    position: absolute;
+    right: 4px;
+    line-height: 35px;
+    top: 3px;
+    background-color: @body-bg;
+    box-shadow: -4px 0px 2px white;
+    &:before {
+      background: @gray-mid-light;
+      color: @body-bg;
+      padding: 5px;
+      border-radius: 50%;
+    }
+  }
+  & li {
+    text-align: left;
+    color: @gray;
+    padding: 10px;
+    min-width: 110px;
+    transition: background .2s linear;
+
+    &:hover {
+      cursor: pointer;
+      background: rgba(1,1,1,0.1);
+    }
   }
 }
 
-.search-controls .pagination {
-  margin-top: 0px;
+.multiselect-container {
+  .dropdown-menu();
+  z-index: 1030;
+}
+
+button.multiselect {
+  height: auto;
+  min-height: 33px;
+  text-align: left;
 }

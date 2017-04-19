@@ -1,6 +1,6 @@
 .alert {
   border: none;
-  border-radius: 0px;
+  border-radius: 0;
 }
 
 .badge {
@@ -11,10 +11,6 @@
   margin-top: 1px;
 }
 
-.carousel-non-touch-device .carousel-hover-title::after {
-  content: " »";
-}
-
 .close {
   text-shadow: none;
   .opacity(.8);
@@ -23,15 +19,6 @@
   &:focus {
     .opacity(1);
   }
-}
-
-@font-face {
-  font-family: 'icomoon';
-}
-
-// Catchall baseclass
-.glyphicon {
-  font-family: 'icomoon';
 }
 
 .input-group {
@@ -61,7 +48,6 @@
   }
 }
 
-// text class styling for author and date
 .date-and-year {
   font-size: @font-size-base;
   line-height: 1.35em;
@@ -85,7 +71,28 @@
   color: @gray-light;
 }
 
-.multiselect-container {
-  .dropdown-menu();
-  z-index: 1030;
+.dedupInformation .dedup-select {
+  font-weight: bold;
+  margin-bottom: 4px;
+  height: 30px;
+}
+
+.radio input[type="radio"],
+.radio-inline input[type="radio"],
+.checkbox input[type="checkbox"],
+.checkbox-inline input[type="checkbox"] {
+  margin-left: 0px;
+}
+
+.datepicker {
+  & .datepicker-switch {
+    color: @link-color;
+    font-size: 1.1em;
+  }
+  & .prev,& .next {
+    font-size: 1.1em;
+  }
+  &.dropdown-menu {
+    padding: 10px;
+  }
 }
