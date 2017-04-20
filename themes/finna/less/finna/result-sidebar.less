@@ -63,7 +63,8 @@
   margin-bottom: 5px;
 }
 
-.list-group-item {
+.list-group-item,
+button.list-group-item {
   position: relative;
   font-size: 1.05em;
   vertical-align: middle;
@@ -78,6 +79,11 @@
   &.title {
     background: @facet-background;
     color: @facet-text-color;
+    &:hover,
+    &:focus {
+      background: @facet-background;
+      color: @facet-text-color;
+    }
   }
 }
 
