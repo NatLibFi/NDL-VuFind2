@@ -1,27 +1,5 @@
 <!-- START of: finna - RecordDriver/SolrForward/core.phtml -->
 <?
-  $primaryRoles = ['drt'];
-  $nonPresenterAuthors = $this->driver->getNonPresenterAuthors();
-  $primaryAuthors = [];
-  $secondaryAuthors = [];
-  foreach ($nonPresenterAuthors as $author) {
-    if (isset($author['role']) && in_array($author['role'], $primaryRoles)) {
-      $primaryAuthors[] = $author;
-    } else {
-      $secondaryAuthors[] = $author;
-    }
-  }
-  $creditedActors = [];
-  $uncreditedActors = [];
-  $presenters = $this->driver->getPresenters();
-  foreach ($presenters['presenters'] as $presenter) {
-    if (isset($presenter['uncredited']) && $presenter['uncredited']) {
-      $uncreditedActors[] = $presenter;
-    } else {
-      $creditedActors[] = $presenter;
-    }
-  }
-
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');

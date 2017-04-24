@@ -269,6 +269,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordSeries']
             ]
         );
+        $spec->setTemplateLine(
+            'Published', 'getDateSpan', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'extendedDateSpan']
+            ]
+        );
         $spec->setLine(
             'Unit ID', 'getUnitID', 'data-escapeHtml.phtml',
             [
@@ -306,6 +312,12 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'Published', 'getPublicationDetails', 'data-publicationDetails.phtml',
+            [
+                'context' => ['class' => 'recordPublications']
+            ]
+        );
+        $spec->setTemplateLine(
             'Projected Publication Date', 'getProjectedPublicationDate',
             'data-transEsc.phtml',
             [
@@ -331,7 +343,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Classification', 'getClassification', 'data-classification.phtml',
+            'Classification', 'getClassifications', 'data-classification.phtml',
             [
                 'context' => ['class' => 'recordClassifications']
             ]
@@ -379,12 +391,6 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Location', 'getPhysicalLocations', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordPhysicalLocation']
-            ]
-        );
-        $spec->setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             [
                 'allowZero' => false,
@@ -413,12 +419,6 @@ class RecordDataFormatterFactory
             'Education Programs', 'getEducationPrograms', 'data-education.phtml',
             [
                 'context' => ['class' => 'record-education-programs']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Published', 'getDateSpan', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'extendedDateSpan']
             ]
         );
         $spec->setTemplateLine(
@@ -507,13 +507,13 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Access', 'getAccessRestrictions', 'data-escapeHtml.phtml',
+            'Access Restrictions', 'getAccessRestrictions', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'extendedAccess']
             ]
         );
         $spec->setTemplateLine(
-            'Terms Of Use', 'getTermsOfUse', 'data-termsOfUse.phtml',
+            'Terms of Use', 'getTermsOfUse', 'data-termsOfUse.phtml',
             [
                 'context' => ['class' => 'extendedTermsOfUse']
             ]
@@ -535,6 +535,12 @@ class RecordDataFormatterFactory
             'Author Notes', true, 'data-authorNotes.phtml',
             [
                 'context' => ['class' => 'extendedAuthorNotes']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Location', 'getPhysicalLocations', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordPhysicalLocation']
             ]
         );
         return $spec->getArray();

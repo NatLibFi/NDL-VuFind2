@@ -67,16 +67,25 @@
     </div>
 
     <?/* Display Main Details */?>
-    <?
-      $formatter = $this->recordDataFormatter();
-      $coreFields = $formatter->getData($driver, $formatter->getDefaults('core'));
-    ?>
-    <? if (!empty($coreFields)): ?>
-    <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>">
-        <? foreach ($coreFields as $key => $current): ?>
-          <tr class="<?=$current['context']['class'];?>"><th><?=$this->transEsc($key)?>:</th><td><?=$current['value']?></td></tr>
-        <? endforeach; ?>
+    <div class="record-details">
+      <?
+        $formatter = $this->recordDataFormatter();
+        $coreFields = $formatter->getData($driver, $formatter->getDefaults('core'));
+      ?>
+      <? if (!empty($coreFields)): ?>
+      <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>">
+          <? foreach ($coreFields as $key => $current): ?>
+            <tr class="<?=$current['context']['class'];?>"><th><?=$this->transEsc($key)?>:</th><td><?=$current['value']?></td></tr>
+          <? endforeach; ?>
       </table>
+      <? endif; ?>
+    <?=$openUrl ? $openUrl->renderMoreOptions() : '' ?>
+    </div>
+    <? if ($this->userlist()->getMode() !== 'disabled'): ?>
+      <? /* Display the lists that this record is saved to */ ?>
+      <div class="savedLists hidden alert alert-info" id="savedLists">
+        <strong><?=$this->transEsc("Saved in")?>:</strong>
+      </div>
     <? endif; ?>
     <?/* End Main Details */?>
     <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
