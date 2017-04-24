@@ -10,6 +10,12 @@
       if (!empty($item['amount'])) {
         $additional[] = $this->escapeHtml($item['amount']);
       }
+      if (!empty($item['method'])) {
+        $additional[] = $this->escapeHtml($item['method']);
+      }
+      if (!empty($item['date'])) {
+        $additional[] = $this->escapeHtml($item['date']);
+      }
     ?>
     <?=$index > 0 ? '<br/>' : '' ?><?=$this->escapeHtml($item['name']) ?><? if (!empty($additional)): ?>, <?=implode(' ', $additional) ?><? endif; ?>
   <? endforeach; ?>

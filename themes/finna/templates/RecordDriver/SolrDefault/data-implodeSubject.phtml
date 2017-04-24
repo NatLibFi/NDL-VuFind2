@@ -1,0 +1,4 @@
+<? //Don't add START and END comments ?>
+<? if(!empty($data)): ?>
+   <div class="truncate-field" data-rows="5"><?=implode('<br/>', array_map([$this, 'escapeHtml'], $data))?><br/></div>
+<? endif; ?>

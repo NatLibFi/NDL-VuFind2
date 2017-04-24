@@ -1,0 +1,21 @@
+<? //Don't add START and END comments ?>
+<? if (!empty($data)): ?>
+<?
+$creditedActors = [];
+$uncreditedActors = [];
+foreach ($data['presenters'] as $presenter) {
+  if (isset($presenter['uncredited']) && $presenter['uncredited']) {
+    $uncreditedActors[] = $presenter;
+  } else {
+    $creditedActors[] = $presenter;
+  }
+}
+?>
+<? if (!empty($creditedActors)): ?>
+<div class="truncate-field">
+  <? foreach($creditedActors as $index => $author): ?>
+    <?=($index > 0 ? '<br/> ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><? if (!empty($author['roleName'])): ?><span class="author-rolename">, <?=$this->escapeHtml($author['roleName']) ?></span><? endif; ?>
+  <? endforeach; ?>
+</div>
+<? endif; ?>
+<? endif; ?>

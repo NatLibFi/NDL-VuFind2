@@ -170,8 +170,8 @@
     ?>
     <? if (!empty($coreFields)): ?>
       <table class="table table-finna-record record-details">
-        <? foreach ($coreFields as $key => $value): ?>
-          <tr><th><?=$this->transEsc($key)?>:</th><td><?=$value?></td></tr>
+        <? foreach ($coreFields as $key => $current): ?>
+          <tr class="<?=$current['context']['class'];?>"><th><?=$this->transEsc($key)?>:</th><td><?=$current['value']?></td></tr>
         <? endforeach; ?>
       </table>
     <? endif; ?>
