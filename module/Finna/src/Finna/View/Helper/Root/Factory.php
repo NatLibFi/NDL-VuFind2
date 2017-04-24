@@ -96,6 +96,19 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     }
 
     /**
+     * Construct EDS view helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return EDS
+     */
+    public static function getEDS(ServiceManager $sm)
+    {
+        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('EDS');
+        return new EDS($config);
+    }
+
+    /**
      * Construct the HeadLink helper.
      *
      * @param ServiceManager $sm Service manager.
@@ -109,23 +122,6 @@ class Factory extends \VuFind\View\Helper\Root\Factory
             $locator->get('VuFindTheme\ThemeInfo'),
             $locator->get('Request'),
             $locator->get('VuFind\Cache\Manager')
-        );
-    }
-
-    /**
-     * Construct the HeadScript helper.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return HeadScript
-     */
-    public static function getHeadScript(ServiceManager $sm)
-    {
-        $locator = $sm->getServiceLocator();
-        return new HeadScript(
-            $locator->get('VuFindTheme\ThemeInfo'),
-            \VuFindTheme\View\Helper\Factory::getPipelineConfig($sm),
-            $locator->get('Request')
         );
     }
 
@@ -347,6 +343,19 @@ class Factory extends \VuFind\View\Helper\Root\Factory
             $locator->get('VuFind\SessionManager'),
             $locator->get('VuFind\DbTablePluginManager')
         );
+    }
+
+    /**
+     * Construct Summon view helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Summon
+     */
+    public static function getSummon(ServiceManager $sm)
+    {
+        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('Summon');
+        return new Summon($config);
     }
 
     /**

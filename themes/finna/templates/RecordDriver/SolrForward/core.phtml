@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordDriver/SolrForward/core.phtml -->
 <?
-  $primaryRoles = ['drt', 'aus'];
+  $primaryRoles = ['drt'];
   $nonPresenterAuthors = $this->driver->getNonPresenterAuthors();
   $primaryAuthors = [];
   $secondaryAuthors = [];
@@ -229,8 +229,9 @@
         <? foreach ($coreFields as $key => $current): ?>
           <tr class="<?=$current['context']['class'];?>"><th><?=$this->transEsc($key)?>:</th><td><?=$current['value']?></td></tr>
         <? endforeach; ?>
-      </table>
-    <? endif; ?>
+    </table>
+    <button class="btn show-details-button hidden"><?=$this->transesc('show_more_details');?> <i class="fa fa-arrow-down"></i></button>
+    <button class="btn hide-details-button hidden"><?=$this->transesc('show_less_details');?> <i class="fa fa-arrow-up"></i></button>
     <?/* End Main Details */?>
     <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
     <div class="row">
