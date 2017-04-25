@@ -209,7 +209,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Collection', 'getCollection', 'data-implodeSubject.phtml',
+            'Collection', 'getCollections', 'data-implodeSubject.phtml',
             [
                 'context' => ['class' => 'recordCollection']
             ]
