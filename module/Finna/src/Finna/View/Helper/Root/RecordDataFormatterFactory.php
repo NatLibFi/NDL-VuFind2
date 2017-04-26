@@ -65,7 +65,7 @@ class RecordDataFormatterFactory
     {
         $spec = new \VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder();
         $spec->setTemplateLine(
-            'Original Work', 'getOriginalWork', 'data-transEsc.phtml',
+            'Original Work', 'getOriginalWork', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'recordOriginalWork']
             ]
@@ -89,13 +89,31 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'Contributors', 'getNonPresenterAuthors', 'data-contributors.phtml',
+            [
+                'context' => ['class' => 'recordAuthors']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Actors', 'getPresenters', 'data-actors.phtml',
+            [
+                'context' => ['class' => 'recordPresenters']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Uncredited Actors', 'getPresenters', 'data-uncreditedActors.phtml',
+            [
+                'context' => ['class' => 'recordPresenters']
+            ]
+        );
+        $spec->setTemplateLine(
             'Assistants', 'getAssistants', 'data-assistants.phtml',
             [
                 'context' => ['class' => 'record-assistants']
             ]
         );
         $spec->setTemplateLine(
-            'Description', 'getDescription', 'data-transEsc.phtml',
+            'Description', 'getDescription', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'recordDescription']
             ]
@@ -135,24 +153,6 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Contributors', true, 'data-contributors.phtml',
-            [
-                'context' => ['class' => 'recordAuthors']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Actors', 'getPresenters', 'data-actors.phtml',
-            [
-                'context' => ['class' => 'recordPresenters']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Uncredited Actors', 'getPresenters', 'data-uncreditedActors.phtml',
-            [
-                'context' => ['class' => 'recordPresenters']
-            ]
-        );
-        $spec->setTemplateLine(
             'Presenters', 'getPresenters', 'data-presenters.phtml',
             [
                 'context' => ['class' => 'recordPresenters']
@@ -176,6 +176,24 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'physicalDescriptions']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Language', 'getLanguages', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'recordLanguage']
+            ]
+        );
+        $spec->setTemplateLine(
+            'original_work_language', 'getOriginalLanguages', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'originalLanguage']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Item Description', 'getGeneralNotes', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'recordDescription']
             ]
         );
         $spec->setTemplateLine(
@@ -285,24 +303,6 @@ class RecordDataFormatterFactory
             'Authors', 'getNonPresenterAuthors', 'data-authors.phtml',
             [
                 'context' => ['class' => 'recordAuthors']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Language', 'getLanguages', 'data-transEsc.phtml',
-            [
-                'context' => ['class' => 'recordLanguage']
-            ]
-        );
-        $spec->setTemplateLine(
-            'original_work_language', 'getOriginalLanguages', 'data-transEsc.phtml',
-            [
-                'context' => ['class' => 'originalLanguage']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Item Description', 'getGeneralNotes', 'data-transEsc.phtml',
-            [
-                'context' => ['class' => 'recordDescription']
             ]
         );
         $spec->setTemplateLine(
@@ -465,7 +465,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Awards', 'getAwards', 'data-transEsc.phtml',
+            'Awards', 'getAwards', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'extendedAwards']
             ]
