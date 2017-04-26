@@ -1,6 +1,6 @@
 <?php
 /**
- * CSS minifier wrapper
+ * CSS minifier extension
  *
  * PHP version 5
  *
@@ -25,18 +25,30 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace FinnaTheme\Minify;
+namespace VuFindTheme\Minify;
 
 /**
- * CSS minifier wrapper
+ * CSS minifier extensions
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
-class CSS extends \VuFindTheme\Minify\CSS
+class CSS extends \MatthiasMullie\Minify\CSS
 {
-    use MinifyTrait;
+    /**
+     * Return a converter to update relative paths to be relative to the new
+     * destination.
+     *
+     * @param string $source Source path
+     * @param string $target Target path
+     *
+     * @return \MatthiasMullie\PathConverter\ConverterInterface
+     */
+    protected function getPathConverter($source, $target)
+    {
+        return new PathConverter($source, $target);
+    }
 }

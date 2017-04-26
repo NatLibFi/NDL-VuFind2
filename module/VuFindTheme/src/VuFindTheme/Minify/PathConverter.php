@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace FinnaTheme\Minify;
+namespace VuFindTheme\Minify;
 
 /**
  * CSS path converter extension
@@ -36,7 +36,7 @@ namespace FinnaTheme\Minify;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class Converter extends \MatthiasMullie\PathConverter\Converter
+class PathConverter extends \MatthiasMullie\PathConverter\Converter
 {
     /**
      * Normalize path.
