@@ -140,6 +140,10 @@
       </div>
     <? endif; ?>
 
+    <video id="my-video" width="640" height="264" class="video-js vjs-default-skin" controls>
+      <source src="http://elo.salama.tv.funet.fi/vod/_definst_/mp4:fi/kava/elonet/2012/MV-266_Polyteekkarifilmi_470272_klippi.mp4/manifest.mpd" type="application/dash+xml">
+    </video>
+
     <div class="record-authors" property="author">
       <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
         <span class="recordFormat">
