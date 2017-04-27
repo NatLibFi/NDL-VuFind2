@@ -76,13 +76,13 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'record-container-link']
             ]
         );
-        $spec->setLine(
+        $spec->setTemplateLine(
             'New Title', 'getNewerTitles', 'data-titles.phtml',
             [
                 'context' => ['class' => 'recordNextTitles']
             ]
         );
-        $spec->setLine(
+        $spec->setTemplateLine(
             'Previous Title', 'getPreviousTitles', 'data-titles.phtml',
             [
                 'context' => ['class' => 'recordPrevTitles']
@@ -96,12 +96,6 @@ class RecordDataFormatterFactory
         );
         $spec->setTemplateLine(
             'Actors', 'getPresenters', 'data-actors.phtml',
-            [
-                'context' => ['class' => 'recordPresenters']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Uncredited Actors', 'getPresenters', 'data-uncreditedActors.phtml',
             [
                 'context' => ['class' => 'recordPresenters']
             ]
@@ -197,25 +191,25 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Subject Detail', 'getSubjectDetails', 'data-implodeSubject.phtml',
+            'Subject Detail', 'getSubjectDetails', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
             ]
         );
         $spec->setTemplateLine(
-            'Subject Place', 'getSubjectPlaces', 'data-implodeSubject.phtml',
+            'Subject Place', 'getSubjectPlaces', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
             ]
         );
-        $spec->setLine(
-            'Subject Date', 'getSubjectDates', 'data-implodeSubject.phtml',
+        $spec->setTemplateLine(
+            'Subject Date', 'getSubjectDates', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
             ]
         );
-        $spec->setLine(
-            'Subject Actor', 'getSubjectActors', 'data-implodeSubject.phtml',
+        $spec->setTemplateLine(
+            'Subject Actor', 'getSubjectActors', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
             ]
@@ -227,38 +221,38 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Collection', 'getCollections', 'data-implodeSubject.phtml',
+            'Collection', 'getCollections', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordCollection']
             ]
         );
         $spec->setTemplateLine(
-            'Inventory ID', 'getIdentifier', 'data-implodeSubject.phtml',
+            'Inventory ID', 'getIdentifier', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordIdentifier']
             ]
         );
         $spec->setTemplateLine(
-            'Measurements', 'getMeasurements', 'data-implodeSubject.phtml',
+            'Measurements', 'getMeasurements', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordMeasurements']
             ]
         );
         $spec->setTemplateLine(
-            'Inscriptions', 'getInscriptions', 'data-implodeSubject.phtml',
+            'Inscriptions', 'getInscriptions', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordInscriptions']
             ]
         );
         $spec->setTemplateLine(
             'Other Classification', 'getFormatClassifications',
-            'data-implodeSubject.phtml',
+            'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordClassifications']
             ]
         );
         $spec->setTemplateLine(
-            'Other ID', 'getLocalIdentifiers', 'data-implodeSubject.phtml',
+            'Other ID', 'getLocalIdentifiers', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordIdentifiers']
             ]
@@ -293,7 +287,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'extendedDateSpan']
             ]
         );
-        $spec->setLine(
+        $spec->setTemplateLine(
             'Unit ID', 'getUnitID', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordReferenceCode']
