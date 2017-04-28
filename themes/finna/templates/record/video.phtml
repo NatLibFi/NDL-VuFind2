@@ -1,20 +1,25 @@
 <!-- START of: finna - record/video.phtml -->
 
-<div class="video-popup">
-  <div class="mfp-bg mfp-ready"></div>
-  <div class="mfp-wrap mfp-gallery mfp-close-btn-in mfp-auto-cursor mfp-ready" tabindex="-1">
-    <div class="mfp-container mfp-ajax-holder mfp-s-ready">
-      <div class="mfp-content">
-        <div class="imagepopup-holder marc" data-type="marc">
-          <video id="my-video" class="video-js vjs-default-skin" controls style="width:100%; height: auto;">
-            <source src="http://elo.salama.tv.funet.fi/vod/_definst_/mp4:fi/kava/elonet/2012/MV-266_Polyteekkarifilmi_470272_klippi.mp4/manifest.mpd" type="application/dash+xml">
-          </video>
-          <button type="button" class="mfp-close">×</button>
-        </div>
-      </div>
-      <div class="mfp-preloader"></div>
-    </div>
-  </div>
+<div>
+  <video id="video-player" class="video-js vjs-default-skin" controls style="width:100%; height: 200px;">
+    <!--<source src="http://elo.salama.tv.funet.fi/vod/_definst_/mp4:fi/kava/elonet/2012/MV-266_Polyteekkarifilmi_470272_klippi.mp4/manifest.mpd" type="application/dash+xml">-->
+  </video>
 </div>
+
+<script src="/vufind2/themes/finna/js/vendor/video.min.js"></script>
+<script src="/vufind2/themes/finna/js/vendor/videojs-dash.min.js"></script>
+
+<script>
+    var player = videojs('video-player');
+    videojs.Html5DashJS.useVideoJSDebug = function (player) {
+        player.getDebug().setLogToBrowserConsole(false);
+    };
+
+
+    player.src({
+        src: 'http://elo.salama.tv.funet.fi/vod/_definst_/mp4:fi/kava/elonet/2012/1524393-OlympiaKatsaus6.mp4/manifest.mpd',
+        type: 'application/dash+xml'
+    });
+</script>
 
 <!-- END of: finna - record/video.phtml -->
