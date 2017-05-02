@@ -84,8 +84,8 @@ return [
         'vendor/jquery.cookie-1.4.1.min.js',
         'vendor/slick.min.js',
         'vendor/video.min.js',
-        'vendor/videojs-dash.min.js',
         'vendor/dash.all.min.js',
+        'vendor/videojs-dash.min.js',
         'vendor/jquery.touchSwipe.min.js',
         'vendor/bootstrap-multiselect.min.js',
         'vendor/gauge.min.js'
