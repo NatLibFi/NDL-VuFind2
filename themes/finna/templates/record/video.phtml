@@ -1,7 +1,7 @@
 <!-- START of: finna - record/video.phtml -->
 
 <div>
-  <video id="video-player" class="video-js vjs-default-skin" controls style="width:100%; height: 200px;">
+  <video id="video-player" class="video-js" controls>
     <!--<source src="http://elo.salama.tv.funet.fi/vod/_definst_/mp4:fi/kava/elonet/2012/MV-266_Polyteekkarifilmi_470272_klippi.mp4/manifest.mpd" type="application/dash+xml">-->
   </video>
 </div>
@@ -11,13 +11,14 @@
 
 <script>
     var player = videojs('video-player');
-    videojs.Html5DashJS.useVideoJSDebug = function (player) {
-        player.getDebug().setLogToBrowserConsole(false);
-    };
 
+    var disablelogging = function(player, mediaPlayer) {
+        mediaPlayer.getDebug().setLogToBrowserConsole(false);
+    };
+    videojs.Html5DashJS.hook('beforeinitialize', disablelogging);
 
     player.src({
-        src: 'http://elo.salama.tv.funet.fi/vod/_definst_/mp4:fi/kava/elonet/2012/1524393-OlympiaKatsaus6.mp4/manifest.mpd',
+        src: 'http://elo.salama.tv.funet.fi/vod/_definst_/mp4:fi/kava/elonet/2012/MV-266_Polyteekkarifilmi_470272_klippi.mp4/manifest.mpd',
         type: 'application/dash+xml'
     });
 </script>
