@@ -137,6 +137,14 @@ class RecordController extends \VuFind\Controller\RecordController
     }
 
     /**
+     * Display Video-player dialog.
+     *
+     * @return mixed
+     */
+    public function videoAction(){
+    }
+
+    /**
      * Load a normalized record from RecordManager for preview
      *
      * @param string $data   Record Metadata
