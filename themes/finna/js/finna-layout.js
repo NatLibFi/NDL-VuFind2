@@ -524,7 +524,7 @@ finna.layout = (function() {
             var field = $('#login_' + (topClass ? topClass + '_' : '') + 'secondary_username');
             if (labels[target] === '') {
                 field.val('');
-                field.closest('.form-group').hide();
+                field.closest('.form-group').remove();
             } else {
                 var group = field.closest('.form-group');
                 group.find('label').text(labels[target] + ':');
