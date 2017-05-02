@@ -276,12 +276,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get the collections of the current record.
      *
-     * @return string
+     * @return array
      */
     public function getCollections()
     {
-        return isset($this->fields['collection']) ?
-        $this->fields['collection'] : [];
+        $results = [];
+        foreach ($this->getSimpleXML()->xpath(
+            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
+            . 'relatedWorkSet/relatedWork/displayObject'
+        ) as $node) {
+                $results[] = (string)$node;
+        }
+        return $results;
     }
 
     /**
