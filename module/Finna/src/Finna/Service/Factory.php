@@ -43,6 +43,21 @@ use Zend\Console\Console,
 class Factory extends \VuFind\Service\Factory
 {
     /**
+     * Construct the Account Capabilities helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return \VuFind\Config\AccountCapabilities
+     */
+    public static function getAccountCapabilities(ServiceManager $sm)
+    {
+        return new \Finna\Config\AccountCapabilities(
+            $sm->get('VuFind\Config')->get('config'),
+            $sm->get('VuFind\AuthManager')
+        );
+    }
+
+    /**
      * Construct the Autocomplete Plugin Manager.
      *
      * @param ServiceManager $sm Service manager.

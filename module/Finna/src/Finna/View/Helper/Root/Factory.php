@@ -195,6 +195,7 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     {
         $helper = new Record(
             $sm->getServiceLocator()->get('VuFind\RecordLoader'),
+            $sm->getServiceLocator()->get('VuFind\AccountCapabilities'),
             $sm->getServiceLocator()->get('VuFind\Config')->get('config')
         );
         if ('cli' !== php_sapi_name()) {

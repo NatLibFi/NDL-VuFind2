@@ -51,15 +51,24 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $loader;
 
     /**
+     * Account capabilities
+     *
+     * @var \VuFind\AccountCapabilities
+     */
+    protected $accountCapabilities;
+
+    /**
      * Constructor
      *
-     * @param \VuFind\RecordLoader $loader Record loader
-     * @param \Zend\Config\Config  $config VuFind configuration
+     * @param \VuFind\RecordLoader        $loader              Record loader
+     * @param \VuFind\AccountCapabilities $accountCapabilities Account capabilities
+     * @param \Zend\Config\Config         $config              VuFind configuration
      */
-    public function __construct($loader, $config = null)
+    public function __construct($loader, $accountCapabilities, $config = null)
     {
         parent::__construct($config);
         $this->loader = $loader;
+        $this->accountCapabilities = $accountCapabilities;
     }
 
     /**
@@ -108,18 +117,6 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return true;
-    }
-
-    /**
-     * Is commenting enabled.
-     *
-     * @return boolean
-     */
-    public function commentingEnabled()
-    {
-        return !isset($this->config->Social->comments)
-            || ($this->config->Social->comments
-                && $this->config->Social->comments !== 'disabled');
     }
 
     /**
@@ -399,7 +396,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function ratingAllowed()
     {
-        return $this->commentingEnabled()
+        return 'enabled' === $this->accountCapabilities->getCommentSetting()
             && $this->driver->tryMethod('ratingAllowed');
     }
 }
