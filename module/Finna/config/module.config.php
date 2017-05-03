@@ -157,21 +157,7 @@ $config = [
                         'action'     => 'Feedback',
                     ]
                 ]
-            ],
-            'record-video' => [
-                'type'    => 'Zend\Mvc\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/Record/[:id]/Video',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ],
-                    'defaults' => [
-                        'controller' => 'Record',
-                        'action'     => 'Video',
-                    ]
-                ]
-            ],
+            ]
         ]
     ],
     'controllers' => [
