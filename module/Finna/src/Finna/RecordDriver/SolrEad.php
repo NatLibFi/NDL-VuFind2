@@ -574,4 +574,21 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
         );
         return $url;
     }
+
+    /**
+     * Get the search_daterange_mv field.
+     *
+     * @return string
+     */
+    public function getDaterange()
+    {
+        if (strpos($this->fields['search_daterange_mv'][0], 'TO')) {
+            $daterange = $this->fields['search_daterange_mv'][0];
+        } else {
+            $daterange = date(
+                'd.m.Y', strtotime($this->fields['search_daterange_mv'][0])
+            );
+        }
+        return $daterange;
+    }
 }
