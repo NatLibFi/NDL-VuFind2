@@ -77,6 +77,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Return access restriction notes for the record.
      *
+     * @param string $language Optional primary language to look for
+     *
      * @return array
      */
     public function getAccessRestrictions($language = '')
