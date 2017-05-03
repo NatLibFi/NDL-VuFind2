@@ -285,7 +285,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet/relatedWork/displayObject'
         ) as $node) {
+            $attributes = $node->attributes();
+            if (!isset($attributes->label)) {
                 $results[] = (string)$node;
+            }
         }
         return $results;
     }
