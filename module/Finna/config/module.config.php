@@ -31,6 +31,19 @@ namespace Finna\Module\Configuration;
 $config = [
     'router' => [
         'routes' => [
+            'cache-file' => [
+                'type'    => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/cache/[:file]',
+                    'constraints' => [
+                        'file'     => '[.a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => 'Cache',
+                        'action'     => 'File',
+                    ]
+                ],
+            ],
             'comments-inappropriate' => [
                 'type'    => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
@@ -150,6 +163,7 @@ $config = [
     'controllers' => [
         'factories' => [
             'browse' => 'Finna\Controller\Factory::getBrowseController',
+            'cache' => 'Finna\Controller\Factory::getCacheController',
             'record' => 'Finna\Controller\Factory::getRecordController',
             'cart' => 'Finna\Controller\Factory::getCartController',
         ],
@@ -233,6 +247,7 @@ $config = [
                     'comments-record' => 'Finna\Db\Table\Factory::getCommentsRecord',
                     'due-date-reminder' => 'Finna\Db\Table\Factory::getDueDateReminder',
                     'fee' => 'Finna\Db\Table\Factory::getFee',
+                    'finnacache' => 'Finna\Db\Table\Factory::getFinnaCache',
                     'resource' => 'Finna\Db\Table\Factory::getResource',
                     'search' => 'Finna\Db\Table\Factory::getSearch',
                     'session' => 'Finna\Db\Table\Factory::getSession',
@@ -248,6 +263,7 @@ $config = [
                     'demo' => 'Finna\ILS\Driver\Factory::getDemo',
                     'koharest' => 'Finna\ILS\Driver\Factory::getKohaRest',
                     'multibackend' => 'Finna\ILS\Driver\Factory::getMultiBackend',
+                    'sierrarest' => 'Finna\ILS\Driver\Factory::getSierraRest',
                     'voyager' => 'Finna\ILS\Driver\Factory::getVoyager',
                     'voyagerrestful' => 'Finna\ILS\Driver\Factory::getVoyagerRestful'
                 ],
