@@ -398,9 +398,9 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Related Items', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
+            '', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
             [
-                'context' => ['class' => 'extendedRelatedItems']
+                'context' => ['class' => 'recordHide']
             ]
         );
         $spec->setTemplateLine(
