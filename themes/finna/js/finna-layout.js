@@ -738,7 +738,7 @@ finna.layout = (function() {
         }
 
         container.find('a[data-embed-video]').click(function(e) {
-            var videoUrl = $(this).attr('data');
+            var videoUrl = $(this).data('videoUrl');
             $.magnificPopup.open({
                 type: 'inline',
                 items: {
