@@ -120,7 +120,6 @@
                   }
                 }
               ?>
-              <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?></a></div>
               <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" data="<?=$url['videoUrl'] ?> " data-embed-video title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?></a></div>
             <? endforeach; ?>
           <? endif; ?>
