@@ -898,6 +898,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected function getVideoUrls()
     {
         // Get video URLs, if any
+        $videoUrls = [];
         $source = null;
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->Title as $title) {
