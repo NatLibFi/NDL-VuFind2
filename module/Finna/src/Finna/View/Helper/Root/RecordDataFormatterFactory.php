@@ -70,12 +70,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordOriginalWork']
             ]
         );
-        $spec->setTemplateLine(
-            'Published in', 'getContainerTitle', 'data-containerTitle.phtml',
-            [
-                'context' => ['class' => 'record-container-link']
-            ]
-        );
+        //$spec->setTemplateLine(
+        //    'Published in', 'getContainerTitle', 'data-containerTitle.phtml',
+        //    [
+        //        'context' => ['class' => 'record-container-link']
+        //    ]
+        //);
         $spec->setTemplateLine(
             'New Title', 'getNewerTitles', 'data-titles.phtml',
             [
@@ -88,24 +88,24 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordPrevTitles']
             ]
         );
-        $spec->setTemplateLine(
-            'Contributors', 'getNonPresenterAuthors', 'data-contributors.phtml',
-            [
-                'context' => ['class' => 'recordAuthors']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Actors', 'getPresenters', 'data-actors.phtml',
-            [
-                'context' => ['class' => 'recordPresenters']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Assistants', 'getAssistants', 'data-assistants.phtml',
-            [
-                'context' => ['class' => 'record-assistants']
-            ]
-        );
+        //$spec->setTemplateLine(
+        //    'Contributors', 'getNonPresenterAuthors', 'data-contributors.phtml',
+        //    [
+        //        'context' => ['class' => 'recordAuthors']
+        //    ]
+        //);
+        //$spec->setTemplateLine(
+        //    'Actors', 'getPresenters', 'data-actors.phtml',
+        //    [
+        //        'context' => ['class' => 'recordPresenters']
+        //    ]
+        //);
+        //$spec->setTemplateLine(
+        //    'Assistants', 'getAssistants', 'data-assistants.phtml',
+        //    [
+        //        'context' => ['class' => 'record-assistants']
+        //    ]
+        //);
         $spec->setTemplateLine(
             'Description', 'getDescription', 'data-forwardFields.phtml',
             [
@@ -158,13 +158,13 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordAltTitles']
             ]
         );
-        $spec->setLine(
-            'Format', 'getFormats', 'RecordHelper',
-            [
-                'helperMethod' => 'getFormatList',
-                'context' => ['class' => 'recordFormat']
-            ]
-        );
+        //$spec->setLine(
+        //    'Format', 'getFormats', 'RecordHelper',
+        //    [
+        //        'helperMethod' => 'getFormatList',
+        //        'context' => ['class' => 'recordFormat']
+        //    ]
+        //);
         $spec->setTemplateLine(
             'Physical Description', 'getPhysicalDescriptions',
             'data-escapeHtml.phtml',
@@ -214,12 +214,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordSubjects']
             ]
         );
-        $spec->setTemplateLine(
-            'Organisation', 'getInstitutions', 'data-organisation.phtml',
-            [
-                'context' => ['class' => 'recordInstitution']
-            ]
-        );
+        //$spec->setTemplateLine(
+        //    'Organisation', 'getInstitutions', 'data-organisation.phtml',
+        //    [
+        //        'context' => ['class' => 'recordInstitution']
+        //    ]
+        //);
         $spec->setTemplateLine(
             'Collection', 'getCollections', 'data-escapeHtml.phtml',
             [
@@ -293,18 +293,18 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordReferenceCode']
             ]
         );
-        $spec->setTemplateLine(
-            'Authors', 'getNonPresenterAuthors', 'data-authors.phtml',
-            [
-                'context' => ['class' => 'recordAuthors']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Publisher', 'getPublicationDetails', 'data-publicationDetails.phtml',
-            [
-                'context' => ['class' => 'recordDescription']
-            ]
-        );
+        //$spec->setTemplateLine(
+        //    'Authors', 'getNonPresenterAuthors', 'data-authors.phtml',
+        //    [
+        //        'context' => ['class' => 'recordAuthors']
+        //    ]
+        //);
+        //$spec->setTemplateLine(
+        //    'Publisher', 'getPublicationDetails', 'data-publicationDetails.phtml',
+        //    [
+        //        'context' => ['class' => 'recordDescription']
+        //    ]
+        //);
         $spec->setTemplateLine(
             'Published', 'getPublicationDetails', 'data-publicationDetails.phtml',
             [
@@ -500,12 +500,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'extendedRelatedItems']
             ]
         );
-        $spec->setTemplateLine(
-            'Access Restrictions', 'getAccessRestrictions', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'extendedAccess']
-            ]
-        );
+        //$spec->setTemplateLine(
+        //    'Access Restrictions', 'getAccessRestrictions', 'data-escapeHtml.phtml',
+        //    [
+        //        'context' => ['class' => 'extendedAccess']
+        //    ]
+        //);
         $spec->setTemplateLine(
             'Terms of Use', 'getTermsOfUse', 'data-termsOfUse.phtml',
             [
