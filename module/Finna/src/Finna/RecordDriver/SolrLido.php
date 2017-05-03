@@ -285,11 +285,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         foreach ($this->getSimpleXML()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
-            . 'relatedWorkSet/relatedWork/displayObject'
+            . 'relatedWorkSet'
         ) as $node) {
-            $attributes = $node->attributes();
-            if (!isset($attributes->label)) {
-                $results[] = (string)$node;
+            $check = ['Kokoelma', 'kuuluu kokoelmaan', 'kokoelma', 'Alakokoelma',
+            'Erityiskokoelma'];
+            $term = $node->relatedWorkRelType->term;
+            if (in_array($term, $check)) {
+                $results[] = (string)$node->relatedWork->displayObject;
             }
         }
         return $results;
