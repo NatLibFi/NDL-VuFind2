@@ -584,6 +584,9 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
     {
         if (strpos($this->fields['search_daterange_mv'][0], 'TO')) {
             $daterange = $this->fields['search_daterange_mv'][0];
+            $replace = ['[', ']', 'TO'];
+            $placements = ['', '', '-'];
+            $daterange = str_replace($replace, $placements, $daterange);
         } else {
             $daterange = date(
                 'd.m.Y', strtotime($this->fields['search_daterange_mv'][0])
