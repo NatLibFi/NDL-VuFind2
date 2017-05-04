@@ -911,8 +911,18 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 if (empty($attributes['video-tyyppi'])) {
                     continue;
                 }
-                $videoUrl = 'http://elo.salama.tv.funet.fi/vod/_definst_/mp4:'
-                    . (string)$title->TitleText . '/manifest.mpd';
+                $videoSources = [
+                    [
+                        'src' => 'http://elo.salama.tv.funet.fi/vod/_definst_/mp4:'
+                            . (string)$title->TitleText . '/manifest.mpd',
+                        'type' => 'application/dash+xml'
+                    ],
+                    [
+                        'src' => 'http://elo.salama.tv.funet.fi/vod/_definst_/mp4:'
+                            . (string)$title->TitleText . '/playlist.m3u8',
+                        'type' => 'application/x-mpegURL'
+                    ]
+                ];
                 $eventAttrs = $xml->ProductionEvent->ProductionEventType
                     ->attributes();
                 $url = (string)$eventAttrs->{'elokuva-elonet-materiaali-video-url'};
@@ -930,7 +940,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
                 $videoUrls[] = [
                     'url' => $url,
-                    'videoUrl' => $videoUrl,
+                    'videoSources' => $videoSources,
                     // Include both 'text' and 'desc' for online and normal urls
                     'text' => $description ? $description : $type,
                     'desc' => $description ? $description : $type,

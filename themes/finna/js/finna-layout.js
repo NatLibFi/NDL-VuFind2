@@ -738,7 +738,7 @@ finna.layout = (function() {
         }
 
         container.find('a[data-embed-video]').click(function(e) {
-            var videoUrl = $(this).data('videoUrl');
+            var videoSources = $(this).data('videoSources');
             $.magnificPopup.open({
                 type: 'inline',
                 items: {
@@ -753,10 +753,7 @@ finna.layout = (function() {
                         };
                         videojs.Html5DashJS.hook('beforeinitialize', disablelogging);
 
-                        player.src({
-                            src: videoUrl,
-                            type: 'application/dash+xml'
-                        });
+                        player.src(videoSources);
                         player.load();
                     },
                     close: function () {
