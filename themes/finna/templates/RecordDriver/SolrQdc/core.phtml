@@ -166,7 +166,8 @@
     <?/* Display Main Details */?>
     <?
       $formatter = $this->recordDataFormatter();
-      $coreFields = $formatter->getData($driver, $formatter->getDefaults('core'));
+      $coreFields = $formatter->getData($driver,
+        $formatter->filterQDCFields($formatter->getDefaults('core')));
     ?>
     <? if (!empty($coreFields)): ?>
       <table class="table table-finna-record record-details">

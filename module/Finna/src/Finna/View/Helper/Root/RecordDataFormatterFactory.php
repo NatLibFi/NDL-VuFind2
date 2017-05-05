@@ -50,7 +50,7 @@ class RecordDataFormatterFactory
      */
     public function __invoke()
     {
-        $helper = new \VuFind\View\Helper\Root\RecordDataFormatter();
+        $helper = new RecordDataFormatter();
         $helper->setDefaults('core', $this->getDefaultCoreSpecs());
         $helper->setDefaults('description', $this->getDefaultDescriptionSpecs());
         return $helper;
@@ -70,12 +70,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordOriginalWork']
             ]
         );
-        /*$spec->setTemplateLine(
+        $spec->setTemplateLine(
             'Published in', 'getContainerTitle', 'data-containerTitle.phtml',
             [
                 'context' => ['class' => 'record-container-link']
             ]
-        );*/
+        );
         $spec->setTemplateLine(
             'New Title', 'getNewerTitles', 'data-titles.phtml',
             [
@@ -88,7 +88,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordPrevTitles']
             ]
         );
-        /*$spec->setTemplateLine(
+        $spec->setTemplateLine(
             'Contributors', 'getNonPresenterAuthors', 'data-contributors.phtml',
             [
                 'context' => ['class' => 'recordAuthors']
@@ -105,7 +105,13 @@ class RecordDataFormatterFactory
             [
                 'context' => ['class' => 'record-assistants']
             ]
-        );*/
+        );
+        $spec->setTemplateLine(
+            'Item Description FWD', 'getGeneralNotes', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'recordDescription']
+            ]
+        );
         $spec->setTemplateLine(
             'Description', 'getDescription', 'data-forwardFields.phtml',
             [
@@ -138,7 +144,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'link_Arvosteltu teos', 'getOtherLinks', 'data-getOtherLinks.phtml',
+            'Other Links', 'getOtherLinks', 'data-getOtherLinks.phtml',
             [
                 'labelFunction'  => function ($data) {
                     return $data[0]['heading'];
@@ -158,24 +164,18 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordAltTitles']
             ]
         );
-        /*$spec->setLine(
+        $spec->setLine(
             'Format', 'getFormats', 'RecordHelper',
             [
                 'helperMethod' => 'getFormatList',
                 'context' => ['class' => 'recordFormat']
             ]
-        );*/
+        );
         $spec->setTemplateLine(
             'Physical Description', 'getPhysicalDescriptions',
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'physicalDescriptions']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Language', 'getLanguages', 'data-transEsc.phtml',
-            [
-                'context' => ['class' => 'recordLanguage']
             ]
         );
         $spec->setTemplateLine(
@@ -185,7 +185,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Item Description', 'getGeneralNotes', 'data-forwardFields.phtml',
+            'Item Description', 'getGeneralNotes', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordDescription']
             ]
@@ -214,12 +214,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordSubjects']
             ]
         );
-        /*$spec->setTemplateLine(
+        $spec->setTemplateLine(
             'Organisation', 'getInstitutions', 'data-organisation.phtml',
             [
                 'context' => ['class' => 'recordInstitution']
             ]
-        );*/
+        );
         $spec->setTemplateLine(
             'Collection', 'getCollections', 'data-escapeHtml.phtml',
             [
@@ -270,7 +270,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Archive', 'isPartOfArchiveSeries', 'data-archive.phtml',
+            'Archive', true, 'data-archive.phtml',
             [
                 'context' => ['class' => 'recordHierarchyLinks']
             ]
@@ -293,18 +293,24 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordReferenceCode']
             ]
         );
-        /*$spec->setTemplateLine(
+        $spec->setTemplateLine(
             'Authors', 'getNonPresenterAuthors', 'data-authors.phtml',
             [
                 'context' => ['class' => 'recordAuthors']
             ]
         );
         $spec->setTemplateLine(
+            'Language', 'getLanguages', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'recordLanguage']
+            ]
+        );
+        $spec->setTemplateLine(
             'Publisher', 'getPublicationDetails', 'data-publicationDetails.phtml',
             [
-                'context' => ['class' => 'recordDescription']
+                'context' => ['class' => 'recordPublications']
             ]
-        );*/
+        );
         $spec->setTemplateLine(
             'Published', 'getPublicationDetails', 'data-publicationDetails.phtml',
             [
@@ -500,12 +506,18 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'extendedRelatedItems']
             ]
         );
-        /*$spec->setTemplateLine(
+        $spec->setTemplateLine(
             'Access Restrictions', 'getAccessRestrictions', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'extendedAccess']
             ]
-        );*/
+        );
+        $spec->setTemplateLine(
+            'Access', 'getAccessRestrictions', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'extendedAccess']
+            ]
+        );
         $spec->setTemplateLine(
             'Terms of Use', 'getTermsOfUse', 'data-termsOfUse.phtml',
             [

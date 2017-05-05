@@ -70,7 +70,8 @@
     <div class="record-details">
       <?
         $formatter = $this->recordDataFormatter();
-        $coreFields = $formatter->getData($driver, $formatter->getDefaults('core'));
+        $coreFields = $formatter->getData($driver,
+          $formatter->filterPrimoFields($formatter->getDefaults('core')));
       ?>
       <? if (!empty($coreFields)): ?>
       <table class="table table-condensed table-finna-record" summary="<?=$this->transEsc('Bibliographic Details')?>">
