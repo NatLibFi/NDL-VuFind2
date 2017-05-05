@@ -781,6 +781,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $breakPoints
                 = ['desktop' => 4, 'desktop-small' => 3,
                    'tablet' => 2, 'mobile' => 1];
+            $settings['scrollSpeed'] = isset($config->scrollSpeed) ? $config->scrollSpeed : 750;
 
             foreach ($breakPoints as $breakPoint => $default) {
                 $settings['slidesToShow'][$breakPoint]
