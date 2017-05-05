@@ -63,6 +63,7 @@ return [
         'vendor/slick.min.css',
         'vendor/bootstrap-multiselect.min.css',
         'vendor/bootstrap-datepicker3.min.css',
+        'vendor/video-js.min.css',
         'finna.css'
     ],
     'js' => [
@@ -83,6 +84,11 @@ return [
         'vendor/jquery.magnific-popup.min.js',
         'vendor/jquery.cookie-1.4.1.min.js',
         'vendor/slick.min.js',
+        'vendor/video.min.js',
+        'vendor/dash.all.min.js',
+        'vendor/videojs-dash.min.js',
+        'vendor/videojs-contrib-hls.min.js',
+        'vendor/videojs.hotkeys.min.js',
         'vendor/jquery.touchSwipe.min.js',
         'vendor/bootstrap-multiselect.min.js',
         'vendor/gauge.min.js'
