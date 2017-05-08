@@ -588,5 +588,6 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
         if (isset($unitdate[0])) {
             return (string)$unitdate[0];
         }
+        return '';
     }
 }
