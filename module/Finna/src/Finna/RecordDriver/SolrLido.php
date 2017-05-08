@@ -283,14 +283,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getCollections()
     {
         $results = [];
+        $allowedTypes = ['Kokoelma', 'kuuluu kokoelmaan', 'kokoelma', 'Alakokoelma',
+            'Erityiskokoelma'];
         foreach ($this->getSimpleXML()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet'
         ) as $node) {
-            $check = ['Kokoelma', 'kuuluu kokoelmaan', 'kokoelma', 'Alakokoelma',
-            'Erityiskokoelma'];
-            $term = $node->relatedWorkRelType->term;
-            if (in_array($term, $check)) {
+            $term = isset($node->relatedWorkRelType->term)
+             ? $node->relatedWorkRelType->term : '';
+            if (in_array($term, $allowedTypes)) {
                 $results[] = (string)$node->relatedWork->displayObject;
             }
         }
