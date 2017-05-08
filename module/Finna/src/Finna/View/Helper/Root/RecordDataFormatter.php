@@ -312,7 +312,7 @@ class RecordDataFormatter extends AbstractHelper
             'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'mainFormat', 'Access', 'Edition',
             'Archive', 'Archive Series', 'Archive Origination',
-            'Item Description FWD'
+            'Item Description FWD', 'Published in'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -354,7 +354,7 @@ class RecordDataFormatter extends AbstractHelper
             'Contributors', 'Format', 'Organisation', 'Published', 'Online Access',
             'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'Access Restrictions', 'mainFormat',
-            'Archive', 'Item Description FWD'
+            'Archive', 'Item Description FWD', 'Publish date'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -373,7 +373,7 @@ class RecordDataFormatter extends AbstractHelper
     {
         $filter = [
             'Contributors', 'Organisation', 'Inventory ID', 'Online Access',
-            'Access', 'Item Description FWD'
+            'Access', 'Item Description FWD', 'Published in', 'Published'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -392,7 +392,7 @@ class RecordDataFormatter extends AbstractHelper
     {
         $filter = [
             'Contributors', 'Archive', 'Publisher', 'Organisation', 'Actors',
-            'Item Description FWD'
+            'Item Description FWD', 'Published in', 'Published'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -412,7 +412,7 @@ class RecordDataFormatter extends AbstractHelper
         $filter = [
             'Publisher','Edition', 'Archive', 'Published in', 'Format',
             'Other Titles', 'Presenters', 'Organisation', 'Published', 'Authors',
-            'Access', 'Item Description'
+            'Access', 'Item Description', 'Publisher'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);

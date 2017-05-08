@@ -288,12 +288,6 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Published', 'getDateSpan', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'extendedDateSpan']
-            ]
-        );
-        $spec->setTemplateLine(
             'Unit ID', 'getUnitID', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordReferenceCode']
@@ -352,6 +346,12 @@ class RecordDataFormatterFactory
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Publish date', 'getDateSpan', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'extendedDateSpan']
             ]
         );
         $spec->setTemplateLine(
