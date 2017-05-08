@@ -179,6 +179,12 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'Language', 'getLanguages', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'recordLanguage']
+            ]
+        );
+        $spec->setTemplateLine(
             'original_work_language', 'getOriginalLanguages', 'data-transEsc.phtml',
             [
                 'context' => ['class' => 'originalLanguage']
@@ -297,12 +303,6 @@ class RecordDataFormatterFactory
             'Authors', 'getNonPresenterAuthors', 'data-authors.phtml',
             [
                 'context' => ['class' => 'recordAuthors']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Language', 'getLanguages', 'data-transEsc.phtml',
-            [
-                'context' => ['class' => 'recordLanguage']
             ]
         );
         $spec->setTemplateLine(
