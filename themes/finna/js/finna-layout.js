@@ -739,6 +739,7 @@ finna.layout = (function() {
 
         container.find('a[data-embed-video]').click(function(e) {
             var videoSources = $(this).data('videoSources');
+            var posterUrl = $(this).data('posterUrl');
             $.magnificPopup.open({
                 type: 'inline',
                 items: {
@@ -753,7 +754,15 @@ finna.layout = (function() {
                         };
                         videojs.Html5DashJS.hook('beforeinitialize', disablelogging);
 
+                        player.ready(function () {
+                            this.hotkeys({
+                                enableVolumeScroll: false,
+                                enableModifiersForNumbers: false
+                            });
+                        });
+
                         player.src(videoSources);
+                        player.poster(posterUrl);
                         player.load();
                     },
                     close: function () {
