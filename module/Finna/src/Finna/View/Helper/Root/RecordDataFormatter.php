@@ -333,7 +333,8 @@ class RecordDataFormatter extends AbstractHelper
             'Contributors', 'Published', 'Online Access',
             'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'Access Restrictions', 'Unit ID',
-            'Other Titles', 'Archive', 'Access', 'Item Description FWD'
+            'Other Titles', 'Archive', 'Access', 'Item Description FWD',
+            'Publish date'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
