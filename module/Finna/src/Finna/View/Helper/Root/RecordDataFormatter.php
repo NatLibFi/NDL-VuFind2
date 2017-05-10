@@ -29,8 +29,6 @@
  * Wiki
  */
 namespace Finna\View\Helper\Root;
-use VuFind\RecordDriver\AbstractBase as RecordDriver;
-use Zend\View\Helper\AbstractHelper;
 
 /**
  * Record driver data formatting view helper
