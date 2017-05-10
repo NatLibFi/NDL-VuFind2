@@ -212,8 +212,9 @@
       <?/* Display Main Details */?>
       <?
         $formatter = $this->recordDataFormatter();
-        $coreFields = $formatter->getData($driver,
-          $formatter->filterForwardFields($formatter->getDefaults('core')));
+        $coreFields = $formatter->getData(
+            $driver, $formatter->filterForwardFields($formatter->getDefaults('core'))
+        );
       ?>
       <? if (!empty($coreFields)): ?>
       <table class="table table-finna-record record-details record-details-more" style="table-layout:initial;">
