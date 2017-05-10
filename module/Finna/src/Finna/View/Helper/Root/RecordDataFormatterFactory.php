@@ -549,6 +549,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordPhysicalLocation']
             ]
         );
+        $spec->setTemplateLine(
+            'SfxUrls', true, 'data-openUrl.phtml',
+            [
+                'context' => ['class' => 'recordHide']
+            ]
+        );
         return $spec->getArray();
     }
 

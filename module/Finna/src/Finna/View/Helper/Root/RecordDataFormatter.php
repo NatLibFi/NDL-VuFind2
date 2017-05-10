@@ -43,261 +43,8 @@ use Zend\View\Helper\AbstractHelper;
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
  */
-class RecordDataFormatter extends AbstractHelper
+class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
 {
-    /**
-     * Default settings.
-     *
-     * @var array
-     */
-    protected $defaults = [];
-
-    /**
-     * Sort callback for field specification.
-     *
-     * @param array $a First value to compare
-     * @param array $b Second value to compare
-     *
-     * @return int
-     */
-    public function specSortCallback($a, $b)
-    {
-        $posA = isset($a['pos']) ? $a['pos'] : 0;
-        $posB = isset($b['pos']) ? $b['pos'] : 0;
-        if ($posA === $posB) {
-            return 0;
-        }
-        return $posA < $posB ? -1 : 1;
-    }
-
-    /**
-     * Create formatted key/value data based on a record driver and field spec.
-     *
-     * @param RecordDriver $driver Record driver object.
-     * @param array        $spec   Formatting specification
-     *
-     * @return array
-     */
-    public function getData(RecordDriver $driver, array $spec)
-    {
-        $result = [];
-
-        // Sort the spec into order by position:
-        uasort($spec, [$this, 'specSortCallback']);
-
-        // Apply the spec:
-        foreach ($spec as $field => $current) {
-            // Extract the relevant data from the driver.
-            $data = $this->extractData($driver, $current);
-            $allowZero = isset($current['allowZero']) ? $current['allowZero'] : true;
-            if (!empty($data) || ($allowZero && ($data === 0 || $data === '0'))) {
-                // Determine the rendering method to use with the second element
-                // of the current spec.
-                $renderMethod = empty($current['renderType'])
-                    ? 'renderSimple' : 'render' . $current['renderType'];
-
-                // Add the rendered data to the return value if it is non-empty:
-                if (is_callable([$this, $renderMethod])) {
-                    $text = $this->$renderMethod($driver, $data, $current);
-                    if (!$text && (!$allowZero || ($text !== 0 && $text !== '0'))) {
-                        continue;
-                    }
-                    // Allow dynamic label override:
-                    if (isset($current['labelFunction'])
-                        && is_callable($current['labelFunction'])
-                    ) {
-                        $field = call_user_func($current['labelFunction'], $data);
-                    }
-                    $context = isset($current['context']) ? $current['context'] : [];
-                    $result[$field] = [
-                        'value' => $text,
-                        'context' => $context
-                    ];
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Get default configuration.
-     *
-     * @param string $key Key for configuration to look up.
-     *
-     * @return array
-     */
-    public function getDefaults($key)
-    {
-        // No value stored? Return empty array:
-        if (!isset($this->defaults[$key])) {
-            return [];
-        }
-        // Callback stored? Resolve to array on demand:
-        if (is_callable($this->defaults[$key])) {
-            $this->defaults[$key] = $this->defaults[$key]();
-            if (!is_array($this->defaults[$key])) {
-                throw new \Exception('Callback for ' . $key . ' must return array');
-            }
-        }
-        // Send back array:
-        return $this->defaults[$key];
-    }
-
-    /**
-     * Set default configuration.
-     *
-     * @param string         $key    Key for configuration to set.
-     * @param array|Callable $values Defaults to store (either an array, or a
-     * Callable returning an array).
-     *
-     * @return void
-     */
-    public function setDefaults($key, $values)
-    {
-        if (!is_array($values) && !is_callable($values)) {
-            throw new \Exception('$values must be array or Callable');
-        }
-        $this->defaults[$key] = $values;
-    }
-
-    /**
-     * Extract data (usually from the record driver).
-     *
-     * @param RecordDriver $driver  Record driver
-     * @param array        $options Incoming options
-     *
-     * @return mixed
-     */
-    protected function extractData(RecordDriver $driver, array $options)
-    {
-        // Static cache for persisting data.
-        static $cache = [];
-
-        // If $method is a bool, return it as-is; this allows us to force the
-        // rendering (or non-rendering) of particular data independent of the
-        // record driver.
-        $method = isset($options['dataMethod']) ? $options['dataMethod'] : false;
-        if ($method === true || $method === false) {
-            return $method;
-        }
-
-        $useCache = isset($options['cacheData']) && $options['cacheData'];
-
-        if ($useCache) {
-            $cacheKey = $driver->getUniqueID() . '|'
-                . $driver->getSourceIdentifier() . '|' . $method;
-            if (isset($cache[$cacheKey])) {
-                return $cache[$cacheKey];
-            }
-        }
-
-        // Default action: try to extract data from the record driver:
-        $data = $driver->tryMethod($method);
-
-        if ($useCache) {
-            $cache[$cacheKey] = $data;
-        }
-
-        return $data;
-    }
-
-    /**
-     * Render using the record view helper.
-     *
-     * @param RecordDriver $driver  Reoord driver object.
-     * @param mixed        $data    Data to render
-     * @param array        $options Rendering options.
-     *
-     * @return string
-     */
-    protected function renderRecordHelper(RecordDriver $driver, $data,
-        array $options
-    ) {
-        $method = isset($options['helperMethod']) ? $options['helperMethod'] : null;
-        $plugin = $this->getView()->plugin('record');
-        if (empty($method) || !is_callable([$plugin, $method])) {
-            throw new \Exception('Cannot call "' . $method . '" on helper.');
-        }
-        return $plugin($driver)->$method($data);
-    }
-
-    /**
-     * Render a record driver template.
-     *
-     * @param RecordDriver $driver  Reoord driver object.
-     * @param mixed        $data    Data to render
-     * @param array        $options Rendering options.
-     *
-     * @return string
-     */
-    protected function renderRecordDriverTemplate(RecordDriver $driver, $data,
-        array $options
-    ) {
-        if (!isset($options['template'])) {
-            throw new \Exception('Template option missing.');
-        }
-        $helper = $this->getView()->plugin('record');
-        $context = isset($options['context']) ? $options['context'] : [];
-        $context['driver'] = $driver;
-        $context['data'] = $data;
-        return trim(
-            $helper($driver)->renderTemplate($options['template'], $context)
-        );
-    }
-
-    /**
-     * Get a link associated with a value, or else return false if link does
-     * not apply.
-     *
-     * @param string $value   Value associated with link.
-     * @param array  $options Rendering options.
-     *
-     * @return string|bool
-     */
-    protected function getLink($value, $options)
-    {
-        if (isset($options['recordLink']) && $options['recordLink']) {
-            $helper = $this->getView()->plugin('record');
-            return $helper->getLink($options['recordLink'], $value);
-        }
-        return false;
-    }
-
-    /**
-     * Simple rendering method.
-     *
-     * @param RecordDriver $driver  Reoord driver object.
-     * @param mixed        $data    Data to render
-     * @param array        $options Rendering options.
-     *
-     * @return string
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function renderSimple(RecordDriver $driver, $data, array $options)
-    {
-        $view = $this->getView();
-        $escaper = (isset($options['translate']) && $options['translate'])
-            ? $view->plugin('transEsc') : $view->plugin('escapeHtml');
-        $separator = isset($options['separator'])
-            ? $options['separator'] : '<br />';
-        $retVal = '';
-        $array = (array)$data;
-        $remaining = count($data);
-        foreach ($array as $line) {
-            $remaining--;
-            $text = $escaper($line);
-            $retVal .= ($link = $this->getLink($line, $options))
-                ? '<a href="' . $link . '">' . $text . '</a>' : $text;
-            if ($remaining > 0) {
-                $retVal .= $separator;
-            }
-        }
-        return (isset($options['prefix']) ? $options['prefix'] : '')
-            . $retVal
-            . (isset($options['suffix']) ? $options['suffix'] : '');
-    }
-
     /**
     * Filter unnecessary fields from Marc records.
     *
@@ -310,7 +57,7 @@ class RecordDataFormatter extends AbstractHelper
         $filter = [
             'Contributors', 'Format', 'Organisation', 'Published', 'Online Access',
             'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
-            'Press Reviews', 'Publisher', 'mainFormat', 'Access', 'Edition',
+            'Press Reviews', 'mainFormat', 'Access', 'Edition',
             'Archive', 'Archive Series', 'Archive Origination',
             'Item Description FWD', 'Published in'
         ];
@@ -334,7 +81,7 @@ class RecordDataFormatter extends AbstractHelper
             'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'Access Restrictions', 'Unit ID',
             'Other Titles', 'Archive', 'Access', 'Item Description FWD',
-            'Publish date'
+            'Publish date', 'SfxUrls'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -355,7 +102,7 @@ class RecordDataFormatter extends AbstractHelper
             'Contributors', 'Format', 'Organisation', 'Published', 'Online Access',
             'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'Access Restrictions', 'mainFormat',
-            'Archive', 'Item Description FWD', 'Publish date'
+            'Archive', 'Item Description FWD', 'Publish date', 'SfxUrls'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -374,7 +121,7 @@ class RecordDataFormatter extends AbstractHelper
     {
         $filter = [
             'Contributors', 'Organisation', 'Inventory ID', 'Online Access',
-            'Access', 'Item Description FWD', 'Published in', 'Published'
+            'Access', 'Item Description FWD', 'Published in', 'Published', 'SfxUrls'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -393,7 +140,7 @@ class RecordDataFormatter extends AbstractHelper
     {
         $filter = [
             'Contributors', 'Archive', 'Publisher', 'Organisation', 'Actors',
-            'Item Description FWD', 'Published in', 'Published'
+            'Item Description FWD', 'Published in', 'Published', 'SfxUrls'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
