@@ -95,7 +95,21 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Actors', 'getPresenters', 'data-actors.phtml',
+            'Secondary Authors', 'getNonPresenterSecondaryAuthors',
+            'data-contributors.phtml',
+            [
+                'context' => ['class' => 'recordAuthors'],
+                'labelFunction' => function () { return 'Contributors'; }
+            ]
+        );
+        $spec->setTemplateLine(
+            'Actors', 'getCreditedPresenters', 'data-actors.phtml',
+            [
+                'context' => ['class' => 'recordPresenters']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Uncredited Actors', 'getUncreditedPresenters', 'data-actors.phtml',
             [
                 'context' => ['class' => 'recordPresenters']
             ]

@@ -54,7 +54,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     {
         $filter = [
             'Contributors', 'Format', 'Organisation', 'Published', 'Online Access',
-            'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
+            'Original Work', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'mainFormat', 'Access', 'Edition',
             'Archive', 'Archive Series', 'Archive Origination',
             'Item Description FWD', 'Published in'
@@ -76,7 +76,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     {
         $filter = [
             'Contributors', 'Published', 'Online Access',
-            'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
+            'Original Work', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'Access Restrictions', 'Unit ID',
             'Other Titles', 'Archive', 'Access', 'Item Description FWD',
             'Publish date', 'SfxUrls'
@@ -98,7 +98,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     {
         $filter = [
             'Contributors', 'Format', 'Organisation', 'Published', 'Online Access',
-            'Original Work', 'Actors', 'Assistants', 'Authors', 'Music',
+            'Original Work', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'Access Restrictions', 'mainFormat',
             'Archive', 'Item Description FWD', 'Publish date', 'SfxUrls'
         ];
@@ -137,7 +137,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     public function filterPrimoFields($coreFields)
     {
         $filter = [
-            'Contributors', 'Archive', 'Publisher', 'Organisation', 'Actors',
+            'Contributors', 'Archive', 'Publisher', 'Organisation',
             'Item Description FWD', 'Published in', 'Published', 'SfxUrls'
         ];
         foreach ($filter as $key) {

@@ -1,16 +1,6 @@
 <!-- START of: finna - RecordDriver/SolrForward/core.phtml -->
 <?
   $primaryRoles = ['drt', 'aus'];
-  $nonPresenterAuthors = $this->driver->getNonPresenterAuthors();
-  $primaryAuthors = [];
-  $secondaryAuthors = [];
-  foreach ($nonPresenterAuthors as $author) {
-    if (isset($author['role']) && in_array($author['role'], $primaryRoles)) {
-      $primaryAuthors[] = $author;
-    } else {
-      $secondaryAuthors[] = $author;
-    }
-  }
 
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
@@ -152,6 +142,7 @@
         <? endif; ?>
       <? endif; ?>
       <? $containerTitle = $this->driver->getContainerTitle(); ?>
+      <? $primaryAuthors = $this->driver->getNonPresenterPrimaryAuthors(); ?>
       <? if ($primaryAuthors || $containerTitle): ?>
         <div class="truncate-field">
           <? if ($primaryAuthors): ?>
