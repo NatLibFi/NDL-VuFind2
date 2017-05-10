@@ -204,6 +204,11 @@
           <? foreach ($coreFields as $key => $current): ?>
             <tr class="<?=$current['context']['class'];?>"><th><?=$this->transEsc($key)?>:</th><td><?=$current['value']?></td></tr>
           <? endforeach; ?>
+          <? if ($openUrlActive): ?>
+            <tr>
+              <td colspan="2" class="more-options-link"><?=$openUrl->renderTemplate()?> </td>
+            </tr>
+          <? endif; ?>
         </table>
       <? endif; ?>
       <button class="btn show-details-button hidden"><?=$this->transesc('show_more_details');?> <i class="fa fa-arrow-down"></i></button>

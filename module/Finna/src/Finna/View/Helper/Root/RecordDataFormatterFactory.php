@@ -99,7 +99,9 @@ class RecordDataFormatterFactory
             'data-contributors.phtml',
             [
                 'context' => ['class' => 'recordAuthors'],
-                'labelFunction' => function () { return 'Contributors'; }
+                'labelFunction' => function () {
+                     return 'Contributors';
+                }
             ]
         );
         $spec->setTemplateLine(
@@ -561,12 +563,6 @@ class RecordDataFormatterFactory
             'Location', 'getPhysicalLocations', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordPhysicalLocation']
-            ]
-        );
-        $spec->setTemplateLine(
-            'SfxUrls', true, 'data-openUrl.phtml',
-            [
-                'context' => ['class' => 'recordHide']
             ]
         );
         return $spec->getArray();
