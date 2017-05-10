@@ -93,6 +93,8 @@ class CoverController extends \VuFind\Controller\CoverController
                         // Strip the data source prefix
                         $parts = explode('.', $driver->getUniqueID(), 2);
                         $filename = end($parts);
+                        $parts = explode('%2F', $filename);
+                        $filename = end($parts);
                     }
                 } elseif (!empty($params['title'])) {
                     $filename = $params['title'];
@@ -102,7 +104,7 @@ class CoverController extends \VuFind\Controller\CoverController
                     $filename = preg_replace('/\.jpe?g/', '', $filename);
                     // Replace some characters for cleaner filenames and hopefully
                     // something that can be found with the search
-                    $filename = preg_replace('/[^\w_ -]/', ' ', $filename);
+                    $filename = preg_replace('/[^\w_ -]/', '_', $filename);
                     $filename .= '.jpg';
                     $headers->addHeaderLine(
                         'Content-Disposition', "inline; filename=$filename"
