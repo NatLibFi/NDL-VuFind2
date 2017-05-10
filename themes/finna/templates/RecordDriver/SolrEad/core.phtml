@@ -55,8 +55,9 @@
   <? if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <? endif; ?>
-  <div class="media-body col-sm-8 col-md-9">
-    <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+  <div class="col-sm-8 col-md-9">
+    <div class="media-body record-information">
+      <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       <? if ($serviceURLs = $this->driver->getServiceURLs()): ?>
         <div class="recordURLs">
           <? foreach ($serviceURLs as $current): ?>
@@ -83,44 +84,46 @@
         </div>
       <? endif; ?>
 
-    <? $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
-    <div class="truncate-field wide recordSummary">
-      <p class="summary">
-      <? foreach ($summ as $field): ?>
-        <?=$this->escapeHtml($field)?><br/>
-      <? endforeach; ?>
-      </p>
-    </div>
-    <? endif; ?>
-
-    <? if ($this->userlist()->getMode() !== 'disabled'): ?>
-      <? /* Display the lists that this record is saved to */ ?>
-      <div class="savedLists hidden alert alert-info" id="savedLists">
-        <strong><?=$this->transEsc("Saved in")?>:</strong>
-      </div>
-    <? endif; ?>
-
-    <?/* Display Main Details */?>
-    <?
-      $formatter = $this->recordDataFormatter();
-      $coreFields = $formatter->getData($driver,
-        $formatter->filterEADFields($formatter->getDefaults('core')));
-    ?>
-    <? if (!empty($coreFields)): ?>
-      <table class="table table-finna-record record-details">
-        <? foreach ($coreFields as $key => $current): ?>
-          <tr class="<?=$current['context']['class'];?>"><th><?=$this->transEsc($key)?>:</th><td><?=$current['value']?></td></tr>
+      <? $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
+      <div class="truncate-field wide recordSummary">
+        <p class="summary">
+        <? foreach ($summ as $field): ?>
+          <?=$this->escapeHtml($field)?><br/>
         <? endforeach; ?>
-      </table>
-    <? endif; ?>
-    <?/* End Main Details */?>
-    <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
-    <div class="row">
-      <div class="col-xs-12">
-        <?=$this->render($template)?>
+        </p>
       </div>
+      <? endif; ?>
+
+      <? if ($this->userlist()->getMode() !== 'disabled'): ?>
+        <? /* Display the lists that this record is saved to */ ?>
+        <div class="savedLists hidden alert alert-info" id="savedLists">
+          <strong><?=$this->transEsc("Saved in")?>:</strong>
+        </div>
+      <? endif; ?>
+
+      <?/* Display Main Details */?>
+      <?
+        $formatter = $this->recordDataFormatter();
+        $coreFields = $formatter->getData($driver,
+          $formatter->filterEADFields($formatter->getDefaults('core')));
+      ?>
+      <? if (!empty($coreFields)): ?>
+        <table class="table table-finna-record record-details">
+          <? foreach ($coreFields as $key => $current): ?>
+            <tr class="<?=$current['context']['class'];?>"><th><?=$this->transEsc($key)?>:</th><td><?=$current['value']?></td></tr>
+          <? endforeach; ?>
+        </table>
+      <? endif; ?>
+      <?/* End Main Details */?>
+
+      <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
+      <div class="row">
+        <div class="col-xs-12">
+          <?=$this->render($template)?>
+        </div>
+      </div>
+      <? endif; ?>
     </div>
-    <? endif; ?>
   </div>
   <? if ($thumbnail && $thumbnailAlignment == 'right'): ?>
     <?=$thumbnail ?>
