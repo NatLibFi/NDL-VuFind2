@@ -163,7 +163,8 @@ class RecordDataFormatterFactory
             'Other Links', 'getOtherLinks', 'data-getOtherLinks.phtml',
             [
                 'labelFunction'  => function ($data) {
-                    return $data[0]['heading'];
+                    $label = isset($data[0]) ? $data[0]['heading'] : '';
+                    return $label;
                 },
                 'context' => ['class' => 'recordOtherLink']
             ]
@@ -420,9 +421,13 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            '', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
+            'recordLinks', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
             [
-                'context' => ['class' => 'recordHide']
+                'labelFunction'  => function ($data) {
+                    $label = isset($data[0]) ? $data[0]['title'] : '';
+                    return $label;
+                },
+                'context' => ['class' => 'recordLinks']
             ]
         );
         $spec->setTemplateLine(
