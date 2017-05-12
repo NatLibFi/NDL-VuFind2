@@ -421,6 +421,12 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'Source Collection', 'getSource', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSource']
+            ]
+        );
+        $spec->setTemplateLine(
             'recordLinks', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
             [
                 'labelFunction'  => function ($data) {
