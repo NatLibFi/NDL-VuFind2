@@ -874,4 +874,38 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         return $this->simpleXML;
 
     }
+    /**
+     * Get the photographer information in buiding objects
+     *
+     * @return string $result Photographer's name and / or time when picture taken.
+     */
+    public function getPhotographerInfo()
+    {
+        foreach ($this->getSimpleXML()->xpath(
+            'lido/descriptiveMetadata/objectClassificationWrap/objectWorkTypeWrap/'
+                . 'objectWorkType'
+        ) as $node) {
+            $term = (string)$node->term;
+        }
+         $isBuilding = strpos($term, 'Rakennus') ? true : false;
+        if ($isBuilding) {
+            foreach ($this->getSimpleXML()->xpath(
+                'lido/administrativeMetadata/resourceWrap/resourceSet'
+            ) as $nodes) {
+                $photo = (string)$nodes->resourceType->term;
+                $isPhoto = $photo == 'Valokuva' ? true : false;
+                if ($isPhoto) {
+                    $photographer = $nodes->resourceDescription;
+                    $time = $nodes->resourceDateTaken->displayDate
+                     ? $nodes->resourceDateTaken->displayDate : "";
+                    $result = !empty($time) ? $photographer[0] ." ". $time[0] :
+                    $photographer[0];
+                }
+            }
+        }
+        if ($isBuilding == false || $isPhoto == false) {
+            $result = '';
+        }
+        return $result;
+    }
 }

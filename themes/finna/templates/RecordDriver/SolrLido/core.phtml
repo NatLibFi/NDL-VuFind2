@@ -368,6 +368,13 @@
             </td>
           </tr>
         <? endif; ?>
+
+        <? if ($results = $this->driver->getPhotographerInfo()): ?>
+        <tr class="recordPhotographer">
+          <th><?=$this->transEsc('lido_event_type_Image_valmistus')?>:</th>
+          <td><?=$this->escapeHtml($results); ?></td>
+        </tr>
+        <? endif; ?>
       </table>
       <?/* End Main Details */?>
       <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-metadata")): ?>
