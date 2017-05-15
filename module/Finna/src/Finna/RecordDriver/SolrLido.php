@@ -898,7 +898,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $photographer = $nodes->resourceDescription;
                     $time = $nodes->resourceDateTaken->displayDate
                      ? $nodes->resourceDateTaken->displayDate : "";
-                    $result = !empty($time) ? $photographer[0] ." ". $time[0] :
+                    $result = !empty($time) ? $photographer[0] . " " . $time[0] :
                     $photographer[0];
                 }
             }
