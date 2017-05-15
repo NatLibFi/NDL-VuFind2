@@ -876,6 +876,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         return $this->simpleXML;
 
     }
+
     /**
      * Get the photographer information in buiding objects
      *
