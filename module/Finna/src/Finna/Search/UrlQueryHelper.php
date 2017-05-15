@@ -166,10 +166,10 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         $params = $this->urlParams;
         if (null === $v) {
             unset($params['view']);
-        } elseif($v == 'grid' || $v == 'condensed') {
+        } elseif ($v == 'grid' || $v == 'condensed') {
             $params['limit'] = '50';
             $params['view'] = $v;
-        }  else {
+        } else {
             $params['limit'] = '20';
             $params['view'] = $v;
         }
