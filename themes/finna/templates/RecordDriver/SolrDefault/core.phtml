@@ -416,6 +416,15 @@
         </tr>
         <? endif; ?>
 
+        <? $scale = $this->driver->getMapScale(); if (!empty($scale)): ?>
+        <tr class="recordMapScale">
+          <th><?=$this->transEsc('Scale')?>: </th>
+          <td>
+            <div class="truncate-field"><?=$this->escapeHtml($scale) ?></div>
+          </td>
+        </tr>
+        <? endif; ?>
+
         <? $manufacturer = $this->driver->tryMethod('getManufacturer'); if (!empty($manufacturer)): ?>
         <tr class="recordManufacturer">
           <th><?=$this->transEsc('Manufacturer')?>: </th>
