@@ -82,6 +82,12 @@ class Factory extends \VuFind\View\Helper\Root\Factory
         );
     }
 
+
+    public static function getCitation(ServiceManager $sm)
+    {
+        return new Citation($sm->getServiceLocator()->get('VuFind\DateConverter'));
+    }
+
     /**
      * Construct the CheckboxFacetCounts helper.
      *
