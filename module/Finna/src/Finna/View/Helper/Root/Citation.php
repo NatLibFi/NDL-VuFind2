@@ -15,17 +15,39 @@ use VuFind\Exception\Date as DateException;
  */
 class Citation extends \VuFind\View\Helper\Root\Citation
 {
+    /**
+     * Get Harvard citation.
+     *
+     * This function assigns all the necessary variables and then returns an Harvard
+     * citation.
+     *
+     * @return string
+     */
     public function getCitationHarvard()
     {
-        $apa = [
+        $harvard = [
             'title' => $this->getAPATitle(),
-            'authors' => $this->getAPAAuthors(),
-            'edition' => $this->getEdition()
+            'authors' => $this->getAPAAuthors()
         ];
 
+        $harvard['periodAfterTitle']
+            = (!$this->isPunctuated($harvard['title']) && empty($harvard['edition']));
+
         $partial = $this->getView()->plugin('partial');
-        $apa['publisher'] = $this->getPublisher();
-        $apa['year'] = $this->getYear();
-        return $partial('Citation/harvard.phtml', $apa);
+        if (empty($this->details['journal'])) {
+            $harvard['edition'] = $this->getEdition();
+            $harvard['publisher'] = $this->getPublisher();
+            $harvard['year'] = $this->getYear();
+            return $partial('Citation/harvard.phtml', $harvard);
+        } else {
+            list($harvard['volume'], $harvard['issue'], $harvard['date'])
+                = $this->getAPANumbersAndDate();
+            $harvard['journal'] = $this->details['journal'];
+            $harvard['pageRange'] = $this->getPageRange();
+            if ($doi = $this->driver->tryMethod('getCleanDOI')) {
+                $harvard['doi'] = $doi;
+            }
+            return $partial('Citation/harvard-article.phtml', $harvard);
+        }
     }
 }?>
