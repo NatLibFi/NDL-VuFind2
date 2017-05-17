@@ -1422,4 +1422,100 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
         return true;
     }
+
+    /**
+     * Get an array of all acquisition information.
+     *
+     * @return array
+     */
+    public function getAcquisition()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('037') as $field) {
+            foreach ($field->getSubfields('b') as $acq) {
+                $results[] = $this->stripTrailingPunctuation($acq->getData());
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of all event information.
+     *
+     * @return array
+     */
+    public function getEventNotice()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('518') as $field) {
+            foreach ($field->getSubfields('a') as $event) {
+                $results[] = $this->stripTrailingPunctuation($event->getData());
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of a composition information.
+     *
+     * @return array
+     */
+    public function getComposition()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('382') as $field) {
+            foreach ($field->getSubfields('a') as $compose) {
+                $results[] = $this->stripTrailingPunctuation($compose->getData());
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an original work field 240 a.
+     *
+     * @return array
+     */
+    public function getOriginalWork()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('240') as $field) {
+            foreach ($field->getSubfields('a') as $original) {
+                $results[] = $this->stripTrailingPunctuation($original->getData());
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get first lines of song lyrics from field 031 t.
+     *
+     * @return array
+     */
+    public function getLyrics()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('031') as $field) {
+            foreach ($field->getSubfields('t') as $lyric) {
+                $results[] = $this->stripTrailingPunctuation($lyric->getData());
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get methodologoy from field 567.
+     *
+     * @return array
+     */
+    public function getMethodology()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('567') as $field) {
+            foreach ($field->getSubfields('a') as $method) {
+                $results[] = $this->stripTrailingPunctuation($method->getData());
+            }
+        }
+        return $results;
+    }
 }

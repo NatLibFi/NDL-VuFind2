@@ -708,6 +708,73 @@
             </td>
           </tr>
         <? endif; ?>
+
+        <? $acquisition = $this->driver->getAcquisition(); if (!empty($acquisition)): ?>
+        <tr class="recordAcquisition">
+          <th><?=$this->transEsc('Acquisition')?>: </th>
+          <td>
+            <? foreach ($acquisition as $field): ?>
+              <?=$this->escapeHtml($field)?><br/>
+            <? endforeach; ?>
+          </td>
+        </tr>
+        <? endif; ?>
+
+        <? $composition = $this->driver->getComposition(); if (!empty($composition)): ?>
+        <tr class="recordComposition">
+          <th><?=$this->transEsc('Composition')?>: </th>
+          <td>
+            <?=implode(', ', $composition); ?>
+          </td>
+        </tr>
+        <? endif; ?>
+
+        <? $originalWork = $this->driver->getOriginalWork(); if (!empty($originalWork)): ?>
+        <tr class="originalWork">
+          <th><?=$this->transEsc('Original Work')?>: </th>
+          <td>
+            <? foreach ($originalWork as $field): ?>
+              <?=$this->escapeHtml($field)?><br/>
+            <? endforeach; ?>
+          </td>
+        </tr>
+        <? endif; ?>
+
+        <? $eventInfo = $this->driver->getEventNotice(); if (!empty($eventInfo)): ?>
+        <tr class="recordEventInfo">
+          <th><?=$this->transEsc('Event notes')?>: </th>
+          <td>
+            <? foreach ($eventInfo as $field): ?>
+              <?=$this->escapeHtml($field)?><br/>
+            <? endforeach; ?>
+          </td>
+        </tr>
+        <? endif; ?>
+
+        <? $lyrics = $this->driver->getLyrics(); if (!empty($lyrics)): ?>
+        <tr class="recordLyrics">
+          <th><?=$this->transEsc('Lyrics')?>: </th>
+          <td>
+            <div class="truncate-field">
+            <? foreach ($lyrics as $field): ?>
+              <?=$this->escapeHtml($field)?><br/>
+            <? endforeach; ?>
+            </div>
+          </td>
+        </tr>
+        <? endif; ?>
+
+        <? $method = $this->driver->getMethodology(); if (!empty($method)): ?>
+        <tr class="recordMethodology">
+          <th><?=$this->transEsc('Methodology')?>: </th>
+          <td>
+            <? foreach ($method as $field): ?>
+              <?=$this->escapeHtml($field)?><br/>
+            <? endforeach; ?>
+          </td>
+        </tr>
+        <? endif; ?>
+
         <? if ($openUrlActive): ?>
         <tr>
           <td colspan="2" class="more-options-link"><?=$openUrl->renderTemplate()?> </td>
