@@ -252,7 +252,7 @@ title_level_holds_mode = "driver"
 ;
 ; You may use multiple group keys (delimited by comma), e.g.,
 ; - item_agency_id,location
-;holdings_grouping = holdings_id
+holdings_grouping = holdings_id,location
 
 ; Whether support for multiple library cards is enabled. Default is false.
 library_cards = true
@@ -1162,6 +1162,15 @@ url_blacklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
 ; Whether to sort data sources by name. Default is false (use the priority defined
 ; in searches.ini).
 ;sort_sources = true
+
+; Video source configuration. First element is data source ID, second is media type
+; and third is the URL. {videoname} in the URL is replaced with the video ID.
+;video_sources[] = "kavi|application/dash+xml|http://elo.salama.tv.funet.fi/vod/_definst_/mp4:{videoname}/manifest.mpd"
+;video_sources[] = "kavi|application/x-mpegURL|http://elo.salama.tv.funet.fi/vod/_definst_/mp4:{videoname}/playlist.m3u8"
+
+; Video poster source configuration keyed by data source. {filename} is replaced with
+; the actual filename.
+;poster_sources[kavi] = "http://www.elonet.fi/tenho/media/{filename}"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
