@@ -882,14 +882,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected function getLanguageSpecificItem($element, $language)
     {
-        $language = substr($language, 0, 2);
-        $result = null;
+        $languages = [];
         if ($language) {
+            $languages[] = $language;
+            if (strlen($language) > 2) {
+                $languages[] = substr($language, 0, 2);
+            }
+        }
+        $result = null;
+        foreach ($languages as $lng) {
             foreach ($element as $item) {
                 $attrs = $item->attributes();
-                if (!empty($attrs->lang) && (string)$attrs->lang == $language) {
+                if (!empty($attrs->lang) && (string)$attrs->lang == $lng) {
                     $result = (string)$item;
-                    break;
+                    break 2;
                 }
             }
         }

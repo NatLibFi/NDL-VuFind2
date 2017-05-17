@@ -86,7 +86,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      */
     public function getLargeImage($index = 0, $params = [], $canonical = false)
     {
-        $images = $this->record->getAllImages('');
+        $images = $this->record->getAllImages($this->view->layout()->userLang);
         if (!isset($images[$index])) {
             return false;
         }
@@ -113,7 +113,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      */
     public function getMasterImage($index = 0, $params = [], $canonical = false)
     {
-        $images = $this->record->getAllImages('');
+        $images = $this->record->getAllImages($this->view->layout()->userLang);
         if (!isset($images[$index])) {
             return false;
         }
