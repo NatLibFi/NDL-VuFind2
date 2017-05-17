@@ -369,7 +369,7 @@
           </tr>
         <? endif; ?>
 
-        <? if ($results = $this->driver->getPhotographerInfo()): ?>
+        <? $results = $this->driver->getPhotographerInfo(); if (!empty($results)): ?>
         <tr class="recordPhotographer">
           <th><?=$this->transEsc('lido_event_type_Image_valmistus')?>:</th>
           <td><?=$this->escapeHtml($results); ?></td>

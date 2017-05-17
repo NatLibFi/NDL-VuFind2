@@ -901,14 +901,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $photographer = $nodes->resourceDescription;
                     $time = $nodes->resourceDateTaken->displayDate
                      ? $nodes->resourceDateTaken->displayDate : "";
-                    $result = !empty($time) ? $photographer[0] . " " . $time[0] :
-                    $photographer[0];
+                    if (strlen(trim($time)) > 0) {
+                        return $result = !empty($time) ?
+                            $photographer[0] . " " . $time[0] : $photographer[0];
+                    }
+                }
+                if ($isBuilding == false || $isPhoto == false) {
+                    break;
                 }
             }
         }
-        if ($isBuilding == false || $isPhoto == false) {
-            $result = '';
-        }
-        return $result;
     }
 }
