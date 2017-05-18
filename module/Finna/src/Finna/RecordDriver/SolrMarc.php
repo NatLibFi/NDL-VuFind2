@@ -1155,6 +1155,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get the map scale of the record.
+     *
+     * @return string
+     */
+    public function getMapScale()
+    {
+        $scale = '';
+        foreach ($this->getMarcRecord()->getFields('255') as $field) {
+            if ($field->getSubfield('a')) {
+                $scale = $field->getSubfield('a')->getData();
+            }
+        }
+        return $this->stripTrailingPunctuation($scale);
+    }
+
+    /**
      * Returns the array element for the 'getAllRecordLinks' method
      *
      * @param File_MARC_Data_Field $field Field to examine
