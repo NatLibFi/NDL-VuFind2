@@ -48,8 +48,8 @@ finna.itemStatus = (function() {
           details.find('.holdings-container.collapsible > .header').click(function () {
              $(this).next('.holdings').toggleClass('collapsed');
               $(this).find('.fa.arrow:first')
-                  .removeClass('fa-arrow-right fa-arrow-down')
-                  .addClass('fa-arrow-' + ($(this).next('.holdings').hasClass('collapsed') ? 'right' : 'down'));
+                  .removeClass('fa-arrow-up fa-arrow-down')
+                  .addClass('fa-arrow-' + ($(this).next('.holdings').hasClass('collapsed') ? 'down' : 'up'));
           });
           statusCallback(item);
         } else if (typeof(result.missing_data) != 'undefined'
