@@ -1351,6 +1351,19 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                             );
                         }
 
+                        // Subfields n and p to show number of part/section of a
+                        // series and name of that part/section
+                        $partName = $this->getSubfieldArray($currentField, ['p']);
+                        if (isset($partName[0])) {
+                            $currentArray['partName']
+                                = $this->stripTrailingPunctuation($partName[0]);
+                        }
+                        $partNumber = $this->getSubfieldArray($currentField, ['n']);
+                        if (isset($partNumber[0])) {
+                            $currentArray['partNumber']
+                                = $this->stripTrailingPunctuation($partNumber[0]);
+                        }
+
                         // Save the current match:
                         $matches[] = $currentArray;
                     }
@@ -1514,6 +1527,38 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         foreach ($this->getMarcRecord()->getFields('567') as $field) {
             foreach ($field->getSubfields('a') as $method) {
                 $results[] = $this->stripTrailingPunctuation($method->getData());
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get format of notated music from field 348.
+     *
+     * @return array
+     */
+    public function getNoteFormat()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('348') as $field) {
+            foreach ($field->getSubfields('a') as $note) {
+                $results[] = $this->stripTrailingPunctuation($note->getData());
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get trade availibility notice from field 366.
+     *
+     * @return array
+     */
+    public function getTradeAvailabilityNote()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('366') as $field) {
+            foreach ($field->getSubfields('e') as $note) {
+                $results[] = $this->stripTrailingPunctuation($note->getData());
             }
         }
         return $results;
