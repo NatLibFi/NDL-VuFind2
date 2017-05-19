@@ -366,12 +366,6 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Publish date', 'getDateSpan', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'extendedDateSpan']
-            ]
-        );
-        $spec->setTemplateLine(
             'Manufacturer', 'getManufacturer', 'data-transEsc.phtml',
             [
                 'context' => ['class' => 'recordManufacturer']
@@ -415,6 +409,12 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'recordLinks', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
+            [
+                'context' => ['class' => 'recordHide']
+            ]
+        );
+        $spec->setTemplateLine(
             'Online Access', true, 'data-onlineAccess.phtml',
             [
                 'context' => ['class' => 'webResource']
@@ -427,13 +427,9 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'recordLinks', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
+            'Publish date', 'getDateSpan', 'data-escapeHtml.phtml',
             [
-                'labelFunction'  => function ($data) {
-                    $label = isset($data[0]) ? $data[0]['title'] : '';
-                    return $label;
-                },
-                'context' => ['class' => 'recordLinks']
+                'context' => ['class' => 'extendedDateSpan']
             ]
         );
         $spec->setTemplateLine(
@@ -462,13 +458,13 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Color', 'getColor', 'data-escapeHtml.phtml',
+            'Color', 'getColor', 'data-color.phtml',
             [
                 'context' => ['class' => 'record-color']
             ]
         );
         $spec->setTemplateLine(
-            'Sound', 'getSound', 'data-escapeHtml.phtml',
+            'Sound', 'getSound', 'data-sound.phtml',
             [
                 'context' => ['class' => 'record-sound']
             ]
@@ -480,7 +476,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Media Format', 'getSystemDetails', 'data-escapeHtml',
+            'System Format', 'getSystemDetails', 'data-escapeHtml',
             [
                 'context' => ['class' => 'extendedSystem']
             ]
@@ -534,13 +530,13 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Access Restrictions', 'getAccessRestrictions', 'data-escapeHtml.phtml',
+            'Access Restrictions', 'getAccessRestrictions', 'data-accrest.phtml',
             [
                 'context' => ['class' => 'extendedAccess']
             ]
         );
         $spec->setTemplateLine(
-            'Access', 'getAccessRestrictions', 'data-escapeHtml.phtml',
+            'Access', 'getAccessRestrictions', 'data-accrest.phtml',
             [
                 'context' => ['class' => 'extendedAccess']
             ]

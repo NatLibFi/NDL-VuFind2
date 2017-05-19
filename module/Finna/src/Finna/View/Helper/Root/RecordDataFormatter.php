@@ -55,7 +55,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $filter = [
             'Contributors', 'Format', 'Organisation', 'Published', 'Online Access',
             'Original Work', 'Assistants', 'Authors', 'Music',
-            'Press Reviews', 'mainFormat', 'Access', 'Edition',
+            'Press Reviews', 'mainFormat', 'Access Restrictions', 'Edition',
             'Archive', 'Archive Series', 'Archive Origination',
             'Item Description FWD', 'Published in', 'Source Collection'
         ];
@@ -100,7 +100,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Contributors', 'Format', 'Organisation', 'Published', 'Online Access',
             'Original Work', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'Access Restrictions', 'mainFormat',
-            'Archive', 'Item Description FWD', 'Publish date', 'Source Collection'
+            'Archive', 'Item Description FWD', 'Publish date', 'Source Collection',
+            'ISBN'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -140,7 +141,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $filter = [
             'Contributors', 'Archive', 'Publisher', 'Organisation',
             'Item Description FWD', 'Published in', 'Published', 'Description',
-            'Format', 'Online Access'
+            'Format', 'Online Access', 'Access Restrictions'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -160,7 +161,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $filter = [
             'Publisher','Edition', 'Archive', 'Published in', 'Format',
             'Other Titles', 'Presenters', 'Organisation', 'Published', 'Authors',
-            'Access', 'Item Description', 'Publisher', 'Source Collection'
+            'Access Restrictions', 'Item Description', 'Publisher',
+            'Source Collection'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
