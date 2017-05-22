@@ -75,4 +75,4 @@ class Citation extends \VuFind\View\Helper\Root\Citation
             return $partial('Citation/harvard-article.phtml', $harvard);
         }
     }
-}?>
+}
