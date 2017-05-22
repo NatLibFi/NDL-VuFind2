@@ -149,30 +149,4 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
             return $this->getParams(false);
         }
     }
-
-    /**
-     * Set view and items per page limit in the params
-     * Limit depends on selected view
-     * list: 20 items of page
-     * grid: 50 items per page
-     * condenced: 50 items per page
-     *
-     * @param string $v New sort parameter (null for NO view parameter)
-     *
-     * @return string
-     */
-    public function setViewAndLimitParams($v)
-    {
-        $params = $this->urlParams;
-        if (null === $v) {
-            unset($params['view']);
-        } elseif ($v == 'grid' || $v == 'condensed') {
-            $params['limit'] = '50';
-            $params['view'] = $v;
-        } else {
-            $params['limit'] = '20';
-            $params['view'] = $v;
-        }
-        return new static($params, $this->queryObject, $this->config, false);
-    }
 }
