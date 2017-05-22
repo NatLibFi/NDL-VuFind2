@@ -22,7 +22,6 @@
  *
  * @category VuFind
  * @package  View_Helpers
- * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Anna Niku <anna.niku@gofore.com>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -34,7 +33,6 @@ namespace Finna\View\Helper\Root;
  *
  * @category VuFind
  * @package  View_Helpers
- * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Anna Niku <anna.niku@gofore.com>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -44,8 +42,8 @@ class Citation extends \VuFind\View\Helper\Root\Citation
     /**
      * Get Harvard citation.
      *
-     * This function assigns all the necessary variables and then returns an Harvard
-     * citation.
+     * This function assigns all the necessary variables using APA's functions
+     * and then returns an Harvard citation.
      *
      * @return string
      */
