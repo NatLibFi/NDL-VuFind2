@@ -55,7 +55,8 @@ class Citation extends \VuFind\View\Helper\Root\Citation
         ];
 
         $harvard['periodAfterTitle']
-            = (!$this->isPunctuated($harvard['title']) && empty($harvard['edition']));
+            = (!$this->isPunctuated($harvard['title'])
+            && empty($harvard['edition']));
 
         $partial = $this->getView()->plugin('partial');
         if (empty($this->details['journal'])) {
