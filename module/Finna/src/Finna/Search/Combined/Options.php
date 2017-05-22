@@ -38,6 +38,7 @@ namespace Finna\Search\Combined;
  */
 class Options extends \VuFind\Search\Combined\Options
 {
+    use \Finna\Search\FinnaOptions;
     /**
      * Constructor
      *
