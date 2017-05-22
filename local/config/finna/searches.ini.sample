@@ -21,7 +21,6 @@ default_view         = list
 ; sets the default number of results per page. limit_options is a comma-separated
 ; list of numbers to be presented to the end-user. If only one limit is required,
 ; set default_limit and leave limit_options commented out.
-; default_limit_grid and default_limit_condensed is default limit for these views
 ; WARNING: using large limits may require you to raise your PHP memory limits to
 ; avoid errors.
 default_limit        = 20

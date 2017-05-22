@@ -46,7 +46,7 @@ class UrlQueryHelperFactory extends \VuFind\Search\Factory\UrlQueryHelperFactory
     /**
      * Extract default settings from the search parameters.
      *
-     * @param Params $params VuFind search parameters
+     * @param Params $params Finna search parameters
      *
      * @return array
      */
