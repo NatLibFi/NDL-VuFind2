@@ -582,7 +582,7 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
      *
      * @return string
      */
-    public function getDaterange()
+    public function getUnitDate()
     {
         $unitdate = $this->getSimpleXML()->xpath('did/unitdate');
         if (isset($unitdate[0])) {
