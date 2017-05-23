@@ -33,6 +33,7 @@ return [
             'primo' => 'Finna\View\Helper\Root\Factory::getPrimo',
             'recaptcha' => 'VuFind\View\Helper\Root\Factory::getRecaptcha',
             'record' => 'Finna\View\Helper\Root\Factory::getRecord',
+            'recordDataFormatter' => 'Finna\View\Helper\Root\RecordDataFormatterFactory',
             'recordImage' => 'Finna\View\Helper\Root\Factory::getRecordImage',
             'scriptSrc' => 'Finna\View\Helper\Root\Factory::getScriptSrc',
             'searchbox' => 'Finna\View\Helper\Root\Factory::getSearchBox',
@@ -59,9 +60,11 @@ return [
         'vendor/dataTables.bootstrap.min.css',
         'vendor/magnific-popup.min.css',
         'dataTables.bootstrap.custom.css',
-        'vendor/slick.min.css',
+        'vendor/slick.css',
+        'vendor/slick-theme.css',
         'vendor/bootstrap-multiselect.min.css',
         'vendor/bootstrap-datepicker3.min.css',
+        'vendor/video-js.min.css',
         'finna.css'
     ],
     'js' => [
@@ -82,6 +85,11 @@ return [
         'vendor/jquery.magnific-popup.min.js',
         'vendor/jquery.cookie-1.4.1.min.js',
         'vendor/slick.min.js',
+        'vendor/video.min.js',
+        'vendor/dash.all.min.js',
+        'vendor/videojs-dash.min.js',
+        'vendor/videojs-contrib-hls.min.js',
+        'vendor/videojs.hotkeys.min.js',
         'vendor/jquery.touchSwipe.min.js',
         'vendor/bootstrap-multiselect.min.js',
         'vendor/gauge.min.js'

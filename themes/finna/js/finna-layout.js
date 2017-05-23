@@ -476,6 +476,8 @@ finna.layout = (function() {
                 }
                 if (this.naturalWidth && this.naturalWidth == 10 && this.naturalHeight == 10) {
                     $(this).parent().addClass('no-image');
+                    var href = $(this).parent().attr('href');
+                    $(this).parent().attr({'href': href.split('#')[0], 'title': ''});
                     $(this).parents('.grid').addClass('no-image');
                     $('.rating-stars').addClass('hidden-xs');
                     $(this).parents('.record-image-container').find('.image-text-container').addClass('hidden');
@@ -732,6 +734,49 @@ finna.layout = (function() {
         });
     };
 
+    var initVideoPopup = function(container) {
+        if (typeof(container) == 'undefined') {
+            container = $('body');
+        }
+
+        container.find('a[data-embed-video]').click(function(e) {
+            var videoSources = $(this).data('videoSources');
+            var posterUrl = $(this).data('posterUrl');
+            $.magnificPopup.open({
+                type: 'inline',
+                items: {
+                    src: "<div class='video-popup'><video id='video-player' class='video-js vjs-big-play-centered' controls></video></div>"
+                },
+                callbacks: {
+                    open: function () {
+                        var player = videojs('video-player');
+
+                        var disablelogging = function (player, mediaPlayer) {
+                            mediaPlayer.getDebug().setLogToBrowserConsole(false);
+                        };
+                        videojs.Html5DashJS.hook('beforeinitialize', disablelogging);
+
+                        player.ready(function () {
+                            this.hotkeys({
+                                enableVolumeScroll: false,
+                                enableModifiersForNumbers: false
+                            });
+                        });
+
+                        player.src(videoSources);
+                        player.poster(posterUrl);
+                        player.load();
+                    },
+                    close: function () {
+                        videojs('video-player').dispose();
+                    }
+                }
+            });
+            e.preventDefault();
+            return false;
+        });
+    };
+
     var initKeyboardNavigation = function () {
         $(window).keyup(function(e) {
             var $target = $(e.target);
@@ -759,6 +804,7 @@ finna.layout = (function() {
         initOrganisationPageLinks: initOrganisationPageLinks,
         initSecondaryLoginField: initSecondaryLoginField,
         initIframeEmbed: initIframeEmbed,
+        initVideoPopup: initVideoPopup,
         init: function() {
             initScrollRecord();
             initJumpMenus();
@@ -788,6 +834,7 @@ finna.layout = (function() {
             initOrganisationInfoWidgets();
             initOrganisationPageLinks();
             initIframeEmbed();
+            initVideoPopup();
             initKeyboardNavigation();
         }
     };

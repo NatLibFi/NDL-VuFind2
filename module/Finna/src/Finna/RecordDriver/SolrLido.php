@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2015-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -35,6 +36,7 @@ namespace Finna\RecordDriver;
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -77,9 +79,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Return access restriction notes for the record.
      *
+     * @param string $language Optional primary language to look for
+     *
      * @return array
      */
-    public function getAccessRestrictions()
+    public function getAccessRestrictions($language = '')
     {
         $restrictions = [];
         $rights = $this->getSimpleXML()->xpath(
@@ -93,7 +97,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
                 $type = strtolower((string)$right->conceptID->attributes()->type);
                 if ($type == 'copyright') {
-                    $term = (string)$right->term;
+                    $term = (string)$this->getLanguageSpecificItem(
+                        $right->term, $language
+                    );
                     if ($term) {
                         $restrictions[] = $term;
                     }
@@ -190,7 +196,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
             }
             if (!empty($resourceSet->rightsResource->rightsType->term)) {
-                $term = (string)$resourceSet->rightsResource->rightsType->term;
+                $term = (string)$this->getLanguageSpecificItem(
+                    $resourceSet->rightsResource->rightsType->term, $language
+                );
                 if (!isset($rights['copyright']) || $rights['copyright'] !== $term) {
                     $rights['description'][] = $term;
                 }
@@ -210,10 +218,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 case 'thumb':
                     $size = 'small';
                     break;
-                case 'image_master':
+                case 'medium':
+                    $size = 'medium';
+                    break;
+                case 'image_large':
                 case 'large':
                 case 'zoomview':
                     $size = 'large';
+                    break;
+                case 'image_master':
+                    $size = 'master';
                     break;
                 }
 
@@ -276,12 +290,24 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get the collections of the current record.
      *
-     * @return string
+     * @return array
      */
     public function getCollections()
     {
-        return isset($this->fields['collection']) ?
-        $this->fields['collection'] : [];
+        $results = [];
+        $allowedTypes = ['Kokoelma', 'kuuluu kokoelmaan', 'kokoelma', 'Alakokoelma',
+            'Erityiskokoelma'];
+        foreach ($this->getSimpleXML()->xpath(
+            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
+            . 'relatedWorkSet'
+        ) as $node) {
+            $term = isset($node->relatedWorkRelType->term)
+             ? $node->relatedWorkRelType->term : '';
+            if (in_array($term, $allowedTypes)) {
+                $results[] = (string)$node->relatedWork->displayObject;
+            }
+        }
+        return $results;
     }
 
     /**
@@ -537,7 +563,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
 
-        $desc = $this->getAccessRestrictions();
+        $desc = $this->getAccessRestrictions($language);
         if ($desc && count($desc)) {
             $description = [];
             foreach ($desc as $p) {
@@ -858,6 +884,39 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             return [$matches[1], $matches[2] == '9999' ? null : $matches[2]];
         }
         return null;
+    }
+
+    /**
+     * Get a language-specific item from an element array
+     *
+     * @param SimpleXMLElement $element  Element to use
+     * @param string           $language Language to look for
+     *
+     * @return SimpleXMLElement
+     */
+    protected function getLanguageSpecificItem($element, $language)
+    {
+        $languages = [];
+        if ($language) {
+            $languages[] = $language;
+            if (strlen($language) > 2) {
+                $languages[] = substr($language, 0, 2);
+            }
+        }
+        $result = null;
+        foreach ($languages as $lng) {
+            foreach ($element as $item) {
+                $attrs = $item->attributes();
+                if (!empty($attrs->lang) && (string)$attrs->lang == $lng) {
+                    $result = (string)$item;
+                    break 2;
+                }
+            }
+        }
+        if (null === $result) {
+            $result = $element;
+        }
+        return $result;
     }
 
     /**
