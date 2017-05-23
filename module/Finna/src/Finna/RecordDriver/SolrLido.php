@@ -953,7 +953,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if ('Valokuva' === $term) {
                     $photographer = $nodes->resourceDescription;
                     $time = $nodes->resourceDateTaken->displayDate
-                     ? $nodes->resourceDateTaken->displayDate : "";
+                     ? $nodes->resourceDateTaken->displayDate : '';
                     if (strlen(trim($time)) > 0 || strlen(trim($photographer)) > 0) {
                         return $result = !empty($time) ?
                             $photographer[0] . ' ' . $time[0] : $photographer[0];
