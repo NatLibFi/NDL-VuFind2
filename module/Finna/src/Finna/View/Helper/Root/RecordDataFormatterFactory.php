@@ -566,6 +566,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordPhysicalLocation']
             ]
         );
+        $spec->setTemplateLine(
+            'Photographer Info', 'getPhotographerInfo', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordPhotographer']
+            ]
+        );
         return $spec->getArray();
     }
 
