@@ -1,6 +1,6 @@
 <? //Don't add START and END comments ?>
 <? if(!empty($data)): ?>
-<div class="truncate-field" data-rows="5">
+<div class="truncate-field" data-rows="3">
   <? foreach($data as $index => $author): ?>
     <?=($index > 0 ? ', ' : '')?><?=$this->escapeHtml($author['name'])?></a>
     <? if (!empty($author['roleName'])): ?><span class="author-rolename">, <?=$this->escapeHtml($author['roleName']) ?></span>
