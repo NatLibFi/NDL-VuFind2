@@ -89,12 +89,6 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Contributors', 'getNonPresenterAuthors', 'data-contributors.phtml',
-            [
-                'context' => ['class' => 'recordAuthors']
-            ]
-        );
-        $spec->setTemplateLine(
             'Secondary Authors', 'getNonPresenterSecondaryAuthors',
             'data-contributors.phtml',
             [
