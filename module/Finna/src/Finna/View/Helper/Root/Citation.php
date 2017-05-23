@@ -81,7 +81,8 @@ class Citation extends \VuFind\View\Helper\Root\Citation
      *
      * @return array
      */
-    protected function getAPAAuthors(){
+    protected function getAPAAuthors()
+    {
         $authorStr = '';
         if (isset($this->details['authors'])
             && is_array($this->details['authors'])
