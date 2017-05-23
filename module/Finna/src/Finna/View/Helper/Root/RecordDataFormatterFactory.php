@@ -277,7 +277,7 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'mainFormat', 'getEvents', 'data-mainFormat.phtml',
             [
-                'context' => ['class' => 'recordHide']
+                'context' => ['class' => 'hide']
             ]
         );
         $spec->setTemplateLine(
@@ -405,7 +405,7 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'recordLinks', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
             [
-                'context' => ['class' => 'recordHide']
+                'context' => ['class' => 'hide']
             ]
         );
         $spec->setTemplateLine(
