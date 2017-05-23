@@ -277,7 +277,7 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'mainFormat', 'getEvents', 'data-mainFormat.phtml',
             [
-                'context' => ['class' => 'recordHide']
+                'context' => ['class' => 'hide']
             ]
         );
         $spec->setTemplateLine(
@@ -405,7 +405,7 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'recordLinks', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
             [
-                'context' => ['class' => 'recordHide']
+                'context' => ['class' => 'hide']
             ]
         );
         $spec->setTemplateLine(
@@ -570,6 +570,30 @@ class RecordDataFormatterFactory
             'Acquisition', 'getAcquisition', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordAcquisition']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Medium of performance', 'getMusicComposition', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordComposition']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Note Format', 'getNoteFormat', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordNoteFormat']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Uniform Title', 'getUniformTitle', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordUniformTitle']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Lyrics', 'getFirstLyrics', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordFirstLyrics']
             ]
         );
         return $spec->getArray();

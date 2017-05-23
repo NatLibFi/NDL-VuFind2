@@ -1475,7 +1475,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      *
      * @return array
      */
-    public function getComposition()
+    public function getMusicComposition()
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
@@ -1491,7 +1491,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      *
      * @return array
      */
-    public function getOriginalWork()
+    public function getUniformTitle()
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('240') as $field) {
@@ -1507,7 +1507,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      *
      * @return array
      */
-    public function getLyrics()
+    public function getFirstLyrics()
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('031') as $field) {
