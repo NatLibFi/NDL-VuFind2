@@ -41,6 +41,7 @@ namespace Finna\Search\Primo;
 class Options extends \VuFind\Search\Primo\Options
 {
     use \Finna\Search\FinnaOptions;
+
     /**
      * Date range visualization settings
      *

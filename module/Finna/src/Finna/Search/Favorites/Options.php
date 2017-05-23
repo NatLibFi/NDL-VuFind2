@@ -40,6 +40,7 @@ use Finna\Controller\MyResearchController;
 class Options extends \VuFind\Search\Favorites\Options
 {
     use \Finna\Search\FinnaOptions;
+
     /**
      * Constructor
      * Add the limit and views options to Favorites.

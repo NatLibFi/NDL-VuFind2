@@ -52,11 +52,9 @@ trait FinnaOptions
         if ($view == 'grid' && $searchSettings->General->default_limit_grid) {
             $defaultLimit = $searchSettings->General->default_limit_grid;
         } elseif ($view == 'condensed'
-            && $searchSettings->General->default_limit_condenced
+            && $searchSettings->General->default_limit_condensed
         ) {
-            $defaultLimit = $searchSettings->General->default_limit_condenced;
-        } elseif ($searchSettings->General->default_limit) {
-            $defaultLimit = $searchSettings->General->default_limit;
+            $defaultLimit = $searchSettings->General->default_limit_condensed;
         } else {
             $defaultLimit = $this->getDefaultLimit();
         }
