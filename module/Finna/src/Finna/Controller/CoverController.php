@@ -93,6 +93,8 @@ class CoverController extends \VuFind\Controller\CoverController
                         // Strip the data source prefix
                         $parts = explode('.', $driver->getUniqueID(), 2);
                         $filename = end($parts);
+                        // Remove beginning of the url from filename by exploding
+                        // it by %2F. Assign last part of it to the filename
                         $parts = explode('%2F', $filename);
                         $filename = end($parts);
                     }
