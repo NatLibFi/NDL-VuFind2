@@ -14,7 +14,7 @@
           <?=$this->escapeHtml($field['number'])?><? if (!empty($field['partName']) || !empty($field['partNumber'])): ?>, <? endif; ?>
         <? endif; ?>
         <? if (!empty($field['partName']) && !empty($field['partNumber'])): ?>
-          <? $link = $field['partName']." & ".$field['partNumber']; ?>
+          <? $link = $field['partName']." & ".$field['partNumber']; ?><br/>
           <a href="<?=$this->record($this->driver)->getLink('series', $link)?>"><?=$this->escapeHtml($link)?></a>
         <? elseif (!empty($field['partName']) && empty($field['partNumber'])): ?>
           <?=$this->escapeHtml($field['partName']) ?>

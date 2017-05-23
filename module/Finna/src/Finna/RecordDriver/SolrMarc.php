@@ -1487,22 +1487,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get an original work field 240 a.
-     *
-     * @return array
-     */
-    public function getUniformTitle()
-    {
-        $results = [];
-        foreach ($this->getMarcRecord()->getFields('240') as $field) {
-            foreach ($field->getSubfields('a') as $original) {
-                $results[] = $this->stripTrailingPunctuation($original->getData());
-            }
-        }
-        return $results;
-    }
-
-    /**
      * Get first lines of song lyrics from field 031 t.
      *
      * @return array

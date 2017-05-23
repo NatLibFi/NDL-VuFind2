@@ -585,15 +585,33 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Uniform Title', 'getUniformTitle', 'data-escapeHtml.phtml',
+            'Uniform Title', 'getUniformTitles', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordUniformTitle']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Event Notice', 'getEventNotice', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordEventNotice']
             ]
         );
         $spec->setTemplateLine(
             'Lyrics', 'getFirstLyrics', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordFirstLyrics']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Trade Note', 'getTradeAvailibilityNote', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordTradeNote']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Methodology', 'getMethodology', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordMethodology']
             ]
         );
         return $spec->getArray();
