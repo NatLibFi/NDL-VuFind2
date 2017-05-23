@@ -6,12 +6,20 @@
        name.  We should account for both cases to maximize compatibility. */?>
     <? if (is_array($field)): ?>
       <? if (!empty($field['name'])): ?>
-        <a href="<?=$this->record($this->driver)->getLink('series', $field['name'])?>"><?=$this->escapeHtml($field['name'])?></a><? if (!empty($field['issn']) || !empty($field['number'])): ?>, <? endif; ?>
+        <a href="<?=$this->record($this->driver)->getLink('series', $field['name'])?>"><?=$this->escapeHtml($field['name'])?></a><? if (!empty($field['issn']) || !empty($field['number']) || !empty($field['partName']) || !empty($field['partNumber'])): ?>, <? endif; ?>
         <? if (!empty($field['issn'])): ?>
           ISSN <?=$this->escapeHtml($field['issn'])?><? if (!empty($field['number'])): ?>; <? endif; ?>
         <? endif; ?>
         <? if (!empty($field['number'])): ?>
-          <?=$this->escapeHtml($field['number'])?>
+          <?=$this->escapeHtml($field['number'])?><? if (!empty($field['partName']) || !empty($field['partNumber'])): ?>, <? endif; ?>
+        <? endif; ?>
+        <? if (!empty($field['partName']) && !empty($field['partNumber'])): ?>
+          <? $link = $field['partName']." & ".$field['partNumber']; ?>
+          <a href="<?=$this->record($this->driver)->getLink('series', $link)?>"><?=$this->escapeHtml($link)?></a>
+        <? elseif (!empty($field['partName']) && empty($field['partNumber'])): ?>
+          <?=$this->escapeHtml($field['partName']) ?>
+        <? elseif (empty($field['partName']) && !empty($field['partNumber'])): ?>
+          <?=$this->escapeHtml($field['partNumber']) ?>
         <? endif; ?>
         <br/>
       <? endif; ?>

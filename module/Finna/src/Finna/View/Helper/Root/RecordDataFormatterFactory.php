@@ -566,6 +566,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordPhysicalLocation']
             ]
         );
+        $spec->setTemplateLine(
+            'Acquisition', 'getAcquisition', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordAcquisition']
+            ]
+        );
         return $spec->getArray();
     }
 
