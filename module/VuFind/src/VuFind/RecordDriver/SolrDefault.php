@@ -1733,7 +1733,7 @@ class SolrDefault extends AbstractBase
      */
     protected function getSupportedCitationFormats()
     {
-        return ['APA', 'Chicago', 'MLA', 'Harvard'];
+        return ['APA', 'Chicago', 'MLA'];
     }
 
     /**
