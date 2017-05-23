@@ -567,6 +567,12 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'Date', 'getUnitDate', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordDaterange']
+            ]
+        );
+        $spec->setTemplateLine(
             'Photographer Info', 'getPhotographerInfo', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordPhotographer']
