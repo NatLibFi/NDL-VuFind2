@@ -75,4 +75,44 @@ class Citation extends \VuFind\View\Helper\Root\Citation
             return $partial('Citation/harvard-article.phtml', $harvard);
         }
     }
+
+    /**
+     * Get an array of authors for an APA and Harvard citation.
+     *
+     * @return array
+     */
+    protected function getAPAAuthors(){
+        $authorStr = '';
+        if (isset($this->details['authors'])
+            && is_array($this->details['authors'])
+        ) {
+            $i = 0;
+            $ellipsis = false;
+            foreach ($this->details['authors'] as $author) {
+                $author = $this->abbreviateName($author);
+                if (($i + 1 == count($this->details['authors']))
+                    && ($i > 0)
+                ) { // Last
+                    // Do we already have periods of ellipsis?  If not, we need
+                    // an ampersand:
+                    $authorStr .= $ellipsis ? ' ' : '& ';
+                    $authorStr .= $this->stripPunctuation($author) . '.';
+                } elseif ($i > 5) {
+                    // If we have more than seven authors, we need to skip some:
+                    if (!$ellipsis) {
+                        $authorStr .= '. . .';
+                        $ellipsis = true;
+                    }
+                } elseif (count($this->details['authors']) > 1) {
+                    $authorStr .= $author;
+                    $authorStr
+                        .= $i + 2 == count($this->details['authors']) ? ' ' : ', ';
+                } else { // First and only
+                    $authorStr .= $this->stripPunctuation($author) . '.';
+                }
+                $i++;
+            }
+        }
+        return (empty($authorStr) ? false : $authorStr);
+    }
 }
