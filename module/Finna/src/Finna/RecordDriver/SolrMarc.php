@@ -1480,8 +1480,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $results = [];
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
             foreach ($field->getSubfields('a') as $compose) {
-                $results[] = $this->stripTrailingPunctuation($compose->getData());
+                $subfields[] = $this->stripTrailingPunctuation($compose->getData());
             }
+            $results = implode(', ', $subfields);
         }
         return $results;
     }
@@ -1527,9 +1528,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('348') as $field) {
-            foreach ($field->getSubfields('a') as $note) {
-                $results[] = $this->stripTrailingPunctuation($note->getData());
+            foreach ($field->getSubfields() as $subfield) {
+                    $subfields[] = $subfield->getData();
             }
+                $results[] = implode(', ', $subfields);
         }
         return $results;
     }
@@ -1545,6 +1547,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         foreach ($this->getMarcRecord()->getFields('366') as $field) {
             foreach ($field->getSubfields('e') as $note) {
                 $results[] = $this->stripTrailingPunctuation($note->getData());
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an uniform title field 240 a.
+     *
+     * @return array
+     */
+    public function getUniformTitle()
+    {
+        $results = [];
+        foreach ($this->getMarcRecord()->getFields('240') as $field) {
+            foreach ($field->getSubfields('a') as $original) {
+                 $results[] = $this->stripTrailingPunctuation($original->getData());
             }
         }
         return $results;

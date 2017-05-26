@@ -591,7 +591,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Uniform Title', 'getUniformTitles', 'data-escapeHtml.phtml',
+            'Uniform Title', 'getUniformTitle', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordUniformTitle']
             ]
@@ -609,7 +609,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Trade Note', 'getTradeAvailibilityNote', 'data-escapeHtml.phtml',
+            'Trade Note', 'getTradeAvailabilityNote', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordTradeNote']
             ]
