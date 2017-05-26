@@ -940,23 +940,25 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getPhotographerInfo()
     {
-        $term = $this->getSimpleXML()->xpath(
+        foreach ($this->getSimpleXML()->xpath(
             'lido/descriptiveMetadata/objectClassificationWrap/objectWorkTypeWrap/'
-                . 'objectWorkType/term'
-        );
-        $isBuilding = strpos($term[0], 'Rakennus') !== false;
+                . 'objectWorkType'
+        ) as $node) {
+            $objectTerm = (string)$node->term;
+        }
+        $isBuilding = strpos($objectTerm, 'Rakennus') !== false;
         if ($isBuilding) {
             foreach ($this->getSimpleXML()->xpath(
                 'lido/administrativeMetadata/resourceWrap/resourceSet'
             ) as $nodes) {
-                $term = (string)$nodes->resourceType->term;
-                if ('Valokuva' === $term) {
-                    $photographer = $nodes->resourceDescription;
-                    $time = $nodes->resourceDateTaken->displayDate
-                     ? $nodes->resourceDateTaken->displayDate : '';
-                    if (strlen(trim($time)) > 0 || strlen(trim($photographer)) > 0) {
+                $resourceTerm = (string)$nodes->resourceType->term;
+                if ('Valokuva' === $resourceTerm) {
+                    $photographer = (string)$nodes->resourceDescription;
+                    $time = !empty($nodes->resourceDateTaken->displayDate)
+                     ? (string)$nodes->resourceDateTaken->displayDate : '';
+                    if ('' !== trim($time) || '' !== trim($photographer)) {
                         return $result = !empty($time) ?
-                            $photographer[0] . ' ' . $time[0] : $photographer[0];
+                            $photographer . ' ' . $time : $photographer;
                     }
                 }
             }
