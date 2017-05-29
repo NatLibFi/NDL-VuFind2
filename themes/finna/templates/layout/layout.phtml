@@ -204,7 +204,20 @@ JS;
       // Set up default search box if no data was provided from the template;
       // this covers case 1.  Cases 2 and 3 are then covered by logic below.
       if (!isset($this->layout()->searchbox)) {
-        $this->layout()->searchbox = $this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false]);
+
+        if($this->layout()->templateName != 'home' && $this->layout()->templateDir != 'search') {
+            $lookfor = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
+            $url = explode('">', explode('href="', $lookfor)[1])[0];
+            parse_str($url, $parsed);
+
+            foreach ($parsed as $key => $value)
+            {
+              if (strpos($key, 'lookfor') !== false){
+                $lookfor = $value;
+              }
+            }
+        }
+        $this->layout()->searchbox = $this->context($this)->renderInContext("search/searchbox.phtml", ['lookfor' => isset($lookfor) ? $lookfor : '', 'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false]);
       }
     ?>
     <header class="hidden-print">
