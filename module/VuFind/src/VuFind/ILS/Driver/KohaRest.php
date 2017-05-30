@@ -104,6 +104,24 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
+     * Mappings from renewal block reasons
+     *
+     * @var array
+     */
+    protected $renewalBlockMappings = [
+        'too_soon' => 'Cannot renew yet',
+        'onsite_checkout' => 'Copy has special circulation',
+        'on_reserve' => 'renew_item_requested',
+        'too_many' => 'renew_item_limit',
+        'restriction' => 'Borrowing Block Message',
+        'overdue' => 'renew_item_overdue',
+        'cardlost' => 'renew_card_lost',
+        'gonenoaddress' => 'Borrowing Block Koha Reason Patron_GoneNoAddress',
+        'debarred' => 'Borrowing Block Koha Reason Patron_DebarredOverdue',
+        'debt' => 'renew_debt'
+    ];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter  Date converter object
@@ -439,28 +457,9 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $renewable = $entry['renewable'];
             $message = '';
             if (!$renewable) {
-                switch ($entry['renewability_error']) {
-                case 'too_soon':
-                    $message = 'Cannot renew yet';
-                    break;
-                case 'onsite_checkout':
-                    $message = 'Copy has special circulation';
-                    break;
-                case 'on_reserve':
-                    $message = 'renew_item_requested';
-                    break;
-                case 'too_many':
-                    $message = 'renew_item_limit';
-                    break;
-                case 'restriction':
-                    $message = 'Borrowing Block Message';
-                    break;
-                case 'overdue':
-                    $message = 'renew_item_overdue';
-                    break;
-                default:
-                    $message = 'renew_denied';
-                }
+                $message = $this->mapRenewalBlockReason(
+                    $entry['renewability_error']
+                );
             }
 
             $transaction = [
@@ -575,6 +574,10 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             if (!empty($bibId)) {
                 $bib = $this->getBibRecord($bibId);
                 $title = isset($bib['title']) ? $bib['title'] : '';
+                if (!empty($bib['title_remainder'])) {
+                    $title .= ' ' . $bib['title_remainder'];
+                    $title = trim($title);
+                }
             }
             $holds[] = [
                 'id' => $bibId,
@@ -589,7 +592,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'position' => $entry['priority'],
                 'available' => !empty($entry['waitingdate']),
                 'in_transit' => isset($entry['found']) && $entry['found'] == 't',
-                'hold_id' => $entry['reserve_id']
+                'requestId' => $entry['reserve_id']
             ];
         }
         return $holds;
@@ -608,7 +611,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     public function getCancelHoldDetails($holdDetails)
     {
         return $holdDetails['available'] || $holdDetails['in_transit'] ? ''
-            : $holdDetails['hold_id'] . '|' . $holdDetails['item_id'];
+            : $holdDetails['requestId'] . '|' . $holdDetails['item_id'];
     }
 
     /**
@@ -904,16 +907,6 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 $item = $this->getItem($entry['itemnumber']);
                 if (!empty($item['biblionumber'])) {
                     $bibId = $item['biblionumber'];
-                    $bib = $this->getBibRecord($bibId);
-                    $title = isset($bib['title']) ? $bib['title'] : '';
-                }
-                if (!empty($item['enumchron'])) {
-                    if (null !== $title) {
-                        $title .= ' ' . $item['enumchron'];
-                    } else {
-                        $title = $item['enumchron'];
-                    }
-
                 }
             }
             $createDate = !empty($entry['date'])
@@ -930,7 +923,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'createdate' => $createDate,
                 'checkout' => '',
                 'id' => $bibId,
-                'title' => $title
+                'title' => $entry['description']
             ];
         }
         return $fines;
@@ -1567,5 +1560,18 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             'success' => false,
             'sysMessage' => $message
         ];
+    }
+
+    /**
+     * Map a Koha renewal block reason code to a VuFind translation string
+     *
+     * @param string $reason Koha block code
+     *
+     * @return string
+     */
+    protected function mapRenewalBlockReason($reason)
+    {
+        return isset($this->renewalBlockMappings[$reason])
+            ? $this->renewalBlockMappings[$reason] : 'renew_denied';
     }
 }
