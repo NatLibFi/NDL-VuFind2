@@ -1,0 +1,43 @@
+<? //Don't add START and END comments ?>
+<? if(!empty($data)): ?>
+  <div class="truncate-field">
+    <? foreach ($data as $index => $item): ?>
+      <?
+        $additional = [];
+        if (!empty($item['method'])) {
+          $additional[] = $this->escapeHtml($item['method']);
+        }
+        if (!empty($item['date'])) {
+          $additional[] = $this->escapeHtml($item['date']);
+        }
+      ?>
+      <?=$index > 0 ? '<br/>' : '' ?><?=$this->escapeHtml($item['name']) ?><? if (!empty($additional)): ?>, <?=implode(' ', $additional) ?><? endif; ?>
+    <? endforeach; ?>
+  <? $time = $this->driver->getOpeningNight(); if (!empty($time)): ?><br/>
+    <tr>
+      <th><?=$this->transEsc('Opening Night') ?>:</th>
+      <td><?=$this->escapeHtml($time);?></td>
+    </tr>
+  <? endif; ?>
+  <? $theater= $this->driver->getOpeningTheaters(); if (!empty($theater)): ?><br/>
+    <tr>
+      <th><?=$this->transEsc('Opening Theaters') ?>:</th>
+      <td>
+        <div class="truncate-field">
+          <?=implode('<br/>', $theater); ?>
+        </div>
+      </td>
+    </tr>
+  <? endif; ?>
+  <? $tvtimes = $this->driver->getTvTimes(); if (!empty($tvtimes)): ?><br/>
+    <tr>
+      <th><?=$this->transEsc('Opening') ?>:</th>
+      <td>
+        <div class="truncate-field">
+          <?=implode('<br/>', $tvtimes); ?>
+        </div>
+      </td>
+    </tr>
+  <? endif; ?>
+  </div>
+<? endif; ?>

@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -33,6 +34,7 @@ namespace Finna\RecordDriver;
  * @category VuFind
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -1056,4 +1058,70 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         }
         return $videoUrls;
     }
+
+    /**
+     * Return production cost
+     *
+     * @return string
+     */
+    public function getProductionCost()
+    {
+        return $this->getProductionEventAttribute('elokuva-tuotantokustannukset');
+    }
+
+    /**
+     * Return opening night theaters and places
+     *
+     * @return array
+     */
+    public function getOpeningTheaters()
+    {
+        $results = [];
+        foreach ($this->getAllRecordsXML() as $xml) {
+            foreach ($xml->ProductionEvent as $event) {
+                if ($event->ProductionEventType == 'PRE') {
+                    $theater = (string)$event->Region->RegionName;
+                    $results = explode(';', $theater);
+                }
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Return opening night time
+     *
+     * @return string
+     */
+    public function getOpeningNight()
+    {
+        foreach ($this->getAllRecordsXML() as $xml) {
+            foreach ($xml->ProductionEvent as $event) {
+                if ($event->ProductionEventType == 'PRE') {
+                    $time = (string)$event->DateText;
+                    return $time;
+                }
+            }
+        }
+    }
+
+    /**
+     * Return television showing dates
+     *
+     * @return array
+     */
+    public function getTvTimes()
+    {
+        foreach ($this->getAllRecordsXML() as $xml) {
+            foreach ($xml->ProductionEvent as $event) {
+                $attributes = $event->ProductionEventType->attributes();
+                $results[] = (string)$attributes[
+                    'elokuva-elotelevisioesitys-esitysaika'
+                    ];
+                return $results;
+            }
+        }
+
+    }
 }
+

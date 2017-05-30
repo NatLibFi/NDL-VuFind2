@@ -372,13 +372,13 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Funding', 'getFunders', 'data-fundingDistribution.phtml',
+            'Funding', 'getFunders', 'data-funding.phtml',
             [
                 'context' => ['class' => 'record-funders']
             ]
         );
         $spec->setTemplateLine(
-            'Distribution', 'getDistributors', 'data-fundingDistribution.phtml',
+            'Distribution', 'getDistributors', 'data-distribution.phtml',
             [
                 'context' => ['class' => 'record-distributors']
             ]
