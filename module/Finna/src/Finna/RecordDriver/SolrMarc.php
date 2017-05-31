@@ -1443,7 +1443,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      *
      * @return array
      */
-    public function getAcquisition()
+    public function getAcquisitionSource()
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('037') as $field) {
@@ -1471,20 +1471,20 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get an array of a composition information.
+     * Get an composition information from field 382.
      *
-     * @return array
+     * @return string
      */
     public function getMusicComposition()
     {
-        $results = [];
+        $result = '';
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
             foreach ($field->getSubfields('a') as $compose) {
                 $subfields[] = $this->stripTrailingPunctuation($compose->getData());
             }
-            $results = implode(', ', $subfields);
+            $result = implode(', ', $subfields);
         }
-        return $results;
+        return $result;
     }
 
     /**
@@ -1520,20 +1520,19 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get format of notated music from field 348.
+     * Get format of notated music from field 348, subfields a, b & 2.
      *
-     * @return array
+     * @return string
      */
-    public function getNoteFormat()
+    public function getNotatedMusicFormat()
     {
-        $results = [];
-        foreach ($this->getMarcRecord()->getFields('348') as $field) {
-            foreach ($field->getSubfields() as $subfield) {
-                    $subfields[] = $subfield->getData();
-            }
-                $results[] = implode(', ', $subfields);
+        $result = '';
+        $fields = ['348' => ['a', 'b', '2']];
+        $matches = $this->getSeriesFromMARC($fields);
+        foreach ($matches as $match) {
+            $result = implode(', ', $match);
         }
-        return $results;
+        return $result;
     }
 
     /**
@@ -1547,22 +1546,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         foreach ($this->getMarcRecord()->getFields('366') as $field) {
             foreach ($field->getSubfields('e') as $note) {
                 $results[] = $this->stripTrailingPunctuation($note->getData());
-            }
-        }
-        return $results;
-    }
-
-    /**
-     * Get an uniform title field 240 a.
-     *
-     * @return array
-     */
-    public function getUniformTitle()
-    {
-        $results = [];
-        foreach ($this->getMarcRecord()->getFields('240') as $field) {
-            foreach ($field->getSubfields('a') as $original) {
-                 $results[] = $this->stripTrailingPunctuation($original->getData());
             }
         }
         return $results;

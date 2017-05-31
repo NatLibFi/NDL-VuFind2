@@ -10,12 +10,21 @@
         <? if (!empty($field['issn'])): ?>
           ISSN <?=$this->escapeHtml($field['issn'])?><? if (!empty($field['number'])): ?>; <? endif; ?>
         <? endif; ?>
+        <?
+            $partParts = [];
+            if (!empty($field['partName'])) {
+                $partParts[] = $field['partName'];
+            }
+            if (!empty($field['partNumber'])) {
+                $partParts[] = $field['partNumber'];
+            }
+            $lookfor = implode(' ', $partParts);
+        ?>
         <? if (!empty($field['number'])): ?>
-          <?=$this->escapeHtml($field['number'])?><? if (!empty($field['partName']) || !empty($field['partNumber'])): ?>, <? endif; ?>
+          <?=$this->escapeHtml($field['number'])?><? if (!empty($lookfor)): ?>, <? endif; ?>
         <? endif; ?>
-        <? if (!empty($field['partName']) && !empty($field['partNumber'])): ?>
-          <? $link = $field['partName']." & ".$field['partNumber']; ?><br/>
-          <a href="<?=$this->record($this->driver)->getLink('series', $link)?>"><?=$this->escapeHtml($link)?></a>
+        <? if (!empty($field['partName']) && !empty($field['partNumber'])): ?><br/>
+          <a href="<?=$this->record($this->driver)->getLink('series', $lookfor)?>"><?=$this->escapeHtml($lookfor)?></a>
         <? elseif (!empty($field['partName']) && empty($field['partNumber'])): ?>
           <?=$this->escapeHtml($field['partName']) ?>
         <? elseif (empty($field['partName']) && !empty($field['partNumber'])): ?>

@@ -573,27 +573,21 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Acquisition', 'getAcquisition', 'data-escapeHtml.phtml',
+            'Source of Acquisition', 'getAcquisitionSource', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordAcquisition']
             ]
         );
         $spec->setTemplateLine(
-            'Medium of performance', 'getMusicComposition', 'data-escapeHtml.phtml',
+            'Medium of Performance', 'getMusicComposition', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordComposition']
             ]
         );
         $spec->setTemplateLine(
-            'Note Format', 'getNoteFormat', 'data-escapeHtml.phtml',
+            'Notated Music', 'getNotatedMusicFormat', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordNoteFormat']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Uniform Title', 'getUniformTitle', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordUniformTitle']
             ]
         );
         $spec->setTemplateLine(
