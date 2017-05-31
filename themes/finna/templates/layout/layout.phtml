@@ -204,20 +204,58 @@ JS;
       // Set up default search box if no data was provided from the template;
       // this covers case 1.  Cases 2 and 3 are then covered by logic below.
       if (!isset($this->layout()->searchbox)) {
-
         if($this->layout()->templateName != 'home' && $this->layout()->templateDir != 'search') {
-            $lookfor = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
-            $url = explode('">', explode('href="', $lookfor)[1])[0];
-            parse_str($url, $parsed);
+          $searchLink = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
+          $url = explode('">', explode('href="', $searchLink)[1])[0];
+          //parse querystring to variables
+          parse_str($url, $parsed);
 
-            foreach ($parsed as $key => $value)
-            {
-              if (strpos($key, 'lookfor') !== false){
-                $lookfor = $value;
+          //advanced search if lookfor0
+          if (strpos($url, 'lookfor0') !== false){
+            $this->layout()->searchbox = $this->context($this)->renderInContext(
+                "search/searchbox.phtml",
+                [
+                  'searchType' => "advanced",
+                  'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false,
+                  ''
+                ]
+            );
+          } else {
+            //basic search
+            $filters = [];
+            foreach ($parsed as $key => $filter) {
+              if (strpos($key, 'lookfor') !== false) {
+                $lookfor = $filter;
+              } elseif (strpos($key, 'filter') !== false) {
+                //set used filters to filterArray
+                foreach ($filter as $value) {
+                  $filterArray = explode(':', $value);
+                  $filterKey = $filterArray[0];
+                  $filterValue = trim($filterArray[1], '"');
+                  if (array_key_exists($filterKey, $filters)) {
+                    array_push($filters[$filterKey], $filterValue);
+                  } else {
+                    $filters[$filterKey] = [$filterValue];
+                  }
+                }
+              } elseif (strpos($key, 'type') !== false) {
+                $type = explode('#', $value)[0];
               }
             }
+
+            $this->layout()->searchbox = $this->context($this)->renderInContext(
+                "search/searchbox.phtml",
+                [
+                  'lookfor' => isset($lookfor) ? $lookfor : '',
+                  'filterList' => isset($filters) ? $filters : [],
+                  'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false,
+                  'searchIndex' => isset($type) ? $type : ''
+                ]
+            );
+          }
+        } else {
+            $this->layout()->searchbox = $this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false]);
         }
-        $this->layout()->searchbox = $this->context($this)->renderInContext("search/searchbox.phtml", ['lookfor' => isset($lookfor) ? $lookfor : '', 'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false]);
       }
     ?>
     <header class="hidden-print">
