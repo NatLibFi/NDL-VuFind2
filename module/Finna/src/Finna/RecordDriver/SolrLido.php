@@ -940,13 +940,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getPhotographerInfo()
     {
+        $isBuilding = false;
         foreach ($this->getSimpleXML()->xpath(
             'lido/descriptiveMetadata/objectClassificationWrap/objectWorkTypeWrap/'
                 . 'objectWorkType'
         ) as $node) {
-            $objectTerm = (string)$node->term;
+            if (strpos((string)$node->term, 'Rakennus')) {
+                $isBuilding = true;
+                break;
+            }
         }
-        $isBuilding = strpos($objectTerm, 'Rakennus') !== false;
+        if (!$isBuilding) {
+            return '';
+        }
         if ($isBuilding) {
             foreach ($this->getSimpleXML()->xpath(
                 'lido/administrativeMetadata/resourceWrap/resourceSet'
