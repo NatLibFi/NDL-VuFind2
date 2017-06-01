@@ -1070,11 +1070,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return opening night theaters and places
+     * Return premier night theaters and places
      *
      * @return array
      */
-    public function getOpeningTheaters()
+    public function getPremiereTheaters()
     {
         $results = [];
         foreach ($this->getAllRecordsXML() as $xml) {
@@ -1093,7 +1093,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      *
      * @return string
      */
-    public function getOpeningNight()
+    public function getPremiereTime()
     {
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
@@ -1106,22 +1106,81 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return television showing dates
+     * Return television broadcasting dates, channels and amount of viewers
      *
      * @return array
      */
-    public function getTvTimes()
+    public function getBroadcastingInfo()
     {
+        $results = [];
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
+                $time = $place = $viewers = '';
                 $attributes = $event->ProductionEventType->attributes();
-                $results[] = (string)$attributes[
-                    'elokuva-elotelevisioesitys-esitysaika'
-                    ];
-                return $results;
+                if (!empty($attributes->{'elokuva-elotelevisioesitys-esitysaika'})) {
+                    $time = (string)$attributes->{
+                        'elokuva-elotelevisioesitys-esitysaika'
+                    };
+                }
+                if (!empty($attributes->{'elokuva-elotelevisioesitys-paikka'})) {
+                    $place = (string)$attributes->{
+                        'elokuva-elotelevisioesitys-paikka'
+                    };
+                }
+                if (!empty($attributes->{'elokuva-elotelevisioesitys-katsojamaara'})
+                ) {
+                    $viewers = (string)$attributes->{
+                        'elokuva-elotelevisioesitys-katsojamaara'
+                    };
+                }
+                if (empty($attributes->{'elokuva-elotelevisioesitys-esitysaika'})) {
+                    continue;
+                }
+
+                $results[] = [
+                    'time' => $time,
+                    'place' => $place,
+                    'viewers' => $viewers
+                ];
             }
         }
+        $results = array_filter($results);
+        return $results;
+    }
 
+    /**
+     * Return filmfestival attendance information if found
+     *
+     * @return array
+     */
+    public function getFestivalInfo()
+    {
+        $results = [];
+        foreach ($this->getAllRecordsXML() as $xml) {
+            foreach ($xml->ProductionEvent as $event) {
+                $atr = $event->ProductionEventType->attributes();
+                if (!empty($atr->{'elokuva-elofestivaaliosallistuminen-aihe'})) {
+                    $name = (string)$atr->{
+                        'elokuva-elofestivaaliosallistuminen-aihe'
+                    };
+                    if (!empty($event->Region->RegionName)) {
+                        $region = (string)$event->Region->RegionName;
+                    }
+                    if (!empty($event->DateText)) {
+                        $date = (string)$event->DateText;
+                    }
+                }
+                if (empty($atr->{'elokuva-elofestivaaliosallistuminen-aihe'})) {
+                    continue;
+                }
+                $results[] = [
+                    'name' => $name,
+                    'region' => $region,
+                    'date' => $date
+                ];
+            }
+        }
+        return $results;
     }
 }
 

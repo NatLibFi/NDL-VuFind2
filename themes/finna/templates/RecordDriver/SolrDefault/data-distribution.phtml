@@ -13,15 +13,18 @@
       ?>
       <?=$index > 0 ? '<br/>' : '' ?><?=$this->escapeHtml($item['name']) ?><? if (!empty($additional)): ?>, <?=implode(' ', $additional) ?><? endif; ?>
     <? endforeach; ?>
-  <? $time = $this->driver->getOpeningNight(); if (!empty($time)): ?><br/>
+  </div>
+
+  <? $time = $this->driver->getPremiereTime(); if (!empty($time)): ?>
     <tr>
-      <th><?=$this->transEsc('Opening Night') ?>:</th>
+      <th><?=$this->transEsc('Premiere Night') ?>:</th>
       <td><?=$this->escapeHtml($time);?></td>
     </tr>
   <? endif; ?>
-  <? $theater= $this->driver->getOpeningTheaters(); if (!empty($theater)): ?><br/>
+
+  <? $theater= $this->driver->getPremiereTheaters(); if (!empty($theater)): ?><br/>
     <tr>
-      <th><?=$this->transEsc('Opening Theaters') ?>:</th>
+      <th><?=$this->transEsc('Premiere Theaters') ?>:</th>
       <td>
         <div class="truncate-field">
           <?=implode('<br/>', $theater); ?>
@@ -29,15 +32,40 @@
       </td>
     </tr>
   <? endif; ?>
-  <? $tvtimes = $this->driver->getTvTimes(); if (!empty($tvtimes)): ?><br/>
+
+  <? $brInfo = $this->driver->getBroadcastingInfo(); if (!empty($brInfo)): ?><br/>
     <tr>
-      <th><?=$this->transEsc('Opening') ?>:</th>
+      <th><?=$this->transEsc('Broadcasting Dates') ?>:</th>
       <td>
         <div class="truncate-field">
-          <?=implode('<br/>', $tvtimes); ?>
+          <? foreach($brInfo as $fields => $keys): ?>
+            <? if (!empty($keys['time'])): ?>
+              <?=$this->escapeHtml($keys['place'])?>, <?=$this->escapeHtml($keys['time'])?><? if (!empty($keys['viewers'])): ?>, <?=$this->transEsc('Amount of Viewers') ?>: <?=$this->escapeHtml($keys['viewers']);?> <? endif;?><br/>
+            <? endif; ?>
+          <? endforeach; ?>
         </div>
       </td>
     </tr>
   <? endif; ?>
-  </div>
+
+  <? $fvInfo = $this->driver->getFestivalInfo(); if (!empty($fvInfo)): ?><br/>
+    <tr>
+      <th><?=$this->transEsc('Film Festival') ?>:</th>
+      <td>
+        <div class="truncate-field">
+          <? foreach($fvInfo as $fields => $keys): ?>
+            <? if (!empty($keys['name'])): ?>
+                <?=$this->escapeHtml($keys['name'])?>
+              <? if (!empty($keys['region'])): ?>
+                <?=$this->escapeHtml($keys['region'])?>
+              <? endif; ?>
+              <? if (!empty($keys['date'])): ?>
+                <?=$this->escapeHtml($keys['date'])?>
+              <? endif; ?><br/>
+            <? endif; ?>
+          <? endforeach; ?>
+        </div>
+      </td>
+    </tr>
+  <? endif; ?>
 <? endif; ?>
