@@ -38,16 +38,33 @@ namespace Finna\View\Helper\Root;
  */
 class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
 {
-    public function getLastSearchId(){
+    /**
+     * Retrieve the last search id
+     *
+     * @return string
+     */
+    public function getLastSearchId()
+    {
         $searchData =  $this->memory->retrieveLastSearchData();
         return $searchData->id;
     }
 
-    public function getLastSearchType(){
+    /**
+     * Retrieve the last search type
+     *
+     * @return string
+     */
+    public function getLastSearchType()
+    {
         $searchData =  $this->memory->retrieveLastSearchData();
         return $searchData->type;
     }
 
+    /**
+     * Retrieve the last search lookfor
+     *
+     * @return string
+     */
     public function getLastSearchLookfor()
     {
         $searchData =  $this->memory->retrieveLastSearchData();

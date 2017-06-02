@@ -209,11 +209,11 @@ JS;
           $searchId = $this->searchMemory()->getLastSearchId();
           $searchType = $this->searchMemory()->getLastSearchType();
           $lookfor = $this->searchMemory()->getLastSearchLookfor();
+
           $url = explode('">', explode('href="', $searchLink)[1])[0];
           //parse querystring to variables
           parse_str($url, $parsed);
 
-          //advanced search if lookfor0
           if ($searchType == 'advanced') {
             $this->layout()->searchbox = $this->context($this)->renderInContext(
                 "search/searchbox.phtml",
@@ -233,11 +233,10 @@ JS;
                 ]
             );
           } else {
-            //basic search
             $filters = [];
             foreach ($parsed as $key => $filter) {
               if (strpos($key, 'filter') !== false) {
-                //set used filters to filterArray
+                //used filters to filterArray
                 foreach ($filter as $value) {
                   $filterArray = explode(':', $value);
                   $filterKey = $filterArray[0];
