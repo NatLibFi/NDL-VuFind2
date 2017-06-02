@@ -8,6 +8,11 @@
       <li><a href="<?=$this->url('content-page', ['page' => 'terms'])?>"><?=$this->transEsc('Terms')?></a></li>
       <li><a href="<?=$this->url('content-page', ['page' => 'privacy'])?>"><?=$this->transEsc('Privacy')?></a></li>
       <li><a href="<?=$this->url('content-page', ['page' => 'register_details'])?>"><?=$this->transEsc('Register Details')?></a></li>
+      <? if ($this->layout()->userLang === "fi"): ?>
+        <li><a href="https://api.finna.fi/" target="_blank"><?=$this->transEsc('Finna API')?></a></li>
+      <? else: ?>
+        <li><a href="https://api.finna.fi/swagger-ui/?url=%2Fapi%2Fv1%3Fswagger" target="_blank"><?=$this->transEsc('Finna API')?></a></li>
+      <? endif; ?>
     </ul>
   </div>
   <div class="col-sm-3">
