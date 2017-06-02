@@ -206,18 +206,33 @@ JS;
       if (!isset($this->layout()->searchbox)) {
         if($this->layout()->templateName != 'home' && $this->layout()->templateDir != 'search') {
           $searchLink = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
+          $searchId = $this->searchMemory()->getLastSearchId();
+          $searchType = $this->searchMemory()->getLastSearchType();
           $url = explode('">', explode('href="', $searchLink)[1])[0];
           //parse querystring to variables
           parse_str($url, $parsed);
 
           //advanced search if lookfor0
-          if (strpos($url, 'lookfor0') !== false){
+          if ($searchType == 'advanced') {
             $this->layout()->searchbox = $this->context($this)->renderInContext(
                 "search/searchbox.phtml",
                 [
                   'searchType' => "advanced",
                   'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false,
                   ''
+                ]
+            );
+            foreach ($parsed as $key => $value) {
+                if (strpos($key, 'lookfor0') !== false) {
+                    $lookfor = $value;
+                }
+            }
+            $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
+                'search/header.phtml',
+                [
+                  'searchType' => $searchType,
+                  'searchId' => $searchId,
+                  'lookfor' => $lookfor
                 ]
             );
           } else {
@@ -239,7 +254,7 @@ JS;
                   }
                 }
               } elseif (strpos($key, 'type') !== false) {
-                $type = explode('#', $value)[0];
+                $type = explode('#', $filter)[0];
               }
             }
 
