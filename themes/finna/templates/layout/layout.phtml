@@ -208,6 +208,7 @@ JS;
           $searchLink = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
           $searchId = $this->searchMemory()->getLastSearchId();
           $searchType = $this->searchMemory()->getLastSearchType();
+          $lookfor = $this->searchMemory()->getLastSearchLookfor();
           $url = explode('">', explode('href="', $searchLink)[1])[0];
           //parse querystring to variables
           parse_str($url, $parsed);
@@ -218,30 +219,24 @@ JS;
                 "search/searchbox.phtml",
                 [
                   'searchType' => "advanced",
-                  'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false,
-                  ''
+                  'ignoreHiddenFilterMemory' => isset($this->layout()->ignoreHiddenFilterMemory) ? $this->layout()->ignoreHiddenFilterMemory : false
                 ]
             );
-            foreach ($parsed as $key => $value) {
-                if (strpos($key, 'lookfor0') !== false) {
-                    $lookfor = $value;
-                }
-            }
+
             $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
                 'search/header.phtml',
                 [
                   'searchType' => $searchType,
                   'searchId' => $searchId,
-                  'lookfor' => $lookfor
+                  'lookfor' => $lookfor,
+                  'onRecordPage' => true
                 ]
             );
           } else {
             //basic search
             $filters = [];
             foreach ($parsed as $key => $filter) {
-              if (strpos($key, 'lookfor') !== false) {
-                $lookfor = $filter;
-              } elseif (strpos($key, 'filter') !== false) {
+              if (strpos($key, 'filter') !== false) {
                 //set used filters to filterArray
                 foreach ($filter as $value) {
                   $filterArray = explode(':', $value);

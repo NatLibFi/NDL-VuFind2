@@ -47,4 +47,10 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
         $searchData =  $this->memory->retrieveLastSearchData();
         return $searchData->type;
     }
+
+    public function getLastSearchLookfor()
+    {
+        $searchData =  $this->memory->retrieveLastSearchData();
+        return $searchData->lookfor;
+    }
 }
