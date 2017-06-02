@@ -1182,5 +1182,81 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         }
         return $results;
     }
-}
 
+    /**
+     * Return foreign distributors and countries
+     *
+     * @return array
+     */
+    public function getForeignDistribution()
+    {
+        $results = [];
+        foreach ($this->getAllRecordsXML() as $xml) {
+            foreach ($xml->ProductionEvent as $event) {
+                $atr = $event->ProductionEventType->attributes();
+                if (!empty($atr->{'elokuva-eloulkomaanmyynti-levittaja'})) {
+                    $name = (string)$atr->{
+                        'elokuva-eloulkomaanmyynti-levittaja'
+                    };
+                    if (!empty($event->Region->RegionName)) {
+                        $region = (string)$event->Region->RegionName;
+                    }
+                }
+                if (empty($atr->{'elokuva-eloulkomaanmyynti-levittaja'})) {
+                    continue;
+                }
+                $results[] = [
+                    'name' => $name,
+                    'region' => $region
+                ];
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Return number of film copies
+     *
+     * @return string
+     */
+    public function getNumberOfCopies()
+    {
+        $number = $this->getProductionEventAttribute('elokuva-teatterikopioidenlkm');
+        return $number;
+    }
+
+    /**
+     * Return other screening occasions
+     *
+     * @return array
+     */
+    public function getOtherScreenings()
+    {
+        $results = [];
+        foreach ($this->getAllRecordsXML() as $xml) {
+            foreach ($xml->ProductionEvent as $event) {
+                $atr = $event->ProductionEventType->attributes();
+                if (!empty($atr->{'elokuva-muuesitys-aihe'})) {
+                    $name = (string)$atr->{
+                        'elokuva-muuesitys-aihe'
+                    };
+                    if (!empty($event->Region->RegionName)) {
+                        $region = (string)$event->Region->RegionName;
+                    }
+                    if (!empty($event->DateText)) {
+                        $date = (string)$event->DateText;
+                    }
+                }
+                if (empty($atr->{'elokuva-muuesitys-aihe'})) {
+                    continue;
+                }
+                $results[] = [
+                    'name' => $name,
+                    'region' => $region,
+                    'date' => $date
+                ];
+            }
+        }
+        return $results;
+    }
+}

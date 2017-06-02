@@ -68,4 +68,48 @@
       </td>
     </tr>
   <? endif; ?>
+
+  <? $foreignDist = $this->driver->getForeignDistribution(); if (!empty($foreignDist)): ?><br/>
+    <tr>
+      <th><?=$this->transEsc('Foreign Distribution') ?>:</th>
+      <td>
+        <div class="truncate-field">
+          <? foreach($foreignDist as $fields => $keys): ?>
+            <? if (!empty($keys['name'])): ?>
+                <?=$this->escapeHtml($keys['name'])?><? if (!empty($keys['region'])): ?>,
+                <?=$this->escapeHtml($keys['region'])?>
+              <? endif; ?><br/>
+            <? endif; ?>
+          <? endforeach; ?>
+        </div>
+      </td>
+    </tr>
+  <? endif; ?>
+
+  <? $copies = $this->driver->getNumberOfCopies(); if (!empty($copies)): ?>
+    <tr>
+      <th><?=$this->transEsc('Film Copies') ?>:</th>
+      <td><?=$this->escapeHtml($copies);?></td>
+    </tr>
+  <? endif; ?>
+
+  <? $screenings = $this->driver->getOtherScreenings(); if (!empty($screenings)): ?><br/>
+    <tr>
+      <th><?=$this->transEsc('Other Screenings') ?>:</th>
+      <td>
+        <div class="truncate-field">
+          <? foreach($screenings as $fields => $keys): ?>
+            <? if (!empty($keys['name'])): ?>
+                <?=$this->escapeHtml($keys['name'])?><? if (!empty($keys['region'])): ?>, <?=$this->escapeHtml($keys['region'])?>
+              <? endif; ?>
+              <? if (!empty($keys['date'])): ?>
+                <?=$this->escapeHtml($keys['date'])?>
+              <? endif; ?><br/>
+            <? endif; ?>
+          <? endforeach; ?>
+        </div>
+      </td>
+    </tr>
+  <? endif; ?>
+
 <? endif; ?>
