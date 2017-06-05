@@ -2,17 +2,17 @@
 <? if (!empty($data)): ?>
   <? foreach ($data as $field): ?>
     <?
-      $partParts = [];
+      $terms = [];
       if (!empty($field['name'])) {
-          $partParts[] = $field['name'];
+          $terms[] = $field['name'];
       }
       if (!empty($field['partNumber'])) {
-          $partParts[] = $field['partNumber'];
+          $terms[] = $field['partNumber'];
       }
       if (!empty($field['partName'])) {
-          $partParts[] = $field['partName'];
+          $terms[] = $field['partName'];
       }
-      $lookfor = implode(', ', $partParts);
+      $lookfor = implode(', ', $terms);
     ?>
     <?/* Depending on the record driver, $field may either be an array with
        "name" and "number" keys or a flat string containing only the series

@@ -585,7 +585,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Notated Music', 'getNotatedMusicFormat', 'data-escapeHtml.phtml',
+            'Notated Music Format', 'getNotatedMusicFormat', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordNoteFormat']
             ]
