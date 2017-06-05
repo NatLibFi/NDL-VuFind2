@@ -14,60 +14,58 @@
   <div class="media">
     <div class="col-xs-9 <? if ($thumbnailAlignment == 'left'): ?><?= $combinedView ? 'col-sm-10 col-sm-push-2' : 'col-sm-9 col-sm-push-3' ?><? elseif ($thumbnailAlignment == 'right'): ?><?= $combinedView ? 'col-sm-10' : 'col-sm-8 col-md-9' ?><? endif; ?>">
       <div class="media-body">
-        <div class="col-sm-11 no-padding">
-          <div>
-            <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
-            <?
-              $summHighlightedTitle = $this->driver->getHighlightedTitle();
-              $summTitle = $this->driver->getTitle();
-              if (!empty($summHighlightedTitle)) {
-                echo $this->highlight($this->addEllipsis($summHighlightedTitle, $summTitle));
-              } else if (!empty($summTitle)) {
-                echo $this->escapeHtml($this->truncate($summTitle, 180));
-              } else {
-                echo $this->transEsc('Title not available');
-              }
-            ?>
-            </a><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
-          </div>
+        <div class="title-container">
+          <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
+          <?
+            $summHighlightedTitle = $this->driver->getHighlightedTitle();
+            $summTitle = $this->driver->getTitle();
+            if (!empty($summHighlightedTitle)) {
+              echo $this->highlight($this->addEllipsis($summHighlightedTitle, $summTitle));
+            } else if (!empty($summTitle)) {
+              echo $this->escapeHtml($this->truncate($summTitle, 180));
+            } else {
+              echo $this->transEsc('Title not available');
+            }
+          ?>
+          </a><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+        </div>
 
-          <div class="dateyeartype">
-            <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
-            <? if ($this->driver->isCollection()): ?>
-              <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
-            <? else: ?>
-              <? $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
-                <div class="truncate-field" data-rows="1">
-                  <? $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
-                    <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ' ; ' : ''?>
-                  <? endforeach; ?>
-                </div>
-              <? endif; ?>
-
-              <? if ($dates = $this->driver->getResultDateRange()): ?>
-                <?=$this->escapeHtml($dates[0]);?><? if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><? endif; ?>
-              <? endif; ?>
+        <div class="dateyeartype">
+          <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
+          <? if ($this->driver->isCollection()): ?>
+            <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
+          <? else: ?>
+            <? $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
+              <div class="truncate-field" data-rows="1">
+                <? $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
+                  <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ' ; ' : ''?>
+                <? endforeach; ?>
+              </div>
             <? endif; ?>
-          </div>
 
-          <? if(!$this->driver->isCollection()): ?>
-            <? if ($snippet = $this->driver->getHighlightedSnippet()): ?>
-              <? if (!empty($snippet['caption'])): ?>
-                <strong><?=$this->transEsc($snippet['caption']) ?>:</strong> ';
-              <? endif; ?>
-              <? if (!empty($snippet['snippet'])): ?>
-                <span class="quotestart">&#8220;</span>...<?=$this->highlight($snippet['snippet']) ?>...<span class="quoteend">&#8221;</span><br/>
-              <? endif; ?>
+            <? if ($dates = $this->driver->getResultDateRange()): ?>
+              <?=$this->escapeHtml($dates[0]);?><? if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><? endif; ?>
             <? endif; ?>
-          <? endif; ?>
-          <?=$this->record($this->driver)->getOnlineUrls('results')?>
-          <?=$this->record($this->driver)->getPreviews()?>
-          <? if ($this->layout()->templateDir === 'list'): ?>
-            <?=$this->render('list/list-notes.phtml')?>
           <? endif; ?>
         </div>
 
-        <div class="col-xs-12 <?= $combinedView ? 'col-sm-10 col-sm-push-2' : 'col-sm-1' ?> hidden-print add-to-favorite-col no-padding">
+        <? if(!$this->driver->isCollection()): ?>
+          <? if ($snippet = $this->driver->getHighlightedSnippet()): ?>
+            <? if (!empty($snippet['caption'])): ?>
+              <strong><?=$this->transEsc($snippet['caption']) ?>:</strong> ';
+            <? endif; ?>
+            <? if (!empty($snippet['snippet'])): ?>
+              <span class="quotestart">&#8220;</span>...<?=$this->highlight($snippet['snippet']) ?>...<span class="quoteend">&#8221;</span><br/>
+            <? endif; ?>
+          <? endif; ?>
+        <? endif; ?>
+        <?=$this->record($this->driver)->getOnlineUrls('results')?>
+        <?=$this->record($this->driver)->getPreviews()?>
+        <? if ($this->layout()->templateDir === 'list'): ?>
+          <?=$this->render('list/list-notes.phtml')?>
+        <? endif; ?>
+
+        <div class="col-xs-12 col-sm-1 hidden-print add-to-favorite-col">
             <? /* Display qrcode if appropriate: */ ?>
             <? if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
                 <?
