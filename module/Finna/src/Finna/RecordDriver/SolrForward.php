@@ -1259,4 +1259,61 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         }
         return $results;
     }
+
+    /**
+     * Return movie inspection details
+     *
+     * @return array
+     */
+    public function getInspectionDetails()
+    {
+        $results = [];
+        foreach ($this->getAllRecordsXML() as $xml) {
+            foreach ($xml->ProductionEvent as $event) {
+                $atr = $event->ProductionEventType->attributes();
+                $office = "";
+                if (!empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
+                    $inspector = (string)$atr->{'elokuva-tarkastus-tarkastuselin'};
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastusnro'})) {
+                        $number = (string)$atr->{'elokuva-tarkastus-tarkastusnro'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-formaatti'})) {
+                        $format = (string)$atr->{'elokuva-tarkastus-formaatti'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-pituus'})) {
+                        $length = (string)$atr->{'elokuva-tarkastus-pituus'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-veroluokka'})) {
+                        $tax = (string)$atr->{'elokuva-tarkastus-veroluokka'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-ikaraja'})) {
+                        $age = (string)$atr->{'elokuva-tarkastus-ikaraja'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastamolaji'})) {
+                        $type = (string)$atr->{'elokuva-tarkastus-tarkastamolaji'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-osalkm'})) {
+                        $part = (string)$atr->{'elokuva-tarkastus-osalkm'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastuttaja'})) {
+                        $office = (string)$atr->{'elokuva-tarkastus-tarkastuttaja'};
+                    }
+                }
+                if (empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
+                    continue;
+                }
+                $results[] = [
+                    'inspector' => $inspector,
+                    'number' => $number,
+                    'format' => $format,
+                    'length' => $length,
+                    'taxclass' => $tax,
+                    'agerestriction' => $age,
+                    'inspcectiontype' => $type,
+                    'part' => $part,
+                    'office' => $office
+                ];
+            }
+        }
+    }
 }

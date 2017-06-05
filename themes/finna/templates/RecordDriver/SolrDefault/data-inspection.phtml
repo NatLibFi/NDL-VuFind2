@@ -1,0 +1,15 @@
+<? //Don't add START and END comments ?>
+<? if(!empty($data)): ?>
+    <? foreach ($data as $field => $keys): ?>
+    <tr class = "recordInspection">
+        <th><?=$this->transEsc("inspection_{$field}")?></th>
+        <td>
+            <div class="truncate-field">
+            <? foreach ($keys as $key): ?>
+                <? if (!empty($key['inspector'])): ?><?=$this->escapeHtml($key['inspector'])?><br/><? endif; ?>
+            <? endforeach; ?>
+            </div>
+        </td>
+    </tr>
+    <? endforeach; ?>
+<? endif; ?>

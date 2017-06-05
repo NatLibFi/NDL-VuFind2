@@ -572,6 +572,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordDaterange']
             ]
         );
+        //$spec->setTemplateLine(
+        //    'Inspection Details', 'getInspectionDetails', 'data-inspection.phtml',
+        //    [
+        //        'context' => ['class' => 'recordInspection']
+        //    ]
+        //);
         return $spec->getArray();
     }
 
