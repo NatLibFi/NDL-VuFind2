@@ -83,6 +83,18 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     }
 
     /**
+     * Construct the Citation helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Citation
+     */
+    public static function getCitation(ServiceManager $sm)
+    {
+        return new Citation($sm->getServiceLocator()->get('VuFind\DateConverter'));
+    }
+
+    /**
      * Construct the CheckboxFacetCounts helper.
      *
      * @param ServiceManager $sm Service manager.
@@ -588,5 +600,19 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     public static function getOnlinePayment(ServiceManager $sm)
     {
         return new OnlinePayment();
+    }
+
+    /**
+     * Construct the SearchMemory helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return SearchMemory
+     */
+    public static function getSearchMemory(ServiceManager $sm)
+    {
+        return new SearchMemory(
+            $sm->getServiceLocator()->get('Finna\Search\Memory')
+        );
     }
 }

@@ -573,6 +573,12 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'Photo Info', 'getPhotoInfo', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordPhotographer']
+            ]
+        );
+        $spec->setTemplateLine(
             'Source of Acquisition', 'getAcquisitionSource', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordAcquisition']
