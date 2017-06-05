@@ -46,8 +46,8 @@
               <? endif; ?>
               </div>
             <? endif; ?>
-          <? if ($photographer = $this->driver->getPhotographerInfo()): ?>
-            <?=$this->transEsc('Photographer Info') ?> : <?=$this->escapeHtml($photographer) ?>
+          <? if ($photo = $this->driver->getPhotoInfo()): ?>
+            <?=$this->transEsc('Photo Info') ?>: <?=$this->escapeHtml($photo) ?>
           <? endif; ?>
         <? endif; ?>
       </div>

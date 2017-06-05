@@ -938,7 +938,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return string $result Photographer's name and / or time when picture taken.
      */
-    public function getPhotographerInfo()
+    public function getPhotoInfo()
     {
         $isBuilding = false;
         foreach ($this->getSimpleXML()->xpath(
@@ -953,20 +953,23 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         if (!$isBuilding) {
             return '';
         }
-        if ($isBuilding) {
-            foreach ($this->getSimpleXML()->xpath(
-                'lido/administrativeMetadata/resourceWrap/resourceSet'
-            ) as $nodes) {
-                $resourceTerm = (string)$nodes->resourceType->term;
-                if ('Valokuva' === $resourceTerm) {
-                    $photographer = !empty($nodes->resourceDescription)
-                     ? (string)$nodes->resourceDescription : '';
-                    $time = !empty($nodes->resourceDateTaken->displayDate)
-                     ? (string)$nodes->resourceDateTaken->displayDate : '';
-                    if ('' !== trim($time) || '' !== trim($photographer)) {
-                        return $result = !empty($time) ?
-                            $photographer . ' ' . $time : $photographer;
+        foreach ($this->getSimpleXML()->xpath(
+            'lido/administrativeMetadata/resourceWrap/resourceSet'
+        ) as $nodes) {
+            $resourceTerm = (string)$nodes->resourceType->term;
+            if ('Valokuva' === $resourceTerm) {
+                $photographer = !empty($nodes->resourceDescription)
+                 ? (string)$nodes->resourceDescription : '';
+                $time = !empty($nodes->resourceDateTaken->displayDate)
+                 ? (string)$nodes->resourceDateTaken->displayDate : '';
+                if ('' !== trim($time) || '' !== trim($photographer)) {
+                    if (strtotime($time) !== false) {
+                        $time = $this->dateConverter->convertToDisplayDate(
+                            'U', strtotime($time)
+                        );
                     }
+                    return $result = !empty($time) ?
+                        $photographer . ' ' . $time : $photographer;
                 }
             }
         }
