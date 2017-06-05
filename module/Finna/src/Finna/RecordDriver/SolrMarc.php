@@ -1532,7 +1532,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         foreach ($matches as $match) {
             $subfields[] =  $this->stripTrailingPunctuation($match);
         }
-        $results = implode(', ', $subfields[0]);
+        if (!empty($subfields)) {
+            $results = implode(', ', $subfields[0]);
+        }
         return $results;
     }
 
