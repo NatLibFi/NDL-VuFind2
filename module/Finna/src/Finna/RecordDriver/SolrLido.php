@@ -963,11 +963,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $time = !empty($nodes->resourceDateTaken->displayDate)
                  ? (string)$nodes->resourceDateTaken->displayDate : '';
                 if ('' !== trim($time) || '' !== trim($photographer)) {
-                    if (strtotime($time) !== false) {
-                        $time = $this->dateConverter->convertToDisplayDate(
-                            'U', strtotime($time)
-                        );
-                    }
                     return $result = !empty($time) ?
                         $photographer . ' ' . $time : $photographer;
                 }
