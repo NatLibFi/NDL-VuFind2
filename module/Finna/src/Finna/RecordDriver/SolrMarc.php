@@ -1522,16 +1522,17 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     /**
      * Get format of notated music from field 348, subfields a, b & 2.
      *
-     * @return array
+     * @return string
      */
     public function getNotatedMusicFormat()
     {
-        $results = [];
+        $results = '';
         $fields = ['348' => ['a', 'b', '2']];
         $matches = $this->getSeriesFromMARC($fields);
         foreach ($matches as $match) {
-            $results[] = implode(', ', $this->stripTrailingPunctuation($match));
+            $subfields[] =  $this->stripTrailingPunctuation($match);
         }
+        $results = implode(', ', $subfields[0]);
         return $results;
     }
 
