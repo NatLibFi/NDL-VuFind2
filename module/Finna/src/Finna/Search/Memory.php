@@ -27,7 +27,6 @@
  */
 namespace Finna\Search;
 
-
 /**
  * Wrapper class to handle search memory
  *
