@@ -14,7 +14,7 @@
   <div class="media">
     <div class="col-xs-9 <? if ($thumbnailAlignment == 'left'): ?><?= $combinedView ? 'col-sm-10 col-sm-push-2' : 'col-sm-9 col-sm-push-3' ?><? elseif ($thumbnailAlignment == 'right'): ?><?= $combinedView ? 'col-sm-10' : 'col-sm-8 col-md-9' ?><? endif; ?>">
       <div class="media-body">
-        <div>
+        <div class="title-container">
           <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title" data-view="<?=isset($this->params) ? $this->params->getOptions()->getListViewOption() : 'list' ?>">
             <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
           </a>

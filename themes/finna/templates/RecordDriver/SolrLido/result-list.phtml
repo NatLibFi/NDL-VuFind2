@@ -65,7 +65,7 @@
           <?=$this->render('list/list-notes.phtml')?>
         <? endif; ?>
 
-        <div class="col-xs-12 col-sm-1 hidden-print add-to-favorite-col">
+        <div class="hidden-print add-to-favorite-col">
             <? /* Display qrcode if appropriate: */ ?>
             <? if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
                 <?
