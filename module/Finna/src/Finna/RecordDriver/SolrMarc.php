@@ -1520,7 +1520,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get format of notated music from field 348, subfields a, b & 2.
+     * Get format of notated music from field 348, subfields a, b and 2.
      *
      * @return string
      */
