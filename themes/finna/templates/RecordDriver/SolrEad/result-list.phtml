@@ -109,8 +109,7 @@
             </div>
           <? endforeach; ?>
         <? endif; ?>
-      </div>
-      <div class="hidden-print add-to-favorite-col">
+        <div class="hidden-print add-to-favorite-col">
           <? /* Display qrcode if appropriate: */ ?>
           <? if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
               <?
@@ -132,6 +131,7 @@
 
           <? $openUrl = $this->driver->getOpenURL(); ?>
           <?=$openUrl?'<span class="Z3988" title="'.$this->escapeHtmlAttr($openUrl).'"></span>':''?>
+        </div>
       </div>
     </div>
     <div class="media-<?=$thumbnailAlignment ?> col-xs-3 <? if ($thumbnailAlignment == 'left'): ?><?= $combinedView ? 'col-sm-2 col-sm-pull-10' : 'col-sm-3 col-sm-pull-9' ?><? elseif ($thumbnailAlignment == 'right'): ?><?= $combinedView ? 'col-sm-2' : 'col-sm-3 col-md-2' ?><? endif; ?> resultThumb">
