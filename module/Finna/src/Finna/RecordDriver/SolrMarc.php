@@ -857,9 +857,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
         // First check the 440, 800 and 830 fields for series information:
         $primaryFields = [
-            '440' => ['a', 'p'],
-            '800' => ['a', 'b', 'c', 'd', 'f', 'p', 'q', 't'],
-            '830' => ['a', 'p', 'x']];
+            '440' => ['a', 'n', 'p'],
+            '800' => ['a', 'b', 'c', 'd', 'f', 'n', 'p', 'q', 't', 'l', 'v'],
+            '830' => ['a', 'v']
+        ];
         $matches = $this->getSeriesFromMARC($primaryFields);
 
         if (empty($matches)) {
@@ -871,12 +872,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         // Still no results found?  Resort to the Solr-based method just in case!
         if (empty($matches)) {
             $matches = parent::getSeries();
-        }
-
-        foreach ($matches as &$match) {
-            if (isset($match['number'])) {
-                $match['number'] = $this->stripTrailingPunctuation($match['number']);
-            }
         }
 
         return $matches;
@@ -1336,16 +1331,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         ];
                         $currentArray['additional'] = implode(' ', $name);
 
-                        // Can we find a number in subfield v?  (Note that number is
+                        // Can we find an ISSN in subfield x? (Note that ISSN is
                         // always in subfield v regardless of whether we are dealing
                         // with 440, 490, 800 or 830 -- hence the hard-coded array
                         // rather than another parameter in $fieldInfo).
-                        $number = $this->getSubfieldArray($currentField, ['v']);
-                        if (isset($number[0])) {
-                            $currentArray['number'] = $number[0];
-                        }
-
-                        // Can we find an ISSN in subfield x? (same note as above)
                         $issn = $this->getSubfieldArray($currentField, ['x']);
                         if (isset($issn[0])) {
                             $currentArray['issn'] = $this->stripTrailingPunctuation(
@@ -1354,16 +1343,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         }
 
                         // Subfields n and p to show number of part/section of a
-                        // series and name of that part/section
-                        $partName = $this->getSubfieldArray($currentField, ['p']);
-                        if (isset($partName[0])) {
-                            $currentArray['partName']
-                                = $this->stripTrailingPunctuation($partName[0]);
-                        }
-                        $partNumber = $this->getSubfieldArray($currentField, ['n']);
-                        if (isset($partNumber[0])) {
-                            $currentArray['partNumber']
-                                = $this->stripTrailingPunctuation($partNumber[0]);
+                        // series and name of that part/section for 830
+                        if ($field == '830') {
+                            $partName = $this->getSubfieldArray(
+                                $currentField, ['p']
+                            );
+                            if (isset($partName[0])) {
+                                $currentArray['partName']
+                                    = $this->stripTrailingPunctuation($partName[0]);
+                            }
+                            $partNumber = $this->getSubfieldArray(
+                                $currentField, ['n']
+                            );
+                            if (isset($partNumber[0])) {
+                                $currentArray['partNumber']
+                                    = $this->stripTrailingPunctuation(
+                                        $partNumber[0]
+                                    );
+                            }
                         }
 
                         // Save the current match:

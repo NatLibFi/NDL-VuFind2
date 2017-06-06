@@ -19,12 +19,12 @@
        name.  We should account for both cases to maximize compatibility. */?>
     <? if (is_array($field)): ?>
       <? if (!empty($lookfor)): ?>
-          <a href="<?=$this->record($this->driver)->getLink('series', $lookfor)?>"><?=$this->escapeHtml($lookfor)?></a><? if (!empty($field['issn']) || !empty($field['number'])): ?>, <? endif; ?>
+          <a href="<?=$this->record($this->driver)->getLink('series', $lookfor)?>"><?=$this->escapeHtml($lookfor)?></a><? if (!empty($field['issn']) || !empty($field['additional'])): ?>, <? endif; ?>
         <? if (!empty($field['issn'])): ?>
-          ISSN <?=$this->escapeHtml($field['issn'])?><? if (!empty($field['number'])): ?>; <? endif; ?>
+          ISSN <?=$this->escapeHtml($field['issn'])?><? if (!empty($field['additional'])): ?>; <? endif; ?>
         <? endif; ?>
-        <? if (!empty($field['number'])): ?>
-          <?=$this->escapeHtml($field['number'])?>
+        <? if (!empty($field['additional'])): ?>
+          <?=$this->escapeHtml($field['additional'])?>
         <? endif; ?>
         <br/>
       <? endif; ?>
