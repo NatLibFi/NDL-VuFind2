@@ -609,7 +609,9 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Trade Note', 'getTradeAvailabilityNote', 'data-escapeHtml.phtml',
+            'Trade Availability Note',
+            'getTradeAvailabilityNote',
+            'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordTradeNote']
             ]

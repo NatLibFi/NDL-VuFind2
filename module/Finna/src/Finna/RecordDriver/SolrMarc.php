@@ -1536,7 +1536,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get trade availibility notice from field 366.
+     * Get trade availability note from field 366.
      *
      * @return array
      */
