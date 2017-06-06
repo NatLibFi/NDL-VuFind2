@@ -51,8 +51,10 @@ finna.common = (function() {
         $('a.finnaQrcodeLink').click(function qrcodeToggle() {
             if ($(this).hasClass("active")) {
                 $(this).html("<i class='fa fa-qr-code' aria-hidden='true'></i>").removeClass("active");
+                $(this).parent().removeClass('qr-box');
             } else {
                 $(this).html(VuFind.translate('qrcode_hide')).addClass("active");
+                $(this).parent().addClass('qr-box');
             }
 
             var holder = $(this).next('.qrcode');

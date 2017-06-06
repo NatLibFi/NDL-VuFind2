@@ -110,21 +110,31 @@
 }
 
 .add-to-favorite-col {
-  @media(min-width: @screen-sm) {
+  @media (min-width: @screen-sm) {
     position: absolute;
     top: 0px;
     right: 10px;
     margin-right: 5px;
   }
 
-  .qrcode{
-    width: 100px;
-    height: 100px;
+  .qrcode {
+    width: 90px;
+    height: 90px;
+  }
+  .finnaQrcodeLink {
+    background-color: @body-bg;
+  }
+  .qr-box {
+    box-shadow: 0 6px 12px #888;
+    border: 1px solid rgba(0, 0, 0, .15);
+    border-radius: 10px;
+    padding: 5px;
+    background: #fff;
   }
 }
 
 .title-container {
   @media(min-width: @screen-xs-max){
-    padding-right: 15px;
+    padding-right: 20px;
   }
 }
