@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordDriver/Primo/result-list.phtml -->
 <?
-  $combinedView = $this->layout()->templateDir === 'combined';
+  $combinedView = !$this->layout()->templateDir || $this->layout()->templateDir === 'combined';
 ?>
 <div class="record-container<?=$this->driver->supportsAjaxStatus()?' ajaxItem ':''?>">
     <div>
@@ -144,19 +144,19 @@
       $openUrlActive = $openUrl->isActive();
       ?>
     </div>
-    <div class="<?= $combinedView ? 'hidden' : 'hidden-xs' ?> col-sm-1 hidden-print">
+    <div class="hidden-xs col-sm-1 hidden-print">
       <? /* Display qrcode if appropriate: */ ?>
       <? if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
         <?
           // Add JS Variables for QrCode
           $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
         ?>
-        <span class="hidden-xs">
+        <div class="<?= $combinedView ? 'hidden' : '' ?> hidden-xs">
           <i class="fa fa-qrcode"></i> <a href="<?=$this->escapeHtmlAttr($QRCode);?>" class="qrcodeLink"><?=$this->transEsc('qrcode_show')?></a>
           <div class="qrcode hidden">
             <img alt="<?=$this->transEsc('QR Code')?>" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
           </div><br/>
-        </span>
+        </div>
       <? endif; ?>
 
       <? if ($this->userlist()->getMode() !== 'disabled'): ?>
@@ -197,7 +197,7 @@
     <? endif; ?>
     </div>
     <div class="clearfix visible-xs"></div>
-    <div class="col-xs-12 <?= $combinedView ? '' : 'visible-xs' ?>">
+    <div class="col-xs-12 visible-xs">
     <? if ($this->userlist()->getMode() !== 'disabled'): ?>
         <? /* Add to favorites */ ?>
         <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record hidden-print <?= $combinedView ? 'pull-left combined-save-record' : '' ?>" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a>
