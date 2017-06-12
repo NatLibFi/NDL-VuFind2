@@ -177,10 +177,12 @@
           </div>
           <div class="col-xs-12">
             <? foreach ($searchFilters as $field => $data): ?>
-              <? foreach ($data as $value): ?>
+              <? foreach ($data as $index => $value): ?>
                 <div>
                   <label>
-                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"' /> <?=$this->escapeHtml($value['displayText'])?>
+                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"' />
+                      <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT') . ' '; if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR') . ' '; ?>
+                    <?=$this->transEsc($field)?>: <?=$this->escapeHtml($value['displayText'])?>
                   </label>
                 </div>
               <? endforeach; ?>
