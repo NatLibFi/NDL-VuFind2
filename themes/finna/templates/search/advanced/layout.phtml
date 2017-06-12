@@ -24,7 +24,14 @@
     }
     $hasDefaultsApplied = $this->saved->getParams()->hasDefaultsApplied();
 
-    $searchFilters = $this->saved->getParams()->getFilterList();
+    $searchFilters = $this->saved->getParams()->getFilterList(true);
+    $checkboxFilters = $this->saved->getParams()->getCheckboxFacets();
+    $usedCheckboxFilters = [];
+    foreach ($checkboxFilters as $filter) {
+        if ($filter['selected'] == true){
+            array_push($usedCheckboxFilters, $filter);
+        }
+    }
     // Remove date range filter (search_daterange_mv) and geographic filters so that
     // they don't get included in the list of active filters
     $searchFilters = $this->saved->getParams()->removeDateRangeFilter($searchFilters);
@@ -163,7 +170,7 @@
     <? if ($hasDefaultsApplied): ?>
       <input type="hidden" name="dfApplied" value="1" />
     <? endif ?>
-    <? if (!empty($searchFilters)): ?>
+    <? if (!empty($searchFilters) || !empty($usedCheckboxFilters)): ?>
       <div class="row">
         <div class="col-sm-6 applied-adv-search-filters sidebar">
           <h4><?=$this->transEsc("adv_search_filters")?></h4>
@@ -176,11 +183,21 @@
             <br>
           </div>
           <div class="col-xs-12">
+            <? foreach ($usedCheckboxFilters as $filter): ?>
+              <? if ($filter['selected'] == true): ?>
+                <div>
+                  <label>
+                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$this->escapeHtmlAttr($filter['filter'])?>' />
+                      <?=$this->transEsc($filter['desc'])?>
+                  </label>
+                </div>
+              <? endif; ?>
+            <? endforeach; ?>
             <? foreach ($searchFilters as $field => $data): ?>
               <? foreach ($data as $index => $value): ?>
                 <div>
                   <label>
-                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"' />
+                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='~<?=$this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"' />
                       <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT') . ' '; if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR') . ' '; ?>
                     <?=$this->transEsc($field)?>: <?=$this->escapeHtml($value['displayText'])?>
                   </label>
