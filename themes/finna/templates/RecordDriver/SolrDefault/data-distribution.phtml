@@ -14,6 +14,7 @@
       <?=$index > 0 ? '<br/>' : '' ?><?=$this->escapeHtml($item['name']) ?><? if (!empty($additional)): ?>, <?=implode(' ', $additional) ?><? endif; ?>
     <? endforeach; ?>
   </div>
+<? endif; ?>
 
   <? $time = $this->driver->getPremiereTime(); if (!empty($time)): ?>
     <tr>
@@ -22,7 +23,7 @@
     </tr>
   <? endif; ?>
 
-  <? $theater= $this->driver->getPremiereTheaters(); if (!empty($theater)): ?><br/>
+  <? $theater= $this->driver->getPremiereTheaters(); if (!empty($theater)): ?>
     <tr>
       <th><?=$this->transEsc('Premiere Theaters') ?>:</th>
       <td>
@@ -33,7 +34,7 @@
     </tr>
   <? endif; ?>
 
-  <? $brInfo = $this->driver->getBroadcastingInfo(); if (!empty($brInfo)): ?><br/>
+  <? $brInfo = $this->driver->getBroadcastingInfo(); if (!empty($brInfo)): ?>
     <tr>
       <th><?=$this->transEsc('Broadcasting Dates') ?>:</th>
       <td>
@@ -48,7 +49,7 @@
     </tr>
   <? endif; ?>
 
-  <? $fvInfo = $this->driver->getFestivalInfo(); if (!empty($fvInfo)): ?><br/>
+  <? $fvInfo = $this->driver->getFestivalInfo(); if (!empty($fvInfo)): ?>
     <tr>
       <th><?=$this->transEsc('Film Festival') ?>:</th>
       <td>
@@ -69,7 +70,7 @@
     </tr>
   <? endif; ?>
 
-  <? $foreignDist = $this->driver->getForeignDistribution(); if (!empty($foreignDist)): ?><br/>
+  <? $foreignDist = $this->driver->getForeignDistribution(); if (!empty($foreignDist)): ?>
     <tr>
       <th><?=$this->transEsc('Foreign Distribution') ?>:</th>
       <td>
@@ -93,7 +94,7 @@
     </tr>
   <? endif; ?>
 
-  <? $screenings = $this->driver->getOtherScreenings(); if (!empty($screenings)): ?><br/>
+  <? $screenings = $this->driver->getOtherScreenings(); if (!empty($screenings)): ?>
     <tr>
       <th><?=$this->transEsc('Other Screenings') ?>:</th>
       <td>
@@ -111,5 +112,3 @@
       </td>
     </tr>
   <? endif; ?>
-
-<? endif; ?>

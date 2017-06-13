@@ -1271,14 +1271,22 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
                 $atr = $event->ProductionEventType->attributes();
-                $office = "";
-                if (!empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
-                    $inspector = (string)$atr->{'elokuva-tarkastus-tarkastuselin'};
+                if (!empty($atr->{'elokuva-tarkastus-tarkastusnro'})
+                    || !empty($atr->{'elokuva-tarkastus-tarkastuselin'})
+                    || !empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})
+                ) {
+                    $office = $reason = $length = $subject = $notification = '';
+                    $format = $part = $tax = $type  = $date = $inspector = $age = '';
+                    $number = $time = '';
                     if (!empty($atr->{'elokuva-tarkastus-tarkastusnro'})) {
                         $number = (string)$atr->{'elokuva-tarkastus-tarkastusnro'};
                     }
-                    if (!empty($atr->{'elokuva-tarkastus-formaatti'})) {
-                        $format = (string)$atr->{'elokuva-tarkastus-formaatti'};
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastamolaji'})) {
+                        $type = (string)$atr->{'elokuva-tarkastus-tarkastamolaji'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
+                        $inspector = (string)$atr->{
+                            'elokuva-tarkastus-tarkastuselin'};
                     }
                     if (!empty($atr->{'elokuva-tarkastus-pituus'})) {
                         $length = (string)$atr->{'elokuva-tarkastus-pituus'};
@@ -1289,8 +1297,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     if (!empty($atr->{'elokuva-tarkastus-ikaraja'})) {
                         $age = (string)$atr->{'elokuva-tarkastus-ikaraja'};
                     }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastamolaji'})) {
-                        $type = (string)$atr->{'elokuva-tarkastus-tarkastamolaji'};
+                    if (!empty($atr->{'elokuva-tarkastus-formaatti'})) {
+                        $format = (string)$atr->{'elokuva-tarkastus-formaatti'};
                     }
                     if (!empty($atr->{'elokuva-tarkastus-osalkm'})) {
                         $part = (string)$atr->{'elokuva-tarkastus-osalkm'};
@@ -1298,22 +1306,43 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     if (!empty($atr->{'elokuva-tarkastus-tarkastuttaja'})) {
                         $office = (string)$atr->{'elokuva-tarkastus-tarkastuttaja'};
                     }
-                }
-                if (empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
-                    continue;
-                }
-                $results[] = [
+                    if (!empty($atr->{'elokuva-tarkastus-kesto'})) {
+                        $time = (string)$atr->{'elokuva-tarkastus-kesto'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastusaihe'})) {
+                        $subject = (string)$atr->{'elokuva-tarkastus-tarkastusaihe'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastusaihe'})) {
+                        $reason = (string)$atr->{'elokuva-tarkastus-perustelut'};
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})) {
+                        $notification = (string)$atr->{
+                            'elokuva-tarkastus-tarkastusilmoitus'};
+                    }
+                    if (!empty($event->DateText)
+                        && strpos($event->DateText, '0000') == false
+                    ) {
+                        $date = (string)$event->DateText;
+                    }
+                    $results[] = [
                     'inspector' => $inspector,
                     'number' => $number,
                     'format' => $format,
                     'length' => $length,
                     'taxclass' => $tax,
                     'agerestriction' => $age,
-                    'inspcectiontype' => $type,
+                    'inspectiontype' => $type,
                     'part' => $part,
-                    'office' => $office
-                ];
+                    'office' => $office,
+                    'runningtime' => $time,
+                    'subject' => $subject,
+                    'date' => $date,
+                    'reason' => $reason,
+                    'notification' => $notification
+                    ];
+                }
             }
         }
+        return $results;
     }
 }

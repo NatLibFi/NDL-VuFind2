@@ -622,12 +622,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordMethodology']
             ]
         );
-        //$spec->setTemplateLine(
-        //    'Inspection Details', 'getInspectionDetails', 'data-inspection.phtml',
-        //    [
-        //        'context' => ['class' => 'recordInspection']
-        //    ]
-        //);
+        $spec->setTemplateLine(
+            'Inspection Details', 'getInspectionDetails', 'data-inspection.phtml',
+            [
+                'context' => ['class' => 'recordInspection']
+            ]
+        );
         return $spec->getArray();
     }
 
