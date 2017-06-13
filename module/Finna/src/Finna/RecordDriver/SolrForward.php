@@ -1149,7 +1149,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return filmfestival attendance information if found
+     * Return filmfestival attendance information
      *
      * @return array
      */
@@ -1221,8 +1221,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getNumberOfCopies()
     {
-        $number = $this->getProductionEventAttribute('elokuva-teatterikopioidenlkm');
-        return $number;
+        return $this->getProductionEventAttribute('elokuva-teatterikopioidenlkm');
     }
 
     /**
