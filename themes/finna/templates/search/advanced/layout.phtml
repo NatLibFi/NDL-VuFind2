@@ -28,7 +28,7 @@
     $checkboxFilters = $this->saved->getParams()->getCheckboxFacets();
     $usedCheckboxFilters = [];
     foreach ($checkboxFilters as $filter) {
-        if ($filter['selected'] == true){
+        if ($filter['selected']) {
             array_push($usedCheckboxFilters, $filter);
         }
     }
@@ -188,7 +188,7 @@
           </div>
           <div class="col-xs-12">
             <? foreach ($usedCheckboxFilters as $filter): ?>
-              <? if ($filter['selected'] == true): ?>
+              <? if ($filter['selected']): ?>
                 <div>
                   <label>
                     <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$this->escapeHtmlAttr($filter['filter'])?>' />
@@ -201,8 +201,9 @@
               <? foreach ($data as $index => $value): ?>
                 <div>
                   <label>
-                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='~<?=$this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"' />
-                      <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT') . ' '; if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR') . ' '; ?>
+                    <? $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
+                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$operatorChar . $this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"' />
+                      <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?>
                     <?=$this->transEsc($field)?>: <?=$this->escapeHtml($value['displayText'])?>
                   </label>
                 </div>
