@@ -1,7 +1,7 @@
 <? $cart = $this->cart(); ?>
 <? if ($cart->isActive()): ?>
     <? $cartId = $this->source . '|' . $this->id; ?>
-    <span class="btn-bookbag-toggle" data-cart-id="<?=$this->escapeHtmlAttr($this->id)?>" data-cart-source="<?=$this->escapeHtmlAttr($this->source)?>">
+    <div class="btn-bookbag-toggle" data-cart-id="<?=$this->escapeHtmlAttr($this->id)?>" data-cart-source="<?=$this->escapeHtmlAttr($this->source)?>">
     <a class="cart-add hidden<? if(!$cart->contains($cartId)): ?> correct<? endif ?>" title="<?=$this->transEsc('Add to Book Bag') ?>">
         <i class="fa fa-suitcase" aria-hidden="true"></i>
         <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to Book Bag') ?></span>
@@ -20,5 +20,5 @@
           <? endif; ?>
       </form>
     </noscript>
-  </span>
+  </div>
 <? endif; ?>
