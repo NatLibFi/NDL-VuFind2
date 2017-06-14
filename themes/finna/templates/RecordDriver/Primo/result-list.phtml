@@ -170,6 +170,10 @@
             </a><br/>
           <? endif; ?>
 
+          <? if ($this->cart()->isActiveInSearch() && $this->params->getOptions()->supportsCart() && $this->cart()->isActive()): ?>
+              <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br/>
+          <? endif; ?>
+
           <? /* Hierarchy tree link */ ?>
           <? $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
               <? foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
