@@ -1283,11 +1283,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     if (!empty($atr->{'elokuva-tarkastus-tarkastamolaji'})) {
                         $type = (string)$atr->{'elokuva-tarkastus-tarkastamolaji'};
                     }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
-                        $inspector = (string)$atr->{
-                            'elokuva-tarkastus-tarkastuselin'
-                        };
-                    }
                     if (!empty($atr->{'elokuva-tarkastus-pituus'})) {
                         $length = (string)$atr->{'elokuva-tarkastus-pituus'};
                     }
@@ -1318,6 +1313,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     if (!empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})) {
                         $notification = (string)$atr->{
                             'elokuva-tarkastus-tarkastusilmoitus'
+                        };
+                    }
+                    if (!empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
+                        $inspector = (string)$atr->{
+                            'elokuva-tarkastus-tarkastuselin'
                         };
                     }
                     if (!empty($event->DateText)
