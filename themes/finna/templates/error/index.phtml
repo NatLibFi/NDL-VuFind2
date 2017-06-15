@@ -14,12 +14,9 @@
     <a href="mailto:<?=$supportEmail?>"><?=$supportEmail?></a>
   </p>
   <br/>
-  <? if (strpos($this->exception->getMessage(), 'Primo')): ?>
-    <?=$this->transEsc('Login to view record') ?>
-    <p><a href="<?=$this->url('myresearch-userlogin')?>"><?=$this->transEsc('Login')?></a></p>
-    <p><?=$this->transEsc('Or')?></p>
-    <p><a href="<?=$this->url('myresearch-logout')?>"><?=$this->transEsc('Logout')?></a>, <?=$this->transEsc('Login with university account')?></p>
-  <? endif; ?>
+  <? if($this->authorizationNote('Primo')): ?>
+      <p><?= $this->translate('record_not_found_unauthorized') ?></p>
+  <?endif; ?>
 </div>
 
 <? if ($this->showInstallLink): ?>
