@@ -362,6 +362,38 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
+     * Purge Patron Transaction History
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws ILSException
+     * @return array Associative array of the results
+     */
+    public function purgeTransactionHistory($patron)
+    {
+        list($code, $result) = $this->makeRequest(
+            ['v1', 'checkouts', 'history'],
+            ['borrowernumber' => $patron['id']],
+            'DELETE',
+            $patron,
+            true
+        );
+        if (!in_array($code, [200, 202, 204])) {
+            return  [
+                'success' => false,
+                'status' => 'Purging the checkout history failed',
+                'sys_message' => isset($result['error']) ? $result['error'] : $code
+            ];
+        }
+
+        return [
+            'success' => true,
+            'status' => 'checkout_history_purged',
+            'sys_message' => ''
+        ];
+    }
+
+    /**
      * Update Patron Transaction History State
      *
      * Enable or disable patron's transaction history
@@ -398,7 +430,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 ? 'request_change_done' : 'request_change_accepted',
             'sys_message' => ''
         ];
-
     }
 
     /**
@@ -790,5 +821,37 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
            'callnumber' => null,
            'location' => null
         ];
+    }
+
+    /**
+     * Return a call number for a Koha item
+     *
+     * @param array $item Item
+     *
+     * @return string
+     */
+    protected function getItemCallNumber($item)
+    {
+        return $this->translateLocation($item['location']);
+    }
+
+    /**
+     * Translate location name
+     *
+     * @param string $location Location code
+     *
+     * @return string
+     */
+    protected function translateLocation($location)
+    {
+        $prefix = 'location_';
+        if (!empty($this->config['Catalog']['id'])) {
+            $prefix .= $this->config['Catalog']['id'] . '_';
+        }
+        return $this->translate(
+            "$prefix$location",
+            null,
+            $location
+        );
     }
 }
