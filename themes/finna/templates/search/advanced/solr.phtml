@@ -68,7 +68,7 @@
       </div>
     </fieldset>
     <? if (!empty($searchFilters) || !empty($usedCheckboxFilters)): ?>
-      <h4>Muut käytössä olevat rajaukset</h4>
+      <h4><?=$this->transEsc("adv_search_filters")?></h4>
       <fieldset class="adv-search well limit-to">
         <?=$this->render('search/advanced/filters.phtml', ['usedCheckboxFilters' => $usedCheckboxFilters, 'searchFilters' => $searchFilters])?>
       </fieldset>
