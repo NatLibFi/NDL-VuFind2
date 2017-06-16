@@ -764,6 +764,9 @@ class AjaxController extends \VuFind\Controller\AjaxController
                 $feed['translateTitle'] = $config->title;
             }
         }
+        if (isset($config->description)) {
+            $feed['carouselDescription'] = $config->description;
+        }
 
         if (isset($config->linkTarget)) {
             $feed['linkTarget'] = $config->linkTarget;
