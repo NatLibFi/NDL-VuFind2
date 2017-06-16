@@ -164,7 +164,7 @@
       <? if (isset($this->extraAdvancedControls)): ?>
         <?=$this->extraAdvancedControls ?>
       <? endif; ?>
-      <div class="col-xs-12">
+      <div>
         <span class="limit-container">
           <?=$this->render('search/advanced/limit.phtml')?>
         </span>
@@ -175,41 +175,39 @@
       <input type="hidden" name="dfApplied" value="1" />
     <? endif ?>
     <? if (!empty($searchFilters) || !empty($usedCheckboxFilters)): ?>
-      <div class="row">
-        <div class="col-sm-6 applied-adv-search-filters sidebar">
-          <h4><?=$this->transEsc("adv_search_filters")?></h4>
-          <div class="col-xs-12">
-            <label>
-              <input type="checkbox" checked="checked" class="checkbox-select-all" />
-              <?=$this->transEsc("adv_search_select_all")?>
-            </label>
-            <br>
-            <br>
-          </div>
-          <div class="col-xs-12">
-            <? foreach ($usedCheckboxFilters as $filter): ?>
-              <? if ($filter['selected']): ?>
-                <div>
-                  <label>
-                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$this->escapeHtmlAttr($filter['filter'])?>' />
-                      <?=$this->transEsc($filter['desc'])?>
-                  </label>
-                </div>
-              <? endif; ?>
+      <div class="col-sm-6 applied-adv-search-filters sidebar">
+        <h4><?=$this->transEsc("adv_search_filters")?></h4>
+        <div class="col-xs-12">
+          <label>
+            <input type="checkbox" checked="checked" class="checkbox-select-all" />
+            <?=$this->transEsc("adv_search_select_all")?>
+          </label>
+          <br>
+          <br>
+        </div>
+        <div class="col-xs-12">
+          <? foreach ($usedCheckboxFilters as $filter): ?>
+            <? if ($filter['selected']): ?>
+              <div>
+                <label>
+                  <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$this->escapeHtmlAttr($filter['filter'])?>' />
+                    <?=$this->transEsc($filter['desc'])?>
+                </label>
+              </div>
+            <? endif; ?>
+          <? endforeach; ?>
+          <? foreach ($searchFilters as $field => $data): ?>
+            <? foreach ($data as $index => $value): ?>
+              <div>
+                <label>
+                  <? $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
+                  <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$operatorChar . $this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"' />
+                    <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?>
+                  <?=$this->transEsc($field)?>: <?=$this->escapeHtml($value['displayText'])?>
+                </label>
+              </div>
             <? endforeach; ?>
-            <? foreach ($searchFilters as $field => $data): ?>
-              <? foreach ($data as $index => $value): ?>
-                <div>
-                  <label>
-                    <? $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
-                    <input type="checkbox" class="checkbox-select-item" checked="checked" name="filter[]" value='<?=$operatorChar . $this->escapeHtmlAttr($value['field'])?>:"<?=$this->escapeHtmlAttr($value['value'])?>"' />
-                      <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?>
-                    <?=$this->transEsc($field)?>: <?=$this->escapeHtml($value['displayText'])?>
-                  </label>
-                </div>
-              <? endforeach; ?>
-            <? endforeach; ?>
-          </div>
+          <? endforeach; ?>
         </div>
       </div>
     <? endif; ?>
