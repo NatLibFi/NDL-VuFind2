@@ -969,4 +969,31 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
     }
+
+    /**
+     * Get the displaysubject info to summary
+     *
+     * @return array $result with info
+     */
+    public function getSummary()
+    {
+        $results = [];
+        $title = $this->getTitle();
+        foreach ($this->getSimpleXML()->xpath(
+            'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
+        ) as $node) {
+            $subject = $node->displaySubject;
+            $notTitle = (string)$subject != $title ? true : false;
+            foreach ($subject as $attributes) {
+                $label = $attributes->attributes()->label !== null
+                    ? $attributes->attributes()->label : '';
+            }
+            if ($label == 'aihe' && $notTitle) {
+                $results[] = (string)$subject;
+            } else if ($label == null && $notTitle) {
+                $results[] = (string)$subject;
+            }
+        }
+        return $results;
+    }
 }
