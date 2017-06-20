@@ -988,9 +988,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $label = $attributes->attributes()->label !== null
                     ? $attributes->attributes()->label : '';
             }
-            if ($label == 'aihe' && $notTitle) {
+            if ($label == 'aihe' && isset($subject) && $notTitle) {
                 $results[] = (string)$subject;
-            } else if ($label == null && $notTitle) {
+            } else if ($label == null && isset($subject) && $notTitle) {
                 $results[] = (string)$subject;
             }
         }
