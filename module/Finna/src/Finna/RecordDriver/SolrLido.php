@@ -978,6 +978,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getSummary()
     {
         $results = [];
+        $label = null;
         $title = $this->getTitle();
         foreach ($this->getSimpleXML()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
@@ -986,7 +987,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $checkTitle = (string)$subject !== $title ? true : false;
             foreach ($subject as $attributes) {
                 $label = $attributes->attributes()->label !== null
-                    ? $attributes->attributes()->label : '';
+                    ? $attributes->attributes()->label : null;
             }
             if ($label == 'aihe' && $checkTitle) {
                 $results[] = (string)$subject;
