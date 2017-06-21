@@ -87,9 +87,6 @@ class EdsController extends \VuFind\Controller\EdsController
         }
         $rangeEnd = date('Y', strtotime('+1 year'));
 
-        $results = $this->getResultsManager()->get($this->searchClassId);
-        $params = $results->getParams();
-
         $range = [];
         if ($view->dateRangeLimit) {
             $values = $view->dateRangeLimit;
