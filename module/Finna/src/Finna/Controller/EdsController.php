@@ -93,7 +93,7 @@ class EdsController extends \VuFind\Controller\EdsController
         $range = [];
         if ($view->dateRangeLimit) {
             $values = $view->dateRangeLimit;
-            if (isset($values[0]) && isset($values[1])) {
+            if ($values[0] && $values[1]) {
                 $range['values'] = [$values[0], $values[1]];
                 if ($ticks[0] > $values[0]) {
                     $ticks[0] = $values[0];
