@@ -4,7 +4,7 @@
     <? foreach ($this->expanderList as $field => $expander):
       $value = $expander['Value'] ?>
       <div>
-        <label for="expand_<?=$this->escapeHtmlAttr(str_replace(' ', '+', $field))?>">
+        <label for="expand_<?=$this->escapeHtmlAttr(str_replace(' ', '+', $field))?>" class="checkbox-label">
           <input id="expand_<?=$this->escapeHtmlAttr(str_replace(' ', '+', $field))?>" type="checkbox" <?=(isset($expander['selected']) && $expander['selected'])?'checked="checked"':''?> name="filter[]" value="EXPAND:<?=$this->escapeHtmlAttr($value)?>">
           <?=$this->transEsc('eds_expander_' . $value, array(), $expander['Label'])?>
         </label>
@@ -25,11 +25,11 @@
 
 <? if (!empty($this->limiterList)): ?>
   <h4><?=$this->transEsc('Limit To')?></h4>
-  <fieldset class="eds well">
+  <fieldset class="eds well limit-to">
     <? foreach ($this->limiterList as $field => $facet): ?>
       <? switch($facet['Type']){
           case 'multiselectvalue': ?>
-            <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '+', $field))?>"><?=$this->transEsc($facet['Label'])?></label><br/>
+            <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '+', $field))?>"><?=$this->transEsc($facet['Label'])?></label>
             <select id="limit_<?=$this->escapeHtmlAttr($field)?>" name="filter[]" multiple="multiple" size="10" class="form-control">
               <? foreach ($facet['LimiterValues'] as $id => $facetValue): ?>
                 <? $value = $facetValue['Value']; ?>
@@ -41,7 +41,7 @@
           case 'select':
             $value = $facet['LimiterValues'][0]['Value'] ?>
             <div>
-              <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '+', $field))?>">
+              <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '+', $field))?>" class="checkbox-label">
                 <input id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '+', $field))?>" type="checkbox" <?=(isset($facet['LimiterValues'][0]['selected']) && $facet['LimiterValues'][0]['selected'])?'checked="checked"':''?> name="filter[]" value="<?=$this->escapeHtmlAttr('LIMIT|'.$field . ':' . $value)?>">
                 <?=$this->transEsc('eds_limiter_' . $field, array(), $facet['Label'])?>
               </label>
@@ -70,12 +70,13 @@
             <? break;
         }; ?>
     <? endforeach; ?>
-  </fieldset>
 <? endif; ?>
 <? if (isset($this->dateRangeLimit)): ?>
-  <h4><?=$this->transEsc('adv_search_year')?></h4>
-  <fieldset class="eds well">
-    <div>
+<div class="row ranges-container">
+  <div class="col-md-2">
+    <label><?=$this->transEsc('adv_search_year')?></label>
+  </div>
+  <div class="col-md-10">
       <input type="hidden" name="daterange[]" value="PublicationDate"/>
         <div class="slider-container">
           <input type="text" id="PublicationDateSlider">
@@ -125,5 +126,6 @@ $(document).ready(function() {
 JS;
     ?>
     <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+    </div>
   </fieldset>
 <? endif; ?>
