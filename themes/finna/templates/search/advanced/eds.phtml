@@ -86,6 +86,7 @@
         </div>
     </div>
       <?
+        $current = $this->daterange;
         $this->headScript()->appendFile('vendor/bootstrap-slider.min.js');
         $this->headLink()->appendStylesheet('vendor/bootstrap-slider.min.css');
         $min = !empty($current['values'][0]) ? min($current['values'][0], 1400) : 1400;
@@ -98,6 +99,8 @@
         $low = intval($low);
         $high = intval($high);
         $init = !empty($current['values'][0]) ? 'fillTexts()' : '';
+        $ticks = $ticks_labels = '[' . implode(', ', $current['ticks']) . ']';
+        $ticks_positions = '[' . implode(', ', $current['ticks_positions']) . ']';
         $script = <<<JS
 $(document).ready(function() {
   var fillTexts = function() {
@@ -111,9 +114,12 @@ $(document).ready(function() {
        'max':{$max},
        'handle':"square",
        'tooltip':"hide",
-       'value':[{$low},{$high}]
+       'value':[{$low},{$high}],
+       'ticks':{$ticks},
+       'ticks_labels':{$ticks_labels},
+       'ticks_positions':{$ticks_positions}
     })
-    .on('change', fillTexts)
+    .change(fillTexts)
     .data('slider');
   {$init}
 });

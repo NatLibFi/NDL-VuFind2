@@ -68,4 +68,54 @@ class EdsController extends \VuFind\Controller\EdsController
     {
         return $this->serviceLocator->get('Finna\Search\Memory');
     }
+
+    /**
+     * Handle an advanced search
+     *
+     * @return mixed
+     */
+    public function advancedAction()
+    {
+        $view = parent::advancedAction();
+
+        $config = $this->getConfig();
+        $ticks = [0, 900, 1800, 1910];
+        if (!empty($config->Site->advSearchYearScale)) {
+            $ticks = array_map(
+                'trim', explode(',', $config->Site->advSearchYearScale)
+            );
+        }
+        $rangeEnd = date('Y', strtotime('+1 year'));
+
+        $results = $this->getResultsManager()->get($this->searchClassId);
+        $params = $results->getParams();
+
+        $range = [];
+        if ($view->dateRangeLimit) {
+            $values = $view->dateRangeLimit;
+            if (isset($values[0]) && isset($values[1])) {
+                $range['values'] = [$values[0], $values[1]];
+                if ($ticks[0] > $values[0]) {
+                    $ticks[0] = $values[0];
+                }
+                if ($rangeEnd < $values[1]) {
+                    $rangeEnd = $values[1];
+                }
+            } else {
+                $range['values'] = [null, null];
+            }
+        }
+        array_push($ticks, $rangeEnd);
+        $range['ticks'] = $ticks;
+
+        $positions = [];
+        for ($i = 0; $i < count($ticks); $i++) {
+            $positions[] = floor($i * 100 / (count($ticks) - 1));
+        }
+        $range['ticks_positions'] = $positions;
+
+        $view->daterange = $range;
+
+        return $view;
+    }
 }
