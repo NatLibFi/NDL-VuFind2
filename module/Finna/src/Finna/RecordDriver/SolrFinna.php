@@ -640,7 +640,7 @@ trait SolrFinna
             return 'Journal';
         } else if (strlen($this->getCleanISBN()) > 0) {
             return 'Book';
-        }elseif (isset($formats[0])) {
+        } elseif (isset($formats[0])) {
             $format = explode('/', $formats[0]);
             if (isset($format[1])) {
                 return $format[1];
