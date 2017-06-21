@@ -636,7 +636,11 @@ trait SolrFinna
             return 'Article';
         } elseif (in_array('0/Journal/', $formats)) {
             return 'Journal';
-        } elseif (isset($formats[0])) {
+        } else if (strlen($this->getCleanISSN()) > 0) {
+            return 'Journal';
+        } else if (strlen($this->getCleanISBN()) > 0) {
+            return 'Book';
+        }elseif (isset($formats[0])) {
             $format = explode('/', $formats[0]);
             if (isset($format[1])) {
                 return $format[1];
