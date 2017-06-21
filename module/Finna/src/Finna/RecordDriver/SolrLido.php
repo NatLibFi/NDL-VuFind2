@@ -983,14 +983,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
         ) as $node) {
             $subject = $node->displaySubject;
-            $checkTitle = (string)$subject != $title ? true : false;
+            $checkTitle = (string)$subject !== $title ? true : false;
             foreach ($subject as $attributes) {
                 $label = $attributes->attributes()->label !== null
                     ? $attributes->attributes()->label : '';
             }
-            if ($label == 'aihe' && isset($subject) && $checkTitle) {
+            if ($label == 'aihe' && $checkTitle) {
                 $results[] = (string)$subject;
-            } else if ($label == null && isset($subject) && $checkTitle) {
+            } else if ($label == null && $checkTitle) {
                 $results[] = (string)$subject;
             }
         }
