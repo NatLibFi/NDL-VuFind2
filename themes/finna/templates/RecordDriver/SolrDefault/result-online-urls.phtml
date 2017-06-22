@@ -45,11 +45,13 @@
               }
             }
             if (strpos($url['url'], 'vimeo') !== false){
-                $vimeoUrl = explode('/', $url['url']);
-                $vimeoId = end($vimeoUrl);
-                $embeddedUrl = 'https://player.vimeo.com/video/' . $vimeoId;
+              $vimeoUrl = explode('/', $url['url']);
+              $videoId = end($vimeoUrl);
+              $embeddedUrl = '//player.vimeo.com/video/' . $videoId;
             } elseif (strpos($url['url'], 'youtube') !== false){
-
+              $youtubeUrl = explode('v=', $url['url']);
+              $videoId = end($youtubeUrl);
+              $embeddedUrl = '//www.youtube.com/embed/' . $videoId;
             }
           ?>
           <a
