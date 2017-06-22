@@ -44,14 +44,8 @@
                 $icon = $map[$url['desc']];
               }
             }
-            if (strpos($url['url'], 'vimeo') !== false){
-              $vimeoUrl = explode('/', $url['url']);
-              $videoId = end($vimeoUrl);
-              $embeddedUrl = '//player.vimeo.com/video/' . $videoId;
-            } elseif (strpos($url['url'], 'youtube') !== false){
-              $youtubeUrl = explode('v=', $url['url']);
-              $videoId = end($youtubeUrl);
-              $embeddedUrl = '//www.youtube.com/embed/' . $videoId;
+            if (strpos($url['url'], 'vimeo') !== false || strpos($url['url'], 'youtube') !== false){
+              $embeddedVideo = true;
             }
           ?>
           <a
@@ -60,7 +54,7 @@
             data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?><? if (!empty($url['posterUrl'])): ?>
             data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<? endif; ?>
             <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-            <?=isset($embeddedUrl) ? 'data-embedded-url=' . $embeddedUrl : '' ?>
+            <?=isset($embeddedVideo) ? 'data-embed-iframe' : '' ?>
             target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa <?=$icon?>"
             aria-hidden="true"
             >

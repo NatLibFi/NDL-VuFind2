@@ -777,26 +777,6 @@ finna.layout = (function() {
         });
     };
 
-    var initEmbeddedVideoPopup = function(container) {
-        if (typeof(container) == 'undefined') {
-            container = $('body');
-        }
-
-        container.find('a[data-embedded-url]').click(function(e) {
-            var url = $(this).data('embedded-url');
-            console.log(url);
-            //var url = 'https://player.vimeo.com/video/3873878';
-            $.magnificPopup.open({
-                type: 'inline',
-                items: {
-                    src: "<div class='video-popup'><iframe width='100%' height='300px' src=" + url + "></iframe></div>"
-                }
-            });
-            e.preventDefault();
-            return false;
-        });
-    };
-
     var initKeyboardNavigation = function () {
         $(window).keyup(function(e) {
             var $target = $(e.target);
@@ -825,7 +805,6 @@ finna.layout = (function() {
         initSecondaryLoginField: initSecondaryLoginField,
         initIframeEmbed: initIframeEmbed,
         initVideoPopup: initVideoPopup,
-        initEmbeddedVideoPopup: initEmbeddedVideoPopup,
         init: function() {
             initScrollRecord();
             initJumpMenus();
@@ -856,7 +835,6 @@ finna.layout = (function() {
             initOrganisationPageLinks();
             initIframeEmbed();
             initVideoPopup();
-            initEmbeddedVideoPopup();
             initKeyboardNavigation();
         }
     };
