@@ -1,6 +1,6 @@
 <?php
 /**
- * OpenURL view helper
+ * RecordLink view helper
  *
  * PHP version 5
  *
