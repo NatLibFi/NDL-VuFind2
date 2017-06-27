@@ -51,7 +51,7 @@
             data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?><? if (!empty($url['posterUrl'])): ?>
             data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<? endif; ?>
             <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-            <? if (preg_match('/^https?:\/\/vimeo\.com\/\d+/', $url['url']) || preg_match('/^https?:\/\/(www\.)?(youtube\.com\/watch\?|youtu\.?be\/)\w+/', $url['url'])): ?>data-embed-iframe<? endif; ?>
+            <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
             target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa <?=$icon?>"
             aria-hidden="true"
             >
