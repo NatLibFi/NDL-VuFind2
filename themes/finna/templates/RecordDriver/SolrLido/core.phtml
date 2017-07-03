@@ -76,10 +76,12 @@
           </div>
         <? endif; ?>
       </div>
-      <? $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $summary[0] : false; ?>
+      <? $summary = $this->driver->getSummary();?>
       <? if ($summary): ?>
         <div class="truncate-field wide recordSummary">
-          <p class="summary"><?=preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($summary)); /* Allow <br> tag */ ?></p>
+          <? foreach ($summary as $row): ?>
+            <p class="summary"><?=preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($row)); /* Allow <br> tag */ ?></p>
+          <? endforeach; ?>
         </div>
       <? endif; ?>
 

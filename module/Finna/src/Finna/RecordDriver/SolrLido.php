@@ -984,7 +984,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
         ) as $node) {
             $subject = $node->displaySubject;
-            $checkTitle = (string)$subject !== $title ? true : false;
+            $checkTitle = (string)$subject != $title ? true : false;
             foreach ($subject as $attributes) {
                 $label = $attributes->attributes()->label !== null
                     ? $attributes->attributes()->label : null;
@@ -992,6 +992,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $results[] = (string)$subject;
                 }
             }
+        }
+        if (isset($this->fields['description'])
+            && !empty($this->fields['description'])
+        ) {
+            $results[] = (string)($this->fields['description']) != $title
+                ? (string)$this->fields['description'] : '';
         }
         return $results;
     }
