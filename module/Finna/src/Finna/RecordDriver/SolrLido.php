@@ -979,7 +979,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $results = [];
         $label = null;
-        $title = $this->getTitle();
+        $title = str_replace(';', ',', $this->getTitle());
         foreach ($this->getSimpleXML()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
         ) as $node) {
@@ -988,11 +988,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             foreach ($subject as $attributes) {
                 $label = $attributes->attributes()->label !== null
                     ? $attributes->attributes()->label : null;
-            }
-            if ($label == 'aihe' && $checkTitle) {
-                $results[] = (string)$subject;
-            } else if ($label == null && $checkTitle) {
-                $results[] = (string)$subject;
+                if ($label == 'aihe' || $label == null  && $checkTitle) {
+                    $results[] = (string)$subject;
+                }
             }
         }
         return $results;
