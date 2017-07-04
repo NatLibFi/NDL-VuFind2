@@ -994,7 +994,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
         if (isset($this->fields['description'])
-            && !empty($this->fields['description'])
+            && !empty($this->fields['description']) && empty($results[0])
         ) {
             $results[] = (string)($this->fields['description']) != $title
                 ? (string)$this->fields['description'] : '';
