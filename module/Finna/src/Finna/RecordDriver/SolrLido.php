@@ -971,9 +971,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get the displaysubject info to summary
+     * Get the displaysubject and description info to summary
      *
-     * @return array $result with info
+     * @return array $results with summary from displaySubject or description field
      */
     public function getSummary()
     {
