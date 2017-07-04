@@ -21,6 +21,8 @@
  *
  * @category VuFind
  * @package  ILS_Drivers
+ * @author   Bjarne Beckmann <bjarne.beckmann@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
@@ -36,6 +38,8 @@ use VuFind\Exception\Date;
  *
  * @category VuFind
  * @package  ILS_Drivers
+ * @author   Bjarne Beckmann <bjarne.beckmann@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
@@ -1058,7 +1062,8 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
      * @throws ILSException
      * @return obj  A Simple XML Object loaded with the xml data returned by the API
      */
-    protected function makeRequest($service, $params = false, $mode = 'GET') {
+    protected function makeRequest($service, $params = false, $mode = 'GET')
+    {
         // Build Url Base
         $urlParams = "{$this->ws_host}/$service";
 
