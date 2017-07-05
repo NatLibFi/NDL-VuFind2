@@ -240,10 +240,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         ];
         $response = $this->makeRequest('GetItem', $params);
 
-        if ($response === false) {
-            throw new ILSException('ils_offline_holdings_message');
-        }
-
         $itemsTotal =  (int) $response->MarcRecord->Overview->TotalCount;
         $orderedTotal = (int) $response->MarcRecord->Overview->Ordered;
         $reservationsTotal =  (int) $response->MarcRecord->Overview->QueueLength;
@@ -367,10 +363,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         ];
         $response = $this->makeRequest('LoginPatron', $params);
 
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
-
         $statusId = (string) $response->Result['id'];
 
         if ($statusId != '0') {
@@ -378,10 +370,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $response = $this->makeRequest('GetPatronInformation', $params);
-
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
 
         $info = $response->Patron;
 
@@ -454,10 +442,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         ];
         $response = $this->makeRequest('GetPatronLoans', $params);
 
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
-
         if (!isset($response->Loans->Loan)) {
             return [];
         }
@@ -509,10 +493,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
 
         $response = $this->makeRequest('GetPatronInformation', $params);
 
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
-
         $balance = (float)$response->Patron->AccountSaldo[0];
 
         if ($balance == 0) {
@@ -556,10 +536,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
                 'loanId'  => $loanId
             ];
             $response = $this->makeRequest('renewloan', $params);
-
-            if ($response === false) {
-                throw new ILSException('ils_connection_failed');
-            }
 
             $statusId = (string) $response->Result['id'];
 
@@ -608,10 +584,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
             'lang'    => $this->getLanguage()
         ];
         $response = $this->makeRequest('GetPatronReservations', $params);
-
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
 
         if (!isset($response->Reservations->Reservation)) {
             return [];
@@ -698,10 +670,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
 
         $response = $this->makeRequest('getUnits', $params);
 
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
-
         if (!isset($response->Unit)) {
             return [];
         }
@@ -761,10 +729,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         $params['unitId'] = $unitId;
 
         $response = $this->makeRequest('getUnits', $params);
-
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
 
         if (!isset($response->Unit)) {
             return [];
@@ -892,10 +856,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         ];
         $response = $this->makeRequest('addreservation', $params);
 
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
-
         $statusId = (string) $response->Result['id'];
 
         if ($statusId == '0') {
@@ -940,10 +900,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
                 'reservationId'   => $details
             ];
             $response = $this->makeRequest('removereservation', $params);
-
-            if ($response === false) {
-                throw new ILSException('ils_connection_failed');
-            }
 
             $statusId = (string) $response->Result['id'];
 
@@ -1016,10 +972,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
             'newpincode' => $cardDetails['newPassword']
         ];
         $response = $this->makeRequest('changepatronpincode', $params);
-
-        if ($response === false) {
-            throw new ILSException('ils_connection_failed');
-        }
 
         $statusId = (string) $response->Result['id'];
 
@@ -1111,7 +1063,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         libxml_use_internal_errors($oldLibXML);
 
         if ($simpleXML === false) {
-            return false;
+            throw new ILSException('ils_connection_failed');
         }
         return $simpleXML;
     }
