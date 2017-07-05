@@ -979,23 +979,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $results = [];
         $label = null;
-        $title = str_replace(';', ',', $this->getTitle());
+        $title = str_replace([',', ';'], ' ', $this->getTitle());
         foreach ($this->getSimpleXML()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
         ) as $node) {
             $subject = $node->displaySubject;
-            $checkTitle = (string)$subject != $title ? true : false;
+            $checkTitle = str_replace([',', ';'], ' ', (string)$subject) != $title;
             foreach ($subject as $attributes) {
-                $label = $attributes->attributes()->label !== null
-                    ? $attributes->attributes()->label : null;
+                $label = $attributes->attributes()->label;
                 if ($label == 'aihe' || $label == null  && $checkTitle) {
                     $results[] = (string)$subject;
                 }
             }
         }
-        if (isset($this->fields['description'])
-            && !empty($this->fields['description']) && empty($results[0])
-        ) {
+        if (!$results && !empty($this->fields['description'])) {
             $results[] = (string)($this->fields['description']) != $title
                 ? (string)$this->fields['description'] : '';
         }
