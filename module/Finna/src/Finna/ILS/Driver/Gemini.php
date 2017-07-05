@@ -690,7 +690,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
      */
     public function getRequestGroups($bibId, $patronId, $holdDetails = null)
     {
-
         $interfaceLanguage = $this->getLanguage();
         $results = [];
 
@@ -858,8 +857,8 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
     protected function holdError($msg)
     {
         return [
-                    'success' => false,
-                    'sysMessage' => $msg
+            'success' => false,
+            'sysMessage' => $msg
         ];
     }
 

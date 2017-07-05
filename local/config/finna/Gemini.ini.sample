@@ -1,6 +1,6 @@
 [Catalog]
-host        =
-apikey      =
+host = https://server.address/GeminirestAPI/GeminiRestApi.svc
+apikey =
 
 
 [Loans]
@@ -44,6 +44,7 @@ maxLength = 4
 
 ; Uncomment the following lines to enable update Address
 ; Select email method and add an emailAddress if you want them to be send via email
+; email is the only method currently supported with Gemini
 [updateAddress]
 method = email
 emailAddress =
