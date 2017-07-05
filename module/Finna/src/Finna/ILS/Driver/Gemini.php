@@ -59,14 +59,14 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
      *
      * @var string
      */
-    protected $ws_host;
+    protected $wsHost;
 
     /**
      * Web services database key
      *
      * @var string
      */
-    protected $ws_apikey;
+    protected $wsApiKey;
 
     /**
      * Default pickup location
@@ -110,19 +110,18 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
      */
     public function init()
     {
-
         if (empty($this->config)) {
             throw new ILSException('Configuration needs to be set.');
         }
 
         if (isset($this->config['Catalog']['host'])) {
-            $this->ws_host = $this->config['Catalog']['host'];
+            $this->wsHost = $this->config['Catalog']['host'];
         } else {
             throw new ILSException('host configuration needs to be set.');
         }
 
         if (isset($this->config['Catalog']['apikey'])) {
-            $this->ws_apikey = $this->config['Catalog']['apikey'];
+            $this->wsApiKey = $this->config['Catalog']['apikey'];
         } else {
             throw new ILSException('apikey configuration needs to be set.');
         }
@@ -177,7 +176,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         // Override the base class formatting with Gemini-specific details
         // to ensure proper caching in a MultiBackend environment.
         return 'Gemini-'
-            . md5("{$this->ws_host}|{$this->ws_apikey}|$key");
+            . md5("{$this->wsHost}|{$this->wsApiKey}|$key");
     }
 
     /**
@@ -236,9 +235,8 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
     {
         // Add Required Params
         $params = [
-            'id'     => $id,
-            'lang'    => $this->getLanguage(),
-            'apikey' => $this->ws_apikey
+            'id'   => $id,
+            'lang' => $this->getLanguage()
         ];
         $response = $this->makeRequest('GetItem', $params);
 
@@ -365,8 +363,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         $params = [
             'barcode' => $username,
             'pincode' => $password,
-            'lang'    => $this->getLanguage(),
-            'apikey'  => $this->ws_apikey
+            'lang'    => $this->getLanguage()
         ];
         $response = $this->makeRequest('LoginPatron', $params);
 
@@ -388,7 +385,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
 
         $info = $response->Patron;
 
-        $names = explode(', ', (string) $info->Name);
+        $names = explode(', ', (string) $info->Name, 2);
         $lastname = $names[0];
         $firstname = isset($names[1]) ? $names[1] : '';
 
@@ -425,6 +422,8 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
      */
     public function getMyProfile($patron)
     {
+        // $patron already contains all fields, but we need to fetch
+        // up-to-date patron information
         $profile
             = $this->patronLogin($patron['cat_username'], $patron['cat_password']);
 
@@ -451,8 +450,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         $params = [
             'barcode' => $username,
             'pincode' => $password,
-            'lang'    => $this->getLanguage(),
-            'apikey'  => $this->ws_apikey
+            'lang'    => $this->getLanguage()
         ];
         $response = $this->makeRequest('GetPatronLoans', $params);
 
@@ -504,8 +502,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         $params = [
             'barcode' => $username,
             'pincode' => $password,
-            'lang'    => $this->getLanguage(),
-            'apikey'  => $this->ws_apikey
+            'lang'    => $this->getLanguage()
         ];
 
         // Gemini does not provide specific information on fines
@@ -556,8 +553,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
             $params = [
                 'barcode' => $username,
                 'pincode' => $password,
-                'loanId'  => $loanId,
-                'apikey'  => $this->ws_apikey
+                'loanId'  => $loanId
             ];
             $response = $this->makeRequest('renewloan', $params);
 
@@ -609,8 +605,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         $params = [
             'barcode' => $username,
             'pincode' => $password,
-            'lang'    => $this->getLanguage(),
-            'apikey'  => $this->ws_apikey
+            'lang'    => $this->getLanguage()
         ];
         $response = $this->makeRequest('GetPatronReservations', $params);
 
@@ -634,12 +629,13 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
                 'create' => $this->dateFormat->convertToDisplayDate(
                     'Y-m-d', (string) $reservation->Activation
                 ),
-                'position' => $reservation->NumberInQueue,
-                'available' => $reservation->reservationStatus == 'fetchable',
-                'modifiable' => $reservation->reservationStatus == 'active',
+                'position' => (string) $reservation->NumberInQueue,
+                'available'
+                    => (string) $reservation->reservationStatus == 'fetchable',
+                'modifiable' => (string) $reservation->reservationStatus == 'active',
                 'item_id' => (string) $reservation->ItemId,
-                'requestId' => $reservation->ReservationId,
-                'title' => $reservation->WorkTitle
+                'requestId' => (string) $reservation->ReservationId,
+                'title' => (string) $reservation->WorkTitle
             ];
             $holdsList[] = $hold;
         }
@@ -653,7 +649,6 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function getLanguage()
     {
-        global $interface;
         $language = $this->getTranslatorLocale();
 
         //Only swedish and finnish are supported
@@ -700,10 +695,8 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         $results = [];
 
         // Add Required Params
-        $params = [
-            'unitId'  => 'ALL',
-            'apikey'  => $this->ws_apikey
-        ];
+        $params['unitId'] = 'ALL';
+
         $response = $this->makeRequest('getUnits', $params);
 
         if ($response === false) {
@@ -766,10 +759,8 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         $results = [];
 
         // Add Required Params
-        $params = [
-            'unitId'  => $unitId,
-            'apikey'  => $this->ws_apikey
-        ];
+        $params['unitId'] = $unitId;
+
         $response = $this->makeRequest('getUnits', $params);
 
         if ($response === false) {
@@ -898,8 +889,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
             'pincode'         => $password,
             'workid'          => $workId,
             'deliverAtUnitId' => $pickUpLocation,
-            'resOwnerUnitId'  => $requestGroupId,
-            'apikey'          => $this->ws_apikey
+            'resOwnerUnitId'  => $requestGroupId
         ];
         $response = $this->makeRequest('addreservation', $params);
 
@@ -948,8 +938,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
             $params = [
                 'barcode'         => $username,
                 'pincode'         => $password,
-                'reservationId'   => $details,
-                'apikey'          => $this->ws_apikey
+                'reservationId'   => $details
             ];
             $response = $this->makeRequest('removereservation', $params);
 
@@ -1025,8 +1014,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
         $params = [
             'barcode'    => $username,
             'oldpincode' => $cardDetails['oldPassword'],
-            'newpincode' => $cardDetails['newPassword'],
-            'apikey'     => $this->ws_apikey
+            'newpincode' => $cardDetails['newPassword']
         ];
         $response = $this->makeRequest('changepatronpincode', $params);
 
@@ -1065,7 +1053,10 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
     protected function makeRequest($service, $params = false, $mode = 'GET')
     {
         // Build Url Base
-        $urlParams = "{$this->ws_host}/$service";
+        $urlParams = "{$this->wsHost}/$service";
+
+        // Add web services database key
+        $params['apikey'] = $this->wsApiKey;
 
         // Add Params
         $queryString = [];
@@ -1165,8 +1156,7 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
             $status = $statusArray[$status];
         } else {
             $this->debug(
-                'Unhandled status ' +
-                " for Gemini: '$status'"
+                "Unhandled status for Gemini: '$status'"
             );
         }
         return $status;
@@ -1230,11 +1220,9 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function mapErrorCodeChangePassword($errorCode)
     {
-        //TODO: Add correct translations
         $errorCodes =  [
-            '-2'  => 'Wrong card number',
-            '-3'  => 'Old PIN code invalid',
-            '-4'  => 'New PIN code not accepted',
+            '-3'  => 'authentication_error_invalid',
+            '-4'  => 'password_error_invalid'
         ];
 
         if (isset($errorCodes[$errorCode])) {
