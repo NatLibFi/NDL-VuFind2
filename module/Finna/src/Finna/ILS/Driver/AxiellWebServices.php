@@ -465,8 +465,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             if (is_object($organisation->branches->branch)) {
                 $locationID
                     = $organisationID . '.' . $organisation->branches->branch->id;
-                if (in_array($locationID, $this->excludePickUpLocations)
-                ) {
+                if (in_array($locationID, $this->excludePickUpLocations)) {
                     continue;
                 }
 
@@ -478,8 +477,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 foreach ($organisation->branches->branch as $branch) {
                     $locationID
                         = $organisationID . '.' . $branch->id;
-                    if (in_array($locationID, $this->excludePickUpLocations)
-                    ) {
+                    if (in_array($locationID, $this->excludePickUpLocations)) {
                         continue;
                     }
 
