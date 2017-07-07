@@ -1043,11 +1043,11 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
                     }
                     $messagingSettings[$messagingService]['sendMethods'] += [
                         "$messagingMethod" => [
-                        'active' => $i == $activatedServices[$messagingService],
-                        'type' => $messagingMethod,
-                        'method' => $this->translate(
-                            "messaging_settings_method_$messagingMethod"
-                        )
+                            'active' => $i == $activatedServices[$messagingService],
+                            'type' => $messagingMethod,
+                            'method' => $this->translate(
+                                "messaging_settings_method_$messagingMethod"
+                            )
                         ]
                     ];
                 }
