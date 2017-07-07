@@ -1003,7 +1003,8 @@ class Gemini extends \VuFind\ILS\Driver\AbstractBase
      * @throws ILSException
      * @return array The messaging settings of the patron
      */
-    protected function processMessagingSettings($activatedServices) {
+    protected function processMessagingSettings($activatedServices)
+    {
         $messagingSettings = [];
         // Get the choice of messaging settings from the backend
         $response = $this->makeRequest('GetMessTypeChoices', null);
