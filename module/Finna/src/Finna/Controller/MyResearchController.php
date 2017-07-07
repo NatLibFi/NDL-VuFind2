@@ -91,6 +91,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         if (!($result instanceof \Zend\View\Model\ViewModel)) {
             return $result;
         }
+
         // Try to find the original action and map it to the corresponding menu item
         // since we were probably forwarded here.
         $requestedAction = '';
