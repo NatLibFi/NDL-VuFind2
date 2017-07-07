@@ -987,7 +987,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $checkTitle = str_replace([',', ';'], ' ', (string)$subject) != $title;
             foreach ($subject as $attributes) {
                 $label = $attributes->attributes()->label;
-                if ($label == 'aihe' || $label == null  && $checkTitle) {
+                if (($label == 'aihe' || $label == null)  && $checkTitle) {
                     $results[] = (string)$subject;
                 }
             }
