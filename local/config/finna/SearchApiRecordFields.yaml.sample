@@ -150,6 +150,10 @@ embeddedComponentParts:
     $ref: '#/definitions/ComponentPart'
 events:
   vufind.method: getEvents
+  description: >
+    Events related to museum (LIDO) material. Events include production, printing
+    photographing, planning and use. The response may include (depending on metadata)
+    names, dates, methods, materials, places, actors, culture and description
   $ref: '#/definitions/Events'
 findingAids:
   vufind.method: getFindingAids
@@ -183,7 +187,7 @@ genres:
   items:
     type: string
 geoLocations:
-  vufind.method: getGeoLocation
+  vufind.method: getGeoLocations
   description: Geographic locations (e.g. points, bounding boxes)
   type: array
   items:

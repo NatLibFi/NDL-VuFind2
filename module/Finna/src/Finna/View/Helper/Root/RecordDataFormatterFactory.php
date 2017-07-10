@@ -190,6 +190,19 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'Extent', 'getPhysicalDescriptions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-extent']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Age Limit', 'getAgeLimit', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordAgeLimit']
+            ]
+        );
+        $spec->setTemplateLine(
             'Language', 'getLanguages', 'data-transEsc.phtml',
             [
                 'context' => ['class' => 'recordLanguage']
@@ -603,7 +616,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Lyrics', 'getFirstLyrics', 'data-escapeHtml.phtml',
+            'First Lyrics', 'getFirstLyrics', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordFirstLyrics']
             ]
