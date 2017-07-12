@@ -1,0 +1,9 @@
+<!-- START of: finna - Helpers/login-helper.phtml -->
+<? $account = $this->auth()->getManager(); ?>
+<? if(!$account->isLoggedIn()): ?>
+    <p><?=$this->transEsc("login_information_text"); ?>
+    <a href="<?=$this->url('myresearch-userlogin')?>" data-lightbox
+    data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home'))
+    ?>'"><?=$this->transEsc("logging_in_text"); ?></a></p>
+<? endif; ?>
+<!-- END of: finna - Helpers/login-helper.phtml -->
