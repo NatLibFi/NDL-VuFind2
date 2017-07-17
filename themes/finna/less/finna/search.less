@@ -1,0 +1,52 @@
+// Thumbnail sizes for media items: search results, list entries, record views
+@thumbnail-width-small:  100px;
+@thumbnail-width-medium: 150px;
+@thumbnail-width-large:  200px;
+
+.bulkActionButtons .checkbox,
+.bulkActionButtons label { display: inline-block; }
+.bulkActionButtons label input { margin-top: 2px; }
+@media (max-width: 767px) {
+  .grid { min-height: 250px; }
+}
+
+.result-body { padding-left: 1rem; }
+.result-links { padding: 1rem; }
+@media (min-width: 768px) {
+  .result-body {
+    float: left;
+    width: 90%;
+    padding: 0;
+  }
+  .result-links {
+    float: left;
+    width: 10%;
+    padding: 0;
+  }
+}
+
+.result{
+  @media (min-width: 768px) {
+    .media-left,
+    .media-right {
+      width: 25%;
+      padding-right: 10px;
+      padding-left: 10px;
+
+      a {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        white-space: nowrap;
+        text-decoration: underline;
+        position: relative;
+      }
+
+      &.small img,
+      &.medium img,
+      &.large img {
+        max-width: 100%;
+      }
+    }
+  }
+}

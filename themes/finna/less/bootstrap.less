@@ -26,6 +26,7 @@
 @import "finna/organisation-page";
 @import "finna/survey";
 @import "finna/terms-of-service";
+@import "finna/search";
 @import "finna/searchbox";
 @import "finna/forms";
 @import "finna/search-controls";
@@ -374,6 +375,12 @@ input[type=number].input-year::-webkit-outer-spin-button {
   .sidebar.right {
     float: right;
   }
+
+  .result-body {
+    .savedLists {
+        width: 111.1%;
+    }
+  }
 }
 // Position mainbody properly when sidebar is on right
 .results .mainbody.left {
@@ -431,7 +438,7 @@ mark, .highlight {
     border: none;
     margin-bottom: 15px;
 }
-.row.result {
+.result {
     padding-top: 15px;
     padding-bottom: 15px;
     &:first-child {
