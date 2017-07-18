@@ -89,27 +89,27 @@
     <?=$this->flashmessages()?>
     <? if ($recordTotal > 0): ?>
       <div class="search-controls row">
+          <? $resultsStr = $this->translate(
+              $browse ? 'browse_extended_' . ucfirst($browse) . '_html' : 'showing_results_of_html',
+              [
+                  '%%start%%' => $this->results->getStartRecord(),
+                  '%%end%%' => $this->results->getEndRecord(),
+                  '%%total%%' => $recordTotal
+              ]
+          );?>
+        <div class="pagination-container">
+            <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $resultsStr])?>
+        </div>
         <? if (!$browse): ?>
-        <div class="col-sm-7 col-sm-push-5 col-md-8 col-md-push-4 text-right hidden-print">
+        <div class="control-container text-right hidden-print">
           <?=$this->render('search/controls/view.phtml')?>
           <?=$this->render('search/controls/sort.phtml')?>
           <?=$this->render('search/controls/limit.phtml')?>
         </div>
         <? endif; ?>
-        <? $resultsStr = $this->translate(
-          $browse ? 'browse_extended_' . ucfirst($browse) . '_html' : 'showing_results_of_html',
-          [
-            '%%start%%' => $this->results->getStartRecord(),
-            '%%end%%' => $this->results->getEndRecord(),
-            '%%total%%' => $recordTotal
-          ]
-        );?>
-        <div<?= !$browse ? ' class="col-sm-5 col-md-4 col-sm-pull-7 col-md-pull-8"' : ' class="col-xs-12"' ?>>
-            <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $resultsStr])?>
-        </div>
         <? $this->layout()->srmessage = strip_tags($resultsStr); ?>
         <? if ($this->fromStreetSearch): ?>
-          <div class="col-sm-7 col-sm-push-5 col-md-8 col-md-push-4 text-right hidden-print">
+          <div class="text-right hidden-print">
             <div class="update-location-button">
               <a class="btn btn-primary" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
             </div>

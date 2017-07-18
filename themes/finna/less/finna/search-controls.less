@@ -2,6 +2,7 @@
 .search-controls {
   .button-label {
     margin-left: 10px;
+    padding: 5px;
   }
   @media(max-width:@screen-xs-max) {
     margin-top: -5px;
@@ -31,6 +32,15 @@
     .update-location-button {
       display: none;
     }
+  }
+  .control-container {
+    @media(max-width: @screen-sm-min) {
+      text-align: center;
+      margin-top: 10px;
+    }
+  }
+  .pagination-container {
+    flex-grow: 1;
   }
 }
 
