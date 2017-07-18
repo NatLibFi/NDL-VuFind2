@@ -89,6 +89,12 @@
     <?=$this->flashmessages()?>
     <? if ($recordTotal > 0): ?>
       <div class="search-controls row">
+        <? if (!$browse): ?>
+        <div class="control-container text-right hidden-print">
+          <?=$this->render('search/controls/view.phtml')?>
+          <?=$this->render('search/controls/sort.phtml')?>
+          <?=$this->render('search/controls/limit.phtml')?>
+        </div>
           <? $resultsStr = $this->translate(
               $browse ? 'browse_extended_' . ucfirst($browse) . '_html' : 'showing_results_of_html',
               [
@@ -99,12 +105,6 @@
           );?>
         <div class="pagination-container">
             <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $resultsStr])?>
-        </div>
-        <? if (!$browse): ?>
-        <div class="control-container text-right hidden-print">
-          <?=$this->render('search/controls/view.phtml')?>
-          <?=$this->render('search/controls/sort.phtml')?>
-          <?=$this->render('search/controls/limit.phtml')?>
         </div>
         <? endif; ?>
         <? $this->layout()->srmessage = strip_tags($resultsStr); ?>
