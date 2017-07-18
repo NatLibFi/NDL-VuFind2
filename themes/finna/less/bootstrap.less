@@ -360,38 +360,28 @@ input[type=number].input-year::-webkit-outer-spin-button {
 }
 /* Results */
 /* --- Layout --- */
-.mainbody {
-    padding-left: 15px;
-    padding-right: 15px;
-}
 @media (min-width: @screen-sm-min) {
   .mainbody { width: 75%; }
   .sidebar { width: 25%; }
   .mainbody.left,
   .sidebar.left {
     float: left;
+    padding-right: 1rem;
   }
   .mainbody.right,
   .sidebar.right {
     float: right;
+    padding-left: 1rem;
   }
+    .empty-list {
+        width: 75%;
+    }
 
   .result-body {
     .savedLists {
         width: 111.1%;
     }
   }
-}
-// Position mainbody properly when sidebar is on right
-.results .mainbody.left {
-  margin-left: -15px;
-  margin-right: -15px;
-}
-
-@media (max-width: @screen-md-min) {
-    .sidebar.right {
-        padding-right: 15px;
-    }
 }
 
 .template-name-results, .template-name-search {
@@ -882,16 +872,10 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
 }
 .result {
   .checkbox {
-    padding-left: 24px;
+    padding-left: 5px;
     margin-top: 0;
     position: absolute;
     z-index: 2;
-    @media (min-width: @screen-sm-min) {
-      margin-left: -9px;
-    }
-    @media (max-width: @screen-xs-max) {
-      margin-left: -8px;
-    }
   }
   a.title {
         font-size: 1.333em;
