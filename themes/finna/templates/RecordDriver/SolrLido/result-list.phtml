@@ -14,6 +14,7 @@ if ($img):
 <div class="<?=$this->driver->supportsAjaxStatus()?'ajaxItem ':''?> list-view">
   <div class="media">
     <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
         <? if ($thumbnail): ?>
             <?=$thumbnail ?>
@@ -72,12 +73,10 @@ if ($img):
           <?=$this->render('list/list-notes.phtml')?>
         <? endif; ?>
 
-        <? if ($this->userlist()->getMode() !== 'disabled'): ?>
-            <? /* Saved lists */ ?>
-          <div class="savedLists alert alert-info hidden">
-            <strong><?=$this->transEsc("Saved in")?>:</strong>
-          </div>
-        <? endif; ?>
+        <? /* Saved lists */ ?>
+        <div class="savedLists alert alert-info hidden">
+          <strong><?=$this->transEsc("Saved in")?>:</strong>
+        </div>
       </div>
       <div class="hidden-print add-to-favorite-col result-link">
           <? /* Display qrcode if appropriate: */ ?>
@@ -108,12 +107,6 @@ if ($img):
           <? $openUrl = $this->driver->getOpenURL(); ?>
           <?=$openUrl?'<span class="Z3988" title="'.$this->escapeHtmlAttr($openUrl).'"></span>':''?>
       </div>
-      <? if ($this->userlist()->getMode() !== 'disabled'): ?>
-          <? /* Saved lists */ ?>
-        <div class="savedLists alert alert-info hidden">
-          <strong><?=$this->transEsc("Saved in")?>:</strong>
-        </div>
-      <? endif; ?>
     </div>
   </div>
 </div>
