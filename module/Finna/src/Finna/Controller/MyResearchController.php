@@ -517,13 +517,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
         if ($this->formWasSubmitted('saveUserProfile')) {
             $validator = new \Zend\Validator\EmailAddress();
-            $valid = new \Zend\Validator\InArray();
-            if (('' === $values->email || $validator->isValid($values->email))
-                || (!empty($values->commentname)
-                && $valid->isValid($values->commentname))
-            ) {
+            if ('' === $values->email || $validator->isValid($values->email)) {
                 $user->email = $values->email;
-                $user->commentname = $values->commentname;
                 $user->save();
                 $this->flashMessenger()->setNamespace('info')
                     ->addMessage('profile_update');

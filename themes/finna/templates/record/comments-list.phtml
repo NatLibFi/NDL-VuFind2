@@ -37,17 +37,7 @@
       <? endif; ?>
       <div class="comment-info">
         <small>
-        <strong>
-        <?=$useri = $this->getTable('User')->getById($comment->user_id);?>
-        <? $usr = $this->escapeHtml(trim($this->userPublicName($comment))); ?>
-        <? if (empty($user->commentname)
-        || $user->commentname === $usr): ?>
-            <?=$usr;?>
-        <? elseif (isset($user->commentname)
-        || $user->commentname !== $usr): ?>
-            <?=$user->commentname; ?>
-        <? endif; ?>
-        </strong>
+          <strong><?=$this->escapeHtml(trim($this->userPublicName($comment)))?></strong>
           <?=$this->escapeHtml($comment->created)?>
           <? if ($own): ?>
             <a href="#" class="edit"><?=$this->transEsc('Edit')?></a>
