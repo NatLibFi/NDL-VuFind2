@@ -27,13 +27,17 @@
 }
 
 .result{
-  @media (min-width: 768px) {
-    .media-left,
-    .media-right {
-      width: 25%;
-      padding-right: 10px;
-      padding-left: 10px;
-
+  .media-left,
+  .media-right {
+    width: 25%;
+    padding-right: 10px;
+    padding-left: 10px;
+    &.small img,
+    &.medium img,
+    &.large img {
+      max-width: 100%;
+    }
+    @media (min-width: 768px) {
       a {
         display: inline-block;
         width: 100%;
@@ -41,12 +45,6 @@
         white-space: nowrap;
         text-decoration: underline;
         position: relative;
-      }
-
-      &.small img,
-      &.medium img,
-      &.large img {
-        max-width: 100%;
       }
     }
   }
