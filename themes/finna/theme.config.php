@@ -68,6 +68,7 @@ return [
         'vendor/bootstrap-multiselect.min.css',
         'vendor/bootstrap-datepicker3.min.css',
         'vendor/video-js.min.css',
+        'vendor/bootstrap-slider.min.css',
         'finna.css'
     ],
     'js' => [
@@ -95,6 +96,7 @@ return [
         'vendor/videojs.hotkeys.min.js',
         'vendor/jquery.touchSwipe.min.js',
         'vendor/bootstrap-multiselect.min.js',
+        'vendor/bootstrap-slider.min.js',
         'vendor/gauge.min.js'
     ],
     'less' => [
