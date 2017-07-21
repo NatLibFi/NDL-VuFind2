@@ -1,5 +1,6 @@
-.row.result.condensed-list-view {
+.result.condensed-list-view {
     padding-top: 6px;
+    padding-left: 1em;
     padding-bottom: 6px;
     margin-bottom: 2px;
 //    border-bottom: 1px solid @gray-lighter;
@@ -78,6 +79,18 @@
         }
         & .table-condensed tbody>tr>th {
             width: 150px;
+        }
+    }
+    .condensed-body {
+        width: 50%;
+        @media (min-width: @screen-md-min) {
+            width: 66.6%;
+        }
+    }
+    .condensed-links {
+        width: 50%;
+        @media (min-width: @screen-md-min) {
+            width: 33.3%;
         }
     }
 }
