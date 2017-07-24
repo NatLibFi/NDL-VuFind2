@@ -148,6 +148,7 @@ if ($img):
             <? $openUrl = $this->driver->getOpenURL(); ?>
             <?=$openUrl?'<span class="Z3988" title="'.$this->escapeHtmlAttr($openUrl).'"></span>':''?>
         </div>
+        <div class="clearfix visible-xs"></div>
         <? if ($this->userlist()->getMode() !== 'disabled'): ?>
             <? /* Saved lists */ ?>
           <div class="savedLists alert alert-info hidden">
@@ -165,7 +166,6 @@ if ($img):
         <? endif; ?>
     </div>
     <? endif; ?>
-    <div class="clearfix visible-xs"></div>
   </div>
 </div>
 <!-- END of: finna - RecordDriver/SolrEad/result-list.phtml -->

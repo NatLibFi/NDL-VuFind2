@@ -159,6 +159,7 @@ if ($img):
             <?=$this->render('list/list-notes.phtml')?>
         <? endif; ?>
 
+        <div class="clearfix"></div>
         <? if ($this->userlist()->getMode() !== 'disabled'): ?>
             <? /* Saved lists */ ?>
           <div class="savedLists alert alert-info hidden">
@@ -215,7 +216,6 @@ if ($img):
       <?=$thumbnail ?>
     </div>
     <? endif; ?>
-    <div class="clearfix visible-xs"></div>
   </div>
 </div>
 <!-- END of: finna - RecordDriver/SolrForward/result-list.phtml -->
