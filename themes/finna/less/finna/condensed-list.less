@@ -62,8 +62,33 @@
             }
         }
         .resultOtherLinks {
-
             .date-and-year();
+        }
+        .condensed-body {
+            width: 50%;
+            @media (min-width: @screen-md-min) {
+                width: 66.6%;
+            }
+        }
+        .condensed-links {
+            width: 50%;
+            @media (min-width: @screen-md-min) {
+                width: 33.3%;
+            }
+        }
+        .condensed-col-title {
+            width: 50%;
+            @media (min-width: @screen-md-min) {
+                width: 66.6%;
+            }
+        }.condensed-col-link {
+             width: 33.3%;
+             @media (min-width: @screen-md-min) {
+                 width: 16.6%;
+             }
+         }
+        .condensed-col-hierarchy {
+            width: 16.6%;
         }
     }
     .condensed-collapse-data {
@@ -80,18 +105,6 @@
         }
         & .table-condensed tbody>tr>th {
             width: 150px;
-        }
-    }
-    .condensed-body {
-        width: 50%;
-        @media (min-width: @screen-md-min) {
-            width: 66.6%;
-        }
-    }
-    .condensed-links {
-        width: 50%;
-        @media (min-width: @screen-md-min) {
-            width: 33.3%;
         }
     }
 }

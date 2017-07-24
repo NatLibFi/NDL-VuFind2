@@ -233,7 +233,7 @@
       </div>
   </div>
   <? if ($thumbnail): ?>
-    <div class="media-<?=$thumbnailAlignment ?> resultThumb <?= $thumbnailAlignment == 'right' ? '' : 'hidden-sm hidden-md hidden-lg'?>">
+    <div class="media-right resultThumb <?= $thumbnailAlignment == 'right' ? '' : 'hidden-sm hidden-md hidden-lg'?>">
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
       <?=$thumbnail ?>
