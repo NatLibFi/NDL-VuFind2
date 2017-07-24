@@ -103,7 +103,7 @@
   <div class="media condensed-collapse-data">
   <? if  ($database === 'false' && $ejournal === 'false'): ?>
     <? if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-      <div class="media-<?=$thumbnailAlignment ?> resultThumb">
+      <div class="media-<?=$thumbnailAlignment ?> resultThumb hidden-xs">
         <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
         <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
             <?=$thumbnail ?>
@@ -232,8 +232,8 @@
         </div>
       </div>
   </div>
-  <? if ($thumbnail && $thumbnailAlignment == 'right'): ?>
-    <div class="media-<?=$thumbnailAlignment ?> resultThumb">
+  <? if ($thumbnail): ?>
+    <div class="media-<?=$thumbnailAlignment ?> resultThumb <?= $thumbnailAlignment == 'right' ? '' : 'hidden-sm hidden-md hidden-lg'?>">
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
       <?=$thumbnail ?>
