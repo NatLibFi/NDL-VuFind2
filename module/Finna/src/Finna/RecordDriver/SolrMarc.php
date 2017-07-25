@@ -1612,4 +1612,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         }
         return $results;
     }
+
+    /**
+     * Get notes from fields 515 & 550, both subfields a.
+     *
+     * @return array
+     */
+    public function getNotes()
+    {
+        $results = [];
+        foreach (['515', '550'] as $fieldCode) {
+            foreach ($this->getMarcRecord()->getFields($fieldCode) as $field) {
+                if ($field->getSubfield('a')) {
+                    $results[] = $this->stripTrailingPunctuation($field->getSubfield('a')->getData());
+                }
+            }
+        }
+        return $results;
+    }
 }

@@ -641,6 +641,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordInspection']
             ]
         );
+        $spec->setTemplateLine(
+            'Notes', 'getNotes', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-notes']
+            ]
+        );
         return $spec->getArray();
     }
 
