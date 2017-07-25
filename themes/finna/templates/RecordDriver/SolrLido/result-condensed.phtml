@@ -51,7 +51,7 @@
   <div class="clearfix"></div>
   <div class="media condensed-collapse-data">
     <? if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-      <div class="media-<?=$thumbnailAlignment ?> condensed-bigger-image resultThumb hidden-xs">
+      <div class="media-<?=$thumbnailAlignment ?> condensed-image resultThumb hidden-xs">
         <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
         <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
           <?=$thumbnail ?>
@@ -107,7 +107,7 @@
       </div>
     </div>
     <? if ($thumbnail ): ?>
-    <div class="media-right condensed-bigger-image resultThumb <?= $thumbnailAlignment == 'right' ? '' : 'hidden-sm hidden-md hidden-lg'?>">
+    <div class="media-right condensed-image resultThumb <?= $thumbnailAlignment == 'right' ? '' : 'hidden-sm hidden-md hidden-lg'?>">
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
         <?=$thumbnail ?>
