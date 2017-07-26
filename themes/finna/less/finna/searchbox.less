@@ -78,8 +78,25 @@
   }
 }
 
-.searchbox-container {
-  padding-right: 0px;
+.search-left {
+  width: 100%;
+  float: left;
+  @media(min-width: @screen-sm) {
+    width: 80%;
+  }
+  @media(min-width: @screen-md) {
+    width: 60%;
+  }
+}
+.search-right {
+  float: right;
+  @media(min-width: @screen-sm) {
+    width: 20%;
+  }
+  @media(min-width: @screen-md) {
+    width: 40%;
+  }
+  padding-left: 15px;
 }
 
 .navbar-form .wider-searchbutton.btn[type="submit"]{
