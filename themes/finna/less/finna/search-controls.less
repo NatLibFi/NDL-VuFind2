@@ -40,7 +40,14 @@
   }
   .pagination-container {
     flex-grow: 1;
+    text-align: left;
   }
+}
+
+@media (min-width: 768px) {
+  .search-header { display: flex; }
+  .search-stats { flex-grow: 1; }
+  .search-controls { text-align: right; }
 }
 
 .search-controls .pagination {
