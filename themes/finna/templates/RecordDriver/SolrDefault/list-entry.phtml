@@ -23,8 +23,7 @@
   <? ob_end_clean(); ?>
 <? endif; ?>
 <!-- start list-entry -->
-<div class="row record-container<? if($this->driver->supportsAjaxStatus()): ?> ajaxItem<? endif ?> myresearch-row">
-  <div class="col-xs-2 col-sm-1 hidden-print">
+<div class="result record-container<? if($this->driver->supportsAjaxStatus()): ?> ajaxItem<? endif ?> myresearch-row">
     <div class="checkboxFilter">
       <div class="checkbox">
         <? // Request a checkbox with a label (can't add the label here as checkbox template contains more than one field): ?>
@@ -33,7 +32,6 @@
     </div>
     <input type="hidden" value="<?=$this->escapeHtmlAttr($id) ?>" class="hiddenId"/>
     <input type="hidden" value="<?=$this->escapeHtmlAttr($source) ?>" class="hiddenSource"/>
-  </div>
 
   <div class="media">
     <div class="media-left">
