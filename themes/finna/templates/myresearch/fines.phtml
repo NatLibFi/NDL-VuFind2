@@ -11,8 +11,7 @@
 
     $user = $this->auth()->isLoggedIn();
 ?>
-<div class="row">
-  <div class="col-md-10 col-lg-9">
+<div class="mainbody">
     <? if ($user): ?>
       <? if (!empty($this->registerPayment)): ?>
         <div class="alert alert-info">
@@ -153,7 +152,6 @@
       </div>
       <? endif; ?>
     <? endif; ?>
-  </div>
 </div>
 <? if (isset($this->registerPayment) && $this->registerPayment): ?>
   <? $this->headScript()->appendFile('finna-online-payment.js'); ?>

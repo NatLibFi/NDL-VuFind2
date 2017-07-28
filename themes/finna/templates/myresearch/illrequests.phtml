@@ -12,8 +12,8 @@
 
     $user = $this->auth()->isLoggedIn();
 ?>
-<div class="row">
-  <div class="col-md-10 col-lg-9 myresearch-grid-list">
+<div class="mainbody">
+  <div class="myresearch-grid-list">
     <? if (!$this->translationEmpty('ill_requests_instructions_html')): ?><p class="no-content-message"><?=$this->transEsc('ill_requests_instructions_html')?></p><? endif; ?>
     <?=$this->flashmessages()?>
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
@@ -59,25 +59,24 @@
           <p><?=$this->transEsc('cannot cancel any interlibrary loan requests')?></p>
         </div>
         <? endif; ?>
-
       <? $iteration = 0; ?>
       <? foreach ($this->recordList as $resource): ?>
         <? $iteration++; ?>
         <? $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
-        <div id="record<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" class="row myresearch-row">
+        <div id="record<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" class="myresearch-row">
           <div class="col-xs-2 col-sm-1 text-center">
-          <? if ($this->cancelForm && isset($ilsDetails['cancel_details'])): ?>
-            <? $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $resource->getUniqueId()); ?>
-            <input type="hidden" name="cancelAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
+          <? //if ($this->cancelForm && isset($ilsDetails['cancel_details'])): ?>
+            <? //$safeId = preg_replace('/[^a-zA-Z0-9]/', '', $resource->getUniqueId()); ?>
+            <input type="hidden" name="cancelAllIDS[]" value="<?//=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
             <div class="checkboxFilter">
               <div class="checkbox">
                 <label>
                   <span class="sr-only"><?=$this->transEsc('Select');?></span>
-                  <input type="checkbox" name="cancelSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?=$safeId?>" />
+                  <input type="checkbox" name="cancelSelectedIDS[]" value="<//?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?//=$safeId?>" />
                 </label>
               </div>
             </div>
-          <? endif; ?>
+          <?// endif; ?>
           </div>
           <div class="col-sm-1 text-left hidden-xs">
             <? if ($summThumb = $this->record($resource)->getThumbnail()): ?>
@@ -180,6 +179,7 @@
             <? endif; ?>
 
           </div>
+          <div class="clearfix"></div>
         </div>
       <? endforeach; ?>
       <? if ($this->cancelForm): ?></form><? endif; ?>
