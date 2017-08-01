@@ -3,6 +3,12 @@
 .main.template-dir-myresearch, .main.template-dir-search.template-name-history, .main.template-dir-librarycards {
     padding-bottom: 30px;
 
+    .mainbody {
+        @media (max-width: @screen-md) {
+            width: 100%;
+        }
+    }
+
     h1 {
         display: inline-block;
     }
@@ -19,6 +25,9 @@
         margin-bottom: 20px;
         & #import-export-buttons {
             margin-right: 20px;
+        }
+        .btn {
+            margin-bottom: 5px;
         }
     }
     & .pickup-location {
@@ -64,7 +73,6 @@
         font-size: @font-size-h3;
         font-weight: bold;
         padding: 7px 10px;
-        margin: 0px;
         background: @gray;
         background: linear-gradient( @gray-light, darken(@gray-light,8%));
         color: @body-bg;
@@ -96,9 +104,6 @@
         padding-bottom: 0;
         border: 1px solid @gray-lighter;
         box-shadow: 10px 15px 30px -25px @gray;
-        & #profile_form {
-            margin-top: 10px;
-        }
         & #profile_library_form {
             & input {
                 min-width: 210px;
@@ -746,7 +751,7 @@
     .my-profile-col {
         width: 33.33%;
         float: left;
-        padding: 0px 15px;
+        padding-right: 15px;
     }
 }
 .main.template-dir-myresearch.template-name-unsubscribe {
