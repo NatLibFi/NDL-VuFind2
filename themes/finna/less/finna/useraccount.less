@@ -266,10 +266,6 @@
     #renewals .toolbar {
         @media (max-width:@screen-xs-max) {
             margin-left: -15px;
-            & .renew-button {
-                margin-bottom: 10px;
-                float: right;
-            }
         }
         & .checkboxFilter.mylist-select-all {
             margin-right: 0;
@@ -551,6 +547,8 @@
                 text-align: right;
             }
         }
+    }
+    .ill-details-row {
         display: flex;
         flex-direction: row;
         .record-checkbox {
@@ -842,5 +840,26 @@
     }
     .alert {
         margin-top: @modal-title-padding;
+    }
+}
+
+.checkedout-table {
+    width: 100%;
+    margin: 15px 0px;
+    th,td {
+        vertical-align: top;
+        padding: 5px;
+        @media(max-width: @screen-sm){
+            text-align: left;
+        }
+        .record-title {
+            text-align: left;
+        }
+    }
+    .table-column {
+        @media(min-width: @screen-sm){
+            width: 50%;
+            float: left;
+        }
     }
 }
