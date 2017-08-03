@@ -249,6 +249,15 @@
     text-align: center;
   }
 }
+
+.adv-search,
+.adv-search .input-group {
+  width: 100%;
+  @media(min-width: @screen-md){
+    width: 75%;
+  }
+}
+
 .adv-term-input.form-control, .adv-term-type.form-control {
     display: initial;
 }
@@ -266,5 +275,12 @@
   }
   input.input-year{
     width: 5em;
+  }
+}
+
+.solr-adv-filter {
+  @media(min-width: @screen-sm) {
+    width: 33.3%;
+    float: left;
   }
 }
