@@ -348,7 +348,7 @@ JS;
     <? // TODO: get rid of template-dir-* and template-name-* here ?>
     <section role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
       <? if (!empty($this->layout()->finnaMainHeader)): ?>
-      <div class="container-fluid finna-main-header">
+      <div class="finna-main-header">
         <div class="container">
           <div>
             <?=$this->layout()->finnaMainHeader?>
@@ -357,7 +357,7 @@ JS;
       </div>
       <? endif; ?>
       <? if (!empty($this->layout()->finnaMainTabs)): ?>
-      <div class="container-fluid finna-main-tabs">
+      <div class="finna-main-tabs">
         <div class="container">
           <div>
               <?=$this->layout()->finnaMainTabs?>
