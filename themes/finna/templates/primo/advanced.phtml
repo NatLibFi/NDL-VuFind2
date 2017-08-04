@@ -81,9 +81,6 @@
           </a>
         </div>
       <? endfor; ?>
-      <div>
-        <div><button type="submit" class="btn btn-primary pull-right" name="submit" value="<?=$this->transEsc("Find")?>"><i class="fa fa-search-adv"></i> <?=$this->transEsc("Find")?></button></div>
-      </div>
       <? $lastSort = $this->searchMemory()->getLastSort($this->options->getSearchClassId()); ?>
       <? if (!empty($lastSort)): ?>
         <input type="hidden" name="sort" value="<?=$this->escapeHtmlAttr($lastSort)?>" />
@@ -102,5 +99,8 @@
         <? endif; ?>
       </div>
       <? endif; ?>
+      <div>
+        <div><button type="submit" class="btn btn-primary pull-right" name="submit" value="<?=$this->transEsc("Find")?>"><i class="fa fa-search-adv"></i> <?=$this->transEsc("Find")?></button></div>
+      </div>
 </form>
 <!-- END of: finna - primo/advanced.phtml -->
