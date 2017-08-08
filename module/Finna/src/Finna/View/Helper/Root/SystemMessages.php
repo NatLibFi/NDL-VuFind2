@@ -83,27 +83,23 @@ class SystemMessages extends \Zend\View\Helper\AbstractHelper
                 return [$messages[$language]];
             } else {
                 // Return all language versions if current locale is not defined.
-                $data = [];
-                foreach ($messages as $lan => $msg) {
-                    $data[] = $msg;
-                }
-                return $data;
+                return array_values($messages);
             }
         };
 
         $messages = [];
-        
+
         if (!empty($this->coreConfig->Site->systemMessages)) {
             $messages = $getMessageFn(
                 $this->coreConfig->Site->systemMessages, $language
             );
         }
-        
+
         if (!empty($this->localConfig->Site->systemMessages)) {
             $localMessages = $getMessageFn(
-               $this->localConfig->Site->systemMessages, $language
+               $this->localConfig->Site->systemMessages->toArray(), $language
             );
-            
+
             $messages = array_filter(array_merge($messages, $localMessages));
         }
 
