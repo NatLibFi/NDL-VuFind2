@@ -11,8 +11,8 @@
 
   $user = $this->auth()->isLoggedIn();
 ?>
-<div class="row">
-  <div class="col-md-10 col-lg-9 myresearch-grid-list">
+<div class="my-research-content">
+  <div class="myresearch-grid-list">
     <? if (!$this->translationEmpty('storage_requests_instructions_html')): ?><p class="no-content-message"><?=$this->transEsc('storage_requests_instructions_html')?></p><? endif; ?>
     <?=$this->flashmessages()?>
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
@@ -33,6 +33,7 @@
       <? if ($this->cancelForm): ?>
       <form name="cancelForm" class="inline" method="post" id="cancelStorageRetrievalRequest">
         <div class="toolbar">
+          <div></div>
           <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
           <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
           <div class="btn-group">

@@ -13,8 +13,8 @@
     // Add finna-holds.js
     $this->headScript()->appendFile('finna-holds.js');
 ?>
-<div class="row">
-  <div class="col-md-10 col-lg-9 myresearch-grid-list">
+<div class="my-research-content">
+  <div class="myresearch-grid-list">
     <? if (!$this->translationEmpty('holds_instructions_html')): ?><p class="no-content-message"><?=$this->translate('holds_instructions_html')?></p><? endif; ?>
     <?=$this->flashmessages()?>
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>

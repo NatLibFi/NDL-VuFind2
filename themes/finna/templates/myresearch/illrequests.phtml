@@ -32,7 +32,7 @@
       <div class="illrequests-pre-list"><?=$this->render($template)?></div>
     <? endif; ?>
     <? if (!empty($this->recordList)): ?>
-      <? if (!$this->cancelForm): ?>
+      <? if ($this->cancelForm): ?>
       <form name="cancelForm" class="inline" method="post" id="cancelILLRequest">
         <table class="checkedout-table">
         <tr class="toolbar">
@@ -40,15 +40,13 @@
             <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
             <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
           </th>
-          <th>
+          <th colspan="4">
             <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEsc("ill_request_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
             <ul class="dropdown-menu useraccount-cancel">
               <li class="disabled"><a><?=$this->transEsc("confirm_ill_request_cancel_selected_text") ?></a></li>
               <li><a href="#" onClick="$('#cancelConfirm').val(1);$('#submitType').attr('name','cancelSelected');$(this).parents('form').submit(); return false;"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
               <li><a href="#" onClick="return false;"><?=$this->transEsc('confirm_dialog_no')?></a></li>
             </ul>
-          </th>
-          <th>
             <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEsc("ill_request_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
             <ul class="dropdown-menu useraccount-cancel">
               <li class="disabled"><a><?=$this->transEsc("confirm_ill_request_cancel_all_text") ?></a></li>
@@ -69,13 +67,13 @@
         <? $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
         <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" class="myresearch-row ill-details-row">
           <td class="text-center">
-          <? if (!$this->cancelForm && !isset($ilsDetails['cancel_details'])): ?>
+          <? if ($this->cancelForm && !isset($ilsDetails['cancel_details'])): ?>
             <? $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $resource->getUniqueId()); ?>
             <input type="hidden" name="cancelAllIDS[]" value="<?//=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
             <div class="checkboxFilter">
               <div class="checkbox">
                 <label>
-                  <span class="sr-only"><?=$this->transEsc('Select');?></span>
+                  <?=$this->transEsc('Select');?>
                   <input type="checkbox" name="cancelSelectedIDS[]" value="<//?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?=$safeId?>" />
                 </label>
               </div>

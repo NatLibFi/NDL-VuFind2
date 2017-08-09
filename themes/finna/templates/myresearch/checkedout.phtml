@@ -34,12 +34,12 @@
     <form name="renewals" method="post" id="renewals">
       <table class="checkedout-table">
       <tr class="toolbar">
-        <th class="text-center">
+        <th class="text-left">
           <div class="checkboxFilter mylist-select-all">
             <div class="checkbox">
               <label>
                 <input type="checkbox" name="selectAll" class="checkbox-select-all"/>
-                <span><?=$this->transEsc('Select All')?></span>
+                <?=$this->transEsc('Select All')?>
                 <span class="selected"></span> <span class="loans-renewal-available"></span>
               </label>
             </div>
@@ -65,7 +65,7 @@
     <? $i = 0; foreach ($this->transactions as $resource): ?>
       <? $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
       <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId())?>" class="myresearch-row">
-        <td class="text-center">
+        <td class="text-left">
         <? if ($this->renewForm): ?>
           <? if (isset($ilsDetails['renewable']) && $ilsDetails['renewable'] && isset($ilsDetails['renew_details'])): ?>
             <? $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $ilsDetails['renew_details']); ?>
