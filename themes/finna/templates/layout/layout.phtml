@@ -276,7 +276,7 @@ JS;
       <div class="container-fluid system-messages">
         <? foreach ($messages as $message): ?>
           <div>
-            <?=$this->translate($message) // intentionally not escaped so that markup can be used ?>
+            <?=$message // intentionally not escaped so that markup can be used ?>
           </div>
         <? endforeach; ?>
       </div>
