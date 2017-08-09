@@ -83,7 +83,11 @@
         font-size: 1.2em;
         margin-bottom: 40px;
         padding-right: 25px;
-        & .amount {
+        @media (min-width: @screen-sm) {
+            width: 50%;
+            float: right;
+        }
+            & .amount {
             font-weight: bold;
         }
 
@@ -96,6 +100,10 @@
     }
     & .online-payment-note {
         margin-bottom: 40px;
+        @media (min-width: @screen-sm) {
+            width: 50%;
+            float: left;
+        }
     }
 
     & .library-profile {
