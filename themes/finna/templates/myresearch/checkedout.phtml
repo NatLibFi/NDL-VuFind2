@@ -32,7 +32,7 @@
   <? if (!empty($this->transactions)): ?>
     <? if ($this->renewForm): ?>
     <form name="renewals" method="post" id="renewals">
-      <table class="checkedout-table">
+      <table class="myresearch-table">
       <tr class="toolbar">
         <th class="text-left">
           <div class="checkboxFilter mylist-select-all">
@@ -53,7 +53,7 @@
         </th>
       </tr>
     <? else: ?>
-    <table class="checkedout-table">
+    <table class="myresearch-table">
       <tr class="toolbar">
         <th class="myresearch-notification"><?=$this->transEsc('cannot renew any checked out items')?></th>
         <th></th>

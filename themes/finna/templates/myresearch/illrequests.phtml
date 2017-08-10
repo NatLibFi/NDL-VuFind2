@@ -34,7 +34,7 @@
     <? if (!empty($this->recordList)): ?>
       <? if ($this->cancelForm): ?>
       <form name="cancelForm" class="inline" method="post" id="cancelILLRequest">
-        <table class="checkedout-table">
+        <table class="myresearch-table">
         <tr class="toolbar">
           <th>
             <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
@@ -56,12 +56,13 @@
           </th>
         </tr>
         <? else: ?>
-        <table class="checkedout-table">
+        <table class="myresearch-table">
           <tr class="toolbar">
             <th colspan="4"><?=$this->transEsc('cannot cancel any interlibrary loan requests')?></th>
           </tr>
         <? endif; ?>
       <? $iteration = 0; ?>
+      <? $x = $this->recordList; ?>
       <? foreach ($this->recordList as $resource): ?>
         <? $iteration++; ?>
         <? $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
@@ -69,12 +70,12 @@
           <td class="text-center">
           <? if ($this->cancelForm && !isset($ilsDetails['cancel_details'])): ?>
             <? $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $resource->getUniqueId()); ?>
-            <input type="hidden" name="cancelAllIDS[]" value="<?//=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
+            <input type="hidden" name="cancelAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
             <div class="checkboxFilter">
               <div class="checkbox">
                 <label>
                   <?=$this->transEsc('Select');?>
-                  <input type="checkbox" name="cancelSelectedIDS[]" value="<//?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?=$safeId?>" />
+                  <input type="checkbox" name="cancelSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?=$safeId?>" />
                 </label>
               </div>
             </div>
