@@ -92,7 +92,7 @@
           <? endif; ?>
         </td>
         <td class="checkedout-status-information" colspan="2">
-          <div class="table-column">
+          <div class="half-table-column text-left">
           <?
             // If this is a non-missing Solr record, we should display a link:
             if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
@@ -133,7 +133,7 @@
             <? endif; ?>
             </div>
           </div>
-          <div class="table-column">
+          <div class="half-table-column">
             <? $showStatus = true; ?>
             <? if (isset($this->renewResult[$ilsDetails['item_id']])): ?>
               <? $renewDetails = $this->renewResult[$ilsDetails['item_id']]; ?>
