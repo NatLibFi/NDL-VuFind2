@@ -152,7 +152,7 @@
                     <? endif; ?>
                   </div>
                 </div>
-                <div class="holds-status-information">
+                <div class="half-table-column holds-status-information">
                   <? if (!empty($ilsDetails['requestGroup'])): ?>
                     <strong><?=$this->transEsc('hold_requested_group') ?>:</strong> <?=$this->transEsc('request_group_' . $ilsDetails['requestGroup'], [], $this->transEsc('location_' . $ilsDetails['requestGroup'], [], $ilsDetails['requestGroup']))?>
                     <br />
