@@ -121,8 +121,7 @@
         <? endif; ?>
         </div>
       <? endif; ?>
-
-      <div class="record-authors" property="author">
+      <div class= "record-published-in">
         <? $containerTitle = $this->driver->getContainerTitle(); ?>
         <? if ($containerTitle): ?>
           <?
@@ -151,11 +150,15 @@
             </span>
           </div>
         <? endif; ?>
-        <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
-          <span class="recordFormat">
-            <?=$this->record($this->driver)->getFormatList()?><br/>
-          </span>
-        <? endif; ?>
+      </div>
+      <div class= "record-format">
+      <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+        <span class="recordFormat">
+          <?=$this->record($this->driver)->getFormatList()?><br/>
+        </span>
+      <? endif; ?>
+      </div>
+      <div class="record-authors" property="author">
         <? $results = $this->driver->getNonPresenterAuthors();?>
         <? if ($results): ?>
           <div class="truncate-field">
