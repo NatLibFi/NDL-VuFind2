@@ -1,7 +1,7 @@
 <? //Don't add START and END comments ?>
 <? $mainFormat = $this->driver->getMainFormat(); ?>
 <? foreach ($data as $eventType => $events): ?>
-<tr class="<?=$class?>">
+<tr class="recordEvents">
   <th><?=$this->transEsc("lido_event_type_{$mainFormat}_$eventType")?>:</th>
   <td>
     <div class="truncate-field">

@@ -290,7 +290,7 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'Events', 'getEvents', 'data-mainFormat.phtml',
             [
-                'context' => ['class' => 'recordEvents', 'renderTr' => false]
+                'context' => ['class' => 'recordEvents', 'title'=> ""]
             ]
         );
         $spec->setTemplateLine(
@@ -418,7 +418,7 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'Record Links', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
             [
-                'context' => ['class' => 'recordLinks', 'renderTr' => false]
+                'context' => ['class' => 'recordLinks', 'title'=> ""]
             ]
         );
         $spec->setTemplateLine(

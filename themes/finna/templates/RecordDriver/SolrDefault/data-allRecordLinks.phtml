@@ -7,7 +7,7 @@
         if ($prevRecordLinkTitle) {
           echo '</td></tr>';
         }
-        echo '<tr class="'.$class.'"><th>' . $this->transEsc($recordLink['title']) . ':</th><td>';
+        echo '<tr class="recordLinks"><th>' . $this->transEsc($recordLink['title']) . ':</th><td>';
         $prevRecordLinkTitle = $recordLink['title'];
       ?>
     <? endif; ?>
