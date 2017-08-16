@@ -91,7 +91,7 @@ class SystemMessages extends \Zend\View\Helper\AbstractHelper
 
         if (!empty($this->coreConfig->Site->systemMessages)) {
             $messages = $getMessageFn(
-                $this->coreConfig->Site->systemMessages, $language
+                $this->coreConfig->Site->systemMessages->toArray(), $language
             );
         }
 
@@ -102,6 +102,9 @@ class SystemMessages extends \Zend\View\Helper\AbstractHelper
 
             $messages = array_filter(array_merge($messages, $localMessages));
         }
+
+        // Run all messages through translator for back-compat
+        $messages = array_map([$this->translator, 'translate'], $messages);
 
         return $messages;
     }
