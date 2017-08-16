@@ -149,10 +149,10 @@
           </div>
         <? endif; ?>
       </div>
-      <div class= "recordFormat">
-      <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
-        <?=$this->record($this->driver)->getFormatList()?><br/>
-      <? endif; ?>
+      <div class="recordFormat">
+        <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+          <?=$this->record($this->driver)->getFormatList()?><br/>
+        <? endif; ?>
       </div>
       <div class="recordAuthors" property="author">
         <? $results = $this->driver->getNonPresenterAuthors();?>
