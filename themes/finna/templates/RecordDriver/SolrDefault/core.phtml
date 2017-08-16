@@ -121,7 +121,7 @@
         <? endif; ?>
         </div>
       <? endif; ?>
-      <div class= "record-published-in">
+      <div class="recordContainerReference">
         <? $containerTitle = $this->driver->getContainerTitle(); ?>
         <? if ($containerTitle): ?>
           <?
@@ -130,39 +130,34 @@
             $hostRecords = $this->driver->tryMethod('getHostRecords');
           ?>
           <div class="truncate-field">
-            <span class="recordContainerReference">
-              <?=$this->transEsc('Published in')?>
-              <? if ($hostRecords): ?>
-                <? foreach ($hostRecords as $i => $hostRecord): ?>
-                  <?=$i > 0 ? '<br/>' : ''?>
-                  <? if ($hostRecord['id'] || $hostRecord['title']): ?>
-                    <? // We should use RecordLink() helper below to create the record URL, but this is much faster. We can get away with it here, but this is not generally acceptable. ?>
-                    <? $link = $hostRecord['id'] ? $this->escapeHtmlAttr($this->url('record') . urlencode($hostRecord['id'])) : $this->record($this->driver)->getLink('title', $hostRecord['title']); ?>
-                    <a href="<?=$link?>"><?=$hostRecord['title']?></a>
-                  <? endif; ?>
-                  <?=$this->escapeHtml($hostRecord['reference']); ?>
-                <? endforeach; ?>
-              <? else: ?>
-                <? $link = $containerID ? $this->escapeHtmlAttr($this->url('record') . urlencode($containerID)) : $this->record($this->driver)->getLink('title', $containerTitle); ?>
-                <a href="<?=$link?>"><?=$this->escapeHtml($containerTitle)?></a>
-                <? $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } ?>
-              <? endif; ?>
-            </span>
+            <?=$this->transEsc('Published in')?>
+            <? if ($hostRecords): ?>
+              <? foreach ($hostRecords as $i => $hostRecord): ?>
+                <?=$i > 0 ? '<br/>' : ''?>
+                <? if ($hostRecord['id'] || $hostRecord['title']): ?>
+                  <? // We should use RecordLink() helper below to create the record URL, but this is much faster. We can get away with it here, but this is not generally acceptable. ?>
+                  <? $link = $hostRecord['id'] ? $this->escapeHtmlAttr($this->url('record') . urlencode($hostRecord['id'])) : $this->record($this->driver)->getLink('title', $hostRecord['title']); ?>
+                  <a href="<?=$link?>"><?=$hostRecord['title']?></a>
+                <? endif; ?>
+                <?=$this->escapeHtml($hostRecord['reference']); ?>
+              <? endforeach; ?>
+            <? else: ?>
+              <? $link = $containerID ? $this->escapeHtmlAttr($this->url('record') . urlencode($containerID)) : $this->record($this->driver)->getLink('title', $containerTitle); ?>
+              <a href="<?=$link?>"><?=$this->escapeHtml($containerTitle)?></a>
+              <? $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } ?>
+            <? endif; ?>
           </div>
         <? endif; ?>
       </div>
-      <div class= "record-format">
+      <div class= "recordFormat">
       <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
-        <span class="recordFormat">
-          <?=$this->record($this->driver)->getFormatList()?><br/>
-        </span>
+        <?=$this->record($this->driver)->getFormatList()?><br/>
       <? endif; ?>
       </div>
-      <div class="record-authors" property="author">
+      <div class="recordAuthors" property="author">
         <? $results = $this->driver->getNonPresenterAuthors();?>
         <? if ($results): ?>
           <div class="truncate-field">
-            <span class="recordAuthors">
             <? foreach($results as $index => $author): ?>
               <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><? if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><? endif; ?><? if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><? endif; ?>
             <? endforeach; ?>
@@ -174,7 +169,6 @@
                 <? $altScriptFound = true; ?>
               <? endif; ?>
             <? endforeach; ?>
-            </span>
           </div>
         <? endif; ?>
         <? $publications = $this->driver->getPublicationDetails(); if (!empty($publications)): ?>
