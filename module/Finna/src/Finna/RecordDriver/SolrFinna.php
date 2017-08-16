@@ -23,6 +23,7 @@
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -35,6 +36,7 @@ namespace Finna\RecordDriver;
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  *
@@ -789,5 +791,16 @@ trait SolrFinna
     protected function getSupportedCitationFormats()
     {
         return ['APA', 'Chicago', 'MLA', 'Harvard'];
+    }
+
+    /**
+     * Get the year from main_date_str field.
+     *
+     * @return string
+     */
+    public function getMainDateStr()
+    {
+        return isset($this->fields['main_date_str'])
+            ? $this->fields['main_date_str'] : '';
     }
 }

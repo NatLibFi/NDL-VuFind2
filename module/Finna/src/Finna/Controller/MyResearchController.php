@@ -23,6 +23,7 @@
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -37,6 +38,7 @@ use Zend\Session\SessionManager;
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -835,7 +837,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'title' => 'sort_title',
             'author' => 'sort_author',
             'year desc' => 'sort_year',
-            'year' => 'sort_year asc',
+            'year asc' => 'sort_year asc',
             'format' => 'sort_format'
         ];
     }

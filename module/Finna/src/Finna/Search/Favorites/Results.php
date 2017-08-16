@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2016-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  Search_Favorites
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -38,6 +39,7 @@ use VuFindSearch\Service as SearchService;
  * @category VuFind
  * @package  Search_Favorites
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -117,6 +119,24 @@ class Results extends \VuFind\Search\Favorites\Results
         } else if ($sortNewestAddedFirst) {
             $this->getParams()->setSort($sort);
             $this->results = array_reverse($this->results);
+        }
+
+        if ($sort === 'year asc') {
+            $records = [];
+            foreach ($this->results as $result) {
+                $date = $result->getMainDateStr();
+                $records[$date  . '_' . $result->getUniqueID()] = $result;
+            }
+            ksort($records);
+            $this->results = array_values($records);
+        } else if ($sort === 'year desc') {
+            $records = [];
+            foreach ($this->results as $result) {
+                $date = $result->getMainDateStr();
+                $records[$date  . '_' . $result->getUniqueID()] = $result;
+            }
+            krsort($records);
+            $this->results = array_values($records);
         }
     }
 
