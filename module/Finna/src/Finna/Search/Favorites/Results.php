@@ -125,7 +125,7 @@ class Results extends \VuFind\Search\Favorites\Results
             $records = [];
             foreach ($this->results as $result) {
                 $date = $result->getMainDateStr();
-                $records[$date  . '_' . $result->getUniqueID()] = $result;
+                $records[$date . '_' . $result->getUniqueID()] = $result;
             }
             ksort($records);
             $this->results = array_values($records);
@@ -133,7 +133,7 @@ class Results extends \VuFind\Search\Favorites\Results
             $records = [];
             foreach ($this->results as $result) {
                 $date = $result->getMainDateStr();
-                $records[$date  . '_' . $result->getUniqueID()] = $result;
+                $records[$date . '_' . $result->getUniqueID()] = $result;
             }
             krsort($records);
             $this->results = array_values($records);
