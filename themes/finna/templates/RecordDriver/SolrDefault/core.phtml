@@ -121,9 +121,9 @@
         <? endif; ?>
         </div>
       <? endif; ?>
-      <div class="recordContainerReference">
-        <? $containerTitle = $this->driver->getContainerTitle(); ?>
-        <? if ($containerTitle): ?>
+      <? $containerTitle = $this->driver->getContainerTitle(); ?>
+      <? if ($containerTitle): ?>
+        <div class="recordContainerReference">
           <?
             $containerSource = $this->driver->getSourceIdentifier();
             $containerID = $this->driver->getContainerRecordID();
@@ -147,8 +147,8 @@
               <? $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } ?>
             <? endif; ?>
           </div>
-        <? endif; ?>
-      </div>
+        </div>
+      <? endif; ?>
       <div class="recordFormat">
         <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
           <?=$this->record($this->driver)->getFormatList()?><br/>
