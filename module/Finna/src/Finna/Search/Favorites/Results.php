@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2016-2017.
+ * Copyright (C) The National Library of Finland 2016.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,7 +22,6 @@
  * @category VuFind
  * @package  Search_Favorites
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
- * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -39,7 +38,6 @@ use VuFindSearch\Service as SearchService;
  * @category VuFind
  * @package  Search_Favorites
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
- * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
