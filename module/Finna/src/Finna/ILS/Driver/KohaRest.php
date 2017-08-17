@@ -866,7 +866,15 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected function getItemCallNumber($item)
     {
-        return $this->translateLocation($item['location']);
+        $result = [];
+        if (!empty($item['ccode'])) {
+            $result[] = $this->translateCollection(
+                $item['ccode'],
+                isset($item['ccode_description']) ? $item['ccode_description'] : null
+            );
+        }
+        $result[] = $this->translateLocation($item['location']);
+        return implode(', ', $result);
     }
 
     /**
@@ -886,6 +894,27 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             "$prefix$location",
             null,
             $location
+        );
+    }
+
+    /**
+     * Translate collection name
+     *
+     * @param string $code        Collection code
+     * @param string $description Collection description
+     *
+     * @return string
+     */
+    protected function translateCollection($code, $description)
+    {
+        $prefix = 'collection_';
+        if (!empty($this->config['Catalog']['id'])) {
+            $prefix .= $this->config['Catalog']['id'] . '_';
+        }
+        return $this->translate(
+            "$prefix$code",
+            null,
+            $description
         );
     }
 }
