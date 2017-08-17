@@ -160,24 +160,26 @@
 
                   <? endif; ?>
                   <? if (!empty($pickupDisplay)): ?>
-                    <strong><?=$this->transEsc('pick_up_location') ?>:</strong>
-                    <? if (isset($ilsDetails['available']) && !$ilsDetails['available'] && $changePickupLocation): ?>
-                      <div class="changeHolds" data-record-id="<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" data-request-id="<?=$this->escapeHtml($ilsDetails['requestId']) ?>" >
-                        <span class="pickup-change-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i></span>
-                        <div class="view-button pickup-location">
-                          <div class="dropdown">
-                            <a href="" class="dropdown-toggle" data-toggle="dropdown">
-                              <span class="pickupLocationSelected"><?=$pickupTranslate ? $this->transEsc($pickupDisplay) : $this->escapeHtml($pickupDisplay)?></span> <i class="fa fa-arrow-down"></i>
-                            </a>
-                            <ul class="dropdown-menu pickup-locations" role="menu">
-                              <li role="menuitem" class="pickup-location-load-indicator hidden"><a><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...</a></li>
-                            </ul>
+                    <div class="pickup-location-container">
+                      <strong><?=$this->transEsc('pick_up_location') ?>:</strong>
+                      <? if (isset($ilsDetails['available']) && !$ilsDetails['available'] && $changePickupLocation): ?>
+                        <div class="changeHolds" data-record-id="<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" data-request-id="<?=$this->escapeHtml($ilsDetails['requestId']) ?>" >
+                          <span class="pickup-change-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i></span>
+                          <div class="view-button pickup-location">
+                            <div class="dropdown">
+                              <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                                <span class="pickupLocationSelected"><?=$pickupTranslate ? $this->transEsc($pickupDisplay) : $this->escapeHtml($pickupDisplay)?></span> <i class="fa fa-arrow-down"></i>
+                              </a>
+                              <ul class="dropdown-menu pickup-locations" role="menu">
+                                <li role="menuitem" class="pickup-location-load-indicator hidden"><a><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...</a></li>
+                              </ul>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    <? else:?>
-                      <?=$pickupTranslate ? $this->transEsc($pickupDisplay) : $this->escapeHtml($pickupDisplay)?>
-                      <br />
-                    <? endif; ?>
+                      <? else:?>
+                        <?=$pickupTranslate ? $this->transEsc($pickupDisplay) : $this->escapeHtml($pickupDisplay)?>
+                      <? endif; ?>
+                    </div>
                   <? endif; ?>
 
                   <? if (!empty($ilsDetails['create'])): ?>
