@@ -836,8 +836,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'id' => 'sort_saved asc',
             'title' => 'sort_title',
             'author' => 'sort_author',
+            'year' => 'sort_year asc',
             'year desc' => 'sort_year',
-            'year asc' => 'sort_year asc',
             'format' => 'sort_format'
         ];
     }

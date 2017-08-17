@@ -120,24 +120,6 @@ class Results extends \VuFind\Search\Favorites\Results
             $this->getParams()->setSort($sort);
             $this->results = array_reverse($this->results);
         }
-
-        if ($sort === 'year asc') {
-            $records = [];
-            foreach ($this->results as $result) {
-                $date = $result->getMainDateStr();
-                $records[$date . '_' . $result->getUniqueID()] = $result;
-            }
-            ksort($records);
-            $this->results = array_values($records);
-        } else if ($sort === 'year desc') {
-            $records = [];
-            foreach ($this->results as $result) {
-                $date = $result->getMainDateStr();
-                $records[$date . '_' . $result->getUniqueID()] = $result;
-            }
-            krsort($records);
-            $this->results = array_values($records);
-        }
     }
 
     /**
