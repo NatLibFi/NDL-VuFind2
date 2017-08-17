@@ -44,7 +44,6 @@ use VuFind\Date\Converter as DateConverter,
  */
 class Resource extends \VuFind\Db\Row\Resource
 {
-
     /**
      * Use a record driver to assign metadata to the current row.  Return the
      * current object to allow fluent interface.
