@@ -149,28 +149,29 @@
           </div>
         </div>
       <? endif; ?>
-      <div class="recordFormat">
-        <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+
+      <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
+        <div class="recordFormat">
           <?=$this->record($this->driver)->getFormatList()?><br/>
-        <? endif; ?>
-      </div>
-      <div class="recordAuthors" property="author">
-        <? $results = $this->driver->getNonPresenterAuthors();?>
-        <? if ($results): ?>
-          <div class="truncate-field">
-            <? foreach($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><? if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><? endif; ?><? if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><? endif; ?>
-            <? endforeach; ?>
-            <? $altScriptFound = false; ?>
-            <? foreach($results as $index => $author): ?>
-              <? if (!empty($author['name_alt'])): ?>
-                <? if (!$altScriptFound): ?><br/><? else: ?>; <? endif; ?>
-                <?=$this->escapeHtml($author['name_alt'])?><? if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><? endif; ?><? if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><? endif; ?>
-                <? $altScriptFound = true; ?>
-              <? endif; ?>
-            <? endforeach; ?>
-          </div>
-        <? endif; ?>
+        </div>
+      <? endif; ?>
+
+      <? $results = $this->driver->getNonPresenterAuthors();?>
+      <? if ($results): ?>
+       <div class="recordAuthors" property="author">
+        <div class="truncate-field">
+          <? foreach($results as $index => $author): ?>
+            <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><? if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><? endif; ?><? if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><? endif; ?>
+          <? endforeach; ?>
+          <? $altScriptFound = false; ?>
+          <? foreach($results as $index => $author): ?>
+            <? if (!empty($author['name_alt'])): ?>
+              <? if (!$altScriptFound): ?><br/><? else: ?>; <? endif; ?>
+              <?=$this->escapeHtml($author['name_alt'])?><? if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><? endif; ?><? if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><? endif; ?>
+              <? $altScriptFound = true; ?>
+            <? endif; ?>
+          <? endforeach; ?>
+        </div>
         <? $publications = $this->driver->getPublicationDetails(); if (!empty($publications)): ?>
           <span class="recordPublications">
             <? foreach ($publications as $field): ?>
@@ -185,13 +186,13 @@
             <? endforeach; ?>
           </span>
         <? endif; ?>
-
         <? $edition = $this->driver->getEdition(); if (!empty($edition)): ?>
           <span class="recordEdition">
             <span property="bookEdition"><?=$this->escapeHtml($edition)?></span>
           </span>
         <? endif; ?>
-      </div>
+       </div>
+      <? endif; ?>
 
       <div class="description recordSummary">
         <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
