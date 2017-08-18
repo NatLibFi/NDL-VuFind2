@@ -179,20 +179,19 @@
               <? if ($this->cart()->isActiveInSearch() && $this->params->getOptions()->supportsCart() && $this->cart()->isActive()): ?>
                   <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br/>
               <? endif; ?>
-
-              <? /* Hierarchy tree link */ ?>
-              <? $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
-                  <? foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
-                  <div class="hierarchyTreeLink hidden-print">
-                    <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
-                    <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree')?>?hierarchy=<?=urlencode($hierarchyID)?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>">
-                      <i class="fa fa-sitemap"></i>
-                        <?=$this->transEsc('hierarchy_view_context')?><? if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><? endif; ?>
-                    </a>
-                  </div>
-                  <? endforeach; ?>
-              <? endif; ?>
           </div>
+          <? /* Hierarchy tree link */ ?>
+          <? $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+              <? foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
+            <div class="hierarchyTreeLink hidden-print">
+              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
+              <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree')?>?hierarchy=<?=urlencode($hierarchyID)?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>">
+                <i class="fa fa-sitemap"></i>
+                  <?=$this->transEsc('hierarchy_view_context')?><? if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><? endif; ?>
+              </a>
+            </div>
+          <? endforeach; ?>
+          <? endif; ?>
         </div>
         <div class="clearfix visible-xs"></div>
         <? if ($this->userlist()->getMode() !== 'disabled'): ?>
