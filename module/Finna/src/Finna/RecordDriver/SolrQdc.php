@@ -90,8 +90,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     {
         $result = [];
         $urls = [];
-        foreach ($this->getSimpleXML()->xpath('file') as $node) {
-            $attributes = $node->attributes();
+        $rights = [];
+        foreach ($this->getSimpleXML()->xpath('/qualifieddc') as $node) {
+            $attributes = $node->file->attributes();
             $size = $attributes->bundle == 'THUMBNAIL' ? 'small' : 'large';
             $mimes = ['image/jpeg', 'image/png'];
             if (isset($attributes->type)) {
@@ -100,12 +101,18 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 }
             }
             $url = isset($attributes->href)
-                ? (string)$attributes->href : (string)$node;
+                ? (string)$attributes->href : (string)$node->file;
 
             if (!preg_match('/\.(jpg|png)$/i', $url)) {
                 continue;
             }
             $urls[$size] = $url;
+            if (!empty($node->rights)) {
+                $rights['copyright'] = (string)$node->rights;
+                $rights['link'] = $this->getRightsLink(
+                    strtoupper($rights['copyright']), $language
+                );
+            }
         }
         if ($urls) {
             if (!isset($urls['small'])) {
@@ -116,7 +123,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $result[] = [
                 'urls' => $urls,
                 'description' => '',
-                'rights' => []
+                'rights' => $rights
             ];
         }
         return $result;
