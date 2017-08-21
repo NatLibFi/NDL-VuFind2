@@ -34,13 +34,12 @@
     <? if (!empty($this->recordList)): ?>
       <? if ($this->cancelForm): ?>
       <form name="cancelForm" class="inline" method="post" id="cancelILLRequest">
-        <table class="myresearch-table">
-        <tr class="toolbar">
-          <th>
+        <div class="toolbar">
+          <div>
             <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
             <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
-          </th>
-          <th colspan="4">
+          </div>
+          <div>
             <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEsc("ill_request_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
             <ul class="dropdown-menu useraccount-cancel">
               <li class="disabled"><a><?=$this->transEsc("confirm_ill_request_cancel_selected_text") ?></a></li>
@@ -53,16 +52,16 @@
               <li><a href="#" onClick="$('#cancelConfirm').val(1);$('#submitType').attr('name','cancelAll');$(this).parents('form').submit(); return false;"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
               <li><a href="#" onClick="return false;"><?=$this->transEsc('confirm_dialog_no')?></a></li>
             </ul>
-          </th>
-        </tr>
+          </div>
+        </div>
         <? else: ?>
-        <table class="myresearch-table">
-          <tr class="toolbar">
-            <th colspan="4"><?=$this->transEsc('cannot cancel any interlibrary loan requests')?></th>
-          </tr>
+          <div class="toolbar">
+            <?=$this->transEsc('cannot cancel any interlibrary loan requests')?>
+          </div>
         <? endif; ?>
       <? $iteration = 0; ?>
       <? $x = $this->recordList; ?>
+      <table class="myresearch-table">
       <? foreach ($this->recordList as $resource): ?>
         <? $iteration++; ?>
         <? $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
