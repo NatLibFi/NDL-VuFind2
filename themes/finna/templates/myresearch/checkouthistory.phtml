@@ -29,18 +29,18 @@
         <div class="checkout-history-pre-list"><?=$this->render($template)?></div>
       <? endif; ?>
       <? if (!empty($this->transactions)): ?>
-        <table class="myresearch-table">
-        <tr class="toolbar">
-          <th class="text-right hidden-print">
+        <div class="history-controls toolbar">
+          <div class="text-right hidden-print right-control">
             <?=$this->render('search/controls/sort.phtml')?>
-          </th>
-          <th class="hidden-print">
+          </div>
+          <div class="hidden-print left-control">
             <a class="btn btn-primary" href="<?=$this->url('myresearch-purgecheckouthistory');?>" data-lightbox><?=$this->transEsc('checkout_history_purge')?></a>
-          </th>
-          <th>
+          </div>
+          <div class="pagination-container">
             <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination-simple.phtml') : ''?>
-          </th>
-        </tr>
+          </div>
+        </div>
+        <table class="myresearch-table">
         <? $i = 0; foreach ($this->transactions as $resource): ?>
           <? $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
           <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId())?>" class="myresearch-row">
@@ -117,11 +117,11 @@
             </td>
           </tr>
         <? endforeach; ?>
+        </table>
         <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination.phtml') : ''?>
         <? if ($template = $this->content()->findTemplateForLng("content/Additions/checkout-history-post-list")): ?>
           <div class="checkout-history-post-list"><?=$this->render($template)?></div>
         <? endif; ?>
-      </table>
       <? else: ?>
         <h4><?=$this->transEsc('You do not have any items in the checkout history')?>.</h4>
       <? endif; ?>

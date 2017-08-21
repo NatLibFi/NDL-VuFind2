@@ -876,3 +876,33 @@
         min-width: 30px;
     }
 }
+.history-controls {
+    @media (min-width: @screen-sm) {
+        display: flex;
+        flex-direction: row-reverse;
+    }
+    .right-control {
+        @media (max-width: @screen-sm) {
+            text-align: right;
+            float: right;
+            width: 65%;
+        }
+    }
+    .left-control {
+        @media (min-width: @screen-sm) {
+            flex-grow: 1;
+            text-align:left;
+        }
+        @media (max-width: @screen-sm) {
+            text-align: left;
+            width: 35%;
+        }
+        margin-bottom: 10px;
+    }
+    .pagination-container {
+        @media (min-width: @screen-sm) {
+            flex-grow: 1;
+            text-align:left;
+        }
+    }
+}

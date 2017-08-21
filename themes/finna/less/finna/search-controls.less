@@ -34,8 +34,10 @@
     }
   }
   .pagination-container {
-    flex-grow: 1;
-    text-align: left;
+    @media(min-width: @screen-sm) {
+      flex-grow: 1;
+      text-align: left;
+    }
   }
 }
 
