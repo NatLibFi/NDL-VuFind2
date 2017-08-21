@@ -195,12 +195,10 @@
       </div>
 
       <? if ($result = $this->driver->getSummary()): ?>
-        <div class="description recordSummary">
-          <div class="truncate-field">
-            <? foreach ($result as $item): ?>
-              <p class="summary"><?=$item // intentionally left unescaped due to embedded HTML ?></p>
-            <? endforeach; ?>
-          </div>
+        <div class="description recordSummary truncate-field">
+          <? foreach ($result as $item): ?>
+            <p class="summary"><?=$item // intentionally left unescaped due to embedded HTML ?></p>
+          <? endforeach; ?>
         </div>
       <? else: ?>
         <div class="description recordSummary">
