@@ -93,7 +93,7 @@
           </div>
         </form>
       <? elseif (!empty($this->pickup)): ?>
-        <div class="my-profile-col4 profile-title"><?=$this->transEsc('preferred_pickup_location')?>:</div>
+        <div class="my-profile-col profile-title"><?=$this->transEsc('preferred_pickup_location')?>:</div>
         <div><?=$this->escapeHtml($this->pickup[0]['locationDisplay']); ?></div>
       <? endif; ?>
 
