@@ -5,13 +5,6 @@ section.main.template-dir-search.template-name-results.browse {
     }
 }
 
-.browse-content {
-    width: 100%;
-    @media (min-width: @screen-lg) {
-        width: 75%;
-    }
-}
-
 // Alpha & list Browse
 
 section.template-dir-browse {
@@ -47,13 +40,23 @@ section.template-dir-browse {
             text-align: center;
             margin-bottom: 2px;
         }
+        @media(min-width: @screen-sm) {
+            width: 50%;
+            float: left;
+        }
     }
     & #list2 {
         margin-bottom: 20px;
     }
-    & #list4 a.list-group-item {
-        display: block;
-        width: 100%;
-        margin-bottom: 2px;
+    & #list4 {
+        @media(min-width: @screen-sm) {
+            width: 50%;
+            float: right;
+        }
+        & a.list-group-item {
+            display: block;
+            width: 100%;
+            margin-bottom: 2px;
+        }
     }
 }

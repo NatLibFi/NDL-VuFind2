@@ -12,7 +12,7 @@
   <h2><?=$this->transEsc('Choose a Category to Begin Browsing') ?>:</h2>
 <? endif; ?>
 
-<div class="browse-content">
+<div class="page-content">
   <div class="browse list-group<? if (!empty($this->categoryList)): ?> hidden-xs<? endif ?>" id="list1">
     <? foreach ($this->browseOptions as $item=>$currentOption): ?>
       <a href="<?=$this->url('browse-' . strtolower($currentOption['action'])); ?>" class="list-group-item<? if($currentOption['action'] == $this->currentAction): ?> active<? endif; ?>">
@@ -39,7 +39,7 @@
   <? endif; ?>
 
   <? if (!empty($this->secondaryList)): ?>
-    <div class="browse list-group col-sm-6<? if (!empty($this->resultList)): ?> hidden-xs<? endif ?>" id="list3">
+    <div class="browse list-group<? if (!empty($this->resultList)): ?> hidden-xs<? endif ?>" id="list3">
     <? foreach($this->secondaryList as $secondary): ?>
       <? $url = $BROWSE_BASE . '?findby=' . urlencode($this->findby)
           . '&amp;category=' . urlencode($this->category)
@@ -70,7 +70,7 @@
   <? endif; ?>
 
   <? if (!empty($this->resultList)): ?>
-    <div class="browse list-group col-sm-6" id="list4">
+    <div class="browse list-group" id="list4">
     <? foreach($this->resultList as $result): ?>
         <a class="list-group-item clearfix" href="<?=$SEARCH_BASE ?>?<?=$this->paramTitle ?><?=urlencode($result['value']) ?><? if ($this->searchParams): foreach($this->searchParams as $var=>$val): ?>&<?=$var ?>=<?=urlencode($val) ?><? endforeach;endif; ?>">
           <?=$this->escapeHtml($result['displayText'])?>
