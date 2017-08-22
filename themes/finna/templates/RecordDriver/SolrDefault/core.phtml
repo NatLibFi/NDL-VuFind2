@@ -193,20 +193,11 @@
         </div>
        <? endif; ?>
       </div>
-
-      <? if ($result = $this->driver->getSummary()): ?>
-        <div class="description recordSummary truncate-field">
-          <? foreach ($result as $item): ?>
-            <p class="summary"><?=$item // intentionally left unescaped due to embedded HTML ?></p>
-          <? endforeach; ?>
-        </div>
-      <? else: ?>
-        <div class="description recordSummary">
-          <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
-            <i class="fa fa-spinner fa-spin"></i>
-          </span>
-        </div>
-      <? endif; ?>
+      <div class="description recordSummary">
+        <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
+          <i class="fa fa-spinner fa-spin"></i>
+        </span>
+      </div>
 
       <? if ($this->userlist()->getMode() !== 'disabled'): ?>
         <? /* Display the lists that this record is saved to */ ?>

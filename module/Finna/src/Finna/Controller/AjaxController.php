@@ -685,7 +685,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $language = $this->serviceLocator->get('VuFind\Translator')
                 ->getLocale();
             if ($summary = $driver->getSummary($language)) {
-                $summary = implode('<br><br>', $summary);
+
+                $summary = implode("\n\r", $summary);
 
                 // Replace double hash with a <br>
                 $summary = str_replace('##', '<br>', $summary);
