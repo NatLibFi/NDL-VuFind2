@@ -23,6 +23,7 @@
  * @package  RecordDrivers
  * @author   Anna Pienimäki <anna.pienimaki@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -35,6 +36,7 @@ namespace Finna\RecordDriver;
  * @package  RecordDrivers
  * @author   Anna Pienimäki <anna.pienimaki@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -91,8 +93,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $result = [];
         $urls = [];
         $rights = [];
-        foreach ($this->getSimpleXML()->xpath('/qualifieddc') as $node) {
-            $attributes = $node->file->attributes();
+        foreach ($this->getSimpleXML()->xpath('file') as $node) {
+            $attributes = $node->attributes();
             $size = $attributes->bundle == 'THUMBNAIL' ? 'small' : 'large';
             $mimes = ['image/jpeg', 'image/png'];
             if (isset($attributes->type)) {
@@ -101,18 +103,18 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 }
             }
             $url = isset($attributes->href)
-                ? (string)$attributes->href : (string)$node->file;
+                ? (string)$attributes->href : (string)$node;
 
             if (!preg_match('/\.(jpg|png)$/i', $url)) {
                 continue;
             }
             $urls[$size] = $url;
-            if (!empty($node->rights)) {
-                $rights['copyright'] = (string)$node->rights;
-                $rights['link'] = $this->getRightsLink(
-                    strtoupper($rights['copyright']), $language
-                );
-            }
+        }
+        foreach ($this->getSimpleXML()->xpath('rights') as $field) {
+            $rights['copyright'] = (string)$field;
+            $rights['link'] = $this->getRightsLink(
+                strtoupper($rights['copyright']), $language
+            );
         }
         if ($urls) {
             if (!isset($urls['small'])) {
