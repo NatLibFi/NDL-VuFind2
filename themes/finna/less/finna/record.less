@@ -133,11 +133,27 @@
   }
 }
 
-.record-view-header{
+.record-view-header {
   .search-tools{
     display: flex;
     .record-back{
       flex: 1;
+    }
+  }
+}
+.record {
+  .search-tools {
+    @media (min-width: @screen-sm) {
+      display: flex;
+      flex-direction: row-reverse;
+      text-align: right;
+      .paginationSimple {
+        flex: 1;
+        text-align: left;
+      }
+    }
+    @media (max-width: @screen-sm) {
+      text-align: center;
     }
   }
 }
