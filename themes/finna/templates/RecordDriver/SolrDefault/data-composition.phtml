@@ -1,0 +1,19 @@
+<? //Don't add START and END comments ?>
+<? if (!empty($data)): ?>
+  <div class="truncate-field">
+    <? foreach($data as $fields => $keys): ?>
+        <? if (!empty($keys['compose'])): ?>
+          <?=$this->escapeHtml($keys['compose'])?>
+            <? if (!empty($keys['count'])): ?>
+              (<?=$this->escapeHtml($keys['count'])?>),
+            <? endif; ?>
+          <? if (!empty($keys['solo'])): ?>
+             <?=$this->escapeHtml($keys['solo'])?>,
+          <? endif; ?>
+          <? if (!empty($keys['doubler'])): ?>
+             <?=$this->escapeHtml($keys['doubler'])?>
+          <? endif; ?><br/>
+        <? endif; ?>
+    <? endforeach; ?>
+  </div>
+<? endif; ?>
