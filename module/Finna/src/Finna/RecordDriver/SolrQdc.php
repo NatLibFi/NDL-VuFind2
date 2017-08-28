@@ -110,12 +110,13 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             }
             $urls[$size] = $url;
         }
-        foreach ($this->getSimpleXML()->xpath('rights') as $field) {
-            $rights['copyright'] = (string)$field;
-            $rights['link'] = $this->getRightsLink(
-                strtoupper($rights['copyright']), $language
-            );
-        }
+
+        $xml = $this->getSimpleXML()->xpath('rights');
+        $rights['copyright'] = !empty($xml) ? (string)$xml[0] : '';
+        $rights['link'] = $this->getRightsLink(
+            strtoupper($rights['copyright']), $language
+        );
+
         if ($urls) {
             if (!isset($urls['small'])) {
                 $urls['small'] = $urls['large'];
