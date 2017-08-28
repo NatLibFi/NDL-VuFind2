@@ -278,7 +278,7 @@
   <? $formats = $this->driver->getFormats(); ?>
   <? if (!empty($holding['items'][0]['order_statuses']) && !in_array(end($formats), ['1/Book/eBook/', '1/Journal/eJournal/', '1/Journal/eArticle/'])): ?>
     <div class="copy-details <?=$holdingsDetails?>">
-      <div style="width: 50%"><?=$this->transEsc("Order Information") ?>:</div>
+      <div><?=$this->transEsc("Order Information") ?>:</div>
       <div>
         <? foreach ($holding['items'][0]['order_statuses'] as $orderStatus): ?>
           <?=$this->transEsc('order_status_' . $orderStatus['status'], null, $orderStatus['status']) ?> <?=$this->escapeHtml($orderStatus['order_update_date']) ?>
