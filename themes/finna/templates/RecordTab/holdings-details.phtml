@@ -17,7 +17,7 @@
         $textFields = $found;
     }
     ?>
-  <div class="copy-details <?=isset($heading) ? 'group-heading' : "row $mode"?>">
+  <div class="copy-details <?=isset($heading) ? 'group-heading' : "$mode"?>">
     <? // Translation for summary is a special case for backwards-compatibility and purchase_history a special case ?>
     <?
     if ($textFieldName == 'summary') {
