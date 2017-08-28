@@ -1524,13 +1524,17 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
-            $compose = $field->getSubfield('a');
+            foreach ($field->getSubfield('a,b,n,p,v') as $compo) {
+                $results[] = [
+
+                ];
+            }
             $solo = $field->getSubfield('b');
             $count = $field->getSubfield('n');
             $doubler = $field->getSubfield('d');
-            //$subfields = $this->getSubfieldArray(
-            //    $field, ['b', 'n', 'd', 'v', 'a', 'p'], false
-            //);
+            $subfields = $this->getSubfieldArray(
+                $field, ['b', 'n', 'd', 'v', 'a', 'p'], false
+            );
             if ($compose || $solo || $count || $doubler) {
                 $results[] = [
                     'compose' => $compose ? $compose->getData() : '',
