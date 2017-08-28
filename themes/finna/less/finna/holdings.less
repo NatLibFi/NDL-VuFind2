@@ -91,6 +91,7 @@
     border-top: none;
 
     .holdings-container-heading {
+        padding-right: 15px;
         &:hover {
             cursor: pointer;
         }
@@ -163,17 +164,19 @@
     }
 
     & .copy-title {
-        padding-left: 20px;
         font-weight: bold;
         & .department {
             font-weight: normal;
         }
+        @media (min-width: @screen-sm-min) {
+            width: 50%;
+            float: left;
+        }
     }
     & .copy-info, .copy-available {
-        @media (max-width: @screen-xs-max) {
-            padding-left: 20px;
-        }
         @media (min-width: @screen-sm-min) {
+            width: 25%;
+            float: left;
             & i {
                 margin-left: -15px;
             }
@@ -188,8 +191,7 @@
         }
     }
     & .copy-details {
-        padding-top: 8px;
-        padding-bottom: 8px;
+        padding: 8px 20px;
         &.collapsed {
            display: none;
         }
@@ -201,6 +203,25 @@
             padding-top: 2px;
             padding-bottom: 0;
             text-transform: initial;
+        }
+        .details-title {
+            @media (min-width: @screen-sm) {
+                width: 25%;
+            }
+            width: 50%;
+            float: left;
+        }
+        .details-info {
+            @media (min-width: @screen-sm) {
+                width: 75%;
+            }
+            width: 50%;
+            float: left;
+        }
+    }
+    .details-info, .details-title, .copy-title, .copy-info {
+        @media (min-width: @screen-sm) {
+            padding: 5px 0px;
         }
     }
     & .headers {

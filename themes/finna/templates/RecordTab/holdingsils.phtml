@@ -271,14 +271,15 @@
       <? endif; ?>
     </div>
   </div>
+  <div class="clearfix"></div>
   <? if (!$this->holdingsSettings()->showDetailsAfterLocationGroup()): ?>
     <?=$this->partial('RecordTab/holdings-details.phtml', ['holdingId' => $holdingId, 'holding' => $holding, 'mode' => $holdingsDetails]);?>
   <? endif; ?>
   <? $formats = $this->driver->getFormats(); ?>
   <? if (!empty($holding['items'][0]['order_statuses']) && !in_array(end($formats), ['1/Book/eBook/', '1/Journal/eJournal/', '1/Journal/eArticle/'])): ?>
-    <div class="copy-details <?=$holdingsDetails?> row">
-      <div class="col-sm-3 col-xs-6"><?=$this->transEsc("Order Information") ?>:</div>
-      <div class="col-sm-3 col-xs-6">
+    <div class="copy-details <?=$holdingsDetails?>">
+      <div style="width: 50%"><?=$this->transEsc("Order Information") ?>:</div>
+      <div>
         <? foreach ($holding['items'][0]['order_statuses'] as $orderStatus): ?>
           <?=$this->transEsc('order_status_' . $orderStatus['status'], null, $orderStatus['status']) ?> <?=$this->escapeHtml($orderStatus['order_update_date']) ?>
         <? endforeach; ?>
@@ -306,7 +307,7 @@
         <span class="copy-number"><?=!empty($row['number']) ? $this->escapeHtml($row['number']) : $this->transEsc("Copy") ?></span>
       </div>
       <? endif; ?>
-      <div class="copy-info <?=(isset($row['availabilityInfo'])) ? 'col-sm-3' : 'col-sm-6' ;?>">
+      <div class="copy-info">
         <? if (isset($row['reserve']) && $row['reserve'] == "Y"): ?>
           <link property="availability" href="http://schema.org/InStoreOnly" />
           <?=$this->transEsc("On Reserve - Ask at Circulation Desk")?><br />
@@ -374,7 +375,7 @@
           <link property="itemOffered" href="#record" />
       </div>
       <? if (isset($row['availabilityInfo'])): ?>
-      <div class="copy-available col-sm-3">
+      <div class="copy-available">
         <? if (!empty($row['availabilityInfo']['ordered'])): ?>
           <div class="ordered">
             <?=$this->translate('status_Ordered')?>: <?=$row['availabilityInfo']['ordered']?>
@@ -387,6 +388,7 @@
       <? endif; ?>
     </div>
   <? endforeach; ?>
+  <div class="clearfix"></div>
   <? if (!empty($holding['purchase_history'])): ?>
     <div class="row">
       <div class="col-xs-4"><?=$this->transEsc("Most Recent Received Issues")?>:</div>
@@ -399,10 +401,8 @@
   <? endif; ?>
 <? endforeach; ?>
 <? if (empty($holdings['holdings'])): ?>
-  <div class="row">
-    <div class="col-xs-12">
-      <h5><?=$this->transEsc('No Holdings Available'); ?></h5>
-    </div>
+  <div>
+    <h5><?=$this->transEsc('No Holdings Available'); ?></h5>
   </div>
 <? endif; ?>
 </div>
