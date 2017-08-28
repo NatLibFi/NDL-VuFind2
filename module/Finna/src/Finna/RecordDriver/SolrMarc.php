@@ -1523,26 +1523,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getMusicComposition()
     {
         $results = [];
+        $i = '';
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
-            foreach ($field->getSubfield('a,b,n,p,v') as $compo) {
-                $results[] = [
-
-                ];
-            }
-            $solo = $field->getSubfield('b');
-            $count = $field->getSubfield('n');
-            $doubler = $field->getSubfield('d');
-            $subfields = $this->getSubfieldArray(
+            $i++;
+            $results[$i] = $this->getSubfieldArray(
                 $field, ['b', 'n', 'd', 'v', 'a', 'p'], false
             );
-            if ($compose || $solo || $count || $doubler) {
-                $results[] = [
-                    'compose' => $compose ? $compose->getData() : '',
-                    'solo' => $solo ? $solo->getData() : '',
-                    'count' => $count ? $count->getData() : '',
-                    'doubler' => $doubler ? $doubler->getData() : ''
-                ];
-            }
+            $juttu = explode(',', $results[$i]);
         }
         return $results;
     }
