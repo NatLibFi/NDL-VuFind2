@@ -817,3 +817,23 @@
         padding-top: 5px;
     }
 }
+
+.organisation-info {
+    @media (min-width: @screen-md) {
+        .info-col {
+            width: 65%;
+            padding-right: 15px
+        }
+        .details-col {
+            width: 35%;
+            padding-left: 15px;
+        }
+        .details-col, .info-col {
+            float: left;
+        }
+    }
+    @media (min-width: @screen-lg) {
+        .info-col { width: 60%; }
+        .details-col { width: 40%; }
+    }
+}
