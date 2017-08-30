@@ -317,7 +317,7 @@
         }
     }
     & .holdings {
-        & .row.odd {
+        & .odd {
             background-color: @gray-ultralight;
         }
         & .branchInfo {
@@ -332,6 +332,16 @@
         }
         & .groupCallnumber {
             float: right;
+        }
+        @media (min-width: @screen-sm) {
+            .group-location-col {
+                width: 65%;
+                float: left;
+            }
+            .group-branches {
+                width: 35%;
+                float: left;
+            }
         }
     }
     & .holdings-container {
