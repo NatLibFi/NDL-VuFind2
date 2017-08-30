@@ -1,7 +1,7 @@
 <!-- START of: finna - organisationInfo/home.phtml -->
 <?
   $this->headTitle($this->title);
-  $this->layout()->finnaMainHeader = '<div><h3>' . $this->title . '</h3></div>';
+  $this->layout()->finnaMainHeader = '<div class="col-xs-12"><h3>' . $this->title . '</h3></div>';
 
   $this->headLink()->appendStylesheet('vendor/leaflet.css');
   $this->headScript()->appendFile('vendor/leaflet.js');
@@ -21,7 +21,7 @@
   $this->jsTranslations()->addStrings([
      'map_my_location' => 'map_my_location',
      'map_zoom_in' => 'map_zoom_in',
-     'map_zoom_out' => 'map_zoom_out',     
+     'map_zoom_out' => 'map_zoom_out',
      'organisationInfoAutocomplete' => 'organisation_info_autocomplete'
   ]);
 
@@ -59,7 +59,7 @@ JS;
   <? if ($this->consortiumInfo): ?>
      <? $building = "0/{$this->id}/"; ?>
      <div class="consortium-navigation hide">
-        <div>
+        <div class="row">
            <ul class="consortium-navigation-list col-xs-12" data-spy="affix" data-offset-top="310">
               <li class="scroll building hide"></li>
               <li class="scroll usage hide"><?=$this->transEsc('organisation_info_navi_usage')?></li>
@@ -71,9 +71,9 @@ JS;
 
   <? if ($this->consortiumInfo): ?>
      <div class="consortium-info hide navi-section" id="consortium-info-section">
-       <div>
-         ><h1 class="name"></h1>
-         <div>
+       <div class="row">
+         <div class="col-xs-12"><h1 class="name"></h1></div>
+         <div class="col-xs-12">
            <div class="consortium-logo hide"></div>
            <div class="description"><?=$this->translate('organisation_no_consortium_info_html');?></div>
          </div>
@@ -90,39 +90,41 @@ JS;
 <div class="fluid-odd">
   <div class="container organisation-info-page loading organisation-page-information-wrapper">
     <div class="consortium-usage-rights hide navi-section" id="consortium-usage-rights-section">
-      <div class="usage-rights-heading"><h3><?=$this->transEsc('organisation_info_navi_usage')?></h3></div>
-      <div class="col-xs-12 col-sm-9">
-        <div class="usage-rights-text">
-          <i class="fa fa-spinner fa-spin" style="text-align: center;"></i>
-          <p class="hide no-info"><?=$this->translate('organisation_no_consortium_info_html');?></p>
-        </div>
-        <div>
-          <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6">
-            <form class="searchbox-consortium searchForm" action="<?=$this->url('search-results')?>">
-              <input class="searchForm_lookfor form-control search-query" name="lookfor" placeholder="<?=$this->transEsc('organisation_info_search')?>" />
-              <input type="hidden" name="filter[]" value="<?=$this->escapeHtmlAttr("{$this->buildingFacetOperator}building:\"{$building}\"")?>" />
-              <button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> <span class="sr-only"><?=$this->translate('Search from collection')?></span></button>
-            </form>
+      <div class="row">
+        <div class="col-xs-12 usage-rights-heading"><h3><?=$this->transEsc('organisation_info_navi_usage')?></h3></div>
+        <div class="col-xs-12 col-sm-9">
+          <div class="usage-rights-text">
+            <i class="fa fa-spinner fa-spin" style="text-align: center;"></i>
+            <p class="hide no-info"><?=$this->translate('organisation_no_consortium_info_html');?></p>
           </div>
-          <div class="gauge-meter col-xs-12 col-sm-4 col-md-5 col-lg-6 hide">
-            <canvas width="75" height="60" class="finna-coverage-gauge"></canvas>
-            <span class="gauge-value"><span class="val"></span> %</span>
-            <span class="gauge-label"><?=$this->translate('organisation_info_coverage')?></span>
+          <div class="row">
+            <div class="col-xs-12 col-sm-8 col-md-7 col-lg-6">
+              <form class="searchbox-consortium searchForm" action="<?=$this->url('search-results')?>">
+                <input class="searchForm_lookfor form-control search-query" name="lookfor" placeholder="<?=$this->transEsc('organisation_info_search')?>" />
+                <input type="hidden" name="filter[]" value="<?=$this->escapeHtmlAttr("{$this->buildingFacetOperator}building:\"{$building}\"")?>" />
+                <button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> <span class="sr-only"><?=$this->translate('Search from collection')?></span></button>
+              </form>
+            </div>
+            <div class="gauge-meter col-xs-12 col-sm-4 col-md-5 col-lg-6 hide">
+              <canvas width="75" height="60" class="finna-coverage-gauge"></canvas>
+              <span class="gauge-value"><span class="val"></span> %</span>
+              <span class="gauge-label"><?=$this->translate('organisation_info_coverage')?></span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-sm-3 sidebar">
-        <div class="links hide">
-          <h4><?=$this->translate('organisation_info_page_finna_link')?></h4>
-          <ul class="list-group">
-            <li class="list-group-item template"><a href="#" target="_blank"></a></li>
-          </ul>
-        </div>
-        <div class="finna-link hide">
-          <h4><?=$this->translate('organisation_info_page_links')?></h4>
-          <ul class="list-group finna-url">
-            <li class="list-group-item template"><a href="#" target="_blank"></a></li>
-          </ul>
+        <div class="col-sm-3 sidebar">
+          <div class="links hide">
+            <h4><?=$this->translate('organisation_info_page_finna_link')?></h4>
+            <ul class="list-group">
+              <li class="list-group-item template"><a href="#" target="_blank"></a></li>
+            </ul>
+          </div>
+          <div class="finna-link hide">
+            <h4><?=$this->translate('organisation_info_page_links')?></h4>
+            <ul class="list-group finna-url">
+              <li class="list-group-item template"><a href="#" target="_blank"></a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -190,7 +192,7 @@ JS;
       <div id="marker-tooltip" class="hide"></div>
     </div>
   </div>
-  <div class="office-information-loader">    
+  <div class="office-information-loader">
     <p><i class="fa fa-spinner fa-spin" style="text-align: center;"></i> <?=$this->translate('Loading')?></p>
   </div>
   <div class="row office-quick-information info-element hide">
@@ -277,7 +279,7 @@ JS;
 <!-- open closed tags to make valid html, if consortiumInfo -->
 <? if ($this->consortiumInfo): ?>
    <div class="container">
-     <div>
+     <div class="row">
 <? endif; ?>
 
 <? if ($template = $this->content()->findTemplateForLng('content/Additions/organisation-page-end')): ?>
