@@ -103,6 +103,8 @@ class ListController extends \Finna\Controller\MyResearchController
                 return $response;
             }
 
+            $this->rememberCurrentSearchUrl();
+
             $view = $this->createViewModel(
                 [
                     'params' => $params,

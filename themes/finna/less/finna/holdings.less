@@ -4,7 +4,7 @@
 .holding-details {
     margin-top: 10px;
     @media (max-width: 400px) {
-        width: 133%;
+        width: 100%;
     }
 }
 .dedup-select {
@@ -203,6 +203,9 @@
             @media (max-width: @screen-xs-max) {
                 text-align: right;
             }
+            & .reservations {
+                padding-right: 8px;
+            }
         }
         & .total-container, .reservations-container {
             margin-top: 14px;
@@ -267,9 +270,13 @@
         & .info {
             color: @gray-light;
             float: right;
+            margin-top: .5em;
             @media (max-width: @screen-xs-max) {
                 display: inline-block;
                 margin-left: 15px;
+            }
+            & .reservations {
+                padding-right: 8px;
             }
         }
     }

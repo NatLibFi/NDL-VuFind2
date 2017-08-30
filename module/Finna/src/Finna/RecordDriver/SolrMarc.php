@@ -560,6 +560,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 switch ($subfieldCode) {
                 case 'w':
                     $id = $subfield->getData();
+                    // Remove any source in parenthesis to create a working link
+                    $id = preg_replace('/\\(.+\\)/', '', $id);
                     break;
                 case 't':
                     $title = $this->stripTrailingPunctuation(
@@ -590,7 +592,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getISBNs()
     {
         $fields = [
-            '020' => ['a'],
+            '020' => ['a', 'q'],
             '773' => ['z'],
         ];
         $isbn = [];
@@ -1614,6 +1616,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get the map scale from field 255, subfield a.
+     *
+     * @return string
+     */
+    public function getMapScale()
+    {
+        $scale = '';
+        foreach ($this->getMarcRecord()->getFields('255') as $field) {
+            if ($field->getSubfield('a')) {
+                $scale = $field->getSubfield('a')->getData();
+            }
+        }
+        return $this->stripTrailingPunctuation($scale);
+    }
+
+    /**
      * Get notes from fields 515 & 550, both subfields a.
      *
      * @return array
@@ -1629,5 +1647,5 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             }
         }
         return $results;
-    }
+   }
 }

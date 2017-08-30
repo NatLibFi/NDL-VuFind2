@@ -247,18 +247,90 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $patron = $this->getILSAuthenticator()->storedCatalogLogin();
 
             if ($patron) {
+                $result = $catalog->checkFunction('changePickupLocation');
+                if (!$result) {
+                    return $this->output(
+                        $this->translate('unavailable'),
+                        self::STATUS_ERROR,
+                        400
+                    );
+                }
+
                 $details = [
                     'requestId'    => $requestId,
                     'pickupLocationId' => $pickupLocationId
                 ];
-                $results = [];
-
                 $results = $catalog->changePickupLocation($patron, $details);
 
                 return $this->output($results, self::STATUS_OK);
             }
         } catch (\Exception $e) {
-            // Do nothing -- just fail through to the error message below.
+            $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
+            $this->logError('changePickupLocation failed: ' . $e->getMessage());
+            // Fall through to the error message below.
+        }
+
+        return $this->output(
+            $this->translate('An error has occurred'), self::STATUS_ERROR, 500
+        );
+    }
+
+    /**
+     * Change request status
+     *
+     * @return \Zend\Http\Response
+     */
+    public function changeRequestStatusAjax()
+    {
+        $requestId = $this->params()->fromQuery('requestId');
+        $frozen = $this->params()->fromQuery('frozen');
+        if (empty($requestId)) {
+            return $this->output(
+                $this->translate('bulk_error_missing'),
+                self::STATUS_ERROR,
+                400
+            );
+        }
+
+        // check if user is logged in
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->output(
+                [
+                    'status' => false,
+                    'msg' => $this->translate('You must be logged in first')
+                ],
+                self::STATUS_NEED_AUTH
+            );
+        }
+
+        try {
+            $catalog = $this->getILS();
+            $patron = $this->getILSAuthenticator()->storedCatalogLogin();
+
+            if ($patron) {
+
+                $result = $catalog->checkFunction('changeRequestStatus');
+                if (!$result) {
+                    return $this->output(
+                        $this->translate('unavailable'),
+                        self::STATUS_ERROR,
+                        400
+                    );
+                }
+
+                $details = [
+                    'requestId' => $requestId,
+                    'frozen' => $frozen
+                ];
+                $results = $catalog->changeRequestStatus($patron, $details);
+
+                return $this->output($results, self::STATUS_OK);
+            }
+        } catch (\Exception $e) {
+            $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
+            $this->logError('changeRequestStatus failed: ' . $e->getMessage());
+            // Fall through to the error message below.
         }
 
         return $this->output(
@@ -613,10 +685,10 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $language = $this->serviceLocator->get('VuFind\Translator')
                 ->getLocale();
             if ($summary = $driver->getSummary($language)) {
-                $summary = implode('<br><br>', $summary);
+                $summary = implode("\n\n", $summary);
 
                 // Replace double hash with a <br>
-                $summary = str_replace('##', '<br>', $summary);
+                $summary = str_replace('##', "\n\n", $summary);
 
                 // Process markdown
                 $summary = $this->getViewRenderer()->plugin('markdown')
@@ -1028,11 +1100,19 @@ class AjaxController extends \VuFind\Controller\AjaxController
     {
         $this->disableSessionWrites();  // avoid session write timing bug
 
-        if (null === ($parent = $this->params()->fromQuery('parent'))) {
+        $reqParams = array_merge(
+            $this->params()->fromPost(), $this->params()->fromQuery()
+        );
+        if (empty($reqParams['parent'])) {
             return $this->handleError('getOrganisationInfo: missing parent');
         }
+        $parent = is_array($reqParams['parent'])
+            ? implode(',', $reqParams['parent']) : $reqParams['parent'];
 
-        $params = $this->params()->fromQuery('params');
+        if (empty($reqParams['params']['action'])) {
+            return $this->handleError('getOrganisationInfo: missing action');
+        }
+        $params = $reqParams['params'];
 
         $cookieName = 'organisationInfoId';
         $cookieManager = $this->serviceLocator->get('VuFind\CookieManager');
@@ -1059,8 +1139,10 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         if ($action == 'lookup') {
-            $params['link'] = $this->params()->fromQuery('link') === '1';
-            $params['parentName'] = $this->params()->fromQuery('parentName');
+            $link = isset($reqParams['link']) ? $reqParams['link'] : '0';
+            $params['link'] = $link === '1';
+            $params['parentName'] = isset($reqParams['parentName'])
+                ? $reqParams['parentName'] : null;
         }
 
         $lang = $this->serviceLocator->get('VuFind\Translator')->getLocale();
@@ -1192,7 +1274,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
                             'tab' => $tab,
                             'lookfor' => $lookfor,
                             'handler' => $params->getQuery()->getHandler(),
-                            'results' => $otherResults
+                            'results' => $otherResults,
+                            'params' => $params
                         ]
                     );
                 }
@@ -1649,7 +1732,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
      *
      * @return \Zend\Http\Response
      */
-    protected function handleError($outputMsg, $logMsg, $httpStatus = 400)
+    protected function handleError($outputMsg, $logMsg = '', $httpStatus = 400)
     {
         $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
         $this->logError(

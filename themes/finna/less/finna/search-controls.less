@@ -1,7 +1,7 @@
 // All search control buttons
 .search-controls {
   .button-label {
-    margin-left: 10px;
+    padding: 5px;
   }
   @media(max-width:@screen-xs-max) {
     margin-top: -5px;
@@ -27,11 +27,24 @@
       }
     }
   }
-  @media (min-width: @screen-sm-min) {
-    .update-location-button {
-      display: none;
+  .control-container {
+    @media(max-width: @screen-sm-min) {
+      text-align: center;
+      margin-top: 10px;
     }
   }
+  .pagination-container {
+    @media(min-width: @screen-sm) {
+      flex-grow: 1;
+      text-align: left;
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .search-header { display: flex; }
+  .search-stats { flex-grow: 1; }
+  .search-controls { text-align: right; }
 }
 
 .search-controls .pagination {
@@ -89,7 +102,6 @@
   @media(max-width:@screen-xs-max) {
     margin-right: 0;
     margin-bottom: 10px;
-
   }
   & .dropdown-menu {
     @media(max-width:@screen-sm-max) {

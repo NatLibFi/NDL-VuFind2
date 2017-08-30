@@ -247,6 +247,7 @@ $config = [
                     'fee' => 'Finna\Db\Row\Factory::getFee',
                     'finnacache' => 'Finna\Db\Row\Factory::getFinnaCache',
                     'privateuser' => 'Finna\Db\Row\Factory::getPrivateUser',
+                    'resource' => 'Finna\Db\Row\Factory::getResource',
                     'search' => 'Finna\Db\Row\Factory::getSearch',
                     'transaction' => 'Finna\Db\Row\Factory::getTransaction',
                     'user' => 'Finna\Db\Row\Factory::getUser',
@@ -296,8 +297,10 @@ $config = [
             ],
             'search_backend' => [
                 'factories' => [
+                    'EDS' => 'Finna\Search\Factory\EdsBackendFactory',
                     'Primo' => 'Finna\Search\Factory\PrimoBackendFactory',
                     'Solr' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
+                    'Summon' => 'Finna\Search\Factory\SummonBackendFactory',
                 ],
                 'aliases' => [
                     // Allow Solr core names to be used as aliases for services:
