@@ -378,9 +378,17 @@ input[type=number].input-year::-webkit-outer-spin-button {
 }
 .left-column-content {
     background: @home-left-column-background;
+    @media (min-width: @screen-sm){
+        width: 60%;
+        float: left;
+    }
 }
 .right-column-content {
     background: @home-right-column-background;
+    @media (min-width: @screen-sm){
+        width: 40%;
+        float: left;
+    }
 }
 
 
