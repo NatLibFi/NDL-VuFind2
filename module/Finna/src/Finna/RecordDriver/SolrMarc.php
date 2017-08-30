@@ -1647,5 +1647,5 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             }
         }
         return $results;
-   }
+    }
 }
