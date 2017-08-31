@@ -250,13 +250,20 @@ h3.introductionText > em {
         }
     }
 }
-.info-col {
-    @media(min-width: @screen-md) {
+@media(min-width: @screen-md) {
+    .info-col {
         width: 33.333%;
         float: left;
-        padding: 0px 15px;
+        padding: 0 15px;
+        &:first-child {
+            padding-left: 0;
+        }
+        &:last-child {
+            padding-right: 0;
+        }
     }
 }
+
 .infobox {
     margin: 20px 0px;
     .box-shadow (@infobox-box-shadow);
