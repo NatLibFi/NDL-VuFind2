@@ -250,6 +250,15 @@ h3.introductionText > em {
         }
     }
 }
+
+@media(min-width: @screen-sm) {
+    .home-column {
+        width: 50%;
+        float: left;
+        padding-right: 15px;
+    }
+}
+
 @media(min-width: @screen-md) {
     .info-col {
         width: 33.333%;
@@ -374,7 +383,6 @@ input[type=number].input-year::-webkit-outer-spin-button {
         display: flex;
         width: 100%;
     }
-
     .footer-column {
         flex: 0 1 100%;
     }
@@ -400,7 +408,7 @@ input[type=number].input-year::-webkit-outer-spin-button {
 }
 .right-column-content {
     background: @home-right-column-background;
-    @media (min-width: @screen-sm){
+    @media (min-width: @screen-sm) {
         width: 40%;
         float: left;
         padding-left: 15px;
