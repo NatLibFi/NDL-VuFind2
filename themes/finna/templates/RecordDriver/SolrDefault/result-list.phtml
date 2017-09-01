@@ -24,7 +24,7 @@ if ($img):
       <div class="result-body">
         <div class="title-container">
           <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title" data-view="<?=isset($this->params) ? $this->params->getOptions()->getListViewOption() : 'list' ?>">
-            <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+            <?=$title = $this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
           </a>
           <? if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
             <div class="result-uniform-titles">
@@ -34,7 +34,12 @@ if ($img):
             </div>
           <? endif; ?>
         </div>
-
+        <? $titleAltScript = $this->driver->tryMethod('getShortTitleAltScript') ?>
+        <? if (!empty($titleAltScript) && !strpos($title, $titleAltScript)): ?>
+          <div class="titleAltScript">
+            <?=$titleAltScript ?>
+          </div>
+        <? endif; ?>
         <div class="dateyeartype">
           <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
 
