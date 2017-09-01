@@ -2,7 +2,18 @@
 <? if (!empty($data)): ?>
   <div class="truncate-field">
     <? foreach($data as $row => $key): ?>
-        <? if ($row): ?><br/><? endif ;?><?=implode(', ', $key); ?>
+      <? $composition = []; ?>
+      <? $previous = null; ?>
+        <? foreach ($key as $value): ?>
+          <? if (is_numeric($value) && $previous) {
+                $composition[] = "$previous ($value)";
+            } else if (strpos($value, $previous)){
+                $composition[] = $value;
+            }
+            $previous = $value;
+          ?>
+        <? endforeach; ?>
+        <? if ($row): ?><br/><? endif ;?><?=implode(', ', $composition); ?>
     <? endforeach; ?>
   </div>
 <? endif; ?>

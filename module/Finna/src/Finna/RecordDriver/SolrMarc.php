@@ -1523,13 +1523,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getMusicComposition()
     {
         $results = [];
-        $i = '';
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
-            $i++;
-            $results[$i] = $this->getSubfieldArray(
+            $results[] = $this->getSubfieldArray(
                 $field, ['b', 'n', 'd', 'v', 'a', 'p'], false
             );
-            $juttu = explode(',', $results[$i]);
         }
         return $results;
     }
@@ -1636,39 +1633,32 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     /**
      * Get associated place of the record from field 370.
      *
-     * @return string
+     * @return array
      */
     public function getAssociatedPlace()
     {
-        $results = '';
+        $results = [];
         foreach ($this->getMarcRecord()->getFields('370') as $field) {
-            if ($field->getSubfield('a')) {
-                $results = $field->getSubfield('a')->getData();
-            }
-            if ($field->getSubfield('c')) {
-                $results = $field->getSubfield('c')->getData();
-            }
-            if ($field->getSubfield('g')) {
-                $results = $field->getSubfield('g')->getData();
+            foreach ($field->getSubfields('g') as $place) {
+                $results[] = $this->stripTrailingPunctuation($place->getData());
             }
         }
-        return $this->stripTrailingPunctuation($results);
+        return $results > 1 ? implode(', ', $results) : $results[0];
     }
 
     /**
      * Get time period of creation from field 388.
      *
-     * @return string
+     * @return array
      */
     public function getTimePeriodOfCreation()
     {
-        $result = '';
+        $results = [];
         foreach ($this->getMarcRecord()->getFields('388') as $field) {
             foreach ($field->getSubfields('a') as $time) {
-                $subfields[] = $this->stripTrailingPunctuation($time->getData());
+                $results[] = $this->stripTrailingPunctuation($time->getData());
             }
-            $result = implode(', ', $subfields);
         }
-        return $result;
+        return $results > 1 ? implode(', ', $results) : $results[0];
     }
 }
