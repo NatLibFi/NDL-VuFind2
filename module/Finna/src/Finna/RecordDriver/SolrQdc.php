@@ -93,7 +93,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $result = [];
         $urls = [];
         $rights = [];
-        foreach ($this->getSimpleXML()->xpath('file') as $node) {
+        foreach ($this->getSimpleXML()->file as $node) {
             $attributes = $node->attributes();
             $size = $attributes->bundle == 'THUMBNAIL' ? 'small' : 'large';
             $mimes = ['image/jpeg', 'image/png'];
@@ -111,8 +111,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $urls[$size] = $url;
         }
 
-        $xml = $this->getSimpleXML()->xpath('rights');
-        $rights['copyright'] = !empty($xml) ? (string)$xml[0] : '';
+        $xml = $this->getSimpleXML();
+        $rights['copyright'] = !empty($xml->rights) ? (string)$xml->rights : '';
         $rights['link'] = $this->getRightsLink(
             strtoupper($rights['copyright']), $language
         );
