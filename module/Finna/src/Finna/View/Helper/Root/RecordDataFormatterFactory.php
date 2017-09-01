@@ -702,6 +702,12 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
+            'Notes', 'getNotes', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-notes']
+            ]
+        );
+        $spec->setTemplateLine(
             'Associated Place', 'getAssociatedPlace', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordAssociatedPlace']
