@@ -3,14 +3,13 @@
   <div class="truncate-field">
     <? foreach($data as $row => $key): ?>
       <? $composition = []; ?>
-      <? $previous = null; ?>
         <? foreach ($key as $value): ?>
-          <? if (is_numeric($value) && $previous) {
-                $composition[] = "$previous ($value)";
-            } else if (strpos($value, $previous)){
+          <? $next = next($key); ?>
+          <? if (is_numeric($next)) {
+                $composition[] = "$value ($next)";
+            } else if (!is_numeric($value)) {
                 $composition[] = $value;
             }
-            $previous = $value;
           ?>
         <? endforeach; ?>
         <? if ($row): ?><br/><? endif ;?><?=implode(', ', $composition); ?>
