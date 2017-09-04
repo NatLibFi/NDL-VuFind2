@@ -51,10 +51,20 @@
           'startRecord' => $this->results->getStartRecord(),
           'endRecord' => $this->results->getEndRecord(),
           'recordsFound' => $this->results->getResultTotal() > 0,
-          'searchType' => $this->params->getsearchType(),
-          'lookfor' => $lookfor
-        ]
+          'searchType' => $this->params->getsearchType()
+      ]
      );
+  }
+
+  if (!$browse) {
+      // Set up Finna Main Header:
+      $this->layout()->finnaFilters = $this->context($this)->renderInContext(
+          'search/filters.phtml',
+          [
+              'results' => $this->results,
+              'params' => $this->params
+          ]
+      );
   }
 
   // Set up Finna Main Tabs:

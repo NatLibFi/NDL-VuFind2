@@ -1,0 +1,22 @@
+<!-- START of: finna - search/filters.phtml -->
+<div class="filters">
+  <?
+    $params = $this->results->getParams();
+    $params->initBasicFacets();
+    $filterList = $this->results->getParams()->getFilterList(true);
+  ?>
+
+  <? foreach ($filterList  as $field => $data): ?>
+      <?=$this->transEsc($field)?>:
+    <? foreach ($data as $index => $value): ?>
+      <span class="filter-value">
+        <? $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
+        <? $removeLink = $results->getUrlQuery()->removeFacet($value['field'], $value['value'], $value['operator']);?>
+        <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?>
+        <?=$this->escapeHtml($value['displayText'])?>
+        <a class="" href="<?=$removeLink?>">x</a>
+      </span>
+    <? endforeach; ?>
+  <? endforeach; ?>
+</div>
+<!-- END of: finna - search/filters.phtml -->
