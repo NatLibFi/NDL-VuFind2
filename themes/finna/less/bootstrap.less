@@ -46,6 +46,7 @@
 @import "finna/common";
 @import "finna/tables";
 @import "finna/video-player";
+@import "finna/record";
 
 ::-ms-clear {
     display: none;
@@ -380,7 +381,6 @@ input[type=number].input-year::-webkit-outer-spin-button {
     background: @home-right-column-background;
 }
 
-
 /* --- Image processing --- */
 
 .group [class^=col-] {padding-left:0}
@@ -396,130 +396,6 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     margin:0;
     margin-bottom: 3px;
     font-size: @record-title-font-size;
-}
-
-/* --- Record View --- */
-.record-uniform-titles {
-    font-size: 1.05em;
-    margin: 0 0 3px;
-}
-.record-authors, .record-title-alt-script {
-    .date-and-year();
-}
-.record-details {
-    & th {
-        width: 30%;
-    }
-}
-.record-alt-titles {
-    color: @gray-light;
-}
-.summary {
-    color: @gray-light;
-    font-size: 1.05em;
-    margin-bottom: 10px;
-}
-.show-details-button, .hide-details-button {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    cursor: pointer;
-    padding-left: 0;
-    background: @body-bg;
-    color: @link-color;
-    width: 100%;
-    background-color: whitesmoke;
-    text-transform: uppercase;
-    font-size: .9em;
-    &:hover {
-        color: @link-color;
-    }
-}
-
-.show-details
-.record-details {
-    margin: 10px 0px;
-}
-.physical-details {
-    color: @gray-light;
-}
-.access-rights {
-    color: @gray-light;
-    margin-top: 5px;
-    padding-top: 5px;
-}
-.back-to-search a {
-    margin: @line-height-computed 0;
-    display: block;
-    font-size: 1.1em;
-    & i {
-        vertical-align: text-top;
-        font-size: 1.2em;
-    }
-    & .btn {
-        margin-right: 10px;
-    }
-    .back-to-search-text {
-        vertical-align: middle;
-    }
-}
-.dataTables_wrapper {
-	  width: 100%;
-}
-.part-authors-padded {
-	  padding-left: 10px;
-}
-.rating-symbol-background {
-    font-weight: bold;
-    margin-right: 1px;
-    color: @gray-light;
-}
-.record .rating-average {
-    margin-top: 10px;
-    text-align: center;
-    .count {
-        display: inline-block;
-        color: @gray-light;
-        &:hover {
-            cursor: pointer;
-        }
-    }
-    & .stars {
-        display: inline-block;
-        &:hover, & .rating-symbol-background:hover {
-            cursor: pointer;
-        }
-    }
-    @media(max-width:@screen-sm-max) {
-        font-size: .8em;
-        & .stars {
-            margin-right: -1px;
-        }
-    }
-}
-.rating-holder {
-    margin-bottom: 5px;
-    .info {
-        line-height: 2em;
-        @media(max-width:@screen-sm-max) {
-            line-height: 2.4em;
-        }
-    }
-    .rating-symbol {
-        margin-right: 3px;
-        font-size: 1.4em;
-        @media(max-width:@screen-sm-max) {
-            font-size: 1.8em;
-        }
-    }
-}
-
-@media(max-width:@screen-xs-max) {
-    .cover-wrapper {
-        text-align: center;
-    }
-    .template-name-view .record .record-title {
-        margin-top: 10px;
-    }
 }
 
 /* --- Collection view --- */
@@ -952,11 +828,6 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     }
 }
 
-//== CONTENT PAGES
-.content-section {
-    padding-bottom: 20px;
-    border-bottom: 1px solid @gray-lighter;
-}
 //Finna mixins
 .truncate-field {
     overflow: hidden;
@@ -1198,54 +1069,6 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     }
     .datepicker.datepicker-dropdown {
         margin-top: -340px;
-    }
-}
-
-
-// Content page styles
-.main.template-dir-content.template-name-content,
-.main.template-dir-feedcontent.template-name-content {
-    & .odd-fluid {
-        background: #f5f5f5;
-    }
-    & .organisation-list-inner-row > div {
-        position: relative;
-        & > .organisation-list-beta {
-            position: absolute;
-            right: 15px;
-            top: 0;
-            padding: 1px 2px;
-            line-height: 1;
-            text-transform: uppercase;
-            background-color: #13aebe;
-            color: #fff;
-        }
-        & .organisation-list-header {
-            font-weight: bold;
-            margin-top: 3px;
-            margin-bottom: -4px;
-        }
-        & .organisation-list-header, .organisation-list-url {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        & .organisation-list-url:hover {
-            text-decoration: underline;
-        }
-        & a:hover {
-            text-decoration: none;
-        }
-    }
-    .organisation-list-header {
-        color: @text-color;
-    }
-    .organisation-list-url {
-        color: @link-color;
-        margin-bottom: 25px;
-    }
-    & ul li {
-        margin-bottom: 3px;
     }
 }
 
