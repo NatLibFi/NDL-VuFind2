@@ -16,15 +16,15 @@
 @gray-ultralight:        lighten(@gray, 69%);
 
 // Brand Colors
-@brand-primary: #00a3b5;
-@brand-secondary: #B3E3E9;
+@brand-primary: #81358a;
+@brand-secondary: @gray;
 @brand-third: #d8f4ed;
 @brand-fourth: #ebd4f0;
 @brand-success: #00b270;
 @brand-warning: #fff48c;
 @brand-danger: #ff461e;
 @brand-info: #b2e3ea;
-@logo-color: #fff;
+@logo-color: @gray;
 
 //== Custom Finna styling
 @background-image-url: url('../images/customhomebg');
@@ -37,9 +37,9 @@
 @navbar-logo-height: 35px;
 @logo-height: 66px;
 @logo-separator-color: #fff; // Color of hr line under main logo
-@header-background-color: rgba(1,1,1,0.8); // Color of navigation bar top
-@footer-background: @gray;
-@footer-text-color: @body-bg;
+@header-background-color: @body-bg; // Color of navigation bar top
+@footer-background: @gray-ultralight;
+@footer-text-color: @gray;
 @finna-main-header-background: @brand-secondary; // Color of page header background and search results tabs
 @finna-searchbox-link-color: #fff; // style searchbox link text color contrast with background
 @finna-searchbox-link-background: rgba(1,1,1,0.6); // style searchbox links (advanced search etc.) background contrast with background
@@ -49,7 +49,7 @@
 @background-image-gradient: #000, #000, 55%, 30%;
 @finna-text-shadow: 1px 1px 1px black;
 @finna-search-input-width: 0.655; //== THIS is percentage Change this if no prefilter-select change to 0.88
-@finna-button-radius: 10px; // Defines all button radiuses
+@finna-button-radius: 2px; // Defines all button radiuses
 @finna-header-font-size: 1.6em;
 @record-title-font-size: 1.7em;
 @main-tabs-background-color: @brand-primary;
@@ -117,7 +117,7 @@
 
 @body-bg: #fff;
 @text-color: @gray;
-@link-color: @brand-primary; // defines all link color, also for linked icons
+@link-color: #0070d2; // defines all link color, also for linked icons
 @link-hover-color: @link-color;
 @link-hover-decoration: #fff;
 @padding-base-vertical: 6px;
@@ -135,7 +135,7 @@
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-@font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 @font-family-serif: PT Serif;
 @font-family-monospace: Monaco;
 @font-family-base: @font-family-sans-serif;
@@ -281,15 +281,17 @@
 //##
 
 // Basics of a navbar
-@navbar-height:                    45px;
+@navbar-default-link-color:        @gray;
+@navbar-height:                    70px;
 @navbar-margin-bottom:             0px;
 @navbar-padding-vertical:          0px;
 @navbar-collapse-max-height:       auto;
 
 @navbar-default-bg:                #fff;
 
+
 // Navbar links
-@navbar-default-link-color:                #fff;  // Color of link texts in navbar
+@navbar-default-link-color:                @gray;  // Color of link texts in navbar
 @navbar-font-size:                         1.05em; // Font-size of navbar links
 @navbar-font-weight:                       500; // Font weight for navbar texts
 // Navbar toggle
