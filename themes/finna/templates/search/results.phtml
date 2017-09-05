@@ -63,7 +63,8 @@
           'search/filters.phtml',
           [
               'results' => $this->results,
-              'params' => $this->params
+              'params' => $this->params,
+              'hasDefaultsApplied' => $this->params->hasDefaultsApplied()
           ]
       );
   }
