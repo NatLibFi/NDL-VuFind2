@@ -35,7 +35,12 @@
   }
 }
 
-.navbar .navbar-logo-height {
+.navbar .navbar-logo {
+  height: @navbar-logo-height;
+  margin-top: ((@navbar-height/2)-(@navbar-logo-height/2));
+}
+
+.navbar #loginOptions {
   height: @navbar-logo-height;
   margin-top: ((@navbar-height/2)-(@navbar-logo-height/2));
 }

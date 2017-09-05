@@ -119,9 +119,9 @@
       <a href="<?=$this->url('myresearch-userlogin')?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Institutional Login")?></a>
       <? else: ?>
         <? if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
-            <a title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Login")?></a>
+          <button type="button" class="btn btn-primary"><a title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Login")?></a></button>
         <? else: ?>
-            <a href="<?=$this->url('myresearch-userlogin')?>" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'" title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Login")?></a>
+          <button type="button" class="btn btn-primary"><a href="<?=$this->url('myresearch-userlogin')?>" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'" title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Login")?></a></button>
         <? endif; ?>
       <? endif; ?>
     </li>
