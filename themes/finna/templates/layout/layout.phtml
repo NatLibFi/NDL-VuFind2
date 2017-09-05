@@ -355,6 +355,9 @@ JS;
         </div>
       </div>
       <? endif; ?>
+      <? if (!empty($this->layout()->finnaFilters)): ?>
+        <?=$this->layout()->finnaFilters?>
+      <? endif; ?>
       <? if (!empty($this->layout()->finnaMainTabs)): ?>
       <div class="finna-main-tabs">
         <div class="container">
