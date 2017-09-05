@@ -1,0 +1,38 @@
+<!-- START of: finna - search/filters.phtml -->
+<?
+$params = $this->results->getParams();
+$params->activateAllFacets();
+$filterList = $params->getFilterList(true);
+$checkboxFilters = $params->getCheckboxFacets();
+$showFilters = !empty($params->getFilterList(false));
+?>
+
+<? if ($showFilters): ?>
+  <div class="finna-filters">
+    <div class="container">
+      <? foreach ($checkboxFilters as $filter): ?>
+        <? if($filter['selected']): ?>
+          <span class="filter-value">
+            <? $removeLink = $results->getUrlQuery()->removeFilter($filter['filter']); ?>
+            <?=$this->translate($filter['desc']) ?>
+            <a href="<?=$removeLink?>">x</a>
+          </span>
+        <? endif ?>
+      <? endforeach; ?>
+
+      <? foreach ($filterList  as $field => $data): ?>
+        <?=$this->transEsc($field)?>:
+        <? foreach ($data as $index => $value): ?>
+          <? $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
+          <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?>
+            <span class="filter-value">
+              <? $removeLink = $results->getUrlQuery()->removeFacet($value['field'], $value['value'], $value['operator']);?>
+              <?=$this->escapeHtml($value['displayText'])?>
+              <a href="<?=$removeLink?>">x</a>
+            </span>
+        <? endforeach; ?>
+      <? endforeach; ?>
+    </div>
+  </div>
+<? endif; ?>
+<!-- END of: finna - search/filters.phtml -->
