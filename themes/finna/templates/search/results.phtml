@@ -57,14 +57,26 @@
      );
   }
 
-  if (!$browse) {
-      // Set up Finna Main Header:
+  if (!$browse && !empty($params->getFilterList(false))){
+      // Clone params to get facet labels for used filters
+      // and prevent affects to sidefacet functionality
+      $params = clone($this->params);
+      $params->activateAllFacets();
+      $filterList = $params->getFilterList(true);
+      $checkboxFilters = $params->getCheckboxFacets();
+      $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
+      $options = $this->searchOptions($this->searchClassId);
+      $defaultSortApplied = !isset($params) || $lastSort == $options->getDefaultSortByHandler($params->getSearchHandler());
+      // Set up filters
+
       $this->layout()->finnaFilters = $this->context($this)->renderInContext(
           'search/filters.phtml',
           [
-              'results' => $this->results,
-              'params' => $this->params,
-              'hasDefaultsApplied' => $this->params->hasDefaultsApplied()
+              'filterList' => $filterList,
+              'checkboxFilters' => $checkboxFilters,
+              'hasDefaultsApplied' => $params->hasDefaultsApplied(),
+              'defaultSortApplied' => $defaultSortApplied,
+              'options' => $options
           ]
       );
   }
