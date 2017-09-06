@@ -6,7 +6,7 @@
     & .list-group-item.title, .list-group-item.active {
         padding: 5px 10px;
         background: none;
-        color:@gray;
+        color: @gray;
         transition: background 0.2s ease-in-out;
         &:hover {
             background: @gray-lighter;
@@ -92,9 +92,13 @@
         }
     }
     & button.list-group-item.title {
+        background: @gray-ultralight;
+        font-weight: normal;
+        color: @gray;
         width: 100%;
         text-align: left;
-        border: 0;
+        border: 1px solid  @gray-lighter;
+        border-radius: @border-radius-base;        
         padding: 10px 10px;
     }
     & .list-group-item i.fa.fa-square-o, .list-group-item i.fa.fa-check-square-o {
