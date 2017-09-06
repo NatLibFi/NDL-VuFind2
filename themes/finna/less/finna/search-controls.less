@@ -60,24 +60,31 @@
 
   }
   & .dropdown > a {
-    background: @link-color;
-    color: @body-bg;
+    background: transparent;
+    border: 2px solid @brand-primary;     
+    color: @brand-primary;
     border-radius: @finna-button-radius;
-    padding: 7px 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 3px 10px;
     display: block;
     & span {
       padding-right: 20px;
     }
     &:hover, &:focus {
       text-decoration: none;
-      background: darken(@link-color, 10%);
+      background: @brand-primary;
+      color: @body-bg;
       transition: background 0.2s linear;
+      & i {
+        color: @body-bg;        
+      } 
     }
   }
   & i {
     font-size: 18px;
     vertical-align: middle;
-    color: @body-bg;
+    color: @brand-primary;
     margin-top: -3px;
     margin-right: 3px;
     border-radius: @finna-button-radius;
