@@ -12,9 +12,9 @@
     <? foreach ($checkboxFilters as $filter): ?>
       <? if($filter['selected']): ?>
         <span class="filter-value">
-          <? $removeLink = isset($results) ? $results->getUrlQuery()->removeFilter($filter['filter']) : ''; ?>
+          <? $removeLink = isset($urlQuery) ? $urlQuery->removeFilter($filter['filter']) : ''; ?>
           <?=$this->translate($filter['desc']) ?>
-          <a href="<?=$removeLink?>">x</a>
+            <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
         </span>
       <? endif ?>
     <? endforeach; ?>
@@ -26,9 +26,9 @@
         <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?>
           <span class="filter-value">
             <?  ?>
-            <? $removeLink = isset($results) ? $results->getUrlQuery()->removeFacet($value['field'], $value['value'], $value['operator']) : '';?>
+            <? $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator']) : '';?>
             <?=$this->escapeHtml($value['displayText'])?>
-            <a href="<?=$removeLink?>">x</a>
+            <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
           </span>
       <? endforeach; ?>
     <? endforeach; ?>

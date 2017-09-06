@@ -46,6 +46,34 @@
       'map_zoom_in' => 'map_zoom_in',
       'map_zoom_out' => 'map_zoom_out'
   ]);
+  if ($lastUrl = $this->searchMemory()->getLastSearchUrl()) {
+      $queryParams = parse_url($lastUrl, PHP_URL_QUERY);
+      $request = new \Zend\StdLib\Parameters();
+      $request->fromString($queryParams);
+      $params = $this->searchParams($this->searchClassId);
+      $params->initFromRequest($request);
+      $params->activateAllFacets();
+      $filterList = $params->getFilterList(true);
+
+      if ( !empty($params->getFilterList(false))) {
+          $checkboxFilters = $params->getCheckboxFacets();
+          $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
+          $options = $this->searchOptions($this->searchClassId);
+          $defaultSortApplied = !isset($params) || $lastSort == $options->getDefaultSortByHandler($params->getSearchHandler());
+          // Set up filters
+          $this->layout()->finnaFilters = $this->context($this)->renderInContext(
+              'search/filters.phtml',
+              [
+                  'filterList' => $filterList,
+                  'checkboxFilters' => $checkboxFilters,
+                  'hasDefaultsApplied' => $params->hasDefaultsApplied(),
+                  'defaultSortApplied' => $defaultSortApplied,
+                  'options' => $options
+              ]
+          );
+      }
+  }
+  $this->record($this->driver)->getOnlineUrls('results');
 ?>
 </div>
 <div class="container-fluid record-view-header">
