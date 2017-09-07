@@ -97,21 +97,26 @@
         color: @gray;
         width: 100%;
         text-align: left;
-        border: 1px solid  @gray-lighter;
-        border-radius: @border-radius-base;        
+        border: 1px solid  @gray-lighter;       
         padding: 10px 10px;
     }
     & .list-group-item i.fa.fa-square-o, .list-group-item i.fa.fa-check-square-o {
         vertical-align: middle;
     }
 
+    & .list-group-item i.fa.fa-check-square-o {
+        color: @link-color;
+    }
+
     & .jstree-node.active, & .list-group-item.active {
-        background: @brand-primary;
-        color: @body-bg;
+        
+        background: transparent;
+        color: @link-color;
+        font-weight: bold;
         & a,
         & .badge,
         & .jstree-icon.jstree-ocl {
-            color: @body-bg;
+            color: @link-color;            
         }
         & .badge {
             padding-right: 3px
