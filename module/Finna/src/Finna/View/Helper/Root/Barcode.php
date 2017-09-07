@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  View_Helpers
@@ -42,9 +42,9 @@ class Barcode extends \Zend\View\Helper\AbstractHelper
      * Create a barcode PNG
      *
      * @param string $code   String to use as the barcode
-     * @param string $type   Barcode type
      * @param int    $width  Barcode narrow bar width
      * @param int    $height Barcode height
+     * @param string $type   Barcode type
      *
      * @return string Base 64 encoded image data
      */
