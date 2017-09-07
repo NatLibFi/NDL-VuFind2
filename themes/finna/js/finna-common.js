@@ -51,9 +51,6 @@ finna.common = (function() {
                 $('.finna-filters').removeClass("hidden");
 
             });
-            searchInput.focusout(function (e) {
-                $('.finna-filters').addClass("hidden");
-            });
         }
     };
 
