@@ -42,8 +42,12 @@
 }
 
 .navbar #loginOptions {
-  height: @navbar-logo-height;
-  margin-top: ((@navbar-height/2)-(@navbar-logo-height/2));
+  position: relative;
+  button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 }
 
 // fix navbar for logoutoptions
