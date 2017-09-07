@@ -136,7 +136,7 @@ if ($groupBranches) {
     </div>
     <div class="holdings<?=$collapseLocations ? ' collapsed' : ''?> root">
 <? else: ?>
-  <div class="header holdings<?=!empty($availableTotal) ? ' available' : ''?>">
+  <div class="header holdings<?=!empty($availableTotal) ? ' available' : ''?> clearfix">
     <div>
     <? if (!empty($availableTotal)): ?>
       <span class="available-total">
@@ -182,7 +182,7 @@ foreach ($this->statusItems as $item):
     </div></div>
   <? endif; ?>
   <? if ($groupBranches && $newLocation): ?>
-    <div class="holdings-container<?=$collapseBranches ? ' collapsible' : ''?>">
+    <div class="holdings-container<?=$collapseBranches ? ' collapsible' : ''?> clearfix">
       <div class="header">
         <? if ($collapseBranches): ?><i class="fa fa-arrow-right arrow right"></i><? endif; ?>
         <?=$currentLocation?>
@@ -217,7 +217,7 @@ foreach ($this->statusItems as $item):
       ? '<span class="branch">' . ($this->transEsc($item['branch']) . '</span>, <span class="department">' . $this->transEsc($item['department']) . '</span>')
       : '<span class="branch">' . $this->transEsc($item['location'], [], $item['location']) . '</span>';
   ?>
-    <div class="<?=$currentRow % 2 == 0 ? 'even' : 'odd'?>">
+    <div class="<?=$currentRow % 2 == 0 ? 'even' : 'odd'?> clearfix">
       <div class="<?=$groupBranches ? 'group-location-col' : 'no-branches'?>">
         <div class="groupLocation <?= $prevOrganisation && $newOrganisation ? ' new-organisation' : ''; ?>">
           <i class="fa fa-<?=$classes[0]?> text-<?=$classes[1]?>"></i> <span class="text-<?=$classes[0]?>"><?=$location?></span>
