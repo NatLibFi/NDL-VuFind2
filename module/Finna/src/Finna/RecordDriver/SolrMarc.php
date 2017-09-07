@@ -1516,11 +1516,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get an composition information from field 382.
+     * Get composition information from field 382.
      *
      * @return array
      */
-    public function getMusicComposition()
+    public function getMusicCompositions()
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('382') as $field) {

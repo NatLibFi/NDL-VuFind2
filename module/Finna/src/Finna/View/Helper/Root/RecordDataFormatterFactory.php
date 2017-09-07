@@ -643,7 +643,8 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Medium of Performance', 'getMusicComposition', 'data-composition.phtml',
+            'Medium of Performance', 'getMusicCompositions',
+            'data-composition.phtml',
             [
                 'context' => ['class' => 'recordComposition']
             ]
@@ -708,13 +709,14 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Associated Place', 'getAssociatedPlace', 'data-escapeHtml.phtml',
+            'Place of Origin', 'getAssociatedPlace', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordAssociatedPlace']
             ]
         );
         $spec->setTemplateLine(
-            'Time Period', 'getTimePeriodOfCreation', 'data-escapeHtml.phtml',
+            'Time Period of Creation', 'getTimePeriodOfCreation',
+            'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordTimePeriod']
             ]
