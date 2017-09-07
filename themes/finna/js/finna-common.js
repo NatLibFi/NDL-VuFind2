@@ -49,7 +49,6 @@ finna.common = (function() {
         if(filters.hasClass('record-page')) {
             searchInput.focus(function (e) {
                 $('.finna-filters').removeClass("hidden");
-
             });
         }
     };

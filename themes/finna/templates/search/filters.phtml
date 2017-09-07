@@ -1,37 +1,41 @@
 <!-- START of: finna - search/filters.phtml -->
 <? $recordPage = $this->layout()->templateDir == 'record'; ?>
-<div class="finna-filters hidden-xs <?=$recordPage ? 'record-page hidden' : '' ?>">
-  <div class="container">
-  <? $defaultFilterState = $hasDefaultsApplied || $options->getRetainFilterSetting() || !$defaultSortApplied ? ' checked="checked"' : ''; ?>
-    <span class="checkbox<?=$defaultFilterState ? ' checked' : ''?>">
-      <label>
-        <input onChange="$('.applied-filter').click();$('.finna-filters .checkbox').toggleClass('checked'); var sort = $(this).closest('form').find('input[name=sort]'); sort.val($('.finna-filters .checkbox').hasClass('checked') ? sort.data('value') : '');" type="checkbox"<?=$defaultFilterState?> class="searchFormKeepFilters"/>
-          <?=$this->transEsc("basic_search_keep_filters")?>
-      </label>
-    </span>
-
-    <? foreach ($checkboxFilters as $filter): ?>
-      <? if($filter['selected']): ?>
-        <span class="filter-value">
-          <? $removeLink = isset($urlQuery) ? $urlQuery->removeFilter($filter['filter']) : ''; ?>
-          <?=$this->translate($filter['desc']) ?>
-            <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
-        </span>
-      <? endif ?>
-    <? endforeach; ?>
-
-    <? foreach ($filterList  as $field => $data): ?>
-      <span class="filters-title"><?=$this->transEsc($field)?>:</span>
-      <? foreach ($data as $index => $value): ?>
-        <? $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
-        <span class="filters-term"><? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?></span>
-        <? $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator']) : '';?>
-        <span class="filter-value">
-          <?=$this->escapeHtml($value['displayText'])?>
-          <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
-        </span>
+<div class="container">
+  <div class="finna-filters hidden-xs <?=$recordPage ? 'record-page hidden' : '' ?>">
+    <div class="retain-filters">
+      <? $defaultFilterState = $hasDefaultsApplied || $options->getRetainFilterSetting() || !$defaultSortApplied ? ' checked="checked"' : ''; ?>
+      <span class="checkbox<?=$defaultFilterState ? ' checked' : ''?>">
+        <label>
+          <input onChange="$('.applied-filter').click();$('.finna-filters .checkbox').toggleClass('checked'); var sort = $(this).closest('form').find('input[name=sort]'); sort.val($('.finna-filters .checkbox').hasClass('checked') ? sort.data('value') : '');" type="checkbox"<?=$defaultFilterState?> class="searchFormKeepFilters"/>
+            <?=$this->transEsc("basic_search_keep_filters")?>
+        </label>
+      </span>
+    </div>
+    <div class="filters">
+      <? foreach ($checkboxFilters as $filter): ?>
+        <? if($filter['selected']): ?>
+          <span class="filter-value">
+            <? $removeLink = isset($urlQuery) ? $urlQuery->removeFilter($filter['filter']) : ''; ?>
+            <?=$this->translate($filter['desc']) ?>
+              <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
+          </span>
+        <? endif ?>
       <? endforeach; ?>
-    <? endforeach; ?>
+
+      <? foreach ($filterList  as $field => $data): ?>
+        <span class="filters-title"><?=$this->transEsc($field)?>:</span>
+        <? foreach ($data as $index => $value): ?>
+          <? $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
+          <span class="filters-term"><? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?></span>
+          <? $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator']) : '';?>
+          <span class="filter-value">
+            <?=$this->escapeHtml($value['displayText'])?>
+            <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
+          </span>
+        <? endforeach; ?>
+      <? endforeach; ?>
+    </div>
+    <div class="clearfix"></div>
   </div>
 </div>
 <!-- END of: finna - search/filters.phtml -->
