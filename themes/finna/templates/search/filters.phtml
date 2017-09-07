@@ -20,16 +20,15 @@
     <? endforeach; ?>
 
     <? foreach ($filterList  as $field => $data): ?>
-      <?=$this->transEsc($field)?>:
+      <span class="filters-title"><?=$this->transEsc($field)?>:</span>
       <? foreach ($data as $index => $value): ?>
         <? $operatorChar = ($value['operator'] == 'NOT') ? '-' : ($value['operator'] == 'OR' ? '~' : ''); ?>
-        <? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?>
-          <span class="filter-value">
-            <?  ?>
-            <? $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator']) : '';?>
-            <?=$this->escapeHtml($value['displayText'])?>
-            <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
-          </span>
+        <span class="filters-term"><? if ($value['operator'] == 'NOT') echo $this->transEsc('NOT'); if ($value['operator'] == 'OR' && $index > 0) echo $this->transEsc('OR'); ?></span>
+        <? $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator']) : '';?>
+        <span class="filter-value">
+          <?=$this->escapeHtml($value['displayText'])?>
+          <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
+        </span>
       <? endforeach; ?>
     <? endforeach; ?>
   </div>
