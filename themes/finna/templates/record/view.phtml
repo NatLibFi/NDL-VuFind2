@@ -47,11 +47,7 @@
       'map_zoom_out' => 'map_zoom_out'
   ]);
   if ($lastUrl = $this->searchMemory()->getLastSearchUrl()) {
-      $queryParams = parse_url($lastUrl, PHP_URL_QUERY);
-      $request = new \Zend\StdLib\Parameters();
-      $request->fromString($queryParams);
-      $params = $this->searchParams($this->searchClassId);
-      $params->initFromRequest($request);
+      $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
       $params->activateAllFacets();
       $filterList = $params->getFilterList(true);
 

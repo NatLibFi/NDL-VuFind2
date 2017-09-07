@@ -1,5 +1,6 @@
 <!-- START of: finna - search/filters.phtml -->
-<div class="finna-filters hidden-xs">
+<? $recordPage = $this->layout()->templateDir == 'record'; ?>
+<div class="finna-filters hidden-xs <?=$recordPage ? 'record-page hidden' : '' ?>">
   <div class="container">
   <? $defaultFilterState = $hasDefaultsApplied || $options->getRetainFilterSetting() || !$defaultSortApplied ? ' checked="checked"' : ''; ?>
     <span class="checkbox<?=$defaultFilterState ? ' checked' : ''?>">

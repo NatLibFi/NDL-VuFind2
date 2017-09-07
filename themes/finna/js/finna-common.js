@@ -44,6 +44,17 @@ finna.common = (function() {
                 e.preventDefault();
            }
         });
+        
+        var filters = $('.finna-filters');
+        if(filters.hasClass('record-page')) {
+            searchInput.focus(function (e) {
+                $('.finna-filters').removeClass("hidden");
+
+            });
+            searchInput.focusout(function (e) {
+                $('.finna-filters').addClass("hidden");
+            });
+        }
     };
 
     var initQrCodeLink = function() {
