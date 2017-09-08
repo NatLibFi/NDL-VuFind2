@@ -504,11 +504,24 @@ mark, .highlight {
   }
 }
 
+@media(min-width: @screen-md) {
+  .search-home-left {
+    width: 40%;
+    float: left;
+    padding-right: 15px;
+  }
+  .search-home-right {
+    width: 60%;
+    float: left;
+    padding-left: 15px;
+  }
+}
+
 .finna-filters {
   background: @body-bg;
   padding: 15px 0 15px 0;
   .filter-value {
-    padding: 5px;    
+    padding: 5px;
     margin: 5px;
     font-weight: bold;
     white-space: nowrap;
