@@ -1524,13 +1524,27 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
-            $results[] = $this->getSubfieldArray(
-                $field, ['b', 'n', 'd', 'v', 'a', 'p'], false
-            );
+            $composition = $field->getSubfield('a');
+            $solo = $field->getSubfield('b');
+            $count = $field->getSubfield('n');
+            $double = $field->getSubfield('d');
+            $notice = $field->getSubfield('v');
+            $alternative = $field->getSubfield('p');
+            if ($composition || $solo || $count || $double || $notice
+                || $alternative
+            ) {
+                $results[] = [
+                    'composition' => $composition ? $composition->getData() : '',
+                    'solo' => $solo ? $solo->getData() : '',
+                    'count' => $count ? $count->getData() : '',
+                    'double' => $double ? $double->getData() : '',
+                    'notice' => $notice ? $notice->getData() : '',
+                    'alternative' => $alternative ? $alternative->getData() : ''
+                ];
+            }
         }
         return $results;
     }
-
     /**
      * Get first lines of song lyrics from field 031 t.
      *
