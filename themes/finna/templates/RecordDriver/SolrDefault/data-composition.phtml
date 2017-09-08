@@ -2,7 +2,13 @@
 <? if (!empty($data)): ?>
   <div class="truncate-field">
     <? foreach($data as $row): ?>
-        <?=implode(', ', $row); ?><br/>
+        <? if (!empty($row['solo'])):?><?=$row['solo']?><?endif;?>
+        <? if (!empty($row['count'])):?><?=$row['count']?><?endif;?>
+        <? if (!empty($row['composition'])):?><?=$row['composition']?><?endif;?>
+        <? if (!empty($row['double'])):?><?=$row['double']?><?endif;?>
+        <? if (!empty($row['alternative'])):?><?=$row['alternative']?><?endif;?>
+        <? if (!empty($row['notice'])):?><?=$row['notice']?><?endif;?>
+    <br/>
     <? endforeach; ?>
   </div>
 <? endif; ?>

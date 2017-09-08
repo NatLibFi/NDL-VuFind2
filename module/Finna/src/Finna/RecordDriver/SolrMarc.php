@@ -1536,7 +1536,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 $results[] = [
                     'composition' => $composition ? $composition->getData() : '',
                     'solo' => $solo ? $solo->getData() : '',
-                    'count' => $count ? $count->getData() : '',
+                    'count' => $count ? '('.$count->getData().')' : '',
                     'double' => $double ? $double->getData() : '',
                     'notice' => $notice ? $notice->getData() : '',
                     'alternative' => $alternative ? $alternative->getData() : ''
