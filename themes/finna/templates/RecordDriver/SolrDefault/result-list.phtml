@@ -34,8 +34,8 @@ if ($img):
             </div>
           <? endif; ?>
         </div>
-          <? if ($titleAltScript = $this->driver->tryMethod('getShortTitleAltScript')): ?>
-          <div class="titleAltScript">
+        <? if ($titleAltScript = $this->driver->tryMethod('getShortTitleAltScript')): ?>
+          <div class="title-alt-script">
             <?=$this->escapeHtml($titleAltScript)?><? if ($subtitleAltScript = $this->driver->tryMethod('getSubtitleAltScript')): ?>&nbsp;: <?=$this->escapeHtml($subtitleAltScript)?><? endif; ?>
           </div>
         <? endif; ?>
