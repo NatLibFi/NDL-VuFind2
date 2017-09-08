@@ -1523,28 +1523,39 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getMusicCompositions()
     {
         $results = [];
+        $i = '';
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
-            $composition = $field->getSubfield('a');
-            $solo = $field->getSubfield('b');
-            $count = $field->getSubfield('n');
-            $double = $field->getSubfield('d');
-            $notice = $field->getSubfield('v');
-            $alternative = $field->getSubfield('p');
-            if ($composition || $solo || $count || $double || $notice
-                || $alternative
-            ) {
-                $results[] = [
-                    'composition' => $composition ? $composition->getData() : '',
-                    'solo' => $solo ? $solo->getData() : '',
-                    'count' => $count ? '('.$count->getData().')' : '',
-                    'double' => $double ? $double->getData() : '',
-                    'notice' => $notice ? $notice->getData() : '',
-                    'alternative' => $alternative ? $alternative->getData() : ''
-                ];
+            $i++;
+            $i2 = '';
+            $subfields = ['a','b','n','d','p','v'];
+            $allSubfields = $field->getSubfields();
+            if (!empty($allSubfields)) {
+                foreach ($allSubfields as $currentSubfield) {
+                    $i2++;
+                    if (in_array($currentSubfield->getCode(), $subfields)) {
+                        $data = trim($currentSubfield->getData());
+                        if (!empty($data)) {
+                            if ($currentSubfield->getCode() == 'n') {
+                                $results[$i][$i2]['count'] = '('.$data.')';
+                            } else if ($currentSubfield->getCode() == 'a') {
+                                $results[$i][$i2]['composition'] = $data;
+                            } else if ($currentSubfield->getCode() == 'b') {
+                                $results[$i][$i2]['solo'] = $data;
+                            } else if ($currentSubfield->getCode() == 'd') {
+                                $results[$i][$i2]['double'] = $data;
+                            } else if ($currentSubfield->getCode() == 'v') {
+                                $results[$i][$i2]['notice'] = $data;
+                            } else if ($currentSubfield->getCode() == 'p') {
+                                $results[$i][$i2]['alternative'] = $data;
+                            }
+                        }
+                    }
+                }
             }
         }
         return $results;
     }
+
     /**
      * Get first lines of song lyrics from field 031 t.
      *

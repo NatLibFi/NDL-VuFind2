@@ -2,13 +2,15 @@
 <? if (!empty($data)): ?>
   <div class="truncate-field">
     <? foreach($data as $row): ?>
-        <? if (!empty($row['solo'])):?><?=$row['solo']?><?endif;?>
-        <? if (!empty($row['count'])):?><?=$row['count']?><?endif;?>
-        <? if (!empty($row['composition'])):?><?=$row['composition']?><?endif;?>
-        <? if (!empty($row['double'])):?><?=$row['double']?><?endif;?>
-        <? if (!empty($row['alternative'])):?><?=$row['alternative']?><?endif;?>
-        <? if (!empty($row['notice'])):?><?=$row['notice']?><?endif;?>
-    <br/>
+      <? foreach ($row as $key): ?>
+        <? if (isset($key['solo'])): ?><?=$key['solo']?><? endif; ?>
+        <? if (isset($key['count'])): ?><?=$key['count']?><? endif; ?>
+        <? if (isset($key['composition'])): ?><?=$key['composition']?><? endif; ?>
+        <? if (isset($key['double'])): ?><?=$key['double']?><? endif; ?>
+        <? if (isset($key['alternative'])): ?><?=$key['alternative']?><? endif; ?>
+        <? if (isset($key['notice'])): ?><?=$key['notice']?><? endif; ?>
+      <? endforeach; ?>
+      <br/>
     <? endforeach; ?>
   </div>
 <? endif; ?>
