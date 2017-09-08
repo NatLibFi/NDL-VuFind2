@@ -1536,7 +1536,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         $data = trim($currentSubfield->getData());
                         if (!empty($data)) {
                             if ($currentSubfield->getCode() == 'n') {
-                                $results[$i][$i2]['count'] = '('.$data.')';
+                                $results[$i][$i2]['count'] = $data;
                             } else if ($currentSubfield->getCode() == 'a') {
                                 $results[$i][$i2]['composition'] = $data;
                             } else if ($currentSubfield->getCode() == 'b') {
