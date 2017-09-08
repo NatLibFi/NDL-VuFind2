@@ -1,13 +1,17 @@
-.nav.searchbox .btn.btn-link {
-  color: @finna-searchbox-link-color;
-  font-size: 1em;
-  font-weight: bold;
-  background: @finna-searchbox-link-background;
-  border-radius: @finna-button-radius;
-  margin-top: 10px;
-  line-height: 25px;
-  padding: 2px 5px 0px;
-  overflow: hidden;
+.nav.searchbox {
+  .searchbox-home .btn.btn-link {
+    background: @finna-searchbox-link-background;
+    border-radius: @finna-button-radius;
+  }
+  .btn.btn-link {
+    color: @finna-searchbox-link-color;
+    font-size: 1em;
+    font-weight: bold;
+    margin-top: 10px;
+    line-height: 25px;
+    padding: 2px 5px 0px;
+    overflow: hidden;
+  }
 }
 
 .finna-filters, .checkboxFilter {
@@ -68,7 +72,8 @@
 }
 .search-right {
   float: right;
-  padding-left: 15px;
+  margin-top: 10px;
+  margin: 18.5px -15px;
   padding-right: 15px;
   @media(min-width: @screen-sm) {
     width: 15%;

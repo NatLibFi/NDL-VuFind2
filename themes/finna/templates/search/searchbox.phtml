@@ -89,6 +89,7 @@
        $placeholder = $this->translate('Find') . '...';
      }
   ?>
+<div class="<?=$mainPage = $action === 'home' ? 'searchbox-home' : '' ?>">
   <div class="search-left">
   <form id="searchForm" role="search" class="searchForm navbar-form navbar-left  <?=$handlerCount < 2 ? 'input-field-only' :''; ?>" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
     <label for="searchForm_lookfor" class="sr-only" hidden><?=$this->transEsc("Find")?></label>
@@ -187,8 +188,7 @@
     <? if ($module === 'summon' && !$this->translationEmpty('tooltip_summon_search_html')): ?><span class="tooltip-search-summon pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_summon_search_html')?>"><i class="fa fa-info-big"></i></span><? endif; ?>
   </div>
   <? endif; ?>
-  <div>
-    <div class="search-left text-right">
+  <div class="search-left text-right">
       <? $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'eds', 'summon']); ?>
 
       <? if ($browse || $mainPage): ?>
@@ -214,6 +214,6 @@
       <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced hidden-xs hidden-md hidden-lg"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
       <? endif; ?>
     </div>
-  </div>
+</div>
 <? endif; ?>
 <!-- END of: finna - search/searchbox.phtml -->
