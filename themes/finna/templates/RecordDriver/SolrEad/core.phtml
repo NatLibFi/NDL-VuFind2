@@ -32,10 +32,9 @@
       </div>
     </div>
 
-    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
-      <?=$this->render('record/record-organisation-menu.phtml') ?>
+    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'ead', 'forward'])): ?>
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
     <? endif; ?>
-
 
     <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-toolbar")): ?>
     <div class="record-post-toolbar">
