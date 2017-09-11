@@ -7,6 +7,22 @@
       width: 100%;
     }
   }
+
+  & .nav>li a {
+    color: @text-color;
+    font-size: 1.1em;
+    font-weight: 500;
+
+    & :hover {
+      color: @link-color;
+    }
+
+    & i {
+      color: lighten(@text-color, 40%);  
+      padding-left: 3px;
+      padding-right: 3px;    
+    }
+  }
 }
 
 
