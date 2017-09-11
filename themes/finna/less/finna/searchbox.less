@@ -7,9 +7,8 @@
     color: @finna-searchbox-link-color;
     font-size: 1em;
     font-weight: normal;
-    margin-top: 10px;
     line-height: 25px;
-    padding: 2px 5px 0px;
+    padding: 0px 5px;
     overflow: hidden;
     text-transform: none;
   }
@@ -61,7 +60,7 @@
 }
 
 .searchbox-columns {
-  .search-left {
+  .search-col {
     position: relative;
     width: 100%;
     float: left;
@@ -72,7 +71,7 @@
       width: 60%;
     }
   }
-  .search-right {
+  .adv-search {
     float: right;
     margin-top: 10px;
     margin: 18.5px -15px;
@@ -88,4 +87,13 @@
 
 .searchbox-flex {
   display: flex;
+  justify-content: space-between;
+  .search-col, .record-back, .adv-search, .pager {
+    margin: auto 0;
+  }
+  @media(min-width: @screen-sm){
+    .search-col {
+      width: 50%;
+    }
+  }
 }
