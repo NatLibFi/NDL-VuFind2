@@ -519,11 +519,30 @@ mark, .highlight {
 .finna-filters {
   background: @body-bg;
   padding: 15px 0 15px 0;
-  .filter-value {
-    padding: 5px;
+
+  & .checkbox label {
+    display: inline-block;
+    padding: 7px;
+    margin: 5px;
+  }
+  & .filters-term {
+    font-size: 0.8em
+  }
+  & .filters-title {
+    margin-left: 10px;
+  }
+  & .filter-value {
+    padding: 7px;
     margin: 5px;
     font-weight: bold;
+    background: @brand-primary;
+    color: @body-bg;
+    border-radius: 15px;
     white-space: nowrap;
+    display: inline-block;
+    & a {
+      color: #fff;
+    }
   }
   .checkbox {
     display: inline;
