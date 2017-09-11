@@ -77,20 +77,6 @@
       <? endif; ?>
     </ul>
 
-    <? if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
-      <? $i = 1;?>
-      <? foreach ($this->layout()->allLangs as $langCode => $langName): ?>
-      <? if ($this->layout()->userLang != $langCode): ?>
-      <ul role="menubar" class="nav navbar-nav language lang-<?=$i;?>">
-        <li role="menuitem">
-          <a class="preserve-anchor" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
-        </li>
-      </ul>
-      <? $i++; ?>
-      <? endif ?>
-      <? endforeach; ?>
-    <? endif; ?>
-
     <? if ($template = $this->content()->findTemplateForLng("content/Additions/header-navibar")): ?>
     <ul role="menubar" class="nav navbar-nav">
       <?=$this->render($template)?>
@@ -98,9 +84,21 @@
     <? endif; ?>
 
   </div>
+
+  <ul role="menu" class="nav navbar-nav nav-absolute">
+    <? if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+      <? $i = 1;?>
+      <? foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+      <? if ($this->layout()->userLang != $langCode): ?>
+        <li role="menuitem" class="lang">
+          <a class="preserve-anchor" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+        </li>
+      <? $i++; ?>
+      <? endif ?>
+      <? endforeach; ?>
+    <? endif; ?>
   <? //hide login/logout if unavailable ?>
   <? if (is_object($account) && $account->loginEnabled()): ?>
-  <ul role="menu" class="nav navbar-nav nav-absolute">
     <? $user = $account->isLoggedIn(); ?>
     <li role="menuitem" class="logoutOptions<? if (!$user): ?> hidden<? endif ?>">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user" aria-hidden="true"></i> <span class="username"><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span> <b class="caret"></b></a>
