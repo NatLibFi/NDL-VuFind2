@@ -75,7 +75,6 @@
   padding-top: 5px;
 }
 .back-to-search a {
-  margin: @line-height-computed 0;
   display: block;
   font-size: 1.1em;
   & i {
@@ -146,30 +145,5 @@
   }
   .template-name-view .record .record-title {
     margin-top: 10px;
-  }
-}
-
-.record-view-header {
-  .search-tools{
-    display: flex;
-    .record-back{
-      flex: 1;
-    }
-  }
-}
-.record {
-  .search-tools {
-    @media (min-width: @screen-sm) {
-      display: flex;
-      flex-direction: row-reverse;
-      text-align: right;
-      .paginationSimple {
-        flex: 1;
-        text-align: left;
-      }
-    }
-    @media (max-width: @screen-sm) {
-      text-align: center;
-    }
   }
 }

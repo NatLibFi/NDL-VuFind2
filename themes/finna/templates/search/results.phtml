@@ -106,42 +106,11 @@
 
   $topRecommendations = $this->results->getRecommendations('top');
 ?>
-    <? if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
-      <? foreach ($this->results->getRecommendations('top') as $current): ?>
+<? if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
+    <? foreach ($this->results->getRecommendations('top') as $current): ?>
         <?=$this->recommend($current)?>
-      <? endforeach; ?>
-    <? endif; ?>
-    <?=$this->flashmessages()?>
-    <? if ($recordTotal > 0): ?>
-      <div class="search-controls">
-        <? if (!$browse): ?>
-        <div class="control-container text-right hidden-print">
-          <?=$this->render('search/controls/view.phtml')?>
-          <?=$this->render('search/controls/sort.phtml')?>
-          <?=$this->render('search/controls/limit.phtml')?>
-        </div>
-          <? $resultsStr = $this->translate(
-              $browse ? 'browse_extended_' . ucfirst($browse) . '_html' : 'showing_results_of_html',
-              [
-                  '%%start%%' => $this->results->getStartRecord(),
-                  '%%end%%' => $this->results->getEndRecord(),
-                  '%%total%%' => $this->localizedNumber($recordTotal)
-              ]
-          );?>
-        <div class="pagination-container">
-            <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $resultsStr])?>
-        </div>
-        <? else: ?>
-          <? $resultsStr = ''; ?>
-        <? endif; ?>
-        <? $this->layout()->srmessage = strip_tags($resultsStr); ?>
-        <? if ($this->fromStreetSearch): ?>
-          <div class="text-right hidden-sm hidden-md hidden-lg hidden-print">
-              <?=$this->render('search/street-search-header.phtml');?>
-          </div>
-        <? endif; ?>
-      </div>
-    <? endif; ?>
+    <? endforeach; ?>
+<? endif; ?>
 <div class="results result-view-<?=$this->escapeHtmlAttr($this->params->getView())?>">
   <? if ($recordTotal < 1): ?>
     <p>
@@ -172,6 +141,38 @@
     </p>
   <? endif; ?>
   <div class="<?=$recordTotal < 1 ? "empty-list" : $this->layoutClass('mainbody')?>">
+    <?=$this->flashmessages()?>
+    <? if ($recordTotal > 0): ?>
+      <div class="search-controls">
+          <? if (!$browse): ?>
+            <div class="control-container text-right hidden-print">
+                <?=$this->render('search/controls/view.phtml')?>
+                <?=$this->render('search/controls/sort.phtml')?>
+                <?=$this->render('search/controls/limit.phtml')?>
+            </div>
+              <? $resultsStr = $this->translate(
+                  $browse ? 'browse_extended_' . ucfirst($browse) . '_html' : 'showing_results_of_html',
+                  [
+                      '%%start%%' => $this->results->getStartRecord(),
+                      '%%end%%' => $this->results->getEndRecord(),
+                      '%%total%%' => $this->localizedNumber($recordTotal)
+                  ]
+              );?>
+            <div class="pagination-container">
+                <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $resultsStr])?>
+            </div>
+          <? else: ?>
+              <? $resultsStr = ''; ?>
+          <? endif; ?>
+          <? $this->layout()->srmessage = strip_tags($resultsStr); ?>
+          <? if ($this->fromStreetSearch): ?>
+            <div class="text-right hidden-sm hidden-md hidden-lg hidden-print">
+                <?=$this->render('search/street-search-header.phtml');?>
+            </div>
+          <? endif; ?>
+      </div>
+    <? endif; ?>
+
     <? /* End Listing Options */ ?>
     <? if ($recordTotal < 1): ?>
       <? foreach ($topRecommendations as $current): ?>
