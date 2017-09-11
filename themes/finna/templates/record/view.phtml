@@ -72,70 +72,12 @@
   $this->record($this->driver)->getOnlineUrls('results');
 ?>
 </div>
-<div class="container-fluid record-view-header">
- <div class="container">
-  <div class="search-tools">
-    <div class="record-back hidden-print">
-    <?
-      $html = '<span class="btn btn-primary"><i class="fa fa-arrow-left"></i> <i class="fa fa-search"></i></span>';
-      $html .= '<span class="back-to-search-text hidden-xs">'.$this->transEsc('Back to search results').'</span>';
-      $previousSearch = $this->searchMemory()->getLastSearchLink($html);
-      if ($previousSearch !== ''):
-    ?>
-      <div class="back-to-search"><?=$previousSearch?></div>
-    <? endif; ?>
-    </div>
-    <div>
-    <? if (isset($this->scrollData) && ($this->scrollData['previousRecord'] || $this->scrollData['nextRecord'])): ?>
-      <ul class="pager hidden-print" id="view-pager">
-      <? if ($this->scrollData['previousRecord']): ?>
-        <? if ($this->scrollData['firstRecord']): ?>
-          <li>
-            <a href="<?=$this->recordLink()->getUrl($this->scrollData['firstRecord'])?>" rel="nofollow"><i class="fa fa-first-page"></i><span class="sr-only"><?=$this->transEsc('First Record')?></span></a>
-          </li>
-        <? endif; ?>
-        <li class="pager-previous-record">
-          <a href="<?=$this->recordLink()->getUrl($this->scrollData['previousRecord'])?>" rel="nofollow"><i class="fa fa-arrow-left"></i><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
-        </li>
-      <? else: ?>
-        <? if ($this->scrollData['firstRecord']): ?>
-          <li class="disabled" title="<?=$this->transEsc('First Record')?>"><a><i class="fa fa-first-page"></i></a></li>
-        <? endif; ?>
-        <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><i class="fa fa-arrow-left"></i></a></li>
-      <? endif; ?>
-      <li class="pager-text">
-        <?=$this->transEsc('of_num_results', [
-          '%%position%%' => $this->localizedNumber($this->scrollData['currentPosition']),
-          '%%total%%' => $this->localizedNumber($this->scrollData['resultTotal'])
-        ]) ?>
-      </li>
-      <? if ($this->scrollData['nextRecord']): ?>
-        <li class="pager-next-record">
-          <a href="<?=$this->recordLink()->getUrl($this->scrollData['nextRecord'])?>" rel="nofollow"><i class="fa fa-arrow-right"></i><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
-        </li>
-        <? if ($this->scrollData['lastRecord']): ?>
-          <li>
-            <a href="<?=$this->recordLink()->getUrl($this->scrollData['lastRecord'])?>" rel="nofollow"><i class="fa fa-last-page"></i><span class="sr-only"><?=$this->transEsc('Last Record')?></span></a>
-          </li>
-        <? endif; ?>
-      <? else: ?>
-        <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><i class="fa fa-arrow-right"></i></a></li>
-        <? if ($this->scrollData['lastRecord']): ?>
-          <li class="disabled" title="<?=$this->transEsc('Last Record')?>"><a><i class="fa fa-last-page"></i></a></li>
-        <? endif; ?>
-      <? endif; ?>
-      </ul>
-      <? endif; ?>
-    </div>
-  </div>
- </div>
-</div>
 <div class="container">
 <div class="record source<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?> record-row">
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
-  <div class="mainbody left">
+  <div>
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" />
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource" />
     <?=$this->flashmessages()?>
@@ -188,10 +130,7 @@
     <?=$this->driver->supportsCoinsOpenURL()?'<span class="Z3988" title="'.$this->escapeHtmlAttr($this->driver->getCoinsOpenURL()).'"></span>':''?>
   </div>
 
-  <div class="sidebar right">
-    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'ead', 'forward'])): ?>
-      <?=$this->render('record/record-organisation-menu.phtml') ?>
-    <? endif; ?>
+  <div>
     <? foreach ($this->related()->getList($this->driver) as $current): ?>
       <?=$this->related()->render($current)?>
     <? endforeach; ?>
