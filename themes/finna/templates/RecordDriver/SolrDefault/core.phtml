@@ -38,6 +38,9 @@
       </div>
     </div>
     <? endif; ?>
+    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'ead', 'forward'])): ?>
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+    <? endif; ?>
   </div>
   <? $thumbnail = ob_get_contents(); ?>
 <? ob_end_clean(); ?>

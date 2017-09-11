@@ -24,8 +24,8 @@
       <?=$this->record($this->driver)->getPreviews()?>
     </div>
 
-    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
-      <?=$this->render('record/record-organisation-menu.phtml') ?>
+    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'ead', 'forward'])): ?>
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
     <? endif; ?>
 
     <div class="record-rating">
