@@ -60,27 +60,32 @@
   }
 }
 
-.search-left {
-  position: relative;
-  width: 100%;
-  float: left;
-  @media(min-width: @screen-sm) {
-    width: 85%;
+.searchbox-columns {
+  .search-left {
+    position: relative;
+    width: 100%;
+    float: left;
+    @media (min-width: @screen-sm) {
+      width: 85%;
+    }
+    @media (min-width: @screen-md) {
+      width: 60%;
+    }
   }
-  @media(min-width: @screen-md) {
-    width: 60%;
-  }
-}
-.search-right {
-  float: right;
-  margin-top: 10px;
-  margin: 18.5px -15px;
-  padding-right: 15px;
-  @media(min-width: @screen-sm) {
-    width: 15%;
-  }
-  @media(min-width: @screen-md) {
-    width: 40%;
+  .search-right {
+    float: right;
+    margin-top: 10px;
+    margin: 18.5px -15px;
+    padding-right: 15px;
+    @media (min-width: @screen-sm) {
+      width: 15%;
+    }
+    @media (min-width: @screen-md) {
+      width: 40%;
+    }
   }
 }
 
+.searchbox-flex {
+  display: flex;
+}
