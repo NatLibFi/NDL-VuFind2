@@ -135,11 +135,11 @@
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-@font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
+@font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 @font-family-serif: PT Serif;
 @font-family-monospace: Monaco;
 @font-family-base: @font-family-sans-serif;
-@font-size-base: 13px;
+@font-size-base: 14px;
 @font-size-icon-small: 14px;
 @font-size-icon-large: 1.5em;
 @font-size-large: ceil((@font-size-base * 1.25));
@@ -153,13 +153,12 @@
 @line-height-base: 1.5;
 @line-height-computed: floor((@font-size-base * @line-height-base));
 @headings-font-family: @font-family-base;
-@headings-font-weight: 500;
 @headings-line-height: 1.1;
 @headings-color: inherit;
 
 
 //## Font size, line-height for content pages
-@content-font-size-base: 14px;
+@content-font-size-base: 16px;
 @content-line-height-base: 1.6;
 @content-headings-font-size-h1: floor((@content-font-size-base * 1.777));
 @content-headings-font-size-h2: floor((@content-font-size-base * 1.777));
