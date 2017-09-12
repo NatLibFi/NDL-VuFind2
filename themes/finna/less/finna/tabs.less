@@ -160,7 +160,7 @@
 }
 
 .nav-tabs {
-    border-bottom: 3px solid @nav-tabs-border-color;
+    border-bottom: 2px solid @nav-tabs-border-color;
     // style 5 tabs to make sure they stay as tabs
     li:first-child:nth-last-child(5), li:first-child:nth-last-child(5) ~ li {
         @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
@@ -181,16 +181,16 @@
 
     > li {
         // Make the list-items overlay the bottom border
-        margin-bottom: -3px;
+        margin-bottom: -2px;
         > a {
             font-size: 1.1em;
             font-weight: 500;
-            background-color: @nav-tabs-border-color;
+            background-color: transparent;
             color: @nav-tabs-text-color;
             margin-right: 3px;
             padding: .6em .5em;
             border: 2px solid transparent;
-            margin-bottom: -1px;
+            margin-bottom: 0;
             border-radius: @tabs-border-radius @tabs-border-radius 0 0;
             transition: none;
             @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
@@ -205,7 +205,7 @@
             }
             &:hover {
                 color: @nav-tabs-link-hover-color;
-                border-color: @nav-tabs-border-color @nav-tabs-border-color @nav-tabs-border-color;
+                border-color: transparent;
             }
         }
         // Active state, and its :hover to override normal :hover
@@ -214,7 +214,7 @@
             &:hover,
             &:focus {
                 background-color: @body-bg;
-                border: 3px solid @nav-tabs-border-color;
+                border: 2px solid @nav-tabs-border-color;
                 border-bottom-color: transparent;
                 transition: border 0.05s linear;
             }
