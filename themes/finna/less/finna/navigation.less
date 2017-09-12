@@ -29,16 +29,18 @@
   margin-bottom: 12px;
   margin-top: 12px;
   > li {
-    display: inline-block;
+    display: block;
     > a {
       transition: background .2s ease-in-out;
     }
   }
 }
-header {
-  padding-top: 10px;
-  padding-bottom: 10px;
+@media (min-width:@screen-md-min) {
+  .nav > li {
+    display: inline-block;    
+  }
 }
+
 .navbar .navbar-logo {
   height: @navbar-logo-height;
   margin-top: ((@navbar-height/2)-(@navbar-logo-height/2));
@@ -51,13 +53,11 @@ header {
 }
 
 .navbar-nav>li.lang>a {
-  text-transform: uppercase;
-  font-size: 0.9em;
-  font-weight: bold;
-  line-height: @navbar-height/2; 
+  line-height: @line-height-computed; 
 }
 
 .navbar-nav>li.lang {
+  display: inline-block;
   border-left: 1px solid @text-color;
 }
 
@@ -177,14 +177,16 @@ header {
   position: absolute;
   z-index: 30;
   right:0;
-  height: 48px;
-  width: 48px;
-  position;
-  margin-top: 0;
-  margin-bottom: 0;
+  height: @navbar-height;
+  width: @navbar-height;
+  margin:0;
   color: @navbar-toggle-color;
-  padding: (@navbar-height/4) 5px (@navbar-height/4) 0px;
+  padding: 0;
   border-radius: 0;
+  i {
+    font-size: 24px;
+    cursor: pointer;
+  }
 }
 
 
@@ -299,12 +301,21 @@ header {
 // Specified Finna styles for navbar
 .nav.nav-absolute {
   position: absolute;
+  margin:0;
+  line-height: @navbar-height;
+  
   top: 0px;
-  right: 96px;
+  right: 15px;
   & .dropdown-menu > li > a {
     white-space: normal;
-  }
+  }   
 }
+
+@media (max-width: @screen-sm-max) {
+  .nav.nav-absolute {
+    right: @navbar-height+15px;
+  }
+} 
 
 // Fix dropdowns in navbar for wide screen
 @media (min-width: @screen-md-min) {
