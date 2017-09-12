@@ -84,53 +84,53 @@
     <?=$this->record($this->driver)->getMetaTags();?>
     <?=$this->record($this->driver)->getCoreMetadata()?>
 
-    <? // N.B. The element/class structure here is important for the ajax tabs to work properly ?>
-    <div class="record-tabs">
-      <? if (count($this->tabs) > 0): ?>
-        <a name="tabnav"></a>
-        <? if (count($this->tabs) > 3): ?>
-          <div class="tabs-responsive">
-        <? endif; ?>
-        <ul class="recordTabs nav nav-tabs">
-          <? foreach ($this->tabs as $tab => $obj): ?>
-            <? // add current tab to breadcrumbs if applicable:
-              $desc = $obj->getDescription();
-              $tab_classes = [];
-              if (0 === strcasecmp($this->activeTab, $tab)) {
-                if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
-                  $tab_classes[] = 'active';
-                }
-                $tab_classes[] = 'initiallyActive';
-                $this->layout()->breadcrumbs .= '<li class="active">' . $this->transEsc($desc) . '</li>';
-                $activeTabObj = $obj;
-              }
-              if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }
-              if (!$obj->supportsAjax()) { $tab_classes[] = 'noajax'; }
-              if (strtolower($tab) == 'details') { $tab_classes[] = 'hidden-xs'; }
-            ?>
-            <li<?=count($tab_classes) > 0 ? ' class="' . implode(' ', $tab_classes) . '"' : ''?>>
-            <a class="<?=strtolower($tab) ?>" href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<? if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<? endif ?>><i class="fa fa-<?=$this->escapeHtmlAttr($tab)?>"></i> <?=$this->transEsc($desc)?><? if (strtolower($tab) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?></a>
-          </li>
-          <? endforeach; ?>
-        </ul>
-        <? if (count($this->tabs) > 3): ?>
-          </div>
-        <? endif; ?>
-      <? endif; ?>
-
-      <div class="tab-content">
-        <? if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
-          <div class="tab-pane active <?=$this->activeTab ?>-tab">
-            <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
-          </div>
-        <? endif; ?>
-      </div>
-    </div>
-
     <?=$this->driver->supportsCoinsOpenURL()?'<span class="Z3988" title="'.$this->escapeHtmlAttr($this->driver->getCoinsOpenURL()).'"></span>':''?>
   </div>
 
-  <div>
+    <? // N.B. The element/class structure here is important for the ajax tabs to work properly ?>
+  <div class="mainbody left record-tabs">
+      <? if (count($this->tabs) > 0): ?>
+        <a name="tabnav"></a>
+          <? if (count($this->tabs) > 3): ?>
+          <div class="tabs-responsive">
+          <? endif; ?>
+        <ul class="recordTabs nav nav-tabs">
+            <? foreach ($this->tabs as $tab => $obj): ?>
+                <? // add current tab to breadcrumbs if applicable:
+                $desc = $obj->getDescription();
+                $tab_classes = [];
+                if (0 === strcasecmp($this->activeTab, $tab)) {
+                    if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
+                        $tab_classes[] = 'active';
+                    }
+                    $tab_classes[] = 'initiallyActive';
+                    $this->layout()->breadcrumbs .= '<li class="active">' . $this->transEsc($desc) . '</li>';
+                    $activeTabObj = $obj;
+                }
+                if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }
+                if (!$obj->supportsAjax()) { $tab_classes[] = 'noajax'; }
+                if (strtolower($tab) == 'details') { $tab_classes[] = 'hidden-xs'; }
+                ?>
+              <li<?=count($tab_classes) > 0 ? ' class="' . implode(' ', $tab_classes) . '"' : ''?>>
+                <a class="<?=strtolower($tab) ?>" href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<? if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<? endif ?>><i class="fa fa-<?=$this->escapeHtmlAttr($tab)?>"></i> <?=$this->transEsc($desc)?><? if (strtolower($tab) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?></a>
+              </li>
+            <? endforeach; ?>
+        </ul>
+          <? if (count($this->tabs) > 3): ?>
+          </div>
+          <? endif; ?>
+      <? endif; ?>
+
+    <div class="tab-content">
+        <? if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
+          <div class="tab-pane active <?=$this->activeTab ?>-tab">
+              <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
+          </div>
+        <? endif; ?>
+    </div>
+  </div>
+
+  <div class="sidebar right">
     <? foreach ($this->related()->getList($this->driver) as $current): ?>
       <?=$this->related()->render($current)?>
     <? endforeach; ?>
