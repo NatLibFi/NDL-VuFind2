@@ -20,7 +20,7 @@
         // style Finna facet headers
         & .list-group-item.title {
             font-size:@font-size-h4;
-            margin-bottom: 5px;
+            margin-bottom: 1px;
             cursor:pointer;
             padding-right: 25px;
             &.collapsed {
@@ -38,7 +38,10 @@
                 right: 8px;
             }
         }
-    & .collapse, .collapsing {
+    & .collapse, .collapsing {        
+        a {
+            background-color: @body-bg;            
+        }
         .list-group-item {
           border-top-left-radius:0px;
           border-top-right-radius:0px;
