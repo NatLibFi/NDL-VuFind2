@@ -1,12 +1,11 @@
 <!-- START of: finna - RecordDriver/SolrDefault/core.phtml -->
 <?
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-  $recordImage = $this->recordImage($this->record($this->driver));
-  $images = $recordImage->getAllImagesAsCoverLinks(
+  $img = $this->recordImage($this->record($this->driver));
+  $images = $img->getAllImagesAsCoverLinks(
       $this->layout()->userLang, $params
   );
 
-  $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>

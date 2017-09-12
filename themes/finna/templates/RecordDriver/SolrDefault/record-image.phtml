@@ -28,7 +28,7 @@
     <? $ind = -1; ?>
     <? foreach ($images as $image): ?>
       <? ++$ind; ?>
-      <div class="image-text-container<?=$ind > 0 ? ' hidden' : '' ?>" data-img-index="<?=$ind ?>">
+      <div class="image-text-container<?=$ind > 0 ? ' hidden' : '' ?> text-left" data-img-index="<?=$ind ?>">
         <? if (!empty($image['description'])): ?>
           <div class="image-description">
             <?=$this->escapeHtml($image['description']) ?>
