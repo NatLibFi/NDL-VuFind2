@@ -1,13 +1,13 @@
 .finna-main-tabs {
     background-color: transparent;
-    margin-top: 20px;
-    margin-bottom: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
     @media(max-width: @screen-sm-max) {
         margin: 0px;
         padding: 0px;
     }
     & ul.nav-tabs {
-        border-bottom:  2px solid @gray-lighter;
+        border-bottom: 2px solid @nav-tabs-border-color;
         margin: 0px;
         @media(max-width: @screen-sm-max) {
             margin-left: 0;  
@@ -61,16 +61,16 @@
 
             &.active {
                 > a {
+                    color: @brand-primary;
                     background-color: @body-bg;
-                    border-top: 3px solid @brand-primary;
-                    border-left: 2px solid @gray-lighter;
-                    border-right: 2px solid @gray-lighter;  
-                    border-bottom: 2px solid @body-bg;                    
-                    color: @gray;
-
+                    border-top: 2px solid @nav-tabs-border-color;
+                    border-left: 2px solid @nav-tabs-border-color;
+                    border-right: 2px solid@nav-tabs-border-color;  
+                    border-bottom: 2px solid @body-bg;   
                 }
             }
             &:not(.active) > a {
+                color: @gray-light;
                 transition: background-color 0.1s linear;
                 &:hover, &:active, &:focus {
                     background: darken(@main-tabs-background-color,4%);
