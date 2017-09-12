@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordDriver/SolrDefault/record-image.phtml -->
 <? $formats = $this->driver->tryMethod('getFormats'); ?>
-<div class="record-image-container">
+<div class="record-image-container <?= empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>">
   <div class="recordcover-holder" data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
 
     <?= $this->partial('RecordDriver/SolrDefault/record-image-navi.phtml', ['images' => $images, 'type' => $type]) ?>
