@@ -2,6 +2,22 @@
   .media-left,
   .media-right {
     width: 25%;
+    &.image {
+      width: 50%;
+      .record-image-container {
+        text-align: center;
+        .image-popup-trigger {
+          img {
+            max-height: 600px;
+            width: auto;
+          }
+        }
+      }
+      .recordcover-holder {
+        box-shadow: 0px 0px 0px 2px @gray-lighter inset;
+        padding: 10px;
+      }
+    }
     @media(max-width: @screen-sm) {
       display: block;
       width: 100%;
