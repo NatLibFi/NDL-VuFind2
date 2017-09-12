@@ -47,15 +47,23 @@ header {
 
 .navbar #loginOptions {
   display: inline-block;
-  height: @navbar-height;
+  line-height: @navbar-height;
 }
 
 .navbar-nav>li.lang>a {
   text-transform: uppercase;
   font-size: 0.9em;
   font-weight: bold;
-  margin-right: 5px;
+  line-height: @navbar-height/2; 
 }
+
+.navbar-nav>li.lang {
+  border-left: 1px solid @text-color;
+}
+
+.navbar-nav>li.lang:first-child {
+  border-left: none;
+}  
 
 // fix navbar for logoutoptions
 .navbar .logoutOptions {
