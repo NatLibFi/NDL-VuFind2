@@ -126,10 +126,14 @@
                 }
                 if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }
                 if (!$obj->supportsAjax()) { $tab_classes[] = 'noajax'; }
-                if (strtolower($tab) == 'details') { $tab_classes[] = 'hidden-xs'; }
+                if (strtolower($tab) == 'details') { $tab_classes[] = 'hidden-xs tab-right'; }
                 ?>
               <li<?=count($tab_classes) > 0 ? ' class="' . implode(' ', $tab_classes) . '"' : ''?>>
-                <a class="<?=strtolower($tab) ?>" href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<? if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<? endif ?>><i class="fa fa-<?=$this->escapeHtmlAttr($tab)?>"></i> <?=$this->transEsc($desc)?><? if (strtolower($tab) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?></a>
+                <a class="<?=strtolower($tab) ?>"
+                   href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<? if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
+                  data-background<? endif ?>>
+                  <? if (strtolower($tab) == 'details'): ?><i class="fa fa-<?=$this->escapeHtmlAttr($tab)?>"></i><? endif; ?>
+                  <? if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><? endif; ?><? if (strtolower($tab) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?></a>
               </li>
             <? endforeach; ?>
         </ul>
