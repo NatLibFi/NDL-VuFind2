@@ -1,7 +1,8 @@
 <!-- START of: finna - search/filters.phtml -->
 <? $recordPage = $this->layout()->templateDir == 'record'; ?>
-<div class="container">
-  <div class="finna-filters hidden-xs <?=$recordPage ? 'record-page hidden' : '' ?>">
+<div class="search-filters">
+  <div class="container filters-container">
+    <div class="finna-filters hidden-xs <?=$recordPage ? 'record-page hidden' : '' ?>">
     <div class="retain-filters">
       <? $defaultFilterState = $hasDefaultsApplied || $options->getRetainFilterSetting() || !$defaultSortApplied ? ' checked="checked"' : ''; ?>
       <span class="checkbox<?=$defaultFilterState ? ' checked' : ''?>">
@@ -37,5 +38,6 @@
     </div>
     <div class="clearfix"></div>
   </div>
+</div>
 </div>
 <!-- END of: finna - search/filters.phtml -->
