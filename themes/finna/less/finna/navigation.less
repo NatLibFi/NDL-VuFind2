@@ -174,7 +174,12 @@ header {
 }
 
 .navbar-toggle {
-  float: left;
+  position: absolute;
+  z-index: 30;
+  right:0;
+  height: 48px;
+  width: 48px;
+  position;
   margin-top: 0;
   margin-bottom: 0;
   color: @navbar-toggle-color;
@@ -295,7 +300,7 @@ header {
 .nav.nav-absolute {
   position: absolute;
   top: 0px;
-  right: 15px;
+  right: 96px;
   & .dropdown-menu > li > a {
     white-space: normal;
   }
