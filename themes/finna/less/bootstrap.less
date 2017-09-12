@@ -148,10 +148,10 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     max-width: 1300px; // dont fully scale the navigation bar text
 }
 .floating-feedback-btn {
-    border-radius: 0;
     margin-top: 15px;
     margin-right: 15px;
-    background: fade(@gray, 90%);
+    background: @gray;
+    color: @body-bg;
     position: absolute;
     right: 0;
     top: auto;
@@ -161,16 +161,16 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
         top: 0;
     }
     &:hover {
-        background: fade(@gray, 90%);
+        background: @gray;
     }
     &:before {
         content: "";
         position: absolute;
-        bottom: -10px;
+        bottom: -6px;
         margin: auto;
-        border-width: 0 0 10px 15px;
+        border-width: 0 0 6px 10px;
         border-style: solid;
-        border-color: transparent fade(@gray, 90%);
+        border-color: transparent @gray;
     }
 }
 
