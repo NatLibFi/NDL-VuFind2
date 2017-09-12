@@ -45,10 +45,10 @@ finna.common = (function() {
            }
         });
         
-        var filters = $('.finna-filters');
+        var filters = $('.search-filters');
         if(filters.hasClass('record-page')) {
             searchInput.focus(function (e) {
-                $('.finna-filters').removeClass("hidden");
+                filters.removeClass("hidden");
             });
         }
     };
