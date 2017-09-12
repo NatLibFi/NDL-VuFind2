@@ -12,19 +12,19 @@
 @gray-dark:              darken(@gray, 10%);
 @gray-light:             lighten(@gray, 18%);
 @gray-mid-light:         lighten(@gray, 40%);
-@gray-lighter:           lighten(@gray, 55%);
-@gray-ultralight:        lighten(@gray, 65%);
+@gray-lighter:           lighten(@gray, 60%);
+@gray-ultralight:        lighten(@gray, 69%);
 
 // Brand Colors
-@brand-primary: #81358a;
-@brand-secondary: @gray;
+@brand-primary: #00a3b5;
+@brand-secondary: #B3E3E9;
 @brand-third: #d8f4ed;
 @brand-fourth: #ebd4f0;
 @brand-success: #00b270;
 @brand-warning: #fff48c;
 @brand-danger: #ff461e;
 @brand-info: #b2e3ea;
-@logo-color: @gray;
+@logo-color: #fff;
 
 //== Custom Finna styling
 @background-image-url: url('../images/customhomebg');
@@ -34,22 +34,22 @@
 @background-start-percent: 10%;
 @background-end-percent: 100%;
 @header-height: 43px;
-@navbar-logo-height: 40px;
+@navbar-logo-height: 35px;
 @logo-height: 66px;
 @logo-separator-color: #fff; // Color of hr line under main logo
-@header-background-color: @body-bg; // Color of navigation bar top
-@footer-background: @gray-ultralight;
-@footer-text-color: @gray;
-@finna-main-header-background: @gray-ultralight; // Color of page header background and search results tabs
-@finna-searchbox-link-color: @gray; // style searchbox link text color contrast with background
+@header-background-color: rgba(1,1,1,0.8); // Color of navigation bar top
+@footer-background: @gray;
+@footer-text-color: @body-bg;
+@finna-main-header-background: @brand-secondary; // Color of page header background and search results tabs
+@finna-searchbox-link-color: #fff; // style searchbox link text color contrast with background
 @finna-searchbox-link-background: rgba(1,1,1,0.6); // style searchbox links (advanced search etc.) background contrast with background
-@finna-record-header-background: @gray-ultralight;
+@finna-record-header-background: @gray-lighter;
 @field-margin-vertical: 20px;
 @field-margin-horizontal: 15px;
 @background-image-gradient: #000, #000, 55%, 30%;
 @finna-text-shadow: 1px 1px 1px black;
-@finna-search-input-width: 0.65; //== THIS is percentage Change this if no prefilter-select change to 0.88
-@finna-button-radius: 0px; // Defines all button radiuses
+@finna-search-input-width: 0.655; //== THIS is percentage Change this if no prefilter-select change to 0.88
+@finna-button-radius: 10px; // Defines all button radiuses
 @finna-header-font-size: 1.6em;
 @record-title-font-size: 1.7em;
 @main-tabs-background-color: @brand-primary;
@@ -117,7 +117,7 @@
 
 @body-bg: #fff;
 @text-color: @gray;
-@link-color: #0070d2; // defines all link color, also for linked icons
+@link-color: @brand-primary; // defines all link color, also for linked icons
 @link-hover-color: @link-color;
 @link-hover-decoration: #fff;
 @padding-base-vertical: 6px;
@@ -135,13 +135,11 @@
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700');
-
-@font-family-sans-serif: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+@font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
 @font-family-serif: PT Serif;
 @font-family-monospace: Monaco;
 @font-family-base: @font-family-sans-serif;
-@font-size-base: 16px;
+@font-size-base: 13px;
 @font-size-icon-small: 14px;
 @font-size-icon-large: 1.5em;
 @font-size-large: ceil((@font-size-base * 1.25));
@@ -155,12 +153,13 @@
 @line-height-base: 1.5;
 @line-height-computed: floor((@font-size-base * @line-height-base));
 @headings-font-family: @font-family-base;
+@headings-font-weight: 500;
 @headings-line-height: 1.1;
 @headings-color: inherit;
 
 
 //## Font size, line-height for content pages
-@content-font-size-base: 16px;
+@content-font-size-base: 14px;
 @content-line-height-base: 1.6;
 @content-headings-font-size-h1: floor((@content-font-size-base * 1.777));
 @content-headings-font-size-h2: floor((@content-font-size-base * 1.777));
@@ -168,7 +167,7 @@
 @content-headings-font-size-h4: floor((@content-font-size-base * 1.15));
 @content-headings-font-size-h5: @content-font-size-base;
 @content-headings-font-size-h6: floor((@content-font-size-base * 0.875));
-@headings-font-weight: 600;
+@headings-font-weight: 700;
 @content-headings-line-height: @headings-line-height;
 @content-headings-color: @gray-dark;
 @content-heading-background: @brand-secondary;
@@ -187,9 +186,9 @@
 //== Components
 //
 //## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
-@border-radius-base:        0px; // 10px;
-@border-radius-large:       0px; // 15px;
-@border-radius-small:       0px; // 5px;
+@border-radius-base:        10px;
+@border-radius-large:       15px;
+@border-radius-small:       5px;
 
 
 //== Tables
@@ -208,7 +207,7 @@
 //## For each of Bootstrap's buttons, define text, background and border color.
 
 @btn-font-weight: normal;
-@btn-default-color: #fff;
+@btn-default-color: #333;
 @btn-default-bg: #fff;
 @btn-default-border: #ccc;
 @btn-primary-color: #fff;
@@ -228,7 +227,6 @@
 @btn-info-border: darken(@btn-info-bg, 5%);
 @btn-link-disabled-color: @gray-light;
 
-@btn-font-weight: bold;
 
 //== Forms
 //
@@ -283,18 +281,16 @@
 //##
 
 // Basics of a navbar
-@navbar-default-link-color:        @gray;
-@navbar-height:                    70px;
+@navbar-height:                    45px;
 @navbar-margin-bottom:             0px;
 @navbar-padding-vertical:          0px;
 @navbar-collapse-max-height:       auto;
 
 @navbar-default-bg:                #fff;
 
-
 // Navbar links
-@navbar-default-link-color:                @gray;  // Color of link texts in navbar
-@navbar-font-size:                         1.2em; // Font-size of navbar links
+@navbar-default-link-color:                #fff;  // Color of link texts in navbar
+@navbar-font-size:                         1.05em; // Font-size of navbar links
 @navbar-font-weight:                       500; // Font weight for navbar texts
 // Navbar toggle
 @navbar-toggle-color:                      @navbar-default-link-color;
@@ -308,21 +304,12 @@
 @nav-link-padding:                          0px 15px;
 @nav-link-hover-bg:                         rgba(255,255,255,0.2);
 //== Tabs
-@nav-tabs-border-width:                     2px;
-@nav-tabs-background-color:                 transparent;
+@nav-tabs-background-color:                 #fff;
 @nav-tabs-text-color:                       @gray;
-@nav-tabs-border-color:                     transparent;   // this will set the background and border color of tabs in record
-@nav-tabs-border-bottom-color:              @gray-lighter;   // this will set the background and border color of tabs in record
-@nav-tabs-focus-border-color:               @gray-lighter;
+@nav-tabs-border-color:                     @brand-secondary;   // this will set the background and border color of tabs in record
 @nav-tabs-link-hover-border-color:          @brand-secondary;
 @nav-tabs-link-hover-color:                 @nav-tabs-active-link-hover-color;
-@nav-tabs-margin-right:                     0px;
-@tabs-border-radius:                        0px;
-
-//== Pills
-@nav-pills-border-radius:                   @border-radius-base;
-@nav-pills-active-link-hover-bg:            @component-active-bg;
-@nav-pills-active-link-hover-color:         @component-active-color;
+@tabs-border-radius:                        10px;
 
 
 //== Pagination
@@ -406,7 +393,7 @@
 //##
 
 //** Background color on `.list-group-item`
-@list-group-bg:               @body-bg;
+@list-group-bg:                 #f5f5f5;
 
 
 
