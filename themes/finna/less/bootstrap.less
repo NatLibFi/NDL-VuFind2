@@ -52,10 +52,15 @@
     display: none;
 }
 
-body {
+.searchHomeContent {
     -webkit-overflow-scrolling: touch;
-    background-size: 100% auto;
-    background-position: 0% 0%;
+    background-size: cover;
+    background-position: center top;
+    background-color: @finna-main-header-background;
+    background-image: @background-image-url;    
+    background-repeat: no-repeat;
+
+    box-shadow: 0 .5rem 2rem rgba(0,0,0,.1);
     @media(max-width:@screen-sm-max) {
         background-size: 150% auto;
         background-position: 50% 0;
@@ -67,32 +72,8 @@ body {
     @media(max-width:@screen-xs-max) {
          background-size: 350% auto;
     }
-    background-color: @finna-main-header-background;
-    background-repeat: no-repeat;
-
-
-    // fine-tune tablet layout
-    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
-        & .container {
-            width: auto;
-        }
-        // element-specific adjustments
-        & .main {
-            & .searchtools-background {
-                 margin-left: -15px;
-            }
-        }
-        & .hidden-print.add-to-favorite-col {
-            margin-left: -15px;
-        }
-    }
 }
-body > .main {
-    background: @body-bg;
-    &.template-name-home {
-        background: @home-content-background;
-    }
-}
+
 iframe {
     border: none;
 }
