@@ -70,6 +70,13 @@
       }
   }
   $this->record($this->driver)->getOnlineUrls('results');
+
+  $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
+  $recordImage = $this->recordImage($this->record($this->driver));
+  $images = $recordImage->getAllImagesAsCoverLinks(
+      $this->layout()->userLang, $params
+  );
+  $noImage = empty($images[0]['urls']['medium']);
 ?>
 </div>
 <div class="container">
@@ -77,7 +84,7 @@
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
-  <div>
+  <div class="record-main <?= $noImage ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" />
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource" />
     <?=$this->flashmessages()?>
@@ -87,6 +94,16 @@
     <?=$this->driver->supportsCoinsOpenURL()?'<span class="Z3988" title="'.$this->escapeHtmlAttr($this->driver->getCoinsOpenURL()).'"></span>':''?>
   </div>
 
+  <div class="sidebar right">
+      <? foreach ($this->related()->getList($this->driver) as $current): ?>
+          <?=$this->related()->render($current)?>
+      <? endforeach; ?>
+      <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-recommendations")): ?>
+        <div>
+            <?=$this->render($template)?>
+        </div>
+      <? endif; ?>
+  </div>
     <? // N.B. The element/class structure here is important for the ajax tabs to work properly ?>
   <div class="mainbody left record-tabs">
       <? if (count($this->tabs) > 0): ?>
@@ -128,17 +145,6 @@
           </div>
         <? endif; ?>
     </div>
-  </div>
-
-  <div class="sidebar right">
-    <? foreach ($this->related()->getList($this->driver) as $current): ?>
-      <?=$this->related()->render($current)?>
-    <? endforeach; ?>
-    <? if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-recommendations")): ?>
-      <div>
-        <?=$this->render($template)?>
-      </div>
-    <? endif; ?>
   </div>
  </div>
 </div>
