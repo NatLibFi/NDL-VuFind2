@@ -5,7 +5,7 @@
     padding: 10px 0px;
     & .list-group-item.title, .list-group-item.active {
         padding: 5px 10px;
-        background: none;
+        background: transparent;
         color: @gray;
         transition: background 0.2s ease-in-out;
         &:hover {
@@ -16,7 +16,6 @@
 }
 
 .list-group.facet {
-        background: @list-group-bg;
         // style Finna facet headers
         & .list-group-item.title {
             font-size:@font-size-h4;
@@ -43,6 +42,7 @@
             background-color: @body-bg;            
         }
         .list-group-item {
+          background: transparent;            
           border-top-left-radius:0px;
           border-top-right-radius:0px;
         }
