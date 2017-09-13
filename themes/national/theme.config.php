@@ -1,4 +1,10 @@
 <?php
 return array(
-    'extends' => 'finna'
+    'extends' => 'finna',
+    'css' => array(
+        'custom.css',
+        'settings.css'
+    ),
+    'js' => array(
+    )
 );
