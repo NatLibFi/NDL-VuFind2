@@ -6,6 +6,7 @@
   background-position: center center;
   background-image: url(../images/customhomebg);
   background-repeat: no-repeat;
+  height: 450px; /* Fallback */
   height: 30vw;
   display: flex;
   flex-flow: row wrap;
@@ -15,6 +16,7 @@
   align-items: center;
   
   @media (max-width: @screen-sm-max) {
+    height: 300px; /* Fallback */
     height: 60vw;    
   }
 }
