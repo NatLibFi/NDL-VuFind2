@@ -87,7 +87,7 @@
         <div class="local-available-online-record recordURLs">
           <div class="truncate-field">
           <? foreach ($urls as $url): ?>
-            <? if(empty($url['videoSources']) && (!empty($url['embed']) && $url['embed'] == 'video') && $this->recordLink()->getEmbeddedVideo($url['url']) != 'data-embed-iframe'): ?>
+            <? if(empty($url['videoSources']) && (empty($url['embed']) || $url['embed'] != 'video') && $this->recordLink()->getEmbeddedVideo($url['url']) != 'data-embed-iframe'): ?>
               <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" target="_blank"
                 <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
                 <? if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<? endif; ?>

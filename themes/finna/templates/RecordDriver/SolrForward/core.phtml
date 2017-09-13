@@ -37,7 +37,7 @@
                           }
                       }
                       ?>
-                      <? if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($current['url']) == 'data-embed-iframe'): ?>
+                      <? if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'): ?>
                       <div class="fulltextField">
                         <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
                             <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
@@ -146,7 +146,7 @@
                     }
                   }
                 ?>
-                <? if(empty($url['videoSources']) && empty($url['embed']) && $url['embed'] == 'video' && $this->recordLink()->getEmbeddedVideo($current['url']) != 'data-embed-iframe'): ?>
+                <? if(empty($url['videoSources']) && (empty($url['embed']) || $url['embed'] != 'video') && $this->recordLink()->getEmbeddedVideo($url['url']) != 'data-embed-iframe'): ?>
                   <div class="fulltextField">
                     <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
                       <? if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<? endif; ?>
