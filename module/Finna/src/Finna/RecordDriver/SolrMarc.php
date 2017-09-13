@@ -1523,34 +1523,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getMusicCompositions()
     {
         $results = [];
-        $i = '';
         foreach ($this->getMarcRecord()->getFields('382') as $field) {
-            $i++;
-            $i2 = '';
-            $subfields = ['a','b','n','d','p','v'];
+            $matches = ['a','b','n','d','p','v'];
             $allSubfields = $field->getSubfields();
             if (!empty($allSubfields)) {
+                $subfields = [];
                 foreach ($allSubfields as $currentSubfield) {
-                    $i2++;
-                    if (in_array($currentSubfield->getCode(), $subfields)) {
+                    if (in_array($currentSubfield->getCode(), $matches)) {
                         $data = trim($currentSubfield->getData());
                         if (!empty($data)) {
                             if ($currentSubfield->getCode() == 'n') {
-                                $results[$i][$i2]['count'] = $data;
-                            } else if ($currentSubfield->getCode() == 'a') {
-                                $results[$i][$i2]['composition'] = $data;
-                            } else if ($currentSubfield->getCode() == 'b') {
-                                $results[$i][$i2]['solo'] = $data;
-                            } else if ($currentSubfield->getCode() == 'd') {
-                                $results[$i][$i2]['double'] = $data;
-                            } else if ($currentSubfield->getCode() == 'v') {
-                                $results[$i][$i2]['notice'] = $data;
-                            } else if ($currentSubfield->getCode() == 'p') {
-                                $results[$i][$i2]['alternative'] = $data;
+                                $subfields[] = "($data)";
+                            } else {
+                                $subfields[] = $data;
                             }
                         }
                     }
                 }
+                $results[] = implode(' ', $subfields);
             }
         }
         return $results;
