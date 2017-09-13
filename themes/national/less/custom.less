@@ -1,1 +1,24 @@
 /* All custom less-code here */
+
+// Searchbox
+.template-name-home .searchContent {
+  background-size: cover;
+  background-position: center center;
+  background-image: url(../images/customhomebg);
+  background-repeat: no-repeat;
+  height: 30vw;
+  display: flex;
+  flex-flow: row wrap;
+  -ms-flex-align: center;
+	-webkit-align-items: center;
+	-webkit-box-align: center;
+  align-items: center;
+  
+  @media (max-width: @screen-sm-max) {
+    height: 60vw;    
+  }
+}
+
+.floating-feedback-btn {
+  top: @navbar-height;
+}
