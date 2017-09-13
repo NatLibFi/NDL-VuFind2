@@ -52,14 +52,16 @@
     display: none;
 }
 
-.searchHomeContent {
+.searchContent {
+    background-color: @finna-main-header-background;
+}
+
+.template-name-home .searchContent {
     -webkit-overflow-scrolling: touch;
     background-size: cover;
     background-position: center top;
-    background-color: @finna-main-header-background;
     background-image: @background-image-url;    
     background-repeat: no-repeat;
-
     @media(max-width:@screen-sm-max) {
         background-size: 150% auto;
         background-position: 50% 0;
@@ -78,7 +80,6 @@ iframe {
 }
 header {
      @media(min-width:768px) {
-
      }
      background: @header-background-color;
 }
