@@ -1,5 +1,18 @@
 <!-- START of: finna - RecordDriver/SolrEad/core.phtml -->
 <?
+
+  $urls = $this->record($this->driver)->getLinkDetails();
+  if (!empty($urls)){
+    $videoUrls = [];
+    $otherUrls = [];
+    foreach ($urls as $url){
+      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
+        array_push($videoUrls, $url);
+      } else {
+        array_push($otherUrls, $url);
+      }
+    }
+  }
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
@@ -7,22 +20,21 @@
   <div class="media-<?=$thumbnailAlignment ?>">
 
     <? $urls = $this->record($this->driver)->getLinkDetails(); ?>
-    <? if (!empty($urls)): ?>
+    <? if (!empty($videoUrls)): ?>
       <div class="local-available-online-record recordURLs">
         <div class="truncate-field">
-            <? foreach ($urls as $url): ?>
-              <? if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'): ?>
-                <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" target="_blank"
-                    <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
-                    <? if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<? endif; ?>
-                    <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
-                    <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-                >
-                  <button class="btn btn-primary"><i class="fa fa-play"></i></button><?=$this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc']))?>
-                </a>
-                <br/>
-              <? endif; ?>
-            <? endforeach; ?>
+          <? foreach ($videoUrls as $url): ?>
+            <? if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'): ?>
+              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" target="_blank"
+                  <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
+                  <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
+                  <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
+              >
+                <button class="btn btn-primary"><i class="fa fa-play"></i></button><?=$this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc']))?>
+              </a>
+              <br/>
+            <? endif; ?>
+          <? endforeach; ?>
         </div>
       </div>
     <? endif; ?>
@@ -82,21 +94,16 @@
         </div>
       <? endif; ?>
 
-      <? $urls = $this->record($this->driver)->getLinkDetails(); ?>
-      <? if (!empty($urls)): ?>
+      <? if (!empty($otherUrls)): ?>
         <div class="local-available-online-record recordURLs">
           <div class="truncate-field">
-          <? foreach ($urls as $url): ?>
-            <? if(empty($url['videoSources']) && (empty($url['embed']) || $url['embed'] != 'video') && $this->recordLink()->getEmbeddedVideo($url['url']) != 'data-embed-iframe'): ?>
+          <? foreach ($otherUrls as $url): ?>
               <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" target="_blank"
-                <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
                 <? if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<? endif; ?>
-                <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
               >
                 <i class="fa fa-external-link"></i> <?=$this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc']))?>
               </a>
               <br/>
-            <? endif; ?>
           <? endforeach; ?>
           </div>
         </div>
