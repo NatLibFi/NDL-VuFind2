@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -69,9 +69,8 @@ class Factory
     {
         $capabilities = $sm->getServiceLocator()->get('VuFind\AccountCapabilities');
         $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
-        $useRecaptcha = isset($config->Captcha) && isset($config->Captcha->forms)
-            && (trim($config->Captcha->forms) === '*'
-            || strpos($config->Captcha->forms, 'userComments'));
+        $recaptcha = \Finna\Controller\Plugin\Factory::getRecaptcha($sm);
+        $useRecaptcha = $recaptcha->active('userComments');
         return new UserComments(
             'enabled' === $capabilities->getCommentSetting(),
             $useRecaptcha

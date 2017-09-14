@@ -45,11 +45,13 @@
             </div>
           </div>
         </th>
-        <th class="">
-          <input type="submit" class="btn btn-primary renew-button" id="renewSelected" name="renewSelected" value="<?=$this->transEsc("renew_selected")?>" />
-        </th>
-        <th class="text-right">
-          <?=$this->render('search/controls/sort.phtml')?>
+        <th class="text-right" colspan="2">
+          <div class="renew-button-col">
+            <input type="submit" class="btn btn-primary renew-button" id="renewSelected" name="renewSelected" value="<?=$this->transEsc("renew_selected")?>" />
+          </div>
+          <div class="sort-col">
+            <?=$this->render('search/controls/sort.phtml')?>
+          </div>
         </th>
       </tr>
     <? else: ?>
@@ -85,11 +87,13 @@
         </td>
         <? endif; ?>
         <td class="text-center hidden-xs">
-          <? if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-            <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
-          <? else: ?>
-            <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
-          <? endif; ?>
+          <div class="cover-image">
+            <? if ($summThumb = $this->record($resource)->getThumbnail()): ?>
+              <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
+            <? else: ?>
+              <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
+            <? endif; ?>
+          </div>
         </td>
         <td class="checkedout-status-information" colspan="2">
           <div class="half-table-column text-left">
@@ -200,7 +204,7 @@
             <div class="checkbox">
               <label>
                 <input type="checkbox" name="selectAll" class="checkbox-select-all"/>
-                <span><?=$this->transEsc('Select All')?></span>
+                <?=$this->transEsc('Select All')?>
               </label>
             </div>
           </div>

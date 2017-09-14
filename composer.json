@@ -8,6 +8,11 @@
         }
     ],
     "license": "GPL-2.0",
+    "config": {
+        "platform": {
+            "php": "5.6.0"
+        }
+    },
     "require": {
         "php": ">=5.6",
         "dlundgren/css-splitter": "1.0.0",
@@ -23,6 +28,7 @@
         "pear/http_request2": "2.3.0",
         "pear/validate_ispn": "dev-master",
         "phing/phing": "2.16.0",
+        "picqer/php-barcode-generator": "0.2.1",
         "serialssolutions/summon": "1.1.0",
         "symfony/yaml": "3.3.2",
         "swagger-api/swagger-ui": "2.2.10",
@@ -39,15 +45,15 @@
         "zendframework/zend-db": "2.8.2",
         "zendframework/zend-dom": "2.6.0",
         "zendframework/zend-escaper": "2.5.2",
-        "zendframework/zend-eventmanager": "3.1.0",
+        "zendframework/zend-eventmanager": "3.2.0",
         "zendframework/zend-feed": "2.8.0",
         "zendframework/zend-http": "2.6.0",
         "zendframework/zend-i18n": "2.7.4",
         "zendframework/zend-loader": "2.5.1",
         "zendframework/zend-log": "2.9.2",
         "zendframework/zend-mail": "2.8.0",
-        "zendframework/zend-modulemanager": "2.7.2",
-        "zendframework/zend-mvc": "2.7.8",
+        "zendframework/zend-modulemanager": "2.8.0",
+        "zendframework/zend-mvc": "2.7.12",
         "zendframework/zend-paginator": "2.7.0",
         "zendframework/zend-serializer": "2.8.0",
         "zendframework/zend-servicemanager": "2.7.5",
@@ -55,12 +61,14 @@
         "zendframework/zend-soap": "2.6.0",
         "zendframework/zend-stdlib": "2.7.7",
         "zendframework/zend-text": "2.6.0",
-        "zendframework/zend-validator": "2.9.1",
+        "zendframework/zend-validator": "2.10.1",
         "zendframework/zend-view": "2.9.0",
         "zendframework/zendrest": "2.0.2",
         "zendframework/zendservice-amazon": "2.3.0",
         "zendframework/zendservice-recaptcha": "3.0.0",
-        "zf-commons/zfc-rbac": "2.6.3"
+        "zf-commons/zfc-rbac": "2.6.3",
+        "ghislainf/zf2-whoops": "dev-master#2649cf7caf400409942ddc3f8fe15b89381fc74e",
+        "pear/archive_tar": "^1.4"
     },
     "require-dev": {
         "behat/mink": "1.7.1",

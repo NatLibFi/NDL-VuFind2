@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -659,9 +659,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             if ($url) {
                 $httpService = $this->serviceLocator->get('VuFind\Http');
                 $result = $httpService->get($url, [], 60);
-                if ($result->isSuccess()) {
-                    $content = $result->getBody();
-
+                if ($result->isSuccess() && ($content = $result->getBody())) {
                     $encoding = mb_detect_encoding(
                         $content, ['UTF-8', 'ISO-8859-1']
                     );

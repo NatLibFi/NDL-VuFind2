@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category Finna
  * @package  View_Helpers
@@ -79,5 +79,24 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     public function getLastSearchUrl()
     {
         return $this->memory->retrieveSearch();
+    }
+
+    /**
+     * Retrieve the parameters of the last search by the search class
+     *
+     * @param string $searchClassId Search class
+     *
+     * @return \VuFind\Search\Base\Params
+     */
+    public function getLastSearchParams($searchClassId)
+    {
+        $lastUrl = $this->getLastSearchUrl();
+        $queryParams = $lastUrl ? parse_url($lastUrl, PHP_URL_QUERY) : '';
+        $request = new \Zend\StdLib\Parameters();
+        $request->fromString($queryParams);
+        $paramsPlugin = $this->getView()->plugin('SearchParams');
+        $params = $paramsPlugin($searchClassId);
+        $params->initFromRequest($request);
+        return $params;
     }
 }

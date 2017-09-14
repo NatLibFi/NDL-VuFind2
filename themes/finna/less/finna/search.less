@@ -150,6 +150,16 @@ mark, .highlight {
     padding-right: 20px;
   }
 }
+.savedLists {
+  &:extend(.alert);
+  &:extend(.alert-info);
+  margin-bottom: 0;
+  display: none;
+  ul {
+    margin-bottom: 0;
+  }
+}
+.savedLists.loaded { display: block; }
 
 .bulkActionButtons {
   .checkbox {
@@ -491,5 +501,18 @@ mark, .highlight {
       max-height: 200px;
       box-shadow: 0px 20px 20px -16px #000;
     }
+  }
+}
+
+@media(min-width: @screen-md) {
+  .search-home-left {
+    width: 40%;
+    float: left;
+    padding-right: 15px;
+  }
+  .search-home-right {
+    width: 60%;
+    float: left;
+    padding-left: 15px;
   }
 }
