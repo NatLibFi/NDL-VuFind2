@@ -1,0 +1,22 @@
+<!-- START of: finna - search/street-search-header.phtml -->
+<div class="row">
+    <div class="col-md-4">
+        <div class="update-location-button text-left">
+            <a class="btn btn-primary" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
+        </div>  
+    </div>
+    <div class="col-md-4">
+        <div class="street-search-header-message">
+            <?=$this->transEsc('street_under_development')?>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="street-search-feedback text-right">
+            <a class="btn btn-primary" href="<?=$this->url('feedback-home', [], ['query' => ['comments' => $this->transEsc('street_search_feedback'), 'url' => $this->serverUrl(true)]])?>"><?=$this->transEsc('Give Feedback')?></a>
+            <br><?=$this->transEsc('street_search_help')?>
+        </div>
+    </div>
+</div>
+<!-- END of: finna - search/street-search-header.phtml -->
+
+

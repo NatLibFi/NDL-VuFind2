@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <atom:link href="" rel="self" type="application/rss+xml" />
+    <title>Pärlor ur samlingarna</title>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/ilmailu2.jpg"/>
+       <title>Turbulens och elegans i luften!</title>
+      <description>En del av Finlands Flygmuseums samlingar är nu tillgängliga i Finna! Under Finlands 100-årsjubileum publiken kan utforska händelserik historia av det nationella flygbolaget Finnair (tidigare Aero Oy). Den bild: flygpassagerare av Aero Oy går ombord på flygplanet i Hamburg på 1950-talet.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/ilmailu2.jpg"/>
+      <link>       <![CDATA[Search/Results?limit=50&view=grid&filter%5B%5D=~sector_str_mv%3A"0%2Fmus%2F"&filter%5B%5D=~building%3A"0%2Filmailumuseo%2F"&type=AllFields]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/ansaikonen.jpg"/>
+      <title>Utforska inhemsk filmhistoria!</title>
+      <description>Nationella audiovisuella institutets (KAVI) filmer och kringmaterial är nu tillgängliga i Finna! I KAVIs samlingar ingår såväl den finska filmens älskade klassiker från Vagabond-valsen till Hulda från Juurakko som Försvarsmaktens översikter från kriget. Därtill finns det mycket videoklipp och fina stillbilder från filmerna.
+        </description>
+      <media:thumbnail url="themes/custom/images/carousel-images/ansaikonen.jpg"/>
+      <link>       <![CDATA[Search/Results?limit=0&filter%5B%5D=~sector_str_mv%3A%220%2Farc%2F%22&filter%5B%5D=~building%3A%220%2FKAVI%2F%22&filter%5B%5D=~geographic_facet%3A%22Suomi%22&filter%5B%5D=online_boolean%3A1&type=AllFields]]>
+      </link>
+    </item>
+     <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/mannerheim2.jpg"/>
+      <title>Över 100 000 bilder i Museiverkets Bildsamlingar har öppnats för fri användning via tjänsten Finna</title>
+      <description>Bland bilderna finns bland annat gammal grafik, scener och människor från 1800-talet. Det finns många bilder även från 100 år tillbaka medan de nyaste har tagits på 2000-talet. Bilderna är med låg resolution och kan användas till exempel på webbplatser eller för att utveckla olika slags applikationer. Bilderna kan i regel användas med CC BY-licensen: vem som helst får använda bilderna för nästan vilket ändamål som helst, men man ska ange både fotografens namn och källan.
+        </description>
+      <media:thumbnail url="themes/custom/images/carousel-images/mannerheim2.jpg"/>
+      <link>       <![CDATA[Search/Results?limit=50&view=grid&filter%5B0%5D=~building%3A%221%2FSuomen+merimuseo%2FKuvakokoelma%2F%22&filter%5B1%5D=~usage_rights_str_mv%3A%22usage_B%22&filter%5B2%5D=~building%3A%220%2FMuseovirasto%2F%22&type=AllFields]]>
+      </link>
+    </item>
+    
+     <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/101kirjaa-tree2.jpg"/>
+      <title>101 Böcker</title>
+      <description>Böckerna är 101 till antalet - en för varje självständighetsår. De utvalda böckerna berättar hur vårt land har blivit en industrialiserad och självständig nation. </description>
+      <media:thumbnail url="themes/custom/images/carousel-images/101kirjaa-tree2.jpg"/>
+      <link>       <![CDATA[https://www.finna.fi/List/433483?sort=id+desc&limit=100&filter%5B0%5D=lists%3A%22433483%22&view=grid&lng=sv]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/kahvilat.jpg"/>
+      <title>Ögonblicksbilder från Helsingfors caféer</title>
+      <description>Chai latte, espresso eller pannkaffe? Glassen smälter och isteet svalkar. Turistvimmel och rofyllda stunder. Hotell- och restaurangmuseets bilder visar Helsingfors färgrika sommar 2010! Bland caféerna på bilderna finns kaffekiosker, stilrena klassiker och bohemiska småkaféer.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/kahvilat.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=kahvila+2010+helsinki+valokuva&type=AllFields&view=grid&filter%5B%5D=~building%3A"0%2FHOTELLI-+JA+RAVINTOLAMUSEO%2F]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/nyblin.jpg"/>
+      <title>Studiobilder av Atelier Daniel Nyblin från 1800-talet</title>
+      <description>Museiverkets Bildsamlingar har digitaliserat 350 studiobilder av fotoateljé Atelier Daniel Nyblin. På foton finns helsingforsbor från 1800-talet och andra märkeskvinnor och -män från den tiden. Man ville på foton föreviga livets vändpunkter som till exempel barn, bröllop, födelsedagar och begravningar. Det sista porträttet togs på dödsbädden eller redan i kistan.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/nyblin.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=hk19321130&type=AllFields&limit=100&view=grid&filter%5B%5D=search_daterange_mv%3A"overlap%7C%5B1877+TO+1878%5D"&dfApplied=1]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/kalliomaalaukset.jpg"/>
+      <title>Pekka Kivikäs fotografisamling över hällmålningar</title>
+      <description>Professor Pekka Kivikäs har forskat länge i hällmålningar. Fotografisamlingen som Kivikäs har samlat under forskningskarriären har han överlåtit till Mellersta Finlands Museum. Den värdefulla samlingen innehåller bilder från Saraakallio i Laukas, Astuvansalmi i S:t Michel och flera andra hällmålningar i Finland. De flesta bilderna är tagna på 1990-talet.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/kalliomaalaukset.jpg"/>
+      <link>       <![CDATA[Search/Results?join=AND&bool0%5B%5D=AND&lookfor0%5B%5D=Kivikäs&lookfor0%5B%5D=Keski-Suomen+museo&type0%5B%5D=Author&type0%5B%5D=AllFields&limit=50&filter%5B%5D=~format%3A"0%2FImage%2F"&view=grid]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/albumitauki.jpg"/>
+      <title>Albumit auki – hemarkivens skatter</title>
+      <description>Hur såg vardagen, och barnen och sommaren, ut förr? Det växande arkivet Albumit auki (Öppna albumen) bevarar hemalbumens foton för kommande generationer i digitaliserad form. Först ut i Finna var Jyväskylä-samlingen. Resten av materialet kommer att föras in i Finna under 2016.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/albumitauki.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=lapset+kesä&type=AllFields&limit=100&view=grid&filter[]=~building%3A"0%2Flasipalatsi%2F&dfApplied=1"]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/01finlandia.jpg"/>
+      <title>Glas från Karhula</title>
+      <description>Karhula glasburkar, Gunnel Nymans och Göran Hongells konstglas från 1930-talet, Tapio Wirkkalas flaskor för Finlandia Vodka. Samlingarna från glasbrukets numera nedlagda museum innehåller bekanta förpackningsglas, handblåsta unika arbeten och bortglömda designpärlor. En del av Kymmenedalens museums Karhula-samling har nu digitaliserats.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/01finlandia.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=wirkkala+OR+"gunnel+nyman"+OR+käsityö&SearchForm_submit=Hae&filter[]=building%3A"1%2FKYMIMUSEO%2FKarhulan+lasikokoelma%2F"&filter[]=online_boolean%3A1&limit=100&sort=relevance&view=grid&dfApplied=1]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/04uuni.jpg"/>
+      <title>Försvunna i skogen</title>
+      <description>Forststyrelsens fotografier från 2010–2015 dokumenterar kulturarv från stenåldern till 1960-talet på statens marker, bl.a. skogsarbete, timmerflottning, ristade eller kvistade träd, renskiljning och krigsföring. Det finns också många bilder av bastur. Mer information om kulturarven finns i Finlands skogsmuseums nättjänst kantapuu.fi.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/04uuni.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=sauna+%22Metsähallituksen+metsätalouden+kulttuuriperintöinventointikokoelma%22&SearchForm_submit=Hae&filter%5B%5D=building%3A%220%2FLusto%2F%22&limit=100&sort=relevance&view=grid&dfApplied=1]]>
+      </link>
+    </item>
+    <item>
+       <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/02kiasma.jpg"/>
+       <title>Konstgrafik från 1980-talet i Kiasmas samlingar</title>
+      <description>Tusentals konstverk från Museet för nutidskonst Kiasmas samlingar, bl.a. vacker och tankeväckande grafik, finns nu i Finna. Grafiken från 1980-talet representerar olika metoder och tekniker.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/02kiasma.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=syövytys&SearchForm_submit=Hae&filter%5B%5D=search_sdaterange_mv%3A%22%5B%22-4371587+3652%22+TO+%227304+2932896%22%5D%22&filter%5B%5D=building%3A%220%2FNykytaiteen+museo+Kiasma%2F%22&filter%5B%5D=format%3A%221%2FWorkOfArt%2FGraphic%2F%22&filter%5B%5D=online_boolean%3A1&search_sdaterange_mvtype=overlap&limit=100&sort=relevance&view=grid&dfApplied=1]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/05sakuvat.jpg"/>
+      <title>Bilder från vinter-, fortsättnings- och Lapplandskriget i Finland</title>
+      <description>Framför dig har du Förvarsmaktens bildarkiv (SA-kuva-arkisto på finska) – en unik bildsamling som består av nästan 160 000 fotografier från  vinterkriget, fortsättningskriget och Lapplandskriget i Finland. Största  delen har fotograferats av informationskompaniernas fotografer.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/05sakuvat.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=&type=AllFields&filter%5B%5D=building%3A"1%2FSA-kuva%2FSA-kuva%2F"&sort=relevance&view=grid&limit=100]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/06ss.jpg"/>
+      <title>Föremål och foton från Fölisöns friluftsmuseum</title>
+      <description>Foton på föremål och hus på Fölisöns friluftsmuseum har digitaliserats. Nu kan du titta närmare på föremål från Kurssi, Ivars, Pertinotja, Halla gård och Kaukola rökpörten. Fotona visar husen på sina ursprungliga platser, när de flyttas till Fölisön och tidigare museiverksamhet. De nyare bilderna visar museets hus och deras interiörer.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/06ss.jpg"/>
+      <link>       <![CDATA[Search/Results?join=AND&bool0%5B%5D=AND&lookfor0%5B%5D=Seurasaari&type0%5B%5D=AllFields&filter%5B%5D=sector_str_mv%3A%220%2Fmus%2F%22&orfilter%5B%5D=format%3A%220%2FImage%2F%22&orfilter%5B%5D=format%3A%220%2FPhysicalObject%2F%22&sort=last_indexed+desc&view=grid&limit=100]]>
+      </link>
+    </item>
+      <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/03nobel.jpg"/>
+       <title>Nobelpristagaren i litteratur 2015</title>
+      <description>Nobelpriset i litteratur 2015 gick till vitryskan Svetlana Aleksijevitj. Hon har bl.a. skrivit <em>Bön för Tjernobyl</em>, som finns i Finna som hörspel på finska, Tshernobylista nousee rukous. Aleksijevitj bok <em>Kriget har inget kvinnligt ansikte</em> har också översatts till svenska.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/03nobel.jpg"/>
+      <link>       <![CDATA[Search/Results?join=AND&bool0%5B%5D=OR&lookfor0%5B%5D=Aleksijevitš%2C+Svetlana&type0%5B%5D=Author&lookfor0%5B%5D=Aleksijevits%2C+Svetlana&type0%5B%5D=Author&filter%5B%5D=format%3A%220%2FBook%2F%22&sort=relevance&view=list]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/07lapset.jpg"/>
+      <title>Barnens nya mediekultur: bebisar surfar på nätet</title>
+      <description>Digitala medier hör till spädbarnens vardag och barnens mediekultur förändras snabbt, berättar källor i Finna. Enligt Barnens mediebarometer 2013 använder 40 procent av 0–2-åringarna internet varje vecka.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/07lapset.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=lapset+media+muutokset&SearchForm_submit=Hae&filter[]=format%3A%221%2FBook%2FBook%2F%22&filter[]=language%3A%22fin%22&view=list&limit=20&sort=relevance]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/08ediths.jpg"/>
+      <title>Edith Södergrans fotografier (Svenska litteratursällskapet)</title>
+      <description>Lyrikern Edit Södergran (1892-1923) är en av Finlands mest översätta författare och hennes dikter på svenska utkommer ständigt i nyutgåvor. Hon är också sedan 1990-talet känd som fotograf och omkring 400 fotografier med motiv från Davos, Schweiz och Raivola på Karelska näset finns bevarade. Ett favoritmotiv är hennes katter.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/08ediths.jpg"/>
+      <link>       <![CDATA[Collection/sls.SLSA+566/Home?lookfor=&type=AllFields&page=1&view=grid&limit=100]]>
+      </link>
+    </item>
+  </channel>
+</rss>

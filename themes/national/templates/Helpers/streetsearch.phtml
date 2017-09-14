@@ -1,0 +1,91 @@
+<!-- START of: custom - Helpers/streetsearch.phtml -->
+<?
+    $this->headScript()->appendFile('finna-street-search.js');
+    $this->jsTranslations()->addStrings(
+      array(
+        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
+        'street_search_checking_for_geolocation' => 'street_search_checking_for_geolocation',
+        'street_search_geolocation_available' => 'street_search_geolocation_available',
+        'street_search_geolocation_position_unavailable' => 'street_search_geolocation_position_unavailable',
+        'street_search_geolocation_other_error' => 'street_search_geolocation_other_error',
+        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
+        'street_search_timeout' => 'street_search_timeout',
+        'street_search_no_streetname_found' => 'street_search_no_streetname_found',
+        'street_search_reversegeocode_unavailable' => 'street_search_reversegeocode_unavailable',
+        'street_search_searching_for' => 'street_search_searching_for',
+        'street_search_coordinates_found' => 'street_search_coordinates_found',
+        'street_search_coordinates_found_accuracy_bad' => 'street_search_coordinates_found_accuracy_bad'
+      )
+    );
+?>
+
+<div class="row">
+  <div class="col-xs-12">
+    <? if (!$this->translationEmpty('street_search_header_html')): ?><div class="introduction"><h1 class="introductionText"><?=$this->translate('street_search_header_html')?></h1></div><? endif; ?>
+  </div>
+</div>
+
+
+
+<div class="street-search-button-area">
+  <button class="btn btn-primary street-search-button"><?=$this->transEsc('street_search_button') ?></button>
+  <div class="alert alert-info street-search-progress hidden">
+    <div class="fa fa-spinner fa-spin"></div>
+    <div class="infoBox">
+      <div>
+        <div class="info"></div>
+        <button class="street-search-terminate"><?=$this->transEsc('street_search_abort') ?></button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END of: custom - Helpers/streetsearch.phtml -->
+
+<style>
+body {
+    background-image: url('/themes/custom/images/customstreetsearchbg');
+    background-size: 100% auto;
+    background-position: 0 0;
+}
+@media (max-width: 767px) {
+    body {
+        background-position: -300px 0;
+        background-size: 250% auto;
+    }
+}
+.section {
+    padding-bottom: 60px;
+}
+h1.introductionText {
+    margin-bottom: 20px;
+}
+h1.introductionText em {
+    color: #addfdb;
+}
+.main-content p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+.main-content {
+    padding-bottom: 3.4em;
+}
+.street-search-button {
+    margin-bottom: inherit;
+}
+.alert {
+    margin-top: 20px;
+}
+.alert-street {
+    font-size: 14px;
+}
+.street-search-button-area {
+    margin-top: 10px;
+}
+.searchLayout {
+    padding-bottom: 60px;
+}
+.finna-main-header {
+    background: #f3ec7a;
+}
+</style>

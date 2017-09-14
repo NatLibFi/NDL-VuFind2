@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <atom:link href="" rel="self" type="application/rss+xml" />
+    <title>Collection highlights</title>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/ilmailu2.jpg"/>
+       <title>Turbulence and elegance in the air!</title>
+      <description>You can now find a part of the collections of The Finnish Aviation Museum on Finna! During the centenary year of Finnish independence the public is now able to browse the materials which are related to national airline Finnair's (originally Aero Ltd) history. Photo: Passengers of Aero Oy are boarding in Hamburg in the 1950's.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/ilmailu2.jpg"/>
+      <link>       <![CDATA[Search/Results?limit=50&view=grid&filter%5B%5D=~sector_str_mv%3A"0%2Fmus%2F"&filter%5B%5D=~building%3A"0%2Filmailumuseo%2F"&type=AllFields]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/ansaikonen.jpg"/>
+      <title>Learn about Finnish film history!</title>
+      <description>You can now find the collections of the National Audiovisual Institute on Finna! The institute’s collections include beloved classics of Finnish film from The Vagabond’s Waltz (1941) and Juurakon Hulda (1937) to the Finnish Defense Force’s wartime accounts. You can also access a wide variety of video clips and film stills.
+        </description>
+      <media:thumbnail url="themes/custom/images/carousel-images/ansaikonen.jpg"/>
+      <link>       <![CDATA[Search/Results??limit=0&filter%5B%5D=~sector_str_mv%3A%220%2Farc%2F%22&filter%5B%5D=~building%3A%220%2FKAVI%2F%22&filter%5B%5D=~geographic_facet%3A%22Suomi%22&filter%5B%5D=online_boolean%3A1&type=AllFields]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/mannerheim2.jpg"/>
+      <title>The Finnish National Board of Antiquities releases over 100 000 images for free use</title>
+      <description>The Finnish National Board of Antiquities released more than 100 000 low-resolution images from its Picture Collections for use without charge on January 19, 2017. The digital images are available for download on the Finna website. They cover the 20th century and include pictures from the 19th and 21st century. Most of the images are published under Creative Commons CC BY, which means that they can be used for any kind of activities as far as the name of the photographer and the source are mentioned.
+        </description>
+      <media:thumbnail url="themes/custom/images/carousel-images/mannerheim2.jpg"/>
+      <link>       <![CDATA[Search/Results?view=grid&filter%5B%5D=~building%3A%221%2FSuomen+merimuseo%2FKuvakokoelma%2F%22&filter%5B%5D=~building%3A%220%2FMuseovirasto%2F%22&filter%5B%5D=~usage_rights_str_mv%3A%22usage_B%22&filter%5B%5D=online_boolean%3A%221%22&type=AllFields&limit=50]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/kahvilat.jpg"/>
+      <title>Café society in Helsinki</title>
+      <description>Would you like a chai latte, an espresso or a more traditional cup of coffee? Or how about a cooling ice cream or a delicious iced tea? The colourful photos of the Hotel and Restaurant Museum capture Helsinki in summer 2010! The photos feature crowds of tourists and lazy locals sampling the wares of simple coffee kiosks, elegant coffee houses and small, bohemian coffee shops.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/kahvilat.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=kahvila+2010+helsinki+valokuva&type=AllFields&view=grid&filter%5B%5D=~building%3A"0%2FHOTELLI-+JA+RAVINTOLAMUSEO%2F]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/nyblin.jpg"/>
+      <title>Daniel Nyblin’s studio photographs from the 19th century</title>
+      <description>The Picture Collections of Finland’s National Board of Antiquities has digitised 350 early photographs from the studio of Daniel Nyblin, featuring Helsinkians and dignitaries of the late 19th century. At the time, photographs commemorated significant life events, such as the arrival of children, weddings, birthdays and funerals.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/nyblin.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=hk19321130&type=AllFields&limit=100&view=grid&filter%5B%5D=search_daterange_mv%3A"overlap%7C%5B1877+TO+1878%5D"&dfApplied=1]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/kalliomaalaukset.jpg"/>
+      <title>The photographs of rock paintings by Pekka Kivikäs </title>
+      <description>Professor Pekka Kivikäs has a long career in rock painting research. His wide picture material belongs to the collection of the Museum of Central Finland. Photographs depict many Finnish prehistoric rock painting sites like Saraakallio and Astuvansalmi. Photographs date mainly from the 1990s.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/kalliomaalaukset.jpg"/>
+      <link>       <![CDATA[Search/Results?join=AND&bool0%5B%5D=AND&lookfor0%5B%5D=Kivikäs&lookfor0%5B%5D=Keski-Suomen+museo&type0%5B%5D=Author&type0%5B%5D=AllFields&limit=50&filter%5B%5D=~format%3A"0%2FImage%2F"&view=grid]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/albumitauki.jpg"/>
+      <title>Gems from family photo albums</title>
+      <description>What did everyday life – say children in the summer – look like before? Albumit auki is a growing archive of Finnish family photos digitised for future generations.  The first collection from the archive to be opened in Finna focuses on Jyväskylä. The remaining material will be made available through Finna in 2016.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/albumitauki.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=lapset+kesä&type=AllFields&limit=100&view=grid&filter[]=~building%3A"0%2Flasipalatsi%2F&dfApplied=1"]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/01finlandia.jpg"/>
+      <title>Karhula glassware</title>
+      <description>Karhula jars, works by Gunnel Nyman and Göran Hongell from the 1930s, Tapio Wirkkala’s Finlandia Vodka bottles. The collections of the now closed Karhula Glass Museum include familiar containers, unique hand-blown pieces and obscure designer gems. The Karhula collection of the Museum of Kymenlaakso has now been partly digitised.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/01finlandia.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=wirkkala+OR+"gunnel+nyman"+OR+käsityö&SearchForm_submit=Hae&filter[]=building%3A"1%2FKYMIMUSEO%2FKarhulan+lasikokoelma%2F"&filter[]=online_boolean%3A1&limit=100&sort=relevance&view=grid&dfApplied=1]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/04uuni.jpg"/>
+      <title>Lost in the woods</title>
+      <description>Photos from 2010−2015 by Metsähallitus depict cultural heritage sites on public land, from the Stone Age to the 1960s on topics such as forestry, log floating, tree markings, reindeer roundup and warfare. Saunas are commonly featured. For details, see kantapuu.fi (Finnish Forest Museum Lusto).</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/04uuni.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=sauna+%22Metsähallituksen+metsätalouden+kulttuuriperintöinventointikokoelma%22&SearchForm_submit=Hae&filter%5B%5D=building%3A%220%2FLusto%2F%22&limit=100&sort=relevance&view=grid&dfApplied=1]]>
+      </link>
+    </item>
+    <item>
+       <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/02kiasma.jpg"/>
+       <title>1980s prints from the Kiasma collections</title>
+      <description>Finna contains thousands of works of art from the collections of the Museum of Contemporary Art Kiasma, such as beautiful and thought-provoking prints. Prints from the 1980s are based on various printmaking methods and techniques.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/02kiasma.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=syövytys&SearchForm_submit=Hae&filter%5B%5D=search_sdaterange_mv%3A%22%5B%22-4371587+3652%22+TO+%227304+2932896%22%5D%22&filter%5B%5D=building%3A%220%2FNykytaiteen+museo+Kiasma%2F%22&filter%5B%5D=format%3A%221%2FWorkOfArt%2FGraphic%2F%22&filter%5B%5D=online_boolean%3A1&search_sdaterange_mvtype=overlap&limit=100&sort=relevance&view=grid&dfApplied=1]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/05sakuvat.jpg"/>
+      <title>Pictures from Finland's winter, continuation and Lapland wars</title>
+      <description>What you have in front of you is a unique collection of photographs from the Wartime Photograph Archives ("SA-kuva-arkisto" in Finnish). It contains some 160,000 photographs from Finland's Winter War, Continuation War and Lapland War. Most of the pictures were taken by Information Company (IC) photographers.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/05sakuvat.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=&type=AllFields&filter%5B%5D=building%3A"1%2FSA-kuva%2FSA-kuva%2F"&sort=relevance&view=grid&limit=100]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/06ss.jpg"/>
+      <title>Items from the Seurasaari open-air museum</title>
+      <description>Objects from and photos of buildings in Seurasaari have been digitised. Visitors can explore objects from the Kurssi, Ivars, Pertinotsa, Halla and Kaukola cottages. The photos show the buildings in their original locations, the transfer of the buildings to Seurasaari, and earlier museum activities. More recent photos show the museum buildings and their interiors.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/06ss.jpg"/>
+      <link>       <![CDATA[Search/Results?join=AND&bool0%5B%5D=AND&lookfor0%5B%5D=Seurasaari&type0%5B%5D=AllFields&filter%5B%5D=sector_str_mv%3A%220%2Fmus%2F%22&orfilter%5B%5D=format%3A%220%2FImage%2F%22&orfilter%5B%5D=format%3A%220%2FPhysicalObject%2F%22&sort=last_indexed+desc&view=grid&limit=100]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/03nobel.jpg"/>
+       <title>The works of the 2015 Nobel laureate in literature</title>
+      <description>The 2015 Nobel Prize in Literature was awarded to Svetlana Alexievich from Belarus, the author of, e.g., Voices from Chernobyl. A radio play based on the Finnish translation of the work can be accessed through Finna. Also translated into Finnish is Alexievich’s book <em>Sodalla ei ole naisen kasvoja</em> (English title: <em>War’s Unwomanly Face</em>).</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/03nobel.jpg"/>
+      <link>       <![CDATA[Search/Results?join=AND&bool0%5B%5D=OR&lookfor0%5B%5D=Aleksijevitš%2C+Svetlana&type0%5B%5D=Author&lookfor0%5B%5D=Aleksijevits%2C+Svetlana&type0%5B%5D=Author&filter%5B%5D=format%3A%220%2FBook%2F%22&sort=relevance&view=list]]>
+      </link>
+    </item>
+    <item>
+        <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/07lapset.jpg"/>
+      <title>Children’s new media culture: babies on the net</title>
+      <description>Digital media is part of the everyday life of babies, too, and children’s media culture is changing quickly, say sources at the Finna service. For instance, according to the 2013 Youth Barometer, 40% of 0–2-year-old children use the Internet weekly. </description>
+      <media:thumbnail url="themes/custom/images/carousel-images/07lapset.jpg"/>
+      <link>       <![CDATA[Search/Results?lookfor=lapset+media+muutokset&SearchForm_submit=Hae&filter[]=format%3A%221%2FBook%2FBook%2F%22&filter[]=language%3A%22fin%22&view=list&limit=20&sort=relevance]]>
+      </link>
+    </item>
+    <item>
+      <enclosure type="image/jpeg" url="themes/custom/images/carousel-images/08ediths.jpg"/>
+      <title>Edith Södergran’s photographs (by Svenska litteratursällskapet)</title>
+      <description>Poet Edith Södergran (1892–1923) is one of Finland’s most translated writers, whose poems in Swedish are regularly republished. Since the 1990s she has also been known for her photographs, of which about 400 taken in Davos in Switzerland and Raivola on the Karelian Isthmus have been preserved. One of her favourite subjects is her cats.</description>
+      <media:thumbnail url="themes/custom/images/carousel-images/08ediths.jpg"/>
+      <link>       <![CDATA[Collection/sls.SLSA+566/Home?lookfor=&type=AllFields&page=1&view=grid&limit=100]]>
+      </link>
+    </item>  
+  </channel>
+</rss>
