@@ -1,13 +1,27 @@
 /* All custom less-code here */
 
+// Body without background image (Quick fix!)
+body {
+  background-image: none !important;
+}
+
+.btn-primary {
+  text-transform: uppercase;
+  padding: 12px;
+}
+
+.searchContent [class^="tooltip-"]>i {
+  color: @text-color;
+}
+
 // Searchbox
 .template-name-home .searchContent {
   background-size: cover;
   background-position: center center;
   background-image: url(../images/customhomebg);
   background-repeat: no-repeat;
-  height: 450px; /* Fallback */
-  height: 30vw;
+  height: 350px; /* Fallback */
+  height: 25vw;
   display: flex;
   flex-flow: row wrap;
   -ms-flex-align: center;
