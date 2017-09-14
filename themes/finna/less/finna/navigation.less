@@ -53,7 +53,7 @@
 }
 
 .navbar-nav>li.lang>a {
-  line-height: @line-height-computed; 
+  line-height: @line-height-computed;
 }
 
 .navbar-nav>li.lang {
@@ -147,6 +147,7 @@
       transition: all 0.2s ease-in-out;
     }
   }
+
 
   @media (min-width: @grid-float-breakpoint) {
     border-top: 0;
@@ -482,4 +483,25 @@
   background-color:  @body-bg; /* this is necessary for overcome the caret default browser */
   pointer-events: none; /* https://developer.mozilla.org/en-US/docs/Web/CSS/pointer-events  */
   z-index: 1; /* this is necessary for overcome the pseudo element */
+}
+
+@media(max-width: @grid-float-breakpoint) {
+  .finna-navbar {
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    top: 0;
+    border-width: 0 0 1px;
+    background-color: @body-bg;
+    .navbar-collapse > ul >li {
+      border-top: 1px solid @gray-lighter;
+    }
+  }
+  .navbar-collapse.in {
+    box-shadow: 0 3px 5px @gray;
+  }
+  .navbar-header {
+    padding-left: 15px;
+  }
 }
