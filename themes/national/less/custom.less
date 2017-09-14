@@ -5,6 +5,7 @@ body {
   background-image: none !important;
 }
 
+
 .btn-primary {
   text-transform: uppercase;
   padding: 12px;
@@ -22,10 +23,10 @@ header {
 
 header .btn {
   background: @body-bg;
+  margin-top: -3px;
+  letter-spacing: 1px;  
   a {
     color: @brand-primary;
-    font-size: 1.1em;
-    letter-spacing: 1px;
   }
   &:hover {
     background-color: @gray-ultralight;
@@ -53,7 +54,7 @@ h1.content-header {
   background-image: url(../images/customhomebg);
   background-repeat: no-repeat;
   height: 350px; /* Fallback */
-  height: 25vw;
+  height: 30vw;
   display: flex;
   flex-flow: row wrap;
   -ms-flex-align: center;
@@ -63,7 +64,7 @@ h1.content-header {
   
   @media (max-width: @screen-sm-max) {
     height: 300px; /* Fallback */
-    height: 60vw;    
+    height: 50vw;    
   }
 }
 
