@@ -20,6 +20,18 @@ header {
   position: relative;
 }
 
+header .btn {
+  background: @body-bg;
+  a {
+    color: @brand-primary;
+    font-size: 1.1em;
+    letter-spacing: 1px;
+  }
+  &:hover {
+    background-color: @gray-ultralight;
+  }
+}
+
 .finna-main-header {
   background: @body-bg;
 }
@@ -54,6 +66,36 @@ h1.content-header {
     height: 60vw;    
   }
 }
+
+.back-to-search-text {
+  color: @text-color;
+}
+
+#similar-records {
+  .iconlabel {
+    color: @gray-mid-light;
+  }
+  h4 {
+    color: @text-color;
+    font-weight: 400;
+    background: @gray-ultralight;
+    border: 1px solid @gray-lighter !important;
+    margin-bottom: 0;
+  }
+  .list-group {
+    .list-group-item {
+      background: #fff;
+      border-left: 1px solid @gray-lighter;
+      border-right: 1px solid @gray-lighter;
+    }
+    .list-group-item:last-child {
+        border-bottom: 1px solid @gray-lighter;
+      }
+    }
+  }
+
+
+
 .floating-feedback-btn {
   top: @navbar-height;
 }
