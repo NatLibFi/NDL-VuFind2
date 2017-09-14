@@ -2,6 +2,38 @@
 <?
   $primaryRoles = ['drt', 'aus'];
 
+  $openUrl = $this->openUrl($this->driver, 'record');
+  $openUrlActive = $openUrl->isActive();
+  // Account for replace_other_urls setting
+  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+  $onlineURLs = $this->driver->getOnlineURLs();
+  $mergedData = $this->driver->tryMethod('getMergedRecordData');
+
+  if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])){
+    $renderedURLs = [];
+    if (!empty($urls)){
+      $videoUrls = [];
+      $otherUrls = [];
+      foreach ($urls as $url) {
+        $renderedURLs[] = $url['url'];
+        $desc = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']);
+        $icon = 'fa-external-link';
+        if (!empty($url['desc'])) {
+            $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
+            if (isset($map[$url['desc']])) {
+                $icon = $map[$url['desc']];
+            }
+        }
+        if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
+          array_push($videoUrls, $url);
+        }
+        else {
+          array_push($otherUrls, $url);
+        }
+      }
+    }
+  }
+
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
   $images = $img->getAllImagesAsCoverLinks(
@@ -13,56 +45,23 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?> <?= !empty($images[0]['urls']['medium']) ? 'image' : ''?>">
 
-      <?
-      $openUrl = $this->openUrl($this->driver, 'record');
-      $openUrlActive = $openUrl->isActive();
-      // Account for replace_other_urls setting
-      $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-      ?>
-      <? $onlineURLs = $this->driver->getOnlineURLs(); $mergedData = $this->driver->tryMethod('getMergedRecordData'); ?>
-      <? if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-        <div class="recordURLs local-available-online-record">
-          <div class="truncate-field">
-              <? $renderedURLs = []; ?>
-              <? if (!empty($urls)): ?>
-                  <? foreach ($urls as $url): ?>
-                      <?
-                      $renderedURLs[] = $url['url'];
-                      $desc = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']);
-                      $icon = 'fa-external-link';
-                      if (!empty($url['desc'])) {
-                          $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
-                          if (isset($map[$url['desc']])) {
-                              $icon = $map[$url['desc']];
-                          }
-                      }
-                      ?>
-                      <? if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($current['url']) == 'data-embed-iframe'): ?>
-                      <div class="fulltextField">
-                        <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
-                            <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
-                            <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
-                            <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-                        >
-                          <button class="btn btn-primary"><i class="fa fa-play"></i></button> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
-                        </a>
-                      </div>
-                    <?endif; ?>
-                  <? endforeach; ?>
-              <? endif; ?>
-              <? if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-                  <? foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
-                      <? if (in_array($url['url'], $renderedURLs)) { continue; } ?>
-                  <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
-                      <? if ($url['source']): ?>
-                        <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
-                      <? endif; ?>
+      <div class="recordURLs local-available-online-record">
+        <div class="truncate-field">
+          <? if (!empty($videoUrls)): ?>
+              <? foreach ($videoUrls as $url): ?>
+                  <div class="fulltextField">
+                    <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
+                        <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
+                        <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
+                        <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
+                    >
+                      <button class="btn btn-primary"><i class="fa fa-play"></i></button> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
+                    </a>
                   </div>
-                  <? endforeach; ?>
-              <? endif; ?>
-          </div>
+              <? endforeach; ?>
+          <? endif; ?>
         </div>
-      <? endif; ?>
+      </div>
 
     <div class="image-information">
       <div class="cover-wrapper">
@@ -126,37 +125,18 @@
         </div>
       <? endif; ?>
 
-      <?
-        $formats = $this->driver->getFormats();
-      ?>
-      <? if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-        <div class="recordURLs local-available-online-record">
-          <div class="truncate-field">
-            <? $renderedURLs = []; ?>
-            <? if (!empty($urls)): ?>
-              <? foreach ($urls as $url): ?>
-                <?
-                  $renderedURLs[] = $url['url'];
-                  $desc = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']);
-                  $icon = 'fa-external-link';
-                  if (!empty($url['desc'])) {
-                    $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
-                    if (isset($map[$url['desc']])) {
-                      $icon = $map[$url['desc']];
-                    }
-                  }
-                ?>
-                <? if(empty($url['videoSources']) && empty($url['embed']) && $url['embed'] == 'video' && $this->recordLink()->getEmbeddedVideo($current['url']) != 'data-embed-iframe'): ?>
-                  <div class="fulltextField">
-                    <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
-                      <? if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<? endif; ?>
-                    >
-                      <i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
-                    </a>
-                  </div>
-                <? endif; ?>
-              <? endforeach; ?>
-            <? endif; ?>
+      <div class="recordURLs local-available-online-record">
+        <div class="truncate-field">
+          <? if($otherUrls): ?>
+            <? foreach ($otherUrls as $url): ?>
+                <div class="fulltextField">
+                  <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
+                    <? if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<? endif; ?>
+                  >
+                    <i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
+                  </a>
+                </div>
+            <? endforeach; ?>
             <? if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
               <? foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
                 <? if (in_array($url['url'], $renderedURLs)) { continue; } ?>
@@ -167,12 +147,13 @@
                 </div>
               <? endforeach; ?>
             <? endif; ?>
-          </div>
-        <? if ($openUrlActive): ?>
-          <?=$openUrl->renderTemplate()?>
-        <? endif; ?>
+          <? endif; ?>
+
+          <? if ($openUrlActive): ?>
+            <?=$openUrl->renderTemplate()?>
+          <? endif; ?>
         </div>
-      <? endif; ?>
+      </div>
 
       <div class="record-authors" property="author">
         <? $formats = $this->driver->getFormats(); if (!empty($formats)): ?>
