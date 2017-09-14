@@ -14,6 +14,10 @@ body {
   color: @text-color;
 }
 
+.navbar-nav>li>.dropdown-menu {
+  margin-top: -10px;
+}
+
 header {
   box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
   z-index: 30;
@@ -32,19 +36,22 @@ header .btn {
   }
 }
 
-.finna-main-header {
+.main.template-dir-myresearch .finna-main-header, .main.template-dir-search.template-name-history .finna-main-header, .main.template-dir-librarycards .finna-main-header {
   background: @body-bg;
 }
 
-h1.content-header {
+h1, h1.content-header {
   font-size: @content-font-size-base !important;
   text-transform: uppercase;
   width: 100%;
   letter-spacing: 2px;
-  border-bottom: 1px solid @gray-lighter;
   padding-top:1.5em;
   padding-bottom: 0.5em;
+  &.content-header {
+    border-bottom: 1px solid @gray-lighter;    
+  }
 }
+
 
 // Searchbox
 .template-name-home .searchContent {
@@ -71,6 +78,19 @@ h1.content-header {
   color: @text-color;
 }
 
+// Content Navigation Menu
+
+.content-navigation-menu {
+   h2 {
+    color: @text-color !important;
+    font-size: @content-headings-font-size-h4 !important; // Quick Fix!    
+    font-weight: 400;
+    background-color: @gray-ultralight !important;
+    border: 1px solid @gray-lighter !important;
+  }
+}
+
+// Similar records
 #similar-records {
   .iconlabel {
     color: @gray-mid-light;
@@ -78,7 +98,7 @@ h1.content-header {
   h4 {
     color: @text-color;
     font-weight: 400;
-    background: @gray-ultralight;
+    background-color: @gray-ultralight;
     border: 1px solid @gray-lighter !important;
     margin-bottom: 0;
   }

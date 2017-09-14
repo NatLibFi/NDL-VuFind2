@@ -11,24 +11,25 @@
 // @brand-warning: #fff48c;
 // @brand-danger: #ff461e;
 // @brand-info: #b2e3ea;
-// @logo-color: #fff;
+@logo-color: #fff;
 
 //== Custom styling
 //== Background
-//@background-image-url: url('../images/customhomebg');
-//@background-image-attachment: scroll;  // set to fixed or scroll (fixed doesnt scoll along with page)
+@background-image-url: url('../images/customhomebg');
+@background-color: @body-bg;
+@background-image-attachment: scroll;  // set to fixed or scroll (fixed doesnt scoll along with page)
 //@background-start-color: rgba(1,1,1,0.01); // gradient color for background image
 //@background-end-color:  rgba(1,1,1,0.3); // gradient color for background image
 //@background-start-percent: 15%;
 //@background-end-percent: 100%;
 
-//@header-height: 43px;
-//@navbar-logo-height: 35px;
+@header-height: 64px;
+@navbar-logo-height: 40px;
 //@logo-height: 66px;
 //@logo-separator-color: #fff; // Color of hr line under main logo
-//@header-background-color: rgba(1,1,1,0.8); // Color of main navigation bar top
-//@footer-background: @gray;
-//@footer-text-color: @body-bg;
+@header-background-color: @body-bg; // Color of main navigation bar top
+@footer-background: @gray-ultralight;
+@footer-text-color: @text-color;
 //@finna-main-header-background: @brand-secondary; // Color of page header background and search results tabs
 //@finna-searchbox-link-color: #fff; // style searchbox link text color contrast with background
 //@finna-searchbox-link-background: rgba(100,100,100,0.3); // style searchbox links (advanced search etc.) background contrast with background
@@ -99,9 +100,9 @@
 // ## Settings for some of the most global styles.
 
 @body-bg: #fff;
-//@text-color: @gray;
+@text-color: @gray;
 @link-color: #0070d2;; // defines all link color, also for linked icons
-//@link-hover-color: @link-color;
+@link-hover-color: @brand-primary;
 //@link-hover-decoration: #fff;
 // @component-active-bg: @brand-primary;
 
@@ -112,7 +113,7 @@
 
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,400i,600,700&subset=cyrillic-ext');
 @font-family-sans-serif: 'Open Sans', sans-serif;
-//@font-family-serif: PT Serif;
+@font-family-serif: PT Serif;
 //@font-family-monospace: Monaco;
 //@font-family-base: @font-family-sans-serif;
 //@headings-font-family: @font-family-base;
@@ -131,12 +132,11 @@
 @content-headings-font-size-h4: @font-size-h4;
 @content-headings-font-size-h5: @font-size-h5;
 @content-headings-font-size-h6: @font-size-h6;
-@headings-font-weight: 700;
 @content-headings-line-height: @headings-line-height;
 @content-headings-color: @gray-dark;
 @content-heading-background: @brand-secondary;
 
-@content-font-size-base: 14px;
+@content-font-size-base: 15px;
 //@content-line-height-base: 1.6;
 @headings-font-weight: 600;
 //@content-headings-line-height: @headings-line-height;
