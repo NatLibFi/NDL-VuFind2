@@ -73,6 +73,7 @@ header .btn {
 h1, h1.content-header {
   font-size: @content-font-size-base !important;
   text-transform: uppercase;
+  font-weight: 600;
   width: 100%;
   letter-spacing: 2px;
   padding-top:1.5em;
@@ -156,4 +157,19 @@ h1, h1.content-header {
   text-transform: none;
   padding: 6px 12px;
   border: none !important;
+}
+
+.carousel h2.carousel-header  {
+  font-size: @content-font-size-base !important;
+  font-weight: 600;
+  background: none !important;
+  color: @text-color;
+  text-transform: uppercase;
+  width: 100%;
+  letter-spacing: 2px;
+  padding-top:1.5em;
+  padding-bottom: 0.5em;
+  &.content-header {
+    border-bottom: 1px solid @gray-lighter; 
+  }
 }

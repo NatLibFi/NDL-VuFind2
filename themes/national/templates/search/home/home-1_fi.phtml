@@ -1,6 +1,12 @@
 <!-- START of: finna - search/home/home-1.phtml -->
+<div class="container">
+<?= $this->feed("carousel-finna"); ?></div>
+</div>
+<div class="container">
 <? if ($template = $this->content()->findTemplateForLng('search/home/home-left')): ?>
 <div class="left-column-content">
+<div>
+
   <?=$this->render($template)?>
 </div>
 <? endif; ?>
@@ -9,4 +15,5 @@
   <?=$this->render($template)?>
 </div>
 <? endif; ?>
+</div>
 <!-- END of: finna - search/home/home-1.phtml -->
