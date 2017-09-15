@@ -85,20 +85,23 @@
       </ul>
       <? endif; ?>
 
+      <ul role="menubar" class="nav navbar-nav lang">
+        <? if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+            <? $i = 1;?>
+            <? foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+                <? if ($this->layout()->userLang != $langCode): ?>
+              <li role="menuitem" class="lang">
+                <a class="preserve-anchor" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+              </li>
+                    <? $i++; ?>
+                <? endif ?>
+            <? endforeach; ?>
+        <? endif; ?>
+      </ul>
+
     </div>
 
     <ul role="menu" class="nav navbar-nav nav-absolute">
-      <? if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
-        <? $i = 1;?>
-        <? foreach ($this->layout()->allLangs as $langCode => $langName): ?>
-        <? if ($this->layout()->userLang != $langCode): ?>
-          <li role="menuitem" class="lang">
-            <a class="preserve-anchor" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
-          </li>
-        <? $i++; ?>
-        <? endif ?>
-        <? endforeach; ?>
-      <? endif; ?>
     <? //hide login/logout if unavailable ?>
     <? if (is_object($account) && $account->loginEnabled()): ?>
       <? $user = $account->isLoggedIn(); ?>
