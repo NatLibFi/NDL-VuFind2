@@ -504,7 +504,7 @@
     position: fixed;
     right: 0;
     left: 0;
-    z-index: 1030;
+    z-index: 100;
     top: 0;
     border-width: 0 0 1px;
     background-color: @body-bg;
@@ -517,6 +517,7 @@
   }
   .navbar-collapse.in {
     box-shadow: 0 3px 5px @gray;
+    max-height: ~"calc(100vh - "@navbar-height~")";
   }
   .navbar-header {
     padding-left: 15px;
