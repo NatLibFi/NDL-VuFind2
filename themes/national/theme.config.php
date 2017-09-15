@@ -2,8 +2,8 @@
 return array(
     'extends' => 'finna',
     'css' => array(
-        'custom.css',
-        'settings.css'
+        'settings.css',
+        'custom.css'        
     ),
     'js' => array(
     )
