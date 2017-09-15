@@ -127,7 +127,7 @@
 
       <div class="recordURLs local-available-online-record">
         <div class="truncate-field">
-          <? if($otherUrls): ?>
+          <? if(!empty($otherUrls)): ?>
             <? foreach ($otherUrls as $url): ?>
                 <div class="fulltextField">
                   <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
