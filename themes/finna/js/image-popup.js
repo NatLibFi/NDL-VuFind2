@@ -56,7 +56,7 @@ finna.imagePopup = (function(finna) {
                 img.css('opacity', '');
             });
             img.attr('src', $(this).attr('href'));
-            var textContainers = $(this).closest('.record-image-container').find('.image-text-container');
+            var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
             textContainers.addClass('hidden');
             textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
             e.preventDefault();

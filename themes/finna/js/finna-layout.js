@@ -483,7 +483,7 @@ finna.layout = (function() {
                     $(this).parent().attr({'href': href.split('#')[0], 'title': ''});
                     $(this).parents('.grid').addClass('no-image');
                     $('.rating-stars').addClass('hidden-xs');
-                    $(this).parents('.record-image-container').find('.image-text-container').addClass('hidden');
+                    $(this).parents('.record-image-container').find('.image-details-container').addClass('hidden');
                 }
             }).each(function() {
                 if (this.complete) {
