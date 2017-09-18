@@ -4,19 +4,34 @@
   <nav class="navbar">
     <div class="container">
       <ul class="nav navbar-nav">
-      <li><a href="#">Page 1</a></li>
-      <li><a href="#">Page 2</a></li>
-      <li><a href="#">Page 3</a></li>
+      <li class="browsebar-title"><?=$this->translate('Selaa');?></li>
+      <li><a class="iconlabel format-1imageimage" href="Search/Results?lookfor=&amp;type=AllFields&amp;filter%5B%5D=~format%3A%220%2FImage%2F%22&amp;filter%5B%5D=online_boolean%3A1"><?=$this->transEsc("format_Image_plural")?></a></li>
+      <li><a class="iconlabel format-1videovideo" href="Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FVideo%2F%22"><?=$this->transEsc("format_Video_plural")?></a></li>
+      <li><a href="Search/Results?sort=author&limit=50&view=grid&filter%5B%5D=online_boolean%3A%221%22&filter%5B%5D=~usage_rights_str_mv%3A%22usage_B%22&type=AllFields"><?=$this->translate('Vapaasti hyödynttäviä aineistoja');?></li>
+      <li><a href="Search/StreetSearch?go=1">Finna Street</a></li>
       <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><?=$this->translate('Muita aineistoja');?> <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a href="#">Action</a></li>
-          <li><a href="#">Another action</a></li>
-          <li><a href="#">Something else here</a></li>
-          <li role="separator" class="divider"></li>
-          <li class="dropdown-header">Nav header</li>
-          <li><a href="#">Separated link</a></li>
-          <li><a href="#">One more separated link</a></li>
+          <li><a class="iconlabel format-1journalarticle" href="Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FJournal%2F%22"><?=$this->transEsc("format_Journal_plural")?></a></li>
+          <li><a class="iconlabel format-1physicalobjectother" href="Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FPhysicalObject%2F%22&amp;filter%5B%5D=online_boolean%3A1"><?=$this->transEsc("format_PhysicalObject_plural")?></a></li>
+          <li><a class="iconlabel format-1document" href="Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FDocument%2F%22"><?=$this->transEsc("format_Document_plural")?></a></li>
+          <li><a class="iconlabel format-1soundrecord" href="Search/Results?type=AllFields&amp;filter%5B0%5D=~format%3A%220%2FSound%2F%22"><?=$this->transEsc("format_Sound/SoundRecording_plural")?></a></li>
+          <li><a class="iconlabel format-1bookbook" href="Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FBook%2F%22"><?=$this->transEsc("format_Book/Book_plural")?></a></li>
+          <li><a class="iconlabel format-manuscript" href="Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FThesis%2F%22&amp;filter%5B%5D=online_boolean%3A1"><?=$this->transEsc("format_Thesis_plural")?></a></li>
+          <li><a class="iconlabel format-1journalarticle" href="Search/Results?type=AllFields&amp;view=grid&amp;filter%5B%5D=online_boolean%3A1&amp;filter%5B%5D=~format%3A%220%2FWorkOfArt%2F%22"><?=$this->transEsc("format_WorkOfArt_plural")?></a></li>
+          <li><a class="iconlabel format-1mapmap" href="Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FMap%2F%22"><?=$this->transEsc("format_Map_plural")?></a></li>
+          <li><a class="iconlabel format-0note" href="Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FMusicalScore%2F%22"><?=$this->transEsc("format_MusicalScore_plural")?></a></li>
+          <li><a class="iconlabel format-1placeplace" href="Search/Results?type=AllFields&amp;limit=50&amp;filter%5B%5D=~format%3A%220%2FPlace%2F%22&amp;filter%5B%5D=online_boolean%3A%221%22"><?=$this->transEsc("format_Place_plural")?></a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Uutta Finnassa <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a href=""><?=$this->translate('Viimeisin vko');?></a></li>
+          <li><a href="#"><?=$this->translate('Viimeisin kk');?></a></li>
+          <li><a href="#"><?=$this->translate('Viimeiset 3 kk');?></a></li>
+          <li><a href="#"><?=$this->translate('Viimeiset 6 kk');?></a></li>
+          <li><a href="#"><?=$this->translate('Viimeiset 12 kk');?></a></li>
         </ul>
       </li>
     </ul>
