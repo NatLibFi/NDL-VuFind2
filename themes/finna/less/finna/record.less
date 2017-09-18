@@ -3,7 +3,9 @@
   .media-right {
     width: 25%;
     &.image {
-      width: 50%;
+      @media(min-width: @screen-sm) {
+        width: 50%;
+      }
       .record-image-container {
         text-align: center;
         .image-popup-trigger {
