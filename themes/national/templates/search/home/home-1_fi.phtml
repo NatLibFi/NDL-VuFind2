@@ -1,19 +1,37 @@
 <!-- START of: finna - search/home/home-1.phtml -->
-<div class="container">
-<?= $this->feed("carousel-finna"); ?></div>
-</div>
-<div class="container">
-<? if ($template = $this->content()->findTemplateForLng('search/home/home-left')): ?>
-<div class="left-column-content">
-<div>
 
-  <?=$this->render($template)?>
+<div class="finna-news">
+  <div class="finna-news-item finna-news-item-1">
+    <div class="finna-news-content">
+      <h4 class="finna-news-category">Uutinen</h4>
+        <a href="#">
+          <h3 class="finna-news-title">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit
+          </h3>
+        </a>
+    </div>
+  </div>
+  <div class="finna-news-item finna-news-item-2">
+    <div class="finna-news-content">
+      <h4 class="finna-news-category">Tapahtuma</h4>
+      <a href="#">
+        <h3 class="finna-news-title">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit
+        </h3>
+      </a>
+    </div>
+  </div>
+
+  <div class="finna-campaign-item finna-campaign-1">  
+    <h2 class="finna-campaign-title">Finna Street</h2>
+    <div class="finna-campaign-content">
+      <p>Löydä historiallisia kuvia sieltä missä olet!</p>
+      <a class="btn btn-primary" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_button')?></span></a>
+    </div>
+  </div>
 </div>
-<? endif; ?>
-<? if ($template = $this->content()->findTemplateForLng('search/home/home-right')): ?>
-<div class="right-column-content">
-  <?=$this->render($template)?>
-</div>
-<? endif; ?>
-</div>
+
+
+<?= $this->feed("carousel-finna"); ?></div>
+
 <!-- END of: finna - search/home/home-1.phtml -->

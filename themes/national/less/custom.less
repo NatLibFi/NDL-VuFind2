@@ -4,6 +4,8 @@
 body {
   background-image: none !important;
 }
+
+
 .introduction-text {
   background-color: fadeout(@brand-primary, 5%);
   position: relative;
@@ -22,10 +24,10 @@ body {
   :before {
       content: "";
       position: absolute;
-      bottom: -8px;
+      bottom: -12px;
       margin: auto;
       left:0;
-      border-width: 0 0 8px 8px;
+      border-width: 0 0 12px 12px;
       border-style: solid;
       border-color: transparent fadeout(@brand-primary, 5%);
   }
@@ -38,6 +40,9 @@ body {
 .btn-primary {
   text-transform: uppercase;
   padding: 12px;
+  font-size: @content-font-size-base !important;
+  letter-spacing: 1px;
+  font-weight: 600;  
 }
 
 .searchContent [class^="tooltip-"]>i {
@@ -46,6 +51,13 @@ body {
 
 .navbar-nav>li>.dropdown-menu {
   margin-top: -10px;
+}
+
+.navbar-nav>li.lang>a {
+  text-transform: uppercase;
+  font-size: @content-font-size-base !important;
+  letter-spacing: 1px;
+  font-weight: 600;
 }
 
 header {
@@ -57,7 +69,6 @@ header {
 header .btn {
   background: @body-bg;
   margin-top: -3px;
-  letter-spacing: 1px;  
   a {
     color: @brand-primary;
   }
@@ -70,7 +81,7 @@ header .btn {
   background: @body-bg;
 }
 
-h1, h1.content-header {
+h1.content-header {
   font-size: @content-font-size-base !important;
   text-transform: uppercase;
   font-weight: 600;
@@ -83,25 +94,21 @@ h1, h1.content-header {
   }
 }
 
-
 // Searchbox
 .template-name-home .searchContent {
   background-size: cover;
   background-position: center center;
   background-image: url(../images/customhomebg);
   background-repeat: no-repeat;
-  height: 350px; /* Fallback */
-  height: 30vw;
+  height: 500px;
   display: flex;
   flex-flow: row wrap;
   -ms-flex-align: center;
 	-webkit-align-items: center;
 	-webkit-box-align: center;
   align-items: center;
-  
-  @media (max-width: @screen-sm-max) {
-    height: 300px; /* Fallback */
-    height: 50vw;    
+  @media (max-width: @screen-xs-max) {
+    height: 80vw;    
   }
 }
 
@@ -160,16 +167,110 @@ h1, h1.content-header {
 }
 
 .carousel h2.carousel-header  {
-  font-size: @content-font-size-base !important;
+  font-size: @content-font-size-base;
   font-weight: 600;
   background: none !important;
   color: @text-color;
   text-transform: uppercase;
   width: 100%;
-  letter-spacing: 2px;
-  padding-top:1.5em;
-  padding-bottom: 0.5em;
+  letter-spacing: 1px;
+  margin-top: eem;
+  padding:0;
   &.content-header {
     border-bottom: 1px solid @gray-lighter; 
   }
+}
+
+.carousel .carousel-text p {
+  font-size: 0.8em;
+}
+
+.carousel .slick-slide.slick-active:hover .carousel-text {
+  height: 100%;
+}
+
+// Finna News
+
+.finna-news {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2em;  
+  margin-bottom: 1em;
+}
+
+.finna-news-item, .finna-campaign-item {
+  width: 32%;
+  height: 285px;
+  position: relative;
+}
+
+.finna-news-content {
+  background: rgba(255,255,255,0.8);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 10px;
+  height: 50%;
+}
+
+.finna-news-category {
+  font-size: @content-font-size-base;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.finna-news-title {
+  color: @brand-primary;
+  font-weight: 400;
+  margin:0;
+}
+
+@media (max-width: @screen-xs-max) {
+  .finna-news {
+    display: block;
+    .finna-news-item, .finna-campaign-item {
+      width: 400px;
+      margin: 1em auto 2em auto;
+    }
+  }
+}
+
+.finna-campaign-title {
+  font-size:3em;
+  text-align: center;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 2px 2px 4px #000000;
+}
+
+.finna-campaign-content {
+  background: rgba(1,1,1,0.6);
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 20px;
+  height: 50%;
+  width: 100%;
+  text-align: center;
+  p {
+    color: #fff;
+  }
+}
+
+.finna-news-item-1 {
+  background-image: url(../../../themes/national/images/carousel-images/km-veistos.jpg);
+  background-size: cover;
+  
+}
+
+.finna-news-item-2 {
+  background-image: url(../../../themes/national/images/carousel-images/ansaikonen.jpg);
+  background-size: cover;  
+}
+
+.finna-campaign-1 {
+  background-image: url(../../../themes/national/images/street-kuva.jpg);
+  background-position: center bottom;
+  background-size: cover;
 }

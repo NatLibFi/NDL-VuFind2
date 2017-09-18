@@ -334,6 +334,7 @@ JS;
             </div>
           </nav>
         <? endif; ?>
+        
         <? if (!empty($this->layout()->searchbox) && $this->layout()->searchbox !== false): ?>
         <div>
           <nav class="nav searchbox hidden-print">
@@ -342,7 +343,11 @@ JS;
         </div>
         <? endif; ?>
       </div>
+      <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
+      <?=$this->render('search/browsebar.phtml')?>
+      <? endif; ?>
     </section>
+    
     <? // TODO: get rid of template-dir-* and template-name-* here ?>
     <section role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
       <? if (!empty($this->layout()->finnaMainHeader)): ?>
