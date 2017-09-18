@@ -88,6 +88,14 @@
     }
     padding-left: 5px;
   }
+  .username {
+    max-width: 150px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: bottom;
+  }
 }
 
 // content-navigation-menu
@@ -521,5 +529,20 @@
   }
   .navbar-header {
     padding-left: 15px;
+  }
+}
+
+@media(min-width: @grid-float-breakpoint) {
+  .finna-navbar {
+    display: flex;
+    .nav.nav-absolute{
+      position: relative;
+    }
+    .navbar-collapse {
+      flex: 1;
+    }
+    .navbar-nav.lang {
+      float: right;
+    }
   }
 }

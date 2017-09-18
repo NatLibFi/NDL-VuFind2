@@ -45,7 +45,7 @@ finna.imagePopup = (function(finna) {
         });
 
         // Roll-over thumbnail images: update medium size record image and indices.
-        $(".image-popup-navi").mouseenter(function() {
+        $(".image-popup-navi").click(function(e) {
             var trigger = $(this).closest('.recordcover-holder').find('.image-popup-trigger');
             trigger.data('ind', $(this).data('ind'));
             trigger.data('thumbInd', $(this).data('thumbInd'));
@@ -56,9 +56,11 @@ finna.imagePopup = (function(finna) {
                 img.css('opacity', '');
             });
             img.attr('src', $(this).attr('href'));
-            var textContainers = $(this).closest('.record-image-container').find('.image-text-container');
+            var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
             textContainers.addClass('hidden');
             textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
+            e.preventDefault();
+            initImagePopup();
         });
 
         // Open image-popup from medium size record image.
@@ -128,32 +130,37 @@ finna.imagePopup = (function(finna) {
         ).toArray();
 
         // Init image-popup components.
-        $('.image-popup').each(function() {
+        initImagePopup();
+
+    };
+
+    var initImagePopup = function () {
+        $('.image-popup-trigger').each(function () {
             $(this).magnificPopup({
                 items: urls,
                 index: $(this).data('ind'),
                 type: 'ajax',
-	            tLoading: '',
-	            tClose: VuFind.translate('close'),
-	            preloader: true,
-	            preload: [1,3],
-	            removalDelay: 200,
+                tLoading: '',
+                tClose: VuFind.translate('close'),
+                preloader: true,
+                preload: [1, 3],
+                removalDelay: 200,
                 ajax: {
                     cursor: ''
                 },
 
                 callbacks: {
-                    ajaxContentAdded: function() {
+                    ajaxContentAdded: function () {
                         var popup = $(".imagepopup-holder");
                         var type = popup.data("type");
                         var id = popup.data("id");
                         var recordIndex = $.magnificPopup.instance.currItem.data.recordInd;
                         VuFind.lightbox.bind('.imagepopup-holder');
-                        $(".imagepopup-holder .image img").one("load", function() {
+                        $(".imagepopup-holder .image img").one("load", function () {
                             $(".imagepopup-holder .image").addClass('loaded');
                             initDimensions();
-                        }).each(function() {
-                            if(this.complete) {
+                        }).each(function () {
+                            if (this.complete) {
                                 $(this).load();
                             }
                         });
@@ -162,17 +169,17 @@ finna.imagePopup = (function(finna) {
                         if (finna.layout.isTouchDevice()) {
                             $(".mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left").addClass('touch-device');
 
-                            $(".mfp-container").swipe( {
-                              allowPageScroll:"vertical",
-                              //Generic swipe handler for all directions
-                              swipeRight:function(event, phase, direction, distance, duration) {
-                                $(".mfp-container .mfp-arrow-left").click();
-                              },
-                              swipeLeft:function(event, direction, distance, duration) {
-                                $(".mfp-container .mfp-arrow-right").click();
-                              },
-                            threshold: 75,
-                            cancelThreshold:20,
+                            $(".mfp-container").swipe({
+                                allowPageScroll: "vertical",
+                                //Generic swipe handler for all directions
+                                swipeRight: function (event, phase, direction, distance, duration) {
+                                    $(".mfp-container .mfp-arrow-left").click();
+                                },
+                                swipeLeft: function (event, direction, distance, duration) {
+                                    $(".mfp-container .mfp-arrow-right").click();
+                                },
+                                threshold: 75,
+                                cancelThreshold: 20,
                             });
                         }
 
@@ -186,7 +193,7 @@ finna.imagePopup = (function(finna) {
                         }
 
                         // Image copyright information
-                        $(".imagepopup-holder .image-rights .copyright-link a").on("click", function() {
+                        $(".imagepopup-holder .image-rights .copyright-link a").on("click", function () {
                             var mode = $(this).data("mode") == 1;
 
                             var moreLink = $(".imagepopup-holder .image-rights .more-link");
@@ -202,9 +209,9 @@ finna.imagePopup = (function(finna) {
 
                         // load feedback modal
                         if ($(".imagepopup-holder #feedback-record")[0] || $(".imagepopup-holder .save-record")[0]) {
-                          $(".imagepopup-holder #feedback-record, .imagepopup-holder .save-record").on("click", function(e) {
-                            $.magnificPopup.close();
-                          });
+                            $(".imagepopup-holder #feedback-record, .imagepopup-holder .save-record").on("click", function (e) {
+                                $.magnificPopup.close();
+                            });
                         }
 
                         // Load book description
@@ -212,17 +219,17 @@ finna.imagePopup = (function(finna) {
                         if (type == 'marc') {
                             var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
                             $.getJSON(url)
-                            .done(function(response) {
-                                if (response.data.length > 0) {
-                                    summaryHolder.find("> div p").html(response.data);
-                                    finna.layout.initTruncate(summaryHolder);
+                                .done(function (response) {
+                                    if (response.data.length > 0) {
+                                        summaryHolder.find("> div p").html(response.data);
+                                        finna.layout.initTruncate(summaryHolder);
+                                        summaryHolder.removeClass('loading');
+                                    }
+                                })
+                                .fail(function (response, textStatus) {
                                     summaryHolder.removeClass('loading');
-                                }
-                            })
-                            .fail(function(response, textStatus) {
-                                summaryHolder.removeClass('loading');
-                                console.log(response, textStatus);
-                            });
+                                    console.log(response, textStatus);
+                                });
                         } else {
                             finna.layout.initTruncate(summaryHolder);
                             summaryHolder.removeClass('loading');
@@ -235,7 +242,7 @@ finna.imagePopup = (function(finna) {
 
                 gallery: {
                     enabled: true,
-                    preload: [0,2],
+                    preload: [0, 2],
                     navigateByImgClick: true,
                     arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
                     tPrev: 'trPrev',

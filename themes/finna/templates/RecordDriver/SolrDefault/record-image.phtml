@@ -28,7 +28,16 @@
     <? $ind = -1; ?>
     <? foreach ($images as $image): ?>
       <? ++$ind; ?>
-      <div class="image-text-container<?=$ind > 0 ? ' hidden' : '' ?> text-left" data-img-index="<?=$ind ?>">
+      <div class="image-details-container<?=$ind > 0 ? ' hidden' : '' ?> text-left" data-img-index="<?=$ind ?>">
+        <div class="image-link">
+            <?
+            $recordImage = $this->recordImage($this->record($this->driver));
+            $originalImage = $recordImage->getMasterImage($ind);
+            $formats = $this->driver->tryMethod('getFormats');
+            $translatedFormat = $this->transEsc(end($formats));
+            ?>
+          <div class="open-link"><a target="_blank" href="<?=$originalImage ?>" download="<?=$originalImage ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Show image in new window') ?></a> <span class="image-dimensions"></span></div>
+        </div>
         <? if (!empty($image['description'])): ?>
           <div class="image-description">
             <?=$this->escapeHtml($image['description']) ?>
