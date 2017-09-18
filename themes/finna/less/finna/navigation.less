@@ -531,3 +531,18 @@
     padding-left: 15px;
   }
 }
+
+@media(min-width: @grid-float-breakpoint) {
+  .finna-navbar {
+    display: flex;
+    .nav.nav-absolute{
+      position: relative;
+    }
+    .navbar-collapse {
+      flex: 1;
+    }
+    .navbar-nav.lang {
+      float: right;
+    }
+  }
+}
