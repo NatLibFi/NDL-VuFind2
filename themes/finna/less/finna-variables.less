@@ -6,24 +6,24 @@
 //== Colors
 //
 //## Gray and brand colors for use across Bootstrap.
-@gray:                   #464646;
+@gray: #2b2b2b;
 
 @gray-darker:            darken(@gray, 40%);
 @gray-dark:              darken(@gray, 10%);
 @gray-light:             lighten(@gray, 18%);
 @gray-mid-light:         lighten(@gray, 40%);
-@gray-lighter:           lighten(@gray, 55%);
-@gray-ultralight:        lighten(@gray, 65%);
+@gray-lighter:           lighten(@gray, 65%);
+@gray-ultralight:        lighten(@gray, 80%);
 
 // Brand Colors
-@brand-primary: #00a3b5;
-@brand-secondary: #B3E3E9;
-@brand-third: #d8f4ed;
-@brand-fourth: #ebd4f0;
+@brand-primary: #81358a;
+@brand-secondary: #e5007e;
+@brand-third: @gray-ultralight;
+@brand-fourth: @gray-ultralight;
 @brand-success: #00b270;
 @brand-warning: #fff48c;
 @brand-danger: #ff461e;
-@brand-info: #b2e3ea;
+@brand-info: #81358a;
 @logo-color: #fff;
 
 //== Custom Finna styling
@@ -54,6 +54,8 @@
 @record-title-font-size: 1.7em;
 @main-tabs-background-color: @body-bg;
 @main-tabs-link-color: @text-color;
+@main-tabs-background-color: #fff;
+
 
 //== Finna custom tooltip
 @finna-tooltip-opacity: 0.7;
@@ -108,7 +110,7 @@
 @list-feed-header-color: @gray;
 
 //== Myreresearch custom styles
-@myresearch-header-background: #b0e9db;
+@myresearch-header-background:  #d9edf7;
 @myresearch-tabs-color: @gray;
 
 //== Scaffolding
@@ -117,7 +119,7 @@
 
 @body-bg: #fff;
 @text-color: @gray;
-@link-color: @brand-primary; // defines all link color, also for linked icons
+@link-color: #0070d2;; // defines all link color, also for linked icons
 @link-hover-color: @link-color;
 @link-hover-decoration: #fff;
 @padding-base-vertical: 6px;
@@ -135,11 +137,12 @@
 //
 //## Font, line-height, and color for body text, headings, and more.
 
-@font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,600,700&subset=cyrillic');
+@font-family-sans-serif: 'Source Sans Pro',-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 @font-family-serif: PT Serif;
 @font-family-monospace: Monaco;
 @font-family-base: @font-family-sans-serif;
-@font-size-base: 13px;
+@font-size-base: 15px;
 @font-size-icon-small: 14px;
 @font-size-icon-large: 1.5em;
 @font-size-large: ceil((@font-size-base * 1.25));
@@ -252,7 +255,6 @@
 @dropdown-header-color: @gray-light;
 @dropdown-caret-color: #000;
 @dropdown-fallback-border: none;
-
 
 //-- Z-index master list
 //
