@@ -32,10 +32,27 @@
     }
   }
 
+  .open-link {
+    a {
+      color: @text-color;
+      font-size: 1em;
+      font-weight: 600;
+      text-transform: uppercase;
+    
+      & i {
+        color: lighten(@text-color, 40%);  
+        padding-left: 3px;
+        padding-right: 3px;    
+      }
+    }
+  }
+
   & .nav>li a {
     color: @text-color;
-    font-size: 1.1em;
-    font-weight: 500;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    // Record view
 
     & :hover {
       color: @link-color;
@@ -92,7 +109,6 @@
   background: @body-bg;
   color: @link-color;
   width: 100%;
-  background-color: whitesmoke;
   text-transform: uppercase;
   font-size: .9em;
   &:hover {

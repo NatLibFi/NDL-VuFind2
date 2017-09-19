@@ -1,13 +1,24 @@
 .browsebar {
   width: 100%;
   background-color: fadeout(@gray,10%); 
-  margin-top: auto;  
+  bottom:0;
+  position: absolute; 
+
 }
 
+.browsebar .nav {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.browsebar .navbar .navbar-nav>li>a {
+  @media (max-width: @screen-md-max) {
+    font-size: 0 !important;
+   } 
+}
 .browsebar .nav>li .iconlabel:before {
   vertical-align: inherit;
-  padding-right: 10px;
-  font-size: 1em;
+  font-size: 1em;   
 }
 
 .browsebar .navbar {
@@ -18,10 +29,26 @@
 
 .browsebar .nav>li {
   display: inline-block;
+  line-height: normal;
+
 }
 
 .browsebar .navbar .navbar-nav>li>a {
   color: #fff;
+  padding-right: 8px;
+  padding-left: 0px;
+  font-size: 1em;
+  line-height: 64px;
+}
+
+.browsebar .navbar .navbar-nav>li>a.dropdown-toggle {
+  padding-left: 8px;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.browsebar .nav>li>a:hover, .browsebar .nav>li>a:focus {
+  background-color: @brand-primary;
 }
 
 .browsebar-title {
@@ -29,4 +56,5 @@
   text-transform: uppercase;
   font-size: 0.9em;
   font-weight: 600;
+  padding-right: 8px;
 }

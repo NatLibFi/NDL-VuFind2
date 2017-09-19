@@ -39,7 +39,7 @@ body {
 .btn-primary {
   text-transform: uppercase;
   padding: 12px;
-  font-size: @content-font-size-base !important;
+  font-size: @content-font-size-base;
   letter-spacing: 1px;
   font-weight: 600;  
 }
@@ -81,11 +81,8 @@ header .btn {
 }
 
 h1.content-header {
-  font-size: @content-font-size-base !important;
-  text-transform: uppercase;
-  font-weight: 600;
+  font-size: 1.5em !important;
   width: 100%;
-  letter-spacing: 2px;
   padding-top:1.5em;
   padding-bottom: 0.5em;
   &.content-header {
@@ -100,16 +97,19 @@ h1.content-header {
   background-image: url(../images/customhomebg);
   background-repeat: no-repeat;
   height: 500px;
-  display: flex;
-  flex-flow: row wrap;
-  -ms-flex-align: center;
-	-webkit-align-items: center;
-	-webkit-box-align: center;
-  align-items: center;
+  position: relative;
   @media (max-width: @screen-xs-max) {
     height: 80vw;    
   }
 }
+
+.template-name-home .searchContent>.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+  }
 
 .back-to-search-text {
   color: @text-color;
@@ -151,10 +151,6 @@ h1.content-header {
     }
   }
 
-.floating-feedback-btn {
-  top: @navbar-height;
-}
-
 .adv-search a.btn-link {
   color: @text-color;
 }
@@ -187,6 +183,7 @@ h1.content-header {
 .carousel .slick-slide.slick-active:hover .carousel-text {
   height: 100%;
 }
+
 
 // Finna News
 
@@ -235,6 +232,7 @@ h1.content-header {
   }
 }
 
+
 .finna-campaign-title {
   font-size:3em;
   text-align: center;
@@ -272,4 +270,113 @@ h1.content-header {
   background-image: url(../../../themes/national/images/street-kuva.jpg);
   background-position: center bottom;
   background-size: cover;
+}
+
+// Icons
+
+.fa-sign-in {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  margin-right:4px;
+  margin-bottom: -6px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../images/icons/log-in.svg);
+  mask-image: url(../images/icons/log-in.svg);
+  &:before {
+    display: none;
+  }
+}
+
+
+.caret {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  margin-right: 4px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../images/icons/chevron-down.svg);
+  mask-image: url(../images/icons/chevron-down.svg);
+}
+
+.browsebar .iconlabel.format-1imageimage::before {
+  content:'';    
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+  margin-left: 8px;
+  margin-bottom: -6px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../images/icons/image.svg);
+  mask-image: url(../images/icons/image.svg); 
+}
+
+.browsebar .iconlabel.format-1videovideo::before {
+  content:'';    
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+  margin-left: 8px;
+  margin-bottom: -6px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../images/icons/video.svg);
+  mask-image: url(../images/icons/video.svg); 
+}
+
+.browsebar .iconlabel.cc-license::before {
+  content:'';    
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+  margin-left: 8px;
+  margin-bottom: -6px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../images/icons/cc.svg);
+  mask-image: url(../images/icons/cc.svg); 
+}
+
+.browsebar .iconlabel.finna-street::before {
+  content:'';    
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+  margin-left: 8px;
+  margin-bottom: -6px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../images/icons/map-pin.svg);
+  mask-image: url(../images/icons/map-pin.svg); 
+}
+
+.browsebar .iconlabel.other-records::before {
+  content:'';    
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+  margin-bottom: -6px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../images/icons/box.svg);
+  mask-image: url(../images/icons/box.svg); 
+}
+
+.browsebar .iconlabel.finna-logo::before {
+  content:'';    
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+  margin-bottom: -6px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../images/icons/finna.svg);
+  mask-image: url(../images/icons/finna.svg); 
 }
