@@ -23,6 +23,7 @@
     <? if (!empty($videoUrls)): ?>
       <div class="local-available-online-record recordURLs">
         <div class="truncate-field">
+          <div class="videourl">
           <? foreach ($videoUrls as $url): ?>
             <? if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'): ?>
               <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" target="_blank"
@@ -30,11 +31,12 @@
                   <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
                   <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
               >
-                <button class="btn btn-primary"><i class="fa fa-play"></i></button><?=$this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc']))?>
+                <button class="btn btn-primary"><i class="fa fa-play-circle"></i></button><span><?=$this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc']))?></span>
               </a>
               <br/>
             <? endif; ?>
           <? endforeach; ?>
+          </div>
         </div>
       </div>
     <? endif; ?>
@@ -43,7 +45,7 @@
         <div class="cover-wrapper">
           <? /* Display thumbnail if appropriate: */ ?>
           <? if ($img): ?>
-            <?=$img->render('record', ['small' => ['w' => 50, 'h' => 50], 'large' => ['w' => 1200, 'h' => 1200]]) ?>
+            <?=$img->render('record', ['small' => ['w' => 50, 'h' => 50], 'medium' => ['w' => 1200, 'h' => 1200]]) ?>
           <? endif;?>
           <? /* Display qrcode if appropriate: */ ?>
           <? $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
