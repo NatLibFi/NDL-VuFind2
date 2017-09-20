@@ -1,8 +1,9 @@
 <!-- START of: finna - search/controls/sort.phtml -->
 <? $list = $this->sortList ? $this->sortList : $this->params->getSortList(); if (!empty($list)): ?>
+<div class="sort-option-container">
   <span class="hidden-sm hidden-xs hidden-md button-label"><?=$this->transEsc('Sort')?></span>
   <span class="sr-only hidden-lg hidden-md"><?=$this->transEsc('Sort')?></span>
-<div class="sort-button">
+  <div class="sort-button">
   <div class="dropdown">
     <? foreach ($list as $sortType => $sortData): ?>
       <? if ($sortData['selected']): ?>
@@ -19,6 +20,7 @@
       </li>
     </ul>
     <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEsc("Set")?>" /></noscript>
+  </div>
   </div>
 </div>
 <? endif; ?>
