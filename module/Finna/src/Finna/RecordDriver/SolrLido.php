@@ -447,7 +447,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     if ($appellationValue !== '') {
                         $role = isset($actor->actorInRole->roleActor->term)
                             ? $actor->actorInRole->roleActor->term : '';
-                        if ($role == 'valokuvaaja') {
+                        if ($role == 'valokuvaaja' || 'kuvaaja') {
                             continue;
                         }
                         $actors[] = [
@@ -981,7 +981,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
             ) as $events) {
                 foreach ($events->eventActor as $actor) {
-                    if ($actor->actorInRole->roleActor->term == 'valokuvaaja') {
+                    if ($actor->actorInRole->roleActor->term == 'valokuvaaja'
+                        || $actor->actorInRole->roleActor->term == 'kuvaaja'
+                    ) {
                         return
                             $actor->actorInRole->actor->nameActorSet
                                 ->appellationValue;
