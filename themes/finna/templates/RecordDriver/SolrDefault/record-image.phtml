@@ -5,13 +5,17 @@
 
     <?= $this->partial('RecordDriver/SolrDefault/record-image-navi.phtml', ['images' => $images, 'type' => $type]) ?>
 
-    <? if (!empty($images[0]['urls']['large'])): ?>
+    <? if (!empty($images[0]['urls']['medium']) || !empty($images[0]['urls']['large'])): ?>
     <div class="recordcover-container">
       <a class="image-popup-trigger" href="<?=$this->recordLink()->getUrl($this->driver) ?>#image" title="<?=$this->transEsc('Open Preview')?>">
         <? if (count($images) <= 1): ?>
           <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
         <? endif; ?>
+        <? if (!empty($images[0]['urls']['large']) && $this->layout()->templateDir == 'record'): ?>
         <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['large']);?>"/>
+        <? else: ?>
+        <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['medium']);?>"/>
+        <? endif; ?>
         <? if (isset($images[0]['large'])): ?>
          <i class="fa fa-magnify hidden-print"></i>
          <? endif; ?>
