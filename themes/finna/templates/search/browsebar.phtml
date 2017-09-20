@@ -27,11 +27,11 @@
       <li class="dropdown">
         <a href="#" class="dropdown-toggle iconlabel finna-logo" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Uutta Finnassa <span class="caret"></span></a>
         <ul class="dropdown-menu">
-          <li><a href=""><?=$this->translate('Viimeisin vko');?></a></li>
-          <li><a href="#"><?=$this->translate('Viimeisin kk');?></a></li>
-          <li><a href="#"><?=$this->translate('Viimeiset 3 kk');?></a></li>
-          <li><a href="#"><?=$this->translate('Viimeiset 6 kk');?></a></li>
-          <li><a href="#"><?=$this->translate('Viimeiset 12 kk');?></a></li>
+          <li><a href="Search/Results?limit=0&dfApplied=1&type=AllFields&filter%5B%5D=first_indexed%3A%22%5BNOW-7DAYS%2FDAY+TO+%2A%5D%22"><?=$this->translate('Viimeisin vko');?></a></li>
+          <li><a href="Search/Results?limit=0&dfApplied=1&type=AllFields&filter%5B%5D=first_indexed%3A%22%5BNOW-1MONTHS%2FDAY+TO+%2A%5D%22"><?=$this->translate('Viimeisin kk');?></a></li>
+          <li><a href="Search/Results?limit=0&dfApplied=1&type=AllFields&filter%5B%5D=first_indexed%3A%22%5BNOW-3MONTHS%2FDAY+TO+%2A%5D%22"><?=$this->translate('Viimeiset 3 kk');?></a></li>
+          <li><a href="Search/Results?limit=0&dfApplied=1&type=AllFields&filter%5B%5D=first_indexed%3A%22%5BNOW-6MONTHS%2FDAY+TO+%2A%5D%22"><?=$this->translate('Viimeiset 6 kk');?></a></li>
+          <li><a href="Search/Results?limit=0&dfApplied=1&type=AllFields&filter%5B%5D=first_indexed%3A%22%5BNOW-1YEAR%2FDAY+TO+%2A%5D%22"><?=$this->translate('Viimeiset 12 kk');?></a></li>
         </ul>
       </li>
     </ul>
