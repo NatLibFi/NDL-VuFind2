@@ -268,10 +268,13 @@ finna.imagePopup = (function(finna) {
             var posterUrl = $(this).data('posterUrl');
 
             var mfp = $.magnificPopup.instance;
+            mfp.index = 0;
+            mfp.gallery = {enabled: false};
             mfp.items[0] = {
                 src: "<div class='video-popup'><video id='video' class='video-js vjs-big-play-centered' controls></video></div>",
                 type: 'inline'
             };
+
             mfp.updateItemHTML();
 
             if( $("#video").length ) {
