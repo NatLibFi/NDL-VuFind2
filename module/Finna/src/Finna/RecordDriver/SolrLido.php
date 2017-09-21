@@ -937,61 +937,44 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get the photographer information in buiding and object records
+     * Get the photographer information if availabe
      *
      * @return string $result Photographer's name and / or time when picture taken.
      */
-    public function getPhotoInfo()
-    {
-        $isBuilding = $isObject = false;
-        foreach ($this->getSimpleXML()->xpath(
-            'lido/descriptiveMetadata/objectClassificationWrap/objectWorkTypeWrap/'
-                . 'objectWorkType'
-        ) as $node) {
-            if (strpos((string)$node->term, 'Rakennus')) {
-                $isBuilding = true;
-                break;
-            } else if ((string)$node->term == ('esine' || 'Esine')) {
-                $isObject = true;
-                break;
-            }
-        }
-        if (!$isBuilding && !$isObject) {
-            return '';
-        }
-        if ($isBuilding) {
-            foreach ($this->getSimpleXML()->xpath(
-                'lido/administrativeMetadata/resourceWrap/resourceSet'
-            ) as $nodes) {
-                $resourceTerm = (string)$nodes->resourceType->term;
-                if ('Valokuva' === $resourceTerm) {
-                    $photographer = !empty($nodes->resourceDescription)
-                     ? (string)$nodes->resourceDescription : '';
-                    $time = !empty($nodes->resourceDateTaken->displayDate)
-                     ? (string)$nodes->resourceDateTaken->displayDate : '';
-                    if ('' !== trim($time) || '' !== trim($photographer)) {
-                        return $result = !empty($time) ?
-                            $photographer . ' ' . $time : $photographer;
-                    }
-                }
-            }
-        }
-        if ($isObject) {
-            foreach ($this->getSimpleXML()->xpath(
-                '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
-            ) as $events) {
-                foreach ($events->eventActor as $actor) {
-                    if ($actor->actorInRole->roleActor->term == 'valokuvaaja'
-                        || $actor->actorInRole->roleActor->term == 'kuvaaja'
-                    ) {
-                        return
-                            $actor->actorInRole->actor->nameActorSet
-                                ->appellationValue;
-                    }
-                }
-            }
-        }
-    }
+     public function getPhotoInfo()
+     {
+         $result = '';
+         foreach ($this->getSimpleXML()->xpath(
+             'lido/administrativeMetadata/resourceWrap/resourceSet'
+         ) as $nodes) {
+             $resourceTerm = (string)$nodes->resourceType->term;
+             if ('Valokuva' === $resourceTerm) {
+                 $photographer = !empty($nodes->resourceDescription)
+                  ? (string)$nodes->resourceDescription : '';
+                 $time = !empty($nodes->resourceDateTaken->displayDate)
+                  ? (string)$nodes->resourceDateTaken->displayDate : '';
+                 if ('' !== trim($time) || '' !== trim($photographer)) {
+                     $result = !empty($time) ?
+                      $photographer . ' ' . $time : $photographer;
+                 }
+             }
+         }
+         if (empty($result)) {
+             foreach ($this->getSimpleXML()->xpath(
+                 '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
+             ) as $events) {
+                 foreach ($events->eventActor as $actor) {
+                     if ($actor->actorInRole->roleActor->term == 'valokuvaaja'
+                         || $actor->actorInRole->roleActor->term == 'kuvaaja'
+                     ) {
+                         $result = $actor->actorInRole->actor->nameActorSet
+                             ->appellationValue;
+                     }
+                 }
+             }
+         }
+         return $result;
+     }
 
     /**
      * Get the displaysubject and description info to summary
