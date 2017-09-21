@@ -296,7 +296,7 @@ JS;
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
           <a class="btn btn-primary floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <? endif; ?>
-      <div class="container">
+      <div class="container search-form-container">
         <div>
         </div>
         <? if (isset($this->layout()->introduction) && $this->resolver('search/introductiontext.phtml')): ?>
