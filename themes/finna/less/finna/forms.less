@@ -1,6 +1,6 @@
 .form-control {
   width: initial;
-  padding: 2px 5px;
+  padding: 0px 5px;
   max-width: 100%; // make sure dropdowns don't overflow elementss
   vertical-align: middle !important;
 
@@ -64,6 +64,7 @@
 
 .navbar-form {
   width: 100%;
+  display:flex;
   margin-left: 0;
   margin-right: 0;
   padding: 0px;
@@ -74,7 +75,7 @@
   margin: 0px;
   box-shadow: 0px 0px 3px rgba(100,100,100,0.5) !important;
   & .form-control.search-query {
-    width: percentage(@finna-search-input-width);
+    flex: 1;
     @media (max-width: @screen-xs-max) {
       width: percentage((@finna-search-input-width - 0.06));
     }
@@ -96,14 +97,12 @@
   }
 
   & .clear-button {
-    position: absolute;
     margin-left: 0px;
     font-size: 1.5em;
-    padding-top: 10px;
     background: @body-bg;
     color: @gray-light;
-    margin-left: -22px;
-    height: 39px;
+    margin: auto;
+    padding: 0px 5px;
     &:before {
       font-family: 'icomoon';
       content: "\e01a";
@@ -118,13 +117,11 @@
 .dropdown.form-control.type-dropdown {
   border: none;
   display: inline-block;
-  padding-right: 17px;
   position: relative;
   background: transparent;
-  height: 39px;
-  width: 21%;
   box-shadow: none;
   color: @gray;
+  margin: auto;
   @media (max-width: @screen-xs-max) {
     width: 25%;
   }
