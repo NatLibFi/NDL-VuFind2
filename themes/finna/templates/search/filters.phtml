@@ -41,7 +41,7 @@
     <!-- Mobile view -->
     <div class="finna-filters visible-xs">
       <div class="filters-toggle-bar">
-        <div class="filters-toggle">Näytä rajaukset<span class="active-filter-count"></span><i class="fa fa-arrow-down"></i></div>
+        <div class="filters-toggle"><?=$this->transEsc("show_filters")?><span class="active-filter-count"></span><i class="fa fa-arrow-down"></i></div>
         <div class="retain-filters">
             <? $defaultFilterState = $hasDefaultsApplied || $options->getRetainFilterSetting() || !$defaultSortApplied ? ' checked="checked"' : ''; ?>
           <span class="checkbox<?=$defaultFilterState ? ' checked' : ''?>">
