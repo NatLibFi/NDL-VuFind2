@@ -59,7 +59,6 @@ body {
   text-transform: uppercase;
   padding: 12px;
   font-size: @content-font-size-base;
-  letter-spacing: 1px;
   font-weight: 600;  
 }
 
@@ -67,7 +66,6 @@ body {
   border-radius: @finna-button-radius;
   text-transform: uppercase; 
   font-size: @content-font-size-base;
-  letter-spacing: 1px;
   font-weight: 600; 
   padding-top: 12px;
   padding-bottom: 12px;
@@ -77,7 +75,6 @@ body {
   text-transform: uppercase;
   padding: 12px;
   font-size: @content-font-size-base;
-  letter-spacing: 1px;
   font-weight: 600;  
 }
 
@@ -94,7 +91,6 @@ body {
   .username {
     font-size: @content-font-size-base;    
     text-transform: uppercase;
-    letter-spacing: 1px;
     font-weight: 600 !important;
     color: @brand-primary;
   }
@@ -350,6 +346,10 @@ h1.content-header {
   margin-right: 6px;
   width: 20px;
   height: 20px;
+}
+
+.fa-window-close {
+  color: @brand-primary;
 }
 
 .fa-sign-in {
@@ -618,23 +618,4 @@ h1.content-header {
   background-color: currentColor;
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/finna.svg);
   mask-image: url(../../../themes/finna/images/pictograms/finna.svg); 
-}
-
-.jstree-ocl {
-  content:'';    
-  width: 24px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-right.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg); }
-
-.jstree-icon {
-  padding: 3px;
-}
-
-.jstree-icon::before {
-  display: none;
 }
