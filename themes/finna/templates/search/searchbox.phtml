@@ -122,7 +122,7 @@
         }
       ?>
       <input id="searchForm_type" type="hidden" name="type" value="<?=$this->escapeHtmlAttr($value)?>" class="searchForm_type" />
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span><?=$this->transEsc($label)?></span> <i class="fa fa-arrow-down"></i></a>
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span><?=$this->transEsc($label)?></span><b class="caret"></b></a>
       <ul class="dropdown-menu" data-native-menu="false">
         <? foreach ($handlers as $handler): ?>
           <li class="select-type">

@@ -555,8 +555,28 @@ mark, .highlight {
   }
   .retain-filters {
     float: left;
+    @media (max-width: @screen-sm){
+      float: right;
+      .checkbox label {
+        margin: 0;
+        padding: 0;
+      }
+    }
   }
   .filters {
     padding-top: 5px;
+  }
+}
+.filters-toggle-bar {
+  line-height: 40px;
+  .filters-toggle {
+    text-transform: uppercase;
+    float: left;
+    color: @brand-primary;
+    font-weight: bold;
+    i {
+      vertical-align: middle;
+      margin-top: -5px;
+    }
   }
 }

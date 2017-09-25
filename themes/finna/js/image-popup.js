@@ -268,33 +268,33 @@ finna.imagePopup = (function(finna) {
             var posterUrl = $(this).data('posterUrl');
 
             var mfp = $.magnificPopup.instance;
+            mfp.index = 0;
+            mfp.gallery = {enabled: false};
             mfp.items[0] = {
                 src: "<div class='video-popup'><video id='video' class='video-js vjs-big-play-centered' controls></video></div>",
                 type: 'inline'
             };
+            $(".mfp-arrow-right, .mfp-arrow-left").addClass("hidden");
             mfp.updateItemHTML();
 
-            if( $("#video").length ) {
-                var player = videojs('video');
+            var player = videojs('video');
+            var disablelogging = function (player, mediaPlayer) {
+                mediaPlayer.getDebug().setLogToBrowserConsole(false);
+            };
+            videojs.Html5DashJS.hook('beforeinitialize', disablelogging);
 
-                var disablelogging = function (player, mediaPlayer) {
-                    mediaPlayer.getDebug().setLogToBrowserConsole(false);
-                };
-                videojs.Html5DashJS.hook('beforeinitialize', disablelogging);
-
-                player.ready(function () {
-                    this.hotkeys({
-                        enableVolumeScroll: false,
-                        enableModifiersForNumbers: false
-                    });
+            player.ready(function () {
+                this.hotkeys({
+                    enableVolumeScroll: false,
+                    enableModifiersForNumbers: false
                 });
+            });
 
-                player.src(videoSources);
-                player.poster(posterUrl);
-                player.load();
+            player.src(videoSources);
+            player.poster(posterUrl);
+            player.load();
 
-                e.preventDefault();
-            }
+            e.preventDefault();
         });
     };
 
