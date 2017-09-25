@@ -147,7 +147,7 @@ if ($img):
               <strong><?=$this->transEsc($snippet['caption']) ?>:</strong> ';
             <? endif; ?>
             <? if (!empty($snippet['snippet'])): ?>
-              <span class="quotestart">&#8220;</span>...<?=str_replace(['{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'], '', $snippet['snippet']); ?>...</i><span class="quoteend">&#8221;</span><br/>
+              <span class="quotestart">&#8220;</span>...<?=str_replace(['{{{{START_HILITE}}}}','{{{{END_HILITE}}}}'], ['<b>', '</b>'], $snippet['snippet']); ?>...</i><span class="quoteend">&#8221;</span><br/>
             <? endif; ?>
           <? endif; ?>
         <? endif; ?>
