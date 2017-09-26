@@ -29,7 +29,7 @@
       <?=$this->record($this->driver)->getPreviews()?>
     </div>
 
-    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'ead', 'forward'])): ?>
+    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
         <?=$this->render('record/record-organisation-menu.phtml') ?>
     <? endif; ?>
 
