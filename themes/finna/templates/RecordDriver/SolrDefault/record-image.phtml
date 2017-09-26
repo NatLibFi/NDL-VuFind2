@@ -44,7 +44,7 @@
             ?>
             <? if ($hasCopyright): ?>
             <div class="open-link"><a target="_blank" href="<?=$originalImage ?>" download="<?=$originalImage ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Show image in new window') ?></a> <span class="image-dimensions"></span></div>
-            <? else: ?><? endif ?>
+            <? endif ?>
             </div>
         <? if (!empty($image['description'])): ?>
           <div class="image-description">
