@@ -548,9 +548,6 @@ mark, .highlight {
       color: @body-bg;
       margin: 4px;
     }
-    @media (max-width: @screen-sm){
-      font-size: 80%;
-    }
   }
 
   .checkbox {
@@ -570,6 +567,17 @@ mark, .highlight {
   }
   .filters {
     padding-top: 5px;
+  }
+}
+@media (max-width: @screen-sm){
+  .filters-title, .filter-value {
+    font-size: 80%;
+  }
+  .filters-toggle, .retain-filters {
+    font-size: 90%;
+  }
+  .finna-filters .retain-filters .checkbox label:before {
+    font-size: 15px;
   }
 }
 
@@ -598,9 +606,6 @@ mark, .highlight {
     & a {
       color: @body-bg;
       margin: 4px;
-    }
-    @media (max-width: @screen-sm){
-      font-size: 80%;
     }
   }
 
