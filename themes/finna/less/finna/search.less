@@ -522,7 +522,7 @@ mark, .highlight {
   position: relative;
 }
 
-.finna-filters {
+.template-name-results .finna-filters {
   padding: 5px 0 5px 0;
   & .checkbox label {
     display: inline-block;
@@ -536,19 +536,20 @@ mark, .highlight {
     margin-left: 10px;
   }
   & .filter-value {
-    padding: 6px 12px;
+    padding: 5px 10px;
     margin: 5px;
-    font-weight: bold;
+    font-weight: 600;
     background: @brand-primary;
-    
     color: @body-bg;
     border-radius: @border-radius-large;
     white-space: nowrap;
     display: inline-block;
     & a {
-      color: #fff;
+      color: @body-bg;
+      margin: 4px;
     }
   }
+
   .checkbox {
     display: inline;
     padding-left: 0px;
@@ -568,6 +569,56 @@ mark, .highlight {
     padding-top: 5px;
   }
 }
+
+.template-name-view .finna-filters {
+  padding: 5px 0 5px 0;
+  & .checkbox label {
+    display: inline-block;
+    padding: 7px;
+    margin: 5px;
+  }
+  & .filters-term {
+    font-size: 0.8em
+  }
+  & .filters-title {
+    margin-left: 10px;
+  }
+  & .filter-value {
+    padding: 5px 10px;
+    margin: 5px;
+    font-weight: 600;
+    background: @gray-ultralight;
+    color: @text-color;
+    border-radius: @border-radius-large;
+    white-space: nowrap;
+    display: inline-block;
+    & a {
+      color: @body-bg;
+      margin: 4px;
+    }
+  }
+
+  .checkbox {
+    display: inline;
+    padding-left: 0px;
+    padding-right: 20px;
+  }
+  .retain-filters {
+    float: left;
+    @media (max-width: @screen-sm){
+      float: right;
+      .checkbox label {
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+  .filters {
+    padding-top: 5px;
+  }
+}
+
+
 .filters-toggle-bar {
   line-height: 40px;
   .filters-toggle {
@@ -581,3 +632,4 @@ mark, .highlight {
     }
   }
 }
+

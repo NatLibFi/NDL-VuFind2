@@ -59,7 +59,7 @@
               <span class="filter-value">
               <? $removeLink = isset($urlQuery) ? $urlQuery->removeFilter($filter['filter']) : ''; ?>
                   <?=$this->translate($filter['desc']) ?>
-                  <? if($removeLink): ?><a href="<?=$removeLink?>">x</a><? endif; ?>
+                  <? if($removeLink): ?><a href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><? endif; ?>
             </span>
               <? endif ?>
           <? endforeach; ?>
