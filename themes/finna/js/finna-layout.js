@@ -571,16 +571,6 @@ finna.layout = (function() {
         });
     };
 
-    var initAutoScrollTouch = function() {
-      if (!navigator.userAgent.match(/iemobile/i) && isTouchDevice() && $(window).width() < 1025) {
-        $( ".search-query" ).click(function() {
-          $('html, body').animate({
-            scrollTop: $(this).offset().top-5
-          }, 200);
-        });
-      };
-    };
-
     var initIpadCheck = function() {
       if (navigator.userAgent.match(/iPad/i)) {
         if (navigator.userAgent.match(/OS 6_\d(_\d) like Mac OS X/i)) {
@@ -860,7 +850,6 @@ finna.layout = (function() {
             initImageCheck();
             initSideFacets();
             initPiwikPopularSearches();
-            initAutoScrollTouch();
             initIpadCheck();
             initLoginRedirect();
             initLoadMasonry();
