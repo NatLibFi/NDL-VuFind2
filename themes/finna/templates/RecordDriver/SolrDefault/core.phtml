@@ -31,7 +31,7 @@
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
-  <div class="media-<?=$thumbnailAlignment ?> <?= !empty($images[0]['urls']['medium']) ? 'image' : ''?>">
+  <div class="media-<?=$thumbnailAlignment ?>">
 
     <? if (!empty($videoUrls)): ?>
         <? foreach ($videoUrls as $url): ?>
