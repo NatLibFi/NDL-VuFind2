@@ -383,25 +383,63 @@ h1.content-header {
   }
 }
 
-.fa-arrow-right {
-  width: 24px;
-  height: 24px;
-  margin-left: 0px;
+.pager .disabled>a {
+  color: @gray-mid-light;
+  & :hover {
+    color: @gray-mid-light;
+  }
+}
+.pager li.disabled .fa-arrow-left {
+  display: inline-block;  
+  width: 20px;
+  height: 20px;
   background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
   &:before {
     display: none;
   }
 }
 
-.fa-arrow-left {
-  width: 24px;
-  height: 24px;
-  margin-left:0px;
+.pager-previous-record .fa-arrow-left {
+  display: inline-block;  
+  width: 20px;
+  height: 20px;
   background-color: currentColor;
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
   mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  &:before {
+    display: none;
+  }
+}
+
+.pager-next-record .fa-arrow-right  {
+  display: inline-block;  
+  width: 20px;
+  height: 20px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  &:before {
+    display: none;
+  }
+}
+
+.back-to-search .fa-arrow-left {
+  display: inline-block;  
+  width: 24px;
+  height: 24px;
+  background-color: currentColor;
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
   &:before {
     display: none;
   }
