@@ -359,13 +359,13 @@
             line-height: 1.5em;
         }
     }
-    .finna-main-tabs {
-         background: darken(@myresearch-header-background, 12%);
+    /*.finna-main-tabs {
+         background: @main-tabs-background-color; //darken(@myresearch-header-background, 12%);
          @media (max-width: @screen-sm-max) {
             padding-top: 0;
             margin-bottom: 20px;
          }
-    }
+    }*/
     & .list-title {
          margin-bottom: 0px;
     }
@@ -612,39 +612,12 @@
         & li {
             float:left;
             margin:0;
+            margin-bottom: -2px;
             @media(max-width: @screen-md-max) {
                 max-width: 160px;
             }
             @media(max-width: @screen-sm-max) {
                     max-width: 95px;
-            }
-            &:first-child {
-                border-left: 2px solid @myresearch-header-background;
-            }
-            .list-group-item {
-                padding: 10px;
-                margin:0;
-                border-right: 2px solid @myresearch-header-background;
-                background: darken(@myresearch-header-background, 12%);
-                color: @myresearch-tabs-color;
-                font-weight: normal;
-                transition: background 0.1s linear;
-                &:hover {
-                    background: darken(@myresearch-header-background, 16%);
-                }
-                @media(max-width: @screen-md-max) {
-                    overflow: hidden;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                }
-                @media(max-width: @screen-sm-max) {
-                    font-size: 0.9em;
-                    padding: 10px 8px;
-                }
-                &.active {
-                    background: @body-bg;
-                    color: @gray;
-                }
             }
         }
     }

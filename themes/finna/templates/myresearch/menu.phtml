@@ -18,52 +18,52 @@
 <? ob_start(); ?>
 <? if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
   <? if ($this->ils()->checkCapability('getMyProfile')): ?>
-    <li class="menu-profile">
-      <a href="<?=$this->url('myresearch-profile')?>" class="list-group-item<?=$this->active == 'profile' ? ' active' : ''?>">
+    <li class="menu-profile<?=$this->active == 'profile' ? ' active' : ''?>">
+      <a href="<?=$this->url('myresearch-profile')?>" class="list-group-item">
         <?=$this->transEsc('Profile')?>
       </a>
     </li>
   <? endif; ?>
   <? if ($showLibraryTabs): ?>
-    <li class="menu-loans">
-      <a href="<?=$this->url('myresearch-checkedout')?>" class="list-group-item<?=$this->active == 'checkedout' ? ' active' : ''?>">
+    <li class="menu-loans <?=$this->active == 'checkedout' ? ' active' : ''?>">
+      <a href="<?=$this->url('myresearch-checkedout')?>" class="list-group-item">
         <?=$this->transEsc('Checked Out Items')?>
       </a>
     </li>
     <? if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
-      <li class="menu-loan-history">
-        <a href="<?=$this->url('myresearch-checkouthistory')?>" class="list-group-item<?=$this->active == 'checkouthistory' ? ' active' : ''?>">
+      <li class="menu-loan-history <?=$this->active == 'checkouthistory' ? ' active' : ''?>">
+        <a href="<?=$this->url('myresearch-checkouthistory')?>" class="list-group-item">
           <?=$this->transEsc('Checkout History')?>
         </a
       ></li>
     <? endif; ?>
-    <li class="menu-holds">
-      <a href="<?=$this->url('myresearch-holds')?>" class="list-group-item<?=$this->active == 'holds' ? ' active' : ''?>">
+    <li class="menu-holds <?=$this->active == 'holds' ? ' active' : ''?>">
+      <a href="<?=$this->url('myresearch-holds')?>" class="list-group-item">
         <?=$this->transEsc('Holds and Recalls')?>
       </a>
     </li>
     <? if ($this->ils()->checkCapability('getMyStorageRetrievalRequests', $capabilityParams)): ?>
-      <li class="menu-storage-retrieval-requests">
-        <a href="<?=$this->url('myresearch-storageretrievalrequests')?>" class="list-group-item<?=$this->active == 'storageRetrievalRequests' ? ' active' : ''?>">
+      <li class="menu-storage-retrieval-requests <?=$this->active == 'storageRetrievalRequests' ? ' active' : ''?>">
+        <a href="<?=$this->url('myresearch-storageretrievalrequests')?>" class="list-group-item">
           <?=$this->transEsc('Storage Retrieval Requests')?>
         </a>
       </li>
     <? endif; ?>
     <? if ($this->ils()->checkCapability('getMyILLRequests', $capabilityParams)): ?>
-      <li class="menu-ill-requests">
-        <a href="<?=$this->url('myresearch-illrequests')?>" class="list-group-item<?=$this->active == 'ILLRequests' ? ' active' : ''?>">
+      <li class="menu-ill-requests <?=$this->active == 'ILLRequests' ? ' active' : ''?>">
+        <a href="<?=$this->url('myresearch-illrequests')?>" class="list-group-item">
           <?=$this->transEsc('Interlibrary Loan Requests')?>
         </a>
       </li>
     <? endif; ?>
-    <li class="menu-fines">
-      <a href="<?=$this->url('myresearch-fines')?>" class="list-group-item<?=$this->active == 'fines' ? ' active' : ''?>">
+    <li class="menu-fines <?=$this->active == 'fines' ? ' active' : ''?>">
+      <a href="<?=$this->url('myresearch-fines')?>" class="list-group-item">
         <?=$this->transEsc('Fines')?>
       </a>
     </li>
     <? if ($user && $user->libraryCardsEnabled()): ?>
-      <li class="menu-library-cards">
-        <a href="<?=$this->url('librarycards-home')?>" class="list-group-item<?=$this->active == 'librarycards' ? ' active' : ''?>">
+      <li class="menu-library-cards <?=$this->active == 'librarycards' ? ' active' : ''?>">
+        <a href="<?=$this->url('librarycards-home')?>" class="list-group-item">
           <?=$this->transEsc('Library Cards')?>
         </a>
       </li>
@@ -71,14 +71,14 @@
   <? endif; ?>
 <? endif; ?>
 <? if ($this->userlist()->getMode() !== 'disabled'): ?>
-  <li class="menu-favorites">
-    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item<?=$this->active == 'favorites' || substr($this->active, 0, 4) == 'list' ? ' active' : ''?>">
+  <li class="menu-favorites <?=$this->active == 'favorites' || substr($this->active, 0, 4) == 'list' ? ' active' : ''?>">
+    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item">
       <?=$this->transEsc('Favorites')?>
     </a>
   </li>
 <? endif; ?>
-<li class="menu-history">
-  <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item<?=$this->active == 'history' ? ' active' : ''?>">
+<li class="menu-history <?=$this->active == 'history' ? ' active' : ''?>">
+  <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item">
     <?=$this->transEsc('history_saved_searches')?>
   </a>
 </li>
@@ -114,7 +114,7 @@
       </ul>
     </div>
   </div>
-  <ul class="list-group useraccount-nav hidden-xs">
+  <ul class="list-group useraccount-nav nav nav-tabs hidden-xs">
     <?=$menuEntries?>
   </ul>
 

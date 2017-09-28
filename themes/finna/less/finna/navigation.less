@@ -95,6 +95,19 @@
     white-space: nowrap;
     display: inline-block;
     vertical-align: bottom;
+    @media (max-width: @screen-sm) {
+      max-width: 80px;
+    }
+  }
+}
+
+.navbar {
+  .logoutOptions, #loginOptions {
+    .login-text {
+      @media (max-width: 400px) {
+        display: none;
+      }
+    }
   }
 }
 
@@ -243,7 +256,7 @@
     }
 
     // Dropdowns get custom display when collapsed
-    .open:not(.logoutOptions) .dropdown-menu {
+    .open:not(.logoutOptions):not(.browsebar-dropdown) .dropdown-menu {
       position: static;
       float: none;
       width: auto;

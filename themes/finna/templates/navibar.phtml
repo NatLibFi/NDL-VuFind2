@@ -106,10 +106,10 @@
     <? if (is_object($account) && $account->loginEnabled()): ?>
       <? $user = $account->isLoggedIn(); ?>
       <li role="menuitem" class="logoutOptions<? if (!$user): ?> hidden<? endif ?>">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user" aria-hidden="true"></i> <span class="username"><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span> <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user" aria-hidden="true"></i> <span class="username login-text"><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span> <b class="caret"></b></a>
         <ul role="menu" class="dropdown-menu">
           <li role="menuitem" class="logoutOptions<? if (!$user): ?> hidden<? endif ?>">
-            <a href="<?=$this->url('myresearch-home', [], ['query' => ['redirect' => 0]])?>" title="<?=$this->transEsc("Your Account")?>"><strong><i class="fa fa-user" aria-hidden="true"></i> <?=$this->transEsc("Your Account")?></strong><div class="description"><?=$this->transEsc("your_account_info")?></div></a>
+            <a href="<?=$this->url('myresearch-home', [], ['query' => ['redirect' => 0]])?>" title="<?=$this->transEsc("Your Account")?>"><strong><i class="fa fa-user" aria-hidden="true"></i><?=$this->transEsc("Your Account")?></strong><div class="description"><?=$this->transEsc("your_account_info")?></div></a>
           </li>
           <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true']);?>
           <li role="menuitem" class="logoutOptions<? if (!$user): ?> hidden<? endif ?>">
@@ -122,9 +122,9 @@
         <a href="<?=$this->url('myresearch-userlogin')?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Institutional Login")?></a>
         <? else: ?>
           <? if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
-            <button type="button" class="btn btn-primary"><a title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Login")?></a></button>
+            <button type="button" class="btn btn-primary"><a title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a></button>
           <? else: ?>
-            <button type="button" class="btn btn-primary"><a href="<?=$this->url('myresearch-userlogin')?>" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'" title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Login")?></a></button>
+            <button type="button" class="btn btn-primary"><a href="<?=$this->url('myresearch-userlogin')?>" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'" title="<?=$this->transEsc("Login")?>"><i class="fa fa-sign-in" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a></button>
           <? endif; ?>
         <? endif; ?>
       </li>

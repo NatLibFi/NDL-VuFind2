@@ -39,6 +39,9 @@
   padding-left: 0px;
   font-size: 1em;
   line-height: 64px;
+  @media(max-width: @screen-sm){
+    line-height: 40px;
+  }
 }
 
 .browsebar .navbar .navbar-nav>li>a.dropdown-toggle {
@@ -57,4 +60,17 @@
   font-size: 0.9em;
   font-weight: 600;
   padding-right: 8px;
+}
+
+@media (max-width: @screen-sm) {
+  .browsebar {
+    .dropdown-menu {
+      position: absolute;
+      background: @body-bg;
+    }
+    .navbar {
+      min-height: 40px;
+      margin: 10px 0px;
+    }
+  }
 }

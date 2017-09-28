@@ -18,6 +18,11 @@
       }
     }
   }
+  @media (max-width: @screen-sm) {
+    .dropdown.form-control {
+      display: none;
+    }
+  }
 }
 
 .finna-filters, .checkboxFilter {
@@ -92,14 +97,24 @@
 }
 
 .searchbox-flex {
-  display: flex;
-  justify-content: space-between;
   .search-col, .record-back, .adv-search, .pager {
     margin: auto 0;
   }
   @media(min-width: @screen-sm){
+    display: flex;
+    justify-content: space-between;
     .search-col {
       width: 50%;
+    }
+  }
+  @media(max-width: @screen-sm) {
+    .record-back {
+      float:left;
+      margin: auto;
+      line-height: 48px;
+    }
+    .record-back, .pager {
+      margin-top: 5px;
     }
   }
 }
