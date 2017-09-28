@@ -39,10 +39,11 @@
             $originalImage = $recordImage->getMasterImage($ind);
             $formats = $this->driver->tryMethod('getFormats');
             $translatedFormat = $this->transEsc(end($formats));
-            $rights = $image['rights'];
-            $hasCopyright = isset($rights['copyright']); 
+            $rights = $image['rights'];           
+            $copyrightedContent = $rights['copyright'];
+            $hasRestricted = $this->transEsc('usage_F');             
             ?>
-            <? if ($hasCopyright): ?>
+            <? if ( $copyrightedContent !== $hasRestricted ): ?>
             <div class="open-link"><a target="_blank" href="<?=$originalImage ?>" download="<?=$originalImage ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Show image in new window') ?></a> <span class="image-dimensions"></span></div>
             <? endif ?>
             </div>
