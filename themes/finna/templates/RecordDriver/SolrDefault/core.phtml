@@ -82,11 +82,6 @@
       </div>
     </div>
     <? endif; ?>
-    <div class="hidden-xs">
-      <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'ead', 'forward'])): ?>
-          <?=$this->render('record/record-organisation-menu.phtml') ?>
-      <? endif; ?>
-    </div>
   </div>
   <? $thumbnail = ob_get_contents(); ?>
 <? ob_end_clean(); ?>
@@ -271,10 +266,5 @@
   <? if ($thumbnail && $thumbnailAlignment == 'right'): ?>
     <?=$thumbnail ?>
   <? endif; ?>
-  <div class="visible-xs">
-      <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'ead', 'forward'])): ?>
-          <?=$this->render('record/record-organisation-menu.phtml') ?>
-      <? endif; ?>
-  </div>
 </div>
 <!-- END of: finna - RecordDriver/SolrDefault/core.phtml -->
