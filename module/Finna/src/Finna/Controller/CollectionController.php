@@ -1,6 +1,6 @@
 <?php
 /**
- * Record Controller
+ * Collection Controller
  *
  * PHP version 5
  *
@@ -26,10 +26,9 @@
  * @link     http://vufind.org   Main Site
  */
 namespace Finna\Controller;
-use VuFind\Search\Memory, Zend\Mail as Mail;
 
 /**
- * Record Controller
+ * Collection Controller
  *
  * @category VuFind
  * @package  Controller
@@ -50,7 +49,7 @@ class CollectionController extends \VuFind\Controller\CollectionController
     protected function showTab($tab, $ajax = false)
     {
         $view = parent::showTab($tab, $ajax);
-        
+
         $this->getSearchMemory()->rememberScrollData($view->scrollData);
         return $view;
     }
