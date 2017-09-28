@@ -89,8 +89,8 @@
        $placeholder = $this->translate('Find') . '...';
      }
   ?>
-<div class="<?=$mainPage = $action === 'home' ? 'searchbox-home' : '' ?> <?= $module == 'record' ? 'searchbox-flex' : 'searchbox-columns' ?>">
-  <? if ($module == 'record'): ?>
+<div class="<?=$mainPage = $action === 'home' ? 'searchbox-home' : '' ?> <?= $module == 'record' || $module == 'collection' ? 'searchbox-flex' : 'searchbox-columns' ?>">
+  <? if ($module == 'record' || $module == 'collection'): ?>
     <div class="record-back hidden-print hidden-xs">
         <?
         $html = '<span><i class="fa fa-arrow-left"></i></span>';
@@ -200,7 +200,7 @@
     <? if ($module === 'summon' && !$this->translationEmpty('tooltip_summon_search_html')): ?><span class="tooltip-search-summon pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_summon_search_html')?>"><i class="fa fa-info-big"></i></span><? endif; ?>
   </div>
   <? endif; ?>
-  <? if ($module != 'record'): ?>
+  <? if ($module != 'record' && $module != 'collection'): ?>
     <div class="search-col text-left">
     <? $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'eds', 'summon']); ?>
 
