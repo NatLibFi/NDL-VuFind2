@@ -186,6 +186,7 @@ $config = [
             'primo' => 'Finna\Controller\Factory::getPrimoController',
             'primorecord' => 'Finna\Controller\Factory::getPrimorecordController',
             'record' => 'Finna\Controller\Factory::getRecordController',
+            'collection' => 'Finna\Controller\Factory::getCollectionController',
             'search' => 'Finna\Controller\Factory::getSearchController',
             'listpage' => 'Finna\Controller\Factory::getListController',
         ],
