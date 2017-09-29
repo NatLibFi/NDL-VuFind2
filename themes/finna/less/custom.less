@@ -333,6 +333,58 @@ h1.content-header {
 
 // Icons
 
+.list-group.facet .jstree-open>.jstree-ocl:before {
+  display: inline-block;  
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;  
+  background-color: @link-color;
+  content:'';
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/minus-square.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/minus-square.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+}
+
+.list-group.facet .jstree-closed>.jstree-ocl:before {
+  display: inline-block;  
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  background-color: @link-color;
+  content:'';
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/plus-square.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/plus-square.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+}
+
+.list-group.facet .list-group-item.title.collapsed:after {
+  display: inline-block;  
+  width: 24px;
+  height: 24px;
+  margin-top:-4px;
+  background-color: currentColor;
+  content:'';
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+}
+
+.facet-group [data-toggle="collapse"]::after {
+  display: inline-block;  
+  width: 24px;
+  height: 24px;
+  margin-top:-4px;
+  background-color: currentColor;
+  content:'' !important;
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-up.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/chevron-up.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+}
+
 .record-link .fa-arrow-right {
   margin-bottom: -4px; 
   margin-right: 6px;
