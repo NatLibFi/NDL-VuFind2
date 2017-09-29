@@ -872,18 +872,21 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
         text-align: center;
         font-size: 30px;
         color: @gray-light;
-        padding: 0px;
+        padding: 0;
         &:hover i {
              background: @gray;
         }
         & i {
             background: @gray-light;
             color:  #fff;
-            border-radius: @border-radius-base;
-            padding: 0px 4px;
+            border-radius: 50%;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            margin-bottom: 8px;
             transition: background 0.08s linear;
-
         }
+
         &:after {
             border-top: 1px solid @gray-lighter;
             content: '';
