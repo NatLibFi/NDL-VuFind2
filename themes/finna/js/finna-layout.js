@@ -472,7 +472,7 @@ finna.layout = (function() {
                 if (this.naturalWidth && this.naturalWidth == 10 && this.naturalHeight == 10) {
                     $(this).parent().addClass('no-image');
                     $('.media-left, .media-right').removeClass('large-image');
-                    $('.large-image record-image-container').addClass('hide-image');
+                    $('.large-image .record-image-container').addClass('hide-image');
                     $('.record-main').addClass('mainbody left');
                     var href = $(this).parent().attr('href');
                     $(this).parent().attr({'href': href.split('#')[0], 'title': ''});
