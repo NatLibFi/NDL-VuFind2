@@ -374,26 +374,26 @@ h1.content-header {
 
 .list-group.facet .list-group-item.title.collapsed:after {
   display: inline-block;  
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   margin-top:-4px;
-  background-color: @text-color;
+  background-color: @brand-primary;
   content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down-2.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-down-2.svg);
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down-circle.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/chevron-down-circle.svg);
   -webkit-mask-size: cover;
   mask-size: cover;
 }
 
-.facet-group [data-toggle="collapse"]::after {
+.facet-group [data-toggle="collapse"]:after {
   display: inline-block;  
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   margin-top:-4px;
-  background-color: @text-color;
-  content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-up-2.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-up-2.svg);
+  background-color: @brand-primary;
+  content:'' !important;
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-up-circle.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/chevron-up-circle.svg);
   -webkit-mask-size: cover;
   mask-size: cover;
 }
