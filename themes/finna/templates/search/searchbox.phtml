@@ -58,6 +58,7 @@
          $this->layout()->searchTabs = $searchTabs;
       }
     }
+    $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'eds', 'summon']);
 ?>
 <? if ($this->searchType != 'advanced'): ?>
   <?
@@ -102,7 +103,7 @@
         <? endif; ?>
     </div>
   <? endif; ?>
-  <div class="search-col">
+  <div class="search">
     <form id="searchForm" role="search" class="searchForm navbar-form navbar-left  <?=$handlerCount < 2 ? 'input-field-only' :''; ?>" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
     <label for="searchForm_lookfor" class="sr-only" hidden><?=$this->transEsc("Find")?></label>
     <input class="searchForm_lookfor form-control search-query<? if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete-finna searcher:<?=$this->escapeHtmlAttr($this->searchClassId) ?><?= !empty($activeTab) ? ' tab:' . $this->escapeHtmlAttr(str_replace(':', '###', $activeTab)) : ''?><?=!empty($browse) || $activeTab == 'Combined' ? ' onlySuggestions:1' : ''?><?= !$browse && in_array($activeTab, ['Combined','Primo','EDS','Summon']) ? ' suggestions:0' : ''?><?= !empty($acHandlers) ? ' handlers:' . implode('|', array_map(function($h) { return $h['handler']; }, $acHandlers)) : ''?><?= !empty($phrase) ? ' phrase:' . $this->escapeHtmlAttr($phrase) : ''?><?= !empty($acFilters) ? ' filters:' . $this->escapeHtmlAttr(implode('||', array_map(function($k, $v) { return $k . '|' . $v; }, array_keys($acFilters), $acFilters))) : ''?><? endif ?>" placeholder="<?=$this->escapeHtmlAttr($placeholder)?>" id="searchForm_lookfor" type="text" name="lookfor" value="<?=$this->escapeHtmlAttr($this->lookfor)?>"/>
@@ -191,42 +192,41 @@
     ?>
   </form>
   </div>
-  <? if ($advSearch): ?>
-  <div class="adv-search">
-    <a href="<?=$this->url($advSearch)?>" class="btn btn-link hidden-xs hidden-sm" rel="nofollow"><i class="fa fa-search-adv"></i> <?=$this->transEsc("Advanced Search")?></a>
+  <div class="search-tooltip">
+    <? if (!$browse && !$mainPage && $advSearch): ?>
+      <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced hidden-xs"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
+    <? endif; ?>
     <? if ($module === 'search' && !$this->translationEmpty('tooltip_local_search_html')): ?><span class="tooltip-search-local pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_local_search_html')?>"><i class="fa fa-info-big"></i></span><? endif; ?>
     <? if ($module === 'primo' && !$this->translationEmpty('tooltip_pci_search_html')): ?><span class="tooltip-search-pci pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_pci_search_html')?>"><i class="fa fa-info-big"></i></span><? endif; ?>
     <? if ($module === 'eds' && !$this->translationEmpty('tooltip_eds_search_html')): ?><span class="tooltip-search-eds pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_eds_search_html')?>"><i class="fa fa-info-big"></i></span><? endif; ?>
     <? if ($module === 'summon' && !$this->translationEmpty('tooltip_summon_search_html')): ?><span class="tooltip-search-summon pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_summon_search_html')?>"><i class="fa fa-info-big"></i></span><? endif; ?>
   </div>
-  <? endif; ?>
+  <div class="clearfix"></div>
   <? if ($module != 'record' && $module != 'collection'): ?>
-    <div class="search-col text-left">
-    <? $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'eds', 'summon']); ?>
+    <div>
+        <? if ($browse || $mainPage): ?>
+          <? if ($advSearch ): ?>
+          <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced hidden-xs"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
+          <? endif; ?>
 
-    <? if ($browse || $mainPage): ?>
-        <? if ($browse || $this->searchClassId != 'Solr'): ?>
-        <a href="<?=$this->url('home');?>" class="btn btn-link btn-basic"><i class="fa fa-search"></i> <?=$this->transEsc("Basic Search")?></a>
-        <? endif; ?>
+          <? if ($browse || $this->searchClassId != 'Solr'): ?>
+          <a href="<?=$this->url('home');?>" class="btn btn-link btn-basic"><i class="fa fa-search"></i> <?=$this->transEsc("Basic Search")?></a>
+          <? endif; ?>
 
-        <? if ($this->primo()->isAvailable() && ($browse || $this->searchClassId !== 'Primo')) : ?>
-        <a href="<?=$this->url('primo-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("Primo Search")?></a>
-        <? endif; ?>
+          <? if ($this->primo()->isAvailable() && ($browse || $this->searchClassId !== 'Primo')) : ?>
+          <a href="<?=$this->url('primo-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("Primo Search")?></a>
+          <? endif; ?>
 
-        <? if ($this->eds()->isAvailable() && ($browse || $this->searchClassId !== 'EDS')) : ?>
-        <a href="<?=$this->url('eds-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("EDS Search")?></a>
-        <? endif; ?>
+          <? if ($this->eds()->isAvailable() && ($browse || $this->searchClassId !== 'EDS')) : ?>
+          <a href="<?=$this->url('eds-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("EDS Search")?></a>
+          <? endif; ?>
 
-        <? if ($this->summon()->isAvailable() && ($browse || $this->searchClassId !== 'Summon')) : ?>
-        <a href="<?=$this->url('summon-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("Summon Search")?></a>
-        <? endif; ?>
+          <? if ($this->summon()->isAvailable() && ($browse || $this->searchClassId !== 'Summon')) : ?>
+          <a href="<?=$this->url('summon-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("Summon Search")?></a>
+          <? endif; ?>
 
-    <? endif; ?>
-
-    <? if ($advSearch): ?>
-      <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced hidden-xs hidden-md hidden-lg"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
-    <? endif; ?>
-  </div>
+      <? endif; ?>
+    </div>
   <? else: ?>
     <div class="record-back hidden-print visible-xs">
         <?
