@@ -65,29 +65,44 @@
     }
   }
 
-  .videourl {
+  .large-image {
+    .video-link-container{
+      width: 50%;
+      float: left;
+      padding-right: 10px;
+    }
+  }
+  a.videourl {
     background: @brand-primary;
     border: 1px solid @brand-primary;
-    padding: 5px;
-    a {
-      display: table;
+    line-height: 48px;
+    display: table;
+    width: 100%;
+    i {
+      vertical-align: middle;
+      margin-bottom: 2px;
+    }
+    .video-icon {
+      height: 48px;
+      width: 48px;
+      float: left;
+      color: @btn-default-color;
       i {
-        vertical-align: middle;
-        margin-bottom: 2px;
+        margin: 0px 15px;
       }
-      span {
-        display: table-cell;
-        vertical-align: middle;
-        text-transform: uppercase;
-        font-weight: bold;
-        color: @btn-default-color;
-      }
+    }
+    .video-desc {
+      display: inline;
+      vertical-align: middle;
+      text-transform: uppercase;
+      font-weight: bold;
+      color: @btn-default-color;
     }
   }
 }
 
 
-  .record-uniform-titles {
+.record-uniform-titles {
   font-size: 1.05em;
   margin: 0 0 3px;
 }
