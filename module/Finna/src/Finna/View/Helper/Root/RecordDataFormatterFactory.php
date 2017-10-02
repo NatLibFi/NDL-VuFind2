@@ -734,7 +734,9 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Publisher or Distributor Number', 'getPubDistNumber', 'data-transEsc.phtml',
+            'Publisher or Distributor Number',
+            'getPubDistNumber',
+            'data-transEsc.phtml',
             [
                 'context' => ['class' => 'record-pubdist-number']
             ]
