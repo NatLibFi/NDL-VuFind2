@@ -184,7 +184,11 @@ h1.content-header {
 // Similar records
 #similar-records {
   .iconlabel {
-    color: @gray-mid-light;
+    color: @text-color;
+    &::before {margin-bottom:-4px;
+      position: relative;
+      top: 4px;
+    }
   }
   h4 {
     color: @text-color;
@@ -193,7 +197,6 @@ h1.content-header {
     background-color: @gray-ultralight;
     border: 1px solid @gray-lighter !important;
     margin-bottom: 0;
-    border-radius: @border-radius-small @border-radius-small 0 0;
   }
   .list-group {
     .title {
@@ -205,9 +208,7 @@ h1.content-header {
       border-right: 1px solid @gray-lighter;
     }
     .list-group-item:last-child {
-        border-bottom: 1px solid @gray-lighter;
-        border-radius: 0 0 @border-radius-small @border-radius-small ;
-        
+        border-bottom: 1px solid @gray-lighter;        
       }
     }
   }
