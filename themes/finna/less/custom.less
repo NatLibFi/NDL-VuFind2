@@ -37,6 +37,8 @@ body {
 
 .sidebar h4 {
   font-size: 1.2em;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 .bulkActionButtons {
   font-size: 0.8em;
@@ -55,7 +57,6 @@ body {
 
 .btn-primary {
   border-radius: @finna-button-radius;
-  text-transform: uppercase; 
   font-size: @content-font-size-base;
   font-weight: 600; 
   padding-top: 12px;
@@ -222,7 +223,7 @@ h1.content-header {
 
 .carousel h2.carousel-header  {
   font-size: @content-font-size-base;
-  font-weight: 600;
+  font-weight: 700;
   background: none !important;
   color: @text-color;
   text-transform: uppercase;
@@ -331,9 +332,22 @@ h1.content-header {
   background-size: cover;
 }
 
+// List Group
+
+.list-group {
+  margin-bottom: -2px;
+  margin-top: 0px;
+}
+
+
+.list-group.facet button.list-group-item.title  {
+  color:@text-color;
+  text-transform: uppercase;
+  font-size: 1em;
+  font-weight: 600;
+}
+
 // Icons
-
-
 
 .list-group.facet .jstree-facet li span.main {
   padding-left: 10px;
@@ -345,7 +359,7 @@ h1.content-header {
   width: 18px;
   height: 18px;
   margin: 2px;
-  background-color: @gray-mid-light;
+  background-color: @brand-primary;
   content:'';
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/minus-square.svg);
   mask-image: url(../../../themes/finna/images/pictograms/minus-square.svg);
@@ -358,7 +372,7 @@ h1.content-header {
   width: 18px;
   height: 18px;
   margin: 2px;
-  background-color: @gray-mid-light;
+  background-color: @brand-primary;
   content:'';
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/plus-square.svg);
   mask-image: url(../../../themes/finna/images/pictograms/plus-square.svg);
@@ -368,26 +382,26 @@ h1.content-header {
 
 .list-group.facet .list-group-item.title.collapsed:after {
   display: inline-block;  
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   margin-top:-4px;
-  background-color: currentColor;
+  background-color: @brand-primary;
   content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down-2.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/chevron-down-2.svg);
   -webkit-mask-size: cover;
   mask-size: cover;
 }
 
 .facet-group [data-toggle="collapse"]::after {
   display: inline-block;  
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   margin-top:-4px;
-  background-color: currentColor;
-  content:'' !important;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-up.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-up.svg);
+  background-color: @brand-primary;
+  content:'';
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-up-2.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/chevron-up-2.svg);
   -webkit-mask-size: cover;
   mask-size: cover;
 }
@@ -558,9 +572,9 @@ h1.content-header {
   width: 18px;
   height: 18px;
   background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);  
   mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
-  -webkit-mask-size: cover;
+  -webkit-mask-size: cover;  
   mask-size: cover;
   &:before {
     display: none;
