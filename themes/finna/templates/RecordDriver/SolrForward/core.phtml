@@ -15,15 +15,6 @@
       $videoUrls = [];
       $otherUrls = [];
       foreach ($urls as $url) {
-        $renderedURLs[] = $url['url'];
-        $desc = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']);
-        $icon = 'fa-external-link';
-        if (!empty($url['desc'])) {
-            $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
-            if (isset($map[$url['desc']])) {
-                $icon = $map[$url['desc']];
-            }
-        }
         if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
           array_push($videoUrls, $url);
         }
@@ -49,17 +40,20 @@
         <div class="truncate-field">
           <? if (!empty($videoUrls)): ?>
               <? foreach ($videoUrls as $url): ?>
-              <div class="video-link-container">
-                <a class="fulltext videourl" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
+                <?
+                  $renderedURLs[] = $url['url'];
+                  $desc = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']);
+                 ?>
+                <div class="video-link-container">
+                  <a class="fulltext videourl" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
                     <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
                     <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
                     <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-                >
-                  <div class="video-icon"><i class="fa fa-play-circle"></i></div>
-                  <div class="video-desc"><?=$this->transEsc('default::link_' . $desc, null, $desc) ?></div>
-                </a>
-                <div>Lisätietoja</div>
-              </div>
+                  >
+                    <div class="video-icon"><i class="fa fa-play-circle"></i></div>
+                    <div class="video-desc"><?=$this->transEsc('default::link_' . $desc, null, $desc) ?></div>
+                  </a>
+                </div>
               <? endforeach; ?>
           <? endif; ?>
         </div>
@@ -141,6 +135,16 @@
             <? endforeach; ?>
             <? if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
               <? foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
+                <?
+                  $renderedURLs[] = $url['url'];
+                  $desc = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']);
+                  if (!empty($url['desc'])) {
+                  $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
+                  if (isset($map[$url['desc']])) {
+                  $icon = $map[$url['desc']];
+                  }
+                  }
+                ?>
                 <? if (in_array($url['url'], $renderedURLs)) { continue; } ?>
                 <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
                 <? if ($url['source']): ?>
