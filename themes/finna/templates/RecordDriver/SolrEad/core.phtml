@@ -1,6 +1,5 @@
 <!-- START of: finna - RecordDriver/SolrEad/core.phtml -->
 <?
-
   $urls = $this->record($this->driver)->getLinkDetails();
   if (!empty($urls)){
     $videoUrls = [];
@@ -24,15 +23,17 @@
       <div class="local-available-online-record recordURLs">
         <div class="truncate-field">
           <? foreach ($videoUrls as $url): ?>
-              <? $desc = $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe' ? $this->escapeHtml($this->translate('format_Video')) : $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?>
+            <? $desc = $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe' ? $this->translate('format_Video') : $this->translate('link_' . $url['desc'], null, $url['desc']); ?>
+            <div class="video-link-container">
               <a  class="videourl" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" target="_blank"
                   <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
                   <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
                   <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
               >
                 <div class="video-icon"><i class="fa fa-play-circle"></i></div>
-                <div class="video-desc"><?=$desc?></div>
+                <div class="video-desc"><?=$this->escapeHtml($desc)?></div>
               </a>
+            </div>
           <? endforeach; ?>
         </div>
       </div>

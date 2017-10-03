@@ -38,14 +38,16 @@
   <div class="media-<?=$thumbnailAlignment ?>">
     <? if (!empty($videoUrls)): ?>
       <? foreach ($videoUrls as $url): ?>
-        <? $desc = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']); ?>
-        <div class="videourl">
-          <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
+        <? $description = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']); ?>
+        <? $desc = $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe' ? $this->translate('format_Video') : $description; ?>
+        <div class="video-link-container">
+          <a class="videourl fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
             <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
             <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
             <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
           >
-            <i class="fa fa-play-circle"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
+            <div class="video-icon"><i class="fa fa-play-circle"></i></div>
+            <div class="video-desc"><?=$this->escapeHtml($desc)?></div>
           </a>
         </div>
       <? endforeach; ?>
