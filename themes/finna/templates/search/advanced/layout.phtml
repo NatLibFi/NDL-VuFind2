@@ -146,11 +146,15 @@
       <? if (isset($this->extraAdvancedControls)): ?>
         <?=$this->extraAdvancedControls ?>
       <? endif; ?>
-      <div>
-        <span class="limit-container">
-          <?=$this->render('search/advanced/limit.phtml')?>
-        </span>
-        <button class="btn btn-primary pull-right" type="submit" value="<?= $this->transEsc('Find')?>"><i class="fa fa-search-adv"></i> <?= $this->transEsc('Find')?></button>
+      <div class="adv-search-bar">
+        <div class="container">
+          <div class="advanced-search">
+           <span class="limit-container">
+              <?=$this->render('search/advanced/limit.phtml')?>
+            </span>
+            <button class="btn btn-primary pull-right" type="submit" value="<?= $this->transEsc('Find')?>"><i class="fa fa-search-adv"></i> <?= $this->transEsc('Find')?></button>
+          </div>
+        </div>
       </div>
     </div>
     <? if ($hasDefaultsApplied): ?>
