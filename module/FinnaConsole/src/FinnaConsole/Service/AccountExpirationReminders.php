@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @package  Service
  * @author   Jyrki Messo <jyrki.messo@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -43,6 +44,7 @@ use DateInterval;
  * @package  Service
  * @author   Jyrki Messo <jyrki.messo@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -124,6 +126,34 @@ class AccountExpirationReminders extends AbstractService
     protected $configReader = null;
 
     /**
+     * Expiration time in days
+     *
+     * @var int
+     */
+    protected $expirationDays;
+
+    /**
+     * Days before expiration to send reminders
+     *
+     * @var int
+     */
+    protected $remindDaysBefore;
+
+    /**
+     * Days between reminders
+     *
+     * @var int
+     */
+    protected $reminderFrequency;
+
+    /**
+     * Whether to just display a report of messages to be sent.
+     *
+     * @var bool
+     */
+    protected $reportOnly;
+
+    /**
      * Constructor
      *
      * @param Finna\Db\Table\User            $table          User table.
@@ -152,14 +182,7 @@ class AccountExpirationReminders extends AbstractService
      */
     public function run($arguments)
     {
-        if (count($arguments) < 5
-            || (int) $arguments[2] < 180
-        ) {
-            $this->msg($this->getUsage());
-            return false;
-        }
-
-        if (! $this->collectScriptArguments($arguments)) {
+        if (!$this->collectScriptArguments($arguments)) {
             $this->msg($this->getUsage());
             return false;
         }
@@ -168,12 +191,15 @@ class AccountExpirationReminders extends AbstractService
         $this->currentSiteConfig = parse_ini_file($siteConfig, true);
 
         $users = $this->getUsersToRemind(
-            $this->expirationDays, $this->remindDaysBefore, $this->remindingFrequency
+            $this->expirationDays, $this->remindDaysBefore, $this->reminderFrequency
         );
         $count = 0;
 
         foreach ($users as $user) {
-            $this->msg("Sending expiration reminder for user " . $user->username);
+            $this->msg(
+                "Sending expiration reminder for user {$user->username}"
+                . " (id {$user->id})"
+            );
             $this->sendAccountExpirationReminder($user, $this->expirationDays);
             $count++;
         }
@@ -181,7 +207,7 @@ class AccountExpirationReminders extends AbstractService
         if ($count === 0) {
             $this->msg('No user accounts to remind.');
         } else {
-            $this->msg("$count expiring user accounts reminded.");
+            $this->msg("$count reminders processed.");
         }
 
         return true;
@@ -198,52 +224,40 @@ class AccountExpirationReminders extends AbstractService
      */
     protected function getUsersToRemind($days, $remindDaysBefore, $frequency)
     {
-        $remindingDaysBegin = [];
-        $remindingDaysEnd = [];
+        $expireDate = date('Y-m-d', strtotime(sprintf('-%d days', (int) $days)));
 
-        for ($x = $remindDaysBefore; $x > 0; $x -= $frequency) {
-            $remindingDaysBegin[] = date(
-                'Y-m-d 00:00:00', strtotime(sprintf('-%d days', (int) $days - $x))
-            );
-            $remindingDaysEnd[] = date(
-                'Y-m-d 23:59:59', strtotime(sprintf('-%d days', (int) $days - $x))
-            );
-        }
-      
-        $timePeriods = "";
-
-        for ($i = 0; $i < count($remindingDaysBegin); $i++) {
-            if (! empty($timePeriods)) {
-                $timePeriods .= " OR ";
-            }
-            $timePeriods .= "(finna_last_login >= '"
-                         . $remindingDaysBegin[$i] . "' AND ";
-            $timePeriods .= "finna_last_login <= '"
-                         . $remindingDaysEnd[$i] . "')";
-        }
-
-        return $this->table->select(
-            function (Select $select) use ($timePeriods) {
+        $users = $this->table->select(
+            function (Select $select) use ($expireDate) {
                 $select->where->notLike('username', 'deleted:%');
-                $select->where($timePeriods);
+                $select->where->lessThan('finna_last_login', $expireDate);
                 $select->where->notEqualTo(
                     'finna_last_login',
-                    '0000-00-00 00:00:00'
+                    '2000-01-01 00:00:00'
                 );
             }
         );
+
+        $results = [];
+        foreach ($users as $user) {
+            $secsSinceLast = time() - strtotime($user->finna_last_expiration_reminder);
+            if ($secsSinceLast >= $frequency * 86400) {
+                $results[] = $user;
+            }
+        }
+
+        return $results;
     }
 
     /**
      * Send account expiration reminder for a user.
      *
-     * @param \Finna\Db\Table\Row\User $user            User.
-     * @param int                      $expiration_days Amount of days when 
-     *                                                  account expires
+     * @param \Finna\Db\Table\Row\User $user           User.
+     * @param int                      $expirationDays Number of days after
+     * the account expires.
      *
-     * @return boolean success.
+     * @return boolean
      */
-    protected function sendAccountExpirationReminder($user,$expiration_days)
+    protected function sendAccountExpirationReminder($user, $expirationDays)
     {
         if (!$user->email || trim($user->email) == '') {
             $this->msg(
@@ -253,7 +267,12 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        list($userInstitution,$userName) = explode(':', $user['username'], 2);
+        if (false !== strpos($user->username, ':')) {
+            list($userInstitution, $userName) = explode(':', $user->username, 2);
+        } else {
+            $userInstitution = 'national';
+            $userName = $user->username;
+        }
 
         if (!$this->currentInstitution
             || $userInstitution != $this->currentInstitution
@@ -283,8 +302,8 @@ class AccountExpirationReminders extends AbstractService
             $this->currentSiteConfig = parse_ini_file($siteConfig, true);
         }
 
-        $expiration_datetime = new DateTime($user->finna_last_login);
-        $expiration_datetime->add(new DateInterval('P' . $expiration_days . 'D'));
+        $expirationDatetime = new DateTime($user->finna_last_login);
+        $expirationDatetime->add(new DateInterval('P' . $expirationDays . 'D'));
 
         $language = isset($this->currentSiteConfig['Site']['language'])
             ? $this->currentSiteConfig['Site']['language'] : 'fi';
@@ -300,28 +319,31 @@ class AccountExpirationReminders extends AbstractService
             ->addTranslationFile('ExtendedIni', null, 'default', $language)
             ->setLocale($language);
 
-        $login_path = $this->urlHelper->__invoke('myresearch-home');
         if (!$this->currentInstitution || $this->currentInstitution == 'national') {
             $this->currentInstitution = 'www';
         }
-        
+
+        $serviceAddress = $this->currentInstitution . '.finna.fi';
+        $serviceName = !empty($this->currentSiteConfig['Site']['title'])
+            ? $this->currentSiteConfig['Site']['title'] : $serviceAddress;
         $params = [
-            'login_method' => $user->finna_auth_method,
+            'loginMethod' => strtolower($user->finna_auth_method),
             'username' => $userName,
-            'firstname' => $user->firstname,
-            'fullname' =>  $user->firstname . " " . $user->lastname,
-            'email' => $user->email,
-            'expiration_date' =>  $expiration_datetime->format('d.m.Y'),
-            'login_link' => 'https://' . $this->currentInstitution .
-                            '.finna.fi' . $login_path
+            'firstname' => $user->firstname ? $user->firstname : $userName,
+            'expirationDate' =>  $expirationDatetime->format('d.m.Y'),
+            'serviceName' => $serviceName,
+            'serviceAddress' => $serviceAddress
         ];
 
         $subject = $this->translate(
             'account_expiration_subject',
-            ['%%expiration_date%%' => $params['expiration_date']]
+            [
+                '%%expirationDate%%' => $params['expirationDate'],
+                '%%serviceName%%' => $serviceName,
+                '%%serviceAddress%%' => $serviceAddress
+            ]
         );
 
-        
         $message = $this->renderer->render(
             'Email/account-expiration-reminder.phtml', $params
         );
@@ -330,9 +352,24 @@ class AccountExpirationReminders extends AbstractService
             $to = $user->email;
             $from = $this->currentSiteConfig['Site']['email'];
 
-            $this->serviceManager->get('VuFind\Mailer')->send(
-                $to, $from, $subject, $message
-            );
+            if ($this->reportOnly) {
+                echo <<<EOT
+----------
+From: $from
+To: $to
+Subject: $subject
+
+$message
+----------
+
+EOT;
+            } else {
+                $this->serviceManager->get('VuFind\Mailer')->send(
+                    $to, $from, $subject, $message
+                );
+                $user->finna_last_expiration_reminder = date('Y-m-d H:i:s');
+                $user->save();
+            }
         } catch (\Exception $e) {
             $this->err(
                 "Failed to send expiration reminder to user {$user->username} "
@@ -360,21 +397,24 @@ class AccountExpirationReminders extends AbstractService
         $this->viewBaseDir = isset($arguments[1]) ? $arguments[1] : false;
 
         // Inactive user account will expire in expirationDays days
-        $this->expirationDays = (isset($arguments[2])
-                                  && $arguments[2] >= 180) ? $arguments[2] : false;
+        $this->expirationDays = (isset($arguments[2]) && $arguments[2] >= 180)
+            ? $arguments[2] : false;
 
         // Start reminding remindDaysBefore before expiration
-        $this->remindDaysBefore = (isset($arguments[3]) &&
-                                   $arguments[3] > 0) ? $arguments[3] : false;
+        $this->remindDaysBefore = (isset($arguments[3]) && $arguments[3] > 0)
+            ? $arguments[3] : false;
 
-        // Remind between remindingFrequency days when reminding period has started
-        $this->remindingFrequency = (isset($arguments[4])
-                                     && $arguments[4] > 0) ? $arguments[4] : false;
+        // Remind every reminderFrequency days when reminding period has started
+        $this->reminderFrequency = (isset($arguments[4]) && $arguments[4] > 0)
+            ? $arguments[4] : false;
+
+        $this->reportOnly = isset($arguments[5]);
+
         if (!$this->baseDir
             || !$this->viewBaseDir
             || !$this->expirationDays
             || !$this->remindDaysBefore
-            || !$this->remindingFrequency
+            || !$this->reminderFrequency
         ) {
             return false;
         } else {
@@ -392,7 +432,7 @@ class AccountExpirationReminders extends AbstractService
         // @codingStandardsIgnoreStart
         return <<<EOT
 Usage:
-  php index.php util expiration_reminders <vufind_dir> <view_dir> <expiration_days> <remind_days_before> <frequency>
+  php index.php util expiration_reminders <vufind_dir> <view_dir> <expiration_days> <remind_days_before> <frequency> [report]
 
   Sends a reminder for those users whose account will expire in <remind_days_before> days.
     vufind_dir          VuFind base installation directory
@@ -401,6 +441,7 @@ Usage:
                         Values less than 180 are not valid.
     remind_days_before  Begin reminding the user x days before the actual expiration
     frequency           How often (in days) the user will be reminded
+    report              If set, only a report of messages to be sent is generated
 
 EOT;
         // @codingStandardsIgnoreEnd

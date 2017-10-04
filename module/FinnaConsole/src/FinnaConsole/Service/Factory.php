@@ -52,7 +52,7 @@ class Factory
     public static function getAccountExpirationReminders(ServiceManager $sm)
     {
         $table = $sm->get('VuFind\DbTablePluginManager')->get('User');
-        $renderer = $sm->get('viewmanager')->getRenderer();
+        $renderer = $sm->get('ViewRenderer');
         $configReader = $sm->get('VuFind\Config');
         $translator = $sm->get('VuFind\Translator');
 
@@ -60,7 +60,7 @@ class Factory
             $table, $renderer, $configReader, $translator, $sm
         );
     }
-    
+
     /**
      * Construct the console service for sending due date reminders.
      *
