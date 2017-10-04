@@ -342,6 +342,32 @@ h1.content-header {
 
 // Icons
 
+.fa-info-big {
+  display: inline-block;  
+  position: relative;
+  width: 24px;
+  height: 24px;
+  top:-4px;
+  background-color: currentColor;
+  content:'';
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/info-2.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/info-2.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+}
+
+.fa-send-feedback {
+  display: inline-block;  
+  width: inherit;
+  height: inherit;
+  background-color: currentColor;
+  content:'';
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+}
+
 .list-group.facet .jstree-facet li span.main {
   padding-left: 10px;
   margin-left: 22px;
@@ -349,8 +375,8 @@ h1.content-header {
 
 .list-group.facet .jstree-open>.jstree-ocl:before {
   display: inline-block;  
-  width: 18px;
-  height: 18px;
+  width: inherit;
+  height: inherit;
   margin: 2px;
   background-color: @brand-primary;
   content:'';
@@ -546,21 +572,6 @@ h1.content-header {
   background-color: currentColor;
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevrons-right.svg);
   mask-image: url(../../../themes/finna/images/pictograms/chevrons-right.svg);
-  &:before {
-    display: none;
-  }
-}
-
-.fa-arrow-down {
-  display: inline-block;
-  margin-bottom: -4px;
-  width: 18px;
-  height: 18px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);  
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
-  -webkit-mask-size: cover;  
-  mask-size: cover;
   &:before {
     display: none;
   }
