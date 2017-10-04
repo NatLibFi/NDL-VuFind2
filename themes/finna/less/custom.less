@@ -94,7 +94,7 @@ body {
   margin-top: 0.5em;
 }
 .searchContent [class^="tooltip-"]>i {
-  color: @brand-primary;
+  color: @brand-primary;  
 }
 
 .sort-button .dropdown>a {text-transform: uppercase; font-size: 0.9em;}
@@ -142,6 +142,34 @@ h1.content-header {
 }
 
 // Searchbox
+
+.searchbox-home {
+  .search-tooltip {
+    float:left;
+    width: 10%;
+  }
+  .tooltip-search-pci, .tooltip-search-local {
+    font-size: 1.2em;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    margin: auto;
+    line-height: 36px;
+    i {
+      margin-left:6px;
+      vertical-align: -1px;
+      cursor: pointer;
+    }
+  }
+}
+
+.tooltip-search-pci, .tooltip-search-local {
+  i {
+    cursor: pointer;
+  }
+}
+
 .template-dir-search.template-name-home .searchContent {
   background-size: cover;
   background-position: center center;
