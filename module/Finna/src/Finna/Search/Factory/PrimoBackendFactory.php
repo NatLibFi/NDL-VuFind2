@@ -5,7 +5,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Search
@@ -30,6 +30,7 @@
 namespace Finna\Search\Factory;
 
 use FinnaSearch\Backend\Primo\Connector;
+use Zend\Console\Console;
 
 /**
  * Factory for Primo Central backends.
@@ -60,9 +61,15 @@ class PrimoBackendFactory
         if (!isset($this->primoConfig->General->url)) {
             throw new \Exception('Missing url in Primo.ini');
         }
-        $instCode = isset($permHandler)
-            ? $permHandler->getInstCode()
-            : null;
+        if (Console::isConsole()) {
+            $instCode = isset($this->primoConfig->Institutions->defaultCode)
+                ? $this->primoConfig->Institutions->defaultCode
+                : null;
+        } else {
+            $instCode = null !== $permHandler
+                ? $permHandler->getInstCode()
+                : null;
+        }
 
         // Build HTTP client:
         $client = $this->serviceLocator->get('VuFind\Http')->createClient();
@@ -88,5 +95,19 @@ class PrimoBackendFactory
         }
 
         return $connector;
+    }
+
+    /**
+     * Get a PrimoPermissionHandler
+     *
+     * @return PrimoPermissionHandler
+     */
+    protected function getPermissionHandler()
+    {
+        if (Console::isConsole()) {
+            // Permissions handler requires an HTTP request, can't use with console
+            return null;
+        }
+        return parent::getPermissionHandler();
     }
 }

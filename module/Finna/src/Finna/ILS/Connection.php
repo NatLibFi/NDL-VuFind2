@@ -20,7 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -147,6 +147,34 @@ class Connection extends \VuFind\ILS\Connection
         }
 
         if ($this->checkCapability('changePickupLocation', [$params ?: []])
+        ) {
+            return $functionConfig;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check for changeRequestStatus
+     *
+     * A support method for checkFunction(). This is responsible for checking
+     * the driver configuration to determine if the system supports change of
+     * request status.
+     *
+     * @param array $functionConfig The configuration values
+     * @param array $params         Patron data
+     *
+     * @return mixed On success, array of configuration data; on failure, false.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    protected function checkMethodchangeRequestStatus($functionConfig, $params)
+    {
+        if (!isset($functionConfig['method'])) {
+            return false;
+        }
+
+        if ($this->checkCapability('changeRequestStatus', [$params ?: []])
         ) {
             return $functionConfig;
         }

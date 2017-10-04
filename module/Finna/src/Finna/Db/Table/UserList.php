@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Db_Table
@@ -26,8 +26,6 @@
  * @link     https://vufind.org Main Page
  */
 namespace Finna\Db\Table;
-use VuFind\Db\Table\PluginManager;
-use Zend\Db\Adapter\Adapter;
 
 /**
  * Table Definition for user_list
@@ -40,25 +38,6 @@ use Zend\Db\Adapter\Adapter;
  */
 class UserList extends \VuFind\Db\Table\UserList
 {
-    /**
-     * Constructor
-     *
-     * @param Adapter                 $adapter Database adapter
-     * @param PluginManager           $tm      Table manager
-     * @param array                   $cfg     Zend Framework configuration
-     * @param \Zend\Session\Container $session Session container (must use same
-     * namespace as container provided to \VuFind\View\Helper\Root\UserList).
-     */
-    public function __construct(Adapter $adapter, PluginManager $tm, $cfg,
-        \Zend\Session\Container $session
-    ) {
-        parent::__construct($adapter, $tm, $cfg, $session);
-        $resultSetPrototype = $this->getResultSetPrototype();
-        $resultSetPrototype->setArrayObjectPrototype(
-            $this->initializeRowPrototype('Finna\Db\Row\UserList')
-        );
-    }
-
     /**
      * Retrieve user's list object by title.
      *

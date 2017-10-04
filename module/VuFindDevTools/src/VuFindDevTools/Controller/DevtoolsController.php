@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA    02111-1307    USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -53,7 +53,7 @@ class DevtoolsController extends \VuFind\Controller\AbstractBase
     protected function getQueryBuilder($id)
     {
         try {
-            $backend = $this->getServiceLocator()
+            $backend = $this->serviceLocator
                 ->get('VuFind\Search\BackendManager')
                 ->get($id);
         } catch (\Exception $e) {
@@ -77,7 +77,7 @@ class DevtoolsController extends \VuFind\Controller\AbstractBase
         }
         if (isset($view->min) && $view->min) {
             $view->results = $view->min->deminify(
-                $this->getServiceLocator()->get('VuFind\SearchResultsPluginManager')
+                $this->serviceLocator->get('VuFind\SearchResultsPluginManager')
             );
         }
         if (isset($view->results) && $view->results) {

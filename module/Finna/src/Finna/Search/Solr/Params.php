@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Search_Solr
@@ -471,6 +471,13 @@ class Params extends \VuFind\Search\Solr\Params
         if (!in_array($field, $this->newItemsFacets)
             || !($range = Utils::parseRange($value))
         ) {
+            if ($translate
+                && in_array($field, $this->getOptions()->getHierarchicalFacets())
+            ) {
+                return $this->translateHierarchicalFacetFilter(
+                    $field, $value, $operator
+                );
+            }
             $result = parent::formatFilterListEntry(
                 $field, $value, $operator, $translate
             );
@@ -493,6 +500,31 @@ class Params extends \VuFind\Search\Solr\Params
             $displayText .= $to ? " $ndash $to" : '';
         }
 
+        return compact('value', 'displayText', 'field', 'operator');
+    }
+
+    /**
+     * Translate a hierarchical facet filter
+     *
+     * Translates each facet level and concatenates the result
+     *
+     * @param string $field    Field name
+     * @param string $value    Field value
+     * @param string $operator Operator (AND/OR/NOT)
+     *
+     * @return array
+     */
+    protected function translateHierarchicalFacetFilter($field, $value, $operator)
+    {
+        $domain = $this->getOptions()->getTextDomainForTranslatedFacet($field);
+        $parts = explode('/', $value);
+        $result = [];
+        for ($i = 0; $i <= $parts[0]; $i++) {
+            $part = array_slice($parts, 1, $i + 1);
+            $key = $i . '/' . implode('/', $part) . '/';
+            $result[] = $this->translate($key, null, end($part));
+        }
+        $displayText = implode(' > ', $result);
         return compact('value', 'displayText', 'field', 'operator');
     }
 

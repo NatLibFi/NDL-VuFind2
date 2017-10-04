@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -447,6 +447,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     if ($appellationValue !== '') {
                         $role = isset($actor->actorInRole->roleActor->term)
                             ? $actor->actorInRole->roleActor->term : '';
+                        if ($role == 'valokuvaaja' || 'kuvaaja') {
+                            continue;
+                        }
                         $actors[] = [
                             'name' => $appellationValue,
                             'role' => $role
@@ -502,7 +505,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $type = isset($attributes->type) ? $attributes->type : '';
                     if ($type) {
                         $results[] = (string)$classificationNode->term
-                            . " $type)";
+                            . " ($type)";
                     } else {
                         $results[] = (string)$classificationNode->term;
                     }
@@ -934,39 +937,75 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get the photographer information in buiding objects
-     *
-     * @return string $result Photographer's name and / or time when picture taken.
-     */
+    * Get the photographer information if availabe
+    *
+    * @return string $result Photographer's name and / or time when picture taken.
+    */
     public function getPhotoInfo()
     {
-        $isBuilding = false;
-        foreach ($this->getSimpleXML()->xpath(
-            'lido/descriptiveMetadata/objectClassificationWrap/objectWorkTypeWrap/'
-                . 'objectWorkType'
-        ) as $node) {
-            if (strpos((string)$node->term, 'Rakennus')) {
-                $isBuilding = true;
-                break;
-            }
-        }
-        if (!$isBuilding) {
-            return '';
-        }
+        $photographer = '';
+        $time = '';
         foreach ($this->getSimpleXML()->xpath(
             'lido/administrativeMetadata/resourceWrap/resourceSet'
         ) as $nodes) {
             $resourceTerm = (string)$nodes->resourceType->term;
-            if ('Valokuva' === $resourceTerm) {
+            if ('alokuva' === strtolower($resourceTerm)) {
                 $photographer = !empty($nodes->resourceDescription)
                  ? (string)$nodes->resourceDescription : '';
                 $time = !empty($nodes->resourceDateTaken->displayDate)
                  ? (string)$nodes->resourceDateTaken->displayDate : '';
-                if ('' !== trim($time) || '' !== trim($photographer)) {
-                    return $result = !empty($time) ?
-                        $photographer . ' ' . $time : $photographer;
+                break;
+            }
+        }
+        if (empty($result)) {
+            foreach ($this->getSimpleXML()->xpath(
+                '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
+            ) as $event) {
+                foreach ($event->eventActor as $actor) {
+                    $term = strtolower($actor->actorInRole->roleActor->term);
+                    if ('valokuvaaja' === $term || 'kuvaaja' === $term) {
+                        $photographer = (string)$actor->actorInRole->actor
+                            ->nameActorSet->appellationValue;
+                        $time = !empty($event->eventDate->displayDate)
+                            ? (string)$event->eventDate->displayDate : '';
+                        break;
+                    }
                 }
             }
         }
+        if ('' !== trim($time) || '' !== trim($photographer)) {
+            return !empty($time) ?
+                $photographer . ' ' . $time : $photographer;
+        }
+        return '';
+    }
+
+    /**
+     * Get the displaysubject and description info to summary
+     *
+     * @return array $results with summary from displaySubject or description field
+     */
+    public function getSummary()
+    {
+        $results = [];
+        $label = null;
+        $title = str_replace([',', ';'], ' ', $this->getTitle());
+        foreach ($this->getSimpleXML()->xpath(
+            'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
+        ) as $node) {
+            $subject = $node->displaySubject;
+            $checkTitle = str_replace([',', ';'], ' ', (string)$subject) != $title;
+            foreach ($subject as $attributes) {
+                $label = $attributes->attributes()->label;
+                if (($label == 'aihe' || $label == null)  && $checkTitle) {
+                    $results[] = (string)$subject;
+                }
+            }
+        }
+        if (!$results && !empty($this->fields['description'])) {
+            $results[] = (string)($this->fields['description']) != $title
+                ? (string)$this->fields['description'] : '';
+        }
+        return $results;
     }
 }

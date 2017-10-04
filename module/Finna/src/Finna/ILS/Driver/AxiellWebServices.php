@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -72,6 +72,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @var string
      */
     protected $defaultPickUpLocation;
+
+    /**
+    * Excluded pickup locations
+    *
+    * @var array
+    */
+    protected $excludePickUpLocations;
 
     /**
      * Default request group
@@ -326,6 +333,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $this->defaultPickUpLocation = false;
         }
 
+        $this->excludePickUpLocations
+            = isset($this->config['Holds']['excludePickUpLocations'])
+            ? explode(':', $this->config['Holds']['excludePickUpLocations']) : [];
+
         $this->defaultRequestGroup
             = isset($this->config['Holds']['defaultRequestGroup'])
             ? $this->config['Holds']['defaultRequestGroup'] : false;
@@ -452,15 +463,26 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             // should be included in the location name
 
             if (is_object($organisation->branches->branch)) {
+                $locationID
+                    = $organisationID . '.' . $organisation->branches->branch->id;
+                if (in_array($locationID, $this->excludePickUpLocations)) {
+                    continue;
+                }
+
                 $locationsList[] = [
-                    'locationID' =>
-                       $organisationID . '.' . $organisation->branches->branch->id,
+                    'locationID' => $locationID,
                     'locationDisplay' => $organisation->branches->branch->name
                 ];
             } else {
                 foreach ($organisation->branches->branch as $branch) {
+                    $locationID
+                        = $organisationID . '.' . $branch->id;
+                    if (in_array($locationID, $this->excludePickUpLocations)) {
+                        continue;
+                    }
+
                     $locationsList[] = [
-                        'locationID' => $organisationID . '.' . $branch->id,
+                        'locationID' => $locationID,
                         'locationDisplay' => $branch->name
                     ];
                 }
@@ -2269,7 +2291,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'isRenewedToday'        => 'Renewed today',
             'isOverdue'             => 'renew_item_overdue',
             'maxNofRenewals'        => 'renew_item_limit',
-            'patronIsDeniedLoan'    => 'fine_limit_patron',
+            'patronIsDeniedLoan'    => 'renew_denied',
             'patronHasDebt'         => 'renew_debt',
             'patronIsInvoiced'      => 'renew_item_patron_is_invoiced',
             'renewalIsDenied'       => 'renew_denied',

@@ -17,9 +17,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * @category VuFind2
+ * @category VuFind
  * @package  Record
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
@@ -37,7 +37,7 @@ use VuFind\Exception\RecordMissing as RecordMissingException,
 /**
  * Record loader
  *
- * @category VuFind2
+ * @category VuFind
  * @package  Record
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
@@ -95,44 +95,38 @@ class Loader extends \VuFind\Record\Loader
     }
 
     /**
-     * Given an array of associative arrays with id and source keys (or pipe-
-     * separated source|id strings), load all of the requested records in the
-     * requested order.
+     * Given an array of IDs and a record source, load a batch of records for
+     * that source.
      *
-     * @param array $ids Array of associative arrays with id/source keys or
-     * strings in source|id format.  In associative array formats, there is
-     * also an optional "extra_fields" key which can be used to pass in data
-     * formatted as if it belongs to the Solr schema; this is used to create
-     * a mock driver object if the real data source is unavailable.
+     * @param array  $ids                       Record IDs
+     * @param string $source                    Record source
+     * @param bool   $tolerateBackendExceptions Whether to tolerate backend
+     * exceptions that may be caused by e.g. connection issues or changes in
+     * subcscriptions
      *
      * @throws \Exception
-     * @return array     Array of record drivers
+     * @return array
      */
-    public function loadBatch($ids)
-    {
-        // Separate MetaLib ids that are loaded separately
-        $loadIds = $metalibIds = $recIds = [];
-        foreach ($ids as $key => $data) {
-            if (!is_array($data)) {
-                $parts = explode('|', $data, 2);
-                $data = ['source' => $parts[0], 'id' => $parts[1]];
+    public function loadBatchForSource($ids, $source = DEFAULT_SEARCH_BACKEND,
+        $tolerateBackendExceptions = false
+    ) {
+        if ('MetaLib' === $source) {
+            $result = [];
+            foreach ($ids as $recId) {
+                $record = $this->recordFactory->get('Missing');
+                $record->setRawData(['id' => $recId]);
+                $record->setSourceIdentifier('MetaLib');
+                $result[] = $record;
             }
-            $recId = $data['id'];
-            $metalib = isset($data['source']) && $data['source'] == 'MetaLib';
-            if ($metalib) {
-                $metalibIds[] = $recId;
-            } else {
-                $loadIds[] = $data;
-            }
-            $recIds[] = $recId;
+            return $result;
         }
 
-        $result = [];
+        $records = parent::loadBatchForSource(
+            $ids, $source, $tolerateBackendExceptions
+        );
 
-        $records = parent::loadBatch($loadIds);
-
-        // Check the results for missing MetaLib records and try to load them with
-        // their old MetaLib IDs
+        // Check the results for missing MetaLib IRD records and try to load them
+        // with their old MetaLib IDs
         foreach ($records as &$record) {
             if ($record instanceof \VuFind\RecordDriver\Missing
                 && $record->getSourceIdentifier() == 'Solr'
@@ -144,19 +138,7 @@ class Loader extends \VuFind\Record\Loader
             }
         }
 
-        $metalibIds = array_flip($metalibIds);
-        foreach ($recIds as $recId) {
-            if (isset($metalibIds[$recId])) {
-                $record = $this->recordFactory->get('Missing');
-                $record->setRawData(['id' => $recId]);
-                $record->setSourceIdentifier('MetaLib');
-                $result[] = $record;
-            } else {
-                $result[] = array_shift($records);
-            }
-        }
-
-        return $result;
+        return $records;
     }
 
     /**

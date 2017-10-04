@@ -41,6 +41,8 @@
   $this->showCartControls = $this->supportsCart && $this->cart()->isActive();
   // Enable bulk options if appropriate:
   $this->showBulkOptions = $this->supportsCart && $this->showBulkOptions;
+  // Enable bulk options if appropriate:
+  $this->showCheckboxes = $this->showCartControls || $this->showBulkOptions;
 
   // Load Javascript dependencies into header:
   $this->headScript()->appendFile("check_save_statuses.js");
@@ -50,7 +52,7 @@
   $this->headLink()->appendStylesheet('combined-search.css');
 ?>
 <?=$this->flashmessages()?>
-<form class="form" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
+<form id="search-cart-form" class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
   <? $recs = $combinedResults->getRecommendations('top'); if (!empty($recs)): ?>
     <div>
       <? foreach ($recs as $current): ?>

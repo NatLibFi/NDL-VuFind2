@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -636,6 +636,10 @@ trait SolrFinna
             return 'Article';
         } elseif (in_array('0/Journal/', $formats)) {
             return 'Journal';
+        } else if (strlen($this->getCleanISSN()) > 0) {
+            return 'Journal';
+        } else if (strlen($this->getCleanISBN()) > 0) {
+            return 'Book';
         } elseif (isset($formats[0])) {
             $format = explode('/', $formats[0]);
             if (isset($format[1])) {

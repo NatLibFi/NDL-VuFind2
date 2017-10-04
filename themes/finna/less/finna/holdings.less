@@ -4,7 +4,7 @@
 .holding-details {
     margin-top: 10px;
     @media (max-width: 400px) {
-        width: 133%;
+        width: 100%;
     }
 }
 .dedup-select {
@@ -44,6 +44,20 @@
     padding-bottom: 2px;
 }
 
+.ils-purchase-history {
+    padding: 8px 15px;
+    @media(min-width: @screen-sm) {
+        .title {
+            width: 33.333%;
+            float:left;
+        }
+        .history {
+            width: 66.666%;
+            float: left;
+        }
+    }
+}
+
 // Result list
 .record-container .holding-details {
     clear: both;
@@ -63,6 +77,9 @@
         & .available-total {
             margin-top: 0.5em;
         }
+    }
+    .form-control {
+        width: 100%;
     }
 }
 
@@ -84,15 +101,21 @@
 }
 .record-holdings-table {
     margin: 20px 0px;
-    padding: 0px 15px;
     border: 1px solid @gray-lighter;
     border-top: none;
 
+    h5{
+        padding-left: 15px;
+    }
     .holdings-container-heading {
         &:hover {
             cursor: pointer;
         }
         & .location {
+            width: 50%;
+            float: left;
+            padding-left: 15px;
+            padding-right: 15px;
             font-weight: bold;
             font-size: .92em;
             text-transform: uppercase;
@@ -113,14 +136,14 @@
             vertical-align: middle;
         }
         & .holdings-details {
+            padding-right: 15px;
             font-weight: bold;
+            width: 25%;
+            float: left;
+            .clearfix();
             @media (max-width: @screen-xs-max) {
+                width: 50%;
                 text-align: right;
-            }
-            @media (min-width: @screen-sm-min) {
-                & i {
-                    margin-left: -15px;
-                }
             }
             .small {
                 font-weight: normal;
@@ -133,8 +156,12 @@
             }
         }
         & .location-link {
+            width: 25%;
+            float: left;
             font-weight: bold;
+            padding-right: 15px;
             @media (max-width: @screen-xs-max) {
+                width: 100%;
                 text-align: right;
                 border-top: none;
                 padding-top: 4px;
@@ -152,33 +179,32 @@
     }
 
     & .copy-title {
-        padding-left: 20px;
         font-weight: bold;
         & .department {
             font-weight: normal;
         }
-    }
-    & .copy-info, .copy-available {
-        @media (max-width: @screen-xs-max) {
-            padding-left: 20px;
-        }
         @media (min-width: @screen-sm-min) {
-            & i {
-                margin-left: -15px;
-            }
+            width: 50%;
+            float: left;
+        }
+    }
+    & .copy-info {
+        @media (min-width: @screen-sm-min) {
+            width: 50%;
+            float: left;
         }
     }
     & .copy-available {
         @media (min-width: @screen-sm-min) {
-            text-align: right;
+            float: right;
             & div {
                 margin-left: -15px;
             }
         }
     }
     & .copy-details {
-        padding-top: 8px;
-        padding-bottom: 8px;
+        .clearfix();
+        padding: 8px 15px;
         &.collapsed {
            display: none;
         }
@@ -191,14 +217,38 @@
             padding-bottom: 0;
             text-transform: initial;
         }
+        .details-title {
+            @media (min-width: @screen-sm) {
+                width: 25%;
+            }
+            width: 50%;
+            float: left;
+        }
+        .details-info {
+            @media (min-width: @screen-sm) {
+                width: 75%;
+            }
+            width: 50%;
+            float: left;
+        }
     }
     & .headers {
-            background: @brand-primary;
-            color: @body-bg;
-            vertical-align: middle;
+        display: flex;
+        width: 100%;
+        padding: 0 15px;
+        background: @brand-primary;
+        color: @body-bg;
+        vertical-align: middle;
+        & .dedup-information {
+            flex: 1;
+        }
         & .reservations-container {
+            flex: 1;
             @media (max-width: @screen-xs-max) {
                 text-align: right;
+            }
+            & .reservations {
+                padding-right: 8px;
             }
         }
         & .total-container, .reservations-container {
@@ -264,14 +314,18 @@
         & .info {
             color: @gray-light;
             float: right;
+            margin-top: .5em;
             @media (max-width: @screen-xs-max) {
                 display: inline-block;
                 margin-left: 15px;
             }
+            & .reservations {
+                padding-right: 8px;
+            }
         }
     }
     & .holdings {
-        & .row.odd {
+        & .odd {
             background-color: @gray-ultralight;
         }
         & .branchInfo {
@@ -286,6 +340,16 @@
         }
         & .groupCallnumber {
             float: right;
+        }
+        @media (min-width: @screen-sm) {
+            .group-location-col {
+                width: 65%;
+                float: left;
+            }
+            .group-branches {
+                width: 35%;
+                float: left;
+            }
         }
     }
     & .holdings-container {

@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Finna
@@ -162,32 +162,32 @@ $config = [
     ],
     'controllers' => [
         'factories' => [
+            'ajax' => 'Finna\Controller\Factory::getAjaxController',
+            'barcode' => 'Finna\Controller\Factory::getBarcodeController',
             'browse' => 'Finna\Controller\Factory::getBrowseController',
             'cache' => 'Finna\Controller\Factory::getCacheController',
-            'record' => 'Finna\Controller\Factory::getRecordController',
             'cart' => 'Finna\Controller\Factory::getCartController',
-        ],
-        'invokables' => [
-            'ajax' => 'Finna\Controller\AjaxController',
-            'combined' => 'Finna\Controller\CombinedController',
-            'comments' => 'Finna\Controller\CommentsController',
-            'content' => 'Finna\Controller\ContentController',
-            'cover' => 'Finna\Controller\CoverController',
-            'error' => 'Finna\Controller\ErrorController',
-            'externalauth' => 'Finna\Controller\ExternalAuthController',
-            'feedback' => 'Finna\Controller\FeedbackController',
-            'feedcontentpage' => 'Finna\Controller\FeedContentController',
-            'librarycards' => 'Finna\Controller\LibraryCardsController',
-            'locationService' => 'Finna\Controller\LocationServiceController',
-            'metalib' => 'Finna\Controller\MetaLibController',
-            'metalibrecord' => 'Finna\Controller\MetaLibrecordController',
-            'my-research' => 'Finna\Controller\MyResearchController',
-            'organisationInfo' => 'Finna\Controller\OrganisationInfoController',
-            'pci' => 'Finna\Controller\PCIController',
-            'primo' => 'Finna\Controller\PrimoController',
-            'primorecord' => 'Finna\Controller\PrimorecordController',
-            'search' => 'Finna\Controller\SearchController',
-            'listpage' => 'Finna\Controller\ListController',
+            'combined' => 'Finna\Controller\Factory::getCombinedController',
+            'comments' => 'Finna\Controller\Factory::getCommentsController',
+            'content' => 'Finna\Controller\Factory::getContentController',
+            'cover' => 'Finna\Controller\Factory::getCoverController',
+            'eds' => 'Finna\Controller\Factory::getEdsController',
+            'error' => 'Finna\Controller\Factory::getErrorController',
+            'externalauth' => 'Finna\Controller\Factory::getExternalAuthController',
+            'feedback' => 'Finna\Controller\Factory::getFeedbackController',
+            'feedcontentpage' => 'Finna\Controller\Factory::getFeedContentController',
+            'librarycards' => 'Finna\Controller\Factory::getLibraryCardsController',
+            'locationService' => 'Finna\Controller\Factory::getLocationServiceController',
+            'metalib' => 'Finna\Controller\Factory::getMetaLibController',
+            'metalibrecord' => 'Finna\Controller\Factory::getMetaLibrecordController',
+            'my-research' => 'Finna\Controller\Factory::getMyResearchController',
+            'organisationInfo' => 'Finna\Controller\Factory::getOrganisationInfoController',
+            'pci' => 'Finna\Controller\Factory::getPCIController',
+            'primo' => 'Finna\Controller\Factory::getPrimoController',
+            'primorecord' => 'Finna\Controller\Factory::getPrimorecordController',
+            'record' => 'Finna\Controller\Factory::getRecordController',
+            'search' => 'Finna\Controller\Factory::getSearchController',
+            'listpage' => 'Finna\Controller\Factory::getListController',
         ],
     ],
     'controller_plugins' => [
@@ -211,10 +211,10 @@ $config = [
             'VuFind\ILSHoldLogic' => 'Finna\Service\Factory::getILSHoldLogic',
             'VuFind\AuthManager' => 'Finna\Auth\Factory::getManager',
             'VuFind\RecordLoader' => 'Finna\Service\Factory::getRecordLoader',
+            'VuFind\Role\PermissionManager' => 'Finna\Service\Factory::getPermissionManager',
             'VuFind\SearchSpecsReader' => 'Finna\Service\Factory::getSearchSpecsReader',
             'VuFind\SearchTabsHelper' => 'Finna\Service\Factory::getSearchTabsHelper',
             'VuFind\YamlReader' => 'Finna\Service\Factory::getYamlReader',
-            'VuFind\Cart' => 'Finna\Service\Factory::getCart',
             'VuFind\Mailer' => 'Finna\Mailer\Factory',
         ],
         'invokables' => [
@@ -241,6 +241,21 @@ $config = [
                     'solr' => 'Finna\Autocomplete\Factory::getSolr'
                 ]
             ],
+            'db_row' => [
+                'factories' => [
+                    'commentsinappropriate' => 'Finna\Db\Row\Factory::getCommentsInappropriate',
+                    'commentsrecord' => 'Finna\Db\Row\Factory::getCommentsRecord',
+                    'duedatereminder' => 'Finna\Db\Row\Factory::getDueDateReminder',
+                    'fee' => 'Finna\Db\Row\Factory::getFee',
+                    'finnacache' => 'Finna\Db\Row\Factory::getFinnaCache',
+                    'privateuser' => 'Finna\Db\Row\Factory::getPrivateUser',
+                    'resource' => 'Finna\Db\Row\Factory::getResource',
+                    'search' => 'Finna\Db\Row\Factory::getSearch',
+                    'transaction' => 'Finna\Db\Row\Factory::getTransaction',
+                    'user' => 'Finna\Db\Row\Factory::getUser',
+                    'userlist' => 'Finna\Db\Row\Factory::getUserList',
+                ],
+            ],
             'db_table' => [
                 'factories' => [
                     'comments' => 'Finna\Db\Table\Factory::getComments',
@@ -262,6 +277,7 @@ $config = [
                 'factories' => [
                     'axiellwebservices' => 'Finna\ILS\Driver\Factory::getAxiellWebServices',
                     'demo' => 'Finna\ILS\Driver\Factory::getDemo',
+                    'gemini' => 'Finna\ILS\Driver\Factory::getGemini',
                     'koharest' => 'Finna\ILS\Driver\Factory::getKohaRest',
                     'multibackend' => 'Finna\ILS\Driver\Factory::getMultiBackend',
                     'sierrarest' => 'Finna\ILS\Driver\Factory::getSierraRest',
@@ -283,8 +299,10 @@ $config = [
             ],
             'search_backend' => [
                 'factories' => [
+                    'EDS' => 'Finna\Search\Factory\EdsBackendFactory',
                     'Primo' => 'Finna\Search\Factory\PrimoBackendFactory',
                     'Solr' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
+                    'Summon' => 'Finna\Search\Factory\SummonBackendFactory',
                 ],
                 'aliases' => [
                     // Allow Solr core names to be used as aliases for services:
@@ -293,6 +311,9 @@ $config = [
             ],
             'search_options' => [
                 'abstract_factories' => ['Finna\Search\Options\PluginFactory'],
+                'factories' => [
+                    'eds' => 'Finna\Search\Options\Factory::getEDS',
+                ],
             ],
             'search_params' => [
                 'abstract_factories' => ['Finna\Search\Params\PluginFactory'],
@@ -452,9 +473,11 @@ $staticRoutes = [
     'LocationService/Modal',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
     'MyResearch/CheckoutHistory', 'MyResearch/SaveCustomOrder',
+    'MyResearch/PurgeCheckoutHistory',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
-    'Search/StreetSearch'
+    'Search/StreetSearch',
+    'Barcode/Show'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

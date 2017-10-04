@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  ILSdrivers
@@ -259,6 +259,33 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
     }
 
     /**
+     * Change Request Status
+     *
+     * Attempts to change the status of a specific hold request
+     *
+     * @param array $patron      The patron array from patronLogin
+     * @param array $holdDetails The request details
+     *
+     * @return mixed An array of data on the request including
+     * whether or not it was successful and a system message (if available)
+     */
+    public function changeRequestStatus($patron, $holdDetails)
+    {
+        $source = $this->getSource($patron['cat_username']);
+        $driver = $this->getDriver($source);
+        if ($driver
+            && $this->methodSupported(
+                $driver, 'changeRequestStatus', [$patron, $holdDetails]
+            )
+        ) {
+            return $driver->changeRequestStatus(
+                $this->stripIdPrefixes($patron, $source), $holdDetails
+            );
+        }
+        throw new ILSException('No suitable backend driver found');
+    }
+
+    /**
      * Return total amount of fees that may be paid online.
      *
      * @param array $patron Patron
@@ -320,7 +347,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
      */
     public function patronLogin($username, $password, $secondary = null)
     {
-        $cacheKey = "patron|$username";
+        $cacheKey = "patron|$username|$password";
         $item = $this->getCachedData($cacheKey);
         if ($item !== null) {
             return $item;
@@ -365,6 +392,25 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
                 $this->stripIdPrefixes($patron, $source), $params
             );
             return $this->addIdPrefixes($transactions, $source);
+        }
+        throw new ILSException('No suitable backend driver found');
+    }
+
+    /**
+     * Purge Patron Transaction History
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @return array Associative array of the results
+     */
+    public function purgeTransactionHistory($patron)
+    {
+        $source = $this->getSource($patron['cat_username']);
+        $driver = $this->getDriver($source);
+        if ($driver) {
+            return $driver->purgeTransactionHistory(
+                $this->stripIdPrefixes($patron, $source)
+            );
         }
         throw new ILSException('No suitable backend driver found');
     }

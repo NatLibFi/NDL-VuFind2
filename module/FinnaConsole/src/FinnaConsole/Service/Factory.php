@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Service
@@ -76,7 +76,7 @@ class Factory
 
         $catalog = \Finna\Service\Factory::getILSConnection($sm);
         $configReader = $sm->get('VuFind\Config');
-        $renderer = $sm->get('viewmanager')->getRenderer();
+        $renderer = $sm->get('ViewRenderer');
         $loader = $sm->get('VuFind\RecordLoader');
         $hmac = $sm->get('VuFind\HMAC');
         $translator = $sm->get('VuFind\Translator');
@@ -132,10 +132,11 @@ class Factory
         $configReader = $sm->get('VuFind\Config');
         $mailer = $sm->get('VuFind\Mailer');
         $viewManager = $sm->get('viewmanager');
+        $viewRenderer = $sm->get('ViewRenderer');
 
         return new OnlinePaymentMonitor(
-            $catalog, $transactionTable, $userTable,
-            $configReader, $mailer, $viewManager
+            $catalog, $transactionTable, $userTable, $configReader, $mailer,
+            $viewManager, $viewRenderer
         );
     }
 
@@ -170,7 +171,7 @@ class Factory
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return \FinnaConsole\Service\ScheduledAlerts
+     * @return \FinnaConsole\Service\VerifyRecordLinks
      */
     public static function getVerifyRecordLinks(ServiceManager $sm)
     {
@@ -183,6 +184,25 @@ class Factory
 
         return new VerifyRecordLinks(
             $commentsTable, $commentsRecordTable, $searchRunner
+        );
+    }
+
+    /**
+     * Construct the console service for verifying resource metadata.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return \FinnaConsole\Service\VerifyResourceMetadata
+     */
+    public static function getVerifyResourceMetadata(ServiceManager $sm)
+    {
+        $resourceTable = $sm->get('VuFind\DbTablePluginManager')
+            ->get('Resource');
+        $dateConverter = $sm->get('VuFind\DateConverter');
+        $recordLoader = $sm->get('VuFind\RecordLoader');
+
+        return new VerifyResourceMetadata(
+            $resourceTable, $dateConverter, $recordLoader
         );
     }
 }

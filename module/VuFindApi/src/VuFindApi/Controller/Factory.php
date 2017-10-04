@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -52,7 +52,7 @@ class Factory
      */
     public static function getApiController(ServiceManager $sm)
     {
-        $controller = new ApiController();
+        $controller = new ApiController($sm);
         $controller->addApi($sm->get('SearchApi'));
         return $controller;
     }
@@ -70,7 +70,7 @@ class Factory
             ->get('VuFind\YamlReader')->get('SearchApiRecordFields.yaml');
         $helperManager = $sm->getServiceLocator()->get('ViewHelperManager');
         $rf = new RecordFormatter($recordFields, $helperManager);
-        $controller = new SearchApiController($rf, new FacetFormatter());
+        $controller = new SearchApiController($sm, $rf, new FacetFormatter());
         return $controller;
     }
 }

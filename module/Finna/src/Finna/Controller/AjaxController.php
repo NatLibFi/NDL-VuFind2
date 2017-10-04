@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -81,7 +81,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $listId = $params['listId'];
         $ids = $params['ids'];
 
-        $table = $this->getServiceLocator()->get('VuFind\DbTablePluginManager')
+        $table = $this->serviceLocator->get('VuFind\DbTablePluginManager')
             ->get('UserList');
         $list = $table->getExisting($listId);
         if ($list->user_id !== $user->id) {
@@ -90,7 +90,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             );
         }
 
-        $favorites = $this->getServiceLocator()
+        $favorites = $this->serviceLocator
             ->get('VuFind\Favorites\FavoritesService');
         foreach ($ids as $id) {
             $source = $id[0];
@@ -143,7 +143,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
         // Is this a new list or an existing list?  Handle the special 'NEW' value
         // of the ID parameter:
-        $table = $this->getServiceLocator()->get('VuFind\DbTablePluginManager')
+        $table = $this->serviceLocator->get('VuFind\DbTablePluginManager')
             ->get('UserList');
 
         $newList = ($id == 'NEW');
@@ -201,7 +201,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             return $this->output("User resource not found", self::STATUS_ERROR, 400);
         }
 
-        $table = $this->getServiceLocator()->get('VuFind\DbTablePluginManager')
+        $table = $this->serviceLocator->get('VuFind\DbTablePluginManager')
             ->get('UserResource');
 
         foreach ($resources as $res) {
@@ -247,18 +247,90 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $patron = $this->getILSAuthenticator()->storedCatalogLogin();
 
             if ($patron) {
+                $result = $catalog->checkFunction('changePickupLocation');
+                if (!$result) {
+                    return $this->output(
+                        $this->translate('unavailable'),
+                        self::STATUS_ERROR,
+                        400
+                    );
+                }
+
                 $details = [
                     'requestId'    => $requestId,
                     'pickupLocationId' => $pickupLocationId
                 ];
-                $results = [];
-
                 $results = $catalog->changePickupLocation($patron, $details);
 
                 return $this->output($results, self::STATUS_OK);
             }
         } catch (\Exception $e) {
-            // Do nothing -- just fail through to the error message below.
+            $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
+            $this->logError('changePickupLocation failed: ' . $e->getMessage());
+            // Fall through to the error message below.
+        }
+
+        return $this->output(
+            $this->translate('An error has occurred'), self::STATUS_ERROR, 500
+        );
+    }
+
+    /**
+     * Change request status
+     *
+     * @return \Zend\Http\Response
+     */
+    public function changeRequestStatusAjax()
+    {
+        $requestId = $this->params()->fromQuery('requestId');
+        $frozen = $this->params()->fromQuery('frozen');
+        if (empty($requestId)) {
+            return $this->output(
+                $this->translate('bulk_error_missing'),
+                self::STATUS_ERROR,
+                400
+            );
+        }
+
+        // check if user is logged in
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->output(
+                [
+                    'status' => false,
+                    'msg' => $this->translate('You must be logged in first')
+                ],
+                self::STATUS_NEED_AUTH
+            );
+        }
+
+        try {
+            $catalog = $this->getILS();
+            $patron = $this->getILSAuthenticator()->storedCatalogLogin();
+
+            if ($patron) {
+
+                $result = $catalog->checkFunction('changeRequestStatus');
+                if (!$result) {
+                    return $this->output(
+                        $this->translate('unavailable'),
+                        self::STATUS_ERROR,
+                        400
+                    );
+                }
+
+                $details = [
+                    'requestId' => $requestId,
+                    'frozen' => $frozen
+                ];
+                $results = $catalog->changeRequestStatus($patron, $details);
+
+                return $this->output($results, self::STATUS_OK);
+            }
+        } catch (\Exception $e) {
+            $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
+            $this->logError('changeRequestStatus failed: ' . $e->getMessage());
+            // Fall through to the error message below.
         }
 
         return $this->output(
@@ -306,36 +378,47 @@ class AjaxController extends \VuFind\Controller\AjaxController
                                 $id, $item, $patron
                             );
 
-                            $msg = $result
-                                ? $this->translate('ill_request_place_text')
-                                : $this->translate('ill_request_error_blocked');
+                            if (is_array($result)) {
+                                $msg = $result['status'];
+                                $result = $result['valid'];
+                            } else {
+                                $msg = $result
+                                    ? 'ill_request_place_text'
+                                    : 'ill_request_error_blocked';
+                            }
                             break;
                         case 'StorageRetrievalRequest':
                             $result = $catalog->checkStorageRetrievalRequestIsValid(
                                 $id, $item, $patron
                             );
 
-                            $msg = $result
-                                ? $this->translate(
-                                    'storage_retrieval_request_place_text'
-                                )
-                                : $this->translate(
-                                    'storage_retrieval_request_error_blocked'
-                                );
+                            if (is_array($result)) {
+                                $msg = $result['status'];
+                                $result = $result['valid'];
+                            } else {
+                                $msg = $result
+                                    ? 'storage_retrieval_request_place_text'
+                                    : 'storage_retrieval_request_error_blocked';
+                            }
                             break;
                         default:
                             $result = $catalog->checkRequestIsValid(
                                 $id, $item, $patron
                             );
 
-                            $msg = $result
-                                ? $this->translate('request_place_text')
-                                : $this->translate('hold_error_blocked');
+                            if (is_array($result)) {
+                                $msg = $result['status'];
+                                $result = $result['valid'];
+                            } else {
+                                $msg = $result
+                                    ? 'request_place_text'
+                                    : 'hold_error_blocked';
+                            }
                             break;
                         }
                         $results[] = [
                             'status' => $result,
-                            'msg' => $msg
+                            'msg' => $this->translate($msg)
                         ];
                     }
                     return $this->output($results, self::STATUS_OK);
@@ -433,7 +516,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         // Add comment to deduplicated records
-        $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
+        $runner = $this->serviceLocator->get('VuFind\SearchRunner');
         $results = $runner->run(
             ['lookfor' => 'local_ids_str_mv:"' . addcslashes($id, '"') . '"'],
             'Solr',
@@ -505,7 +588,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
         $configFile = $isSolr ? 'facets' : 'Primo';
         $config
-            = $this->getServiceLocator()->get('VuFind\Config')->get($configFile);
+            = $this->serviceLocator->get('VuFind\Config')->get($configFile);
         if (!isset($config->SpecialFacets->dateRangeVis)) {
             return $this->output([], self::STATUS_ERROR, 400);
         }
@@ -550,12 +633,12 @@ class AjaxController extends \VuFind\Controller\AjaxController
             return $this->output('', self::STATUS_ERROR, 400);
         }
 
-        $cacheDir = $this->getServiceLocator()->get('VuFind\CacheManager')
+        $cacheDir = $this->serviceLocator->get('VuFind\CacheManager')
             ->getCache('description')->getOptions()->getCacheDir();
 
         $localFile = "$cacheDir/" . urlencode($id) . '.txt';
 
-        $config = $this->getServiceLocator()->get('VuFind\Config')->get('config');
+        $config = $this->serviceLocator->get('VuFind\Config')->get('config');
         $maxAge = isset($config->Content->summarycachetime)
             ? $config->Content->summarycachetime : 1440;
 
@@ -574,11 +657,9 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $url = $driver->getDescriptionURL();
             // Get, manipulate, save and display content if available
             if ($url) {
-                $httpService = $this->getServiceLocator()->get('VuFind\Http');
+                $httpService = $this->serviceLocator->get('VuFind\Http');
                 $result = $httpService->get($url, [], 60);
-                if ($result->isSuccess()) {
-                    $content = $result->getBody();
-
+                if ($result->isSuccess() && ($content = $result->getBody())) {
                     $encoding = mb_detect_encoding(
                         $content, ['UTF-8', 'ISO-8859-1']
                     );
@@ -599,13 +680,13 @@ class AjaxController extends \VuFind\Controller\AjaxController
                     return $this->output($content, self::STATUS_OK);
                 }
             }
-            $language = $this->getServiceLocator()->get('VuFind\Translator')
+            $language = $this->serviceLocator->get('VuFind\Translator')
                 ->getLocale();
             if ($summary = $driver->getSummary($language)) {
-                $summary = implode('<br><br>', $summary);
+                $summary = implode("\n\n", $summary);
 
                 // Replace double hash with a <br>
-                $summary = str_replace('##', '<br>', $summary);
+                $summary = str_replace('##', "\n\n", $summary);
 
                 // Process markdown
                 $summary = $this->getViewRenderer()->plugin('markdown')
@@ -634,7 +715,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             : false
         ;
 
-        $feedService = $this->getServiceLocator()->get('Finna\Feed');
+        $feedService = $this->serviceLocator->get('Finna\Feed');
         try {
             $feed
                 = $feedService->readFeed(
@@ -669,9 +750,9 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         $url = urldecode($url);
-        $feedService = $this->getServiceLocator()->get('Finna\Feed');
+        $feedService = $this->serviceLocator->get('Finna\Feed');
         try {
-            $config = $this->getServiceLocator()->get('VuFind\Config')
+            $config = $this->serviceLocator->get('VuFind\Config')
                 ->get('rss-organisation-page');
             $feedConfig = ['url' => $url];
 
@@ -765,6 +846,10 @@ class AjaxController extends \VuFind\Controller\AjaxController
             }
         }
 
+        if (isset($config->description)) {
+            $feed['description'] = $config->description;
+        }
+
         if (isset($config->linkTarget)) {
             $feed['linkTarget'] = $config->linkTarget;
         }
@@ -830,7 +915,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $element = 0;
         }
         $feedUrl = $this->params()->fromQuery('feedUrl');
-        $feedService = $this->getServiceLocator()->get('Finna\Feed');
+        $feedService = $this->serviceLocator->get('Finna\Feed');
         try {
             if ($feedUrl) {
                 $config = $this->getOrganisationFeedConfig($id, $feedUrl);
@@ -898,7 +983,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
      */
     protected function getOrganisationFeedConfig($id, $url)
     {
-        $config = $this->getServiceLocator()->get('VuFind\Config')
+        $config = $this->serviceLocator->get('VuFind\Config')
             ->get('rss-organisation-page');
         $feedConfig = ['url' => $url];
 
@@ -1013,11 +1098,19 @@ class AjaxController extends \VuFind\Controller\AjaxController
     {
         $this->disableSessionWrites();  // avoid session write timing bug
 
-        if (null === ($parent = $this->params()->fromQuery('parent'))) {
+        $reqParams = array_merge(
+            $this->params()->fromPost(), $this->params()->fromQuery()
+        );
+        if (empty($reqParams['parent'])) {
             return $this->handleError('getOrganisationInfo: missing parent');
         }
+        $parent = is_array($reqParams['parent'])
+            ? implode(',', $reqParams['parent']) : $reqParams['parent'];
 
-        $params = $this->params()->fromQuery('params');
+        if (empty($reqParams['params']['action'])) {
+            return $this->handleError('getOrganisationInfo: missing action');
+        }
+        $params = $reqParams['params'];
 
         $cookieName = 'organisationInfoId';
         $cookieManager = $this->serviceLocator->get('VuFind\CookieManager');
@@ -1044,11 +1137,13 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         if ($action == 'lookup') {
-            $params['link'] = $this->params()->fromQuery('link') === '1';
-            $params['parentName'] = $this->params()->fromQuery('parentName');
+            $link = isset($reqParams['link']) ? $reqParams['link'] : '0';
+            $params['link'] = $link === '1';
+            $params['parentName'] = isset($reqParams['parentName'])
+                ? $reqParams['parentName'] : null;
         }
 
-        $lang = $this->getServiceLocator()->get('VuFind\Translator')->getLocale();
+        $lang = $this->serviceLocator->get('VuFind\Translator')->getLocale();
         $map = ['en-gb' => 'en'];
 
         if (isset($map[$lang])) {
@@ -1058,7 +1153,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $lang = 'fi';
         }
 
-        $service = $this->getServiceLocator()->get('Finna\OrganisationInfo');
+        $service = $this->serviceLocator->get('Finna\OrganisationInfo');
         try {
             $response = $service->query($parent, $params, $buildings);
         } catch (\Exception $e) {
@@ -1081,7 +1176,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
     public function getSearchTabsRecommendationsAjax()
     {
         $this->disableSessionWrites();  // avoid session write timing bug
-        $config = $this->getServiceLocator()->get('VuFind\Config')->get('config');
+        $config = $this->serviceLocator->get('VuFind\Config')->get('config');
         if (empty($config->SearchTabsRecommendations->recommendations)) {
             return $this->output('', self::STATUS_OK);
         }
@@ -1093,7 +1188,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             'limit', $this->params()->fromQuery('limit', null)
         );
 
-        $table = $this->getServiceLocator()->get('VuFind\DbTablePluginManager');
+        $table = $this->serviceLocator->get('VuFind\DbTablePluginManager');
         $search = $table->get('Search')->select(['id' => $id])
             ->current();
         if (empty($search)) {
@@ -1101,7 +1196,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         $minSO = $search->getSearchObject();
-        $results = $this->getServiceLocator()
+        $results = $this->serviceLocator
             ->get('VuFind\SearchResultsPluginManager');
         $savedSearch = $minSO->deminify($results);
         $params = $savedSearch->getParams();
@@ -1148,7 +1243,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             foreach ($tabs['tabs'] as $tab) {
                 if ($tab['id'] == $recommendation) {
                     $uri = new \Zend\Uri\Uri($tab['url']);
-                    $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
+                    $runner = $this->serviceLocator->get('VuFind\SearchRunner');
                     $otherResults = $runner->run(
                         $uri->getQueryAsArray(),
                         $tab['class'],
@@ -1177,7 +1272,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
                             'tab' => $tab,
                             'lookfor' => $lookfor,
                             'handler' => $params->getQuery()->getHandler(),
-                            'results' => $otherResults
+                            'results' => $otherResults,
+                            'params' => $params
                         ]
                     );
                 }
@@ -1199,7 +1295,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $request = $this->getRequest()->getQuery()->toArray()
             + $this->getRequest()->getPost()->toArray();
 
-        $rManager = $this->getServiceLocator()->get('VuFind\RecommendPluginManager');
+        $rManager = $this->serviceLocator->get('VuFind\RecommendPluginManager');
         $setupCallback = function ($runner, $params, $searchId) use ($rManager) {
             $listener = new RecommendListener($rManager, $searchId);
             $config = [];
@@ -1218,11 +1314,11 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $params->setLimit(0);
         };
 
-        $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
+        $runner = $this->serviceLocator->get('VuFind\SearchRunner');
         $results = $runner->run($request, 'Solr', $setupCallback);
 
         if ($results instanceof \VuFind\Search\EmptySet\Results) {
-            $this->setLogger($this->getServiceLocator()->get('VuFind\Logger'));
+            $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
             $this->logError('Solr faceting request failed');
             return $this->output('', self::STATUS_ERROR, 500);
         }
@@ -1250,8 +1346,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
         $id = $this->params()->fromPost('id', $this->params()->fromQuery('id'));
 
-        $recordLoader = $this->getServiceLocator()->get('VuFind\RecordLoader');
-        $similar = $this->getServiceLocator()->get('VuFind\RelatedPluginManager')
+        $recordLoader = $this->serviceLocator->get('VuFind\RecordLoader');
+        $similar = $this->serviceLocator->get('VuFind\RelatedPluginManager')
             ->get('Similar');
 
         $driver = $recordLoader->load($id);
@@ -1322,7 +1418,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         }
 
         // This may be called frequently, don't leave sessions dangling
-        $this->getServiceLocator()->get('VuFind\SessionManager')->destroy();
+        $this->serviceLocator->get('VuFind\SessionManager')->destroy();
 
         return $this->output('', self::STATUS_OK);
     }
@@ -1363,8 +1459,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
     public function getPiwikPopularSearchesAjax()
     {
         $this->disableSessionWrites();  // avoid session write timing bug
-        $this->setLogger($this->getServiceLocator()->get('VuFind\Logger'));
-        $config = $this->getServiceLocator()->get('VuFind\Config')->get('config');
+        $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
+        $config = $this->serviceLocator->get('VuFind\Config')->get('config');
 
         if (!isset($config->Piwik->url)
             || !isset($config->Piwik->site_id)
@@ -1384,7 +1480,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
             'token_auth'   => $config->Piwik->token_auth
         ];
         $url = $config->Piwik->url;
-        $httpService = $this->getServiceLocator()->get('VuFind\Http');
+        $httpService = $this->serviceLocator->get('VuFind\Http');
         $client = $httpService->createClient($url);
         $client->setParameterGet($params);
         $result = $client->send();
@@ -1518,7 +1614,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $this->disableSessionWrites();  // avoid session write timing bug
         if ($type = $this->getBrowseAction($this->getRequest())) {
             $config
-                = $this->getServiceLocator()->get('VuFind\Config')->get('browse');
+                = $this->serviceLocator->get('VuFind\Config')->get('browse');
 
             if (!isset($config[$type])) {
                 return $this->output(
@@ -1551,7 +1647,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         if (!empty($facetConfig->FacetFilters->$facet)
             || !empty($facetConfig->ExcludeFilters->$facet)
         ) {
-            $facetHelper = $this->getServiceLocator()
+            $facetHelper = $this->serviceLocator
                 ->get('VuFind\HierarchicalFacetHelper');
             $filters = !empty($facetConfig->FacetFilters->$facet)
                 ? $facetConfig->FacetFilters->$facet->toArray()
@@ -1634,9 +1730,9 @@ class AjaxController extends \VuFind\Controller\AjaxController
      *
      * @return \Zend\Http\Response
      */
-    protected function handleError($outputMsg, $logMsg, $httpStatus = 400)
+    protected function handleError($outputMsg, $logMsg = '', $httpStatus = 400)
     {
-        $this->setLogger($this->getServiceLocator()->get('VuFind\Logger'));
+        $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
         $this->logError(
             $outputMsg . ($logMsg ? " ({$logMsg})" : null)
         );
@@ -1655,8 +1751,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
     protected function importSearches($searches, $userId)
     {
         $searchTable = $this->getTable('Search');
-        $sessId = $this->getServiceLocator()->get('VuFind\SessionManager')->getId();
-        $resultsManager = $this->getServiceLocator()->get(
+        $sessId = $this->serviceLocator->get('VuFind\SessionManager')->getId();
+        $resultsManager = $this->serviceLocator->get(
             'VuFind\SearchResultsPluginManager'
         );
         $initialSearchCount = count($searchTable->getSavedSearches($userId));
@@ -1709,7 +1805,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $recordLoader = $this->getRecordLoader();
         $favoritesCount = 0;
         $listCount = 0;
-        $favorites = $this->getServiceLocator()
+        $favorites = $this->serviceLocator
             ->get('VuFind\Favorites\FavoritesService');
 
         foreach ($lists as $list) {

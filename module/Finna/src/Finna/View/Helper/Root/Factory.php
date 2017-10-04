@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  View_Helpers
@@ -147,11 +147,22 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     public static function getLayoutClass(ServiceManager $sm)
     {
         $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
-        $left = !isset($config->Site->sidebarOnLeft)
+        $sidebarOnLeft = !isset($config->Site->sidebarOnLeft)
             ? false : $config->Site->sidebarOnLeft;
+        $mirror = !isset($config->Site->mirrorSidebarInRTL)
+            ? true : $config->Site->mirrorSidebarInRTL;
         $offcanvas = !isset($config->Site->offcanvas)
             ? false : $config->Site->offcanvas;
-        return new \Finna\View\Helper\Bootstrap3\LayoutClass($left, $offcanvas);
+        // The right-to-left setting is injected into the layout by the Bootstrapper;
+        // pull it back out here to avoid duplicate effort, then use it to apply
+        // the mirror setting appropriately.
+        $layout = $sm->getServiceLocator()->get('viewmanager')->getViewModel();
+        if ($layout->rtl && !$mirror) {
+            $sidebarOnLeft = !$sidebarOnLeft;
+        }
+        return new \Finna\View\Helper\Bootstrap3\LayoutClass(
+            $sidebarOnLeft, $offcanvas
+        );
     }
 
     /**
@@ -194,6 +205,21 @@ class Factory extends \VuFind\View\Helper\Root\Factory
         $config = $sm->getServiceLocator()->get('VuFind\Config')
             ->get('OrganisationInfo');
         return new OrganisationInfo($config);
+    }
+
+    /**
+     * Construct the Recaptcha helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Recaptcha
+     */
+    public static function getRecaptcha(ServiceManager $sm)
+    {
+        return new Recaptcha(
+            $sm->getServiceLocator()->get('VuFind\Recaptcha'),
+            $sm->getServiceLocator()->get('VuFind\Config')->get('config')
+        );
     }
 
     /**
@@ -381,8 +407,9 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     {
         $locator = $sm->getServiceLocator();
         $config = $locator->get('VuFind\Config')->get('config');
+        $localConfig = $locator->get('VuFind\Config')->get('system');
 
-        return new SystemMessages($config);
+        return new SystemMessages($config, $localConfig);
     }
 
     /**
@@ -470,14 +497,20 @@ class Factory extends \VuFind\View\Helper\Root\Factory
     {
         $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
         $url = isset($config->Piwik->url) ? $config->Piwik->url : false;
-        $siteId = isset($config->Piwik->site_id) ? $config->Piwik->site_id : 1;
+        $options = [
+            'siteId' => isset($config->Piwik->site_id) ? $config->Piwik->site_id : 1,
+            'searchPrefix' => isset($config->Piwik->searchPrefix)
+                ? $config->Piwik->searchPrefix : null
+        ];
         $customVars = isset($config->Piwik->custom_variables)
             ? $config->Piwik->custom_variables
             : false;
         $request = $sm->getServiceLocator()->get('Request');
         $router = $sm->getServiceLocator()->get('Router');
         $translator = $sm->getServiceLocator()->get('VuFind\Translator');
-        return new Piwik($url, $siteId, $customVars, $router, $request, $translator);
+        return new Piwik(
+            $url, $options, $customVars, $router, $request, $translator
+        );
     }
 
     /**
@@ -614,5 +647,17 @@ class Factory extends \VuFind\View\Helper\Root\Factory
         return new SearchMemory(
             $sm->getServiceLocator()->get('Finna\Search\Memory')
         );
+    }
+
+    /**
+     * Construct the RecordLink helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return RecordLink
+     */
+    public static function getRecordLink(ServiceManager $sm)
+    {
+        return new RecordLink($sm->getServiceLocator()->get('VuFind\RecordRouter'));
     }
 }

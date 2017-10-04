@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Service
@@ -140,7 +140,7 @@ class DueDateReminders extends AbstractService
      *
      * @var Zend\View\Renderer\PhpRenderer
      */
-    protected $renderer = null;
+    protected $viewRenderer = null;
 
     /**
      * Current institution.
@@ -204,7 +204,7 @@ class DueDateReminders extends AbstractService
 
         $this->datasourceConfig = $configReader->get('datasources');
         $this->configReader = $configReader;
-        $this->renderer = $renderer;
+        $this->viewRenderer = $renderer;
         $this->translator = $translator;
         $this->urlHelper = $renderer->plugin('url');
         $this->recordLoader = $recordLoader;
@@ -430,9 +430,9 @@ class DueDateReminders extends AbstractService
             $this->currentViewPath = $viewPath;
 
             $resolver = new AggregateResolver();
-            $this->renderer->setResolver($resolver);
             $stack = new TemplatePathStack(['script_paths' => $templateDirs]);
             $resolver->attach($stack);
+            $this->viewRenderer->setResolver($resolver);
 
             $siteConfig = $viewPath . '/local/config/vufind/config.ini';
             $this->currentSiteConfig = parse_ini_file($siteConfig, true);
@@ -483,7 +483,8 @@ class DueDateReminders extends AbstractService
             'baseUrl' => $baseUrl,
             'lastLogin' => $lastLogin->format($dateFormat),
             'loginMethod' => $loginMethod,
-            'serviceName' => $serviceName
+            'serviceName' => $serviceName,
+            'userInstitution' => $userInstitution
         ];
 
         if (!empty($errors)) {
@@ -496,7 +497,8 @@ class DueDateReminders extends AbstractService
             $params['url'] = $baseUrl
                 . $this->urlHelper->__invoke('myresearch-checkedout');
         }
-        $message = $this->renderer->render("Email/due-date-reminder.phtml", $params);
+        $message = $this->viewRenderer
+            ->render('Email/due-date-reminder.phtml', $params);
         try {
             $to = $user->email;
             $from = $this->currentSiteConfig['Site']['email'];
@@ -535,7 +537,7 @@ class DueDateReminders extends AbstractService
      */
     protected function collectScriptArguments($arguments)
     {
-        // Current view local configuration directory
+        // VuFind base directory
         $this->baseDir = isset($arguments[0]) ? $arguments[0] : false;
         // Base directory for all views.
         $this->viewBaseDir = isset($arguments[1]) ? $arguments[1] : '..';

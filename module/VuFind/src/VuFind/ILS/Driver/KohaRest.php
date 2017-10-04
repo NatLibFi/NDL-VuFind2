@@ -181,6 +181,19 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
+     * Method to ensure uniform cache keys for cached VuFind objects.
+     *
+     * @param string|null $suffix Optional suffix that will get appended to the
+     * object class name calling getCacheKey()
+     *
+     * @return string
+     */
+    protected function getCacheKey($suffix = null)
+    {
+        return 'KohaRest' . '-' . md5($this->config['Catalog']['host'] . $suffix);
+    }
+
+    /**
      * Get Status
      *
      * This is responsible for retrieving the status information of a certain
@@ -546,7 +559,6 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      * @throws DateException
      * @throws ILSException
      * @return array        Array of the patron's holds on success.
-     * @todo   Support for handling frozen and pickup location change
      */
     public function getMyHolds($patron)
     {
@@ -579,6 +591,11 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                     $title = trim($title);
                 }
             }
+            $frozen = false;
+            if (!empty($entry['suspend'])) {
+                $frozen = !empty($entry['suspend_until']) ? $entry['suspend_until']
+                    : true;
+            }
             $holds[] = [
                 'id' => $bibId,
                 'item_id' => $itemId ? $itemId : $entry['reserve_id'],
@@ -592,7 +609,9 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'position' => $entry['priority'],
                 'available' => !empty($entry['waitingdate']),
                 'in_transit' => isset($entry['found']) && $entry['found'] == 't',
-                'requestId' => $entry['reserve_id']
+                'requestId' => $entry['reserve_id'],
+                'title' => $title,
+                'frozen' => $frozen
             ];
         }
         return $holds;
@@ -760,7 +779,9 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      * @param array  $data   An Array of item data
      * @param patron $patron An array of patron data
      *
-     * @return bool True if request is valid, false if not
+     * @return mixed An array of data on the request including
+     * whether or not it is valid and a status message. Alternatively a boolean
+     * true if request is valid, false if not.
      */
     public function checkRequestIsValid($id, $data, $patron)
     {
@@ -775,7 +796,16 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'GET',
                 $patron
             );
-            return !empty($result[0]['availability']['available']);
+            if (!empty($result[0]['availability']['available'])) {
+                return [
+                    'valid' => true,
+                    'status' => 'title_hold_place'
+                ];
+            }
+            return [
+                'valid' => false,
+                'status' => $this->getHoldBlockReason($result)
+            ];
         }
         $result = $this->makeRequest(
             ['v1', 'availability', 'item', 'hold'],
@@ -783,7 +813,16 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             'GET',
             $patron
         );
-        return !empty($result[0]['availability']['available']);
+        if (!empty($result[0]['availability']['available'])) {
+            return [
+                'valid' => true,
+                'status' => 'hold_place'
+            ];
+        }
+        return [
+            'valid' => false,
+            'status' => $this->getHoldBlockReason($result)
+        ];
     }
 
     /**
@@ -1104,7 +1143,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
 
         // Add params
         if (false !== $params) {
-            if ($method == 'GET') {
+            if ('GET' === $method || 'DELETE' === $method) {
                 $client->setParameterGet($params);
             } else {
                 $body = '';
@@ -1135,7 +1174,15 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         // Send request and retrieve response
         $startTime = microtime(true);
         $client->setMethod($method);
-        $response = $client->send();
+        try {
+            $response = $client->send();
+        } catch (\Exception $e) {
+            $this->error(
+                "$method request for '$apiUrl' failed: " . $e->getMessage()
+            );
+            throw new ILSException('Problem with Koha REST API.');
+        }
+
         // If we get a 401, we need to renew the access token and try again
         if ($response->getStatusCode() == 401) {
             if (!$this->renewPatronCookie($patron)) {
@@ -1144,7 +1191,14 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $client->clearCookies();
             $client->addCookie($this->sessionCache->patronCookie);
             $this->debug('Session renewed');
-            $response = $client->send();
+            try {
+                $response = $client->send();
+            } catch (\Exception $e) {
+                $this->error(
+                    "$method request for '$apiUrl' failed: " . $e->getMessage()
+                );
+                throw new ILSException('Problem with Koha REST API.');
+            }
         }
 
         $result = $response->getBody();
@@ -1205,7 +1259,14 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             ]
         );
 
-        $response = $client->setMethod('POST')->send();
+        try {
+            $response = $client->setMethod('POST')->send();
+        } catch (\Exception $e) {
+            $this->error(
+                "POST request for '$apiUrl' failed: " . $e->getMessage()
+            );
+            throw new ILSException('Problem with Koha REST API.');
+        }
         if (!$response->isSuccess()) {
             if ($response->getStatusCode() == 401) {
                 return false;
@@ -1253,11 +1314,6 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
 
         $statuses = [];
         foreach ($result[0]['item_availabilities'] as $i => $item) {
-            $location = $this->translate(
-                'location_' . $item['holdingbranch'],
-                null,
-                $item['holdingbranch']
-            );
             $avail = $item['availability'];
             $available = $avail['available'];
             $statusCodes = $this->getItemStatusCodes($item);
@@ -1274,18 +1330,23 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $entry = [
                 'id' => $id,
                 'item_id' => $item['itemnumber'],
-                'location' => $location,
+                'location' => $this->getItemLocationName($item),
                 'availability' => $available,
                 'status' => $status,
                 'status_array' => $statusCodes,
                 'reserve' => 'N',
-                'callnumber' => $item['itemcallnumber'],
+                'callnumber' => $this->getItemCallNumber($item),
                 'duedate' => $duedate,
                 'number' => $item['enumchron'],
                 'barcode' => $item['barcode'],
-                'item_notes' => [$item['itemnotes']],
-                'sort' => $i
+                'sort' => $i,
+                'requests_placed' => max(
+                    [$item['hold_queue_length'], $result[0]['hold_queue_length']]
+                )
             ];
+            if (!empty($item['itemnotes'])) {
+                $entry['item_notes'] = [$item['itemnotes']];
+            }
 
             if ($patron && $this->itemHoldAllowed($item)) {
                 $entry['is_holdable'] = true;
@@ -1364,7 +1425,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                         $statuses[] = $onHold ? 'In Transit On Hold' : 'In Transit';
                         break;
                     default:
-                        $statuses[] = $status;
+                        $statuses[] = !empty($reason['code'])
+                            ? $reason['code'] : $status;
                     }
                 } elseif (strncmp($key, 'Hold::', 6) == 0) {
                     $status = substr($key, 6);
@@ -1421,11 +1483,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     {
         $unavail = isset($item['availability']['unavailabilities'])
             ? $item['availability']['unavailabilities'] : [];
-        if (!isset($unavail['Item::NotForLoan'])
-            && !isset($unavail['Item::Withdrawn'])
-            && !isset($unavail['Item::Lost'])
-            && !isset($unavail['Hold::NotHoldable'])
-        ) {
+        if (!isset($unavail['Hold::NotHoldable'])) {
             return true;
         }
         return false;
@@ -1600,5 +1658,82 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     {
         return isset($this->renewalBlockMappings[$reason])
             ? $this->renewalBlockMappings[$reason] : 'renew_denied';
+    }
+
+    /**
+     * Return a location for a Koha item
+     *
+     * @param array $item Item
+     *
+     * @return string
+     */
+    protected function getItemLocationName($item)
+    {
+        $branchId = $item['holdingbranch'];
+        $name = $this->translate("location_$branchId");
+        if ($name === "location_$branchId") {
+            $branches = $this->getCachedData('branches');
+            if (null === $branches) {
+                $result = $this->makeRequest(
+                    ['v1', 'libraries'], false, 'GET'
+                );
+                $branches = [];
+                foreach ($result as $branch) {
+                    $branches[$branch['branchcode']] = $branch['branchname'];
+                }
+                $this->putCachedData('branches', $branches);
+            }
+            $name = isset($branches[$branchId]) ? $branches[$branchId] : $branchId;
+        }
+        return $name;
+    }
+
+    /**
+     * Return a call number for a Koha item
+     *
+     * @param array $item Item
+     *
+     * @return string
+     */
+    protected function getItemCallNumber($item)
+    {
+        return $item['itemcallnumber'];
+    }
+
+    /**
+     * Get a reason for why a hold cannot be placed
+     *
+     * @param array $result Hold check result
+     *
+     * @return string
+     */
+    protected function getHoldBlockReason($result)
+    {
+        if (!empty($result[0]['availability']['unavailabilities'])) {
+            foreach ($result[0]['availability']['unavailabilities']
+                as $key => $reason
+            ) {
+                switch ($key) {
+                case 'Biblio::NoAvailableItems':
+                    return 'hold_error_not_holdable';
+                case 'Item::NotForLoan':
+                case 'Hold::NotAllowedInOPAC':
+                case 'Hold::ZeroHoldsAllowed':
+                case 'Hold::NotAllowedByLibrary':
+                case 'Hold::NotAllowedFromOtherLibraries':
+                case 'Item::Restricted':
+                case 'Hold::ItemLevelHoldNotAllowed':
+                    return 'hold_error_item_not_holdable';
+                case 'Hold::MaximumHoldsForRecordReached':
+                case 'Hold::MaximumHoldsReached':
+                    return 'hold_error_too_many_holds';
+                case 'Item::AlreadyHeldForThisPatron':
+                    return 'hold_error_already_held';
+                case 'Hold::OnShelfNotAllowed':
+                    return 'hold_error_on_shelf_blocked';
+                }
+            }
+        }
+        return 'hold_error_blocked';
     }
 }

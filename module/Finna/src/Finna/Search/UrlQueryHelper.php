@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Search
@@ -91,7 +91,10 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         }
 
         $paramArray['filter'] = $newFilter;
-        return $this->addFacet($field, $value, $operator, $paramArray);
+        $paramArray['filter'][] = $prefix . $field . ':"' . $value . '"';
+        unset($paramArray['page']);
+
+        return new static($paramArray, $this->queryObject, $this->config, false);
     }
 
     /**
@@ -148,5 +151,19 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         if ($output) {
             return $this->getParams(false);
         }
+    }
+
+    /**
+     * Get the current search parameters without page param as a GET query.
+     *
+     * @param bool $escape Should we escape the string for use in the view?
+     *
+     * @return string
+     */
+    public function getParamsWithoutPage($escape = true)
+    {
+        $params = $this->urlParams;
+        unset($params['page']);
+        return '?' . $this->buildQueryString($params, $escape);
     }
 }

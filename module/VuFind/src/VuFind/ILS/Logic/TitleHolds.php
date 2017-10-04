@@ -205,14 +205,13 @@ class TitleHolds
         $checkHolds = $this->catalog->checkFunction(
             'Holds', compact('id', 'patron')
         );
-        $data = [
-            'id' => $id,
-            'level' => 'title'
-        ];
 
-        if ($checkHolds != false) {
-            $valid = $this->catalog->checkRequestIsValid($id, $data, $patron);
-            if ($valid) {
+        if (isset($checkHolds['HMACKeys'])) {
+            $data = ['id' => $id, 'level' => 'title'];
+            $result = $this->catalog->checkRequestIsValid($id, $data, $patron);
+            if ((is_array($result) && $result['valid'])
+                || (is_bool($result) && $result)
+            ) {
                 return $this->getHoldDetails($data, $checkHolds['HMACKeys']);
             }
         }

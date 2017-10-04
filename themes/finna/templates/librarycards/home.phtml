@@ -12,8 +12,7 @@
     // Additional translations
     $this->jsTranslations()->addStrings(['new_password_success' => 'new_password_success']);
 ?>
-<div class="row">
-  <div class="col-md-10 col-lg-9">
+<div class="my-research-content">
     <?=$this->flashmessages()?>
     <? if (!$this->translationEmpty('library_cards_instructions_html')): ?><p class="no-content-message"><?=$this->translate('library_cards_instructions_html')?></p><? endif; ?>
     <h2><?=$this->transEsc('Library Cards Connected To My Account')?></h2>
@@ -42,12 +41,20 @@
           <? if ($this->multipleTargets): ?>
             <td><?=$target ? $this->transEsc("source_$target", null, $target) : '&nbsp;' ?></td>
           <? endif; ?>
-          <td><?=$this->escapeHtml($username)?></td>
+          <td>
+            <a href="<?=$this->url('barcode-show') ?>?code=<?=$this->escapeHtmlAttr($username) ?>" title="<?=$this->escapeHtmlAttr($this->translate('show_barcode_title'))?>">
+              <div class="librarycard-barcode">
+                <img src="data:image/png;base64,<?=$this->barcode()->createPng($username, 2, 40)?>" alt="">
+              </div>
+              <?=$this->escapeHtml($username)?>
+            </a>
+          </td>
           <td class="library-card-actions">
-              <span class="change-password-link">
-                <a class="btn-link" href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($record['id']) ?>" data-lightbox title="<?=$this->transEsc('Change Password')?>"><i class="fa fa-lock bigger gray"></i> <?=$this->transEsc('Change Password')?></a>
-              </span>
-              <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
+            <span class="change-password-link">
+              <a class="btn-link" href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($record['id']) ?>" data-lightbox title="<?=$this->transEsc('Change Password')?>"><i class="fa fa-lock bigger gray"></i> <?=$this->transEsc('Change Password')?></a>
+            </span>
+            <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
+            <div class="dropdown">
               <a class="btn-link dropdown-toggle" data-toggle="dropdown" href="<?=$this->url('librarycards-deletecard') ?>?cardID=<?=urlencode($record['id'])?>">
                 <i class="fa fa-unlink gray" aria-hidden="true"></i> <?=$this->transEsc('Disconnect Library Card')?>
               </a>
@@ -56,6 +63,7 @@
                 <li><a href="<?=$this->url('librarycards-deletecard') ?>?cardID=<?=urlencode($record['id'])?>&amp;confirm=1"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
                 <li><a href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
               </ul>
+            </div>
           </td>
         </tr>
       <? endforeach; ?>
@@ -67,7 +75,5 @@
       <br>
       <br>
     </div>
-  </div>
-
 </div>
 <!-- END of: finna - librarycards/home.phtml -->

@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Bootstrap
@@ -241,6 +241,31 @@ class Bootstrapper
         };
         $this->events->attach('dispatch.error', $callback, 9000);
         $this->events->attach('dispatch', $callback, 9000);
+    }
+
+    /**
+     * Initialize the base url for the application from an environment variable
+     *
+     * @return void
+     */
+    protected function initBaseUrl()
+    {
+        if (Console::isConsole()) {
+            return;
+        }
+        $callback = function ($event) {
+            $application = $event->getApplication();
+            $request = $application->getRequest();
+            $baseUrl = $request->getServer('FINNA_BASE_URL');
+
+            if (!empty($baseUrl)) {
+                $baseUrl = '/' . trim($baseUrl, '/');
+                $router = $application->getServiceManager()->get('Router');
+                $router->setBaseUrl($baseUrl);
+                $request->setBaseUrl($baseUrl);
+            }
+        };
+        $this->events->attach('route', $callback, 9000);
     }
 
     /**

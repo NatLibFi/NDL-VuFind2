@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -62,9 +62,9 @@ class LocationServiceController extends \Finna\Controller\AjaxController
         $title = $request['title'];
 
         $locationService
-            = $this->getServiceLocator()->get('Finna\LocationService');
+            = $this->serviceLocator->get('Finna\LocationService');
         $language
-            = $this->getServiceLocator()->get('VuFind\Translator')->getLocale();
+            = $this->serviceLocator->get('VuFind\Translator')->getLocale();
 
         $config = $locationService->getConfig(
             $source, $title, $callnumber, $collection, $location, $language

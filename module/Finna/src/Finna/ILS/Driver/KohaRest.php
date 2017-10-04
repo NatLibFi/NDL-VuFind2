@@ -26,7 +26,6 @@
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
 namespace Finna\ILS\Driver;
-
 use VuFind\Exception\ILS as ILSException;
 
 /**
@@ -75,6 +74,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $data = parent::getHolding($id, $patron);
         if (!empty($data)) {
             $summary = $this->getHoldingsSummary($data);
+
+            // Remove request counts before adding the summary if necessary
+            if (isset($this->config['Holdings']['display_item_hold_counts'])
+                && !$this->config['Holdings']['display_item_hold_counts']
+            ) {
+                foreach ($data as &$item) {
+                    unset($item['requests_placed']);
+                }
+            }
+
             $data[] = $summary;
         }
         return $data;
@@ -258,6 +267,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      *   sort   Sorting order, one of:
      *          checkout asc
      *          checkout desc
+     *          return asc
+     *          return desc
      *          due asc
      *          due desc
      *
@@ -272,6 +283,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         );
         if ($sort[0] == 'checkout') {
             $sortKey = 'issuedate';
+        } elseif ($sort[0] == 'return') {
+            $sortKey = 'returndate';
         } else {
             $sortKey = 'date_due';
         }
@@ -339,13 +352,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'item_id' => $entry['itemnumber'],
                 'title' => $title,
                 'volume' => $volume,
-                'date' => $this->dateConverter->convertToDisplayDate(
+                'checkoutdate' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d\TH:i:sP', $entry['issuedate']
                 ),
                 'duedate' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d\TH:i:sP', $entry['date_due']
                 ),
                 'dueStatus' => $dueStatus,
+                'returndate' => $this->dateConverter->convertToDisplayDate(
+                    'Y-m-d\TH:i:sP', $entry['returndate']
+                ),
                 'renew' => $entry['renewals']
             ];
 
@@ -353,6 +369,38 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         }
 
         return $result;
+    }
+
+    /**
+     * Purge Patron Transaction History
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws ILSException
+     * @return array Associative array of the results
+     */
+    public function purgeTransactionHistory($patron)
+    {
+        list($code, $result) = $this->makeRequest(
+            ['v1', 'checkouts', 'history'],
+            ['borrowernumber' => $patron['id']],
+            'DELETE',
+            $patron,
+            true
+        );
+        if (!in_array($code, [200, 202, 204])) {
+            return  [
+                'success' => false,
+                'status' => 'Purging the checkout history failed',
+                'sys_message' => isset($result['error']) ? $result['error'] : $code
+            ];
+        }
+
+        return [
+            'success' => true,
+            'status' => 'checkout_history_purged',
+            'sys_message' => ''
+        ];
     }
 
     /**
@@ -392,7 +440,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 ? 'request_change_done' : 'request_change_accepted',
             'sys_message' => ''
         ];
-
     }
 
     /**
@@ -671,6 +718,40 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
+     * Change request status
+     *
+     * This is responsible for changing the status of a hold request
+     *
+     * @param string $patron      Patron array
+     * @param string $holdDetails The request details (at the moment only 'frozen'
+     * is supported)
+     *
+     * @return array Associative array of the results
+     */
+    public function changeRequestStatus($patron, $holdDetails)
+    {
+        $requestId = $holdDetails['requestId'];
+        $frozen = !empty($holdDetails['frozen']);
+
+        $request = [
+            'suspend' => $frozen
+        ];
+
+        list($code, $result) = $this->makeRequest(
+            ['v1', 'holds', $requestId],
+            json_encode($request),
+            'PUT',
+            $patron,
+            true
+        );
+
+        if ($code >= 300) {
+            return $this->holdError($code, $result);
+        }
+        return ['success' => true];
+    }
+
+    /**
      * Return total amount of fees that may be paid online.
      *
      * @param array $patron Patron
@@ -763,6 +844,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     protected function getHoldingsSummary($holdings)
     {
         $availableTotal = $itemsTotal = $reservationsTotal = 0;
+        $requests = 0;
         $locations = [];
 
         foreach ($holdings as $item) {
@@ -770,13 +852,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $availableTotal++;
             }
             $locations[$item['location']] = true;
+            if ($item['requests_placed'] > $requests) {
+                $requests = $item['requests_placed'];
+            }
         }
 
         // Since summary data is appended to the holdings array as a fake item,
         // we need to add a few dummy-fields that VuFind expects to be
         // defined for all elements.
 
-        return [
+        $result = [
            'available' => $availableTotal,
            'total' => count($holdings),
            'locations' => count($locations),
@@ -784,5 +869,70 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
            'callnumber' => null,
            'location' => null
         ];
+        if (!empty($this->config['Holdings']['display_total_hold_count'])) {
+            $result['reservations'] = $requests;
+        }
+        return $result;
+    }
+
+    /**
+     * Return a call number for a Koha item
+     *
+     * @param array $item Item
+     *
+     * @return string
+     */
+    protected function getItemCallNumber($item)
+    {
+        $result = [];
+        if (!empty($item['ccode'])) {
+            $result[] = $this->translateCollection(
+                $item['ccode'],
+                isset($item['ccode_description']) ? $item['ccode_description'] : null
+            );
+        }
+        $result[] = $this->translateLocation($item['location']);
+        return implode(', ', $result);
+    }
+
+    /**
+     * Translate location name
+     *
+     * @param string $location Location code
+     *
+     * @return string
+     */
+    protected function translateLocation($location)
+    {
+        $prefix = 'location_';
+        if (!empty($this->config['Catalog']['id'])) {
+            $prefix .= $this->config['Catalog']['id'] . '_';
+        }
+        return $this->translate(
+            "$prefix$location",
+            null,
+            $location
+        );
+    }
+
+    /**
+     * Translate collection name
+     *
+     * @param string $code        Collection code
+     * @param string $description Collection description
+     *
+     * @return string
+     */
+    protected function translateCollection($code, $description)
+    {
+        $prefix = 'collection_';
+        if (!empty($this->config['Catalog']['id'])) {
+            $prefix .= $this->config['Catalog']['id'] . '_';
+        }
+        return $this->translate(
+            "$prefix$code",
+            null,
+            $description
+        );
     }
 }

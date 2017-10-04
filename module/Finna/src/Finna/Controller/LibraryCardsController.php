@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -234,7 +234,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
         // Validate new password
         try {
-            $ilsAuth = $this->getServiceLocator()->get('VuFind\AuthPluginManager')
+            $ilsAuth = $this->serviceLocator->get('VuFind\AuthPluginManager')
                 ->get('ILS');
             $ilsAuth->validatePasswordInUpdate(
                 ['password' => $password, 'password2' => $password2]

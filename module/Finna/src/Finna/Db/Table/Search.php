@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Db_Table
@@ -27,8 +27,6 @@
  * @link     https://vufind.org Main Page
  */
 namespace Finna\Db\Table;
-use VuFind\Db\Table\PluginManager;
-use Zend\Db\Adapter\Adapter;
 
 /**
  * Table Definition for search
@@ -42,22 +40,6 @@ use Zend\Db\Adapter\Adapter;
  */
 class Search extends \VuFind\Db\Table\Search
 {
-    /**
-     * Constructor
-     *
-     * @param Adapter       $adapter Database adapter
-     * @param PluginManager $tm      Table manager
-     * @param array         $cfg     Zend Framework configuration
-     */
-    public function __construct(Adapter $adapter, PluginManager $tm, $cfg)
-    {
-        parent::__construct($adapter, $tm, $cfg, 'search');
-        $resultSetPrototype = $this->getResultSetPrototype();
-        $resultSetPrototype->setArrayObjectPrototype(
-            $this->initializeRowPrototype('Finna\Db\Row\Search')
-        );
-    }
-
     /**
      * Get distinct view URLs with scheduled alerts.
      *

@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,16 +17,19 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
 namespace Finna\Controller;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Session\SessionManager;
 
 /**
  * Controller for the user account area.
@@ -35,6 +38,7 @@ namespace Finna\Controller;
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -44,17 +48,47 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     use CatalogLoginTrait;
 
     /**
+     * Session manager
+     *
+     * @var SessionManager
+     */
+    protected $sessionManager;
+
+    /**
+     * Constructor
+     *
+     * @param ServiceLocatorInterface $sm             Service manager
+     * @param SessionManager          $sessionManager Session manager
+     */
+    public function __construct(ServiceLocatorInterface $sm,
+        SessionManager $sessionManager
+    ) {
+        parent::__construct($sm);
+        $this->sessionManager = $sessionManager;
+    }
+
+    /**
      * Catalog Login Action
      *
      * @return mixed
      */
     public function catalogloginAction()
     {
-        $result = parent::catalogloginAction();
-
-        if (!($result instanceof \Zend\View\Model\ViewModel)) {
-            return $result;
+        // Connect to the ILS and check if multiple target support is available
+        // Add default driver to result so we can use it on cataloglogin.phtml
+        $targets = null;
+        $defaultTarget = null;
+        $catalog = $this->getILS();
+        if ($catalog->checkCapability('getLoginDrivers')) {
+            $targets = $catalog->getLoginDrivers();
+            $defaultTarget = $catalog->getDefaultLoginDriver();
         }
+        $result = $this->createViewModel(
+            [
+                'targets' => $targets,
+                'defaultdriver' => $defaultTarget
+            ]
+        );
 
         // Try to find the original action and map it to the corresponding menu item
         // since we were probably forwarded here.
@@ -142,7 +176,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             ]
         ];
 
-        $date = $this->getServiceLocator()->get('VuFind\DateConverter');
+        $date = $this->serviceLocator->get('VuFind\DateConverter');
         $sortFunc = function ($a, $b) use ($currentSort, $date) {
             $aDetails = $a->getExtraDetail('ils_details');
             $bDetails = $b->getExtraDetail('ils_details');
@@ -219,18 +253,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             ? $config->Catalog->checkout_history_page_size : 50;
 
         // Handle sorting
-        $currentSort = $this->getRequest()->getQuery('sort', 'duedate desc');
+        $currentSort = $this->getRequest()->getQuery('sort', 'checkout desc');
         $view->sortList = [
-            'duedate desc' => [
-                'desc' => 'sort_duedate_desc',
-                'url' => '?sort=duedate%20desc',
-                'selected' => $currentSort == 'duedate desc'
-            ],
-            'duedate asc' => [
-                'desc' => 'sort_duedate_asc',
-                'url' => '?sort=duedate%20asc',
-                'selected' => $currentSort == 'duedate asc'
-            ],
             'checkout desc' => [
                 'desc' => 'sort_checkout_date_desc',
                 'url' => '?sort=checkout%20desc',
@@ -240,6 +264,26 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 'desc' => 'sort_checkout_date_asc',
                 'url' => '?sort=checkout%20asc',
                 'selected' => $currentSort == 'checkout asc'
+            ],
+            'return desc' => [
+                'desc' => 'sort_return_date_desc',
+                'url' => '?sort=return%20desc',
+                'selected' => $currentSort == 'return desc'
+            ],
+            'return asc' => [
+                'desc' => 'sort_return_date_asc',
+                'url' => '?sort=return%20asc',
+                'selected' => $currentSort == 'return asc'
+            ],
+            'duedate desc' => [
+                'desc' => 'sort_duedate_desc',
+                'url' => '?sort=duedate%20desc',
+                'selected' => $currentSort == 'duedate desc'
+            ],
+            'duedate asc' => [
+                'desc' => 'sort_duedate_asc',
+                'url' => '?sort=duedate%20asc',
+                'selected' => $currentSort == 'duedate asc'
             ]
         ];
         // Get checkout history details:
@@ -250,19 +294,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         ];
         $result = $catalog->getMyTransactionHistory($patron, $params);
 
-        // Build paginator if needed:
-        if ($limit > 0 && $limit < $result['count']) {
-            $adapter = new \Zend\Paginator\Adapter\ArrayAdapter($result);
-            $paginator = new \Zend\Paginator\Paginator($adapter);
-            $paginator->setItemCountPerPage($limit);
-            $paginator->setCurrentPageNumber($page);
-            $pageStart = $paginator->getAbsoluteItemNumber(1) - 1;
-            $pageEnd = $paginator->getAbsoluteItemNumber($limit) - 1;
-        } else {
-            $paginator = false;
-            $pageStart = 0;
-            $pageEnd = $result['count'];
-        }
+        $adapter = new \Zend\Paginator\Adapter\NullFill($result['count']);
+        $paginator = new \Zend\Paginator\Paginator($adapter);
+        $paginator->setItemCountPerPage($limit);
+        $paginator->setCurrentPageNumber($page);
 
         $transactions = $hiddenTransactions = [];
         foreach ($result['transactions'] as $current) {
@@ -271,6 +306,57 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $view->transactions = $transactions;
         $view->paginator = $paginator;
+        $view->count = $result['count'];
+        return $view;
+    }
+
+    /**
+     * Purge checkout history action.
+     *
+     * @return mixed
+     */
+    public function purgeCheckoutHistoryAction()
+    {
+        if ($this->formWasSubmitted('cancel', false)) {
+            return $this->redirect()->toRoute('myresearch-checkouthistory');
+        }
+
+        // Stop now if the user does not have valid catalog credentials available:
+        if (!is_array($patron = $this->catalogLogin())) {
+            return $patron;
+        }
+
+        if ($view = $this->createViewIfUnsupported('purgeTransactionHistory')) {
+            return $view;
+        }
+
+        // Set up CSRF:
+        $this->csrf = new \Zend\Validator\Csrf(
+            [
+                'session' => new \Zend\Session\Container(
+                    'csrf', $this->sessionManager
+                ),
+                'salt' => isset($this->config->Security->HMACkey)
+                    ? $this->config->Security->HMACkey : 'VuFindCsrfSalt',
+            ]
+        );
+
+        if ($this->formWasSubmitted('submit', false)) {
+            $csrf = $this->getRequest()->getPost()->get('csrf');
+            if (!$this->csrf->isValid($csrf)) {
+                throw new \Exception('An error has occurred');
+            }
+            $catalog = $this->getILS();
+            $result = $catalog->purgeTransactionHistory($patron);
+            $this->flashMessenger()->addMessage(
+                $result['status'], $result['success'] ? 'error' : 'info'
+            );
+            return $this->redirect()->toRoute('myresearch-checkouthistory');
+        }
+
+        $view = $this->createViewModel();
+        $view->csrf = $this->csrf->getHash(true);
+
         return $view;
     }
 
@@ -336,6 +422,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             ) {
                 return $this->redirect()->toRoute('list-page', ['lid' => $list->id]);
             }
+            if ($list) {
+                $this->rememberCurrentSearchUrl();
+            } else {
+                $memory  = $this->serviceLocator->get('VuFind\Search\Memory');
+                $memory->rememberSearch(
+                    $this->url()->fromRoute('myresearch-favorites')
+                );
+            }
         }
 
         if (!$user) {
@@ -397,7 +491,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         // If we got this far, we just need to display the favorites:
         try {
-            $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
+            $runner = $this->serviceLocator->get('VuFind\SearchRunner');
 
             // We want to merge together GET, POST and route parameters to
             // initialize our search object:
@@ -760,8 +854,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             'id' => 'sort_saved asc',
             'title' => 'sort_title',
             'author' => 'sort_author',
+            'year desc' => 'sort_year',
             'year' => 'sort_year asc',
-            'format' => 'sort_format',
+            'format' => 'sort_format'
         ];
     }
 
@@ -945,7 +1040,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $user = $this->getTable('User')->getById($search->user_id);
 
                 $secret = $search->getUnsubscribeSecret(
-                    $this->getServiceLocator()->get('VuFind\HMAC'), $user
+                    $this->serviceLocator->get('VuFind\HMAC'), $user
                 );
                 if ($key !== $secret) {
                     throw new \Exception('Invalid parameters.');
@@ -958,7 +1053,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
                 $dueDateTable = $this->getTable('due-date-reminder');
                 $secret = $dueDateTable->getUnsubscribeSecret(
-                    $this->getServiceLocator()->get('VuFind\HMAC'), $user, $user->id
+                    $this->serviceLocator->get('VuFind\HMAC'), $user, $user->id
                 );
                 if ($key !== $secret) {
                     throw new \Exception('Invalid parameters.');
@@ -1151,6 +1246,35 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
+     * Append current URL to search memory so that return links on
+     * record pages opened from a list point back to the list page.
+     *
+     * @return void
+     */
+    protected function rememberCurrentSearchUrl()
+    {
+        $memory  = $this->serviceLocator->get('VuFind\Search\Memory');
+        $listUrl = $this->getRequest()->getRequestUri();
+        /*$routeName = $publicView ? 'list-page' : 'userList';
+        $idParamName = $publicView ? 'lid' : 'id';
+        $request = $this->getRequest();
+        $queryParams = [];
+        if ($view = $request->getQuery('view')) {
+            $queryParams['view'] = $view;
+        }
+        if ($page = $request->getQuery('page')) {
+            $queryParams['page'] = $page;
+        }
+        if ($filter = $request->getQuery('filter')) {
+            $queryParams['filter'] = $filter;
+        }
+        $listUrl = $this->url()->fromRoute(
+            $routeName, [$idParamName => $id], ['query' => $queryParams]
+        );*/
+        $memory->rememberSearch($listUrl);
+    }
+
+    /**
      * Change phone number, email and checkout history state from library info.
      *
      * @param array  $patron patron data
@@ -1296,7 +1420,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $subject = $this->getConfig()->Site->title . ": $subject";
         $from = $this->getConfig()->Site->email;
 
-        $this->getServiceLocator()->get('VuFind\Mailer')->send(
+        $this->serviceLocator->get('VuFind\Mailer')->send(
             $recipient, $from, $subject, $message
         );
     }
@@ -1327,7 +1451,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     protected function exportUserLists($userId)
     {
         $user = $this->getTable('User')->getById($userId);
-        $runner = $this->getServiceLocator()->get('VuFind\SearchRunner');
+        $runner = $this->serviceLocator->get('VuFind\SearchRunner');
 
         $getTag = function ($tag) {
             return $tag['tag'];

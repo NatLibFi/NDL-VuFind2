@@ -318,22 +318,11 @@ finna.dateRangeVis = (function() {
     };
 
     var initFacetBar = function() {
-        var facet = $('.daterange-facet');
-        var facetItem = facet.find('.list-group-item');
-        var title = facet.find('.title');
-        title.on('click', function(e) {
-            facet.find('.list-group-item.daterange').removeClass('expand');
-            facet.find('.expand-modal i').removeClass('fa-condense');
-            plotData(200);
+        $('.daterange-facet.facet-group').on('shown.bs.collapse', function(e) {
+            if (!plotted) {
+                showVis();
+            }
         });
-
-        if (facetItem.hasClass('collapsed')) {
-            title.on('click', function(e) {
-                if (!plotted) {
-                    showVis();
-                }
-            });
-        }
     };
 
     var initResizeListener = function() {
@@ -364,7 +353,6 @@ finna.dateRangeVis = (function() {
                return false;
            }
         );
-        
         
         var fromElement = form.find('.year-from');
         var toElement = form.find('.year-to');

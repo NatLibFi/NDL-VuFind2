@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Search_Favorites
@@ -90,13 +90,6 @@ class Results extends \VuFind\Search\Favorites\Results
             $sort = 'id desc';
         }
 
-        $sortNewestAddedFirst = $sort == 'id desc';
-        if ($sortNewestAddedFirst) {
-            // Set sort option to 'id' (ascending), since we reverse the
-            // results to a descending (newest first) order (see below).
-            $this->getParams()->setSort('id');
-        }
-
         $this->getParams()->setSort($sort);
 
         parent::performSearch();
@@ -114,9 +107,6 @@ class Results extends \VuFind\Search\Favorites\Results
             }
             ksort($records);
             $this->results = array_values($records);
-        } else if ($sortNewestAddedFirst) {
-            $this->getParams()->setSort($sort);
-            $this->results = array_reverse($this->results);
         }
     }
 

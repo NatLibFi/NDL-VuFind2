@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -90,5 +90,34 @@ class PrimoController extends \VuFind\Controller\PrimoController
         $this->initSavedTabs();
 
         return $view;
+    }
+
+    /**
+     * Save a search to the history in the database.
+     * Save search Id and type to memory
+     *
+     * @param \VuFind\Search\Base\Results $results Search results
+     *
+     * @return void
+     */
+    public function saveSearchToHistory($results)
+    {
+        parent::saveSearchToHistory($results);
+        $this->getSearchMemory()->rememberSearchData(
+            $results->getSearchId(),
+            $results->getParams()->getSearchType(),
+            $results->getUrlQuery()->isQuerySuppressed()
+                ? '' : $results->getParams()->getDisplayQuery()
+        );
+    }
+
+    /**
+     * Get the search memory
+     *
+     * @return \Finna\Search\Memory
+     */
+    public function getSearchMemory()
+    {
+        return $this->serviceLocator->get('Finna\Search\Memory');
     }
 }

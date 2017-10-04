@@ -1,3 +1,10 @@
+.page-content {
+  width: 100%;
+  @media (min-width: @screen-lg) {
+    width: 75%;
+  }
+}
+
 .alert {
   border: none;
   border-radius: 0;
@@ -101,4 +108,28 @@
 .checkbox label{
   display: inline;
   padding-left: 0px;
+}
+
+.add-to-favorite-col {
+  @media (min-width: @screen-sm) {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    text-align: right;
+  }
+
+  .qrcode {
+    width: 90px;
+    height: 90px;
+  }
+  .finnaQrcodeLink {
+    background-color: @body-bg;
+  }
+  .qr-box {
+    box-shadow: 0 6px 12px @gray-mid-light;
+    border: 1px solid @gray-mid-light;
+    border-radius: 10px;
+    padding: 5px;
+    background: #fff;
+  }
 }

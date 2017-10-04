@@ -18,7 +18,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  RecordTabs
@@ -107,7 +107,7 @@ class Map extends \VuFind\RecordTab\Map
     {
         $array = [];
         $envelope = preg_replace('/.*\((.+)\).*/', '\\1', $envelope);
-        list($minX, $maxX, $maxY, $minY) = explode(' ', trim($envelope));
+        list($minX, $maxX, $maxY, $minY) = explode(',', trim($envelope));
         return [
             [(float)$minY, (float)$minX],
             [(float)$minY, (float)$maxX],

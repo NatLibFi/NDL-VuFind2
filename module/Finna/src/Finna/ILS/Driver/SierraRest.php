@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -117,4 +117,78 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         ];
     }
 
+    /**
+     * Change pickup location
+     *
+     * This is responsible for changing the pickup location of a hold
+     *
+     * @param string $patron      Patron array
+     * @param string $holdDetails The request details
+     *
+     * @return array Associative array of the results
+     */
+    public function changePickupLocation($patron, $holdDetails)
+    {
+        $requestId = $holdDetails['requestId'];
+        $pickUpLocation = $holdDetails['pickupLocationId'];
+
+        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
+            return $this->holdError('hold_invalid_pickup');
+        }
+
+        $request = [
+            'pickupLocation' => $pickUpLocation
+        ];
+
+        $result = $this->makeRequest(
+            ['v3', 'patrons', 'holds', $requestId],
+            json_encode($request),
+            'PUT',
+            $patron
+        );
+
+        if (isset($result['code']) && $result['code'] != 0) {
+            return [
+                'success' => false,
+                'status' => $this->formatErrorMessage($result['description'])
+            ];
+        }
+        return ['success' => true];
+    }
+
+    /**
+     * Change request status
+     *
+     * This is responsible for changing the status of a hold request
+     *
+     * @param string $patron      Patron array
+     * @param string $holdDetails The request details (at the moment only 'frozen'
+     * is supported)
+     *
+     * @return array Associative array of the results
+     */
+    public function changeRequestStatus($patron, $holdDetails)
+    {
+        $requestId = $holdDetails['requestId'];
+        $frozen = !empty($holdDetails['frozen']);
+
+        $request = [
+            'freeze' => $frozen
+        ];
+
+        $result = $this->makeRequest(
+            ['v3', 'patrons', 'holds', $requestId],
+            json_encode($request),
+            'PUT',
+            $patron
+        );
+
+        if (isset($result['code']) && $result['code'] != 0) {
+            return [
+                'success' => false,
+                'status' => $this->formatErrorMessage($result['description'])
+            ];
+        }
+        return ['success' => true];
+    }
 }

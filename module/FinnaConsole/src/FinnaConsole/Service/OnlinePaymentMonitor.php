@@ -17,9 +17,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * @category VuFind2
+ * @category VuFind
  * @package  Service
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
@@ -34,7 +34,7 @@ use Finna\Db\Table\Transaction,
 /**
  * Console service for processing unregistered online payments.
  *
- * @category VuFind2
+ * @category VuFind
  * @package  Service
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
@@ -100,6 +100,13 @@ class OnlinePaymentMonitor extends AbstractService
     protected $viewManager = null;
 
     /**
+     * View renderer
+     *
+     * @var Zend\View\Renderer\PhpRenderer
+     */
+    protected $viewRenderer = null;
+
+    /**
      * Number of hours before considering unregistered transactions to be expired.
      *
      * @var int
@@ -136,9 +143,10 @@ class OnlinePaymentMonitor extends AbstractService
      * @param \VuFind\Config                    $configReader     Config reader
      * @param \VuFind\Mailer                    $mailer           Mailer
      * @param \Zend\Mvc\View\Console\ViewManage $viewManager      View manager
+     * @param Zend\View\Renderer\PhpRenderer    $viewRenderer     View renderer
      */
-    public function __construct(
-        $catalog, $transactionTable, $userTable, $configReader, $mailer, $viewManager
+    public function __construct($catalog, $transactionTable, $userTable,
+        $configReader, $mailer, $viewManager, $viewRenderer
     ) {
         $this->catalog = $catalog;
         $this->datasourceConfig = $configReader->get('datasources');
@@ -147,6 +155,7 @@ class OnlinePaymentMonitor extends AbstractService
         $this->userTable = $userTable;
         $this->mailer = $mailer;
         $this->viewManager = $viewManager;
+        $this->viewRenderer = $viewRenderer;
     }
 
     /**
@@ -371,8 +380,6 @@ class OnlinePaymentMonitor extends AbstractService
      */
     protected function sendReports($report)
     {
-        $renderer = $this->viewManager->getRenderer();
-
         $subject
             = 'Finna: ilmoitus tietokannan %s epäonnistuneista verkkomaksuista';
 
@@ -399,8 +406,8 @@ class OnlinePaymentMonitor extends AbstractService
                 ];
                 $messageSubject = sprintf($subject, $driver);
 
-                $message
-                    = $renderer->render('Email/online-payment-alert.phtml', $params);
+                $message = $this->viewRenderer
+                    ->render('Email/online-payment-alert.phtml', $params);
 
                 try {
                     $this->mailer->send(

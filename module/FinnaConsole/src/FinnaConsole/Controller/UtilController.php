@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -141,6 +141,16 @@ class UtilController extends \VuFindConsole\Controller\UtilController
     }
 
     /**
+     * Verify resource metadata.
+     *
+     * @return \Zend\Console\Response
+     */
+    public function verifyResourceMetadataAction()
+    {
+        return $this->runService('Finna\VerifyResourceMetadata');
+    }
+
+    /**
      * Helper function for running a service.
      *
      * @param string $service Service name.
@@ -151,7 +161,7 @@ class UtilController extends \VuFindConsole\Controller\UtilController
     {
         $arguments = $this->getRequest()->getParams()->toArray();
         $arguments = array_splice($arguments, 2, -2);
-        $sl = $this->getServiceLocator();
+        $sl = $this->serviceLocator;
         // Disable sharing of mailer so that every time an instance is requested a
         // new one is created. This avoids sharing an SMTP connection that might time
         // out during a long execution.

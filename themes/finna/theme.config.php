@@ -32,7 +32,7 @@ return [
                 => 'Finna\View\Helper\Root\Factory::getOrganisationsList',
             'piwik' => 'Finna\View\Helper\Root\Factory::getPiwik',
             'primo' => 'Finna\View\Helper\Root\Factory::getPrimo',
-            'recaptcha' => 'VuFind\View\Helper\Root\Factory::getRecaptcha',
+            'recaptcha' => 'Finna\View\Helper\Root\Factory::getRecaptcha',
             'record' => 'Finna\View\Helper\Root\Factory::getRecord',
             'recordDataFormatter' => 'Finna\View\Helper\Root\RecordDataFormatterFactory',
             'recordImage' => 'Finna\View\Helper\Root\Factory::getRecordImage',
@@ -45,12 +45,14 @@ return [
             'systemMessages' => 'Finna\View\Helper\Root\Factory::getSystemMessages',
             'translation' => 'Finna\View\Helper\Root\Factory::getTranslation',
             'proxyurl' => 'Finna\View\Helper\Root\Factory::getProxyUrl',
+            'recordlink' =>  'Finna\View\Helper\Root\Factory::getRecordLink',
         ],
         'invokables' => [
+            'barcode' => 'Finna\View\Helper\Root\Barcode',
             'markdown' => 'Finna\View\Helper\Root\Markdown',
+            'organisationDisplayName' => 'Finna\View\Helper\Root\OrganisationDisplayName',
             'personaAuth' => 'Finna\View\Helper\Root\PersonaAuth',
             'resultfeed' => 'Finna\View\Helper\Root\ResultFeed',
-            'organisationDisplayName' => 'Finna\View\Helper\Root\OrganisationDisplayName',
             'search' => 'Finna\View\Helper\Root\Search',
             'streetSearch' => 'Finna\View\Helper\Root\StreetSearch',
             'translationEmpty' => 'Finna\View\Helper\Root\TranslationEmpty',
@@ -67,7 +69,8 @@ return [
         'vendor/bootstrap-multiselect.min.css',
         'vendor/bootstrap-datepicker3.min.css',
         'vendor/video-js.min.css',
-        'finna.css'
+        'vendor/bootstrap-slider.min.css',
+        'finna.css',
     ],
     'js' => [
         'vendor/event-stub.js:lt IE 9',
@@ -94,6 +97,7 @@ return [
         'vendor/videojs.hotkeys.min.js',
         'vendor/jquery.touchSwipe.min.js',
         'vendor/bootstrap-multiselect.min.js',
+        'vendor/bootstrap-slider.min.js',
         'vendor/gauge.min.js'
     ],
     'less' => [

@@ -144,7 +144,7 @@ table .iconlabel {
 .fa-spinner:before {
     content: "\f110";
     color: gray;
-    font-size: 20px;
+    font-size: 21px;
 }
 #description_text .fa-spinner {
     position: absolute;
@@ -642,6 +642,9 @@ table .iconlabel {
     border-radius: 50%;
     display: inline;
 }
+.nav-pills .btn-bookbag-toggle .fa {
+    font-family: FontAwesome;
+}
 .nav-pills {
     & > li.addthis-share-buttons, li.whatsapp {
         float: right;
@@ -847,3 +850,12 @@ i.bigger {
     }
 }
 
+.add-to-favorite-col {
+    @media (min-width: @screen-sm-min) {
+        i {
+            font-size: 16px;
+            text-align: right;
+            margin-bottom: 5px;
+        }
+    }
+}

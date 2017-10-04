@@ -17,7 +17,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
  * @package  Controller
@@ -66,7 +66,7 @@ class RecordController extends \VuFind\Controller\RecordController
 
             $driver = $this->loadRecord();
             $dataSource = $driver->getDataSource();
-            $dataSources = $this->getServiceLocator()->get('VuFind\Config')
+            $dataSources = $this->serviceLocator->get('VuFind\Config')
                 ->get('datasources');
 
             $inst = isset($dataSources->$dataSource) ?
@@ -122,7 +122,7 @@ class RecordController extends \VuFind\Controller\RecordController
             $headers->removeHeader('Content-Type');
             $headers->addHeaderLine('Content-Type', 'text/plain; charset=UTF-8');
 
-            $this->getServiceLocator()->get('VuFind\Mailer')->getTransport()
+            $this->serviceLocator->get('VuFind\Mailer')->getTransport()
                 ->send($mail);
 
             $flashMsg->addSuccessMessage('Thank you for your feedback.');
