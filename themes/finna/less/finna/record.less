@@ -222,6 +222,22 @@
 }
 
 .open-link {
+  text-align: left;
   margin-top: 5px;
-  line-height: normal;
+  & a {
+      display: inline-block;
+      padding: 6px 8px 5px;
+      background:  darken(@gray-mid-light, 5%);
+      font-size: .94em;
+      color: @body-bg;
+      border-radius: 10px;
+      transition: background .2s linear;
+      &:hover {
+          text-decoration: none;
+          background: darken(@gray-mid-light, 15%);
+      }
+  }
+  & i {
+      padding-right: 2px;
+  }
 }
