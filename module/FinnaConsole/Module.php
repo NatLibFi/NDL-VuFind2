@@ -95,6 +95,8 @@ class Module implements \Zend\ModuleManager\Feature\ConsoleUsageProviderInterfac
     public function getConsoleUsage(Console $console)
     {
         return [
+            'util account_expiration_reminders'
+            => 'Remind users x days before account expiration',
             'util due_date_reminders' => 'Send due date reminders',
             'util encrypt_catalog_passwords' => 'Encrypt ILS passwords in database',
             'util expire_finna_cache' => 'Remove expires Finna cache entries from'
