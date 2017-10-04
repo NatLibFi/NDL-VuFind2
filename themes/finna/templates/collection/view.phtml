@@ -27,6 +27,30 @@
   $headText = $this->driver->getBreadcrumb() . ' | ' . $this->translate('Collection') . (isset($dataSource) ? ' | ' . $this->transEsc('default::source_'. $dataSource, null, $dataSource) : '');
   $this->headTitle($headText);
 
+  if ($lastUrl = $this->searchMemory()->getLastSearchUrl()) {
+      $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
+      $params->activateAllFacets();
+      $filterList = $params->getFilterList(true);
+
+      if ( !empty($params->getFilterList(false))) {
+          $checkboxFilters = $params->getCheckboxFacets();
+          $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
+          $options = $this->searchOptions($this->searchClassId);
+          $defaultSortApplied = !isset($params) || $lastSort == $options->getDefaultSortByHandler($params->getSearchHandler());
+          // Set up filters
+          $this->layout()->finnaFilters = $this->context($this)->renderInContext(
+              'search/filters.phtml',
+              [
+                  'filterList' => $filterList,
+                  'checkboxFilters' => $checkboxFilters,
+                  'hasDefaultsApplied' => $params->hasDefaultsApplied(),
+                  'defaultSortApplied' => $defaultSortApplied,
+                  'options' => $options
+              ]
+          );
+      }
+  }
+
   if (!empty($lastSearch)) {
     $this->layout()->breadcrumbs = '<li>' . $lastSearch . '</li> ';
   }
