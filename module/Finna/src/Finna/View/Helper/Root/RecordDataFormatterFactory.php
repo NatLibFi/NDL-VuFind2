@@ -722,9 +722,9 @@ class RecordDataFormatterFactory
         );
 
         $spec->setTemplateLine(
-            'Uniform Title', 'getUniformTitle', 'data-transEsc.phtml',
+            'Uniform Title', 'getCollectiveUniformTitle', 'data-transEsc.phtml',
             [
-                'context' => ['class' => 'record-uniform-title']
+                'context' => ['class' => 'record-collective-uniform-title']
             ]
         );
         $spec->setTemplateLine(

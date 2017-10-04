@@ -1697,11 +1697,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get uniform title from field 243, subfields a and k.
+     * Get collective uniform title from field 243, subfields a and k.
      *
      * @return array
      */
-    public function getUniformTitle()
+    public function getCollectiveUniformTitle()
     {
         $results = [];
         foreach ($this->getMarcRecord()->getFields('243') as $field) {
@@ -1819,17 +1819,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $range = [];
             switch ($field->getIndicator(1)) {
             case 0:
-                if ($field->getSubfield('b')) {
-                    $results[] = $this->stripTrailingPunctuation(
-                        $field->getSubfield('b')->getData()
-                    );
-                }
-                if ($field->getSubfield('c')) {
-                    $results[] = $this->stripTrailingPunctuation(
-                        $field->getSubfield('c')->getData()
-                    );
-                }
-                break;
             case 1:
                 foreach ($field->getSubfields('b') as $time) {
                     $subfields[] = $this->stripTrailingPunctuation(
@@ -1866,27 +1855,27 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get copyright notes from field 542, all subfields.
+     * Get copyright notes from field 542, subfields a - u.
      *
      * @return array
      */
     public function getCopyrightNotes()
     {
-        $subfields = array_merge(range('a', 'u'), ['3', '6', '8']);
+        $subfields = range('a', 'u');
         return $this->stripTrailingPunctuation(
             $this->getFieldArray('542', $subfields)
         );
     }
 
     /**
-     * Get language notes from field 546, all subfields.
+     * Get language notes from field 546, subfields a and b.
      *
      * @return array
      */
     public function getLanguageNotes()
     {
         return $this->stripTrailingPunctuation(
-            $this->getFieldArray('546', ['a', 'b', '3', '6', '8'])
+            $this->getFieldArray('546', ['a', 'b'])
         );
     }
 
