@@ -239,7 +239,8 @@ class AccountExpirationReminders extends AbstractService
 
         $results = [];
         foreach ($users as $user) {
-            $secsSinceLast = time() - strtotime($user->finna_last_expiration_reminder);
+            $secsSinceLast = time()
+                - strtotime($user->finna_last_expiration_reminder);
             if ($secsSinceLast >= $frequency * 86400) {
                 $results[] = $user;
             }
