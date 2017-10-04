@@ -297,8 +297,6 @@ JS;
           <a class="btn btn-primary floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <? endif; ?>
       <div class="container search-form-container">
-        <div>
-        </div>
         <? if (isset($this->layout()->introduction) && $this->resolver('search/introductiontext.phtml')): ?>
         <div class="introduction">
           <div class="introduction clearfix">
@@ -334,13 +332,9 @@ JS;
             </div>
           </nav>
         <? endif; ?>
-        
+
         <? if (!empty($this->layout()->searchbox) && $this->layout()->searchbox !== false): ?>
-        <div>
-          <nav class="nav searchbox hidden-print">
             <?=$this->layout()->searchbox ?>
-          </nav>
-        </div>
         <? endif; ?>
       </div>
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
