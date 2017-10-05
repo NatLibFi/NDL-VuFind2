@@ -2,14 +2,20 @@
 
 .main.template-dir-myresearch, .main.template-dir-search.template-name-history, .main.template-dir-librarycards {
     padding-bottom: 30px;
-
+    h1 {
+        font-weight: 500;
+    }
+    .finna-main-header{
+        i {
+            color: @brand-primary;
+        }
+    }
     .my-research-content {
         width: 100%;
         @media (min-width: @screen-md) {
             width: 75%;
         }
     }
-
     h1 {
         display: inline-block;
     }
@@ -615,6 +621,10 @@
             margin-bottom: -2px;
             @media(max-width: @screen-md-max) {
                 max-width: 160px;
+                font-size: 14px;
+                a {
+                    padding: 10px;
+                }
             }
             @media(max-width: @screen-sm-max) {
                     max-width: 95px;
