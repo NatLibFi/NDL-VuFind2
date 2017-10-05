@@ -115,7 +115,7 @@ button.list-group-item {
       }
     }
     & .other-organisation-links a {
-      padding: 0px 10px;
+      padding: 5px 10px;
       font-weight: bold;
       display: block;
       white-space: nowrap;
@@ -183,25 +183,24 @@ button.list-group-item {
   }
 }
 
-.record-type.organisations {
-  padding: 0px 0px 10px;
-  font-size: 1.04em;
-  @media (max-width: @screen-xs-max) {
-    border-top: none;
-    border-bottom: 1px solid @gray-lighter;
-  }
-  & > li {
-    font-weight: bold;
-    & ul {
-      font-weight: normal;
-      margin-top: 10px;
-    }
-  }
-}
-
 .sidebar {
   margin-bottom: 30px;
   @media (max-width: @screen-xs-max) {
     clear: both;
+  }
+  .record-type.organisations {
+    padding: 15px;
+    font-size: 1em;
+    @media (max-width: @screen-xs-max) {
+      border-top: none;
+      border-bottom: 1px solid @gray-lighter;
+    }
+    & > li {
+      font-weight: bold;
+      & ul {
+        font-weight: normal;
+        margin-top: 10px;
+      }
+    }
   }
 }
