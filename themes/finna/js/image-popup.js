@@ -338,6 +338,7 @@ finna.imagePopup = (function(finna) {
             initRecordImage();
         } else {
             resolveRecordImageSize();
+            initDimensions();
         }
 
         if (location.hash == '#image') {
