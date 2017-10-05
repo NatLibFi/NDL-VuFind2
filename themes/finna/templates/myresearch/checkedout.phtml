@@ -11,7 +11,7 @@
 
     $user = $this->auth()->isLoggedIn();
 ?>
-<div class="my-research-content myresearch-grid-list">
+<div class="myresearch-grid-list">
   <? if (!$this->translationEmpty('checked_out_instructions_html')): ?><p class="no-content-message"><?=$this->translate('checked_out_instructions_html')?></p><? endif; ?>
   <?=$this->flashmessages()?>
   <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
