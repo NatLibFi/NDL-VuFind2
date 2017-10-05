@@ -85,7 +85,7 @@
 <? $menuEntries = ob_get_clean(); ?>
 
   <div>
-    <div class="dropdown visible-xs useraccount-nav-mobile">
+    <div class="dropdown visible-xs visible-sm useraccount-nav-mobile">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown">
       <?
         switch ($this->active) {
@@ -114,7 +114,7 @@
       </ul>
     </div>
   </div>
-  <ul class="list-group useraccount-nav nav nav-tabs hidden-xs">
+  <ul class="list-group useraccount-nav nav nav-tabs hidden-xs hidden-sm">
     <?=$menuEntries?>
   </ul>
 
