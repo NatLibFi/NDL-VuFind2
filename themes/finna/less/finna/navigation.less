@@ -103,12 +103,21 @@
 .navbar {
   .logoutOptions, #loginOptions {
     .login-text {
-      @media (max-width: 400px) {
+      @media (max-width: @screen-xxs) {
         display: none;
       }
     }
     @media (max-width: @grid-float-breakpoint){
       margin: 0 15px;
+    }
+  }
+}
+
+@media(max-width: @grid-float-breakpoint){
+  #loginOptions button {
+    background-color: @body-bg;
+    a {
+      color: @brand-primary;
     }
   }
 }
