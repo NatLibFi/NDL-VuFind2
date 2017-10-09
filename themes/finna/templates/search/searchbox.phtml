@@ -91,7 +91,7 @@
      }
   ?>
 <nav class="nav searchbox hidden-print">
-  <div class="<?=$mainPage = $action === 'home' ? 'searchbox-home' : '' ?> <?= $module == 'record' || $module == 'collection' ? 'searchbox-flex' : 'searchbox-columns' ?>">
+  <div class="<?=$mainPage ? 'searchbox-home' : '' ?> <?= $module == 'record' || $module == 'collection' ? 'searchbox-flex' : 'searchbox-columns' ?>">
     <? if ($module == 'record' || $module == 'collection'): ?>
       <div class="record-back hidden-print">
           <?
