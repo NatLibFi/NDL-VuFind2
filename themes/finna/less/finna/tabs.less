@@ -276,3 +276,25 @@
         }
     }
 }
+
+@media(max-width: @screen-sm) {
+    .mobile-main-tabs {
+        width: 100%;
+        .dropdown-toggle {
+            line-height: 50px;
+            margin-top: 15px;
+            border: 1px solid @gray-lighter;
+            border-top: 4px solid @brand-primary;
+            background-color: @main-tabs-background-color;
+            padding: 0 15px;
+            font-weight: 700;
+            .more {
+                float: right;
+                color: #81358a;
+            }
+        }
+        .tooltip {
+            dispay: none;
+        }
+    }
+}
