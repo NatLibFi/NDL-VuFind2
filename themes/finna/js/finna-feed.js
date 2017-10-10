@@ -1,22 +1,22 @@
 /*global VuFind, finna */
 finna.feed = (function finnaFeed() {
-  var calculateScrollSpeed = function calculateScrollSpeed(scrollCnt, scrollSpeed) {
+  function calculateScrollSpeed(scrollCnt, scrollSpeed) {
     return scrollSpeed * Math.max(1, (scrollCnt / 5));
   };
 
   // Horizontal carousel:
-  var centerImages = function centerImages(holder) {
+  function centerImages(holder) {
     holder.find('.carousel-feed:not(.slick-vertical) .slick-slide .wrapper img').each (function centerEachImage() {
       centerImage($(this));
     });
   };
 
-  var centerImage = function centerImage(img) {
+  function centerImage(img) {
     var offset = img.width() - img.closest('.slick-slide').width();
     img.css('margin-left', offset > 0 ? '-' + offset / 2 + 'px' : 'auto');
   };
 
-  var adjustWidth = function adjustWidth(holder) {
+  function adjustWidth(holder) {
     holder.find('.carousel-slide-header p, .carousel-text')
       .width(holder.find('.slick-slide').width() - 20);
 
@@ -25,7 +25,7 @@ finna.feed = (function finnaFeed() {
     });
   };
 
-  var adjustTitles = function adjustTitles(holder) {
+  function adjustTitles(holder) {
     // Move title field below image
     var maxH = 0;
     holder.find('.carousel-feed .slick-slide .carousel-slide-header p').each(function getMaxH() {
@@ -37,13 +37,13 @@ finna.feed = (function finnaFeed() {
   };
 
   // Vertical carousel:
-  var adjustTextFields = function adjustTextFields(holder) {
+  function adjustTextFields(holder) {
     holder.find('.carousel-feed .slick-slide').each(function adjustEachTextField() {
       adjustTextField($(this));
     });
   };
 
-  var adjustTextField = function adjustTextField(slide) {
+  function adjustTextField(slide) {
     var imgH = slide.find('.wrapper').height();
     var titleH = slide.find('.carousel-slide-header p').height();
     var textF = slide.find('.carousel-text');
@@ -62,7 +62,7 @@ finna.feed = (function finnaFeed() {
     }
   };
 
-  var loadFeed = function loadFeed(holder) {
+  function loadFeed(holder) {
     var id = holder.data('feed');
     if (typeof id == 'undefined') {
       return;
@@ -70,7 +70,7 @@ finna.feed = (function finnaFeed() {
     processLoadFeed(holder, {method: 'getFeed', id: id});
   };
 
-  var loadFeedFromUrl = function loadFeedFromUrl(holder) {
+  function loadFeedFromUrl(holder) {
     var feedUrl = holder.data('url');
     var id = holder.data('feed');
 
@@ -87,7 +87,7 @@ finna.feed = (function finnaFeed() {
     );
   };
 
-  var processLoadFeed = function processLoadFeed(holder, params) {
+  function processLoadFeed(holder, params) {
     params['touch-device'] = (finna.layout.isTouchDevice() ? 1 : 0);
 
     var url = VuFind.path + '/AJAX/JSON?' + $.param(params);
@@ -207,7 +207,7 @@ finna.feed = (function finnaFeed() {
       });
   };
 
-  var getCarouselSettings = function getCarouselSettings(settings) {
+  function getCarouselSettings(settings) {
     return {
       dots: settings.dots,
       swipe: !settings.vertical,
@@ -248,7 +248,7 @@ finna.feed = (function finnaFeed() {
     };
   };
 
-  var initComponents = function initComponents() {
+  function initComponents() {
     $('.feed-container[data-init!="0"]').each(function loadEachFeed() {
       loadFeed($(this));
     });
@@ -264,4 +264,4 @@ finna.feed = (function finnaFeed() {
 
   return my;
 
-})(finna);
+})();

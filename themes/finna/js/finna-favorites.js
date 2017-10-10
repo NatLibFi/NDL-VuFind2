@@ -18,13 +18,13 @@ finna.favorites = (function finnaFavorites() {
     submitBtn.attr('disabled', false);
   });
 
-  var showInfo = function showInfo(response) {
+  function showInfo(response) {
     dialog.siblings('h1').remove();
     form.remove();
     dialog.append(response.data);
   };
 
-  var upload = function upload() {
+  function upload() {
     var spinner = $('<i>').addClass('fa fa-spinner fa-spin');
     submitBtn.attr('disabled', true);
     dialog.prepend(spinner);
@@ -50,5 +50,5 @@ finna.favorites = (function finnaFavorites() {
   return {
     upload: upload
   };
-})(finna);
+})();
 

@@ -1,7 +1,7 @@
 /*global VuFind, finna, module */
 finna.imagePopup = (function finnaImagePopup() {
 
-  var openPopup = function openPopup(trigger) {
+  function openPopup(trigger) {
     var ind = trigger.data('ind');
     var links = trigger.closest('.recordcover-holder').find('.image-popup');
     var link = links.filter(function filterLink() {
@@ -10,7 +10,7 @@ finna.imagePopup = (function finnaImagePopup() {
     link.click();
   }
 
-  var initThumbnailNavi = function initThumbnailNavi() {
+  function initThumbnailNavi() {
     // Assign record indices
     var recordIndex = null;
     if ($('.paginationSimple').length) {
@@ -74,11 +74,11 @@ finna.imagePopup = (function finnaImagePopup() {
   };
 
   // Copied from finna-mylist.js to avoid dependency
-  var getActiveListId = function getActiveListId() {
+  function getActiveListId() {
     return $('input[name="listID"]').val();
   };
 
-  var initRecordImage = function initRecordImage() {
+  function initRecordImage() {
     // Collect data for all image-popup triggers on page.
     var urls = $('.image-popup').map(function mapPopupTriggers() {
       // result list
@@ -240,7 +240,7 @@ finna.imagePopup = (function finnaImagePopup() {
     });
   };
 
-  var resolveRecordImageSize = function resolveRecordImageSize() {
+  function resolveRecordImageSize() {
     if ($('.image-popup-navi').length > 1) {
       initThumbnailNavi();
       initRecordImage();
@@ -258,7 +258,7 @@ finna.imagePopup = (function finnaImagePopup() {
     }
   };
 
-  var initDimensions = function initDimensions() {
+  function initDimensions() {
     if (typeof $('.open-link a').attr('href') !== 'undefined') {
       var img = document.createElement('img')
       img.src = $('.open-link a').attr('href');
@@ -273,7 +273,7 @@ finna.imagePopup = (function finnaImagePopup() {
     }
   };
 
-  var init = function init() {
+  function init() {
     if (module !== 'record') {
       initThumbnailNavi();
       initRecordImage();

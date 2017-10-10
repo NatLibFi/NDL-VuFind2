@@ -1,6 +1,6 @@
 /*global VuFind, finna */
 finna.changeHolds = (function finnaChangeHolds() {
-  var setupChangeHolds = function setupChangeHolds() {
+  function setupChangeHolds() {
     var errorOccured = $('<div></div>').attr('class', 'alert alert-danger hold-change-error').text(VuFind.translate('error_occurred'));
 
     var changeHolds = $('.changeHolds');
@@ -58,7 +58,7 @@ finna.changeHolds = (function finnaChangeHolds() {
       return false;
     });
 
-    var pickupSubmitHandler = function pickupSubmitHandler() {
+    function pickupSubmitHandler() {
       $().dropdown('toggle');
       var selected = $(this);
       var requestId = selected.data('requestId');
@@ -98,7 +98,7 @@ finna.changeHolds = (function finnaChangeHolds() {
         });
     };
 
-    var changeHoldStatus = function changeHoldStatus(container, requestId, frozen) {
+    function changeHoldStatus(container, requestId, frozen) {
       var spinnerChange = container.find('.status-change-load-indicator');
 
       $('.hold-change-success').remove();
@@ -145,4 +145,4 @@ finna.changeHolds = (function finnaChangeHolds() {
 
   return my;
 
-})(finna);
+})();

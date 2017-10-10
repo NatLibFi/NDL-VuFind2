@@ -2,7 +2,7 @@
 finna.organisationInfo = (function finnaOrganisationInfo() {
   var organisationList = {};
 
-  var query = function query(parentId, queryParams, callback) {
+  function query(parentId, queryParams, callback) {
     var url = VuFind.path + '/AJAX/JSON';
     var params = {method: 'getOrganisationInfo', parent: parentId, params: queryParams};
 
@@ -23,7 +23,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
   };
 
-  var getOrganisations = function getOrganisations(target, parent, buildings, callbackParams, callback) {
+  function getOrganisations(target, parent, buildings, callbackParams, callback) {
     if (typeof parent === 'undefined') {
       return;
     }
@@ -47,14 +47,14 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     });
   };
 
-  var getInfo = function getInfo(id) {
+  function getInfo(id) {
     if (!(id in organisationList)) {
       return false;
     }
     return organisationList[id];
   };
 
-  var getDetails = function getDetails(id) {
+  function getDetails(id) {
     if (!(id in organisationList)) {
       return false;
     }
@@ -97,7 +97,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     return details;
   };
 
-  var getSchedules = function getSchedules(target, parent, id, periodStart, dir, fullDetails, allServices, callback) {
+  function getSchedules(target, parent, id, periodStart, dir, fullDetails, allServices, callback) {
     var params = {
       target: target, action: 'details', id: id,
       fullDetails: fullDetails ? 1 : 0,
@@ -135,7 +135,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     });
   };
 
-  var getField = function getField(obj, field, organisationId) {
+  function getField(obj, field, organisationId) {
     var res = finna.common.getField(obj, field);
     if (res !== null) {
       return res;
@@ -151,21 +151,21 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     return null;
   };
 
-  var getCachedDetails = function getCachedDetails(id) {
+  function getCachedDetails(id) {
     if (typeof organisationList[id].details !== 'undefined') {
       return organisationList[id].details;
     }
     return null;
   };
 
-  var cacheDetails = function cacheDetails(id, details) {
+  function cacheDetails(id, details) {
     if (!('openTimes' in details) && 'openTimes' in organisationList[id]) {
       details.openTimes = organisationList[id].openTimes;
     }
     organisationList[id].details = details;
   };
 
-  var cacheSchedules = function cacheSchedules(id, data) {
+  function cacheSchedules(id, data) {
     var schedules = finna.common.getField(data, 'openTimes');
     if (schedules) {
       organisationList[id].openTimes = schedules;

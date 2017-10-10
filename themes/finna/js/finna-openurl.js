@@ -1,6 +1,6 @@
 /*global VuFind, finna */
 finna.openUrl = (function finnaOpenUrl() {
-  var initLinks = function initLinks() {
+  function initLinks() {
     $('.openUrlEmbed a').each(function initOpenUrlEmbed(ind, e) {
       $(e).one('inview', function onInViewOpenUrl() {
         VuFind.openurl.embedOpenUrlLinks($(this));
@@ -16,4 +16,4 @@ finna.openUrl = (function finnaOpenUrl() {
   };
 
   return my;
-})(finna);
+})();

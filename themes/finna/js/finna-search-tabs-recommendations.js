@@ -1,6 +1,6 @@
 /*global VuFind, finna, checkSaveStatuses */
 finna.searchTabsRecommendations = (function finnaSearchTabsRecommendations() {
-  var initSearchTabsRecommendations = function initSearchTabsRecommendations() {
+  function initSearchTabsRecommendations() {
     var holder = $('#search-tabs-recommendations-holder');
     if (!holder[0]) {
       return;
@@ -29,4 +29,4 @@ finna.searchTabsRecommendations = (function finnaSearchTabsRecommendations() {
 
   return my;
 
-})(finna);
+})();

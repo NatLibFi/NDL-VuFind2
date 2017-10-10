@@ -15,7 +15,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
   var openTimelineCallback = null;
 
   // Move dates: params either + or -
-  var moveVis = function moveVis(start, end) {
+  function moveVis(start, end) {
     var ops = {
       '+': function movePlus(a) { return a + visMove },
       '-': function moveMinus(a) { return a - visMove }
@@ -24,7 +24,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     visDateEnd = ops[end](visDateEnd);
   };
 
-  var timelineAction = function timelineAction(backend, action) {
+  function timelineAction(backend, action) {
     if (loading) {
       return;
     }
@@ -64,7 +64,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
   };
 
-  var showVis = function showVis() {
+  function showVis() {
     // Display timeline when facet animation is complete
     if (openTimelineCallback) {
       var fn = openTimelineCallback;
@@ -75,7 +75,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
   };
 
-  var initVis = function initVis(backend, facet, params, baseParams, h, start, end, plotImmediately) {
+  function initVis(backend, facet, params, baseParams, h, start, end, plotImmediately) {
     facetField = facet;
     holder = h;
 
@@ -117,7 +117,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
   };
 
-  var loadVis = function loadVis(backend, action, params) {
+  function loadVis(backend, action, params) {
     // Load and display timeline (called at initial open and after timeline navigation)
     var url = VuFind.path + '/AJAX/JSON' + params + '&method=dateRangeVisual&backend=' + backend;
 
@@ -196,7 +196,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       });
   };
 
-  var plotData = function plotData(delay) {
+  function plotData(delay) {
     if (!visData) {
       return;
     }
@@ -268,7 +268,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     plotted = true;
   };
 
-  var getGraphOptions = function getGraphOptions(start, end) {
+  function getGraphOptions(start, end) {
     var options = {
       series: {
         bars: {
@@ -304,7 +304,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     return options;
   };
 
-  var initTimelineNavigation = function initTimelineNavigation(backend, _holder) {
+  function initTimelineNavigation(backend, _holder) {
     _holder.find('.navigation div:not(.expand-modal)').on(
       'click',
       { callback: timelineAction },
@@ -322,7 +322,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     );
   };
 
-  var initFacetBar = function initFacetBar() {
+  function initFacetBar() {
     $('.daterange-facet.facet-group').on('shown.bs.collapse', function onShownCollapse(/*e*/) {
       if (!plotted) {
         showVis();
@@ -330,13 +330,13 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     });
   };
 
-  var initResizeListener = function initResizeListener() {
+  function initResizeListener() {
     $(window).on('resize.screen.finna', function onResizeScreen(/*e, data*/) {
       plotData();
     });
   };
 
-  var updateFieldLimits = function updateFieldLimits(evt) {
+  function updateFieldLimits(evt) {
     var params = evt.data;
     params.from.attr('max', params.to.val());
     params.to.attr('min', params.from.val());
@@ -351,7 +351,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
   };
 
-  var initForm = function initForm(form, backend, _facetField) {
+  function initForm(form, backend, _facetField) {
     facetField = _facetField;
     form.find('a.submit').on('click',
       function onFormSubmitClick() {
@@ -449,7 +449,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     });
   };
 
-  var padZeros = function padZeros(_number, _length) {
+  function padZeros(_number, _length) {
     var number = _number;
     var length = typeof length === 'undefined' ? 4 : _length;
     // Room for any leading negative sign
@@ -465,7 +465,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     return (negative ? '-' : '') + str;
   }
 
-  var init = function init() {
+  function init() {
     initResizeListener();
     initFacetBar();
   };
@@ -478,4 +478,4 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
 
   return my;
 
-})(finna);
+})();

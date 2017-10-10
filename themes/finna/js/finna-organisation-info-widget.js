@@ -5,7 +5,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
   var schedulesLoading = false;
   var organisationList = {};
 
-  var loadOrganisationList = function loadOrganisationList() {
+  function loadOrganisationList() {
     holder.find('.week-navi.prev-week').fadeTo(0, 0);
 
     var parent = holder.data('parent');
@@ -25,7 +25,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     });
   };
 
-  var organisationListLoaded = function organisationListLoaded(data) {
+  function organisationListLoaded(data) {
     var list = data.list;
     var id = data.id;
     var found = false;
@@ -61,7 +61,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     attachWeekNaviListener();
   };
 
-  var menuClicked = function menuClicked(disable) {
+  function menuClicked(disable) {
     var toggle = holder.find('.organisation .dropdown-toggle');
     var input = toggle.find('input');
     var id = input.val();
@@ -76,7 +76,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     }
   };
 
-  var attachWeekNaviListener = function attachWeekNaviListener() {
+  function attachWeekNaviListener() {
     holder.find('.week-navi').unbind('click').click(function onClickWeekNavi() {
       if (schedulesLoading) {
         return;
@@ -101,7 +101,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     });
   };
 
-  var showDetails = function showDetails(id, name, allServices) {
+  function showDetails(id, name, allServices) {
     holder.find('.error,.info-element').hide();
     holder.find('.is-open').hide();
 
@@ -152,7 +152,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     );
   };
 
-  var schedulesLoaded = function schedulesLoaded(id, response) {
+  function schedulesLoaded(id, response) {
     schedulesLoading = false;
 
     holder.find('.week-navi-holder .week-navi').each(function handleWeekNavi() {
@@ -298,7 +298,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     schedulesHolder.stop(true, false).fadeTo(200, 1);
   };
 
-  var detailsLoaded = function detailsLoaded(id, response) {
+  function detailsLoaded(id, response) {
     toggleSpinner(false);
     if (null === response) {
       return;
@@ -352,7 +352,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     }
   };
 
-  var updatePrevBtn = function updatePrevBtn(response) {
+  function updatePrevBtn(response) {
     var prevBtn = holder.find('.week-navi.prev-week');
     if ('openTimes' in response
       && 'currentWeek' in response.openTimes
@@ -365,12 +365,12 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     }
   };
 
-  var updateWeekNum = function updateWeekNum(week) {
+  function updateWeekNum(week) {
     holder.data('week-num', week);
     holder.find('.week-navi-holder .week-text .num').text(week);
   };
 
-  var toggleSpinner = function toggleSpinner(mode) {
+  function toggleSpinner(mode) {
     var spinner = holder.find('.loader');
     if (mode) {
       spinner.fadeIn();
@@ -389,4 +389,4 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     }
   };
   return my;
-})(finna);
+})();

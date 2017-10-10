@@ -1,6 +1,6 @@
 /*global VuFind, finna */
 finna.contentFeed = (function finnaContentFeed() {
-  var loadFeed = function loadFeed(container, modal) {
+  function loadFeed(container, modal) {
     var id = container.data('feed');
     var element = container.data('element');
     var feedUrl = container.data('feed-url');
@@ -71,4 +71,4 @@ finna.contentFeed = (function finnaContentFeed() {
   };
 
   return my;
-})(finna);
+})();

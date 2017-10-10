@@ -12,4 +12,4 @@ finna.combinedResults = (function finnaCombinedResults() {
   };
 
   return my;
-})(finna);
+})();

@@ -2,7 +2,7 @@
 finna.layout = (function finnaLayout() {
   var _fixFooterTimeout = null;
 
-  var initMap = function initMap(map) {
+  function initMap(map) {
     // Add zoom control with translated tooltips
     L.control.zoom({
       position: 'topleft',
@@ -17,7 +17,7 @@ finna.layout = (function finnaLayout() {
     map.scrollWheelZoom.disable();
   };
 
-  var initResizeListener = function initResizeListener() {
+  function initResizeListener() {
     var intervalId = false;
     $(window).on('resize', function onResizeWindow(/*e*/) {
       clearTimeout(intervalId);
@@ -31,13 +31,13 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var isTouchDevice = function isTouchDevice() {
+  function isTouchDevice() {
     return (('ontouchstart' in window)
       || (navigator.maxTouchPoints > 0)
       || (navigator.msMaxTouchPoints > 0)); // IE10, IE11, Edge
   };
 
-  var detectIe = function detectIe() {
+  function detectIe() {
     var undef,
       v = 3,
       div = document.createElement('div'),
@@ -52,7 +52,7 @@ finna.layout = (function finnaLayout() {
   // Append current anchor (location.hash) to selected links
   // in order to preserve the anchor when the link is clicked.
   // This is used in top header language links.
-  var initAnchorNavigationLinks = function initAnchorNavigationLinks() {
+  function initAnchorNavigationLinks() {
     $('a.preserve-anchor').each(function addAnchors() {
       var hash = location.hash;
       if (hash.length === 0) {
@@ -62,7 +62,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initFixFooter = function initFixFooter() {
+  function initFixFooter() {
     $(window).resize(function onResizeWindow(/*e*/) {
       if (!_fixFooterTimeout) {
         _fixFooterTimeout = setTimeout(function fixFooterCallback() {
@@ -78,10 +78,10 @@ finna.layout = (function finnaLayout() {
     }).resize();
   };
 
-  var initLocationService = function initLocationService(_holder) {
+  function initLocationService(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    var closeModalCallback = function closeModalCallback(modal) {
+    function closeModalCallback(modal) {
       modal.removeClass('location-service location-service-qrcode');
       modal.find('.modal-dialog').removeClass('modal-lg');
     };
@@ -100,7 +100,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initTruncate = function initTruncate(_holder) {
+  function initTruncate(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
     var notifyTruncateChange = function notifyTruncateChange(field) {
@@ -167,8 +167,8 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initTruncatedRecordImageNavi = function initTruncatedRecordImageNavi() {
-    var displayTruncatedImage = function displayTruncatedImage(placeholder) {
+  function initTruncatedRecordImageNavi() {
+    function displayTruncatedImage(placeholder) {
       var img = $('<img/>');
       img.append($('<i class="fa fa-spinner fa-spin"/>')).one('load', function onLoadImage() {
         $(this).empty();
@@ -203,7 +203,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initContentNavigation = function initContentNavigation() {
+  function initContentNavigation() {
     if ($('.content-navigation-menu')[0]) {
       $('.content-section').each(function initContentSection(index) {
         var link = '#' + $(this).attr('id');
@@ -234,7 +234,7 @@ finna.layout = (function finnaLayout() {
     }
   };
 
-  var initRecordSwipe = function initRecordSwipe() {
+  function initRecordSwipe() {
     if ($('#view-pager').length && isTouchDevice()) {
       $('section.main').append("<div class='swipe-arrow-navigation arrow-navigation-left'><i class='fa fa-arrow-left'></i></div>");
       $('section.main').append("<div class='swipe-arrow-navigation arrow-navigation-right'><i class='fa fa-arrow-right'></i></div>");
@@ -271,7 +271,7 @@ finna.layout = (function finnaLayout() {
     }
   };
 
-  var initMultiSelect = function initMultiSelect() {
+  function initMultiSelect() {
     $('.multi-select').multiselect({
       enableCaseInsensitiveFiltering: true,
       maxHeight: 310,
@@ -292,7 +292,7 @@ finna.layout = (function finnaLayout() {
     }
   };
 
-  var initMobileNarrowSearch = function initMobileNarrowSearch() {
+  function initMobileNarrowSearch() {
     var filterAmount = $('.checkboxFilter input[checked]').length + $('.list-group.filters .list-group-item.active').length;
     if (filterAmount > 0) {
       $('.mobile-navigation .sidebar-navigation .active-filters  .active-filter-count').text(filterAmount);
@@ -310,7 +310,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initCheckboxClicks = function initCheckboxClicks() {
+  function initCheckboxClicks() {
     $('.checkboxFilter:not(.mylist-select-all) .checkbox input').click(function onClickCheckbox() {
       $(this).closest('.checkbox').toggleClass('checked');
       var nonChecked = true;
@@ -345,7 +345,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initScrollLinks = function initScrollLinks() {
+  function initScrollLinks() {
     $('.library-link').click(function onClickLibraryLink() {
       $('html, body').animate({
         scrollTop: $('.recordProvidedBy').offset().top
@@ -376,7 +376,7 @@ finna.layout = (function finnaLayout() {
       });
     }
 
-    $( "#modal" ).on('shown.bs.modal', function onShownModal(/*e*/) {
+    $('#modal').on('shown.bs.modal', function onShownModal(/*e*/) {
       $('#hierarchyTree').scroll(function onScrollHierarchyTree() {
         modalContent = $('#hierarchyTree').scrollTop();
         if (modalContent > 1500) {
@@ -392,7 +392,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initSearchboxFunctions = function initSearchboxFunctions() {
+  function initSearchboxFunctions() {
     if ($('.navbar-form .checkbox')[0]) {
       $('.autocomplete-results').addClass('checkbox-active');
     }
@@ -427,7 +427,7 @@ finna.layout = (function finnaLayout() {
     }
   };
 
-  var initToolTips = function initToolTips(_holder) {
+  function initToolTips(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
     holder.find('[data-toggle="tooltip"]').tooltip({trigger: 'click', viewport: '.container'});
@@ -443,7 +443,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initCondensedList = function initCondensedList() {
+  function initCondensedList() {
     $('.condensed-collapse-toggle').click(function onClickCollapseToggle(event) {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear');
@@ -459,13 +459,13 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initTouchDeviceGallery = function initTouchDeviceGallery() {
+  function initTouchDeviceGallery() {
     if ($('.result-view-grid')[0] != null && isTouchDevice()) {
       $('.result-view-grid').addClass('touch-device');
     }
   };
 
-  var initImageCheck = function initImageCheck() {
+  function initImageCheck() {
     $('.image-popup-trigger img').each(function setupImagePopup() {
       $(this).one('load', function onLoadImage() {
         // Don't hide anything if we have multiple images
@@ -489,7 +489,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initHierarchicalFacet = function initHierarchicalFacet(treeNode, inSidebar) {
+  function initHierarchicalFacet(treeNode, inSidebar) {
     treeNode.bind('ready.jstree', function onReadyJstree() {
       var tree = $(this);
       // if hierarchical facet contains 2 or less top level items, it is opened by default
@@ -511,13 +511,13 @@ finna.layout = (function finnaLayout() {
     initFacetTree(treeNode, inSidebar);
   };
 
-  var initJumpMenus = function initJumpMenus(_holder) {
+  function initJumpMenus(_holder) {
     var holder = typeof _holder === 'undefined' ? $('body') : _holder;
     holder.find('select.jumpMenu').unbind('change').change(function onChangeJumpMenu() { $(this).closest('form').submit(); });
     holder.find('select.jumpMenuUrl').unbind('change').change(function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
   };
 
-  var initSecondaryLoginField = function initSecondaryLoginField(labels, topClass) {
+  function initSecondaryLoginField(labels, topClass) {
     $('#login_target').change(function onChangeLoginTarget() {
       var target = $('#login_target').val();
       var field = $('#login_' + (topClass ? topClass + '_' : '') + 'secondary_username');
@@ -532,7 +532,7 @@ finna.layout = (function finnaLayout() {
     }).change();
   };
 
-  var initSideFacets = function initSideFacets() {
+  function initSideFacets() {
     var $container = $('.side-facets-container');
     if ($container.length === 0) {
       return;
@@ -554,7 +554,7 @@ finna.layout = (function finnaLayout() {
       });
   };
 
-  var initPiwikPopularSearches = function initPiwikPopularSearches() {
+  function initPiwikPopularSearches() {
     var $container = $('.piwik-popular-searches');
     if ($container.length === 0) {
       return;
@@ -570,7 +570,7 @@ finna.layout = (function finnaLayout() {
       });
   };
 
-  var initAutoScrollTouch = function initAutoScrollTouch() {
+  function initAutoScrollTouch() {
     if (!navigator.userAgent.match(/iemobile/i) && isTouchDevice() && $(window).width() < 1025) {
       $('.search-query').click(function onClickSearchQuery() {
         $('html, body').animate({
@@ -580,7 +580,7 @@ finna.layout = (function finnaLayout() {
     }
   };
 
-  var initIpadCheck = function initIpadCheck() {
+  function initIpadCheck() {
     if (navigator.userAgent.match(/iPad/i)) {
       if (navigator.userAgent.match(/OS 6_\d(_\d) like Mac OS X/i)) {
         $('body').addClass('ipad-six');
@@ -588,7 +588,7 @@ finna.layout = (function finnaLayout() {
     }
   };
 
-  var initScrollRecord = function initScrollRecord() {
+  function initScrollRecord() {
     if (!$('section.main').is('.template-name-search, .template-name-results')) {
       return;
     }
@@ -612,7 +612,7 @@ finna.layout = (function finnaLayout() {
     }
   };
 
-  var initBuildingFilter = function initBuildingFilter() {
+  function initBuildingFilter() {
     $('#building_filter').keyup(function onKeyUpFilter() {
       var valThis = this.value.toLowerCase();
       $('#facet_building>ul>li>a>.main').each(function setupBuildingSearch() {
@@ -626,7 +626,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initLoginRedirect = function initLoginRedirect() {
+  function initLoginRedirect() {
     if (!document.addEventListener) {
       return;
     }
@@ -638,7 +638,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initLoadMasonry = function initLoadMasonry() {
+  function initLoadMasonry() {
     var ie = detectIe();
     // do not execute on ie8 or lower as they are not supported by masonry
     if (ie > 8 || ie == null) {
@@ -654,7 +654,7 @@ finna.layout = (function finnaLayout() {
     }
   };
 
-  var initOrganisationPageLinks = function initOrganisationPageLinks() {
+  function initOrganisationPageLinks() {
     $('.organisation-page-link').not('.done').map(function setupOrganisationPageLinks() {
       $(this).one('inview', function onInViewLink() {
         var holder = $(this);
@@ -671,7 +671,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var getOrganisationPageLink = function getOrganisationPageLink(organisation, organisationName, link, callback) {
+  function getOrganisationPageLink(organisation, organisationName, link, callback) {
     var params = {
       url: VuFind.path + '/AJAX/JSON?method=getOrganisationInfo',
       dataType: 'json',
@@ -695,7 +695,7 @@ finna.layout = (function finnaLayout() {
       });
   };
 
-  var initOrganisationInfoWidgets = function initOrganisationInfoWidgets() {
+  function initOrganisationInfoWidgets() {
     $('.organisation-info[data-init="1"]').map(function setupOrganisationInfo() {
       var service = finna.organisationInfo();
       var widget = finna.organisationInfoWidget();
@@ -704,7 +704,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initIframeEmbed = function initIframeEmbed(_container) {
+  function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
     container.find('a[data-embed-iframe]').click(function onClickEmbedLink(e) {
@@ -722,9 +722,9 @@ finna.layout = (function finnaLayout() {
         },
         iframe: {
           markup: '<div class="mfp-iframe-scaler">'
-                        + '<div class="mfp-close"></div>'
-                        + '<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
-                        + '</div>',
+            + '<div class="mfp-close"></div>'
+            + '<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
+            + '</div>',
           patterns: {
             youtube_short: {
               index: 'youtu.be/',
@@ -746,7 +746,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initVideoPopup = function initVideoPopup(_container) {
+  function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
     container.find('a[data-embed-video]').click(function onClickVideoLink(e) {
@@ -787,7 +787,7 @@ finna.layout = (function finnaLayout() {
     });
   };
 
-  var initKeyboardNavigation = function initKeyboardNavigation() {
+  function initKeyboardNavigation() {
     $(window).keyup(function onKeyUp(e) {
       var $target = $(e.target);
       // jsTree link target navigation
@@ -850,5 +850,5 @@ finna.layout = (function finnaLayout() {
   };
 
   return my;
-})(finna);
+})();
 

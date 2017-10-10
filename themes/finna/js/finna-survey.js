@@ -2,7 +2,7 @@
 finna.finnaSurvey = (function finnaSurvey() {
   var _cookieName = 'finnaSurvey';
 
-  var init = function init() {
+  function init() {
     var cookie = $.cookie(_cookieName);
     if (typeof cookie !== 'undefined' && cookie === '1') {
       return;

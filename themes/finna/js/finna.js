@@ -26,7 +26,7 @@ var finna = (function finnaModule() {
         'finnaSurvey'
       ];
 
-      $.each(modules, function handleModule(ind, module) {
+      $.each(modules, function initModule(ind, module) {
         if (typeof finna[module] !== 'undefined') {
           finna[module].init();
         }

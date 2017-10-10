@@ -3,7 +3,7 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
   var holder = false;
   var parent = false;
 
-  var updateConsortiumInfo = function updateConsortiumInfo(data, organisationList) {
+  function updateConsortiumInfo(data, organisationList) {
     var infoField = holder.find('.consortium-info');
     var usageInfo = holder.find('.consortium-usage-rights').removeClass('hide');
     holder.find('.consortium-navigation').removeClass('hide');
@@ -150,7 +150,7 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
     }
   };
 
-  var initSectorUsageInfo = function initSectorUsageInfo(id, callback) {
+  function initSectorUsageInfo(id, callback) {
     // Resolve building sector
     var url = 'https://api.finna.fi/v1/search?';
     var params = {
@@ -180,11 +180,11 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
       });
   };
 
-  var enableConsortiumNaviItem = function enableConsortiumNaviItem(id) {
+  function enableConsortiumNaviItem(id) {
     holder.find('.consortium-navigation .scroll.' + id).addClass('active');
   };
 
-  var initConsortiumNavi = function initConsortiumNavi() {
+  function initConsortiumNavi() {
     var active = holder.find('.consortium-navigation .scroll.active');
     if (active.length > 1) {
       active.removeClass('hide');
@@ -213,4 +213,4 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
   };
 
   return my;
-})(finna);
+})();

@@ -9,7 +9,7 @@ finna.organisationMap = (function finnaOrganisationMap() {
   var markers = [];
   var selectedMarker = null;
 
-  var draw = function draw(organisationList/*, id*/) {
+  function draw(organisationList/*, id*/) {
     var me = $(this);
     var organisations = organisationList;
 
@@ -107,7 +107,7 @@ finna.organisationMap = (function finnaOrganisationMap() {
     reset();
   };
 
-  var reset = function reset() {
+  function reset() {
     var group = new L.featureGroup(markers);
     var bounds = group.getBounds().pad(0.2);
     // Fit markers to screen
@@ -116,11 +116,11 @@ finna.organisationMap = (function finnaOrganisationMap() {
     selectedMarker = null;
   };
 
-  var resize = function resize() {
+  function resize() {
     map.invalidateSize(true);
   };
 
-  var selectMarker = function selectMarker(id) {
+  function selectMarker(id) {
     var marker = null;
     if (id in mapMarkers) {
       marker = mapMarkers[id];
@@ -138,13 +138,13 @@ finna.organisationMap = (function finnaOrganisationMap() {
     selectedMarker = marker;
   };
 
-  var hideMarker = function hideMarker() {
+  function hideMarker() {
     if (selectedMarker) {
       selectedMarker.closePopup();
     }
   };
 
-  var init = function init(_holder, _mapTileUrl, _attribution) {
+  function init(_holder, _mapTileUrl, _attribution) {
     holder = _holder;
     mapTileUrl = _mapTileUrl;
     attribution = _attribution;

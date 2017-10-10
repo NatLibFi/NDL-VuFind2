@@ -1,6 +1,6 @@
 /*global finna */
 finna.primoAdvSearch = (function finnaPrimoAdvSearch() {
-  var initForm = function initForm() {
+  function initForm() {
     $('.primo-add-search').click(function onClickAddSearch() {
       var fieldCount = $('.primo-advanced-search-fields').length;
       var last = $('.primo-advanced-search-fields').last();

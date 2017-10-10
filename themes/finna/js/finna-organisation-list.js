@@ -1,6 +1,6 @@
 /*global finna */
 finna.organisationList = (function finnaOrganisationList() {
-  var initOrganisationPageLinksForParticipants = function initOrganisationPageLinksForParticipants() {
+  function initOrganisationPageLinksForParticipants() {
     var ids = $.makeArray($('.organisations .page-link').not('.done').map(function getId() {
       return $(this).data('organisation');
     }));

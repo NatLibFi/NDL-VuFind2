@@ -1,7 +1,7 @@
 /*global VuFind, finna */
 finna.onlinePayment = (function finnaOnlinePayment() {
 
-  var registerPayment = function registerPayment(params) {
+  function registerPayment(params) {
     var url = VuFind.path + '/AJAX/registerOnlinePayment';
     $.ajax({
       type: 'POST',
@@ -30,4 +30,4 @@ finna.onlinePayment = (function finnaOnlinePayment() {
   };
 
   return my;
-})(finna);
+})();

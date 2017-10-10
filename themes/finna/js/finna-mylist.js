@@ -7,11 +7,11 @@ finna.myList = (function finnaMyList() {
   var save = false;
 
   // This is duplicated in image-popup.js to avoid dependency
-  var getActiveListId = function getActiveListId() {
+  function getActiveListId() {
     return $('input[name="listID"]').val();
   };
 
-  var updateList = function updateList(params, callback, type) {
+  function updateList(params, callback, type) {
     save = true;
     var spinner = null;
 
@@ -73,7 +73,7 @@ finna.myList = (function finnaMyList() {
       });
   };
 
-  var updateListResource = function updateListResource(params, input/*, row*/) {
+  function updateListResource(params, input/*, row*/) {
     save = true;
     toggleErrorMessage(false);
 
@@ -108,7 +108,7 @@ finna.myList = (function finnaMyList() {
       });
   };
 
-  var addResourcesToList = function addResourcesToList(listId) {
+  function addResourcesToList(listId) {
     toggleErrorMessage(false);
 
     var ids = [];
@@ -144,7 +144,7 @@ finna.myList = (function finnaMyList() {
       });
   };
 
-  var refreshLists = function refreshLists(/*data*/) {
+  function refreshLists(/*data*/) {
     toggleErrorMessage(false);
 
     $.ajax({
@@ -162,7 +162,7 @@ finna.myList = (function finnaMyList() {
       });
   };
 
-  var listDescriptionChanged = function listDescriptionChanged() {
+  function listDescriptionChanged() {
     var description = $('.list-description .editable');
     if (description.html() === '') {
       description.data('empty', '1');
@@ -173,7 +173,7 @@ finna.myList = (function finnaMyList() {
     toggleTitleEditable(true);
   };
 
-  var newListAdded = function newListAdded(data) {
+  function newListAdded(data) {
     // update add-to-list select
     $('#add-to-list')
       .append($('<option></option>')
@@ -183,7 +183,7 @@ finna.myList = (function finnaMyList() {
     refreshLists();
   };
 
-  var updateBulkActionsToolbar = function updateBulkActionsToolbar() {
+  function updateBulkActionsToolbar() {
     var buttons = $('.bulk-action-buttons-col');
     if ($(document).scrollTop() > $('.bulk-action-buttons-row').offset().top) {
       buttons.addClass('fixed');
@@ -192,8 +192,7 @@ finna.myList = (function finnaMyList() {
     }
   };
 
-
-  var toggleTitleEditable = function toggleTitleEditable(mode) {
+  function toggleTitleEditable(mode) {
     var target = $('.list-title span');
     var currentTitle;
     if (mode) {
@@ -225,7 +224,7 @@ finna.myList = (function finnaMyList() {
     $('.list-title').toggleClass('disable', !mode);
   };
 
-  var initEditComponents = function initEditComponents() {
+  function initEditComponents() {
     addNewListLabel = $('.add-new-list div').text();
     var isDefaultList = typeof(getActiveListId()) == 'undefined';
 
@@ -342,7 +341,7 @@ finna.myList = (function finnaMyList() {
     };
   };
 
-  var initFavoriteOrderingFunctionality = function initFavoriteOrderingFunctionality() {
+  function initFavoriteOrderingFunctionality() {
     $('#sortable').sortable({cursor: 'move', opacity: 0.7});
 
     $('#sort_form').submit(function onSubmitSortForm(/*event*/) {
@@ -352,7 +351,7 @@ finna.myList = (function finnaMyList() {
     });
   };
 
-  var initEditableMarkdownField = function initEditableMarkdownField(element, callback) {
+  function initEditableMarkdownField(element, callback) {
     element.find('.editable').unbind('click').click(function onClickEditable(e) {
       if (save) {
         // Do not open the editor when save is in progress.
@@ -438,7 +437,7 @@ finna.myList = (function finnaMyList() {
     });
   };
 
-  var toggleErrorMessage = function toggleErrorMessage(mode) {
+  function toggleErrorMessage(mode) {
     var $msg = $('.mylist-error');
     $msg.addClass('alert alert-danger');
     $msg.toggleClass('hidden', !mode);
@@ -447,7 +446,7 @@ finna.myList = (function finnaMyList() {
     }
   };
 
-  var toggleSpinner = function toggleSpinner(target, mode) {
+  function toggleSpinner(target, mode) {
     if (mode) {
       // save original classes to a data-attribute
       target.data('class', target.attr('class'));
@@ -468,4 +467,4 @@ finna.myList = (function finnaMyList() {
   };
 
   return my;
-})(finna);
+})();

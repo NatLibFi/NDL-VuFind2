@@ -1,8 +1,7 @@
 /*global VuFind, finna, registerAjaxCommentRecord, deleteRecordComment, refreshCommentList */
 /*exported deleteRecordComment */
 finna.comments = (function finnaComments() {
-
-  var initCommentList = function initCommentList(allowCommenting, allowRating, commentCount) {
+  function initCommentList(allowCommenting, allowRating, commentCount) {
     $('.recordTabs #usercomments .count').text(commentCount);
 
     var form = $('form.comment-form');
@@ -22,7 +21,7 @@ finna.comments = (function finnaComments() {
       initCommentForm(_registerAjaxCommentRecord, allowRating);
     };
 
-    deleteRecordComment = function deleteRecordComment(element, recordId, recordSource, commentId) { // eslint-disable-line no-global-assign
+    function deleteRecordComment(element, recordId, recordSource, commentId) { // eslint-disable-line no-global-assign
       var url = VuFind.path + '/AJAX/JSON?'
         + $.param({method: 'deleteRecordComment', id: commentId});
       $.ajax({
@@ -47,7 +46,7 @@ finna.comments = (function finnaComments() {
     VuFind.lightbox.bind($('.usercomments-tab'));
   };
 
-  var initCommentForm = function initCommentForm(parentMethod, allowRating) {
+  function initCommentForm(parentMethod, allowRating) {
     parentMethod();
 
     $('form.comment-form').unbind('submit').submit(function onCommentSubmit(event) {
@@ -116,16 +115,16 @@ finna.comments = (function finnaComments() {
     });
   };
 
-  var initRating = function initRating() {
+  function initRating() {
     $('.usercomments-tab .rating').rating();
   };
 
-  var updateAverageRating = function updateAverageRating(rating, count) {
+  function updateAverageRating(rating, count) {
     $('.rating-average .rating').rating('rate', rating);
     $('.rating-average .count>span').text(count);
   };
 
-  var initEditComment = function initEditComment(allowCommenting, allowRating) {
+  function initEditComment(allowCommenting, allowRating) {
     $('.comment-list .edit').unbind('click').click(function onCommentEditClick() {
       var comment = $(this).closest('.comment');
       var form = $('form.comment-form');
@@ -161,7 +160,7 @@ finna.comments = (function finnaComments() {
     });
   };
 
-  var requestRefreshComments = function requestRefreshComments() {
+  function requestRefreshComments() {
     var record = $('input.hiddenId').val();
     var source = $('input.hiddenSource').val();
     var tab = $('.usercomments-tab');
@@ -176,4 +175,4 @@ finna.comments = (function finnaComments() {
   };
 
   return my;
-})(finna);
+})();

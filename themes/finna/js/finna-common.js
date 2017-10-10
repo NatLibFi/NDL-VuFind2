@@ -1,18 +1,18 @@
 /*global VuFind, finna */
 finna.common = (function finnaCommon() {
 
-  var decodeHtml = function decodeHtml(str) {
+  function decodeHtml(str) {
     return $("<textarea/>").html(str).text();
   };
 
-  var getField = function getField(obj, field) {
+  function getField(obj, field) {
     if (field in obj && typeof obj[field] != 'undefined') {
       return obj[field];
     }
     return null;
   };
 
-  var initSearchInputListener = function initSearchInputListener() {
+  function initSearchInputListener() {
     var searchInput = $('.searchForm_lookfor:visible');
     if (searchInput.length === 0) {
       return;
@@ -46,7 +46,7 @@ finna.common = (function finnaCommon() {
     });
   };
 
-  var initQrCodeLink = function initQrCodeLink() {
+  function initQrCodeLink() {
     // handle finna QR code links
     $('a.finnaQrcodeLink').click(function qrcodeToggle() {
       if ($(this).hasClass("active")) {
@@ -79,4 +79,4 @@ finna.common = (function finnaCommon() {
 
   return my;
 
-})(finna);
+})();

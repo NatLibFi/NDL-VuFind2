@@ -1,7 +1,7 @@
 /*global VuFind, finna */
 finna.itemStatus = (function finnaItemStatus() {
 
-  var checkItemStatus = function checkItemStatus(id) {
+  function checkItemStatus(id) {
     var item = $('.hiddenId[value="' + id + '"]').closest('.record-container');
     item.find(".ajax-availability").removeClass('hidden');
     item.find(".availability-load-indicator").removeClass('hidden');
@@ -112,7 +112,7 @@ finna.itemStatus = (function finnaItemStatus() {
     item.data('xhr', xhr);
   };
 
-  var initDedupRecordSelection = function initDedupRecordSelection(_holder) {
+  function initDedupRecordSelection(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
     holder.find('.dedup-select').change(function onChangeDedupSelection() {
@@ -145,7 +145,7 @@ finna.itemStatus = (function finnaItemStatus() {
     });
   };
 
-  var initItemStatuses = function initItemStatuses(_holder) {
+  function initItemStatuses(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
     holder.find('.ajaxItem').each(function initAjaxItem(/*ind, e*/) {
@@ -168,4 +168,4 @@ finna.itemStatus = (function finnaItemStatus() {
   };
 
   return my;
-})(finna);
+})();

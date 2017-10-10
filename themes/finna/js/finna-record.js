@@ -1,6 +1,6 @@
 /*global VuFind, finna */
 finna.record = (function finnaRecord() {
-  var initDescription = function initDescription() {
+  function initDescription() {
     var description = $('#description_text');
     if (description.length) {
       var id = description.data('id');
@@ -29,7 +29,7 @@ finna.record = (function finnaRecord() {
     }
   }
 
-  var initHideDetails = function initHideDetails() {
+  function initHideDetails() {
     $('.show-details-button').click(function onClickShowDetailsButton() {
       $('.record-information .record-details-more').removeClass('hidden');
       $(this).addClass('hidden');
@@ -54,7 +54,7 @@ finna.record = (function finnaRecord() {
     }
   };
 
-  var getRequestLinkData = function getRequestLinkData(element, recordId) {
+  function getRequestLinkData(element, recordId) {
     var vars = {}, hash;
     var hashes = element.href.slice(element.href.indexOf('?') + 1).split('&');
 
@@ -68,7 +68,7 @@ finna.record = (function finnaRecord() {
     return vars;
   }
 
-  var checkRequestsAreValid = function checkRequestsAreValid(elements, requestType) {
+  function checkRequestsAreValid(elements, requestType) {
     if (!elements[0]) {
       return;
     }
@@ -101,13 +101,13 @@ finna.record = (function finnaRecord() {
       });
   }
 
-  var setUpCheckRequest = function setUpCheckRequest() {
+  function setUpCheckRequest() {
     checkRequestsAreValid($('.expandedCheckRequest').removeClass('expandedCheckRequest'), 'Hold');
     checkRequestsAreValid($('.expandedCheckStorageRetrievalRequest').removeClass('expandedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest');
     checkRequestsAreValid($('.expandedCheckILLRequest').removeClass('expandedCheckILLRequest'), 'ILLRequest');
   }
 
-  var initHoldingsControls = function initHoldingsControls() {
+  function initHoldingsControls() {
     $('.holdings-container-heading').click(function onClickHeading(e) {
       if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')) {
         return;
@@ -128,7 +128,7 @@ finna.record = (function finnaRecord() {
     });
   };
 
-  var setupHoldingsTab = function setupHoldingsTab() {
+  function setupHoldingsTab() {
     initHoldingsControls();
     setUpCheckRequest();
     finna.layout.initLocationService();
@@ -136,7 +136,7 @@ finna.record = (function finnaRecord() {
     VuFind.lightbox.bind($('.holdings-tab'));
   };
 
-  var initRecordNaviHashUpdate = function initRecordNaviHashUpdate() {
+  function initRecordNaviHashUpdate() {
     $(window).on('hashchange', function onHashChange() {
       $('.record-view-header .pager a').each(function updateHash(i, a) {
         a.hash = window.location.hash;

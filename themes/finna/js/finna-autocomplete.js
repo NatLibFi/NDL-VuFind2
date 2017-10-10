@@ -1,10 +1,10 @@
 /* global VuFind, finna, extractClassParams */
 finna.autocomplete = (function finnaAutocomplete() {
-  var getPreserveFiltersMode = function getPreserveFiltersMode() {
+  function getPreserveFiltersMode() {
     return $(".searchFormKeepFilters").is(":checked");
   };
 
-  var setupAutocomplete = function setupAutocomplete() {
+  function setupAutocomplete() {
     $('.searchForm').on('submit', function onSubmitSearchForm() {
       if ($('.autocomplete-finna').autocompleteFinna.element !== false) {
         $('.autocomplete-finna').autocompleteFinna.element.hide();
@@ -90,4 +90,4 @@ finna.autocomplete = (function finnaAutocomplete() {
   };
 
   return my;
-})(finna);
+})();

@@ -6,7 +6,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
   var geolocationAccuracyThreshold = 20; // If accuracy >= threshold then give a warning for the user
   var searchRadius = 0.1; // Radius of the search area in KM
 
-  var doStreetSearch = function doStreetSearch() {
+  function doStreetSearch() {
     progressContainer.removeClass('hidden');
     progressContainer.find('.fa-spinner').removeClass('hidden');
     terminate = false;
@@ -22,13 +22,13 @@ finna.StreetSearch = (function finnaStreetSearch() {
     }
   };
 
-  var terminateStreetSearch = function terminateStreetSearch() {
+  function terminateStreetSearch() {
     terminate = true;
     progressContainer.addClass('hidden');
     startButton.prop('disabled', false);
   };
 
-  var geoLocationError = function geoLocationError(error) {
+  function geoLocationError(error) {
     var errorString = 'street_search_geolocation_other_error';
     var additionalInfo = '';
     if (error) {
@@ -54,7 +54,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
     info(errorString, true);
   };
 
-  var locationSearch = function locationSearch(position) {
+  function locationSearch(position) {
     if (terminate) {
       return;
     }
@@ -81,7 +81,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
     window.location.href = url;
   };
 
-  var info = function info(message, stopped, allowStopping) {
+  function info(message, stopped, allowStopping) {
     if (typeof stopped !== 'undefined' && stopped) {
       terminateButton.addClass('hidden');
       progressContainer.find('.fa-spinner').addClass('hidden');
@@ -93,7 +93,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
     progressContainer.find('.info').empty().append(div);
   };
 
-  var initPageElements = function initPageElements() {
+  function initPageElements() {
     startButton = $('.street-search-button');
     terminateButton = $('.street-search-terminate');
     progressContainer = $('.street-search-progress');

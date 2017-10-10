@@ -1,7 +1,7 @@
 /* global VuFind, finna, L */
 finna.advSearch = (function advSearch() {
 
-  var initForm = function initForm() {
+  function initForm() {
     var form = $('.template-dir-search #advSearchForm');
     var container = form.find('.ranges-container .slider-container').closest('fieldset');
     var field = container.find('input[name="daterange[]"]').eq(0).val();
@@ -48,16 +48,16 @@ finna.advSearch = (function advSearch() {
     });
   };
 
-    /**
-     * Initialize advanced search map
-     *
-     * @param options Array of options:
-     *   tileLayer     L.tileLayer Tile layer
-     *   center        L.LatLng    Map center point
-     *   zoom          int         Initial zoom level
-     *   items         array       Items to draw on the map
-     */
-  var initMap = function initMap(_options) {
+  /**
+   * Initialize advanced search map
+   *
+   * @param options Array of options:
+   *   tileLayer     L.tileLayer Tile layer
+   *   center        L.LatLng    Map center point
+   *   zoom          int         Initial zoom level
+   *   items         array       Items to draw on the map
+   */
+  function initMap(_options) {
     var mapCanvas = $('.selection-map-canvas');
     if (mapCanvas.length === 0) {
       return;
@@ -174,7 +174,7 @@ finna.advSearch = (function advSearch() {
     });
   };
 
-  var addRemoveButton = function addRemoveButton(layer, featureGroup) {
+  function addRemoveButton(layer, featureGroup) {
     var button = $('<a/>')
       .html('<i class="fa fa-times" aria-hidden="true"></i>')
       .click(function mapOnRemoveButtonClick(/*e*/) {
@@ -193,4 +193,4 @@ finna.advSearch = (function advSearch() {
 
   return my;
 
-})(finna);
+})();
