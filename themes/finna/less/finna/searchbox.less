@@ -103,24 +103,33 @@
   .search-col, .record-back, .adv-search, .pager {
     margin: auto 0;
   }
-  @media(min-width: @screen-sm){
-    display: flex;
-    justify-content: space-between;
-    .search {
-      width: 50%;
-    }
-    .search-tooltip {
-      line-height: 48px;
-    }
+  display: flex;
+  justify-content: space-between;
+  .search {
+    width: 50%;
+  }
+  .search-tooltip {
+    line-height: 48px;
   }
   @media(max-width: @screen-sm) {
-    .record-back {
-      float:left;
-      margin: auto;
-      line-height: 48px;
+    .search{
+      flex: 1;
     }
-    .record-back, .pager {
-      margin-top: 5px;
+    .pager-text {
+      display:none;
+    }
+    .pager {
+      margin-left: 10px;
+      &>li>a {
+        i.fa-arrow-left,
+        i.fa-arrow-right {
+          width: 15px;
+          height: 15px;
+        }
+      }
+    }
+    .record-back {
+      margin-right: 10px;
     }
   }
 }

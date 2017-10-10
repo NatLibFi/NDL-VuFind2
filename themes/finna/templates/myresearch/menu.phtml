@@ -84,9 +84,9 @@
 </li>
 <? $menuEntries = ob_get_clean(); ?>
 
-  <div>
-    <div class="dropdown visible-xs visible-sm useraccount-nav-mobile">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+  <div class="mobile-main-tabs visible-xs visible-sm">
+    <div class="dropdown useraccount-nav-mobile">
+      <div class="dropdown-toggle" data-toggle="dropdown">
       <?
         switch ($this->active) {
         case 'profile': echo $this->transEsc('Profile'); break;
@@ -108,7 +108,8 @@
             break;
         }
       ?>
-      <i class="fa fa-arrow-down"></i></a>
+        <span class="more">Lisää<b class="caret"></b></span>
+      </div>
       <ul class="dropdown-menu">
         <?=$menuEntries?>
       </ul>

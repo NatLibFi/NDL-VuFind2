@@ -221,23 +221,25 @@
   }
 }
 
-.open-link {
+.open-link, .save-record-link, .record-link {
   text-align: left;
   margin-top: 5px;
   & a {
       display: inline-block;
-      padding: 6px 8px 5px;
-      background:  darken(@gray-mid-light, 5%);
       font-size: .94em;
-      color: @body-bg;
+      color: @gray-mid-light;
       border-radius: 10px;
       transition: background .2s linear;
-      &:hover {
-          text-decoration: none;
-          background: darken(@gray-mid-light, 15%);
-      }
   }
-  & i {
-      padding-right: 2px;
+  a, a span {
+    &:hover {
+      text-decoration: none;
+      color: @link-color;
+    }
+  }
+  span {
+    color: @gray-dark;
+    text-transform: uppercase;
+    font-weight: 600;
   }
 }

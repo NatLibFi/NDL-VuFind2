@@ -9,6 +9,7 @@
     & ul.nav-tabs {
         border-bottom: 2px solid @nav-tabs-border-color;
         margin: 0px;
+        margin-bottom: 1em;
         @media(max-width: @screen-sm-max) {
             margin-left: 0;  
         }
@@ -274,5 +275,25 @@
                 border-bottom: 5px solid @link-color;
             }
         }
+    }
+}
+
+.mobile-main-tabs {
+    width: 100%;
+    .dropdown-toggle {
+        line-height: 50px;
+        margin-top: 15px;
+        border: 1px solid @gray-lighter;
+        border-top: 4px solid @brand-primary;
+        background-color: @main-tabs-background-color;
+        padding: 0 15px;
+        font-weight: 700;
+        .more {
+            float: right;
+            color: #81358a;
+        }
+    }
+    .tooltip {
+        display: none;
     }
 }
