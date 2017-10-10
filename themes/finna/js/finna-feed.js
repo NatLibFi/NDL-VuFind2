@@ -97,114 +97,114 @@ finna.feed = (function finnaFeed() {
     holder.find('.fa-spin').delay(1000).fadeIn();
 
     $.getJSON(url)
-    .done(function loadFeedDone(response) {
-      if (response.data) {
-        holder.html(response.data.html);
-        var settings = response.data.settings;
-        if (typeof settings.height == 'undefined') {
-          settings.height = 300;
-        }
-        var type = settings.type;
+      .done(function loadFeedDone(response) {
+        if (response.data) {
+          holder.html(response.data.html);
+          var settings = response.data.settings;
+          if (typeof settings.height == 'undefined') {
+            settings.height = 300;
+          }
+          var type = settings.type;
 
-        var carousel = type === 'carousel' || type === 'carousel-vertical';
+          var carousel = type === 'carousel' || type === 'carousel-vertical';
 
-        if (carousel) {
-          var vertical = type === 'carousel-vertical';
-          settings.vertical = vertical;
+          if (carousel) {
+            var vertical = type === 'carousel-vertical';
+            settings.vertical = vertical;
 
-          var obj = holder.find('.carousel-feed').slick(getCarouselSettings(settings));
+            var obj = holder.find('.carousel-feed').slick(getCarouselSettings(settings));
 
-          var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
+            var titleBottom = typeof settings.titlePosition !== 'undefined' && settings.titlePosition === 'bottom';
 
-          var callbacks = {};
-          if (!vertical) {
-            callbacks.resize = function resizeCallback() {
+            var callbacks = {};
+            if (!vertical) {
+              callbacks.resize = function resizeCallback() {
+                adjustWidth(holder);
+                if (titleBottom) {
+                  adjustTitles(holder);
+                }
+                centerImages(holder);
+              };
+            } else {
+              callbacks.resize = function resizeCallback2() {
+                adjustTextFields(holder);
+              };
+            }
+
+            var refreshId = null;
+            $(window).resize(function resizeWindow() {
+              clearInterval(refreshId);
+              refreshId = setTimeout(function resizeTimeoutCallback() {
+                callbacks.resize();
+              }, 250);
+            });
+
+            if (!vertical) {
               adjustWidth(holder);
+
               if (titleBottom) {
                 adjustTitles(holder);
+                holder.find('.carousel-hover-title').hide();
               }
-              centerImages(holder);
-            };
-          } else {
-            callbacks.resize = function resizeCallback2() {
-              adjustTextFields(holder);
-            };
-          }
 
-          var refreshId = null;
-          $(window).resize(function resizeWindow() {
-            clearInterval(refreshId);
-            refreshId = setTimeout(function resizeTimeoutCallback() {
-              callbacks.resize();
-            }, 250);
-          });
-
-          if (!vertical) {
-            adjustWidth(holder);
-
-            if (titleBottom) {
-              adjustTitles(holder);
-              holder.find('.carousel-hover-title').hide();
+              holder.find('.slick-slide')
+                .css('max-height', settings.height + 'px')
+                .addClass('adjusted-height')
+                .find('.wrapper img').css('height', settings.height + 'px')
+                .find('.slick-track, .slick-slide .wrapper').css('max-height', settings.height + 'px');
+            } else {
+              holder.find('.slick-track, .slick-slide .wrapper').css('height', settings.height + 'px');
             }
 
-            holder.find('.slick-slide')
-              .css('max-height', settings.height + 'px')
-              .addClass('adjusted-height')
-              .find('.wrapper img').css('height', settings.height + 'px')
-              .find('.slick-track, .slick-slide .wrapper').css('max-height', settings.height + 'px');
-          } else {
-            holder.find('.slick-track, .slick-slide .wrapper').css('height', settings.height + 'px');
-          }
-
-          // Carousel image onload-listeners
-          holder.find('.carousel-feed .slick-slide .wrapper img').each (function addOnLoadListeners() {
-            $(this).on('load', function onLoadFeed() {
-              if (!vertical) {
-                centerImage($(this));
-              } else {
-                adjustTextField($(this).closest('.slick-slide'));
-              }
-            });
-          });
-
-          // Text hover for touch devices
-          if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
-            $('.carousel-text').css('padding-bottom', '30px');
-            holder.find('.slick-slide a').click(function onClickSlideLink(/*event*/) {
-              if (!$(this).closest('.slick-slide').hasClass('clicked')) {
-                $(this).closest('.slick-slide').addClass('clicked');
-                return false;
-              }
-            });
-            if (navigator.userAgent.match(/iemobile/i)) {
-              $('.slick-slide').click(function onIeClick() {
-                $(this).toggleClass('ie-mobile-tap');
+            // Carousel image onload-listeners
+            holder.find('.carousel-feed .slick-slide .wrapper img').each (function addOnLoadListeners() {
+              $(this).on('load', function onLoadFeed() {
+                if (!vertical) {
+                  centerImage($(this));
+                } else {
+                  adjustTextField($(this).closest('.slick-slide'));
+                }
               });
-            }
-          } else {
-            holder.find('.carousel').addClass('carousel-non-touch-device');
-          }
-          // Force refresh to make sure that the layout is ok
-          obj.slick('slickGoTo', 0, true);
-        }
+            });
 
-        // Bind lightbox if feed content is shown in modal
-        if (typeof settings.modal !== 'undefined' && settings.modal) {
-          holder.find('a').click(function onClockHolderLink() {
-            $('#modal').addClass('feed-content');
-          });
-          VuFind.lightbox.bind(holder);
+            // Text hover for touch devices
+            if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
+              $('.carousel-text').css('padding-bottom', '30px');
+              holder.find('.slick-slide a').click(function onClickSlideLink(/*event*/) {
+                if (!$(this).closest('.slick-slide').hasClass('clicked')) {
+                  $(this).closest('.slick-slide').addClass('clicked');
+                  return false;
+                }
+              });
+              if (navigator.userAgent.match(/iemobile/i)) {
+                $('.slick-slide').click(function onIeClick() {
+                  $(this).toggleClass('ie-mobile-tap');
+                });
+              }
+            } else {
+              holder.find('.carousel').addClass('carousel-non-touch-device');
+            }
+            // Force refresh to make sure that the layout is ok
+            obj.slick('slickGoTo', 0, true);
+          }
+
+          // Bind lightbox if feed content is shown in modal
+          if (typeof settings.modal !== 'undefined' && settings.modal) {
+            holder.find('a').click(function onClockHolderLink() {
+              $('#modal').addClass('feed-content');
+            });
+            VuFind.lightbox.bind(holder);
+          }
         }
-      }
-    })
-    .fail(function loadFeedFail(response/*, textStatus, err*/) {
-      var err = '<!-- Feed could not be loaded';
-      if (typeof response.responseJSON !== 'undefined') {
-        err += ': ' + response.responseJSON.data;
-      }
-      err += ' -->';
-      holder.html(err);
-    });
+      })
+      .fail(function loadFeedFail(response/*, textStatus, err*/) {
+        var err = '<!-- Feed could not be loaded';
+        if (typeof response.responseJSON !== 'undefined') {
+          err += ': ' + response.responseJSON.data;
+        }
+        err += ' -->';
+        holder.html(err);
+      });
   };
 
   var getCarouselSettings = function getCarouselSettings(settings) {
@@ -225,7 +225,7 @@ finna.feed = (function finnaFeed() {
           settings: {
             slidesToShow: settings.slidesToShow['desktop-small'],
             slidesToScroll: settings.scrolledItems['desktop-small'],
-            speed: calculateScrollSpeed(settings.scrolledItems['desktop-small'], settings.scrollSpeed),
+            speed: calculateScrollSpeed(settings.scrolledItems['desktop-small'], settings.scrollSpeed)
           }
         },
         {
@@ -233,7 +233,7 @@ finna.feed = (function finnaFeed() {
           settings: {
             slidesToShow: settings.slidesToShow.tablet,
             slidesToScroll: settings.scrolledItems.tablet,
-            speed: calculateScrollSpeed(settings.scrolledItems.tablet, settings.scrollSpeed),
+            speed: calculateScrollSpeed(settings.scrolledItems.tablet, settings.scrollSpeed)
           }
         },
         {
@@ -241,7 +241,7 @@ finna.feed = (function finnaFeed() {
           settings: {
             slidesToShow: settings.slidesToShow.mobile,
             slidesToScroll: settings.scrolledItems.mobile,
-            speed: calculateScrollSpeed(settings.scrolledItems.mobile, settings.scrollSpeed),
+            speed: calculateScrollSpeed(settings.scrolledItems.mobile, settings.scrollSpeed)
           }
         }
       ]

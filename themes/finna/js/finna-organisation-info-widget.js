@@ -115,8 +115,8 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     holder.data('id', id);
 
     if ('openTimes' in data && 'openNow' in data
-              && 'schedules' in data.openTimes && data.openTimes.schedules.length
-          ) {
+      && 'schedules' in data.openTimes && data.openTimes.schedules.length
+    ) {
       holder.find('.is-open' + (data.openNow ? '.open' : '.closed')).show();
     }
 
@@ -355,9 +355,9 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
   var updatePrevBtn = function updatePrevBtn(response) {
     var prevBtn = holder.find('.week-navi.prev-week');
     if ('openTimes' in response
-              && 'currentWeek' in response.openTimes
-              && response.openTimes.currentWeek
-          ) {
+      && 'currentWeek' in response.openTimes
+      && response.openTimes.currentWeek
+    ) {
       prevBtn.unbind('click').fadeTo(200, 0);
     } else {
       prevBtn.fadeTo(200, 1);

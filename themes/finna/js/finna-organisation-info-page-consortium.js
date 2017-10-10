@@ -161,23 +161,23 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
     url += $.param(params) + '&callback=?';
 
     $.getJSON(url)
-    .done(function onSearchDone(response) {
-      if (response.status === 'OK' && response.resultCount > 0 && 'sectors' in response.records[0]) {
-        // General usage info for sector
-        var sector = $(response.records[0].sectors).last()[0].value;
-        // Use same info for academic libraries
-        if (sector === '1/lib/poly/') {
-          sector = '1/lib/uni/';
+      .done(function onSearchDone(response) {
+        if (response.status === 'OK' && response.resultCount > 0 && 'sectors' in response.records[0]) {
+          // General usage info for sector
+          var sector = $(response.records[0].sectors).last()[0].value;
+          // Use same info for academic libraries
+          if (sector === '1/lib/poly/') {
+            sector = '1/lib/uni/';
+          }
+          var usageInfo = VuFind.translate('usageInfo-' + sector);
+          callback(true, finna.common.decodeHtml(usageInfo));
+        } else {
+          callback(false);
         }
-        var usageInfo = VuFind.translate('usageInfo-' + sector);
-        callback(true, finna.common.decodeHtml(usageInfo));
-      } else {
+      })
+      .fail(function onSearchFail(/*response, textStatus, err*/) {
         callback(false);
-      }
-    })
-    .fail(function onSearchFail(/*response, textStatus, err*/) {
-      callback(false);
-    });
+      });
   };
 
   var enableConsortiumNaviItem = function enableConsortiumNaviItem(id) {

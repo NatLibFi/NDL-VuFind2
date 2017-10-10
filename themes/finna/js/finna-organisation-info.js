@@ -67,12 +67,12 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     }
 
     $(['name', 'email', 'homepage', 'routeUrl', 'mapUrl', 'openToday', 'buildingYear', 'openTimes', 'schedule-descriptions'])
-    .each(function handleField(ind, field) {
-      var val = getField(data, field);
-      if (val) {
-        details[field] = val;
-      }
-    });
+      .each(function handleField(ind, field) {
+        var val = getField(data, field);
+        if (val) {
+          details[field] = val;
+        }
+      });
 
     var address = '';
     var street = getField(data.address, 'street');
@@ -124,12 +124,12 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
       var result = {};
       $(['openTimes', 'scheduleDescriptions', 'periodStart', 'weekNum', 'currentWeek', 'phone', 'links', 'facility-image', 'services', 'pictures', 'rss'])
-      .each(function handleField(ind, field) {
-        var val = getField(obj, field, id);
-        if (val) {
-          result[field] = val;
-        }
-      });
+        .each(function handleField(ind, field) {
+          var val = getField(obj, field, id);
+          if (val) {
+            result[field] = val;
+          }
+        });
 
       callback(result);
     });

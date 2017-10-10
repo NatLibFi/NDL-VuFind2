@@ -58,19 +58,19 @@ finna.myList = (function finnaMyList() {
       url: VuFind.path + '/AJAX/JSON?method=editList',
       data: {'params': listParams}
     })
-    .done(function onEditListDone(data/*, status, jqXHR*/) {
-      if (type !== 'add-list' && spinner) {
-        toggleSpinner(spinner, false);
-      }
-      if (callback != null) {
-        callback(data.data);
-      }
-      save = false;
-    })
-    .fail(function onEditListFail() {
-      toggleErrorMessage(true);
-      save = false;
-    });
+      .done(function onEditListDone(data/*, status, jqXHR*/) {
+        if (type !== 'add-list' && spinner) {
+          toggleSpinner(spinner, false);
+        }
+        if (callback != null) {
+          callback(data.data);
+        }
+        save = false;
+      })
+      .fail(function onEditListFail() {
+        toggleErrorMessage(true);
+        save = false;
+      });
   };
 
   var updateListResource = function updateListResource(params, input/*, row*/) {
@@ -87,25 +87,25 @@ finna.myList = (function finnaMyList() {
       url: VuFind.path + '/AJAX/JSON?method=editListResource',
       data: {'params': params}
     })
-    .done(function onEditListResourceDone(/*data*/) {
-      if (spinner) {
-        toggleSpinner(spinner, false);
-      }
+      .done(function onEditListResourceDone(/*data*/) {
+        if (spinner) {
+          toggleSpinner(spinner, false);
+        }
 
-      var hasNotes = params.notes !== '';
-      parent.find('.note-info').toggleClass('hide', !hasNotes);
-      input.data('empty', hasNotes === '' ? '1' : '0');
-      if (!hasNotes) {
-        input.text(VuFind.translate('add_note'));
-      }
-      toggleTitleEditable(true);
-      save = false;
-    })
-    .fail(function onEditListResourceFail() {
-      toggleErrorMessage(true);
-      toggleTitleEditable(true);
-      save = false;
-    });
+        var hasNotes = params.notes !== '';
+        parent.find('.note-info').toggleClass('hide', !hasNotes);
+        input.data('empty', hasNotes === '' ? '1' : '0');
+        if (!hasNotes) {
+          input.text(VuFind.translate('add_note'));
+        }
+        toggleTitleEditable(true);
+        save = false;
+      })
+      .fail(function onEditListResourceFail() {
+        toggleErrorMessage(true);
+        toggleTitleEditable(true);
+        save = false;
+      });
   };
 
   var addResourcesToList = function addResourcesToList(listId) {
@@ -132,16 +132,16 @@ finna.myList = (function finnaMyList() {
       url: VuFind.path + '/AJAX/JSON?method=addToList',
       data: {params: {'listId': listId, 'source': 'Solr', 'ids': ids}}
     })
-    .done(function onAddToListDone(/*data*/) {
-      // Don't reload to avoid trouble with POST requests
-      location.href = location.href;
-    })
-    .fail(function onAddToListFail() {
-      toggleErrorMessage(true);
-      $('#add-to-list-spinner').addClass('hidden');
-      $('#add-to-list').removeAttr('disabled');
-      $('#add-to-list').val('');
-    });
+      .done(function onAddToListDone(/*data*/) {
+        // Don't reload to avoid trouble with POST requests
+        location.href = location.href;
+      })
+      .fail(function onAddToListFail() {
+        toggleErrorMessage(true);
+        $('#add-to-list-spinner').addClass('hidden');
+        $('#add-to-list').removeAttr('disabled');
+        $('#add-to-list').val('');
+      });
   };
 
   var refreshLists = function refreshLists(/*data*/) {
@@ -153,13 +153,13 @@ finna.myList = (function finnaMyList() {
       url: VuFind.path + '/AJAX/JSON?method=getMyLists',
       data: {'active': getActiveListId()}
     })
-    .done(function onGetMyListsDone(data) {
-      $('.mylist-bar').html(data.data);
-      initEditComponents();
-    })
-    .fail(function onGetMyListsDone() {
-      toggleErrorMessage(true);
-    });
+      .done(function onGetMyListsDone(data) {
+        $('.mylist-bar').html(data.data);
+        initEditComponents();
+      })
+      .fail(function onGetMyListsDone() {
+        toggleErrorMessage(true);
+      });
   };
 
   var listDescriptionChanged = function listDescriptionChanged() {
@@ -177,8 +177,8 @@ finna.myList = (function finnaMyList() {
     // update add-to-list select
     $('#add-to-list')
       .append($('<option></option>')
-      .attr('value', data.id)
-      .text(data.title));
+        .attr('value', data.id)
+        .text(data.title));
 
     refreshLists();
   };

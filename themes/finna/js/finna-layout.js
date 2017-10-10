@@ -266,7 +266,7 @@ finna.layout = (function finnaLayout() {
         },
         // Default is 75px, set to 0 for demo so any distance triggers swipe
         threshold: 125,
-        cancelThreshold: 20,
+        cancelThreshold: 20
       });
     }
   };
@@ -277,7 +277,7 @@ finna.layout = (function finnaLayout() {
       maxHeight: 310,
       nonSelectedText: VuFind.translate('none_selected'),
       nSelectedText: VuFind.translate('selected'),
-      buttonClass: "form-control",
+      buttonClass: 'form-control'
     });
     // use click events only if there is a multi-select element
     if ($('.multi-select').length) {
@@ -540,18 +540,18 @@ finna.layout = (function finnaLayout() {
     $container.find('.facet-load-indicator').removeClass('hidden');
     var query = window.location.href.split('?')[1];
     $.getJSON(VuFind.path + '/AJAX/JSON?method=getSideFacets&' + query)
-    .done(function onGetSideFacetsDone(response) {
-      $container.replaceWith(response.data);
-      finna.dateRangeVis.init();
-      initToolTips($('.sidebar'));
-      initMobileNarrowSearch();
-      VuFind.lightbox.bind($('.sidebar'));
-      setupFacets();
-    })
-    .fail(function onGetSideFacetsFail() {
-      $container.find('.facet-load-indicator').addClass('hidden');
-      $container.find('.facet-load-failed').removeClass('hidden');
-    });
+      .done(function onGetSideFacetsDone(response) {
+        $container.replaceWith(response.data);
+        finna.dateRangeVis.init();
+        initToolTips($('.sidebar'));
+        initMobileNarrowSearch();
+        VuFind.lightbox.bind($('.sidebar'));
+        setupFacets();
+      })
+      .fail(function onGetSideFacetsFail() {
+        $container.find('.facet-load-indicator').addClass('hidden');
+        $container.find('.facet-load-failed').removeClass('hidden');
+      });
   };
 
   var initPiwikPopularSearches = function initPiwikPopularSearches() {
@@ -561,13 +561,13 @@ finna.layout = (function finnaLayout() {
     }
     $container.find('.load-indicator').removeClass('hidden');
     $.getJSON(VuFind.path + '/AJAX/JSON?method=getPiwikPopularSearches')
-    .done(function onGetPiwikSearchesDone(response) {
-      $container.html(response.data);
-    })
-    .fail(function onGetPiwikSearchesFail() {
-      $container.find('.load-indicator').addClass('hidden');
-      $container.find('.load-failed').removeClass('hidden');
-    });
+      .done(function onGetPiwikSearchesDone(response) {
+        $container.html(response.data);
+      })
+      .fail(function onGetPiwikSearchesFail() {
+        $container.find('.load-indicator').addClass('hidden');
+        $container.find('.load-failed').removeClass('hidden');
+      });
   };
 
   var initAutoScrollTouch = function initAutoScrollTouch() {
@@ -648,7 +648,7 @@ finna.layout = (function finnaLayout() {
           fitWidth: false,
           itemSelector: '.result.grid',
           columnWidth: '.result.grid',
-          isResizeBound: 'true',
+          isResizeBound: 'true'
         });
       });
     }
@@ -681,7 +681,7 @@ finna.layout = (function finnaLayout() {
         'params[action]': 'lookup',
         link: link ? '1' : '0',
         parent: organisation
-      },
+      }
     };
     if (organisationName) {
       params.data.parentName = new String(organisationName);

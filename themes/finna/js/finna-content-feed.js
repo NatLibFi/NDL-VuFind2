@@ -17,46 +17,46 @@ finna.contentFeed = (function finnaContentFeed() {
     }
 
     $.getJSON(url, params)
-    .done(function onContentGetDone(response) {
-      if (response.data) {
-        var data = response.data;
-        if (typeof data.item !== 'undefined' && typeof data.item.html !== 'undefined') {
-          var item = data.item;
-          contentHolder.html(item.html);
-          var title = item.title;
-          if (!modal) {
-            $('.content-header').text(title);
-            document.title = title + ' | ' + document.title;
+      .done(function onContentGetDone(response) {
+        if (response.data) {
+          var data = response.data;
+          if (typeof data.item !== 'undefined' && typeof data.item.html !== 'undefined') {
+            var item = data.item;
+            contentHolder.html(item.html);
+            var title = item.title;
+            if (!modal) {
+              $('.content-header').text(title);
+              document.title = title + ' | ' + document.title;
+            }
+            if (typeof item.contentDate != 'undefined') {
+              container.find('.date span').text(item.contentDate);
+              container.find('.date').css('display', 'inline-block');
+            }
+          } else {
+            var err = $('<div/>').addClass('alert alert-danger');
+            err.append($('<p/>').text(VuFind.translate('rss_article_not_found')));
+            err.append($('<a/>')
+              .attr('href', data.channel.link)
+              .text(VuFind.translate('rss_article_channel_link').replace('%title%', data.channel.title)));
+            contentHolder.empty().append(err);
           }
-          if (typeof item.contentDate != 'undefined') {
-            container.find('.date span').text(item.contentDate);
-            container.find('.date').css('display', 'inline-block');
-          }
-        } else {
-          var err = $('<div/>').addClass('alert alert-danger');
-          err.append($('<p/>').text(VuFind.translate('rss_article_not_found')));
-          err.append($('<a/>')
-            .attr('href', data.channel.link)
-            .text(VuFind.translate('rss_article_channel_link').replace('%title%', data.channel.title)));
-          contentHolder.empty().append(err);
-        }
 
-        if (!modal) {
-          if (typeof data.navigation != 'undefined') {
-            $('.article-navigation-wrapper').html(data.navigation);
-            $('.article-navigation-header').show();
+          if (!modal) {
+            if (typeof data.navigation != 'undefined') {
+              $('.article-navigation-wrapper').html(data.navigation);
+              $('.article-navigation-header').show();
+            }
           }
         }
-      }
-    })
-    .fail(function onContentGetFail(response/*, textStatus, err*/) {
-      var err = '<!-- Feed could not be loaded';
-      if (typeof response.responseJSON !== 'undefined') {
-        err += ': ' + response.responseJSON.data;
-      }
-      err += ' -->';
-      contentHolder.html(err);
-    });
+      })
+      .fail(function onContentGetFail(response/*, textStatus, err*/) {
+        var err = '<!-- Feed could not be loaded';
+        if (typeof response.responseJSON !== 'undefined') {
+          err += ': ' + response.responseJSON.data;
+        }
+        err += ' -->';
+        contentHolder.html(err);
+      });
 
     $('#modal').one('hidden.bs.modal', function onContentModalHidden() {
       $(this).removeClass('feed-content');

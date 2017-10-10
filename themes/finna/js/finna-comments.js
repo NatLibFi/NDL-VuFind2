@@ -30,18 +30,18 @@ finna.comments = (function finnaComments() {
         url: url,
         data: {recordId: recordId}
       })
-      .done(function commentAjaxDone(response) {
-        requestRefreshComments();
-        if ('rating' in response.data) {
-          updateAverageRating(
-            response.data.rating.average,
-            response.data.rating.count
-          );
-        }
-      })
-      .fail(function commentAjaxFail(response, textStatus) {
-        alert(textStatus);
-      });
+        .done(function commentAjaxDone(response) {
+          requestRefreshComments();
+          if ('rating' in response.data) {
+            updateAverageRating(
+              response.data.rating.average,
+              response.data.rating.count
+            );
+          }
+        })
+        .fail(function commentAjaxFail(response, textStatus) {
+          alert(textStatus);
+        });
     };
 
     VuFind.lightbox.bind($('.usercomments-tab'));
@@ -99,19 +99,19 @@ finna.comments = (function finnaComments() {
         data: data,
         dataType: 'json'
       })
-      .done(function onCommentSubmitDone(response) {
-        requestRefreshComments();
-        if ('rating' in response.data) {
-          updateAverageRating(
-                  response.data.rating.average,
-                  response.data.rating.count
-              );
-        }
-        $(form).find('textarea[name="comment"]').val('');
-      })
-      .fail(function onCommentSubmitFail(response/*, textStatus*/) {
-        alert(response.responseJSON.data);
-      });
+        .done(function onCommentSubmitDone(response) {
+          requestRefreshComments();
+          if ('rating' in response.data) {
+            updateAverageRating(
+              response.data.rating.average,
+              response.data.rating.count
+            );
+          }
+          $(form).find('textarea[name="comment"]').val('');
+        })
+        .fail(function onCommentSubmitFail(response/*, textStatus*/) {
+          alert(response.responseJSON.data);
+        });
       return false;
     });
   };

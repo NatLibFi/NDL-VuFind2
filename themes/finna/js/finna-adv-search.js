@@ -176,10 +176,10 @@ finna.advSearch = (function advSearch() {
 
   var addRemoveButton = function addRemoveButton(layer, featureGroup) {
     var button = $('<a/>')
-        .html('<i class="fa fa-times" aria-hidden="true"></i>')
-        .click(function mapOnRemoveButtonClick(/*e*/) {
-          featureGroup.removeLayer(layer);
-        });
+      .html('<i class="fa fa-times" aria-hidden="true"></i>')
+      .click(function mapOnRemoveButtonClick(/*e*/) {
+        featureGroup.removeLayer(layer);
+      });
     $('<span/>').text(VuFind.translate('removeCaption')).appendTo(button);
     layer.bindPopup(button.get(0), {closeButton: false});
   };

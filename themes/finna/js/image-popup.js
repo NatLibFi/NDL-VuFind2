@@ -167,7 +167,7 @@ finna.imagePopup = (function finnaImagePopup() {
                   $('.mfp-container .mfp-arrow-right').click();
                 },
                 threshold: 75,
-                cancelThreshold: 20,
+                cancelThreshold: 20
               });
             }
 
@@ -207,16 +207,16 @@ finna.imagePopup = (function finnaImagePopup() {
             if (type === 'marc') {
               var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
               $.getJSON(url)
-              .done(function onGetDescriptionDone(response) {
-                if (response.data.length > 0) {
-                  summaryHolder.find('> div p').html(response.data);
-                  finna.layout.initTruncate(summaryHolder);
+                .done(function onGetDescriptionDone(response) {
+                  if (response.data.length > 0) {
+                    summaryHolder.find('> div p').html(response.data);
+                    finna.layout.initTruncate(summaryHolder);
+                    summaryHolder.removeClass('loading');
+                  }
+                })
+                .fail(function onGetDescriptionFail(/*response, textStatus*/) {
                   summaryHolder.removeClass('loading');
-                }
-              })
-              .fail(function onGetDescriptionFail(/*response, textStatus*/) {
-                summaryHolder.removeClass('loading');
-              });
+                });
             } else {
               finna.layout.initTruncate(summaryHolder);
               summaryHolder.removeClass('loading');
@@ -224,7 +224,7 @@ finna.imagePopup = (function finnaImagePopup() {
 
             // Init embedding
             finna.layout.initIframeEmbed(popup);
-          },
+          }
         },
 
         gallery: {
@@ -252,8 +252,7 @@ finna.imagePopup = (function finnaImagePopup() {
         } else {
           $(this).closest('a.image-popup-trigger')
             .addClass('disable')
-            .unbind('click').click(function onClickPopupTrigger() { return false; }
-          );
+            .unbind('click').click(function onClickPopupTrigger() { return false; });
         }
       });
     }

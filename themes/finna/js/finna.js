@@ -31,7 +31,7 @@ var finna = (function finnaModule() {
           finna[module].init();
         }
       });
-    },
+    }
   };
 
   return my;

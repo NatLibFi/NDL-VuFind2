@@ -6,26 +6,26 @@ finna.record = (function finnaRecord() {
       var id = description.data('id');
       var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
       $.getJSON(url)
-      .done(function onGetDescriptionDone(response) {
-        if (response.data.length > 0) {
-          description.html(response.data);
+        .done(function onGetDescriptionDone(response) {
+          if (response.data.length > 0) {
+            description.html(response.data);
 
-              // Make sure any links open in a new window
-          description.find('a').attr('target', '_blank');
+            // Make sure any links open in a new window
+            description.find('a').attr('target', '_blank');
 
-          description.wrapInner('<div class="truncate-field wide"><p class="summary"></p></div>');
-          finna.layout.initTruncate(description);
-          if (!$('.hide-details-button').hasClass('hidden')) {
-            $('.record .description').addClass('too-long');
-            $('.record .description .more-link.wide').click();
+            description.wrapInner('<div class="truncate-field wide"><p class="summary"></p></div>');
+            finna.layout.initTruncate(description);
+            if (!$('.hide-details-button').hasClass('hidden')) {
+              $('.record .description').addClass('too-long');
+              $('.record .description .more-link.wide').click();
+            }
+          } else {
+            description.hide();
           }
-        } else {
+        })
+        .fail(function onGetDescriptionFail() {
           description.hide();
-        }
-      })
-      .fail(function onGetDescriptionFail() {
-        description.hide();
-      });
+        });
     }
   }
 
@@ -72,7 +72,7 @@ finna.record = (function finnaRecord() {
     if (!elements[0]) {
       return;
     }
-    var recordId = elements[0].href.match(/\/Record\/([^\/]+)\//)[1];
+    var recordId = elements[0].href.match(/\/Record\/([^/]+)\//)[1];
 
     var vars = [];
     $.each(elements, function handleElement(idx, element) {
@@ -88,17 +88,17 @@ finna.record = (function finnaRecord() {
       cache: false,
       url: url
     })
-    .done(function onCheckRequestDone(responses) {
-      $.each(responses.data, function handleResponse(idx, response) {
-        var element = elements[idx];
-        if (response.status) {
-          $(element).removeClass('disabled')
-            .html(response.msg);
-        } else {
-          $(element).remove();
-        }
+      .done(function onCheckRequestDone(responses) {
+        $.each(responses.data, function handleResponse(idx, response) {
+          var element = elements[idx];
+          if (response.status) {
+            $(element).removeClass('disabled')
+              .html(response.msg);
+          } else {
+            $(element).remove();
+          }
+        });
       });
-    });
   }
 
   var setUpCheckRequest = function setUpCheckRequest() {

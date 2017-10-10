@@ -8,18 +8,19 @@ finna.onlinePayment = (function finnaOnlinePayment() {
       url: url,
       data: jQuery.parseJSON(params),
       dataType: 'json'
-    }).done(function onRegisterPaymentDone(response) {
-      location.href = response.data;
     })
-    .fail(function onRegisterPaymentFail(response/*, textStatus*/) {
-      var redirect = '';
-      if (typeof response.responseJSON === 'undefined') {
-        redirect = window.location.href.split('?')[0];
-      } else {
-        redirect = response.responseJSON.data;
-      }
-      location.href = redirect;
-    });
+      .done(function onRegisterPaymentDone(response) {
+        location.href = response.data;
+      })
+      .fail(function onRegisterPaymentFail(response/*, textStatus*/) {
+        var redirect = '';
+        if (typeof response.responseJSON === 'undefined') {
+          redirect = window.location.href.split('?')[0];
+        } else {
+          redirect = response.responseJSON.data;
+        }
+        location.href = redirect;
+      });
 
     return false;
   };
