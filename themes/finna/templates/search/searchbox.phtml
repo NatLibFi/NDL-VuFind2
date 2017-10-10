@@ -96,7 +96,7 @@
       <div class="record-back hidden-print">
           <?
           $html = '<span><i class="fa fa-arrow-left"></i></span>';
-          $html .= '<span class="back-to-search-text hidden-xs">'.$this->transEsc('Back to search results').'</span>';
+          $html .= '<span class="back-to-search-text hidden-xs hidden-sm">'.$this->transEsc('Back to search results').'</span>';
           $previousSearch = $this->searchMemory()->getLastSearchLink($html);
           if ($previousSearch !== ''):
               ?>

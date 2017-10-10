@@ -76,7 +76,7 @@
     width: 100%;
     float: left;
     @media (min-width: @screen-sm) {
-      width: 85%;
+      width: 70%;
     }
     @media (min-width: @screen-md) {
       width: 60%;
@@ -88,7 +88,7 @@
     line-height: 48px;
     padding-right: 15px;
     @media (min-width: @screen-sm) {
-      width: 15%;
+      width: 30%;
     }
     @media (min-width: @screen-md) {
       width: 40%;
@@ -111,22 +111,30 @@
   .search-tooltip {
     line-height: 48px;
   }
-  @media(max-width: @screen-sm) {
+  @media(max-width: @screen-md) {
     .search{
       flex: 1;
     }
-    .pager-text {
-      display:none;
+    .pager li.pager-text {
+      margin: 0 5px;
     }
     .pager {
-      margin-left: 10px;
-      &>li>a {
+      & > li > a {
         i.fa-arrow-left,
         i.fa-arrow-right {
           width: 15px;
           height: 15px;
         }
       }
+    }
+  }
+  @media(max-width: @screen-sm) {
+    .pager-text {
+      display:none;
+    }
+    .pager {
+      min-width: 70px;
+      margin-left: 10px;
     }
     .record-back {
       margin-right: 10px;
