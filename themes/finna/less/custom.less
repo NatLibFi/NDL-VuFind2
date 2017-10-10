@@ -369,9 +369,14 @@ h4.record-organisation-header {
 
 // List Group
 
-.list-group {
+.facet-group {
   margin-bottom: -2px;
   margin-top: 0px;
+
+  @media (max-width: @screen-sm) {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
 }
 
 // Icons
@@ -382,11 +387,11 @@ h4.record-organisation-header {
   position: relative;
   width: 24px;
   height: 24px;
-  top:-4px;
+  top:-6px;
   background-color: currentColor;
   content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/info-2.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/info-2.svg);
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/help-circle.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/help-circle.svg);
   -webkit-mask-size: cover;
   mask-size: cover;
 }
@@ -399,8 +404,8 @@ h4.record-organisation-header {
   top:-4px;
   background-color: currentColor;
   content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/info-2-filled.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/info-2-filled.svg);
+  -webkit-mask-image: url(../../../themes/finna/images/pictograms/help-circle.svg);
+  mask-image: url(../../../themes/finna/images/pictograms/help-circle.svg);
   -webkit-mask-size: cover;
   mask-size: cover;
 }
@@ -447,6 +452,11 @@ h4.record-organisation-header {
   mask-image: url(../../../themes/finna/images/pictograms/plus-circle.svg);
   -webkit-mask-size: cover;
   mask-size: cover;
+}
+
+.list-group.facet .jstree-facet .jstree-container-ul .jstree-icon {
+  margin: 0 !important; // Quick hack
+  padding: 0 !important; // Quick hack
 }
 
 .list-group.facet .list-group-item.title.collapsed:after {
@@ -515,6 +525,10 @@ h4.record-organisation-header {
   &:before {
     display: none;
   }
+}
+
+.template-dir-myresearch .fa-sign-out {
+  background-color: @body-bg;  
 }
 
 .pager .disabled>a {
