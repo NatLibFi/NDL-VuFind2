@@ -111,23 +111,30 @@
   .search-tooltip {
     line-height: 48px;
   }
-  @media(max-width: @screen-sm) {
+  @media(max-width: @screen-md) {
     .search{
       flex: 1;
     }
-    .pager-text {
-      display:none;
+    .pager li.pager-text {
+      margin: 0 5px;
     }
     .pager {
-      min-width: 70px;
-      margin-left: 10px;
-      &>li>a {
+      & > li > a {
         i.fa-arrow-left,
         i.fa-arrow-right {
           width: 15px;
           height: 15px;
         }
       }
+    }
+  }
+  @media(max-width: @screen-sm) {
+    .pager-text {
+      display:none;
+    }
+    .pager {
+      min-width: 70px;
+      margin-left: 10px;
     }
     .record-back {
       margin-right: 10px;
