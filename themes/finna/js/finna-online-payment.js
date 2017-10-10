@@ -23,7 +23,7 @@ finna.onlinePayment = (function finnaOnlinePayment() {
       });
 
     return false;
-  };
+  }
 
   var my = {
     registerPayment: registerPayment

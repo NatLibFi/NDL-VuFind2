@@ -19,7 +19,7 @@ finna.searchTabsRecommendations = (function finnaSearchTabsRecommendations() {
         finna.itemStatus.initDedupRecordSelection(container);
         checkSaveStatuses(container);
       });
-  };
+  }
 
   var my = {
     init: function init() {
@@ -28,5 +28,4 @@ finna.searchTabsRecommendations = (function finnaSearchTabsRecommendations() {
   };
 
   return my;
-
 })();

@@ -20,13 +20,13 @@ finna.StreetSearch = (function finnaStreetSearch() {
     } else {
       geoLocationError();
     }
-  };
+  }
 
   function terminateStreetSearch() {
     terminate = true;
     progressContainer.addClass('hidden');
     startButton.prop('disabled', false);
-  };
+  }
 
   function geoLocationError(error) {
     var errorString = 'street_search_geolocation_other_error';
@@ -52,7 +52,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
       errorString += ' -- ' + additionalInfo;
     }
     info(errorString, true);
-  };
+  }
 
   function locationSearch(position) {
     if (terminate) {
@@ -79,7 +79,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
     };
     var url = VuFind.path + '/Search/Results?' + $.param(queryParameters);
     window.location.href = url;
-  };
+  }
 
   function info(message, stopped, allowStopping) {
     if (typeof stopped !== 'undefined' && stopped) {
@@ -91,7 +91,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
     }
     var div = $('<div></div>').text(message);
     progressContainer.find('.info').empty().append(div);
-  };
+  }
 
   function initPageElements() {
     startButton = $('.street-search-button');
@@ -104,15 +104,15 @@ finna.StreetSearch = (function finnaStreetSearch() {
     if (query.indexOf('&go=1') >= 0) {
       startButton.click();
     }
-  };
+  }
 
-  var init = function init() {
+  function init() {
     initPageElements();
-  };
+  }
 
   var my = {
     init: init
   };
-  return my;
 
+  return my;
 })();

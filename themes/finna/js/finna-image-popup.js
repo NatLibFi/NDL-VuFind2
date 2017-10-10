@@ -71,12 +71,12 @@ finna.imagePopup = (function finnaImagePopup() {
       openPopup($(this));
       e.preventDefault();
     });
-  };
+  }
 
   // Copied from finna-mylist.js to avoid dependency
   function getActiveListId() {
     return $('input[name="listID"]').val();
-  };
+  }
 
   function initRecordImage() {
     // Collect data for all image-popup triggers on page.
@@ -238,7 +238,7 @@ finna.imagePopup = (function finnaImagePopup() {
         }
       });
     });
-  };
+  }
 
   function resolveRecordImageSize() {
     if ($('.image-popup-navi').length > 1) {
@@ -256,7 +256,7 @@ finna.imagePopup = (function finnaImagePopup() {
         }
       });
     }
-  };
+  }
 
   function initDimensions() {
     if (typeof $('.open-link a').attr('href') !== 'undefined') {
@@ -271,7 +271,7 @@ finna.imagePopup = (function finnaImagePopup() {
         }
       }
     }
-  };
+  }
 
   function init() {
     if (module !== 'record') {
@@ -287,7 +287,7 @@ finna.imagePopup = (function finnaImagePopup() {
     $.extend(true, $.magnificPopup.defaults, {
       tLoading: VuFind.translate('loading') + '...'
     });
-  };
+  }
 
   var my = {
     init: init

@@ -22,7 +22,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     };
     visDateStart = ops[start](visDateStart);
     visDateEnd = ops[end](visDateEnd);
-  };
+  }
 
   function timelineAction(backend, action) {
     if (loading) {
@@ -62,7 +62,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
         finna.dateRangeVis.loadVis(backend, action, newSearchParams);
       }
     }
-  };
+  }
 
   function showVis() {
     // Display timeline when facet animation is complete
@@ -73,7 +73,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     } else {
       plotData();
     }
-  };
+  }
 
   function initVis(backend, facet, params, baseParams, h, start, end, plotImmediately) {
     facetField = facet;
@@ -115,7 +115,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     ) {
       openTimelineCallback();
     }
-  };
+  }
 
   function loadVis(backend, action, params) {
     // Load and display timeline (called at initial open and after timeline navigation)
@@ -194,7 +194,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       .fail(function onContentGetFail(/*response, textStatus*/) {
         holder.find('.date-vis').closest('.content').removeClass('loading');
       });
-  };
+  }
 
   function plotData(delay) {
     if (!visData) {
@@ -266,7 +266,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     }
     plotInited = true;
     plotted = true;
-  };
+  }
 
   function getGraphOptions(start, end) {
     var options = {
@@ -302,7 +302,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
 
     options.selection = {mode: 'x', color: '#00a3b5;', borderWidth: 0};
     return options;
-  };
+  }
 
   function initTimelineNavigation(backend, _holder) {
     _holder.find('.navigation div:not(.expand-modal)').on(
@@ -320,7 +320,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
         plotData();
       }
     );
-  };
+  }
 
   function initFacetBar() {
     $('.daterange-facet.facet-group').on('shown.bs.collapse', function onShownCollapse(/*e*/) {
@@ -328,13 +328,13 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
         showVis();
       }
     });
-  };
+  }
 
   function initResizeListener() {
     $(window).on('resize.screen.finna', function onResizeScreen(/*e, data*/) {
       plotData();
     });
-  };
+  }
 
   function updateFieldLimits(evt) {
     var params = evt.data;
@@ -349,7 +349,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       params.from.removeAttr('required');
       params.to.removeAttr('required');
     }
-  };
+  }
 
   function initForm(form, backend, _facetField) {
     facetField = _facetField;
@@ -447,7 +447,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       }
       return;
     });
-  };
+  }
 
   function padZeros(_number, _length) {
     var number = _number;
@@ -468,7 +468,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
   function init() {
     initResizeListener();
     initFacetBar();
-  };
+  }
 
   var my = {
     init: init,

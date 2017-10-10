@@ -21,7 +21,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         }
         callback(false, error);
       });
-  };
+  }
 
   function getOrganisations(target, parent, buildings, callbackParams, callback) {
     if (typeof parent === 'undefined') {
@@ -45,14 +45,14 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       });
       callback(response, callbackParams);
     });
-  };
+  }
 
   function getInfo(id) {
     if (!(id in organisationList)) {
       return false;
     }
     return organisationList[id];
-  };
+  }
 
   function getDetails(id) {
     if (!(id in organisationList)) {
@@ -95,7 +95,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       details = $.extend(details, {details: cached});
     }
     return details;
-  };
+  }
 
   function getSchedules(target, parent, id, periodStart, dir, fullDetails, allServices, callback) {
     var params = {
@@ -133,7 +133,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
       callback(result);
     });
-  };
+  }
 
   function getField(obj, field, organisationId) {
     var res = finna.common.getField(obj, field);
@@ -149,21 +149,21 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       }
     }
     return null;
-  };
+  }
 
   function getCachedDetails(id) {
     if (typeof organisationList[id].details !== 'undefined') {
       return organisationList[id].details;
     }
     return null;
-  };
+  }
 
   function cacheDetails(id, details) {
     if (!('openTimes' in details) && 'openTimes' in organisationList[id]) {
       details.openTimes = organisationList[id].openTimes;
     }
     organisationList[id].details = details;
-  };
+  }
 
   function cacheSchedules(id, data) {
     var schedules = finna.common.getField(data, 'openTimes');
@@ -176,7 +176,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       organisationList[id].details.scheduleDescriptions = scheduleDesc;
       organisationList[id].scheduleDescriptions = scheduleDesc;
     }
-  };
+  }
 
   var my = {
     getOrganisations: getOrganisations,
@@ -184,5 +184,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     getDetails: getDetails,
     getSchedules: getSchedules
   };
+
   return my;
 })();

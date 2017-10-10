@@ -46,7 +46,7 @@ finna.advSearch = (function advSearch() {
     toField.change(function toFieldChange() {
       fromField.attr('max', toField.val());
     });
-  };
+  }
 
   /**
    * Initialize advanced search map
@@ -172,7 +172,7 @@ finna.advSearch = (function advSearch() {
         mapCanvas.closest('form').append(field);
       }
     });
-  };
+  }
 
   function addRemoveButton(layer, featureGroup) {
     var button = $('<a/>')
@@ -182,7 +182,7 @@ finna.advSearch = (function advSearch() {
       });
     $('<span/>').text(VuFind.translate('removeCaption')).appendTo(button);
     layer.bindPopup(button.get(0), {closeButton: false});
-  };
+  }
 
   var my = {
     init: function init() {

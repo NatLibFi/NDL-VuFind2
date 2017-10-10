@@ -21,7 +21,7 @@ finna.finnaSurvey = (function finnaSurvey() {
     setTimeout(function timeoutCallback() {
       holder.fadeIn(300).css({bottom: 0});
     }, 150);
-  };
+  }
 
   var my = {
     init: init

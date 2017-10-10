@@ -18,7 +18,7 @@ finna.primoAdvSearch = (function finnaPrimoAdvSearch() {
 
       return false;
     });
-  };
+  }
 
   var my = {
     init: function init() {
@@ -27,5 +27,4 @@ finna.primoAdvSearch = (function finnaPrimoAdvSearch() {
   };
 
   return my;
-
 })();

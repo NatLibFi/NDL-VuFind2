@@ -110,7 +110,7 @@ finna.itemStatus = (function finnaItemStatus() {
         item.find(".availability-load-indicator").addClass('hidden');
       });
     item.data('xhr', xhr);
-  };
+  }
 
   function initDedupRecordSelection(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
@@ -143,7 +143,7 @@ finna.itemStatus = (function finnaItemStatus() {
       recordContainer.find('.location').removeClass('hidden');
       checkItemStatus(id);
     });
-  };
+  }
 
   function initItemStatuses(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
@@ -154,7 +154,7 @@ finna.itemStatus = (function finnaItemStatus() {
         checkItemStatus(id);
       });
     });
-  };
+  }
 
   var my = {
     initItemStatuses: initItemStatuses,

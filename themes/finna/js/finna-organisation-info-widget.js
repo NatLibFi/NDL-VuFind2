@@ -23,7 +23,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
         organisationListLoaded(response);
       }
     });
-  };
+  }
 
   function organisationListLoaded(data) {
     var list = data.list;
@@ -59,7 +59,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     var week = parseInt(data.weekNum);
     updateWeekNum(week);
     attachWeekNaviListener();
-  };
+  }
 
   function menuClicked(disable) {
     var toggle = holder.find('.organisation .dropdown-toggle');
@@ -74,7 +74,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       var menu = holder.find('.organisation.dropdown');
       menu.replaceWith(menu.find('.dropdown-toggle span'));
     }
-  };
+  }
 
   function attachWeekNaviListener() {
     holder.find('.week-navi').unbind('click').click(function onClickWeekNavi() {
@@ -99,7 +99,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
         }
       );
     });
-  };
+  }
 
   function showDetails(id, name, allServices) {
     holder.find('.error,.info-element').hide();
@@ -150,7 +150,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
         }
       }
     );
-  };
+  }
 
   function schedulesLoaded(id, response) {
     schedulesLoading = false;
@@ -296,7 +296,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
 
     holder.find('.week-navi-holder').toggle(hasSchedules);
     schedulesHolder.stop(true, false).fadeTo(200, 1);
-  };
+  }
 
   function detailsLoaded(id, response) {
     toggleSpinner(false);
@@ -350,7 +350,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
         holder.find('.services .service-' + obj).show();
       });
     }
-  };
+  }
 
   function updatePrevBtn(response) {
     var prevBtn = holder.find('.week-navi.prev-week');
@@ -363,12 +363,12 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       prevBtn.fadeTo(200, 1);
       attachWeekNaviListener();
     }
-  };
+  }
 
   function updateWeekNum(week) {
     holder.data('week-num', week);
     holder.find('.week-navi-holder .week-text .num').text(week);
-  };
+  }
 
   function toggleSpinner(mode) {
     var spinner = holder.find('.loader');
@@ -377,7 +377,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     } else {
       spinner.hide();
     }
-  };
+  }
 
   var my = {
     loadOrganisationList: loadOrganisationList,
@@ -388,5 +388,6 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       service = _service;
     }
   };
+
   return my;
 })();

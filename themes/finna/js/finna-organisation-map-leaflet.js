@@ -105,7 +105,7 @@ finna.organisationMap = (function finnaOrganisationMap() {
     });
 
     reset();
-  };
+  }
 
   function reset() {
     var group = new L.featureGroup(markers);
@@ -114,11 +114,11 @@ finna.organisationMap = (function finnaOrganisationMap() {
     map.fitBounds(bounds, {zoom: {animate: true}});
     map.closePopup();
     selectedMarker = null;
-  };
+  }
 
   function resize() {
     map.invalidateSize(true);
-  };
+  }
 
   function selectMarker(id) {
     var marker = null;
@@ -136,19 +136,19 @@ finna.organisationMap = (function finnaOrganisationMap() {
 
     marker.openPopup();
     selectedMarker = marker;
-  };
+  }
 
   function hideMarker() {
     if (selectedMarker) {
       selectedMarker.closePopup();
     }
-  };
+  }
 
   function init(_holder, _mapTileUrl, _attribution) {
     holder = _holder;
     mapTileUrl = _mapTileUrl;
     attribution = _attribution;
-  };
+  }
 
   var my = {
     hideMarker: hideMarker,
@@ -158,5 +158,6 @@ finna.organisationMap = (function finnaOrganisationMap() {
     init: init,
     draw: draw
   };
+
   return my;
 })();

@@ -96,7 +96,7 @@ finna.changeHolds = (function finnaChangeHolds() {
           spinnerChange.addClass('hidden');
           hold.append(errorOccured);
         });
-    };
+    }
 
     function changeHoldStatus(container, requestId, frozen) {
       var spinnerChange = container.find('.status-change-load-indicator');
@@ -134,7 +134,7 @@ finna.changeHolds = (function finnaChangeHolds() {
           spinnerChange.addClass('hidden');
           container.append(errorOccured);
         });
-    };
+    }
   }
 
   var my = {

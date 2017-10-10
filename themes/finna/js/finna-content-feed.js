@@ -61,7 +61,7 @@ finna.contentFeed = (function finnaContentFeed() {
     $('#modal').one('hidden.bs.modal', function onContentModalHidden() {
       $(this).removeClass('feed-content');
     });
-  };
+  }
 
   var my = {
     loadFeed: loadFeed,

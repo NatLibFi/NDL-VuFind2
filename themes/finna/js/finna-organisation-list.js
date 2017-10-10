@@ -15,7 +15,8 @@ finna.organisationList = (function finnaOrganisationList() {
         });
       }
     });
-  };
+  }
+
   var my = {
     init: function init() {
       initOrganisationPageLinksForParticipants();

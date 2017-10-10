@@ -63,14 +63,14 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         err();
       }
     });
-  };
+  }
 
   function err() {
     var msg = $('<div/>')
       .addClass('alert alert-danger')
       .text(VuFind.translate('error_occurred'));
     holder.find('.organisation-info-page').first().replaceWith(msg);
-  };
+  }
 
   function initMap() {
     $.each(organisationList, function handleOrganisation(ind, obj) {
@@ -131,7 +131,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       $(this).hide();
       holder.find('.expand-map').show();
     });
-  };
+  }
 
   function initSearch() {
     var officeSearch = holder.find('#office-search');
@@ -186,7 +186,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       officeSearch.focus();
       return false;
     });
-  };
+  }
 
   function updateWindowHash(hash) {
     // Create a fake hidden div with id=hash and absolute position
@@ -208,11 +208,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       window.location.hash = '';
     }
     window.location.hash = hash;
-  };
+  }
 
   function hideMapMarker() {
     holder.find('#marker-tooltip').hide();
-  };
+  }
 
   function updateConsortiumNotification(data) {
     if ('consortium' in data) {
@@ -221,7 +221,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           .html(data.consortium.finna.notification).removeClass('hide');
       }
     }
-  };
+  }
 
   function updateDefaultServicePoint(data) {
     if ('consortium' in data) {
@@ -233,11 +233,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         window.location.hash = data.consortium.finna.service_point;
       }
     }
-  };
+  }
 
   function setOfficeInformationLoader(mode) {
     holder.find('.office-information-loader').toggle(mode);
-  };
+  }
 
   function updateSelectedOrganisation(id) {
     setOfficeInformationLoader(true);
@@ -261,7 +261,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     } else {
       setOfficeInformationLoader(false);
     }
-  };
+  }
 
   function updateGeneralInfo(data, rssAvailable) {
     holder.find('.office-quick-information').toggleClass('hide', false);
@@ -368,7 +368,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     $('.office-quick-information').show();
     $('.office-information').show();
     setOfficeInformationLoader(false);
-  };
+  }
 
   function updateServices(data) {
     if ('allServices' in data.details) {
@@ -383,7 +383,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         li.appendTo(serviceHolder);
       });
     }
-  };
+  }
 
   function updateRSSFeeds(data) {
     var rssAvailable = false;
@@ -405,14 +405,14 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       });
     }
     return rssAvailable;
-  };
+  }
 
   function getOrganisationFromURL() {
     if (window.location.hash !== '') {
       return parseInt(window.location.hash.replace('#', ''));
     }
     return false;
-  };
+  }
 
   /**
    * Initialize organisation page
@@ -502,7 +502,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     }
 
     loadOrganisationList(buildings, library);
-  };
+  }
 
   var my = {
     init: init

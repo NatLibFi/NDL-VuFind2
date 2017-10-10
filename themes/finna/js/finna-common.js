@@ -3,14 +3,14 @@ finna.common = (function finnaCommon() {
 
   function decodeHtml(str) {
     return $("<textarea/>").html(str).text();
-  };
+  }
 
   function getField(obj, field) {
     if (field in obj && typeof obj[field] != 'undefined') {
       return obj[field];
     }
     return null;
-  };
+  }
 
   function initSearchInputListener() {
     var searchInput = $('.searchForm_lookfor:visible');
@@ -44,7 +44,7 @@ finna.common = (function finnaCommon() {
         e.preventDefault();
       }
     });
-  };
+  }
 
   function initQrCodeLink() {
     // handle finna QR code links
@@ -66,7 +66,7 @@ finna.common = (function finnaCommon() {
       holder.toggleClass('hidden');
       return false;
     });
-  };
+  }
 
   var my = {
     decodeHtml: decodeHtml,

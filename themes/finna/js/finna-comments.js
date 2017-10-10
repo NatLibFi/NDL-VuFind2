@@ -15,13 +15,14 @@ finna.comments = (function finnaComments() {
     }
     initEditComment(allowCommenting, allowRating);
 
-    // Override global methods
+    // Override global method
     var _registerAjaxCommentRecord = registerAjaxCommentRecord;
     registerAjaxCommentRecord = function registerAjaxCommentRecord() { // eslint-disable-line no-global-assign
       initCommentForm(_registerAjaxCommentRecord, allowRating);
     };
 
-    function deleteRecordComment(element, recordId, recordSource, commentId) { // eslint-disable-line no-global-assign
+    // Override global method
+    deleteRecordComment = function deleteRecordComment(element, recordId, recordSource, commentId) { // eslint-disable-line no-global-assign
       var url = VuFind.path + '/AJAX/JSON?'
         + $.param({method: 'deleteRecordComment', id: commentId});
       $.ajax({
@@ -44,7 +45,7 @@ finna.comments = (function finnaComments() {
     };
 
     VuFind.lightbox.bind($('.usercomments-tab'));
-  };
+  }
 
   function initCommentForm(parentMethod, allowRating) {
     parentMethod();
@@ -113,16 +114,16 @@ finna.comments = (function finnaComments() {
         });
       return false;
     });
-  };
+  }
 
   function initRating() {
     $('.usercomments-tab .rating').rating();
-  };
+  }
 
   function updateAverageRating(rating, count) {
     $('.rating-average .rating').rating('rate', rating);
     $('.rating-average .count>span').text(count);
-  };
+  }
 
   function initEditComment(allowCommenting, allowRating) {
     $('.comment-list .edit').unbind('click').click(function onCommentEditClick() {
@@ -158,14 +159,14 @@ finna.comments = (function finnaComments() {
       $(this).toggleClass('hide', true);
       return false;
     });
-  };
+  }
 
   function requestRefreshComments() {
     var record = $('input.hiddenId').val();
     var source = $('input.hiddenSource').val();
     var tab = $('.usercomments-tab');
     refreshCommentList(tab, record, source);
-  };
+  }
 
   var my = {
     initCommentList: initCommentList,

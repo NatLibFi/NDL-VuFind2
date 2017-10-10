@@ -6,7 +6,7 @@ finna.openUrl = (function finnaOpenUrl() {
         VuFind.openurl.embedOpenUrlLinks($(this));
       });
     });
-  };
+  }
 
   var my = {
     initLinks: initLinks,

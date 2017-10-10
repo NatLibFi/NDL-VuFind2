@@ -15,7 +15,7 @@ finna.layout = (function finnaLayout() {
       map.scrollWheelZoom.enable();
     });
     map.scrollWheelZoom.disable();
-  };
+  }
 
   function initResizeListener() {
     var intervalId = false;
@@ -29,13 +29,13 @@ finna.layout = (function finnaLayout() {
         $(window).trigger('resize.screen.finna', data);
       }, 100);
     });
-  };
+  }
 
   function isTouchDevice() {
     return (('ontouchstart' in window)
       || (navigator.maxTouchPoints > 0)
       || (navigator.msMaxTouchPoints > 0)); // IE10, IE11, Edge
-  };
+  }
 
   function detectIe() {
     var undef,
@@ -47,7 +47,7 @@ finna.layout = (function finnaLayout() {
       all[0]
     );
     return v > 4 ? v : undef;
-  };
+  }
 
   // Append current anchor (location.hash) to selected links
   // in order to preserve the anchor when the link is clicked.
@@ -60,7 +60,7 @@ finna.layout = (function finnaLayout() {
       }
       $(this).attr('href', $(this).attr('href') + hash);
     });
-  };
+  }
 
   function initFixFooter() {
     $(window).resize(function onResizeWindow(/*e*/) {
@@ -76,7 +76,7 @@ finna.layout = (function finnaLayout() {
         }, 50);
       }
     }).resize();
-  };
+  }
 
   function initLocationService(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
@@ -84,7 +84,7 @@ finna.layout = (function finnaLayout() {
     function closeModalCallback(modal) {
       modal.removeClass('location-service location-service-qrcode');
       modal.find('.modal-dialog').removeClass('modal-lg');
-    };
+    }
 
     holder.find('a.location-service.location-service-modal').click(function onClickModalLink(/*e*/) {
       var modal = $('#modal');
@@ -98,17 +98,17 @@ finna.layout = (function finnaLayout() {
       modal.modal();
       return false;
     });
-  };
+  }
 
   function initTruncate(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    var notifyTruncateChange = function notifyTruncateChange(field) {
+    function notifyTruncateChange(field) {
       field.find('.truncate-change span').each(function setupTruncateChange(ind, e) {
         var visible = $(e).position().top <= field.height();
         $(e).trigger('truncate-change', [visible]);
       });
-    };
+    }
 
     var truncation = [];
     var rowHeight = [];
@@ -165,7 +165,7 @@ finna.layout = (function finnaLayout() {
       notifyTruncateChange(self);
       self.trigger('truncate-done', [self]);
     });
-  };
+  }
 
   function initTruncatedRecordImageNavi() {
     function displayTruncatedImage(placeholder) {
@@ -177,7 +177,7 @@ finna.layout = (function finnaLayout() {
       img.attr('alt', '');
       placeholder.parent().removeClass('truncate-change');
       placeholder.replaceWith(img);
-    };
+    }
 
     // Load truncated record images lazily when parent container is opened
     $('.recordcovers .truncate-change span').each(function addTruncateChangeHandler() {
@@ -201,7 +201,7 @@ finna.layout = (function finnaLayout() {
         cnt.insertAfter(moreLink.first().children().first());
       }
     });
-  };
+  }
 
   function initContentNavigation() {
     if ($('.content-navigation-menu')[0]) {
@@ -232,7 +232,7 @@ finna.layout = (function finnaLayout() {
         }
       });
     }
-  };
+  }
 
   function initRecordSwipe() {
     if ($('#view-pager').length && isTouchDevice()) {
@@ -269,7 +269,7 @@ finna.layout = (function finnaLayout() {
         cancelThreshold: 20
       });
     }
-  };
+  }
 
   function initMultiSelect() {
     $('.multi-select').multiselect({
@@ -290,7 +290,7 @@ finna.layout = (function finnaLayout() {
         }
       });
     }
-  };
+  }
 
   function initMobileNarrowSearch() {
     var filterAmount = $('.checkboxFilter input[checked]').length + $('.list-group.filters .list-group-item.active').length;
@@ -308,7 +308,7 @@ finna.layout = (function finnaLayout() {
     $('.mobile-navigation .sidebar-navigation .active-filters').unbind('click').click(function onClickMobileActiveFilters() {
       $('.sidebar').scrollTop(0);
     });
-  };
+  }
 
   function initCheckboxClicks() {
     $('.checkboxFilter:not(.mylist-select-all) .checkbox input').click(function onClickCheckbox() {
@@ -343,7 +343,7 @@ finna.layout = (function finnaLayout() {
         myListFunctions.attr('disabled', false);
       }
     });
-  };
+  }
 
   function initScrollLinks() {
     $('.library-link').click(function onClickLibraryLink() {
@@ -390,7 +390,7 @@ finna.layout = (function finnaLayout() {
         $('#hierarchyTree, #modal').animate({scrollTop: 0 }, 200);
       });
     });
-  };
+  }
 
   function initSearchboxFunctions() {
     if ($('.navbar-form .checkbox')[0]) {
@@ -425,7 +425,7 @@ finna.layout = (function finnaLayout() {
         $('.searchFormKeepFilters').closest('.checkbox').removeClass('checked');
       }
     }
-  };
+  }
 
   function initToolTips(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
@@ -441,7 +441,7 @@ finna.layout = (function finnaLayout() {
         $('[data-toggle="tooltip"]').tooltip('hide');
       }
     });
-  };
+  }
 
   function initCondensedList() {
     $('.condensed-collapse-toggle').click(function onClickCollapseToggle(event) {
@@ -457,13 +457,13 @@ finna.layout = (function finnaLayout() {
         }
       }
     });
-  };
+  }
 
   function initTouchDeviceGallery() {
     if ($('.result-view-grid')[0] != null && isTouchDevice()) {
       $('.result-view-grid').addClass('touch-device');
     }
-  };
+  }
 
   function initImageCheck() {
     $('.image-popup-trigger img').each(function setupImagePopup() {
@@ -487,7 +487,7 @@ finna.layout = (function finnaLayout() {
         }
       });
     });
-  };
+  }
 
   function initHierarchicalFacet(treeNode, inSidebar) {
     treeNode.bind('ready.jstree', function onReadyJstree() {
@@ -509,13 +509,13 @@ finna.layout = (function finnaLayout() {
       });
     });
     initFacetTree(treeNode, inSidebar);
-  };
+  }
 
   function initJumpMenus(_holder) {
     var holder = typeof _holder === 'undefined' ? $('body') : _holder;
     holder.find('select.jumpMenu').unbind('change').change(function onChangeJumpMenu() { $(this).closest('form').submit(); });
     holder.find('select.jumpMenuUrl').unbind('change').change(function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
-  };
+  }
 
   function initSecondaryLoginField(labels, topClass) {
     $('#login_target').change(function onChangeLoginTarget() {
@@ -530,7 +530,7 @@ finna.layout = (function finnaLayout() {
         group.show();
       }
     }).change();
-  };
+  }
 
   function initSideFacets() {
     var $container = $('.side-facets-container');
@@ -552,7 +552,7 @@ finna.layout = (function finnaLayout() {
         $container.find('.facet-load-indicator').addClass('hidden');
         $container.find('.facet-load-failed').removeClass('hidden');
       });
-  };
+  }
 
   function initPiwikPopularSearches() {
     var $container = $('.piwik-popular-searches');
@@ -568,7 +568,7 @@ finna.layout = (function finnaLayout() {
         $container.find('.load-indicator').addClass('hidden');
         $container.find('.load-failed').removeClass('hidden');
       });
-  };
+  }
 
   function initAutoScrollTouch() {
     if (!navigator.userAgent.match(/iemobile/i) && isTouchDevice() && $(window).width() < 1025) {
@@ -578,7 +578,7 @@ finna.layout = (function finnaLayout() {
         }, 200);
       });
     }
-  };
+  }
 
   function initIpadCheck() {
     if (navigator.userAgent.match(/iPad/i)) {
@@ -586,7 +586,7 @@ finna.layout = (function finnaLayout() {
         $('body').addClass('ipad-six');
       }
     }
-  };
+  }
 
   function initScrollRecord() {
     if (!$('section.main').is('.template-name-search, .template-name-results')) {
@@ -610,7 +610,7 @@ finna.layout = (function finnaLayout() {
     if (target) {
       $('html,body').animate({scrollTop: target.offset().top}, 100);
     }
-  };
+  }
 
   function initBuildingFilter() {
     $('#building_filter').keyup(function onKeyUpFilter() {
@@ -624,7 +624,7 @@ finna.layout = (function finnaLayout() {
         }
       });
     });
-  };
+  }
 
   function initLoginRedirect() {
     if (!document.addEventListener) {
@@ -636,7 +636,7 @@ finna.layout = (function finnaLayout() {
         e.preventDefault();
       }
     });
-  };
+  }
 
   function initLoadMasonry() {
     var ie = detectIe();
@@ -652,7 +652,7 @@ finna.layout = (function finnaLayout() {
         });
       });
     }
-  };
+  }
 
   function initOrganisationPageLinks() {
     $('.organisation-page-link').not('.done').map(function setupOrganisationPageLinks() {
@@ -669,7 +669,7 @@ finna.layout = (function finnaLayout() {
         });
       });
     });
-  };
+  }
 
   function getOrganisationPageLink(organisation, organisationName, link, callback) {
     var params = {
@@ -693,7 +693,7 @@ finna.layout = (function finnaLayout() {
       .fail(function onGetOrganisationInfoFail() {
         callback(false);
       });
-  };
+  }
 
   function initOrganisationInfoWidgets() {
     $('.organisation-info[data-init="1"]').map(function setupOrganisationInfo() {
@@ -702,7 +702,7 @@ finna.layout = (function finnaLayout() {
       widget.init($(this), service);
       widget.loadOrganisationList();
     });
-  };
+  }
 
   function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
@@ -744,7 +744,7 @@ finna.layout = (function finnaLayout() {
       e.preventDefault();
       return false;
     });
-  };
+  }
 
   function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
@@ -761,10 +761,12 @@ finna.layout = (function finnaLayout() {
           open: function onOpen() {
             var player = videojs('video-player');
 
-            var disablelogging = function onBeforeInit(videoJs, mediaPlayer) {
-              mediaPlayer.getDebug().setLogToBrowserConsole(false);
-            };
-            videojs.Html5DashJS.hook('beforeinitialize', disablelogging);
+            videojs.Html5DashJS.hook(
+              'beforeinitialize',
+              function onBeforeInit(videoJs, mediaPlayer) {
+                mediaPlayer.getDebug().setLogToBrowserConsole(false);
+              }
+            );
 
             player.ready(function onReady() {
               this.hotkeys({
@@ -785,7 +787,7 @@ finna.layout = (function finnaLayout() {
       e.preventDefault();
       return false;
     });
-  };
+  }
 
   function initKeyboardNavigation() {
     $(window).keyup(function onKeyUp(e) {
@@ -800,7 +802,7 @@ finna.layout = (function finnaLayout() {
       }
       return true;
     });
-  };
+  }
 
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,

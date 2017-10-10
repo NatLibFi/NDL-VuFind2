@@ -148,7 +148,7 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
       listHolder.addClass('truncate-field');
       finna.layout.initTruncate(listHolder.parent());
     }
-  };
+  }
 
   function initSectorUsageInfo(id, callback) {
     // Resolve building sector
@@ -178,11 +178,11 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
       .fail(function onSearchFail(/*response, textStatus, err*/) {
         callback(false);
       });
-  };
+  }
 
   function enableConsortiumNaviItem(id) {
     holder.find('.consortium-navigation .scroll.' + id).addClass('active');
-  };
+  }
 
   function initConsortiumNavi() {
     var active = holder.find('.consortium-navigation .scroll.active');
@@ -200,7 +200,7 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
     } else {
       holder.find('.consortium-navigation').hide();
     }
-  };
+  }
 
   var my = {
     enableConsortiumNaviItem: enableConsortiumNaviItem,

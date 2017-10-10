@@ -52,7 +52,7 @@ finna.record = (function finnaRecord() {
         $('.hide-details-button').click();
       }
     }
-  };
+  }
 
   function getRequestLinkData(element, recordId) {
     var vars = {}, hash;
@@ -126,7 +126,7 @@ finna.record = (function finnaRecord() {
         checkRequestsAreValid(rows.find('.collapsedCheckILLRequest').removeClass('collapsedCheckILLRequest'), 'ILLRequest', 'ILLRequestBlocked');
       }
     });
-  };
+  }
 
   function setupHoldingsTab() {
     initHoldingsControls();
@@ -134,7 +134,7 @@ finna.record = (function finnaRecord() {
     finna.layout.initLocationService();
     finna.layout.initJumpMenus($('.holdings-tab'));
     VuFind.lightbox.bind($('.holdings-tab'));
-  };
+  }
 
   function initRecordNaviHashUpdate() {
     $(window).on('hashchange', function onHashChange() {
@@ -149,7 +149,7 @@ finna.record = (function finnaRecord() {
     initHideDetails();
     initDescription();
     initRecordNaviHashUpdate();
-  };
+  }
 
   var my = {
     checkRequestsAreValid: checkRequestsAreValid,

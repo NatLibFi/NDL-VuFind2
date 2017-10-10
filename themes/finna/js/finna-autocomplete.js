@@ -2,7 +2,7 @@
 finna.autocomplete = (function finnaAutocomplete() {
   function getPreserveFiltersMode() {
     return $(".searchFormKeepFilters").is(":checked");
-  };
+  }
 
   function setupAutocomplete() {
     $('.searchForm').on('submit', function onSubmitSearchForm() {
@@ -81,7 +81,7 @@ finna.autocomplete = (function finnaAutocomplete() {
         }
       });
     });
-  };
+  }
 
   var my = {
     init: function init() {

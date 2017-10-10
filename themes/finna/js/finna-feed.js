@@ -2,19 +2,19 @@
 finna.feed = (function finnaFeed() {
   function calculateScrollSpeed(scrollCnt, scrollSpeed) {
     return scrollSpeed * Math.max(1, (scrollCnt / 5));
-  };
+  }
 
   // Horizontal carousel:
   function centerImages(holder) {
     holder.find('.carousel-feed:not(.slick-vertical) .slick-slide .wrapper img').each (function centerEachImage() {
       centerImage($(this));
     });
-  };
+  }
 
   function centerImage(img) {
     var offset = img.width() - img.closest('.slick-slide').width();
     img.css('margin-left', offset > 0 ? '-' + offset / 2 + 'px' : 'auto');
-  };
+  }
 
   function adjustWidth(holder) {
     holder.find('.carousel-slide-header p, .carousel-text')
@@ -23,7 +23,7 @@ finna.feed = (function finnaFeed() {
     holder.find('.slick-slide .wrapper img').each (function centerEachImage() {
       centerImage($(this));
     });
-  };
+  }
 
   function adjustTitles(holder) {
     // Move title field below image
@@ -34,14 +34,14 @@ finna.feed = (function finnaFeed() {
     });
     holder.find('.carousel-feed .slick-list').css('padding-bottom', maxH + 'px');
     holder.find('.carousel-feed .slick-slide .carousel-text').addClass('text-bottom');
-  };
+  }
 
   // Vertical carousel:
   function adjustTextFields(holder) {
     holder.find('.carousel-feed .slick-slide').each(function adjustEachTextField() {
       adjustTextField($(this));
     });
-  };
+  }
 
   function adjustTextField(slide) {
     var imgH = slide.find('.wrapper').height();
@@ -60,7 +60,7 @@ finna.feed = (function finnaFeed() {
       h -= (dif - 2);
       textF.height(h);
     }
-  };
+  }
 
   function loadFeed(holder) {
     var id = holder.data('feed');
@@ -68,7 +68,7 @@ finna.feed = (function finnaFeed() {
       return;
     }
     processLoadFeed(holder, {method: 'getFeed', id: id});
-  };
+  }
 
   function loadFeedFromUrl(holder) {
     var feedUrl = holder.data('url');
@@ -85,7 +85,7 @@ finna.feed = (function finnaFeed() {
         id: id
       }
     );
-  };
+  }
 
   function processLoadFeed(holder, params) {
     params['touch-device'] = (finna.layout.isTouchDevice() ? 1 : 0);
@@ -205,7 +205,7 @@ finna.feed = (function finnaFeed() {
         err += ' -->';
         holder.html(err);
       });
-  };
+  }
 
   function getCarouselSettings(settings) {
     return {
@@ -246,14 +246,13 @@ finna.feed = (function finnaFeed() {
         }
       ]
     };
-  };
+  }
 
   function initComponents() {
     $('.feed-container[data-init!="0"]').each(function loadEachFeed() {
       loadFeed($(this));
     });
-  };
-
+  }
 
   var my = {
     loadFeedFromUrl: loadFeedFromUrl,
@@ -263,5 +262,4 @@ finna.feed = (function finnaFeed() {
   };
 
   return my;
-
 })();

@@ -9,7 +9,7 @@ finna.myList = (function finnaMyList() {
   // This is duplicated in image-popup.js to avoid dependency
   function getActiveListId() {
     return $('input[name="listID"]').val();
-  };
+  }
 
   function updateList(params, callback, type) {
     save = true;
@@ -71,7 +71,7 @@ finna.myList = (function finnaMyList() {
         toggleErrorMessage(true);
         save = false;
       });
-  };
+  }
 
   function updateListResource(params, input/*, row*/) {
     save = true;
@@ -106,7 +106,7 @@ finna.myList = (function finnaMyList() {
         toggleTitleEditable(true);
         save = false;
       });
-  };
+  }
 
   function addResourcesToList(listId) {
     toggleErrorMessage(false);
@@ -142,7 +142,7 @@ finna.myList = (function finnaMyList() {
         $('#add-to-list').removeAttr('disabled');
         $('#add-to-list').val('');
       });
-  };
+  }
 
   function refreshLists(/*data*/) {
     toggleErrorMessage(false);
@@ -160,7 +160,7 @@ finna.myList = (function finnaMyList() {
       .fail(function onGetMyListsDone() {
         toggleErrorMessage(true);
       });
-  };
+  }
 
   function listDescriptionChanged() {
     var description = $('.list-description .editable');
@@ -171,7 +171,7 @@ finna.myList = (function finnaMyList() {
       description.data('empty', '0');
     }
     toggleTitleEditable(true);
-  };
+  }
 
   function newListAdded(data) {
     // update add-to-list select
@@ -181,7 +181,7 @@ finna.myList = (function finnaMyList() {
         .text(data.title));
 
     refreshLists();
-  };
+  }
 
   function updateBulkActionsToolbar() {
     var buttons = $('.bulk-action-buttons-col');
@@ -190,7 +190,7 @@ finna.myList = (function finnaMyList() {
     } else {
       buttons.removeClass('fixed');
     }
-  };
+  }
 
   function toggleTitleEditable(mode) {
     var target = $('.list-title span');
@@ -222,7 +222,7 @@ finna.myList = (function finnaMyList() {
       target.replaceWith(target.clone());
     }
     $('.list-title').toggleClass('disable', !mode);
-  };
+  }
 
   function initEditComponents() {
     addNewListLabel = $('.add-new-list div').text();
@@ -261,17 +261,17 @@ finna.myList = (function finnaMyList() {
         var form = $('.delete-list');
         var prompt = form.find('.dropdown-menu');
 
-        var initRepositionListener = function initRepositionListener() {
-          $(window).resize(repositionPrompt);
-        };
-
-        var repositionPrompt = function repositionPrompt() {
+        function repositionPrompt() {
           var pos = target.offset();
           prompt.css({
             'left': pos.left - prompt.width() + target.width(),
             'top': pos.top + 30
           });
-        };
+        }
+
+        function initRepositionListener() {
+          $(window).resize(repositionPrompt);
+        }
 
         prompt.find('.confirm').unbind('click').click(function onClickConfirm(ev) {
           form.submit();
@@ -339,7 +339,7 @@ finna.myList = (function finnaMyList() {
         return VuFind.translate('loading') + '...';
       }
     };
-  };
+  }
 
   function initFavoriteOrderingFunctionality() {
     $('#sortable').sortable({cursor: 'move', opacity: 0.7});
@@ -349,7 +349,7 @@ finna.myList = (function finnaMyList() {
       $('#sort_form input[name="orderedList"]').val(JSON.stringify(listOfItems));
       return true;
     });
-  };
+  }
 
   function initEditableMarkdownField(element, callback) {
     element.find('.editable').unbind('click').click(function onClickEditable(e) {
@@ -435,7 +435,7 @@ finna.myList = (function finnaMyList() {
         return false;
       });
     });
-  };
+  }
 
   function toggleErrorMessage(mode) {
     var $msg = $('.mylist-error');
@@ -444,7 +444,7 @@ finna.myList = (function finnaMyList() {
     if (mode) {
       $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
-  };
+  }
 
   function toggleSpinner(target, mode) {
     if (mode) {
@@ -457,7 +457,7 @@ finna.myList = (function finnaMyList() {
     }
     // spinner
     target.toggleClass('fa-spinner fa-spin list-save', mode);
-  };
+  }
 
   var my = {
     initFavoriteOrderingFunctionality: initFavoriteOrderingFunctionality,

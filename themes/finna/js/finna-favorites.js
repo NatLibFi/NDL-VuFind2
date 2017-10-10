@@ -22,7 +22,7 @@ finna.favorites = (function finnaFavorites() {
     dialog.siblings('h1').remove();
     form.remove();
     dialog.append(response.data);
-  };
+  }
 
   function upload() {
     var spinner = $('<i>').addClass('fa fa-spinner fa-spin');
@@ -45,7 +45,7 @@ finna.favorites = (function finnaFavorites() {
         spinner.remove();
       }
     });
-  };
+  }
 
   return {
     upload: upload
