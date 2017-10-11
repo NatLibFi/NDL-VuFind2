@@ -172,6 +172,11 @@
           <? endif; ?>
       </div>
     <? endif; ?>
+    <? if ($this->results->getResultTotal() > 0): ?>
+      <span class="hidden-print">
+        <?=$this->search()->renderSpellingSuggestions($this->transEsc('spell_suggest'), $this->results, $this) ; ?>
+      </span>
+    <? endif; ?>
 
     <? /* End Listing Options */ ?>
     <? if ($recordTotal < 1): ?>
