@@ -60,6 +60,9 @@ finna.organisationMap = (function finnaOrganisationMap() {
     // Map points
     $.each(organisations, function mapOrganisation(ind, obj) {
       if (obj.address != null && obj.address.coordinates !== null) {
+        if (typeof obj.address.coordinates === 'undefined') {
+          return true;
+        }
         var infoWindowContent = obj.map.info;
         var point = obj.address.coordinates;
 

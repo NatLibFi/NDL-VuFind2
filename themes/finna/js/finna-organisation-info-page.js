@@ -438,7 +438,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     }
 
     mapHolder = holder.find('.map-widget');
-    map = finna.organisationMap();
+    map = finna.organisationMap;
     map.init(mapHolder[0], mapTileUrl, attribution);
 
     $(map).on('marker-click', function onClickMarker(ev, id) {
@@ -467,8 +467,8 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       return false;
     });
 
-    service = finna.organisationInfo();
-    infoWidget = finna.organisationInfoWidget();
+    service = finna.organisationInfo;
+    infoWidget = finna.organisationInfoWidget;
 
     var widgetHolder = holder.find('.organisation-info');
     widgetHolder.on('detailsLoaded', function onDetailsLoaded(ev, id) {
@@ -481,7 +481,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     infoWidget.init(widgetHolder, service);
 
     if (consortiumInfo) {
-      consortium = new finna.organisationInfoPageConsortium();
+      consortium = finna.organisationInfoPageConsortium;
       consortium.init(parent, holder);
     }
 
