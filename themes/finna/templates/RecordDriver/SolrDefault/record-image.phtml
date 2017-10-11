@@ -1,5 +1,6 @@
 <!-- START of: finna - RecordDriver/SolrDefault/record-image.phtml -->
 <? $formats = $this->driver->tryMethod('getFormats'); ?>
+<? $largeImageLayout = $this->driver->getSourceIdentifier() == 'Solr' && in_array($this->driver->getRecordType(), ['lido', 'forward']); ?>
 <div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>">
   <div class="recordcover-holder" data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
 
@@ -11,10 +12,10 @@
         <? if (count($images) <= 1): ?>
           <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
         <? endif; ?>
-        <? if (!empty($images[0]['urls']['large']) && $this->layout()->templateDir == 'record'): ?>
-        <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['large']);?>"/>
+        <? if (!empty($images[0]['urls']['large']) && $this->layout()->templateDir == 'record' && $largeImageLayout): ?>
+          <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['large']);?>"/>
         <? else: ?>
-        <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['medium']);?>"/>
+          <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['medium']);?>"/>
         <? endif; ?>
         <? if (isset($images[0]['large'])): ?>
          <i class="fa fa-magnify hidden-print"></i>
