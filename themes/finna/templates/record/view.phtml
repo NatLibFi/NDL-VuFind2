@@ -95,8 +95,10 @@
   </div>
 
   <div class="sidebar right">
-      <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr' && !in_array($this->driver->getRecordType(), ['lido', 'forward'])): ?>
+      <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+        <div id="organisation-menu" <?= in_array($this->driver->getRecordType(), ['lido', 'forward']) ? "class='hidden'" : ""?>>
           <?=$this->render('record/record-organisation-menu.phtml') ?>
+        </div>
       <? endif; ?>
       <? foreach ($this->related()->getList($this->driver) as $current): ?>
           <?=$this->related()->render($current)?>

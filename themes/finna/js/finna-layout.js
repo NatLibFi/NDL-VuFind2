@@ -480,6 +480,8 @@ finna.layout = (function() {
                     $(this).parent().addClass('no-image');
                     $('.large-image .record-image-container').addClass('hide-image');
                     $('.media-left, .media-right').removeClass('large-image');
+                    $('.media-left #organisation-menu, .media-right #organisation-menu').addClass('hidden');
+                    $('.sidebar #organisation-menu').removeClass('hidden');
                     $('.record-main').addClass('mainbody left');
                     var href = $(this).parent().attr('href');
                     $(this).parent().attr({'href': href.split('#')[0], 'title': ''});

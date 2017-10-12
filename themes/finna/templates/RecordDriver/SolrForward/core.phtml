@@ -36,9 +36,9 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?> <?= !empty($images[0]['urls']['medium']) ? 'large-image' : ''?>">
 
-      <div class="recordURLs local-available-online-record">
-        <div class="truncate-field">
-          <? if (!empty($videoUrls)): ?>
+      <? if (!empty($videoUrls)): ?>
+        <div class="recordURLs local-available-online-record">
+          <div class="truncate-field">
               <? foreach ($videoUrls as $url): ?>
                 <?
                   $renderedURLs[] = $url['url'];
@@ -55,9 +55,9 @@
                   </a>
                 </div>
               <? endforeach; ?>
-          <? endif; ?>
+          </div>
         </div>
-      </div>
+      <? endif; ?>
 
     <div class="image-information">
       <div class="cover-wrapper">
@@ -79,7 +79,9 @@
     </div>
 
     <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+      <div id="organisation-menu">
         <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
     <? endif; ?>
 
     <div class="record-rating text-left">
