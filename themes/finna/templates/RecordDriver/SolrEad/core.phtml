@@ -12,11 +12,15 @@
       }
     }
   }
+  $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
+  $images = $img->getAllImagesAsCoverLinks(
+      $this->layout()->userLang, $params
+  );
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
-  <div class="media-<?=$thumbnailAlignment ?>">
+  <div class="media-<?=$thumbnailAlignment ?> <?= !empty($images[0]['urls']['medium']) ? 'large-image' : ''?>">
 
     <? $urls = $this->record($this->driver)->getLinkDetails(); ?>
     <? if (!empty($videoUrls)): ?>
@@ -56,7 +60,13 @@
            // getPreviewData() (should stay here) and
            // getPreviewLink() (can go in your desired tab) ?>
         <?=$this->record($this->driver)->getPreviews()?>
+    </div>
+
+    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+      <div id="organisation-menu">
+          <?=$this->render('record/record-organisation-menu.phtml') ?>
       </div>
+    <? endif; ?>
 
     <div class="record-rating">
       <div class="rating-stars">

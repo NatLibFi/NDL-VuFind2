@@ -84,7 +84,7 @@
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
-  <div class="record-main <?= $noImage || !in_array($this->driver->getRecordType(), ['lido', 'forward']) ? 'mainbody left' : ''?>">
+  <div class="record-main <?= $noImage || !in_array($this->driver->getRecordType(), ['lido', 'forward', 'ead']) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId" />
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource" />
     <?=$this->flashmessages()?>
@@ -96,7 +96,7 @@
 
   <div class="sidebar right">
       <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
-        <div id="organisation-menu" <?= in_array($this->driver->getRecordType(), ['lido', 'forward']) ? "class='hidden'" : ""?>>
+        <div id="organisation-menu" <?= in_array($this->driver->getRecordType(), ['lido', 'forward', 'ead']) ? "class='hidden'" : ""?>>
           <?=$this->render('record/record-organisation-menu.phtml') ?>
         </div>
       <? endif; ?>
