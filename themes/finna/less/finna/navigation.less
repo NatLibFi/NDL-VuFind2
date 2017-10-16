@@ -32,6 +32,9 @@
     display: block;
     > a {
       transition: background .2s ease-in-out;
+      @media(max-width: @screen-md-max){
+        padding: 0 10px;
+      }
     }
   }
 }
@@ -333,6 +336,7 @@
     margin: 0;
   }
 }
+
 
 // Menu position and menu carets
 .navbar-nav > li > .dropdown-menu {
