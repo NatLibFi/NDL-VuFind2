@@ -1,6 +1,6 @@
 .browsebar {
   width: 100%;
-  background-color: fadeout(@gray,10%); 
+  background-color: @brand-primary;
   bottom:0;
   position: absolute; 
 
@@ -71,6 +71,26 @@
     .navbar {
       min-height: 40px;
       margin: 10px 0px;
+    }
+  }
+}
+
+.browsebar {
+  padding-right: 15px;
+  .nav-dropdown-toggle {
+    border: none;
+    background-color: @brand-primary;
+    color: white;
+  }
+  .nav-dropdown.priority-nav__dropdown > li{
+    padding: 10px 15px;
+    background-color: @brand-primary;
+    width: 100%;
+    & > .iconlabel {
+      color: @body-bg;
+    }
+    nav-dropdown-toggle {
+
     }
   }
 }

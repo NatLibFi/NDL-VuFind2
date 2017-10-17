@@ -71,6 +71,7 @@ return [
         'vendor/video-js.min.css',
         'vendor/bootstrap-slider.min.css',
         'finna.css',
+        'vendor/priority-nav-core.css'
     ],
     'js' => [
         'vendor/event-stub.js:lt IE 9',
@@ -98,7 +99,8 @@ return [
         'vendor/jquery.touchSwipe.min.js',
         'vendor/bootstrap-multiselect.min.js',
         'vendor/bootstrap-slider.min.js',
-        'vendor/gauge.min.js'
+        'vendor/gauge.min.js',
+        'vendor/priority-nav.min.js'
     ],
     'less' => [
         'active' => false

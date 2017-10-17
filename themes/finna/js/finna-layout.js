@@ -824,6 +824,18 @@ finna.layout = (function() {
 
     };
 
+    var initPriorityNav = function () {
+        var wrapper = document.querySelector(".nav-wrapper");
+        var nav = priorityNav.init({
+            mainNavWrapper: ".nav-wrapper",
+            mainNav: ".nav-ul",
+            navDropdownLabel: '<span class="caret"></span>',
+            navDropdownClassName: "nav-dropdown",
+            navDropdownToggleClassName: "nav-dropdown-toggle",
+            breakPoint: 300
+        });
+    };
+
     var my = {
         getOrganisationPageLink: getOrganisationPageLink,
         isTouchDevice: isTouchDevice,
@@ -868,6 +880,7 @@ finna.layout = (function() {
             initVideoPopup();
             initKeyboardNavigation();
             initFiltersToggle();
+            initPriorityNav();
         }
     };
 

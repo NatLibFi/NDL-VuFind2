@@ -736,7 +736,6 @@ h4.record-organisation-header {
   position: relative;
   display: inline-block;
   margin-right: 8px;
-  margin-left: 8px;
   margin-bottom: -6px;
   background-color: currentColor;
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/cc.svg);
@@ -771,7 +770,7 @@ h4.record-organisation-header {
 }
 
 .browsebar .iconlabel.finna-logo::before {
-  content:'';    
+  content:'';
   width: 24px;
   height: 24px;
   position: relative;
@@ -782,6 +781,22 @@ h4.record-organisation-header {
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/finna.svg);
   mask-image: url(../../../themes/finna/images/pictograms/finna.svg); 
 }
+
+.browsebar .iconlabel.format-1journalarticle::before,
+.browsebar .iconlabel.format-1physicalobjectother::before,
+.browsebar .iconlabel.format-1document::before,
+.browsebar .iconlabel.format-1soundrecord::before,
+.browsebar .iconlabel.format-1bookbook::before {
+  content:'';
+  width: 24px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+  margin-bottom: -6px;
+  background-color: currentColor;
+}
+
 
 .download {
   display: inline-block;
