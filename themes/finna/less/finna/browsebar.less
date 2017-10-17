@@ -2,7 +2,9 @@
   width: 100%;
   background-color: @brand-primary;
   bottom:0;
-  position: absolute; 
+  position: absolute;
+  padding-right: 15px;
+  color: @body-bg;
 
 }
 
@@ -18,6 +20,7 @@
 
 .browsebar .navbar {
   border-radius: 0;
+  border: none;
   max-width: none;
   background-color: transparent;
 }
@@ -84,8 +87,22 @@
     & > .iconlabel {
       color: @body-bg;
     }
-    nav-dropdown-toggle {
+  }
+  .nav-dropdown-toggle {
+    height: 64px;
+  }
+  nav.navbar {
+    width: 70%;
+    float: left;
+  }
 
+  .organisation-link {
+    width: 30%;
+    float: right;
+    margin: 15px 0;
+    a {
+      color: #fff;
+      font-size: 1.1em;
     }
   }
 }
