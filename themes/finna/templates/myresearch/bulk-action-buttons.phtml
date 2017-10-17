@@ -22,7 +22,7 @@
       <button class="btn btn-primary" id="<?=$this->idPrefix?>delete_list_items_<?=!is_null($this->list) ? $this->escapeHtmlAttr($this->list->id) : ''?>" type="submit" name="delete" value="<?=$this->transEsc('Delete')?>" title="<?=$this->transEsc('delete_selected')?>" disabled<?if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<? endif; ?>><i class="fa fa-times"></i> <?=$this->transEsc('bookbag_delete_selected')?></button>
     <? endif; ?>
       <? if ($lists): ?>
-      <span class="jump-menu-style controls fa-arrow-down disabled">
+      <span class="jump-menu-style controls btn btn-primary fa-arrow-down disabled">
         <select id="add-to-list" class="form-control" autocomplete="off" disabled<?if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<? endif; ?>>
           <option value=""><?= $this->translate('Add to List'); ?>&hellip;</option>
           <? foreach ($lists as $l): ?>

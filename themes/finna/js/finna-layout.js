@@ -478,8 +478,10 @@ finna.layout = (function() {
                 }
                 if (this.naturalWidth && this.naturalWidth == 10 && this.naturalHeight == 10) {
                     $(this).parent().addClass('no-image');
-                    $('.media-left, .media-right').removeClass('large-image');
                     $('.large-image .record-image-container').addClass('hide-image');
+                    $('.media-left, .media-right').removeClass('large-image');
+                    $('.media-left #organisation-menu, .media-right #organisation-menu').addClass('hidden');
+                    $('.sidebar #organisation-menu').removeClass('hidden');
                     $('.record-main').addClass('mainbody left');
                     var href = $(this).parent().attr('href');
                     $(this).parent().attr({'href': href.split('#')[0], 'title': ''});

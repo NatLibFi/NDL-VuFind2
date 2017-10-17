@@ -12,11 +12,15 @@
       }
     }
   }
+  $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
+  $images = $img->getAllImagesAsCoverLinks(
+      $this->layout()->userLang, $params
+  );
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
-  <div class="media-<?=$thumbnailAlignment ?>">
+  <div class="media-<?=$thumbnailAlignment ?> <?= !empty($images[0]['urls']['medium']) ? 'large-image' : ''?>">
 
     <? $urls = $this->record($this->driver)->getLinkDetails(); ?>
     <? if (!empty($videoUrls)): ?>
@@ -43,7 +47,7 @@
         <div class="cover-wrapper">
           <? /* Display thumbnail if appropriate: */ ?>
           <? if ($img): ?>
-            <?=$img->render('record', ['small' => ['w' => 50, 'h' => 50], 'medium' => ['w' => 1200, 'h' => 1200]]) ?>
+            <?=$img->render('record', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]) ?>
           <? endif;?>
           <? /* Display qrcode if appropriate: */ ?>
           <? $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
@@ -56,7 +60,13 @@
            // getPreviewData() (should stay here) and
            // getPreviewLink() (can go in your desired tab) ?>
         <?=$this->record($this->driver)->getPreviews()?>
+    </div>
+
+    <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+      <div id="organisation-menu">
+          <?=$this->render('record/record-organisation-menu.phtml') ?>
       </div>
+    <? endif; ?>
 
     <div class="record-rating">
       <div class="rating-stars">
@@ -71,17 +81,17 @@
       <?=$this->render($template)?>
     </div>
     <? endif; ?>
-
   </div>
   <? $thumbnail = ob_get_contents(); ?>
 <? ob_end_clean(); ?>
 <? $this->headScript()->appendFile("finna-record.js"); ?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
+  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <? if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <? endif; ?>
   <div class="media-body record-information">
-      <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       <? if ($serviceURLs = $this->driver->getServiceURLs()): ?>
         <div class="recordURLs">
           <? foreach ($serviceURLs as $current): ?>
