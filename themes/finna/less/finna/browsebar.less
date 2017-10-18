@@ -3,14 +3,11 @@
   background-color: fadeout(@brand-primary, 6%);
   bottom:0;
   position: absolute;
-  padding-right: 15px;
   color: @body-bg;
-
 }
 
 .browsebar .nav {
   margin-left: 1em;
-  margin-right: 1em;
 }
 
 .browsebar .nav>li .iconlabel:before {
@@ -56,7 +53,7 @@
   text-transform: uppercase;
   font-size: 0.9em;
   font-weight: 600;
-  padding-right: 8px;
+  padding-right: 25px;
 }
 
 @media (max-width: @screen-sm) {
@@ -86,23 +83,39 @@
     border: none;
     background-color: transparent;
     color: white;
+    @media(max-width: @screen-sm) {
+      font-size: 0.9em;
+    }
     &:hover {
       background-color: darken(@brand-primary, 5%);
     }
   }
   nav.navbar {
-    width: 70%;
+    width: 100%;
     float: left;
   }
 
   .organisation-link {
     width: 30%;
+    height: 64px;
     float: right;
     background: fadeout(darken(@brand-primary, 8%), 6%);
-    padding: 20px 0;
+    padding: 20px 10px;
     a {
       color: #fff;
       font-size: 1.1em;
+    }
+    & ~ nav.navbar {
+      width: 70%;
+      @media(max-width: @screen-sm){
+        width: 50%;
+      }
+    }
+    @media(max-width: @screen-sm){
+      width: 50%;
+      a {
+        font-size: 0.9em;
+      }
     }
   }
 }
