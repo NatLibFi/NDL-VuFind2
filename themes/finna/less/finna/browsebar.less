@@ -1,6 +1,6 @@
 .browsebar {
   width: 100%;
-  background-color: @brand-primary;
+  background-color: fadeout(@brand-primary, 6%);
   bottom:0;
   position: absolute;
   padding-right: 15px;
@@ -33,7 +33,6 @@
 
 .browsebar .navbar .navbar-nav>li>a {
   color: #fff;
-  padding-right: 8px;
   padding-left: 0px;
   font-size: 1.1em;
   line-height: 64px;
@@ -49,7 +48,7 @@
 }
 
 .browsebar .nav>li>a:hover, .browsebar .nav>li>a:focus {
-  background-color: @brand-primary;
+  background-color: darken(@brand-primary, 5%);
 }
 
 .browsebar-title {
@@ -75,29 +74,22 @@
 
 .browsebar {
   padding-right: 15px;
-  .nav-dropdown-toggle {
-    border: none;
-    background-color: @brand-primary;
-    color: white;
-  }
   .priority-nav__dropdown {
     left: 0;
-  }
-  .nav-dropdown.priority-nav__dropdown > li{
-    padding: 10px 15px;
-    background-color: @brand-primary;
-    width: 100%;
-    & > .iconlabel {
-      color: @body-bg;
+    top: 30px;
+    li>a.iconlabel{
+      margin: 0px;
     }
   }
   .nav-dropdown-toggle {
     height: 64px;
     font-size: 1.1em;
-    //background-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
-    background-image: url(../../../../themes/finna/images/pictograms/chevron-down.svg);
-    background-repeat: no-repeat;
-    background-position: 100% center;
+    border: none;
+    background-color: transparent;
+    color: white;
+    &:hover {
+      background-color: darken(@brand-primary, 5%);
+    }
   }
   nav.navbar {
     width: 70%;
@@ -107,7 +99,7 @@
   .organisation-link {
     width: 30%;
     float: right;
-    background-color: darken(@brand-primary, 8%);
+    background: fadeout(darken(@brand-primary, 8%), 6%);
     padding: 20px 0;
     a {
       color: #fff;

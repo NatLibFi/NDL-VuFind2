@@ -831,7 +831,7 @@ finna.layout = (function() {
             mainNavWrapper: ".nav-wrapper",
             mainNav: ".nav-ul",
             navDropdownLabel: '<span class="other-records"></span>Muita aineistoja<span class="caret"></span>',
-            navDropdownClassName: "nav-dropdown",
+            navDropdownClassName: "dropdown-menu",
             navDropdownToggleClassName: "nav-dropdown-toggle",
             breakPoint: 300
         });
