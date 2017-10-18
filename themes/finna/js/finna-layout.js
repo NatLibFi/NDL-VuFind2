@@ -825,12 +825,12 @@ finna.layout = (function() {
     };
 
     var initPriorityNav = function () {
-        var translated = VuFind.translate('Other records');
+        var translated = VuFind.translate('other_records');
         var wrapper = document.querySelector(".nav-wrapper");
         var nav = priorityNav.init({
             mainNavWrapper: ".nav-wrapper",
             mainNav: ".nav-ul",
-            navDropdownLabel: '<span class="other-records"></span>Muita aineistoja<span class="caret"></span>',
+            navDropdownLabel: '<span class="other-records"></span>' + translated + '<span class="caret"></span>',
             navDropdownClassName: "dropdown-menu",
             navDropdownToggleClassName: "nav-dropdown-toggle",
             breakPoint: 300
