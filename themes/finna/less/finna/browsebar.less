@@ -106,16 +106,12 @@
       font-size: 1.1em;
     }
     & ~ nav.navbar {
-      width: 70%;
-      @media(max-width: @screen-sm){
-        width: 50%;
+      @media(min-width: @screen-sm){
+        width: 70%;
       }
     }
     @media(max-width: @screen-sm){
-      width: 50%;
-      a {
-        font-size: 0.9em;
-      }
+      display: none;
     }
   }
 }
