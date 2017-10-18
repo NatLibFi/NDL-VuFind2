@@ -100,7 +100,7 @@ return [
         'vendor/bootstrap-multiselect.min.js',
         'vendor/bootstrap-slider.min.js',
         'vendor/gauge.min.js',
-        'vendor/priority-nav.min.js'
+        'vendor/priority-nav.js'
     ],
     'less' => [
         'active' => false

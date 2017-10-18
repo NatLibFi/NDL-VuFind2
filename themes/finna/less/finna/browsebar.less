@@ -80,6 +80,9 @@
     background-color: @brand-primary;
     color: white;
   }
+  .priority-nav__dropdown {
+    left: 0;
+  }
   .nav-dropdown.priority-nav__dropdown > li{
     padding: 10px 15px;
     background-color: @brand-primary;
@@ -90,6 +93,11 @@
   }
   .nav-dropdown-toggle {
     height: 64px;
+    font-size: 1.1em;
+    //background-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
+    background-image: url(../../../../themes/finna/images/pictograms/chevron-down.svg);
+    background-repeat: no-repeat;
+    background-position: 100% center;
   }
   nav.navbar {
     width: 70%;
@@ -99,10 +107,14 @@
   .organisation-link {
     width: 30%;
     float: right;
-    margin: 15px 0;
+    background-color: darken(@brand-primary, 8%);
+    padding: 20px 0;
     a {
       color: #fff;
       font-size: 1.1em;
     }
   }
+}
+.browsebar .navbar-nav {
+  float: none;
 }
