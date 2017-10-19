@@ -20,6 +20,7 @@
 @import "finna/content";
 @import "finna/condensed-list";
 @import "finna/highlight";
+@import "finna/home";
 @import "finna/map";
 @import "finna/location-service";
 @import "finna/organisation-list";
@@ -55,6 +56,9 @@
 
 .searchContent {
     background-color: @finna-search-background;
+    & [class^="tooltip-"]>i {
+        color: @brand-primary;
+    }
 }
 
 .template-dir-search.template-name-home .searchContent {
@@ -85,6 +89,10 @@ header {
      @media(min-width:768px) {
      }
      background: @header-background-color;
+}
+// Body without background image (Quick fix!)
+body {
+    background-image: none !important;
 }
 section.main.template-dir-search.template-name-results,
 section.main.template-dir-primo.template-name-search,
@@ -169,51 +177,10 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     }
 }
 
-.introduction h1, .introduction h3 {
-    text-shadow: 2px 3px 0px black;
-    padding: 0 5px 1px 7px;
-    color: #fff;
-    line-height: 1.4em;
-    font-weight: bold;
-    & .brand-third {
-        color: @brand-third;
-    }
-}
-.introduction h1 {
-    font-size: @introduction-header;
-    line-height: (@introduction-header/2.1);
-    @media(max-width:@screen-xs-max) {
-        font-size: (@introduction-header/1.5);
-    }
-}
 .searchLayout {
     .introduction {
         position: relative;
     }
-}
-h1.introductionText, h3.introductionText {
-    margin: 0px 50px 5px 0px;
-    em {
-        font-style: normal;
-    }
-}
-h1.introductionText > em {
-    color: @brand-secondary;
-}
-h3.introductionText > em {
-    color: @link-color;
-}
-.home-1 {
-    background: @home-1-background;
-}
-.home-2 {
-    background: @home-2-background;
-}
-.home-3 {
-    background: @home-3-background;
-}
-.home-4 {
-    background: @home-4-background;
 }
 .document-types {
     li {
@@ -231,14 +198,6 @@ h3.introductionText > em {
         &:hover {
                 text-decoration: none;
         }
-    }
-}
-
-@media(min-width: @screen-sm) {
-    .home-column {
-        width: 50%;
-        float: left;
-        padding-right: 15px;
     }
 }
 
@@ -287,23 +246,6 @@ i.fa.fa-search.backgrounding {
 i.fa.fa-search.backgrounding:before {
     font-size: 100px;
     color: rgba(255,255,255,0.5);
-}
-
-.searchtools-background {
-  background: @finna-searchtools-background;
-}
-
-.searchtools {
-  padding-top: 20px;
-  padding-bottom: 20px;
-  & a {
-  color: @finna-searchtools-color;
-  font-size: 1.1em;
-  font-weight: 600;
-  text-transform: uppercase;
-  margin-right: 15px;
-  display: inline-block;
-  }
 }
 
 footer {
@@ -383,22 +325,6 @@ input[type=number].input-year::-webkit-outer-spin-button {
     font-weight: bold;
     line-height: 1.6em;
     padding-bottom: 20px;
-}
-.left-column-content {
-    background: @home-left-column-background;
-    @media (min-width: @screen-sm){
-        width: 60%;
-        float: left;
-        padding-right: 15px;
-    }
-}
-.right-column-content {
-    background: @home-right-column-background;
-    @media (min-width: @screen-sm) {
-        width: 40%;
-        float: left;
-        padding-left: 15px;
-    }
 }
 
 /* --- Image processing --- */
@@ -572,48 +498,6 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     }
 }
 
-/* --- Record images--- */
-.recordcovers {
-    &.list {
-        position: absolute;
-        left: auto;
-        padding: 0;
-        width: auto;
-        z-index: 3;
-        min-height: 20px;
-        text-align: center;
-        top: 0;
-        & a {
-            background: @body-bg;
-            text-decoration: none;
-            .opacity(.5);
-            font-size: 1em;
-            display: inline-block;
-            width: auto;
-            padding: 1px 5px;
-            margin: 0 4px 4px 0;
-            text-align: center;
-            transition: .2s linear;
-            &:hover {
-                .opacity(1);
-            }
-        }
-    }
-
-    &.record a {
-        margin: 0 5px 5px 0;
-        background-position: 50% 50%;
-        background-size: cover;
-        display: inline-block;
-        height: 42px;
-        margin: 0 5px 5px 0;
-        overflow: hidden;
-        width: 42px;
-        &.truncate-change {
-            opacity: 0;
-        }
-    }
-}
 
 /* --- OpenURLs --- */
 .template-dir-combined, #search-tabs-recommendations-holder, .local-available-online-record {
@@ -919,217 +803,6 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
 }
 .mobileMargin {
     margin: 15px -8.333% 0px -23%;
-}
-// mobile toolbar
-
-@media (max-width: @screen-xs-max) {
-    .mobile-toolbar {
-        border-top: 1px solid @body-bg;
-        position: fixed;
-        height: 44px;
-        bottom: 0;
-        z-index: 2;
-        width: 100%;
-        background: @sidebar-background;
-        & img.qrcode {
-            max-width: initial;
-            margin-left: -36px;
-            border: 2px solid @gray;
-        }
-        & .nav-pills.mobile-actions, .nav-pills.mobile-sharing {
-            float: left;
-            &>li {
-                padding-top: 0px;
-                padding: 0;
-                height: 44px;
-                margin: 0;
-                & .fa {
-                    font-size: 20px;
-                }
-                &>a {
-                    padding: 11px 9px 0px 9px;
-                    height: 44px;
-                    margin-top: 0px;
-                    border-radius: 0px !important;
-                    color: @sidebar-header-text-color;
-                }
-            }
-            & li.whatsapp {
-                margin: 0;
-            }
-            & .addthis-share-buttons {
-                margin-right: 0 !important;
-            }
-        }
-        & .nav-pills.mobile-sharing .whatsapp a, .addthis_toolbox.addthis_default_style a, .nav-pills.mobile-sharing .mail-record a {
-            padding: 12px 10px !important;
-            display: block;
-            &:hover {
-                background: rgba(255,255,255,0.2);
-            }
-            & .fa {
-                padding: 6px;
-            }
-            & i {
-                margin: 0;
-            }
-        }
-        & .nav-pills.mobile-sharing .whatsapp a, .nav-pills.mobile-sharing .mail-record a {
-            padding: 6px 10px !important;
-        }
-        & .dropdown-toggle {
-            color: @btn-primary-color;
-            background: @btn-primary-bg;
-            border-radius: 0;
-            & .fa {
-                font-size: 20px;
-            }
-        }
-        & .dropdown-menu {
-              position: absolute;
-              z-index: 1000;
-              float: none;
-              min-width: initial;
-              padding: 0;
-              margin: 0;
-              list-style: none;
-              font-size: 13px;
-              background-color: @sidebar-background;
-              border: none;
-              border-radius: 0 !important;
-              bottom: 44px;
-              box-shadow: 10px 2px 20px -10px;
-            & > li {
-                border:none;
-                & > a {
-                    color: @body-bg;
-                    padding: 6px 10px 2px 4px;
-                    line-height: 2em;
-                }
-            }
-            & .export-list>a {
-                padding: 5px 10px;
-                color: @sidebar-header-text-color;
-            }
-        }
-        & .nav-pills.library-link {
-            color: @body-bg;
-            float: right;
-            font-size: 1.2em;
-            padding-top: 5px;
-            padding-right: 5px;
-            padding-left: 5px;
-            font-size: .95em;
-            &>li {
-                padding-top: 0px;
-
-                margin: 3px 0px;
-            }
-            & span {
-                margin: 0;
-                text-align: right;
-                display: block;
-                line-height: 1.2em;
-            }
-            &:hover {
-                cursor: pointer;
-                background-color: rgba(255,255,255,0.2);
-            }
-        }
-    }
-    section.template-name-results .sidebar, section.template-name-search .sidebar {
-        position: fixed;
-        top: 120%;
-        transition: top 0.5s ease;
-        background: @body-bg;
-        z-index: 100;
-        width: 100%;
-        height: 100%;
-        overflow-y: scroll;
-        padding-left: 0px;
-        padding-right: 0px;
-        padding-bottom: 40px;
-        &.open {
-            top: 0%;
-            right: 0;
-        }
-        & .list-group.facet:last-child {
-            margin-bottom: 44px;
-        }
-        & .list-group-item.active i.fa.fa-check-square-o:before {
-              content: "\f00c" !important;
-        }
-    }
-    .mobile-navigation {
-        .mobile-toolbar();
-        left: 0;
-        z-index: 60;
-        & i {
-            font-size: 15px;
-            vertical-align: -2px;
-        }
-        li.sidebar-navigation {
-            padding: 11px;
-            color: @sidebar-header-text-color;
-            font-size: 1.1em;
-            &:hover {
-                cursor: pointer;
-            }
-        }
-        span.active-filters {
-            float: right;
-            max-width: 55%;
-        }
-    }
-    .prevent-scroll {
-        overflow: hidden;
-    }
-    .datepicker.datepicker-dropdown {
-        margin-top: -340px;
-    }
-}
-
-//== SYSTEM MESSAGES
-.system-messages {
-    background-color: @brand-warning;
-    padding-top: 0.6em;
-    padding-bottom: 0.6em;
-    text-align: center;
-}
-
-// Popular searches
-.popular-searches {
-    & ul {
-        margin-bottom: 0;
-    }
-    & li {
-        margin-bottom: 10px;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-    }
-    & .position {
-        color: @btn-primary-color;
-        background: @btn-primary-bg;
-        border-radius: 50%;
-        display: inline-block;
-        height: 30px;
-        line-height: 30px;
-        margin-right: 6px;
-        padding: 0;
-        text-align: center;
-        width: 30px;
-    }
-    & a {
-        text-decoration: none;
-    }
-}
-.popular-search-col {
-    width: 100%;
-    @media (min-width: @screen-sm) {
-        width: 50%;
-        float: left
-    }
 }
 
 // ipad ios 6 fix
