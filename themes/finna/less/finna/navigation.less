@@ -71,6 +71,9 @@
 
 // fix navbar for logoutoptions
 .navbar .logoutOptions {
+  a {
+    color: @action-link-color;
+  }
   & .dropdown-menu {
     right: 5px;
     left: auto;
@@ -97,9 +100,16 @@
     white-space: nowrap;
     display: inline-block;
     vertical-align: bottom;
+    font-size: @content-font-size-base;
+    text-transform: uppercase;
+    font-weight: 600;
     @media (max-width: @screen-sm) {
       max-width: 80px;
     }
+  }
+  .description {
+    font-size: 0.9em;
+    line-height: 1.2em;
   }
 }
 
@@ -120,7 +130,7 @@
   #loginOptions button {
     background-color: @body-bg;
     a {
-      color: @brand-primary;
+      color: @action-link-color;
     }
   }
 }
