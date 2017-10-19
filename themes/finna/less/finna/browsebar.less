@@ -1,9 +1,9 @@
 .browsebar {
   width: 100%;
-  background-color: fadeout(@brand-primary, 6%);
+  background-color: @finna-browsebar-background;
   bottom:0;
   position: absolute;
-  color: @body-bg;
+  color: @finna-browsebar-link-color;
 }
 
 .browsebar .nav {
@@ -29,7 +29,7 @@
 }
 
 .browsebar .navbar .navbar-nav>li>a {
-  color: #fff;
+  color: @finna-browsebar-link-color;
   padding-left: 0px;
   font-size: 1.1em;
   line-height: 64px;
@@ -45,7 +45,7 @@
 }
 
 .browsebar .nav>li>a:hover, .browsebar .nav>li>a:focus {
-  background-color: darken(@brand-primary, 5%);
+  background-color: darken(@finna-browsebar-background, 5%);
 }
 
 .browsebar-title {
@@ -82,12 +82,12 @@
     font-size: 1.1em;
     border: none;
     background-color: transparent;
-    color: white;
+    color: @finna-browsebar-link-color;
     @media(max-width: @screen-sm) {
       font-size: 0.9em;
     }
     &:hover {
-      background-color: darken(@brand-primary, 5%);
+      background-color: darken(@finna-browsebar-background, 5%);
     }
   }
   nav.navbar {
@@ -99,10 +99,10 @@
     width: 30%;
     height: 64px;
     float: right;
-    background: fadeout(darken(@brand-primary, 8%), 6%);
+    background: @finna-browsebar-highlight-background;
     padding: 20px 10px;
     a {
-      color: #fff;
+      color: @finna-browsebar-link-color;
       font-size: 1.1em;
     }
     & ~ nav.navbar {
