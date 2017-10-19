@@ -54,34 +54,6 @@
     display: none;
 }
 
-.searchContent {
-    background-color: @finna-search-background;
-    & [class^="tooltip-"]>i {
-        color: @brand-primary;
-    }
-}
-
-.template-dir-search.template-name-home .searchContent {
-    z-index: 20;
-    -webkit-overflow-scrolling: touch;
-    background-size: cover;
-    background-position: center top;
-    background-image: @background-image-url;    
-    background-repeat: no-repeat;
-    height: 90vh;
-    @media(max-width:@screen-sm-max) {
-        background-size: 150% auto;
-        background-position: 50% 0;
-        & .record-view-header > .container {
-            padding-left: 0;
-            padding-right: 0;
-        }
-    }
-    @media(max-width:@screen-xs-max) {
-         background-size: 350% auto;
-    }
-}
-
 iframe {
     border: none;
 }
@@ -133,9 +105,6 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
 .template-name-content .finna-main-header {
     background: @body-bg;
 }
-.record-view-header {
-    background: @finna-record-header-background;
-}
 
 .logo {
     margin:@field-margin-vertical 0px 0px;
@@ -147,9 +116,7 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
 .logo hr {
     border-bottom: 6px solid @logo-separator-color;
 }
-.navbar {
-    max-width: 1300px; // dont fully scale the navigation bar text
-}
+
 .floating-feedback-btn {
     margin-top: 15px;
     margin-right: 15px;
@@ -517,30 +484,6 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     }
 }
 
-
-/* --- Sidebar --- */
-.sidebar {
-    & .list-group-item.usage-rights-info {
-        margin-top: 5px;
-        margin-left: 20px;
-        & .fa {
-            font-size: 1.1em;
-            float: left;
-            margin-left: -20px;
-            color: @brand-primary;
-        }
-        & .info {
-            margin-left: 5px;
-            margin-top: -3px;
-        }
-        & .more-info {
-            text-align: right;
-            display: block;
-            margin-top: 3px;
-        }
-    }
-}
-
 /* --- Slider accessibility --- */
 .slider {
   .slider-track {
@@ -774,7 +717,6 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     }
 }
 .description.too-long {
-
     & .more-link.wide {
         margin-top: 10px;
         height: 1px;
@@ -793,9 +735,6 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
 .less-link i {
     padding-top: 2px;
     vertical-align: middle;
-}
-.record .recordcover-holder .more-link {
-    width: 100%;
 }
 .resetMarginsPaddings {
     margin: 0px;

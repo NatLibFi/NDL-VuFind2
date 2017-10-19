@@ -841,3 +841,53 @@ mark, .highlight {
     margin-top: -340px;
   }
 }
+/* --- Sidebar --- */
+.sidebar {
+  & .list-group-item.usage-rights-info {
+    margin-top: 5px;
+    margin-left: 20px;
+    & .fa {
+      font-size: 1.1em;
+      float: left;
+      margin-left: -20px;
+      color: @brand-primary;
+    }
+    & .info {
+      margin-left: 5px;
+      margin-top: -3px;
+    }
+    & .more-info {
+      text-align: right;
+      display: block;
+      margin-top: 3px;
+    }
+  }
+}
+
+.searchContent {
+  background-color: @finna-search-background;
+  & [class^="tooltip-"]>i {
+    color: @brand-primary;
+  }
+}
+
+.template-dir-search.template-name-home .searchContent {
+  z-index: 20;
+  -webkit-overflow-scrolling: touch;
+  background-size: cover;
+  background-position: center top;
+  background-image: @background-image-url;
+  background-repeat: no-repeat;
+  height: 90vh;
+  @media(max-width:@screen-sm-max) {
+    background-size: 150% auto;
+    background-position: 50% 0;
+    & .record-view-header > .container {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+  @media(max-width:@screen-xs-max) {
+    background-size: 350% auto;
+  }
+}
