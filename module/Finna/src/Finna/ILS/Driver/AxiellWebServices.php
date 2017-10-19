@@ -1625,7 +1625,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'position' =>
                    isset($reservation->queueNo) ? $reservation->queueNo : '-',
                 'available' => $reservation->reservationStatus == 'fetchable',
-                'modifiable' => $reservation->isEditable == 'yes',
+                'is_editable' => $reservation->isEditable == 'yes',
                 'item_id' => '',
                 'requestId' => $reservation->id,
                 'volume' =>
