@@ -78,7 +78,7 @@ return [
         'finna.js',
         'finna-autocomplete.js',
         'finna-combined-results.js',
-        'image-popup.js',
+        'finna-image-popup.js',
         'finna-adv-search.js',
         'finna-daterange-vis.js',
         'finna-feed.js',
