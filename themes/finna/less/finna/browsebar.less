@@ -53,9 +53,8 @@
   font-size: 0.9em;
   font-weight: 600;
   padding-right: 25px;
-  @media (max-width: @screen-xxs) {
-    display: none;
-  }
+  line-height: 64px;
+  float: left;
 }
 
 @media (max-width: @screen-sm) {
@@ -85,9 +84,6 @@
     border: none;
     background-color: transparent;
     color: @finna-browsebar-link-color;
-    @media(max-width: @screen-sm) {
-      font-size: 0.9em;
-    }
     &:hover {
       background-color: darken(@finna-browsebar-background, 5%);
     }
