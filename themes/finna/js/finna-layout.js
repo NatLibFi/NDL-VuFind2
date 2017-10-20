@@ -818,7 +818,7 @@ finna.layout = (function finnaLayout() {
         navDropdownClassName: "dropdown-menu",
         navDropdownBreakpointLabel: '<span class="other-records"></span>' + VuFind.translate('records') + '<span class="caret"></span>',
         navDropdownToggleClassName: "nav-dropdown-toggle",
-        breakPoint: 700
+        breakPoint: 400
     });
   }
 
