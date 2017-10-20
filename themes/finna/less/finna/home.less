@@ -1,0 +1,120 @@
+.home-1 {
+  background: @home-1-background;
+}
+.home-2 {
+  background: @home-2-background;
+}
+.home-3 {
+  background: @home-3-background;
+}
+.home-4 {
+  background: @home-4-background;
+}
+
+@media(min-width: @screen-sm) {
+  .home-column {
+    width: 50%;
+    float: left;
+    padding-right: 15px;
+  }
+}
+
+.introduction h1, .introduction h3 {
+  padding: 0 5px 1px 7px;
+  color: #fff;
+  line-height: 1.4em;
+  font-weight: bold;
+  & .brand-third {
+    color: @brand-third;
+  }
+}
+.introduction h1 {
+  font-size: @introduction-header;
+  line-height: (@introduction-header/2.1);
+  @media(max-width:@screen-xs-max) {
+    font-size: (@introduction-header/1.5);
+  }
+}
+
+.introduction-text {
+  background-color: fadeout(@brand-primary, 5%);
+  position: relative;
+  display: inline-block;
+  max-width: 400px;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-radius: @border-radius-small @border-radius-small @border-radius-small 0;
+
+  h3 {
+    margin:0;
+    padding: 0;
+    text-shadow: none;
+    font-weight: 400;
+    @media (max-width: @screen-sm) {
+      font-size: 16px;
+    }
+  }
+
+  :before {
+    content: "";
+    position: absolute;
+    bottom: -12px;
+    margin: auto;
+    left:0;
+    border-width: 0 0 12px 12px;
+    border-style: solid;
+    border-color: transparent fadeout(@brand-primary, 5%);
+  }
+}
+
+.left-column-content {
+  background: @home-left-column-background;
+  @media (min-width: @screen-sm){
+    width: 60%;
+    float: left;
+    padding-right: 15px;
+  }
+}
+.right-column-content {
+  background: @home-right-column-background;
+  @media (min-width: @screen-sm) {
+    width: 40%;
+    float: left;
+    padding-left: 15px;
+  }
+}
+
+// Popular searches
+.popular-searches {
+  & ul {
+    margin-bottom: 0;
+  }
+  & li {
+    margin-bottom: 10px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  & .position {
+    color: @btn-primary-color;
+    background: @btn-primary-bg;
+    border-radius: 50%;
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+    margin-right: 6px;
+    padding: 0;
+    text-align: center;
+    width: 30px;
+  }
+  & a {
+    text-decoration: none;
+  }
+}
+.popular-search-col {
+  width: 100%;
+  @media (min-width: @screen-sm) {
+    width: 50%;
+    float: left
+  }
+}

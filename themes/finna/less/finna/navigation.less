@@ -71,6 +71,9 @@
 
 // fix navbar for logoutoptions
 .navbar .logoutOptions {
+  a {
+    color: @action-link-color;
+  }
   & .dropdown-menu {
     right: 5px;
     left: auto;
@@ -97,13 +100,21 @@
     white-space: nowrap;
     display: inline-block;
     vertical-align: bottom;
+    font-size: @content-font-size-base;
+    text-transform: uppercase;
+    font-weight: 600;
     @media (max-width: @screen-sm) {
       max-width: 80px;
     }
   }
+  .description {
+    font-size: 0.9em;
+    line-height: 1.2em;
+  }
 }
 
 .navbar {
+  max-width: 1300px; // dont fully scale the navigation bar text
   .logoutOptions, #loginOptions {
     .login-text {
       @media (max-width: @screen-xxs) {
@@ -120,7 +131,7 @@
   #loginOptions button {
     background-color: @body-bg;
     a {
-      color: @brand-primary;
+      color: @action-link-color;
     }
   }
 }
@@ -573,4 +584,21 @@
       float: right;
     }
   }
+}
+
+.navbar-nav>li>.dropdown-menu {
+  margin-top: -10px;
+}
+
+.navbar-nav>li.lang>a {
+  text-transform: uppercase;
+  font-size: @content-font-size-base !important;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+header {
+  box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
+  z-index: 80;
+  position: relative;
 }

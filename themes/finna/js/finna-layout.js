@@ -824,6 +824,19 @@ finna.layout = (function() {
 
     };
 
+    var initPriorityNav = function () {
+        var wrapper = document.querySelector(".nav-wrapper");
+        var nav = priorityNav.init({
+            mainNavWrapper: ".nav-wrapper",
+            mainNav: ".nav-ul",
+            navDropdownLabel: '<span class="other-records"></span>' + VuFind.translate('other_records') + '<span class="caret"></span>',
+            navDropdownClassName: "dropdown-menu",
+            navDropdownBreakpointLabel: '<span class="other-records"></span>' + VuFind.translate('records') + '<span class="caret"></span>',
+            navDropdownToggleClassName: "nav-dropdown-toggle",
+            breakPoint: 300
+        });
+    };
+
     var my = {
         getOrganisationPageLink: getOrganisationPageLink,
         isTouchDevice: isTouchDevice,
@@ -868,6 +881,7 @@ finna.layout = (function() {
             initVideoPopup();
             initKeyboardNavigation();
             initFiltersToggle();
+            initPriorityNav();
         }
     };
 

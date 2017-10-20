@@ -1,42 +1,4 @@
 /* All custom less-code here */
-
-// Body without background image (Quick fix!)
-
-body {
-  background-image: none !important;
-}
-
-.introduction-text {
-  background-color: fadeout(@brand-primary, 5%);
-  position: relative;
-  display: inline-block;
-  max-width: 400px;
-  padding: 1em;
-  margin-bottom: 1em;
-  border-radius: @border-radius-small @border-radius-small @border-radius-small 0;
-
-  h3 {
-    margin:0;
-    padding: 0;
-    text-shadow: none;
-    font-weight: 400;
-    @media (max-width: @screen-sm) {
-      font-size: 16px;
-    }
-  }
-
-  :before {
-      content: "";
-      position: absolute;
-      bottom: -12px;
-      margin: auto;
-      left:0;
-      border-width: 0 0 12px 12px;
-      border-style: solid;
-      border-color: transparent fadeout(@brand-primary, 5%);
-  }
-}
-
 .bulkActionButtons {
   font-size: 0.8em;
 }
@@ -52,29 +14,6 @@ body {
   font-weight: 600;  
 }
 
-
-.logoutOptions {
-  i.fa-user {
-    color: @brand-primary;
-  }
-  i.fa-sign-out {
-    color: @brand-primary;
-  }
-  .caret {
-    color: @brand-primary;    
-  }
-  .username {
-    font-size: @content-font-size-base;    
-    text-transform: uppercase;
-    font-weight: 600;
-    color: @brand-primary;
-  }
-  .description {
-    font-size: 0.9em;
-    line-height: 1.2em;
-  }
-}
-
 .finna-campaign-content .btn-primary {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
@@ -83,28 +22,7 @@ body {
 .search-controls {
   margin-top: 0.5em;
 }
-.searchContent [class^="tooltip-"]>i {
-  color: @brand-primary;  
-}
-
 .sort-button .dropdown>a {text-transform: uppercase; font-size: 0.9em;}
-
-.navbar-nav>li>.dropdown-menu {
-  margin-top: -10px;
-}
-
-.navbar-nav>li.lang>a {
-  text-transform: uppercase;
-  font-size: @content-font-size-base !important;
-  letter-spacing: 1px;
-  font-weight: 600;
-}
-
-header {
-  box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
-  z-index: 80;
-  position: relative;
-}
 
 .main.template-dir-myresearch .finna-main-header, .main.template-dir-search.template-name-history .finna-main-header, .main.template-dir-librarycards .finna-main-header {
   background: @body-bg;
@@ -156,9 +74,6 @@ h1.content-header {
   background-repeat: no-repeat;
   height: 500px;
   position: relative;
-  @media (max-width: @screen-xs-max) {
-    height: 90vw;
-  }
 }
 
 .template-dir-search.template-name-home .searchContent>.container {
@@ -464,7 +379,7 @@ h4.record-organisation-header {
   width: 24px;
   height: 24px;
   margin-top:-4px;
-  background-color: @brand-primary;
+  background-color: @action-link-color;
   content:'';
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down-circle.svg);
   mask-image: url(../../../themes/finna/images/pictograms/chevron-down-circle.svg);
@@ -477,7 +392,7 @@ h4.record-organisation-header {
   width: 24px;
   height: 24px;
   margin-top:-4px;
-  background-color: @brand-primary;
+  background-color: @action-link-color;
   content:'' !important;
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-up-circle.svg);
   mask-image: url(../../../themes/finna/images/pictograms/chevron-up-circle.svg);
@@ -736,7 +651,6 @@ h4.record-organisation-header {
   position: relative;
   display: inline-block;
   margin-right: 8px;
-  margin-left: 8px;
   margin-bottom: -6px;
   background-color: currentColor;
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/cc.svg);
@@ -750,28 +664,25 @@ h4.record-organisation-header {
   position: relative;
   display: inline-block;
   margin-right: 8px;
-  margin-left: 8px;
   margin-bottom: -6px;
   background-color: currentColor;
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/map-pin.svg);
   mask-image: url(../../../themes/finna/images/pictograms/map-pin.svg); 
 }
 
-.browsebar .iconlabel.other-records::before {
-  content:'';    
+.other-records {
   width: 24px;
   height: 24px;
   position: relative;
   display: inline-block;
-  margin-right: 8px;
   margin-bottom: -6px;
+  margin-right: 8px;
   background-color: currentColor;
   -webkit-mask-image: url(../../../themes/finna/images/pictograms/box.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/box.svg); 
+  mask-image: url(../../../themes/finna/images/pictograms/box.svg);
 }
 
 .browsebar .iconlabel.finna-logo::before {
-  content:'';    
   width: 24px;
   height: 24px;
   position: relative;

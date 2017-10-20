@@ -1,21 +1,15 @@
 .browsebar {
   width: 100%;
-  background-color: fadeout(@gray,10%); 
+  background-color: @finna-browsebar-background;
   bottom:0;
-  position: absolute; 
-
+  position: absolute;
+  color: @finna-browsebar-link-color;
 }
 
 .browsebar .nav {
   margin-left: 1em;
-  margin-right: 1em;
 }
 
-.browsebar .navbar .navbar-nav>li>a {
-  @media (max-width: @screen-md-max) {
-    font-size: 0 !important;
-   } 
-}
 .browsebar .nav>li .iconlabel:before {
   vertical-align: inherit;
   font-size: 1em;   
@@ -23,6 +17,7 @@
 
 .browsebar .navbar {
   border-radius: 0;
+  border: none;
   max-width: none;
   background-color: transparent;
 }
@@ -34,8 +29,7 @@
 }
 
 .browsebar .navbar .navbar-nav>li>a {
-  color: #fff;
-  padding-right: 8px;
+  color: @finna-browsebar-link-color;
   padding-left: 0px;
   font-size: 1.1em;
   line-height: 64px;
@@ -51,7 +45,7 @@
 }
 
 .browsebar .nav>li>a:hover, .browsebar .nav>li>a:focus {
-  background-color: @brand-primary;
+  background-color: darken(@finna-browsebar-background, 5%);
 }
 
 .browsebar-title {
@@ -59,7 +53,7 @@
   text-transform: uppercase;
   font-size: 0.9em;
   font-weight: 600;
-  padding-right: 8px;
+  padding-right: 25px;
 }
 
 @media (max-width: @screen-sm) {
@@ -70,7 +64,57 @@
     }
     .navbar {
       min-height: 40px;
-      margin: 10px 0px;
     }
   }
+}
+
+.browsebar {
+  padding-right: 15px;
+  .priority-nav__dropdown {
+    left: 0;
+    top: 30px;
+    li>a.iconlabel{
+      margin: 0px;
+    }
+  }
+  .nav-dropdown-toggle {
+    height: 64px;
+    font-size: 1.1em;
+    border: none;
+    background-color: transparent;
+    color: @finna-browsebar-link-color;
+    @media(max-width: @screen-sm) {
+      font-size: 0.9em;
+    }
+    &:hover {
+      background-color: darken(@finna-browsebar-background, 5%);
+    }
+  }
+  nav.navbar {
+    width: 100%;
+    float: left;
+  }
+
+  .organisation-link {
+    width: 30%;
+    height: 64px;
+    float: right;
+    background: @finna-browsebar-highlight-background;
+    padding: 20px 10px;
+    a {
+      color: @finna-browsebar-link-color;
+      font-size: 1.1em;
+    }
+    & ~ nav.navbar {
+      @media(min-width: @screen-sm){
+        width: 70%;
+      }
+    }
+    @media(max-width: @screen-sm){
+      display: none;
+    }
+  }
+}
+.browsebar .navbar-nav {
+  float: none;
 }

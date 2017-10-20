@@ -112,6 +112,51 @@
   }
 }
 
+.record-view-header {
+  background: @finna-record-header-background;
+}
+
+.recordcovers {
+  &.list {
+    position: absolute;
+    left: auto;
+    padding: 0;
+    width: auto;
+    z-index: 3;
+    min-height: 20px;
+    text-align: center;
+    top: 0;
+    & a {
+      background: @body-bg;
+      text-decoration: none;
+      .opacity(.5);
+      font-size: 1em;
+      display: inline-block;
+      width: auto;
+      padding: 1px 5px;
+      margin: 0 4px 4px 0;
+      text-align: center;
+      transition: .2s linear;
+      &:hover {
+        .opacity(1);
+      }
+    }
+  }
+
+  &.record a {
+    margin: 0 5px 5px 0;
+    background-position: 50% 50%;
+    background-size: cover;
+    display: inline-block;
+    height: 42px;
+    margin: 0 5px 5px 0;
+    overflow: hidden;
+    width: 42px;
+    &.truncate-change {
+      opacity: 0;
+    }
+  }
+}
 
 .record-uniform-titles {
   font-size: 1.05em;
@@ -240,4 +285,8 @@
     text-transform: uppercase;
     font-weight: 600;
   }
+}
+
+.record .recordcover-holder .more-link {
+  width: 100%;
 }

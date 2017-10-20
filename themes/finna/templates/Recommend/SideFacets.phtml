@@ -146,11 +146,6 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
             <?=$this->context($this)->renderInContext('Recommend/SideFacets/hierarchical-facet.phtml', $contextVars); ?>
             <noscript>
           <? endif; ?>
-          <? if ($title == 'usage_rights_str_mv'): ?>
-            <div class="list-group-item usage-rights-info">
-              <i class="fa fa-info-big"></i><div class="info"><?=$this->translate('usage_rights_info')?></div><a class="more-info" href="<?=$this->url('content-page', ['page' => 'terms'])?>#terms"><?=$this->translate('usage_rights_info_more')?></a>
-            </div>
-          <? endif; ?>
 
           <? $contextVars = [
             'options' => $options,
@@ -160,6 +155,11 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
             'results' => $results
           ]; ?>
           <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
+          <? if ($title == 'usage_rights_str_mv'): ?>
+          <div class="list-group-item usage-rights-info">
+            <i class="fa fa-info-big"></i><div class="info"><?=$this->translate('usage_rights_info')?></div><a class="more-info" href="<?=$this->url('content-page', ['page' => 'terms'])?>#terms"><?=$this->translate('usage_rights_info_more')?></a>
+          </div>
+          <? endif; ?>
           <? if (in_array($title, $hierarchicalFacets)): ?>
             </noscript>
           <? endif; ?>
