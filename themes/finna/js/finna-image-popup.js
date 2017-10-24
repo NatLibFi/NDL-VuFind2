@@ -47,7 +47,7 @@ finna.imagePopup = (function finnaImagePopup() {
     });
 
     // Roll-over thumbnail images: update medium size record image and indices.
-    $('.image-popup-navi').click(function onMouseEnterNavi() {
+    $('.image-popup-navi').click(function(e) {
       var trigger = $(this).closest('.recordcover-holder').find('.image-popup-trigger');
       trigger.data('ind', $(this).data('ind'));
       trigger.data('thumbInd', $(this).data('thumbInd'));
@@ -61,8 +61,8 @@ finna.imagePopup = (function finnaImagePopup() {
       var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
       textContainers.addClass('hidden');
       textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
-      e.preventDefault();
       initRecordImage();
+      e.preventDefault();
     });
 
     // Open image-popup from medium size record image.
