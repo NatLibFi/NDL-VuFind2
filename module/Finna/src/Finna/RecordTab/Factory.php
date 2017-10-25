@@ -76,4 +76,10 @@ class Factory
             $useRecaptcha
         );
     }
+
+    public static function getMusic(ServiceManager $sm)
+    {
+        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
+        return new Music(true);
+    }
 }

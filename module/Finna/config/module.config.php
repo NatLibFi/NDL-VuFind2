@@ -354,6 +354,7 @@ $config = [
                 'factories' => [
                     'map' => 'Finna\RecordTab\Factory::getMap',
                     'usercomments' => 'Finna\RecordTab\Factory::getUserComments',
+                    'music' => 'Finna\RecordTab\Factory::getMusic',
                 ],
                 'invokables' => [
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
@@ -415,6 +416,7 @@ $config = [
                     'Reviews' => 'Reviews',
                     'Map' => 'Map',
                     'Details' => 'StaffViewArray',
+                    'Music' => 'Music',
                 ],
                 'defaultTab' => null,
             ],

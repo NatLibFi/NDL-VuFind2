@@ -111,6 +111,8 @@
   </div>
     <? // N.B. The element/class structure here is important for the ajax tabs to work properly ?>
   <div class="mainbody left record-tabs">
+      <? $x = $this->tabs; ?>
+
       <? if (count($this->tabs) > 0): ?>
         <a name="tabnav"></a>
           <? if (count($this->tabs) > 3): ?>

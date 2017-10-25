@@ -99,13 +99,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Actors', 'getCreditedPresenters', 'data-actors.phtml',
-            [
-                'context' => ['class' => 'recordPresenters']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Uncredited Actors', 'getUncreditedPresenters', 'data-actors.phtml',
+            'Actors', 'getAllPresenters', 'data-actors.phtml',
             [
                 'context' => ['class' => 'recordPresenters']
             ]

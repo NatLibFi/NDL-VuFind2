@@ -57,7 +57,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Online Access', 'Original Work', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'mainFormat', 'Access Restrictions', 'Edition',
             'Archive', 'Archive Series', 'Archive Origination',
-            'Item Description FWD', 'Published in', 'Source Collection'
+            'Item Description FWD', 'Published in', 'Source Collection',
+            'Uncredited Actors'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -150,7 +151,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     }
 
     /**
-    * Filter unnecessary fields from Primo records.
+    * Filter unnecessary fields from Forward records.
     *
     * @param array $coreFields data to filter.
     *
@@ -162,7 +163,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Publisher','Edition', 'Extent', 'Archive', 'Published in', 'Format',
             'Other Titles', 'Presenters', 'Organisation', 'Published', 'Authors',
             'Access Restrictions', 'Item Description', 'Publisher',
-            'Source Collection'
+            'Source Collection', 'Music', 'Distribution', 'Press Reviews',
+            'InspectionDetails',
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
