@@ -65,6 +65,18 @@ class RecordDataFormatterFactory
     {
         $spec = new \VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder();
         $spec->setTemplateLine(
+            'Genre', 'getGenres', 'data-genres.phtml',
+            [
+                'context' => ['class' => 'recordGenres']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Age Limit', 'getAgeLimit', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordAgeLimit']
+            ]
+        );
+        $spec->setTemplateLine(
             'Original Work', 'getOriginalWork', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'recordOriginalWork']
@@ -188,12 +200,6 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'record-extent']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Age Limit', 'getAgeLimit', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordAgeLimit']
             ]
         );
         $spec->setTemplateLine(
@@ -439,12 +445,6 @@ class RecordDataFormatterFactory
             'Additional Information', 'getTitleStatement', 'data-addInfo.phtml',
             [
                 'context' => ['class' => 'recordTitleStatement']
-            ]
-        );
-        $spec->setTemplateLine(
-            'Genre', 'getGenres', 'data-genres.phtml',
-            [
-                'context' => ['class' => 'recordGenres']
             ]
         );
         $spec->setTemplateLine(

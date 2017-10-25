@@ -580,9 +580,16 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         return $str ? [$str] : [];
     }
 
+    /**
+     * Get all presenters
+     *
+     * @return array
+     */
     public function getAllPresenters()
     {
-        return $this->getPresenters();
+        $credited = $this->getPresenters(false);
+        $uncredited = $this->getPresenters(true);
+        return ['credited' => $credited, 'uncredited' => $uncredited];
     }
 
     /**
