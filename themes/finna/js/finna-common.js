@@ -34,13 +34,6 @@ finna.common = (function finnaCommon() {
           }
         }
 
-        var filters = $('.search-filters');
-        if(filters.hasClass('record-page')) {
-          searchInput.focus(function (e) {
-              filters.removeClass("hidden");
-          });
-        }
-
         // Move cursor to the end of the input
         var tmpVal = searchInput.val();
         searchInput.val(' ').focus().val(tmpVal + letter);
@@ -51,6 +44,12 @@ finna.common = (function finnaCommon() {
         e.preventDefault();
       }
     });
+    var filters = $('.search-filters');
+    if(filters.hasClass('record-page')) {
+        searchInput.focus(function (e) {
+            filters.removeClass("hidden");
+        });
+    }
   }
 
   function initQrCodeLink() {
