@@ -71,12 +71,6 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Age Limit', 'getAgeLimit', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordAgeLimit']
-            ]
-        );
-        $spec->setTemplateLine(
             'Original Work', 'getOriginalWork', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'recordOriginalWork']
@@ -200,6 +194,12 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'record-extent']
+            ]
+        );
+        $spec->setTemplateLine(
+            'Age Limit', 'getAgeLimit', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordAgeLimit']
             ]
         );
         $spec->setTemplateLine(
