@@ -354,6 +354,7 @@ $config = [
                 'factories' => [
                     'map' => 'Finna\RecordTab\Factory::getMap',
                     'usercomments' => 'Finna\RecordTab\Factory::getUserComments',
+                    'pressreview' => 'Finna\RecordTab\Factory::getPressReviews',
                     'music' => 'Finna\RecordTab\Factory::getMusic',
                 ],
                 'invokables' => [
@@ -416,6 +417,7 @@ $config = [
                     'Reviews' => 'Reviews',
                     'Map' => 'Map',
                     'Details' => 'StaffViewArray',
+                    'PressReview' => 'PressReview',
                     'Music' => 'Music',
                 ],
                 'defaultTab' => null,

@@ -77,6 +77,26 @@ class Factory
         );
     }
 
+    /**
+     * Factory for PressReview tab plugin.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return PressReview
+     */
+    public static function getPressReviews(ServiceManager $sm)
+    {
+        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
+        return new PressReviews(true);
+    }
+
+    /**
+     * Factory for Music tab plugin.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Music
+     */
     public static function getMusic(ServiceManager $sm)
     {
         $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
