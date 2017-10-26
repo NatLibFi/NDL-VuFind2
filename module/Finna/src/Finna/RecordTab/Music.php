@@ -1,11 +1,10 @@
 <?php
 /**
- * User comments tab
+ * Music tab (SolrForward)
  *
  * PHP version 5
  *
- * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -63,6 +62,9 @@ class Music extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
+        if (empty($this->driver->getMusicInfo())) {
+            $this->enabled = false;
+        };
         return $this->enabled;
     }
 
