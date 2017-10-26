@@ -102,4 +102,17 @@ class Factory
         $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
         return new Music(true);
     }
+
+    /**
+     * Factory for Distribution tab plugin.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Music
+     */
+    public static function getDistribution(ServiceManager $sm)
+    {
+        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
+        return new Distribution(true);
+    }
 }

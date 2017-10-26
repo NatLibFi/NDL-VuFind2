@@ -356,6 +356,7 @@ $config = [
                     'usercomments' => 'Finna\RecordTab\Factory::getUserComments',
                     'pressreview' => 'Finna\RecordTab\Factory::getPressReviews',
                     'music' => 'Finna\RecordTab\Factory::getMusic',
+                    'distribution' => 'Finna\RecordTab\Factory::getDistribution',
                 ],
                 'invokables' => [
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
@@ -419,6 +420,7 @@ $config = [
                     'Details' => 'StaffViewArray',
                     'PressReview' => 'PressReview',
                     'Music' => 'Music',
+                    'Distribution' => 'Distribution',
                 ],
                 'defaultTab' => null,
             ],
