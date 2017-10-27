@@ -357,6 +357,8 @@ $config = [
                     'pressreview' => 'Finna\RecordTab\Factory::getPressReviews',
                     'music' => 'Finna\RecordTab\Factory::getMusic',
                     'distribution' => 'Finna\RecordTab\Factory::getDistribution',
+                    'inspectionDetails' =>
+                        'Finna\RecordTab\Factory::getInspectionDetails',
                 ],
                 'invokables' => [
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
@@ -421,6 +423,7 @@ $config = [
                     'PressReview' => 'PressReview',
                     'Music' => 'Music',
                     'Distribution' => 'Distribution',
+                    'InspectionDetails' => 'InspectionDetails',
                 ],
                 'defaultTab' => null,
             ],

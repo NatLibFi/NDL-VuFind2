@@ -80,11 +80,9 @@ class Factory
     /**
      * Factory for PressReview tab plugin.
      *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return PressReview
+     * @return PressReviews
      */
-    public static function getPressReviews(ServiceManager $sm)
+    public static function getPressReviews()
     {
         return new PressReviews(true);
     }
@@ -92,11 +90,9 @@ class Factory
     /**
      * Factory for Music tab plugin.
      *
-     * @param ServiceManager $sm Service manager.
-     *
      * @return Music
      */
-    public static function getMusic(ServiceManager $sm)
+    public static function getMusic()
     {
         return new Music(true);
     }
@@ -104,12 +100,22 @@ class Factory
     /**
      * Factory for Distribution tab plugin.
      *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return Music
+     * @return Distribution
      */
-    public static function getDistribution(ServiceManager $sm)
+    public static function getDistribution()
     {
         return new Distribution(true);
+    }
+
+    /**
+     * Factory for Distribution tab plugin.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return InspectionDetails
+     */
+    public static function getInspectionDetails()
+    {
+        return new InspectionDetails(true);
     }
 }
