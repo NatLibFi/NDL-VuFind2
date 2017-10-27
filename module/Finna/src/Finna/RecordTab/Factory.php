@@ -86,7 +86,6 @@ class Factory
      */
     public static function getPressReviews(ServiceManager $sm)
     {
-        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
         return new PressReviews(true);
     }
 
@@ -99,7 +98,6 @@ class Factory
      */
     public static function getMusic(ServiceManager $sm)
     {
-        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
         return new Music(true);
     }
 
@@ -112,7 +110,6 @@ class Factory
      */
     public static function getDistribution(ServiceManager $sm)
     {
-        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
         return new Distribution(true);
     }
 }
