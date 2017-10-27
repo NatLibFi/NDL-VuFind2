@@ -589,7 +589,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $credited = $this->getPresenters(false);
         $uncredited = $this->getPresenters(true);
-        return ['credited' => $credited, 'uncredited' => $uncredited];
+        if(!empty($credited['presenters']) || !empty($uncredited['presenters'])) {
+            return ['credited' => $credited, 'uncredited' => $uncredited];
+        }
+        return [];
     }
 
     /**
@@ -1360,5 +1363,30 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
         }
         return $results;
+    }
+
+    /**
+     * Return movie Age limit
+     *
+     * @return string AgeLimit
+     */
+    public function getAgeLimit()
+    {
+        $inspectionDetails = $this->getInspectionDetails();
+        foreach ($inspectionDetails as $inspection) {
+            if (isset($inspection['agerestriction'])) {
+                if (!isset($agerestriction) && $inspection['agerestriction']) {
+                    $agerestriction = $inspection['agerestriction'];
+                    $date = $inspection['date'] ? $inspection['date'] : '';
+                } elseif ($inspection['agerestriction']
+                    && isset($date)
+                    && strtotime($inspection['date']) > strtotime($date)
+                ) {
+                    $agerestriction = $inspection['agerestriction'];
+                    $date = $inspection['date'];
+                }
+            }
+        }
+        return isset($agerestriction) ? $agerestriction : null;
     }
 }

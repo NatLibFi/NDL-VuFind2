@@ -1,4 +1,5 @@
 <? //Don't add START and END comments ?>
+<? if(!empty($data)): ?>
 <div class="truncate-field">
   <? if (!empty($data['credited']['presenters'])): ?>
       <? foreach($data['credited']['presenters'] as $index => $author): ?>
@@ -13,3 +14,5 @@
       <? endforeach; ?>
   <? endif; ?>
 </div>
+<? endif; ?>
+
