@@ -1,6 +1,6 @@
 <?php
 /**
- * Description tab (SolrForward)
+ * Press Review tab (SolrForward)
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace Finna\RecordTab;
 
 /**
- * SolrForward Description tab
+ * SolrForward Press Review tab
  *
  * @category VuFind
  * @package  RecordTabs

@@ -359,7 +359,7 @@ $config = [
                     'distribution' => 'Finna\RecordTab\Factory::getDistribution',
                     'inspectionDetails' =>
                         'Finna\RecordTab\Factory::getInspectionDetails',
-                    'description' => 'Finna\RecordTab\Factory::getDescriptionFWD',
+                    'descriptionFWD' => 'Finna\RecordTab\Factory::getDescriptionFWD',
                     'itemdescription' =>
                         'Finna\RecordTab\Factory::getItemDescription',
                 ],
@@ -427,7 +427,7 @@ $config = [
                     'Music' => 'Music',
                     'Distribution' => 'Distribution',
                     'InspectionDetails' => 'InspectionDetails',
-                    'Description' => 'Description',
+                    'DescriptionFWD' => 'DescriptionFWD',
                     'ItemDescription' => 'ItemDescription',
                 ],
                 'defaultTab' => null,
