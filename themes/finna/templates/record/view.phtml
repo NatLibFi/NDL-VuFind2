@@ -173,7 +173,7 @@
               }
               if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }
               if (!$obj->supportsAjax()) { $tab_classes[] = 'noajax'; }
-              if (strtolower($tab) == 'details') { $tab_classes[] = 'hidden-xs tab-right'; }
+              if (strtolower($tab) == 'details') { $tab_classes[] = 'tab-right'; }
               ?>
             <div <?=count($tab_classes) > 0 ? ' class="' . implode(' ', $tab_classes) . '"' : ''?>>
               <div class="accordion-toggle">
@@ -182,7 +182,7 @@
                   data-background<? endif ?>>
                     <div class="accordion-title">
                     <? if (strtolower($tab) == 'details'): ?><i class="fa fa-<?=$this->escapeHtmlAttr($tab)?>"></i><? endif; ?>
-                    <? if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><? endif; ?><? if (strtolower($tab) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?>
+                    <?=$this->transEsc($desc)?><? if (strtolower($tab) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?>
                     </div>
                 </a>
               </div>

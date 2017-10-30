@@ -145,7 +145,7 @@ finna.record = (function finnaRecord() {
     $(window).trigger('hashchange');
   }
 
-  function applyRecordTabHash() {
+  /*function applyRecordTabHash() {
       var activeTab = $('.record-tabs .accordion a').attr('class');
       var $initiallyActiveTab = $('.record-tabs .accordion.initiallyActive a');
       var newTab = typeof window.location.hash !== 'undefined'
@@ -244,14 +244,44 @@ finna.record = (function finnaRecord() {
 
       registerTabEvents();
       applyRecordTabHash();
+  }*/
+
+  function initRecordTabs() {
+    $('.record-tabs .accordion-toggle').click(function(e){
+      var accordion = $(e.target).closest('.accordion');
+      if (accordion.hasClass('active')){
+        return true;
+      }
+      console.log('eeeee', e);
+
+      e.preventDefault();
+      if(accordion.hasClass('active')){
+        $('.record-tabs').find('.accordion.active').removeClass('active');
+      } else {
+        $('.record-tabs').find('.accordion.active').removeClass('active');
+        accordion.addClass('active');
+
+        var tabid = accordion.find('.accordion-toggle a').attr('class');
+        console.log(tabid);
+        var newTab = getNewRecordTab(tabid).addClass('active');
+        console.log($('.accordion-content').find('.tab-pane'));
+        if(accordion.find('.accordion-content .tab-pane').length == 0) {
+          accordion.find('.accordion-content').append(newTab);
+          accordion.find('.accordion-content');
+          console.log(accordion);
+          return ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
+        }
+      }
+    });
   }
 
   var init = function init() {
     initHideDetails();
     initDescription();
     initRecordNaviHashUpdate();
-    recordDocReady();
-  }
+    //recordDocReady();
+    initRecordTabs();
+  };
 
   var my = {
     checkRequestsAreValid: checkRequestsAreValid,
