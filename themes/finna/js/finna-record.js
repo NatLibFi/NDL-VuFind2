@@ -16,8 +16,8 @@ finna.record = (function finnaRecord() {
             description.wrapInner('<div class="truncate-field wide"><p class="summary"></p></div>');
             finna.layout.initTruncate(description);
             if (!$('.hide-details-button').hasClass('hidden')) {
-              $('.record .description').addClass('too-long');
-              $('.record .description .more-link.wide').click();
+              $('.record-information .description').addClass('too-long');
+              $('.record-information .description .more-link.wide').click();
             }
           } else {
             description.hide();
@@ -45,7 +45,7 @@ finna.record = (function finnaRecord() {
       sessionStorage.removeItem('finna_record_details');
     });
     if ($('.record-information').height() > 350 && $('.show-details-button')[0]) {
-      $('.record .description').addClass('too-long');
+      $('.record-information .description').addClass('too-long');
       if (sessionStorage.getItem('finna_record_details')) {
         $('.show-details-button').click();
       } else {

@@ -1,0 +1,8 @@
+<!-- END of: finna - RecordTab/distribution.phtml -->
+<?
+$formatter = $this->recordDataFormatter();
+$fields = $formatter->getDefaults('core');
+$pressReview = $formatter->getData($this->driver, array($fields['Distribution']));
+?>
+<?= $pressReview[0]['value'] ?>
+<!-- END of: finna - RecordTab/distribution.phtml -->

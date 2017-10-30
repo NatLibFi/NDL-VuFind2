@@ -134,6 +134,15 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
             </div>
         <? elseif (isset($rangeFacets[$title])): ?>
           <?=$this->context($this)->renderInContext('Recommend/SideFacets/range-facet.phtml', ['results' => $results, 'title' => $title, 'facet' => $rangeFacets[$title]]); ?>
+        <? elseif ($title == 'usage_rights_str_mv'): ?>
+            <? $contextVars = [
+                'options' => $options,
+                'allowExclude' => $this->recommend->excludeAllowed($title),
+                'facets_before_more' => $this->recommend->getShowMoreSetting($title),
+                'showMoreInLightbox' => $this->recommend->getShowInLightboxSetting($title),
+                'results' => $results
+            ]; ?>
+            <?=$this->context($this)->renderInContext('Recommend/SideFacets/usage-rights-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
         <? else: ?>
           <? $contextVars = [
             'allowExclude' => $this->recommend->excludeAllowed($title),
@@ -155,11 +164,6 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
             'results' => $results
           ]; ?>
           <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
-          <? if ($title == 'usage_rights_str_mv'): ?>
-          <div class="list-group-item usage-rights-info">
-            <i class="fa fa-info-big"></i><div class="info"><?=$this->translate('usage_rights_info')?></div><a class="more-info" href="<?=$this->url('content-page', ['page' => 'terms'])?>#terms"><?=$this->translate('usage_rights_info_more')?></a>
-          </div>
-          <? endif; ?>
           <? if (in_array($title, $hierarchicalFacets)): ?>
             </noscript>
           <? endif; ?>

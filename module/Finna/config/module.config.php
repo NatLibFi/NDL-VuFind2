@@ -354,6 +354,14 @@ $config = [
                 'factories' => [
                     'map' => 'Finna\RecordTab\Factory::getMap',
                     'usercomments' => 'Finna\RecordTab\Factory::getUserComments',
+                    'pressreview' => 'Finna\RecordTab\Factory::getPressReviews',
+                    'music' => 'Finna\RecordTab\Factory::getMusic',
+                    'distribution' => 'Finna\RecordTab\Factory::getDistribution',
+                    'inspectionDetails' =>
+                        'Finna\RecordTab\Factory::getInspectionDetails',
+                    'descriptionFWD' => 'Finna\RecordTab\Factory::getDescriptionFWD',
+                    'itemdescription' =>
+                        'Finna\RecordTab\Factory::getItemDescription',
                 ],
                 'invokables' => [
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
@@ -415,6 +423,12 @@ $config = [
                     'Reviews' => 'Reviews',
                     'Map' => 'Map',
                     'Details' => 'StaffViewArray',
+                    'PressReview' => 'PressReview',
+                    'Music' => 'Music',
+                    'Distribution' => 'Distribution',
+                    'InspectionDetails' => 'InspectionDetails',
+                    'DescriptionFWD' => 'DescriptionFWD',
+                    'ItemDescription' => 'ItemDescription',
                 ],
                 'defaultTab' => null,
             ],
