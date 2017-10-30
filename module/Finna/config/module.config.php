@@ -359,6 +359,9 @@ $config = [
                     'distribution' => 'Finna\RecordTab\Factory::getDistribution',
                     'inspectionDetails' =>
                         'Finna\RecordTab\Factory::getInspectionDetails',
+                    'description' => 'Finna\RecordTab\Factory::getDescriptionFWD',
+                    'itemdescription' =>
+                        'Finna\RecordTab\Factory::getItemDescription',
                 ],
                 'invokables' => [
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
@@ -424,6 +427,8 @@ $config = [
                     'Music' => 'Music',
                     'Distribution' => 'Distribution',
                     'InspectionDetails' => 'InspectionDetails',
+                    'Description' => 'Description',
+                    'ItemDescription' => 'ItemDescription',
                 ],
                 'defaultTab' => null,
             ],

@@ -108,14 +108,32 @@ class Factory
     }
 
     /**
-     * Factory for Distribution tab plugin.
-     *
-     * @param ServiceManager $sm Service manager.
+     * Factory for Inspection Details tab plugin.
      *
      * @return InspectionDetails
      */
     public static function getInspectionDetails()
     {
         return new InspectionDetails(true);
+    }
+
+    /**
+     * Factory for Description tab plugin.
+     *
+     * @return DescriptionFWD
+     */
+    public static function getDescriptionFWD()
+    {
+        return new DescriptionFWD(true);
+    }
+
+    /**
+     * Factory for Item Description tab plugin.
+     *
+     * @return Description
+     */
+    public static function getItemDescription()
+    {
+        return new ItemDescription(true);
     }
 }

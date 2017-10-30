@@ -129,7 +129,7 @@ class RecordDataFormatterFactory
             ]
         );
         $spec->setTemplateLine(
-            'Description', 'getDescription', 'data-forwardFields.phtml',
+            'Description FWD', 'getDescription', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'recordDescription']
             ]
