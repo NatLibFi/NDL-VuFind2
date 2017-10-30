@@ -1,3 +1,4 @@
+
 //
 // Finna Variables
 // --------------------------------------------------
@@ -129,7 +130,7 @@
 @list-feed-header-color: @gray;
 
 //== Myreresearch custom styles
-@myresearch-header-background:  #d9edf7;
+@myresearch-header-background:  @body-bg;
 @myresearch-tabs-color: @gray;
 
 //== Scaffolding
@@ -353,8 +354,10 @@
 //
 //##
 
-@pager-bg:                             @link-color;
-@pager-hover-bg:                       @brand-primary;
+@pager-bg:                             @action-link-color;
+@pager-hover-bg:                       darken(@action-link-color,0.5  %);
+@pager-disabled-color:                 @gray-mid-light;
+ 
 
 
 //== Form states and alerts

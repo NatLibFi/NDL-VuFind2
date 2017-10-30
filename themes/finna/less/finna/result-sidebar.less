@@ -133,6 +133,12 @@ button.list-group-item {
     }
     .open-link a {
       line-height: normal;
+      i {
+        color: tint(@action-link-color, 22%);
+        :before {
+          vertical-align: middle;
+        }
+      }
     }
     & .more-link, .less-link {
       padding-left: 10px;

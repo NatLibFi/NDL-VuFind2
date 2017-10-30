@@ -1,7 +1,4 @@
 /* All custom less-code here */
-.bulkActionButtons {
-  font-size: 0.8em;
-}
 
 .template-name-home .search-col {
   margin-top: 1em; //Quick fix!
@@ -19,14 +16,6 @@
   padding-bottom: 0.5em;
 }
 
-.search-controls {
-  margin-top: 0.5em;
-}
-.sort-button .dropdown>a {text-transform: uppercase; font-size: 0.9em;}
-
-.main.template-dir-myresearch .finna-main-header, .main.template-dir-search.template-name-history .finna-main-header, .main.template-dir-librarycards .finna-main-header {
-  background: @body-bg;
-}
 
 h1.content-header {
   font-size: 1.5em !important;
@@ -38,34 +27,7 @@ h1.content-header {
   }
 }
 
-// Searchbox
-
-.searchbox-home {
-  .search-tooltip {
-    float:left;
-    width: 10%;
-  }
-  .tooltip-search-pci, .tooltip-search-local {
-    font-size: 1.2em;
-    background: rgba(255,255,255,0.3);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin: auto;
-    line-height: 40px;
-    i {
-      margin-left:4px;
-      vertical-align: 3px;
-      cursor: pointer;
-    }
-  }
-}
-
-.tooltip-search-pci, .tooltip-search-local {
-  i {
-    cursor: pointer;
-  }
-}
+// Search content
 
 .template-dir-search.template-name-home .searchContent {
   background-size: cover;
@@ -83,10 +45,6 @@ h1.content-header {
     margin-right: -50%;
     transform: translate(-50%, -50%);
   }
-
-.back-to-search-text {
-  color: @text-color;
-}
 
 // Content Navigation Menu
 
@@ -194,7 +152,6 @@ h4.record-organisation-header {
   height: 100%;
 }
 
-
 // Finna News
 
 .finna-news {
@@ -243,7 +200,6 @@ h4.record-organisation-header {
   }
 }
 
-
 .finna-campaign-title {
   font-size:3em;
   text-align: center;
@@ -287,274 +243,9 @@ h4.record-organisation-header {
 .facet-group {
   margin-bottom: -2px;
   margin-top: 0px;
-
-  @media (max-width: @screen-sm) {
-    padding-left: 10px;
-    padding-right: 10px;
-  }
 }
 
 // Icons
-
-
-.fa-info-big {
-  display: inline-block;  
-  position: relative;
-  width: 24px;
-  height: 24px;
-  top:-6px;
-  background-color: currentColor;
-  content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/help-circle.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/help-circle.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-}
-
-.searchbox-home .fa-info-big {
-  display: inline-block;  
-  position: relative;
-  width: 32px;
-  height: 32px;
-  top:-4px;
-  background-color: currentColor;
-  content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/help-circle-32px.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/help-circle-32px.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-}
-
-.fa-send-feedback {
-  display: inline-block;
-  position: relative;  
-  width: 18px;
-  height: 18px;
-  background-color: currentColor;
-  content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-}
-
-.list-group.facet .jstree-facet li span.main {
-  padding-left: 10px;
-  margin-left: 22px;
-}
-
-.list-group.facet .jstree-open>.jstree-ocl:before {
-  display: inline-block;  
-  width: 18px;
-  height: 18px;
-  margin: 2px;
-  background-color: @brand-primary;
-  content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/minus-circle.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/minus-circle.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-}
-
-.list-group.facet .jstree-closed>.jstree-ocl:before {
-  display: inline-block;  
-  width: 18px;
-  height: 18px;
-  margin: 2px;
-  background-color: @brand-primary;
-  content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/plus-circle.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/plus-circle.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-}
-
-.list-group.facet .jstree-facet .jstree-container-ul .jstree-icon {
-  margin: 0 !important; // Quick hack
-  padding: 0 !important; // Quick hack
-}
-
-.list-group.facet .list-group-item.title.collapsed:after {
-  display: inline-block;  
-  width: 24px;
-  height: 24px;
-  margin-top:-4px;
-  background-color: @action-link-color;
-  content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down-circle.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-down-circle.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-}
-
-.facet-group [data-toggle="collapse"]:after {
-  display: inline-block;  
-  width: 24px;
-  height: 24px;
-  margin-top:-4px;
-  background-color: @action-link-color;
-  content:'' !important;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-up-circle.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-up-circle.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-}
-
-.fa-sign-in {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  margin-right:4px;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/log-in.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/log-in.svg);
-  &:before {
-    display: none;
-  }
-}
-
-.fa-user {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  margin-right:4px;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/user.svg);
-  mask-image: url(../../../themes/finna/images/user.svg);
-  &:before {
-    display: none;
-  }
-}
-
-.fa-sign-out {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  margin-right:4px;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/log-out.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/log-out.svg);
-  &:before {
-    display: none;
-  }
-}
-
-.template-dir-myresearch .fa-sign-out {
-  background-color: @body-bg;  
-}
-
-.pager .disabled>a {
-  color: @gray-mid-light;
-  & :hover {
-    color: @gray-mid-light;
-  }
-}
-.pager li.disabled .fa-arrow-left {
-  display: inline-block;  
-  width: 20px;
-  height: 20px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-  &:before {
-    display: none;
-  }
-}
-
-.pager .fa-arrow-left {
-  display: inline-block;  
-  width: 20px;
-  height: 20px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-  &:before {
-    display: none;
-  }
-}
-
-.pager .fa-arrow-right  {
-  display: inline-block;  
-  width: 20px;
-  height: 20px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/arrow-right.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-  &:before {
-    display: none;
-  }
-}
-
-.back-to-search .fa-arrow-left {
-  display: inline-block;  
-  width: 24px;
-  height: 24px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/arrow-left.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-  &:before {
-    display: none;
-  }
-}
-
-.pagination-button .fa-arrow-left {
-  width: 20px;
-  height: 20px;
-  margin-left:0px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-left.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-left.svg);
-  &:before {
-    display: none;
-  }
-}
-
-.pagination-button .fa-first-page {
-  width: 20px;
-  height: 20px;
-  margin-left:0px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevrons-left.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevrons-left.svg);
-  &:before {
-    display: none;
-  }
-}
-
-.pagination-button .fa-arrow-right {
-  width: 20px;
-  height: 20px;
-  margin-left:0px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-right.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-right.svg);
-  &:before {
-    display: none;
-  }
-}
-
-.pagination-button .fa-last-page {
-  width: 20px;
-  height: 20px;
-  margin-left:0px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevrons-right.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevrons-right.svg);
-  &:before {
-    display: none;
-  }
-}
 
 .fa-play-circle {
   width: 24px;
@@ -573,101 +264,8 @@ h4.record-organisation-header {
   color: @text-color;
 }
 
-.pager li>a, .pager li>span {
-  background: @brand-primary;
-}
-
-.pager .disabled>a {
-  border: 2px solid @gray-mid-light;
-  background: transparent; 
-}
-
-.pager .disabled>a:hover {
-  background: transparent;
-}
-
-.pager li.disabled i  {
-  background-color: @gray-mid-light;
-}
-
- .paginationSimple  i.fa-arrow-right {
-  width: 24px;
-  height: 24px;
-  position: relative !important;
-  bottom: -6px;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/arrow-filled-right.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/arrow-filled-right.svg);
-  &:before {
-    display: none;
-  }
-}
-
 .list-group.facet .jstree-facet .jstree-container-ul .jstree-icon {
   color: @gray-light;
-}
-
-.caret {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  margin-right: 4px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/chevron-down.svg);
-}
-
-.browsebar .iconlabel.format-1imageimage::before {
-  content:'';    
-  width: 24px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  margin-right: 8px;
-  margin-left: 8px;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/image.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/image.svg); 
-}
-
-.browsebar .iconlabel.format-1videovideo::before {
-  content:'';    
-  width: 24px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  margin-right: 8px;
-  margin-left: 8px;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/video.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/video.svg); 
-}
-
-.browsebar .iconlabel.cc-license::before {
-  content:'';    
-  width: 24px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  margin-right: 8px;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/cc.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/cc.svg); 
-}
-
-.browsebar .iconlabel.finna-street::before {
-  content:'';    
-  width: 24px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  margin-right: 8px;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/map-pin.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/map-pin.svg); 
 }
 
 .other-records {
@@ -682,58 +280,3 @@ h4.record-organisation-header {
   mask-image: url(../../../themes/finna/images/pictograms/box.svg);
 }
 
-.browsebar .finna-logo {
-  width: 24px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  margin-right: 8px;
-  margin-bottom: -6px;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/finna.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/finna.svg); 
-}
-
-.download {
-  display: inline-block;
-  position: relative;
-  width: 18px;
-  height: 18px;
-  background-color: currentColor;
-  content:'';
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/download.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/download.svg);
-  -webkit-mask-size: cover;
-  mask-size: cover;
-  top: 4px;
-}
-
-.view-button i.fa-list::before {
-  width: 32px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/list-wide.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/list-wide.svg); 
-}
-
-.view-button i.fa-grid::before {
-  width: 32px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/grid-wide.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/grid-wide.svg); 
-}
-
-.view-button i.fa-condensed::before {
-  width: 32px;
-  height: 24px;
-  position: relative;
-  display: inline-block;
-  background-color: currentColor;
-  -webkit-mask-image: url(../../../themes/finna/images/pictograms/condensed-list-wide.svg);
-  mask-image: url(../../../themes/finna/images/pictograms/condensed-list-wide.svg); 
-}

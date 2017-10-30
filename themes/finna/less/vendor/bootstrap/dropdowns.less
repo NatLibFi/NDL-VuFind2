@@ -4,16 +4,12 @@
 
 
 // Dropdown arrow/caret
-.caret {
-  display: inline-block;
-  width: 0;
-  height: 0;
-  margin-left: 2px;
+
+
+.caret::before {
+  font-family: icomoon;
+  content: "\E613";
   vertical-align: middle;
-  border-top:   @caret-width-base dashed;
-  border-top:   @caret-width-base solid ~"\9"; // IE8
-  border-right: @caret-width-base solid transparent;
-  border-left:  @caret-width-base solid transparent;
 }
 
 // The dropdown wrapper (div)

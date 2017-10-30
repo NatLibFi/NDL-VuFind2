@@ -28,16 +28,20 @@
             &.collapsed {
                 border-radius: 0px;
                 &:after {
-                    font-family:'icomoon';
-                    content:'\e613';
+                    font-family: icomoon;
+                    font-size: 24px;                                   
+                    content: "\e916";
+                    color: @action-link-color;
                 }
             }
             &:after {
-                font-family:'icomoon';
-                content:'\e612';
+                font-family: icomoon; 
+                font-size: 24px;               
+                content: "\e91a";
                 float: right;
                 position: absolute;
                 right: 8px;
+                color: @action-link-color;                
             }
         }
     & .collapse, .collapsing {        
@@ -72,15 +76,12 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        padding-left: 1px; /* Fix Firefox cutting the checkboxes */
-        margin-left: 13px;
+        padding-left: 10px;
+        margin-left: 15px;
     }
-
     .jstree-facet .jstree-container-ul .jstree-icon {
       color: @gray-light;
     }
-
-
     & a {
         color: @link-color;
         &:hover {
@@ -152,12 +153,13 @@
     text-decoration: inherit;
     cursor: pointer;
     padding: 0;
+    color: @action-link-color;
     }
     & .jstree-open > .jstree-ocl:before {
-        content: "\e027";
+        content: "\e907";
     }
     & .jstree-closed > .jstree-ocl:before {
-        content: "\e025";
+        content: "\e906";
     }
     & .jstree-leaf > .jstree-ocl:before {
         content: " ";

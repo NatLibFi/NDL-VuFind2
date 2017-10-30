@@ -51,8 +51,7 @@
   .search-header { display: flex; }
   .search-stats { flex-grow: 1; }
   .search-controls { 
-    text-align: right;
-    margin-top: 1em;  
+    text-align: right;    
   }
 }
 
@@ -68,13 +67,14 @@
     border-radius: 10px;
   }
   & .dropdown > a {
+    text-transform: uppercase;
     background: transparent;
     border: 2px solid @brand-primary;     
     color: @brand-primary;
     border-radius: @border-radius-small;
-    font-size: 1em;
+    font-size: 0.9em;
     padding: 2px 5px;
-    display: block;
+    display: inline-block;
     & span {
       padding-right: 20px;
     }
@@ -131,6 +131,7 @@
     padding: 2px 5px;
     & i{
       color: @brand-primary;
+      font-size: 1.5em;      
     }
     &.selected {
       border: 2px solid @brand-primary;
