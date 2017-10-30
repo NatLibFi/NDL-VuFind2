@@ -5,58 +5,51 @@
   position: absolute;
   color: @finna-browsebar-link-color;
 }
-
 .browsebar .nav {
   margin-left: 1em;
 }
-
 .browsebar .nav>li .iconlabel:before {
-  vertical-align: inherit;
-  font-size: 1em;   
+  vertical-align: top;
+  font-size: 1.3em;
+  margin-right: 0.5em;   
 }
-
 .browsebar .navbar {
   border-radius: 0;
   border: none;
   max-width: none;
   background-color: transparent;
 }
-
 .browsebar .nav>li {
   display: inline-block;
   line-height: normal;
-
 }
-
 .browsebar .navbar .navbar-nav>li>a {
   color: @finna-browsebar-link-color;
-  padding-left: 0px;
+  padding-left: 5px;
+  padding-right: 5px;
   font-size: 1.1em;
-  line-height: 64px;
+  height: 64px;
   @media(max-width: @screen-sm){
-    line-height: 40px;
+    height: 40px;
   }
 }
-
 .browsebar .navbar .navbar-nav>li>a.dropdown-toggle {
   padding-left: 8px;
   margin-right: 0;
   padding-right: 0;
 }
-
 .browsebar .nav>li>a:hover, .browsebar .nav>li>a:focus {
   background-color: darken(@finna-browsebar-background, 5%);
 }
-
 .browsebar-title {
   text-transform: uppercase;
   font-size: 0.9em;
+  vertical-align: middle;
   font-weight: 600;
   padding-right: 25px;
   line-height: 64px;
   float: left;
 }
-
 @media (max-width: @screen-sm) {
   .browsebar {
     .dropdown-menu {
@@ -94,7 +87,7 @@
   }
 
   .organisation-link {
-    width: 25%;
+    width: 30%;
     float: right;
     background: @finna-browsebar-highlight-background;
     padding: 0px 10px;
@@ -103,19 +96,24 @@
       display: inline-block;
       color: @finna-browsebar-link-color;
       font-size: 1.1em;
-      line-height: 1.5;
-      vertical-align: middle;
+      i {
+        font-style: normal;
+        font-size: 1.1em;
+        line-height: 1.5em;
+        vertical-align: middle;
+        color: @finna-browsebar-link-color;
+      }
     }
     & ~ nav.navbar {
       @media(min-width: @screen-sm){
-        width: 70%;
+        width: 65%;
       }
     }
     @media(max-width: @screen-sm){
       display: none;
     }
     @media(max-width: @screen-md){
-      width: 30%;
+      width: 35%;
     }
   }
 }

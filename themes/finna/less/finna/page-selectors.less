@@ -14,7 +14,7 @@
   & li a i {
     background: @brand-primary;
     border-radius: 50%;
-    padding: 6px;
+    padding: 4px 6px;
     text-align: center;
     color: @btn-primary-color;
     font-size: 1.05em;
@@ -105,47 +105,5 @@
   // paginate_button is used in DataTables
   & > li.paginate_button.disabled > a {
     display: none;
-  }
-}
-
-.pager {
-  text-align: right;
-  & li {
-    display: inline;
-    & > a,
-    & > span {
-      display: inline-block;
-      padding: 4px 7px 2px;
-      color: @body-bg;
-      background-color: @pager-bg;
-      border-radius: 50%;
-      font-size: 16px;
-    }
-  }
-  & li.pager-text {
-    //background-color: none;
-    margin: 0px 10px;
-    font-size: 1.1em;
-    margin-top: -2px;
-  }
-  & li.disabled i {
-    cursor: initial;
-  }
-  & li:not(.disabled) {
-    & > a:hover, & > a:focus {
-      text-decoration: none;
-      cursor: pointer;
-      background-color: darken(@pager-hover-bg, 8%);
-    }
-  }
-  .disabled {
-    > a,
-    > a:hover,
-    > a:focus,
-    > span {
-      background-color: @pager-disabled-color;
-      color: @body-bg;
-      cursor: not-allowed;
-    }
   }
 }

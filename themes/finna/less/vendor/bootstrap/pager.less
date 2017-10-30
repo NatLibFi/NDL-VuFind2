@@ -2,52 +2,60 @@
 // Pager pagination
 // --------------------------------------------------
 
-
 .pager {
-  padding-left: 0;
-  list-style: none;
-  text-align: center;
-  &:extend(.clearfix all);
-  li {
+  text-align: right;
+  & li {
     display: inline;
-    > a,
-    > span {
+    & > a,
+    & > span {
       display: inline-block;
-      padding: 5px 14px;
+      padding: 2px 7px 2px;
+      color: #fff;
       background-color: @pager-bg;
-      border: 1px solid @pager-border;
-      border-radius: @pager-border-radius;
-    }
-
-    > a:hover,
-    > a:focus {
-      text-decoration: none;
-      background-color: @pager-hover-bg;
+      border-radius: 50%;
+      font-size: 20px;
+      border: 2px solid @pager-bg;       
+      
     }
   }
-
+  & li.pager-text {
+    //background-color: none;
+    margin: 0px 10px;
+    font-size: 1.1em;
+    margin-top: -2px;
+  }
+  & li.disabled i {
+    cursor: initial;
+  }
+  & li:not(.disabled) {
+    & > a:hover, & > a:focus {
+      text-decoration: none;
+      cursor: pointer;
+      background-color: darken(@pager-hover-bg, 8%);
+    }
+  }
+  .disabled {
+    > a,
+    > a:hover,
+    > a:focus,
+    > span {
+      background-color: transparent;
+      color: @pager-disabled-color;
+      cursor: not-allowed;
+      border: 2px solid @pager-disabled-color;       
+    }
+  }
   .next {
     > a,
     > span {
       float: right;
     }
   }
-
   .previous {
     > a,
     > span {
       float: left;
     }
   }
-
-  .disabled {
-    > a,
-    > a:hover,
-    > a:focus,
-    > span {
-      color: @pager-disabled-color;
-      background-color: @pager-bg;
-      cursor: @cursor-disabled;
-    }
-  }
 }
+

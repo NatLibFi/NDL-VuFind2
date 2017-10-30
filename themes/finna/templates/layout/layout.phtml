@@ -298,6 +298,11 @@ JS;
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
           <a class="btn btn-primary btn-uppercase floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <? endif; ?>
+      <? if ($this->layout()->templateName === 'home'  && !$this->translationEmpty('tooltip_image_html')): ?>
+         <div class="image-info"> 
+           <span class="tooltip-image" data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<?=$this->transesc('tooltip_image_html')?>"><i class="iconlabel info-image"></i></span>
+        </div>
+           <? endif; ?>
       <div class="container search-form-container">
         <? if (isset($this->layout()->introduction) && $this->resolver('search/introductiontext.phtml')): ?>
         <div class="introduction">

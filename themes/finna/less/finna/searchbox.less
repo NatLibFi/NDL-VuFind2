@@ -1,23 +1,30 @@
 .nav.searchbox {
-  .searchbox-home .btn.btn-link {
-    background: @finna-searchbox-link-background;
-    border-radius: @border-radius-small;
-  }
-  .searchbox-home .btn.btn-link {
-    color: @finna-searchbox-link-color;
-    font-size: 1em;
-    font-weight: normal;
-    line-height: 25px;
-    margin-top: 0;
-    padding: 0px 5px;
-    overflow: hidden;
-    text-transform: none;
-    & .adv-search {
-      i {
-        color: @finna-searchbox-link-color;
+  .searchbox-home {
+    .search-tooltip {
+      float:left;
+      width: 10%;
+    }
+    .btn.btn-link {
+      background: @finna-searchbox-link-background;
+      border-radius: @border-radius-small;
+    }
+    .btn.btn-link {
+      color: @finna-searchbox-link-color;
+      font-size: 1em;
+      font-weight: normal;
+      line-height: 25px;
+      margin-top: 0;
+      padding: 0px 5px;
+      overflow: hidden;
+      text-transform: none;
+      & .adv-search {
+        i {
+          color: @finna-searchbox-link-color;
+        }
       }
     }
   }
+
   @media (max-width: @screen-sm) {
     .dropdown.form-control {
       display: none;
@@ -81,6 +88,7 @@
     margin-right: 10px;
   }
   .back-to-search-text {
+    color: @text-color;    
     vertical-align: middle;
   }
 }
@@ -97,6 +105,7 @@
       width: 60%;
     }
   }
+  
   .search-tooltip {
     float: right;
     padding-left: 5px;
@@ -109,6 +118,8 @@
       width: 40%;
     }
   }
+  a {color: @finna-search-link-color;}
+
   .search-links {
     margin-top: 15px;
   }
@@ -126,6 +137,9 @@
   }
   .search-tooltip {
     line-height: 48px;
+    a {
+      color: @finna-search-link-color;
+    }
   }
   .back-to-search-text{
     padding-right: 10px;

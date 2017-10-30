@@ -44,7 +44,7 @@
             ?>          
           <? if ( isset($rights['copyright']) && ($rights['copyright'] !== $this->transEsc('usage_F'))): ?>
           <div class="open-link"><a target="_blank" href="<?=$originalImage ?>" download="<?=$originalImage ?>">
-              <b class="download"></b>
+              <i aria-hidden="true" class="iconlabel download"></i>
               <span><?=$this->transEsc('Show image in new window') ?></span>
             </a>
             <span class="image-dimensions"></span>

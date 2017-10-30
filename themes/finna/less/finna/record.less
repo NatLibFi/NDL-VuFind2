@@ -14,10 +14,15 @@
             width: auto;
           }
         }
-        .open-link{
+        .open-link {
           margin-top: 10px;
+          i, b {
+              color: tint(@action-link-color, 22%);
+              margin-right: 0;
+              font-style: normal;
+            }
+          }
         }
-      }
     }
     .hide-image {
       display: none;
@@ -44,7 +49,7 @@
     }
 
     & i {
-      color: lighten(@text-color, 40%);  
+      color: tint(@action-link-color, 22%);
       padding-left: 3px;
       padding-right: 3px;    
     }
@@ -212,7 +217,6 @@
   padding-left: 10px;
 }
 .rating-symbol-background {
-  font-weight: bold;
   margin-right: 1px;
   color: @gray-light;
 }
