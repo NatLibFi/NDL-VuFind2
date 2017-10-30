@@ -1,0 +1,41 @@
+.accordion {
+
+  .accordion-toggle{
+    padding: 15px;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-transform: uppercase;
+    background-color: @gray-ultralight;
+    border: 1px solid @gray-lighter !important;
+    a {
+      color: @text-color;
+      .accordion-title {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-right: 40px;
+      }
+    }
+    &:after {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      margin-top:-4px;
+      background-color: @action-link-color;
+      content:'';
+      -webkit-mask-image: url(../../../themes/finna/images/pictograms/chevron-down-circle.svg);
+      mask-image: url(../../../themes/finna/images/pictograms/chevron-down-circle.svg);
+      -webkit-mask-size: cover;
+      mask-size: cover;
+    }
+  }
+  .accordion-content {
+    .tab-pane {
+      display: none;
+    }
+    .tab-pane.active {
+      display: block;
+    }
+  }
+}

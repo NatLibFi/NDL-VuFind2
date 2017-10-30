@@ -110,7 +110,7 @@
       <? endif; ?>
   </div>
     <? // N.B. The element/class structure here is important for the ajax tabs to work properly ?>
-  <div class="mainbody left record-tabs">
+  <div class="mainbody left record-tabs visible-lg">
 
       <? if (count($this->tabs) > 0): ?>
         <a name="tabnav"></a>
@@ -156,7 +156,48 @@
         <? endif; ?>
     </div>
   </div>
- </div>
+
+  <div class="mainbody left record-tabs hidden-lg">
+      <? if (count($this->tabs) > 0): ?>
+          <? foreach ($this->tabs as $tab => $obj): ?>
+              <? // add current tab to breadcrumbs if applicable:
+              $desc = $obj->getDescription();
+              $tab_classes = ['accordion'];
+              if (0 === strcasecmp($this->activeTab, $tab)) {
+                  if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
+                      $tab_classes[] = 'active';
+                  }
+                  $tab_classes[] = 'initiallyActive';
+                  $this->layout()->breadcrumbs .= '<li class="active">' . $this->transEsc($desc) . '</li>';
+                  $activeTabObj = $obj;
+              }
+              if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }
+              if (!$obj->supportsAjax()) { $tab_classes[] = 'noajax'; }
+              if (strtolower($tab) == 'details') { $tab_classes[] = 'hidden-xs tab-right'; }
+              ?>
+            <div <?=count($tab_classes) > 0 ? ' class="' . implode(' ', $tab_classes) . '"' : ''?>>
+              <div class="accordion-toggle">
+                <a class="<?=strtolower($tab) ?>"
+                   href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<? if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
+                  data-background<? endif ?>>
+                    <div class="accordion-title">
+                    <? if (strtolower($tab) == 'details'): ?><i class="fa fa-<?=$this->escapeHtmlAttr($tab)?>"></i><? endif; ?>
+                    <? if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><? endif; ?><? if (strtolower($tab) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?>
+                    </div>
+                </a>
+              </div>
+              <div class="accordion-content">
+                  <? if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
+                    <div class="tab-pane active <?=$this->activeTab ?>-tab">
+                        <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
+                    </div>
+                  <? endif; ?>
+              </div>
+            </div>
+          <? endforeach; ?>
+      <?endif; ?>
+  </div>
+</div>
 </div>
 <?=$this->partial('RecordDriver/SolrDefault/toolbar_mobile.phtml') ?>
 <div>

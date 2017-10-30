@@ -145,10 +145,112 @@ finna.record = (function finnaRecord() {
     $(window).trigger('hashchange');
   }
 
+  function applyRecordTabHash() {
+      var activeTab = $('.record-tabs .accordion a').attr('class');
+      var $initiallyActiveTab = $('.record-tabs .accordion.initiallyActive a');
+      var newTab = typeof window.location.hash !== 'undefined'
+          ? window.location.hash.toLowerCase() : '';
+
+      // Open tab in url hash
+      if (newTab.length <= 1 || newTab === '#tabnav') {
+          $initiallyActiveTab.click();
+      } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
+          $('.' + newTab.substr(1)).click();
+      }
+  }
+
+  $(window).on('hashchange', applyRecordTabHash);
+
+  function removeHashFromLocation() {
+    if (window.history.replaceState) {
+      var href = window.location.href.split('#');
+      window.history.replaceState({}, document.title, href[0]);
+    } else {
+      window.location.hash = '#';
+    }
+  }
+
+  function ajaxLoadTab($newTab, tabid, setHash) {
+    // Request the tab via AJAX:
+    $.ajax({
+        url: VuFind.path + getUrlRoot(document.URL) + '/AjaxTab',
+        type: 'POST',
+        data: {tab: tabid}
+    })
+      .always(function ajaxLoadTabDone(data) {
+        if (typeof data === 'object') {
+            $newTab.html(data.responseText ? data.responseText : VuFind.translate('error_occurred'));
+        } else {
+            $newTab.html(data);
+        }
+        registerTabEvents();
+        if (typeof syn_get_widget === "function") {
+            syn_get_widget();
+        }
+        if (typeof setHash == 'undefined' || setHash) {
+            window.location.hash = tabid;
+        } else {
+            removeHashFromLocation();
+        }
+        setupJumpMenus($newTab);
+      });
+    return false;
+  }
+
+  function recordDocReady() {
+      $('.record-tabs .accordion a').click(function recordTabsClick() {
+          var $accordion = $(this).parent().parent();
+          // If it's an active tab, click again to follow to a shareable link.
+          if ($accordion.hasClass('active')) {
+              return true;
+          }
+          var tabid = this.className;
+          var $top = $(this).closest('.record-tabs');
+          // if we're flagged to skip AJAX for this tab, we need special behavior:
+          if ($accordion.hasClass('noajax')) {
+              // if this was the initially active tab, we have moved away from it and
+              // now need to return -- just switch it back on.
+              if ($accordion.hasClass('initiallyActive')) {
+                  $(this).tab('show');
+                  $top.find('.tab-pane.active').removeClass('active');
+                  $top.find('.' + tabid + '-tab').addClass('active');
+                  window.location.hash = 'tabnav';
+                  return false;
+              }
+              // otherwise, we need to let the browser follow the link:
+              return true;
+          }
+          $top.find('.tab-pane.active').removeClass('active');
+          $(this).tab('show');
+          if ($top.find('.' + tabid + '-tab').length > 0) {
+              $top.find('.' + tabid + '-tab').addClass('active');
+              if ($(this).parent().hasClass('initiallyActive')) {
+                  removeHashFromLocation();
+              } else {
+                  window.location.hash = tabid;
+              }
+              return false;
+          } else {
+              var newTab = getNewRecordTab(tabid).addClass('active');
+              $accordion.find('.accordion-content').append(newTab);
+              $accordion.find('.accordion-content')
+              return ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
+          }
+      });
+
+      $('[data-background]').each(function setupBackgroundTabs(index, el) {
+          backgroundLoadTab(el.className);
+      });
+
+      registerTabEvents();
+      applyRecordTabHash();
+  }
+
   var init = function init() {
     initHideDetails();
     initDescription();
     initRecordNaviHashUpdate();
+    recordDocReady();
   }
 
   var my = {
