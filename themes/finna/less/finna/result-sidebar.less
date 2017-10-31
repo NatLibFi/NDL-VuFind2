@@ -102,7 +102,6 @@ button.list-group-item {
   }
   &.organisations {
     padding: 0px;
-    font-size: 1.1em;
     margin-bottom: 10px;
     background: @list-group-bg;
     & .record-organisation {
@@ -111,7 +110,14 @@ button.list-group-item {
       font-weight: bold;
       & .record-organisation-info {
         font-size: 1em;
-        font-weight: normal;
+        font-weight: 600;
+        text-transform: uppercase;
+        a {
+          color: @action-link-color;
+          i {
+            color: tint(@action-link-color, 22%);
+          }          
+        }
       }
     }
     & .other-organisation-links a {
@@ -194,9 +200,13 @@ button.list-group-item {
     padding: 15px;
     font-size: 1em;
     & > li {
-      font-weight: bold;
-      & ul {
-        font-weight: normal;
+      font-weight: 600;
+      & a {
+        text-transform: uppercase;
+        color: @action-link-color;
+        & i {
+          color: tint(@action-link-color, 22%);
+        }
       }
     }
   }
