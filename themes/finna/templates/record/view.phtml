@@ -157,7 +157,7 @@
     </div>
   </div>
 
-  <div class="mainbody left record-tabs hidden-lg">
+  <div class="mainbody left record-accordions hidden-lg">
       <? if (count($this->tabs) > 0): ?>
           <? foreach ($this->tabs as $tab => $obj): ?>
               <? // add current tab to breadcrumbs if applicable:
@@ -177,7 +177,7 @@
               ?>
             <div <?=count($tab_classes) > 0 ? ' class="' . implode(' ', $tab_classes) . '"' : ''?>>
               <div class="accordion-toggle">
-                <a class="<?=strtolower($tab) ?>"
+                <a id="<?=strtolower($tab) ?>"
                    href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<? if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
                   data-background<? endif ?>>
                     <div class="accordion-title">
