@@ -249,12 +249,10 @@ finna.record = (function finnaRecord() {
   function initRecordTabs() {
     $('.record-tabs .accordion-toggle').click(function(e){
       var accordion = $(e.target).closest('.accordion');
+      e.preventDefault();
       if (accordion.hasClass('active')){
         return true;
       }
-      console.log('eeeee', e);
-
-      e.preventDefault();
       if(accordion.hasClass('active')){
         $('.record-tabs').find('.accordion.active').removeClass('active');
       } else {
