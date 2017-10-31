@@ -78,24 +78,32 @@
   color: @link-color;
   font-size: .8em;
 }
+.tooltip-search-pci, .tooltip-search-local {
+  i {
+    font-size: 36px;
+  }
+}
+
+  
 .searchbox-home {
   .tooltip-search-pci, .tooltip-search-local {
     background: rgba(255,255,255,0.6);
-    font-size: 1.75em;          
+    font-size: 36px;          
     border-radius: 50%;
-    width: 1.75em;
-    height: 1.75em;
-    line-height: 1.75em;
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
     i {
-      font-size: 1.25em;
-      margin-left: 0.2em;  
-      margin-top: 0.175em;            
+      font-size: 36px;                
+      margin-left: 4px;  
+      top: -2px;  
+      position: relative;          
       text-align: center;
       cursor: pointer;
     }
   }
 }
-.image-info {
+.image-info { 
   .tooltip {
     overflow: hidden;    
   }
@@ -106,22 +114,22 @@
     position: absolute;
     right: 15px;
     bottom: 100px;
-    font-size: 1.75em;              
-    width: 1.75em;
-    height: 1.75em;
-    line-height: 1.75em;
+    font-size: 36px;          
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
     background: rgba(255,255,255,0.6);
     border-radius: 50%;
     i {
-      font-size: 1em;
-      margin-left: 0.225em;  
-      margin-top: 0.175em;            
+      font-size: 36px;  
+      margin-left: 4px;  
+      top: -1px;  
+      position: relative;                 
       text-align: center;
       cursor: pointer;
       font-style: normal;
     }
   }
-  
 }
 .finna-main-tabs ul.nav-tabs>li.active>a {
   & .tooltip-tabs_local, .tooltip-tabs_pci {

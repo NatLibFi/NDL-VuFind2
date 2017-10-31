@@ -1,8 +1,7 @@
 .nav.searchbox {
   .searchbox-home {
     .search-tooltip {
-      float:left;
-      width: 10%;
+      width: 30%;
     }
     .btn.btn-link {
       background: @finna-searchbox-link-background;
@@ -111,7 +110,15 @@
   .search-tooltip {
     float: right;
     padding-left: 5px;
-    line-height: 48px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;;
     padding-right: 15px;
     @media (min-width: @screen-sm) {
       width: 30%;
