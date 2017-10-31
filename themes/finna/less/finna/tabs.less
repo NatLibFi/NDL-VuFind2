@@ -36,8 +36,9 @@
                 margin-bottom: 0;
                 border: 0;
                 border-radius: 0;
-                font-size: 1em;
-                font-weight: bold;
+                font-size: 0.9em;
+                font-weight: 600;
+                text-transform: uppercase;
                 color: @main-tabs-link-color;
                 transition: none;
                 @media (max-width: @screen-xs-max) {
@@ -63,8 +64,6 @@
 
             &.active {
                 > a {
-                    color: @brand-primary;
-                    background-color: @body-bg;
                     border-radius: @tabs-border-radius @tabs-border-radius 0 0;
                     border-top: 2px solid @nav-tabs-border-color;
                     border-left: 2px solid @nav-tabs-border-color;
@@ -74,13 +73,12 @@
                 }
             }
             &:not(.active) > a {
-                color: @gray-light;
                 transition: background-color 0.1s linear;
                 &:hover, &:active, &:focus {
                     background: darken(@main-tabs-background-color,4%);
                 }
                 i {
-                    color: @gray-light;
+                    color:  @main-tabs-link-color;
                 }
             }
         }
