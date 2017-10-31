@@ -107,18 +107,6 @@ button.list-group-item {
     & .record-organisation {
       background: @body-bg;
       padding: 5px 10px;
-      font-weight: bold;
-      & .record-organisation-info {
-        font-size: 1em;
-        font-weight: 600;
-        text-transform: uppercase;
-        a {
-          color: @action-link-color;
-          i {
-            color: tint(@action-link-color, 22%);
-          }          
-        }
-      }
     }
     & .other-organisation-links a {
       padding: 5px 10px;
@@ -127,7 +115,7 @@ button.list-group-item {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-    }
+      }
     & h5 {
       margin-top: 0px;
       margin-bottom: 0px;
@@ -156,6 +144,15 @@ button.list-group-item {
 .sidebar .recordProvidedBy {
   border-top: none;
   margin-top: 0px;
+}
+
+#feedback-record {
+  color: @action-link-color;
+  text-transform: uppercase;
+  font-weight: 600;
+  i {
+    color: tint(@action-link-color, 22%);
+  }
 }
 
 #similar-records {
