@@ -160,6 +160,7 @@ finna.record = (function finnaRecord() {
         if(accordion.find('.accordion-content .tab-pane').length == 0) {
           accordion.find('.accordion-content').append(newTab);
           ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
+          accordion.scrollTop(0);
         }
       }
     });
