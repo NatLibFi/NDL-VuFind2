@@ -67,7 +67,7 @@
 .list-group-item,
 button.list-group-item {
   position: relative;
-  font-size: 1.05em;
+  font-size: 1em;
   vertical-align: middle;
   border: none;
   &:first-child {
@@ -102,17 +102,11 @@ button.list-group-item {
   }
   &.organisations {
     padding: 0px;
-    font-size: 1.1em;
     margin-bottom: 10px;
     background: @list-group-bg;
     & .record-organisation {
       background: @body-bg;
       padding: 5px 10px;
-      font-weight: bold;
-      & .record-organisation-info {
-        font-size: 1em;
-        font-weight: normal;
-      }
     }
     & .other-organisation-links a {
       padding: 5px 10px;
@@ -121,7 +115,7 @@ button.list-group-item {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
-    }
+      }
     & h5 {
       margin-top: 0px;
       margin-bottom: 0px;
@@ -150,6 +144,15 @@ button.list-group-item {
 .sidebar .recordProvidedBy {
   border-top: none;
   margin-top: 0px;
+}
+
+#feedback-record {
+  color: @action-link-color;
+  text-transform: uppercase;
+  font-weight: 600;
+  i {
+    color: tint(@action-link-color, 22%);
+  }
 }
 
 #similar-records {
@@ -194,9 +197,13 @@ button.list-group-item {
     padding: 15px;
     font-size: 1em;
     & > li {
-      font-weight: bold;
-      & ul {
-        font-weight: normal;
+      font-weight: 600;
+      & a {
+        text-transform: uppercase;
+        color: @action-link-color;
+        & i {
+          color: tint(@action-link-color, 22%);
+        }
       }
     }
   }

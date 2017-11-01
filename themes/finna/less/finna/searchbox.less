@@ -1,8 +1,7 @@
 .nav.searchbox {
   .searchbox-home {
     .search-tooltip {
-      float:left;
-      width: 10%;
+      width: 30%;
     }
     .btn.btn-link {
       background: @finna-searchbox-link-background;
@@ -79,16 +78,18 @@
 
 .back-to-search a {
   display: block;
-  font-size: 1.1em;
+  font-size: 1em;
+  font-weight: 600;
+  color: @finna-search-link-color;
   & i {
     vertical-align: text-top;
-    font-size: 1.2em;
+    font-size: 1.5em;
+    margin-right: 5px;
   }
   & .btn {
     margin-right: 10px;
   }
   .back-to-search-text {
-    color: @text-color;    
     vertical-align: middle;
   }
 }
@@ -109,7 +110,15 @@
   .search-tooltip {
     float: right;
     padding-left: 5px;
-    line-height: 48px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;;
     padding-right: 15px;
     @media (min-width: @screen-sm) {
       width: 30%;
@@ -127,6 +136,11 @@
 
 .searchbox-flex {
   display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
   justify-content: space-between;
   .search-col, .record-back, .adv-search, .pager {
     margin: auto 0;
