@@ -5,7 +5,7 @@
 <?
 $script = <<<JS
 $(document).ready(function() {
-  $('#similar-records').load(
+  $('.sidebar #similar-records').load(
     path +'/AJAX/SimilarRecords',
     { id: $('#similar-records').data('id') },
     function() {
