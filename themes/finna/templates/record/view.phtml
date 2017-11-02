@@ -118,7 +118,6 @@
     <? endif; ?>
   </div>
 
-  <div class="clearfix"></div>
   <div class="mainbody left record-tabs visible-lg">
     <? if (count($this->tabs) > 0): ?>
       <a name="tabnav"></a>
@@ -165,6 +164,7 @@
     </div>
   </div>
 
+  <div class="clearfix hidden-lg"></div>
   <div class="record-accordions hidden-lg">
       <? if (count($this->tabs) > 0): ?>
           <? foreach ($this->tabs as $accordion => $obj): ?>
