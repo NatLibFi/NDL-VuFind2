@@ -60,7 +60,9 @@
     </div>
 
     <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
-        <?=$this->render('record/record-organisation-menu.phtml') ?>
+      <div id="organisation-menu">
+          <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
     <? endif; ?>
 
     <div class="record-rating text-left">
