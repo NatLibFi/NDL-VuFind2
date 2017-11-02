@@ -475,19 +475,14 @@ finna.layout = (function finnaLayout() {
         }
         if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
           $(this).parent().addClass('no-image');
-          $('.large-image .record-image-container').addClass('hide-image');
-          $('.media-left, .media-right').removeClass('large-image');
-          $('.media-left #organisation-menu, .media-right #organisation-menu').addClass('hidden');
-          $('.sidebar #organisation-menu').removeClass('hidden');
-          $('.record-main').removeClass('large-image-layout');
-          $('.smaller-image-sidebar').removeClass('hidden');
+          $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
+          //$('.media-left #organisation-menu, .media-right #organisation-menu').addClass('hidden');
           $('.large-image-sidebar').addClass('visible-xs');
           $('.record-main').addClass('mainbody left');
           var href = $(this).parent().attr('href');
           $(this).parent().attr({'href': href.split('#')[0], 'title': ''});
           $(this).parents('.grid').addClass('no-image');
           $('.rating-stars').addClass('hidden-xs');
-          $(this).parents('.record-image-container').find('.image-details-container').addClass('hidden');
         }
       }).each(function loadImage() {
         if (this.complete) {
