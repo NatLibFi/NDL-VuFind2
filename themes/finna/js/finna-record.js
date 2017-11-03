@@ -145,7 +145,7 @@ finna.record = (function finnaRecord() {
     $(window).trigger('hashchange');
   }
 
-  function initRecordTabs() {
+  function initRecordAccordions() {
     $('.record-accordions .accordion-toggle').click(function(e){
       var accordion = $(e.target).closest('.accordion');
       var tabid = accordion.find('.accordion-toggle a').attr('id');
@@ -162,6 +162,7 @@ finna.record = (function finnaRecord() {
           accordion.find('.accordion-content').append(newTab);
           ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
         }
+        $('html, body').animate({scrollTop: accordion.offset().top - 64}, 150);
       }
     });
   }
@@ -186,8 +187,7 @@ finna.record = (function finnaRecord() {
     initHideDetails();
     initDescription();
     initRecordNaviHashUpdate();
-    //recordDocReady();
-    initRecordTabs();
+    initRecordAccordions();
     applyRecordAccordionHash();
   };
 
