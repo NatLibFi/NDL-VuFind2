@@ -44,12 +44,6 @@ finna.common = (function finnaCommon() {
         e.preventDefault();
       }
     });
-    var filters = $('.search-filters');
-    if(filters.hasClass('record-page')) {
-        searchInput.focus(function (e) {
-            filters.removeClass("hidden");
-        });
-    }
   }
 
   function initQrCodeLink() {
