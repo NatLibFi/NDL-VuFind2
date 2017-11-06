@@ -1,8 +1,9 @@
 <!-- START of: finna - search/controls/view.phtml -->
 <? $viewList = $this->params->getViewList(); if (count($viewList) > 1): ?>
+<? $viewOptionsIcons = $this->params->getViewOptionListType(); ?>
 <div class="view-option-container text-right">
     <? $module = $this->layout()->templateDir; ?>
-    <? if ($module != 'primo' && $module != 'eds'): ?>
+    <? if ($module != 'primo' && $module != 'eds' && $viewOptionsIcons == true): ?>
     <span class="hidden-sm hidden-xs hidden-md button-label"><?=$this->transEsc('show_as')?></span>
     <span class="sr-only hidden-lg hidden-md"><?=$this->transEsc('show_as')?></span>
     <div class="view-options">
