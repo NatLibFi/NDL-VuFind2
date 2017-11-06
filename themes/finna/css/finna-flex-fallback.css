@@ -10,6 +10,9 @@
     min-width: 20px;
     vertical-align: top;
   }
+  input.search-query {
+    min-width: 60%;
+  }
   /* Layout */
   .combined-search-container .combined-column,
   .date-fields .date-from,
