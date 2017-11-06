@@ -27,6 +27,10 @@
     vertical-align: top;
     padding: 10px;
   }
+  .finna-news-item, .finna-campaign-item {
+    float: left;
+    margin-right: 15px;
+  }
   .grid-result .grid-body,
   .grid-result .grid-checkbox {
     display: block;
