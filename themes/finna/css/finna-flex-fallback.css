@@ -11,7 +11,7 @@
     vertical-align: top;
   }
   input.search-query {
-    min-width: 60%;
+    min-width: 50%;
   }
   /* Layout */
   .combined-search-container .combined-column,
@@ -44,4 +44,15 @@
   .finna-navbar {
     display: table;
   }
+}
+.searchbox-flex {
+  display: table;
+}
+.searchbox-flex .record-back,
+.searchbox-flex .search,
+.searchbox-flex .search-tooltip,
+.searchbox-flex .pager {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
 }
