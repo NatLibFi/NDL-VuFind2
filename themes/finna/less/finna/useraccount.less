@@ -33,7 +33,7 @@
         }
     }
     & .useraccount-header {
-        font-weight: bold;
+        font-weight: 600;
         font-size:@font-size-h2;
     }
     & #account-actions {
@@ -92,7 +92,7 @@
         font-weight: bold;
         padding: 7px 10px;
         background: @gray;
-        background: linear-gradient( @gray-light, darken(@gray-light,8%));
+        background: linear-gradient( @gray-lighter, darken(@gray-lighter,8%));
         color: @body-bg;
     }
 
@@ -197,14 +197,12 @@
             }
         }
         & .headers {
-            background: @gray;
-            background: linear-gradient( @gray-light, darken(@gray-light,8%));
-            color: @body-bg;
+            background: @gray-lighter;
+            color: @text-color;
         }
         & .headers th {
             background: none;
-            border: none;
-            border-right: 1px solid @body-bg;
+            border-top: 1px solid #d1d1d1;
             &:last-child {
                 border-right: none;
             }
@@ -247,6 +245,9 @@
         & .history-save {
             text-align: center;
             width: 15%;
+            a {
+                color: @action-link-color;
+            }
         }
         & .history-results {
             width: 15%;
@@ -610,6 +611,10 @@
             float:left;
             margin:0;
             margin-bottom: -2px;
+            a {
+                padding: 10px 5px;
+                margin-right: 0px;
+            }
             @media(max-width: @screen-md-max) {
                 max-width: 160px;
                 font-size: 14px;
