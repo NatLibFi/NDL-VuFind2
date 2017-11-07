@@ -2,11 +2,16 @@
   list-style-type: none;
   .accordion-toggle{
     padding: 10px;
+    margin-bottom: 5px;
     font-size: 1em;
     font-weight: 600;
     text-transform: uppercase;
     background-color: @gray-ultralight;
-    border: 1px solid @gray-lighter !important;
+    border-top: 1px solid @gray-lighter;
+    border-right: 1px solid @gray-lighter;  
+    border-bottom: 1px solid @gray-lighter;        
+    border-left: 4px solid @gray-lighter;
+    
     a {
       color: @text-color;
       .accordion-title {
@@ -41,6 +46,7 @@
     transition: height 0.3s ease-in;
   }
   .accordion-toggle {
+    border-left: 4px solid @action-link-color;
     .accordion-title {
       &:after {
         font-family: icomoon;
