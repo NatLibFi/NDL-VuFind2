@@ -22,7 +22,7 @@
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
-  <div class="media-<?=$thumbnailAlignment ?> <?= !empty($images[0]['urls']['medium']) || !empty($images[0]['urls']['large']) ? 'large-image' : ''?>">
+  <div class="media-<?=$thumbnailAlignment ?>">
     <? if (!empty($videoUrls)): ?>
         <? foreach ($videoUrls as $url): ?>
             <? $description = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']); ?>
@@ -60,7 +60,9 @@
     </div>
 
     <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
-        <?=$this->render('record/record-organisation-menu.phtml') ?>
+      <div id="organisation-menu">
+          <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
     <? endif; ?>
 
     <div class="record-rating text-left">

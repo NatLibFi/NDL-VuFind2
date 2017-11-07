@@ -71,7 +71,8 @@ return [
         'vendor/video-js.min.css',
         'vendor/bootstrap-slider.min.css',
         'finna.css',
-        'vendor/priority-nav-core.css'
+        'vendor/priority-nav-core.css',
+        'finna-flex-fallback.css::lt IE 10', // flex polyfill
     ],
     'js' => [
         'vendor/event-stub.js:lt IE 9',
@@ -100,7 +101,7 @@ return [
         'vendor/bootstrap-multiselect.min.js',
         'vendor/bootstrap-slider.min.js',
         'vendor/gauge.min.js',
-        'vendor/priority-nav.js'
+        'vendor/priority-nav.js',
     ],
     'less' => [
         'active' => false

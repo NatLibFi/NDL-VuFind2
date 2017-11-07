@@ -2,34 +2,12 @@
   .media-left,
   .media-right {
     width: 25%;
-    &.large-image {
-      @media(min-width: @screen-sm) {
-        width: 50%;
-      }
-      .record-image-container {
-        text-align: center;
-        .image-popup-trigger {
-          img {
-            max-height: 600px;
-            width: auto;
-          }
-        }
-        .open-link {
-          margin-top: 10px;
-          i, b {
-              color: tint(@action-link-color, 22%);
-              margin-right: 0;
-              font-style: normal;
-            }
-          }
-        }
-    }
-    .hide-image {
-      display: none;
-    }
     @media(max-width: @screen-sm) {
       display: block;
       width: 100%;
+    }
+    .recordcover-container {
+      position: relative;
     }
   }
   @media(min-width: @screen-sm){
@@ -69,14 +47,6 @@
       float: left;
     }
   }
-
-  .large-image {
-    .video-link-container {
-      width: 50%;
-      float: left;
-      padding-right: 10px;
-    }
-  }
   .video-link-container {
     margin-bottom: 10px;
   }
@@ -114,6 +84,55 @@
     @media (max-width: @screen-sm) {
       margin-bottom: 20px;
     }
+  }
+}
+
+.no-image-layout {
+  .record-image-container {
+    display: none;
+  }
+  .image-details-container {
+    display: none;
+  }
+  .media-left,
+  .media-right {
+    #organisation-menu {
+      display: none;
+    }
+  }
+}
+
+.large-image-layout.record {
+  .media-left,
+  .media-right {
+    @media (min-width: @screen-sm) {
+      width: 50%;
+    }
+    .record-image-container {
+      text-align: center;
+      .image-popup-trigger {
+        img {
+          max-height: 600px;
+          width: auto;
+        }
+      }
+      .open-link {
+        margin-top: 10px;
+        i, b {
+          color: tint(@action-link-color, 22%);
+          margin-right: 0;
+          font-style: normal;
+        }
+      }
+    }
+  }
+  .video-link-container {
+    width: 50%;
+    float: left;
+    padding-right: 10px;
+  }
+  .smaller-image-sidebar {
+    display: none;
   }
 }
 
@@ -293,4 +312,18 @@
 
 .record .recordcover-holder .more-link {
   width: 100%;
+}
+
+@media(max-width: @screen-md-max) {
+  .large-image-sidebar {
+    width: 100%;
+  }
+}
+
+#similar-records{
+  .details {
+    font-size: 0.9em;
+    line-height: 25px;
+    margin-top: -5px;
+  }
 }

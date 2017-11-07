@@ -145,11 +145,51 @@ finna.record = (function finnaRecord() {
     $(window).trigger('hashchange');
   }
 
+  function initRecordAccordions() {
+    $('.record-accordions .accordion-toggle').click(function(e){
+      var accordion = $(e.target).closest('.accordion');
+      var tabid = accordion.find('.accordion-toggle a').attr('id');
+      e.preventDefault();
+      if(accordion.hasClass('active')){
+        $('.record-accordions').find('.accordion.active').removeClass('active');
+        removeHashFromLocation();
+      } else {
+        $('.record-accordions').find('.accordion.active').removeClass('active');
+        accordion.addClass('active');
+        window.location.hash = tabid;
+        var newTab = getNewRecordTab(tabid).addClass('active');
+        if(accordion.find('.accordion-content .tab-pane').length < 1) {
+          accordion.find('.accordion-content').append(newTab);
+          ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
+        }
+        $('html, body').animate({scrollTop: accordion.offset().top - 64}, 150);
+      }
+    });
+  }
+
+  function applyRecordAccordionHash() {
+    var activeTab = $('.record-accordions .accordion.active a').attr('id');
+    var $initiallyActiveTab = $('.record-accordions .accordion.initiallyActive a');
+    var newTab = typeof window.location.hash !== 'undefined'
+        ? window.location.hash.toLowerCase() : '';
+
+    // Open tab in url hash
+    if (newTab.length <= 1 || newTab === '#tabnav') {
+      $initiallyActiveTab.click();
+    } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
+      $('#' + newTab.substr(1)).click();
+    }
+  }
+
+  $(window).on('hashchange', applyRecordAccordionHash);
+
   var init = function init() {
     initHideDetails();
     initDescription();
     initRecordNaviHashUpdate();
-  }
+    initRecordAccordions();
+    applyRecordAccordionHash();
+  };
 
   var my = {
     checkRequestsAreValid: checkRequestsAreValid,
