@@ -54,7 +54,9 @@
   padding: 15px;
   background: @sidebar-background;
   color: @sidebar-header-text-color;
-  font-size: @font-size-h4;
+  font-size: @font-size-h5;
+  font-weight: 600;
+  text-transform: uppercase;
   margin-top: 0px;
   margin-bottom: 0px;
   word-wrap: break-word;
@@ -156,6 +158,12 @@ button.list-group-item {
 }
 
 #similar-records {
+  & a {
+    font-weight: 600;
+  }
+  .details {
+    color: @gray-light;
+  }
   i { margin-right: 0; font-style: normal;}
 }
 
