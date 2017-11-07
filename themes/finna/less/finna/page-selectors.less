@@ -53,7 +53,7 @@
       padding: 6px;
       text-align: center;
       border-radius: 50%;
-      background: @link-color;
+      background: @action-link-color;
       color: @body-bg;
       font-size: 1.05em;
       transition: background 0.2s ease;
@@ -66,6 +66,7 @@
   > li {
     display: inline; // Remove list-style and block-level defaults
     & a {
+      color: @action-link-color;
       & i {
         vertical-align: text-bottom;
         font-size: 1.1em;
