@@ -12,7 +12,7 @@
     list-style-type: none;
   }
   & li a i {
-    background: @brand-primary;
+    background: @action-link-color;
     border-radius: 50%;
     padding: 4px;
     text-align: center;
@@ -20,7 +20,7 @@
     font-size: 1.05em;
     transition: background 0.2s ease;
     &:hover {
-      background: darken(@brand-primary, 5%);
+      background: darken(@action-link-color, 5%);
     }
   }
   & .fa-arrow-left {
@@ -58,7 +58,7 @@
       font-size: 1.05em;
       transition: background 0.2s ease;
       &:hover {
-        background: darken(@link-color, 10%);
+        background: darken(@action-link-color, 5%);
         color: @body-bg;
       }
     }
