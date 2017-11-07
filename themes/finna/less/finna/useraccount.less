@@ -486,12 +486,13 @@
             word-wrap: break-word;
         }
         & li > a:not(.add-new-list) {
-            background: @gray-light;
-            color: @body-bg;
+            background: @gray-ultralight;
+            color: @text-color;
             margin-bottom: 5px;
         }
         & li > a.active {
-            background: @gray;
+            color: @brand-primary;
+            font-weight: 700;
             & .favorite-list-name {
                 max-width: 85%;
             }
