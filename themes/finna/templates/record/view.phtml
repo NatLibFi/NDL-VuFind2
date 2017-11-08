@@ -112,13 +112,13 @@
   <? $sidebar = ob_get_contents(); ?>
   <? ob_end_clean(); ?>
 
-  <div class="sidebar right smaller-image-sidebar hidden-xs">
+  <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
     <? if ($sidebar):?>
         <?=$sidebar ?>
     <? endif; ?>
   </div>
 
-  <div class="mainbody left record-tabs visible-lg">
+  <div class="mainbody left record-tabs visible-lg visible-md">
     <? if (count($this->tabs) > 0): ?>
       <a name="tabnav"></a>
         <? if (count($this->tabs) > 3): ?>
@@ -164,8 +164,8 @@
     </div>
   </div>
 
-  <div class="clearfix hidden-lg"></div>
-  <div class="record-accordions hidden-lg">
+  <div class="clearfix hidden-lg hidden-md"></div>
+  <div class="record-accordions hidden-lg hidden-md">
       <? if (count($this->tabs) > 0): ?>
           <? foreach ($this->tabs as $accordion => $obj): ?>
               <? // add current tab to breadcrumbs if applicable:
@@ -201,7 +201,7 @@
       <?endif; ?>
   </div>
 
-  <div class="sidebar left large-image-sidebar <?= $largeImageLayout ? '' : 'visible-xs'?>">
+  <div class="sidebar left large-image-sidebar <?= $largeImageLayout ? '' : 'visible-xs visible-sm'?>">
     <? if ($sidebar):?>
         <?=$sidebar ?>
     <? endif; ?>
