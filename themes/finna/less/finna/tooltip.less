@@ -95,35 +95,24 @@
     line-height: 44px;
     i {
       font-size: 36px;                
-      margin-left: 4px;  
-      top: -2px;  
+      margin-left: 4px;   
       position: relative;          
       text-align: center;
       cursor: pointer;
     }
   }
 }
-.image-info { 
-  .tooltip {
+.tooltip-image { 
+  & .tooltip {
     overflow: hidden;    
   }
-  .tooltip-arrow {
+  & .tooltip-arrow {
     display: none;    
   }
-  .tooltip-image {
-    position: absolute;
-    right: 15px;
-    bottom: 100px;
-    font-size: 36px;          
-    width: 44px;
-    height: 44px;
-    line-height: 44px;
-    background: rgba(255,255,255,0.6);
-    border-radius: 50%;
+  & .tooltip-image-info {
     i {
       font-size: 36px;  
-      margin-left: 4px;  
-      top: -1px;  
+      margin-left: 2px;  
       position: relative;                 
       text-align: center;
       cursor: pointer;

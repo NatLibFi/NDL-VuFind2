@@ -298,12 +298,11 @@ JS;
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
           <a class="btn btn-primary btn-uppercase floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <? endif; ?>
-      <? if ($this->layout()->templateName === 'home'  && !$this->translationEmpty('tooltip_image_html')): ?>
-         <div class="image-info"> 
-           <span class="tooltip-image" data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<?=$this->transesc('tooltip_image_html')?>"><i class="fa fa-info-circle-big"></i></span>
+      <div class="container">
+        <div class="search-form-container">
+        <div class="logo clearfix">
+          <?=$this->render('search/logosection.phtml') ?>
         </div>
-           <? endif; ?>
-      <div class="container search-form-container">
         <? if (isset($this->layout()->introduction) && $this->resolver('search/introductiontext.phtml')): ?>
         <div class="introduction">
           <div class="introduction clearfix">
@@ -343,7 +342,7 @@ JS;
         <? if (!empty($this->layout()->searchbox) && $this->layout()->searchbox !== false): ?>
             <?=$this->layout()->searchbox ?>
         <? endif; ?>
-      </div>
+      </div></div>
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && $this->content()->findTemplateForLng('search/browsebar')): ?>
         <?=$this->render('search/browsebar.phtml')?>
       <? endif; ?>

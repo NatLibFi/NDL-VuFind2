@@ -884,23 +884,30 @@ mark, .highlight {
   }
 }
 
-.template-dir-search.template-name-home .searchContent {
-  z-index: 20;
-  -webkit-overflow-scrolling: touch;
-  background-size: cover;
-  background-position: center top;
-  background-image: @background-image-url;
-  background-repeat: no-repeat;
-  height: 90vh;
-  @media(max-width:@screen-sm-max) {
-    background-size: 150% auto;
-    background-position: 50% 0;
-    & .record-view-header > .container {
-      padding-left: 0;
-      padding-right: 0;
-    }
+.template-name-home {
+  position: relative;
+  & .search-form-container {
+    padding-top: 1em;
+    padding-bottom: 1em;
   }
-  @media(max-width:@screen-xs-max) {
-    background-size: 350% auto;
+  & .searchContent {
+    -webkit-overflow-scrolling: touch;
+    background-size: cover;
+    background-position: center top;
+    background-color: @finna-home-background;
+    background-image: @background-image-url;
+    background-repeat: no-repeat;
+    #gradient.vertical(@background-start-color; @background-end-color; @background-start-percent; @background-end-percent);        
+    @media(max-width:@screen-sm-max) {
+      background-size: 150% auto;
+      background-position: 50% 0;
+      & .record-view-header > .container {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+    @media(max-width:@screen-xs-max) {
+      background-size: 350% auto;
+    }
   }
 }
