@@ -54,7 +54,7 @@
   padding: 15px;
   background: @sidebar-background;
   color: @sidebar-header-text-color;
-  font-size: @font-size-h5;
+  font-size: @font-size-h4;
   font-weight: 600;
   text-transform: uppercase;
   margin-top: 0px;
@@ -164,7 +164,12 @@ button.list-group-item {
   .details {
     color: @gray-light;
   }
-  i { margin-right: 0; font-style: normal;}
+  i { 
+    margin-right: 0; 
+    font-style: normal;
+    top: 0.35em;
+    position: relative;
+  }
 }
 
 #side-collapse-first_indexed {
@@ -204,6 +209,7 @@ button.list-group-item {
   .record-type.organisations {
     padding: 15px;
     font-size: 1em;
+    border: @sidebar-border;    
     & > li {
       font-weight: 600;
       & a {
