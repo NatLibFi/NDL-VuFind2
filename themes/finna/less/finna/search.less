@@ -894,10 +894,10 @@ mark, .highlight {
     -webkit-overflow-scrolling: touch;
     background-size: cover;
     background-position: center top;
+    #gradient.vertical(@background-start-color; @background-end-color; @background-start-percent; @background-end-percent);            
     background-color: @finna-home-background;
     background-image: @background-image-url;
     background-repeat: no-repeat;
-    #gradient.vertical(@background-start-color; @background-end-color; @background-start-percent; @background-end-percent);        
     @media(max-width:@screen-sm-max) {
       background-size: 150% auto;
       background-position: 50% 0;
