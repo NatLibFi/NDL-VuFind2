@@ -344,8 +344,8 @@ JS;
             <?=$this->layout()->searchbox ?>
         <? endif; ?>
       </div>
-      <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
-      <?=$this->render('search/browsebar.phtml')?>
+      <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && $this->content()->findTemplateForLng('search/browsebar')): ?>
+        <?=$this->render('search/browsebar.phtml')?>
       <? endif; ?>
     </section>
     

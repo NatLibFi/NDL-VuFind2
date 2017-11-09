@@ -2,26 +2,16 @@
 .nav-pills {
   padding: 0px;
   margin: 0px;
-  margin-bottom: 10px;
   & a:hover {
     text-decoration: none;
   }
   & > li:not(.addthis-share-buttons):not(.whatsapp) {
+    margin: 10px;
     float: left;
-    margin: 5px 20px 5px 0px;
-    @media (max-width: @screen-xs-max) {
-      padding-top: 10px;
-    }
-    &:first-child {
-      margin-left: 0;
-    }
     // Links rendered as pills
     & > a {
       border-radius: @nav-pills-border-radius;
       padding: 0px;
-    }
-    & + li {
-      margin-left: 0px;
     }
   }
 }
