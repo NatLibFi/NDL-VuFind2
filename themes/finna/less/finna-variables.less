@@ -31,10 +31,10 @@
 
 //== Custom Finna styling
 @background-image-url: url('../images/logo_background.jpg');
-
+@background-color: tint(@brand-primary, 78%);
 @background-image-attachment: scroll;  // set to fixed or scroll (fixed doesnt scoll along with page);
-@background-start-color: rgba(1,1,1,0.0); // gradient color for background image
-@background-end-color:  rgba(1,1,1,0.2); // gradient color for background image
+@background-start-color: transparent; // gradient color for background image
+@background-end-color:  transparent; // gradient color for background image
 @background-start-percent: 10%;
 @background-end-percent: 100%;
 @header-height: 43px;
@@ -47,11 +47,12 @@
 @action-link-color: @brand-primary;
 @finna-search-background: @gray-ultralight; // Background color of finna searchbox section
 @finna-search-link-color: @text-color;
-@finna-home-background: @finna-search-background; // Color of home page background
 @finna-main-header-background: @body-bg; // Color of page header background and search results tabs
 @finna-searchbox-link-color: @body-bg; // style searchbox link text color contrast with background
-@finna-searchbox-link-background: rgba(1,1,1,0.8); // style searchbox links (advanced search etc.) background contrast with background
+@finna-searchbox-link-background: rgba(1,1,1,0.6); // style searchbox links (advanced search etc.) background contrast with background
 @finna-record-header-background: @gray-lighter;
+@finna-feedback-color: #fff;
+@finna-feedback-background: darken(@brand-primary, 10%);
 @field-margin-vertical: 20px;
 @field-margin-horizontal: 15px;
 @finna-text-shadow: 1px 1px 1px black;

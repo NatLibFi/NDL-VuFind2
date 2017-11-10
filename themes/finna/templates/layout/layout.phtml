@@ -298,11 +298,11 @@ JS;
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
           <a class="btn btn-primary btn-uppercase floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <? endif; ?>
-      <div class="container">
-        <div class="search-form-container">
-        <div class="logo clearfix">
-          <?=$this->render('search/logosection.phtml') ?>
-        </div>
+      <div class="search-form-container">
+        <div class="container">
+          <div class="logo clearfix">
+            <?=$this->render('search/logosection.phtml') ?>
+          </div>
         <? if (isset($this->layout()->introduction) && $this->resolver('search/introductiontext.phtml')): ?>
         <div class="introduction">
           <div class="introduction clearfix">
@@ -342,7 +342,8 @@ JS;
         <? if (!empty($this->layout()->searchbox) && $this->layout()->searchbox !== false): ?>
             <?=$this->layout()->searchbox ?>
         <? endif; ?>
-      </div></div>
+      </div>
+    </div>
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && $this->content()->findTemplateForLng('search/browsebar')): ?>
         <?=$this->render('search/browsebar.phtml')?>
       <? endif; ?>

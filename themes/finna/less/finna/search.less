@@ -889,13 +889,13 @@ mark, .highlight {
   & .search-form-container {
     padding-top: 2em;
     padding-bottom: 2em;
+    #gradient.vertical(@background-start-color; @background-end-color; @background-start-percent; @background-end-percent);                    
   }
   & .searchContent {
     -webkit-overflow-scrolling: touch;
     background-size: cover;
     background-position: center top;
-    #gradient.vertical(@background-start-color; @background-end-color; @background-start-percent; @background-end-percent);            
-    background-color: @finna-home-background;
+    background-color: @background-color;    
     background-image: @background-image-url;
     background-repeat: no-repeat;
     @media(max-width:@screen-sm-max) {
