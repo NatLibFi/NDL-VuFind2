@@ -6,7 +6,7 @@
 //== Colors
 //
 //## Gray and brand colors for use across Bootstrap.
-//@gray: #2b2b2b;
+// @gray: #2b2b2b;
 
 // @gray-darker:            darken(@gray, 40%);
 // @gray-dark:              darken(@gray, 10%);
@@ -16,10 +16,10 @@
 // @gray-ultralight:        lighten(@gray, 80%);
 
 // Brand Colors
-// @brand-primary: #81358a;
-// @brand-secondary: #81358a;
-// @brand-third: #81358a;
-// @brand-fourth: #81358a;
+// @brand-primary: #007c90;
+// @brand-secondary: #009bb4;
+// @brand-third: #007c90;
+// @brand-fourth: #007c90;
 // @brand-success: #00b270;
 // @brand-warning: #fff48c;
 // @brand-danger: #ff461e;
@@ -31,9 +31,10 @@
 
 //== Custom Finna styling
 // @background-image-url: url('../images/logo_background.jpg');
-// @background-image-attachment: scroll;  // set to fixed or scroll (fixed doesnt scoll along with page)
-// @background-start-color: rgba(1,1,1,0.3); // gradient color for background image
-// @background-end-color:  rgba(1,1,1,0.7); // gradient color for background image
+// @background-color: tint(@brand-primary, 78%);
+// @background-image-attachment: scroll;  // set to fixed or scroll (fixed doesnt scoll along with page);
+// @background-start-color: transparent; // gradient color for background image
+// @background-end-color:  transparent; // gradient color for background image
 // @background-start-percent: 10%;
 // @background-end-percent: 100%;
 // @header-height: 43px;
@@ -48,8 +49,10 @@
 // @finna-search-link-color: @text-color;
 // @finna-main-header-background: @body-bg; // Color of page header background and search results tabs
 // @finna-searchbox-link-color: @body-bg; // style searchbox link text color contrast with background
-// @finna-searchbox-link-background: rgba(1,1,1,0.8); // style searchbox links (advanced search etc.) background contrast with background
+// @finna-searchbox-link-background: rgba(1,1,1,0.6); // style searchbox links (advanced search etc.) background contrast with background
 // @finna-record-header-background: @gray-lighter;
+// @finna-feedback-color: #fff;
+// @finna-feedback-background: darken(@brand-primary, 10%);
 // @field-margin-vertical: 20px;
 // @field-margin-horizontal: 15px;
 // @finna-text-shadow: 1px 1px 1px black;
@@ -63,7 +66,6 @@
 
 // @finna-searchtools-background: @gray-lighter;
 // @finna-searchtools-color: @gray;
-
 
 //== Finna home page
 // @introduction-header: 3em;
@@ -82,7 +84,7 @@
 //== Finna facets
 // @sidebar-header-text-color: @body-bg;
 // @sidebar-background: @brand-primary;
-// @sidebar-border: none;
+// @sidebar-border: 1px solid @gray-lighter;
 // @facet-background:  @gray;
 // @facet-text-color: @body-bg;
 // @display-checkbox-facet-amount: inline-block;    // set to none or inline-block
@@ -95,11 +97,12 @@
 //Search tools
 // @finna-searchtools-background: @brand-primary;
 // @finna-searchtools-color: @body-bg;
-//Browsebar
+
+
+//== Browsebar
 // @finna-browsebar-background: @brand-primary;
 // @finna-browsebar-highlight-background: darken(@brand-primary, 10%);
 // @finna-browsebar-link-color: @body-bg;
-
 
 //== Generated horizontal carousel styles
 //== Carousel images background-color
@@ -138,7 +141,7 @@
 
 // @body-bg: #fff;
 // @text-color: @gray;
-// @link-color:  mix(@brand-primary, #0066cc); // defines all link color, also for linked icons
+// @link-color:  #007c90; // defines all link color, also for linked icons
 // @link-hover-color: @link-color;
 // @link-hover-decoration: #fff;
 // @padding-base-vertical: 6px;
@@ -161,7 +164,7 @@
 // @font-family-serif: PT Serif;
 // @font-family-monospace: Monaco;
 // @font-family-base: @font-family-sans-serif;
-// @font-size-base: 16px;
+// @font-size-base: 14px;
 // @font-size-icon-small: 14px;
 // @font-size-icon-large: 1.5em;
 // @font-size-large: ceil((@font-size-base * 1.3));
@@ -180,8 +183,8 @@
 
 
 //## Font size, line-height for content pages
-// @content-font-size-base: 15px;
-// @content-line-height-base: 1.6;
+// @content-font-size-base: 16px;
+// @content-line-height-base: 1.5;
 // @content-headings-font-size-h1: floor((@content-font-size-base * 1.777));
 // @content-headings-font-size-h2: floor((@content-font-size-base * 1.777));
 // @content-headings-font-size-h3: floor((@content-font-size-base * 1.333));
@@ -222,11 +225,12 @@
 // @table-border-color:            transparent;
 
 
+
 //== Buttons
 //
 //## For each of Bootstrap's buttons, define text, background and border color.
 
-// @btn-font-weight: bold;
+// @btn-font-weight: 600;
 // @btn-default-color: @body-bg;
 // @btn-default-bg: #fff;
 // @btn-default-border: #ccc;
@@ -420,6 +424,7 @@
 // @list-group-bg: @body-bg;
 
 
+
 //== Panels
 //
 //##
@@ -445,6 +450,7 @@
 // @badge-font-weight:           400;
 
 
+
 //== Breadcrumbs
 //
 //##
@@ -453,7 +459,7 @@
 // @breadcrumb-padding-horizontal: 5px;
 //** Breadcrumb background color
 // @breadcrumb-bg:                 rgba(1, 1, 1, 0.4);
-// //** Breadcrumb text color
+//** Breadcrumb text color
 // @breadcrumb-color:              #fff;
 //** Text color of current page in the breadcrumb
 // @breadcrumb-active-color:       #fff;
