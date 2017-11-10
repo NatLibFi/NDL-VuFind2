@@ -811,9 +811,9 @@ finna.layout = (function finnaLayout() {
     var nav = priorityNav.init({
         mainNavWrapper: ".nav-wrapper",
         mainNav: ".nav-ul",
-        navDropdownLabel: '<span class="iconlabel other-records"></span>' + VuFind.translate('other_records') + '<span class="caret"></span>',
+        navDropdownLabel: '<div><span class="iconlabel other-records"></span>' + VuFind.translate('other_records') + '<span class="caret"></span></div>',
         navDropdownClassName: "dropdown-menu",
-        navDropdownBreakpointLabel: '<span class="iconlabel other-records"></span>' + VuFind.translate('records') + '<span class="caret"></span>',
+        navDropdownBreakpointLabel: '<div><span class="iconlabel other-records"></span>' + VuFind.translate('records') + '<span class="caret"></span></div>',
         navDropdownToggleClassName: "nav-dropdown-toggle",
         breakPoint: 400
     });
