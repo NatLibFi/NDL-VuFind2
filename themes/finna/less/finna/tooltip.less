@@ -87,18 +87,15 @@
   
 .searchbox-home {
   .tooltip-search-pci, .tooltip-search-local {
-    background: rgba(255,255,255,0.6);
-    font-size: 36px;          
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
-    line-height: 44px;
     i {
       font-size: 36px;                
       margin-left: 4px;   
       position: relative;          
       text-align: center;
       cursor: pointer;
+      background: rgba(255,255,255,.6);
+      border-radius: 50%;
+      padding: 3px;
     }
   }
 }
@@ -117,6 +114,10 @@
       text-align: center;
       cursor: pointer;
       font-style: normal;
+      padding: 3px;
+      border-radius: 50%;
+      background: @finna-searchbox-link-background;
+      color: @body-bg;
     }
   }
   @media (max-width: @screen-sm) {
