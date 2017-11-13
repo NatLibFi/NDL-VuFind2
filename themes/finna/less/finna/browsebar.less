@@ -4,8 +4,9 @@
   bottom:0;
   color: @finna-browsebar-link-color;
 }
-.browsebar .nav>li .iconlabel:before {
-  vertical-align: top;
+.browsebar .nav>li .iconlabel:before,
+.browsebar .nav-dropdown-label.iconlabel:before{
+  vertical-align: middle;
   font-size: 1.3em;
   margin-right: 0.5em;   
 }
@@ -77,6 +78,7 @@
     }
     .nav-dropdown-label {
       min-width: 200px;
+      line-height: 64px;
     }
   }
   nav.navbar {
