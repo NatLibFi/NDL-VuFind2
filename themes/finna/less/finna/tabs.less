@@ -8,8 +8,7 @@
     }
     & ul.nav-tabs {
         border-bottom: 1px solid @nav-tabs-border-color;
-        margin: 0px;
-        margin-bottom: 1em;
+        margin: 1em 0;
         @media(max-width: @screen-sm-max) {
             margin-left: 0;  
         }
@@ -39,7 +38,8 @@
                 font-weight: 600;
                 color: @main-tabs-link-color;
                 transition: none;
-                margin-top: -1px;
+                border-top: 4px solid transparent;
+                margin-top: 0;
                 @media (max-width: @screen-xs-max) {
                     padding: 8px 6px;
                     font-size: .85em;
@@ -62,12 +62,10 @@
 
             &.active {
                 > a {
-                    border-radius: 0;
                     border-top: 4px solid @action-link-color;
                     border-left: 1px solid @nav-tabs-border-color;
                     border-right: 1px solid @nav-tabs-border-color;  
                     border-bottom: 1px solid @body-bg;
-                    margin-top: -5px;
                 }
             }
             &:not(.active) > a {
@@ -222,7 +220,6 @@
                 border-top: 4px solid @action-link-color;
                 border-bottom-color: transparent;
                 transition: border 0.05s linear;
-                margin-top: -3px;
             }
         }
     }
@@ -252,11 +249,10 @@
             display: none;
         }
         & > li {
-            margin-bottom: -5px;
             word-wrap: break-word;
         }
         & > li > a {
-            padding: 0px 10px 10px;
+            padding: 0 10px 10px;
             background-color: transparent;
             border: none;
             border-bottom: 5px solid transparent;
