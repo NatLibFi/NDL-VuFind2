@@ -1366,7 +1366,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return movie Age limit
+     * Return movie Age limit'
+     * Get Age limit from last inspection's details
      *
      * @return string AgeLimit
      */

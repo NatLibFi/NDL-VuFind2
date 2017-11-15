@@ -1,6 +1,6 @@
 <?php
 /**
- * Press Review tab (SolrForward)
+ * DescriptionFWD tab (SolrForward)
  *
  * PHP version 5
  *
@@ -28,7 +28,7 @@
 namespace Finna\RecordTab;
 
 /**
- * SolrForward Press Review tab
+ * SolrForward DescriptionFWD tab
  *
  * @category VuFind
  * @package  RecordTabs
@@ -62,7 +62,7 @@ class DescriptionFWD extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
-        if (empty($this->driver->getPressReview())) {
+        if (empty($this->driver->getDescription())) {
             $this->enabled = false;
         };
         return $this->enabled;
