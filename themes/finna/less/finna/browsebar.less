@@ -63,7 +63,7 @@
   .priority-nav__dropdown {
     left: 0;
     top: 30px;
-    li>a.iconlabel{
+    li > a.iconlabel {
       margin: 0px;
     }
   }
@@ -92,36 +92,35 @@
       margin-left: 75px;
     }
   }
-
-  .browse-link {
-    width: 30%;
-    float: right;
-    background: @finna-browsebar-highlight-background;
-    padding: 0px 10px;
-    line-height: 64px;
-    a {
-      display: inline-block;
-      color: @finna-browsebar-link-color;
-      font-size: 1.1em;
-      i {
-        font-style: normal;
-        font-size: 1.1em;
-        line-height: 1.5em;
-        vertical-align: middle;
-        color: @finna-browsebar-link-color;
-      }
-    }
-    & ~ nav.navbar {
-      @media(min-width: @screen-sm) and (max-width: @screen-md){
-        width: 65%;
-      }
-      @media(min-width: @screen-md){
-        width: 70%;
-      }
-    }
-    @media(max-width: @screen-md){
-      width: 35%;
-    }
-  }
 }
 
+.browsebar .browse-link {
+  width: 30%;
+  float: right;
+  background: @finna-browsebar-highlight-background;
+  padding: 0px 10px;
+  line-height: 64px;
+  a {
+    display: inline-block;
+    color: @finna-browsebar-link-color;
+    font-size: 1.1em;
+    i {
+      font-style: normal;
+      font-size: 1.1em;
+      line-height: 1.5em;
+      vertical-align: middle;
+      color: @finna-browsebar-link-color;
+    }
+  }
+  & ~ nav.navbar {
+    @media(min-width: @screen-sm) and (max-width: @screen-md){
+      width: 65%;
+    }
+    @media(min-width: @screen-md){
+      width: 70%;
+    }
+  }
+  @media(max-width: @screen-md){
+    width: 35%;
+  }
+}
