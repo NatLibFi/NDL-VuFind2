@@ -298,23 +298,19 @@
 .open-link, .save-record-link, .record-link {
   text-align: left;
   margin-top: 5px;
-  & a {
-      display: inline-block;
-      font-size: .94em;
-      color: @gray-mid-light;
-      border-radius: 10px;
-      transition: background .2s linear;
-  }
+  color: @action-link-color;
+  font-size: 1em;
+  font-weight: 600;
+  text-transform: uppercase;
   a, a span {
     &:hover {
       text-decoration: none;
       color: @link-color;
     }
   }
-  span {
-    color: @gray-dark;
-    text-transform: uppercase;
-    font-weight: 600;
+  .image-dimensions {
+    color: @gray-mid-light;
+    font-size: .8em;
   }
 }
 

@@ -4,11 +4,10 @@
   bottom:0;
   color: @finna-browsebar-link-color;
 }
-.browsebar .nav {
-  margin-left: 1em;
-}
-.browsebar .nav>li .iconlabel:before {
-  vertical-align: top;
+.browsebar .nav>li .iconlabel:before,
+.browsebar .nav-dropdown-label.iconlabel:before,
+.browsebar .dropdown-menu a.iconlabel:before{
+  vertical-align: middle;
   font-size: 1.3em;
   margin-right: 0.5em;   
 }
@@ -34,11 +33,6 @@
 }
 .browsebar button .iconlabel {
   color: @finna-browsebar-link-color;
-}
-.browsebar .navbar .navbar-nav>li>a.dropdown-toggle {
-  padding-left: 8px;
-  margin-right: 0;
-  padding-right: 0;
 }
 .browsebar .nav>li>a:hover, .browsebar .nav>li>a:focus {
   background-color: darken(@finna-browsebar-background, 5%);
@@ -66,59 +60,67 @@
 }
 
 .browsebar {
-  padding-right: 15px;
   .priority-nav__dropdown {
     left: 0;
     top: 30px;
-    li>a.iconlabel{
+    li > a.iconlabel {
       margin: 0px;
     }
   }
   .nav-dropdown-toggle {
     height: 64px;
     font-size: 1.1em;
-    padding-left: 10px;
     border: none;
     background-color: transparent;
     color: @finna-browsebar-link-color;
+    padding: 0;
     &:hover {
       background-color: darken(@finna-browsebar-background, 5%);
+    }
+    .nav-dropdown-label {
+      min-width: 200px;
+      line-height: 64px;
+      .caret {
+        margin-left: 5px;
+      }
     }
   }
   nav.navbar {
     width: 100%;
     float: left;
-  }
-
-  .browse-link {
-    width: 30%;
-    float: right;
-    background: @finna-browsebar-highlight-background;
-    padding: 0px 10px;
-    line-height: 64px;
-    a {
-      display: inline-block;
-      color: @finna-browsebar-link-color;
-      font-size: 1.1em;
-      i {
-        font-style: normal;
-        font-size: 1.1em;
-        line-height: 1.5em;
-        vertical-align: middle;
-        color: @finna-browsebar-link-color;
-      }
-    }
-    & ~ nav.navbar {
-      @media(min-width: @screen-sm){
-        width: 65%;
-      }
-    }
-    @media(max-width: @screen-sm){
-      display: none;
-    }
-    @media(max-width: @screen-md){
-      width: 35%;
+    .nav-wrapper {
+      margin-left: 75px;
     }
   }
 }
 
+.browsebar .browse-link {
+  width: 30%;
+  float: right;
+  background: @finna-browsebar-highlight-background;
+  padding: 0px 10px;
+  line-height: 64px;
+  a {
+    display: inline-block;
+    color: @finna-browsebar-link-color;
+    font-size: 1.1em;
+    i {
+      font-style: normal;
+      font-size: 1.1em;
+      line-height: 1.5em;
+      vertical-align: middle;
+      color: @finna-browsebar-link-color;
+    }
+  }
+  & ~ nav.navbar {
+    @media(min-width: @screen-sm) and (max-width: @screen-md){
+      width: 65%;
+    }
+    @media(min-width: @screen-md){
+      width: 70%;
+    }
+  }
+  @media(max-width: @screen-md){
+    width: 35%;
+  }
+}

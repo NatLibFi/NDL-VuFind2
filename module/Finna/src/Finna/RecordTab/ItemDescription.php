@@ -28,7 +28,7 @@
 namespace Finna\RecordTab;
 
 /**
- * SolrForward Description tab
+ * SolrForward Item Description tab
  *
  * @category VuFind
  * @package  RecordTabs
@@ -62,7 +62,7 @@ class ItemDescription extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
-        if (empty($this->driver->getPressReview())) {
+        if (empty($this->driver->getGeneralNotes())) {
             $this->enabled = false;
         };
         return $this->enabled;
