@@ -95,7 +95,7 @@
     <? if ($module == 'record' || $module == 'collection'): ?>
       <div class="record-back hidden-print">
           <?
-          $html = '<span><i class="fa fa-arrow-left"></i></span>';
+          $html = '<span><i class="fa fa-arrow-alt-left"></i></span>';
           $html .= '<span class="back-to-search-text hidden-xs hidden-sm">'.$this->transEsc('Back to search results').'</span>';
           $previousSearch = $this->searchMemory()->getLastSearchLink($html);
           if ($previousSearch !== ''):
@@ -243,13 +243,13 @@
                 </li>
                 <? endif; ?>
               <li class="pager-previous-record">
-                <a href="<?=$this->recordLink()->getUrl($this->scrollData['previousRecord'])?>" rel="nofollow"><i class="fa fa-arrow-left"></i><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
+                <a href="<?=$this->recordLink()->getUrl($this->scrollData['previousRecord'])?>" rel="nofollow"><i class="fa fa-arrow-alt-left"></i><span class="sr-only"><?=$this->transEsc('Previous Record')?></span></a>
               </li>
             <? else: ?>
                 <? if ($this->scrollData['firstRecord']): ?>
                 <li class="disabled" title="<?=$this->transEsc('First Record')?>"><a><i class="fa fa-first-page"></i></a></li>
                 <? endif; ?>
-              <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><i class="fa fa-arrow-left"></i></a></li>
+              <li class="disabled" title="<?=$this->transEsc('Previous Record')?>"><a><i class="fa fa-arrow-alt-left"></i></a></li>
             <? endif; ?>
           <li class="pager-text">
               <?=$this->transEsc('of_num_results', [
@@ -259,7 +259,7 @@
           </li>
             <? if ($this->scrollData['nextRecord']): ?>
               <li class="pager-next-record">
-                <a href="<?=$this->recordLink()->getUrl($this->scrollData['nextRecord'])?>" rel="nofollow"><i class="fa fa-arrow-right"></i><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
+                <a href="<?=$this->recordLink()->getUrl($this->scrollData['nextRecord'])?>" rel="nofollow"><i class="fa fa-arrow-alt-right"></i><span class="sr-only"><?=$this->transEsc('Next Record')?></span></a>
               </li>
                 <? if ($this->scrollData['lastRecord']): ?>
                 <li>
@@ -267,7 +267,7 @@
                 </li>
                 <? endif; ?>
             <? else: ?>
-              <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><i class="fa fa-arrow-right"></i></a></li>
+              <li class="disabled" title="<?=$this->transEsc('Next Record')?>"><a><i class="fa fa-arrow-alt-right"></i></a></li>
                 <? if ($this->scrollData['lastRecord']): ?>
                 <li class="disabled" title="<?=$this->transEsc('Last Record')?>"><a><i class="fa fa-last-page"></i></a></li>
                 <? endif; ?>
