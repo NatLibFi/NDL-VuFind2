@@ -39,7 +39,7 @@
     $this->layout()->breadcrumbs .= '<li class="active">' . $this->transEsc('Search') . ': ' . $this->escapeHtml($lookfor) . '</li>';
   }
 
-  if (!$browse && $searchType == 'advanced') {
+  if (!$browse && $searchType == 'advanced' || $this->fromStreetSearch) {
     // Set up Finna Main Header:
     $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
         'search/header.phtml',
