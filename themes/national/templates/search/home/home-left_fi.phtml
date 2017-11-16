@@ -1,17 +1,13 @@
 <!-- START of: national - search/home/home-left.phtml -->
 <div class="introduction">
-<div>
-    <h2>Otsikko 1 (home-left_fi.phtml)</h2>
-    <p>In libros De generatione et corruptione</p>
-    <p>In hoc igitur libro philosophus primo ponit prooemium, demonstrans suam intentionem: secundo prosequitur propositum...</p>
-</div>
-<div>
-  <div class="home-column">
-    <p>Palsta 1</p>
-  </div>
-  <div class="home-column">
-    <p>Palsta 2</p>
-  </div>
-</div>
+  <h2>Tietoa tarvitseville ja elämyksiä etsiville</h2>
+  <? $cnt = $this->indexedTotal()->getTotalIndexedCount(); ?>
+    <? if ($cnt > 0): ?>
+        <p>Finna.fi:stä löydät <?=$this->translate('currently_indexed_html', ['%%total%%' => $this->localizedNumber($cnt)]); ?><br>
+        <a href="<?=$this->url('content-page', ['page' => 'organisations'])?>">Kenen aineistoja on finna.fi:ssä?</a></p>
+    <? endif; ?>
+  <p>Finnassa voit katsella verkossa saatavilla olevia sisältöjä, uusia lainoja, tilata aineistoja, ja paljon muuta.<br>
+  <a href="<?=$this->url('content-page', ['page' => 'about'])?>">Mikä Finna on?</a>
+  </p>
 </div>
 <!-- END of: national - search/home/home-left.phtml -->
