@@ -64,7 +64,7 @@ class PressReviews extends \VuFind\RecordTab\AbstractBase
     {
         if (empty($this->driver->getPressReview())) {
             $this->enabled = false;
-        };
+        }
         return $this->enabled;
     }
 
