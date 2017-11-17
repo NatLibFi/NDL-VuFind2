@@ -45,7 +45,7 @@
         <table class="myresearch-table">
         <? $i = 0; foreach ($this->transactions as $resource): ?>
           <? $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
-          <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId())?>" class="myresearch-row">
+          <tr class="myresearch-row">
             <td class="text-left hidden-xs">
               <div class="cover-image">
                 <? if ($summThumb = $this->record($resource)->getThumbnail()): ?>

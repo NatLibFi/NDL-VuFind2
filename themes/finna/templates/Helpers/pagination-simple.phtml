@@ -1,7 +1,7 @@
 <!-- START of: finna - Helpers/pagination_simple.phtml -->
 <? if ($this->pageCount): ?>
   <ul class="paginationSimple">
-    <li<? if (isset($this->previous)): ?>>
+    <li><? if (isset($this->previous)): ?>
       <? $newParams = $this->params; $newParams['page'] = $this->previous; ?>
       <a href="<?= $this->currentPath() . '?' . http_build_query($newParams); ?>">
         <span class="sr-only"><?=$this->transEsc('Previous Page')?></span><i class="fa fa-arrow-left"></i>

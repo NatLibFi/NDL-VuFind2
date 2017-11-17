@@ -44,7 +44,7 @@
                 <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
                 <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
               </th>
-              <th colspan="3">
+              <th colspan="2">
                 <div class="btn-group">
                   <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEsc("hold_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
                   <ul class="dropdown-menu useraccount-cancel">
@@ -74,16 +74,15 @@
           <? foreach ($this->recordList as $resource): ?>
             <? $iteration++; ?>
             <? $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
-            <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" class="myresearch-row">
+            <tr class="myresearch-row">
               <td class="text-center">
               <? if ($this->cancelForm && isset($ilsDetails['cancel_details'])): ?>
-                <? $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $resource->getUniqueId()); ?>
                 <input type="hidden" name="cancelAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
                 <div class="checkboxFilter">
                   <div class="checkbox">
                     <label>
                       <span class="sr-only"><?=$this->transEsc('Select');?></span>
-                      <input type="checkbox" name="cancelSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?=$safeId?>" />
+                      <input type="checkbox" name="cancelSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
                     </label>
                   </div>
                 </div>
