@@ -1,11 +1,8 @@
 <!-- START of: finna - navibar-logo.phtml -->
 <? if (($srcUrl = $this->imageSrc('finna-logo.' . $this->layout()->userLang)) || ($srcUrl = $this->imageSrc('finna-logo'))): ?>
-  <a href="<?=$this->url('home');?>"><span class="sr-only"><?=$this->transEsc('Home');?></span>
-    <img src="<?=$srcUrl; ?>" alt="Logo" class="navbar-logo" />
-  </a>
+  <span class="sr-only"><?=$this->transEsc('Home');?></span>
+  <img src="<?=$srcUrl; ?>" alt="Logo" class="navbar-logo" />
 <? else: ?>
-  <a href="<?=$this->url('home');?>" class="finnalogo"><span class="sr-only"><?=$this->transEsc('Home');?></span></a>
-<? endif; ?>
-<? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir == 'search') : ?>
+  <span class="sr-only"><?=$this->transEsc('Home');?></span>
 <? endif; ?>
 <!-- END of: finna - navibar-logo.phtml -->

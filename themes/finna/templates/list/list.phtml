@@ -42,11 +42,11 @@ $this->headScript()->prependScript("var listId = {$list->id}; var publicList = 1
     </div>
 </div>
 <div class="public-list-view results result-view-<?=$this->escapeHtmlAttr($this->params->getView())?>">
-    <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-home') ?>">
+    <form id="search-cart-form" class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-home') ?>" autocomplete="off">
     </form>
-      <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => '']) ?>
-      <?=$this->render('search/list-' . $this->params->getView() . '.phtml') ?>
-      <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'bottom_']) ?>
+    <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => '', 'formAttr' => 'search-cart-form']) ?>
+    <?=$this->render('search/list-' . $this->params->getView() . '.phtml') ?>
+    <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'bottom_', 'formAttr' => 'search-cart-form']) ?>
 </div>
 <div class="container-fluid pagination-background">
   <div class="container">
@@ -55,7 +55,7 @@ $this->headScript()->prependScript("var listId = {$list->id}; var publicList = 1
     </div>
   </div>
 </div>
-<? // NOTE: insert extra closing div here to make the RSS-link container 100% wide ?> 
+<? // NOTE: insert extra closing div here to make the RSS-link container 100% wide ?>
 </div>
 
 <div class="container-fluid searchtools-background">
