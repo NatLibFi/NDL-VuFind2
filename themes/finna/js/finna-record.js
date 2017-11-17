@@ -146,11 +146,11 @@ finna.record = (function finnaRecord() {
   }
 
   function initRecordAccordions() {
-    $('.record-accordions .accordion-toggle').click(function(e){
+    $('.record-accordions .accordion-toggle').click(function accordionClicked(e){
       var accordion = $(e.target).closest('.accordion');
       var tabid = accordion.find('.accordion-toggle a').attr('id');
       e.preventDefault();
-      if(accordion.hasClass('active')){
+      if (accordion.hasClass('active')){
         $('.record-accordions').find('.accordion.active').removeClass('active');
         removeHashFromLocation();
       } else {
@@ -158,7 +158,7 @@ finna.record = (function finnaRecord() {
         accordion.addClass('active');
         window.location.hash = tabid;
         var newTab = getNewRecordTab(tabid).addClass('active');
-        if(accordion.find('.accordion-content .tab-pane').length < 1) {
+        if (accordion.find('.accordion-content .tab-pane').length < 1) {
           accordion.find('.accordion-content').append(newTab);
           ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
         }

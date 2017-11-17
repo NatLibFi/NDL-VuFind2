@@ -807,15 +807,14 @@ finna.layout = (function finnaLayout() {
   }
 
   function initPriorityNav() {
-    var wrapper = document.querySelector(".nav-wrapper");
-    var nav = priorityNav.init({
-        mainNavWrapper: ".nav-wrapper",
-        mainNav: ".nav-ul",
-        navDropdownLabel: '<div class="nav-dropdown-label iconlabel other-records">' + VuFind.translate('other_records') + '<span class="caret"></span></div>',
-        navDropdownClassName: "dropdown-menu",
-        navDropdownBreakpointLabel: '<div class="nav-dropdown-label iconlabel other-records">' + VuFind.translate('records') + '<span class="caret"></span></div>',
-        navDropdownToggleClassName: "nav-dropdown-toggle",
-        breakPoint: 400
+    priorityNav.init({
+      mainNavWrapper: ".nav-wrapper",
+      mainNav: ".nav-ul",
+      navDropdownLabel: '<div class="nav-dropdown-label iconlabel other-records">' + VuFind.translate('other_records') + '<span class="caret"></span></div>',
+      navDropdownClassName: "dropdown-menu",
+      navDropdownBreakpointLabel: '<div class="nav-dropdown-label iconlabel other-records">' + VuFind.translate('records') + '<span class="caret"></span></div>',
+      navDropdownToggleClassName: "nav-dropdown-toggle",
+      breakPoint: 400
     });
   }
 
@@ -825,8 +824,8 @@ finna.layout = (function finnaLayout() {
       $('.filters-toggle .active-filter-count').text(' (' + filterAmount + ')');
     }
 
-    $('.filters-toggle').click(function(){
-      if($('.filters-bar').hasClass('hidden')) {
+    $('.filters-toggle').click(function filterToggleClicked(){
+      if ($('.filters-bar').hasClass('hidden')) {
         $('.filters-bar').removeClass('hidden');
         $('.filters-toggle .fa-arrow-down').removeClass('fa-arrow-down').addClass('fa-arrow-up');
       } else {
@@ -835,8 +834,7 @@ finna.layout = (function finnaLayout() {
 
       }
     });
-
-  };
+  }
 
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
