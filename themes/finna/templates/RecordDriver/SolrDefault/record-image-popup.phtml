@@ -6,11 +6,11 @@
   $currentImage = $this->index + 1;
   $numOfImages = $this->record($this->driver)->getNumOfRecordImages('large');
   $imageDescription = $this->driver->tryMethod('getImageDescription', [$this->index]);
-  $rights = $recordImage->getImageRights($this->index); 
+  $rights = $recordImage->getImageRights($this->index);
 ?>
 <? $formats = $this->driver->tryMethod('getFormats'); ?>
 <? $translatedFormat = $this->transEsc(end($formats)); ?>
-<? $recordType = $this->driver->getRecordType(); ?>
+<? $recordType = $this->driver->tryMethod('getRecordType'); ?>
 <div class="imagepopup-holder <?=$this->escapeHtmlAttr($recordType) ?>" data-type="<?=$this->escapeHtmlAttr($recordType) ?>" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID()) ?>">
   <div class="imagepopup-container">
     <div class="image iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>">

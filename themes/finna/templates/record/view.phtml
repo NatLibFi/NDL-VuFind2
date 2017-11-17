@@ -77,7 +77,7 @@
       $this->layout()->userLang, $params
   );
   $noImage = empty($images[0]['urls']['medium']) && empty($images[0]['urls']['large']);
-  $largeImageLayout = !$noImage && in_array($this->driver->getRecordType(), ['lido', 'forward', 'ead']);
+  $largeImageLayout = !$noImage && in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward', 'ead']);
 ?>
 </div>
 <div class="container">
