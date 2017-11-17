@@ -10,7 +10,7 @@
 </div>
 
 <? if ($user): ?>
-  <form class="comment-form" action="<?=$this->recordLink()->getActionUrl($this->driver, 'AddComment')?>" method="post"">
+  <form class="comment-form" action="<?=$this->recordLink()->getActionUrl($this->driver, 'AddComment')?>" method="post">
     <div>
       <input type="hidden" name="id" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>"/>
       <input type="hidden" name="source" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>"/>
