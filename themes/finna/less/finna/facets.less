@@ -194,6 +194,19 @@
 
 .full-facet-sort-options {
     margin-bottom: 5px;
+    .btn-group {
+      a {
+        border-radius: 15px;
+        padding: 5px 10px;
+        border: 1px solid @action-link-color;
+        color: @action-link-color;
+        background-color: @body-bg;
+        &.active {
+          color: @body-bg;
+          background-color: @action-link-color;
+        }
+      }
+    }
 }
 .lightbox-scroll.full-facets {
     border: 1px solid @gray-lighter;
