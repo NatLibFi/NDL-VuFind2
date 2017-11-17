@@ -2,7 +2,7 @@
 <?
 $formatter = $this->recordDataFormatter();
 $fields = $formatter->getDefaults('core');
-$description = $formatter->getData($this->driver, array($fields['Description FWD']));
+$description = $formatter->getData($this->driver, [$fields['Description FWD']]);
 ?>
 <?= $description[0]['value'] ?>
 <!-- END of: finna - RecordTab/description.phtml -->

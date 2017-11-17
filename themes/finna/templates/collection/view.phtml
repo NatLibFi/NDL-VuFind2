@@ -31,7 +31,7 @@
       $params->activateAllFacets();
       $filterList = $params->getFilterList(true);
 
-      if ( !empty($params->getFilterList(false))) {
+      if (!empty($params->getFilterList(false))) {
           $checkboxFilters = $params->getCheckboxFacets();
           $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
           $options = $this->searchOptions($this->searchClassId);

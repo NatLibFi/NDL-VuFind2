@@ -154,7 +154,7 @@ finna.imagePopup = (function finnaImagePopup() {
               }
             });
 
-              // Prevent navigation button CSS-transitions on touch-devices
+            // Prevent navigation button CSS-transitions on touch-devices
             if (finna.layout.isTouchDevice()) {
               $('.mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left').addClass('touch-device');
 
@@ -262,7 +262,7 @@ finna.imagePopup = (function finnaImagePopup() {
       };
       $(".mfp-arrow-right, .mfp-arrow-left").addClass("hidden");
       mfp.updateItemHTML();
-      
+
       var player = videojs('video');
 
       videojs.Html5DashJS.hook(

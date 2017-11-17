@@ -42,7 +42,7 @@
             $translatedFormat = $this->transEsc(end($formats));
             $rights = $image['rights'];
             ?>
-          <? if ( isset($rights['copyright']) && ($rights['copyright'] !== $this->transEsc('usage_F'))): ?>
+          <? if (isset($rights['copyright']) && $rights['copyright'] !== $this->transEsc('usage_F')): ?>
           <div class="open-link"><a target="_blank" href="<?=$originalImage ?>" download="<?=$originalImage ?>">
               <i aria-hidden="true" class="fa fa-download"></i>
               <span><?=$this->transEsc('Show image in new window') ?></span>

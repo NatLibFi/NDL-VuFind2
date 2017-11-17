@@ -51,7 +51,7 @@
       $params->activateAllFacets();
       $filterList = $params->getFilterList(true);
 
-      if ( !empty($params->getFilterList(false))) {
+      if (!empty($params->getFilterList(false))) {
           $checkboxFilters = $params->getCheckboxFacets();
           $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
           $options = $this->searchOptions($this->searchClassId);
@@ -92,7 +92,7 @@
     <?=$this->record($this->driver)->getMetaTags();?>
     <?=$this->record($this->driver)->getCoreMetadata()?>
 
-    <?=$this->driver->supportsCoinsOpenURL()?'<span class="Z3988" title="'.$this->escapeHtmlAttr($this->driver->getCoinsOpenURL()).'"></span>':''?>
+    <?=$this->driver->supportsCoinsOpenURL()?'<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>':''?>
   </div>
 
   <? ob_start(); ?>

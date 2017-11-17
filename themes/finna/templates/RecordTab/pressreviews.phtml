@@ -2,7 +2,7 @@
 <?
   $formatter = $this->recordDataFormatter();
   $fields = $formatter->getDefaults('core');
-  $pressReview = $formatter->getData($this->driver, array($fields['Press Reviews']));
+  $pressReview = $formatter->getData($this->driver, [$fields['Press Reviews']]);
 ?>
 <?= $pressReview[0]['value'] ?>
 <!-- END of: finna - RecordTab/pressreviews.phtml -->
