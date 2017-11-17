@@ -146,13 +146,13 @@ finna.imagePopup = (function finnaImagePopup() {
             var recordIndex = $.magnificPopup.instance.currItem.data.recordInd;
             VuFind.lightbox.bind('.imagepopup-holder');
             $('.imagepopup-holder .image img').one('load', function onLoadImg() {
-                $('.imagepopup-holder .image').addClass('loaded');
-                initDimensions();
-              }).each(function triggerImageLoad() {
-                if (this.complete) {
-                  $(this).load();
-                }
-              });
+              $('.imagepopup-holder .image').addClass('loaded');
+              initDimensions();
+            }).each(function triggerImageLoad() {
+              if (this.complete) {
+                $(this).load();
+              }
+            });
 
               // Prevent navigation button CSS-transitions on touch-devices
             if (finna.layout.isTouchDevice()) {
@@ -162,71 +162,71 @@ finna.imagePopup = (function finnaImagePopup() {
                 allowPageScroll: 'vertical',
                 // Generic swipe handler for all directions
                 swipeRight: function onSwipeRight(/*event, phase, direction, distance, duration*/) {
-                    $('.mfp-container .mfp-arrow-left').click();
+                  $('.mfp-container .mfp-arrow-left').click();
                 },
                 swipeLeft: function onSwipeLeft(/*event, direction, distance, duration*/) {
-                    $('.mfp-container .mfp-arrow-right').click();
+                  $('.mfp-container .mfp-arrow-right').click();
                 },
                 threshold: 75,
                 cancelThreshold: 20
               });
-              }
+            }
 
-              // Record index
-              if (recordIndex) {
-                var recIndex = $('.imagepopup-holder .image-info .record-index');
-                var recordCount = $(".paginationSimple .total").text();
-                recIndex.find('.index').html(recordIndex);
-                recIndex.find('.total').html(recordCount);
-                recIndex.show();
-              }
+            // Record index
+            if (recordIndex) {
+              var recIndex = $('.imagepopup-holder .image-info .record-index');
+              var recordCount = $(".paginationSimple .total").text();
+              recIndex.find('.index').html(recordIndex);
+              recIndex.find('.total').html(recordCount);
+              recIndex.show();
+            }
 
-              // Image copyright information
-              $('.imagepopup-holder .image-rights .copyright-link a').click(function onClickCopyright() {
-                var mode = $(this).data('mode') === '1';
+            // Image copyright information
+            $('.imagepopup-holder .image-rights .copyright-link a').click(function onClickCopyright() {
+              var mode = $(this).data('mode') === '1';
 
-                var moreLink = $('.imagepopup-holder .image-rights .more-link');
-                var lessLink = $('.imagepopup-holder .image-rights .less-link');
+              var moreLink = $('.imagepopup-holder .image-rights .more-link');
+              var lessLink = $('.imagepopup-holder .image-rights .less-link');
 
-                moreLink.toggle(!mode);
-                lessLink.toggle(mode);
+              moreLink.toggle(!mode);
+              lessLink.toggle(mode);
 
-                $('.imagepopup-holder .image-rights .copyright').toggle(mode);
+              $('.imagepopup-holder .image-rights .copyright').toggle(mode);
 
-                return false;
+              return false;
+            });
+
+            // load feedback modal
+            if ($('.imagepopup-holder #feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
+              $('.imagepopup-holder #feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
+                $.magnificPopup.close();
               });
+            }
 
-              // load feedback modal
-              if ($('.imagepopup-holder #feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
-                $('.imagepopup-holder #feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
-                    $.magnificPopup.close();
+            // Load book description
+            var summaryHolder = $('.imagepopup-holder .summary');
+            if (type === 'marc') {
+              var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
+              $.getJSON(url)
+                .done(function onGetDescriptionDone(response) {
+                  if (response.data.length > 0) {
+                    summaryHolder.find('> div p').html(response.data);
+                    finna.layout.initTruncate(summaryHolder);
+                    summaryHolder.removeClass('loading');
+                  }
+                })
+                .fail(function onGetDescriptionFail(/*response, textStatus*/) {
+                  summaryHolder.removeClass('loading');
                 });
-              }
+            } else {
+              finna.layout.initTruncate(summaryHolder);
+              summaryHolder.removeClass('loading');
+            }
 
-              // Load book description
-              var summaryHolder = $('.imagepopup-holder .summary');
-              if (type === 'marc') {
-                var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
-                $.getJSON(url)
-                  .done(function onGetDescriptionDone(response) {
-                    if (response.data.length > 0) {
-                      summaryHolder.find('> div p').html(response.data);
-                      finna.layout.initTruncate(summaryHolder);
-                      summaryHolder.removeClass('loading');
-                    }
-                  })
-                  .fail(function onGetDescriptionFail(/*response, textStatus*/) {
-                      summaryHolder.removeClass('loading');
-                  });
-              } else {
-                finna.layout.initTruncate(summaryHolder);
-                summaryHolder.removeClass('loading');
-              }
-
-              // Init embedding
-              finna.layout.initIframeEmbed(popup);
-              initVideoPopup(popup);
-              },
+            // Init embedding
+            finna.layout.initIframeEmbed(popup);
+            initVideoPopup(popup);
+          },
           close: function closePopup() {
             if ($("#video").length){
               videojs('video').dispose();
@@ -246,10 +246,8 @@ finna.imagePopup = (function finnaImagePopup() {
     });
   }
 
-  function initVideoPopup(container) {
-    if (typeof(container) === 'undefined') {
-      container = $('body');
-    }
+  function initVideoPopup(_container) {
+    var container = typeof _container === 'undefined' ? $('body') : _container;
 
     container.find('a[data-embed-video]').click(function openVideoPopup(e) {
       var videoSources = $(this).data('videoSources');
