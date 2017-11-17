@@ -1,4 +1,4 @@
-/*global VuFind, finna */
+/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab */
 finna.record = (function finnaRecord() {
   function initDescription() {
     var description = $('#description_text');

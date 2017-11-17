@@ -1,4 +1,4 @@
-/*global VuFind, finna, module */
+/*global videojs */
 finna.imagePopup = (function finnaImagePopup() {
 
   function openPopup(trigger) {
@@ -127,121 +127,121 @@ finna.imagePopup = (function finnaImagePopup() {
 
     $('.image-popup-trigger').each(function initPopup() {
       $(this).magnificPopup({
-            items: urls,
-            index: $(this).data('ind'),
-            type: 'ajax',
-            tLoading: '',
-            tClose: VuFind.translate('close'),
-            preloader: true,
-            preload: [1, 3],
-            removalDelay: 200,
-            ajax: {
-                cursor: ''
-            },
-            callbacks: {
-                ajaxContentAdded: function onAjaxContentAdded() {
-                    var popup = $('.imagepopup-holder');
-                    var type = popup.data("type");
-                    var id = popup.data("id");
-                    var recordIndex = $.magnificPopup.instance.currItem.data.recordInd;
-                    VuFind.lightbox.bind('.imagepopup-holder');
-                    $('.imagepopup-holder .image img').one('load', function onLoadImg() {
-                        $('.imagepopup-holder .image').addClass('loaded');
-                        initDimensions();
-                    }).each(function triggerImageLoad() {
-                        if (this.complete) {
-                            $(this).load();
-                        }
-                    });
-
-                    // Prevent navigation button CSS-transitions on touch-devices
-                    if (finna.layout.isTouchDevice()) {
-                        $('.mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left').addClass('touch-device');
-
-                        $('.mfp-container').swipe({
-                            allowPageScroll: 'vertical',
-                            // Generic swipe handler for all directions
-                            swipeRight: function onSwipeRight(/*event, phase, direction, distance, duration*/) {
-                                $('.mfp-container .mfp-arrow-left').click();
-                            },
-                            swipeLeft: function onSwipeLeft(/*event, direction, distance, duration*/) {
-                                $('.mfp-container .mfp-arrow-right').click();
-                            },
-                            threshold: 75,
-                            cancelThreshold: 20
-                        });
-                    }
-
-                    // Record index
-                    if (recordIndex) {
-                        var recIndex = $('.imagepopup-holder .image-info .record-index');
-                        var recordCount = $(".paginationSimple .total").text();
-                        recIndex.find('.index').html(recordIndex);
-                        recIndex.find('.total').html(recordCount);
-                        recIndex.show();
-                    }
-
-                    // Image copyright information
-                    $('.imagepopup-holder .image-rights .copyright-link a').click(function onClickCopyright() {
-                        var mode = $(this).data('mode') === '1';
-
-                        var moreLink = $('.imagepopup-holder .image-rights .more-link');
-                        var lessLink = $('.imagepopup-holder .image-rights .less-link');
-
-                        moreLink.toggle(!mode);
-                        lessLink.toggle(mode);
-
-                        $('.imagepopup-holder .image-rights .copyright').toggle(mode);
-
-                        return false;
-                    });
-
-                    // load feedback modal
-                    if ($('.imagepopup-holder #feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
-                        $('.imagepopup-holder #feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
-                            $.magnificPopup.close();
-                        });
-                    }
-
-                    // Load book description
-                    var summaryHolder = $('.imagepopup-holder .summary');
-                    if (type === 'marc') {
-                        var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
-                        $.getJSON(url)
-                            .done(function onGetDescriptionDone(response) {
-                                if (response.data.length > 0) {
-                                    summaryHolder.find('> div p').html(response.data);
-                                    finna.layout.initTruncate(summaryHolder);
-                                    summaryHolder.removeClass('loading');
-                                }
-                            })
-                            .fail(function onGetDescriptionFail(/*response, textStatus*/) {
-                                summaryHolder.removeClass('loading');
-                            });
-                    } else {
-                        finna.layout.initTruncate(summaryHolder);
-                        summaryHolder.removeClass('loading');
-                    }
-
-                    // Init embedding
-                    finna.layout.initIframeEmbed(popup);
-                    initVideoPopup(popup);
-                  },
-                  close: function closePopup() {
-                      if ($("#video").length){
-                          videojs('video').dispose();
-                      }
+        items: urls,
+        index: $(this).data('ind'),
+        type: 'ajax',
+        tLoading: '',
+        tClose: VuFind.translate('close'),
+        preloader: true,
+        preload: [1, 3],
+        removalDelay: 200,
+        ajax: {
+          cursor: ''
+        },
+        callbacks: {
+          ajaxContentAdded: function onAjaxContentAdded() {
+              var popup = $('.imagepopup-holder');
+              var type = popup.data("type");
+              var id = popup.data("id");
+              var recordIndex = $.magnificPopup.instance.currItem.data.recordInd;
+              VuFind.lightbox.bind('.imagepopup-holder');
+              $('.imagepopup-holder .image img').one('load', function onLoadImg() {
+                  $('.imagepopup-holder .image').addClass('loaded');
+                  initDimensions();
+              }).each(function triggerImageLoad() {
+                  if (this.complete) {
+                    $(this).load();
                   }
-            },
-            gallery: {
-                enabled: true,
-                preload: [0, 2],
-                navigateByImgClick: true,
-                arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
-                tPrev: 'trPrev',
-                tNext: 'trNext',
-                tCounter: ''
-            }
+              });
+
+              // Prevent navigation button CSS-transitions on touch-devices
+              if (finna.layout.isTouchDevice()) {
+                  $('.mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left').addClass('touch-device');
+
+                  $('.mfp-container').swipe({
+                      allowPageScroll: 'vertical',
+                      // Generic swipe handler for all directions
+                      swipeRight: function onSwipeRight(/*event, phase, direction, distance, duration*/) {
+                          $('.mfp-container .mfp-arrow-left').click();
+                      },
+                      swipeLeft: function onSwipeLeft(/*event, direction, distance, duration*/) {
+                          $('.mfp-container .mfp-arrow-right').click();
+                      },
+                      threshold: 75,
+                      cancelThreshold: 20
+                  });
+              }
+
+              // Record index
+              if (recordIndex) {
+                  var recIndex = $('.imagepopup-holder .image-info .record-index');
+                  var recordCount = $(".paginationSimple .total").text();
+                  recIndex.find('.index').html(recordIndex);
+                  recIndex.find('.total').html(recordCount);
+                  recIndex.show();
+              }
+
+              // Image copyright information
+              $('.imagepopup-holder .image-rights .copyright-link a').click(function onClickCopyright() {
+                  var mode = $(this).data('mode') === '1';
+
+                  var moreLink = $('.imagepopup-holder .image-rights .more-link');
+                  var lessLink = $('.imagepopup-holder .image-rights .less-link');
+
+                  moreLink.toggle(!mode);
+                  lessLink.toggle(mode);
+
+                  $('.imagepopup-holder .image-rights .copyright').toggle(mode);
+
+                  return false;
+              });
+
+              // load feedback modal
+              if ($('.imagepopup-holder #feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
+                  $('.imagepopup-holder #feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
+                      $.magnificPopup.close();
+                  });
+              }
+
+              // Load book description
+              var summaryHolder = $('.imagepopup-holder .summary');
+              if (type === 'marc') {
+                  var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
+                  $.getJSON(url)
+                      .done(function onGetDescriptionDone(response) {
+                          if (response.data.length > 0) {
+                              summaryHolder.find('> div p').html(response.data);
+                              finna.layout.initTruncate(summaryHolder);
+                              summaryHolder.removeClass('loading');
+                          }
+                      })
+                      .fail(function onGetDescriptionFail(/*response, textStatus*/) {
+                          summaryHolder.removeClass('loading');
+                      });
+              } else {
+                  finna.layout.initTruncate(summaryHolder);
+                  summaryHolder.removeClass('loading');
+              }
+
+              // Init embedding
+              finna.layout.initIframeEmbed(popup);
+              initVideoPopup(popup);
+              },
+          close: function closePopup() {
+              if ($("#video").length){
+                  videojs('video').dispose();
+              }
+          }
+        },
+        gallery: {
+            enabled: true,
+            preload: [0, 2],
+            navigateByImgClick: true,
+            arrowMarkup: '<button title="%title%" type="button" class="mfp-arrow mfp-arrow-%dir%"></button>',
+            tPrev: 'trPrev',
+            tNext: 'trNext',
+            tCounter: ''
+        }
       });
     });
   }
@@ -264,14 +264,16 @@ finna.imagePopup = (function finnaImagePopup() {
       };
       $(".mfp-arrow-right, .mfp-arrow-left").addClass("hidden");
       mfp.updateItemHTML();
-
+      
       var player = videojs('video');
-      var disablelogging = function disablePlayerLogging(player, mediaPlayer) {
-          mediaPlayer.getDebug().setLogToBrowserConsole(false);
-      };
-      videojs.Html5DashJS.hook('beforeinitialize', disablelogging);
 
-      player.ready(function setupPlayer() {
+      videojs.Html5DashJS.hook(
+          'beforeinitialize',
+          function onBeforeInit(videoJs, mediaPlayer) {
+            mediaPlayer.getDebug().setLogToBrowserConsole(false);
+          }
+      );
+      player.ready(function onReady() {
         this.hotkeys({
           enableVolumeScroll: false,
           enableModifiersForNumbers: false
