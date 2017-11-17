@@ -589,7 +589,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $credited = $this->getPresenters(false);
         $uncredited = $this->getPresenters(true);
-        if(!empty($credited['presenters']) || !empty($uncredited['presenters'])) {
+        if (!empty($credited['presenters']) || !empty($uncredited['presenters'])) {
             return ['credited' => $credited, 'uncredited' => $uncredited];
         }
         return [];

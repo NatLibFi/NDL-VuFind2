@@ -50,12 +50,6 @@
   margin-right: 20px;
 }
 
-.navbar-nav #loginOptions,
-.navbar-nav .logoutOptions,
-.navbar-nav .logoutOptions>a {
-  display: inline-block;
-}
-
 .navbar-nav>li.lang>a {
   line-height: @line-height-computed;
 }
@@ -77,8 +71,11 @@
   & .dropdown-menu {
     right: 5px;
     left: auto;
-    & > li > a {
-      width: 250px;
+    & > li {
+      line-height: normal;
+      & > a {
+        width: 250px;
+      }
     }
   }
   &.card-selection {
