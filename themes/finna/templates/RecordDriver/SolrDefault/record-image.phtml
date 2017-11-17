@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordDriver/SolrDefault/record-image.phtml -->
 <? $formats = $this->driver->tryMethod('getFormats'); ?>
-<? $largeImageLayout = $this->driver->getSourceIdentifier() == 'Solr' && in_array($this->driver->getRecordType(), ['lido', 'forward']); ?>
+<? $largeImageLayout = $this->driver->getSourceIdentifier() == 'Solr' && in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward']); ?>
 <div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>">
   <div class="recordcover-holder" data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
 
@@ -40,8 +40,8 @@
             $originalImage = $recordImage->getMasterImage($ind);
             $formats = $this->driver->tryMethod('getFormats');
             $translatedFormat = $this->transEsc(end($formats));
-            $rights = $image['rights'];           
-            ?>          
+            $rights = $image['rights'];
+            ?>
           <? if ( isset($rights['copyright']) && ($rights['copyright'] !== $this->transEsc('usage_F'))): ?>
           <div class="open-link"><a target="_blank" href="<?=$originalImage ?>" download="<?=$originalImage ?>">
               <i aria-hidden="true" class="fa fa-download"></i>
