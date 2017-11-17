@@ -295,6 +295,7 @@ JS;
       </div>
     </header>
     <section role="search" class="searchContent<?=$currentTabClass?>">
+      <h2 class="sr-only"><?=$this->transEsc('Search')?></h2>
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
           <a class="btn btn-primary btn-uppercase floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <? endif; ?>
