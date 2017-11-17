@@ -64,7 +64,7 @@ class Music extends \VuFind\RecordTab\AbstractBase
     {
         if (empty($this->driver->getMusicInfo())) {
             $this->enabled = false;
-        };
+        }
         return $this->enabled;
     }
 

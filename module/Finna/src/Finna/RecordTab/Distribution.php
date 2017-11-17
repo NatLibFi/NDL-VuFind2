@@ -64,7 +64,7 @@ class Distribution extends \VuFind\RecordTab\AbstractBase
     {
         if (empty($this->driver->getDistributors())) {
             $this->enabled = false;
-        };
+        }
         return $this->enabled;
     }
 

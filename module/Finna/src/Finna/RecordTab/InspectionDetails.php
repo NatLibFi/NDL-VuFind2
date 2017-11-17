@@ -64,7 +64,7 @@ class InspectionDetails extends \VuFind\RecordTab\AbstractBase
     {
         if (empty($this->driver->getInspectionDetails())) {
             $this->enabled = false;
-        };
+        }
         return $this->enabled;
     }
 

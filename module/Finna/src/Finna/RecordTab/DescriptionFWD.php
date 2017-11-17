@@ -64,7 +64,7 @@ class DescriptionFWD extends \VuFind\RecordTab\AbstractBase
     {
         if (empty($this->driver->getDescription())) {
             $this->enabled = false;
-        };
+        }
         return $this->enabled;
     }
 

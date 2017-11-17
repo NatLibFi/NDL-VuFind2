@@ -64,7 +64,7 @@ class ItemDescription extends \VuFind\RecordTab\AbstractBase
     {
         if (empty($this->driver->getGeneralNotes())) {
             $this->enabled = false;
-        };
+        }
         return $this->enabled;
     }
 
