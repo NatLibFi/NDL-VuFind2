@@ -1,6 +1,6 @@
 // Custom styles for user account functions
 
-.main.template-dir-myresearch, .main.template-dir-search.template-name-history, .main.template-dir-librarycards {
+.template-dir-myresearch, .template-dir-search.template-name-history, .template-dir-librarycards {
     padding-bottom: 30px;
     h1 {
         font-weight: 500;
@@ -19,9 +19,6 @@
         width: 100%;
         padding: 20px;
         border-radius: @border-radius-base;
-        @media (min-width: @screen-md) {
-            width: 75%;
-        }
     }
     h1 {
         display: inline-block;
@@ -91,7 +88,7 @@
         font-weight: bold;
         padding: 7px 10px;
         background: @gray;
-        background: linear-gradient( @gray-lighter, darken(@gray-lighter,8%));
+        background: @action-link-color;
         color: @body-bg;
     }
 
@@ -661,6 +658,21 @@
         margin-top: 5px;
         padding: 10px 15px;
     }
+}
+
+.template-name-profile {
+  .my-research-content {
+    @media (min-width: @screen-md) {
+      width: 75%;
+    }
+  }
+}
+
+.my-research-content .my-profile {
+    background: @gray-ultralight;
+    border-radius: @border-radius-small;
+    margin-bottom: 2em;
+    padding: 5px 10px;
 }
 
 .main.template-dir-myresearch.template-name-mylist {

@@ -12,7 +12,7 @@
       padding: 7px 7px;
       background: @brand-primary;
       color: @body-bg;
-      border-radius: 10px;
+      border-radius: @finna-button-radius;
       display: inline-block;
       margin-top: -7px;
       &:hover, &:focus {
@@ -40,11 +40,13 @@
   }
 }
 & .myresearch-profile-header, .useraccount-header {
-  .select-card-wrapper .dropdown > a {
-    background: @body-bg;
-    color: @gray;
-    border: 1px solid @gray-lighter;
-
+  .select-card-wrapper {
+    margin-left: 1em;
+    & .dropdown > a {
+      background: @body-bg;
+      color: @gray;
+      border: 1px solid @gray-lighter;
+    }
   }
 }
 & .finna-main-header .select-card-wrapper{

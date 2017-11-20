@@ -56,7 +56,7 @@
     <?= $this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
     <?= $this->partial('myresearch/profile-my-information.phtml', ['user' => $user, 'cards' => $cards, 'hideDueDateReminder' => $this->hideDueDateReminder, 'hideProfileEmailAddress' => $this->hideProfileEmailAddress]); ?>
     <? if (isset($this->profile)): ?>
-    <div class="myresearch-profile-header"><?=$this->transEsc('Library Card Settings');?> <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?></div>
+    <div class="myresearch-profile-header"><span><?=$this->transEsc('Library Card Settings');?></span><?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?></div>
     <div class="myresearch-profile-list library-profile">
       <? if (!$this->hideDueDateReminder): ?>
         <form id="profile_due_date_form" class="inline" method="post">
