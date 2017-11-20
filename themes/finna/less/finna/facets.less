@@ -55,7 +55,7 @@
         }
     }
     // defines all facet paddings between lines
-    & ul.jstree-container-ul > li.jstree-node, .list-group-item:not(.title) {
+    & ul.jstree-container-ul > li.jstree-node, .list-group-item:not(.title), .usage-right-group {
         padding: 3px 10px 3px 8px;
         @media(max-width:@screen-xs-max) {
             font-size: 1.15em;
@@ -66,8 +66,11 @@
             padding-top: 2px;
         }
     }
+    .usage-right-group a {
+      padding-left: 20px;
+    }
 
-    /* adjust hierarchical facet list styling */
+      /* adjust hierarchical facet list styling */
     .jstree-facet ul:not(.jstree-container-ul) {
         padding-left: 14px;
     }
