@@ -47,14 +47,18 @@
 
 <?= $usageOptions['usage_A'] ? $usageOptions['usage_A']['html'] : ''?>
 <? if($usageOptions['usage_B'] || $usageOptions['usage_D']): ?>
-  <div><?=$this->transEsc('usage_title_derivates')?></div>
-  <?= $usageOptions['usage_D'] ? $usageOptions['usage_D']['html'] : '' ?>
-  <?= $usageOptions['usage_B'] ? $usageOptions['usage_B']['html'] : ''; ?>
+  <div class="usage-right-group">
+    <span><?=$this->transEsc('usage_title_derivates')?></span>
+    <?= $usageOptions['usage_D'] ? $usageOptions['usage_D']['html'] : '' ?>
+    <?= $usageOptions['usage_B'] ? $usageOptions['usage_B']['html'] : ''; ?>
+  </div>
 <? endif; ?>
 <? if($usageOptions['usage_E'] || $usageOptions['usage_C']): ?>
-  <div><?=$this->transEsc('usage_title_no_derivates')?></div>
-  <?= $usageOptions['usage_E'] ? $usageOptions['usage_E']['html'] : ''; ?>
-  <?= $usageOptions['usage_C'] ? $usageOptions['usage_C']['html'] : ''; ?>
+  <div class="usage-right-group">
+    <span><?=$this->transEsc('usage_title_no_derivates')?></span>
+    <?= $usageOptions['usage_E'] ? $usageOptions['usage_E']['html'] : ''; ?>
+    <?= $usageOptions['usage_C'] ? $usageOptions['usage_C']['html'] : ''; ?>
+  </div>
 <? endif; ?>
 <?= $usageOptions['usage_F'] ? $usageOptions['usage_F']['html'] : ''?>
 

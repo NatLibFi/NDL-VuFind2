@@ -49,7 +49,8 @@
                     & i {
                         display: block;
                         margin-top: 3px;   
-                        color: @main-tabs-link-color;                        
+                        color: @action-link-color; 
+                        font-size: 16px;                        
                     }
                 }
                 @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
@@ -72,6 +73,9 @@
                 transition: background-color 0.1s linear;
                 &:hover, &:active, &:focus {
                     background: darken(@main-tabs-background-color,4%);
+                }
+                @media (max-width: @screen-xs-max) {
+                    border-bottom: 1px solid @nav-tabs-border-color;
                 }
             }
         }
