@@ -138,7 +138,7 @@ finna.record = (function finnaRecord() {
 
   function initRecordNaviHashUpdate() {
     $(window).on('hashchange', function onHashChange() {
-      $('.record-view-header .pager a').each(function updateHash(i, a) {
+      $('.pager a').each(function updateHash(i, a) {
         a.hash = window.location.hash;
       });
     });
