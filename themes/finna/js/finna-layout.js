@@ -816,6 +816,11 @@ finna.layout = (function finnaLayout() {
       navDropdownToggleClassName: "nav-dropdown-toggle",
       breakPoint: 400
     });
+
+    $(".nav-dropdown-label").click(function priorityNavLabelClicked(e){
+      e.stopPropagation();
+      $(e.target).parent().click();
+    })
   }
 
   function initFiltersToggle () {
