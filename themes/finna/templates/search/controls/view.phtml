@@ -1,8 +1,13 @@
 <!-- START of: finna - search/controls/view.phtml -->
-<? $viewList = $this->params->getViewList(); if (count($viewList) > 1): ?>
-<? $viewOptionsIcons = $this->params->getViewOptionListType(); ?>
+<?
+  $viewList = $this->params->getViewList();
+  if (!isset($isCollection) || !$isCollection){
+      $viewOptionsIcons = $this->params->getViewOptionListType();
+  }
+?>
+<? if (count($viewList) > 1): ?>
 <div class="view-option-container text-right">
-    <? if ($viewOptionsIcons == true): ?>
+    <? if (isset($viewOptionsIcons) && $viewOptionsIcons == true): ?>
     <span class="hidden-sm hidden-xs hidden-md button-label"><?=$this->transEsc('show_as')?></span>
     <span class="sr-only hidden-lg hidden-md"><?=$this->transEsc('show_as')?></span>
     <div class="view-options">

@@ -3,7 +3,7 @@
   // Get search results
   $results = $this->tab->getResults();
   $params = $this->tab->getParams();
-  $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1];
+  $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1, 'isCollection' => $this->driver->isCollection()];
 ?>
 <? if (($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
   <? foreach ($results->getRecommendations('top') as $current): ?>
