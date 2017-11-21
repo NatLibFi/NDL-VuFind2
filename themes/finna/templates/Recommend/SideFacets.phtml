@@ -87,7 +87,7 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
     <? $daterangeFacet = $title == $daterangeFacetField; ?>
     <div class="list-group facet<?= $daterangeFacet ? ' daterange-facet' : '' ?> facet-group" id="side-panel-<?=$this->escapeHtmlAttr($title) ?>">
       <? // Use a with href and preventing js for keyboard navigation ?>
-      <button class="list-group-item title<? if (in_array($title, $collapsedFacets)): ?> collapsed<? endif ?>" data-toggle="collapse" data-target="#side-collapse-<?=$this->escapeHtmlAttr($title) ?>" href="#" onclick="return false;"><?=$this->transEsc($cluster['label'])?></button>
+      <button class="list-group-item title<? if (in_array($title, $collapsedFacets)): ?> collapsed<? endif ?>" data-toggle="collapse" data-target="#side-collapse-<?=$this->escapeHtmlAttr($title) ?>" onclick="return false;"><?=$this->transEsc($cluster['label'])?></button>
       <?
         if ($daterangeFacet) {
           $fromVal = $toVal = $type = null;
