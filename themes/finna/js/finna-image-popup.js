@@ -197,8 +197,8 @@ finna.imagePopup = (function finnaImagePopup() {
             });
 
             // load feedback modal
-            if ($('.imagepopup-holder #feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
-              $('.imagepopup-holder #feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
+            if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
+              $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
                 $.magnificPopup.close();
               });
             }
