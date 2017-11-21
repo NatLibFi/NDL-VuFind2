@@ -176,61 +176,64 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
         }
 
-        $messagingPrefs = $this->makeRequest(
+        list($resultCode, $messagingPrefs) = $this->makeRequest(
             ['v1', 'messaging_preferences'],
             ['borrowernumber' => $patron['id']],
             'GET',
-            $patron
+            $patron,
+            true
         );
 
         $messagingSettings = [];
-        foreach ($messagingPrefs as $type => $prefs) {
-            $typeName = isset($this->messagingPrefTypeMap[$type])
-                ? $this->messagingPrefTypeMap[$type] : $type;
-            $settings = [
-                'type' => $typeName
-            ];
-            if (isset($prefs['transport_types'])) {
-                $settings['settings']['transport_types'] = [
-                    'type' => 'multiselect'
+        if (200 === $resultCode) {
+            foreach ($messagingPrefs as $type => $prefs) {
+                $typeName = isset($this->messagingPrefTypeMap[$type])
+                    ? $this->messagingPrefTypeMap[$type] : $type;
+                $settings = [
+                    'type' => $typeName
                 ];
-                foreach ($prefs['transport_types'] as $key => $active) {
-                    $settings['settings']['transport_types']['options'][$key] = [
-                        'active' => $active
+                if (isset($prefs['transport_types'])) {
+                    $settings['settings']['transport_types'] = [
+                        'type' => 'multiselect'
+                    ];
+                    foreach ($prefs['transport_types'] as $key => $active) {
+                        $settings['settings']['transport_types']['options'][$key] = [
+                            'active' => $active
+                        ];
+                    }
+                }
+                if (isset($prefs['digest'])) {
+                    $settings['settings']['digest'] = [
+                        'type' => 'boolean',
+                        'name' => '',
+                        'active' => $prefs['digest']['value'],
+                        'readonly' => !$prefs['digest']['configurable']
                     ];
                 }
-            }
-            if (isset($prefs['digest'])) {
-                $settings['settings']['digest'] = [
-                    'type' => 'boolean',
-                    'name' => '',
-                    'active' => $prefs['digest']['value'],
-                    'readonly' => !$prefs['digest']['configurable']
-                ];
-            }
-            if (isset($prefs['days_in_advance'])
-                && ($prefs['days_in_advance']['configurable']
-                || null !== $prefs['days_in_advance']['value'])
-            ) {
-                $options = [];
-                for ($i = 0; $i <= 30; $i++) {
-                    $options[$i] = [
-                        'name' => $this->translate(
-                            1 === $i ? 'messaging_settings_num_of_days'
-                            : 'messaging_settings_num_of_days_plural',
-                            ['%%days%%' => $i]
-                        ),
-                        'active' => $i == $prefs['days_in_advance']['value']
+                if (isset($prefs['days_in_advance'])
+                    && ($prefs['days_in_advance']['configurable']
+                    || null !== $prefs['days_in_advance']['value'])
+                ) {
+                    $options = [];
+                    for ($i = 0; $i <= 30; $i++) {
+                        $options[$i] = [
+                            'name' => $this->translate(
+                                1 === $i ? 'messaging_settings_num_of_days'
+                                : 'messaging_settings_num_of_days_plural',
+                                ['%%days%%' => $i]
+                            ),
+                            'active' => $i == $prefs['days_in_advance']['value']
+                        ];
+                    }
+                    $settings['settings']['days_in_advance'] = [
+                        'type' => 'select',
+                        'value' => $prefs['days_in_advance']['value'],
+                        'options' => $options,
+                        'readonly' => !$prefs['days_in_advance']['configurable']
                     ];
                 }
-                $settings['settings']['days_in_advance'] = [
-                    'type' => 'select',
-                    'value' => $prefs['days_in_advance']['value'],
-                    'options' => $options,
-                    'readonly' => !$prefs['days_in_advance']['configurable']
-                ];
+                $messagingSettings[$type] = $settings;
             }
-            $messagingSettings[$type] = $settings;
         }
 
         return [
@@ -451,16 +454,15 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function updateAddress($patron, $details)
     {
-        $addressFields = isset($this->config['updateAddress']['fields'])
+        $addressFields = [];
+        $fieldConfig = isset($this->config['updateAddress']['fields'])
             ? $this->config['updateAddress']['fields'] : [];
-        $addressFields = array_map(
-            function ($item) {
-                $parts = explode(':', $item, 2);
-                return isset($parts[1]) ? $parts[1] : '';
-            },
-            $addressFields
-        );
-        $addressFields = array_flip($addressFields);
+        foreach ($fieldConfig as $field) {
+            $parts = explode(':', $field, 2);
+            if (isset($parts[1])) {
+                $addressFields[$parts[1]] = $parts[0];
+            }
+        }
 
         // Pick the configured fields from the request
         $request = [];
@@ -478,9 +480,22 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             true
         );
         if (!in_array($code, [200, 202, 204])) {
-            return  [
+            if (409 === $code && !empty($result['conflict'])) {
+                $keys = array_keys($result['conflict']);
+                $key = reset($keys);
+                $fieldName = isset($addressFields[$key])
+                    ? $this->translate($addressFields[$key])
+                    : '???';
+                $status = $this->translate(
+                    'request_change_value_already_in_use',
+                    ['%%field%%' => $fieldName]
+                );
+            } else {
+                $status = 'Changing the contact information failed';
+            }
+            return [
                 'success' => false,
-                'status' => 'Changing the contact information failed',
+                'status' => $status,
                 'sys_message' => isset($result['error']) ? $result['error'] : $code
             ];
         }
