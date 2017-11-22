@@ -168,10 +168,7 @@
                     <? endif; ?>
                   <? endif; ?>
 
-                  <? if (isset($ilsDetails['is_editable'])): ?>
-                    <? $requestIsEditable = $ilsDetails['is_editable']; ?>
-                  <? else: $requestIsEditable = true; ?>
-                  <? endif; ?>
+                  <? $requestIsEditable = isset($ilsDetails['is_editable']) ? $ilsDetails['is_editable'] : true; ?>
 
                   <? if (!empty($pickupDisplay)): ?>
                     <div class="pickup-location-container">
