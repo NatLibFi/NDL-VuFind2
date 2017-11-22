@@ -49,7 +49,7 @@ class Memory extends \VuFind\Search\Memory
      */
     public function rememberSearchData($searchId, $searchType, $lookfor)
     {
-        $this->session->searchData = (object) [
+        $this->session->searchData = (object)[
             'id' => $searchId,
             'type' => $searchType,
             'lookfor' => $lookfor
@@ -64,5 +64,27 @@ class Memory extends \VuFind\Search\Memory
     public function retrieveLastSearchData()
     {
         return isset($this->session->searchData) ? $this->session->searchData : null;
+    }
+
+    /**
+     * Remember record scroll data
+     *
+     * @param object $scrollData Record scroll data.
+     *
+     * @return void
+     */
+    public function rememberScrollData($scrollData)
+    {
+        $this->session->scrollData = $scrollData;
+    }
+
+    /**
+     * Retrieve scroll data
+     *
+     * @return object
+     */
+    public function retrieveScrollData()
+    {
+        return isset($this->session->scrollData) ? $this->session->scrollData : null;
     }
 }

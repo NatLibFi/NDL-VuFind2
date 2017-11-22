@@ -26,6 +26,7 @@
  * @link     https://vufind.org/wiki/development Wiki
  */
 namespace VuFind\Log;
+
 use Zend\Config\Config;
 use Zend\Log\Writer\WriterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -119,6 +120,17 @@ class LoggerFactory implements \Zend\ServiceManager\FactoryInterface
         $parts = explode(':', $config);
         $file = $parts[0];
         $error_types = isset($parts[1]) ? $parts[1] : '';
+
+        // Make sure to use only the last ‘:’ to avoid trouble with Windows’s driver
+        // letter
+        $pos = strrpos($config, ':');
+        if ($pos > 0) {
+            $file = substr($config, 0, $pos);
+            $error_types = substr($config, $pos + 1);
+        } else {
+            $file = $config;
+            $error_types = '';
+        }
 
         // Make Writers
         $filters = explode(',', $error_types);
@@ -270,7 +282,7 @@ class LoggerFactory implements \Zend\ServiceManager\FactoryInterface
 
             // VuFind's configuration provides four priority options, each
             // combining two of the standard Zend levels.
-            switch(trim($priority)) {
+            switch (trim($priority)) {
             case 'debug':
                 // Set static flag indicating that debug is turned on:
                 $logger->debugNeeded(true);
@@ -296,7 +308,7 @@ class LoggerFactory implements \Zend\ServiceManager\FactoryInterface
 
             // Clone the submitted writer since we'll need a separate instance of the
             // writer for each selected priority level.
-            $newWriter = clone($writer);
+            $newWriter = clone $writer;
 
             // verbosity
             if ($verbosity) {

@@ -26,6 +26,7 @@
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
 namespace Finna\ILS\Driver;
+
 use VuFind\Exception\ILS as ILSException;
 
 /**
@@ -175,61 +176,64 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
         }
 
-        $messagingPrefs = $this->makeRequest(
+        list($resultCode, $messagingPrefs) = $this->makeRequest(
             ['v1', 'messaging_preferences'],
             ['borrowernumber' => $patron['id']],
             'GET',
-            $patron
+            $patron,
+            true
         );
 
         $messagingSettings = [];
-        foreach ($messagingPrefs as $type => $prefs) {
-            $typeName = isset($this->messagingPrefTypeMap[$type])
-                ? $this->messagingPrefTypeMap[$type] : $type;
-            $settings = [
-                'type' => $typeName
-            ];
-            if (isset($prefs['transport_types'])) {
-                $settings['settings']['transport_types'] = [
-                    'type' => 'multiselect'
+        if (200 === $resultCode) {
+            foreach ($messagingPrefs as $type => $prefs) {
+                $typeName = isset($this->messagingPrefTypeMap[$type])
+                    ? $this->messagingPrefTypeMap[$type] : $type;
+                $settings = [
+                    'type' => $typeName
                 ];
-                foreach ($prefs['transport_types'] as $key => $active) {
-                    $settings['settings']['transport_types']['options'][$key] = [
-                        'active' => $active
+                if (isset($prefs['transport_types'])) {
+                    $settings['settings']['transport_types'] = [
+                        'type' => 'multiselect'
+                    ];
+                    foreach ($prefs['transport_types'] as $key => $active) {
+                        $settings['settings']['transport_types']['options'][$key] = [
+                            'active' => $active
+                        ];
+                    }
+                }
+                if (isset($prefs['digest'])) {
+                    $settings['settings']['digest'] = [
+                        'type' => 'boolean',
+                        'name' => '',
+                        'active' => $prefs['digest']['value'],
+                        'readonly' => !$prefs['digest']['configurable']
                     ];
                 }
-            }
-            if (isset($prefs['digest'])) {
-                $settings['settings']['digest'] = [
-                    'type' => 'boolean',
-                    'name' => '',
-                    'active' => $prefs['digest']['value'],
-                    'readonly' => !$prefs['digest']['configurable']
-                ];
-            }
-            if (isset($prefs['days_in_advance'])
-                && ($prefs['days_in_advance']['configurable']
-                || null !== $prefs['days_in_advance']['value'])
-            ) {
-                $options = [];
-                for ($i = 0; $i <= 30; $i++) {
-                    $options[$i] = [
-                        'name' => $this->translate(
-                            1 === $i ? 'messaging_settings_num_of_days'
-                            : 'messaging_settings_num_of_days_plural',
-                            ['%%days%%' => $i]
-                        ),
-                        'active' => $i == $prefs['days_in_advance']['value']
+                if (isset($prefs['days_in_advance'])
+                    && ($prefs['days_in_advance']['configurable']
+                    || null !== $prefs['days_in_advance']['value'])
+                ) {
+                    $options = [];
+                    for ($i = 0; $i <= 30; $i++) {
+                        $options[$i] = [
+                            'name' => $this->translate(
+                                1 === $i ? 'messaging_settings_num_of_days'
+                                : 'messaging_settings_num_of_days_plural',
+                                ['%%days%%' => $i]
+                            ),
+                            'active' => $i == $prefs['days_in_advance']['value']
+                        ];
+                    }
+                    $settings['settings']['days_in_advance'] = [
+                        'type' => 'select',
+                        'value' => $prefs['days_in_advance']['value'],
+                        'options' => $options,
+                        'readonly' => !$prefs['days_in_advance']['configurable']
                     ];
                 }
-                $settings['settings']['days_in_advance'] = [
-                    'type' => 'select',
-                    'value' => $prefs['days_in_advance']['value'],
-                    'options' => $options,
-                    'readonly' => !$prefs['days_in_advance']['configurable']
-                ];
+                $messagingSettings[$type] = $settings;
             }
-            $messagingSettings[$type] = $settings;
         }
 
         return [
@@ -247,128 +251,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'hold_identifier' => $result['othernames'],
             'guarantor' => $guarantor,
             'guarantees' => $guarantees,
-            'checkout_history' => $result['privacy'],
+            'loan_history' => $result['privacy'],
             'messagingServices' => $messagingSettings,
             'full_data' => $result
         ];
-    }
-
-    /**
-     * Get Patron Transaction History
-     *
-     * This is responsible for retrieving all historical transactions
-     * (i.e. checked out items)
-     * by a specific patron.
-     *
-     * @param array $patron The patron array from patronLogin
-     * @param array $params Retrieval params that may contain the following keys:
-     *   start  Start offset (0-based)
-     *   limit  Maximum number of records to return
-     *   sort   Sorting order, one of:
-     *          checkout asc
-     *          checkout desc
-     *          return asc
-     *          return desc
-     *          due asc
-     *          due desc
-     *
-     * @throws DateException
-     * @throws ILSException
-     * @return array        Array of the patron's transactions on success.
-     */
-    public function getMyTransactionHistory($patron, $params)
-    {
-        $sort = explode(
-            ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
-        );
-        if ($sort[0] == 'checkout') {
-            $sortKey = 'issuedate';
-        } elseif ($sort[0] == 'return') {
-            $sortKey = 'returndate';
-        } else {
-            $sortKey = 'date_due';
-        }
-        $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
-
-        $queryParams = [
-            'borrowernumber' => $patron['id'],
-            'sort' => $sortKey,
-            'order' => $direction
-        ];
-
-        if (!empty($params['start'])) {
-            $queryParams['offset'] = $params['start'];
-        }
-        if (!empty($params['limit'])) {
-            $queryParams['limit'] = $params['limit'];
-        }
-
-        $transactions = $this->makeRequest(
-            ['v1', 'checkouts', 'history'],
-            $queryParams,
-            'GET',
-            $patron
-        );
-
-        $result = [
-            'count' => $transactions['total'],
-            'transactions' => []
-        ];
-
-        foreach ($transactions['records'] as $entry) {
-            try {
-                $item = $this->getItem($entry['itemnumber']);
-            } catch (\Exception $e) {
-                $item = [];
-            }
-            $volume = isset($item['enumchron'])
-                ? $item['enumchron'] : '';
-            $title = '';
-            if (!empty($item['biblionumber'])) {
-                $bib = $this->getBibRecord($item['biblionumber']);
-                if (!empty($bib['title'])) {
-                    $title = $bib['title'];
-                }
-                if (!empty($bib['title_remainder'])) {
-                    $title .= ' ' . $bib['title_remainder'];
-                    $title = trim($title);
-                }
-            }
-
-            $dueStatus = false;
-            $now = time();
-            $dueTimeStamp = strtotime($entry['date_due']);
-            if (is_numeric($dueTimeStamp)) {
-                if ($now > $dueTimeStamp) {
-                    $dueStatus = 'overdue';
-                } else if ($now > $dueTimeStamp - (1 * 24 * 60 * 60)) {
-                    $dueStatus = 'due';
-                }
-            }
-
-            $transaction = [
-                'id' => isset($item['biblionumber']) ? $item['biblionumber'] : '',
-                'checkout_id' => $entry['issue_id'],
-                'item_id' => $entry['itemnumber'],
-                'title' => $title,
-                'volume' => $volume,
-                'checkoutdate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP', $entry['issuedate']
-                ),
-                'duedate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP', $entry['date_due']
-                ),
-                'dueStatus' => $dueStatus,
-                'returndate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP', $entry['returndate']
-                ),
-                'renew' => $entry['renewals']
-            ];
-
-            $result['transactions'][] = $transaction;
-        }
-
-        return $result;
     }
 
     /**
@@ -391,14 +277,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         if (!in_array($code, [200, 202, 204])) {
             return  [
                 'success' => false,
-                'status' => 'Purging the checkout history failed',
+                'status' => 'Purging the loan history failed',
                 'sys_message' => isset($result['error']) ? $result['error'] : $code
             ];
         }
 
         return [
             'success' => true,
-            'status' => 'checkout_history_purged',
+            'status' => 'loan_history_purged',
             'sys_message' => ''
         ];
     }
@@ -568,16 +454,15 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function updateAddress($patron, $details)
     {
-        $addressFields = isset($this->config['updateAddress']['fields'])
+        $addressFields = [];
+        $fieldConfig = isset($this->config['updateAddress']['fields'])
             ? $this->config['updateAddress']['fields'] : [];
-        $addressFields = array_map(
-            function ($item) {
-                $parts = explode(':', $item, 2);
-                return isset($parts[1]) ? $parts[1] : '';
-            },
-            $addressFields
-        );
-        $addressFields = array_flip($addressFields);
+        foreach ($fieldConfig as $field) {
+            $parts = explode(':', $field, 2);
+            if (isset($parts[1])) {
+                $addressFields[$parts[1]] = $parts[0];
+            }
+        }
 
         // Pick the configured fields from the request
         $request = [];
@@ -595,9 +480,22 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             true
         );
         if (!in_array($code, [200, 202, 204])) {
-            return  [
+            if (409 === $code && !empty($result['conflict'])) {
+                $keys = array_keys($result['conflict']);
+                $key = reset($keys);
+                $fieldName = isset($addressFields[$key])
+                    ? $this->translate($addressFields[$key])
+                    : '???';
+                $status = $this->translate(
+                    'request_change_value_already_in_use',
+                    ['%%field%%' => $fieldName]
+                );
+            } else {
+                $status = 'Changing the contact information failed';
+            }
+            return [
                 'success' => false,
-                'status' => 'Changing the contact information failed',
+                'status' => $status,
                 'sys_message' => isset($result['error']) ? $result['error'] : $code
             ];
         }

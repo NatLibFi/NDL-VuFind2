@@ -27,6 +27,7 @@
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
 namespace Finna\Controller;
+
 use Zend\ServiceManager\ServiceManager;
 
 /**
@@ -110,6 +111,22 @@ class Factory extends \VuFind\Controller\Factory
     {
         $serviceLocator = $sm->getServiceLocator();
         return new RecordController(
+            $serviceLocator,
+            $serviceLocator->get('VuFind\Config')->get('config')
+        );
+    }
+
+    /**
+     * Construct the CollectionController.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return CollectionController
+     */
+    public static function getCollectionController(ServiceManager $sm)
+    {
+        $serviceLocator = $sm->getServiceLocator();
+        return new CollectionController(
             $serviceLocator,
             $serviceLocator->get('VuFind\Config')->get('config')
         );
