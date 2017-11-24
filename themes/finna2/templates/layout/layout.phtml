@@ -361,6 +361,9 @@ JS;
         </div>
       </div>
       <? endif; ?>
+      <? if ($this->searchMemory()->getLastSearchType() === 'advanced' && $this->layout()->templateDir === 'record'): ?>
+          <?=$this->render('record/record-view-header.phtml')?>
+      <? endif; ?>
       <? if (!empty($this->layout()->finnaFilters)): ?>
         <?=$this->layout()->finnaFilters?>
       <? endif; ?>
