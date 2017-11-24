@@ -227,7 +227,7 @@ JS;
                 ]
             );
 
-            $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
+            $this->layout()->advSearchHeader = $this->context($this)->renderInContext(
                 'search/header.phtml',
                 [
                   'searchType' => $searchType,
@@ -361,8 +361,8 @@ JS;
         </div>
       </div>
       <? endif; ?>
-      <? if ($this->searchMemory()->getLastSearchType() === 'advanced' && $this->layout()->templateDir === 'record'): ?>
-          <?=$this->render('record/record-view-header.phtml')?>
+      <? if (!empty($this->layout()->advSearchHeader)): ?>
+        <?=$this->layout()->advSearchHeader; ?>
       <? endif; ?>
       <? if (!empty($this->layout()->finnaFilters)): ?>
         <?=$this->layout()->finnaFilters?>
