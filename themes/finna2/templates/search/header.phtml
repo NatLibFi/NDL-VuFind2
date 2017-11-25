@@ -23,7 +23,7 @@
 <? if ($searchType == 'advanced'): ?>
   <div class="adv-search-header">
     <div class="container">
-      <div class="searchbox-flex adv-search-header">
+      <div class="searchbox-flex">
         <? if ($this->layout()->templateDir === 'record'): ?>
           <div class="record-back hidden-print">
             <?
@@ -44,7 +44,7 @@
           </div>
         </div>
         <? if ($this->layout()->templateDir === 'record'): ?>
-        <div>
+        <div class="pager-container">
             <?  $this->scrollData = $this->searchMemory()->getLastScrollData() ?>
             <? if (isset($this->scrollData) && ($this->scrollData['previousRecord'] || $this->scrollData['nextRecord'])): ?>
               <ul class="pager hidden-print" id="view-pager">
