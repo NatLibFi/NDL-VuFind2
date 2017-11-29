@@ -1,0 +1,154 @@
+.main.template-dir-myresearch.template-name-mylist {
+  & .search-controls {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    & hr {
+      border-top: 1px solid @gray-lighter;
+    }
+  }
+  & .bulk-action-buttons-col {
+    width: 100%;
+    @media (min-width: @screen-sm-min) {
+      padding-right: 0;
+    }
+    @media( max-width: @grid-float-breakpoint) {
+      top: @navbar-height;
+    }
+    &:not(.fixed) .mylist-functions {
+      text-align: right;
+    }
+  }
+  & .mylist-nav .list-visibility {
+    padding: 10px;
+    & .list-url {
+      font-weight: bold;
+      word-break: break-word;
+      & a:first-child {
+        margin-right: 10px;
+      }
+      & .feed {
+        font-size: 1.2em;
+        display: inline-block;
+        color: initial;
+      }
+    }
+
+    & .list-visibility-hidden {
+      margin-left: 10px;
+      margin-bottom: 5px;
+      @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+        margin-left: 0;
+        display: block;
+      }
+    }
+  }
+
+  & .delete-list li {
+    border-bottom: none;
+    &:not(.disabled) {
+      float: left;
+      width: 45%;
+      padding: 10px;
+      text-align: center;
+      & a {
+        border-radius: @border-radius-base;
+        background: @link-color;
+        color: @body-bg;
+      }
+    }
+  }
+}
+.template-name-mylist .bulk-action-buttons-col {
+  padding: 10px;
+  padding-bottom: 0px;
+  border-right: none;
+  border-bottom: 1px solid @gray-lighter;
+}
+
+.mylist-bar {
+  margin-top: 20px;
+}
+.mylist-nav {
+  & li > a {
+    word-wrap: break-word;
+  }
+  & li > a:not(.add-new-list) {
+    background: @gray-ultralight;
+    color: @text-color;
+    margin-bottom: 5px;
+  }
+  & li > a.active {
+    color: @brand-primary;
+    font-weight: 700;
+    & .favorite-list-name {
+      max-width: 85%;
+    }
+    & .remove-favorite-list {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+  }
+
+  & .add-new-list {
+    display: block;
+  }
+  & .add-new-list .name {
+    width: 100%;
+  }
+  & .add-new-list .icon {
+    cursor: pointer;
+    position: absolute;
+    top: 0.7em;
+    right: 0.7em;
+  }
+}
+.bulk-action-buttons-row {
+  margin: 0;
+  min-height: 60px; // prevent fixed element bounce effect
+  @media(max-width:@screen-xs-max) {
+    .row();
+  }
+}
+.bulk-action-buttons-col {
+  padding: 10px 0;
+  border-right: 10px solid @body-bg;
+  & input.btn {
+    margin-right: 3px;
+  }
+  .btn, span {
+    height: 42px;
+  }
+  & .mylist-functions {
+    & i#add-to-list {
+      position: absolute;
+      top: 8px;
+    }
+    & select#add-to-list {
+      max-width: 140px;
+    }
+    & select, button, span {
+      margin-bottom: 4px;
+    }
+  }
+  &.fixed {
+    background-color: @gray-lighter;
+    position: fixed;
+    top: 0px;
+    padding: 10px 0 2px 10px;
+    z-index: 11;
+    background: rgba(77,77,77,0.95);
+    box-shadow: 0px 19px 15px -13px grey;
+    & .checkbox span {
+      color: @body-bg;
+    }
+  }
+}
+
+.checkboxFilter.mylist-select-all {
+  float: left;
+  margin-right: 15px;
+  & .checkbox {
+    margin:0;
+  }
+}

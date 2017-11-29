@@ -1,10 +1,42 @@
-.myresearch-row .checkboxFilter {
-  padding-left: 0;
-  & .checkbox {
+.myresearch-row {
+  padding: 10px;
+  margin: 0;
+  word-wrap: break-word;
+  @media(max-width:@screen-xs-max) {
+    .row();
+  }
+  &:nth-child(odd) {
+    background: @table-bg-accent;
+  }
+  & h3 {
+    margin: 0;
+    font-weight: 400;
+    font-size: 1.2em;
+    margin-bottom: 2px;
+  }
+  & .no-checkbox {
+    font-size: 0.8em;
+    color: @gray-light;
+  }
+  & .alert {
+    padding: 4px;
+    margin-bottom: 3px;
+    margin-top: 3px;
+  }
+  // row for holds information
+  & .holds-status-information, .checkedout-status-information {
+    @media(min-width: @screen-sm-min) {
+      text-align: right;
+    }
+  }
+  & .checkboxFilter {
     padding-left: 0;
-    margin-top: 0;
-    & label {
-      margin-left: 0;
+    & .checkbox {
+      padding-left: 0;
+      margin-top: 0;
+      & label {
+        margin-left: 0;
+      }
     }
   }
 }
