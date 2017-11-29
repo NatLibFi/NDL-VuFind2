@@ -75,13 +75,14 @@
       width: 100%;
     }
   }
-  .record-title {
-    margin: 0;
-    margin-bottom: 3px;
-    font-size: @record-title-font-size;
-    @media (max-width: @screen-sm) {
-      margin-bottom: 20px;
-    }
+}
+
+.record .record-title {
+  margin: 0;
+  margin-bottom: 3px;
+  font-size: @record-title-font-size;
+  @media (max-width: @screen-sm) {
+    margin-bottom: 20px;
   }
 }
 
@@ -328,5 +329,17 @@
     font-size: 0.9em;
     line-height: 25px;
     margin-top: -5px;
+  }
+}
+
+.citation {
+  .pace-car {
+    th,td {
+      border:0;
+      padding:0;
+    }
+  }
+  th {
+    text-align:right;
   }
 }
