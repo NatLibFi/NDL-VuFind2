@@ -12,6 +12,7 @@
 @import "finna/image-popup";
 @import "finna/finnaicons";
 @import "finna/fonts";
+@import "finna/finna-header";
 @import "finna/useraccount";
 @import "finna/combinedlist";
 @import "finna/holdings";
@@ -60,8 +61,6 @@ iframe {
     border: none;
 }
 header {
-     @media(min-width:768px) {
-     }
      background: @header-background-color;
 }
 // Body without background image (Quick fix!)
@@ -86,29 +85,8 @@ section.main.template-dir-feedcontent.template-name-content > .container {
   padding-top: 0;
   padding-bottom: 3.4em;
 }
-section.main.template-dir-content.template-name-content .container-fluid.finna-main-header > .container,
-section.main.template-dir-feedcontent.template-name-content .container-fluid.finna-main-header > .container {
-  padding-bottom: 0;
-}
 .record-row {
     margin-top: 20px;
-}
-.finna-main-header {
-    background: @finna-main-header-background;
-    padding: 15px 0 15px 0;
-    & .search-result-header, .content-header {
-        font-size: @finna-header-font-size;
-        margin: 0;
-    }
-    & .update-location-button {
-        margin-top: 15px;
-        & i {
-            color: #fff;
-        }
-    }
-}
-.template-name-content .finna-main-header {
-    background: @body-bg;
 }
 
 .floating-feedback-btn {
