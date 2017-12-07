@@ -154,7 +154,6 @@ finna.advSearch = (function advSearch() {
           });
           $('.map-button-edit').addClass("hidden");
           $('.map-button-disable-edit').removeClass("hidden");
-          console.log(e.target);
         });
         $(button).css('top', '-10px');
         return button;
@@ -167,7 +166,9 @@ finna.advSearch = (function advSearch() {
         var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
         $('<span/>').text(' Lopeta muokkaus').appendTo(htmlElem);
         var button = this.createButton('map-button-disable-edit hidden', htmlElem.html(), function disableeditmap(e) {
-          drawnItems._layers[1].editing.disable();
+          drawnItems.eachLayer(function disableEditing(layer) {
+            layer.editing.disable();
+          });
           $('.map-button-disable-edit').addClass("hidden");
           $('.map-button-edit').removeClass("hidden");
         });
