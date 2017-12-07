@@ -73,7 +73,6 @@
     left: auto;
     & > li {
       line-height: normal;
-      padding: 5px 0px;
       & > a {
         color: @text-color;
         width: 250px;
@@ -109,6 +108,9 @@
     @media (max-width: @screen-sm) {
       max-width: 80px;
     }
+    @media (max-width: @screen-xxs) {
+      display: none;
+    }
   }
   .description {
     font-size: 0.9em;
@@ -127,6 +129,9 @@
     }
     @media (max-width: @grid-float-breakpoint){
       margin: 0 15px;
+    }
+    @media (max-width: @screen-sm){
+      margin: 0;
     }
   }
 }
@@ -581,7 +586,7 @@
     max-height: ~"calc(100vh - "@navbar-height~")";
   }
   .navbar-header {
-    padding-left: 15px;
+    padding-left: 10px;
   }
 }
 
