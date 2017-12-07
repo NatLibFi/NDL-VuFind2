@@ -65,6 +65,9 @@
 
 // fix navbar for logoutoptions
 .finna-navbar .navbar-nav .logoutOptions {
+  @media(max-width: @screen-sm){
+    margin: 0;
+  }
   a {
     color: @action-link-color;
   }
@@ -129,9 +132,6 @@
     }
     @media (max-width: @grid-float-breakpoint){
       margin: 0 15px;
-    }
-    @media (max-width: @screen-sm){
-      margin: 0;
     }
   }
 }
