@@ -1,4 +1,4 @@
-/*global VuFind, checkSaveStatuses, action, finna, L, initFacetTree, setupFacets, videojs */
+/*global VuFind, checkSaveStatuses, action, finna, L, initFacetTree, setupFacets, videojs, buildFacetNodes */
 finna.layout = (function finnaLayout() {
   var _fixFooterTimeout = null;
 
@@ -538,7 +538,7 @@ finna.layout = (function finnaLayout() {
 
   function initSideFacets() {
     // Load new-style ajax facets
-    var $collapsedFacets = $('.side-facets-container-ajax')
+    $('.side-facets-container-ajax')
       .find('div.collapse[data-facet]:not(.in)')
       .on('shown.bs.collapse', function expandFacet() {
         loadAjaxSideFacets();
@@ -575,7 +575,7 @@ finna.layout = (function finnaLayout() {
 
     var facetList = [];
     var $facets = $container.find('div.collapse.in[data-facet]');
-    $facets.each(function () {
+    $facets.each(function addFacet() {
       if (!$(this).data('loaded')) {
         facetList.push($(this).data('facet'));
       }
@@ -610,13 +610,9 @@ finna.layout = (function finnaLayout() {
 
             addJSTreeListener(treeNode);
 
-            var facet = treeNode.data('facet');
-            var operator = treeNode.data('operator');
             var currentPath = treeNode.data('path');
             var allowExclude = treeNode.data('exclude');
             var excludeTitle = treeNode.data('exclude-title');
-            var sort = treeNode.data('sort');
-            var query = window.location.href.split('?')[1];
 
             var results = buildFacetNodes(facetData, currentPath, allowExclude, excludeTitle, true);
             treeNode.on('loaded.jstree open_node.jstree', function treeNodeOpen(/*e, data*/) {
