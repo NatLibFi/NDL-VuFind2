@@ -144,6 +144,39 @@ finna.advSearch = (function advSearch() {
     });
     map.addControl(new CircleButton());
 
+    var EditButton = FinnaMapButton.extend({
+      onAdd: function mapOnAddCircle(mapTarget) {
+        var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
+        $('<span/>').text(' Muokkaa').appendTo(htmlElem);
+        var button = this.createButton('map-button-edit', htmlElem.html(), function editmap(e) {
+          drawnItems.eachLayer(function enableEditing(layer) {
+            layer.editing.enable();
+          });
+          $('.map-button-edit').addClass("hidden");
+          $('.map-button-disable-edit').removeClass("hidden");
+          console.log(e.target);
+        });
+        $(button).css('top', '-10px');
+        return button;
+      }
+    });
+    map.addControl(new EditButton());
+
+    var DisableEditButton = FinnaMapButton.extend({
+      onAdd: function mapOnAddCircle(mapTarget) {
+        var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
+        $('<span/>').text(' Lopeta muokkaus').appendTo(htmlElem);
+        var button = this.createButton('map-button-disable-edit hidden', htmlElem.html(), function disableeditmap(e) {
+          drawnItems._layers[1].editing.disable();
+          $('.map-button-disable-edit').addClass("hidden");
+          $('.map-button-edit').removeClass("hidden");
+        });
+        $(button).css('top', '-10px');
+        return button;
+      }
+    });
+    map.addControl(new DisableEditButton());
+
     map.on('draw:created', function mapOnCreated(e) {
       var layer = e.layer;
       addRemoveButton(layer, drawnItems);
