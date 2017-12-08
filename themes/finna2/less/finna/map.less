@@ -15,3 +15,29 @@ div.selection-map-canvas {
 .leaflet-marker-icon .fa-map-marker {
     opacity: 0.8;
 }
+
+.leaflet-marker-icon.leaflet-div-icon {
+  font-family: FontAwesome;
+  font-size: 15px;
+  text-rendering: auto;
+  border: none;
+  background: transparent;
+  color: @action-link-color;
+  &.leaflet-edit-move:before {
+    content: "\f047";
+    font-size: 20px;
+    top: -4px;
+    left: -4px;
+    position: relative;
+    padding: 5px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  &.leaflet-edit-resize:before {
+    content: "\f065";
+    padding: 5px;
+    margin: -3px;
+    border-radius: 50%;
+    background: #fff;
+  }
+}
