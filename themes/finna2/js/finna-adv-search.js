@@ -87,6 +87,9 @@ finna.advSearch = (function advSearch() {
         drawnItems.addLayer(circle);
       }
     });
+    drawnItems.eachLayer(function disableEditing(layer)   {
+      layer.editing.enable();
+    });
 
     var map = new L.Map(mapCanvas.get(0), {
       layers: [options.tileLayer, drawnItems],
@@ -144,42 +147,9 @@ finna.advSearch = (function advSearch() {
     });
     map.addControl(new CircleButton());
 
-    var EditButton = FinnaMapButton.extend({
-      onAdd: function mapOnAddCircle(mapTarget) {
-        var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
-        $('<span/>').text(' Muokkaa').appendTo(htmlElem);
-        var button = this.createButton('map-button-edit', htmlElem.html(), function editmap(e) {
-          drawnItems.eachLayer(function enableEditing(layer) {
-            layer.editing.enable();
-          });
-          $('.map-button-edit').addClass("hidden");
-          $('.map-button-disable-edit').removeClass("hidden");
-        });
-        $(button).css('top', '-10px');
-        return button;
-      }
-    });
-    map.addControl(new EditButton());
-
-    var DisableEditButton = FinnaMapButton.extend({
-      onAdd: function mapOnAddCircle(mapTarget) {
-        var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
-        $('<span/>').text(' Lopeta muokkaus').appendTo(htmlElem);
-        var button = this.createButton('map-button-disable-edit hidden', htmlElem.html(), function disableeditmap(e) {
-          drawnItems.eachLayer(function disableEditing(layer) {
-            layer.editing.disable();
-          });
-          $('.map-button-disable-edit').addClass("hidden");
-          $('.map-button-edit').removeClass("hidden");
-        });
-        $(button).css('top', '-10px');
-        return button;
-      }
-    });
-    map.addControl(new DisableEditButton());
-
     map.on('draw:created', function mapOnCreated(e) {
       var layer = e.layer;
+      layer.editing.enable();
       addRemoveButton(layer, drawnItems);
       drawnItems.addLayer(layer);
     });
