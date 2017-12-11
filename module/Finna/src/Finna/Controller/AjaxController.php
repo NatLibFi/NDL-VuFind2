@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2017.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -525,6 +525,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
                 $params->resetFacetConfig();
                 $options = $params->getOptions();
                 $options->disableHighlighting();
+                $options->spellcheckEnabled(false);
             }
         );
         $ids = [$id];
@@ -1311,10 +1312,15 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $listener->attach($runner->getEventManager()->getSharedManager());
 
             $params->setLimit(0);
+            if (is_callable([$params, 'getHierarchicalFacetLimit'])) {
+                $params->setHierarchicalFacetLimit(-1);
+            }
+            $options = $params->getOptions();
+            $options->disableHighlighting();
         };
 
         $runner = $this->serviceLocator->get('VuFind\SearchRunner');
-        $results = $runner->run($request, 'Solr', $setupCallback);
+        $results = $runner->run($request, DEFAULT_SEARCH_BACKEND, $setupCallback);
 
         if ($results instanceof \VuFind\Search\EmptySet\Results) {
             $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
@@ -1325,13 +1331,111 @@ class AjaxController extends \VuFind\Controller\AjaxController
         $recommend = $results->getRecommendations('side');
         $recommend = reset($recommend);
 
-        $view = $this->getViewRenderer();
-        $view->recommend = $recommend;
-        $view->params = $results->getParams();
-        $view->searchClassId = 'Solr';
-        $html = $view->partial('Recommend/SideFacets.phtml');
+        if (isset($request['enabledFacets'])) {
+            // Render requested facets separately
+            $response = [];
+            $facetConfig = $this->getConfig('facets');
+            $facetHelper = $this->serviceLocator
+                ->get('VuFind\HierarchicalFacetHelper');
+            $hierarchicalFacets = [];
+            $options = $results->getOptions();
+            if (is_callable([$options, 'getHierarchicalFacets'])) {
+                $hierarchicalFacets = $options->getHierarchicalFacets();
+                $hierarchicalFacetSortOptions
+                    = $recommend->getHierarchicalFacetSortOptions();
+            }
+            $checkboxFacets = $results->getParams()->getCheckboxFacets();
+            $sideFacetSet = $recommend->getFacetSet();
+            $results = $recommend->getResults();
+            $view = $this->getViewRenderer();
+            $view->recommend = $recommend;
+            $view->params = $results->getParams();
+            $view->searchClassId = 'Solr';
+            foreach ($request['enabledFacets'] as $facet) {
+                if (strpos($facet, ':')) {
+                    foreach ($checkboxFacets as $checkboxFacet) {
+                        if ($facet !== $checkboxFacet['filter']) {
+                            continue;
+                        }
+                        list($field, $value) = explode(':', $facet, 2);
+                        $checkboxResults = $results->getFacetList(
+                            [$field => $value]
+                        );
+                        if (!isset($checkboxResults[$field]['list'])) {
+                            $response[$facet] = null;
+                            continue 2;
+                        }
+                        $count = 0;
+                        $truncate = substr($value, -1) === '*';
+                        if ($truncate) {
+                            $value = substr($value, 0, -1);
+                        }
+                        foreach ($checkboxResults[$field]['list'] as $item) {
+                            if ($item['value'] == $value
+                                || ($truncate
+                                && preg_match('/^' . $value . '/', $item['value']))
+                                || ($item['value'] == 'true' && $value == '1')
+                                || ($item['value'] == 'false' && $value == '0')
+                            ) {
+                                $count += $item['count'];
+                            }
+                        }
+                        $response[$facet] = $count;
+                        continue 2;
+                    }
+                }
+                if (in_array($facet, $hierarchicalFacets)) {
+                    // Return the facet data for hierarchical facets
+                    $facetList = $sideFacetSet[$facet]['list'];
 
-        return $this->output($html, self::STATUS_OK);
+                    if (!empty($hierarchicalFacetSortOptions[$facet])) {
+                        $facetHelper->sortFacetList(
+                            $facetList,
+                            'top' === $hierarchicalFacetSortOptions[$facet]
+                        );
+                    }
+
+                    $facetList = $facetHelper->buildFacetArray(
+                        $facet, $facetList, $results->getUrlQuery()
+                    );
+
+                    if (!empty($facetConfig->FacetFilters->$facet)
+                        || !empty($facetConfig->ExcludeFilters->$facet)
+                    ) {
+                        $filters = !empty($facetConfig->FacetFilters->$facet)
+                            ? $facetConfig->FacetFilters->$facet->toArray()
+                            : [];
+                        $excludeFilters
+                            = !empty($facetConfig->ExcludeFilters->$facet)
+                            ? $facetConfig->ExcludeFilters->$facet->toArray()
+                            : [];
+
+                        $facetList = $facetHelper->filterFacets(
+                            $facetList,
+                            $filters,
+                            $excludeFilters
+                        );
+                    }
+
+                    $response[$facet] = $facetList;
+                } else {
+                    $view->facet = $facet;
+                    $view->cluster = isset($sideFacetSet[$facet])
+                        ? $sideFacetSet[$facet] : [];
+                    $response[$facet]
+                        = $view->partial('Recommend/SideFacets/facet.phtml');
+                }
+            }
+            return $this->output($response, self::STATUS_OK);
+        } else {
+            // Render full sidefacets
+            $view = $this->getViewRenderer();
+            $view->recommend = $recommend;
+            $view->params = $results->getParams();
+            $view->searchClassId = 'Solr';
+            $html = $view->partial('Recommend/SideFacets.phtml');
+            return $this->output($html, self::STATUS_OK);
+        }
     }
 
     /**
