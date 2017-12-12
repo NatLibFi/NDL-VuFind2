@@ -62,8 +62,6 @@
 .template-name-mylist .bulk-action-buttons-col {
   padding: 10px;
   padding-bottom: 0px;
-  border-right: none;
-  border-bottom: 1px solid @gray-lighter;
 }
 
 .mylist-bar {
@@ -106,7 +104,7 @@
 }
 .bulk-action-buttons-row {
   margin: 0;
-  min-height: 60px; // prevent fixed element bounce effect
+  border-bottom: 1px solid @gray-lighter;
   @media(max-width:@screen-xs-max) {
     .row();
   }
@@ -114,32 +112,15 @@
 
 .bulk-action-buttons-col {
   padding: 10px 0;
-  border-right: 10px solid @body-bg;
-  /*& input.btn {
-    margin-right: 3px;
-  }
-  .btn, span {
-    height: 42px;
-  }
-  & .mylist-functions {
-    & i#add-to-list {
-      position: absolute;
-      top: 8px;
-    }
-    & select#add-to-list {
-      max-width: 140px;
-    }
-    & select, button, span {
-      margin-bottom: 4px;
-    }
-  }*/
   &.fixed {
     margin-top: 0;
+    min-height: 50px;
+    top: 0;
     background-color: @body-bg;
     position: fixed;
     padding: 10px 0 2px 10px;
     z-index: 11;
-    box-shadow: 0px 19px 15px -13px grey;
+    box-shadow: 0 0 10px 3px @gray-mid-light;
   }
 }
 .mylist-functions.btn-group .btn {
