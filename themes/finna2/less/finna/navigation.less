@@ -32,15 +32,17 @@
     display: block;
     > a {
       transition: background .2s ease-in-out;
-      @media(max-width: @screen-md-max){
-        padding: 0 6px;
-      }
     }
   }
 }
 @media (min-width:@screen-md-min) {
   .nav > li {
     display: inline-block;    
+  }
+}
+@media (max-width: @screen-md-max) {
+  .finna-navbar .nav >li>a {
+    padding: 0 6px;
   }
 }
 
@@ -460,13 +462,11 @@
     background-color: transparent;
     border: 0 none;
     box-shadow: none;
-    //color: @body-bg;
     display: block;
     font-size: 100%;
     font-weight: 600;
     line-height: 1em;
     margin: 0;
-    //padding: 7px 20px 0 8px;
     width: 100%;
     -webkit-appearance: none;
     -moz-appearance: none;
