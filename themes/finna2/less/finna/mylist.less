@@ -266,3 +266,42 @@
     }
   }
 }
+
+.mylist-header {
+  @media(max-width: @screen-xs-max) {
+    margin: 0 -15px;
+    padding: 0 5px;
+  }
+  .alert {
+    margin-top: 1em;
+  }
+}
+.mylist-controls-bar {
+  div {
+    display: inline-block;
+  }
+  .mylist-controls {
+    float: right;
+    &::after {
+      content: "";
+      clear: both;
+    }
+  }
+  @media(max-width: @screen-xxs) {
+    .sort-button .dropdown>a span{
+      padding-right: 20px;
+      max-width: 72px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+      height: 17px;
+      margin-bottom: -3px;
+    }
+  }
+  @media(max-width: @screen-xs-max) {
+    .paginationSimple li > span {
+      display: none;
+    }
+  }
+}
