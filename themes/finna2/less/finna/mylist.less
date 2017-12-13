@@ -86,20 +86,26 @@
       position: absolute;
       top: 10px;
       right: 10px;
+      i {
+        background-color: @action-link-color;
+        font-size: 10px;
+      }
     }
   }
 
   & .add-new-list {
+    border: 1px solid @gray-lighter;
     display: block;
-  }
-  & .add-new-list .name {
-    width: 100%;
-  }
-  & .add-new-list .icon {
-    cursor: pointer;
-    position: absolute;
-    top: 0.7em;
-    right: 0.7em;
+    .name {
+      width: 100%;
+    }
+    i {
+      cursor: pointer;
+      position: absolute;
+      top: 0.7em;
+      right: 0.7em;
+      color: @action-link-color;
+    }
   }
 }
 .bulk-action-buttons-row {
@@ -230,6 +236,7 @@
     padding: 5px 30px 5px 10px;
     margin-top: 5px;
     border-radius: 3px;
+    border: 1px solid @gray-lighter;
     list-style-type: decimal;
     list-style-position: inside;
     &:hover {
@@ -285,6 +292,13 @@
     &::after {
       content: "";
       clear: both;
+    }
+    &>.btn {
+      padding: 6px;
+      margin-top: -3px;
+    }
+    .button-label {
+      margin-left: 5px;
     }
   }
   @media(max-width: @screen-xxs) {
