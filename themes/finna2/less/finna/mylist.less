@@ -118,24 +118,33 @@
     top: 0;
     background-color: @body-bg;
     position: fixed;
-    padding: 10px 0 2px 10px;
+    padding: 10px 0 10px 10px;
     z-index: 11;
     box-shadow: 0 0 10px 3px @gray-mid-light;
   }
 }
-.mylist-functions.btn-group .btn {
-  height: 30px;
-  & select {
+.mylist-functions.btn-group {
+  .btn {
     height: 30px;
   }
+  select {
+    margin-right: -1px;
+  }
 }
+
 .my-list-functions-label {
   text-transform: capitalize;
+  font-size: @font-size-base;
+  margin-left: 5px;
+  @media(min-width: @screen-sm) {
+    margin-left: 2em;
+  }
 }
 
 .checkboxFilter.mylist-select-all {
   float: left;
   margin-right: 10px;
+  margin-bottom: 3px;
   line-height: @line-height-computed;
   & .checkbox {
     margin:0;

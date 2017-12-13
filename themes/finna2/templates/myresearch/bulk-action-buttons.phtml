@@ -13,8 +13,8 @@
           <span class="hidden-xs"><?=$this->transEsc('select_page')?></span>
         </label>
       </div>
+      <span class="my-list-functions-label"><?=$this->transEsc('with_selected')?>:</span>
     </div>
-    <span class="my-list-functions-label"><?=$this->transEsc('with_selected')?>:</span>
     <div class="mylist-functions btn-group">
       <button class="btn btn-primary" type="submit" name="email" value="<?=$this->transEsc('Email')?>" title="<?=$this->transEsc('bookbag_email_selected')?>" disabled<?if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<? endif; ?>><?=$this->transEsc('Email')?></button>
       <? $exportOptions = $this->export()->getActiveFormats('bulk'); if (count($exportOptions) > 0): ?>
