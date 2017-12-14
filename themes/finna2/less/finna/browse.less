@@ -26,9 +26,15 @@ section.template-dir-browse {
         }
         & .widen {
             width: 100%;
-            background: #f5f5f5;
+            background: @gray-ultralight;
             margin-bottom: 3px;
             max-width: 500px;
+            & a {
+                background-color: @gray-ultralight;
+            }
+            & a.list-group-item.active {
+                background-color: @brand-primary;
+            }
         }
         & .list-group-item.view-record {
             padding: 12px 15px;
@@ -58,5 +64,16 @@ section.template-dir-browse {
             width: 100%;
             margin-bottom: 2px;
         }
+    }
+}
+
+/* --- Browse --- */
+.browse.list-group .list-group-item {
+    word-wrap:break-word;
+    &.view-record {
+        border-top:0;
+        font-size:85%;
+        padding:2px 4px;
+        text-align:right;
     }
 }

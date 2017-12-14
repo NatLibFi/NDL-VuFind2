@@ -360,6 +360,16 @@ trait SolrFinna
             ];
         }
 
+        // Check for cached data
+        if (isset($this->cachedMergeRecordData)) {
+            return $this->cachedMergeRecordData;
+        }
+
+        // Check if this is a merged record
+        if (empty($this->fields['merged_child_boolean'])) {
+            return [];
+        }
+
         // Find the dedup record
         if (null === $this->searchService) {
             return [];
@@ -370,13 +380,15 @@ trait SolrFinna
             'local_ids_str_mv:"' . $safeId . '"'
         );
         $params = new \VuFindSearch\ParamBag(
-            ['hl' => 'false', 'spellcheck' => 'false']
+            ['hl' => 'false', 'spellcheck' => 'false', 'sort' => '']
         );
         $records = $this->searchService->search('Solr', $query, 0, 1, $params)
             ->getRecords();
         if (!isset($records[0])) {
+            $this->cachedMergeRecordData = [];
             return [];
         }
+
         $results = [];
         $results['records'] = $this->createSourceIdArray($records[0]->getLocalIds());
         if ($onlineURLs = $records[0]->getOnlineURLs(true)) {
@@ -385,6 +397,7 @@ trait SolrFinna
                 true
             );
         }
+        $this->cachedMergeRecordData = $results;
         return $results;
     }
 

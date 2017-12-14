@@ -1,0 +1,329 @@
+.main.template-dir-myresearch.template-name-mylist {
+  & .search-controls {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    & hr {
+      border-top: 1px solid @gray-lighter;
+    }
+  }
+  & .bulk-action-buttons-col {
+    width: 100%;
+    @media (min-width: @screen-sm-min) {
+      padding-right: 0;
+    }
+    @media( max-width: @grid-float-breakpoint) {
+      top: @navbar-height;
+    }
+    &:not(.fixed) .mylist-functions {
+      text-align: right;
+    }
+  }
+  & .mylist-nav .list-visibility {
+    padding: 10px;
+    & .list-url {
+      font-weight: bold;
+      word-break: break-word;
+      & a:first-child {
+        margin-right: 10px;
+      }
+      & .feed {
+        font-size: 1.2em;
+        display: inline-block;
+        color: initial;
+      }
+    }
+
+    & .list-visibility-hidden {
+      margin-left: 10px;
+      margin-bottom: 5px;
+      @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
+        margin-left: 0;
+        display: block;
+      }
+    }
+  }
+
+  & .delete-list li {
+    border-bottom: none;
+    &:not(.disabled) {
+      float: left;
+      width: 45%;
+      padding: 10px;
+      text-align: center;
+      & a {
+        border-radius: @border-radius-base;
+        background: @link-color;
+        color: @body-bg;
+      }
+    }
+  }
+}
+
+.template-name-mylist .bulk-action-buttons-col {
+  padding: 10px;
+  padding-bottom: 0px;
+}
+
+.mylist-bar:not(.open) {
+  margin-top: 20px;
+}
+.mylist-nav {
+  & li > a {
+    word-wrap: break-word;
+  }
+  & li > a:not(.add-new-list) {
+    background: @gray-ultralight;
+    color: @text-color;
+    margin-bottom: 5px;
+  }
+  & li > a.active {
+    color: @brand-primary;
+    font-weight: 700;
+    & .favorite-list-name {
+      max-width: 85%;
+    }
+    & .remove-favorite-list {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      i {
+        background-color: @action-link-color;
+        font-size: 10px;
+      }
+    }
+  }
+
+  & .add-new-list {
+    border: 1px solid @gray-lighter;
+    display: block;
+    .name {
+      width: 100%;
+    }
+    i {
+      cursor: pointer;
+      position: absolute;
+      top: 0.7em;
+      right: 0.7em;
+      color: @action-link-color;
+    }
+  }
+}
+.bulk-action-buttons-row {
+  margin: 0;
+  border-bottom: 1px solid @gray-lighter;
+  @media(max-width:@screen-xs-max) {
+    .row();
+  }
+}
+
+.bulk-action-buttons-col {
+  padding: 10px 0;
+  &.fixed {
+    margin-top: 0;
+    min-height: 50px;
+    top: 0;
+    background-color: @body-bg;
+    position: fixed;
+    padding: 10px 0 10px 10px;
+    z-index: 11;
+    box-shadow: 0 0 10px 3px @gray-mid-light;
+  }
+}
+.mylist-functions.btn-group {
+  .btn {
+    height: 30px;
+  }
+  select {
+    margin-right: -1px;
+  }
+}
+
+.my-list-functions-label {
+  font-size: @font-size-base;
+  margin-left: 5px;
+  @media(min-width: @screen-sm) {
+    margin-left: 2em;
+  }
+}
+
+.checkboxFilter.mylist-select-all {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 3px;
+  line-height: @line-height-computed;
+  & .checkbox {
+    margin:0;
+  }
+}
+
+.list-title {
+  margin-bottom: 0;
+  & i.fa-pen {
+    margin-bottom: -22px;
+  }
+  &.no-edit {
+    border: 0;
+    &:hover {
+      border: 0;
+    }
+  }
+}
+
+.list-description {
+  @media(min-width: @screen-sm) {
+    margin-bottom: 10px;
+  }
+}
+.list-description i.fa-pen {
+  margin-bottom: -12px;
+}
+.list-description h1 {
+  display: inherit;
+}
+.resource-note i.fa-pen {
+  margin-bottom: -18px;
+}
+
+.list-title, .list-description:not(.edit), .resource-note:not(.edit), .add-new-list {
+  border: 1px solid transparent;
+  display: inline-block;
+  padding: 5px;
+  width: ~"-webkit-calc(100% - 30px)";
+  width: ~"-moz-calc(100% - 30px)";
+  width: ~"calc(100% - 30px)";
+  width: 100%;
+  &:hover, &:active, &:focus {
+    border: 1px solid @gray-lighter;
+    & i {
+      transition: all 0.2s linear;
+      color: @gray;
+    }
+  }
+  & i {
+    color: @gray-light;
+    float: right;
+  }
+  & span {
+
+    width: 100%;
+    display: inline-block;
+    word-wrap: break-word;
+    padding-right: 25px;
+    & input, textarea {
+      &:focus, &:active {
+        border: none;
+        box-shadow: none;
+        outline: none;
+      }
+    }
+  }
+  & .markdown-preview {
+    display: none;
+  }
+}
+.list-description.markdown, .resource-note.markdown {
+  padding: 0;
+  & .fa {
+    margin-top: 7px;
+    margin-right: 5px;
+  }
+}
+.list-title.disable {
+  &:hover, &:active, &:focus {
+    border: 1px solid transparent;
+    cursor: initial;
+  }
+}
+
+.sortable-favorite-list {
+  & li {
+    background: @list-group-bg;
+    padding: 5px 30px 5px 10px;
+    margin-top: 5px;
+    border-radius: 3px;
+    border: 1px solid @gray-lighter;
+    list-style-type: decimal;
+    list-style-position: inside;
+    &:hover {
+      cursor: move;
+    }
+    & h4 {
+      margin: 0;
+      font-size: 14px;
+    }
+    & p {
+      margin-top: 2px;
+      margin-bottom: 0;
+    }
+    & .fa.fa-arrow-down, & .fa.fa-arrow-up {
+      position: absolute;
+      right: 26px;
+      margin-top: 10px;
+    }
+    & .fa.fa-arrow-up {
+      margin-top: 0;
+    }
+  }
+  & .btn {
+    margin-bottom: 10px;
+    margin-right: 10px;
+  }
+  @media(max-width: @screen-xs-max) {
+    margin-left: 5px;
+    margin-right: 10px;
+    & li {
+      & .fa.fa-arrow-down, & .fa.fa-arrow-up {
+        right: 32px;
+      }
+    }
+  }
+}
+
+.mylist-header {
+  @media(max-width: @screen-xs-max) {
+    margin: 0 -15px;
+    padding: 0 5px;
+  }
+  .alert {
+    margin-top: 1em;
+  }
+}
+.mylist-controls-bar {
+  div {
+    display: inline-block;
+  }
+  .mylist-controls {
+    float: right;
+    &::after {
+      content: "";
+      clear: both;
+    }
+    &>.btn {
+      padding: 6px;
+      margin-top: -3px;
+    }
+    .button-label {
+      margin-left: 5px;
+    }
+  }
+  @media(max-width: @screen-xxs) {
+    .sort-button .dropdown>a span{
+      padding-right: 20px;
+      max-width: 72px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      display: inline-block;
+      margin-bottom: -6px;
+    }
+  }
+  @media(max-width: @screen-xs-max) {
+    .pagination-container, .mylist-controls {
+      width: 100%;
+      margin-top: 8px;
+    }
+    .pagination-container .paginationSimple {
+      text-align: left;
+    }
+  }
+}

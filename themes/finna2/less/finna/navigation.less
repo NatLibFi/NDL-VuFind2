@@ -32,9 +32,6 @@
     display: block;
     > a {
       transition: background .2s ease-in-out;
-      @media(max-width: @screen-md-max){
-        padding: 0 10px;
-      }
     }
   }
 }
@@ -43,11 +40,16 @@
     display: inline-block;    
   }
 }
+@media (max-width: @screen-md-max) {
+  .finna-navbar .nav >li>a {
+    padding: 0 6px;
+  }
+}
 
 .navbar .navbar-logo {
   height: @navbar-logo-height;
   margin-top: ((@navbar-height/2)-(@navbar-logo-height/2));
-  margin-right: 20px;
+  margin-right: 10px;
 }
 
 .navbar-nav>li.lang>a {
@@ -65,6 +67,9 @@
 
 // fix navbar for logoutoptions
 .finna-navbar .navbar-nav .logoutOptions {
+  @media(max-width: @screen-sm){
+    margin: 0;
+  }
   a {
     color: @action-link-color;
   }
@@ -72,8 +77,6 @@
     right: 5px;
     left: auto;
     & > li {
-      line-height: normal;
-      padding: 5px 0px;
       & > a {
         color: @text-color;
         width: 250px;
@@ -82,6 +85,9 @@
           padding-right: 5px;
         }
       }
+    }
+    @media (max-width: @screen-xxs) {
+      right: -30px;
     }
   }
   &.card-selection {
@@ -101,13 +107,15 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-    display: inline-block;
     vertical-align: bottom;
     font-size: @font-size-base;
     text-transform: uppercase;
     font-weight: 600;
     @media (max-width: @screen-sm) {
       max-width: 80px;
+    }
+    @media (max-width: @screen-xxs) {
+      display: none;
     }
   }
   .description {
@@ -192,33 +200,17 @@
 }
 
 .navbar-collapse {
-  color: @body-bg;
   border-top: 3px solid @brand-primary;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25);
-
-  &.in {
-    & .dropdown-menu a {
-      color: @navbar-default-link-color;
-      transition: all 0.2s ease-in-out;
-    }
-  }
-
-
   @media (min-width: @grid-float-breakpoint) {
     border-top: 0;
     box-shadow: none;
-    &.in {
-      & .dropdown-menu a {
-        color: @gray;
-        transition: none;
-      }
-    }
   }
 }
 
 .navbar-brand {
   padding: 0;
   line-height: @navbar-height;
+  max-width: 200px;
   .navbar-logo {
     font-size: @navbar-logo-height;
     color: @logo-color;
@@ -460,34 +452,22 @@
   }
 }
 .jump-menu-style {
-  border: none;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
   padding: 0;
   position: relative;
   width: auto;
   z-index: 1;
   display: inline-block;
   min-width: 60px;
-  font-weight: 500;
-
   & select {
-    font-family: "Helvetica Neue", arial;
     background-color: transparent;
     border: 0 none;
     box-shadow: none;
-    color: @body-bg;
     display: block;
     font-size: 100%;
-    font-weight: 500;
+    font-weight: 600;
     line-height: 1em;
     margin: 0;
-    padding: 0px 20px 0px 8px;
     width: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -520,13 +500,8 @@
   &.controls {
     border-radius: @finna-button-radius;
     background-color: @brand-primary;
-    margin-bottom: 4px;
-    height: 42px;
     padding-top: 0px;
     transition: background-color .1s linear;
-    &:hover, &:active, &:hover:before, &:active:before {
-      background-color: darken(@brand-primary, 6%);
-    }
     & option:checked {
       background: @btn-primary-bg;
       color: @body-bg;
@@ -538,7 +513,7 @@
     border-top-right-radius: 10px;
     border-bottom-right-radius: 10px;
     color: @body-bg;
-    line-height: 34px;
+    line-height: 40px;
   }
   &.disabled {
     .opacity(0.5);
@@ -558,7 +533,7 @@
 }
 
 /* Mobile navbar */
-@media(max-width: @grid-float-breakpoint) {
+@media(max-width: @grid-float-breakpoint-max) {
   .finna-navbar {
     position: fixed;
     right: 0;
@@ -566,7 +541,7 @@
     z-index: 100;
     top: 0;
     border-width: 0 0 1px;
-    background-color: @body-bg;
+    background-color: @header-background-color;
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
     .navbar-collapse > ul >li {
       border-bottom: 1px solid @gray-lighter;
@@ -580,7 +555,7 @@
     max-height: ~"calc(100vh - "@navbar-height~")";
   }
   .navbar-header {
-    padding-left: 15px;
+    padding-left: 10px;
   }
 }
 

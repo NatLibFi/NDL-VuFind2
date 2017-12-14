@@ -227,7 +227,7 @@ JS;
                 ]
             );
 
-            $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
+            $this->layout()->advSearchHeader = $this->context($this)->renderInContext(
                 'search/header.phtml',
                 [
                   'searchType' => $searchType,
@@ -347,8 +347,8 @@ JS;
         <? endif; ?>
       </div>
     </div>
-      <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && $this->content()->findTemplateForLng('search/home/browsebar') ): ?>
-        <?=$this->render('search/home/browsebar.phtml')?>
+      <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && $template = $this->content()->findTemplateForLng('search/home/browsebar')): ?>
+        <?=$this->render($template)?>
       <? endif; ?>
     </section>
 
@@ -360,6 +360,9 @@ JS;
           <?=$this->layout()->finnaMainHeader?>
         </div>
       </div>
+      <? endif; ?>
+      <? if (!empty($this->layout()->advSearchHeader)): ?>
+        <?=$this->layout()->advSearchHeader; ?>
       <? endif; ?>
       <? if (!empty($this->layout()->finnaFilters)): ?>
         <?=$this->layout()->finnaFilters?>
