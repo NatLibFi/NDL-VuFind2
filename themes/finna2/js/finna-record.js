@@ -171,20 +171,23 @@ finna.record = (function finnaRecord() {
   }
 
   function applyRecordAccordionHash() {
-    var activeTab = $('.record-accordions .accordion.active a').attr('id');
-    var $initiallyActiveTab = $('.record-accordions .accordion.initiallyActive a');
-    var newTab = typeof window.location.hash !== 'undefined'
-      ? window.location.hash.toLowerCase() : '';
+    if($(window).width() < 992) {
+      var activeTab = $('.record-accordions .accordion.active a').attr('id');
+      var $initiallyActiveTab = $('.record-accordions .accordion.initiallyActive a');
+      var newTab = typeof window.location.hash !== 'undefined'
+          ? window.location.hash.toLowerCase() : '';
 
-    // Open tab in url hash
-    if (newTab.length <= 1 || newTab === '#tabnav') {
-      $initiallyActiveTab.click();
-    } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
-      $('#' + newTab.substr(1)).click();
+      // Open tab in url hash
+      if (newTab.length <= 1 || newTab === '#tabnav') {
+        $initiallyActiveTab.click();
+      } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
+        $('#' + newTab.substr(1)).click();
+      }
     }
   }
 
   $(window).on('hashchange', applyRecordAccordionHash);
+  $(window).resize(applyRecordAccordionHash);
 
   $(document).ready(function onReady() {
     $('.sidebar .similar-records').load(
