@@ -42,7 +42,10 @@
             <? if ($libraryCardName): ?>
               <span><?=$libraryCardName?></span>
             <? else: ?>
-              <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
+              <span>
+                <?=$this->transEsc("Library Card name missing")?>
+                <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"> <?=$this->transEsc("Add name")?></a>
+              </span>
             <? endif; ?>
           </td>
           <? if ($this->multipleTargets): ?>
@@ -57,18 +60,20 @@
             </a>
           </td>
           <td data-label="<?=$this->transEsc('Actions')?>" class="library-card-actions">
-            <a class="btn-link" href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($record['id']) ?>" data-lightbox title="<?=$this->transEsc('Change Password')?>"><i class="fa fa-lock bigger gray"></i> <?=$this->transEsc('Change Password')?></a>
-            <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
-            <div class="dropdown">
-              <a class="btn-link dropdown-toggle" data-toggle="dropdown" href="<?=$this->url('librarycards-deletecard') ?>?cardID=<?=urlencode($record['id'])?>">
-                <i class="fa fa-unlink gray" aria-hidden="true"></i> <?=$this->transEsc('Disconnect Library Card')?>
-              </a>
-              <ul class="dropdown-menu useraccount-cancel">
-                <li class="disabled"><a><?=$this->transEsc('Disconnect Library Card')?>?</a></li>
-                <li><a href="<?=$this->url('librarycards-deletecard') ?>?cardID=<?=urlencode($record['id'])?>&amp;confirm=1"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                <li><a href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-              </ul>
-            </div>
+            <span>
+              <a class="btn-link" href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($record['id']) ?>" data-lightbox title="<?=$this->transEsc('Change Password')?>"><i class="fa fa-lock bigger gray"></i> <?=$this->transEsc('Change Password')?></a>
+              <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
+              <div class="dropdown">
+                <a class="btn-link dropdown-toggle" data-toggle="dropdown" href="<?=$this->url('librarycards-deletecard') ?>?cardID=<?=urlencode($record['id'])?>">
+                  <i class="fa fa-unlink gray" aria-hidden="true"></i> <?=$this->transEsc('Disconnect Library Card')?>
+                </a>
+                <ul class="dropdown-menu useraccount-cancel">
+                  <li class="disabled"><a><?=$this->transEsc('Disconnect Library Card')?>?</a></li>
+                  <li><a href="<?=$this->url('librarycards-deletecard') ?>?cardID=<?=urlencode($record['id'])?>&amp;confirm=1"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
+                  <li><a href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                </ul>
+              </div>
+            </span>
           </td>
         </tr>
       <? endforeach; ?>

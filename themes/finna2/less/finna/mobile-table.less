@@ -1,12 +1,3 @@
-table.mobile-table {
-  border: 1px solid #ccc;
-  border-collapse: collapse;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  table-layout: fixed;
-}
-
 @media(max-width: @screen-xs-max) {
   table.mobile-table {
     border: 0;
@@ -30,7 +21,7 @@ table.mobile-table {
     border: 1px solid @gray-lighter;
     display: block;
     margin-bottom: 1.5em;
-    background-color: @body-bg;
+    background-color: @body-bg !important;
   }
   table.mobile-table tr>td {
     border: 0;
@@ -39,12 +30,18 @@ table.mobile-table {
     text-align: left;
     padding: 0;
     span, img {
-      padding: 5px 10px;
+      display: inline-block;
+      padding: 10px;
+      a {
+        font-style: italic;
+      }
+    }
+    img {
+      padding-bottom: 0px;
     }
   }
-  table.mobile-table a,
   table.mobile-table .library-card-actions a {
-    margin-left: 10px;
+    font-style: normal;
   }
   table.mobile-table td:before {
     content: attr(data-label);
@@ -57,10 +54,8 @@ table.mobile-table {
     width: ~"calc(100% - 1px)";
     background: @gray-ultralight;
     padding: 10px;
-    margin-bottom: 5px;
     margin-left: 1px;
   }
   table.mobile-table td:not(:first-child):before {
-    margin-top:10px;
   }
 }
