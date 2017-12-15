@@ -171,7 +171,7 @@ finna.record = (function finnaRecord() {
   }
 
   function applyRecordAccordionHash() {
-    if($(window).width() < 992) {
+    if ($('.record-accordions').is(':visible')) {
       var activeTab = $('.record-accordions .accordion.active a').attr('id');
       var $initiallyActiveTab = $('.record-accordions .accordion.initiallyActive a');
       var newTab = typeof window.location.hash !== 'undefined'
