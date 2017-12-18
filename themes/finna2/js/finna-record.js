@@ -149,45 +149,40 @@ finna.record = (function finnaRecord() {
     $('.record-accordions .accordion-toggle').click(function accordionClicked(e){
       var accordion = $(e.target).closest('.accordion');
       var tabid = accordion.find('.accordion-toggle a').attr('id');
+      var $recordTabs = $('.record-tabs');
       e.preventDefault();
       if (accordion.hasClass('active')){
         $('.record-accordions').find('.accordion.active').removeClass('active');
+        $recordTabs.find('.tab-pane.active').removeClass('active');
         removeHashFromLocation();
       } else {
         $('.record-accordions').find('.accordion.active').removeClass('active');
         accordion.addClass('active');
+        $recordTabs.find('.' + tabid + '-tab').addClass('active');
         window.location.hash = tabid;
-        var newTab = getNewRecordTab(tabid).addClass('active');
-        if (accordion.hasClass('noajax')){
-          return true;
+        accordion.append($('.tab-content'));
+        if ($('.record-accordions').is(':visible')) {
+          $('html, body').animate({scrollTop: accordion.offset().top - 64}, 150);
         }
-        if (accordion.find('.accordion-content .tab-pane.' + tabid + '-tab').length < 1) {
-          accordion.find('.accordion-content').html(newTab);
-          ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
-        }
-        $('html, body').animate({scrollTop: accordion.offset().top - 64}, 150);
       }
     });
   }
 
   function applyRecordAccordionHash() {
-    if ($('.record-accordions').is(':visible')) {
-      var activeTab = $('.record-accordions .accordion.active a').attr('id');
-      var $initiallyActiveTab = $('.record-accordions .accordion.initiallyActive a');
-      var newTab = typeof window.location.hash !== 'undefined'
-          ? window.location.hash.toLowerCase() : '';
+    var activeTab = $('.record-accordions .accordion.active a').attr('id');
+    var $initiallyActiveTab = $('.record-accordions .accordion.initiallyActive a');
+    var newTab = typeof window.location.hash !== 'undefined'
+        ? window.location.hash.toLowerCase() : '';
 
-      // Open tab in url hash
-      if (newTab.length <= 1 || newTab === '#tabnav') {
-        $initiallyActiveTab.click();
-      } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
-        $('#' + newTab.substr(1)).click();
-      }
+    // Open tab in url hash
+    if (newTab.length <= 1 || newTab === '#tabnav') {
+      $initiallyActiveTab.click();
+    } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
+      $('#' + newTab.substr(1)).click();
     }
   }
 
   $(window).on('hashchange', applyRecordAccordionHash);
-  $(window).resize(applyRecordAccordionHash);
 
   $(document).ready(function onReady() {
     $('.sidebar .similar-records').load(

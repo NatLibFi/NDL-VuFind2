@@ -10,6 +10,9 @@
     border-right: 1px solid @gray-lighter;
     border-bottom: 1px solid @gray-lighter;
     border-left: 4px solid @gray-lighter;
+    @media(min-width: @screen-md) {
+      display: none;
+    }
   }
   .accordion-toggle a {
     color: @text-color;
@@ -29,20 +32,9 @@
       }
     }
   }
-  .accordion-content {
-    display: none;
-    height: 0;
-    transition: height 0.3s ease-in;
-  }
 }
 
 .accordion.active {
-  .accordion-content{
-    display: block;
-    height: auto;
-    padding: 10px;
-    transition: height 0.3s ease-in;
-  }
   .accordion-toggle {
     border-left: 4px solid @action-link-color;
     .accordion-title {
@@ -55,9 +47,27 @@
       }
     }
   }
+  @media(max-width: @screen-sm-max) {
+    .tab-content {
+      display: block;
+      margin: 10px 0;
+    }
+  }
 }
 
-.record-accordions {
+.record-accordions.record-tabs {
   margin-bottom: 30px;
   width: 100%;
+  @media (min-width: @screen-md){
+    width: 75%;
+    padding-right: 15px;
+    float: left;
+  }
+  @media(max-width: @screen-sm-max) {
+    .tab-content {
+      display: none;
+      padding: 0;
+      margin: 0;
+    }
+  }
 }
