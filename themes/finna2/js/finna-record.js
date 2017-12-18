@@ -172,7 +172,7 @@ finna.record = (function finnaRecord() {
     var activeTab = $('.record-accordions .accordion.active a').attr('id');
     var $initiallyActiveTab = $('.record-accordions .accordion.initiallyActive a');
     var newTab = typeof window.location.hash !== 'undefined'
-        ? window.location.hash.toLowerCase() : '';
+      ? window.location.hash.toLowerCase() : '';
 
     // Open tab in url hash
     if (newTab.length <= 1 || newTab === '#tabnav') {
