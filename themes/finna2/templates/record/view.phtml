@@ -179,12 +179,11 @@
                 ?>
             <div <?=count($accordion_classes) > 0 ? ' class="' . implode(' ', $accordion_classes) . '"' : ''?>>
               <div class="accordion-toggle">
-                <a id="<?=strtolower($accordion) ?>"
+                <a id="<?=strtolower($accordion) ?>" class="accordion-title"
                    href="<?=$this->recordLink()->getTabUrl($this->driver, $accordion)?>#tabnav"<? if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
                   data-background<? endif ?>>
-                  <div class="accordion-title">
-                      <?=$this->transEsc($desc)?><? if (strtolower($accordion) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?>
-                  </div>
+                  <span class="title"><?=$this->transEsc($desc)?><? if (strtolower($accordion) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?></span>
+                  <i class="icon"></i>
                 </a>
               </div>
             </div>
