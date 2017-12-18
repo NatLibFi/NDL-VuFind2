@@ -136,7 +136,7 @@
             <span><?=$this->transEsc('Image Rights') ?>:</span> 
             <? if ((isset($rights['copyright'])) && (!empty($rights['copyright']))): ?><? if ($hasLink): ?><a target="_blank" href="<?=$rights['link'] ?>"><? endif; ?><? if ($this->transEsc($rights['copyright']) === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><? else: ?><?=$this->transEsc($rights['copyright']) ?><? endif; ?><? if ($hasLink): ?></a><? endif; ?>
             <? else: ?>
-              <? foreach ($this->driver->tryMethod('getUsageRights') as $usageRights): ?>
+              <? foreach ($this->driver->tryMethod('getUsageRights', [], []) as $usageRights): ?>
                 <?=$this->transEsc($usageRights) ?><br>
               <? endforeach; ?>
             <? endif; ?>
