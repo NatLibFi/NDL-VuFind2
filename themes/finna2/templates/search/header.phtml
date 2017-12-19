@@ -121,9 +121,10 @@
 </div>
 
 <? if ($this->fromStreetSearch): ?>
+<? $filters = isset($this->params) ? $this->params->getFilters() : ''; ?>
 <div>
   <div id="searchForm" class="hidden-print">
-    <?=$this->render('search/street-search-header.phtml');?>
+    <?=$this->render('search/street-search-header.phtml', ['filters' => $filters]);?>
   </div>
 </div>
 <? endif; ?>

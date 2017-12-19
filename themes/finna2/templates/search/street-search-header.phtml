@@ -1,5 +1,41 @@
 <!-- START of: finna - search/street-search-header.phtml -->
-<div class="update-location-button">
-  <a class="btn btn-primary" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
+<?
+  $this->headLink()->appendStylesheet('vendor/leaflet.css');
+  $this->headLink()->appendStylesheet('vendor/leaflet.draw.css');
+  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.js');
+  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.draw.js');
+  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-street-map.js');
+  echo $this->inlineScript();
+  //$this->headScript()->appendFile('finna-street-map.js');
+?>
+<div class="row">
+  <div class="col-md-4">
+    <div class="update-location-button text-left">
+      <a class="btn btn-primary" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="street-search-header-message">
+      <h4><?=$this->transEsc('street_under_development')?></h4>
+      <p><?=$this->transEsc('street_search_help')?></p>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="street-search-feedback text-right">
+      <a class="btn btn-primary" href="<?=$this->url('feedback-home', [], ['query' => ['comments' => $this->transEsc('street_search_feedback'), 'url' => $this->serverUrl(true)]])?>"><?=$this->transEsc('Give Feedback')?></a>
+    </div>
+  </div>
+  <div class="map" style="height: 300px; width: 300px;"></div>
 </div>
+<?
+  foreach ($this->filters as $field => $data) {
+    print_r($field . "<br>");
+  }
+?>
+<script type="text/javascript">
+  $(document).ready(function() {
+    console.log("document ready");
+    finna.StreetMap.initMap("xxx");
+  });
+</script>
 <!-- END of: finna - search/street-search-header.phtml -->
