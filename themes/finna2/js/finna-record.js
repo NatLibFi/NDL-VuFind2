@@ -148,7 +148,7 @@ finna.record = (function finnaRecord() {
   function initRecordAccordions() {
     $('.record-accordions .accordion-toggle').click(function accordionClicked(e){
       var accordion = $(e.target).closest('.accordion');
-      var tabid = accordion.find('.accordion-toggle a').attr('id');
+      var tabid = accordion.find('.accordion-toggle a').data('tab');
       var $recordTabs = $('.record-tabs');
       e.preventDefault();
       if (accordion.hasClass('active')){
@@ -169,7 +169,7 @@ finna.record = (function finnaRecord() {
   }
 
   function applyRecordAccordionHash() {
-    var activeTab = $('.record-accordions .accordion.active a').attr('id');
+    var activeTab = $('.record-accordions .accordion.active a').data('tab');
     var $initiallyActiveTab = $('.record-accordions .accordion.initiallyActive a');
     var newTab = typeof window.location.hash !== 'undefined'
       ? window.location.hash.toLowerCase() : '';
@@ -178,7 +178,7 @@ finna.record = (function finnaRecord() {
     if (newTab.length <= 1 || newTab === '#tabnav') {
       $initiallyActiveTab.click();
     } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
-      $('#' + newTab.substr(1)).click();
+      $("a[data-tab='" + newTab.substr(1) +"']").click();
     }
   }
 
