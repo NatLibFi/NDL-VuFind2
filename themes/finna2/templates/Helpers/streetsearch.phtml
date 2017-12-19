@@ -18,6 +18,11 @@
       ]
     );
 ?>
+<div class="row">
+  <div class="col-xs-12">
+      <? if (!$this->translationEmpty('street_search_header_html')): ?><div class="introduction"><h1 class="introductionText"><?=$this->translate('street_search_header_html')?></h1></div><? endif; ?>
+  </div>
+</div>
 <div class="street-search-button-area">
   <button class="btn btn-primary street-search-button"><?=$this->transEsc('street_search_button') ?></button>
   <div class="alert alert-info street-search-progress hidden">

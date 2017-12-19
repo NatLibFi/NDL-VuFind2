@@ -124,7 +124,7 @@
 <? $filters = isset($this->params) ? $this->params->getFilters() : ''; ?>
 <div>
   <div id="searchForm" class="hidden-print">
-    <?=$this->render('search/street-search-header.phtml', ['filters' => $filters]);?>
+    <?=$this->render('search/street-search-header.phtml', ['params' => $this->params]);?>
   </div>
 </div>
 <? endif; ?>

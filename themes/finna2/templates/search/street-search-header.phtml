@@ -28,14 +28,19 @@
   <div class="map" style="height: 300px; width: 300px;"></div>
 </div>
 <?
-  foreach ($this->filters as $field => $data) {
-    print_r($field . "<br>");
-  }
+  $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList());
 ?>
 <script type="text/javascript">
   $(document).ready(function() {
-    console.log("document ready");
-    finna.StreetMap.initMap("xxx");
+    var options = {
+      items: []
+    };
+    <? foreach ($geoFilters as $filter): ?>
+      <? foreach (preg_split('/\s+OR\s+/', $filter) as $item): ?>
+        options.items.push('<?=$this->escapeJs($item) ?>');
+      <? endforeach; ?>
+    <? endforeach; ?>
+    finna.StreetMap.initMap(options);
   });
 </script>
 <!-- END of: finna - search/street-search-header.phtml -->
