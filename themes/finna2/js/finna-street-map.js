@@ -33,6 +33,7 @@ finna.StreetMap = (function finnaStreetMap() {
     });
 
     var map = new L.Map(mapCanvas.get(0), {
+      attributionControl: false,
       layers: [options.tileLayer, drawnItems],
       center: options.center,
       zoom: options.zoom,

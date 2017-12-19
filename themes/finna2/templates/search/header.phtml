@@ -93,6 +93,7 @@
   </div>
 <? endif; ?>
 
+<? if (!$this->fromStreetSearch): ?>
 <div class="container <?=$searchType != 'advanced' ? 'hidden-xs' : '';?>">
   <div class="finna-main-header">
     <h1 class="search-result-header">
@@ -119,6 +120,7 @@
     <? endif; ?>
   </div>
 </div>
+<? endif; ?>
 
 <? if ($this->fromStreetSearch): ?>
 <? $filters = isset($this->params) ? $this->params->getFilters() : ''; ?>
