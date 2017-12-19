@@ -1,4 +1,4 @@
-/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab */
+/*global VuFind, finna, removeHashFromLocation */
 finna.record = (function finnaRecord() {
   function initDescription() {
     var description = $('#description_text');
@@ -178,7 +178,7 @@ finna.record = (function finnaRecord() {
     if (newTab.length <= 1 || newTab === '#tabnav') {
       $initiallyActiveTab.click();
     } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
-      $("a[data-tab='" + newTab.substr(1) +"']").click();
+      $("a[data-tab='" + newTab.substr(1) + "']").click();
     }
   }
 
