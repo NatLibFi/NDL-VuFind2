@@ -35,12 +35,62 @@
   .highlight {
     color: @brand-primary;
   }
+  @media(max-width: @screen-xs-max) {
+    font-size: @font-size-base;
+  }
 }
 
+.street-search-feedback a {
+  margin-bottom: 2em;
+  &:hover {
+    background: darken(@brand-primary,5%);
+  }
+  &:before {
+    content: "";
+    position: relative;
+    bottom: -11px;
+    margin: auto;
+    border-width: 0 0 9px 12px;
+    border-style: solid;
+    border-color: transparent @brand-primary;
+  }
+  &:hover:before {
+    border-color: transparent darken(@brand-primary,5%);
+  }
+}
+
+.street-map-controls {
+  a.map-control {
+    border: 1px solid @gray-lighter;
+    background: @body-bg;
+    color: @text-color;
+    border-radius: 0;
+    width: 50%;
+    float: left;
+    & i {
+      color: #fff;
+    }
+    &:last-child {
+      border-left: 0px;
+    }
+  }
+}
+.street-search-toggle {
+  width: 100%;
+  padding: 15px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: @action-link-color;
+  border-bottom: 1px solid @gray-lighter;
+}
+.street-search-info {
+  margin: 15px 0;
+}
 @media (min-width: @screen-sm) {
   .street-search-info {
     width: 60%;
     float: left;
+    margin: 0;
   }
   .street-map-container {
     width: 40%;

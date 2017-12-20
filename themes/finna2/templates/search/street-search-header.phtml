@@ -9,19 +9,21 @@
   //$this->headScript()->appendFile('finna-street-map.js');
 ?>
 <div>
-  <div class="street-search-info">
+  <div class="street-search-toggle visible-xs">Finna Street<i class="fa fa-arrow-down"></i></div>
+  <div class="street-search-info hidden-xs">
     <div class="street-search-feedback">
-      <a class="btn btn-primary btn-uppercase" href="<?=$this->url('feedback-home', [], ['query' => ['comments' => $this->transEsc('street_search_feedback'), 'url' => $this->serverUrl(true)]])?>"><?=$this->transEsc('Give Feedback')?></a>
+      <a class="btn btn-primary btn-uppercase" href="<?=$this->url('feedback-home', [], ['query' => ['comments' => $this->transEsc('street_search_feedback'), 'url' => $this->serverUrl(true)]])?>"><?=$this->transEsc('Feedback')?></a>
     </div>
     <div class="street-search-header-message">
       <?=$this->translate('street_search_introduction_html')?>
     </div>
-    <div class="update-location-button text-left">
-      <a class="btn btn-primary" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
-    </div>
   </div>
   <div class="street-map-container">
     <div class="map" style="height: 200px;"></div>
+    <div class="street-map-controls text-center">
+      <a class="btn map-control" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
+      <a class="btn map-control" href="#"><span>Valitse alue TODO</span></a>
+    </div>
   </div>
 </div>
 <?
@@ -29,6 +31,7 @@
 ?>
 <script type="text/javascript">
   $(document).ready(function() {
+    finna.StreetMap.initStreetToggle();
     var options = {
       items: []
     };
