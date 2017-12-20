@@ -57,10 +57,10 @@ finna.StreetMap = (function finnaStreetMap() {
     $('.street-search-toggle').click(function onClick(){
       if($('.street-search-info').hasClass('hidden-xs')) {
         $('.street-search-info').removeClass('hidden-xs');
-        $('.street-search-info .fa-arrow-down').removeClass('fa-arrow-down').addClass('fa-arrow-up');
+        $('.street-search-toggle .fa-arrow-down').removeClass('fa-arrow-down').addClass('fa-arrow-up');
       } else {
         $('.street-search-info').addClass('hidden-xs');
-        $('.street-search-info .fa-arrow-down').removeClass('fa-arrow-up').addClass('fa-arrow-down');
+        $('.street-search-toggle .fa-arrow-up').removeClass('fa-arrow-up').addClass('fa-arrow-down');
       }
     })
   }
