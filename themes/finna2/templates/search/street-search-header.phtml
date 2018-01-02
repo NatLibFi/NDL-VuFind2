@@ -1,13 +1,4 @@
 <!-- START of: finna - search/street-search-header.phtml -->
-<?
-  $this->headLink()->appendStylesheet('vendor/leaflet.css');
-  $this->headLink()->appendStylesheet('vendor/leaflet.draw.css');
-  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.js');
-  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.draw.js');
-  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-street-map.js');
-  echo $this->inlineScript();
-  //$this->headScript()->appendFile('finna-street-map.js');
-?>
 <div>
   <div class="street-search-toggle visible-xs">Finna Street<i class="fa fa-arrow-down"></i></div>
   <div class="street-search-info hidden-xs">
@@ -18,29 +9,5 @@
       <?=$this->translate('street_search_introduction_html')?>
     </div>
   </div>
-  <div class="street-map-container">
-    <div class="map" style="height: 200px;"></div>
-    <div class="street-map-controls text-center">
-      <a class="btn map-control" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
-      <a class="btn map-control" href="#"><span>Valitse alue TODO</span></a>
-    </div>
-  </div>
 </div>
-<?
-  $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList());
-?>
-<script type="text/javascript">
-  $(document).ready(function() {
-    finna.StreetMap.initStreetToggle();
-    var options = {
-      items: []
-    };
-    <? foreach ($geoFilters as $filter): ?>
-      <? foreach (preg_split('/\s+OR\s+/', $filter) as $item): ?>
-        options.items.push('<?=$this->escapeJs($item) ?>');
-      <? endforeach; ?>
-    <? endforeach; ?>
-    finna.StreetMap.initMap(options);
-  });
-</script>
 <!-- END of: finna - search/street-search-header.phtml -->

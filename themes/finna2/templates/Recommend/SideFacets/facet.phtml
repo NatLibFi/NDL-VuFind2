@@ -89,9 +89,18 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
     'collapsedFacets' => $collapsedFacets,
     'results' => $results
   ]; ?>
+  <?
+  $geographicFacetField = null;
+  if (null === $module || in_array($module, ['search'])) {
+    $options = $results->getOptions();
+    if (is_callable([$options, 'getGeographicSearchField'])) {
+        $geographicFacetField = $options->getGeographicSearchField();
+    }
+  } ?>
+  <? $geographicFacet = $title == $geographicFacetField; ?>
   <? if (in_array($title, $hierarchicalFacets)): ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/hierarchical-facet.phtml', $contextVars); ?>
-  <? elseif (in_array($title, $geographicFacets)) :?>
+  <? elseif ($geographicFacet) :?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/geographical-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
   <? else: ?>
