@@ -351,7 +351,6 @@ finna.layout = (function finnaLayout() {
         scrollTop: $('.recordProvidedBy').offset().top
       }, 500);
     });
-    var modalContent = 0;
     if ($('.floating-feedback-btn').length) {
       var feedbackBtnOffset = $('.floating-feedback-btn').offset().top;
       $(window).scroll(function onScrollWindow(/*event*/) {
@@ -375,21 +374,6 @@ finna.layout = (function finnaLayout() {
         }
       });
     }
-
-    $('#modal').on('shown.bs.modal', function onShownModal(/*e*/) {
-      $('#hierarchyTree').scroll(function onScrollHierarchyTree() {
-        modalContent = $('#hierarchyTree').scrollTop();
-        if (modalContent > 1500) {
-          $('#modal .back-to-up').removeClass('hidden');
-        }
-        else {
-          $('#modal .back-to-up').addClass('hidden');
-        }
-      });
-      $('.back-to-up').click(function onClickBackToUp() {
-        $('#hierarchyTree, #modal').animate({scrollTop: 0 }, 200);
-      });
-    });
   }
 
   function initSearchboxFunctions() {
