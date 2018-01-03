@@ -1,8 +1,7 @@
 /*global VuFind, finna */
-finna.StreetMap = (function finnaStreetMap() {
+finna.MapFacet = (function finnaStreetMap() {
 
-  function initMap(_options) {
-    var mapCanvas = $('.map');
+  function initMap(mapCanvas, _options){
     if (mapCanvas.length === 0) {
       return;
     }
@@ -53,22 +52,35 @@ finna.StreetMap = (function finnaStreetMap() {
     }
   }
 
-  function initStreetToggle() {
-    $('.street-search-toggle').click(function onClick(){
-      if($('.street-search-info').hasClass('hidden-xs')) {
-        $('.street-search-info').removeClass('hidden-xs');
-        $('.street-search-toggle .fa-arrow-down').removeClass('fa-arrow-down').addClass('fa-arrow-up');
-      } else {
-        $('.street-search-info').addClass('hidden-xs');
-        $('.street-search-toggle .fa-arrow-up').removeClass('fa-arrow-up').addClass('fa-arrow-down');
-      }
-    })
+  function initMapPoup(_options) {
+    $('.open-map-popup').click(function onClickOpenMap(e) {
+      $.magnificPopup.open({
+        type: 'inline',
+        items: {
+          src: "<div class='popup-map' style='height: 500px;'></div>"
+        },
+        callbacks: {
+          open: function onOpen() {
+            initMap($(".popup-map"), _options);
+          },
+          close: function onClose() {
+
+          }
+        }
+      });
+      e.preventDefault();
+      return false;
+    });
+  }
+
+  function init(_options){
+    initMapPoup(_options);
+    initMap($(".map"), _options);
   }
 
   var my = {
-    initMap: initMap,
-    initStreetToggle: initStreetToggle
-};
+    init: init
+  };
 
   return my;
 })();

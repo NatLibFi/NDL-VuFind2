@@ -3,27 +3,33 @@ $this->headLink()->appendStylesheet('vendor/leaflet.css');
 $this->headLink()->appendStylesheet('vendor/leaflet.draw.css');
 $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.js');
 $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.draw.js');
-$this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-street-facet.js');
+$this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-map-facet.js');
 echo $this->inlineScript();
 ?>
-
+<?=$this->headLink()?>
 <?
 $options = $results->getOptions();
 if (is_callable([$options, 'getGeographicFacet'])) {
   $x = $options->getGeographicFacet();
 }
 ?>
-<div class="map" style="height: 200px;"></div>
-<div class="street-map-controls text-center">
-  <a class="btn map-control" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
-  <a class="btn map-control" href="#"><span>Valitse alue TODO</span></a>
-</div>
 <?
 $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList());
 ?>
+<div class="geographic-facet">
+  <? if(empty($geoFilters)):?>
+    <div class="btn open-map-popup">TODO: Rajaa karttasijainnilla</div>
+  <? else: ?>
+    <div class="map" style="height: 200px"></div>
+    <div class="street-map-controls text-center">
+      <a class="btn map-control" href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-crosshairs"></i> <span><?=$this->transEsc('street_search_refresh')?></span></a>
+      <a class="btn map-control open-map-popup" href="#"><span>TODO: Valitse alue</span></a>
+    </div>
+  <? endif; ?>
+</div>
+
 <script type="text/javascript">
   $(document).ready(function() {
-    finna.StreetMap.initStreetToggle();
     var options = {
       items: []
     };
@@ -32,6 +38,6 @@ $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList()
         options.items.push('<?=$this->escapeJs($item) ?>');
       <? endforeach; ?>
     <? endforeach; ?>
-    finna.StreetMap.initMap(options);
+    finna.MapFacet.init(options);
   });
 </script>
