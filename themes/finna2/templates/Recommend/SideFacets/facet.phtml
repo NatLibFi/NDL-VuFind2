@@ -102,7 +102,7 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/hierarchical-facet.phtml', $contextVars); ?>
   <? elseif ($geographicFacet) :?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
-    <?=$this->context($this)->renderInContext('Recommend/SideFacets/geographical-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
+    <?=$this->context($this)->renderInContext('Recommend/SideFacets/geographic-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
   <? else: ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
   <? endif; ?>

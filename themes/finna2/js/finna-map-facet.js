@@ -50,36 +50,29 @@ finna.MapFacet = (function finnaStreetMap() {
       };
       options.tileLayer.on('load', onLoad);
     }
+    return map;
   }
 
-  function initMapPoup(_options) {
-    $('.open-map-popup').click(function onClickOpenMap(e) {
-      $.magnificPopup.open({
-        type: 'inline',
-        items: {
-          src: "<div class='popup-map' style='height: 500px;'></div>"
-        },
-        callbacks: {
-          open: function onOpen() {
-            initMap($(".popup-map"), _options);
-          },
-          close: function onClose() {
+  function initFacetMap(options){
+    initMap($(".map"), options);
+  }
 
-          }
-        }
-      });
-      e.preventDefault();
-      return false;
+  function initModalMap(options) {
+    function closeModalCallback(modal) {
+      modal.removeClass('location-service location-service-qrcode');
+      modal.find('.modal-dialog').removeClass('modal-lg');
+    }
+    var modal = $('#modal');
+    modal.one('hidden.bs.modal', function onHiddenModal() {
+      closeModalCallback($(this));
     });
-  }
-
-  function init(_options){
-    initMapPoup(_options);
-    initMap($(".map"), _options);
+    modal.find('.modal-dialog').addClass('modal-lg');
+    initMap($(".modal-map"), options)
   }
 
   var my = {
-    init: init
+    initFacetMap: initFacetMap,
+    initModalMap: initModalMap
   };
 
   return my;

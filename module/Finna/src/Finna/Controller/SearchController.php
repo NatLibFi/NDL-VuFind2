@@ -583,4 +583,22 @@ class SearchController extends \VuFind\Controller\SearchController
         }
         return false;
     }
+
+    /**
+     * Open map facet modal
+     *
+     * @return \VuFind\Controller\ViewModel
+     */
+    public function mapFacetAction()
+    {
+        $view = $this->createViewModel();
+        $view->setTemplate('Recommend/SideFacets/map-facet-modal');
+
+        $results = $this->getResultsManager()->get($this->searchClassId);
+        $params = $results->getParams();
+        $params->initFromRequest($this->getRequest()->getQuery());
+
+        $view->geoFilters = $params->getGeographicFilters($params->getFilterList());
+        return $view;
+    }
 }

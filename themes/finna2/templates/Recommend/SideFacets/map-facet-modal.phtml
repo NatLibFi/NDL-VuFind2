@@ -1,0 +1,16 @@
+<h2>Todo: Rajaa alue kartalta</h2>
+<div class="modal-map" style="height: 500px;"></div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    var options = {
+      items: []
+    };
+    <? foreach ($geoFilters as $filter): ?>
+      <? foreach (preg_split('/\s+OR\s+/', $filter) as $item): ?>
+        options.items.push('<?=$this->escapeJs($item) ?>');
+      <? endforeach; ?>
+    <? endforeach; ?>
+    finna.MapFacet.initModalMap(options);
+  });
+</script>
