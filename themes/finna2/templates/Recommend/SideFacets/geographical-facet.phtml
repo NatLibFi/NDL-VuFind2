@@ -8,14 +8,9 @@ echo $this->inlineScript();
 ?>
 <?=$this->headLink()?>
 <?
-$options = $results->getOptions();
-if (is_callable([$options, 'getGeographicFacet'])) {
-  $x = $options->getGeographicFacet();
-}
-?>
-<?
 $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList());
 ?>
+
 <div class="geographic-facet">
   <? if(empty($geoFilters)):?>
     <div class="btn open-map-popup">TODO: Rajaa karttasijainnilla</div>
@@ -26,6 +21,9 @@ $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList()
       <a class="btn map-control open-map-popup" href="#"><span>TODO: Valitse alue</span></a>
     </div>
   <? endif; ?>
+</div>
+<div class="list-group-item facet-info">
+  <i class="fa fa-info-big-2"></i><div class="info"><?=$this->transEsc('geographic_facet_info')?></div>
 </div>
 
 <script type="text/javascript">
