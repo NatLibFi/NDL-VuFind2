@@ -1,10 +1,21 @@
 <?
-$this->headLink()->appendStylesheet('vendor/leaflet.css');
-$this->headLink()->appendStylesheet('vendor/leaflet.draw.css');
-$this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.js');
-$this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.draw.js');
-$this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-map-facet.js');
-echo $this->inlineScript();
+  $this->headLink()->appendStylesheet('vendor/leaflet.css');
+  $this->headLink()->appendStylesheet('vendor/leaflet.draw.css');
+  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.js');
+  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.draw.js');
+  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-map-facet.js');
+  echo $this->inlineScript();
+
+  //todo:
+  $this->jsTranslations()->addStrings(
+    [
+      'radiusPrefix' => 'Radius',
+      'circleCaption' => 'Select Area',
+      'clearCaption' => 'Clear Selections',
+      'removeCaption' => 'Clear',
+      'map_zoom_in' => 'map_zoom_in',
+      'map_zoom_out' => 'map_zoom_out'
+    ]);
 ?>
 <?=$this->headLink()?>
 <?
