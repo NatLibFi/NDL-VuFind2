@@ -144,6 +144,10 @@ class SideFacets extends \VuFind\Recommend\SideFacets
      */
     public function getGeographicFacet()
     {
-        return $this->geographicFacets;
+        return array_map(
+            function ($geo_facet) {
+                return explode(':', $geo_facet)[0];
+            }, $this->geographicFacets
+        );
     }
 }

@@ -57,14 +57,6 @@ class Options extends \VuFind\Search\Solr\Options
      */
     protected $dateRangeVis = '';
 
-
-    /**
-     * Geographic facets
-     *
-     * @var array
-     */
-    protected $geographic = '';
-
     /**
      * Constructor
      *
@@ -77,10 +69,6 @@ class Options extends \VuFind\Search\Solr\Options
         $facetSettings = $configLoader->get($this->facetsIni);
         if (isset($facetSettings->SpecialFacets->dateRangeVis)) {
             $this->dateRangeVis = $facetSettings->SpecialFacets->dateRangeVis;
-        }
-        if (isset($facetSettings->SpecialFacets->geographic)) {
-            $this->geographic
-                = $facetSettings->SpecialFacets->geographic;
         }
     }
 
@@ -143,16 +131,5 @@ class Options extends \VuFind\Search\Solr\Options
     public function getSearchAction()
     {
         return $this->browseAction ?: parent::getSearchAction();
-    }
-
-    /**
-     * Get the field used for geographic facet
-     *
-     * @return string
-     */
-    public function getGeographicSearchField()
-    {
-        list($field) = explode(':', $this->geographic);
-        return $field;
     }
 }

@@ -89,22 +89,15 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
     'collapsedFacets' => $collapsedFacets,
     'results' => $results
   ]; ?>
-  <?
-  $geographicFacetField = null;
-  if (null === $module || in_array($module, ['search'])) {
-    $options = $results->getOptions();
-    if (is_callable([$options, 'getGeographicSearchField'])) {
-        $geographicFacetField = $options->getGeographicSearchField();
-    }
-  } ?>
-  <? $geographicFacet = $title == $geographicFacetField; ?>
   <? if (in_array($title, $hierarchicalFacets)): ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/hierarchical-facet.phtml', $contextVars); ?>
-  <? elseif ($geographicFacet) :?>
+  <? elseif (in_array($title, $geographicFacets)): ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
-    <?=$this->context($this)->renderInContext('Recommend/SideFacets/geographic-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
   <? else: ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
   <? endif; ?>
+  <? if (in_array($title, $geographicFacets)): ?>
+    <?=$this->context($this)->renderInContext('Recommend/SideFacets/geographic-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
+    <? endif; ?>
 <? endif; ?>
 <!-- END of: finna - Recommend/SideFacets/facet.phtml -->
