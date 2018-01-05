@@ -45,7 +45,7 @@
   &:hover {
     background: darken(@brand-primary,5%);
   }
-  &:before {
+  &:after {
     content: "";
     position: relative;
     bottom: -11px;
@@ -59,25 +59,10 @@
   }
 }
 
-.street-search-toggle {
-  width: 100%;
-  padding: 15px 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: @action-link-color;
-  border-bottom: 1px solid @gray-lighter;
+.street-search-header-message {
+  width: 80%;
+  float: left;
 }
-.street-search-info {
-  margin: 15px 0;
-}
-@media (min-width: @screen-sm) {
-  .street-search-info {
-    width: 60%;
-    float: left;
-    margin: 0;
-  }
-  .street-map-container {
-    width: 40%;
-    float: right;
-  }
+.street-search-feedback {
+  float: right;
 }
