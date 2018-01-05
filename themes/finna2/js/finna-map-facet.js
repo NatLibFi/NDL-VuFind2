@@ -75,7 +75,6 @@ finna.MapFacet = (function finnaStreetMap() {
 
     var defaults = {
       tileLayer: L.tileLayer('//map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
-        //zoom: 10,
         tileSize: 256,
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
       }),
@@ -94,9 +93,6 @@ finna.MapFacet = (function finnaStreetMap() {
         drawnItems.addLayer(circle);
       }
     });
-    drawnItems.eachLayer(function disableEditing(layer) {
-      layer.editing.enable();
-    });
 
     var map = new L.Map(mapCanvas.get(0), {
       layers: [options.tileLayer, drawnItems],
@@ -113,6 +109,9 @@ finna.MapFacet = (function finnaStreetMap() {
         var fitZoom = map.getBoundsZoom(bounds);
         map.fitBounds(bounds, fitZoom);
         options.tileLayer.off('load', onLoad);
+        drawnItems.eachLayer(function disableEditing(layer) {
+          layer.editing.enable();
+        });
       };
       options.tileLayer.on('load', onLoad);
     }
