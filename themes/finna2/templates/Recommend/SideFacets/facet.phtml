@@ -98,6 +98,6 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
   <? endif; ?>
   <? if (in_array($title, $geographicFacets)): ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/geographic-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
-    <? endif; ?>
+  <? endif; ?>
 <? endif; ?>
 <!-- END of: finna - Recommend/SideFacets/facet.phtml -->

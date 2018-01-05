@@ -80,7 +80,7 @@ finna.MapFacet = (function finnaStreetMap() {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
       }),
       center: new L.LatLng(64.8, 26),
-      zoom: 8,
+      zoom: 5,
       items: []
     };
     var options = $.extend(defaults, _options);
@@ -170,6 +170,11 @@ finna.MapFacet = (function finnaStreetMap() {
     });
 
     mapCanvas.closest('form').submit(function mapFormSubmit() {
+      $('input[name="filter[]"]').each(function() {
+        if(this.value.includes("!geofilt sfield=location_geo")){
+          this.remove();
+        }
+      });
       var filters = '';
       drawnItems.eachLayer(function mapLayerToSearchFilter(layer) {
         var latlng = layer.getLatLng();

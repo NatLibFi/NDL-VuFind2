@@ -591,14 +591,19 @@ class SearchController extends \VuFind\Controller\SearchController
      */
     public function mapFacetAction()
     {
-        $view = $this->createViewModel();
-        $view->setTemplate('Recommend/SideFacets/map-facet-modal');
-
         $results = $this->getResultsManager()->get($this->searchClassId);
         $params = $results->getParams();
         $params->initFromRequest($this->getRequest()->getQuery());
 
-        $view->geoFilters = $params->getGeographicFilters($params->getFilterList());
+        $view = $this->createViewModel(
+            [
+                'results' => $results,
+                'geoFilters' =>
+                $params->getGeographicFilters($params->getFilterList())
+            ]
+        );
+        $view->setTemplate('Recommend/SideFacets/map-facet-modal');
+
         return $view;
     }
 }

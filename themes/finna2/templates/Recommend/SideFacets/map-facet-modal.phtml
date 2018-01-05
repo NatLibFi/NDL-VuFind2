@@ -1,5 +1,18 @@
+<?
+  $this->jsTranslations()->addStrings(
+    [
+      'radiusPrefix' => 'Radius',
+      'circleCaption' => 'Select Area',
+      'clearCaption' => 'Clear Selections',
+      'removeCaption' => 'Clear',
+      'map_zoom_in' => 'map_zoom_in',
+      'map_zoom_out' => 'map_zoom_out'
+    ]);
+?>
 <h2>Todo: Rajaa alue kartalta</h2>
 <form action="<?=$this->url('search-results')?>" data-lightbox-ignore>
+  <?=$results->getUrlQuery()->asHiddenFields(['page' => "/./"])?>
+  <? $searchFilters = $results->getParams()->getFilterList(true);?>
   <div class="modal-map" style="height: 500px;"></div>
   <button class="btn btn-lg btn-primary pull-right" type="submit">To do: Rajaa</button>
 </form>
