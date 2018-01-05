@@ -4,16 +4,6 @@
   $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.js');
   $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.draw.js');
   $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-map-facet.js');
-
-  $this->jsTranslations()->addStrings(
-    [
-      'radiusPrefix' => 'Radius',
-      'circleCaption' => 'Select Area',
-      'clearCaption' => 'Clear Selections',
-      'removeCaption' => 'Clear',
-      'map_zoom_in' => 'map_zoom_in',
-      'map_zoom_out' => 'map_zoom_out'
-    ]);
 ?>
 <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
 <?=$this->headLink()?>
@@ -21,14 +11,14 @@
   $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList());
   $mapPopupUrl = $this->url('search-mapfacet') . $results->getUrlQuery()->getParams(false);
 ?>
-
 <div class="geographic-facet">
+  <h5 class=""><?=$this->translate('filter_by_geo_location')?></h5>
   <? if(empty($geoFilters)):?>
-    <a class="btn" href="<?=$mapPopupUrl ?>" data-lightbox>TODO: Rajaa karttasijainnilla</a>
+    <a class="btn" href="<?=$mapPopupUrl ?>" data-lightbox><?=$this->translate("select_area_from_map");?></a>
   <? else: ?>
     <div class="map" style="height: 200px"></div>
-    <div class="street-map-controls text-center">
-      <a class="btn map-control" href="<?=$mapPopupUrl?>" data-lightbox><span>TODO: Valitse alue</span></a>
+    <div class="map-controls text-center">
+      <a class="btn map-control" href="<?=$mapPopupUrl?>" data-lightbox><span><?=$this->translate("select_area_from_map");?></span></a>
     </div>
   <? endif; ?>
 </div>
