@@ -176,6 +176,7 @@
                 }
                 if (!$obj->isVisible()) { $accordion_classes[] = 'hidden'; }
                 if (!$obj->supportsAjax()) { $accordion_classes[] = 'noajax'; }
+                if (strtolower($accordion) == 'details') { $accordion_classes[] = 'hidden-xs'; }
                 ?>
             <div <?=count($accordion_classes) > 0 ? ' class="' . implode(' ', $accordion_classes) . '"' : ''?>>
               <div class="accordion-toggle">
