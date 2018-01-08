@@ -1,5 +1,7 @@
 /*global VuFind, finna */
 finna.MapFacet = (function finnaStreetMap() {
+  var geolocationAccuracyThreshold = 20; // If accuracy >= threshold then give a warning for the user
+  var searchRadius = 0.1; // Radius of the search area in KM
 
   function initFacetMap(_options){
     var mapCanvas = $(".map");
@@ -138,6 +140,30 @@ finna.MapFacet = (function finnaStreetMap() {
     });
     map.addControl(new DeleteButton());
 
+    function locationSearch(position) {
+      if (position.coords.accuracy >= geolocationAccuracyThreshold) {
+        console.log("paikannuksen tarkkuus voi olla heikko");
+      } else {
+        console.log("sijainti löydetty");
+      }
+      console.log(position);
+      var circle = new L.Circle([position.coords.latitude, position.coords.longitude], searchRadius * 1000);
+      addRemoveButton(circle, drawnItems);
+      circle.editing.enable();
+      drawnItems.addLayer(circle);
+    }
+
+    var LocationButton = FinnaMapButton.extend({
+      onAdd: function mapOnSelectLocation(/*mapTarget*/) {
+        var htmlElem = $('<div><i class="fa fa-map-marker"></i>');
+        $('<span/>').text(' ' + VuFind.translate('use_my_location')).appendTo(htmlElem);
+        return this.createButton('map-button-location', htmlElem.html(), function mapClearLayersClick() {
+          navigator.geolocation.getCurrentPosition(locationSearch, geoLocationError, { timeout: 30000, maximumAge: 10000 });
+        });
+      }
+    });
+    map.addControl(new LocationButton());
+
     var CircleButton = FinnaMapButton.extend({
       onAdd: function mapOnAddCircle(mapTarget) {
         var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
@@ -198,6 +224,32 @@ finna.MapFacet = (function finnaStreetMap() {
         });
     $('<span/>').text(VuFind.translate('removeCaption')).appendTo(button);
     layer.bindPopup(button.get(0), {closeButton: false});
+  }
+
+  function geoLocationError(error) {
+    var errorString = 'street_search_geolocation_other_error';
+    var additionalInfo = '';
+    if (error) {
+      switch (error.code) {
+        case error.POSITION_UNAVAILABLE:
+          errorString = 'street_search_geolocation_position_unavailable';
+          break;
+        case error.PERMISSION_DENIED:
+          errorString = 'street_search_geolocation_inactive';
+          break;
+        case error.TIMEOUT:
+          errorString = 'street_search_timeout';
+          break;
+        default:
+          additionalInfo = error.message;
+          break;
+      }
+    }
+    errorString = VuFind.translate(errorString);
+    if (additionalInfo) {
+      errorString += ' -- ' + additionalInfo;
+    }
+    console.log(errorString);
   }
 
   var my = {

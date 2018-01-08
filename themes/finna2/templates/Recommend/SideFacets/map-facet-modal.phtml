@@ -4,6 +4,7 @@
   <? $searchFilters = $results->getParams()->getFilterList(true);?>
   <div class="modal-map" style="height: 500px;"></div>
   <button class="btn btn-lg btn-primary pull-right" type="submit"><?=$this->transEsc('filter_by_geographic')?></button>
+  <div class="fa fa-spinner fa-spin hidden"></div>
 </form>
 
 <script type="text/javascript">
