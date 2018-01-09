@@ -92,12 +92,13 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
   <? if (in_array($title, $hierarchicalFacets)): ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/hierarchical-facet.phtml', $contextVars); ?>
   <? elseif (in_array($title, $geographicFacets)): ?>
+    <div class="geofacet-header">
+      <h5 class="geofacet-title"><?=$this->translate('choose_from_list')?></h5>
+    </div>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
+    <?=$this->context($this)->renderInContext('Recommend/SideFacets/geographic-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
   <? else: ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/cluster-list.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
-  <? endif; ?>
-  <? if (in_array($title, $geographicFacets)): ?>
-    <?=$this->context($this)->renderInContext('Recommend/SideFacets/geographic-facet.phtml', array_merge($contextVars, ['title' => $title, 'cluster' => $cluster])); ?>
   <? endif; ?>
 <? endif; ?>
 <!-- END of: finna - Recommend/SideFacets/facet.phtml -->

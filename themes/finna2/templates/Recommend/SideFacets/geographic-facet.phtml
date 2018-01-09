@@ -10,21 +10,26 @@
 <?
   $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList());
   $mapPopupUrl = $this->url('search-mapfacet') . $results->getUrlQuery()->getParams(false);
+  $removeFacetUrl = $results->getUrlQuery()->removeFacet($geoFilters[0], '');
 ?>
+<div class="geofacet-header">
+  <h5 class="geofacet-title"><?=$this->translate('filter_by_geo_location')?></h5>
+    <? if(!empty($geoFilters)): ?><a class="remove-facet" href="<?=$removeFacetUrl?>"><?=$this->translate("Remove filter");?></a><?endif;?>
+</div>
 <div class="geographic-facet">
-  <h5 class=""><?=$this->translate('filter_by_geo_location')?></h5>
   <? if(empty($geoFilters)):?>
     <div class="map-controls text-center">
-      <a class="btn user-location-filter" href="<?=$results->getUrlQuery()->removeFacet($geoFilters[0], $thisFacet['value'], $thisFacet['operator']) ?>"><span><?=$this->translate("use_my_location");?></span></a>
+      <a class="btn user-location-filter" href="<?=$removeFacetUrl?>"><?=$this->translate("use_my_location");?></a>
       <a class="btn map-control" href="<?=$mapPopupUrl ?>" data-lightbox><?=$this->translate("select_area_from_map");?></a>
     </div>
   <? else: ?>
     <div class="map" style="height: 200px"></div>
     <div class="map-controls text-center">
-      <a class="btn user-location-filter" href="<?=$results->getUrlQuery()->removeFacet($geoFilters[0], $thisFacet['value'], $thisFacet['operator']) ?>"><span><?=$this->translate("use_my_location");?></span></a>
+      <a class="btn user-location-filter" href="<?=$removeFacetUrl?>"><?=$this->translate("use_my_location");?></a>
       <a class="btn map-control" href="<?=$mapPopupUrl?>" data-lightbox><span><?=$this->translate("select_area_from_map");?></span></a>
     </div>
   <? endif; ?>
+  <div class="clearfix"></div>
 </div>
 <div class="list-group-item facet-info">
   <i class="fa fa-info-big-2"></i><div class="info"><?=$this->transEsc('geographic_facet_info')?></div>
