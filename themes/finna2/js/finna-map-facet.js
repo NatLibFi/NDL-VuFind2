@@ -4,6 +4,11 @@ finna.MapFacet = (function finnaStreetMap() {
   var searchRadius = 0.1; // Radius of the search area in KM
 
   function initFacetMap(_options){
+    $(".user-location-filter").click(function onLocationFilterClick(e){
+      e.preventDefault();
+      navigator.geolocation.getCurrentPosition(locationSearch, geoLocationError, { timeout: 30000, maximumAge: 10000 });
+    });
+
     var mapCanvas = $(".map");
     if (mapCanvas.length === 0) {
       return;
@@ -140,30 +145,6 @@ finna.MapFacet = (function finnaStreetMap() {
     });
     map.addControl(new DeleteButton());
 
-    function locationSearch(position) {
-      if (position.coords.accuracy >= geolocationAccuracyThreshold) {
-        console.log("paikannuksen tarkkuus voi olla heikko");
-      } else {
-        console.log("sijainti löydetty");
-      }
-      console.log(position);
-      var circle = new L.Circle([position.coords.latitude, position.coords.longitude], searchRadius * 1000);
-      addRemoveButton(circle, drawnItems);
-      circle.editing.enable();
-      drawnItems.addLayer(circle);
-    }
-
-    var LocationButton = FinnaMapButton.extend({
-      onAdd: function mapOnSelectLocation(/*mapTarget*/) {
-        var htmlElem = $('<div><i class="fa fa-map-marker"></i>');
-        $('<span/>').text(' ' + VuFind.translate('use_my_location')).appendTo(htmlElem);
-        return this.createButton('map-button-location', htmlElem.html(), function mapClearLayersClick() {
-          navigator.geolocation.getCurrentPosition(locationSearch, geoLocationError, { timeout: 30000, maximumAge: 10000 });
-        });
-      }
-    });
-    map.addControl(new LocationButton());
-
     var CircleButton = FinnaMapButton.extend({
       onAdd: function mapOnAddCircle(mapTarget) {
         var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
@@ -214,6 +195,22 @@ finna.MapFacet = (function finnaStreetMap() {
         mapCanvas.closest('form').append(field);
       }
     });
+  }
+
+  function locationSearch(position) {
+    if (position.coords.accuracy >= geolocationAccuracyThreshold) {
+      console.log("paikannuksen tarkkuus voi olla heikko");
+    } else {
+      console.log("sijainti löydetty");
+    }
+
+    var queryParameters = {
+      'filter': [
+        '{!geofilt sfield=location_geo pt=' + position.coords.latitude + ',' + position.coords.longitude + ' d=' + searchRadius + '}'
+      ]
+    };
+    var url = $(".user-location-filter").attr("href") + '&' + $.param(queryParameters);
+    window.location.href = url;
   }
 
   function addRemoveButton(layer, featureGroup) {

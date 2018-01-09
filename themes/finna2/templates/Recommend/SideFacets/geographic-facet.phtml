@@ -15,11 +15,13 @@
   <h5 class=""><?=$this->translate('filter_by_geo_location')?></h5>
   <? if(empty($geoFilters)):?>
     <div class="map-controls text-center">
+      <a class="btn user-location-filter" href="<?=$results->getUrlQuery()->removeFacet($geoFilters[0], $thisFacet['value'], $thisFacet['operator']) ?>"><span><?=$this->translate("use_my_location");?></span></a>
       <a class="btn map-control" href="<?=$mapPopupUrl ?>" data-lightbox><?=$this->translate("select_area_from_map");?></a>
     </div>
   <? else: ?>
     <div class="map" style="height: 200px"></div>
     <div class="map-controls text-center">
+      <a class="btn user-location-filter" href="<?=$results->getUrlQuery()->removeFacet($geoFilters[0], $thisFacet['value'], $thisFacet['operator']) ?>"><span><?=$this->translate("use_my_location");?></span></a>
       <a class="btn map-control" href="<?=$mapPopupUrl?>" data-lightbox><span><?=$this->translate("select_area_from_map");?></span></a>
     </div>
   <? endif; ?>

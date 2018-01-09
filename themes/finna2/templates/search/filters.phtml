@@ -16,7 +16,6 @@
   <? foreach ($filterList  as $field => $data): ?>
     <? if ($params->isGeographicFilter($data)): ?>
       <span class="filter-value">
-        <? $removeLink = isset($urlQuery) ? $urlQuery->removeFilter($field) : ''; ?>
         <? $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($data[0]['field'], $data[0]['value'], $data[0]['operator']) : '';?>
         <?=$this->transEsc($field)?>
         <? if($removeLink): ?><a href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><? endif; ?>
