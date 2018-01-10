@@ -1,8 +1,8 @@
 <!-- START of: finna - search/street-search-header.phtml -->
-<div>
-  <div class="street-search-info hidden-xs">
-    <div class="street-search-header-message">
-      <?=$this->translate('street_search_introduction_html')?>
+<div class="street-search-header">
+  <div class="street-search-info">
+    <div class="street-search-introduction">
+      <?=$this->translate('street_search_introduction_results_html')?>
     </div>
     <div class="street-search-feedback">
       <a class="btn btn-primary btn-uppercase" href="<?=$this->url('feedback-home', [], ['query' => ['comments' => $this->transEsc('street_search_feedback'), 'url' => $this->serverUrl(true)]])?>"><span><?=$this->transEsc('Feedback')?></span></a>

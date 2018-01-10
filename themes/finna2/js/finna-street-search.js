@@ -52,6 +52,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
       errorString += ' -- ' + additionalInfo;
     }
     info(errorString, true);
+    $('.street-search-action-links').removeClass('hidden');
   }
 
   function locationSearch(position) {

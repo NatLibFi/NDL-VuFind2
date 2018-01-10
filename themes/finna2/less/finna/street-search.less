@@ -29,7 +29,7 @@
   text-decoration: underline;
 }
 
-.street-search-header-message {
+.street-search-introduction {
   font-size: @font-size-h2;
   font-weight: 600;
   .highlight {
@@ -59,10 +59,40 @@
   }
 }
 
-.street-search-header-message {
+.street-search-header .street-search-introduction {
   width: 80%;
   float: left;
 }
 .street-search-feedback {
   float: right;
+}
+
+.street-search-action-links {
+  margin-bottom: 1.5em;
+  a {
+    border: 1px solid @gray-lighter;
+    width: 300px;
+    text-align: center;
+    display: table-cell;
+    padding: 10px;
+    margin-bottom: -1px;
+    text-transform: uppercase;
+    font-weight: 600;
+    i {
+      margin-right: 10px;
+    }
+    &:last-child {
+      border-left: none;
+    }
+  }
+}
+
+.street-search-info-box {
+  border-left: @finna-infobox-border;
+  background-color: @finna-infobox-bg;
+  color: @finna-infobox-color;
+  max-width: 600px;
+  margin: 20px 0;
+  padding: 15px;
+  font-size: 15px;
 }
