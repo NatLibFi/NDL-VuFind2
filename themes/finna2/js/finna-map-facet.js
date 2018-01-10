@@ -229,7 +229,7 @@ finna.MapFacet = (function finnaStreetMap() {
       e.popup._source.setStyle({opacity: 0.5, fillOpacity: 0.2});
     });
 
-    mapCanvas.closest('form').submit(function mapFormSubmit() {
+    mapCanvas.closest('form').submit(function mapFormSubmit(e) {
       $('input[name="filter[]"]').each(function() {
         if(this.value.includes("!geofilt sfield=location_geo")){
           this.remove();
@@ -244,9 +244,30 @@ finna.MapFacet = (function finnaStreetMap() {
         }
         filters += value;
       });
-      if (filters) {
-        var field = $('<input type="hidden" name="filter[]"/>').val(filters);
-        mapCanvas.closest('form').append(field);
+
+      if (window.location.href.includes('/StreetSearch?go=1')) {
+        e.preventDefault();
+        var queryParameters = {
+          'type': 'AllFields',
+          'limit': '100',
+          'view': 'grid',
+          'filter': [
+            '~format:"0/Image/"',
+            '~format:"0/Place/"',
+            'online_boolean:"1"',
+            filters
+          ],
+          'streetsearch': '1'
+        };
+        var url = VuFind.path + '/Search/Results?' + $.param(queryParameters);
+
+        window.location.href = url;
+      }
+      else {
+        if (filters) {
+          var field = $('<input type="hidden" name="filter[]"/>').val(filters);
+          mapCanvas.closest('form').append(field);
+        }
       }
     });
   }
