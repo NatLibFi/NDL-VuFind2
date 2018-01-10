@@ -2,10 +2,14 @@
 finna.MapFacet = (function finnaStreetMap() {
   var geolocationAccuracyThreshold = 20; // If accuracy >= threshold then give a warning for the user
   var searchRadius = 0.1; // Radius of the search area in KM
+  var progressContainer;
 
   function initMapFacet(_options){
+    progressContainer = $('.location-search-info');
     $(".user-location-filter").click(function onLocationFilterClick(e){
       e.preventDefault();
+      progressContainer.find('.fa-spinner').removeClass('hidden');
+      progressContainer.removeClass('hidden');
       navigator.geolocation.getCurrentPosition(locationSearch, geoLocationError, { timeout: 30000, maximumAge: 10000 });
     });
 
@@ -59,6 +63,56 @@ finna.MapFacet = (function finnaStreetMap() {
       options.tileLayer.on('load', onLoad);
     }
     return map;
+  }
+
+  function locationSearch(position) {
+    if (position.coords.accuracy >= geolocationAccuracyThreshold) {
+      info(VuFind.translate('street_search_coordinates_found_accuracy_bad'));
+    } else {
+      info(VuFind.translate('street_search_coordinates_found'));
+    }
+
+    var queryParameters = {
+      'filter': [
+        '{!geofilt sfield=location_geo pt=' + position.coords.latitude + ',' + position.coords.longitude + ' d=' + searchRadius + '}'
+      ]
+    };
+    var url = $(".user-location-filter").attr("href") + '&' + $.param(queryParameters);
+    window.location.href = url;
+  }
+
+  function geoLocationError(error) {
+    var errorString = 'street_search_geolocation_other_error';
+    var additionalInfo = '';
+    if (error) {
+      switch (error.code) {
+        case error.POSITION_UNAVAILABLE:
+          errorString = 'street_search_geolocation_position_unavailable';
+          break;
+        case error.PERMISSION_DENIED:
+          errorString = 'street_search_geolocation_inactive';
+          break;
+        case error.TIMEOUT:
+          errorString = 'street_search_timeout';
+          break;
+        default:
+          additionalInfo = error.message;
+          break;
+      }
+    }
+    errorString = VuFind.translate(errorString);
+    if (additionalInfo) {
+      errorString += ' -- ' + additionalInfo;
+    }
+    info(errorString, true);
+  }
+
+  function info(message, stopped){
+    if (typeof stopped !== 'undefined' && stopped) {
+      progressContainer.find('.fa-spinner').addClass('hidden');
+    }
+    var div = $('<div class="info-message"></div>').text(message);
+    progressContainer.find('.info').empty().append(div);
   }
 
   function initMapModal(_options) {
@@ -197,22 +251,6 @@ finna.MapFacet = (function finnaStreetMap() {
     });
   }
 
-  function locationSearch(position) {
-    if (position.coords.accuracy >= geolocationAccuracyThreshold) {
-      console.log("paikannuksen tarkkuus voi olla heikko");
-    } else {
-      console.log("sijainti löydetty");
-    }
-
-    var queryParameters = {
-      'filter': [
-        '{!geofilt sfield=location_geo pt=' + position.coords.latitude + ',' + position.coords.longitude + ' d=' + searchRadius + '}'
-      ]
-    };
-    var url = $(".user-location-filter").attr("href") + '&' + $.param(queryParameters);
-    window.location.href = url;
-  }
-
   function addRemoveButton(layer, featureGroup) {
     var button = $('<a/>')
         .html('<i class="fa fa-times" aria-hidden="true"></i>')
@@ -221,32 +259,6 @@ finna.MapFacet = (function finnaStreetMap() {
         });
     $('<span/>').text(VuFind.translate('removeCaption')).appendTo(button);
     layer.bindPopup(button.get(0), {closeButton: false});
-  }
-
-  function geoLocationError(error) {
-    var errorString = 'street_search_geolocation_other_error';
-    var additionalInfo = '';
-    if (error) {
-      switch (error.code) {
-        case error.POSITION_UNAVAILABLE:
-          errorString = 'street_search_geolocation_position_unavailable';
-          break;
-        case error.PERMISSION_DENIED:
-          errorString = 'street_search_geolocation_inactive';
-          break;
-        case error.TIMEOUT:
-          errorString = 'street_search_timeout';
-          break;
-        default:
-          additionalInfo = error.message;
-          break;
-      }
-    }
-    errorString = VuFind.translate(errorString);
-    if (additionalInfo) {
-      errorString += ' -- ' + additionalInfo;
-    }
-    console.log(errorString);
   }
 
   var my = {
