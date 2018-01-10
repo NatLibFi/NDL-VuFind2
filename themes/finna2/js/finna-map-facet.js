@@ -3,7 +3,7 @@ finna.MapFacet = (function finnaStreetMap() {
   var geolocationAccuracyThreshold = 20; // If accuracy >= threshold then give a warning for the user
   var searchRadius = 0.1; // Radius of the search area in KM
 
-  function initFacetMap(_options){
+  function initMapFacet(_options){
     $(".user-location-filter").click(function onLocationFilterClick(e){
       e.preventDefault();
       navigator.geolocation.getCurrentPosition(locationSearch, geoLocationError, { timeout: 30000, maximumAge: 10000 });
@@ -61,7 +61,7 @@ finna.MapFacet = (function finnaStreetMap() {
     return map;
   }
 
-  function initModalMap(_options) {
+  function initMapModal(_options) {
     function closeModalCallback(modal) {
       modal.removeClass('location-service location-service-qrcode');
       modal.find('.modal-dialog').removeClass('modal-lg');
@@ -250,8 +250,8 @@ finna.MapFacet = (function finnaStreetMap() {
   }
 
   var my = {
-    initFacetMap: initFacetMap,
-    initModalMap: initModalMap
+    initMapFacet: initMapFacet,
+    initMapModal: initMapModal
   };
 
   return my;
