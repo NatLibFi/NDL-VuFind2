@@ -14,7 +14,8 @@
 ?>
 <div class="geofacet-header">
   <h5 class="geofacet-title"><?=$this->translate('filter_by_geo_location')?></h5>
-    <? if(!empty($geoFilters)): ?><a class="remove-facet" href="<?=$removeFacetUrl?>"><?=$this->translate("Remove filter");?></a><?endif;?>
+  <? if(!empty($geoFilters)): ?><a class="remove-facet" href="<?=$removeFacetUrl?>"><?=$this->translate("Remove filter");?></a><?endif;?>
+  <div class="clearfix"></div>
 </div>
 <div class="geographic-facet">
   <? if(empty($geoFilters)):?>
