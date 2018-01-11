@@ -127,7 +127,6 @@ trait FinnaParams
         return $results;
     }
 
-
     /**
      * Check if the given filter is a geographic filter.
      *
