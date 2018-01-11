@@ -24,6 +24,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
   function terminateStreetSearch() {
     terminate = true;
     progressContainer.addClass('hidden');
+    $('.street-search-action-links').removeClass('hidden');
   }
 
   function geoLocationError(error) {
@@ -84,6 +85,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
     if (typeof stopped !== 'undefined' && stopped) {
       terminateButton.addClass('hidden');
       progressContainer.find('.fa-spinner').addClass('hidden');
+      $('.street-search-action-links').removeClass('hidden');
     } else if (typeof allowStopping !== 'undefined' && !allowStopping) {
       terminateButton.addClass('hidden');
     }

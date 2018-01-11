@@ -235,18 +235,18 @@ finna.MapFacet = (function finnaStreetMap() {
 
     mapCanvas.closest('form').submit(function mapFormSubmit(e) {
       $('input[name="filter[]"]').each(function() {
-        if(this.value.includes("!geofilt sfield=location_geo")){
+        if (this.value.includes("!geofilt sfield=location_geo")){
           this.remove();
         }
       });
-      var filters = '';
+      var geoFilters = '';
       drawnItems.eachLayer(function mapLayerToSearchFilter(layer) {
         var latlng = layer.getLatLng();
         var value = '{!geofilt sfield=location_geo pt=' + latlng.lat + ',' + latlng.lng + ' d=' + (layer.getRadius() / 1000) + '}';
-        if (filters) {
-          filters += ' OR ';
+        if (geoFilters) {
+          geoFilters += ' OR ';
         }
-        filters += value;
+        geoFilters += value;
       });
 
       if (window.location.href.includes('/StreetSearch?go=1')) {
@@ -259,7 +259,7 @@ finna.MapFacet = (function finnaStreetMap() {
             '~format:"0/Image/"',
             '~format:"0/Place/"',
             'online_boolean:"1"',
-            filters
+            geoFilters
           ],
           'streetsearch': '1'
         };
@@ -268,8 +268,8 @@ finna.MapFacet = (function finnaStreetMap() {
         window.location.href = url;
       }
       else {
-        if (filters) {
-          var field = $('<input type="hidden" name="filter[]"/>').val(filters);
+        if (geoFilters) {
+          var field = $('<input type="hidden" name="filter[]"/>').val(geoFilters);
           mapCanvas.closest('form').append(field);
         }
       }
