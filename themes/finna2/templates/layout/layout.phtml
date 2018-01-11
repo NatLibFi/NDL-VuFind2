@@ -317,14 +317,14 @@ JS;
       <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
           <a class="btn btn-primary btn-uppercase floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <? endif; ?>
-      <div class="search-form-container">
-        <? if (!empty($this->layout()->infoMessage)): ?>
-          <div class="alert alert-info">
-            <div class="container">
+      <? if (!empty($this->layout()->infoMessage)): ?>
+        <div class="alert alert-info">
+          <div class="container">
               <?=$this->layout()->infoMessage?>
-            </div>
           </div>
-        <? endif; ?>
+        </div>
+      <? endif; ?>
+      <div class="search-form-container">
         <div class="container">
           <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
             <div class="logo clearfix">
