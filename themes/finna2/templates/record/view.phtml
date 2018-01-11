@@ -146,7 +146,7 @@
               <a class="<?=strtolower($tab) ?>"
                  href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<? if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
                 data-background<? endif ?>>
-                <? if (strtolower($tab) == 'details'): ?><i class="fa fa-<?=$this->escapeHtmlAttr($tab)?>"></i><? endif; ?>
+                <? if (strtolower($tab) == 'details'): ?><i class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><? endif; ?>
                 <? if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><? endif; ?><? if (strtolower($tab) == 'usercomments') : ?>(<span class="count"><?= count($this->driver->getComments()) ?></span>)<? endif; ?></a>
             </li>
           <? endforeach; ?>
@@ -170,7 +170,10 @@
             <? foreach ($this->tabs as $accordion => $obj): ?>
                 <? // add current tab to breadcrumbs if applicable:
                 $desc = $obj->getDescription();
-                $accordion_classes = ['accordion'];
+                $accordion_classes = [
+                    'accordion',
+                    'accordion-' . strtolower($accordion)
+                ];
                 if (0 === strcasecmp($this->activeTab, $accordion)) {
                     $this->layout()->breadcrumbs .= '<li class="active">' . $this->transEsc($desc) . '</li>';
                     $activeTabObj = $obj;
