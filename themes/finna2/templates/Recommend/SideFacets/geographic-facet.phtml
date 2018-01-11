@@ -5,7 +5,7 @@
   $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.draw.js');
   $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-map-facet.js');
 ?>
-<?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+<? echo $this->inlineScript(); ?>
 <?=$this->headLink()?>
 <?
   $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList());
