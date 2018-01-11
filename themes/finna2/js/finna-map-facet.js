@@ -1,4 +1,4 @@
-/*global VuFind, finna */
+/*global VuFind, finna, L */
 finna.MapFacet = (function finnaStreetMap() {
   var geolocationAccuracyThreshold = 20; // If accuracy >= threshold then give a warning for the user
   var searchRadius = 0.1; // Radius of the search area in KM
@@ -90,18 +90,18 @@ finna.MapFacet = (function finnaStreetMap() {
     var additionalInfo = '';
     if (error) {
       switch (error.code) {
-        case error.POSITION_UNAVAILABLE:
-          errorString = 'street_search_geolocation_position_unavailable';
-          break;
-        case error.PERMISSION_DENIED:
-          errorString = 'street_search_geolocation_inactive';
-          break;
-        case error.TIMEOUT:
-          errorString = 'street_search_timeout';
-          break;
-        default:
-          additionalInfo = error.message;
-          break;
+      case error.POSITION_UNAVAILABLE:
+        errorString = 'street_search_geolocation_position_unavailable';
+        break;
+      case error.PERMISSION_DENIED:
+        errorString = 'street_search_geolocation_inactive';
+        break;
+      case error.TIMEOUT:
+        errorString = 'street_search_timeout';
+        break;
+      default:
+        additionalInfo = error.message;
+        break;
       }
     }
     errorString = VuFind.translate(errorString);
@@ -234,7 +234,7 @@ finna.MapFacet = (function finnaStreetMap() {
     });
 
     mapCanvas.closest('form').submit(function mapFormSubmit(e) {
-      $('input[name="filter[]"]').each(function() {
+      $('input[name="filter[]"]').each(function removeLastSearchLocationFilter() {
         if (this.value.includes("!geofilt sfield=location_geo")){
           this.remove();
         }
@@ -267,11 +267,9 @@ finna.MapFacet = (function finnaStreetMap() {
 
         window.location.href = url;
       }
-      else {
-        if (geoFilters) {
-          var field = $('<input type="hidden" name="filter[]"/>').val(geoFilters);
-          mapCanvas.closest('form').append(field);
-        }
+      else if (geoFilters) {
+        var field = $('<input type="hidden" name="filter[]"/>').val(geoFilters);
+        mapCanvas.closest('form').append(field);
       }
     });
   }
