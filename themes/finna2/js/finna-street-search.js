@@ -1,6 +1,6 @@
 /*global VuFind, finna */
 finna.StreetSearch = (function finnaStreetSearch() {
-  var startButton, terminateButton, progressContainer;
+  var terminateButton, progressContainer;
   var terminate = false;
 
   var geolocationAccuracyThreshold = 20; // If accuracy >= threshold then give a warning for the user
@@ -10,7 +10,6 @@ finna.StreetSearch = (function finnaStreetSearch() {
     progressContainer.removeClass('hidden');
     progressContainer.find('.fa-spinner').removeClass('hidden');
     terminate = false;
-    startButton.prop('disabled', true);
 
     info(VuFind.translate('street_search_checking_for_geolocation'));
 
@@ -25,7 +24,6 @@ finna.StreetSearch = (function finnaStreetSearch() {
   function terminateStreetSearch() {
     terminate = true;
     progressContainer.addClass('hidden');
-    startButton.prop('disabled', false);
   }
 
   function geoLocationError(error) {
@@ -86,7 +84,6 @@ finna.StreetSearch = (function finnaStreetSearch() {
     if (typeof stopped !== 'undefined' && stopped) {
       terminateButton.addClass('hidden');
       progressContainer.find('.fa-spinner').addClass('hidden');
-      startButton.prop('disabled', false);
     } else if (typeof allowStopping !== 'undefined' && !allowStopping) {
       terminateButton.addClass('hidden');
     }
@@ -95,15 +92,13 @@ finna.StreetSearch = (function finnaStreetSearch() {
   }
 
   function initPageElements() {
-    startButton = $('.street-search-button');
     terminateButton = $('.street-search-terminate');
     progressContainer = $('.street-search-progress');
     terminate = false;
-    startButton.click(doStreetSearch);
     terminateButton.click(terminateStreetSearch);
     var query = '&' + window.location.href.split('?')[1];
     if (query.indexOf('&go=1') >= 0) {
-      startButton.click();
+      doStreetSearch();
     }
   }
 

@@ -318,6 +318,13 @@ JS;
           <a class="btn btn-primary btn-uppercase floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <? endif; ?>
       <div class="search-form-container">
+        <? if (!empty($this->layout()->infoMessage)): ?>
+          <div class="alert alert-info">
+            <div class="container">
+              <?=$this->layout()->infoMessage?>
+            </div>
+          </div>
+        <? endif; ?>
         <div class="container">
           <? if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
             <div class="logo clearfix">
@@ -377,6 +384,9 @@ JS;
       <? endif; ?>
       <? if (!empty($this->layout()->finnaFilters)): ?>
         <?=$this->layout()->finnaFilters?>
+      <? endif; ?>
+      <? if (!empty($this->layout()->finnaStreetBar)): ?>
+        <?=$this->layout()->finnaStreetBar?>
       <? endif; ?>
       <? if (!empty($this->layout()->finnaMainHeader)): ?>
         <div class="finna-main-header">
