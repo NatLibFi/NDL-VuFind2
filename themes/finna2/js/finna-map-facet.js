@@ -13,6 +13,10 @@ finna.MapFacet = (function finnaStreetMap() {
       navigator.geolocation.getCurrentPosition(locationSearch, geoLocationError, { timeout: 30000, maximumAge: 10000 });
     });
 
+    $('.close-info').click(function onCloseInfoClick(){
+      progressContainer.addClass('hidden');
+    });
+
     var mapCanvas = $(".map");
     if (mapCanvas.length === 0) {
       return;

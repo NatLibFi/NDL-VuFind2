@@ -19,25 +19,24 @@
 </div>
 <div class="geographic-facet">
   <? if(empty($geoFilters)):?>
-    <div class="location-search-info hidden">
+    <div class="location-search-info alert alert-info hidden">
       <div class="fa fa-spinner fa-spin hidden"></div>
       <div class="info"></div>
     </div>
-    <div class="map-controls text-center">
-      <a class="btn user-location-filter" href="<?=$removeFacetUrl?>"><?=$this->translate("use_my_location");?></a>
-      <a class="btn map-control" href="<?=$mapPopupUrl ?>" data-lightbox><?=$this->translate("select_area_from_map");?></a>
-    </div>
   <? else: ?>
-    <div class="map" style="height: 200px"></div>
-    <div class="location-search-info info-map hidden">
-      <div class="fa fa-spinner fa-spin"></div>
-      <div class="info"></div>
-    </div>
-    <div class="map-controls text-center">
-      <a class="btn user-location-filter" href="<?=$removeFacetUrl?>"><?=$this->translate("use_my_location");?></a>
-      <a class="btn map-control" href="<?=$mapPopupUrl?>" data-lightbox><span><?=$this->translate("select_area_from_map");?></span></a>
+    <div class="map-container">
+      <div class="map" style="height: 200px"></div>
+      <div class="location-search-info info-map hidden">
+        <a class="close-info fa fa-times"></a>
+        <div class="fa fa-spinner fa-spin"></div>
+        <div class="info"></div>
+      </div>
     </div>
   <? endif; ?>
+  <div class="map-controls text-center">
+    <a class="btn user-location-filter" href="<?=$removeFacetUrl?>"><?=$this->translate("use_my_location");?></a>
+    <a class="btn map-control" href="<?=$mapPopupUrl ?>" data-lightbox><?=$this->translate("select_from_map");?></a>
+  </div>
   <div class="clearfix"></div>
 </div>
 <div class="list-group-item facet-info">

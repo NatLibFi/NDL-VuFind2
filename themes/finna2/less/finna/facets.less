@@ -344,7 +344,6 @@ span.badge.cb-facet {
 .geographic-facet {
   margin-bottom: 10px;
   padding: 0 8px;
-  position: relative;
   .map-controls {
     a.map-control, a.user-location-filter {
       border: 1px solid @gray-lighter;
@@ -383,12 +382,22 @@ span.badge.cb-facet {
 .list-group.facet .geographic-facet a:hover {
   text-decoration: none;
 }
-.location-search-info.info-map{
-  top: 0;
-  height: 200px;
-  z-index: 1050;
-  position: absolute;
-  background: fade(#fff, 80%);
-  text-align: center;
-  padding: 45px 10px;
+
+.location-search-info .close-info {
+  float: right;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.map-container {
+  position: relative;
+  .location-search-info {
+    bottom: 0;
+    height: auto;
+    z-index: 1050;
+    position: absolute;
+    background: fade(#fff, 80%);
+    text-align: center;
+    padding: 10px;
+  }
 }
