@@ -7,6 +7,15 @@
     <div class="street-search-feedback">
       <a class="btn btn-primary btn-uppercase" href="<?=$this->url('feedback-home', [], ['query' => ['comments' => $this->transEsc('street_search_feedback'), 'url' => $this->serverUrl(true)]])?>"><span><?=$this->transEsc('Feedback')?></span></a>
     </div>
+    <div class="clearfix"></div>
+  </div>
+  <div class="street-search-action-links visible-xs">
+    <a href="<?=$this->url('search-streetsearch')?>?go=1">
+      <i class="fa fa-map-marker"></i><?=$this->translate('use_my_current_location')?>
+    </a>
+    <a class="select-from-map" href="<?=$this->url('search-mapfacet') . $urlParams?>" data-lightbox>
+      <i class="fa fa-map-o"></i><?=$this->translate('select_area_from_map') ?>
+    </a>
   </div>
 </div>
 <!-- END of: finna - search/street-search-header.phtml -->

@@ -35,19 +35,20 @@
     color: @brand-primary;
   }
   @media(max-width: @screen-xs-max) {
-    font-size: @font-size-base;
+    font-size: 18px;
   }
 }
 
 .street-search-feedback a {
   margin-bottom: 2em;
+  position: relative;
   &:hover {
     background: darken(@brand-primary,5%);
   }
   &:before {
     content: "";
-    position: relative;
-    bottom: -11px;
+    position: absolute;
+    bottom: -9px;
     margin: auto;
     border-width: 0 0 9px 12px;
     border-style: solid;
@@ -74,9 +75,6 @@
   margin-bottom: 1.5em;
   border-bottom: 1px solid @gray-lighter;
   a {
-    border-left: 1px solid @gray-lighter;
-    border-right: 1px solid @gray-lighter;
-    width: 300px;
     text-align: center;
     display: inline-block;
     padding: 10px;
@@ -86,8 +84,26 @@
     i {
       margin-right: 10px;
     }
+  }
+}
+
+.template-name-streetsearch .street-search-action-links a {
+  border-left: 1px solid @gray-lighter;
+  border-right: 1px solid @gray-lighter;
+  &:last-child {
+    border-left: none;
+  }
+}
+
+.street-search-header .street-search-action-links {
+  margin: 0 -15px;
+  margin-top: 20px;
+  border-top: 1px solid @gray-lighter;
+  a {
+    width: 49%;
+    border-right: 1px solid @gray-lighter;
     &:last-child {
-      border-left: none;
+      border-right: none;
     }
   }
 }

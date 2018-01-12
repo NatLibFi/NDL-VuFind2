@@ -248,7 +248,7 @@ finna.MapFacet = (function finnaStreetMap() {
         geoFilters += value;
       });
 
-      if (window.location.href.includes('/StreetSearch?go=1')) {
+      if (window.location.href.includes('/StreetSearch?go=1') || window.location.href.includes('streetsearch=1')) {
         e.preventDefault();
         var queryParameters = {
           'type': 'AllFields',
