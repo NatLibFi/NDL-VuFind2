@@ -1,13 +1,4 @@
 <?
-  $this->headLink()->appendStylesheet('vendor/leaflet.css');
-  $this->headLink()->appendStylesheet('vendor/leaflet.draw.css');
-  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.js');
-  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'vendor/leaflet.draw.js');
-  $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'finna-map-facet.js');
-?>
-<? echo $this->inlineScript(); ?>
-<?=$this->headLink()?>
-<?
   $geoFilters = $this->params->getGeographicFilters($this->params->getFilterList());
   $mapPopupUrl = $this->url('search-mapfacet') . $results->getUrlQuery()->getParams(false);
   $removeFacetUrl = $results->getUrlQuery()->removeFacet($geoFilters[0], '');
