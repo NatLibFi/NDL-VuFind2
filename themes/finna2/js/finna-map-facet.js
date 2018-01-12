@@ -183,10 +183,10 @@ finna.MapFacet = (function finnaStreetMap() {
 
     var FinnaMapButton = L.Control.extend({
       options: {
-        position: 'bottomright'
+        position: 'bottomleft'
       },
       createButton: function createButton(cssClass, html, clickHandler/*, style*/) {
-        var container = L.DomUtil.create('div', 'map-button ' + cssClass + ' btn btn-primary leaflet-bar leaflet-control leaflet-control-custom');
+        var container = L.DomUtil.create('div', 'map-button btn ' + cssClass + ' leaflet-bar leaflet-control leaflet-control-custom');
         $(container).html(html).click(clickHandler);
         return container;
       }
@@ -207,13 +207,12 @@ finna.MapFacet = (function finnaStreetMap() {
       onAdd: function mapOnAddCircle(mapTarget) {
         var htmlElem = $('<div><i class="fa fa-crosshairs"></i>');
         $('<span/>').text(' ' + VuFind.translate('circleCaption')).appendTo(htmlElem);
-        var button = this.createButton('map-button-circle', htmlElem.html(), function mapCircleButtonClick() {
+        var button = this.createButton('map-button-circle btn-primary', htmlElem.html(), function mapCircleButtonClick() {
           $('.map-button-circle').addClass('active');
           new L.Draw.Circle(mapTarget, {}).on('disabled', function mapOnCircleDisabled() {
             $('.map-button-circle').removeClass('active');
           }).enable();
         });
-        $(button).css('top', '-10px');
         return button;
       }
     });
