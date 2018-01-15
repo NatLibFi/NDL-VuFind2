@@ -100,6 +100,7 @@ finna.StreetSearch = (function finnaStreetSearch() {
     terminateButton.click(terminateStreetSearch);
     var query = '&' + window.location.href.split('?')[1];
     if (query.indexOf('&go=1') >= 0) {
+      $('.street-search-action-links').addClass('hidden');
       doStreetSearch();
     }
   }

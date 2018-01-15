@@ -118,3 +118,23 @@
   padding: 15px;
   font-size: 15px;
 }
+
+.template-name-streetsearch .introduction .introduction-text {
+  background-color: @brand-primary;
+  position: relative;
+  display: inline-block;
+  max-width: 450px;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-radius: 5px 5px 5px 0;
+  .introductionText:before {
+    content: "";
+    position: absolute;
+    bottom: -12px;
+    margin: auto;
+    left: 0;
+    border-width: 0 0 12px 12px;
+    border-style: solid;
+    border-color: transparent @brand-primary;
+  }
+}
