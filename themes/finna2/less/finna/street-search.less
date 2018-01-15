@@ -1,3 +1,6 @@
+.template-name-streetsearch .search-form-container {
+  padding: 2em 0;
+}
 .street-search-progress .fa-spinner {
   display: block;
   width: auto;
@@ -128,14 +131,17 @@
   padding: 1em;
   margin-bottom: 1em;
   border-radius: 5px 5px 5px 0;
-  .introductionText:before {
-    content: "";
-    position: absolute;
-    bottom: -12px;
-    margin: auto;
-    left: 0;
-    border-width: 0 0 12px 12px;
-    border-style: solid;
-    border-color: transparent @brand-primary;
+  h3.introductionText{
+    font-weight: 400;
+    &:before {
+      content: "";
+      position: absolute;
+      bottom: -12px;
+      margin: auto;
+      left: 0;
+      border-width: 0 0 12px 12px;
+      border-style: solid;
+      border-color: transparent @brand-primary;
+    }
   }
 }

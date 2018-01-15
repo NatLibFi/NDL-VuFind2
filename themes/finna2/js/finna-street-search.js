@@ -105,12 +105,21 @@ finna.StreetSearch = (function finnaStreetSearch() {
     }
   }
 
+  function initStreetHeader(){
+    progressContainer = $('.street-search-progress');
+    $('.update-location').click(function updateStreetSearchLocation(e){
+      e.preventDefault();
+      doStreetSearch();
+    });
+  }
+
   function init() {
     initPageElements();
   }
 
   var my = {
-    init: init
+    init: init,
+    initStreetHeader: initStreetHeader
   };
 
   return my;
