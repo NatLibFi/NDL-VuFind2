@@ -144,7 +144,7 @@ finna.MapFacet = (function finnaStreetMap() {
         attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
       }),
       center: new L.LatLng(64.8, 26),
-      zoom: 5,
+      zoom: 8,
       items: []
     };
     var options = $.extend(defaults, _options);
@@ -158,6 +158,9 @@ finna.MapFacet = (function finnaStreetMap() {
         drawnItems.addLayer(circle);
       }
     });
+    if (options.items.length <= 0 ) {
+      options.zoom = 5;
+    }
 
     var map = new L.Map(mapCanvas.get(0), {
       layers: [options.tileLayer, drawnItems],
@@ -248,7 +251,7 @@ finna.MapFacet = (function finnaStreetMap() {
         geoFilters += value;
       });
 
-      if (window.location.href.includes('/StreetSearch?go=1') || window.location.href.includes('streetsearch=1')) {
+      if (geoFilters && (window.location.href.includes('/StreetSearch?go=1') || window.location.href.includes('streetsearch=1'))) {
         e.preventDefault();
         var queryParameters = {
           'type': 'AllFields',
