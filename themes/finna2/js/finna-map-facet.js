@@ -9,6 +9,7 @@ finna.MapFacet = (function finnaStreetMap() {
     $(".user-location-filter").click(function onLocationFilterClick(e){
       e.preventDefault();
       progressContainer.find('.fa-spinner').removeClass('hidden');
+      progressContainer.find('.info').empty();
       progressContainer.removeClass('hidden');
       navigator.geolocation.getCurrentPosition(locationSearch, geoLocationError, { timeout: 30000, maximumAge: 10000 });
     });
