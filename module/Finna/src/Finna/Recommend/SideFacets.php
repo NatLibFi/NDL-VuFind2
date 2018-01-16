@@ -142,7 +142,7 @@ class SideFacets extends \VuFind\Recommend\SideFacets
      *
      * @return array
      */
-    public function getGeographicFacet()
+    public function getGeographicFacets()
     {
         return array_map(
             function ($geo_facet) {

@@ -70,7 +70,7 @@
 ]); ?>
 <?
 if ($this->fromStreetSearch) {
-  $geographicFacets = $this->recommend->getGeographicFacet();
+  $geographicFacets = $this->recommend->getGeographicFacets();
   foreach ($collapsedFacets as $index => $facet){
     if (in_array($facet, $geographicFacets)) {
       unset($collapsedFacets[$index]);

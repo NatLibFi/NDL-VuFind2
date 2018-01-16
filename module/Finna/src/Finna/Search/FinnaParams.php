@@ -130,13 +130,14 @@ trait FinnaParams
     /**
      * Check if the given filter is a geographic filter.
      *
-     * @param string $filter Facet
+     * @param array $filter Facet
      *
      * @return boolean
      */
     public function isGeographicFilter($filter)
     {
-        return strncmp($filter[0]['field'], '{!geofilt', 9) == 0;
+        return isset($filter[0]['field'])
+            ? strncmp($filter[0]['field'], '{!geofilt', 9) == 0 : false;
     }
 
     /**
