@@ -1,6 +1,7 @@
 <!-- START of: finna - content/help_en-gb.phtml -->
-<? $this->headTitle($this->translate('Instructions of use')); $this->content()->setHeading($this->translate('Search Tips')); ?>
-
+<? if ($this->resolver('Content/help-tabs.phtml')): ?>
+    <?=$this->render('Content/help-tabs.phtml', ['activeTab' =>  'help'])?>
+<? endif; ?>
 <div>
   <div class="sidebar left">
     <div class="content-navigation-menu">

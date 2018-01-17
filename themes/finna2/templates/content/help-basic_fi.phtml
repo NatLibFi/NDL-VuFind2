@@ -1,6 +1,6 @@
-<!-- START of: finna - content/help_fi.phtml -->
+<!-- START of: finna - content/help_basic_fi.phtml -->
 <? if ($this->resolver('Content/help-tabs.phtml')): ?>
-  <?=$this->render('Content/help-tabs.phtml', ['activeTab' =>  'help'])?>
+    <?=$this->render('Content/help-tabs.phtml', ['activeTab' =>  'help-basic'])?>
 <? endif; ?>
 <div>
   <div class="sidebar left">
@@ -8,9 +8,9 @@
     </div>
   </div>
   <div class="mainbody right">
-    <? if ($this->resolver('Content/Additions/helpBegin.phtml')): ?>
-      <?=$this->render('Content/Additions/helpBegin.phtml')?>
-    <? endif; ?>
+      <? if ($this->resolver('Content/Additions/helpBegin.phtml')): ?>
+          <?=$this->render('Content/Additions/helpBegin.phtml')?>
+      <? endif; ?>
     <div id="basicsearch" class="content-section">
       <h2><i class="fa fa-search"></i> Perushaku</h2>
       <p>Pelkällä välilyönnillä erotetut hakusanat käyttäytyvät AND-hakulogiikalla eli hakutuloksien tulee sisältää kaikki antamasi hakusanat.</p><p>Esimerkiksi <i>mannerheim carl</i> on sama haku kuin <i>mannerheim AND carl</i>.
@@ -232,9 +232,9 @@
       <p>Esimerkki: haussa termin "Keynes" painoarvoa on nostettu:</p>
       <pre class="code">economics Keynes^5</pre>
     </div>
-    <? if ($this->resolver('Content/Additions/helpEnd.phtml')): ?>
-      <?=$this->render('Content/Additions/helpEnd.phtml')?>
-    <? endif; ?>
+      <? if ($this->resolver('Content/Additions/helpEnd.phtml')): ?>
+          <?=$this->render('Content/Additions/helpEnd.phtml')?>
+      <? endif; ?>
   </div>
 </div>
-<!-- END of: finna - content/help_fi.phtml -->
+<!-- END of: finna - content/help_basic_fi.phtml -->
