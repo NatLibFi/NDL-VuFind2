@@ -37,13 +37,17 @@
                     if ('boolean' === $setting['type']) {
                         if (empty($setting['readonly'])) {
                             $active = $setting['active'] ? 'active' : 'inactive';
-                            $settingStr .= strtolower(
-                                $this->transEsc(
-                                    "messaging_settings_setting_$name",
-                                    null,
-                                    $name
-                                )
-                            ) . ' ' . $this->transEsc("messaging_settings_option_$active");
+                            if (isset($setting['label'])) {
+                               $settingStr .= strtolower($this->transEsc($setting['label']));
+                            } else {
+                               $settingStr .= strtolower(
+                                   $this->transEsc(
+                                      "messaging_settings_setting_$name",
+                                      null,
+                                      $name
+                                   )
+                               ) . ' ' . $this->transEsc("messaging_settings_option_$active");
+                            }
                         }
                     } else {
                         foreach ($setting['options'] as $optionId => $option) {

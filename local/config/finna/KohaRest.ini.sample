@@ -72,6 +72,15 @@ options[0] = loan_history_forever
 options[1] = loan_history_default
 options[2] = loan_history_never
 
+; Sort options for transaction history.
+[TransactionHistorySortList]
+checkout desc = sort_checkout_date_desc
+checkout asc = sort_checkout_date_asc
+return desc = sort_return_date_desc
+return asc = sort_return_date_asc
+duedate desc = sort_duedate_desc
+duedate asc = sort_duedate_asc
+
 ; Changing of messaging settings is enabled if method parameter is set. Only valid
 ; value for Koha is 'driver'.
 [updateMessagingSettings]

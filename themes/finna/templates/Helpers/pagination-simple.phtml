@@ -1,10 +1,14 @@
 <!-- START of: finna - Helpers/pagination-simple.phtml -->
 <? if ($this->pageCount): ?>
   <ul class="paginationSimple">
-    <li<? if (isset($this->previous)): ?>>
+    <li><? if (isset($this->previous)): ?>
       <? $newParams = $this->params; $newParams['page'] = $this->previous; ?>
-      <a href="<?= $this->currentPath() . '?' . http_build_query($newParams); ?>">
-        <span class="sr-only"><?=$this->transEsc('Previous Page')?></span><i class="fa fa-arrow-left"></i>
+      <? if (isset($sort)): ?>
+        <a href="<?= $this->currentPath() . '?' . http_build_query($newParams) . '&sort=' . $sort; ?>">
+      <? else: ?>
+        <a href="<?= $this->currentPath() . '?' . http_build_query($newParams); ?>">
+      <? endif; ?>
+      <span class="sr-only"><?=$this->transEsc('Previous Page')?></span><i class="fa fa-arrow-left"></i>
       </a>
     <? endif; ?>
     </li>
@@ -19,7 +23,11 @@
     </li>
     <li<? if (isset($this->next)): ?>>
       <? $newParams = $this->params; $newParams['page'] = $this->next; ?>
-      <a href="<?= $this->currentPath() . '?' . http_build_query($newParams); ?>">
+      <? if (isset($sort)): ?>
+        <a href="<?= $this->currentPath() . '?' . http_build_query($newParams) . '&sort=' . $sort; ?>">
+      <? else: ?>
+        <a href="<?= $this->currentPath() . '?' . http_build_query($newParams); ?>">
+      <? endif; ?>
         <span class="sr-only"><?=$this->transEsc('Next Page')?></span><i class="fa fa-arrow-right"></i>
       </a>
     <? endif; ?>

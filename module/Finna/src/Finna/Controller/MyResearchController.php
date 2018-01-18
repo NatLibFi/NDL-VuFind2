@@ -275,6 +275,83 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
+     * Send list of checkout history to view.
+     *
+     * @return mixed
+     */
+    public function checkoutHistoryAction()
+    {
+        // Stop now if the user does not have valid catalog credentials available:
+        if (!is_array($patron = $this->catalogLogin())) {
+            return $patron;
+        }
+
+        if ($view = $this->createViewIfUnsupported('getMyTransactionHistory')) {
+            return $view;
+        }
+
+        $view = $this->createViewModel();
+
+        // Connect to the ILS:
+        $catalog = $this->getILS();
+
+        // Display account blocks, if any:
+        $this->addAccountBlocksToFlashMessenger($catalog, $patron);
+
+        // Get page and page size:
+        $page = $this->params()->fromQuery('page', 1);
+        $config = $this->getConfig();
+        $limit = isset($config->Catalog->checkout_history_page_size)
+            ? $config->Catalog->checkout_history_page_size : 50;
+
+        $currentSort = $this->getRequest()->getQuery('sort', 'checkout desc');
+
+        // Get checkout history details:
+        $params = [
+            'start' => ($page - 1) * $limit,
+            'limit' => $limit,
+            'sort' => $currentSort
+        ];
+        $result = $catalog->getMyTransactionHistory($patron, $params);
+
+        $adapter = new \Zend\Paginator\Adapter\NullFill($result['count']);
+        $paginator = new \Zend\Paginator\Paginator($adapter);
+        $paginator->setItemCountPerPage($limit);
+        $paginator->setCurrentPageNumber($page);
+
+        $transactions = $hiddenTransactions = [];
+        foreach ($result['transactions'] as $current) {
+            $transactions[] = $this->getDriverForILSRecord($current);
+        }
+
+        $view->transactions = $transactions;
+        $view->paginator = $paginator;
+        $view->count = $result['count'];
+
+        // Handle sorting
+        if (!empty($result['sortList'])) {
+            $sortList = $result['sortList'];
+            $sortData = [];
+            if (!isset($sortList[$currentSort])) {
+                $currentSort = $sortList[0];
+            }
+            foreach ($sortList as $key => $label) {
+                $sortData[$key] = [
+                   'desc' => $label,
+                   'url' => '?sort=' . urlencode($key),
+                   'selected' => $currentSort == $key
+                ];
+            }
+            $view->sortList = $sortData;
+        }
+        $view->purgeHistory
+            = $catalog->checkFunction('purgeTransactionhistory', $patron);
+
+        return $view;
+    }
+
+    /**
+     * Purge checkout history action.
      * Purge historic loans action.
      *
      * @return mixed

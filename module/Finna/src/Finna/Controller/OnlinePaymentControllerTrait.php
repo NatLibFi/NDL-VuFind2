@@ -146,15 +146,6 @@ trait OnlinePaymentControllerTrait
             return;
         }
 
-        // Check that mandatory settings exist
-        if (!isset($paymentConfig['currency'])) {
-            $this->handleError(
-                "Mandatory setting 'currency' missing from ILS driver for"
-                . " '{$patron['source']}'"
-            );
-            return false;
-        }
-
         $payableOnline = $catalog->getOnlinePayableAmount($patron);
 
         // Check if there is a payment in progress
@@ -279,8 +270,10 @@ trait OnlinePaymentControllerTrait
                     $this->flashMessenger()->addMessage(
                         strip_tags($paymentPermittedForUser), 'error'
                     );
-                } elseif (!empty($payableOnline['reason'])) {
-                    $view->nonPayableReason = $payableOnline['reason'];
+                } elseif (!$payableOnline['payable']) {
+                    if (!empty($payableOnline['reason'])) {
+                        $view->nonPayableReason = $payableOnline['reason'];
+                    }
                 } elseif ($this->formWasSubmitted('pay')) {
                     $view->setTemplate(
                         'Helpers/OnlinePayment/terms-' . $view->paymentHandler
