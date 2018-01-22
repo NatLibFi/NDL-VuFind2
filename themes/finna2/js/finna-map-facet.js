@@ -131,7 +131,7 @@ finna.MapFacet = (function finnaStreetMap() {
     });
     modal.find('.modal-dialog').addClass('modal-lg');
 
-    $('#modal').on('shown.bs.modal', function(){
+    $('#modal').on('shown.bs.modal', function onShownModal() {
       map.invalidateSize();
     });
 
