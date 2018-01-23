@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015-2017.
+ * Copyright (C) The National Library of Finland 2015-2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -501,14 +501,44 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
         if ($this->formWasSubmitted('saveUserProfile')) {
             $validator = new \Zend\Validator\EmailAddress();
-            if ('' === $values->email || $validator->isValid($values->email)) {
+            $email = $validator->isValid($values->email);
+            $nickname = $this->validateNickname($values->finna_nickname, $user->id);
+            if (!$nickname && $user->email == $values->email) {
+                $this->flashMessenger()->addErrorMessage(
+                    'profile_update_invalid_nickname'
+                );
+            } elseif ($nickname == $values->finna_nickname && !$email) {
+                $this->flashMessenger()->addErrorMessage(
+                    'profile_update_invalid_email'
+                );
+            } elseif (!$nickname && !$email) {
+                $this->flashMessenger()->setNamespace('error')
+                    ->addMessage('profile_update_failed');
+            } elseif ($nickname == $user->finna_nickname
+                && $user->email == $values->email
+            ) {
+                $this->flashMessenger()->setNamespace('info')
+                    ->addMessage('profile_update_none');
+            } elseif ($nickname != false && $values->email == $user->email
+                && $nickname != $user->finna_nickname
+            ) {
+                $user->finna_nickname = $nickname;
+                $user->save();
+                $this->flashMessenger()->setNamespace('info')
+                    ->addMessage('profile_update_nickname');
+            } elseif ($email && $user->email != $values->email
+                && $nickname == $user->finna_nickname
+            ) {
+                $user->email = $values->email;
+                $user->save();
+                $this->flashMessenger()->setNamespace('info')
+                    ->addMessage('profile_update_email');
+            } else {
+                $user->finna_nickname = $nickname;
                 $user->email = $values->email;
                 $user->save();
                 $this->flashMessenger()->setNamespace('info')
                     ->addMessage('profile_update');
-            } else {
-                $this->flashMessenger()->setNamespace('error')
-                    ->addMessage('profile_update_failed');
             }
         }
 
@@ -1486,6 +1516,31 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $record->setSourceIdentifier($source);
             $record->setExtraDetail('ils_details', $current);
             return $record;
+        }
+    }
+
+    /**
+     * Validate user's nickname.
+     *
+     * @param string $username User nickname
+     * @param string $userid   User id
+     *
+     * @return mixed Validated username or false if not valid
+     */
+    protected function validateNickname($username, $userid)
+    {
+        if (preg_match('/^(?!.*[._]{2})[A-ZÅÄÖa-zåäö0-9._]{3,24}$/', $username)
+        ) {
+            $check = $this->getTable('User')->getByNickname($username, $userid);
+            if ($check == true) {
+                return $username;
+            } elseif ($check == $username) {
+                return $check;
+            } else {
+                return false;
+            }
+        } else {
+            return;
         }
     }
 }

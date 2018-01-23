@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library 2015-2016.
+ * Copyright (C) The National Library 2015-2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -33,6 +34,7 @@ namespace Finna\RecordDriver;
  * @category VuFind
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -103,5 +105,18 @@ trait FinnaRecord
             return $current->saved;
         }
         return null;
+    }
+
+    /**
+     * Get user id from db
+     *
+     * @param int $user_id user user_id
+     *
+     * @return string
+     */
+    public function getUserById($user_id)
+    {
+        $table = $this->getDbTable('User');
+        return $table->getById($user_id);
     }
 }

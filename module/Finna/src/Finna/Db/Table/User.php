@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -35,6 +36,7 @@ use Zend\Db\Sql\Select;
  * @category VuFind
  * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -154,5 +156,27 @@ class User extends \VuFind\Db\Table\User
                 $select->order('username desc');
             }
         );
+    }
+
+    /**
+     * Check if user input for nickname exists already in database.
+     *
+     * @param string $nickname to compare with user table column finna_nickname
+     * @param int    $userid   User id to help identify user's own nickname
+     *
+     * @return mixed true if available nickname, false if taken and string if
+     * taken and it is user's own current nickname
+     */
+    public function getByNickname($nickname, $userid)
+    {
+        $row = $this->select(['finna_nickname' => $nickname])->current();
+        if (empty($row)) {
+            return true;
+        } else {
+            if ($row->id == $userid) {
+                return $row->finna_nickname;
+            }
+            return false;
+        }
     }
 }

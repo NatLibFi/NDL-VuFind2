@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2015-2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  View_Helpers
  * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
+ * @author   Konsta Raunio <konsta.rauniohelsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -33,6 +34,7 @@ namespace Finna\View\Helper\Root;
  * @category VuFind
  * @package  View_Helpers
  * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
+ * @author   Konsta Raunio <konsta.rauniohelsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -51,9 +53,13 @@ class UserPublicName extends \Zend\View\Helper\AbstractHelper
         if ($user) {
             if ($user->email
                 && ($pos = strpos($user->email, '@')) !== false
+                && $user->finna_nickname == null
             ) {
                 $username = substr($user->email, 0, $pos);
-            } elseif ($user->firstname && $user->lastname) {
+            } elseif ($user->finna_nickname != null
+            ) {
+                $username = $user->finna_nickname;
+            } else {
                 $username = "$user->firstname $user->lastname";
             }
         }
