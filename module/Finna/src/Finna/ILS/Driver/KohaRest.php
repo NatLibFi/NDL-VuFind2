@@ -794,13 +794,19 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 isset($item['ccode_description']) ? $item['ccode_description'] : null
             );
         }
-        $result[] = $this->translateLocation($item['location']);
-        $str = implode(', ', $result);
-        if (!empty($item['itemcallnumber'])
+        $result[] = $this->translateLocation(
+            $item['location'],
+            !empty($item['location_description'])
+                ? $item['location_description'] : $item['location']
+        );
+        if ((!empty($item['itemcallnumber'])
+            || !empty($item['itemcallnumber_display']))
             && !empty($this->config['Holdings']['display_full_call_number'])
         ) {
-            $str .= ' ' . $item['itemcallnumber'];
+            $result[] = !empty($item['itemcallnumber_display'])
+                ? $item['itemcallnumber_display'] : $item['itemcallnumber'];
         }
+        $str = implode(', ', $result);
         return $str;
     }
 
@@ -1102,10 +1108,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * Translate location name
      *
      * @param string $location Location code
+     * @param string $default  Default value if translation is not available
      *
      * @return string
      */
-    protected function translateLocation($location)
+    protected function translateLocation($location, $default = null)
     {
         $prefix = 'location_';
         if (!empty($this->config['Catalog']['id'])) {
@@ -1114,7 +1121,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         return $this->translate(
             "$prefix$location",
             null,
-            $location
+            null !== $default ? $default : $location
         );
     }
 
