@@ -1,5 +1,5 @@
 finna.map = (function finnaMap() {
-  function init($mapContainer, editable, _options) {
+  function initMap($mapContainer, editable, _options) {
     var mapCanvas = $mapContainer;
     if (mapCanvas.length === 0) {
       return;
@@ -43,18 +43,7 @@ finna.map = (function finnaMap() {
       zoomControl: false
     });
 
-    // Add zoom control with translated tooltips
-    L.control.zoom({
-      position: 'topleft',
-      zoomInTitle: VuFind.translate('map_zoom_in'),
-      zoomOutTitle: VuFind.translate('map_zoom_out')
-    }).addTo(map);
-
-    // Enable mouseWheel zoom on click
-    map.once('focus', function onFocusMap() {
-      map.scrollWheelZoom.enable();
-    });
-    map.scrollWheelZoom.disable();
+    initMapZooming(map);
 
     if (options.items.length > 0) {
       var onLoad = function tileLayerOnLoad() {
@@ -143,8 +132,24 @@ finna.map = (function finnaMap() {
     layer.bindPopup(button.get(0), {closeButton: false});
   }
 
+  function initMapZooming(map) {
+    // Add zoom control with translated tooltips
+    L.control.zoom({
+      position: 'topleft',
+      zoomInTitle: VuFind.translate('map_zoom_in'),
+      zoomOutTitle: VuFind.translate('map_zoom_out')
+    }).addTo(map);
+
+    // Enable mouseWheel zoom on click
+    map.once('focus', function onFocusMap() {
+      map.scrollWheelZoom.enable();
+    });
+    map.scrollWheelZoom.disable();
+  }
+
   var my = {
-    init: init,
+    initMap: initMap,
+    initMapZooming: initMapZooming
   };
 
   return my;

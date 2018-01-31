@@ -59,7 +59,7 @@ finna.advSearch = (function advSearch() {
    */
   function initMap(_options) {
     var mapCanvas = $('.selection-map-canvas');
-    var mapData = finna.map.init(mapCanvas, true, _options);
+    var mapData = finna.map.initMap(mapCanvas, true, _options);
     var drawnItems = mapData.drawnItems;
 
     mapCanvas.closest('form').submit(function mapFormSubmit() {

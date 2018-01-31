@@ -54,7 +54,7 @@ $(document).ready(function() {
     zoom: 5,
     zoomControl: false
   });
-  finna.layout.initMap(map);
+  finna.map.initMapZooming(map);
   var onLoad = function() {
     fitZoom = map.getBoundsZoom(drawnItems.getBounds());
     map.setZoom(fitZoom <= 9 ? fitZoom - 1 : 9);

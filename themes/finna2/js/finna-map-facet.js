@@ -18,7 +18,7 @@ finna.MapFacet = (function finnaStreetMap() {
       progressContainer.addClass('hidden');
     });
 
-    finna.map.init($(".map"), false, _options);
+    finna.map.initMap($(".map"), false, _options);
   }
 
   function locationSearch(position) {
@@ -90,7 +90,7 @@ finna.MapFacet = (function finnaStreetMap() {
     });
 
     var mapCanvas = $('.modal-map');
-    var mapData = finna.map.init(mapCanvas, true, _options);
+    var mapData = finna.map.initMap(mapCanvas, true, _options);
     var drawnItems = mapData.drawnItems;
 
     mapCanvas.closest('form').submit(function mapFormSubmit(e) {
