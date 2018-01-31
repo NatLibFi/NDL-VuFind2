@@ -17,10 +17,12 @@
         <div class="input-group">
           <input id="keywordFilter_lookfor" type="text" name="lookfor" placeholder="<?=$this->transEsc('Search from collection')?>" value="<?=$params->getDisplayQuery()?>" class="form-control"/>
             <? foreach ($params->getFilterList(true) as $field => $filters): ?>
-                <? foreach ($filters as $filter): ?>
+              <? foreach ($filters as $filter): ?>
                 <input type="hidden" name="filter[]" value="<?=$this->escapeHtmlAttr($filter['field'])?>:&quot;<?=$this->escapeHtmlAttr($filter['value'])?>&quot;" />
-                <? endforeach; ?>
+              <? endforeach; ?>
             <? endforeach; ?>
+            <input type="hidden" name="view" value="<?=$params->getView() ?>" />
+            <input type="hidden" name="sort" value="<?=$params->getSort() ?>" />
           <span class="input-group-btn"><button class="btn btn-primary btn-default" type="submit" name="submit"><span class="sr-only"><?=$this->transEsc('Search')?></span><i class="fa fa-search"></i></button></span>
         </div>
       </form>
