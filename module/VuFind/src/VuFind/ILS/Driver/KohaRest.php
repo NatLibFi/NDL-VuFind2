@@ -342,7 +342,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             true
         );
 
-        if ($code == 401) {
+        if ($code == 401 || $code == 403) {
             return null;
         }
         if ($code != 200) {
@@ -714,14 +714,17 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'create' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d', $entry['reservedate']
                 ),
-                'expire' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d', $entry['expirationdate']
-                ),
+                'expire' => !empty($entry['expirationdate'])
+                    ? $this->dateConverter->convertToDisplayDate(
+                        'Y-m-d', $entry['expirationdate']
+                    ) : '',
                 'position' => $entry['priority'],
                 'available' => !empty($entry['waitingdate']),
-                'in_transit' => isset($entry['found']) && $entry['found'] == 't',
+                'in_transit' => isset($entry['found'])
+                    && strtolower($entry['found']) == 't',
                 'requestId' => $entry['reserve_id'],
                 'title' => $title,
+                'volume' => $volume,
                 'frozen' => $frozen
             ];
         }
@@ -1396,7 +1399,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             throw new ILSException('Problem with Koha REST API.');
         }
         if (!$response->isSuccess()) {
-            if ($response->getStatusCode() == 401) {
+            if (in_array((int)$response->getStatusCode(), [401, 403])) {
                 return false;
             }
             $this->error(
