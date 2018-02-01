@@ -1,4 +1,4 @@
-/* global VuFind, finna, L */
+/* global finna */
 finna.advSearch = (function advSearch() {
 
   function initForm() {

@@ -1,4 +1,4 @@
-/*global VuFind, finna, L */
+/*global VuFind, finna */
 finna.MapFacet = (function finnaStreetMap() {
   var geolocationAccuracyThreshold = 20; // If accuracy >= threshold then give a warning for the user
   var searchRadius = 0.1; // Radius of the search area in KM

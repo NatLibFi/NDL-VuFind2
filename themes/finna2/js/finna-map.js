@@ -1,3 +1,4 @@
+/*global VuFind, finna, L */
 finna.map = (function finnaMap() {
   function initMap($mapContainer, editable, _options) {
     var mapCanvas = $mapContainer;
