@@ -13703,6 +13703,11 @@ ul.nav-tabs.help-tabs li > a {
   font-weight: 500;
   padding: 10px 15px;
 }
+@media (max-width: 1200px) {
+  ul.nav-tabs.help-tabs li > a {
+    font-size: 20px;
+  }
+}
 .result.condensed-list-view {
   padding-top: 6px;
   padding-left: 2em;
