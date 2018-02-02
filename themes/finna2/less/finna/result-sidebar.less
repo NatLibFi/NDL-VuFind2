@@ -206,10 +206,10 @@ button.list-group-item {
   @media (max-width: @screen-xs-max) {
     clear: both;
   }
-  .record-type.organisations {
+  .record-type.organisations{
     padding: 15px;
     font-size: 1em;
-    border: @sidebar-border;    
+    margin-bottom: 0;
     & > li {
       font-weight: 600;
       & a {
@@ -220,5 +220,9 @@ button.list-group-item {
         }
       }
     }
+  }
+  .record-organisation-box {
+    border: @sidebar-border;
+    margin-bottom: 1em;
   }
 }
