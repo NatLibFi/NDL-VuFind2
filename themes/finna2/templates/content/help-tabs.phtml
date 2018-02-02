@@ -10,10 +10,12 @@
         <li<? if($activeTab == "help-advanced"): ?> class="active" <? endif; ?>>
             <a href="<?=$this->url('content-page', ['page' => 'help-advanced'])?>"><?=$this->translate('tabs_help-advanced');?></a>
         </li>
+        <li<? if($activeTab == "help-query"): ?> class="active" <? endif; ?>>
+            <a href="<?=$this->url('content-page', ['page' => 'help-query'])?>"><?=$this->translate('tabs_help-query');?></a>
+        </li>
     </ul>
     <div class="mobile-main-tabs visible-xs">
         <div class="dropdown visible-xs">
-
             <div class="dropdown-toggle clearfix" data-toggle="dropdown">
                 <div class="tab-title"><?=$this->translate('tabs_' . $activeTab);?></div>
                 <div class="more"><?=$this->transEsc("More");?><b class="caret"></b></div>
@@ -27,6 +29,9 @@
                 </li>
                 <li role="menuitem" <? if($activeTab == "help-advanced"): ?> class="active" <? endif; ?>>
                     <a href="<?=$this->url('content-page', ['page' => 'help-advanced'])?>"><?=$this->translate('tabs_help-advanced');?></a>
+                </li>
+                <li role="menuitem" <? if($activeTab == "help-query"): ?> class="active" <? endif; ?>>
+                    <a href="<?=$this->url('content-page', ['page' => 'help-query'])?>"><?=$this->translate('tabs_help-query');?></a>
                 </li>
             </ul>
         </div>
