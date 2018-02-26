@@ -879,6 +879,28 @@ trait SolrFinna
     }
 
     /**
+     * Checks if any of the URLs contains an audio file and updates
+     * the url array acoordingly
+     *
+     * @param array $urls URLs to be checked for audio files
+     *
+     * @return array URL array with added audio and codec tag where
+     * appropriate
+     */
+    protected function checkForAudioUrls($urls)
+    {
+        $newUrls = [];
+        foreach ($urls as $url) {
+            if (preg_match('/^http(s)?:\/\/.*\.(mp3|wav)$/', $url['url'], $match)) {
+                $url['embed'] = 'audio';
+                $url['codec'] = $match[2];
+            }
+            $newUrls[] = $url;
+        }
+        return $newUrls;
+    }
+
+    /**
      * Get an array of strings representing citation formats supported
      * by this record's data (empty if none).  For possible legal values,
      * see /application/themes/root/helpers/Citation.php, getCitation()

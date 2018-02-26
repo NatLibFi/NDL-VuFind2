@@ -3,10 +3,13 @@
   $urls = $this->record($this->driver)->getLinkDetails();
   if (!empty($urls)){
     $videoUrls = [];
+    $audioUrls = [];
     $otherUrls = [];
     foreach ($urls as $url){
       if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
         array_push($videoUrls, $url);
+      } elseif(!empty($url['embed']) && $url['embed'] == 'audio') {
+        array_push($audioUrls, $url);
       } else {
         array_push($otherUrls, $url);
       }
@@ -42,6 +45,15 @@
         </div>
       </div>
     <? endif; ?>
+
+    <? if (!empty($audioUrls)): ?>
+      <? foreach ($audioUrls as $url): ?>
+        <audio class="video-js vjs-default-skin" controls preload="auto" 
+          data-setup='{}'>
+          <source src="<?= $url['url'] ?>" type="audio/<?= $url['codec'] ?>"/>
+        </audio>
+      <? endforeach; ?>
+    <? endif ?>
 
     <div class="image-information">
         <div class="cover-wrapper">
