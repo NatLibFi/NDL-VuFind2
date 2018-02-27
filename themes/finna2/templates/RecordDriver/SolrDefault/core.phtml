@@ -10,14 +10,27 @@
 
   if (!empty($urls)){
     $videoUrls = [];
+    $audioUrls = [];
     $otherUrls = [];
     foreach ($urls as $url) {
       $renderedURLs[] = $url['url'];
       if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
         array_push($videoUrls, $url);
-      }
-      else {
+      } elseif(!empty($url['embed']) && $url['embed'] == 'audio') {
+        array_push($audioUrls, $url);
+      } else {
         array_push($otherUrls, $url);
+      }
+    }
+  }
+
+  if (!empty($onlineURLs)) {
+    if(empty($audioUrls)) {
+      $audioUrls = [];
+    }
+    foreach ($onlineURLs as $url) {
+      if(!empty($url['embed']) && $url['embed'] == 'audio') {
+        array_push($audioUrls, $url);
       }
     }
   }
@@ -49,6 +62,25 @@
           </div>
         <? endforeach; ?>
     <? endif; ?>
+    
+    <? if (!empty($audioUrls)): ?>
+      <? foreach ($audioUrls as $url): ?>
+        <div class="audio-item-wrapper">
+          <div class="audio-player-wrapper">
+            <? if (!empty($url['desc'])): ?>
+              <strong><?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?></strong>
+            <? else: ?>
+              <strong><?=$this->transEsc('format_Sound') ?></strong>
+            <? endif ?>
+            <audio class="video-js vjs-default-skin" controls preload="auto" 
+              data-setup='{}'>
+              <source src="<?= $url['url'] ?>" type="audio/<?= $url['codec'] ?>"/>
+            </audio>
+          </div>
+          <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Download recording') ?></a></div>
+        </div>
+      <? endforeach; ?>
+    <? endif ?>
 
     <div class="image-information">
       <div class="cover-wrapper">
