@@ -455,9 +455,9 @@ trait SolrFinna
         if (!isset($this->fields['online_urls_str_mv'])) {
             return [];
         }
-        return $raw ? $this->fields['online_urls_str_mv'] : $this->mergeURLArray(
+        return $raw ? $this->fields['online_urls_str_mv'] : $this->checkForAudioUrls($this->mergeURLArray(
             $this->fields['online_urls_str_mv'], true
-        );
+        ));
     }
 
     /**
