@@ -148,6 +148,17 @@ finna.imagePopup = (function finnaImagePopup() {
             $('.imagepopup-holder .image img').one('load', function onLoadImg() {
               $('.imagepopup-holder .image').addClass('loaded');
               initDimensions();
+              $('.imagepopup-holder .image img').addClass('panzoom-elements');
+              $('.panzoom-elements').parent().parent().append('<div class="buttons"><button class="zoom-in">Zoom In</button><button class="zoom-out">Zoom Out</button><input class="zoom-range" step="0.05" min="0.3" max="6" type="range"><button class="reset">Reset</button></div>');
+              $('.panzoom-elements').panzoom({
+                contain: 'invert',
+                minScale: 1,
+                maxScale: 5,
+                $zoomIn: $(".zoom-in"),
+                $zoomOut: $(".zoom-out"),
+                $zoomRange: $(".zoom-range"),
+                $reset: $(".reset")
+              });
             }).each(function triggerImageLoad() {
               if (this.complete) {
                 $(this).load();
