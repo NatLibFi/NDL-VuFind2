@@ -1,4 +1,16 @@
 .record {
+  .media {
+    display: table;
+    table-layout: fixed;
+    @media(max-width: @screen-sm) {
+      display: block;
+    }
+  }
+
+  .media-body {
+    width: auto;
+  }
+
   .media-left,
   .media-right {
     width: 25%;
