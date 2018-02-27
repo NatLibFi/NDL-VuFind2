@@ -28,11 +28,15 @@
     if(empty($audioUrls)) {
       $audioUrls = [];
     }
+    $tempUrlArray = [];
     foreach ($onlineURLs as $url) {
       if(!empty($url['embed']) && $url['embed'] == 'audio') {
         array_push($audioUrls, $url);
+      } else {
+        array_push($tempUrlArray, $url);
       }
     }
+    $onlineURLs = $tempUrlArray;
   }
 
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);

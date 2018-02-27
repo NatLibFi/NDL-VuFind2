@@ -38,11 +38,15 @@
     if(empty($audioUrls)) {
       $audioUrls = [];
     }
+    $tempUrlArray = [];
     foreach ($onlineURLs as $url) {
       if(!empty($url['embed']) && $url['embed'] == 'audio') {
         array_push($audioUrls, $url);
+      } else {
+        array_push($tempUrlArray, $url);
       }
     }
+    $onlineURLs = $tempUrlArray;
   }
 
   $img = $this->recordImage($this->record($this->driver));
