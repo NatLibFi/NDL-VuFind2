@@ -1,9 +1,13 @@
+.audio-player-wrapper {
+  border: @sidebar-border; 
+  padding: 5px;
+}
+
 .vjs-audio {
   background: transparent;
   color: @brand-primary;
-  height: 70px !important;
+  height: 60px !important;
   padding: 0;
-  border: @sidebar-border;
 
   .vjs-big-play-button,
   .vjs-poster,
@@ -27,7 +31,7 @@
   }
 
   .vjs-play-control {
-    bottom: 5px;
+    bottom: 0px;
     align-self: center;
     left: 40%;
     width: 20%;
@@ -42,8 +46,8 @@
   }
 
   .vjs-volume-menu-button {
-    bottom: 5px;
-    right: 5px;
+    bottom: 0px;
+    right: 0px;
     width: 30%;
 
     &:hover, &:focus {

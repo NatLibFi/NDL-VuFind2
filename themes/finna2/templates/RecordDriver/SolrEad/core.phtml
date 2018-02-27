@@ -48,10 +48,16 @@
 
     <? if (!empty($audioUrls)): ?>
       <? foreach ($audioUrls as $url): ?>
-        <audio class="video-js vjs-default-skin" controls preload="auto" 
-          data-setup='{}'>
-          <source src="<?= $url['url'] ?>" type="audio/<?= $url['codec'] ?>"/>
-        </audio>
+        <div class="audio-item-wrapper">
+          <div class="audio-player-wrapper">
+            <strong><?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?></strong>
+            <audio class="video-js vjs-default-skin" controls preload="auto" 
+              data-setup='{}'>
+              <source src="<?= $url['url'] ?>" type="audio/<?= $url['codec'] ?>"/>
+            </audio>
+          </div>
+          <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Download') ?></a></div>
+        </div>
       <? endforeach; ?>
     <? endif ?>
 
