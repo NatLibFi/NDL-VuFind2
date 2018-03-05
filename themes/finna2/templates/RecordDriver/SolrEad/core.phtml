@@ -8,7 +8,7 @@
     foreach ($urls as $url){
       if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
         array_push($videoUrls, $url);
-      } elseif(!empty($url['embed']) && $url['embed'] == 'audio') {
+      } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
         array_push($audioUrls, $url);
       } else {
         array_push($otherUrls, $url);
@@ -45,21 +45,8 @@
         </div>
       </div>
     <? endif; ?>
-
-    <? if (!empty($audioUrls)): ?>
-      <? foreach ($audioUrls as $url): ?>
-        <div class="audio-item-wrapper">
-          <div class="audio-player-wrapper">
-            <strong><?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?></strong>
-            <audio class="video-js vjs-default-skin" controls preload="auto" 
-              data-setup='{}'>
-              <source src="<?= $url['url'] ?>" type="audio/<?= $url['codec'] ?>"/>
-            </audio>
-          </div>
-          <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Download') ?></a></div>
-        </div>
-      <? endforeach; ?>
-    <? endif ?>
+    
+    <?= $this->partial('RecordDriver/SolrDefault/record-audio-player.phtml', ['audioUrls' => $audioUrls]) ?>
 
     <div class="image-information">
         <div class="cover-wrapper">
