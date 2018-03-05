@@ -733,6 +733,117 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
+     * Get a password recovery token for a user
+     *
+     * @param array $params Required params such as cat_username and email
+     *
+     * @return array Associative array of the results
+     */
+    public function getPasswordRecoveryToken($params)
+    {
+        $request = [
+            'cardnumber' => $params['cat_username'],
+            'email' => $params['email'],
+            'skip_email' => true
+        ];
+        $operator = [];
+        if (!empty($this->config['PasswordRecovery']['userId'])
+            && !empty($this->config['PasswordRecovery']['userPassword'])
+        ) {
+            $operator = [
+                'cat_username' => $this->config['PasswordRecovery']['userId'],
+                'cat_password' => $this->config['PasswordRecovery']['userPassword']
+            ];
+        }
+
+        list($code, $result) = $this->makeRequest(
+            ['v1', 'patrons', 'password', 'recovery'],
+            json_encode($request),
+            'POST',
+            $operator,
+            true
+        );
+        if (201 != $code) {
+            if (404 != $code) {
+                throw new ILSException("Failed to get a recovery token: $code");
+            }
+            return [
+                'success' => false,
+                'error' => $result['error']
+            ];
+        }
+        return [
+            'success' => true,
+            'token' => $result['uuid']
+        ];
+    }
+
+    /**
+     * Recover user's password with a token from getPasswordRecoveryToken
+     *
+     * @param array $params Required params such as cat_username, token and new
+     * password
+     *
+     * @return array Associative array of the results
+     */
+    public function recoverPassword($params)
+    {
+        $request = [
+            'uuid' => $params['token'],
+            'new_password' => $params['password'],
+            'confirm_new_password' => $params['password']
+        ];
+        $operator = [];
+        if (!empty($this->config['passwordRecovery']['userId'])
+            && !empty($this->config['passwordRecovery']['userPassword'])
+        ) {
+            $operator = [
+                'cat_username' => $this->config['passwordRecovery']['userId'],
+                'cat_password' => $this->config['passwordRecovery']['userPassword']
+            ];
+        }
+
+        list($code, $result) = $this->makeRequest(
+            ['v1', 'patrons', 'password', 'recovery', 'complete'],
+            json_encode($request),
+            'POST',
+            $operator,
+            true
+        );
+        if (200 != $code) {
+            return [
+                'success' => false,
+                'error' => $result['error']
+            ];
+        }
+        return [
+            'success' => true
+        ];
+    }
+
+    /**
+     * Public Function which retrieves renew, hold and cancel settings from the
+     * driver ini file.
+     *
+     * @param string $function The name of the feature to be checked
+     * @param array  $params   Optional feature-specific parameters (array)
+     *
+     * @return array An array with key-value pairs.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getConfig($function, $params = null)
+    {
+        if ('getPasswordRecoveryToken' === $function
+            || 'recoverPassword' === $function
+        ) {
+            return !empty($this->config['PasswordRecovery']['enabled'])
+                ? $this->config['PasswordRecovery'] : false;
+        }
+        return parent::getConfig($function, $params);
+    }
+
+    /**
      * Return summary of holdings items.
      *
      * @param array $holdings Parsed holdings items
@@ -794,13 +905,19 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 isset($item['ccode_description']) ? $item['ccode_description'] : null
             );
         }
-        $result[] = $this->translateLocation($item['location']);
-        $str = implode(', ', $result);
-        if (!empty($item['itemcallnumber'])
+        $result[] = $this->translateLocation(
+            $item['location'],
+            !empty($item['location_description'])
+                ? $item['location_description'] : $item['location']
+        );
+        if ((!empty($item['itemcallnumber'])
+            || !empty($item['itemcallnumber_display']))
             && !empty($this->config['Holdings']['display_full_call_number'])
         ) {
-            $str .= ' ' . $item['itemcallnumber'];
+            $result[] = !empty($item['itemcallnumber_display'])
+                ? $item['itemcallnumber_display'] : $item['itemcallnumber'];
         }
+        $str = implode(', ', $result);
         return $str;
     }
 
@@ -1102,10 +1219,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * Translate location name
      *
      * @param string $location Location code
+     * @param string $default  Default value if translation is not available
      *
      * @return string
      */
-    protected function translateLocation($location)
+    protected function translateLocation($location, $default = null)
     {
         $prefix = 'location_';
         if (!empty($this->config['Catalog']['id'])) {
@@ -1114,7 +1232,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         return $this->translate(
             "$prefix$location",
             null,
-            $location
+            null !== $default ? $default : $location
         );
     }
 

@@ -1,0 +1,43 @@
+.collection-list-controls {
+  display: flex;
+  margin-bottom: 0.5em;
+  .filter-input {
+    flex-grow: 1;
+    white-space: nowrap;
+    span {
+      margin-right: 10px;
+    }
+  }
+  .view-option-container, .sort-option-container {
+    margin: auto 0 auto 5px;
+    .view-dropdown i:first-child {
+      margin-right: 5px;
+      @media (max-width: @screen-sm-max) {
+        margin-right: 20px;
+      }
+    }
+  }
+  #keywordFilter_lookfor {
+    width: 100%;
+    @media (min-width: @screen-sm) {
+      &::-moz-placeholder { opacity: 0; }
+      &:-ms-input-placeholder { opacity: 0; }
+      &::-webkit-input-placeholder { opacity: 0; }
+    }
+  }
+}
+
+.template-dir-collection .mobile-navigation {
+  bottom: 44px;
+}
+
+.collectionlist-tab .finna-filters {
+  border-top: 1px solid @gray-lighter;
+  border-bottom: 1px solid @gray-lighter;
+  margin-bottom: 0.5em;
+}
+
+.template-dir-collection .record-accordions.record-tabs {
+  width: 100%;
+  padding: 0;
+}

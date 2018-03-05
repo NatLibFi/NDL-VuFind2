@@ -88,6 +88,7 @@ return [
         'finna-layout.js',
         'finna-openurl.js',
         'finna-common.js',
+        'finna-map.js',
         'finna-map-facet.js',
         'vendor/jquery.dataTables.min.js',
         'vendor/dataTables.bootstrap.min.js',
@@ -105,8 +106,8 @@ return [
         'vendor/bootstrap-slider.min.js',
         'vendor/gauge.min.js',
         'vendor/priority-nav.min.js',
-        'vendor/leaflet.js',
-        'vendor/leaflet.draw.js',
+        'vendor/leaflet.min.js',
+        'vendor/leaflet.draw.min.js',
     ],
     'less' => [
         'active' => false

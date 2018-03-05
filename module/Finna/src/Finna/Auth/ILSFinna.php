@@ -66,6 +66,22 @@ trait ILSFinna
     }
 
     /**
+     * Check if ILS supports password recovery
+     *
+     * @param string $target Login target (MultiILS)
+     *
+     * @return string
+     */
+    public function ilsSupportsPasswordRecovery($target)
+    {
+        $catalog = $this->getCatalog();
+        $recoveryConfig = $catalog->checkFunction(
+            'recoverPassword', ['cat_username' => "$target.123"]
+        );
+        return $recoveryConfig ? true : false;
+    }
+
+    /**
      * Make sure passwords match and fulfill ILS policy
      *
      * @param array $params request parameters
@@ -129,6 +145,11 @@ trait ILSFinna
                 }
             }
             $user->$field = isset($info[$field]) ? $info[$field] : ' ';
+        }
+
+        // Set home library if not already set
+        if (!empty($info['home_library']) && empty($user->home_library)) {
+            $user->home_library = $info['home_library'];
         }
 
         // Update the user in the database, then return it to the caller:

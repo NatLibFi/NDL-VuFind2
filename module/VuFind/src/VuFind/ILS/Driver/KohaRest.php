@@ -104,7 +104,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         'M' => 'Sundry',
         'N' => 'New Card',
         'ODUE' => 'Overdue',
-        'Res' => 'Hold Fee'
+        'Res' => 'Hold Fee',
+        'HE' => 'Hold Expired'
     ];
 
     /**
@@ -342,7 +343,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             true
         );
 
-        if ($code == 401) {
+        if ($code == 401 || $code == 403) {
             return null;
         }
         if ($code != 200) {
@@ -357,7 +358,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             'cat_password' => $password,
             'email' => $result['email'],
             'major' => null,
-            'college' => null
+            'college' => null,
+            'home_library' => $result['branchcode']
         ];
     }
 
@@ -714,14 +716,17 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'create' => $this->dateConverter->convertToDisplayDate(
                     'Y-m-d', $entry['reservedate']
                 ),
-                'expire' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d', $entry['expirationdate']
-                ),
+                'expire' => !empty($entry['expirationdate'])
+                    ? $this->dateConverter->convertToDisplayDate(
+                        'Y-m-d', $entry['expirationdate']
+                    ) : '',
                 'position' => $entry['priority'],
                 'available' => !empty($entry['waitingdate']),
-                'in_transit' => isset($entry['found']) && $entry['found'] == 't',
+                'in_transit' => isset($entry['found'])
+                    && strtolower($entry['found']) == 't',
                 'requestId' => $entry['reserve_id'],
                 'title' => $title,
+                'volume' => $volume,
                 'frozen' => $frozen
             ];
         }
@@ -1066,15 +1071,18 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             if (isset($this->feeTypeMappings[$type])) {
                 $type = $this->feeTypeMappings[$type];
             }
-            $fines[] = [
+            $fine = [
                 'amount' => $entry['amount'] * 100,
                 'balance' => $entry['amountoutstanding'] * 100,
                 'fine' => $type,
                 'createdate' => $createDate,
                 'checkout' => '',
-                'id' => $bibId,
                 'title' => $entry['description']
             ];
+            if (null !== $bibId) {
+                $fine['id'] = $bibId;
+            }
+            $fines[] = $fine;
         }
         return $fines;
     }
@@ -1396,7 +1404,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             throw new ILSException('Problem with Koha REST API.');
         }
         if (!$response->isSuccess()) {
-            if ($response->getStatusCode() == 401) {
+            if (in_array((int)$response->getStatusCode(), [401, 403])) {
                 return false;
             }
             $this->error(

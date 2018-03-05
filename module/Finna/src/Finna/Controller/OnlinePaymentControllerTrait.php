@@ -215,12 +215,17 @@ trait OnlinePaymentControllerTrait
                 return;
             }
 
+            $patronProfile = array_merge(
+                $patron,
+                $catalog->getMyProfile($patron)
+            );
+
             // Start payment
             $result = $paymentHandler->startPayment(
                 $finesUrl,
                 $ajaxUrl,
                 $user,
-                $patron,
+                $patronProfile,
                 $driver,
                 $payableOnline['amount'],
                 $view->transactionFee,
@@ -228,12 +233,10 @@ trait OnlinePaymentControllerTrait
                 $paymentConfig['currency'],
                 $paymentParam
             );
-            if (!$result) {
-                $this->flashMessenger()->addMessage(
-                    'online_payment_failed', 'error'
-                );
-                header("Location: " . $this->getServerUrl('myresearch-fines'));
-            }
+            $this->flashMessenger()->addMessage(
+                $result ? $result : 'online_payment_failed', 'error'
+            );
+            header("Location: " . $this->getServerUrl('myresearch-fines'));
             exit();
         } elseif ($payment) {
             // Payment response received.
