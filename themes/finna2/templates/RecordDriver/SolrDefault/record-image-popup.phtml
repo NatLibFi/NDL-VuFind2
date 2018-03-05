@@ -14,7 +14,15 @@
 <div class="imagepopup-holder <?=$this->escapeHtmlAttr($recordType) ?>" data-type="<?=$this->escapeHtmlAttr($recordType) ?>" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID()) ?>">
   <div class="imagepopup-container">
     <div class="image iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>">
-      <img src="<?=$largeImage ?>" />
+      <div class="image-wrapper">
+        <img src="<?=$largeImage ?>" />
+      </div>
+      <div class="imagepopup-zoom-container">
+        <div class="zoom-out zoom-button"><i class="fa fa-search-minus"></i><span class="sr-only">Zoom out</span></div>
+        <div class="zoom-button"><input class="zoom-range" type="range"></div>
+        <div class="zoom-in zoom-button"><i class="fa fa-search-plus"></i><span class="sr-only">Zoom in</span></div>
+        <div class="zoom-reset zoom-button"><i class="fa fa-arrows-alt"></i><span class="sr-only">Reset</span></div>
+      </div>
     </div>
     <div class="content">
       <h3 class="title"><?=$this->escapeHtml($this->driver->getTitle()) ?></h3>
