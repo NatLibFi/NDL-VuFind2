@@ -143,20 +143,31 @@ finna.imagePopup = (function finnaImagePopup() {
             var popup = $('.imagepopup-holder');
             var type = popup.data("type");
             var id = popup.data("id");
+            var fullImage = false;
+            var fullImageExists = $('.popup-link-buttons .open-link').length;
             var recordIndex = $.magnificPopup.instance.currItem.data.recordInd;
             VuFind.lightbox.bind('.imagepopup-holder');
             $('.imagepopup-holder .image img').one('load', function onLoadImg() {
               $('.imagepopup-holder .image').addClass('loaded');
               initDimensions();
-              $('.imagepopup-holder .image img').addClass('panzoom-elements');
-              $('.panzoom-elements').panzoom({
+              var $panZoomImage = $('.imagepopup-holder .image img')
+              $panZoomImage.addClass('panzoom-image');
+              $panZoomImage.panzoom({
                 contain: 'invert',
                 minScale: 1,
                 maxScale: 5,
+                linearZoom: true,
                 $zoomIn: $(".zoom-in"),
                 $zoomOut: $(".zoom-out"),
                 $zoomRange: $(".zoom-range"),
                 $reset: $(".zoom-reset")
+              }).on('panzoomzoom', function(e, panzoom, scale, opts) {
+                if (fullImageExists && !fullImage && (panzoom.dimensions.width > panzoom.elem.naturalWidth || panzoom.dimensions.height > panzoom.elem.naturalHeight)) {
+                  $panZoomImage.attr('src', $panZoomImage.attr('src').replace("size=large", "size=master").replace("&w=1200", "").replace("&h=1200", ""));
+                }
+                //console.log(e);
+                //console.log(panzoom);
+                //console.log(opts);
               });
             }).each(function triggerImageLoad() {
               if (this.complete) {
