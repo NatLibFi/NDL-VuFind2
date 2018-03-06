@@ -856,8 +856,6 @@ class AjaxController extends \VuFind\Controller\AjaxController
 
         if (isset($config->itemsCarousel)) {
             $feed['itemsCarousel'] = $config->itemsCarousel;
-        } else {
-            $feed['itemsCarousel'] = $items;
         }
 
         $template = $type == 'list' ? 'list' : 'carousel';
