@@ -11,6 +11,8 @@
 ;; Optional settings:
 
 ; items = <items> Number of newest items to read from the feed. By default, all items are shown.
+; itemsCarousel = <itemsCarousel> Number of items to show in carousel. If not set it defaults to
+; <items>
 ; title = "[rss|<translation-key>]" Feed title:
 ;    'rss' = Use <title> element from feed
 ;    '<translation-key>' = Use local translation
