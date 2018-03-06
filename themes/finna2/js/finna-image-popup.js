@@ -161,13 +161,10 @@ finna.imagePopup = (function finnaImagePopup() {
                 $zoomOut: $(".zoom-out"),
                 $zoomRange: $(".zoom-range"),
                 $reset: $(".zoom-reset")
-              }).on('panzoomzoom', function(e, panzoom, scale, opts) {
+              }).on('panzoomzoom', function zoomCheck(e, panzoom) {
                 if (fullImageExists && !fullImage && (panzoom.dimensions.width > panzoom.elem.naturalWidth || panzoom.dimensions.height > panzoom.elem.naturalHeight)) {
                   $panZoomImage.attr('src', $panZoomImage.attr('src').replace("size=large", "size=master").replace("&w=1200", "").replace("&h=1200", ""));
                 }
-                //console.log(e);
-                //console.log(panzoom);
-                //console.log(opts);
               });
             }).each(function triggerImageLoad() {
               if (this.complete) {
