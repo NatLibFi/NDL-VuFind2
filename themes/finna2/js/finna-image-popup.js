@@ -153,9 +153,7 @@ finna.imagePopup = (function finnaImagePopup() {
                 $(".zoom-in").unbind();
                 $('.imagepopup-zoom-container').removeClass('inactive');
                 var $panZoomImage = $('.imagepopup-holder .image img');
-                if ($('.popup-link-buttons .open-link').length) {
-                  $panZoomImage.attr('src', $panZoomImage.attr('src').replace("size=large", "size=master").replace("&w=1200", "").replace("&h=1200", ""));
-                }
+                $panZoomImage.attr('src', $('.imagepopup-holder .original-image-url').attr('href'));
                 $panZoomImage.addClass('panzoom-image');
                 $panZoomImage.panzoom({
                   contain: 'invert',
