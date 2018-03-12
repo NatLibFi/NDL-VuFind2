@@ -144,12 +144,12 @@ class CPU extends BaseHandler
                 }
             }
             if (!empty($fine['title'])) {
+                $fine['title'] = preg_replace(
+                    '/[^a-zåäöA-ZÅÄÖ0-9\s]/', '', $fine['title']
+                );
                 $fineDesc .= ' ('
                     . substr($fine['title'], 0, 100 - 4 - strlen($fineDesc))
                 . ')';
-            }
-            if (!empty($fineDesc)) {
-                $fineDesc = preg_replace('/[^a-zA-Z0-9\s]/', '', $fineDesc);
             }
             $code = isset($productCodeMappings[$fineType])
                 ? $productCodeMappings[$fineType] : $productCode;
