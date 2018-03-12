@@ -25,6 +25,25 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?>">
 
+    <div class="image-information">
+        <div class="cover-wrapper">
+          <? /* Display thumbnail if appropriate: */ ?>
+          <? if ($img): ?>
+            <?=$img->render('record', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]) ?>
+          <? endif;?>
+          <? /* Display qrcode if appropriate: */ ?>
+          <? $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
+          <? if ($QRCode): ?>
+            <div class="visible-print inline-block"><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"/></div>
+          <? endif; ?>
+        </div>
+        <? // if you have a preview tab but want to move or remove the preview link
+           // from this area of the record view, this can be split into
+           // getPreviewData() (should stay here) and
+           // getPreviewLink() (can go in your desired tab) ?>
+        <?=$this->record($this->driver)->getPreviews()?>
+    </div>
+
     <? $urls = $this->record($this->driver)->getLinkDetails(); ?>
     <? if (!empty($videoUrls)): ?>
       <div class="local-available-online-record recordURLs">
@@ -47,25 +66,6 @@
     <? endif; ?>
     
     <?= $this->partial('RecordDriver/SolrDefault/record-audio-player.phtml', ['audioUrls' => $audioUrls]) ?>
-
-    <div class="image-information">
-        <div class="cover-wrapper">
-          <? /* Display thumbnail if appropriate: */ ?>
-          <? if ($img): ?>
-            <?=$img->render('record', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]) ?>
-          <? endif;?>
-          <? /* Display qrcode if appropriate: */ ?>
-          <? $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
-          <? if ($QRCode): ?>
-            <div class="visible-print inline-block"><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"/></div>
-          <? endif; ?>
-        </div>
-        <? // if you have a preview tab but want to move or remove the preview link
-           // from this area of the record view, this can be split into
-           // getPreviewData() (should stay here) and
-           // getPreviewLink() (can go in your desired tab) ?>
-        <?=$this->record($this->driver)->getPreviews()?>
-    </div>
 
     <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
       <div class="organisation-menu">

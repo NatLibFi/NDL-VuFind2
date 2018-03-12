@@ -50,25 +50,6 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?>">
 
-    <? if (!empty($videoUrls)): ?>
-        <? foreach ($videoUrls as $url): ?>
-          <? $description = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']); ?>
-          <? $desc = $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe' ? $this->translate('format_Video') : $description; ?>
-          <div class="video-link-container">
-            <a class="videourl fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
-                <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
-                <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
-                <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-            >
-              <div class="video-icon"><i class="fa fa-play-circle"></i></div>
-              <div class="video-desc"><?=$this->escapeHtml($desc)?></div>
-            </a>
-          </div>
-        <? endforeach; ?>
-    <? endif; ?>
-    
-    <?= $this->partial('RecordDriver/SolrDefault/record-audio-player.phtml', ['audioUrls' => $audioUrls]) ?>
-
     <div class="image-information">
       <div class="cover-wrapper">
         <? /* Display thumbnail if appropriate: */ ?>
@@ -87,6 +68,25 @@
          // getPreviewLink() (can go in your desired tab) ?>
       <?=$this->record($this->driver)->getPreviews()?>
     </div>
+
+    <? if (!empty($videoUrls)): ?>
+        <? foreach ($videoUrls as $url): ?>
+          <? $description = isset($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']); ?>
+          <? $desc = $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe' ? $this->translate('format_Video') : $description; ?>
+          <div class="video-link-container">
+            <a class="videourl fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
+                <? if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<? endif; ?>
+                <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
+                <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
+            >
+              <div class="video-icon"><i class="fa fa-play-circle"></i></div>
+              <div class="video-desc"><?=$this->escapeHtml($desc)?></div>
+            </a>
+          </div>
+        <? endforeach; ?>
+    <? endif; ?>
+    
+    <?= $this->partial('RecordDriver/SolrDefault/record-audio-player.phtml', ['audioUrls' => $audioUrls]) ?>
 
     <div class="record-rating text-left">
       <div class="rating-stars">

@@ -9,9 +9,36 @@
   }
 }
 
+.audio-title-wrapper,
 .audio-player-wrapper {
-  border: @sidebar-border; 
   padding: 5px;
+}
+
+.audio-title-wrapper {
+  background-color: @brand-primary;
+  color: white;
+  border-radius: 5px;
+}
+
+.audio-player-wrapper {
+  border-left: @sidebar-border;
+  border-right: @sidebar-border;
+  border-bottom: @sidebar-border;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.audio-accordion-item {
+  display: none;
+}
+
+.audio-item-wrapper.active {
+  .audio-title-wrapper {
+    border-radius: 5px 5px 0 0;
+  }
+
+  .audio-accordion-item {
+    display: initial;
+  }
 }
 
 .vjs-audio {
