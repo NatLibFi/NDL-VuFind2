@@ -65,7 +65,9 @@
       </div>
     <? endif; ?>
     
-    <?= $this->partial('RecordDriver/SolrDefault/record-audio-player.phtml', ['audioUrls' => $audioUrls]) ?>
+    <? if (!empty($audioUrls)): ?>
+      <?= $this->partial('RecordDriver/SolrDefault/record-audio-player.phtml', ['audioUrls' => $audioUrls]) ?>
+    <? endif; ?>
 
     <? if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
       <div class="organisation-menu">

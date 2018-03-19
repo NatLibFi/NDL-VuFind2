@@ -91,7 +91,9 @@
       <? endforeach; ?>
     <? endif; ?>
     
-    <?= $this->partial('RecordDriver/SolrDefault/record-audio-player.phtml', ['audioUrls' => $audioUrls]) ?>
+    <? if (!empty($audioUrls)): ?>
+      <?= $this->partial('RecordDriver/SolrDefault/record-audio-player.phtml', ['audioUrls' => $audioUrls]) ?>
+    <? endif; ?>
 
     <div class="record-rating">
       <div class="rating-stars">
