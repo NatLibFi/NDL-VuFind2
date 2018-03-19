@@ -1,6 +1,7 @@
 .audio-item-wrapper {
   margin-bottom: 5px;
   padding-bottom: 5px;
+  margin-bottom: 10px;
   ::-moz-focus-inner {
     border:0;
   }
@@ -10,7 +11,7 @@
 }
 
 .audio-title-wrapper,
-.audio-player-wrapper {
+.audio-accordion-item {
   padding: 5px;
 }
 
@@ -18,13 +19,24 @@
   background-color: @brand-primary;
   color: white;
   border-radius: 5px;
+  &::before {
+    content: "\f107";
+    font-family: VideoJS;
+    background: white;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    border-radius: 10px;
+    text-align: center;
+    color: @brand-primary;
+  }
 }
 
-.audio-player-wrapper {
+.audio-accordion-item {
   border-left: @sidebar-border;
   border-right: @sidebar-border;
   border-bottom: @sidebar-border;
-  border-radius: 0px 0px 5px 5px;
+  border-radius: 0 0 5px 5px;
 }
 
 .audio-accordion-item {
@@ -32,13 +44,17 @@
 }
 
 .audio-item-wrapper.active {
+  .audio-accordion-item {
+    display: block;
+  }
+
   .audio-title-wrapper {
     border-radius: 5px 5px 0 0;
   }
+}
 
-  .audio-accordion-item {
-    display: initial;
-  }
+.audio-player-wrapper {
+  margin-bottom: 15px;
 }
 
 .vjs-audio {
