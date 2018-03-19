@@ -144,6 +144,9 @@ class CPU extends BaseHandler
                 }
             }
             if (!empty($fine['title'])) {
+                $fine['title'] = preg_replace(
+                    '/[^\x20-\x7D\å\ä\ö\Å\Ä\Ö]/', '', $fine['title']
+                );
                 $fineDesc .= ' ('
                     . substr($fine['title'], 0, 100 - 4 - strlen($fineDesc))
                 . ')';
