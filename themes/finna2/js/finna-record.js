@@ -154,7 +154,7 @@ finna.record = (function finnaRecord() {
   function initAudioAccordion() {
     $('.audio-accordion .audio-item-wrapper').first().addClass('active');
     $('.audio-accordion .audio-title-wrapper').click(function audioAccordionClicker() {
-      $('.audio-accordion .audio-item-wrapper').removeClass('active');
+      $('.audio-accordion .audio-item-wrapper.active').removeClass('active');
       $(this).parent().addClass('active');
     });
   }

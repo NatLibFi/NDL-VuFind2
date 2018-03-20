@@ -8,6 +8,9 @@
   :focus {
     outline:none;
   }
+  .open-link {
+    font-size: @font-size-small
+  }
 }
 
 .audio-title-wrapper,
@@ -19,6 +22,11 @@
   background-color: @brand-primary;
   color: white;
   border-radius: 5px;
+  position: relative;
+}
+
+.audio-title {
+  margin-left: 25px;
   &::before {
     content: "\f107";
     font-family: VideoJS;
@@ -29,6 +37,9 @@
     border-radius: 10px;
     text-align: center;
     color: @brand-primary;
+    position: absolute;
+    top:  ~"calc(50% - 10px)";
+    left: 5px;
   }
 }
 
@@ -41,6 +52,12 @@
 
 .audio-accordion-item {
   display: none;
+}
+
+.audio-item-wrapper:not(.active) {
+  .audio-title-wrapper {
+    cursor: pointer;
+  }
 }
 
 .audio-item-wrapper.active {
