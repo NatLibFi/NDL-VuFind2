@@ -181,7 +181,7 @@
            $containerID = $this->driver->getContainerRecordID();
          ?>
          <div class="truncate-field">
-           <span class="recordPublished"><?=$this->transEsc('Published in')?></span>
+           <span class="recordPublished"><?=$this->transEsc('Published in')?>: </span>
            <? if ($hostRecords): ?>
              <? foreach ($hostRecords as $i => $hostRecord): ?>
                <?=$i > 0 ? '<br/>' : ''?>
