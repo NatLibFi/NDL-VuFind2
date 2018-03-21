@@ -98,7 +98,7 @@ class Loader extends \VuFind\Cover\Loader
      *
      * @var string
      */
-    protected $datasourceCoverConfig = NULL;
+    protected $datasourceCoverConfig = null;
 
     /**
      * Set datasource spesific cover image configuration.
@@ -110,7 +110,7 @@ class Loader extends \VuFind\Cover\Loader
     public function setDatasourceConfig($providers)
     {
         $this->datasourceCoverConfig = $providers;
-    }    
+    }
 
     /**
      * Set image parameters.

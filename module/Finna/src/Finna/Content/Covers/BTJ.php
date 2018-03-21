@@ -64,7 +64,7 @@ class BTJ extends \VuFind\Content\AbstractCover
         $sizeCodes = [
             'medium' => '04',
             'small' => '06',
-            'large' => '07'          
+            'large' => '07'
         ];
         if (isset($ids['isbn'])) {
             $isbn = $ids['isbn']->get13();
