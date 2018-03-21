@@ -12,7 +12,7 @@
   <? if (!isset($this->layout()->renderingError)): ?>
     <div class="collapse navbar-collapse" id="header-collapse">
       
-      <ul role="menubar" class="nav navbar-nav">
+      <ul role="menubar" class="nav navbar-nav navbar-main">
         <? foreach ($this->navibar()->getMenuItems($this->layout()->userLang) as $key => $val): ?>
         <? if (count($val['items']) > 1): ?>
         <li role="menuitem" class="dropdown" id="<?= $val['label'] ?>">

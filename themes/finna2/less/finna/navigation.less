@@ -351,7 +351,10 @@
     flex-shrink: 1;
     float: initial;
     margin: 0;
-    padding-bottom: @navbar-height / 4;
+
+    &.navbar-main {
+      margin-bottom: @navbar-height / 4;
+    }
   }
 
   .btn {
@@ -587,7 +590,6 @@
     .navbar-nav.lang {
       flex-grow: 0;
       flex-shrink: 0;
-      padding-bottom: 0;
     }
   }
 }
