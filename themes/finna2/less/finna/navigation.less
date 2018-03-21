@@ -252,9 +252,14 @@
   > li > a {
     padding-top: @navbar-padding-vertical;
     padding-bottom: @navbar-padding-vertical;
-    line-height: @navbar-height;
+    line-height: @navbar-height / 2;
+    margin-top: @navbar-height / 4;
+    margin-bottom: @navbar-height / 4;
     font-size: @navbar-font-size;
     font-weight: @navbar-font-weight;
+    @media (min-width:@screen-md-min) {
+      margin-bottom: 0;
+    }
   }
   &.language:not(.lang-1):before {
     color: @navbar-default-link-color;
@@ -264,7 +269,8 @@
     }
     height: ((@navbar-height) - 24);
     margin-top: ((@navbar-height - (@navbar-height - 24)) / 2);
-    float: left;
+    flex-grow: 1;
+    flex-shrink: 1;
   }
   &.lang-1 {
     margin-left: 10px;
@@ -572,9 +578,12 @@
     }
     .navbar-collapse {
       flex: 1;
+      display: flex !important; // Needed to override bootstrap defaults
+      padding-bottom: @navbar-height / 4;
     }
     .navbar-nav.lang {
-      float: right;
+      flex-grow: 0;
+      flex-shrink: 0;
     }
   }
 }
