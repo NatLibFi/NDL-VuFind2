@@ -68,7 +68,8 @@ class BTJ extends \VuFind\Content\AbstractCover
         ];
         if (isset($ids['isbn'])) {
             $isbn = $ids['isbn']->get13();
-            return "https://armas.btj.fi/request.php?id=$key&pid=$isbn&ftype=$sizeCodes[$size]";
+            return "https://armas.btj.fi/request.php?"
+                . "id=$key&pid=$isbn&ftype=$sizeCodes[$size]";
         }
         return false;
     }

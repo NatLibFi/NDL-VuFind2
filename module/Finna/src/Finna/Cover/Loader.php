@@ -103,7 +103,7 @@ class Loader extends \VuFind\Cover\Loader
     /**
      * Set datasource spesific cover image configuration.
      *
-     * @param string $providers   Comma separated list of cover image providers
+     * @param string $providers Comma separated list of cover image providers
      *
      * @return void
      */
