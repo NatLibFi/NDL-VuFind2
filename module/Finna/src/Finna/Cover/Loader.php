@@ -38,6 +38,7 @@ use VuFindCode\ISBN;
  * @package  Cover_Generator
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Kalle Pyykkönen <kalle.pyykkonen@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/configuration:external_content Wiki
  */
@@ -91,6 +92,25 @@ class Loader extends \VuFind\Cover\Loader
      * @var boolean
      */
     protected $size = 'medium';
+
+    /**
+     * Datasource spesific cover image configuration
+     *
+     * @var string
+     */
+    protected $datasourceCoverConfig = NULL;
+
+    /**
+     * Set datasource spesific cover image configuration.
+     *
+     * @param string $providers   Comma separated list of cover image providers
+     *
+     * @return void
+     */
+    public function setDatasourceConfig($providers)
+    {
+        $this->datasourceCoverConfig = $providers;
+    }    
 
     /**
      * Set image parameters.
@@ -237,9 +257,11 @@ class Loader extends \VuFind\Cover\Loader
         if (empty($ids)) {
             return false;
         }
-
-        $providers = isset($this->config->Content->coverimages)
+        $datasourceProviders = isset($this->datasourceCoverConfig)
+            ? explode(',', $this->datasourceCoverConfig) : [];
+        $commonProviders = isset($this->config->Content->coverimages)
             ? explode(',', $this->config->Content->coverimages) : [];
+        $providers = array_merge($datasourceProviders, $commonProviders);
 
         // Try to find provider-specific cache file
         foreach ($providers as $provider) {

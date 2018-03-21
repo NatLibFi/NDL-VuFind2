@@ -148,6 +148,13 @@ class CoverController extends \VuFind\Controller\CoverController
                 $this->serviceLocator->get('VuFind\Http')->createClient(),
                 $cacheDir
             );
+            // Cover image configuration for current datasource
+            $recordId = $this->params()->fromQuery('recordid');
+            $datasourceId = strtok($recordId, '.');
+            $datasourceCovers = 
+                isset($this->getConfig('datasources')->$datasourceId->coverimages)
+                    ? $this->getConfig('datasources')->$datasourceId->coverimages : NULL;
+            $this->loader->setDatasourceConfig($datasourceCovers);
             \VuFind\ServiceManager\Initializer::initInstance(
                 $this->loader, $this->serviceLocator
             );

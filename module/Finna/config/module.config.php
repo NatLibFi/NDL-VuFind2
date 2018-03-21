@@ -336,7 +336,8 @@ $config = [
             'content_covers' => [
                 'invokables' => [
                     'bookyfi' => 'Finna\Content\Covers\BookyFi',
-                    'natlibfi' => 'Finna\Content\Covers\NatLibFi'
+                    'natlibfi' => 'Finna\Content\Covers\NatLibFi',
+                    'btj' => 'Finna\Content\Covers\BTJ',
                 ],
             ],
             'recorddriver' => [
