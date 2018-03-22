@@ -36,15 +36,6 @@
             max-width: 49%;
         }
         & .match {
-            @media (min-width: @screen-sm-min) {
-                &:before {
-                    content: '\2014';
-                    position: absolute;
-                    top: 16%;
-                    left: -16px;
-                    color: @gray-mid-light;
-                }
-            }
             @media (max-width: @screen-xs-max) {
                 margin: 15px 0px 30px;
                 text-align: center;
@@ -68,32 +59,6 @@
             & select:first-child {
                 display: block;
             }
-          }
-        }
-        .search {
-          @media (min-width: @screen-sm-min) {
-              border-right: 1px solid @gray-mid-light;
-              &:first-of-type:after {
-                color: @gray-mid-light;
-                content: '\2014';
-                position: absolute;
-                right: 15px;
-                height: 100%;
-                top: -10px;
-              }
-              &:last-of-type:after {
-                color: @gray-mid-light;
-                content: '\2014';
-                position: absolute;
-                right: 15px;
-                margin-top: 26px;
-              }
-              &:only-of-type {
-                  border-right: none;
-                  &:after {
-                    content: '';
-                  }
-              }
           }
         }
         & .primo-advanced-search-fields {
@@ -223,8 +188,6 @@
     .adv-group-match{
       @media (min-width: @screen-sm){
         width: 40%;
-        float: left;
-        left: 60%;
         position: relative;
         padding-left: 15px;
       }
@@ -232,8 +195,6 @@
     .adv-group-terms{
       @media (min-width: @screen-sm){
         width: 60%;
-        right: 40%;
-        float: left;
         position: relative;
         padding-right: 15px;
       }
