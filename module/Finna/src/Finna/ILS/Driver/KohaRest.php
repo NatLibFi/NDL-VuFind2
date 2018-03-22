@@ -653,14 +653,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * Return total amount of fees that may be paid online.
      *
      * @param array $patron Patron
+     * @param array $fines  Patron's fines
      *
      * @throws ILSException
      * @return array Associative array of payment info,
      * false if an ILSException occurred.
      */
-    public function getOnlinePayableAmount($patron)
+    public function getOnlinePayableAmount($patron, $fines)
     {
-        $fines = $this->getMyFines($patron);
         if (!empty($fines)) {
             $amount = 0;
             foreach ($fines as $fine) {
@@ -689,15 +689,17 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      *
      * This is called after a successful online payment.
      *
-     * @param array  $patron        Patron.
-     * @param int    $amount        Amount to be registered as paid
-     * @param string $transactionId Transaction ID
+     * @param array  $patron            Patron
+     * @param int    $amount            Amount to be registered as paid
+     * @param string $transactionId     Transaction ID
+     * @param int    $transactionNumber Internal transaction number
      *
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId)
-    {
+    public function markFeesAsPaid($patron, $amount, $transactionId,
+        $transactionNumber
+    ) {
         $request = [
             'amount' => $amount / 100,
             'note' => "Online transaction $transactionId"
@@ -819,6 +821,80 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         return [
             'success' => true
         ];
+    }
+
+    /**
+     * Get Patron Holds
+     *
+     * This is responsible for retrieving all holds by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's holds on success.
+     */
+    public function getMyHolds($patron)
+    {
+        $result = $this->makeRequest(
+            ['v1', 'holds'],
+            ['borrowernumber' => $patron['id']],
+            'GET',
+            $patron
+        );
+        if (!isset($result)) {
+            return [];
+        }
+        $holds = [];
+        foreach ($result as $entry) {
+            $bibId = isset($entry['biblionumber']) ? $entry['biblionumber'] : null;
+            $itemId = isset($entry['itemnumber']) ? $entry['itemnumber'] : null;
+            $title = '';
+            $volume = '';
+            $publicationYear = '';
+            if ($itemId) {
+                $item = $this->getItem($itemId);
+                $bibId = $item['biblionumber'];
+                $volume = $item['enumchron'];
+            }
+            if (!empty($bibId)) {
+                $bib = $this->getBibRecord($bibId);
+                $title = isset($bib['title']) ? $bib['title'] : '';
+                if (!empty($bib['title_remainder'])) {
+                    $title .= ' ' . $bib['title_remainder'];
+                    $title = trim($title);
+                }
+            }
+            $frozen = false;
+            if (!empty($entry['suspend'])) {
+                $frozen = !empty($entry['suspend_until']) ? $entry['suspend_until']
+                    : true;
+            }
+            $available = !empty($entry['waitingdate']);
+            $inTransit = isset($entry['found'])
+                && strtolower($entry['found']) == 't';
+            $holds[] = [
+                'id' => $bibId,
+                'item_id' => $itemId ? $itemId : $entry['reserve_id'],
+                'location' => $entry['branchcode'],
+                'create' => $this->dateConverter->convertToDisplayDate(
+                    'Y-m-d', $entry['reservedate']
+                ),
+                'expire' => !empty($entry['expirationdate'])
+                    ? $this->dateConverter->convertToDisplayDate(
+                        'Y-m-d', $entry['expirationdate']
+                    ) : '',
+                'position' => $entry['priority'],
+                'available' => $available,
+                'in_transit' => $inTransit,
+                'requestId' => $entry['reserve_id'],
+                'title' => $title,
+                'volume' => $volume,
+                'frozen' => $frozen,
+                'is_editable' => !$available && !$inTransit
+            ];
+        }
+        return $holds;
     }
 
     /**
