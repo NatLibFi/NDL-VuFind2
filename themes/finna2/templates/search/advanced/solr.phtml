@@ -55,15 +55,14 @@
                 <? endforeach; ?>
               <? endif; ?>
             </select>
+            <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_' . $this->escapeHtmlAttr(str_replace(' ', '', $field)))?></p></div>
           </div>
         <? endforeach; ?>
-        <div><p class="information-text"><i class="fa fa-info2"></i> <?=$this->transEsc('advanced_search_information_text')?></p></div>
-    </div>
-      <div class="clearfix"></div>
-      <div class="ranges-container">
-        <?=$this->render('search/advanced/ranges.phtml', ['searchClassId' => $searchClassId, 'ranges' => $daterange])?>
       </div>
     </fieldset>
+    <div class="ranges-container well limit-to">
+      <?=$this->render('search/advanced/ranges.phtml', ['searchClassId' => $searchClassId, 'ranges' => $daterange])?>
+    </div>
     <? if (!empty($searchFilters) || !empty($usedCheckboxFilters)): ?>
       <h4><?=$this->transEsc("adv_search_filters")?></h4>
       <fieldset class="well limit-to">
@@ -80,6 +79,7 @@
   <div class="map-container">
     <fieldset class="well map">
       <?=$this->render('search/advanced/map.phtml', ['searchClassId' => $searchClassId, 'saved' => $this->saved])?>
+      <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_map')?></p></div>
     </fieldset>
   </div>
 </div>
