@@ -22,10 +22,12 @@
   </div>
   <div>
     <div>
-    <fieldset class="well limit-to">
-      <? if (!empty($this->checkboxFacets)): ?>
+    <? if (!empty($this->checkboxFacets)): ?>
+      <div class="checkboxFilter">
         <?=$this->render('search/advanced/checkbox-filters.phtml')?>
-      <? endif; ?>
+      </div>
+    <? endif; ?>
+    <fieldset class="well limit-to">
       <div>
         <? foreach ($this->facetList as $field => $list): ?>
           <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
