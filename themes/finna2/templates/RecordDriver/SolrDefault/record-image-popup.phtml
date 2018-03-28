@@ -11,6 +11,7 @@
 <? $formats = $this->driver->tryMethod('getFormats'); ?>
 <? $translatedFormat = $this->transEsc(end($formats)); ?>
 <? $recordType = $this->driver->tryMethod('getRecordType'); ?>
+<? $largeImageLayout = !$noImage && in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward', 'ead']); ?>
 <div class="imagepopup-holder <?=$this->escapeHtmlAttr($recordType) ?>" data-type="<?=$this->escapeHtmlAttr($recordType) ?>" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID()) ?>">
   <div class="imagepopup-container">
     <div class="image iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>">
@@ -19,11 +20,13 @@
           <img src="<?=$largeImage ?>" />
         </div>
       </div>
-      <div class="imagepopup-zoom-container inactive">
-        <div class="zoom-in zoom-button"><i class="fa fa-zoom-in" aria-hidden="true"></i><span class="sr-only">Zoom in</span></div>
-        <div class="zoom-out zoom-button"><i class="fa fa-zoom-out" aria-hidden="true"></i><span class="sr-only">Zoom out</span></div>
-        <div class="zoom-reset zoom-button"><i class="fa fa-zoom-100" aria-hidden="true"></i><span class="sr-only">Reset</span></div>
-      </div>
+      <? if ($largeImageLayout): ?>
+        <div class="imagepopup-zoom-container inactive">
+          <div class="zoom-in zoom-button"><i class="fa fa-zoom-in" aria-hidden="true"></i><span class="sr-only">Zoom in</span></div>
+          <div class="zoom-out zoom-button"><i class="fa fa-zoom-out" aria-hidden="true"></i><span class="sr-only">Zoom out</span></div>
+          <div class="zoom-reset zoom-button"><i class="fa fa-zoom-100" aria-hidden="true"></i><span class="sr-only">Reset</span></div>
+        </div>
+      <? endif; ?>
     </div>
     <div class="content">
       <h3 class="title"><?=$this->escapeHtml($this->driver->getTitle()) ?></h3>
