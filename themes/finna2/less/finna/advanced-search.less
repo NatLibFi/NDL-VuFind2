@@ -74,14 +74,17 @@
     }
     & .match {
       @media (max-width: @screen-xs-max) {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
       }
     }
     & .adv-group-close {
       position: absolute;
-      bottom: 15px;
+      bottom: 20px;
       right: 15px;
       z-index: 1;
+      @media (max-width: @screen-xs-max) {
+        font-size: @font-size-small;
+      }
     }
     .adv-search, .primo-advanced-search-fields {
       margin-bottom: 0px;
@@ -91,7 +94,6 @@
       }
       .close {opacity: .8;}
       @media (max-width: @screen-xs-max) {
-        margin-bottom: 10px;
         & select:first-child {
           display: block;
         }
@@ -323,6 +325,24 @@
   }
   .finna-main-tabs {
     padding-top: 15px;
+  }
+  .well {
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+    @media (max-width: @screen-xs-max) {
+      padding: 10px;
+    }
+  }
+  .checkboxFilter {
+    .checkbox {
+      padding-left: 0;
+    }
+  }
+  .slider-container {
+    @media (max-width: @screen-xs-max) {
+      padding: 5px;
+    }
   }
 }
 
