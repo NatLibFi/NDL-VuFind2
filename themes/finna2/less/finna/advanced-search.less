@@ -11,7 +11,8 @@
       bottom: -15px;
       left: 15px;
       width: 60px;
-      background: darken(@brand-primary, 12%);
+      background: @brand-primary;
+      color: white;
       line-height: 64px;
       text-align: center;
       font-size: 32px;
@@ -45,6 +46,11 @@
     position: sticky;
     bottom: 0;
     z-index: 9999;
+    &.primo-search-bar {
+      text-align: right;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+    }
   }
   & .responsive-field {
     min-width: 45%;
@@ -54,7 +60,7 @@
   }
   .adv-group {
     position: relative;
-    background: #f5f5f5;
+    background: @well-bg;
     border-radius: @border-radius-base;
     margin-top: 5px;
     margin-bottom: .5em;
@@ -98,7 +104,8 @@
     }
     & .primo-add-search {
       display: inline-block;
-      margin-top: 4px;
+      margin-top: 10px;
+      padding: 6px;
     }
     [class^=col-] {padding-left: 15px;}
   }
@@ -273,13 +280,12 @@
     &::before {
       height: 24px;
       width: 24px;
-      border: 2px solid @brand-primary;
+      font-size: 24px;
       color: @brand-primary;
       display: block;
       text-align: center;
-      border-radius: 12px;
       font-family: icomoon;
-      content: "\e601";
+      content: "\e918";
       line-height: 24px;
       position: absolute;
       // top: ~"calc(50% - 12px)";
@@ -287,8 +293,8 @@
     }
   }
   .finna-main-header {
-    background-color: @brand-primary;
-    color: white;
+    background-color: @well-bg;
+    color: @gray;
     .container {
       position: relative;
     }
@@ -315,25 +321,8 @@
       }
     }
   }
-  .checkboxFilter {
-    margin-bottom: 20px;
-    .checkbox {
-      padding-left: 0;
-      label {
-        display: block;
-        line-height: 24px;
-        height: 24px;
-        position: relative;
-        padding-left: 30px;
-        &::before {
-          font-size: 30px;
-          position: absolute;
-          top: 2px;
-          left: 0;
-          color: @gray-lighter;
-        }
-      }
-    }
+  .finna-main-tabs {
+    padding-top: 15px;
   }
 }
 

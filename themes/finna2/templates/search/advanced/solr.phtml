@@ -27,9 +27,9 @@
         <?=$this->render('search/advanced/checkbox-filters.phtml')?>
       </div>
     <? endif; ?>
-    <fieldset class="well limit-to">
-      <div>
-        <? foreach ($this->facetList as $field => $list): ?>
+    <? foreach ($this->facetList as $field => $list): ?>
+      <fieldset class="well limit-to">
+        <div>
           <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
             <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>"><?=$this->transEsc($list['label'])?>:</label>
             <select class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>" name="filter[]"  multiple="multiple" >
@@ -59,9 +59,9 @@
             </select>
             <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_' . $this->escapeHtmlAttr(str_replace(' ', '', $field)))?></p></div>
           </div>
-        <? endforeach; ?>
-      </div>
-    </fieldset>
+        </div>
+      </fieldset>
+    <? endforeach; ?>
     <div class="ranges-container well limit-to">
       <?=$this->render('search/advanced/ranges.phtml', ['searchClassId' => $searchClassId, 'ranges' => $daterange])?>
     </div>
