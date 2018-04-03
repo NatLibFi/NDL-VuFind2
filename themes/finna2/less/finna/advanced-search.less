@@ -5,7 +5,7 @@
     font-weight: 500;
     &::before {
       font-family: icomoon;
-      content: "\e600";
+      content: "\e91e";
       position: absolute;
       top: -15px;
       bottom: -15px;
@@ -16,6 +16,13 @@
       line-height: 64px;
       text-align: center;
       font-size: 32px;
+      @media (max-width: @screen-xs-max) {
+        top: -7px;
+        bottom: -7px;
+        width: 48px;
+        font-size: @font-size-base * 1.5;
+        line-height: 48px;
+      }
     }
   }
   h4 {
@@ -287,7 +294,7 @@
       display: block;
       text-align: center;
       font-family: icomoon;
-      content: "\e918";
+      content: "\e00f";
       line-height: 24px;
       position: absolute;
       // top: ~"calc(50% - 12px)";
@@ -297,6 +304,9 @@
   .finna-main-header {
     background-color: @well-bg;
     color: @gray;
+    @media (max-width: @screen-xs-max) {
+      padding: 7px 0;
+    }
     .container {
       position: relative;
     }
@@ -343,6 +353,9 @@
     @media (max-width: @screen-xs-max) {
       padding: 5px;
     }
+  }
+  .tooltip-pci-advanced {
+    line-height: 22px;
   }
 }
 
