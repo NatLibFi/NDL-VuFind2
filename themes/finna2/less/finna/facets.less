@@ -61,7 +61,6 @@
   .usage-right-group {
     padding: 3px 8px 3px 10px;
     @media(max-width:@screen-xs-max) {
-      font-size: 1.15em;
       padding: 6px 10px 3px 14px;
     }
   }
@@ -110,14 +109,20 @@
   // Hierarchical facets
   .jstree-node .facet {
     border: none;
+    &:not(.excludable) .badge {
+      margin-right: 10px;
+    }
   }
   .jstree-facet {
     .jstree-anchor {
       padding: 0;
     }
-    .list-group-item {
-      padding: 2px 0 0 10px;
+    .jstree-node {
+      padding: 3px 0 3px 10px;
       border: 0;
+      &.jstree-leaf {
+        padding-left: 0;
+      }
     }
     .jstree-container-ul {
       background: transparent;
@@ -136,7 +141,7 @@
     padding-left: 10px;
   }
   .jstree-children {
-    padding-left: 18px;
+    padding-left: 14px;
   }
 
   .jstree-facet .jstree-container-ul .jstree-icon {
@@ -164,17 +169,26 @@
   }
 
   // tablet & mobile facet adjustments
+  @media (max-width: @screen-xs-max) {
+    & .facet:not(.facet-group), .usage-right-group {
+      font-size: 1.15em;
+    }
+    .jstree-facet .list-group-item {
+      padding: 6px 0 3px 10px;
+    }
+
+  }
   @media (max-width: @screen-sm-max) {
     .datepicker.datepicker-dropdown {
         font-size: 1.4em;
     }
-    .jstree-facet .jstree-container-ul .jstree-icon {
-      font-size: 1.2em;
-      margin-left: -5px;
+    .jstree-facet .jstree-container-ul .jstree-icon:before {
+      font-size: 1.4em;
+      margin-left: -17px;
       margin-top: -3px;
-      @media(max-width: @screen-xs-max) {
+      @media (max-width: @screen-xs-max) {
           margin-top: -5px;
-          font-size: 1.3em;
+          font-size: 1.7em;
       }
     }
   }
@@ -250,12 +264,6 @@ span.badge.cb-facet {
     }
   }
   .collapsed::after {content: '\25BC';}
-
-  .facetOR .text {
-    display: inline-block;
-    padding-left: 0.5rem;
-    text-indent: -0.5rem;
-  }
 
   .excludable {
     display: flex;

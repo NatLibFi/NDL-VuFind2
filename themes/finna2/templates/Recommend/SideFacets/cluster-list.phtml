@@ -1,6 +1,6 @@
 <? if (!empty($cluster['list'])): ?>
 <? $idAndClass = 'id="more-narrowGroupHidden-' . $this->escapeHtmlAttr($this->title) . '" class="facet narrow-toggle less-narrow-toggle"'; ?>
-<? $moreClass = 'narrowGroupHidden-' . $this->escapeHtmlAttr($this->title) . ' hidden less-narrow-toggle'; ?>
+<? $moreClass = 'narrowGroupHidden-' . $this->escapeHtmlAttr($this->title) . ' hidden'; ?>
 <? foreach ($this->cluster['list'] as $i => $thisFacet): ?>
   <?
     if(empty($thisFacet['displayText'])) {
