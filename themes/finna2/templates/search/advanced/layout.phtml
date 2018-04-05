@@ -142,7 +142,7 @@
       </div>
       <div class="group-join-container">
         <div id="groupJoin" class="form text-center">
-          <label for="groupJoinOptions" class="sr-only"><?=$this->transEsc("search_match")?>:</label>
+          <label for="groupJoinOptions"><?=$this->transEsc("adv_search_group_join")?>:</label>
           <select id="groupJoinOptions" name="join" class="form-control form-inline">
             <option value="AND"<? if($searchDetails && $searchDetails->getOperator() == 'ALL'):?> selected<?endif?>><?= $this->transEsc('group_AND') ?></option>
             <option value="OR"<? if($searchDetails && $searchDetails->getOperator() == 'OR'):?> selected<?endif?>><?= $this->transEsc('group_OR') ?></option>
