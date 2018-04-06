@@ -79,9 +79,21 @@ mark, .highlight {
     display: block;
   }
   & .list-view {
-    & .more-link, & .less-link {
+    & .more-link, & .less-link,  & .less-link-top {
       padding-bottom: 0;
     }
+  }
+  // .media and .media-body code added to fix IE11 display: table-cell issues
+  .media {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+    @media(max-width: @screen-sm) {
+      display: block;
+    }
+  }
+  .media-body {
+    width: auto;
   }
 }
 .dateyeartype {
@@ -352,13 +364,13 @@ mark, .highlight {
   & .search-form-container {
     padding-top: 2em;
     padding-bottom: 2em;
-    #gradient.vertical(@background-start-color; @background-end-color; @background-start-percent; @background-end-percent);                    
+    #gradient.vertical(@background-start-color; @background-end-color; @background-start-percent; @background-end-percent);
   }
   & .searchContent {
     -webkit-overflow-scrolling: touch;
     background-size: cover;
     background-position: center top;
-    background-color: @background-color;    
+    background-color: @background-color;
     background-image: @background-image-url;
     background-repeat: no-repeat;
     @media(max-width:@screen-sm-max) {
