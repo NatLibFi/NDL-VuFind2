@@ -4,17 +4,17 @@
   $this->layout()->finnaMainHeader = '<div><h3>' . $this->title . '</h3></div>';
 
   $this->headLink()->appendStylesheet('vendor/L.Control.Locate.min.css');
-  $this->headScript()->appendFile('vendor/L.Control.Locate.min.js');
+  $this->headScript()->appendFile('vendor/L.Control.Locate.min.js', '');
 
-  $this->headScript()->appendFile('vendor/jquery-ui-custom.min.js');
+  $this->headScript()->appendFile('vendor/jquery-ui-custom.min.js', '');
 
-  $this->headScript()->appendFile('finna-organisation-info.js');
+  $this->headScript()->appendFile('finna-organisation-info.js', '');
   if ($this->consortiumInfo) {
-    $this->headScript()->appendFile('finna-organisation-info-page-consortium.js');
+    $this->headScript()->appendFile('finna-organisation-info-page-consortium.js', '');
   }
-  $this->headScript()->appendFile('finna-organisation-info-widget.js');
-  $this->headScript()->appendFile('finna-organisation-info-page.js');
-  $this->headScript()->appendFile('finna-organisation-map-leaflet.js');
+  $this->headScript()->appendFile('finna-organisation-info-widget.js', '');
+  $this->headScript()->appendFile('finna-organisation-info-page.js', '');
+  $this->headScript()->appendFile('finna-organisation-map-leaflet.js', '');
 
   $this->jsTranslations()->addStrings([
      'map_my_location' => 'map_my_location',
@@ -39,7 +39,7 @@ $(document).ready(function() {
    });
 });
 JS;
-   $this->headScript()->appendScript($setupJS);
+   $this->headScript()->appendScript($setupJS, '');
 ?>
 
 <? if ($template = $this->content()->findTemplateForLng('content/Additions/organisation-page-start')): ?>
@@ -55,32 +55,30 @@ JS;
   </div>
 
   <? if ($this->consortiumInfo): ?>
-     <? $building = "0/{$this->id}/"; ?>
-     <div class="consortium-navigation hide">
-       <ul class="consortium-navigation-list" data-spy="affix" data-offset-top="310">
-          <li class="scroll building hide"></li>
-          <li class="scroll usage hide"><?=$this->transEsc('organisation_info_navi_usage')?></li>
-          <li class="scroll service hide"><?=$this->transEsc('organisation_info_navi_service')?></li>
-       </ul>
-     </div>
+    <? $building = "0/{$this->id}/"; ?>
+    <div class="consortium-navigation hide">
+      <ul class="consortium-navigation-list" data-spy="affix" data-offset-top="310">
+        <li class="scroll building hide"></li>
+        <li class="scroll usage hide"><?=$this->transEsc('organisation_info_navi_usage')?></li>
+        <li class="scroll service hide"><?=$this->transEsc('organisation_info_navi_service')?></li>
+      </ul>
+    </div>
   <? endif; ?>
 
   <? if ($this->consortiumInfo): ?>
-     <div class="consortium-info hide navi-section" id="consortium-info-section">
-       <div>
-         <h1 class="name"></h1>
-         <div class="consortium-info-row">
-           <div class="consortium-logo hide"></div>
-           <div class="description"><?=$this->translate('organisation_no_consortium_info_html');?></div>
-         </div>
-       </div>
-       <div class="homepage hide"></div>
-       <div class="organisation-list" data-rows="1"><ul></ul></div>
-     </div>
+    <div class="consortium-info hide navi-section" id="consortium-info-section">
+      <div>
+        <h1 class="name"></h1>
+        <div class="consortium-info-row">
+          <div class="consortium-logo hide"></div>
+          <div class="description"><?=$this->translate('organisation_no_consortium_info_html');?></div>
+        </div>
+      </div>
+      <div class="homepage hide"></div>
+      <div class="organisation-list" data-rows="1"><ul></ul></div>
+    </div>
 </div>
 <!-- close divs organisation-info-wrapper, row and container to make layout fluid again -->
-</div>
-</div>
 </div>
 <!-- add fluid-odd wrapper to make background background-color -->
 <div class="fluid-odd">
@@ -104,7 +102,6 @@ JS;
               <span class="gauge-value"><span class="val"></span> %</span>
               <span class="gauge-label"><?=$this->translate('organisation_info_coverage')?></span>
             </div>
-          </div>
           </div>
         </div>
         <div class="sidebar right">
@@ -193,7 +190,7 @@ JS;
   <div class="office-quick-information info-element hide">
     <div class="office-title">
       <h2 class="service-title"></h2>
-      <p><span class="office-links address"></span> <a href="#" target="_blank" class="office-links route info-element"><i class="fa fa-bus"></i> <?=$this->translate('organisation_info_route')?></a> <a href="" class="office-links reserve-computer info-element"><i class="fa fa-desktop"></i> <?=$this->translate('organisation_info_reserve_computer')?></a> <span class="office-links office-website info-element"><a href="#" target="_blank"><i class="fa fa-home"></i> <?=$this->translate('organisation_info_homepage')?></a><span></p>
+      <p><span class="office-links address"></span> <a href="#" target="_blank" class="office-links route info-element"><i class="fa fa-bus"></i> <?=$this->translate('organisation_info_route')?></a> <a href="" class="office-links reserve-computer info-element"><i class="fa fa-desktop"></i> <?=$this->translate('organisation_info_reserve_computer')?></a> <span class="office-links office-website info-element"><a href="#" target="_blank"><i class="fa fa-home"></i> <?=$this->translate('organisation_info_homepage')?></a></span></p>
       <p class="office-links email info-element"><i class="fa fa-envelope"></i> <span class="email"></span></p>
     </div>
     <div class="open-closed-info">
@@ -217,7 +214,7 @@ JS;
           <a data-toggle="collapse" href="#collapse1"><?=$this->translate('organisation_info_general')?></a>
         </h4>
         <div id="collapse1" class="panel-collapse collapse in">
-          <img class="building-image" src="#" />
+          <img class="building-image" src="#" alt="" />
           <p class="building-name info-element"></p>
           <p class="building-year info-element"><?=$this->translate('organisation_info_building_year')?>: <span></span></p>
           <p class="office-description description-long info-element"></p>
@@ -274,9 +271,8 @@ JS;
 <!-- open closed tags to make valid html, if consortiumInfo -->
 <? if ($this->consortiumInfo): ?>
    <div class="container">
-     <div>
 <? endif; ?>
-
+</div>
 <? if ($template = $this->content()->findTemplateForLng('content/Additions/organisation-page-end')): ?>
    <?=$this->render('content/Additions/organisation-page-end.phtml')?>
 <? endif; ?>
