@@ -30,6 +30,7 @@
 namespace Finna\Controller;
 
 use Finna\Cover\Loader;
+use VuFindCode\ISBN;
 
 /**
  * Generates record images.
@@ -163,6 +164,7 @@ class CoverController extends \VuFind\Controller\CoverController
                 $this->params()->fromQuery('recordid'), 'Solr'
             );
             $recordISBN = $driver->getCleanISBN();
+            $recordISBN = new ISBN($recordISBN);
             $this->loader->setRecordIdentifiers(['recordisbn' => $recordISBN]);
         }
         return $this->loader;

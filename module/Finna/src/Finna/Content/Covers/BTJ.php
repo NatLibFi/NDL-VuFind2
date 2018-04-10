@@ -67,7 +67,7 @@ class BTJ extends \VuFind\Content\AbstractCover
             'large' => '07'
         ];
         if (isset($ids['recordisbn'])) {
-            $isbn = $ids['isbn']->get13();
+            $isbn = $ids['recordisbn']->get13();
             return "https://armas.btj.fi/request.php?"
                 . "id=$key&pid=$isbn&ftype=$sizeCodes[$size]";
         }
