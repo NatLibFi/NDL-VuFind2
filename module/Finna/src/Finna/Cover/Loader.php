@@ -101,6 +101,25 @@ class Loader extends \VuFind\Cover\Loader
     protected $datasourceCoverConfig = null;
 
     /**
+     * Identifiers from current record
+     *
+     * @var Array
+     */
+    protected $recordIdentifiers = null;
+
+    /**
+     * Set identifiers obtained from indexed record.
+     *
+     * @param Array $ids Array of identifiers.
+     *
+     * @return void
+     */
+    public function setRecordIdentifiers($ids)
+    {
+        $this->recordIdentifiers = $ids;
+    }
+
+    /**
      * Set datasource spesific cover image configuration.
      *
      * @param string $providers Comma separated list of cover image providers
@@ -254,6 +273,10 @@ class Loader extends \VuFind\Cover\Loader
     {
         // Check that we have at least one valid identifier:
         $ids = $this->getIdentifiers();
+        if ($this->recordIdentifiers) {
+            $ids = array_merge($ids, $this->recordIdentifiers);
+        }
+
         if (empty($ids)) {
             return false;
         }
