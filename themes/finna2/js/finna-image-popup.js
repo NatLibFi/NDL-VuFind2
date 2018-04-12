@@ -159,11 +159,26 @@ finna.imagePopup = (function finnaImagePopup() {
                   contain: 'invert',
                   minScale: 1,
                   maxScale: 5,
-                  linearZoom: true,
-                  $zoomIn: $(".zoom-in"),
-                  $zoomOut: $(".zoom-out"),
+                  increment: 0.3,
+                  exponential: false,
                   $reset: $(".zoom-reset")
                 }).panzoom("zoom");
+                $panZoomImage.parent().on('mousewheel.focal', function( e ) {
+                  e.preventDefault();
+                  var delta = e.delta || e.originalEvent.wheelDelta;
+                  var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+                  $panZoomImage.panzoom('zoom', zoomOut, {
+                    increment: 0.1,
+                    animate: false,
+                    focal: e
+                  });
+                });
+                $(".zoom-in").click(function zoomIn() {
+                  $panZoomImage.panzoom("zoom");
+                });
+                $(".zoom-out").click(function zoomOut() {
+                  $panZoomImage.panzoom("zoom", true);
+                });
               });
             }).each(function triggerImageLoad() {
               if (this.complete) {

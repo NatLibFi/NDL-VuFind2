@@ -1059,8 +1059,8 @@ class AjaxController extends \VuFind\Controller\AjaxController
             }
         }
 
-        $view->enableZoom = isset($config->Content->enableZoom)
-            ? $config->Content->enableZoom : false;
+        $view->enableImagePopupZoom = isset($config->Content->enableImagePopupZoom)
+            ? $config->Content->enableImagePopupZoom : false;
 
         return $view;
     }

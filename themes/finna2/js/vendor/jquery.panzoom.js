@@ -538,10 +538,12 @@
 				}
 				var spaceWLeft, spaceWRight, scaleDiff;
 				var container = this.container;
-				var width = dims.width;
-				var height = dims.height;
+				//var width = dims.width;
+				//var height = dims.height;
 				var conWidth = container.width;
 				var conHeight = container.height;
+				var width = conWidth * matrix[0];
+				var height = conHeight * matrix[3];
 				var zoomAspectW = conWidth / width;
 				var zoomAspectH = conHeight / height;
 
@@ -563,6 +565,7 @@
 				} else {
 					matrix[4] = Math.min(Math.max(matrix[4], spaceWLeft), -spaceWRight);
 				}
+				console.log("matrix[4] result:" + matrix[4]);
 
 				if (contain === 'invert' || (contain === 'automatic' && zoomAspectH < 1.01)) {
 					matrix[5] = Math.max(Math.min(matrix[5], spaceHTop - dims.border.top), -spaceHBottom);
