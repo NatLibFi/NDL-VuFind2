@@ -160,12 +160,6 @@ class CoverController extends \VuFind\Controller\CoverController
             \VuFind\ServiceManager\Initializer::initInstance(
                 $this->loader, $this->serviceLocator
             );
-            $driver = $this->getRecordLoader()->load(
-                $this->params()->fromQuery('recordid'), 'Solr'
-            );
-            $recordISBN = $driver->getCleanISBN();
-            $recordISBN = new ISBN($recordISBN);
-            $this->loader->setRecordIdentifiers(['recordisbn' => $recordISBN]);
         }
         return $this->loader;
     }

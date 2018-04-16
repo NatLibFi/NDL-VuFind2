@@ -337,7 +337,9 @@ $config = [
                 'invokables' => [
                     'bookyfi' => 'Finna\Content\Covers\BookyFi',
                     'natlibfi' => 'Finna\Content\Covers\NatLibFi',
-                    'btj' => 'Finna\Content\Covers\BTJ',
+                ],
+                'factories' => [
+                    'btj' => 'Finna\Content\Covers\BTJFactory::getBTJ',
                 ],
             ],
             'recorddriver' => [

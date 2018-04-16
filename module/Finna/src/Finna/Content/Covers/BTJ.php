@@ -1,6 +1,6 @@
 <?php
 /**
- * Booky.fi cover content loader.
+ * BTJ Cover Image Service cover content loader.
  *
  * PHP version 5
  *
@@ -27,6 +27,8 @@
  */
 namespace Finna\Content\Covers;
 
+use VuFindCode\ISBN;
+
 /**
  * BTJ Cover Image Service cover content loader.
  *
@@ -39,10 +41,20 @@ namespace Finna\Content\Covers;
 class BTJ extends \VuFind\Content\AbstractCover
 {
     /**
-     * Constructor
+     * Recordloader to fetch the current record
+     *
+     * @var VuFind\RecordLoader
      */
-    public function __construct()
+    protected $recordLoader = null;
+
+    /**
+     * Constructor
+     *
+     * @param VuFind\RecordLoader $recordLoader Record loader.
+     */
+    public function __construct($recordLoader)
     {
+        $this->recordLoader = $recordLoader;
         $this->supportsIsbn = true;
         $this->cacheAllowed = false;
     }
@@ -66,12 +78,16 @@ class BTJ extends \VuFind\Content\AbstractCover
             'small' => '06',
             'large' => '07'
         ];
-        if (isset($ids['recordisbn'])) {
-            $isbn = $ids['recordisbn']->get13();
-            return "https://armas.btj.fi/request.php?"
+        try {
+            $driver = $this->getRecord($ids['recordid']);
+            $recordISBN = $driver->getCleanISBN();
+            $recordISBN = new ISBN($recordISBN);
+            $isbn = $recordISBN->get13();
+            return "https://armas.btj.fi/request.php?error=1&"
                 . "id=$key&pid=$isbn&ftype=$sizeCodes[$size]";
+        } catch (Exception $e) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -83,6 +99,18 @@ class BTJ extends \VuFind\Content\AbstractCover
      */
     public function supports($ids)
     {
-        return isset($ids['recordisbn']);
+        return isset($ids['recordid']);
+    }
+
+    /**
+     * Get record by id
+     *
+     * @param string $id Id for the record to load.
+     *
+     * @return \VuFind\RecordDriver\AbstractBase
+     */
+    protected function getRecord($id)
+    {
+        return $this->recordLoader->load($id, 'Solr');
     }
 }
