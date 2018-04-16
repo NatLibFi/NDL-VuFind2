@@ -34,6 +34,7 @@ use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\Mail as MailException;
 use VuFind\Search\RecommendListener;
 use Zend\Stdlib\Parameters;
+use Zend\Validator\Csrf;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -416,6 +417,10 @@ class MyResearchController extends AbstractBase
             // Do nothing; if we're unable to load information about pickup
             // locations, they are not supported and we should ignore them.
         }
+
+        $config = $this->getConfig();
+        $view->accountDeletion
+            = !empty($config->Authentication->account_deletion);
 
         return $view;
     }
@@ -1678,5 +1683,52 @@ class MyResearchController extends AbstractBase
         if (!empty($method)) {
             $this->getAuthManager()->setAuthMethod($method);
         }
+    }
+
+    /**
+     * Account deletion
+     *
+     * @return mixed
+     */
+    public function deleteAccountAction()
+    {
+        // Force login:
+        if (!($user = $this->getUser())) {
+            return $this->forceLogin();
+        }
+
+        $config = $this->getConfig();
+        if (empty($config->Authentication->account_deletion)) {
+            throw new \VuFind\Exception\BadRequest();
+        }
+
+        $view = $this->createViewModel(['accountDeleted' => false]);
+        if ($this->formWasSubmitted('submit')) {
+            // Set up CSRF:
+            $sessionManager = $this->serviceLocator->get('VuFind\SessionManager');
+            $csrf = new Csrf(
+                [
+                    'session'
+                        => new \Zend\Session\Container('csrf', $sessionManager),
+                    'salt' => isset($config->Security->HMACkey)
+                        ? $config->Security->HMACkey : 'VuFindCsrfSalt',
+                ]
+            );
+            if (!$csrf->isValid($this->getRequest()->getPost()->get('csrf'))) {
+                throw new \VuFind\Exception\BadRequest(
+                    'error_inconsistent_parameters'
+                );
+            }
+            $user->delete(
+                $config->Authentication->delete_comments_with_user ?? true
+            );
+            $view->accountDeleted = true;
+            $view->redirectUrl = $this->getAuthManager()->logout(
+                $this->getServerUrl('home')
+            );
+        } elseif ($this->formWasSubmitted('reset')) {
+            return $this->redirect()->toRoute('myresearch-profile');
+        }
+        return $view;
     }
 }
