@@ -7,6 +7,7 @@
 .grid.result {
   float: left;
   width: 50%;
+  border-bottom: none;
   @media (max-width: @screen-xs) {
     width: 100%;
   }
@@ -33,7 +34,7 @@
 .result-view-grid {
   .grid:not(.recordcovers) {
     padding: 0px 5px 10px;
-    margin-bottom: 10px;
+    margin-bottom: 0px;
     &:focus {
       outline: none;
     }
@@ -164,6 +165,9 @@
         }
       }
     }
+  }
+  .record-image-container {
+    margin-bottom: 0;
   }
 }
 .result-view-grid.touch-device {
