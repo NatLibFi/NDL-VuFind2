@@ -163,7 +163,7 @@ finna.imagePopup = (function finnaImagePopup() {
                   exponential: false,
                   $reset: $(".zoom-reset")
                 }).panzoom("zoom");
-                $panZoomImage.parent().on('mousewheel.focal', function( e ) {
+                $panZoomImage.parent().on('mousewheel.focal', function mouseWheelZoom( e ) {
                   e.preventDefault();
                   var delta = e.delta || e.originalEvent.wheelDelta;
                   var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
