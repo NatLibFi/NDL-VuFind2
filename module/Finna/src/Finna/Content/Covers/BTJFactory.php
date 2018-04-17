@@ -41,7 +41,7 @@ use Zend\ServiceManager\ServiceManager;
 class BTJFactory extends \VuFind\Service\Factory
 {
     /**
-     * Construct the Autocomplete Plugin Manager.
+     * Construct the BTJ Cover Image Service cover content loader.
      *
      * @param ServiceManager $sm Service manager.
      *
