@@ -116,7 +116,10 @@
       }
     }
     &.no-image {
-      & .recordcover-holder:before {
+      .grid-body {
+        position: relative;
+      }
+      .recordcover-holder:before {
         color: @gray-light;
         content: attr(data-format);
         position: absolute;
@@ -125,7 +128,7 @@
         left:0;
         width: 100%;
       }
-      & .recordcover-holder:after {
+      .recordcover-holder:after {
         color: #BFBFBF;
         content: attr(data-noimage);
         position: absolute;
@@ -135,10 +138,10 @@
         text-transform: uppercase;
         letter-spacing: 1px;
       }
-      & .recordcover-holder {
+      .recordcover-holder {
         background: #f5f5f5;
       }
-      & .iconlabel:before {
+      .iconlabel:before {
         color: @gray-mid-light;
         top: 40%;
       }
