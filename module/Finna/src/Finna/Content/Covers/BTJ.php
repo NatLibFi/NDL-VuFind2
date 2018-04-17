@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2014-2016.
+ * Copyright (C) The National Library of Finland 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -55,7 +55,7 @@ class BTJ extends \VuFind\Content\AbstractCover
     public function __construct($recordLoader)
     {
         $this->recordLoader = $recordLoader;
-        $this->supportsIsbn = true;
+        $this->supportsIsbn = false;
         $this->cacheAllowed = false;
     }
 

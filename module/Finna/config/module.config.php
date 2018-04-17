@@ -334,12 +334,12 @@ $config = [
                 ]
             ],
             'content_covers' => [
+                'factories' => [
+                    'btj' => 'Finna\Content\Covers\BTJFactory::getBTJ',
+                ],
                 'invokables' => [
                     'bookyfi' => 'Finna\Content\Covers\BookyFi',
                     'natlibfi' => 'Finna\Content\Covers\NatLibFi',
-                ],
-                'factories' => [
-                    'btj' => 'Finna\Content\Covers\BTJFactory::getBTJ',
                 ],
             ],
             'recorddriver' => [
