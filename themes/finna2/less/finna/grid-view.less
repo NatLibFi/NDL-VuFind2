@@ -23,6 +23,9 @@
   .grid-result {
     width:100%;
   }
+  &#result0 {
+    border-top: none;
+  }
 }
 .grid-large-break,
 .grid-small-break { clear: both; }
@@ -169,13 +172,10 @@
 }
 .result-view-grid.touch-device {
   & .grid {
-    margin-bottom: 60px;
-    padding-bottom: 20px;
     & .grid-title {
       .opacity(.9);
       position: relative;
-      transition: max-height .2s ease-in, box-shadow .2s ease-in;
-      max-height: 70px;
+      max-height: 200px;
       top: 100%;
       box-shadow: none;
       padding: 10px;
@@ -191,10 +191,6 @@
       & p {
         margin-bottom: 0;
       }
-    }
-    &:hover .grid-title {
-      max-height: 200px;
-      box-shadow: 0px 20px 20px -16px #000;
     }
   }
 }
