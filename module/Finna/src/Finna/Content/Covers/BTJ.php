@@ -52,7 +52,7 @@ class BTJ extends \VuFind\Content\AbstractCover
      *
      * @param VuFind\RecordLoader $recordLoader Record loader.
      */
-    public function __construct($recordLoader)
+    public function __construct(\VuFind\Record\Loader $recordLoader)
     {
         $this->recordLoader = $recordLoader;
         $this->supportsIsbn = false;
@@ -80,12 +80,13 @@ class BTJ extends \VuFind\Content\AbstractCover
         ];
         try {
             $driver = $this->getRecord($ids['recordid']);
-            $recordISBN = $driver->getCleanISBN();
-            $recordISBN = new ISBN($recordISBN);
-            $isbn = $recordISBN->get13();
-            return "https://armas.btj.fi/request.php?error=1&"
+            $recordISBN = new ISBN($driver->getCleanISBN());
+            if ($isbn = $recordISBN->get13()) {
+                return "https://armas.btj.fi/request.php?error=1&"
                 . "id=$key&pid=$isbn&ftype=$sizeCodes[$size]";
-        } catch (Exception $e) {
+            }
+            return false;
+        } catch (\Exception $e) {
             return false;
         }
     }
