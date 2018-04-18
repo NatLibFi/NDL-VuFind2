@@ -340,6 +340,13 @@ maximum_password_length = 32
 ; Exclude the listed ILS drivers from the authentication API
 ;exclude_api_targets = ils3,ils4
 
+; Allow a user to delete their account. Default is false.
+account_deletion = true
+; Whether comments added by a user are deleted when they remove their account.
+; Default is true.
+delete_comments_with_user = false
+
+
 [ChoiceAuth]
 choice_order = Database,Shibboleth,MultiILS
 
@@ -586,7 +593,7 @@ email = SHIB_mail
 ; You can select Syndetics, LibraryThing, Summon, Amazon, Booksite, OpenLibrary,
 ; Contentcafe and/or Google Books.
 ;   Note: Summon service takes a Serials Solutions client key, NOT Summon API key!
-;coverimages     = Syndetics:MySyndeticsId,Amazon:MyAccessKeyId,Booksite,LibraryThing:MyLibraryThingId,Google,OpenLibrary,Summon:MySerialsSolutionsClientKey,Contentcafe:MyContentCafeID,NatLibFi,BookyFi
+;coverimages     = Syndetics:MySyndeticsId,Amazon:MyAccessKeyId,Booksite,LibraryThing:MyLibraryThingId,Google,OpenLibrary,Summon:MySerialsSolutionsClientKey,Contentcafe:MyContentCafeID,NatLibFi,BookyFi,BTJ:customerId
 coverimages     = NatLibFi,OpenLibrary
 
 ; This setting controls the image to display when no book cover is available.
@@ -674,6 +681,10 @@ feedcachetime = 10
 recordMap = openlayers
 ;mapLabels = file:geosearch_test_lookup.txt
 ;displayCoords = true
+
+; Enables zoom for images in the image popup, only applies to records using the large image 
+; layout. Disabled by default.
+; enableImagePopupZoom = true
 
 [QRCode]
 ; This setting controls the image to display when no qrcode is available.
@@ -1014,11 +1025,6 @@ BibTeX = false
 ; format section of export.ini; default is 'link' if not overridden below. See
 ; export.ini for more details on available options.
 ;defaultType = download
-
-;AddThis is optional. It uses the Add This tool available from www.addthis.com
-; and requires the username generated when an analytics account is registered.
-[AddThis]
-key = xa-512b2521367a9395
 
 ; This section controls how item status information is presented in search results.
 [Item_Status]

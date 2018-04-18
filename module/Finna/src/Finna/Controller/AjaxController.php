@@ -854,6 +854,10 @@ class AjaxController extends \VuFind\Controller\AjaxController
             $feed['linkTarget'] = $config->linkTarget;
         }
 
+        if (isset($config->visualItems)) {
+            $feed['visualItems'] = $config->visualItems;
+        }
+
         $template = $type == 'list' ? 'list' : 'carousel';
         $html = $this->getViewRenderer()->partial(
             "ajax/feed-$template.phtml", $feed
@@ -1004,6 +1008,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
      */
     public function getImagePopupAjax()
     {
+        $config = $this->getServiceLocator()->get('VuFind\Config')->get('config');
         $response = $this->getResponse();
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-type', 'text/html');
@@ -1053,6 +1058,9 @@ class AjaxController extends \VuFind\Controller\AjaxController
                 $view->listUser = $user;
             }
         }
+
+        $view->enableImagePopupZoom = isset($config->Content->enableImagePopupZoom)
+            ? $config->Content->enableImagePopupZoom : false;
 
         return $view;
     }
@@ -1397,7 +1405,7 @@ class AjaxController extends \VuFind\Controller\AjaxController
                     }
 
                     $facetList = $facetHelper->buildFacetArray(
-                        $facet, $facetList, $results->getUrlQuery()
+                        $facet, $facetList, $results->getUrlQuery(), false
                     );
 
                     if (!empty($facetConfig->FacetFilters->$facet)

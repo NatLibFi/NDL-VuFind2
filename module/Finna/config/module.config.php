@@ -104,16 +104,6 @@ $config = [
                     ]
                 ],
             ],
-            'myresearch-deleteaccount' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/MyResearch/DeleteAccount',
-                    'defaults' => [
-                        'controller' => 'MyResearch',
-                        'action'     => 'DeleteAccount',
-                    ]
-                ],
-            ],
             'myresearch-unsubscribe' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -334,9 +324,12 @@ $config = [
                 ]
             ],
             'content_covers' => [
+                'factories' => [
+                    'btj' => 'Finna\Content\Covers\BTJFactory::getBTJ',
+                ],
                 'invokables' => [
                     'bookyfi' => 'Finna\Content\Covers\BookyFi',
-                    'natlibfi' => 'Finna\Content\Covers\NatLibFi'
+                    'natlibfi' => 'Finna\Content\Covers\NatLibFi',
                 ],
             ],
             'recorddriver' => [
