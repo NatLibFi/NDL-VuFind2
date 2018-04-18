@@ -5,6 +5,12 @@
     margin: 0px;
     padding: 0px;
   }
+  .container {
+    @media(max-width: @screen-xs-max) {
+      display: table;
+      width: 100%;
+    }
+  }
   ul.nav-tabs {
     border-bottom: 1px solid @nav-tabs-border-color;
     margin: 1em 0;
