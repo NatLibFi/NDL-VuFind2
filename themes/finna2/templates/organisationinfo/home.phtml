@@ -93,7 +93,7 @@ JS;
           </div>
           <div>
             <form class="searchbox-consortium searchForm" action="<?=$this->url('search-results')?>">
-              <input class="searchForm_lookfor form-control search-query" name="lookfor" placeholder="<?=$this->transEsc('organisation_info_search')?>" />
+              <input class="searchForm_lookfor form-control search-query" name="lookfor" placeholder="<?=$this->transEsc('organisation_info_search')?>" aria-label="<?=$this->transEsc('organisation_info_search')?>" />
               <input type="hidden" name="filter[]" value="<?=$this->escapeHtmlAttr("{$this->buildingFacetOperator}building:\"{$building}\"")?>" />
               <button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> <span class="sr-only"><?=$this->translate('Search from collection')?></span></button>
             </form>
@@ -136,8 +136,8 @@ JS;
     <div class="map-control-bar">
       <div class="flex-item">
         <form class="form-inline searchbox-office office-search-notifications map-ui">
-          <input id="office-search" type="text" placeholder="" />
-          <button class="btn btn-primary btn-office-search"><i class="fa fa-arrow-down"></i></button>
+          <input id="office-search" type="text" placeholder="" aria-label="<?=$this->translate('office_search')?>" />
+          <button class="btn btn-primary btn-office-search" aria-label="<?=$this->translate('btn_office_search')?>"><i class="fa fa-arrow-down"></i></button>
           <div class="notification"><?=$this->transEsc('organisation_info_location_not_available');?></div>
         </form>
         <div class="autocomplete-container"></div>
@@ -214,7 +214,7 @@ JS;
           <a data-toggle="collapse" href="#collapse1"><?=$this->translate('organisation_info_general')?></a>
         </h4>
         <div id="collapse1" class="panel-collapse collapse in">
-          <img class="building-image" src="#" alt="" />
+          <img class="building-image" src="#" alt="<?=$this->translate('organisation_info_logo')?>" />
           <p class="building-name info-element"></p>
           <p class="building-year info-element"><?=$this->translate('organisation_info_building_year')?>: <span></span></p>
           <p class="office-description description-long info-element"></p>
