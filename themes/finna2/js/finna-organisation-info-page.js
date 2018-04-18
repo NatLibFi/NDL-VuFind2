@@ -337,7 +337,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     var img = holder.find('.building-image');
     if ('pictures' in data.details) {
       var src = data.details.pictures[0].url;
-      img.attr("alt", data.name);
       img.show();
       if (img.attr('src') !== src) {
         img.attr('src', src);
