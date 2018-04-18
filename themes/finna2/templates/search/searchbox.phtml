@@ -160,7 +160,7 @@
        <? if (!$browse && (!empty($filterDetails) || !empty($this->savedSearches) || !$defaultSortApplied || (isset($this->searchIndex) && ($this->searchIndex != 'AllFields' && $handlerCount <= 1)))): ?>
         <div aria-hidden="true" class="hidden">
           <fieldset>
-            <legend class="sr-only">Hidden fields, do not usre</legend>
+            <legend class="sr-only">Hidden fields</legend>
             <? foreach ($filterDetails as $current): ?>
               <input class="applied-filter" id="<?=$this->escapeHtmlAttr($current['id'])?>" type="checkbox"<?=$defaultFilterState?> name="filter[]" value="<?=$this->escapeHtmlAttr($current['value'])?>" />
               <label for="<?=$this->escapeHtmlAttr($current['id'])?>"><?=$this->escapeHtml($current['value'])?></label>
