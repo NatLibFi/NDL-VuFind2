@@ -275,8 +275,6 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
             link.appendTo(linkHolder);
           });
           links = true;
-        } else {
-          holder.find('.mobile-schedule-link-template').remove();
         }
       }
       if (!links) {
