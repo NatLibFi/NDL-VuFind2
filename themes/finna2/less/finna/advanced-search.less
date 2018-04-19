@@ -297,8 +297,9 @@
       content: "\e00f";
       line-height: 24px;
       position: absolute;
-      // top: ~"calc(50% - 12px)";
       top: 0;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
   }
   .finna-main-header {
@@ -368,7 +369,7 @@
   }
   .multiselect-container {
     background-color: @well-bg;
-    border: none; 
+    padding: 0; 
     li {
       background: white;
       &:first-child {
@@ -376,9 +377,12 @@
       }
     }
     .multiselect-clear-filter {
-      background-color: darken(@btn-default-bg, 10%);
-      border-color: darken(@btn-default-border, 12%);
-      color: @text-color;
+      margin-left: 0;
+      &, &:hover {
+        background-color: @well-bg;
+        border-color: @well-bg;
+        color: @text-color;
+      }
     }
     .input-group {
       width: 100%;
