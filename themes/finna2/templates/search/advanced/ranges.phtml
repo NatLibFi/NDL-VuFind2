@@ -3,6 +3,7 @@
   <? $params = $this->searchParams($this->searchClassId); $params->activateAllFacets(); ?>
   <? foreach ($this->ranges as $current): $escField = $this->escapeHtmlAttr($current['field']); ?>
     <fieldset>
+      <legend class="sr-only"><?=$this->transEsc($params->getFacetLabel($current['field']))?></legend>
       <div>
         <label class="form-inline"><?=$this->transEsc($params->getFacetLabel($current['field']))?>:</label>
       </div>      
