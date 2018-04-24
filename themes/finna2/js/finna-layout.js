@@ -698,12 +698,12 @@ finna.layout = (function finnaLayout() {
   function initBuildingFilter() {
     $('#building_filter').keyup(function onKeyUpFilter() {
       var valThis = this.value.toLowerCase();
-      $('#facet_building>ul>li>a>.main').each(function setupBuildingSearch() {
+      $('#facet_building>ul>li>a .text').each(function doBuildingSearch() {
         var text = $(this).text().toLowerCase();
         if (text.indexOf(valThis) !== -1) {
-          $(this).parent().parent().show();
+          $(this).closest('li').show();
         } else {
-          $(this).parent().parent().hide();
+          $(this).closest('li').hide();
         }
       });
     });
@@ -731,7 +731,8 @@ finna.layout = (function finnaLayout() {
           fitWidth: false,
           itemSelector: '.result.grid',
           columnWidth: '.result.grid',
-          isResizeBound: 'true'
+          isResizeBound: 'true',
+          horizontalOrder: 'true'
         });
       });
     }
