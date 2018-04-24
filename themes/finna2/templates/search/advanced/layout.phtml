@@ -106,12 +106,26 @@
               <a href="#" class="adv-group-close hidden" title="<?=$this->transEsc("del_search")?>"><i class="fa fa-times" aria-hidden="true"></i> <?=$this->transEsc("del_search")?></a>
               <div class="adv-search-group">
                 <div class="adv-group-match match">
+                  <span class="label-style"><?=$this->transEsc("search_match")?>:</span>
+                  <span class="radio-wrapper">
+                    <input name="bool<?=$group ?>[]" type="radio" id="and<?=$group ?>" value="AND"<? if((isset($setSearchGroups[$group]) && 'AND' == $setSearchGroups[$group]) || (!isset($setSearchGroups[$group]) || ('OR' != $setSearchGroups[$group] && 'NOT' != $setSearchGroups[$group]))):?> checked<?endif;?>>
+                    <label for="and<?=$group ?>"><?=$this->transEsc("search_AND")?></label>
+                  </span>
+                  <span class="radio-wrapper">
+                    <input name="bool<?=$group ?>[]" type="radio" id="or<?=$group ?>" value="OR"<? if(isset($setSearchGroups[$group]) && 'OR' == $setSearchGroups[$group]):?> checked<?endif;?>>
+                    <label for="or<?=$group ?>"><?=$this->transEsc("search_OR")?></label>
+                  </span>
+                  <span class="radio-wrapper">
+                    <input name="bool<?=$group ?>[]" type="radio" id="not<?=$group ?>" value="NOT"<? if(isset($setSearchGroups[$group]) && 'NOT' == $setSearchGroups[$group]):?> checked<?endif;?>>
+                    <label for="not<?=$group ?>"><?=$this->transEsc("search_NOT")?></label>
+                  </span>
+                  <!--
                   <label class="search_bool"><?=$this->transEsc("search_match")?>:</label>
                   <select name="bool<?=$group ?>[]" id="search_bool<?=$group ?>" class="form-control form-inline">
                     <option value="AND"<? if(isset($setSearchGroups[$group]) && 'AND' == $setSearchGroups[$group]):?> selected<?endif;?>><?=$this->transEsc("search_AND")?></option>
                     <option value="OR"<? if(isset($setSearchGroups[$group]) && 'OR' == $setSearchGroups[$group]):?> selected<?endif;?>><?=$this->transEsc("search_OR")?></option>
                     <option value="NOT"<? if(isset($setSearchGroups[$group]) && 'NOT' == $setSearchGroups[$group]):?> selected<?endif;?>><?=$this->transEsc("search_NOT")?></option>
-                  </select>
+                  </select>-->
                 </div>
                 <div class="adv-group-terms">
                   <? for ($search = 0; $search < 3 || (isset($setQueries[$group]) && $search < count($setQueries[$group])); $search++): ?>

@@ -13,7 +13,6 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
   .adv_search_terms {
     font-weight: normal;
     display: block;
-    margin-bottom: 20px;
     strong {
       font-weight: @headings-font-weight;
     }
@@ -58,6 +57,7 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
 .adv-search-header {
   padding: 15px 0;
   background-color: @well-bg;
+  border-bottom: 1px solid @filterContent-border-color;
   @media (max-width: @screen-sm-max) {
     border-top: 1px solid white;
   }
@@ -136,6 +136,9 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
       white-space: normal;
       margin-left: 5px;
       margin-right: 0;
+      .template-name-results & {
+        margin-left: 15px;
+      }
     }
   }
   .adv-search-menu-toggle {
