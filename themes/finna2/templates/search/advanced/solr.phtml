@@ -22,49 +22,50 @@
   </div>
   <div>
     <div>
-    <? if (!empty($this->checkboxFacets)): ?>
-      <div class="checkboxFilter">
-        <?=$this->render('search/advanced/checkbox-filters.phtml')?>
-      </div>
-    <? endif; ?>
-    <? foreach ($this->facetList as $field => $list): ?>
-      <fieldset class="well limit-to">
-        <legend class="sr-only"><?=$this->transEsc($list['label'])?></legend>
-        <div>
-          <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
-            <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>"><?=$this->transEsc($list['label'])?>:</label>
-            <select class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>" name="filter[]"  multiple="multiple" >
-              <? if (is_array($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
-                <? foreach ($list['list'] as $value): ?>
-                  <? $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']); ?>
-                  <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
-                <? endforeach; ?>
-              <? else: ?>
-                <?
-                // Sort the current facet list alphabetically; we'll use this data
-                // along with the foreach below to display facet options in the
-                // correct order.
-                $sorted = [];
-                foreach ($list['list'] as $i => $value) {
-                  if (!empty($value['displayText'])) {
-                    $sorted[$i] = $value['displayText'];
-                  }
-                }
-                natcasesort($sorted);
-                ?>
-                <? foreach ($sorted as $i => $display): ?>
-                  <? $value = $list['list'][$i]; ?>
-                  <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$this->escapeHtml($display)?></option>
-                <? endforeach; ?>
-              <? endif; ?>
-            </select>
-            <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_' . $this->escapeHtmlAttr(str_replace(' ', '', $field)))?></p></div>
-          </div>
+      <? if (!empty($this->checkboxFacets)): ?>
+        <div class="checkboxFilter">
+          <?=$this->render('search/advanced/checkbox-filters.phtml')?>
         </div>
-      </fieldset>
-    <? endforeach; ?>
-    <div class="ranges-container well limit-to">
-      <?=$this->render('search/advanced/ranges.phtml', ['searchClassId' => $searchClassId, 'ranges' => $daterange])?>
+      <? endif; ?>
+      <? foreach ($this->facetList as $field => $list): ?>
+        <fieldset class="well limit-to">
+          <legend class="sr-only"><?=$this->transEsc($list['label'])?></legend>
+          <div>
+            <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
+              <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>"><?=$this->transEsc($list['label'])?>:</label>
+              <select class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>" name="filter[]"  multiple="multiple" >
+                <? if (is_array($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
+                  <? foreach ($list['list'] as $value): ?>
+                    <? $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']); ?>
+                    <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
+                  <? endforeach; ?>
+                <? else: ?>
+                  <?
+                  // Sort the current facet list alphabetically; we'll use this data
+                  // along with the foreach below to display facet options in the
+                  // correct order.
+                  $sorted = [];
+                  foreach ($list['list'] as $i => $value) {
+                    if (!empty($value['displayText'])) {
+                      $sorted[$i] = $value['displayText'];
+                    }
+                  }
+                  natcasesort($sorted);
+                  ?>
+                  <? foreach ($sorted as $i => $display): ?>
+                    <? $value = $list['list'][$i]; ?>
+                    <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$this->escapeHtml($display)?></option>
+                  <? endforeach; ?>
+                <? endif; ?>
+              </select>
+              <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_' . $this->escapeHtmlAttr(str_replace(' ', '', $field)))?></p></div>
+            </div>
+          </div>
+        </fieldset>
+      <? endforeach; ?>
+      <div class="ranges-container well limit-to">
+        <?=$this->render('search/advanced/ranges.phtml', ['searchClassId' => $searchClassId, 'ranges' => $daterange])?>
+      </div>
     </div>
     <? if (!empty($searchFilters) || !empty($usedCheckboxFilters)): ?>
       <h4><?=$this->transEsc("adv_search_filters")?></h4>
@@ -72,7 +73,6 @@
         <?=$this->render('search/advanced/filters.phtml', ['usedCheckboxFilters' => $usedCheckboxFilters, 'searchFilters' => $searchFilters])?>
       </fieldset>
     <? endif; ?>
-    </div>
   </div>
 <? endif; ?>
 <div class="search-map-container">

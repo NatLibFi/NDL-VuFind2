@@ -86,7 +86,7 @@
   <? endforeach; ?>
   <div class="advanced-search">
     <div class="">
-      <h4><?=$this->transEsc("adv_search_label")?><? if (!$this->translationEmpty("tooltip_{$tooltipSource}_advanced_html")): ?><span class="tooltip-<?=$tooltipSource?>-advanced pull-right" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title='<?=$this->transesc("tooltip_{$tooltipSource}_advanced_html") ?>'><i class="fa fa-info-big" aria-hidden="true"></i> <?=$this->transEsc("Help with Advanced Search")?></span><? endif; ?></h4>
+      <h4><?=$this->transEsc("adv_search_label")?><? if (!$this->translationEmpty("tooltip_{$tooltipSource}_advanced_html")): ?><span class="tooltip-<?=$tooltipSource?>-advanced" data-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title='<?=$this->transesc("tooltip_{$tooltipSource}_advanced_html") ?>'><i class="fa fa-info-big" aria-hidden="true"></i> <?=$this->transEsc("Help with Advanced Search")?></span><? endif; ?></h4>
       <input type="hidden" name="sort" value="relevance">
 
       <? /* An empty div. This is the target for the javascript that builds this screen */ ?>
@@ -106,19 +106,22 @@
               <a href="#" class="adv-group-close hidden" title="<?=$this->transEsc("del_search")?>"><i class="fa fa-times" aria-hidden="true"></i> <?=$this->transEsc("del_search")?></a>
               <div class="adv-search-group">
                 <div class="adv-group-match match">
-                  <span class="label-style"><?=$this->transEsc("search_match")?>:</span>
-                  <span class="radio-wrapper">
-                    <input name="bool<?=$group ?>[]" type="radio" id="and<?=$group ?>" value="AND"<? if((isset($setSearchGroups[$group]) && 'AND' == $setSearchGroups[$group]) || (!isset($setSearchGroups[$group]) || ('OR' != $setSearchGroups[$group] && 'NOT' != $setSearchGroups[$group]))):?> checked<?endif;?>>
-                    <label for="and<?=$group ?>"><?=$this->transEsc("search_AND")?></label>
-                  </span>
-                  <span class="radio-wrapper">
-                    <input name="bool<?=$group ?>[]" type="radio" id="or<?=$group ?>" value="OR"<? if(isset($setSearchGroups[$group]) && 'OR' == $setSearchGroups[$group]):?> checked<?endif;?>>
-                    <label for="or<?=$group ?>"><?=$this->transEsc("search_OR")?></label>
-                  </span>
-                  <span class="radio-wrapper">
-                    <input name="bool<?=$group ?>[]" type="radio" id="not<?=$group ?>" value="NOT"<? if(isset($setSearchGroups[$group]) && 'NOT' == $setSearchGroups[$group]):?> checked<?endif;?>>
-                    <label for="not<?=$group ?>"><?=$this->transEsc("search_NOT")?></label>
-                  </span>
+                  <fieldset>
+                    <legend class="sr-only"><?=$this->transEsc("search_match")?></legend>
+                    <span class="label-style"><?=$this->transEsc("search_match")?>:</span>
+                    <span class="radio-wrapper">
+                      <input name="bool<?=$group ?>[]" type="radio" id="search_and" value="AND"<? if((isset($setSearchGroups[$group]) && 'AND' == $setSearchGroups[$group]) || (!isset($setSearchGroups[$group]) || ('OR' != $setSearchGroups[$group] && 'NOT' != $setSearchGroups[$group]))):?> checked<?endif;?>>
+                      <label for="search_and"><?=$this->transEsc("search_AND")?></label>
+                    </span>
+                    <span class="radio-wrapper">
+                      <input name="bool<?=$group ?>[]" type="radio" id="search_or" value="OR"<? if(isset($setSearchGroups[$group]) && 'OR' == $setSearchGroups[$group]):?> checked<?endif;?>>
+                      <label for="search_or"><?=$this->transEsc("search_OR")?></label>
+                    </span>
+                    <span class="radio-wrapper">
+                      <input name="bool<?=$group ?>[]" type="radio" id="search_not" value="NOT"<? if(isset($setSearchGroups[$group]) && 'NOT' == $setSearchGroups[$group]):?> checked<?endif;?>>
+                      <label for="search_not"><?=$this->transEsc("search_NOT")?></label>
+                    </span>
+                  </fieldset>
                   <!--
                   <label class="search_bool"><?=$this->transEsc("search_match")?>:</label>
                   <select name="bool<?=$group ?>[]" id="search_bool<?=$group ?>" class="form-control form-inline">
