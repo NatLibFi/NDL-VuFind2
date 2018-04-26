@@ -330,8 +330,7 @@
   .content-header {
     display: inline-block;
   }
-  .ranges-container .year-input-container,
-  .solr-adv-filter .btn-group {
+  .ranges-container .year-input-container {
     width: 100%;
     vertical-align: top;
     @media (min-width: @screen-sm-min) {
@@ -352,12 +351,12 @@
   .finna-main-tabs {
     padding-top: 15px;
   }
-  .well {
-    &:not(:last-child) {
-      margin-bottom: 10px;
-    }
-    @media (max-width: @screen-xs-max) {
+  @media (max-width: @screen-xs-max) {
+    .well {
       padding: 10px;
+      &.facets {
+        padding: 10px 10px 0 10px;
+      }
     }
   }
   .checkboxFilter {
@@ -412,6 +411,48 @@
   }
   .label-block {
     display: block;
+  }
+  .facet-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .facet {
+    width: 24.5%;
+    margin-bottom: 10px;
+    @media (max-width: @screen-xs-max) {
+      width: 33%;
+    }
+    @media (max-width: @screen-xxs-max) {
+      width: 49%;
+    }
+    label {
+      margin-bottom: 10px;
+    }
+  }
+  .option-container {
+    position: relative;
+    > .information {
+      position: absolute;
+      top: 4px;
+      right: 0;
+      &::before {
+        top: -1px;
+      }
+      @media (max-width: @screen-xs-max) {
+        .information-text {
+          padding-left: 26px;
+        }
+      }
+      @media (max-width: @screen-xxs-max) {
+        max-width: 50%;
+      }
+    }
+  }
+  .facets {
+    @media (max-width: @screen-xxs-max) {
+      margin-top: 30px;
+    }
   }
 }
 
