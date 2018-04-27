@@ -176,7 +176,7 @@
             <? endif; ?>
             <!-- this is a hidden element that flags whether or not default filters have been applied;
                 it is intentionally unlabeled, as users are not meant to manipulate it directly. -->
-            <input class="applied-filter" aria-hidden="true" aria-label="hidden_field" id="dfApplied" type="checkbox" name="dfApplied" value="1"<?=$defaultFilterState?> />
+            <input class="applied-filter" aria-hidden="true" aria-label="<?=$this->translate('hidden_field')?>" id="dfApplied" type="checkbox" name="dfApplied" value="1"<?=$defaultFilterState?> />
           </fieldset>
         </div>
       <? endif; ?>

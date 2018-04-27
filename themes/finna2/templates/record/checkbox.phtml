@@ -6,8 +6,8 @@
 <span class="sr-only"><?=$this->transEsc('Select');?></span>
 <? endif; ?>
 <fieldset>
-  <legend class="sr-only"><?=$this->transEsc('select_record')?></legend>
-  <input id="<?=$this->escapeHtmlAttr($safeId) ?>" class="checkbox-select-item" type="checkbox" name="ids[]" value="<?=$this->escapeHtmlAttr($this->id) ?>"<? if(isset($this->formAttr)): ?> form="<?=$this->formAttr ?>"<? endif; ?> aria-label="<?=$this->transEsc('select_record')?>" />
+  <legend class="sr-only"><?=$this->transEsc('Select')?></legend>
+  <input id="<?=$this->escapeHtmlAttr($safeId) ?>" class="checkbox-select-item" type="checkbox" name="ids[]" value="<?=$this->escapeHtmlAttr($this->id) ?>"<? if(isset($this->formAttr)): ?> form="<?=$this->formAttr ?>"<? endif; ?> aria-label="<?=$this->transEsc('Select')?>" />
 </fieldset>
 <? if ($this->label): ?>
 </label>
