@@ -288,7 +288,7 @@ finna.layout = (function finnaLayout() {
         }
       });
     }
-    $('.multiselect-search').attr('placeholder', VuFind.translate('search'));
+    $('.multiselect-search').attr('placeholder', VuFind.translate('search_placeholder'));
   }
 
   function initMobileNarrowSearch() {
