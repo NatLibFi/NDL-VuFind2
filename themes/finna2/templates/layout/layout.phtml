@@ -68,7 +68,8 @@
             'shelf_location' => 'shelf_location',
             'request_change_done' => 'request_change_done',
             'other_records' => 'other_records',
-            'records' => 'records'
+            'records' => 'records',
+            'search_placeholder' => 'search_placeholder'
           ]
         );
         // Add translation strings
@@ -288,6 +289,9 @@ JS;
       }
     ?>
     <header class="hidden-print">
+      <? if (!$this->cookie()->get('cookieConsent')): ?>
+        <?=$this->partial('Helpers/cookie-consent.phtml');?>
+      <? endif; ?>
       <? if (!empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(?i)msie [5-8]/', $_SERVER['HTTP_USER_AGENT'])): ?>
       <div class="container-fluid system-messages">
         <?=$this->translate('outdated_browser_message_html');?>
