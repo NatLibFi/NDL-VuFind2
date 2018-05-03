@@ -21,13 +21,12 @@
     <h4><?=$this->transEsc('Limit To')?></h4>
   </div>
   <div>
-    <div class="option-container">    
+    <div class="option-container">
       <? if (!empty($this->checkboxFacets)): ?>
         <div class="checkboxFilter">
           <?=$this->render('search/advanced/checkbox-filters.phtml')?>
         </div>
       <? endif; ?>
-      <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_facets')?></p></div>
       <fieldset class="well limit-to facets">
         <legend class="sr-only"><?=$this->transEsc('Limit To')?></legend>
         <div class="facet-container">
@@ -64,6 +63,7 @@
             </div>
           <? endforeach; ?>
         </div>
+        <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_facets')?></p></div>
       </fieldset>
       <div class="ranges-container well limit-to">
         <?=$this->render('search/advanced/ranges.phtml', ['searchClassId' => $searchClassId, 'ranges' => $daterange])?>
