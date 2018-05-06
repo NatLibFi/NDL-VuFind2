@@ -104,16 +104,6 @@ $config = [
                     ]
                 ],
             ],
-            'myresearch-deleteaccount' => [
-                'type' => 'Zend\Mvc\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/MyResearch/DeleteAccount',
-                    'defaults' => [
-                        'controller' => 'MyResearch',
-                        'action'     => 'DeleteAccount',
-                    ]
-                ],
-            ],
             'myresearch-unsubscribe' => [
                 'type' => 'Zend\Mvc\Router\Http\Literal',
                 'options' => [
@@ -212,6 +202,7 @@ $config = [
             'VuFind\ILSHoldLogic' => 'Finna\Service\Factory::getILSHoldLogic',
             'VuFind\AuthManager' => 'Finna\Auth\Factory::getManager',
             'VuFind\RecordLoader' => 'Finna\Service\Factory::getRecordLoader',
+            'VuFind\RecordTabPluginManager' => 'Finna\Service\Factory::getRecordTabPluginManager',
             'VuFind\Role\PermissionManager' => 'Finna\Service\Factory::getPermissionManager',
             'VuFind\SearchSpecsReader' => 'Finna\Service\Factory::getSearchSpecsReader',
             'VuFind\SearchTabsHelper' => 'Finna\Service\Factory::getSearchTabsHelper',
@@ -334,9 +325,12 @@ $config = [
                 ]
             ],
             'content_covers' => [
+                'factories' => [
+                    'btj' => 'Finna\Content\Covers\BTJFactory::getBTJ',
+                ],
                 'invokables' => [
                     'bookyfi' => 'Finna\Content\Covers\BookyFi',
-                    'natlibfi' => 'Finna\Content\Covers\NatLibFi'
+                    'natlibfi' => 'Finna\Content\Covers\NatLibFi',
                 ],
             ],
             'recorddriver' => [

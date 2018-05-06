@@ -288,6 +288,7 @@ finna.layout = (function finnaLayout() {
         }
       });
     }
+    $('.multiselect-search').attr('placeholder', VuFind.translate('search_placeholder'));
   }
 
   function initMobileNarrowSearch() {
@@ -612,6 +613,11 @@ finna.layout = (function finnaLayout() {
             var results = buildFacetNodes(facetData, currentPath, allowExclude, excludeTitle, true);
             treeNode.on('loaded.jstree open_node.jstree', function treeNodeOpen(/*e, data*/) {
               treeNode.find('ul.jstree-container-ul > li.jstree-node').addClass('list-group-item');
+              treeNode.find('a.exclude').click(function excludeLinkClick(e) {
+                window.location = this.href;
+                e.preventDefault();
+                return false;
+              });
             });
             treeNode.jstree({
               'core': {
@@ -693,12 +699,12 @@ finna.layout = (function finnaLayout() {
   function initBuildingFilter() {
     $('#building_filter').keyup(function onKeyUpFilter() {
       var valThis = this.value.toLowerCase();
-      $('#facet_building>ul>li>a>.main').each(function setupBuildingSearch() {
+      $('#facet_building>ul>li>a .text').each(function doBuildingSearch() {
         var text = $(this).text().toLowerCase();
         if (text.indexOf(valThis) !== -1) {
-          $(this).parent().parent().show();
+          $(this).closest('li').show();
         } else {
-          $(this).parent().parent().hide();
+          $(this).closest('li').hide();
         }
       });
     });
@@ -726,7 +732,8 @@ finna.layout = (function finnaLayout() {
           fitWidth: false,
           itemSelector: '.result.grid',
           columnWidth: '.result.grid',
-          isResizeBound: 'true'
+          isResizeBound: 'true',
+          horizontalOrder: 'true'
         });
       });
     }
@@ -908,6 +915,17 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  function initCookieConsent() {
+    var state = $.cookie('cookieConsent');
+    if ('undefined' === typeof state || !state) {
+      $('a.cookie-consent-dismiss').click(function dismiss() {
+        $.cookie('cookieConsent', 1, {path: VuFind.path, expires: 365});
+        $('.cookie-consent').addClass('hidden');
+      });
+      $('.cookie-consent').removeClass('hidden');
+    }
+  }
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -954,6 +972,7 @@ finna.layout = (function finnaLayout() {
       initKeyboardNavigation();
       initPriorityNav();
       initFiltersToggle();
+      initCookieConsent();
     }
   };
 

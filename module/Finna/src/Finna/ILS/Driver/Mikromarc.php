@@ -1520,8 +1520,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'duedate' => null,
                 'barcode' => $item['Barcode'],
                 'item_notes' => [isset($items['notes']) ? $item['notes'] : null],
-                'is_holdable' =>  false
             ];
+            if ($patron && $this->itemHoldAllowed($item)) {
+                $entry['is_holdable'] = true;
+                $entry['level'] = 'copy';
+                $entry['addLink'] = true;
+            } else {
+                $entry['is_holdable'] = false;
+            }
 
             $statuses[] = $entry;
         }
@@ -1563,8 +1569,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 $orderedTotal += $item['availabilityInfo']['ordered'];
             }
 
-            $reservationsTotal += $item['availabilityInfo']['reservations'];
-
+            $reservationsTotal = $item['availabilityInfo']['reservations'];
             $locations[$item['location']] = true;
 
             if ($item['is_holdable']) {
@@ -1802,7 +1807,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function itemHoldAllowed($item)
     {
-        return false;
+        $notAllowedForHold = isset($this->config['Holds']['notAllowedForHold'])
+            ? explode(':', $this->config['Holds']['notAllowedForHold'])
+            : [
+                'ClaimedReturnedOrNeverBorrowed', 'Lost',
+                'SuppliedReturnNotRequired', 'MissingOverDue', 'Withdrawn',
+                'Discarded', 'Other'
+            ];
+        return in_array($item['ItemStatus'], $notAllowedForHold) ? false : true;
     }
 
     /**
@@ -1844,7 +1856,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         }
 
         $map = [
-           'DuplicateReservationExists' => 'hold_error_duplicate'
+           'DuplicateReservationExists' => 'hold_error_duplicate',
+           'NoItemsAvailableByTerm' => 'hold_error_denied',
+           'NoItemAvailable' => 'hold_error_denied'
         ];
 
         if (isset($map[$message])) {

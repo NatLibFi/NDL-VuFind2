@@ -158,9 +158,7 @@ class Factory extends \VuFind\Service\Factory
         $configKey = strtolower(str_replace('\\', '_', $ns));
         $config = $sm->get('Config');
         return new $className(
-            new \Zend\ServiceManager\Config(
-                $config['vufind']['plugin_managers'][$configKey]
-            )
+            $sm, $config['vufind']['plugin_managers'][$configKey]
         );
     }
 
@@ -246,6 +244,18 @@ class Factory extends \VuFind\Service\Factory
             $sm->get('VuFind\RecordDriverPluginManager'),
             $sm->get('VuFind\RecordCache')
         );
+    }
+
+    /**
+     * Construct the RecordTab Plugin Manager.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return \VuFind\RecordTab\PluginManager
+     */
+    public static function getRecordTabPluginManager(ServiceManager $sm)
+    {
+        return static::getGenericPluginManager($sm, 'RecordTab');
     }
 
     /**
