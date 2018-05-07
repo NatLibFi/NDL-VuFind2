@@ -331,13 +331,14 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           timeOpen.find('.opening-times .closes').text(openToday.closes);
           timeOpen.show();
           var staffSchedule = obj.times[1];
+          var staffTimes;
           if (staffSchedule) {
-            var staffTimes = timeOpen.find('.staff-times');
+            staffTimes = timeOpen.find('.staff-times');
             staffTimes.find('.opens').text(staffSchedule.opens);
             staffTimes.find('.closes').text(staffSchedule.closes);
             staffTimes.removeClass('hide');
           } else {
-            var staffTimes = timeOpen.find('.staff-times');
+            staffTimes = timeOpen.find('.staff-times');
             staffTimes.addClass('hide');
           }
         }
