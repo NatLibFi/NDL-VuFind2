@@ -327,9 +327,19 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           openToday = obj.times[0];
 
           var timeOpen = holder.find('.time-open');
-          timeOpen.find('.opens').text(openToday.opens);
-          timeOpen.find('.closes').text(openToday.closes);
+          timeOpen.find('.opening-times .opens').text(openToday.opens);
+          timeOpen.find('.opening-times .closes').text(openToday.closes);
           timeOpen.show();
+          var staffSchedule = obj.times[1];
+          if (staffSchedule) {
+            var staffTimes = timeOpen.find('.staff-times');
+            staffTimes.find('.opens').text(staffSchedule.opens);
+            staffTimes.find('.closes').text(staffSchedule.closes);
+            staffTimes.removeClass('hide');
+          } else {
+            var staffTimes = timeOpen.find('.staff-times');
+            staffTimes.addClass('hide');
+          }
         }
       });
     }
