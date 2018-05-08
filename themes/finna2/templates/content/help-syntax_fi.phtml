@@ -1,6 +1,6 @@
-<!-- START of: finna - content/help_query_fi.phtml -->
+<!-- START of: finna - content/help_syntax_fi.phtml -->
 <? if ($this->resolver('Content/help-tabs.phtml')): ?>
-    <?=$this->render('Content/help-tabs.phtml', ['activeTab' =>  'help-query'])?>
+    <?=$this->render('Content/help-tabs.phtml', ['activeTab' =>  'help-syntax'])?>
 <? endif; ?>
 <div>
   <div class="sidebar left">
@@ -8,9 +8,6 @@
     </div>
   </div>
   <div class="mainbody right">
-      <? if ($this->resolver('Content/Additions/helpBegin.phtml')): ?>
-          <?=$this->render('Content/Additions/helpBegin.phtml')?>
-      <? endif; ?>
     <div id="merging" class="content-section">
       <h2>Hakusanojen yhdistäminen</h2>
       <p>Hakupalkkiin peräkkäin kirjoitetut sanat yhdistyvät AND-hakulogiikalla. Jos haluat käyttää haussa muita kuin AND-operaattoria, operaattori (OR, NOT) on kirjoitettava ISOIN KIRJAIMIN hakusanojen väliin. Jos käytät hakulausekkeessa kahta tai useampaa eri operaattoria käytä sulkumerkkejä ( ) eri tavoilla yhdistettyjen hakusanojen välillä.</p>
@@ -166,10 +163,6 @@
       ѵ = i Сѵнодъ = Sinod"<br>
       </p>
     </div>
-
-      <? if ($this->resolver('Content/Additions/helpEnd.phtml')): ?>
-          <?=$this->render('Content/Additions/helpEnd.phtml')?>
-      <? endif; ?>
   </div>
 </div>
-<!-- END of: finna - content/help_advanced_fi.phtml -->
+<!-- END of: finna - content/help_syntax_fi.phtml -->

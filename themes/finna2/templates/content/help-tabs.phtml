@@ -10,8 +10,8 @@
         <li<? if($activeTab == "help-advanced"): ?> class="active" <? endif; ?>>
             <a href="<?=$this->url('content-page', ['page' => 'help-advanced'])?>"><?=$this->translate('tabs_help-advanced');?></a>
         </li>
-        <li<? if($activeTab == "help-query"): ?> class="active" <? endif; ?>>
-            <a href="<?=$this->url('content-page', ['page' => 'help-query'])?>"><?=$this->translate('tabs_help-query');?></a>
+        <li<? if($activeTab == "help-syntax"): ?> class="active" <? endif; ?>>
+            <a href="<?=$this->url('content-page', ['page' => 'help-syntax'])?>"><?=$this->translate('tabs_help-syntax');?></a>
         </li>
     </ul>
     <div class="mobile-main-tabs visible-xs">
@@ -30,8 +30,8 @@
                 <li role="menuitem" <? if($activeTab == "help-advanced"): ?> class="active" <? endif; ?>>
                     <a href="<?=$this->url('content-page', ['page' => 'help-advanced'])?>"><?=$this->translate('tabs_help-advanced');?></a>
                 </li>
-                <li role="menuitem" <? if($activeTab == "help-query"): ?> class="active" <? endif; ?>>
-                    <a href="<?=$this->url('content-page', ['page' => 'help-query'])?>"><?=$this->translate('tabs_help-query');?></a>
+                <li role="menuitem" <? if($activeTab == "help-syntax"): ?> class="active" <? endif; ?>>
+                    <a href="<?=$this->url('content-page', ['page' => 'help-syntax'])?>"><?=$this->translate('tabs_help-syntax');?></a>
                 </li>
             </ul>
         </div>

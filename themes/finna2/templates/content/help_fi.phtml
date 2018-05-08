@@ -12,34 +12,27 @@
       <?=$this->render('Content/Additions/helpBegin.phtml')?>
     <? endif; ?>
     <div id="begin1" class="content-section">
-      <h2>Näin aloitat haun Finnassa</h2>
-      <p>Voit tehdä haun Finnassa monella tavalla:</p>
+      <h2>Miten aloitan haun Finnassa?</h2>
+      <p>Hakuvaihtoehdot Finnassa:</p>
       <h3>Vapaa sanahaku ja rajaus <a href="<?=$this->url('home')?>"><i class="fa fa-external-link-square" aria-hidden="true"></i></a></h3>
       <ul class="list-bullets">
-        <li>Aloita haku kirjoittamalla hakukenttään hakusanoja haluamastasi aiheesta tai aineistosta.</li>
-        <li>Hakukentän päässä on pudotusvalikko, josta voit kohdistaa haun otsikkoon, tekijään tai aiheeseen. Oletusvaihtoehto <i>"Kaikki osumat"</i> kohdistaa haun kaikkiin haettavissa oleviin tietoihin.</li>
-        <li>Ensimmäisen haun jälkeen avautuu valikko, josta voit rajata hakutuloksia. Rajauksia voi tehdä esimerkiksi käyttöoikeuksien, aineiston sisältötyypin tai valmistusvuoden mukaan.</li>
-        <li>Lisää vinkkejä hakujen muotoiluun saat <a href="<?=$this->url('content-page', ['page' => 'help-basic'])?>">perushaun ohjeista</a>.</li>
+        <li>Haku on helpointa aloittaa kirjoittamalla hakusanoja hakukenttään haluamastasi aiheesta tai aineistosta.</li>
+        <li>Hakukentän päässä olevasta pudotusvalikosta valitsemalla voi kohdistaa haun otsikkoon, tekijään tai aiheeseen. Vaihtoehto "Kaikki osumat" kohdistaa haun kaikkiin haettavissa oleviin tietoihin.</li>
+        <li>Ensimmäisen haun jälkeen on <strong>mahdollista rajata</strong> hakutuloksia esimerkiksi käyttöoikeuksien, aineiston sisältötyypin tai valmistusvuoden mukaan.</li>
+        <li>Ideoita hakujen muotoiluun saat <a href="<?=$this->url('content-page', ['page' => 'help-basic'])?>">perushaun</a> ohjeistuksesta.</li>
       </ul>
       <h3>Tarkennettu haku <a href="<?=$this->url('search-advanced')?>"><i class="fa fa-external-link-square" aria-hidden="true"></i></a></h3>
-      <h3>Finna Street -paikkahaku <a href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-external-link-square" aria-hidden="true"></i></a></h3>
+      <h3>Finna Street <a href="<?=$this->url('search-streetsearch')?>?go=1"><i class="fa fa-external-link-square" aria-hidden="true"></i></a></h3>
       <ul class="list-bullets">
-        <li>Finna Street -paikkahaku etsii kuvia Finnasta selaimesi antaman sijainnin perusteella. Haku toimii luotettavimmin mobiililaitteilla, jotka käyttävät paikannukseen GPS-tekniikaa. Hakutulokset perustuvat kuvien paikkatietoihin. Muista ennen hakua sallia paikannus selaimessasi!</li>
-        <li>Voit hakea kuvia ja paikkoihin liittyvää aineistoa myös kirjoittamalla paikan nimen tai osoitteen hakupalkkiin.</li>
+        <li>Finna Street - paikkahaku etsii selaimesi antaman sijainnin perusteella kuvia Finnasta. Sijainnin perusteella tapahtuva haku toimii luotettavimmin laitteilla, jotka käyttävät GPS-tekniikaa paikannukseen, eli mobiililaitteilla. Hakutulokset ovat riippuvaisia kuvien paikkatiedoista. Voit hakea paikkoihin liittyvää aineistoa myös kirjoittamalla paikan nimen tai osoitteen hakupalkkiin. Muista sallia paikannus selaimessasi!</li>
       </ul>
     </div>
     <div id="begin2" class="content-section">
-      <h2>Näin tarkastelet hakutuloksia</h2>
-      <ol class="list-numbers">
-        <li>Kun olet napsauttanut hakupainiketta, pääset hakutulossivulle. Löydät sivuilta aineistoja, jotka vastaavat hakusanojasi.</li>
-        <li>Voit rajata hakutuloksia edelleen hakutulossivulla (katso osio <a href="<?=$this->url('content-page', ['page' => 'help-basic'])?>#narrowsearch">hakutulosten rajaaminen</a>).</li>
-        <li>Jos Finnasta ei löydy hakuasi vastaavaa aineistoa, haku ilmoittaa siitä erikseen.</li>
-        <li>Kun napautat aineiston otsikkoa hakutuloslistasta, pääset aineiston tarkkoihin tietoihin. Kun klikkaat hakutuloksen kuvaketta tai kuvaa, saat auki suuremman kuvan ja osan tiedoista esikatselunäkymässä.</li>
-      </ol>
-    <ul class="list-bullets">
-      <li>Osassa aineistoa on latausmahdollisuus, eli voit ladata aineiston omalle koneellesi. Muista kuitenkin tarkistaa aineiston omista tiedoista, mitkä ovat esimerkiksi kuvien käyttöoikeudet.</li>
-      <li>Aineistoa voi käyttää esimerkiksi opetuksen ja oppimisen tukena tai harrastuskäytössä.</li>
-    </ul>
+      <h2>Miten tarkastelen hakutuloksia?</h2>
+      <p>Kun teet haun Finnassa, haun käynnistäminen ohjaa hakutulossivulle, josta löydät hakusanojasi vastaavaa aineistosisältöä. Hakutuloksia voi rajata hakutulossivulla (ks <a href="<?=$this->url('content-page', ['page' => 'help-basic'])?>#narrowsearch">Hakutulosten rajaaminen</a> -osio). Jos Finnasta ei löydy hakuasi vastaavaa aineistoa, ilmoittaa haku siitä erikseen.</p>
+      <p>Hakutuloslistasta pääset aineiston tarkkoihin tietoihin otsikkoa napauttamalla. Hakutuloksen kuvaketta tai kuvaa klikkaamalla saat auki suuremman kuvan ja osan tiedoista esikatselunäkymässä.</p>
+      <p>Osaan aineistosta  tarjotaan latausmahdollisuus. Muistathan kuitenkin tarkistaa esimerkiksi kuvien käyttöoikeudet aineiston omista tiedoista.</p>
+      <p>Aineistoa voi hyödyntää esimerkiksi opetuksen ja oppimisen tukena tai harrastuskäytössä.</p>
     </div>
     <? if ($this->resolver('Content/Additions/helpEnd.phtml')): ?>
       <?=$this->render('Content/Additions/helpEnd.phtml')?>
