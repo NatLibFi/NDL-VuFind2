@@ -967,7 +967,7 @@ finna.layout = (function finnaLayout() {
     });
 
     // Accordion
-    $('.login-accordion .accordion-toggle').click(function accordionClicked(e) {
+    $('.login-accordion .accordion-toggle').click(function accordionClicked() {
       _activateLoginTab($(this).find('a').data('tab'));
     });
     // Call activation to position the initial content properly
