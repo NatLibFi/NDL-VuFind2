@@ -23,7 +23,8 @@
         <? $this->auth()->getManager()->setAuthMethod($method) ?>
         <div class="accordion-toggle">
           <a data-tab="<?=$this->escapeHtmlAttr($method)?>" class="accordion-title">
-            <span class="title"><?=$this->transEsc('login_method_tab_' . strtolower($method))?>
+            <span class="title"><?=$this->transEsc('login_method_tab_' . strtolower($method))?></span>
+            <i class="icon" aria-hidden="true"></i>
           </a>
         </div>
       </div>
