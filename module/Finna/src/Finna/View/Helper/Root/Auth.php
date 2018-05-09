@@ -27,9 +27,6 @@
  */
 namespace Finna\View\Helper\Root;
 
-use VuFind\Exception\ILS as ILSException;
-use Zend\View\Exception\RuntimeException;
-
 /**
  * Authentication view helper
  *
