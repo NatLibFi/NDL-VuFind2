@@ -2,7 +2,7 @@
 <div id="authcontainer">
 <?
   $methods = $this->auth()->getManager()->getSelectableAuthOptions();
-  $activeMethod = $this->auth()->getManager()->getAuthMethod();
+  $activeMethod = $this->auth()->getRequestedAuthMethod();
   if (empty($activeMethod) || 'ChoiceAuth' === $activeMethod) {
     $activeMethod = reset($methods);
   }
