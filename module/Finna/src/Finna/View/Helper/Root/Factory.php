@@ -43,6 +43,22 @@ use Zend\ServiceManager\ServiceManager;
 class Factory extends \VuFind\View\Helper\Root\Factory
 {
     /**
+     * Construct the Auth helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Auth
+     */
+    public static function getAuth(ServiceManager $sm)
+    {
+        return new Auth(
+            $sm->getServiceLocator()->get('VuFind\AuthManager'),
+            $sm->getServiceLocator()->get('VuFind\ILSAuthenticator'),
+            $sm->getServiceLocator()->get('Request')
+        );
+    }
+
+    /**
      * Construct the Autocomplete helper.
      *
      * @param ServiceManager $sm Service manager.
@@ -277,11 +293,25 @@ class Factory extends \VuFind\View\Helper\Root\Factory
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return Header
+     * @return Content
      */
     public static function getContent(ServiceManager $sm)
     {
         return new Content();
+    }
+
+    /**
+     * Construct cookie view helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Cookie
+     */
+    public static function getCookie(ServiceManager $sm)
+    {
+        return new Cookie(
+            $sm->getServiceLocator()->get('VuFind\CookieManager')
+        );
     }
 
     /**

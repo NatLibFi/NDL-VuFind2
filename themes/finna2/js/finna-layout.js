@@ -288,6 +288,7 @@ finna.layout = (function finnaLayout() {
         }
       });
     }
+    $('.multiselect-search').attr('placeholder', VuFind.translate('search_placeholder'));
   }
 
   function initMobileNarrowSearch() {
@@ -914,6 +915,66 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  function initCookieConsent() {
+    var state = $.cookie('cookieConsent');
+    if ('undefined' === typeof state || !state) {
+      $('a.cookie-consent-dismiss').click(function dismiss() {
+        $.cookie('cookieConsent', 1, {path: VuFind.path, expires: 365});
+        $('.cookie-consent').addClass('hidden');
+      });
+      $('.cookie-consent').removeClass('hidden');
+    }
+  }
+
+  function _activateLoginTab(tabId) {
+    var $top = $('.login-tabs');
+    $top.find('.tab-pane.active').removeClass('active');
+    $top.find('li.' + tabId).tab('show');
+    $top.find('.' + tabId + '-tab').addClass('active');
+    _toggleLoginAccordion(tabId);
+  }
+
+  // The accordion has a delicate relationship with the tabs. Handle with care!
+  function _toggleLoginAccordion(tabId) {
+    var $accordionHeading = $('.login-accordion .accordion-heading a[data-tab="' + tabId + '"]').closest('.accordion-heading');
+    var $loginTabs = $('.login-tabs');
+    var $tabContent = $loginTabs.find('.tab-content');
+    if ($accordionHeading.hasClass('active')) {
+      $accordionHeading.removeClass('active');
+      // Hide tab from accordion
+      $loginTabs.find('.tab-pane.active').removeClass('active');
+      // Deactivate any tab since it can't follow the state of a collapsed accordion
+      $loginTabs.find('.nav-tabs li.active').removeClass('active');
+      // Move tab content out from accordions
+      $tabContent.insertAfter($('.login-accordion .accordion-heading').last());
+    } else {
+      // Move tab content under the correct accordion toggle
+      $tabContent.insertAfter($accordionHeading);
+      $('.login-accordion').find('.accordion-heading.active').removeClass('active');
+      $accordionHeading.addClass('active');
+      $loginTabs.find('.tab-pane.active').removeClass('active');
+      $loginTabs.find('.' + tabId + '-tab').addClass('active');
+    }
+  }
+
+  function initLoginTabs() {
+    // Tabs
+    $('.login-tabs .nav-tabs a').click(function recordTabsClick() {
+      if (!$(this).closest('li').hasClass('active')) {
+        _activateLoginTab(this.className);
+      }
+      return false;
+    });
+
+    // Accordion
+    $('.login-accordion .accordion-toggle').click(function accordionClicked() {
+      _activateLoginTab($(this).find('a').data('tab'));
+    });
+    // Call activation to position the initial content properly
+    _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
+  }
+
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -927,6 +988,7 @@ finna.layout = (function finnaLayout() {
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
     initIframeEmbed: initIframeEmbed,
     initVideoPopup: initVideoPopup,
+    initLoginTabs: initLoginTabs,
     init: function init() {
       initScrollRecord();
       initJumpMenus();
@@ -960,6 +1022,7 @@ finna.layout = (function finnaLayout() {
       initKeyboardNavigation();
       initPriorityNav();
       initFiltersToggle();
+      initCookieConsent();
     }
   };
 

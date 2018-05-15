@@ -39,8 +39,10 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
             // IE opens Delay initing autocomplete menu to prevent IE from opening it automatically at
             initSearch();
           }
+          var desc = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', cnt);
           holder.find('.ui-autocomplete-input')
-            .attr('placeholder', VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', cnt))
+            .attr('placeholder', desc)
+            .attr('aria-label', desc)
             .focus().blur();
 
           if (typeof id != 'undefined' && id) {
@@ -271,10 +273,12 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     finna.feed.init(contactHolder);
 
     holder.find('.office-quick-information .service-title').text(data.name);
-    if ('address' in data && !data.details.museum) {
+    if ('address' in data) {
       holder.find('.office-links.address').html(data.address);
-      var address = holder.find('.address-contact');
-      address.show().find('> p').html(data.address);
+      if (!data.details.museum) {
+        var address = holder.find('.address-contact');
+        address.show().find('> p').html(data.address);
+      }
     }
     if ('email' in data) {
       var email = data.email;
