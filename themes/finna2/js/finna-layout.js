@@ -125,12 +125,8 @@ finna.layout = (function finnaLayout() {
       // truncate only if there's more than one line to hide
       if (self.height() > (truncation[index] + rowHeight[index] + 1)) {
         self.css('height', truncation[index] - 1 + 'px');
-        if (self.hasClass('wide')) { // generate different truncate styles according to class
-          self.after('<div class="more-link wide"><i class="fa fa-handle-open"></i></div><div class="less-link wide"> <i class="fa fa-handle-close"></i></div>');
-        } else {
-          self.before('<div class="less-link-top">' + VuFind.translate('show_less') + ' <i class="fa fa-arrow-up"></i></div>');
-          self.after('<div class="more-link">' + VuFind.translate('show_more') + ' <i class="fa fa-arrow-down"></i></div><div class="less-link">' + VuFind.translate('show_less') + ' <i class="fa fa-arrow-up"></i></div>');
-        }
+        self.before('<div class="less-link-top">' + VuFind.translate('show_less') + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></div>');
+        self.after('<div class="more-link">' + VuFind.translate('show_more') + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></div><div class="less-link">' + VuFind.translate('show_less') + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></div>');
         $('.less-link-top').hide();
         $('.less-link').hide();
 
@@ -710,7 +706,7 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function initLoginRedirect() {
+  function initLightboxLogin() {
     if (!document.addEventListener) {
       return;
     }
@@ -719,6 +715,14 @@ finna.layout = (function finnaLayout() {
         window.location.href = VuFind.path + '/MyResearch/Home';
         e.preventDefault();
       }
+    });
+    $('#modal').on('show.bs.modal', function onShowModal() {
+      if ($('#modal').find('#authcontainer').length > 0) {
+        $('#modal .modal-dialog').addClass('modal-lg modal-lg-dynamic');
+      }
+    });
+    $('#modal').on('hidden.bs.modal', function onHiddenModal() {
+      $('#modal .modal-dialog.modal-lg-dynamic').removeClass('modal-lg');
     });
   }
 
@@ -926,6 +930,55 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  function _activateLoginTab(tabId) {
+    var $top = $('.login-tabs');
+    $top.find('.tab-pane.active').removeClass('active');
+    $top.find('li.' + tabId).tab('show');
+    $top.find('.' + tabId + '-tab').addClass('active');
+    _toggleLoginAccordion(tabId);
+  }
+
+  // The accordion has a delicate relationship with the tabs. Handle with care!
+  function _toggleLoginAccordion(tabId) {
+    var $accordionHeading = $('.login-accordion .accordion-heading a[data-tab="' + tabId + '"]').closest('.accordion-heading');
+    var $loginTabs = $('.login-tabs');
+    var $tabContent = $loginTabs.find('.tab-content');
+    if ($accordionHeading.hasClass('active')) {
+      $accordionHeading.removeClass('active');
+      // Hide tab from accordion
+      $loginTabs.find('.tab-pane.active').removeClass('active');
+      // Deactivate any tab since it can't follow the state of a collapsed accordion
+      $loginTabs.find('.nav-tabs li.active').removeClass('active');
+      // Move tab content out from accordions
+      $tabContent.insertAfter($('.login-accordion .accordion-heading').last());
+    } else {
+      // Move tab content under the correct accordion toggle
+      $tabContent.insertAfter($accordionHeading);
+      $('.login-accordion').find('.accordion-heading.active').removeClass('active');
+      $accordionHeading.addClass('active');
+      $loginTabs.find('.tab-pane.active').removeClass('active');
+      $loginTabs.find('.' + tabId + '-tab').addClass('active');
+    }
+  }
+
+  function initLoginTabs() {
+    // Tabs
+    $('.login-tabs .nav-tabs a').click(function recordTabsClick() {
+      if (!$(this).closest('li').hasClass('active')) {
+        _activateLoginTab(this.className);
+      }
+      return false;
+    });
+
+    // Accordion
+    $('.login-accordion .accordion-toggle').click(function accordionClicked() {
+      _activateLoginTab($(this).find('a').data('tab'));
+    });
+    // Call activation to position the initial content properly
+    _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
+  }
+
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -939,6 +992,7 @@ finna.layout = (function finnaLayout() {
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
     initIframeEmbed: initIframeEmbed,
     initVideoPopup: initVideoPopup,
+    initLoginTabs: initLoginTabs,
     init: function init() {
       initScrollRecord();
       initJumpMenus();
@@ -963,7 +1017,7 @@ finna.layout = (function finnaLayout() {
       initPiwikPopularSearches();
       initAutoScrollTouch();
       initIpadCheck();
-      initLoginRedirect();
+      initLightboxLogin();
       initLoadMasonry();
       initOrganisationInfoWidgets();
       initOrganisationPageLinks();

@@ -39,8 +39,10 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
             // IE opens Delay initing autocomplete menu to prevent IE from opening it automatically at
             initSearch();
           }
+          var desc = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', cnt);
           holder.find('.ui-autocomplete-input')
-            .attr('placeholder', VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', cnt))
+            .attr('placeholder', desc)
+            .attr('aria-label', desc)
             .focus().blur();
 
           if (typeof id != 'undefined' && id) {
@@ -329,9 +331,20 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           openToday = obj.times[0];
 
           var timeOpen = holder.find('.time-open');
-          timeOpen.find('.opens').text(openToday.opens);
-          timeOpen.find('.closes').text(openToday.closes);
+          timeOpen.find('.opening-times .opens').text(openToday.opens);
+          timeOpen.find('.opening-times .closes').text(openToday.closes);
           timeOpen.show();
+          var staffSchedule = obj.times[1];
+          var staffTimes;
+          if (staffSchedule) {
+            staffTimes = timeOpen.find('.staff-times');
+            staffTimes.find('.opens').text(staffSchedule.opens);
+            staffTimes.find('.closes').text(staffSchedule.closes);
+            staffTimes.removeClass('hide');
+          } else {
+            staffTimes = timeOpen.find('.staff-times');
+            staffTimes.addClass('hide');
+          }
         }
       });
     }

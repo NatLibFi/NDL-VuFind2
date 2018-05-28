@@ -3,6 +3,7 @@ return [
     'extends' => 'bootstrap3',
     'helpers' => [
         'factories' => [
+            'auth' => 'Finna\View\Helper\Root\Factory::getAuth',
             'authorizationNote' => 'Finna\View\Helper\Root\Factory::getAuthorizationNote',
             'autocomplete' => 'Finna\View\Helper\Root\Factory::getAutocomplete',
             'browse' => 'Finna\View\Helper\Root\Factory::getBrowse',
@@ -23,6 +24,7 @@ return [
             'holdingsSettings' => 'Finna\View\Helper\Root\Factory::getHoldingsSettings',
             'imageSrc' => 'Finna\View\Helper\Root\Factory::getImageSrc',
             'indexedTotal' => 'Finna\View\Helper\Root\Factory::getTotalIndexed',
+            'inlineScript' => 'FinnaTheme\View\Helper\Factory::getInlineScript',
             'layoutclass' => 'Finna\View\Helper\Root\Factory::getLayoutClass',
             'metalib' => 'Finna\View\Helper\Root\Factory::getMetaLib',
             'navibar' => 'Finna\View\Helper\Root\Factory::getNavibar',

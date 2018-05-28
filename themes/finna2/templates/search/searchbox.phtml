@@ -158,23 +158,25 @@
       ?>
        <? $defaultFilterState = $this->hasDefaultsApplied || $options->getRetainFilterSetting() || !$defaultSortApplied ? ' checked="checked"' : ''; ?>
        <? if (!$browse && (!empty($filterDetails) || !empty($this->savedSearches) || !$defaultSortApplied || (isset($this->searchIndex) && ($this->searchIndex != 'AllFields' && $handlerCount <= 1)))): ?>
-        <div class="hidden">
-          <? foreach ($filterDetails as $current): ?>
-            <input class="applied-filter" id="<?=$this->escapeHtmlAttr($current['id'])?>" type="checkbox"<?=$defaultFilterState?> name="filter[]" value="<?=$this->escapeHtmlAttr($current['value'])?>" />
-            <label for="<?=$this->escapeHtmlAttr($current['id'])?>"><?=$this->escapeHtml($current['value'])?></label>
-          <? endforeach; ?>
-          <? if (!empty($this->savedSearches)): ?>
-            <? foreach ($this->savedSearches as $searchClass => $searchId): ?>
-              <input class="applied-filter saved-search" id="search-<?=$this->escapeHtmlAttr($searchClass)?>" type="checkbox"<?=$defaultFilterState?> name="search[]" value="<?=$this->escapeHtmlAttr($searchClass . ':' . $searchId)?>" />
-              <label for="<?=$this->escapeHtmlAttr($searchClass)?>"><?=$this->escapeHtml($searchId)?></label>
+        <div aria-hidden="true" class="hidden">
+            <? foreach ($filterDetails as $current): ?>
+              <input class="applied-filter" id="<?=$this->escapeHtmlAttr($current['id'])?>" type="checkbox"<?=$defaultFilterState?> name="filter[]" value="<?=$this->escapeHtmlAttr($current['value'])?>" />
+              <label for="<?=$this->escapeHtmlAttr($current['id'])?>"><?=$this->escapeHtml($current['value'])?></label>
             <? endforeach; ?>
-          <? endif; ?>
-          <? if ($handlerCount <= 1 && isset($this->searchIndex)): ?>
-            <input class="applied-filter" id="search-index" type="checkbox"<?=$defaultFilterState?> name="type" value="<?=$this->escapeHtmlAttr($this->searchIndex)?>" />
-          <? endif; ?>
-          <!-- this is a hidden element that flags whether or not default filters have been applied;
-               it is intentionally unlabeled, as users are not meant to manipulate it directly. -->
-          <input class="applied-filter" id="dfApplied" type="checkbox" name="dfApplied" value="1"<?=$defaultFilterState?> />
+            <? if (!empty($this->savedSearches)): ?>
+              <? foreach ($this->savedSearches as $searchClass => $searchId): ?>
+                <input class="applied-filter saved-search" id="search-<?=$this->escapeHtmlAttr($searchClass)?>" type="checkbox"<?=$defaultFilterState?> name="search[]" value="<?=$this->escapeHtmlAttr($searchClass . ':' . $searchId)?>" />
+                <label for="<?=$this->escapeHtmlAttr($searchClass)?>"><?=$this->escapeHtml($searchId)?></label>
+              <? endforeach; ?>
+            <? endif; ?>
+            <? if ($handlerCount <= 1 && isset($this->searchIndex)): ?>
+              <input class="applied-filter" id="search-index" type="checkbox"<?=$defaultFilterState?> name="type" value="<?=$this->escapeHtmlAttr($this->searchIndex)?>" />
+              <label for="search-index">search-index</label>
+            <? endif; ?>
+            <!-- this is a hidden element that flags whether or not default filters have been applied;
+                it is intentionally unlabeled, as users are not meant to manipulate it directly. -->
+            <input class="applied-filter" aria-hidden="true" id="dfApplied" type="checkbox" name="dfApplied" value="1"<?=$defaultFilterState?> />
+            <label for="dfApplied">dfApplied</label>
         </div>
       <? endif; ?>
       <? foreach ($hiddenFilters as $key => $filter): ?>
@@ -197,13 +199,13 @@
       <? if (!$browse && !$mainPage && $advSearch): ?>
         <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced hidden-xs"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
       <? endif; ?>
-      <? if ($module === 'search' && !$this->translationEmpty('tooltip_local_search_html')): ?><span class="tooltip-search-local pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_local_search_html')?>"><i class="fa fa-question-circle-big"></i></span><? endif; ?>
-      <? if ($module === 'primo' && !$this->translationEmpty('tooltip_pci_search_html')): ?><span class="tooltip-search-pci pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_pci_search_html')?>"><i class="fa fa-question-circle-big"></i></span><? endif; ?>
-      <? if ($module === 'eds' && !$this->translationEmpty('tooltip_eds_search_html')): ?><span class="tooltip-search-eds pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_eds_search_html')?>"><i class="fa fa-question-circle-big"></i></span><? endif; ?>
-      <? if ($module === 'summon' && !$this->translationEmpty('tooltip_summon_search_html')): ?><span class="tooltip-search-summon pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_summon_search_html')?>"><i class="fa fa-question-circle-big"></i></span><? endif; ?>
+      <? if ($module === 'search' && !$this->translationEmpty('tooltip_local_search_html')): ?><span class="tooltip-search-local pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_local_search_html')?>"><i class="fa fa-question-circle-big"></i></span><? endif; ?>
+      <? if ($module === 'primo' && !$this->translationEmpty('tooltip_pci_search_html')): ?><span class="tooltip-search-pci pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_pci_search_html')?>"><i class="fa fa-question-circle-big"></i></span><? endif; ?>
+      <? if ($module === 'eds' && !$this->translationEmpty('tooltip_eds_search_html')): ?><span class="tooltip-search-eds pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_eds_search_html')?>"><i class="fa fa-question-circle-big"></i></span><? endif; ?>
+      <? if ($module === 'summon' && !$this->translationEmpty('tooltip_summon_search_html')): ?><span class="tooltip-search-summon pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_summon_search_html')?>"><i class="fa fa-question-circle-big"></i></span><? endif; ?>
       <? if ($this->layout()->templateDir === 'search' && $this->layout()->templateName === 'home' && !$this->translationEmpty('tooltip_image_html')): ?>
          <div class="tooltip-image">
-           <span class="tooltip-image-info" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transesc('tooltip_image_html')?>"><i class="fa fa-info-circle"></i></span>
+           <span class="tooltip-image-info" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_image_html')?>"><i class="fa fa-info-circle"></i></span>
         </div>
       <? endif; ?>
     </div>
