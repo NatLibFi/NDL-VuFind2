@@ -31,7 +31,7 @@ $config = [
     'router' => [
         'routes' => [
             'cache-file' => [
-                'type'    => 'Zend\Router\Http\Segment',
+                'type'    => 'Zend\Mvc\Router\Http\Segment',
                 'options' => [
                     'route'    => '/cache/[:file]',
                     'constraints' => [
@@ -147,6 +147,11 @@ $config = [
                     ]
                 ]
             ]
+        ],
+    ],
+    'route_manager' => [
+        'aliases' => [
+            'Zend\Mvc\Router\Http\Segment' => 'Zend\Router\Http\Segment'
         ]
     ],
     'controllers' => [
@@ -225,7 +230,10 @@ $config = [
     ],
     'controller_plugins' => [
         'factories' => [
-            'recaptcha' => 'Finna\Controller\Plugin\Factory::getRecaptcha',
+            'Finna\Controller\Plugin\Recaptcha' => 'Finna\Controller\Plugin\Factory::getRecaptcha',
+        ],
+        'aliases' => [
+            'VuFind\Controller\Plugin\Recaptcha' => 'Finna\Controller\Plugin\Recaptcha',
         ],
     ],
     'service_manager' => [
@@ -270,9 +278,6 @@ $config = [
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
             'VuFind\Search\Memory' => 'Finna\Search\Memory',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
-        ],
-        'invokables' => [
-            'VuFind\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
         ]
     ],
     // This section contains all VuFind-specific settings (i.e. configurations
@@ -470,7 +475,8 @@ $config = [
                     'VuFind\ILS\Driver\KohaRest' => 'Finna\ILS\Driver\KohaRest',
                     'VuFind\ILS\Driver\MultiBackend' => 'Finna\ILS\Driver\MultiBackend',
                     'VuFind\ILS\Driver\SierraRest' => 'Finna\ILS\Driver\SierraRest',
-                    'VuFind\ILS\Driver\VoyagerRestful' => 'Finna\ILS\Driver\Voyager',
+                    'VuFind\ILS\Driver\Voyager' => 'Finna\ILS\Driver\Voyager',
+                    'VuFind\ILS\Driver\VoyagerRestful' => 'Finna\ILS\Driver\VoyagerRestful',
                 ]
             ],
             'recommend' => [

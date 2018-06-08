@@ -45,7 +45,13 @@
     }
   }
 
-  .local-available-online-record {
+  .recordURLs {
+    margin: 0px 0px 10px;
+    padding-bottom: 10px;
+    & .online-source {
+      font-size: 0.9em;
+      color: @gray-light;
+    }
     a {
       font-size: 15px;
     }
@@ -222,18 +228,22 @@
   font-size: 1.05em;
   margin: 0 0 3px;
 }
+// record-authors is no longer used, but is retained here for locally customized templates
 .record-authors, .record-title-alt-script {
   .date-and-year();
   margin-top: 6px;
 }
-
-.record-authors .recordContainerReference {
-  padding-bottom: 1em;
-  padding-top: 1em;
-  a {
-    font-size: 1.2em;
-    text-decoration: underline;
-    font-weight: 700;
+.record-core-metadata {
+  .date-and-year();
+  margin-top: 6px;
+  .recordContainerReference {
+    padding-bottom: 1em;
+    padding-top: 1em;
+    a {
+      font-size: 1.2em;
+      text-decoration: underline;
+      font-weight: 700;
+    }
   }
   .recordPublished {
     font-weight: 700;
