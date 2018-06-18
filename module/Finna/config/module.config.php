@@ -78,7 +78,7 @@ $config = [
                         'lid'     => '[0-9]+',
                     ],
                     'defaults' => [
-                        'controller' => 'Listpage',
+                        'controller' => 'ListPage',
                         'action'     => 'List',
                     ]
                 ],
@@ -468,7 +468,7 @@ $config = [
                 'aliases' => [
                     'axiellwebservices' => 'Finna\ILS\Driver\AxiellWebServices',
                     'gemini' => 'Finna\ILS\Driver\Gemini',
-                    'mikromark' => 'Finna\ILS\Driver\Mikromarc',
+                    'mikromarc' => 'Finna\ILS\Driver\Mikromarc',
                     // TOOD: remove the following line when KohaRest driver is available upstream:
                     'koharest' => 'Finna\ILS\Driver\KohaRest',
 
@@ -504,7 +504,7 @@ $config = [
             'search_options' => [
                 'factories' => [
                     'Finna\Search\Combined\Options' => 'VuFind\Search\OptionsFactory',
-                    'Finna\Search\EDS\Options' => 'VuFind\Search\OptionsFactory',
+                    'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\OptionsFactory',
                     'Finna\Search\Primo\Options' => 'VuFind\Search\OptionsFactory',
                 ],
                 'aliases' => [
