@@ -152,14 +152,13 @@ class SearchController extends \VuFind\Controller\SearchController
             $minSO = $minSO->deminify($this->getResultsManager());
             $schedule[$minSO->getSearchId()] = $current->finna_schedule;
         }
-
-        foreach($view->unsaved as $search) {
-            if(get_class($search) !== 'Finna\Search\Solr\Results') {
+        // Add unsaved searches
+        foreach ($view->unsaved as $search) {
+            if (get_class($search) !== 'Finna\Search\Solr\Results') {
                 continue;
             }
             $schedule[$search->getSearchId()] = 0;
         }
-
         $view->schedule = $schedule;
         return $view;
     }
