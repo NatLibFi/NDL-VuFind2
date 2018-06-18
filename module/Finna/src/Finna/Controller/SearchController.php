@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Kalle Pyykkönen <kalle.pyykkonen@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -36,6 +37,7 @@ use VuFindCode\ISBN;
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Kalle Pyykkönen <kalle.pyykkonen@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
@@ -150,6 +152,14 @@ class SearchController extends \VuFind\Controller\SearchController
             $minSO = $minSO->deminify($this->getResultsManager());
             $schedule[$minSO->getSearchId()] = $current->finna_schedule;
         }
+
+        foreach($view->unsaved as $search) {
+            if(get_class($search) !== 'Finna\Search\Solr\Results') {
+                continue;
+            }
+            $schedule[$search->getSearchId()] = 0;
+        }
+
         $view->schedule = $schedule;
         return $view;
     }
