@@ -339,9 +339,9 @@ finna.imagePopup = (function finnaImagePopup() {
           initThumbnailNavi();
           initRecordImage();
         } else {
-          $(this).closest('a.image-popup-trigger')
-            .addClass('disable')
-            .unbind('click').click(function onClickPopupTrigger() { return false; });
+          $(this).closest('.recordcover-holder').empty();
+          $('.access-rights p').first().hide();
+          $('.image-rights').hide();
         }
       });
     }
