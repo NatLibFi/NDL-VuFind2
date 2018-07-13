@@ -138,7 +138,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
         ) {
             // Load local cache if available
             if (($content = file_get_contents($localFile)) !== false) {
-                return $this->formatResponse(['html' => $content], self::STATUS_OK);
+                return $this->formatResponse(['html' => $content]);
             } else {
                 return $this->formatResponse('', self::STATUS_HTTP_ERROR);
             }
@@ -178,7 +178,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
                 $summary = str_replace('##', "\n\n", $summary);
 
                 // Process markdown
-                $summary = $this->viewRenderer->plugin('markdown')->toHtml($summary);
+                $summary = $this->renderer->plugin('markdown')->toHtml($summary);
 
                 return $this->formatResponse(['html' => $summary]);
             }

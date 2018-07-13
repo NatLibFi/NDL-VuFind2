@@ -38,8 +38,11 @@ use Zend\Mvc\Controller\Plugin\Params;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ChangePickupLocation extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
+class ChangeRequestStatus extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
+    implements \Zend\Log\LoggerAwareInterface
 {
+    use \VuFind\Log\LoggerAwareTrait;
+
     /**
      * Handle a request.
      *
@@ -59,8 +62,8 @@ class ChangePickupLocation extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
             );
         }
 
-        $requestId = $this->params()->fromQuery('requestId');
-        $frozen = $this->params()->fromQuery('frozen');
+        $requestId = $params->fromQuery('requestId');
+        $frozen = $params->fromQuery('frozen');
         if (empty($requestId)) {
             return $this->formatResponse(
                 $this->translate('bulk_error_missing'),
@@ -69,9 +72,7 @@ class ChangePickupLocation extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         }
 
         try {
-            $result = $this->connection->checkFunction(
-                'changeRequestStatus', [$patron]
-            );
+            $result = $this->ils->checkFunction('changeRequestStatus', [$patron]);
             if (!$result) {
                 return $this->formatResponse(
                     $this->translate('unavailable'),
@@ -83,11 +84,10 @@ class ChangePickupLocation extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                 'requestId' => $requestId,
                 'frozen' => $frozen
             ];
-            $results = $this->connection->changeRequestStatus($patron, $details);
+            $results = $this->ils->changeRequestStatus($patron, $details);
 
             return $this->formatResponse($results);
         } catch (\Exception $e) {
-            $this->setLogger($this->serviceLocator->get('VuFind\Logger'));
             $this->logError('changePickupLocation failed: ' . $e->getMessage());
             // Fall through to the error message below.
         }

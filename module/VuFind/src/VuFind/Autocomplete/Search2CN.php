@@ -1,10 +1,10 @@
 <?php
 /**
- * Resolver Driver Factory Class
+ * Search2 Call Number Autocomplete Module
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) Villanova University 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,42 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Resolver_Drivers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Autocomplete
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Chris Hallberg <challber@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:link_resolver_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:autosuggesters Wiki
  */
-namespace Finna\Resolver\Driver;
-
-use Zend\ServiceManager\ServiceManager;
+namespace VuFind\Autocomplete;
 
 /**
- * Resolver Driver Factory Class
+ * Search2 Call Number Autocomplete Module
  *
  * @category VuFind
- * @package  Resolver_Drivers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Autocomplete
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:link_resolver_drivers Wiki
- *
- * @codeCoverageIgnore
+ * @link     https://vufind.org/wiki/development:plugins:autosuggesters Wiki
  */
-class Factory
+class Search2CN extends SolrCN
 {
     /**
-     * Factory for Sfx record driver.
+     * Search object family to use
      *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return Sfx
+     * @var string
      */
-    public static function getSfx(ServiceManager $sm)
-    {
-        $config = $sm->get('VuFind\Config')->get('config');
-        return new Sfx(
-            $config->OpenURL->url,
-            $sm->get('VuFind\Http')->createClient(),
-            $config
-        );
-    }
+    protected $searchClassId = 'Search2';
 }

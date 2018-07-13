@@ -31,7 +31,7 @@ $config = [
     'router' => [
         'routes' => [
             'cache-file' => [
-                'type'    => 'Zend\Mvc\Router\Http\Segment',
+                'type'    => 'Zend\Router\Http\Segment',
                 'options' => [
                     'route'    => '/cache/[:file]',
                     'constraints' => [
@@ -370,10 +370,15 @@ $config = [
             ],
             'auth' => [
                 'factories' => [
-                    'ils' => 'Finna\Auth\Factory::getILS',
-                    'multiils' => 'Finna\Auth\Factory::getMultiILS',
-                    'shibboleth' => 'Finna\Auth\Factory::getShibboleth'
+                    'Finna\Auth\ILS' => 'Finna\Auth\Factory::getILS',
+                    'Finna\Auth\MultiILS' => 'Finna\Auth\Factory::getMultiILS',
+                    'Finna\Auth\Shibboleth' => 'Finna\Auth\Factory::getShibboleth',
                 ],
+                'aliases' => [
+                    'VuFind\Auth\ILS' => 'Finna\Auth\ILS',
+                    'VuFind\Auth\MultiILS' => 'Finna\Auth\MultiILS',
+                    'VuFind\Auth\Shibboleth' => 'Finna\Auth\Shibboleth',
+                ]
             ],
             'autocomplete' => [
                 'factories' => [
@@ -463,7 +468,7 @@ $config = [
                     'Finna\ILS\Driver\MultiBackend' => 'VuFind\ILS\Driver\MultiBackendFactory',
                     'Finna\ILS\Driver\SierraRest' => 'VuFind\ILS\Driver\SierraRestFactory',
                     'Finna\ILS\Driver\Voyager' => '\VuFind\ILS\Driver\DriverWithDateConverterFactory',
-                    'Finna\ILS\Driver\VoyagerRestful' => '\VuFind\ILS\Driver\DriverWithDateConverterFactory',
+                    'Finna\ILS\Driver\VoyagerRestful' => '\Finna\ILS\Driver\VoyagerRestfulFactory',
                 ],
                 'aliases' => [
                     'axiellwebservices' => 'Finna\ILS\Driver\AxiellWebServices',
@@ -492,8 +497,11 @@ $config = [
             ],
             'resolver_driver' => [
                 'factories' => [
-                    'sfx' => 'Finna\Resolver\Driver\Factory::getSfx',
+                    'Finna\Resolver\Driver\Sfx' => 'VuFind\Resolver\Driver\DriverWithHttpClientFactory',
                 ],
+                'aliases' => [
+                    'VuFind\Resolver\Driver\Sfx' => 'Finna\Resolver\Driver\Sfx',
+                ]
             ],
             'search_backend' => [
                 'factories' => [
@@ -511,6 +519,9 @@ $config = [
                     'VuFind\Search\Combined\Options' => 'Finna\Search\Combined\Options',
                     'VuFind\Search\EDS\Options' => 'Finna\Search\EDS\Options',
                     'VuFind\Search\Primo\Options' => 'Finna\Search\Primo\Options',
+
+                    // Counterpart for EmptySet Params:
+                    'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
                 ]
             ],
             'search_params' => [
@@ -561,7 +572,7 @@ $config = [
                     'Finna\RecordDriver\SolrDefault' =>
                         'VuFind\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrMarc' =>
-                        'VuFind\RecordDriver\SolrMarcFactory',
+                        'VuFind\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrEad' =>
                         'VuFind\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrForward' =>
@@ -583,6 +594,11 @@ $config = [
                     'VuFind\RecordDriver\SolrDefault' => 'Finna\RecordDriver\SolrDefault',
                     'VuFind\RecordDriver\SolrMarc' => 'Finna\RecordDriver\SolrMarc',
                     'VuFind\RecordDriver\Primo' => 'Finna\RecordDriver\Primo',
+                ],
+                'delegators' => [
+                    'Finna\RecordDriver\SolrMarc' => [
+                        'VuFind\RecordDriver\IlsAwareDelegatorFactory'
+                    ],
                 ],
             ],
             'recordtab' => [

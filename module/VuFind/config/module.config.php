@@ -126,6 +126,8 @@ $config = [
             'VuFind\Controller\ErrorController' => 'VuFind\Controller\AbstractBaseFactory',
             'VuFind\Controller\ExternalAuthController' => 'VuFind\Controller\AbstractBaseFactory',
             'VuFind\Controller\FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
+            'VuFind\Controller\Search2Controller' => 'VuFind\Controller\AbstractBaseFactory',
+            'VuFind\Controller\Search2recordController' => 'VuFind\Controller\AbstractBaseFactory',
             'VuFind\Controller\HelpController' => 'VuFind\Controller\AbstractBaseFactory',
             'VuFind\Controller\HierarchyController' => 'VuFind\Controller\AbstractBaseFactory',
             'VuFind\Controller\IndexController' => 'VuFind\Controller\IndexControllerFactory',
@@ -195,6 +197,10 @@ $config = [
             'externalauth' => 'VuFind\Controller\ExternalAuthController',
             'Feedback' => 'VuFind\Controller\FeedbackController',
             'feedback' => 'VuFind\Controller\FeedbackController',
+            'Search2' => 'VuFind\Controller\Search2Controller',
+            'search2' => 'VuFind\Controller\Search2Controller',
+            'Search2Record' => 'VuFind\Controller\Search2recordController',
+            'search2record' => 'VuFind\Controller\Search2recordController',
             'Help' => 'VuFind\Controller\HelpController',
             'help' => 'VuFind\Controller\HelpController',
             'Hierarchy' => 'VuFind\Controller\HierarchyController',
@@ -363,12 +369,12 @@ $config = [
             'VuFind\SMS\SMSInterface' => 'VuFind\SMS\Factory',
             'VuFind\Solr\Writer' => 'VuFind\Solr\WriterFactory',
             'VuFind\Tags' => 'VuFind\TagsFactory',
+            'VuFind\Validator\Csrf' => 'VuFind\Validator\CsrfFactory',
             'VuFindHttp\HttpService' => 'VuFind\Service\Factory::getHttp',
             'VuFindSearch\Service' => 'VuFind\Service\Factory::getSearchService',
             'Zend\Db\Adapter\Adapter' => 'VuFind\Service\Factory::getDbAdapter',
             'Zend\Mvc\I18n\Translator' => 'VuFind\Service\Factory::getTranslator',
             'Zend\Session\SessionManager' => 'VuFind\Session\ManagerFactory',
-            'Zend\Validator\Csrf' => 'VuFind\Service\CsrfValidatorFactory',
         ],
         'initializers' => [
             'VuFind\ServiceManager\ServiceInitializer',
@@ -433,6 +439,7 @@ $config = [
             'VuFind\Translator' => 'Zend\Mvc\I18n\Translator',
             'VuFind\WorldCatUtils' => 'VuFind\Connection\WorldCatUtils',
             'VuFind\YamlReader' => 'VuFind\Config\YamlReader',
+            'Zend\Validator\Csrf' => 'VuFind\Validator\Csrf',
         ],
     ],
     'translator' => [],
@@ -554,7 +561,13 @@ $config = [
                 ],
                 'defaultTab' => null,
             ],
-            'VuFind\RecordDriver\SolrAuth' => [
+            'VuFind\RecordDriver\SolrAuthDefault' => [
+                'tabs' => [
+                    'Details' => 'StaffViewArray',
+                 ],
+                'defaultTab' => null,
+            ],
+            'VuFind\RecordDriver\SolrAuthMarc' => [
                 'tabs' => [
                     'Details' => 'StaffViewMARC',
                  ],
@@ -635,6 +648,7 @@ $recordRoutes = [
     'solrauthrecord' => 'Authority',
     'summonrecord' => 'SummonRecord',
     'worldcatrecord' => 'WorldcatRecord',
+    'search2record' => 'Search2Record',
 
     // For legacy (1.x/2.x) compatibility:
     'vufindrecord' => 'Record',
@@ -686,6 +700,7 @@ $staticRoutes = [
     'Search/FacetList', 'Search/History', 'Search/Home', 'Search/NewItem',
     'Search/OpenSearch', 'Search/Reserves', 'Search/ReservesFacetList',
     'Search/Results', 'Search/Suggest',
+    'Search2/Advanced', 'Search2/Home', 'Search2/Results',
     'Summon/Advanced', 'Summon/FacetList', 'Summon/Home', 'Summon/Search',
     'Tag/Home',
     'Upgrade/Home', 'Upgrade/FixAnonymousTags', 'Upgrade/FixDuplicateTags',

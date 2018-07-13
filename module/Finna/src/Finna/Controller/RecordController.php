@@ -161,7 +161,7 @@ class RecordController extends \VuFind\Controller\RecordController
             throw new \Exception('Normalization preview URL not configured');
         }
 
-        $httpService = $this->serviceLocator->get('\VuFind\Http');
+        $httpService = $this->serviceLocator->get('VuFind\Http');
         $client = $httpService->createClient(
             $config->NormalizationPreview->url,
             \Zend\Http\Request::METHOD_POST
@@ -401,7 +401,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 $gatheredDetails, $extraHoldFields, $requestGroups
             );
             $validPickup = $validGroup && $this->holds()->validatePickUpInput(
-                $gatheredDetails['pickUpLocation'], $extraHoldFields, $pickup
+                $gatheredDetails['pickUpLocation'] ?? '', $extraHoldFields, $pickup
             );
             if (!$validGroup) {
                 $this->flashMessenger()

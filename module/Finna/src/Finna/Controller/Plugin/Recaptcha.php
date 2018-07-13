@@ -130,7 +130,7 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
         $user = $this->authManager->isLoggedIn();
 
         $bypassCaptcha = $user && in_array(
-            strtolower($user->finna_auth_method),
+            strtolower($user->auth_method),
             $this->bypassCaptcha[$domain]
         );
         return $bypassCaptcha ? false : parent::active($domain);
@@ -153,6 +153,9 @@ class Recaptcha extends \VuFind\Controller\Plugin\Recaptcha
         $storage = new \Zend\Session\Container(
             'SessionState', $this->sessionManager
         );
+        if (empty($storage->sessionStartTime)) {
+            $storage->sessionStartTime = time();
+        }
         $timestamp = isset($storage->lastProtectedActionTime)
             ? $storage->lastProtectedActionTime : $storage->sessionStartTime;
         $passed = time() - $timestamp >= $this->actionInterval;
