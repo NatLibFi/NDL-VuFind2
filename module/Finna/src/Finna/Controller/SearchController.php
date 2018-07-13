@@ -154,10 +154,9 @@ class SearchController extends \VuFind\Controller\SearchController
         }
         // Add unsaved searches
         foreach ($view->unsaved as $search) {
-            if ($search instanceof Finna\Search\Solr\Results) {
-                continue;
+            if ($search instanceof \Finna\Search\Solr\Results) {
+                $schedule[$search->getSearchId()] = 0;
             }
-            $schedule[$search->getSearchId()] = 0;
         }
         $view->schedule = $schedule;
         return $view;

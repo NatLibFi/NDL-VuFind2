@@ -794,12 +794,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             if ($savedRow) {
                 $savedRow->setSchedule($schedule, $baseurl);
             } else {
-                if ($this->setSavedFlagSecurely($sid, true, $user->id)) {
-                    $historyRow = $search->select(
-                        ['id' => $sid, 'user_id' => $user->id]
-                    )->current();
-                    $historyRow->setSchedule($schedule, $baseurl);
-                }
+                $this->setSavedFlagSecurely($sid, true, $user->id);
+                $historyRow = $search->select(
+                    ['id' => $sid, 'user_id' => $user->id])->current();
+                $historyRow->setSchedule($schedule, $baseurl);
             }
             return $this->redirect()->toRoute('search-history');
         } else {
