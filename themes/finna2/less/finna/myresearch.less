@@ -162,7 +162,6 @@
   }
   .my-research-content {
     width: 100%;
-    padding: 20px;
     border-radius: @border-radius-base;
   }
   h1 {
@@ -448,16 +447,21 @@
   }
 }
 .useraccount-nav {
+  border: solid 1px @gray-lighter;
+  box-shadow: 2px 2px 3px 0 @gray-lighter;
   display: table;
-  width: 100%;
+  &.list-group {
+    border-radius: 4px;
+  }
   & li {
-    float:left;
+    border-top: 1px solid @gray-lighter;
+    float: left;
+    width: 100%;
     a {
-      padding: 10px 5px;
+      padding: 12px 10px;
       margin-right: 0px;
     }
     @media(max-width: @screen-md-max) {
-      max-width: 160px;
       font-size: 14px;
       a {
         padding: 10px;
@@ -466,6 +470,9 @@
     @media(max-width: @screen-sm-max) {
       max-width: 95px;
     }
+  }
+  & li:first-child {
+    border-top: transparent;
   }
 }
 
@@ -483,7 +490,6 @@
     }
   }
 }
-
 .main.template-dir-myresearch.template-name-unsubscribe {
   & .unsubscribe {
     margin-bottom: 20px;
