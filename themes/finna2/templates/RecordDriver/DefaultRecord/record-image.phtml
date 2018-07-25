@@ -61,13 +61,28 @@
         <div class="access-rights">
           <div class="image-rights">
             <?php $hasLink = isset($rights['link']); ?>
-            <strong><?= $this->transEsc('Image Rights') ?>:</strong>
-            <?php if (!empty($rights['copyright'])): ?><?php if ($hasLink): ?><span class="imagerights"><a target="_blank" href="<?= $rights['link'] ?>"><?php endif; ?><?php if ($this->transEsc($rights['copyright']) === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$this->transEsc($rights['copyright']) ?><?php endif; ?><?php if ($hasLink): ?></a></span><?php endif; ?>
+            <strong><?= $this->transEsc('Image Rights') ?></strong><br>
+            <span class="imagerights btn">
+            <?php if (!empty($rights['copyright'])): ?>              
+              <?php $copyright = $this->transEsc($rights['copyright']) ?>
+              <?php if (preg_match("/^.+?\\d$/", $copyright)): ?>
+                <?php $deed = mb_substr($copyright, 0, -4); ?>
+                <?php switch ($deed):
+                  case 'CC BY': ?><img class="creative-commons" src="<?=$this->imageLink('cc_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_attribution_icon_black.png')?>" alt=""><?php break; ?>
+                  <?php case 'CC BY-SA': ?><img class="creative-commons" src="<?=$this->imageLink('cc_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_attribution_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_sa_black.png')?>" alt=""><?php break; ?>
+                  <?php case 'CC BY-ND': ?><img class="creative-commons" src="<?=$this->imageLink('cc_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_attribution_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_nd_black.png')?>" alt=""><?php break; ?>
+                  <?php case 'CC BY-NC': ?><img class="creative-commons" src="<?=$this->imageLink('cc_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_attribution_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_nc-eu_black.png')?>" alt=""><?php break; ?>
+                  <?php case 'CC BY-NC-SA': ?><img class="creative-commons" src="<?=$this->imageLink('cc_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_attribution_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_nc-eu_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_sa_black.png')?>" alt=""><?php break; ?>
+                  <?php case 'CC BY-NC-ND': ?><img class="creative-commons" src="<?=$this->imageLink('cc_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_attribution_icon_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_nc-eu_black.png')?>" alt=""> <img class="creative-commons" src="<?=$this->imageLink('cc_nd_black.png')?>" alt=""><?php break; ?>
+                <?php endswitch; ?> <?php endif; ?><?php if ($hasLink): ?><a target="_blank" href="<?= $rights['link'] ?>"><?php endif; ?><?php if ($copyright === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$copyright ?><?php endif; ?><?php if ($hasLink): ?></a><?php endif; ?>
             <?php else: ?>
               <?php if (in_array('usage_F', $this->driver->tryMethod('getUsageRights', [], []))): ?>
-                <?=$this->transEsc('usage_F') ?><br>
+                <?=$this->transEsc('usage_F') ?>
+              <?php else: ?>
+                <?=$this->transEsc('usage_unknown') ?>
               <?php endif; ?>
             <?php endif; ?>
+            </span> <a target="_blank" href="<?php if ($hasLink): ?><?= $rights['link'] ?><?php else: ?><?=$this->url('content-page', ['page' => 'terms'])?><?php endif; ?>"><?=$this->transEsc('usage_meaning') ?></a>
           </div>
           <div class="copyright truncate-field">
             <?php if (isset($rights['description'])): ?>
