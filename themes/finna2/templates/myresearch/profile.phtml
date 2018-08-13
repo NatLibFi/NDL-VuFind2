@@ -241,14 +241,13 @@
               <div class="profile-text-value"><?=$this->escapeHtml($guaranteeFullName) ?></div>
             <?php endforeach; ?>
           <?php endif; ?>
-          
           <?php if ($updateAddress): ?>
             <div>
               <?=$updateAddressLink ?>
             </div>
           <?php endif; ?>
           <div>
-            <?php if (true): ?>
+            <?php if ($updatePhone || $updateEmail || $updateLoanHistory): ?>
               <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEsc("save_my_profile") ?>" class="btn btn-primary" />
             <?php endif; ?>
             <?php if ($this->accountDeletion): ?>

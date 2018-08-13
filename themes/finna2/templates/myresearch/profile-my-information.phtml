@@ -1,6 +1,5 @@
 <!-- START of: finna - myresearch/profile-my-information.phtml -->
 <?php if ($user): ?>
-
   <form name="my_profile_form" class="inline" method="post">
     <?php if (!$this->hideProfileEmailAddress): ?>
         <div class="my-profile-col">
@@ -38,10 +37,10 @@
       </form>
   <?php endif; ?>
 
-<div class="myresearch-profile-list">
-  <?php if ($this->auth()->isLoggedIn() && !in_array($this->auth()->getManager()->getAuthClassForTemplateRendering(), ['Finna\Auth\ILS', 'Finna\Auth\MultiILS']) && $this->auth()->getManager()->supportsPasswordChange()): ?>
-    <a href="<?=$this->url('myresearch-changepassword') ?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('Change Password') ?></a>
-  <?php endif; ?>
-</div>
+  <div class="myresearch-profile-list">
+    <?php if ($this->auth()->isLoggedIn() && !in_array($this->auth()->getManager()->getAuthClassForTemplateRendering(), ['Finna\Auth\ILS', 'Finna\Auth\MultiILS']) && $this->auth()->getManager()->supportsPasswordChange()): ?>
+      <a href="<?=$this->url('myresearch-changepassword') ?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('Change Password') ?></a>
+    <?php endif; ?>
+  </div>
 <?php endif; ?>
 <!-- END of: finna - myresearch/profile-my-information.phtml -->
