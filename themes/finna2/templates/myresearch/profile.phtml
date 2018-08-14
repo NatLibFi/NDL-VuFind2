@@ -269,12 +269,8 @@
     <span><?= $this->transEsc("my_profile_export_import") ?></span>
   </div>
   <div class="myresearch-profile-list library-profile">
-    <div class="my-profile-col">
-      <a class="btn btn-primary" href="<?=$this->url('myresearch-export') ?>"><i class="fa fa-arrow-down"></i> <?=$this->transEsc('export_favorites') ?></a>
-    </div>
-    <div class="my-profile-col">
-      <a class="btn btn-primary" href="<?=$this->url('myresearch-import') ?>"  data-lightbox><i class="fa fa-arrow-up"></i> <?=$this->transEsc('import_favorites') ?> </a>
-    </div>
+    <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-export') ?>"><i class="fa fa-arrow-down"></i> <?=$this->transEsc('export_favorites') ?></a>
+    <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox><i class="fa fa-arrow-up"></i> <?=$this->transEsc('import_favorites') ?> </a>
     <div class="clearfix"></div>
   </div>
   <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && !empty($this->patronLoginView->getTemplate())): ?>

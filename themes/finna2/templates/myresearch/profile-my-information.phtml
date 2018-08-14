@@ -23,7 +23,7 @@
         <div class="my-profile-col profile-title">
             <label for="due-date-reminder"><?="Eräpäivämuistutukset sähköpostilla" ?>:</label>
         </div>
-        <div>
+        <div class="my-profile-col">
           <select id="due-date-reminder" name="due_date_reminder" class="jumpMenu form-control">
             <option value="0" <?= $user->finna_due_date_reminder == 0 ? 'selected="selected"' : '' ?>><?=$this->transEsc("due_date_reminder_none") ?></option>
             <option value="1" <?= $user->finna_due_date_reminder == 1 ? 'selected="selected"' : '' ?>><?=$this->transEsc("due_date_reminder_one_day") ?></option>
@@ -35,6 +35,7 @@
           <?php endif; ?>
         </div>
       </form>
+      <div class="clearfix"></div>
   <?php endif; ?>
 
   <div class="myresearch-profile-list">
