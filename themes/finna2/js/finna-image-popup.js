@@ -339,9 +339,7 @@ finna.imagePopup = (function finnaImagePopup() {
           initThumbnailNavi();
           initRecordImage();
         } else {
-          $(this).closest('.recordcover-holder').empty();
-          $('.access-rights p').first().hide();
-          $('.image-rights').hide();
+          $(this).closest('.media-left').remove();
         }
       });
     }

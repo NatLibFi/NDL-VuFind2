@@ -90,13 +90,6 @@
       <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
     <?php endif; ?>
 
-    <div class="record-rating text-left">
-      <div class="rating-stars">
-        <div onclick="$('a.usercomments').click();">
-          <?=$this->record($this->driver)->getRating()?>
-        </div>
-      </div>
-    </div>
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/record-post-toolbar")): ?>
     <div>
       <div class="record-post-toolbar">
@@ -293,5 +286,12 @@
   <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
+</div>
+<div class="record-rating text-left">
+    <div class="rating-stars">
+      <div onclick="$('a.usercomments').click();">
+        <?=$this->record($this->driver)->getRating()?>
+      </div>
+    </div>
 </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/core.phtml -->
