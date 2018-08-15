@@ -26,6 +26,20 @@
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
     <div class="useraccount-header"><?=$this->transEsc('Your Fines')?>  <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?></div>
     <br>
+    
+    <div class="clearfix"></div>
+    <?php if ($this->onlinePayment): ?>
+      <?php if ($this->onlinePaymentEnabled): ?>
+      <div class="pull-right online-payment-area">
+        <?=$this->onlinePayment($paymentHandler, $transactionId, $payableTotal);?>
+      </div>
+      <?php elseif (!empty($this->nonPayableReason)): ?>
+      <div class="pull-right">
+        <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ?  (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?>
+      </div>
+      <?php endif; ?>
+      <div class="clearfix"></div>
+    <?php endif; ?>
     <?php if (isset($this->noSupport)): ?>
       <?php if ($user->getLibraryCards()->count() > 1): ?>
         <div class="support-notice">
@@ -67,11 +81,33 @@
         <table class="table table-striped useraccount-table<?=$this->onlinePayment ? ' online-payment' : ''?>">
           <tr class="headers">
             <th class="user-account-table-title <?php if ($hideTitle): ?> hidden<?php endif; ?>"><?=$this->transEsc('Title')?></th>
-            <th<?php if ($hideCheckout): ?> class="hidden"<?php endif; ?>><?=$this->transEsc('fine_checkout_date')?></th>
-            <th<?php if ($hideDueDate): ?> class="hidden"<?php endif; ?>><?=$this->transEsc('Due Date')?></th>
-            <th><?=$this->transEsc('fine_description')?></th>
-            <th<?php if ($hideFineCreationDate): ?> class="hidden"<?php endif; ?>><?=$this->transEsc('fine_creation_date')?></th>
-            <th<?php if ($hideAmount): ?> class="hidden"<?php endif; ?>><?=$this->transEsc('Fee')?></th>
+            <th
+              <?php if ($hideCheckout): ?> class="hidden"
+              <?php else: ?> class="hidden-xs"
+              <?php endif; ?>
+            >
+            <?=$this->transEsc('fine_checkout_date')?>
+            </th>
+            <th
+              <?php if ($hideDueDate): ?> class="hidden"
+              <?php else: ?> class="hidden-xs"
+              <?php endif; ?>
+            >
+            <?=$this->transEsc('Due Date')?></th>
+            <th class="hidden-xs"><?=$this->transEsc('fine_description')?>
+            </th>
+            <th
+              <?php if ($hideFineCreationDate): ?> class="hidden"
+              <?php else: ?> class="hidden-xs"
+              <?php endif; ?>
+            >
+            <?=$this->transEsc('fine_creation_date')?>
+            </th>
+            <th
+              <?php if ($hideAmount): ?> class="hidden"
+              <?php else: ?> class="hidden-xs"
+              <?php endif; ?>><?=$this->transEsc('Fee')?>
+            </th>
             <th class="balance"><?=$this->transEsc('Balance')?></th>
           </tr>
           <?php $totalDue = 0; ?>
@@ -98,17 +134,35 @@
               <?php else: ?>
                 <a href="<?=$this->recordLink()->getUrl($record['driver'])?>"><?=$this->escapeHtml(trim($record['title'], '/: '))?></a>
               <?php endif; ?>
-            <td<?php if ($hideCheckout): ?> class="hidden"<?php endif; ?>>
+            <td
+              <?php if ($hideCheckout): ?> class="hidden"
+              <?php else: ?> class="hidden-xs"
+              <?php endif; ?>
+            >
               <?=isset($record['checkout']) ? $this->escapeHtml($record['checkout']) : ''?>
             </td>
-            <td<?php if ($hideDueDate): ?> class="hidden"<?php endif; ?>>
+            <td
+              <?php if ($hideDueDate): ?> class="hidden"
+              <?php else: ?> class="hidden-xs"
+              <?php endif; ?>
+            >
               <?=isset($record['duedate']) ? $this->escapeHtml($record['duedate']) : ''?>
             </td>
-            <td><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
-            <td<?php if ($hideFineCreationDate): ?> class="hidden"<?php endif; ?>>
+            <td class="hidden-xs"><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
+            <td
+              <?php if ($hideFineCreationDate): ?> class="hidden"
+              <?php else: ?> class="hidden-xs"
+              <?php endif; ?>
+            >
               <?=isset($record['createdate']) ? $this->escapeHtml($record['createdate']) : ''?>
             </td>
-            <td<?php if ($hideAmount): ?> class="hidden"<?php endif; ?>><?=isset($record['amount']) ? $this->safeMoneyFormat($record['amount'] / 100.00) : ''?></td>
+            <td
+              <?php if ($hideAmount): ?> class="hidden"
+              <?php else: ?> class="hidden-xs"
+              <?php endif; ?>
+            >
+            <?=isset($record['amount']) ? $this->safeMoneyFormat($record['amount'] / 100.00) : ''?>
+            </td>
             <td class="balance">
               <?php if ($showNonPayable): ?>
               <span class="online-payment-nonpayable">
@@ -135,11 +189,6 @@
             <p><?=$this->transEsc('online_payment_payable_online'); ?> (<?=$payableOnlineCnt ?>): <span class="amount"><?=$this->safeMoneyFormat($payableOnline / 100.00);?></span></p>
             <?php if (!empty($transactionFee)): ?>
             <p><?=$this->transEsc('online_payment_transaction_fee'); ?>: <span class="amount"><?=$this->safeMoneyFormat($transactionFee / 100.00);?></span></p>
-            <?php endif; ?>
-            <?php if ($this->onlinePaymentEnabled): ?>
-              <?=$this->onlinePayment($paymentHandler, $transactionId, $payableTotal);?>
-            <?php elseif (!empty($this->nonPayableReason)): ?>
-              <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ?  (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?>
             <?php endif; ?>
           </div>
           <?php if ($template = $this->content()->findTemplateForLng("content/Additions/online-payment")): ?>

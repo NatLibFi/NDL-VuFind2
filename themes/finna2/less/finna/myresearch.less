@@ -288,6 +288,20 @@
   font-size:@font-size-h2;
 }
 
+.online-payment-area {
+  @media (max-width: @screen-sm) {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 100px;
+    form > img {
+      height: 15%;
+      width: 15%;
+    }
+  }
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
 #renewals .toolbar {
   @media (max-width:@screen-xs-max) {
     margin-left: -15px;
@@ -389,7 +403,11 @@
     }
   }
   & .user-account-table-title {
-    width: 25%;
+    min-width: 25%;
+    @media (max-width: @screen-xs-max) {
+      white-space: normal !important;
+      min-width: 30%;
+    }
   }
   & .total-balance {
     background: none;
