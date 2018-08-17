@@ -104,15 +104,15 @@
       <ul role="menubar" class="nav navbar-nav nav-login">
         <li role="menuitem" class="nav-login" id="loginOptions-navi"<?php if($account->isLoggedIn()): ?> class="hidden"<?php endif ?>>
         <?php if ($sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
-          <a href="<?=$this->url('myresearch-userlogin')?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Institutional Login")?></a>
+          <a href="<?=$this->url('myresearch-userlogin')?>"><i class="fa fa-user" aria-hidden="true"></i> <?=$this->transEsc("Institutional Login")?></a>
         <?php else: ?>
           <?php if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
             <div>
-              <a class="btn btn-primary btn-uppercase"><i class="fa fa-sign-in fa-lg" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
+              <a class="btn btn-primary btn-uppercase"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
             </div>
           <?php else: ?>
             <div>
-              <a href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><i class="fa fa-sign-in fa-lg" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a>
+              <a href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a>
             </div>
           <?php endif; ?>
         <?php endif; ?>
@@ -127,28 +127,68 @@
     <?php if (is_object($account) && $account->loginEnabled()): ?>
       <?php $user = $account->isLoggedIn(); ?>
       <li role="menuitem" class="logoutOptions<?php if (!$user): ?> hidden<?php endif ?>">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user fa-lg" aria-hidden="true"></i> <span class="username login-text"><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span> <b class="caret"></b></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><i class="fa fa-user fa-lg" aria-hidden="true"></i> <span class="username login-text"><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span><b class="caret"></b></a>
         <ul role="menu" class="dropdown-menu">
-          <li role="menuitem" class="logoutOptions<?php if (!$user): ?> hidden<?php endif ?>">
-            <a href="<?=$this->url('myresearch-home', [], ['query' => ['redirect' => 0]])?>" title="<?=$this->transEsc("Your Account")?>"><strong><i class="fa fa-user fa-lg" aria-hidden="true"></i><?=$this->transEsc("Your Account")?></strong><div class="description"><?=$this->transEsc("your_account_info")?></div></a>
+          <li class="dropdown-accordion logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+            <a id="accordion-open" data-toggle="collapse" data-target="collapse-area"><?=$this->transEsc("loans_and_holds")?><span class="pull-right caret"></span></a>
+              <ul id="collapse-area" class="collapse">
+                <li role="menuitem" class="accordion-menuitem<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+                  <a href="<?=$this->url('myresearch-checkedout')?>"><?=$this->transEsc('Checked Out Items')?></a>
+                </li>
+                <li role="menuitem" class="accordion-menuitem<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+                  <a href="<?=$this->url('myresearch-holds')?>">
+                    <?=$this->transEsc('Holds and Recalls')?>
+                  </a>
+                </li>
+                <li role="menuitem" class="accordion-menuitem<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+                  <a href="<?=$this->url('myresearch-storageretrievalrequests')?>">
+                    <?=$this->transEsc('Storage Retrieval Requests')?>
+                  </a>
+                </li>
+                <li role="menuitem" class="accordion-menuitem<?=$this->active == 'ILLRequests' ? ' active' : ''?>">
+                  <a href="<?=$this->url('myresearch-illrequests')?>">
+                  <?=$this->transEsc('Interlibrary Loan Requests')?>
+                  </a>
+                </li>
+              </ul>
+          </li>
+          <li role="menuitem" class="logoutOptions" >
+            <a href="<?=$this->url('myresearch-fines')?>">
+              <?=$this->transEsc('Fines')?>
+            </a>
           </li>
           <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true']);?>
+          <li role="menuitem" class="logoutOptions">
+            <a href="<?=$this->url('search-history')?>?require_login">
+              <?=$this->transEsc('history_saved_searches')?>
+            </a>
+          </li>
+          <li role ="menuitem" class="logoutOptions">
+            <a href="<?=$this->url('myresearch-favorites')?>">
+            <?=$this->transEsc('Favorites')?>
+            </a>
+          </li>
+          <li role="menuitem" class="logoutOptions">
+            <a href="<?=$this->url('myresearch-profile')?>">
+              <?=$this->transEsc('Profile')?>
+            </a>
+          </li>
           <li role="menuitem" class="logoutOptions<?php if (!$user): ?> hidden<?php endif ?>">
-            <a href="<?=$this->url('myresearch-logout')?>" class="logout" title="<?=$this->transEsc("Log Out")?>"><strong><i class="fa fa-sign-out fa-lg" aria-hidden="true"></i> <?=$this->transEsc("Log Out")?></strong></a>
+            <a href="<?=$this->url('myresearch-logout')?>" class="logout" title="<?=$this->transEsc("Log Out")?>"><?=$this->transEsc("Log Out")?><i class="pull-right fa fa-sign-out fa-lg" aria-hidden="true"></i></a>
           </li>
         </ul>
       </li>
       <li role="menuitem" id="loginOptions"<?php if($account->isLoggedIn()): ?> class="hidden"<?php endif ?>>
         <?php if ($sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
-        <a href="<?=$this->url('myresearch-userlogin')?>"><i class="fa fa-sign-in" aria-hidden="true"></i> <?=$this->transEsc("Institutional Login")?></a>
+        <a href="<?=$this->url('myresearch-userlogin')?>"><i class="fa fa-user" aria-hidden="true"></i> <?=$this->transEsc("Institutional Login")?></a>
         <?php else: ?>
           <?php if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
             <div>
-              <a class="btn btn-primary btn-uppercase"><i class="fa fa-sign-in fa-lg" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
+              <a class="btn btn-primary btn-uppercase"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
             </div>
           <?php else: ?>
             <div>
-              <a href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><i class="fa fa-sign-in fa-lg" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a>
+              <a href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a>
             </div>
           <?php endif; ?>
         <?php endif; ?>
@@ -157,4 +197,18 @@
     <?php endif; ?>
   <?php endif; ?>
 </div>
+
+<script>
+$( "#accordion-open" ).on( "click", function() {
+  event.stopPropagation(); 
+  $('#collapse-area').toggle();
+  var caret = $('#accordion-open').find('span');
+  if(caret.hasClass('caret-up')){
+    caret.removeClass('caret-up');
+  }else{
+    caret.addClass('caret-up');
+  }
+});
+</script>
+
 <!-- END of: finna - navibar.phtml -->
