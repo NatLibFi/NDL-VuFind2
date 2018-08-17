@@ -125,31 +125,40 @@
     <ul role="menu" class="nav navbar-nav nav-absolute">
     <?php //hide login/logout if unavailable ?>
     <?php if (is_object($account) && $account->loginEnabled()): ?>
-      <?php $user = $account->isLoggedIn(); ?>
+      <?php
+        $capabilityParams = [];
+        $user = $this->auth()->isLoggedIn();
+        $patron = $user ? $this->auth()->getILSPatron() : false;
+        $capabilityParams = $patron ? ['patron' => $patron] : [];
+      ?>
       <li role="menuitem" class="logoutOptions<?php if (!$user): ?> hidden<?php endif ?>">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" ><i class="fa fa-user fa-lg" aria-hidden="true"></i> <span class="username login-text"><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span><b class="caret"></b></a>
         <ul role="menu" class="dropdown-menu">
-          <li class="dropdown-accordion logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+          <li class="dropdown-accordion logoutOptions<?php if(!$user): ?> hidden<?php endif ?>">
             <a id="accordion-open" data-toggle="collapse" data-target="collapse-area"><?=$this->transEsc("loans_and_holds")?><span class="pull-right caret"></span></a>
               <ul id="collapse-area" class="collapse">
-                <li role="menuitem" class="accordion-menuitem<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+                <li role="menuitem" class="accordion-menuitem<?php if(!$user): ?> hidden<?php endif ?>">
                   <a href="<?=$this->url('myresearch-checkedout')?>"><?=$this->transEsc('Checked Out Items')?></a>
                 </li>
-                <li role="menuitem" class="accordion-menuitem<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+                <li role="menuitem" class="accordion-menuitem<?php if(!$user): ?> hidden<?php endif ?>">
                   <a href="<?=$this->url('myresearch-holds')?>">
                     <?=$this->transEsc('Holds and Recalls')?>
                   </a>
                 </li>
-                <li role="menuitem" class="accordion-menuitem<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+                <?php if ($this->ils()->checkCapability('getMyStorageRetrievalRequests', $capabilityParams)): ?>
+                <li role="menuitem" class="accordion-menuitem<?php if(!$user): ?> hidden<?php endif ?>">
                   <a href="<?=$this->url('myresearch-storageretrievalrequests')?>">
                     <?=$this->transEsc('Storage Retrieval Requests')?>
                   </a>
                 </li>
+                <?php endif; ?>
+                <?php if ($this->ils()->checkCapability('getMyILLRequests', $capabilityParams)): ?>
                 <li role="menuitem" class="accordion-menuitem<?=$this->active == 'ILLRequests' ? ' active' : ''?>">
                   <a href="<?=$this->url('myresearch-illrequests')?>">
                   <?=$this->transEsc('Interlibrary Loan Requests')?>
                   </a>
                 </li>
+                <?php endif; ?>
               </ul>
           </li>
           <li role="menuitem" class="logoutOptions" >
@@ -163,11 +172,13 @@
               <?=$this->transEsc('history_saved_searches')?>
             </a>
           </li>
+          <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
           <li role ="menuitem" class="logoutOptions">
             <a href="<?=$this->url('myresearch-favorites')?>">
             <?=$this->transEsc('Favorites')?>
             </a>
           </li>
+          <?php endif; ?>
           <li role="menuitem" class="logoutOptions">
             <a href="<?=$this->url('myresearch-profile')?>">
               <?=$this->transEsc('Profile')?>
