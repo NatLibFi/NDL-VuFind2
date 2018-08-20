@@ -506,7 +506,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'checkout_id' => $entry['Id'],
                 'item_id' => $entry['ItemId'],
                 'duedate' => $this->dateConverter->convertToDisplayDate(
-                    'U', strtotime($entry['DueTime'])
+                    'U', strtotime('-1 hours', strtotime($entry['DueTime']))
                 ),
                 'dueStatus' => $entry['ServiceCode'],
                 'renew' => $renewalCount,
