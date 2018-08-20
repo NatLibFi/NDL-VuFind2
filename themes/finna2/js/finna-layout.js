@@ -450,6 +450,9 @@ finna.layout = (function finnaLayout() {
         if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
           $(this).parent().addClass('no-image');
           $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
+          //$('.recordcover-holder').hide();
+          //$('.access-rights p').first().hide();
+          //$('.image-rights').hide();
           $('.large-image-sidebar').addClass('visible-xs');
           $('.record-main').addClass('mainbody left');
           var href = $(this).parent().attr('href');
