@@ -98,53 +98,6 @@
     }
   }
 
-  & .dropdown-accordion {
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-
-    & .accordion-menuitem{
-      border-radius: 0;
-      line-height: 30px;
-      > a{
-        color: @text-color;
-        left: 10%;
-        position: relative;
-      }
-    }
-
-    > #accordion-open{
-      background-color: transparent;
-      border: 0;
-      width: 100%;
-    }
-
-    > a, & li{
-      cursor: pointer;
-    }
-
-    & li {
-      &:hover{
-        background: @gray-lighter;
-      }
-    }
-    
-  }
-
-  &.card-selection {
-    & p {
-      padding-left: 15px;
-      margin-bottom: 0px;
-    }
-    & > a {
-      padding-left: 32px;
-    }
-    & i.fa-check {
-      margin-left: -17px;
-    }
-    padding-left: 5px;
-  }
   .username {
     display: inline-block;
     max-width: 150px;
@@ -499,6 +452,88 @@
 }
 
 .dropdown-menu > li > a {
+  &:hover,
+  &:focus,
+  &:active {
+    text-decoration: none;
+    color: @dropdown-link-hover-color;
+    background-color: @dropdown-link-hover-bg;
+  }
+}
+
+#my-info-dropdown-menu {
+  padding: 0px 1px;
+  border: 1px solid @dropdown-border;
+  border-radius: @border-radius-base;
+  min-width: 0;
+  width: 280px;
+  position: absolute;
+  right: -15%;
+  z-index: 1001;
+  background-color: white;
+  .box-shadow(0 6px 12px rgba(0, 0, 0, .275));
+
+  & .card-selection {
+    & p {
+      padding-left: 15px;
+      margin-bottom: 0px;
+    }
+    & > a {
+      padding-left: 32px;
+    }
+    & i.fa-check {
+      margin-left: -17px;
+    }
+    padding-left: 5px;
+  }
+
+  > li {
+    border-bottom: 1px solid @gray-lighter;
+    line-height: 30px;
+    cursor: pointer;
+
+    > ul > li > a{
+      text-indent: 10%;
+    }
+    
+    & a{
+      color: @text-color;
+      display: block;
+      width: 100%;
+      height: 100%;
+
+      & i {
+        padding-top: 8px;
+      }
+      
+      &:focus{
+        text-decoration: none;
+        outline: none !important;
+      }
+
+      &:hover{
+        text-decoration: none;
+        color: @dropdown-link-hover-color;
+        background-color: @dropdown-link-hover-bg;
+      }
+    }
+    
+  }
+
+  & > li:last-child > a, & li:last-child {
+    border-bottom: none;
+    .border-bottom-radius(8px);
+  }
+  & > li:first-child > a, & li:first-child {
+    .border-top-radius(8px);
+  }
+
+  > li > a {
+    padding: 7px 15px;
+  }
+}
+
+#dropdown-menu-navbar > li > a {
   &:hover,
   &:focus,
   &:active {
