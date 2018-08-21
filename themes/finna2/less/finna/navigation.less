@@ -46,13 +46,6 @@
   }
 }
 
-.caret.caret-up{
-  transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-}
-
 .navbar .navbar-logo {
   height: @navbar-logo-height;
   margin-top: ((@navbar-height/2)-(@navbar-logo-height/2));
@@ -491,6 +484,15 @@
     border-bottom: 1px solid @gray-lighter;
     line-height: 30px;
     cursor: pointer;
+
+    & a:not(.collapsed) {
+      > .caret {
+        transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+        -webkit-transform: rotate(180deg);
+        -moz-transform: rotate(180deg);   
+      }
+    }
 
     > ul > li > a{
       text-indent: 10%;
