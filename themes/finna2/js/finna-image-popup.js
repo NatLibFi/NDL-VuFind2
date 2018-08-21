@@ -343,6 +343,10 @@ finna.imagePopup = (function finnaImagePopup() {
           $('.access-rights p').first().hide();
           $('.image-rights').hide();
           $('.media-left > .organisation-menu').hide();
+
+          if( $('.access-rights').has('.more-link') ) {
+            $('.access-rights > .more-link').hide();
+          }
         }
       });
     }
