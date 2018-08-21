@@ -384,6 +384,7 @@ JS;
     </section>
 
     <?php // TODO: get rid of template-dir-* and template-name-* here ?>
+    <?php $user = $this->auth()->isLoggedIn(); ?>
     <section role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
       <?php if (!empty($this->layout()->advSearchHeader)): ?>
         <?=$this->layout()->advSearchHeader; ?>
@@ -398,7 +399,7 @@ JS;
       <?php if (!empty($this->layout()->finnaStreetBar)): ?>
         <?=$this->layout()->finnaStreetBar?>
       <?php endif; ?>
-      <?php if (!empty($this->layout()->finnaMainHeader)): ?>
+      <?php if (!empty($this->layout()->finnaMainHeader) && (!$this->layout()->templateDir === 'myresearch')): ?>
         <div class="finna-main-header">
           <div class="container">
               <?=$this->layout()->finnaMainHeader?>
@@ -408,12 +409,25 @@ JS;
       <?php if (!empty($this->layout()->finnaMainTabs)): ?>
       <div class="finna-main-tabs">
         <div class="container">
-            <?=$this->layout()->finnaMainTabs?>
+        <?php if (!$user): ?>
+          <?=$this->layout()->finnaMainTabs?>
+        <?php endif; ?>
         </div>
       </div>
       <?php endif; ?>
       <div id="content" class="container main-content">
+      <?php if ($user): ?>
+        <?=$this->layout()->finnaMainTabs?>
+        <?php if (($this->layout()->templateDir === 'myresearch') || ($this->layout()->templateName === 'history')): ?>
+          <div class="<?=$this->layoutClass('mainbody')?>">
+        <?php endif; ?>
         <?=$this->layout()->content ?>
+        <?php if (($this->layout()->templateDir === 'myresearch') || ($this->layout()->templateName === 'history')): ?>
+          </div>
+        <?php endif; ?>
+      <?php else: ?>
+        <?=$this->layout()->content ?>
+      <?php endif; ?>
       </div>
     </section>
     <footer class="hidden-print">
