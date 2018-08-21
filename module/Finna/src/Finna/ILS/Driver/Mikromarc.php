@@ -1482,8 +1482,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $available = $item['ItemStatus'] === 'AvailableForLoan';
             $statusCode = $this->getItemStatusCode($item);
             $organisationTotal[$unit['branch']] = [
-               'reservations' => $item['ReservationQueueLength'],
-               'displayText' => $statusCode
+               'reservations' => $item['ReservationQueueLength']
             ];
 
             $unit = $this->getLibraryUnit($unitId);
@@ -1499,19 +1498,19 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'branch_id' => $unit['branch'],
                 'availability' => $available,
                 'status' => $statusCode,
-                'status_array' => [$statusCode],
                 'reserve' => 'N',
                 'callnumber' => $item['Shelf'],
                 'duedate' => null,
                 'barcode' => $item['Barcode'],
                 'item_notes' => [isset($items['notes']) ? $item['notes'] : null],
             ];
-            if ($patron && $this->itemHoldAllowed($item)) {
+            if ($patron && $this->itemHoldAllowed($item) && $item['PermitLoan']) {
                 $entry['is_holdable'] = true;
                 $entry['level'] = 'copy';
                 $entry['addLink'] = true;
             } else {
                 $entry['is_holdable'] = false;
+                $entry['status'] = 'On Reference Desk';
             }
 
             $statuses[] = $entry;
