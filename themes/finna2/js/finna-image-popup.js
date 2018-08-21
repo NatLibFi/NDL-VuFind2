@@ -64,15 +64,6 @@ finna.imagePopup = (function finnaImagePopup() {
       initRecordImage();
       e.preventDefault();
     });
-
-    // Open image-popup from medium size record image.
-    $('.image-popup-trigger').click(function onClickPopupTrigger(e) {
-      if ($(this).hasClass('no-image')) {
-        return;
-      }
-      openPopup($(this));
-      e.preventDefault();
-    });
   }
 
   // Copied from finna-mylist.js to avoid dependency
