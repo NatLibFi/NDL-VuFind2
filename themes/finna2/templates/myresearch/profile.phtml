@@ -83,7 +83,7 @@
         <?php if (isset($profile['messagingServices']) && !empty($profile['messagingServices'])): ?>
           <?= $this->partial('myresearch/profile-messaging.phtml', ['profile' => $profile, 'user' => $user, 'capabilityParams' => $capabilityParams]); ?>
         <?php endif; ?>
-        
+
         <?php
           $selectedCard = null;
           foreach ($cards as $card) {
@@ -276,7 +276,6 @@
   <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && !empty($this->patronLoginView->getTemplate())): ?>
     <?=$this->partial($this->patronLoginView);?>
   <?php endif; ?>
-
 </div>
 
 <?php if (isset($this->parent)): ?>
