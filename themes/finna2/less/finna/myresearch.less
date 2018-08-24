@@ -453,13 +453,43 @@
   &.list-group {
     border-radius: 4px;
   }
+
+
+  
   & li {
     border-top: 1px solid @gray-lighter;
     float: left;
     width: 100%;
+
+    & .collapsing {
+      -webkit-transition: none;
+      transition: none;
+      display: none;
+    }
+    &.menu-header {
+      background-color: @brand-third;
+      
+      > h4 {
+        text-transform: none;
+        padding: 15px 5px 15px 10px;
+        > i {
+          font-size: 25px;
+          margin-top: -4px;
+        }
+      }
+    }
     a {
       padding: 12px 10px;
       margin-right: 0px;
+
+      &:not(.collapsed) {
+        > .caret {
+          transform: rotate(180deg);
+          -ms-transform: rotate(180deg);
+          -webkit-transform: rotate(180deg);
+          -moz-transform: rotate(180deg);   
+        }
+      }
     }
     @media(max-width: @screen-md-max) {
       font-size: 14px;

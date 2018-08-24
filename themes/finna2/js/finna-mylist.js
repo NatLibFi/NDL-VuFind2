@@ -271,7 +271,7 @@ finna.myList = (function finnaMyList() {
         function repositionPrompt() {
           var pos = target.offset();
           prompt.css({
-            'left': pos.left - prompt.width() + target.width(),
+            'left': pos.left + target.width(),
             'top': pos.top + 30
           });
         }
@@ -293,30 +293,28 @@ finna.myList = (function finnaMyList() {
         repositionPrompt();
         initRepositionListener();
         prompt.show();
+        prompt.find('.confirm a').focus();
         e.preventDefault();
       });
     }
 
-    // add new list
-    var newListCallBack = {
-      'start': function onStartNewList(e) {
-        e.target.find('input').val('');
-      },
-      'finish': function onFinishNewList(e) {
-        if (e.value === '' || e.cancel) {
-          $('.add-new-list .name').text(addNewListLabel);
-          return;
-        }
+    $('.add-new-list .icon').on('click', function(){
+      var newListInput = $('.new-list-input');
+      var newListName = newListInput.val().trim();
 
-        if (e.value !== '') {
-          updateList({'id': 'NEW', 'title': e.value, 'desc': null, 'public': 0}, newListAdded, 'add-list');
-        }
+      if(newListName != ''){
+        newListInput.off('keyup');
+        $(this).off('click');
+        updateList({'id': 'NEW', 'title': newListName, 'desc':null, 'public': 0}, newListAdded, 'add-list');
+      }  
+    }); 
+
+    //Add new list, listen for keyup enter
+    $(".new-list-input").on('keyup', function (e) {
+      if (e.keyCode == 13) {
+        $('.add-new-list .icon').click();
       }
-    };
-    var target = $('.add-new-list .name');
-    if (target.length > 0) {
-      target.editable({action: 'click', triggers: [target, $('.add-new-list .icon')]}, newListCallBack, editableSettings);
-    }
+    });
 
     $('.myresearch-row').each(function initNoteEditor(ind, obj) {
       var editField = $(obj).find('.myresearch-notes .resource-note');

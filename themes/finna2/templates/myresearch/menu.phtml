@@ -10,6 +10,16 @@
     $this->layout()->finnaMainHeader;
 
     $showLibraryTabs = $this->ils()->loginAvailable();
+
+    //Get the data for vertical menu to show lists on correct site
+    if($this->active == 'favorites' || substr($this->active, 0, 4) == 'list'){
+      $list = $this->results->getListObject();
+      $activeId = $list['id'];
+      $activeUrl = $this->serverUrl() . $this->url('home') . 'List/' . $activeId;
+      $activePublic = $list['public'];
+      $isDefaultList = !isset($list);
+      $lists = $user ? $user->getLists() : null;
+    }
 ?>
 <?php ob_start(); ?>
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
@@ -82,8 +92,11 @@
 <?php ob_start(); ?>
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
   <?php if ($showLibraryTabs): ?>
-    <li role="menuitem" class="dropdown <?=$this->active == 'checkedout' || $this->active == 'historicLoans' || $this->active == 'holds' || $this->active == 'storageRetrievalRequests' || $this->active == 'ILLRequests' ? ' active' : ''?>">
-      <a href="#" class="dropdown-toggle list-group-item" data-toggle="collapse" data-target="#myLoans">
+    <li class="menu-header hidden-xs hidden-sm">
+      <h4><?= $this->transEsc('Your Account') ?><i class="fa fa-question-circle-big pull-right"></i></h4>
+    </li>
+    <li role="menuitem" class="dropdown hidden-xs hidden-sm <?=$this->active == 'checkedout' || $this->active == 'historicLoans' || $this->active == 'holds' || $this->active == 'storageRetrievalRequests' || $this->active == 'ILLRequests' ? ' active' : ''?>">
+      <a href="#" class="dropdown-toggle list-group-item collapsed" data-toggle="collapse" data-target="#myLoans" aria-expanded="false">
         <?=$this->transEsc('Checked Out Items')?> / <?=$this->transEsc('Holds and Recalls')?> <b class="caret"></b>
       </a>
       <ul id="myLoans" role="presentation" class="dropdown-menu subtabs collapse <?=$this->active == 'checkedout' || $this->active == 'historicLoans' || $this->active == 'holds' || $this->active == 'storageRetrievalRequests' || $this->active == 'ILLRequests' ? ' in' : ''?>">
@@ -120,13 +133,13 @@
       <?php endif; ?>
       </ul>
     </li>
-    <li class="menu-fines <?=$this->active == 'fines' ? ' active' : ''?>">
+    <li class="menu-fines hidden-xs hidden-sm <?=$this->active == 'fines' ? ' active' : ''?>">
       <a href="<?=$this->url('myresearch-fines')?>" class="list-group-item">
         <?=$this->transEsc('Fines')?>
       </a>
     </li>
     <?php if ($user && $user->libraryCardsEnabled()): ?>
-      <li class="menu-library-cards <?=$this->active == 'librarycards' ? ' active' : ''?>">
+      <li class="menu-library-cards hidden-xs hidden-sm<?=$this->active == 'librarycards' ? ' active' : ''?>">
         <a href="<?=$this->url('librarycards-home')?>" class="list-group-item">
           <?=$this->transEsc('Library Cards')?>
         </a>
@@ -135,20 +148,25 @@
   <?php endif; ?>
 <?php endif; ?>
 <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-  <li class="menu-favorites <?=$this->active == 'favorites' || substr($this->active, 0, 4) == 'list' ? ' active' : ''?>">
-    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item">
+  <li class="menu-favorites mylist-menu-favorites <?=$this->active == 'favorites' || substr($this->active, 0, 4) == 'list' ? ' active collapsed' : ''?>">
+    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item hidden-xs hidden-sm hidden-md">
       <?=$this->transEsc('Favorites')?>
     </a>
+    <?php if($this->active == 'favorites' || substr($this->active, 0, 4) == 'list') : ?>
+    <div class="mylist-bar">
+      <?= $this->partial('myresearch/mylist-navi.phtml', ['user' => $user, 'isDefaultList' => $isDefaultList, 'activeId' => $activeId, 'activePublic' => $activePublic, 'lists' => $lists, 'results' => $this->results]);  ?>
+    </div>
+    <?php endif; ?>
   </li>
 <?php endif; ?>
-<li class="menu-history <?=$this->active == 'history' ? ' active' : ''?>">
+<li class="menu-history hidden-xs hidden-sm <?=$this->active == 'history' ? ' active' : ''?>">
   <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item">
     <?=$this->transEsc('history_saved_searches')?>
   </a>
 </li>
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
   <?php if ($this->ils()->checkCapability('getMyProfile')): ?>
-    <li class="menu-profile<?=$this->active == 'profile' ? ' active' : ''?>">
+    <li class="menu-profile  hidden-xs hidden-sm<?=$this->active == 'profile' ? ' active' : ''?>">
       <a href="<?=$this->url('myresearch-profile')?>" class="list-group-item">
         <?=$this->transEsc('Profile')?>
       </a>
@@ -183,14 +201,14 @@
             }
           ?>
         </div>
-        <div class="more"><?=$this->transEsc("More");?><b class="caret"></b></div>
+        <div class="more"><?= $this->transEsc('Your Account') ?><b class="caret"></b></div>
       </div>
       <ul class="dropdown-menu">
         <?=$menuEntriesMobile?>
       </ul>
     </div>
   </div>
-  <ul class="<?=$this->layoutClass('sidebar')?> list-group useraccount-nav nav-tabs hidden-xs hidden-sm" role="menu">
+  <ul class="<?=$this->layoutClass('sidebar')?> nav-tabs-personal list-group useraccount-nav nav-tabs" role="menu">
     <?=$menuEntries?>
   </ul>
 
