@@ -1,3 +1,12 @@
+.template-dir-myresearch.template-name-mylist {
+  // mobile toolbar
+  @media (max-width: @screen-sm-max) {
+    &.prevent-scroll {
+      overflow: hidden;
+    }
+  }
+}
+
 .main.template-dir-myresearch.template-name-mylist {
   & .search-controls {
     margin-top: 10px;
@@ -62,8 +71,7 @@
         }
       }
     }
-  }
-    
+  }    
 }
 
 .template-name-mylist .bulk-action-buttons-col {
@@ -87,13 +95,10 @@
   display: block;
 }
 
-
-
 .mylist-nav {
   border: solid 1px @gray-lighter !important;
-
+  border-top-width: 0px;
   & li {
-    width: 100%;
     > a {
       word-wrap: break-word;
     }
@@ -120,6 +125,11 @@
         border: 0;
         background-color: transparent;
         padding: 1px;
+        &:focus {
+          border: 1px solid @action-link-color;
+          border-style: dotted;
+        }
+
         & i {
           vertical-align: top;
           margin-right: 2px;
@@ -234,6 +244,10 @@
   li.hidden-xs.hidden-sm, li.mylist-menu-favorites, li.favorites-menulist-item {
     width: 100%;
     max-width: none;
+    & h4 {
+      text-transform: none;
+      text-align: center;
+    }
   }
 }
 

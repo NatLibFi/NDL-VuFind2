@@ -1,7 +1,6 @@
 /*global VuFind, finna, SimpleMDE */
 finna.myList = (function finnaMyList() {
 
-  var addNewListLabel = null;
   var editor = null;
   var editableSettings = {'minWidth': 200, 'addToHeight': 100};
   var save = false;
@@ -232,7 +231,6 @@ finna.myList = (function finnaMyList() {
   }
 
   function initEditComponents() {
-    addNewListLabel = $('.add-new-list div').text();
     var isDefaultList = typeof(getActiveListId()) == 'undefined';
 
     // bulk actions
@@ -298,20 +296,20 @@ finna.myList = (function finnaMyList() {
       });
     }
 
-    $('.add-new-list .icon').on('click', function(){
+    $('.add-new-list .icon').on('click', function createNewList(){
       var newListInput = $('.new-list-input');
       var newListName = newListInput.val().trim();
 
-      if(newListName != ''){
+      if (newListName !== ''){
         newListInput.off('keyup');
         $(this).off('click');
-        updateList({'id': 'NEW', 'title': newListName, 'desc':null, 'public': 0}, newListAdded, 'add-list');
+        updateList({'id': 'NEW', 'title': newListName, 'desc': null, 'public': 0}, newListAdded, 'add-list');
       }  
     }); 
 
     //Add new list, listen for keyup enter
-    $(".new-list-input").on('keyup', function (e) {
-      if (e.keyCode == 13) {
+    $(".new-list-input").on('keyup', function invokeAddNewList(e) {
+      if (e.keyCode === 13) {
         $('.add-new-list .icon').click();
       }
     });

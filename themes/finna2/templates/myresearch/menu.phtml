@@ -149,7 +149,7 @@
 <?php endif; ?>
 <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
   <li class="menu-favorites mylist-menu-favorites <?=$this->active == 'favorites' || substr($this->active, 0, 4) == 'list' ? ' active collapsed' : ''?>">
-    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item hidden-xs hidden-sm hidden-md">
+    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item hidden-xs hidden-sm">
       <?=$this->transEsc('Favorites')?>
     </a>
     <?php if($this->active == 'favorites' || substr($this->active, 0, 4) == 'list') : ?>
