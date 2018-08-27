@@ -10,9 +10,9 @@
     $this->layout()->finnaMainHeader;
 
     $showLibraryTabs = $this->ils()->loginAvailable();
-
+    $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
     //Get the data for vertical menu to show lists on correct site
-    if($this->active == 'favorites' || substr($this->active, 0, 4) == 'list'){
+    if($listOpen){
       $list = $this->results->getListObject();
       $activeId = $list['id'];
       $activeUrl = $this->serverUrl() . $this->url('home') . 'List/' . $activeId;
@@ -77,7 +77,7 @@
   <?php endif; ?>
 <?php endif; ?>
 <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-  <li class="menu-favorites <?=$this->active == 'favorites' || substr($this->active, 0, 4) == 'list' ? ' active' : ''?>">
+  <li class="menu-favorites <?= $listOpen ? ' active' : ''?>">
     <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item">
       <?=$this->transEsc('Favorites')?>
     </a>
@@ -148,11 +148,12 @@
   <?php endif; ?>
 <?php endif; ?>
 <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-  <li class="menu-favorites mylist-menu-favorites <?=$this->active == 'favorites' || substr($this->active, 0, 4) == 'list' ? ' active collapsed' : ''?>">
-    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item hidden-xs hidden-sm">
+  <li class="menu-favorites mylist-menu-favorites <?= $listOpen ? ' active' : ''?>">
+    <a href="<?=$this->url('myresearch-favorites')?>" class="<?= !$listOpen ? 'collapsed ' : '' ?>list-group-item hidden-xs hidden-sm">
       <?=$this->transEsc('Favorites')?>
+      <b class="caret"></b>
     </a>
-    <?php if($this->active == 'favorites' || substr($this->active, 0, 4) == 'list') : ?>
+    <?php if($listOpen) : ?>
     <div class="mylist-bar">
       <?= $this->partial('myresearch/mylist-navi.phtml', ['user' => $user, 'isDefaultList' => $isDefaultList, 'activeId' => $activeId, 'activePublic' => $activePublic, 'lists' => $lists, 'results' => $this->results]);  ?>
     </div>

@@ -1,5 +1,4 @@
 .template-dir-myresearch.template-name-mylist {
-  // mobile toolbar
   @media (max-width: @screen-sm-max) {
     &.prevent-scroll {
       overflow: hidden;
@@ -97,7 +96,6 @@
 
 .mylist-nav {
   border: solid 1px @gray-lighter !important;
-  border-top-width: 0px;
   & li {
     > a {
       word-wrap: break-word;
@@ -241,6 +239,11 @@
 }
 
 .useraccount-nav {
+  &.nav-tabs-personal {
+    & .subtabs.mylist-nav {
+      border-top-width: 0px;
+    }
+  }
   li.hidden-xs.hidden-sm, li.mylist-menu-favorites, li.favorites-menulist-item {
     width: 100%;
     max-width: none;
