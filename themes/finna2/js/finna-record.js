@@ -212,7 +212,7 @@ finna.record = (function finnaRecord() {
       } else {
         var newTab = getNewRecordTab(tabid).addClass('active');
         $recordTabs.find('.tab-content').append(newTab);
-        return ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
+        return ajaxLoadTab(newTab, tabid, false);
       }
     }
     return false;
