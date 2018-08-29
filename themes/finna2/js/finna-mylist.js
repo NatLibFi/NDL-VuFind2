@@ -242,6 +242,9 @@ finna.myList = (function finnaMyList() {
       updateBulkActionsToolbar();
     }
 
+    //Init mobile navigation collapse after list has been reloaded
+    finna.layout.initMobileNarrowSearch();
+
     // Checkbox select all
     $('.checkbox-select-all').unbind('change').change(function onChangeSelectAll() {
       $('.myresearch-row .checkbox-select-item').prop('checked', $(this).is(':checked'));
@@ -285,6 +288,7 @@ finna.myList = (function finnaMyList() {
         prompt.find('.cancel').unbind('click').click(function onClickCancel(ev) {
           $(window).off('resize', repositionPrompt);
           prompt.hide();
+          $('.remove-favorite-list').focus();
           ev.preventDefault();
         });
 
@@ -308,7 +312,7 @@ finna.myList = (function finnaMyList() {
     }); 
 
     //Add new list, listen for keyup enter
-    $(".new-list-input").on('keyup', function invokeAddNewList(e) {
+    $(".new-list-input").on('keyup', function invokeCreateNewList(e) {
       if (e.keyCode === 13) {
         $('.add-new-list .icon').click();
       }

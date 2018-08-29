@@ -30,10 +30,10 @@
         <i class="fa fa-public public-favorite-list pull-left"></i>
         <?php endif; ?>
         <div class="favorite-list-name">
+          <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div>
           <?php if ($active): ?>
             <button class="pull-left remove-favorite-list  remove"><i  class="fa fa-button fa-times"></i></button>
           <?php endif; ?>
-          <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div>
           <div class="pull-right">(<?=$list->cnt?>)</div>
         </div>
       </a>
