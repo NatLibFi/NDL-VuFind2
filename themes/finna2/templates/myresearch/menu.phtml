@@ -93,7 +93,7 @@
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
   <?php if ($showLibraryTabs): ?>
     <li class="menu-header hidden-xs hidden-sm">
-      <h4><?= $this->transEsc('Your Account') ?><i class="fa fa-question-circle-big pull-right"></i></h4>
+      <h4><?= $this->transEsc('Your Account') ?><?= '<span class="tooltip-myaccount" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="' . $this->transEsc("tooltip_myaccount_html") . '"><i class="fa fa-info-big"></i></span>' ?></h4>
     </li>
     <li role="menuitem" class="dropdown hidden-xs hidden-sm <?=$this->active == 'checkedout' || $this->active == 'historicLoans' || $this->active == 'holds' || $this->active == 'storageRetrievalRequests' || $this->active == 'ILLRequests' ? ' active' : ''?>">
       <a href="#" class="dropdown-toggle list-group-item collapsed" data-toggle="collapse" data-target="#myLoans" aria-expanded="false">

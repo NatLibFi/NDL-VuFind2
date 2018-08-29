@@ -261,8 +261,6 @@
   }
 }
 
-
-
 .list-title, .list-description:not(.edit), .resource-note:not(.edit), .add-new-list {
   border: 1px solid transparent;
   display: inline-block;
@@ -356,6 +354,21 @@
     }
   }
 }
+
+.menu-header {
+  & h4 {
+    color: @myresearch-menu-header-font-color;
+    & span {
+      float: right;
+      > i {
+        color: @myresearch-menu-header-font-color;
+        font-size: 25px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
 @media(max-width: @screen-sm-max){
   .hidden-print.sidebar-on-left.nav-tabs-personal.list-group{
     position: fixed;
@@ -369,12 +382,6 @@
     padding-left: 0px;
     padding-right: 0px;
     padding-bottom: 40px;
-
-    >.menu-header {
-      &h4 {
-        color: @myresearch-menu-header-font-color;
-      }
-    }
 
     &.open {
       top: 0%;
