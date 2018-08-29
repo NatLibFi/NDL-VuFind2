@@ -243,7 +243,6 @@ finna.record = (function finnaRecord() {
     initDescription();
     initRecordNaviHashUpdate();
     initRecordAccordion();
-    applyRecordAccordionHash();
     initAudioAccordion();
     $(window).on('hashchange', applyRecordAccordionHash);
     loadSimilarRecords();
