@@ -5,6 +5,10 @@ finna.myList = (function finnaMyList() {
   var editableSettings = {'minWidth': 200, 'addToHeight': 100};
   var save = false;
 
+  //Needed for paginating the favorites list
+  var page = 0; 
+  var children = null;
+
   // This is duplicated in image-popup.js to avoid dependency
   function getActiveListId() {
     return $('input[name="listID"]').val();
@@ -232,6 +236,16 @@ finna.myList = (function finnaMyList() {
 
   function initEditComponents() {
     var isDefaultList = typeof(getActiveListId()) == 'undefined';
+
+    loadChildren();
+    openPage(0);
+
+    $('.paginate.left').unbind('click').click(function onPaginateLeft() {
+      openPage(-1);
+    });
+    $('.paginate.right').unbind('click').click(function onPaginateRight() {
+      openPage(+1);
+    });
 
     // bulk actions
     var buttons = $('.bulk-action-buttons-col');
@@ -463,6 +477,30 @@ finna.myList = (function finnaMyList() {
     }
     // spinner
     target.toggleClass('fa-spinner fa-spin list-save', mode);
+  }
+
+  function loadChildren(){
+    // exclude new list input from selection as it is not a list
+    children = $('.mylist-nav li').not('.add-new-list-holder, :has(a.active)');
+  }
+
+  function openPage(direction){
+    page += direction;
+
+    var itemsPerPage = 10;
+    var iterator = itemsPerPage * page;
+
+    if (children.length > itemsPerPage) {
+      $('.mylist-nav').find('li:not(:has(a.active), .add-new-list-holder)').remove();
+      children.slice(iterator, iterator + itemsPerPage).insertBefore('.add-new-list-holder');
+
+      //Check if we still have more items to display
+      var nextPage = (children.slice(iterator + itemsPerPage).length === 0) ? 'none' : '';
+      $('.paginate.right').css('display', nextPage);
+      $('.paginate.left').css('display', (page === 0) ? 'none' : '' );
+    } else {
+      $('.paginate-control').hide();
+    }
   }
 
   var my = {

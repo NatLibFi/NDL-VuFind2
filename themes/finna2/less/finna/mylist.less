@@ -98,7 +98,20 @@
   display: block;
 }
 
-.mylist-nav {
+.mylist-bar {
+  & .paginate-control {
+    text-align: center;
+    padding: 5px;
+    font-size: 1.2em;
+    & .paginate {
+      border: 1px solid rgb(194, 194, 194);
+      border-radius: 6px;
+      background-color: transparent;
+      width: 35px;
+      height: 35px;
+    }
+  }
+
   & li {
     > a {
       word-wrap: break-word;
