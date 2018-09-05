@@ -43,13 +43,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     use SolrFinna;
 
     /**
-     * Datasource configuration
-     *
-     * @var \Zend\Config\Config
-     */
-    protected $datasourceConfig;
-
-    /**
      * Fields that may contain subject headings, and their descriptions
      *
      * @var array
@@ -65,6 +58,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         '653' => '',
         '656' => 'occupation'
     ];
+
+    /**
+     * Constructor
+     *
+     * @param \Zend\Config\Config $mainConfig     VuFind main configuration (omit for
+     * built-in defaults)
+     * @param \Zend\Config\Config $recordConfig   Record-specific configuration file
+     * (omit to use $mainConfig as $recordConfig)
+     * @param \Zend\Config\Config $searchSettings Search-specific configuration file
+     */
+    public function __construct($mainConfig = null, $recordConfig = null,
+        $searchSettings = null
+    ) {
+        parent::__construct($mainConfig, $recordConfig, $searchSettings);
+        $this->searchSettings = $searchSettings;
+    }
 
     /**
      * Return access restriction notes for the record.
@@ -529,7 +538,31 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getHostRecords()
     {
         $result = [];
-        foreach ($this->getMarcRecord()->getFields('773') as $field) {
+        $fields = $this->getMarcRecord()->getFields('773');
+
+        if (!empty($this->fields['hierarchy_parent_id'])
+            && count($this->fields['hierarchy_parent_id']) > count($fields)
+        ) {
+            // Can't use 773 fields since they don't represent the actual links
+            foreach ($this->fields['hierarchy_parent_id'] as $key => $parentId) {
+                if (isset($this->fields['hierarchy_parent_title'][$key])) {
+                    $title = $this->fields['hierarchy_parent_title'][$key];
+                } elseif (isset($this->fields['hierarchy_parent_title'][0])) {
+                    $this->fields['hierarchy_parent_title'][0];
+                } else {
+                    $title = 'Title not available';
+                }
+                $result[] = [
+                    'id' => $parentId,
+                    'title' => $title,
+                    'reference' => '',
+                    'publishingInfo' => ''
+                ];
+            }
+            return $result;
+        }
+
+        foreach ($fields as $field) {
             $id = '';
             $title = '';
             $reference = '';
@@ -557,6 +590,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         $subfield->getData(), '.-'
                     );
                     break;
+                }
+            }
+
+            if (count($fields) === 1
+                && !empty($this->fields['hierarchy_parent_id'])
+            ) {
+                // If we only have one field, use the hierarchy data for id
+                $id = $this->fields['hierarchy_parent_id'];
+                if (is_array($id)) {
+                    $id = reset($id);
                 }
             }
 
