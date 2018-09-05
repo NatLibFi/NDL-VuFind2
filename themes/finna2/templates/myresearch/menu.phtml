@@ -20,6 +20,8 @@
       $isDefaultList = !isset($list);
       $lists = $user ? $user->getLists() : null;
     }
+
+    echo $this->inlineScript()->appendFile('finna-menu.js');
 ?>
 <?php ob_start(); ?>
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
@@ -96,8 +98,8 @@
       <h4><?= $this->transEsc('Your Account') ?><?= '<span class="tooltip-myaccount" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="' . $this->transEsc("tooltip_myaccount_html") . '"><i class="fa fa-info-big"></i></span>' ?></h4>
     </li>
     <li role="menuitem" class="dropdown hidden-xs hidden-sm <?=$this->active == 'checkedout' || $this->active == 'historicLoans' || $this->active == 'holds' || $this->active == 'storageRetrievalRequests' || $this->active == 'ILLRequests' ? ' active' : ''?>">
-      <a href="#" class="dropdown-toggle list-group-item collapsed" data-toggle="collapse" data-target="#myLoans" aria-expanded="false">
-        <?=$this->transEsc('Checked Out Items')?> / <?=$this->transEsc('Holds and Recalls')?> <b class="caret"></b>
+      <a href="<?=$this->url('myresearch-checkedout') ?>" id="open-loans" class=" list-group-item collapsed" >
+        <?=$this->transEsc('Checked Out Items')?> / <?=$this->transEsc('Holds and Recalls')?> <button class="caret"></button>
       </a>
       <ul id="myLoans" role="presentation" class="dropdown-menu subtabs collapse <?=$this->active == 'checkedout' || $this->active == 'historicLoans' || $this->active == 'holds' || $this->active == 'storageRetrievalRequests' || $this->active == 'ILLRequests' ? ' in' : ''?>">
         <li role="menuitem" class="menu-loans <?=$this->active == 'checkedout' ? ' active' : ''?>">
@@ -149,15 +151,19 @@
 <?php endif; ?>
 <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
   <li class="menu-favorites mylist-menu-favorites <?= $listOpen ? ' active' : ''?>">
-    <a href="<?=$this->url('myresearch-favorites')?>" class="<?= !$listOpen ? 'collapsed ' : '' ?>list-group-item hidden-xs hidden-sm">
+    <a href="<?=$this->url('myresearch-favorites')?>" id="open-list" class="<?= !$listOpen ? 'collapsed ' : '' ?>list-group-item hidden-xs hidden-sm">
       <?=$this->transEsc('Favorites')?>
-      <b class="caret"></b>
-    </a>
-    <?php if($listOpen) : ?>
+      <i class="hidden fa fa-spinner fa-spin"></i>
+      <span class="ajax-error hidden">
+        <small> <?=$this->translate('An error has occurred'); ?></small>
+      </span>
+      <button class="caret"></button>
+    </a>  
     <div class="mylist-bar">
+      <?php if($listOpen) : ?>
       <?= $this->partial('myresearch/mylist-navi.phtml', ['user' => $user, 'isDefaultList' => $isDefaultList, 'activeId' => $activeId, 'activePublic' => $activePublic, 'lists' => $lists, 'results' => $this->results]);  ?>
-    </div>
-    <?php endif; ?>
+      <?php endif; ?>
+    </div> 
   </li>
 <?php endif; ?>
 <li class="menu-history hidden-xs hidden-sm <?=$this->active == 'history' ? ' active' : ''?>">
@@ -212,5 +218,10 @@
   <ul class="<?=$this->layoutClass('sidebar')?> nav-tabs-personal list-group useraccount-nav nav-tabs" role="menu">
     <?=$menuEntries?>
   </ul>
+        
+  <script>
+     finna.menu.init(); 
+  </script>
+
 
 <!-- END of: finna - myresearch/menu.phtml -->

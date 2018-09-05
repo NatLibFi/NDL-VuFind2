@@ -13,7 +13,7 @@
   }
 ?>
   <h4 class="visible-xs visible-sm"><i class="fa fa-arrow-down pull-left"></i> <?=$this->transEsc('Your Lists')?></h4>
-  <ul class="dropdown-menu subtabs collapse in mylist-nav" role="presentation">
+  <ul id="favorites-collapse" class="dropdown-menu subtabs collapse in mylist-nav" role="presentation">
     <li role="menuitem" class="favorites-menulist-item">
       <a href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>">
         <div class="favorite-list-name">
@@ -26,11 +26,11 @@
     <?php $active = ($list->id === $activeId); ?>
     <li role="menuitem" class="favorites-menulist-item">
       <a href="<?= $active ? '#' : $this->url('userList', ['id' => $list['id']])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>">
-        <?php if ($list['public']): ?>
-        <i class="fa fa-public public-favorite-list pull-left"></i>
-        <?php endif; ?>
         <div class="favorite-list-name">
           <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div>
+          <?php if ($list['public']): ?>
+            <i class="fa fa-public public-favorite-list pull-left"></i>
+          <?php endif; ?>
           <?php if ($active): ?>
             <button class="pull-left remove-favorite-list  remove"><i  class="fa fa-button fa-times"></i></button>
           <?php endif; ?>
@@ -50,8 +50,4 @@
       </div>
     </li>
   </ul>
-  <div class="paginate-control">
-    <button class="paginate left"><</button>
-    <button class="paginate right">></button>
-  </div>
 <!-- END of: finna - myresearch/mylist-navi.phtml -->

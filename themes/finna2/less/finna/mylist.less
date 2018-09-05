@@ -99,19 +99,6 @@
 }
 
 .mylist-bar {
-  & .paginate-control {
-    text-align: center;
-    padding: 5px;
-    font-size: 1.2em;
-    & .paginate {
-      border: 1px solid rgb(194, 194, 194);
-      border-radius: 6px;
-      background-color: transparent;
-      width: 35px;
-      height: 35px;
-    }
-  }
-
   & li {
     > a {
       word-wrap: break-word;
@@ -130,6 +117,10 @@
         text-overflow: ellipsis;
         white-space: nowrap;
         margin-right: 5px;
+      }
+
+      & .public-favorite-list {
+        padding: 2px;
       }
     }
     > a.active {
@@ -324,6 +315,11 @@
   }
 }
 
+button.caret{
+  background-color: transparent;
+  border: none;
+}
+
 .sortable-favorite-list {
   & li {
     background: @list-group-bg;
@@ -371,6 +367,7 @@
 .menu-header {
   & h4 {
     color: @myresearch-menu-header-font-color;
+    padding-right: 12px !important;
     & span {
       float: right;
       > i {
