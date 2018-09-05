@@ -16,7 +16,7 @@ finna.menu = (function finnaMenu(){
         if (!$('.ajax-error').hasClass('hidden')) {
           $('.ajax-error').addClass('hidden');
         }
-
+        
         if (!loading) {
           loadLists();
           loading = true;
@@ -43,8 +43,8 @@ finna.menu = (function finnaMenu(){
 
   //Load lists if there is none to show
   function loadLists(){
-
     $('#open-list .fa').toggleClass('hidden');
+
     $.ajax({
       type: 'POST',
       dataType: 'json',
