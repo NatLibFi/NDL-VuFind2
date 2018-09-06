@@ -1482,8 +1482,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $available = $item['ItemStatus'] === 'AvailableForLoan';
             $statusCode = $this->getItemStatusCode($item);
             $organisationTotal[$unit['branch']] = [
-               'reservations' => $item['ReservationQueueLength'],
-               'displayText' => $statusCode
+               'reservations' => $item['ReservationQueueLength']
             ];
 
             $unit = $this->getLibraryUnit($unitId);
@@ -1499,19 +1498,29 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'branch_id' => $unit['branch'],
                 'availability' => $available,
                 'status' => $statusCode,
-                'status_array' => [$statusCode],
                 'reserve' => 'N',
                 'callnumber' => $item['Shelf'],
                 'duedate' => null,
                 'barcode' => $item['Barcode'],
                 'item_notes' => [isset($items['notes']) ? $item['notes'] : null],
             ];
-            if ($patron && $this->itemHoldAllowed($item)) {
+
+            if (!empty($item['LocationId'])) {
+                $entry['department'] = $this->getDepartment($item['LocationId']);
+                $entry['branch'] = $this->translate("Copy");
+            }
+
+            if ($this->itemHoldAllowed($item) && $item['PermitLoan']) {
                 $entry['is_holdable'] = true;
-                $entry['level'] = 'copy';
-                $entry['addLink'] = true;
+                if ($patron) {
+                    $entry['level'] = 'copy';
+                    $entry['addLink'] = !empty(
+                        $this->config['Holds']['ShowLinkOnCopy']
+                    );
+                }
             } else {
                 $entry['is_holdable'] = false;
+                $entry['status'] = 'On Reference Desk';
             }
 
             $statuses[] = $entry;
@@ -1572,7 +1581,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
            'holdable' => $holdable,
            'availability' => null,
            'callnumber' => null,
-           'location' => null
+           'location' => null,
+           'groupBranches' => false
         ];
     }
 
@@ -2005,5 +2015,27 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             return 1;
         }
         return strcmp($a['branch'], $b['branch']);
+    }
+
+    /**
+     * Fetch name of the department where the shelf is located
+     *
+     * @param int $locationId Id of the shelf
+     *
+     * @return string
+     */
+    public function getDepartment($locationId)
+    {
+        static $cacheDepartment = [];
+        if (!isset($cacheDepartment[$locationId])) {
+            $request = [
+                '$filter' => "Id eq $locationId"
+            ];
+            $cacheDepartment[$locationId] = $this->makeRequest(
+                ['odata', 'CatalogueItemLocations'],
+                $request
+            );
+        }
+        return $cacheDepartment[$locationId][0]['Name'];
     }
 }
