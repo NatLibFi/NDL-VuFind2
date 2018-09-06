@@ -164,6 +164,13 @@
     width: 100%;
     padding: 20px;
     border-radius: @border-radius-base;
+
+    @media(min-width: @screen-sm){
+      & .relative {
+        position: relative;
+      }
+    }
+
   }
   h1 {
     display: inline-block;
@@ -284,7 +291,7 @@
 }
 
 .useraccount-header {
-  line-height: 3;
+  line-height: 1.5;
   font-weight: 600;
   font-size:@font-size-h2;
   display: inline-block;
