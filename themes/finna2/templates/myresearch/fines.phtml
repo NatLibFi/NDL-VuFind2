@@ -21,25 +21,25 @@
       <?php endif; ?>
     <?php endif; ?>
 
+    <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?>
     <?php if (!$this->translationEmpty('fines_instructions_html')): ?><p class="no-content-message"><?=$this->translate('fines_instructions_html')?></p><?php endif; ?>
     <?=$this->flashmessages()?>
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
-    <div class="useraccount-header"><?=$this->transEsc('Your Fines')?>  <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?></div>
-    <br>
-    
-    <div class="clearfix"></div>
-    <?php if ($this->onlinePayment): ?>
-      <?php if ($this->onlinePaymentEnabled): ?>
-      <div class="pull-right online-payment-area">
-        <?=$this->onlinePayment($paymentHandler, $transactionId, $payableTotal);?>
-      </div>
-      <?php elseif (!empty($this->nonPayableReason)): ?>
-      <div class="pull-right">
-        <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ?  (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?>
-      </div>
+    <div>
+      <div class="useraccount-header"><?=$this->transEsc('Your Fines')?> </div>
+      <?php if ($this->onlinePayment): ?>
+        <?php if ($this->onlinePaymentEnabled): ?>
+        <div class="pull-right online-payment-area">
+          <?=$this->onlinePayment($paymentHandler, $transactionId, $payableTotal);?>
+        </div>
+        <?php elseif (!empty($this->nonPayableReason)): ?>
+        <div class="pull-right">
+          <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ?  (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?>
+        </div>
+        <?php endif; ?>
+        <div class="clearfix"></div>
       <?php endif; ?>
-      <div class="clearfix"></div>
-    <?php endif; ?>
+    </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if ($user->getLibraryCards()->count() > 1): ?>
         <div class="support-notice">

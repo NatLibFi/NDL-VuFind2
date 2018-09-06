@@ -284,21 +284,27 @@
 }
 
 .useraccount-header {
+  line-height: 3;
   font-weight: 600;
   font-size:@font-size-h2;
+  display: inline-block;
 }
 
 .online-payment-area {
+  display: inline-block;
   @media (max-width: @screen-sm) {
     position: -webkit-sticky;
     position: sticky;
     top: 100px;
-    form > img {
-      height: 15%;
-      width: 15%;
+    width: 100%;
+    form {
+      float: right !important;
+      > img {
+        height: 15%;
+        width: 15%;
+      }
     }
   }
-  margin-top: 15px;
   margin-bottom: 15px;
 }
 
