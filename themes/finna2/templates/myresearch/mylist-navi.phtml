@@ -31,10 +31,10 @@
           <?php if ($list['public']): ?>
             <i class="fa fa-public public-favorite-list pull-left"></i>
           <?php endif; ?>
-          <?php if ($active): ?>
-            <button class="pull-left remove-favorite-list  remove"><i  class="fa fa-button fa-times"></i></button>
-          <?php endif; ?>
           <div class="pull-right">(<?=$list->cnt?>)</div>
+          <?php if ($active): ?>
+            <button class="pull-right remove-favorite-list  remove"><i  class="fa fa-button fa-times"></i></button>
+          <?php endif; ?>
         </div>
       </a>
       <?php if ($active): ?>

@@ -25,13 +25,6 @@
 ?>
 <?php ob_start(); ?>
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
-  <?php if ($this->ils()->checkCapability('getMyProfile')): ?>
-    <li class="menu-profile<?=$this->active == 'profile' ? ' active' : ''?>">
-      <a href="<?=$this->url('myresearch-profile')?>" class="list-group-item">
-        <?=$this->transEsc('Profile')?>
-      </a>
-    </li>
-  <?php endif; ?>
   <?php if ($showLibraryTabs): ?>
     <li class="menu-loans <?=$this->active == 'checkedout' ? ' active' : ''?>">
       <a href="<?=$this->url('myresearch-checkedout')?>" class="list-group-item">
@@ -90,6 +83,13 @@
     <?=$this->transEsc('history_saved_searches')?>
   </a>
 </li>
+<?php if ($this->ils()->checkCapability('getMyProfile')): ?>
+  <li class="menu-profile<?=$this->active == 'profile' ? ' active' : ''?>">
+    <a href="<?=$this->url('myresearch-profile')?>" class="list-group-item">
+      <?=$this->transEsc('Profile')?>
+    </a>
+  </li>
+<?php endif; ?>
 <?php $menuEntriesMobile = ob_get_clean(); ?>
 <?php ob_start(); ?>
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>

@@ -98,12 +98,30 @@
   & li {
     > a {
       word-wrap: break-word;
+      &.active {
+        font-weight: bold;
+        
+        & .remove-favorite-list {
+          border: 0;
+          background-color: transparent;
+          padding: 1px;
+          &:focus {
+            border: 1px solid @action-link-color;
+            border-style: dotted;
+          }
+  
+          & i {
+            vertical-align: text-top;
+            margin-right: 2px;
+            background-color: @action-link-color;
+            font-size: 10px;
+          }
+        }
+      }
     }
-  }
-  & li > a:not(.add-new-list) {
-    color: @text-color;
-  }
-  & li {
+    > a:not(.add-new-list) {
+      color: @text-color;
+    }
     & .favorite-list-name {
       height: 25px;
 
@@ -119,34 +137,11 @@
         padding: 2px;
       }
     }
-    > a.active {
-      font-weight: bold;
-      
-      & .remove-favorite-list {
-        position: relative;
-        border: 0;
-        background-color: transparent;
-        padding: 1px;
-        &:focus {
-          border: 1px solid @action-link-color;
-          border-style: dotted;
-        }
-
-        & i {
-          vertical-align: top;
-          margin-right: 2px;
-          background-color: @action-link-color;
-          font-size: 10px;
-        }
-      }
-    }
   }
   
   & .add-new-list-holder {
-    padding-left: 20px;
-    padding-right: 20px;
-    margin-bottom: 10px;
-    margin-top: 5px;
+    padding: 0 20px 0 20px;
+    margin: 5px 0 10px 0px;
     & .add-new-list {
       border: 1px solid @gray-lighter;
       display: block;
@@ -250,7 +245,6 @@
     }
   }
   li.hidden-xs.hidden-sm, li.mylist-menu-favorites, li.favorites-menulist-item {
-    width: 100%;
     max-width: none;
 
     & h4 {
