@@ -46,7 +46,7 @@
       }
     }
     & a {
-      padding: 0px 5px 5px 5px !important;
+      padding: 2px 2px 2px 2px !important;
     }
 
     & .list-visibility-hidden {
@@ -82,14 +82,10 @@
 }
 
 & .favorites-menulist-item {
-  & a{
+  & a {
     padding: 3px 20px 3px 20px !important;
     &.active {
         font-weight: bold;  
-    }
-    > i {
-      position: relative;
-      top: 4px;
     }
   }
 }
@@ -148,7 +144,7 @@
   
   & .add-new-list-holder {
     padding-left: 20px;
-    padding-right: 5px;
+    padding-right: 20px;
     margin-bottom: 10px;
     margin-top: 5px;
     & .add-new-list {
@@ -256,6 +252,7 @@
   li.hidden-xs.hidden-sm, li.mylist-menu-favorites, li.favorites-menulist-item {
     width: 100%;
     max-width: none;
+
     & h4 {
       text-transform: none;
       @media (max-width: @screen-sm-max) {
