@@ -926,6 +926,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         ) {
             return !empty($this->config['PasswordRecovery']['enabled'])
                 ? $this->config['PasswordRecovery'] : false;
+        } elseif ('getPatronStaffAuthorizationStatus' === $function) {
+            return ['enabled' => true];
         }
         return parent::getConfig($function, $params);
     }
@@ -1045,7 +1047,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         );
 
         $statuses = [];
-        foreach ($result[0]['item_availabilities'] as $i => $item) {
+        foreach ($result[0]['item_availabilities'] ?? [] as $i => $item) {
             // $holding is a reference!
             unset($holding);
             if (!empty($item['holding_id'])
@@ -1069,15 +1071,19 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $duedate = null;
             }
 
+            $location = $this->getItemLocationName($item);
+            $callnumber = $this->getItemCallNumber($item);
+            $sublocation = $item['sub_description'] ?? '';
             $entry = [
                 'id' => $id,
                 'item_id' => $item['itemnumber'],
-                'location' => $this->getItemLocationName($item),
+                'location' => $location,
+                'department' => $sublocation,
                 'availability' => $available,
                 'status' => $status,
                 'status_array' => $statusCodes,
                 'reserve' => 'N',
-                'callnumber' => $this->getItemCallNumber($item),
+                'callnumber' => $callnumber,
                 'duedate' => $duedate,
                 'number' => $item['enumchron'],
                 'barcode' => $item['barcode'],
@@ -1185,7 +1191,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $marcRecord = $holding['_marcRecord'] ?? null;
         if (!isset($holding['_marcRecord'])) {
-            foreach ($holding['holdings_metadatas'] as $metadata) {
+            foreach ($holding['holdings_metadata'] ?? [$holding['metadata']]
+                as $metadata
+            ) {
                 if ('marcxml' === $metadata['format']
                     && 'MARC21' === $metadata['marcflavour']
                 ) {
@@ -1311,6 +1319,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected function translateLocation($location, $default = null)
     {
+        if (empty($location)) {
+            return null !== $default ? $default : '';
+        }
         $prefix = 'location_';
         if (!empty($this->config['Catalog']['id'])) {
             $prefix .= $this->config['Catalog']['id'] . '_';
@@ -1340,6 +1351,30 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             "$prefix$code",
             null,
             $description
+        );
+    }
+
+    /**
+     * Check if patron belongs to staff.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @return bool True if patron is staff, false if not
+     */
+    public function getPatronStaffAuthorizationStatus($patron)
+    {
+        $username = $patron['cat_username'];
+        if ($this->sessionCache->patron != $username) {
+            if (!$this->renewPatronCookie($patron)) {
+                return false;
+            }
+        }
+
+        return !empty(
+            array_intersect(
+                ['superlibrarian', 'catalogue'],
+                $this->sessionCache->patronPermissions
+            )
         );
     }
 }

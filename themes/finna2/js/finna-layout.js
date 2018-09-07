@@ -439,32 +439,6 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-  function initImageCheck() {
-    $('.image-popup-trigger img').each(function setupImagePopup() {
-      $(this).one('load', function onLoadImage() {
-        // Don't hide anything if we have multiple images
-        var navi = $(this).closest('.image-popup-navi');
-        if (navi && navi.length > 1) {
-          return;
-        }
-        if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
-          $(this).parent().addClass('no-image');
-          $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
-          $('.large-image-sidebar').addClass('visible-xs');
-          $('.record-main').addClass('mainbody left');
-          var href = $(this).parent().attr('href');
-          $(this).parent().attr({'href': href.split('#')[0], 'title': ''});
-          $(this).parents('.grid').addClass('no-image');
-          $('.rating-stars').addClass('hidden-xs');
-        }
-      }).each(function loadImage() {
-        if (this.complete) {
-          $(this).load();
-        }
-      });
-    });
-  }
-
   function initHierarchicalFacet(treeNode, inSidebar) {
     addJSTreeListener(treeNode);
     initFacetTree(treeNode, inSidebar);
@@ -501,7 +475,7 @@ finna.layout = (function finnaLayout() {
     $('#login_target').change(function onChangeLoginTarget() {
       var target = $('#login_target').val();
       var field = $('#login_' + (topClass ? topClass + '_' : '') + 'secondary_username');
-      if (labels[target] === '') {
+      if ((typeof labels[target] === 'undefined') || labels[target] === '') {
         field.val('');
         field.closest('.form-group').hide();
       } else {
@@ -978,7 +952,6 @@ finna.layout = (function finnaLayout() {
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
   }
 
-
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -1012,7 +985,6 @@ finna.layout = (function finnaLayout() {
       initCondensedList();
       if (typeof checkSaveStatuses !== 'undefined') { checkSaveStatuses(); }
       initTouchDeviceGallery();
-      initImageCheck();
       initSideFacets();
       initPiwikPopularSearches();
       initAutoScrollTouch();

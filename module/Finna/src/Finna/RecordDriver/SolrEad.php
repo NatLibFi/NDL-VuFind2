@@ -106,9 +106,8 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
         if (!isset($record->accessrestrict)) {
             return false;
         }
-        $attributes = $record->accessrestrict->attributes();
-        if (isset($attributes['type'])) {
-            $copyright = (string)$attributes['type'];
+        if (isset($record->accessrestrict->p)) {
+            $copyright = (string)$record->accessrestrict->p;
             $data = [];
             $data['copyright'] = $copyright;
             if ($link = $this->getRightsLink(strtoupper($copyright), $language)) {
@@ -176,8 +175,12 @@ class SolrEad extends \VuFind\RecordDriver\SolrDefault
                     ?? $urls['small'];
             }
 
-            $description = isset($daogrp->daodesc->p) ? $daogrp->daodesc->p
-                : $daogrp->daodesc;
+            if (isset($daogrp->dapdesc->p) && $daogrp->dapdesc->p != 'Fotografi') {
+                $description = $daogrp->dapdesc->p;
+            } else {
+                $description = '';
+            }
+
             $result[] = [
                 'urls' => $urls,
                 'description' => (string)$description,
