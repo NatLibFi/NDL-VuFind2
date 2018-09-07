@@ -473,6 +473,12 @@
     padding-left: 5px;
   }
 
+  > li:first-child {
+    >a {
+      padding-bottom: 1px;
+    }
+  }
+
   > li {
     border-bottom: 1px solid @gray-lighter;
     line-height: 30px;
@@ -487,8 +493,14 @@
       }
     }
 
-    > ul > li > a{
-      text-indent: 10%;
+    > ul {
+      line-height: 20px;
+      > li > a{
+        text-indent: 5%;
+        & li {
+          height: 25px;
+        }
+      }
     }
     
     & a{
