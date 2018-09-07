@@ -16,7 +16,7 @@
   <ul id="favorites-collapse" class="dropdown-menu subtabs collapse in mylist-nav" role="presentation">
     <li role="menuitem" class="favorites-menulist-item">
       <a href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>">
-        <div class="favorite-list-name">
+        <div class="favorite-list-holder">
           <div class="pull-left favorite-list-title"><?=$this->transEsc('All Favourites')?></div>
           <div class="pull-right">(<?=$numOfResources; ?>)</div>
         </div>
@@ -26,7 +26,7 @@
     <?php $active = ($list->id === $activeId); ?>
     <li role="menuitem" class="favorites-menulist-item">
       <a href="<?= $active ? '#' : $this->url('userList', ['id' => $list['id']])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>">
-        <div class="favorite-list-name">
+        <div class="favorite-list-holder">
           <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div>
           <?php if ($list['public']): ?>
             <i class="fa fa-public public-favorite-list pull-left"></i>
