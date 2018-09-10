@@ -953,7 +953,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function addDropdownCloseHandler() {
-    $(document).on('click', function(e) {
+    $(document).on('click', function checkClickPosition(e) {
       var menu = $('#my-info-dropdown-menu');
 
       //Lets check if we are clicking outside the dropdownmenu and it is open
