@@ -952,6 +952,19 @@ finna.layout = (function finnaLayout() {
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
   }
 
+  function addDropdownCloseHandler() {
+    $(document).on('click', function(e) {
+      var menu = $('#my-info-dropdown-menu');
+
+      //Lets check if we are clicking outside the dropdownmenu and it is open
+      if (!$(e.target).parents('#my-info-dropdown-menu').length > 0 && menu.hasClass('in')) {
+        menu.removeClass('in');
+        var a = menu.siblings('a');
+        a.addClass('collapsed').attr('aria-expanded', "false");
+      }
+    });
+  }
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -967,6 +980,7 @@ finna.layout = (function finnaLayout() {
     initVideoPopup: initVideoPopup,
     initLoginTabs: initLoginTabs,
     init: function init() {
+      addDropdownCloseHandler();
       initScrollRecord();
       initJumpMenus();
       initAnchorNavigationLinks();
