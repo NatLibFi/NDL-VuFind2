@@ -158,7 +158,7 @@ finna.record = (function finnaRecord() {
       return _toggleAccordion($(e.target).closest('.accordion'));
     });
   }
-
+  
   function applyRecordAccordionHash(callback) {
     var newTab = typeof window.location.hash !== 'undefined'
       ? window.location.hash.toLowerCase() : '';
@@ -240,6 +240,9 @@ finna.record = (function finnaRecord() {
 
     if ($recordTabs.find('.' + tabid + '-tab').length > 0) {
       $recordTabs.find('.' + tabid + '-tab').addClass('active');
+      if (accordion.hasClass('initiallyActive')) {
+        removeHashFromLocation();
+      }
     } 
   }
 
