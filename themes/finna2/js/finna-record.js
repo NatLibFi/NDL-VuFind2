@@ -158,7 +158,7 @@ finna.record = (function finnaRecord() {
       return _toggleAccordion($(e.target).closest('.accordion'));
     });
   }
-  
+
   function applyRecordAccordionHash(callback) {
     var newTab = typeof window.location.hash !== 'undefined'
       ? window.location.hash.toLowerCase() : '';

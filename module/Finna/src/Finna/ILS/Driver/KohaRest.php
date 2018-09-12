@@ -1045,12 +1045,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'GET',
             $patron
         );
-        if (empty($result[0]['item_availabilities'])) {
-            return [];
-        }
 
         $statuses = [];
-        foreach ($result[0]['item_availabilities'] as $i => $item) {
+        foreach ($result[0]['item_availabilities'] ?? [] as $i => $item) {
             // $holding is a reference!
             unset($holding);
             if (!empty($item['holding_id'])
@@ -1076,11 +1073,12 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
             $location = $this->getItemLocationName($item);
             $callnumber = $this->getItemCallNumber($item);
+            $sublocation = $item['sub_description'] ?? '';
             $entry = [
                 'id' => $id,
-                'holdings_id' => "$location/$callnumber",
                 'item_id' => $item['itemnumber'],
                 'location' => $location,
+                'department' => $sublocation,
                 'availability' => $available,
                 'status' => $status,
                 'status_array' => $statusCodes,
@@ -1193,7 +1191,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $marcRecord = $holding['_marcRecord'] ?? null;
         if (!isset($holding['_marcRecord'])) {
-            foreach ($holding['holdings_metadatas'] as $metadata) {
+            foreach ($holding['holdings_metadata'] ?? [$holding['metadata']]
+                as $metadata
+            ) {
                 if ('marcxml' === $metadata['format']
                     && 'MARC21' === $metadata['marcflavour']
                 ) {
@@ -1319,6 +1319,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected function translateLocation($location, $default = null)
     {
+        if (empty($location)) {
+            return null !== $default ? $default : '';
+        }
         $prefix = 'location_';
         if (!empty($this->config['Catalog']['id'])) {
             $prefix .= $this->config['Catalog']['id'] . '_';
