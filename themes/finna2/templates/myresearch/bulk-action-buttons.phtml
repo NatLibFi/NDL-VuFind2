@@ -29,7 +29,7 @@
           <option value=""><?= $this->translate('Add to List'); ?>&hellip;</option>
           <?php foreach ($lists as $l): ?>
           <?php if ($list && $list->id == $l->id) { continue; } ?>
-          <?php $title = (strlen($l->title) > 20) ? substr($l->title, 0, 20) . '...' : $l->title ?>
+          <?php $title = $this->truncate($l->title, 20) ?>
           <option value="<?= $l->id; ?>"><?= $this->escapeHtml($title); ?></option>
           <?php endforeach; ?>
         </select>
