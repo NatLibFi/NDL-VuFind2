@@ -24,7 +24,7 @@ if ($img):
       <div class="result-body">
         <div class="title-container">
           <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title" data-view="<?=isset($this->params) ? $this->params->getOptions()->getListViewOption() : 'list' ?>">
-            <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+            <h3><?=$this->record($this->driver)->getTitleHtml()?></h3><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
           </a>
           <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
             <div class="result-uniform-titles">
