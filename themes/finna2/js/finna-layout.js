@@ -90,8 +90,7 @@ finna.layout = (function finnaLayout() {
 
     function notifyTruncateChange(field) {
       field.find('.truncate-change span').each(function setupTruncateChange(ind, e) {
-        var visible = $(e).position().top <= field.height();
-        $(e).trigger('truncate-change', [visible]);
+        $(e).trigger('truncate-change', [true]);
       });
     }
 
