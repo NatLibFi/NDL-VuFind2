@@ -11,8 +11,8 @@
           <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
         </div>
         <div class="title-container">
-          <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
-          <?php
+          <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
+          <h2 class="search-title"><?php
             $summHighlightedTitle = $this->driver->getHighlightedTitle();
             $summTitle = $this->driver->getTitle();
             if (!empty($summHighlightedTitle)) {
@@ -22,7 +22,7 @@
             } else {
               echo $this->transEsc('Title not available');
             }
-          ?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+          ?></h2><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
           </a>
 
         </div>

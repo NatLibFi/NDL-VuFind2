@@ -29,8 +29,15 @@
     }
     .condensed-collapse-toggle {
         display: flex;
-        a.title {
-            font-size: 1.25em;
+        & a {
+            display: inline-block;
+            & h3.title {
+                font-size: 1.25em;
+                font-weight: 400;
+                line-height: 1.1em;
+                margin: 0;
+                display: inline;
+            }
         }
         &:hover {
             cursor: pointer;

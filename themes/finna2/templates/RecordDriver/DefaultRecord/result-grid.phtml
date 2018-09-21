@@ -25,9 +25,9 @@ $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
         <div class="status ajax-availability hidden text-center"><span class="label label-default"><?=$this->transEsc('Loading')?>...</span></div>
       <?php endif; ?>
     <?php endif; ?>
-    <div class="grid-title text-center">
-      <a class="title" href="<?=$this->recordLink()->getUrl($this->driver)?>" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
-        <?= $this->record($this->driver)->getTitleHtml(50); ?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+    <div class="text-center grid-title">
+      <a href="<?=$this->recordLink()->getUrl($this->driver)?>" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
+        <h2 class="title"><?= $this->record($this->driver)->getTitleHtml(50); ?></h2><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
       </a>
       <div class="dateyeartype">
         <?php $summAuthor = $this->driver->getPrimaryAuthor();

@@ -17,8 +17,8 @@
   <div class="condensed-collapse-toggle">
     <div class="condensed-body">
       <i class="fa fa-arrow-right"></i>
-        <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
-          <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+        <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
+          <h2 class="title"><?=$this->record($this->driver)->getTitleHtml()?></h2><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
         </a>
         <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
           <div class="result-uniform-titles">
