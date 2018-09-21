@@ -14,7 +14,7 @@
       <div class="condensed-body">
         <i class="fa fa-arrow-right"></i>
           <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
-            <h2 class="title"><?=$this->record($this->driver)->getTitleHtml()?></h2><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+            <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
           </a>
           <div class="resultOtherLinks">
           <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
