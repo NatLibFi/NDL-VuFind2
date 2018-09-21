@@ -23,7 +23,8 @@ if ($img):
     <div class="media-body">
       <div class="result-body">
         <div class="title-container">
-          <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
+        <h2 class="search-title">
+          <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
           <?php
             $summHighlightedTitle = $this->driver->getHighlightedTitle();
             $summTitle = $this->driver->getTitle();
@@ -35,7 +36,7 @@ if ($img):
               echo $this->transEsc('Title not available');
             }
           ?>
-          </a><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+          </a></h2><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
         </div>
 
         <div class="dateyeartype">

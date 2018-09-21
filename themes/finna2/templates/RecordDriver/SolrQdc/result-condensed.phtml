@@ -13,9 +13,11 @@
   <div class="condensed-collapse-toggle">
       <div class="condensed-body">
         <i class="fa fa-arrow-right"></i>
-          <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
-            <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
-          </a>
+          <h2 class="title">
+            <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
+              <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
+            </a>
+          </h2>
           <div class="resultOtherLinks">
           <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
           <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>

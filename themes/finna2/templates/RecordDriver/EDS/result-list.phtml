@@ -12,7 +12,8 @@
         </div>
         <div>
           <div class="title-container">
-            <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
+          <h2 class="search-title">
+            <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
             <?php
               $summHighlightedTitle = $this->driver->getHighlightedTitle();
               $summTitle = $this->driver->getTitle();
@@ -25,7 +26,7 @@
               }
             ?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
             </a>
-
+          </h2>
           </div>
           <div class="dateyeartype">
             <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
