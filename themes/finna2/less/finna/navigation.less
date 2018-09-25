@@ -258,6 +258,10 @@
   margin: (@navbar-padding-vertical / 2) -@navbar-padding-horizontal;
 
   > li > a {
+    &.dropdown-toggle:focus {
+      outline: 5px auto -webkit-focus-ring-color;
+    }
+
     padding-top: @navbar-padding-vertical;
     padding-bottom: @navbar-padding-vertical;
     line-height: @navbar-height / 2;
