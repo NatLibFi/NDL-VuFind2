@@ -1,6 +1,6 @@
 <!-- START of: finna - librarycards/selectcard.phtml -->
 <?php if ($this->user): ?>
-  <?php $cards = $this->user->getLibraryCards(); if ($cards->count() > 1): ?>
+  <?php $cards = $this->user->getLibraryCards(); if ($cards->count() > 0): ?>
     <?php $targetCount = $this->ils()->checkCapability('getLoginDrivers') ? count($this->ils()->getLoginDrivers()) : 1; ?>
     <?php if (isset($loginMenu) && $loginMenu): ?>
       <li role="menuitem" class="logoutOptions card-selection">
@@ -26,7 +26,7 @@
       </li>
     <?php else: ?>
       <div class="select-card-wrapper">
-        <span class="select-card-label"><?=$this->transEsc(isset($this->label) ? $this->label :'') ?></span>
+        <span class="select-card-label"><?=$this->transEsc(isset($this->label) ? $this->label : '') ?>:</span>
         <div class="dropdown select-card">
           <?php
             $display = null;

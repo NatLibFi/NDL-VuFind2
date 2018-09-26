@@ -13,7 +13,6 @@
 
     $user = $this->auth()->isLoggedIn();
     $cards = $user->getLibraryCards();
-
     $patron = $user ? $this->auth()->getILSPatron() : false;
     $capabilityParams = $patron ? ['patron' => $patron] : [];
     $updateAddress = $this->ils()->checkFunction('updateAddress', $capabilityParams);
@@ -21,6 +20,12 @@
     $updateSmsNumber = $this->ils()->checkFunction('updateSmsNumber', $capabilityParams);
     $updateEmail = $this->ils()->checkFunction('updateEmail', $capabilityParams);
     $updateLoanHistory = $this->ils()->checkFunction('updateTransactionHistoryState', $capabilityParams);
+
+    $ddrConfig = $this->ils()->getConfig(
+      'dueDateReminder', $patron
+    );
+    
+    $ddrEnabled = (isset($ddrConfig['enabled']) && $ddrConfig['enabled'] === true);
 
     $updateAddressLink = '';
     if ($updateAddress) {
@@ -55,7 +60,11 @@
   <div>
     <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>
     <?=$this->flashmessages();?>
-    <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?>
+    <?php if (count($cards) > 0): ?>
+      <div class="myresearch-profile-list library-card-holder">
+        <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
+      </div>
+    <?php endif; ?>
     <?= $this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
     <?php if (is_array($this->profile)): ?>
       <div class="myresearch-profile-header"><span><?=$this->transEsc('Library Card Settings');?></span></div>
@@ -263,14 +272,15 @@
     <span><?= $this->transEsc("history_schedule") ?></span>
   </div>
   <div class="myresearch-profile-list library-profile">
-    <?= $this->partial('myresearch/profile-my-information.phtml', ['user' => $user, 'cards' => $cards, 'hideDueDateReminder' => $this->hideDueDateReminder, 'hideProfileEmailAddress' => $this->hideProfileEmailAddress]); ?>
+    <?= $this->partial('myresearch/profile-my-information.phtml', ['user' => $user, 'cards' => $cards, 'hideDueDateReminder' => $this->hideDueDateReminder, 'hideProfileEmailAddress' => $this->hideProfileEmailAddress, 'ddrEnabled' => $ddrEnabled]); ?>
   </div>
   <div class="myresearch-profile-header">
     <span><?= $this->transEsc("my_profile_export_import") ?></span>
   </div>
-  <div class="myresearch-profile-list library-profile">
-    <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-export') ?>"><i class="fa fa-arrow-down"></i> <?=$this->transEsc('export_favorites') ?></a>
-    <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox><i class="fa fa-arrow-up"></i> <?=$this->transEsc('import_favorites') ?> </a>
+  <div class="myresearch-profile-list library-profile export-holder">
+    <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-export') ?>"><i class="fa fa-download" aria-hidden="true"></i> <?=$this->transEsc('export_favorites') ?></a>
+    <div class="clearfix visible-xs"></div>
+    <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox><i class="fa fa-upload" aria-hidden="true"></i> <?=$this->transEsc('import_favorites') ?> </a>
     <div class="clearfix"></div>
   </div>
   <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && !empty($this->patronLoginView->getTemplate())): ?>

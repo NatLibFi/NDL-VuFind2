@@ -40,6 +40,11 @@
   padding-bottom: 0;
   border: 1px solid @gray-lighter;
   box-shadow: 10px 15px 30px -25px @gray;
+  display: inline-block;
+  width: 100%;
+  &.export-holder {
+    padding: 10px 10px 0px 10px;
+  }
   & #profile_library_form {
     & input {
       min-width: 210px;
@@ -91,9 +96,15 @@
 }
 
 .my-profile-btn {
-  min-width: 40%;
-  float: left;
-  margin: 10px;
+  margin: 0px 5px 10px 0px;
+  display: inline-block;
+  @media(max-width: @screen-sm-max){
+    width: 100%;
+    float: left !important;
+    word-break: normal;
+    margin-bottom: 20px;
+    display: block;
+  }
 }
 
 @media (min-width: @screen-sm ){
