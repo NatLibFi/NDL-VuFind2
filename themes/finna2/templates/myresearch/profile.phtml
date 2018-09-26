@@ -60,7 +60,7 @@
   <div>
     <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>
     <?=$this->flashmessages();?>
-    <?php if (count($cards) > 0): ?>
+    <?php if (count($cards) > 1): ?>
       <div class="myresearch-profile-list library-card-holder">
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
       </div>
