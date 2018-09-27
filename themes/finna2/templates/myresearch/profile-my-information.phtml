@@ -2,19 +2,20 @@
 <?php if ($user): ?>
   <form name="my_profile_form" class="inline" method="post">
     <?php if (!$this->hideProfileEmailAddress): ?>
-      <div class="my-profile-col">
-        <label for="email"><?=$this->transEsc("Email") ?>:</label>
+      <div class="my-profile-row">
+        <div class="my-profile-col">
+          <label for="email"><?=$this->transEsc("Email") ?>:</label>
+        </div>
+        <div class="my-profile-col">
+          <input id="email" type="email" class="form-control" name="email" value="<?=$user->email?>"/>
+        </div>
+        <div class="clearfix visible-xs"></div>
+        <div class="my-profile-col">
+          <i class="fa fa-info-big"></i>  <?=$this->transEsc(($ddrEnabled) ? 'email_info' : 'email_info_without_ddr') ?>
+        </div>
       </div>
-      <div class="my-profile-col">
-        <input id="email" type="email" class="form-control" name="email" value="<?=$user->email?>"/>
-      </div>
-      <div class="clearfix visible-xs"></div>
-      <div class="my-profile-col">
-        <i class="fa fa-info-big"></i>  <?=$this->transEsc(($ddrEnabled) ? 'email_info' : 'email_info_without_ddr') ?>
-      </div>
-      <div class="clearfix visible-xs"><br/></div>
-      <div>
-        <input id="save-user-profile" name="saveUserProfile" type="submit" value="<?=$this->transEsc("Save") ?>" class="btn btn-primary" />
+      <div class="my-profile-row">
+          <input id="save-user-profile" name="saveUserProfile" type="submit" value="<?=$this->transEsc("Save") ?>" class="btn btn-primary" />
       </div>
     <?php endif; ?>
   </form>

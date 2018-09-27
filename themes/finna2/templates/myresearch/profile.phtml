@@ -24,7 +24,7 @@
     $ddrConfig = $this->ils()->getConfig(
       'dueDateReminder', $patron
     );
-    
+
     $ddrEnabled = (isset($ddrConfig['enabled']) && $ddrConfig['enabled'] === true);
 
     $updateAddressLink = '';
@@ -255,12 +255,12 @@
               <?=$updateAddressLink ?>
             </div>
           <?php endif; ?>
-          <div>
+          <div class="my-profile-row">
             <?php if ($updatePhone || $updateEmail || $updateLoanHistory): ?>
-              <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEsc("save_my_profile") ?>" class="btn btn-primary" />
+              <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEsc("save_my_profile") ?>" class="btn btn-primary my-profile-btn" />
             <?php endif; ?>
             <?php if ($this->accountDeletion): ?>
-              <a class="btn btn-default" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><i class="fa fa-times"></i> <?=$this->transEsc('delete_account_title') ?></a>
+              <a class="btn btn-default my-profile-btn" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><i class="fa fa-times"></i> <?=$this->transEsc('delete_account_title') ?></a>
             <?php endif; ?>
             <div class="clearfix"></div>
           </div>
@@ -277,11 +277,13 @@
   <div class="myresearch-profile-header">
     <span><?= $this->transEsc("my_profile_export_import") ?></span>
   </div>
-  <div class="myresearch-profile-list library-profile export-holder">
-    <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-export') ?>"><i class="fa fa-download" aria-hidden="true"></i> <?=$this->transEsc('export_favorites') ?></a>
-    <div class="clearfix visible-xs"></div>
-    <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox><i class="fa fa-upload" aria-hidden="true"></i> <?=$this->transEsc('import_favorites') ?> </a>
-    <div class="clearfix"></div>
+  <div class="myresearch-profile-list library-profile">
+    <div class="my-profile-row">
+      <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-export') ?>"><i class="fa fa-download" aria-hidden="true"></i> <?=$this->transEsc('export_favorites') ?></a>
+      <div class="clearfix visible-xs"></div>
+      <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox><i class="fa fa-upload" aria-hidden="true"></i> <?=$this->transEsc('import_favorites') ?> </a>
+      <div class="clearfix"></div>
+    </div>
   </div>
   <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && !empty($this->patronLoginView->getTemplate())): ?>
     <?=$this->partial($this->patronLoginView);?>
