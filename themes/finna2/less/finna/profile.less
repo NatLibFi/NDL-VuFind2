@@ -56,12 +56,11 @@
       display: inline-block;
       width: 100%;
       padding: 8px;
-      @media(max-width: @screen-xs-max){
+      @media(max-width: @screen-xs-max) {
         padding: 10px 8px 0px;
       }
       >.my-profile-col {
-        padding: 0;
-        padding-right: 8px;
+        padding: 0 8px 0 0;
       }
     }
     &.profile-title {
@@ -110,20 +109,19 @@
 .my-profile-btn {
   margin: 0px 5px 10px 0px;
   display: inline-block;
-  @media(max-width: @screen-sm){
+  @media(max-width: @screen-sm) {
     width: 100%;
     float: left !important;
     display: block;
   }
 }
 
-@media (min-width: @screen-sm ){
+@media (min-width: @screen-sm ) {
   .my-profile-col {
     width: 33.33%;
     float: left;
     padding-right: 15px;
   }
-
   .password-col {
     width: 66.6%;
     float: left;
