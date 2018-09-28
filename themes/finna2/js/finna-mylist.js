@@ -276,7 +276,7 @@ finna.myList = (function finnaMyList() {
           var half = $(window).width() / 2;
 
           //Our prompt is located on the right side so lets calculate a place in the middle
-          if (location.left > half){
+          if (location.left > half) {
             left = half - prompt.width() / 2;
           }
           prompt.css({
@@ -308,11 +308,11 @@ finna.myList = (function finnaMyList() {
       });
     }
 
-    $('.add-new-list .icon').on('click', function createNewList(){
+    $('.add-new-list .icon').on('click', function createNewList() {
       var newListInput = $('.new-list-input');
       var newListName = newListInput.val().trim();
 
-      if (newListName !== ''){
+      if (newListName !== '') {
         newListInput.off('keyup');
         $(this).off('click');
         updateList({'id': 'NEW', 'title': newListName, 'desc': null, 'public': 0}, newListAdded, 'add-list');
@@ -412,7 +412,7 @@ finna.myList = (function finnaMyList() {
       editor = new SimpleMDE(editorSettings);
       currentVal = editor.value();
 
-      editor.codemirror.on('change', function onChangeEditor(){
+      editor.codemirror.on('change', function onChangeEditor() {
         var html = SimpleMDE.prototype.markdown(editor.value());
         preview.find('.data').html(html);
       });

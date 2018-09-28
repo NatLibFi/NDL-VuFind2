@@ -1,16 +1,16 @@
 /*global VuFind, finna*/
-finna.menu = (function finnaMenu(){
+finna.menu = (function finnaMenu() {
 
   var listHolder = null;
   var loading = false;
 
-  function init(){
+  function init() {
     listHolder = $('.mylist-bar');
 
     if (!listHolder.children().length > 0) {
       $('#open-list').addClass('collapsed');
 
-      $('#open-list > .caret').unbind('click').click(function onCaretClick(event){
+      $('#open-list > .caret').unbind('click').click(function onCaretClick(event) {
         event.preventDefault();
 
         if (!$('.ajax-error').hasClass('hidden')) {
@@ -23,26 +23,26 @@ finna.menu = (function finnaMenu(){
         } 
       });
     } else { 
-      $('#open-list > .caret').unbind('click').click(function toggleFavourites(event){
+      $('#open-list > .caret').unbind('click').click(function toggleFavourites(event) {
         event.preventDefault();
         toggleList();
       });
     }
 
-    $('#open-loans > .caret').unbind('click').click(function getLists(event){
+    $('#open-loans > .caret').unbind('click').click(function getLists(event) {
       event.preventDefault();
       $('#myLoans').toggleClass('in');
       $('#open-loans').toggleClass('collapsed');
     });
   }
 
-  function toggleList(){
+  function toggleList() {
     $('#favorites-collapse').toggleClass('in');
     $('#open-list').toggleClass('collapsed');
   }
 
   //Load lists if there is none to show
-  function loadLists(){
+  function loadLists() {
     $('#open-list .fa').toggleClass('hidden');
 
     $.ajax({
@@ -57,7 +57,7 @@ finna.menu = (function finnaMenu(){
         $('#open-list .fa').toggleClass('hidden');
         $('.add-new-list-holder').hide();
 
-        $('#open-list > .caret').unbind('click').click(function toggleFavourites(event){
+        $('#open-list > .caret').unbind('click').click(function toggleFavourites(event) {
           event.preventDefault();
           toggleList();
         });
@@ -69,7 +69,9 @@ finna.menu = (function finnaMenu(){
       });
   }
 
-  return {
+  var my = {
     init: init
-  };
+  }
+
+  return my;
 })();
