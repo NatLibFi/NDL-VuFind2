@@ -30,6 +30,7 @@
 namespace FinnaConsole\Service;
 
 use Zend\ServiceManager\ServiceManager;
+use Zend\Stdlib\RequestInterface as Request;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplatePathStack;
 
@@ -215,11 +216,12 @@ class DueDateReminders extends AbstractService
     /**
      * Run service.
      *
-     * @param array $arguments Command line arguments.
+     * @param array   $arguments Command line arguments.
+     * @param Request $request   Full request
      *
      * @return boolean success
      */
-    public function run($arguments)
+    public function run($arguments, Request $request)
     {
         $this->msg('Sending due date reminders');
 
@@ -268,7 +270,7 @@ class DueDateReminders extends AbstractService
                 "User {$user->username} (id {$user->id})"
                 . ' does not have an email address, bypassing due date reminders'
             );
-            return false;
+            return ['remindLoans' => [], 'errors' => []];
         }
 
         $remindLoans = [];
