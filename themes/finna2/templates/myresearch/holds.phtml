@@ -2,20 +2,17 @@
 <?php
     // Set up page title:
     $this->headTitle($this->translate('My Holds'));
-
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('My Holds') . '</li>';
-
     $user = $this->auth()->isLoggedIn();
     // Add finna-holds.js
     $this->headScript()->appendFile('finna-holds.js');
-
     $patron = $user ? $this->auth()->getILSPatron() : false;
     $changePickupLocation = $this->ils()->checkFunction('changePickupLocation', [$patron]);
     $changeRequestStatus = $this->ils()->checkFunction('changeRequestStatus', [$patron]);
 ?>
 
-<!-- Leftside navigationbar -->
+<!-- -->
 <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'holds']); ?>
 
 <div class="<?=$this->layoutClass('mainbody')?>">
@@ -25,10 +22,9 @@
       <?=$this->flashmessages()?>
       <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
       <div class="useraccount-header">
-        <?=$this->transEsc('Your Holds and Recalls') ?>
-        (<?=count($this->recordList);?>)
-        <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?>
-      </div>
+      <?=$this->transEsc('Your Holds and Recalls') ?>
+      (<?=count($this->recordList);?>)
+      <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?></div>
       <?php if (isset($this->noSupport)): ?>
         <?php if ($user->getLibraryCards()->count() > 1): ?>
           <div class="support-notice">
@@ -214,7 +210,11 @@
 
                     <?php if (isset($ilsDetails['available']) && $ilsDetails['available'] == true): ?>
                       <div class="alert alert-success">
-                        <?=$this->transEsc("hold_available") ?>
+                        <?php if (!empty($ilsDetails['last_pickup_date'])): ?>
+                          <?=$this->transEsc('hold_available_until', ['%%date%%' => $ilsDetails['last_pickup_date']]) ?>
+                        <?php else: ?>
+                          <?=$this->transEsc('hold_available') ?>
+                        <?php endif; ?>
                         <?php if (isset($ilsDetails['pickupnum'])):?>
                         <br />
                         <strong><?=$this->transEsc("Pickup number") ?>:</strong> <?=$this->escapeHtml($ilsDetails['pickupnum']) ?>
