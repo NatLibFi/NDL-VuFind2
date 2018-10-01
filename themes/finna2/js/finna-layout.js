@@ -877,7 +877,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function initFiltersToggle () {
-    $('.filters-toggle').click(function filterToggleClicked(e){
+    $('.filters-toggle').click(function filterToggleClicked(e) {
       var finnaFilters = $(e.target).closest('.finna-filters');
       var filtersBar = finnaFilters.find('.filters-bar');
       if (filtersBar.hasClass('hidden')) {
@@ -950,11 +950,10 @@ finna.layout = (function finnaLayout() {
   }
 
   function addDropdownCloseHandler() {
-    $(document).on('click', function checkClickPosition(e) {
+    $(document).on('click keyup', function checkClickPosition(e) {
       var menu = $('#my-info-dropdown-menu');
-
       //Lets check if we are clicking outside the dropdownmenu and it is open
-      if (!$(e.target).parents('#my-info-dropdown-menu').length > 0 && menu.hasClass('in')) {
+      if ((!$(e.target).parents('#my-info-dropdown-menu').length > 0 || e.key === "Escape") && menu.hasClass('in')) {
         menu.removeClass('in');
         var a = menu.siblings('a');
         a.addClass('collapsed').attr('aria-expanded', "false");
