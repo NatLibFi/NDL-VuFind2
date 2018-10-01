@@ -46,7 +46,7 @@
           <th class="<?= $hideCheckout ? "hidden" : "hidden-xs" ?>">
             <?=$this->transEsc('fine_checkout_date')?>
           </th>
-          <th class="<?= $hideDueDate ? "hidden" : "hidden-xs" ?>">
+          <th class="<?= $hideDueDate ? "hidden" : "" ?>">
             <?=$this->transEsc('Due Date')?>
           </th>
           <th class="hidden-xs"><?=$this->transEsc('fine_description')?>
@@ -86,7 +86,7 @@
           <td class="<?= $hideCheckout ? "hidden" : "hidden-xs" ?>">
             <?=isset($record['checkout']) ? $this->escapeHtml($record['checkout']) : ''?>
           </td>
-          <td class="<?=$hideDueDate ? "hidden" : "hidden-xs" ?>">
+          <td class="<?=$hideDueDate ? "hidden" : "" ?>">
             <?=isset($record['duedate']) ? $this->escapeHtml($record['duedate']) : ''?>
           </td>
           <td class="hidden-xs"><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
