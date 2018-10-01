@@ -16,7 +16,7 @@
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px
   }
-  & .fa-arrow-right, .fa-arrow-left {
+  .fa-arrow-right, .fa-arrow-left {
     color: @body-bg;
     top: 10px;
     left: 8px;
@@ -68,17 +68,17 @@
 
 // fix navbar for logoutoptions
 .finna-navbar .navbar-nav .logoutOptions {
-  @media(max-width: @screen-sm){
+  @media(max-width: @screen-sm) {
     margin: 0;
   }
   a {
     color: @action-link-color;
   }
-  & .dropdown-menu {
+  .dropdown-menu {
     right: 5px;
     left: auto;
-    & > li {
-      & > a {
+    > li {
+      > a {
         color: @text-color;
         width: 250px;
         i {
@@ -121,9 +121,6 @@
         display: none;
       }
     }
-    @media (max-width: @grid-float-breakpoint){
-      margin: 0 15px;
-    }
   }
   #loginOptions-navi .login-text {
     padding-left: 0.5em;
@@ -133,7 +130,7 @@
   }
 }
 
-@media(max-width: @grid-float-breakpoint){
+@media(max-width: @grid-float-breakpoint) {
   #loginOptions button {
     background-color: @body-bg;
     a {
@@ -145,7 +142,7 @@
 // content-navigation-menu
 .main.template-dir-content.template-name-content .content-navigation-menu {
   margin: 20px 0px;
-  & h2 {
+  h2 {
     font-size: 1em;
     text-transform: uppercase;
     font-weight: 600;
@@ -185,10 +182,10 @@
 }
 
 .navbar {
-  & .dropdown .dropdown-menu > li > a > div:not(.description) {
+  .dropdown .dropdown-menu > li > a > div:not(.description) {
     font-weight: bold;
   }
-  & .dropdown .dropdown-menu > li > a > div.description {
+  .dropdown .dropdown-menu > li > a > div.description {
     font-size: .9em;
   }
 }
@@ -209,7 +206,7 @@
     font-size: @navbar-logo-height;
     color: @logo-color;
   }
-  & img {
+  img {
     height: @navbar-logo-height;
     width: auto;
   }
@@ -377,7 +374,7 @@
   right: 15px;
   flex-grow: 0;
   flex-shrink: 0;
-  & .dropdown-menu > li > a {
+  .dropdown-menu > li > a {
     white-space: normal;
   }
 }
@@ -428,11 +425,11 @@
   > li {
     border-bottom: 1px solid @gray-lighter;
   }
-  & > li:last-child > a, & li:last-child {
+  > li:last-child > a, li:last-child {
     border-bottom: none;
     .border-bottom-radius(8px);
   }
-  & > li:first-child > a, & li:first-child {
+  > li:first-child > a, li:first-child {
     .border-top-radius(8px);
   }
 
@@ -463,32 +460,25 @@
   background-color: white;
   .box-shadow(0 6px 12px rgba(0, 0, 0, .275));
 
-  & .card-selection {
-    & p {
+  .card-selection {
+    p {
       padding-left: 15px;
       margin-bottom: 0px;
     }
-    & > a {
+    > a {
       padding-left: 32px;
     }
-    & i.fa-check {
+    i.fa-check {
       margin-left: -17px;
-    }
-    padding-left: 5px;
-  }
-
-  > li:first-child {
-    >a {
-      padding-bottom: 1px;
+      color: @brand-primary;
     }
   }
-
   > li {
     border-bottom: 1px solid @gray-lighter;
     line-height: 30px;
     cursor: pointer;
 
-    & a:not(.collapsed) {
+    a:not(.collapsed) {
       > .caret {
         transform: rotate(180deg);
         -ms-transform: rotate(180deg);
@@ -499,31 +489,26 @@
 
     > ul {
       line-height: 20px;
-      > li > a{
+      > li > a {
         text-indent: 5%;
-        & li {
+        li {
           height: 25px;
         }
       }
     }
     
-    & a{
+    a {
       color: @text-color;
       display: block;
       width: 100%;
       height: 100%;
       padding: 7px 15px;
 
-      & i {
+      i {
         padding-top: 8px;
       }
-      
-      &:focus{
-        text-decoration: none;
-        outline: none !important;
-      }
 
-      &:hover{
+      &:hover {
         text-decoration: none;
         color: @dropdown-link-hover-color;
         background-color: @dropdown-link-hover-bg;
@@ -531,11 +516,11 @@
     }
   }
 
-  & > li:last-child > a, & li:last-child {
+  > li:last-child > a, li:last-child {
     border-bottom: none;
     .border-bottom-radius(8px);
   }
-  & > li:first-child > a, & li:first-child {
+  > li:first-child > a, li:first-child {
     .border-top-radius(8px);
   }
 }
@@ -544,7 +529,7 @@
 .jumpMenuForm {
   height: 33px;
   margin-bottom: 10px;
-  & label {
+  label {
     font-weight: normal;
     margin-left: 10px;
   }
@@ -556,7 +541,7 @@
   z-index: 1;
   display: inline-block;
   min-width: 60px;
-  & select {
+  select {
     background-color: transparent;
     border: 0 none;
     box-shadow: none;
@@ -574,7 +559,7 @@
       box-shadow: none;
     }
   }
-  & option {
+  option {
     background: @body-bg;
     color: @gray;
     padding: 5px;
@@ -600,7 +585,7 @@
     background-color: @brand-primary;
     padding-top: 0px;
     transition: background-color .1s linear;
-    & option:checked {
+    option:checked {
       background: @btn-primary-bg;
       color: @body-bg;
     }
@@ -669,7 +654,7 @@
 @media(min-width: @grid-float-breakpoint) {
   .finna-navbar {
     display: flex;
-    .nav.nav-absolute{
+    .nav.nav-absolute {
       position: relative;
     }
     .navbar-collapse {
