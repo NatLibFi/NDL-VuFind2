@@ -413,6 +413,11 @@
   border-collapse: separate;
   &.online-payment {
     margin-bottom: 15px;
+    td {
+      @media (max-width: @screen-xs-max) {
+        white-space: normal !important;
+      }
+    }
   }
   &.library-cards {
     @media (max-width: @screen-xs-max) {
