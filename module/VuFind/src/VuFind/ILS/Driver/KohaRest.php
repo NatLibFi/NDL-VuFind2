@@ -1664,9 +1664,19 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             );
             $blockReason = [];
             if (!empty($result['blocks'])) {
-                $blockReason[] = $this->translate('Borrowing Block Message');
+                $holdBlock = false;
+                $nonHoldBlock = false;
                 foreach ($result['blocks'] as $reason => $details) {
                     $params = [];
+                    if ($reason === 'Hold::MaximumHoldsReached') {
+                        $holdBlock = true;
+                        $params = [
+                            '%%blockCount%%' => $details['current_hold_count'],
+                            '%%blockLimit%%' => $details['max_holds_allowed']
+                        ];
+                    } else {
+                        $nonHoldBlock = true;
+                    }
                     if (($reason == 'Patron::Debt'
                         || $reason == 'Patron::DebtGuarantees')
                         && !empty($details['current_outstanding'])
@@ -1684,6 +1694,13 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                         $reason = $translated;
                         $blockReason[] = $reason;
                     }
+                }
+                // Add the generic block message to the beginning if we have blocks
+                // other than hold block
+                if ($nonHoldBlock) {
+                    array_unshift(
+                        $blockReason, $this->translate('Borrowing Block Message')
+                    );
                 }
             }
             $this->putCachedData($cacheId, $blockReason);

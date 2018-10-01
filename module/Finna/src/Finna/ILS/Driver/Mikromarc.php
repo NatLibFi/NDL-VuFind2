@@ -621,7 +621,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                     'U', strtotime($entry['ResValidUntil'])
                 ),
                 'position' => $entry['NumberInQueue'],
-                'available' => $entry['ServiceCode'] === 'ReservationArrived',
+                'available' => ($entry['ServiceCode'] === 'ReservationArrived'
+                    || $entry['ServiceCode'] === 'ReservationNoticeSent')
+                        ? true : false,
                 'requestId' => $entry['Id']
             ];
             if (!empty($entry['MarcRecordTitle'])) {
@@ -1494,7 +1496,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'holdings_id' => $unit['organisation'],
                 'location' => $locationName,
                 'organisation_id' => $unit['organisation'],
-                'branch' => $locationName,
                 'branch_id' => $unit['branch'],
                 'availability' => $available,
                 'status' => $statusCode,
@@ -1507,7 +1508,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 
             if (!empty($item['LocationId'])) {
                 $entry['department'] = $this->getDepartment($item['LocationId']);
-                $entry['branch'] = $this->translate("Copy");
             }
 
             if ($this->itemHoldAllowed($item) && $item['PermitLoan']) {
@@ -1567,6 +1567,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             if ($item['is_holdable']) {
                 $holdable = true;
             }
+            $itemsTotal++;
         }
 
         // Since summary data is appended to the holdings array as a fake item,
@@ -2014,7 +2015,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         if ($orderB !== null) {
             return 1;
         }
-        return strcmp($a['branch'], $b['branch']);
+        return strcmp($a['location'], $b['location']);
     }
 
     /**
