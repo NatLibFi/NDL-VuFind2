@@ -112,7 +112,7 @@
             <th class="<?= $hideDueDate ? "hidden" : "" ?>">
               <?=$this->transEsc('Due Date')?>
             </th>
-            <th class="hidden-xs"><?=$this->transEsc('fine_description')?>
+            <th><?=$this->transEsc('fine_description')?>
             </th>
             <th class="<?= $hideFineCreationDate ? "hidden" : "hidden-xs" ?>">
               <?=$this->transEsc('fine_creation_date')?>
@@ -151,7 +151,7 @@
             <td class="<?=$hideDueDate ? "hidden" : "" ?>">
               <?=isset($record['duedate']) ? $this->escapeHtml($record['duedate']) : ''?>
             </td>
-            <td class="hidden-xs"><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
+            <td><?=isset($fine) ? $this->transEsc($fine) : ''?></td>
             <td class="<?=$hideFineCreationDate ? "hidden" : "hidden-xs" ?>">
               <?=isset($record['createdate']) ? $this->escapeHtml($record['createdate']) : ''?>
             </td>
