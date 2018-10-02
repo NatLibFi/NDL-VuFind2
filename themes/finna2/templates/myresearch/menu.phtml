@@ -4,11 +4,6 @@
     $user = $this->auth()->isLoggedIn();
     $patron = $user ? $this->auth()->getILSPatron() : false;
     $capabilityParams = $patron ? ['patron' => $patron] : [];
-    if ($user) {
-        $this->layout()->finnaMainHeader .= '<a class="btn btn-sm btn-primary btn-uppercase pull-right" href="' . $this->url('myresearch-logout') . '" title="' . $this->transEsc('Log Out') . '"><i class="fa fa-sign-out fa-lg"></i> ' . $this->transEsc('Log Out') . '</a>';
-    }
-    $this->layout()->finnaMainHeader;
-
     $showLibraryTabs = $this->ils()->loginAvailable();
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
     //Get the data for vertical menu to show lists on correct site

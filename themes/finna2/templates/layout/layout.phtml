@@ -399,10 +399,10 @@ JS;
       <?php if (!empty($this->layout()->finnaStreetBar)): ?>
         <?=$this->layout()->finnaStreetBar?>
       <?php endif; ?>
-      <?php if (!empty($this->layout()->finnaMainHeader) && (!$this->layout()->templateDir === 'myresearch')): ?>
+      <?php if (!empty($this->layout()->finnaMainHeader)): ?>  
         <div class="finna-main-header">
-          <div class="container">
-              <?=$this->layout()->finnaMainHeader?>
+            <div class="container">
+              <?=$this->layout()->finnaMainHeader?>   
           </div>
         </div>
       <?php endif; ?>
