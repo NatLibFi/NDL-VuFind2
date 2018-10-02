@@ -500,24 +500,27 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $renewLimit = $this->config['Loans']['renewalLimit'];
         $transactions = [];
         foreach ($result as $entry) {
-            $renewalCount = $entry['RenewalCount'];
-            $transaction = [
-                'id' => $entry['MarcRecordId'],
-                'checkout_id' => $entry['Id'],
-                'item_id' => $entry['ItemId'],
-                'duedate' => $this->dateConverter->convertToDisplayDate(
-                    'U', strtotime($entry['DueTime'])
-                ),
-                'dueStatus' => $entry['ServiceCode'],
-                'renew' => $renewalCount,
-                'renewLimit' => $renewLimit,
-                'renewable' => ($renewLimit - $renewalCount) > 0,
-                'message' => $entry['Notes']
-            ];
-            if (!empty($entry['MarcRecordTitle'])) {
-                $transaction['title'] = $entry['MarcRecordTitle'];
+            $checkForILL = $this->checkILL($entry['MarcRecordId']);
+            if (!$checkForILL) {
+                $renewalCount = $entry['RenewalCount'];
+                $transaction = [
+                    'id' => $entry['MarcRecordId'],
+                    'checkout_id' => $entry['Id'],
+                    'item_id' => $entry['ItemId'],
+                    'duedate' => $this->dateConverter->convertToDisplayDate(
+                        'U', strtotime($entry['DueTime'])
+                    ),
+                    'dueStatus' => $entry['ServiceCode'],
+                    'renew' => $renewalCount,
+                    'renewLimit' => $renewLimit,
+                    'renewable' => ($renewLimit - $renewalCount) > 0,
+                    'message' => $entry['Notes']
+                ];
+                if (!empty($entry['MarcRecordTitle'])) {
+                    $transaction['title'] = $entry['MarcRecordTitle'];
+                }
+                $transactions[] = $transaction;
             }
-            $transactions[] = $transaction;
         }
         return $transactions;
     }
@@ -2038,5 +2041,21 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             );
         }
         return $cacheDepartment[$locationId][0]['Name'];
+    }
+
+    /**
+     * Check ILL status for the record provided
+     *
+     * @param int $MarcRecordId The record needed for status fetch
+     *
+     * @return boolean
+     */
+    public function checkILL($MarcRecordId)
+    {
+        $result = $this->makeRequest(
+            ['odata', 'CatalogueItems'],
+            ['$filter' => "MarcRecordId eq $MarcRecordId"]
+        );
+        return $result[0]['IsILL'];
     }
 }
