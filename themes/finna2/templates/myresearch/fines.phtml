@@ -3,9 +3,6 @@
     // Set up page title:
     $this->headTitle($this->translate('My Fines'));
 
-    // Set up myresearch menu
-    $this->layout()->finnaMainTabs = $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'fines']);
-
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Fines') . '</li>';
 
@@ -41,39 +38,43 @@
       }
     }
 ?>
-<div class="my-research-content">
-  <?php if ($user): ?>
-    <?php if (!empty($this->registerPayment)): ?>
-      <div class="alert alert-info">
-        <span class="register-payment-spinner"><i class="fa fa-spinner fa-spin"></i> <?=$this->translate('Registering Payment');?></span>
-        <div id="online-payment-status" class="info hide"></div>
-      </div>
+<!-- Leftside navigationbar -->
+<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'fines']); ?>
+
+<div class="<?=$this->layoutClass('mainbody')?> myresearch-body">
+  <div class="my-research-content">
+    <?php if ($user): ?>
+      <?php if (!empty($this->registerPayment)): ?>
+        <div class="alert alert-info">
+          <span class="register-payment-spinner"><i class="fa fa-spinner fa-spin"></i> <?=$this->translate('Registering Payment');?></span>
+          <div id="online-payment-status" class="info hide"></div>
+        </div>
+      <?php endif; ?>
     <?php endif; ?>
-  <?php endif; ?>
-  <?php if (!$this->translationEmpty('fines_instructions_html')): ?><p class="no-content-message"><?=$this->translate('fines_instructions_html')?></p><?php endif; ?>
-  <div class="fines-info-area">
-    <div class="useraccount-header"><?=$this->transEsc('Your Fines') . " (" . count($this->fines) . ")"?></div>
-    <div>
-      <label><?= $this->transEsc('Library Card'); ?>
-        <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?>
-      </label>
+    <?php if (!$this->translationEmpty('fines_instructions_html')): ?><p class="no-content-message"><?=$this->translate('fines_instructions_html')?></p><?php endif; ?>
+    <div class="fines-info-area">
+      <div class="useraccount-header"><?=$this->transEsc('Your Fines') . " (" . count($this->fines) . ")"?></div>
+      <div>
+        <label><?= $this->transEsc('Library Card'); ?>
+          <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?>
+        </label>
+      </div>
     </div>
-  </div>
-  <?=$this->flashmessages()?>
-  <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
-  <div class="fines-info-area">
-    <div>
-      <p><?=$this->transEsc('Total Balance Due')?> (<?=count($this->fines);?>): <span class="amount"><?=$this->safeMoneyFormat($totalDue / 100.00) ?></span></p>
-    </div>
-      <?php if ($this->onlinePayment): ?>
-        <div>
-          <p><?=$this->transEsc('online_payment_payable_online'); ?> (<?=$payableOnlineCnt ?>): <span class="amount"><?=$this->safeMoneyFormat($payableOnline / 100.00);?></span></p>
-        </div>
-        <div> 
-          <?php if (!empty($transactionFee)): ?>
-            <p><?=$this->transEsc('online_payment_transaction_fee'); ?>: <span class="amount"><?=$this->safeMoneyFormat($transactionFee / 100.00);?></span></p>
-          <?php endif; ?>
-        </div>
+    <?=$this->flashmessages()?>
+    <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
+    <div class="fines-info-area">
+      <div>
+        <p><?=$this->transEsc('Total Balance Due')?> (<?=count($this->fines);?>): <span class="amount"><?=$this->safeMoneyFormat($totalDue / 100.00) ?></span></p>
+      </div>
+        <?php if ($this->onlinePayment): ?>
+          <div>
+            <p><?=$this->transEsc('online_payment_payable_online'); ?> (<?=$payableOnlineCnt ?>): <span class="amount"><?=$this->safeMoneyFormat($payableOnline / 100.00);?></span></p>
+          </div>
+          <div> 
+            <?php if (!empty($transactionFee)): ?>
+              <p><?=$this->transEsc('online_payment_transaction_fee'); ?>: <span class="amount"><?=$this->safeMoneyFormat($transactionFee / 100.00);?></span></p>
+            <?php endif; ?>
+          </div>
       <?php endif; ?>
   </div>
   <?php if ($this->onlinePayment): ?>
