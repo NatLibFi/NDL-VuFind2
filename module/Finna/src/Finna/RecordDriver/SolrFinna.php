@@ -347,6 +347,16 @@ trait SolrFinna
     }
 
     /**
+     * Toggle Feedback-button visibility on recordpages
+     *
+     * @return boolean
+     */
+    public function recordFeedbackEnabled()
+    {
+        return $this->mainConfig['RecordFeedbackEnabled']['enabled'] ?? true;
+    }
+
+    /**
      * Get an array of dedup and link data associated with the record.
      *
      * @return array

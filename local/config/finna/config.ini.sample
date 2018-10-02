@@ -1452,3 +1452,7 @@ en-gb['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.ht
 [FinnaSurvey]
 enabled = false
 url = "https://my.surveypal.com/Finnasurvey"
+
+; Toggle "Contact us" -feedback button on recordpages to show, default is true.
+;[RecordFeedbackEnabled]
+;enabled = true
