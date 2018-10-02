@@ -954,9 +954,7 @@ finna.layout = (function finnaLayout() {
       var menu = $('#my-info-dropdown-menu');
       //Lets check if we are clicking outside the dropdownmenu and it is open
       if ((!$(e.target).parents('#my-info-dropdown-menu').length > 0 || e.key === "Escape") && menu.hasClass('in')) {
-        menu.removeClass('in');
-        var a = menu.siblings('a');
-        a.addClass('collapsed').attr('aria-expanded', "false");
+        menu.collapse("hide");
       }
     });
   }
