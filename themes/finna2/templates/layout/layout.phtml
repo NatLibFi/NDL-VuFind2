@@ -384,7 +384,6 @@ JS;
     </section>
 
     <?php // TODO: get rid of template-dir-* and template-name-* here ?>
-    <?php $user = $this->auth()->isLoggedIn(); ?>
     <section role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
       <?php if (!empty($this->layout()->advSearchHeader)): ?>
         <?=$this->layout()->advSearchHeader; ?>
@@ -401,8 +400,8 @@ JS;
       <?php endif; ?>
       <?php if (!empty($this->layout()->finnaMainHeader)): ?>  
         <div class="finna-main-header">
-            <div class="container">
-              <?=$this->layout()->finnaMainHeader?>   
+          <div class="container">
+            <?=$this->layout()->finnaMainHeader?>   
           </div>
         </div>
       <?php endif; ?>
