@@ -3,7 +3,7 @@
     $this->headTitle($this->translate('Login'));
 
     // Check if this page has been added as a part of another page
-    $isPartial = $this->layout()->templateName === "profile";
+    $isPartial = $this->layout()->templateName === 'profile';
 
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Login') . '</li>';
@@ -12,7 +12,7 @@
     $offlineMode = $this->ils()->getOfflineMode();
 ?>
 
-<?php if(!$isPartial): ?>
+<?php if (!$isPartial): ?>
   <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => '']); ?>
 
   <!-- Leftside navigationbar -->
@@ -61,7 +61,7 @@
     ?>
     <?=$this->partial("librarycards/library_card_terms_$language.phtml"); ?>
   <?php endif; ?>
-  <?php if(!$isPartial): ?>
+  <?php if (!$isPartial): ?>
     </div>
   <?php endif; ?>
 <?php
