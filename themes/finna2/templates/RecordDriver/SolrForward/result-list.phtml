@@ -37,12 +37,11 @@ if ($img):
       <div class="result-body">
         <div class="title-container">
           <h2 class="search-title">
-            <a href="<?=$this->recordLink()->getUrl($this->driver)?>" data-view="<?=isset($this->params) ? $this->params->getOptions()->getListViewOption() : 'list' ?>">
+            <a class="title" href="<?=$this->recordLink()->getUrl($this->driver)?>" data-view="<?=isset($this->params) ? $this->params->getOptions()->getListViewOption() : 'list' ?>">
               <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
             </a>
           </h2><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
         </div>
-
         <div class="dateyeartype">
           <div class="resultItemFormat">
             <?=$this->record($this->driver)->getFormatList() ?>

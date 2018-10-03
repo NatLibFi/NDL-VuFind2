@@ -18,7 +18,7 @@
     <div class="condensed-body">
       <i class="fa fa-arrow-right"></i>
         <h2 class="title">
-          <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
+          <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
             <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
           </a>
         </h2>
