@@ -117,31 +117,27 @@
     <ul role="menu" class="nav navbar-nav nav-absolute">
     <?php //hide login/logout if unavailable ?>
     <?php if (is_object($account) && $account->loginEnabled()): ?>
-      <?php 
-        $user = $this->auth()->isLoggedIn();
-        if($user) :
-      ?>
+      <?php if ($this->auth()->isLoggedIn()): ?>
         <li class="logoutOptions">
-          <a href="#my-info-dropdown-menu" role="menu"  data-toggle="collapse" class="collapsed" aria-expanded="false"><i class="fa fa-user fa-lg" aria-hidden="true"></i> <span class="username login-text"><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span><b class="caret"></b></a>
-          <ul id="my-info-dropdown-menu" class="collapse">
-            <li role="menuitem">
-              <a href="#collapse-area" role="menu" data-toggle="collapse" class="collapsed" aria-expanded="false" onclick="return false;"><?=$this->transEsc("loans_and_holds")?><span class="pull-right caret"></span></a>
-                <ul id="collapse-area" class="collapse">
-                  <li role="menuitem">
-                    <a href="<?=$this->url('myresearch-checkedout')?>"><?=$this->transEsc('Checked Out Items')?></a>
-                  </li>
-                  <li role="menuitem">
-                    <a href="<?=$this->url('myresearch-holds')?>">
-                      <?=$this->transEsc('Holds and Recalls')?>
-                    </a>
-                  </li>
-                </ul>
-            </li>
-            <li role="menuitem">
-              <a href="<?=$this->url('myresearch-fines')?>">
-                <?=$this->transEsc('Fines')?>
-              </a>
-            </li>
+          <a href="#" role="menu"  data-toggle="dropdown"aria-expanded="false"><i class="fa fa-user fa-lg" aria-hidden="true"></i> <span class="username login-text"><?=$user ? $this->escapeHtml($this->truncate($user->getDisplayName(), 20)) : $this->transEsc("Your Account")?></span><b class="caret"></b></a>
+          <ul id="my-info-dropdown-menu" class="dropdown-menu">
+            <?php if ($user->getLibraryCards()->count() > 0): ?>
+              <li role="menuitem">
+                <a href="<?=$this->url('myresearch-checkedout')?>">
+                  <?=$this->transEsc('Checked Out Items')?>
+                </a>
+              </li>
+              <li role="menuitem">
+                <a href="<?=$this->url('myresearch-holds')?>">
+                  <?=$this->transEsc('Holds and Recalls')?>
+                </a>
+              </li>
+              <li role="menuitem">
+                <a href="<?=$this->url('myresearch-fines')?>">
+                  <?=$this->transEsc('Fines')?>
+                </a>
+              </li>
+            <?php endif; ?>        
             <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true']);?>
             <li role="menuitem">
               <a href="<?=$this->url('search-history')?>?require_login">
