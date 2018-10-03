@@ -66,37 +66,37 @@
       <div>
         <p><?=$this->transEsc('Total Balance Due')?> (<?=count($this->fines);?>): <span class="amount"><?=$this->safeMoneyFormat($totalDue / 100.00) ?></span></p>
       </div>
-        <?php if ($this->onlinePayment): ?>
-          <div>
-            <p><?=$this->transEsc('online_payment_payable_online'); ?> (<?=$payableOnlineCnt ?>): <span class="amount"><?=$this->safeMoneyFormat($payableOnline / 100.00);?></span></p>
-          </div>
-          <div> 
-            <?php if (!empty($transactionFee)): ?>
-              <p><?=$this->transEsc('online_payment_transaction_fee'); ?>: <span class="amount"><?=$this->safeMoneyFormat($transactionFee / 100.00);?></span></p>
-            <?php endif; ?>
-          </div>
+      <?php if ($this->onlinePayment): ?>
+        <div>
+          <p><?=$this->transEsc('online_payment_payable_online'); ?> (<?=$payableOnlineCnt ?>): <span class="amount"><?=$this->safeMoneyFormat($payableOnline / 100.00);?></span></p>
+        </div>
+        <div> 
+          <?php if (!empty($transactionFee)): ?>
+            <p><?=$this->transEsc('online_payment_transaction_fee'); ?>: <span class="amount"><?=$this->safeMoneyFormat($transactionFee / 100.00);?></span></p>
+          <?php endif; ?>
+        </div>
       <?php endif; ?>
-  </div>
-  <?php if ($this->onlinePayment): ?>
-    <?php if ($this->onlinePaymentEnabled): ?>
-      <div class="fines-info-area payment-row">   
-      <?=$this->onlinePayment($paymentHandler, $transactionId, $payableTotal);?>
-    <?php elseif (!empty($this->nonPayableReason)): ?>
-      <div>
-        <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ?  (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?>
-      </div>
-    <?php endif; ?>
-      <div class="clearfix">
-      </div>
     </div>
-  <?php endif; ?>
-  <?php if (isset($this->noSupport)): ?>
-    <?php if ($user->getLibraryCards()->count() > 0): ?>
-      <div class="support-notice">
-        <p><?=$this->transEsc("no_ils_support_description") ?></p>
+    <?php if ($this->onlinePayment): ?>
+      <?php if ($this->onlinePaymentEnabled): ?>
+        <div class="fines-info-area payment-row">   
+        <?=$this->onlinePayment($paymentHandler, $transactionId, $payableTotal);?>
+      <?php elseif (!empty($this->nonPayableReason)): ?>
+        <div>
+          <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ?  (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?>
+        </div>
+      <?php endif; ?>
+        <div class="clearfix">
+        </div>
       </div>
     <?php endif; ?>
-  <?php else: ?>
+    <?php if (isset($this->noSupport)): ?>
+      <?php if ($user->getLibraryCards()->count() > 0): ?>
+        <div class="support-notice">
+          <p><?=$this->transEsc("no_ils_support_description") ?></p>
+        </div>
+      <?php endif; ?>
+    <?php else: ?>
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/fines-pre-list")): ?>
       <div class="fines-pre-list"><?=$this->render($template)?></div>
     <?php endif; ?>
