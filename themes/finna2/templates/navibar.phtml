@@ -20,7 +20,7 @@
                 <?php foreach ($val['items'] as $itemKey => $itemVal): ?>
                 <?php
                   if (!($itemUrl = $this->navibar()->getMenuItemUrl($itemVal))) {
-                  continue;
+                    continue;
                   }
                   $url = $itemUrl['url'];
                   $target = !empty($itemUrl['target']) ? $itemUrl['target'] : null;
@@ -28,10 +28,10 @@
                   $desc = !empty($itemVal['desc']) ? $itemVal['desc'] : null;
                 ?>
                 <li role="menuitem">
-                  <a<?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$url?>">
+                  <a <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$url?>">
                     <div><?= $this->transEsc($label) ?></div>
                     <?php if ($desc): ?>
-                    <div class="description" role="note"><?= $this->transEsc($desc) ?></div>
+                      <div class="description" role="note"><?= $this->transEsc($desc) ?></div>
                     <?php endif; ?>
                   </a>
                 </li>
