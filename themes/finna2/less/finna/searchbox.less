@@ -42,49 +42,24 @@
   .filters {
     display: inline-block;
   }
-  & .checkbox label input {
-    display: none;
-  }
-  & .checkbox label:before {
-    content: "\f096";
-    font-family: 'Fontawesome';
-    font-size: 20px;
-    vertical-align: -2px;
-    display: inline-block;
-    width: 16px;
-  }
-  & .checkbox.checked label:before {
-    font-family: 'Fontawesome';
-    content: "\f14a";
-  }
-}
-
-.finna-checkbox {
-  display: inline-block;
-
-  > label {
-    display: inline;
-  }
   input[type=checkbox] {
-    height: 20px;
-    width: 20px;
-    line-height: unset;
+    height: 15px;
+    width: 15px;
     appearance: none;
     -moz-appearance: none;
     -webkit-appearance: none;
     border: 1px solid black;
     border-radius: 4px;
+    margin: 0px;
+    top: 2px;
 
-    &:before {
-      content: "";
-      border: 1px solid transparent;
-    }
     &:checked{
       background-color: black;
       &:after{
         font-family: 'Fontawesome';
         content: "\f00c";
         color: white;
+        position: absolute;
       }
     }
   }
