@@ -63,29 +63,14 @@
 
 .bulkActionButtons {
   & .btn-group {
-    @media(max-width: @screen-sm-min) {
-      width: 100%;
-      padding: 4px;
-      display: inline-block;
-      text-align: center;
-      margin: 0 auto;
-    }
-    width: 100%;
-    button, select {
+    .btn {
       border: 1px solid @gray-lighter;
       background: @gray-ultralight;
       color: @text-color;
       padding: 5px 10px;
       font-size: 0.9em;
-      @media(max-width: @screen-sm-min) {
-        border-radius: 0 !important;
-        margin-left: -1px !important;
-        max-width: 25%;
-        min-width: 15%;
-        height: 45px;
-        border: 1px solid @gray-lighter;
-        margin-bottom: 5px;
-        text-align: center;
+      @media(max-width: @screen-xs-max) {
+        padding: 5px;
       }
     }
   } 
