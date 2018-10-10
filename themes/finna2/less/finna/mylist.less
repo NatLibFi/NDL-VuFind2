@@ -208,6 +208,7 @@
   }
   &.no-edit {
     border: 0;
+    margin-top: 5px;
     &:hover {
       border: 0;
     }
@@ -442,6 +443,7 @@ button.caret{
       @media (max-width: @screen-xs-max) {
         width: 40%;
         min-width: 90px;
+        max-width: 120px;
         display: inline-block;
       }
     }
@@ -449,8 +451,9 @@ button.caret{
       @media (max-width: @screen-xs-max) {
         display: inline-block;
         text-align: left;
-        width: 30%;
+        width: 35%;
         max-width: 280px;
+        
         .sort-button {
           span {
             max-width: 280px;
@@ -472,7 +475,6 @@ button.caret{
           width: 100%;
         }
       }
-      
     }
     &.limit-option-container {
       @media (max-width: @screen-sm) {
@@ -502,6 +504,10 @@ button.caret{
   }
   .mylist-controls {
     float: right;
+    text-align: left;
+    @media (max-width: @screen-xxs) {
+        text-align: right;
+    }
     &::after {
       content: "";
       clear: both;
