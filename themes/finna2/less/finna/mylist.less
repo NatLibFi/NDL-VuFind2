@@ -430,6 +430,7 @@ button.caret{
 .mylist-header {
   display: inline-block;
   width: 100%;
+
   .alert {
     margin-top: 1em;
   }
@@ -440,23 +441,19 @@ button.caret{
   div {
     display: inline-block;
     a.btn.btn-primary {
-      @media (max-width: @screen-xs-max) {
+      @media (max-width: @screen-xxs-max) {
         width: 40%;
         min-width: 90px;
-        max-width: 120px;
         display: inline-block;
       }
     }
     &.sort-option-container {
-      @media (max-width: @screen-xs-max) {
+      @media (max-width: @screen-sm) {
         display: inline-block;
         text-align: left;
         width: 35%;
-        max-width: 280px;
-        
         .sort-button {
           span {
-            max-width: 280px;
             width: 95%;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -465,10 +462,8 @@ button.caret{
             padding-right: 20px;
             margin-bottom: -6px;
           }
-          @media (max-width: @screen-xxs) {
-            .dropdown-menu {
-              left: -90px;
-            }
+          .dropdown-menu {
+            left: -90px;
           }
         }
         div, a {
@@ -477,10 +472,9 @@ button.caret{
       }
     }
     &.limit-option-container {
-      @media (max-width: @screen-sm) {
+      @media (max-width: @screen-xxs-max) {
         display: inline-block;
-        max-width: 20%;
-        text-align: right;
+        width: 20%;
         div, a {
           width: 100%;
         }
@@ -489,16 +483,24 @@ button.caret{
 
     &.pagination-container {
       padding: 8px;
+      padding-left: 6px;
       .paginationSimple {
         margin-left: 0px;
+        span:not(.index):not(.total) {
+          font-size: 14px;
+        }
       }
     }
   }
   .mylist-controls {
     float: right;
     text-align: left;
-    @media (max-width: @screen-xxs) {
-        text-align: right;
+    @media (max-width: @screen-sm-min) {
+      width: 60%;
+      text-align: right;
+    }
+    @media (max-width: @screen-xxs-max) {
+      width: 100%;
     }
     &::after {
       content: "";
@@ -513,9 +515,6 @@ button.caret{
     }
   }
   @media (max-width: @screen-xs-max) {
-    .pagination-container, .mylist-controls {
-      width: 100%;
-    }
     .pagination-container .paginationSimple {
       text-align: left;
     }
