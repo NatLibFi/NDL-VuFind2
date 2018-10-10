@@ -48,7 +48,7 @@
     <div class="checkbox">
       <label>
         <input onChange="$('.finna-filters .checkbox').toggleClass('checked'); var sort = $(this).closest('form').find('input[name=sort]'); sort.val($('.finna-filters .checkbox').hasClass('checked') ? sort.data('value') : '');" type="checkbox"<?=$defaultFilterState?> id="filter-checkbox" class="searchFormKeepFilters"/>
-        <?=$this->transEsc("basic_search_keep_filters")?>
+        <strong><?=$this->transEsc("basic_search_keep_filters")?></strong>
       </label>
     </div>
   <?php endif; ?>
