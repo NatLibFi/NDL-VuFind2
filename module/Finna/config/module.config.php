@@ -57,6 +57,20 @@ $config = [
                     ]
                 ]
             ],
+            'feedback-form' => [
+                'type'    => 'Zend\Mvc\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/Feedback/Form/[:id]',
+                    'constraints' => [
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => 'Form',
+                        'action'     => 'form',
+                    ]
+                ]
+            ],
             'feed-content-page' => [
                 'type'    => 'Zend\Router\Http\Segment',
                 'options' => [
@@ -759,7 +773,8 @@ $recordRoutes = [
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
-    'MyResearch' => ['sortList' => 'SortList/[:id]']
+    'MyResearch' => ['sortList' => 'SortList/[:id]'],
+    'Feedback' => ['form' => 'Form/[:id]']
 ];
 
 $staticRoutes = [

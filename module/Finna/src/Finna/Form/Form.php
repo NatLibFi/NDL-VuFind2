@@ -1,0 +1,532 @@
+<?php
+/**
+ * Configurable form.
+ *
+ * PHP version 5
+ *
+ * Copyright (C) The National Library of Finland 2018.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2,
+ * as published by the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @category VuFind
+ * @package  Form
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
+ */
+namespace Finna\Form;
+
+use VuFind\Config\Locator;
+
+use Zend\InputFilter\InputFilter;
+use Zend\Validator\EmailAddress;
+use Zend\Validator\NotEmpty;
+
+/**
+ * Configurable form.
+ *
+ * @category VuFind
+ * @package  Form
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
+ */
+class Form extends \Zend\Form\Form
+{
+    /**
+     * Input filter
+     *
+     * @var InputFilter
+     */
+    protected $inputFilter;
+
+    /**
+     * Validation messages
+     *
+     * @var array
+     */
+    protected $messages;
+
+    /**
+     * Form config
+     *
+     * @var array
+     */
+    protected $formElementConfig;
+
+    /**
+     * Translator
+     *
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
+     * Constructor
+     *
+     * @param string     $formId     Form id
+     * @param Translator $translator Translator
+     * @param User       $user       User
+     *
+     * @throws Exception
+     */
+    public function __construct($formId, $translator, $user)
+    {
+        parent::__construct($formId);
+
+        if (!$config = $this->getFormConfig($formId)) {
+            throw new \Exception("Form '$formId' not found");
+            return null;
+        }
+
+        $this->translator = $translator;
+        $this->messages = [];
+        $this->messages['empty']
+            = $translator->translate('This field is required');
+
+        $this->messages['invalid_email']
+            = $translator->translate('Email address is invalid');
+
+        $this->formElementConfig
+            = $this->parseConfig($formId, $config, $translator, $user);
+
+        $this->buildForm($this->formElementConfig);
+    }
+
+    /**
+     * Get form configuration
+     *
+     * @param string $formId Form id
+     *
+     * @return mixed null|array
+     * @throws Exception
+     */
+    protected function getFormConfig($formId = null)
+    {
+        $confName = 'FeedbackForms.json';
+        $localConfig = $parentConfig = $config = null;
+
+        if ($parentFile = Locator::getLocalConfigPath(
+            $confName, 'config/finna'
+        )
+        ) {
+            $parentConfig = json_decode(file_get_contents($parentFile), true);
+        }
+
+        if ($localFile = Locator::getLocalConfigPath($confName)) {
+            $localConfig = json_decode(file_get_contents($localFile), true);
+        }
+
+        if (JSON_ERROR_NONE !== ($error = json_last_error())) {
+            throw new \Exception("Invalid form configuration for form '$formId'");
+        }
+
+        $config = $parentConfig;
+        if ($localConfig) {
+            // Handle non-overridable forms before merging local config
+            foreach ($parentConfig['forms'] as $id => $form) {
+                if (isset($form['allowOverride'])
+                    && $form['allowOverride'] === false
+                    && isset($localConfig['forms'][$id])
+                ) {
+                    $localConfig['forms'][$id] = $parentConfig['forms'][$id];
+                }
+            }
+            if (isset($localConfig['forms'])) {
+                $config['forms'] = array_replace_recursive(
+                    $parentConfig['forms'], $localConfig['forms']
+                );
+            }
+        }
+
+        if (!$formId) {
+            if (!isset($config['default'])) {
+                return null;
+            }
+            $formId = $config['default'];
+        }
+
+        if (! isset($config['forms'][$formId])) {
+            return null;
+        }
+
+        return $config['forms'][$formId];
+    }
+
+    /**
+     * Parse form configuration.
+     *
+     * @param string     $formId     Form id
+     * @param array      $config     Configuration
+     * @param Translator $translator Translator
+     * @param User       $user       User (if available)
+     *
+     * @return array
+     */
+    protected function parseConfig($formId, $config, $translator, $user = null)
+    {
+        $formConfig = [
+           'id' => $formId,
+           'title' => !empty($config['name']) ?: $formId
+        ];
+        $fields = [
+            'title', 'help', 'submit', 'response',
+            'enabled', 'onlyLogged', 'emailSubject', 'senderInfoRequired'
+        ];
+        foreach ($fields as $key) {
+            if (isset($config[$key])) {
+                $formConfig[$key] = $config[$key];
+            }
+        }
+
+        $this->formConfig = $formConfig;
+
+        $elements = [];
+        $configuredElements = $this->getFormElements($config);
+
+        // Add sender contact name & email fields
+        $senderName = [
+            'name' => '__name__', 'type' => 'text', 'label' => 'feedback_name',
+            'group' => '__sender__'
+        ];
+        $senderEmail = [
+            'name' => '__email__', 'type' => 'text', 'label' => 'feedback_email',
+            'group' => '__sender__'
+        ];
+        if (isset($formConfig['senderInfoRequired'])
+            && $formConfig['senderInfoRequired'] == true
+        ) {
+            $senderEmail['required'] = $senderEmail['aria-required']
+                = $senderName['required'] = $senderName['aria-required'] = true;
+        }
+
+        $configuredElements[] = $senderName;
+        $configuredElements[] = $senderEmail;
+
+        foreach ($configuredElements as $el) {
+            $element = [];
+
+            $required = ['type', 'name'];
+            $optional = ['required', 'help','value', 'inputType', 'group'];
+            foreach (array_merge($required, $optional) as $field
+            ) {
+                if (!isset($el[$field])) {
+                    continue;
+                }
+                $value = $el[$field];
+                $element[$field] = $value;
+            }
+            $element['label'] = $translator->translate($el['label']);
+
+            $elementType = $element['type'];
+            if ($elementType === 'select') {
+                if (empty($el['options']) && empty($el['optionGroups'])) {
+                    continue;
+                }
+                if (isset($el['options'])) {
+                    $options = [];
+                    foreach ($el['options'] as $option) {
+                        $options[$option] = $translator->translate($option);
+                    }
+                    $element['options'] = $options;
+                } elseif (isset($el['optionGroups'])) {
+                    $groups = [];
+                    foreach ($el['optionGroups'] as $group) {
+                        if (empty($group['options'])) {
+                            continue;
+                        }
+                        $options = [];
+                        foreach ($group['options'] as $option) {
+                            $options[$option] = $translator->translate($option);
+                        }
+                        $label = $translator->translate($group['label']);
+                        $groups[$label] = ['label' => $label, 'options' => $options];
+                    }
+                    $element['optionGroups'] = $groups;
+                }
+            }
+
+            $settings = [];
+            if (isset($el['settings'])) {
+                foreach ($el['settings'] as $setting) {
+                    list($settingId, $settingVal) = $setting;
+                    $settings[trim($settingId)] = trim($settingVal);
+                }
+                $element['settings'] = $settings;
+            }
+            if (in_array($elementType, ['text', 'url', 'email'])
+                && !isset($element['settings']['size'])
+            ) {
+                $element['settings']['size'] = 50;
+            }
+
+            if ($elementType == 'textarea') {
+                if (!isset($element['settings']['cols'])) {
+                    $element['settings']['cols'] = 50;
+                }
+                if (!isset($element['settings']['rows'])) {
+                    $element['settings']['rows'] = 8;
+                }
+            }
+            $elements[] = $element;
+        }
+
+        $elements[] = ['type' => 'submit', 'name' => 'submit', 'label' => 'Send'];
+
+        return $elements;
+    }
+
+    /**
+     * Build form.
+     *
+     * @param array $elements Parsed configuration elements
+     *
+     * @return void
+     */
+    protected function buildForm($elements)
+    {
+        foreach ($elements as $el) {
+            $map = [
+                'text' => '\Zend\Form\Element\Text',
+                'url' => '\Zend\Form\Element\Url',
+                'email' => '\Zend\Form\Element\Email',
+                'textarea' => '\Zend\Form\Element\Textarea',
+                'select' => '\Zend\Form\Element\Select',
+                'submit' => '\Zend\Form\Element\Submit'
+            ];
+
+            $type = $el['type'];
+            if (!isset($map[$type])) {
+                die("invalid form element type: $type");
+                continue;
+            }
+
+            $conf = [];
+            $conf['name'] = $el['name'];
+
+            $conf['type'] = $map[$type];
+            $conf['options'] = [];
+            $attributes = ['id' => $el['name'], 'class' => ''];
+            if ($type !== 'submit') {
+                $attributes['class'] = 'form-control';
+            }
+            if (!empty($el['required'])) {
+                $attributes['required'] = true;
+                $attributes['aria-required'] = "true";
+            } elseif ($type !== 'submit') {
+                $attributes['aria-required'] = "false";
+            }
+            if (!empty($el['settings'])) {
+                $attributes += $el['settings'];
+            }
+            if (!empty($el['label'])) {
+                $attributes['aria-label'] = $el['label'];
+            }
+
+            switch ($type) {
+            case 'select':
+                if (isset($el['options'])) {
+                    $conf['options'] = ['value_options' => $el['options']];
+                } elseif (isset($el['optionGroups'])) {
+                    $conf['options'] = ['value_options' => $el['optionGroups']];
+                }
+                break;
+            case 'submit':
+                $attributes['value'] = $el['label'];
+                $attributes['class'] .= ' btn btn-primary';
+                break;
+            }
+            $conf['attributes'] = $attributes;
+
+            $this->add($conf);
+        }
+    }
+
+    /**
+     * Check if form enabled.
+     *
+     * @return boolean
+     */
+    public function isEnabled()
+    {
+        return !(isset($this->formConfig['enabled'])
+                 && $this->formConfig['enabled'] === false);
+    }
+
+    /**
+     * Check if form is available only for logged users.
+     *
+     * @return boolean
+     */
+    public function showOnlyForLoggedUsers()
+    {
+        return !empty($this->formConfig['onlyLogged']);
+    }
+
+    /**
+     * Return form element configuration.
+     *
+     * @return array
+     */
+    public function getElements()
+    {
+        return $this->formElementConfig;
+    }
+
+    /**
+     * Return form title.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return isset($this->formConfig['title']) ? $this->formConfig['title'] : null;
+    }
+
+    /**
+     * Return form help text.
+     *
+     * @return string|null
+     */
+    public function getHelp()
+    {
+        return isset($this->formConfig['help']) ? $this->formConfig['help'] : null;
+    }
+
+    /**
+     * Return form email message subject.
+     *
+     * @return string
+     */
+    public function getEmailSubject()
+    {
+        return !empty($this->formConfig['emailSubject'])
+            ? $this->formConfig['emailSubject']
+            : 'VuFind Feedback';
+    }
+
+    /**
+     * Return reponse that is shown after successful form submit.
+     *
+     * @return string
+     */
+    public function getSubmitResponse()
+    {
+        return !empty($this->formConfig['response'])
+            ? $this->formConfig['response']
+            : 'Thank you for your feedback.';
+    }
+
+    /**
+     * Format email message.
+     *
+     * @param array $requestParams Request parameters
+     *
+     * @return array Array with template parameters and template name.
+     */
+    public function formatEmailMessage($requestParams)
+    {
+        $params = [];
+        foreach ($this->getElements() as $el) {
+            $type = $el['type'];
+            $name = $el['name'];
+            if ($type === 'submit') {
+                continue;
+            }
+            $value = $requestParams->fromPost($el['name'], null);
+
+            if ($type === 'select') {
+                $value = $this->translator->translate($value);
+            }
+
+            $label = $this->translator->translate($el['label']);
+
+            $params[$label] = ['type' => $type, 'value' => $value];
+        }
+
+        return [$params, 'Email/dynamic-form.phtml'];
+    }
+
+    /**
+     * Retrieve input filter used by this form
+     *
+     * @return \Zend\InputFilter\InputFilterInterface
+     */
+    public function getInputFilter()
+    {
+        if ($this->inputFilter) {
+            return $this->inputFilter;
+        }
+
+        $inputFilter = new InputFilter();
+
+        $validators = [
+            'email' => [
+                'name' => EmailAddress::class,
+                'options' => [
+                    'message' => $this->messages['invalid_email']
+                ]
+            ],
+            'notEmpty' => [
+                'name' => NotEmpty::class,
+                'options' => [
+                    'message' => [
+                        NotEmpty::IS_EMPTY => $this->messages['empty']
+                    ]
+                ]
+            ]
+        ];
+
+        foreach ($this->getElements() as $el) {
+            $required = isset($el['required']) && $el['required'] === true;
+            $fieldValidators = [];
+            if ($required) {
+                $fieldValidators[] = $validators['notEmpty'];
+            }
+            if ($el['type'] === 'email') {
+                $fieldValidators[] = $validators['email'];
+            }
+
+            $inputFilter->add(
+                [
+                    'name' => $el['name'],
+                    'required' => $required,
+                    'validators' => $fieldValidators
+                ]
+            );
+        }
+
+        $this->inputFilter = $inputFilter;
+        return $this->inputFilter;
+    }
+
+    /**
+     * Get form elements
+     *
+     * @param array $config Form configuration
+     *
+     * @return array
+     */
+    protected function getFormElements($config)
+    {
+        $elements = [];
+        foreach ($config['fields'] as $field) {
+            if (!isset($field['type'])) {
+                continue;
+            }
+            $elements[] = $field;
+        }
+        return $elements;
+    }
+}

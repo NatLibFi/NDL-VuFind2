@@ -1,0 +1,134 @@
+{
+  "forms": {
+    
+    "FeedbackSite": {
+      "allowOverride": false,
+      "onlyLogged": false,
+      "enabled": true,
+      "emailSubject": "feedback_email_subject",
+      "title": "Feedback",
+      "response": "Thank you for your feedback.",
+      "senderInfoRequired": true, 
+      "help": {
+        "pre": "feedback_recipient_info_html",
+        "post": "feedback_recipient_info_html"
+      },
+      "fields": [
+        {
+          "name": "receiver",
+          "type": "select",
+          "label": "feedback_receiver",
+          "options": [
+              "2/Vaski/1/1/" ,
+              "2/Vaski/1/095/",
+              "2/Vaski/5/102/" ,
+              "2/Vaski/5/100/",
+              "E-library"
+          ]
+        },
+        {
+          "name": "subject",
+          "type": "select",
+          "label": "feedback_category",
+          "options": [
+             "feedback_category_general" ,
+             "feedback_category_metadata",
+             "feedback_category_services",
+             "feedback_category_usability",
+             "feedback_category_technical"
+          ]
+        },
+        {
+          "name": "message",
+          "type": "textarea",
+          "label": "feedback_message",
+          "required": true,
+          "settings": [
+          ]
+        },
+        {
+          "name": "url",
+          "type": "url",
+          "label": "feedback_url",
+          "settings": [
+            [ "placeholder", "https://..." ]
+          ]
+        }
+      ]
+    },
+
+    "AcquisitionRequest": {
+      "onlyLogged": false,
+      "enabled": true,
+      "emailSubject": "acquisition_request_email_subject",
+      "title": "Acquisition Request",
+      "response": "Thank you for your feedback.",
+      "help": {
+        "pre": "feedback_recipient_info",
+        "post": "feedback_recipient_info"
+      },
+      "fields": [
+        {
+          "name": "receiver",
+          "type": "select",
+          "label": "acquisition_request_receiver",
+          "required": true,
+          "optionGroups": [
+              {
+                "label": "1/Vaski/1/",
+                "options": [
+                    "2/Vaski/1/1/" ,
+                    "2/Vaski/1/095/",
+                    "Send"
+                ]
+              },
+              {
+                "label": "1/Vaski/5/",
+                "options": [
+                    "2/Vaski/5/100/" ,
+                    "2/Vaski/5/102/",
+                    "Send"
+                ]
+              }
+          ]
+        },
+        {
+          "name": "message",
+          "type": "textarea",
+          "label": "feedback_message",
+          "required": true
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "label": "acquisition_request_title",
+          "required": true
+        },
+        {
+          "name": "author",
+          "type": "text",
+          "label": "acquisition_request_author",
+          "required": true
+        },
+
+        {
+          "name": "format",
+          "type": "text",
+          "label": "acquisition_request_format",
+          "required": true
+        },
+        {
+          "name": "info",
+          "type": "text",
+          "label": "acquisition_request_info"
+        },
+        {
+          "name": "argument",
+          "type": "textarea",
+          "label": "acquisition_request_argument"
+        }
+      ]
+    }
+
+  }
+}
