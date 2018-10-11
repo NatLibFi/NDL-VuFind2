@@ -230,10 +230,15 @@
 
 .useraccount-nav {
   &.nav-tabs-personal {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 30px;
+    @media (min-width: @screen-md) {
+    &.move-list {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 30px;
+      }
+    }
     display: block;
+    z-index: 2;
     margin-top: 15px;
     .subtabs.mylist-nav {
       border-top-width: 0px;

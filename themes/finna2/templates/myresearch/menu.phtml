@@ -66,13 +66,6 @@
     <?php endif; ?>
   <?php endif; ?>
 <?php endif; ?>
-<?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-  <li class="menu-favorites <?= $listOpen ? ' active' : ''?>">
-    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item">
-      <?=$this->transEsc('Favorites')?>
-    </a>
-  </li>
-<?php endif; ?>
 <li class="menu-history <?=$this->active == 'history' ? ' active' : ''?>">
   <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item">
     <?=$this->transEsc('history_saved_searches')?>
@@ -82,6 +75,13 @@
   <li class="menu-profile<?=$this->active == 'profile' ? ' active' : ''?>">
     <a href="<?=$this->url('myresearch-profile')?>" class="list-group-item">
       <?=$this->transEsc('Profile')?>
+    </a>
+  </li>
+<?php endif; ?>
+<?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+  <li class="menu-favorites <?= $listOpen ? ' active' : ''?>">
+    <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item">
+      <?=$this->transEsc('Favorites')?>
     </a>
   </li>
 <?php endif; ?>
@@ -150,23 +150,6 @@
     <?php endif; ?>
   <?php endif; ?>
 <?php endif; ?>
-<?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-  <li class="menu-favorites mylist-menu-favorites <?= $listOpen ? ' active' : ''?>">
-    <a href="<?=$this->url('myresearch-favorites')?>" id="open-list" class="<?= !$listOpen ? 'collapsed ' : '' ?>list-group-item hidden-xs hidden-sm">
-      <?=$this->transEsc('Favorites')?>
-      <i class="hidden fa fa-spinner fa-spin"></i>
-      <span class="ajax-error hidden">
-        <small> <?=$this->translate('An error has occurred'); ?></small>
-      </span>
-      <button class="caret"></button>
-    </a>
-    <div class="mylist-bar">
-      <?php if($listOpen) : ?>
-      <?= $this->partial('myresearch/mylist-navi.phtml', ['user' => $user, 'isDefaultList' => $isDefaultList, 'activeId' => $activeId, 'activePublic' => $activePublic, 'lists' => $lists, 'results' => $this->results]);  ?>
-      <?php endif; ?>
-    </div>
-  </li>
-<?php endif; ?>
 <li class="menu-history hidden-xs hidden-sm <?=$this->active == 'history' ? ' active' : ''?>">
   <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item">
     <?=$this->transEsc('history_saved_searches')?>
@@ -180,6 +163,23 @@
       </a>
     </li>
   <?php endif; ?>
+<?php endif; ?>
+<?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+  <li class="menu-favorites mylist-menu-favorites <?= $listOpen ? ' active' : ''?>">
+    <a href="<?=$this->url('myresearch-favorites')?>" id="open-list" class="<?= !$listOpen ? 'collapsed ' : '' ?>list-group-item hidden-xs hidden-sm">
+      <?=$this->transEsc('Favorites')?>
+      <i class="hidden fa fa-spinner fa-spin"></i>
+      <span class="ajax-error hidden">
+        <small> <?=$this->translate('An error has occurred'); ?></small>
+      </span>
+      <button class="caret"></button>
+    </a>
+    <div class="mylist-bar">
+      <?php if($listOpen) : ?>
+        <?= $this->partial('myresearch/mylist-navi.phtml', ['user' => $user, 'isDefaultList' => $isDefaultList, 'activeId' => $activeId, 'activePublic' => $activePublic, 'lists' => $lists, 'results' => $this->results]);  ?>
+      <?php endif; ?>
+    </div>
+  </li>
 <?php endif; ?>
 <?php $menuEntries = ob_get_clean(); ?>
 
@@ -216,7 +216,7 @@
       </ul>
     </div>
   </div>
-  <ul class="<?=$this->layoutClass('sidebar-myresearch')?> nav-tabs-personal list-group useraccount-nav nav-tabs" role="menu">
+  <ul class="<?=$this->layoutClass('sidebar-myresearch')?> <?= $listOpen ? '' : 'move-list' ?> nav-tabs-personal list-group useraccount-nav nav-tabs" role="menu">
     <?=$menuEntries?>
   </ul>
 

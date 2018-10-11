@@ -39,6 +39,7 @@ finna.menu = (function finnaMenu() {
   function toggleList() {
     $('#favorites-collapse').toggleClass('in');
     $('#open-list').toggleClass('collapsed');
+    $('.nav-tabs-personal').toggleClass('move-list');
   }
 
   //Load lists if there is none to show
@@ -56,6 +57,7 @@ finna.menu = (function finnaMenu() {
         $('#open-list').toggleClass('collapsed');
         $('#open-list .fa').toggleClass('hidden');
         $('.add-new-list-holder').hide();
+        $('.nav-tabs-personal').toggleClass('move-list');
 
         $('#open-list > .caret').unbind('click').click(function toggleFavourites(event) {
           event.preventDefault();
