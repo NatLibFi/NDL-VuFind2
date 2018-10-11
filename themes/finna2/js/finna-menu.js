@@ -40,6 +40,10 @@ finna.menu = (function finnaMenu() {
     $('#favorites-collapse').toggleClass('in');
     $('#open-list').toggleClass('collapsed');
     $('.nav-tabs-personal').toggleClass('move-list');
+
+    if (!$('.nav-tabs-personal').hasClass('move-list')) {
+      window.scroll(0, 0);
+    }
   }
 
   //Load lists if there is none to show
