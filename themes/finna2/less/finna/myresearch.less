@@ -517,11 +517,14 @@
     float: left;
     width: 100%;
 
-    .collapsing {
-      -webkit-transition: none;
-      transition: none;
-      display: none;
+    &.menu-logout {
+      i {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+      }
     }
+
     &.menu-header {
       background-color: @brand-third;
       

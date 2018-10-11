@@ -66,11 +66,6 @@
     <?php endif; ?>
   <?php endif; ?>
 <?php endif; ?>
-<li class="menu-history <?=$this->active == 'history' ? ' active' : ''?>">
-  <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item">
-    <?=$this->transEsc('history_saved_searches')?>
-  </a>
-</li>
 <?php if ($this->ils()->checkCapability('getMyProfile')): ?>
   <li class="menu-profile<?=$this->active == 'profile' ? ' active' : ''?>">
     <a href="<?=$this->url('myresearch-profile')?>" class="list-group-item">
@@ -78,6 +73,11 @@
     </a>
   </li>
 <?php endif; ?>
+<li class="menu-history <?=$this->active == 'history' ? ' active' : ''?>">
+  <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item">
+    <?=$this->transEsc('history_saved_searches')?>
+  </a>
+</li>
 <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
   <li class="menu-favorites <?= $listOpen ? ' active' : ''?>">
     <a href="<?=$this->url('myresearch-favorites')?>" class="list-group-item">
@@ -150,11 +150,6 @@
     <?php endif; ?>
   <?php endif; ?>
 <?php endif; ?>
-<li class="menu-history hidden-xs hidden-sm <?=$this->active == 'history' ? ' active' : ''?>">
-  <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item">
-    <?=$this->transEsc('history_saved_searches')?>
-  </a>
-</li>
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
   <?php if ($this->ils()->checkCapability('getMyProfile')): ?>
     <li class="menu-profile  hidden-xs hidden-sm<?=$this->active == 'profile' ? ' active' : ''?>">
@@ -164,6 +159,11 @@
     </li>
   <?php endif; ?>
 <?php endif; ?>
+<li class="menu-history hidden-xs hidden-sm <?=$this->active == 'history' ? ' active' : ''?>">
+  <a href="<?=$this->url('search-history')?>?require_login" class="list-group-item">
+    <?=$this->transEsc('history_saved_searches')?>
+  </a>
+</li>
 <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
   <li class="menu-favorites mylist-menu-favorites <?= $listOpen ? ' active' : ''?>">
     <a href="<?=$this->url('myresearch-favorites')?>" id="open-list" class="<?= !$listOpen ? 'collapsed ' : '' ?>list-group-item hidden-xs hidden-sm">
@@ -181,6 +181,12 @@
     </div>
   </li>
 <?php endif; ?>
+<li class="menu-logout  hidden-xs hidden-sm<?=$this->active == 'profile' ? ' active' : ''?>">
+  <a href="<?=$this->url('myresearch-logout')?>" class="list-group-item">
+    <?=$this->transEsc('Log Out')?>
+    <i class="pull-right fa fa-sign-out fa-lg" aria-hidden="true"></i>
+  </a>
+</li>
 <?php $menuEntries = ob_get_clean(); ?>
 
   <div class="mobile-main-tabs visible-xs visible-sm">
