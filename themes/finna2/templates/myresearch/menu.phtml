@@ -152,7 +152,7 @@
 <?php endif; ?>
 <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
   <?php if ($this->ils()->checkCapability('getMyProfile')): ?>
-    <li class="menu-profile  hidden-xs hidden-sm<?=$this->active == 'profile' ? ' active' : ''?>">
+    <li class="menu-profile hidden-xs hidden-sm<?=$this->active == 'profile' ? ' active' : ''?>">
       <a href="<?=$this->url('myresearch-profile')?>" class="list-group-item">
         <?=$this->transEsc('Profile')?>
       </a>
@@ -181,7 +181,7 @@
     </div>
   </li>
 <?php endif; ?>
-<li class="menu-logout  hidden-xs hidden-sm<?=$this->active == 'profile' ? ' active' : ''?>">
+<li class="menu-logout hidden-xs hidden-sm">
   <a href="<?=$this->url('myresearch-logout')?>" class="list-group-item">
     <?=$this->transEsc('Log Out')?>
     <i class="pull-right fa fa-sign-out fa-lg" aria-hidden="true"></i>
