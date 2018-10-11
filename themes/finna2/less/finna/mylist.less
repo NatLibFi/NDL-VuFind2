@@ -133,10 +133,11 @@
     margin: 5px 0 10px 0px;
     .add-new-list {
       border: 1px solid @gray-lighter;
-      display: block;
+      display: -webkit-flex;
+      display: flex;
       border-radius: 2px;
       input {
-        width: 85%;
+        width: 95%;
         border-radius: 4px;
         padding-left: 4px;
         border: none;
@@ -145,14 +146,12 @@
           font-size: 16px;
         }
       }
-      div {
-        display: inline-block;
-      }
       i {
         cursor: pointer;
         font-size: 20px;
         line-height: 20px;
         color: @action-link-color;
+        padding: 5px;
       }
     }
   }
