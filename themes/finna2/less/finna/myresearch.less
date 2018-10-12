@@ -544,9 +544,18 @@
   margin-top: 15px;
   .subtabs.mylist-nav {
     border-top-width: 0px;
+    li.hidden-xs.hidden-sm, li.mylist-menu-favorites {
+      max-width: none;
+      h4 {
+        text-transform: none;
+        @media (max-width: @screen-sm-max) {
+          text-align: center;
+        }
+      }
+    }
     li:first-child {
       a {
-        padding-top: 9px !important;
+        padding-top: 9px;
       }
     }
   }
@@ -580,6 +589,9 @@
         }
       }
     }
+    li > a {
+      padding-left: 20px;
+    }
     a {
       padding: 12px 10px;
       margin-right: 0px;
@@ -604,9 +616,6 @@
       a {
         padding: 10px;
       }
-    }
-    @media(max-width: @screen-sm-max) {
-      max-width: 95px;
     }
   }
 }
