@@ -159,7 +159,7 @@ finna.record = (function finnaRecord() {
     });
   }
 
-  function applyRecordAccordionHash() {
+  function applyRecordAccordionHash(callback) {
     var newTab = typeof window.location.hash !== 'undefined'
       ? window.location.hash.toLowerCase() : '';
 
@@ -169,7 +169,12 @@ finna.record = (function finnaRecord() {
       ? $('.record-accordions .accordion.initiallyActive')
       : $tab.closest('.accordion');
     if (accordion.length > 0) {
-      _toggleAccordion(accordion, true);
+      //onhashchange is an object, so we avoid that later
+      if (typeof callback === 'function') {
+        callback(accordion);
+      } else {
+        _toggleAccordion(accordion, true);
+      }
     }
   }
 
@@ -218,6 +223,29 @@ finna.record = (function finnaRecord() {
     return false;
   }
 
+  //Toggle accordion at the start so the accordions work properly
+  function initialToggle(accordion) {
+    var $recordTabs = $('.record-tabs');
+    var $tabContent = $recordTabs.find('.tab-content');
+    var tabid = accordion.find('.accordion-toggle a').data('tab');
+    $tabContent.insertAfter(accordion);
+
+    if (accordion.hasClass('noajax') && !$recordTabs.find('.' + tabid + '-tab').length) {
+      return true;
+    }
+
+    $('.record-accordions').find('.accordion.active').removeClass('active');
+    accordion.addClass('active');
+    $recordTabs.find('.tab-pane.active').removeClass('active');
+
+    if ($recordTabs.find('.' + tabid + '-tab').length > 0) {
+      $recordTabs.find('.' + tabid + '-tab').addClass('active');
+      if (accordion.hasClass('initiallyActive')) {
+        removeHashFromLocation();
+      }
+    } 
+  }
+
   function loadSimilarRecords()
   {
     $.getJSON(
@@ -243,8 +271,8 @@ finna.record = (function finnaRecord() {
     initDescription();
     initRecordNaviHashUpdate();
     initRecordAccordion();
-    applyRecordAccordionHash();
     initAudioAccordion();
+    applyRecordAccordionHash(initialToggle);
     $(window).on('hashchange', applyRecordAccordionHash);
     loadSimilarRecords();
   }

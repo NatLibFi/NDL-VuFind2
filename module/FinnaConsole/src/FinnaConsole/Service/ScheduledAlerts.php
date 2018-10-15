@@ -35,6 +35,8 @@ use Zend\Config\Reader\Ini as IniReader;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Stdlib\Parameters;
 
+use Zend\Stdlib\RequestInterface as Request;
+
 /**
  * Send scheduled alerts.
  *
@@ -162,11 +164,12 @@ class ScheduledAlerts extends AbstractService
     /**
      * Run service.
      *
-     * @param array $arguments Command line arguments.
+     * @param array   $arguments Command line arguments.
+     * @param Request $request   Full request
      *
      * @return boolean success
      */
-    public function run($arguments)
+    public function run($arguments, Request $request)
     {
         $this->collectScriptArguments($arguments);
 
@@ -307,7 +310,6 @@ class ScheduledAlerts extends AbstractService
             = $this->serviceManager
                 ->get('VuFind\Search\BackendManager')->get('Solr');
         $viewManager = $this->serviceManager->get('ViewManager');
-        $viewModel = $viewManager->getViewModel();
         $renderer = $this->serviceManager->get('ViewRenderer');
         $emailer = $this->serviceManager->get('VuFind\Mailer');
         $translator = $renderer->plugin('translate');

@@ -41,7 +41,7 @@ return [
             'Finna\View\Helper\Root\Record' => 'Finna\View\Helper\Root\RecordFactory',
             'Finna\View\Helper\Root\RecordDataFormatter' => 'Finna\View\Helper\Root\RecordDataFormatterFactory',
             'Finna\View\Helper\Root\RecordImage' => 'Zend\ServiceManager\Factory\InvokableFactory',
-            'Finna\View\Helper\Root\RecordLink' => 'VuFind\View\Helper\Root\RecordLinkFactory',
+            'Finna\View\Helper\Root\RecordLink' => 'Finna\View\Helper\Root\RecordLinkFactory',
             'Finna\View\Helper\Root\ResultFeed' => 'VuFind\View\Helper\Root\ResultFeedFactory',
             'Finna\View\Helper\Root\ScriptSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\Search' => 'Zend\ServiceManager\Factory\InvokableFactory',
@@ -56,6 +56,7 @@ return [
             'Finna\View\Helper\Root\Translation' => 'Finna\View\Helper\Root\TranslationFactory',
             'Finna\View\Helper\Root\TranslationEmpty' => 'Zend\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\TruncateUrl' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'Finna\View\Helper\Root\UserAgent' => 'Finna\View\Helper\Root\UserAgentFactory',
             'Finna\View\Helper\Root\UserPublicName' => 'Zend\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => [
@@ -77,6 +78,8 @@ return [
             'inlineScript' => 'FinnaTheme\View\Helper\InlineScript',
             'headTitle' => 'Finna\View\Helper\Root\HeadTitle',
             'holdingsSettings' => 'Finna\View\Helper\Root\HoldingsSettings',
+            //use root highlight so search results use span instead of mark
+            'highlight' => 'VuFind\View\Helper\Root\Highlight',
             'imageSrc' => 'Finna\View\Helper\Root\ImageSrc',
             'indexedTotal' => 'Finna\View\Helper\Root\TotalIndexed',
             'markdown' => 'Finna\View\Helper\Root\Markdown',
@@ -99,6 +102,7 @@ return [
             'translation' => 'Finna\View\Helper\Root\Translation',
             'translationEmpty' => 'Finna\View\Helper\Root\TranslationEmpty',
             'truncateUrl' => 'Finna\View\Helper\Root\TruncateUrl',
+            'userAgent' => 'Finna\View\Helper\Root\UserAgent',
             'userPublicName' => 'Finna\View\Helper\Root\UserPublicName',
 
             // Overrides
