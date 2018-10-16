@@ -51,10 +51,10 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="mylist-error hidden"><?=$this->translate('An error has occurred'); ?></div>
-    <?php if (isset($list)): ?>
-      <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>" />
-      <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>" />
-    <?php endif; ?>
+  <?php if (isset($list)): ?>
+    <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->id)?>" />
+    <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->title)?>" />
+  <?php endif; ?>
   <div class="clearfix mylist-header hidden-print">
     <div>
       <?=$this->flashmessages()?>
