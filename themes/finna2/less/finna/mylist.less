@@ -486,7 +486,7 @@ button.caret{
       padding-left: 6px;
       .paginationSimple {
         margin-left: 0px;
-        span:not(.index):not(.total) {
+        .pagination-text {
           font-size: 14px;
         }
       }
@@ -496,11 +496,8 @@ button.caret{
     float: right;
     text-align: left;
     @media (max-width: @screen-sm-min) {
-      width: 60%;
-      text-align: right;
-    }
-    @media (max-width: @screen-xxs-max) {
       width: 100%;
+      float: left;
     }
     &::after {
       content: "";
