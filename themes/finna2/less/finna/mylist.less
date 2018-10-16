@@ -438,69 +438,12 @@ button.caret{
 .mylist-controls-bar {
   display: inline-block;
   width: 100%;
-  div {
-    display: inline-block;
-    a.btn.btn-primary {
-      @media (max-width: @screen-xxs-max) {
-        width: 40%;
-        display: inline-block;
-      }
-    }
-    &.sort-option-container {
-      @media (max-width: @screen-sm) {
-        display: inline-block;
-        text-align: left;
-        width: 35%;
-        .sort-button {
-          span {
-            width: 95%;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            display: inline-block;
-            overflow: hidden;
-            padding-right: 20px;
-            margin-bottom: -6px;
-          }
-        }
-        .dropdown-menu {
-          left: -90px;
-        }
-        div, a {
-          width: 100%;
-        }
-      }
-    }
-    &.limit-option-container {
-      @media (max-width: @screen-xxs-max) {
-        display: inline-block;
-        width: 20%;
-        div, a {
-          width: 100%;
-        }
-      }
-    }
-
-    &.pagination-container {
-      padding: 8px;
-      padding-left: 6px;
-      .paginationSimple {
-        margin-left: 0px;
-        .pagination-text {
-          font-size: 14px;
-        }
-      }
-    }
-  }
   .mylist-controls {
     float: right;
-    text-align: left;
-    @media (max-width: @screen-sm-min) {
-      width: 60%;
-      text-align: right;
-    }
-    @media (max-width: @screen-xxs-max) {
+    text-align: right;
+    @media (max-width: @screen-sm) {
       width: 100%;
-      float: left;
+      text-align: left;
     }
     &::after {
       content: "";
@@ -514,9 +457,60 @@ button.caret{
       margin-left: 5px;
     }
   }
-  @media (max-width: @screen-xs-max) {
-    .pagination-container .paginationSimple {
-      text-align: left;
+
+  a.btn.btn-primary {
+    display: inline-block;
+    @media (max-width: @screen-xxs-max) {
+      width: 40%;
+      
     }
   }
+  .sort-option-container {
+    display: inline-block;
+    @media (max-width: @screen-sm) {
+      text-align: left;
+      width: 35%;
+      .sort-button {
+        span {
+          width: 95%;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          display: inline-block;
+          overflow: hidden;
+          padding-right: 20px;
+          margin-bottom: -6px;
+        }
+      }
+      div, a {
+        width: 100%;
+      }
+    }
+    @media (max-width: @screen-sm) {
+      .dropdown-menu {
+        left: -90px;
+      }
+    }
+  }
+  .limit-option-container {
+    display: inline-block;
+    @media (max-width: @screen-xxs-max) {
+      text-align: right;
+      width: 20%;
+      div, a {
+        width: 100%;
+      }
+    }
+  }
+
+  .pagination-container {
+    display: inline-block;
+    padding: 8px;
+    padding-left: 6px;
+    .paginationSimple {
+      margin-left: 0px;
+      .pagination-text {
+        font-size: 14px;
+      }
+    }
+  } 
 }
