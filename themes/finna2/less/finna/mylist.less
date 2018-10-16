@@ -443,7 +443,6 @@ button.caret{
     a.btn.btn-primary {
       @media (max-width: @screen-xxs-max) {
         width: 40%;
-        min-width: 90px;
         display: inline-block;
       }
     }
@@ -462,9 +461,9 @@ button.caret{
             padding-right: 20px;
             margin-bottom: -6px;
           }
-          .dropdown-menu {
-            left: -90px;
-          }
+        }
+        .dropdown-menu {
+          left: -90px;
         }
         div, a {
           width: 100%;
@@ -496,6 +495,10 @@ button.caret{
     float: right;
     text-align: left;
     @media (max-width: @screen-sm-min) {
+      width: 60%;
+      text-align: right;
+    }
+    @media (max-width: @screen-xxs-max) {
       width: 100%;
       float: left;
     }
