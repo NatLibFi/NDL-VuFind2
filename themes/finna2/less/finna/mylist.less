@@ -444,57 +444,51 @@ button.caret{
       width: 100%;
       text-align: left;
     }
-    &::after {
-      content: "";
-      clear: both;
-    }
-    >.btn {
-      padding: 6px;
-      margin-top: -1px;
-    }
     .button-label {
       margin-left: 5px;
     }
-  }
-  a.btn.btn-primary {
-    display: inline-block;
-    @media (max-width: @screen-xxs-max) {
-      width: 40%;
+    a.btn.btn-primary {
+      display: inline-block;
+      padding: 6px;
+      margin-top: -1px;
+      @media (max-width: @screen-xxs-max) {
+        width: 40%;
+      }
     }
-  }
-  .sort-option-container {
-    display: inline-block;
-    @media (max-width: @screen-sm) {
-      text-align: left;
-      width: 35%;
-      .sort-button {
-        span {
-          width: 95%;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          display: inline-block;
-          overflow: hidden;
-          padding-right: 20px;
-          margin-bottom: -6px;
+    .sort-option-container {
+      display: inline-block;
+      @media (max-width: @screen-sm) {
+        text-align: left;
+        width: 35%;
+        .sort-button {
+          span {
+            width: 95%;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: inline-block;
+            overflow: hidden;
+            padding-right: 20px;
+            margin-bottom: -6px;
+          }
+        }
+        div, a {
+          width: 100%;
         }
       }
-      div, a {
-        width: 100%;
+      @media (max-width: @screen-sm) {
+        .dropdown-menu {
+          left: -90px;
+        }
       }
     }
-    @media (max-width: @screen-sm) {
-      .dropdown-menu {
-        left: -90px;
-      }
-    }
-  }
-  .limit-option-container {
-    display: inline-block;
-    @media (max-width: @screen-xxs-max) {
-      text-align: right;
-      width: 20%;
-      div, a {
-        width: 100%;
+    .limit-option-container {
+      display: inline-block;
+      @media (max-width: @screen-xxs-max) {
+        text-align: right;
+        width: 20%;
+        div, a {
+          width: 100%;
+        }
       }
     }
   }
