@@ -20,9 +20,12 @@
       <?=$this->flashmessages()?>
       <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
       <div class="useraccount-header">
+        <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
+      </div>
+      <div class="useraccount-header">
       <?=$this->transEsc('Interlibrary Loan Requests') ?>
-      (<?=count($this->recordList);?>)
-      <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?></div>
+        (<?=count($this->recordList);?>)
+      </div>
       <?php if (isset($this->noSupport)): ?>
         <?php if ($user->getLibraryCards()->count() > 1): ?>
           <div class="support-notice">

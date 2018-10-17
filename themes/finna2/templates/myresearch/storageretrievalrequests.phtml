@@ -18,9 +18,12 @@
       <?php if (!$this->translationEmpty('storage_requests_instructions_html')): ?><p class="no-content-message"><?=$this->transEsc('storage_requests_instructions_html')?></p><?php endif; ?>
       <?=$this->flashmessages()?>
       <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
-      <div class="useraccount-header"><?=$this->transEsc('Storage Retrieval Requests') ?>
-      (<?=count($this->recordList);?>)
-      <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?></div>
+      <div class="useraccount-header">
+        <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
+      </div>
+      <div class="useraccount-header">
+        <?=$this->transEsc('Storage Retrieval Requests') ?>(<?=count($this->recordList);?>)
+      </div>
       <?php if (isset($this->noSupport)): ?>
         <?php if ($user->getLibraryCards()->count() > 1): ?>
           <div class="support-notice">

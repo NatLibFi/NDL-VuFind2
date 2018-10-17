@@ -55,9 +55,7 @@
     <div class="fines-info-area">
       <div class="useraccount-header"><?=$this->transEsc('Your Fines') . " (" . count($this->fines) . ")"?></div>
       <div>
-        <label><?= $this->transEsc('Library Card'); ?>
-          <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user])?>
-        </label>
+        <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
       </div>
     </div>
     <?=$this->flashmessages()?>
