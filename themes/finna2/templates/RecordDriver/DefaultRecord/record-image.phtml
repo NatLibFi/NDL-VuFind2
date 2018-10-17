@@ -69,7 +69,7 @@
                 <?php $copyright = $this->transEsc($rights['copyright']) ?>
                 <?php if (preg_match('/^.+?\\d$/', $copyright)): ?>
                   <?php if (!empty($copyright)): ?>
-                    <?=$this->partial('Helpers/copyright-icons.phtml', ['icons' => $copyright]);?> <?php if ($hasLink): ?><a target="_blank" href="<?= $rights['link'] ?>"><?php endif; ?><?php if (!empty($copyright)): ?><?php if ($copyright === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$copyright ?><?php endif; ?><?php endif; ?><?php if ($hasLink): ?></a><?php else: ?><?=$copyright ?><?php endif; ?>
+                    <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?> <?php if ($hasLink): ?><a target="_blank" href="<?= $rights['link'] ?>"><?php endif; ?><?php if (!empty($copyright)): ?><?php if ($copyright === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$copyright ?><?php endif; ?><?php endif; ?><?php if ($hasLink): ?></a><?php else: ?><?=$copyright ?><?php endif; ?>
                   <?php endif; ?>
                 <?php endif; ?>
               <?php else: ?>
@@ -77,7 +77,7 @@
                   <?php foreach ($rights['description'] as $item): ?>
                     <?php if (preg_match('/^.+?\\d$/', $item)): ?>
                       <?php if (!empty($item)): ?>
-                        <?=$this->partial('Helpers/copyright-icons.phtml', ['icons' => $item])?> <?php if ($hasLink): ?><a target="_blank" href="<?= $rights['link'] ?>"><?php endif; ?><?php if (!empty($copyright)): ?><?php if ($copyright === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$copyright ?><?php endif; ?><?php else: ?><?=$item ?><?php endif; ?><?php if ($hasLink): ?></a><?php endif; ?>
+                        <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $item])?> <?php if ($hasLink): ?><a target="_blank" href="<?= $rights['link'] ?>"><?php endif; ?><?php if (!empty($copyright)): ?><?php if ($copyright === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$copyright ?><?php endif; ?><?php else: ?><?=$item ?><?php endif; ?><?php if ($hasLink): ?></a><?php endif; ?>
                       <?php endif; ?>
                     <?php endif; ?>
                   <?php endforeach ?>
