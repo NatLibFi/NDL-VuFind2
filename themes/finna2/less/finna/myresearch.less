@@ -71,6 +71,7 @@
 .myresearch-table {
   width: 100%;
   margin: 15px 0px;
+
   th,td {
     vertical-align: top;
     padding: 5px;
@@ -103,33 +104,6 @@
   .sort-col .dropdown-toggle {
     margin-bottom: 0;
   }
-
-  @media(min-width: @screen-xs-min) {
-    .sort-col,
-    .renew-button-col {
-      width: 50%;
-      float: left;
-      .sort-button {
-        margin-bottom: 0px;
-      }
-    }
-    .sort-col{ text-align: right; }
-    .renew-button-col { text-align: left; }
-  }
-
-  @media(max-width: @screen-xxs-max) {
-    .renew-button-col {
-      margin-bottom: 10px;
-      input {
-        min-width: 170px;
-      }
-    }
-    .sort-col {
-      .dropdown-menu {
-        min-width: 170px;
-      }
-    }
-  }
   @media(min-width: @screen-sm) {
     .half-table-column {
       width: 50%;
@@ -142,6 +116,26 @@
     .status-column{
       width: 40%;
       float: left;
+    }
+  }
+  @media(min-width: @screen-xs-min) {
+    .sort-col,
+    .renew-button-col {
+      width: 50%;
+      float: left;
+      .sort-button {
+        margin-bottom: 0px;
+      }
+    }
+    .sort-col{ text-align: right; }
+    .renew-button-col { text-align: left; }
+  }
+  @media(max-width: @screen-xxs-max) {
+    .renew-button-col {
+      margin-bottom: 10px;
+      input {
+        min-width: 170px;
+      }
     }
   }
   .checkbox-col{
@@ -175,7 +169,6 @@
     padding: 10px;
     padding-bottom: 0px;
     margin-bottom: 0px;
-
   }
   > h4 {
     margin-left: 10px;
