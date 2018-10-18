@@ -23,7 +23,7 @@
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
       </div>
       <div class="useraccount-header">
-      <?=$this->transEsc('Interlibrary Loan Requests') ?>
+        <?=$this->transEsc('Interlibrary Loan Requests') ?>
         (<?=count($this->recordList);?>)
       </div>
       <?php if (isset($this->noSupport)): ?>
