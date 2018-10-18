@@ -138,23 +138,23 @@
                 </li>
               <?php endif; ?>        
               <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true']);?>
-              <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-                <li>
-                  <a role="menuitem" href="<?=$this->url('myresearch-favorites')?>">
-                    <?=$this->transEsc('Favorites')?>
-                  </a>
-                </li>
-              <?php endif; ?>
-              <li>
-                <a role="menuitem" href="<?=$this->url('search-history')?>?require_login">
-                  <?=$this->transEsc('history_saved_searches')?>
-                </a>
-              </li>
               <li>
                 <a role="menuitem" href="<?=$this->url('myresearch-profile')?>">
                   <?=$this->transEsc('Profile')?>
                 </a>
               </li>
+              <li>
+                <a role="menuitem" href="<?=$this->url('search-history')?>?require_login">
+                  <?=$this->transEsc('history_saved_searches')?>
+                </a>
+              </li>
+              <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+                <li>
+                  <a role ="menuitem" href="<?=$this->url('myresearch-favorites')?>">
+                  <?=$this->transEsc('Favorites')?>
+                  </a>
+                </li>
+              <?php endif; ?>
               <li>
                 <a role="menuitem" href="<?=$this->url('myresearch-logout')?>" title="<?=$this->transEsc("Log Out")?>"><?=$this->transEsc("Log Out")?><i class="pull-right fa fa-sign-out fa-lg" aria-hidden="true"></i></a>
               </li>
