@@ -127,13 +127,6 @@ class ListController extends \Finna\Controller\MyResearchController
      */
     protected function getListUsername($listUserId)
     {
-        $user = $this->getUser();
-        if ($user && $user->id == $listUserId) {
-            $listUser = $user;
-        } else {
-            $table = $this->getTable('User');
-            $listUser = $table->getById($listUserId);
-        }
         return "";
     }
 
