@@ -616,7 +616,7 @@
         }
       }
     }
-    @media(max-width: @screen-md-max) {
+    @media (max-width: @screen-md-max) {
       font-size: 14px;
       a {
         padding: 10px;
@@ -626,8 +626,10 @@
 }
 
 .history-holder {
-  h2 {
-    margin-top: 9px;
+  @media (min-width: @screen-xs-max) {
+    h2 {
+      margin-top: 9px;
+    }
   }
   .table-responsive .table tbody {
     tr, td {
