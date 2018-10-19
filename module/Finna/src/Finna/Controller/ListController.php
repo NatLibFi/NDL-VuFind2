@@ -123,7 +123,7 @@ class ListController extends \Finna\Controller\MyResearchController
      *
      * @param int $listUserId lists owners user id
      *
-     * @return string|null username
+     * @return string username
      */
     protected function getListUsername($listUserId)
     {
@@ -134,11 +134,7 @@ class ListController extends \Finna\Controller\MyResearchController
             $table = $this->getTable('User');
             $listUser = $table->getById($listUserId);
         }
-        /**
-         * TODO: add a check to see if user wants to be anonymous, if so return null
-         * return $listUser;
-         */
-        return null;
+        return "";
     }
 
     /**
