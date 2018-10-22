@@ -251,8 +251,13 @@
                 <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEsc("save_my_profile") ?>" class="btn btn-primary my-profile-btn" />
               <?php endif; ?>
               <?php if ($this->accountDeletion): ?>
-                <a class="btn btn-default my-profile-btn" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><i class="fa fa-times"></i> <?=$this->transEsc('delete_account_title') ?></a>
+                <a class="btn btn-default btn-delete my-profile-btn" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><i class="fa fa-times"></i> <?=$this->transEsc('delete_account_title') ?></a>
               <?php endif; ?>
+              <?php if (!$this->translationEmpty('your_account_delete_info')): ?>
+                <div>
+                  <i class="fa fa-info-circle-hollow" aria-hidden="true"></i> <?=$this->transEsc('your_account_delete_info');?>
+                </div>
+              <?php endif;?>
               <div class="clearfix"></div>
             </div>
           </form>
