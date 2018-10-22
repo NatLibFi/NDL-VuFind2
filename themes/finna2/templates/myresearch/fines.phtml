@@ -78,7 +78,8 @@
     <?php if ($this->onlinePayment): ?>
       <?php if ($this->onlinePaymentEnabled): ?>
         <div class="fines-info-area payment-row">
-        <?=$this->onlinePayment($paymentHandler, $transactionId, $payableTotal);?>
+          <?=$this->onlinePayment($paymentHandler, $transactionId, $payableTotal);?>
+        </div>
       <?php elseif (!empty($this->nonPayableReason)): ?>
         <div>
           <p><?=$this->transEsc($this->nonPayableReason); ?><?=$this->nonPayableReason == 'online_payment_minimum_fee' ?  (': <span class="amount">' . $this->safeMoneyFormat($this->minimumFee / 100.00)) . '</span>' : '';?>
