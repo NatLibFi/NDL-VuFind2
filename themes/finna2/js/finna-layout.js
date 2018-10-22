@@ -382,11 +382,26 @@ finna.layout = (function finnaLayout() {
       form.find('.clear-button').addClass('hidden');
       form.find('.searchForm_lookfor').focus();
     });
-    $('.searchForm_lookfor').bind('autocomplete:select', function onAutocompleteSelect() { $('.navbar-form').submit() });
 
-    $('.select-type').click(function onClickSelectType() {
-      $('input[name=type]:hidden').val($(this).children().val());
-      $('.type-dropdown .dropdown-toggle span').text($(this).text());
+    $('.searchForm_lookfor').bind('autocomplete:select', function onAutocompleteSelect() { 
+      $('.navbar-form').submit() 
+    });
+
+    $('.select-type').on('click keypress', function onClickSelectType(event) {
+      var eventType = event.type;
+      var isEnter = (eventType === 'keypress' && event.which === 13);
+      if (eventType === 'click' || isEnter) {
+        var dropdownToggle = $('.type-dropdown .dropdown-toggle');
+
+        $('input[name=type]:hidden').val($(this).children().val());
+        dropdownToggle.find('span').text($(this).text());
+
+        if (isEnter) {
+          event.preventDefault();
+          dropdownToggle.dropdown('toggle');
+          dropdownToggle.focus();
+        }
+      }
     });
 
     if (sessionStorage.getItem('vufind_retain_filters')) {
