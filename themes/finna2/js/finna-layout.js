@@ -390,6 +390,7 @@ finna.layout = (function finnaLayout() {
     $('.select-type').on('click keypress', function onClickSelectType(event) {
       var eventType = event.type;
       var isEnter = (eventType === 'keypress' && event.which === 13);
+      
       if (eventType === 'click' || isEnter) {
         var dropdownToggle = $('.type-dropdown .dropdown-toggle');
 
