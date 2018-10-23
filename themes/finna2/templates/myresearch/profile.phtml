@@ -263,7 +263,7 @@
       <?= $this->partial('myresearch/profile-my-information.phtml', ['user' => $user, 'cards' => $cards, 'hideDueDateReminder' => $this->hideDueDateReminder, 'hideProfileEmailAddress' => $this->hideProfileEmailAddress]); ?>
     </div>
     <div class="myresearch-profile-header">
-      <span><?= $this->transEsc("my_profile_export_import") ?></span>
+      <span><?= $this->transEsc("my_profile_export_import").' / '. $this->transEsc('delete_account_title') ?></span>
     </div>
     <div class="myresearch-profile-list library-profile">
       <div class="my-profile-row">
@@ -271,7 +271,7 @@
         <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox title="<?=$this->transEsc('import_favorites') ?>"><i class="fa fa-upload" aria-hidden="true"></i> <?=$this->transEsc('import_favorites') ?> </a>
         <?php if ($this->accountDeletion): ?>
           <div class="visible-xs separator"></div>
-          <a class="btn btn-danger btn-delete my-profile-btn" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><i class="fa fa-times"></i> <?=$this->transEsc('delete_account_title') ?></a>
+          <a class="btn btn-danger my-profile-btn" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><i class="fa fa-times"></i> <?=$this->transEsc('delete_account_title') ?></a>
           <?php if (!$this->translationEmpty('your_account_delete_info')): ?>
             <div class="my-profile-row">
                 <i class="fa fa-info-circle-hollow" aria-hidden="true"></i> <?=$this->transEsc('your_account_delete_info');?>
