@@ -329,9 +329,10 @@
 
 .fines-info-area {
   margin-bottom: 15px;
-  label {
+  div.card-holder {
     display: flex;
     align-items: center;
+    font-weight: bold;
   }
   .amount {
     font-weight: bold;
@@ -495,6 +496,12 @@
 
 .myresearch-body {
   margin-top: 15px;
+  @media (max-width: @screen-sm-max) {
+    margin-top: 0px;
+    &.mainbody.right {
+      padding-left: 0px;
+    } 
+  }
 }
 
 .useraccount-nav-mobile {
@@ -602,8 +609,10 @@
       margin-right: 0px;
       &#open-loans {
         display: flex;
-        button {
+        span {
           margin-left: auto;
+          display: inline-block;
+          cursor: pointer;
         }
       }
 
