@@ -387,22 +387,14 @@ finna.layout = (function finnaLayout() {
       $('.navbar-form').submit() 
     });
 
-    $('.select-type').on('click keypress', function onClickSelectType(event) {
-      var eventType = event.type;
-      var isEnter = (eventType === 'keypress' && event.which === 13);
-      
-      if (eventType === 'click' || isEnter) {
-        var dropdownToggle = $('.type-dropdown .dropdown-toggle');
+    $('.select-type').on('click', function onClickSelectType(event) {
+      event.preventDefault();
+      var dropdownToggle = $('.type-dropdown .dropdown-toggle');
 
-        $('input[name=type]:hidden').val($(this).children().val());
-        dropdownToggle.find('span').text($(this).text());
-
-        if (isEnter) {
-          event.preventDefault();
-          dropdownToggle.dropdown('toggle');
-          dropdownToggle.focus();
-        }
-      }
+      $('input[name=type]:hidden').val($(this).siblings().val());
+      dropdownToggle.find('span').text($(this).text());
+      dropdownToggle.dropdown('toggle');
+      dropdownToggle.focus();
     });
 
     if (sessionStorage.getItem('vufind_retain_filters')) {
