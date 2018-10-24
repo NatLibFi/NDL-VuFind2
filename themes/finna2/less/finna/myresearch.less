@@ -306,12 +306,16 @@
   }
 }
 
-.useraccount-header {
+.useraccount-row {
   line-height: 1.5;
   font-weight: 600;
-  font-size:@font-size-h2;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.useraccount-header {
+  .useraccount-row();
+  font-size:@font-size-h2;
 }
 
 .payment-row {

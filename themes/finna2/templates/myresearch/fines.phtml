@@ -53,9 +53,11 @@
     <?php endif; ?>
     <?php if (!$this->translationEmpty('fines_instructions_html')): ?><p class="no-content-message"><?=$this->translate('fines_instructions_html')?></p><?php endif; ?>
     <div class="fines-info-area">
-      <div class="useraccount-header"><?=$this->transEsc('Your Fines') . " (" . count($this->fines) . ")"?></div>
-      <div>
+      <div class="useraccount-row">
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
+      </div>
+      <div class="useraccount-header">
+        <?=$this->transEsc('Your Fines') . " (" . count($this->fines) . ")"?>
       </div>
     </div>
     <?=$this->flashmessages()?>

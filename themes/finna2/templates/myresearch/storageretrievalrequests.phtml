@@ -18,7 +18,7 @@
       <?php if (!$this->translationEmpty('storage_requests_instructions_html')): ?><p class="no-content-message"><?=$this->transEsc('storage_requests_instructions_html')?></p><?php endif; ?>
       <?=$this->flashmessages()?>
       <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
-      <div class="useraccount-header">
+      <div class="useraccount-row">
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
       </div>
       <div class="useraccount-header">
@@ -190,12 +190,14 @@
           <?php endforeach; ?>
         </table>
         <?php if ($this->cancelForm): ?></form><?php endif; ?>
-        <?php if ($template = $this->content()->findTemplateForLng("content/Additions/storageretrievalrequests-post-list")): ?>
-          <div class="storageretrievalrequests-post-list"><?=$this->render($template)?></div>
+          <?php if ($template = $this->content()->findTemplateForLng("content/Additions/storageretrievalrequests-post-list")): ?>
+            <div class="storageretrievalrequests-post-list"><?=$this->render($template)?></div>
+          <?php endif; ?>
+        <?php else: ?>
+          <div class="useraccount-row">
+            <h4><?=$this->transEsc('You do not have any storage retrieval requests placed') ?>.</h4>
+          </div>
         <?php endif; ?>
-      <?php else: ?>
-        <h4><?=$this->transEsc('You do not have any storage retrieval requests placed') ?>.</h4>
-      <?php endif; ?>
       <?php endif; ?>
     </div>
   </div>
