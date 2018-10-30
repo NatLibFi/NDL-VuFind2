@@ -26,6 +26,7 @@
   .pager {
     li.pager-text {
       font-size: 1em;
+      margin: 0px 3px;
       color:  mix(@finna-search-background, contrast(@finna-search-background), 5%);
     }
     li > a {
@@ -99,7 +100,8 @@
 }
 
 .back-to-search a {
-  display: block;
+  display: flex;
+  align-items: center;
   font-size: 1em;
   font-weight: 600;
   color: @finna-search-link-color;
@@ -178,6 +180,8 @@
     flex: 1;
   }
   .pager {
+    display: flex;
+    align-items: center;
     .disabled {
       color: mix(@finna-search-background, contrast(@finna-search-background), 50%);
     }
@@ -198,10 +202,13 @@
       }
     }
   }
-  @media(max-width: @screen-sm) {
+  @media(max-width: @screen-sm-max) {
     .pager {
       min-width: 70px;
       margin-left: 10px;
+      li:first-child {
+        margin-right: 4px;
+      }
       .pager-text {
         display:none;
       }
