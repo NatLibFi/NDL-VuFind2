@@ -204,9 +204,9 @@
       <?php endif; ?>
       <?php
         $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'summon' => 'summon'];
-        if (isset($searchTypes[$module]) && !$this->translationEmpty('tooltip_'.$searchTypes[$module].'_search_html')) {
-          $tooltipClass = 'tooltip-search-'.$searchTypes[$module];
-          $tooltipText = $this->transEsc('tooltip_'.$searchTypes[$module].'_search_html');
+        if (isset($searchTypes[$module]) && !$this->translationEmpty('tooltip_' . $searchTypes[$module] . '_search_html')) {
+          $tooltipClass = 'tooltip-search-' . $searchTypes[$module];
+          $tooltipText = $this->transEsc('tooltip_' . $searchTypes[$module] . '_search_html');
         }
 
         if(isset($tooltipClass) && isset($tooltipText)) :
