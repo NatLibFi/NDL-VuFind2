@@ -216,9 +216,9 @@
         </button>
       <?php endif; ?>
       <?php if ($module === 'search' && $action === 'home' && !$this->translationEmpty('tooltip_image_html')): ?>
-        <div aria-hidden="true" class="tooltip-image">
-          <span class="tooltip-image-info" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_image_html')?>"><i class="fa fa-info-circle"></i></span>
-        </div>
+        <button aria-hidden="true" class="tooltip-image" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_image_html')?>">
+          <i class="fa fa-info-circle"></i>
+        </button>
       <?php endif; ?>
     </div>
     <div class="clearfix"></div>
