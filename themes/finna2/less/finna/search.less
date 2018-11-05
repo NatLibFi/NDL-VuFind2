@@ -237,8 +237,9 @@ mark, .highlight {
     position: relative;
     top: 40px;
     left: -21px;
+    display: inline-block;
   }
-  .media{
+  .media {
     flex: 1;
   }
   h2.title {
@@ -382,6 +383,15 @@ h2 {
   background-color: @finna-search-background;
   [class^="tooltip-"]>i {
     color: @action-link-color;
+  }
+}
+
+.template-dir-search.template-name-results {
+  .search-form-container {
+    //Specific stylings for advanced search form container
+    &.advanced-container {
+      display: block;
+    }
   }
 }
 
