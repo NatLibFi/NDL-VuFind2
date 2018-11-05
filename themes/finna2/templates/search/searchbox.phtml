@@ -196,7 +196,7 @@
     </div>
     <div class="search-tooltip">
       <?php if (!$browse && !$mainPage && $advSearch): ?>
-        <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=(($module === 'record') ? 'visible-lg' : 'hidden-xs ')?>"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
+        <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced <?=(($module === 'record') ? 'visible-lg' : 'hidden-xs')?>"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
       <?php endif; ?>
       <?php
         $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'summon' => 'summon'];
