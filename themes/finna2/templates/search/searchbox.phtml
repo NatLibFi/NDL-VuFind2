@@ -209,7 +209,7 @@
           $tooltipText = $this->transEsc('tooltip_' . $searchTypes[$module] . '_search_html');
         }
 
-        if(isset($tooltipClass) && isset($tooltipText)) :
+        if (isset($tooltipClass) && isset($tooltipText)):
       ?>
         <button aria-label="<?= $this->transEsc('Search Tips') ?>" class="tooltip-button <?=$tooltipClass?> pull-right hidden-xs" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$tooltipText?>">
           <i class="fa fa-question-circle-big"></i>
