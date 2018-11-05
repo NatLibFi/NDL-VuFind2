@@ -4,7 +4,7 @@
     <?php $targetCount = $this->ils()->checkCapability('getLoginDrivers') ? count($this->ils()->getLoginDrivers()) : 1; ?>
     <?php if (isset($loginMenu) && $loginMenu): ?>
       <li class="logoutOptions card-selection">
-        <a class="list-group-item card-header" href="<?=$this->url('librarycards-home')?>">
+        <a class="card-header" href="<?=$this->url('librarycards-home')?>">
           <?=$this->transEsc(isset($this->label) ? $this->label : 'Kirjastokortti') ?>
         </a>
         <label id="select-card-label-dropdown"><?= $this->transEsc('Library Card') ?></label>
