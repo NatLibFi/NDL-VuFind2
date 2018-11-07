@@ -1,0 +1,19 @@
+<div class="video-accordion">
+  <?php foreach ($videoUrls as $url): ?>
+    <?php $description = $url['desc'] ?? $this->truncateUrl($url['url']); ?>
+    <?php $desc = $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe' ? $this->translate('format_Video') : $description; ?>
+    <div class="video-link-title">
+      <?=$this->escapeHtml($desc)?>
+    </div>
+    <div class="video-link-container">
+      <a class="videourl fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
+          <?php if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<?php endif; ?>
+          <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
+          <?=!empty($url['embed']) && $url['embed'] === 'video' ? ' data-embed-video' : '' ?>
+      >
+          <div class="video-icon"><i class="fa fa-play-circle"></i></div>
+      </a>
+    </div>
+  <?php endforeach; ?>
+</div>
+<div class="clearfix"></div>

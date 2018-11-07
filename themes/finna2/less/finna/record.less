@@ -73,24 +73,51 @@
   .video-link-container {
     margin-bottom: 10px;
   }
-  a.videourl {
-    background: @brand-primary;
-    border: 1px solid @brand-primary;
-    line-height: 48px;
-    display: table;
-    width: 100%;
-    border-radius: 4px;
-    i {
-      vertical-align: middle;
-      margin-bottom: 2px;
-    }
-    .video-icon {
-      height: 48px;
-      width: 48px;
-      float: left;
-      color: @btn-default-color;
+
+  .video-accordion {
+    .video-link-title {
       text-align: center;
+      font-weight: 600;
+      min-height: 30px;
+      line-height: 30px;
+      background-color: @brand-primary;
+      color: white;
+      border-radius: 4px;
+      border-bottom-right-radius: 0;
+      border-bottom-left-radius: 0;
     }
+
+    .video-link-container {
+      border: 1px solid @gray;
+      background-color: black;
+      border-radius: 4px;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      min-height: 60px;
+    }
+    a {
+      display: flex;
+      align-items: center;
+      min-height: 60px;
+      .video-icon {
+        height: 48px;
+        width: 48px;
+        float: left;
+        color: @btn-default-color;
+        text-align: center;
+        font-size: 28px;
+        flex: 1;
+        i {
+          vertical-align: middle;
+          margin-bottom: 2px;
+        }  
+      }
+    }
+    
+  }
+
+  a.videourl {
+    
     .video-desc {
       display: table-cell;
       vertical-align: middle;

@@ -46,7 +46,8 @@
 
     <?php $urls = $this->record($this->driver)->getLinkDetails(); ?>
     <?php if (!empty($videoUrls)): ?>
-      <div class="recordURLs local-available-online-record">
+      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]); ?>
+      <?php /*<div class="recordURLs local-available-online-record">
         <div class="truncate-field">
           <?php foreach ($videoUrls as $url): ?>
             <?php $desc = $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe' ? $this->translate('format_Video') : $this->translate('link_' . $url['desc'], null, $url['desc']); ?>
@@ -62,7 +63,7 @@
             </div>
           <?php endforeach; ?>
         </div>
-      </div>
+      </div> */?>
     <?php endif; ?>
 
     <?php if (!empty($audioUrls)): ?>
