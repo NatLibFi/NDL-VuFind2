@@ -816,10 +816,15 @@ finna.layout = (function finnaLayout() {
 
   function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
+    var playerArea = container.find('a[data-embed-video]');
+    var posterUrl = playerArea.data('poster-image');
 
-    container.find('a[data-embed-video]').click(function onClickVideoLink(e) {
+    if (posterUrl !== "") {
+      playerArea.css('background-image', 'url(' + posterUrl + ')');
+    }
+
+    playerArea.click(function onClickVideoLink(e) {
       var videoSources = $(this).data('videoSources');
-      var posterUrl = $(this).data('posterUrl');
       $.magnificPopup.open({
         type: 'inline',
         items: {
@@ -844,7 +849,6 @@ finna.layout = (function finnaLayout() {
             });
 
             player.src(videoSources);
-            player.poster(posterUrl);
             player.load();
           },
           close: function onClose() {
