@@ -85,7 +85,7 @@
                   <?php endif; ?>
                 <?php endif; ?>
               <?php endif; ?>
-            </span> <a target="_blank" href="<?php if ($hasLink): ?><?= $rights['link'] ?><?php else: ?><?=$this->url('content-page', ['page' => 'terms'])?><?php endif; ?>"><?=$this->transEsc('usage_meaning') ?></a>
+            </span> <p class="copyright-meaning"><a target="_blank" href="<?php if ($hasLink): ?><?= $rights['link'] ?><?php else: ?><?=$this->url('content-page', ['page' => 'terms'])?><?php endif; ?>"><?=$this->transEsc('usage_meaning') ?></a></p>
           </div>
           <div class="copyright truncate-field">
             <?php if (isset($rights['description'])): ?>
