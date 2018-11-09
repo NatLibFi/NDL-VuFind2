@@ -10,7 +10,7 @@
 
         $first = ($i === 0);
         $id = 'video-container-' . $i;
-        $ariaExpanded = 'aria-expanded=' . $first;
+        $ariaExpanded = 'aria-expanded=' . (($first) ? 'true' : 'false');
         $posterUrl = isset($url['posterUrl']) && !empty($url['posterUrl']) ? $url['posterUrl'] : '';
         $dataEmbed = !empty($url['embed']) && $url['embed'] === 'video' ? ' data-embed-video' : '';
 
@@ -31,8 +31,8 @@
         <span><?=$this->escapeHtml($desc)?></span>
         <span class="caret"></span>
       </button>
-      <div class="video-link-container <?=($first) ? 'collapse in' : 'collapse'?>" id="<?=$id?>" <?=$ariaExpanded?>>
-        <a class="videourl fulltext" href="" target="_blank" <?=implode(' ', array_values($attrs))?>>
+      <div role="figure" class="video-link-container <?=($first) ? 'collapse in' : 'collapse'?>" id="<?=$id?>" <?=$ariaExpanded?>>
+        <a class="videourl fulltext" <?=implode(' ', array_values($attrs))?>>
           <div class="video-icon"><i class="fa fa-play-circle"></i></div>
         </a>
       </div>
