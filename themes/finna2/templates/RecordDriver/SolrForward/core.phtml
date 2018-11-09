@@ -35,9 +35,7 @@
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment?>">
-    <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]); ?>
-    <?php endif; ?>
+    
 
     <div class="image-information">
       <div class="cover-wrapper">
@@ -57,6 +55,9 @@
          // getPreviewLink() (can go in your desired tab) ?>
       <?=$this->record($this->driver)->getPreviews()?>
     </div>
+    <?php if (!empty($videoUrls)): ?>
+      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]); ?>
+    <?php endif; ?>
 
     <?php if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
       <div class="organisation-menu">

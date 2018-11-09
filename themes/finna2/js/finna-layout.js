@@ -820,7 +820,7 @@ finna.layout = (function finnaLayout() {
     var posterUrl = playerArea.data('poster-image');
 
     if (posterUrl !== "") {
-      playerArea.css('background-image', 'url(' + posterUrl + ')');
+      playerArea.css('background-image', 'url(' + encodeURI(posterUrl) + ')');
     }
 
     playerArea.click(function onClickVideoLink(e) {

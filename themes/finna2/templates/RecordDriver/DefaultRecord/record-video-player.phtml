@@ -15,15 +15,15 @@
         $dataEmbed = !empty($url['embed']) && $url['embed'] === 'video' ? ' data-embed-video' : '';
 
         $attrs = [];
-        $attrs['link'] = 'href=' . $this->escapeHtmlAttr($this->proxyUrl($url['url']));
-        $attrs['title'] = 'title=' . $this->escapeHtmlAttr($url['url']);
-        $attrs['target'] = 'target="_blank"';
-        $attrs['embeddedUrl'] = $embeddedVideo;
-        $attrs['dataEmbed'] = $dataEmbed;
-        $attrs['posterImage'] = 'data-poster-image=' . $this->escapeHtmlAttr($posterUrl);
+        $attrs[] = 'href=' . $this->escapeHtmlAttr($this->proxyUrl($url['url']));
+        $attrs[] = 'title=' . $this->escapeHtmlAttr($url['url']);
+        $attrs[] = 'target="_blank"';
+        $attrs[] = $embeddedVideo;
+        $attrs[] = $dataEmbed;
+        $attrs[] = 'data-poster-image=' . $this->escapeHtmlAttr($posterUrl);
 
         if (!empty($url['videoSources'])) {
-          $attrs['sources'] = 'data-video-sources=' . $this->escapeHtmlAttr(json_encode($url['videoSources']));
+          $attrs[] = 'data-video-sources=' . $this->escapeHtmlAttr(json_encode($url['videoSources']));
         }
       ?>
       <button type="button" aria-label="video" class="video-link-title <?=($first) ? '' : 'collapsed'?>" data-toggle="collapse" data-target="#<?=$id?>" <?=$ariaExpanded?>>
@@ -32,7 +32,7 @@
         <span class="caret"></span>
       </button>
       <div role="figure" class="video-link-container <?=($first) ? 'collapse in' : 'collapse'?>" id="<?=$id?>" <?=$ariaExpanded?>>
-        <a class="videourl fulltext" <?=implode(' ', array_values($attrs))?>>
+        <a class="videourl fulltext" <?=implode(' ', $attrs)?>>
           <div class="video-icon"><i class="fa fa-play-circle"></i></div>
         </a>
       </div>
