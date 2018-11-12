@@ -113,7 +113,7 @@ function buildJSONNodes(xml) {
       li_attr: { recordid: id.text() },
       a_attr: {
         href: name.attr('href'),
-        title: name.text()
+        title: name.text() + " asd"
       },
       type: name.attr('href').match(/\/Collection\//) ? 'collection' : 'record',
       children: buildJSONNodes(this)
@@ -195,6 +195,17 @@ $(document).ready(function hierarchyTreeReady() {
         hTree.animate({
           scrollTop: scrollTop
         }, 1500);
+      }
+      var jsTreeFirstChild = $(this).find('.jstree-container-ul').children('li').first();
+
+      if (jsTreeFirstChild.find('ul').length === 0) {
+        jsTreeFirstChild.append(
+          '<div class="empty-collection">'
+          + '<span class="highlight">' 
+          + VuFind.translate('collection_empty') 
+          + '</span>' 
+          + '</div>'
+        );
       }
     })
     .jstree({
