@@ -44,6 +44,7 @@ finna.map = (function finnaMap() {
       zoomControl: false
     });
 
+    mapCanvas.attr('tabindex', -1);
     initMapZooming(map);
 
     if (options.items.length > 0) {
@@ -138,8 +139,12 @@ finna.map = (function finnaMap() {
     L.control.zoom({
       position: 'topleft',
       zoomInTitle: VuFind.translate('map_zoom_in'),
-      zoomOutTitle: VuFind.translate('map_zoom_out')
+      zoomOutTitle: VuFind.translate('map_zoom_out'),
     }).addTo(map);
+
+    $('.leaflet-control-zoom').children('a').each(function removeFocus(){
+      $(this).attr('tabindex', -1);
+    });
 
     // Enable mouseWheel zoom on click
     map.once('focus', function onFocusMap() {
