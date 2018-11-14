@@ -139,10 +139,10 @@ finna.map = (function finnaMap() {
     L.control.zoom({
       position: 'topleft',
       zoomInTitle: VuFind.translate('map_zoom_in'),
-      zoomOutTitle: VuFind.translate('map_zoom_out'),
+      zoomOutTitle: VuFind.translate('map_zoom_out')
     }).addTo(map);
 
-    $('.leaflet-control-zoom').children('a').each(function removeFocus(){
+    $('.leaflet-control-zoom').children('a').each(function removeFocus() {
       $(this).attr('tabindex', -1);
     });
 
