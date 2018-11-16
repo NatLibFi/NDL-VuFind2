@@ -79,9 +79,9 @@ class SideFacets extends \VuFind\Recommend\SideFacets
         if (isset($config->SpecialFacets->newItems)) {
             $this->newItemsFacets = $config->SpecialFacets->newItems->toArray();
         }
-        if (isset($config->SpecialFacets->finna_geographic)) {
+        if (isset($config->Geographical->finna_geographic)) {
             $this->geographicFacets
-                = $config->SpecialFacets->finna_geographic->toArray();
+                = $config->Geographical->finna_geographic->toArray();
         }
     }
 
