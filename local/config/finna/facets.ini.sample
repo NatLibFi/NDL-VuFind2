@@ -227,7 +227,7 @@ facet_limit      = -1
 ;building[]=1/NLF/arto/
 ;building[]=1/JYU/100/
 
-; Defines if geographical facets are enabled in sidefacets
+; Geographical facet settings
 [Geographical]
 ; Finna geographical facet
 finna_geographic[] = geographic_facet:location_geo
