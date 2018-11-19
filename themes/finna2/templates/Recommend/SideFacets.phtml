@@ -6,6 +6,8 @@
   $this->results = $results = $this->recommend->getResults();
   $this->options = $options = $results->getOptions();
 
+  $language = $this->layout()->userLang;
+
   $this->headScript()->appendFile('vendor/bootstrap-datepicker.min.js');
   $datePickerLang = 'en';
     
