@@ -230,4 +230,4 @@ facet_limit      = -1
 ; Geographical facet settings
 [Geographical]
 ; Finna geographical facet
-finna_geographic[] = geographic_facet:location_geo
+enabled = false

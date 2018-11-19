@@ -53,9 +53,9 @@ class SideFacets extends \VuFind\Recommend\SideFacets
     /**
      * Geographic facet setting
      *
-     * @var array
+     * @var bool
      */
-    protected $geographicFacets = [];
+    protected $geographicFacet = false;
 
     /**
      * Store the configuration of the recommendation module.
@@ -79,9 +79,8 @@ class SideFacets extends \VuFind\Recommend\SideFacets
         if (isset($config->SpecialFacets->newItems)) {
             $this->newItemsFacets = $config->SpecialFacets->newItems->toArray();
         }
-        if (isset($config->Geographical->finna_geographic)) {
-            $this->geographicFacets
-                = $config->Geographical->finna_geographic->toArray();
+        if (isset($config->Geographical->enabled)) {
+            $this->geographicFacet = (bool)$config->Geographical->enabled;
         }
     }
 
@@ -138,16 +137,12 @@ class SideFacets extends \VuFind\Recommend\SideFacets
     }
 
     /**
-     * Get an array of geographic facets.
+     * Is the map in geographicfacet enabled.
      *
-     * @return array
+     * @return bool
      */
-    public function getGeographicFacets()
+    public function getGeographicFacet()
     {
-        return array_map(
-            function ($geo_facet) {
-                return explode(':', $geo_facet)[0];
-            }, $this->geographicFacets
-        );
+        return $this->geographicFacet;
     }
 }
