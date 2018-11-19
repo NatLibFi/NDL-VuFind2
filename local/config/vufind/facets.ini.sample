@@ -4,6 +4,6 @@ relative_path = ../finna/facets.ini
 override_full_sections = "Geographical,Results,ResultsTop,SpecialFacets,CheckboxFacets,Results_Settings,Author,Advanced,Advanced_Settings,HomePage,HomePage_Settings,"
 
 [Geographical]
-enabled = false
+map_selection = false
 
 ; Add any overrides below

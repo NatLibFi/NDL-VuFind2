@@ -51,11 +51,13 @@ class SideFacets extends \VuFind\Recommend\SideFacets
     use SideFacetsTrait;
 
     /**
-     * Geographic facet setting
+     * Display the map under region facet
      *
-     * @var bool
+     * @var array
      */
-    protected $geographicFacet = false;
+    protected $geographicFacet = [
+        'map_selection' => false,
+    ];
 
     /**
      * Store the configuration of the recommendation module.
@@ -79,8 +81,9 @@ class SideFacets extends \VuFind\Recommend\SideFacets
         if (isset($config->SpecialFacets->newItems)) {
             $this->newItemsFacets = $config->SpecialFacets->newItems->toArray();
         }
-        if (isset($config->Geographical->enabled)) {
-            $this->geographicFacet = (bool)$config->Geographical->enabled;
+        if (isset($config->Geographical->map_selection)) {
+            $this->geographicFacet['map_selection']
+                = (bool)$config->Geographical->map_selection;
         }
     }
 
@@ -137,9 +140,9 @@ class SideFacets extends \VuFind\Recommend\SideFacets
     }
 
     /**
-     * Is the map in geographicfacet enabled.
+     * Returns the geographic map facet array.
      *
-     * @return bool
+     * @return array
      */
     public function getGeographicFacet()
     {

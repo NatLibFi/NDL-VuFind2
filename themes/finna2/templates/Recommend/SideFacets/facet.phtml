@@ -3,7 +3,7 @@
 <?php $hierarchicalFacetSortOptions = $this->recommend->getHierarchicalFacetSortOptions(); ?>
 <?php $hierarchicalFacets = $this->recommend->getHierarchicalFacets(); ?>
 <?php $collapsedFacets = $this->recommend->getCollapsedFacets(); ?>
-<?php $geographicFacet = false; ?>
+<?php $geographicFacet = []; ?>
 <?php
   if (is_callable([$this->recommend, 'getGeographicFacet'])) {
     $geographicFacet = $this->recommend->getGeographicFacet();
@@ -97,7 +97,7 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
   ]; ?>
   <?php if (in_array($title, $hierarchicalFacets)): ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/hierarchical-facet.phtml', $contextVars); ?>
-  <?php elseif ($geographicFacet): ?>
+  <?php elseif (isset($geographicFacet['map_selection']) && $geographicFacet['map_selection']): ?>
     <div class="geofacet-header">
       <h5 class="geofacet-title"><?=$this->translate('choose_from_list')?></h5>
     </div>
