@@ -230,4 +230,4 @@ facet_limit      = -1
 ; Geographical facet settings
 [Geographical]
 ; Finna geographical facet
-enabled = true
+enabled = false
