@@ -8,19 +8,12 @@
 
   $this->headScript()->appendFile('vendor/bootstrap-datepicker.min.js');
   $datePickerLang = 'en';
-  switch ($this->layout()->userLang) {
-    case 'en-gb':
-        $this->headScript()->appendFile('vendor/bootstrap-datepicker.en-GB.min.js');
-        $datePickerLang = 'en-GB';
-        break;
-    case 'fi':
-        $this->headScript()->appendFile('vendor/bootstrap-datepicker.fi.min.js');
-        $datePickerLang = 'fi';
-        break;
-    case 'sv':
-        $this->headScript()->appendFile('vendor/bootstrap-datepicker.sv.min.js');
-        $datePickerLang = 'sv';
-        break;
+    
+  $datepickerLanguages = ['en-gb' => 'en-GB', 'fi' => 'fi', 'sv' => 'sv'];
+
+  if (array_key_exists($language, $datepickerLanguages)) {
+    $datePickerLang = $datepickerLanguages[$language];
+    $this->headScript()->appendFile('vendor/bootstrap-datepicker.' . $datePickerLang . '.min.js');
   }
 
   $resultsTotal = $results->getResultTotal();
