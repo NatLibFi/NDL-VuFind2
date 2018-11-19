@@ -97,7 +97,7 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
   ]; ?>
   <?php if (in_array($title, $hierarchicalFacets)): ?>
     <?=$this->context($this)->renderInContext('Recommend/SideFacets/hierarchical-facet.phtml', $contextVars); ?>
-  <?php elseif (isset($geographicFacet['map_selection']) && $geographicFacet['map_selection']): ?>
+  <?php elseif ($title === 'geographic_facet' && isset($geographicFacet['map_selection']) && $geographicFacet['map_selection']): ?>
     <div class="geofacet-header">
       <h5 class="geofacet-title"><?=$this->translate('choose_from_list')?></h5>
     </div>
