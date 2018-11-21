@@ -35,11 +35,23 @@
       position: relative;
       display: inline;
     }
-    .tooltip-local-advanced {
+    button {
       float: right;
       border: none;
       background: transparent;
       padding: 6px;
+      i {
+        cursor: pointer;
+      }
+
+      @media (max-width: @screen-xxs) {
+        i {
+          font-size: 24px;
+        }
+        span {
+          display: none;
+        }
+      } 
     }
   }
   
@@ -92,6 +104,9 @@
       display: inline-block;
       margin-top: 10px;
       padding: 6px;
+      @media (max-width: @screen-xxs) {
+        width: 100%;
+      }
     }
     .responsive-field {
       max-width: 49%;
@@ -110,9 +125,6 @@
       float: right;
       @media (max-width: @screen-xs-max) {
         font-size: @font-size-small;
-      }
-      @media (max-width: @screen-xxs) {
-        float: none;
       }
     }
     .adv-search, .primo-advanced-search-fields {
