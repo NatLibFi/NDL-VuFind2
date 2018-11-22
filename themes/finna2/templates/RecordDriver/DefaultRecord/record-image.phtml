@@ -29,6 +29,9 @@
           <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
         </a>
       <?php endif; ?>
+      <?php if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
+        <p class="imagerights-default"><?= $this->transEsc('Image Rights Default') ?></p>
+      <?php endif; ?>
     <?php endif; ?>
   </div>
   <?php if ($type != 'list' && $type != 'list grid'): ?>
@@ -59,7 +62,6 @@
             <?=$this->escapeHtml($image['description']) ?>
           </div>
         <?php endif; ?>
-        <?php $rights = $image['rights']; ?>
         <div class="access-rights">
           <div class="image-rights">
             <?php $hasLink = isset($rights['link']); ?>
@@ -88,15 +90,14 @@
             </span> <p class="copyright-meaning"><a target="_blank" href="<?php if ($hasLink): ?><?= $rights['link'] ?><?php else: ?><?=$this->url('content-page', ['page' => 'terms'])?><?php endif; ?>"><?=$this->transEsc('usage_meaning') ?></a></p>
           </div>
           <div class="copyright truncate-field">
-            <?php if (isset($rights['description'])): ?>
-              <?php foreach ($rights['description'] as $item): ?>
-                <p><?=$this->transEsc($item) ?></p>
-              <?php endforeach ?>
-            <?php endif ?>
+          <?php if (isset($rights['description'])): ?>
+            <?php foreach ($rights['description'] as $item): ?>
+              <p><?=$this->transEsc($item) ?></p>
+            <?php endforeach ?>
+          <?php endif ?>
           </div>
           <?php if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
-            <p><?= $this->transEsc('Image Rights Default') ?>
-            <p><a href="<?= $this->url('content-page', ['page' => 'terms']) . '#image_rights' ?>"><i class="fa fa-arrow-right"></i><?= $this->translate('See terms and conditions') ?></a>
+          <p><a href="<?= $this->url('content-page', ['page' => 'terms']) . '#image_rights' ?>"><i class="fa fa-arrow-right"></i><?= $this->translate('See terms and conditions') ?></a></p>
           <?php endif; ?>
         </div>
       </div>
