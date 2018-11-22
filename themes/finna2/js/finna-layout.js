@@ -124,14 +124,14 @@ finna.layout = (function finnaLayout() {
       // truncate only if there's more than one line to hide
       if (self.height() > (truncation[index] + rowHeight[index] + 1)) {
         self.css('height', truncation[index] - 1 + 'px');
-        self.before('<div class="less-link-top">' + VuFind.translate('show_less') + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></div>');
-        self.after('<div class="more-link">' + VuFind.translate('show_more') + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></div><div class="less-link">' + VuFind.translate('show_less') + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></div>');
+        self.before('<button type="button" class="less-link-top">' + VuFind.translate('show_less') + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
+        self.after('<button type="button" class="more-link">' + VuFind.translate('show_more') + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button><button type="button" class="less-link">' + VuFind.translate('show_less') + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
         $('.less-link-top').hide();
         $('.less-link').hide();
 
         self.nextAll('.more-link').first().click(function onClickMoreLink(/*event*/) {
           $(this).hide();
-          $(this).next('.less-link').show();
+          $(this).next('.less-link').show().focus();
           $(this).prev('.truncate-field').css('height', 'auto');
           if (self.height() > (rowHeight[index] * 30)) {
             $(this).siblings('.less-link-top').show();
@@ -142,14 +142,14 @@ finna.layout = (function finnaLayout() {
         self.prevAll('.less-link-top').first().click(function onClickLessLink(/*event*/) {
           $(this).hide();
           $(this).siblings('.less-link').hide();
-          $(this).siblings('.more-link').show();
+          $(this).siblings('.more-link').show().focus();
           $(this).nextAll('.truncate-field').first().css('height', truncation[index] - 1 + 'px');
           notifyTruncateChange(self);
         });
         self.nextAll('.less-link').first().click(function onClickLessLink(/*event*/) {
           $(this).hide();
           $(this).siblings('.less-link-top').hide();
-          $(this).prev('.more-link').show();
+          $(this).prev('.more-link').show().focus();
           $(this).prevAll('.truncate-field').first().css('height', truncation[index] - 1 + 'px');
           notifyTruncateChange(self);
         });
