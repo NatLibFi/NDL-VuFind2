@@ -29,9 +29,6 @@
           <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
         </a>
       <?php endif; ?>
-      <?php if (!isset($rights['copyright']) && !isset($rights['description']) && $this->layout()->templateName === 'view'): ?>
-        <p class="imagerights-default"><?= $this->transEsc('Image Rights Default') ?></p>
-      <?php endif; ?>
     <?php endif; ?>
   </div>
   <?php if ($type != 'list' && $type != 'list grid'): ?>
@@ -61,6 +58,9 @@
           <div class="image-description">
             <?=$this->escapeHtml($image['description']) ?>
           </div>
+        <?php endif; ?>
+        <?php if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
+          <p class="imagerights-default"><?= $this->transEsc('Image Rights Default') ?></p>
         <?php endif; ?>
         <div class="access-rights">
           <div class="image-rights">
