@@ -49,16 +49,39 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
         'multiple'
     ];
 
+    protected $elementBase = [];
+
     /**
-     * Creates a string of given key value pairs in form of html attributes
+     * Adds a base-element to $this->elementBase array
+     * identified by $identifier
      *
-     * @param array $data of object to create
+     * @param string $identifier key for the element in base data
+     * @param array  $data       attributes of the element
+     *
+     * @return void
+     */
+    public function base(string $identifier, array $data)
+    {
+        $this->elementBase[$identifier] = $this->attr($data);
+    }
+
+    /**
+     * Creates a string of given key value pairs in form of html attributes,
+     * if identifier is set, then we try to find corresponding basedata for
+     * that element
+     *
+     * @param array  $data       of object to create
+     * @param string $identifier key for the element in base data
      *
      * @return string created attributes
      */
-    public function attr(array $data)
+    public function attr(array $data, string $identifier = '')
     {
         $element = '';
+
+        if (!empty($identifier) && isset($this->elementBase[$identifier])) {
+            $element .= $this->elementBase[$identifier];
+        }
 
         foreach ($data as $attr => $value) {
             if (in_array($attr, $this->booleanAttributes) && empty($value)) {

@@ -141,40 +141,48 @@
                   </select>
                 </div>
                 <div class="adv-group-terms">
-                  <?php $loopLimit = (isset($setQueries[$group])) ? count($setQueries[$group]) : 3; ?>
+                  <?php 
+                  $loopLimit = (isset($setQueries[$group])) ? count($setQueries[$group]) : 3;
+
+                  $this->htmlElement()->base('input-text', [
+                    'placeholder' => $msgSearchWords . '...',
+                    'title' => $msgSearchWords,
+                    'type' => 'text',
+                    'aria-label' => $msgSearchWords,
+                    'class' => 'adv-term-input form-control form-inline responsive-field search-text'
+                  ]);
+
+                  $this->htmlElement()->base('select-field', [
+                    'aria-label' => $msgSearchInField,
+                    'class' => 'adv-term-type form-control form-inline responsive-field search-select',
+                    'title' => $msgSearchInField,
+                  ]);
+                  ?>
                   <?php for ($search = 0; $search < $loopLimit; $search++): ?>
                     <?php if ($group == 0 && $search == 0): ?>
                       <div id="new_search_template">
                     <?php endif; ?>
                     <?php
-                      $isQuerySearchSet = isset($setQueries[$group][$search]);
-                      $inputElement = [
-                        'aria-label' => $msgSearchWords,
-                        'class' => 'adv-term-input form-control form-inline responsive-field search-text',
-                        'id' => 'search_lookfor' . $group . '_' . $search,
-                        'name' => 'lookfor' . $group . '[]',
-                        'placeholder' => $msgSearchWords . '...',
-                        'title' => $msgSearchWords,
-                        'type' => 'text',
-                        'value' => $isQuerySearchSet ? $this->escapeHtml($setQueries[$group][$search]->getString()) : '',
-                      ];
+                    $isQuerySearchSet = isset($setQueries[$group][$search]);
+                    $inputElement = [
+                      'id' => 'search_lookfor' . $group . '_' . $search,
+                      'name' => 'lookfor' . $group . '[]',
+                      'value' => $isQuerySearchSet ? $this->escapeHtml($setQueries[$group][$search]->getString()) : '',
+                    ];
 
-                      $selectElement = [
-                        'aria-label' => $msgSearchInField,
-                        'class' => 'adv-term-type form-control form-inline responsive-field search-select',
-                        'title' => $msgSearchInField,
-                        'type' => 'type' . $group . '[]',
-                      ];
+                    $selectElement = [
+                      'type' => 'type' . $group . '[]',
+                    ];
                     ?>
                     <div id="search<?=$group . '_' . $search ?>" class="adv-search search">
-                      <input <?= $this->htmlElement()->attr($inputElement) ?>>
-                      <select <?= $this->htmlElement()->attr($selectElement) ?>>
+                      <input <?= $this->htmlElement()->attr($inputElement, 'input-text') ?>>
+                      <select <?= $this->htmlElement()->attr($selectElement, 'select-field') ?>>
                         <?php foreach ($this->options->getAdvancedHandlers() as $searchVal => $searchDesc): ?>
                           <?php
-                            $optionElement = [
-                              'value' => $this->escapeHtml($searchVal),
-                              'selected' => ($isQuerySearchSet && $searchVal == $setQueries[$group][$search]->getHandler()) ? 'selected' : ''
-                            ];
+                          $optionElement = [
+                            'value' => $this->escapeHtml($searchVal),
+                            'selected' => ($isQuerySearchSet && $searchVal == $setQueries[$group][$search]->getHandler()) ? 'selected' : ''
+                          ];
                           ?>
                           <option <?= $this->htmlElement()->attr($optionElement) ?>>
                             <?= $this->transEsc($searchDesc) ?>
