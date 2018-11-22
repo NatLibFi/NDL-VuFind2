@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -67,7 +67,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
 
     /**
      * Creates a string of given key value pairs in form of html attributes,
-     * if identifier is set, then we try to find corresponding basedata for
+     * if identifier is set, try to find corresponding basedata for
      * that element
      *
      * @param array  $data       of object to create
