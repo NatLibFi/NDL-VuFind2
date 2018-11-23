@@ -60,10 +60,10 @@
           </div>
         <?php endif; ?>
         <?php if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
-          <p class="imagerights-default"><?= $this->transEsc('Image Rights Default') ?></p>
+          <p class="image-rights-default"><?= $this->transEsc('Image Rights Default') ?></p>
         <?php endif; ?>
         <div class="access-rights">
-          <div class="image-rights">
+          <div class="material-rights">
             <?php $hasLink = isset($rights['link']); ?>
             <strong><?= $this->transEsc('Image Rights') ?></strong><br>
             <span class="cc-rights">
