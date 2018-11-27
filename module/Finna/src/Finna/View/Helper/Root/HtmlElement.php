@@ -51,6 +51,16 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
 
     protected $elementBase = [];
 
+    protected $escaper;
+
+    /**
+     * HtmlElement constructor
+     */
+    public function __construct()
+    {
+        $this->escaper = new \Zend\Escaper\Escaper('utf-8');
+    }
+
     /**
      * Adds a base-element to $this->elementBase array
      * identified by $identifier
@@ -60,9 +70,9 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
      *
      * @return void
      */
-    public function base(string $identifier, array $data)
+    public function addAttributeTemplate(string $identifier, array $data)
     {
-        $this->elementBase[$identifier] = $this->attr($data);
+        $this->elementBase[$identifier] = $this->getAttributes($data);
     }
 
     /**
@@ -73,29 +83,38 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
      * @param array  $data       of object to create
      * @param string $identifier key for the element in base data
      *
+     * @throws OutOfBoundsException if the given key is not set in elementBase array
+     * 
      * @return string created attributes
      */
-    public function attr(array $data, string $identifier = '')
+    public function getAttributes(array $data, string $identifier = null)
     {
-        $element = '';
-
-        if (!empty($identifier) && isset($this->elementBase[$identifier])) {
-            $element .= $this->elementBase[$identifier];
+        if (isset($identifier) && !array_key_exists($identifier, $this->elementBase)) {
+            throw new \OutOfBoundsException('Key ' . $identifier . ' not set.');
         }
 
+        $element = [];
+
         foreach ($data as $attr => $value) {
-            if (in_array($attr, $this->booleanAttributes) && empty($value)) {
+            if (in_array($attr, $this->booleanAttributes) && strlen($value) === 0) {
                 continue;
             }
 
             $str = $attr;
-            if (!empty($value)) {
-                $str .= '=' . '"' . $value . '"';
+
+            if ((strlen($value) !== 0)) {
+                $str .= '=' . '"' . $this->escaper->escapeHtmlAttr($value) . '"';
             }
 
-            $element .= $str . ' ';
+            $element[] = $str;
         }
 
-        return $element;
+        $attributes = implode(' ', $element);
+
+        if (isset($this->elementBase[$identifier])) {
+            $attributes .= ' ' . $this->elementBase[$identifier];
+        }
+
+        return $attributes;
     }
 }

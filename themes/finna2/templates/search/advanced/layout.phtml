@@ -95,10 +95,10 @@
             'data-toggle' => 'tooltip',
             'data-placement' => 'bottom',
             'data-html' => 'true',
-            'data-original-title' => $this->transesc("tooltip_{$tooltipSource}_advanced_html"),
+            'data-original-title' => $this->translate("tooltip_{$tooltipSource}_advanced_html"),
           ];
           ?>
-          <button type="button" <?=$this->htmlElement()->attr($tooltipElement)?>><i class="fa fa-info-big" aria-hidden="true"></i> 
+          <button type="button" <?=$this->htmlElement()->getAttributes($tooltipElement)?>><i class="fa fa-info-big" aria-hidden="true"></i> 
             <span> <?=$this->transEsc("Help with Advanced Search")?> </span>
           </button>
         <?php endif; ?>
@@ -119,8 +119,8 @@
           $msgSearchGroup = $this->transEsc('adv_search_group');
           $msgDeleteSearch = $this->transEsc("del_search");
           $msgSearchMatch = $this->transEsc("search_match");
-          $msgSearchWords = $this->transEsc("Search words");
-          $msgSearchInField = $this->transEsc("search_in_field");
+          $msgSearchWords = $this->translate("Search words");
+          $msgSearchInField = $this->translate("search_in_field");
           $msgSearchAnd = $this->transEsc("search_AND");
           $msgSearchOr = $this->transEsc("search_OR");
           $msgSearchNot = $this->transEsc("search_NOT");
@@ -144,7 +144,7 @@
                   <?php 
                   $loopLimit = (isset($setQueries[$group])) ? count($setQueries[$group]) : 3;
 
-                  $this->htmlElement()->base('input-text', [
+                  $this->htmlElement()->addAttributeTemplate('input-text', [
                     'placeholder' => $msgSearchWords . '...',
                     'title' => $msgSearchWords,
                     'type' => 'text',
@@ -152,7 +152,7 @@
                     'class' => 'adv-term-input form-control form-inline responsive-field search-text'
                   ]);
 
-                  $this->htmlElement()->base('select-field', [
+                  $this->htmlElement()->addAttributeTemplate('select-field', [
                     'aria-label' => $msgSearchInField,
                     'class' => 'adv-term-type form-control form-inline responsive-field search-select',
                     'title' => $msgSearchInField,
@@ -168,7 +168,7 @@
                     $inputElement = [
                       'id' => 'search_lookfor' . $group . '_' . $search,
                       'name' => 'lookfor' . $group . '[]',
-                      'value' => $isQuerySearchSet ? $this->escapeHtml($setQueries[$group][$search]->getString()) : '',
+                      'value' => $isQuerySearchSet ? $setQueries[$group][$search]->getString() : '',
                     ];
 
                     $selectElement = [
@@ -176,8 +176,8 @@
                     ];
                     ?>
                     <div id="search<?=$group . '_' . $search ?>" class="adv-search search">
-                      <input <?= $this->htmlElement()->attr($inputElement, 'input-text') ?>>
-                      <select <?= $this->htmlElement()->attr($selectElement, 'select-field') ?>>
+                      <input <?= $this->htmlElement()->getAttributes($inputElement, 'input-text') ?>>
+                      <select <?= $this->htmlElement()->getAttributes($selectElement, 'select-field') ?>>
                         <?php foreach ($this->options->getAdvancedHandlers() as $searchVal => $searchDesc): ?>
                           <?php
                           $optionElement = [
@@ -185,7 +185,7 @@
                             'selected' => ($isQuerySearchSet && $searchVal == $setQueries[$group][$search]->getHandler()) ? 'selected' : ''
                           ];
                           ?>
-                          <option <?= $this->htmlElement()->attr($optionElement) ?>>
+                          <option <?= $this->htmlElement()->getAttributes($optionElement) ?>>
                             <?= $this->transEsc($searchDesc) ?>
                           </option>
                         <?php endforeach; ?>
