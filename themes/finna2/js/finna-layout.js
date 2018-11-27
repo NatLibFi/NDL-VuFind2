@@ -131,7 +131,7 @@ finna.layout = (function finnaLayout() {
 
         self.nextAll('.more-link').first().click(function onClickMoreLink(/*event*/) {
           $(this).hide();
-          $(this).next('.less-link').show().focus();
+          $(this).next('.less-link').show();
           $(this).prev('.truncate-field').css('height', 'auto');
           if (self.height() > (rowHeight[index] * 30)) {
             $(this).siblings('.less-link-top').show();
@@ -142,14 +142,14 @@ finna.layout = (function finnaLayout() {
         self.prevAll('.less-link-top').first().click(function onClickLessLink(/*event*/) {
           $(this).hide();
           $(this).siblings('.less-link').hide();
-          $(this).siblings('.more-link').show().focus();
+          $(this).siblings('.more-link').show();
           $(this).nextAll('.truncate-field').first().css('height', truncation[index] - 1 + 'px');
           notifyTruncateChange(self);
         });
         self.nextAll('.less-link').first().click(function onClickLessLink(/*event*/) {
           $(this).hide();
           $(this).siblings('.less-link-top').hide();
-          $(this).prev('.more-link').show().focus();
+          $(this).prev('.more-link').show();
           $(this).prevAll('.truncate-field').first().css('height', truncation[index] - 1 + 'px');
           notifyTruncateChange(self);
         });
