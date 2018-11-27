@@ -84,12 +84,14 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
      * @param string $identifier key for the element in base data
      *
      * @throws OutOfBoundsException if the given key is not set in elementBase array
-     * 
+     *
      * @return string created attributes
      */
     public function getAttributes(array $data, string $identifier = null)
     {
-        if (isset($identifier) && !array_key_exists($identifier, $this->elementBase)) {
+        if (isset($identifier) 
+            && !array_key_exists($identifier, $this->elementBase)
+        ) {
             throw new \OutOfBoundsException('Key ' . $identifier . ' not set.');
         }
 
@@ -102,7 +104,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
 
             $str = $attr;
 
-            if ((strlen($value) !== 0)) {
+            if (strlen($value) !== 0) {
                 $str .= '=' . '"' . $this->escaper->escapeHtmlAttr($value) . '"';
             }
 
