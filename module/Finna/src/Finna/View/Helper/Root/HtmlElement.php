@@ -89,7 +89,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
      */
     public function getAttributes(array $data, string $identifier = null)
     {
-        if (isset($identifier) 
+        if (isset($identifier)
             && !array_key_exists($identifier, $this->elementBase)
         ) {
             throw new \OutOfBoundsException('Key ' . $identifier . ' not set.');
