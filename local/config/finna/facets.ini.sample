@@ -227,7 +227,7 @@ facet_limit      = -1
 ;building[]=1/NLF/arto/
 ;building[]=1/JYU/100/
 
-; Geographical facet settings
+; Geographical facet settings, settings for map under the region facet
 [Geographical]
 ; Finna geographical facet
 map_selection = false
