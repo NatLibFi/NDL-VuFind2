@@ -90,7 +90,7 @@ class SideFacets extends \VuFind\Recommend\SideFacets
             $this->geographicFacet['map_selection']
                 = in_array('geographic_facet:location_geo', $finna_geographic);
         }
-        
+
         if (isset($config->Geographical->map_selection)) {
             $this->geographicFacet['map_selection']
                 = (bool)$config->Geographical->map_selection;
