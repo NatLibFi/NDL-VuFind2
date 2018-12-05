@@ -369,9 +369,21 @@
       padding: 0 10px;
     }
   }
+  .multi-select {
+    display: none;
+  }
   .multiselect-container {
     background-color: @well-bg;
     padding: 0;
+    &.dropdown-menu >.active >a{
+          background-color: transparent;
+          color: black;
+          &:focus {
+            outline: 1px dotted #212121;
+            outline: 5px auto -webkit-focus-ring-color;
+            background-color: rgba(1, 1, 1, 0.1);
+          }
+    }
     li {
       background: white;
       &:first-child {
