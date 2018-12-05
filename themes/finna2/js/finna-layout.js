@@ -282,6 +282,9 @@ finna.layout = (function finnaLayout() {
       });
     }
     $('.multiselect-search').attr('placeholder', VuFind.translate('search_placeholder'));
+    $('.multiselect-container').on('show.bs.modal', function focusFirstElement(e){
+      $(this).find(':first-child:not(.multiselect-item)').focus();
+    });
   }
 
   function initMobileNarrowSearch() {
