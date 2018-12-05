@@ -84,18 +84,16 @@ class SideFacets extends \VuFind\Recommend\SideFacets
             $this->newItemsFacets = $config->SpecialFacets->newItems->toArray();
         }
 
-        if (isset($config->Geographical->map_selection)) {
-            $this->geographicFacet['map_selection']
-                = (bool)$config->Geographical->map_selection;
-        }
-
         //Fallback check for older style of enabling the map in facets
-        if (isset($config->SpecialFacets->finna_geographic)
-            && !$this->geographicFacet['map_selection']
-        ) {
+        if (isset($config->SpecialFacets->finna_geographic)) {
             $finna_geographic = $config->SpecialFacets->finna_geographic->toArray();
             $this->geographicFacet['map_selection']
                 = in_array('geographic_facet:location_geo', $finna_geographic);
+        }
+        
+        if (isset($config->Geographical->map_selection)) {
+            $this->geographicFacet['map_selection']
+                = (bool)$config->Geographical->map_selection;
         }
     }
 

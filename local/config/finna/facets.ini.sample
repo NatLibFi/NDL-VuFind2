@@ -229,5 +229,5 @@ facet_limit      = -1
 
 ; Geographical facet settings, settings for map under the region facet
 [Geographical]
-; Finna geographical facet
-map_selection = false
+;Map selection enabled?
+;map_selection = ""
