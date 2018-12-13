@@ -372,36 +372,20 @@
   .multi-select {
     display: none;
   }
-  .multiselect-container {
-    background-color: @well-bg;
-    padding: 0;
-    &.dropdown-menu >.active >a{
-          background-color: transparent;
-          color: black;
-          &:focus {
-            outline: 1px dotted #212121;
-            outline: 5px auto -webkit-focus-ring-color;
-            background-color: rgba(1, 1, 1, 0.1);
-          }
-    }
-    li {
-      background: white;
-      &:first-child {
-        background-color: @well-bg;
-      }
-    }
-    .multiselect-clear-filter {
-      margin-left: 0;
-      &, &:hover {
-        background-color: @well-bg;
-        border-color: @well-bg;
-        color: @text-color;
-      }
-    }
-    .input-group {
-      width: 100%;
-      .form-control {
-        width: 100%;
+  .multiselect-dropdown {
+    >.dropdown-menu {
+      max-width: 200px;
+      max-height: 200px;
+      overflow-x: hidden;
+      border-radius: 0;
+      >li {
+        border-bottom: none;
+        padding: 2px 4px;
+        border-radius: 0;
+
+        &.highlighted {
+          background-color: @brand-primary;
+        }
       }
     }
   }

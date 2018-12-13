@@ -34,7 +34,12 @@
             <div class="facet">
               <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
                 <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>"><?=$this->transEsc($list['label'])?>:</label>
-                <select class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>" name="filter[]"  multiple="multiple" >
+                <select 
+                  data-placeholder="Choose option" 
+                  class="finna-multiselect form-control" 
+                  id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>" 
+                  name="filter[]"
+                  multiple>
                   <?php if (is_array($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
                     <?php foreach ($list['list'] as $value): ?>
                       <?php $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']); ?>
@@ -59,6 +64,7 @@
                     <?php endforeach; ?>
                   <?php endif; ?>
                 </select>
+
               </div>
             </div>
           <?php endforeach; ?>

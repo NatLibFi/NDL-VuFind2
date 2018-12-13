@@ -263,6 +263,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function initMultiSelect() {
+    //$('.chosen-select').chosen();
     $('.multi-select').multiselect({
       enableCaseInsensitiveFiltering: true,
       maxHeight: 310,
