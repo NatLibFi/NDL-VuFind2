@@ -80,7 +80,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
      * if identifier is set, try to find corresponding basedata for
      * that element
      *
-     * @param array  $data       of object to create
+     * @param array  $data       attributes of element to create
      * @param string $identifier key for the element in base data
      *
      * @throws OutOfBoundsException if the given key is not set in elementBase array
@@ -90,9 +90,9 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     public function getAttributes(array $data, string $identifier = null)
     {
         if (isset($identifier)
-            && !array_key_exists($identifier, $this->elementBase)
+            && !isset($this->elementBase[$identifier])
         ) {
-            throw new \OutOfBoundsException('Key ' . $identifier . ' not set.');
+            throw new \OutOfBoundsException("Element $identifier not defined.");
         }
 
         $element = [];
