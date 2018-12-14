@@ -104,6 +104,19 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
 
             $str = $attr;
 
+            if (isset($this->elementBase[$identifier]) && $attr === 'class') {
+                $result = $this->tryToAppendAttribute(
+                    $this->elementBase[$identifier],
+                    $attr,
+                    $value
+                );
+
+                if ($result !== false) {
+                    $this->elementBase[$identifier] = $result;
+                    continue;
+                }
+            }
+
             if (strlen($value) !== 0) {
                 $str .= '=' . '"' . $this->escaper->escapeHtmlAttr($value) . '"';
             }
@@ -118,5 +131,32 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
         }
 
         return $attributes;
+    }
+
+    /**
+     * Function to add attribute class inside existing attribute
+     *
+     * @param string $original   string to insert into
+     * @param string $class      class to find from original
+     * @param string $insertable string to add into original
+     *
+     * @return string|false
+     */
+    protected function tryToAppendAttribute(
+        string $original,
+        string $class,
+        string $insertable
+    ) {
+        $class .= '="';
+        $found = strpos($original, $class);
+
+        if ($found !== false) {
+            $found += (strlen($class));
+            $endOf = strpos($original, '"', $found);
+            $result = substr_replace($original, ' ' . $insertable, $endOf, 0);
+            return $result;
+        } else {
+            return false;
+        }
     }
 }
