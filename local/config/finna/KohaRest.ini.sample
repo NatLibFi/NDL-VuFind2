@@ -8,6 +8,8 @@ override_full_sections = "UpdateAddress"
 id = "outi"
 ; URL of the Koha Rest API without the version
 host = "http://koha-server/api"
+; Whether the "paged" API endpoint is available for loans. Default is false.
+;checkoutsSupportPaging = true
 
 [Holds]
 ; defaultRequiredDate - A colon-separated list used to set the default "not required
@@ -88,3 +90,7 @@ enabled = true
 userId = 'admin'
 ; Recovery processing operator password in Koha
 userPassword = '1234'
+
+[Loans]
+; How many loans can be displayed on a single page
+;max_page_size = 25
