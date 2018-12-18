@@ -90,11 +90,11 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     /**
      * Removes a base-element from $this->elementBase array
      * identified by $identifier
-     * 
+     *
      * @param string $identifier key for the element to remove
-     * 
+     *
      * @throws OutOfBoundsException if the given key is not set in elementBase array
-     * 
+     *
      * @return void
      */
     public function removeAttributeTemplate(string $identifier)
@@ -186,7 +186,6 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
         array $newAttributes
     ) {
         foreach ($newAttributes as $key => $value) {
-
             if (in_array($key, $this->booleanAttributes)
                 && strlen($value) === 0
             ) {
