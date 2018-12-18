@@ -88,6 +88,25 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
+     * Removes a base-element from $this->elementBase array
+     * identified by $identifier
+     * 
+     * @param string $identifier key for the element to remove
+     * 
+     * @throws OutOfBoundsException if the given key is not set in elementBase array
+     * 
+     * @return void
+     */
+    public function removeAttributeTemplate(string $identifier)
+    {
+        if (isset($this->elementBase[$identifier])) {
+            unset($this->elementBase[$identifier]);
+        } else {
+            throw new \OutOfBoundsException("Element $identifier not defined.");
+        }
+    }
+
+    /**
      * Escapes given values from an array
      *
      * @param array $array with escapable data
@@ -119,14 +138,12 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
      */
     public function getAttributes(array $data, string $identifier = null)
     {
-        if (isset($identifier)
-            && !isset($this->elementBase[$identifier])
-        ) {
+        $identifierSet = isset($identifier);
+        $hasBaseElement = $identifierSet && isset($this->elementBase[$identifier]);
+
+        if ($identifierSet && !$hasBaseElement) {
             throw new \OutOfBoundsException("Element $identifier not defined.");
         }
-
-        $hasBaseElement = isset($identifier)
-            && isset($this->elementBase[$identifier]);
 
         $baseData = ($hasBaseElement) ? $this->elementBase[$identifier] : [];
         $newData = $this->escapeAttributes($data);
@@ -139,7 +156,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
-     * Stringify array element
+     * Stringify array
      *
      * @param array $element to stringify
      *
@@ -148,37 +165,38 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     protected function stringifyAttributes(array $element)
     {
         $stringified = [];
+
         foreach ($element as $key => $value) {
             $stringified[] = "$key=\"$value\"";
         }
+
         return implode(' ', $stringified);
     }
 
     /**
      * Function to add attributes to an existing element
      *
-     * @param array $baseData base attributes of element
-     * @param array $new      attributes for element
+     * @param array $baseAttributes base attributes of element
+     * @param array $newAttributes  attributes for element
      *
-     * @return array $combined array to return
+     * @return array combined array to return
      */
     protected function appendAttributes(
-        array $baseData,
-        array $new
+        array $baseAttributes,
+        array $newAttributes
     ) {
-        $combined = $baseData;
+        foreach ($newAttributes as $key => $value) {
 
-        foreach ($new as $key => $value) {
-            $isEmpty = (strlen($value) === 0);
-
-            if (in_array($key, $this->booleanAttributes) && $isEmpty) {
+            if (in_array($key, $this->booleanAttributes)
+                && strlen($value) === 0
+            ) {
                 continue;
             }
 
-            $combined[$key] = isset($combined[$key])
-                ? $combined[$key] . " $value" : $value;
+            $baseAttributes[$key] = isset($baseAttributes[$key])
+                ? $baseAttributes[$key] . " $value" : $value;
         }
 
-        return $combined;
+        return $baseAttributes;
     }
 }
