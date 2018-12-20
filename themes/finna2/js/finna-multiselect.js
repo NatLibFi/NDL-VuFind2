@@ -1,21 +1,28 @@
-/*global finna*/
+/*global finna, VuFind*/
 
 finna.multiSelect = (function multiSelect(){
   var identifierNumber = 0;
 
-  var inputElement = "<div class=\"multiselect-dropdown\">" +
-  "<span class=\"describer\" id=\"\" hidden></span>" +
-  "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"\" class=\"form-control multiselect-input\" type=\"text\">" +
-  "<ul class=\"multiselect-dropdown-menu\">" +
-  "</ul>" +
-  "<div class=\"multiselect-selected\">" +
-  "</div>" +
-  "</div>";
-  var listItem = "<li data-target=\"\" tabindex=\"-1\"></li>";
-  var selectedItem = "<button class=\"multiselect-filter\" data-target=\"\" type=\"button\" title=\"Poista rajaus\"></button>";
+  var inputElement;
+  var listItem;
+  var selectedItem;
   var idStart = 'multiselect_id_';
 
+  function initTemplates() {
+    inputElement = "<div class=\"multiselect-dropdown\">" +
+      "<span class=\"describer\" id=\"\" hidden></span>" +
+      "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"\" class=\"form-control multiselect-input\" type=\"text\">" +
+      "<ul class=\"multiselect-dropdown-menu\">" +
+      "</ul>" +
+      "<div class=\"multiselect-selected\">" +
+      "</div>" +
+      "</div>";
+    listItem = "<li data-target=\"\" tabindex=\"-1\"></li>";
+    selectedItem = "<button class=\"multiselect-filter\" data-target=\"\" type=\"button\" title=\"" + VuFind.translate('remove_filter') + "\"></button>";
+  }
+
   function initFields() {
+    initTemplates();
     $('.finna-multiselect').each(function createDropdowns(){
       var id = idStart + identifierNumber++;
       var root = $(this).parent();
@@ -147,7 +154,7 @@ finna.multiSelect = (function multiSelect(){
     element.remove();
   }
 
-  function addToFilters(element, isClick) {
+  function addToFilters(element) {
     var tempButton = $(selectedItem).clone();
     var selectedArea = element.parent().siblings('.multiselect-selected');
     var originalSelect = element.parent().siblings('select');
