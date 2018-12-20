@@ -45,7 +45,7 @@ finna.multiSelect = (function multiSelect(){
       openList($(this));
     });
 
-    //Dynmacilly during runtime created elements needs an external listener
+    //Dynamically during runtime created elements needs an external listener
     $(document).on('click', '.multiselect-filter', function removeFilter(){
       removeFromSelected($(this));
     });
@@ -80,7 +80,7 @@ finna.multiSelect = (function multiSelect(){
       }
     });
 
-    $('.multiselect-dropdown-menu li').on('click', function clickItem(e){
+    $('.multiselect-dropdown-menu li').on('click', function clickItem(){
       addToFilters($(this), true);
     });
 
@@ -94,6 +94,7 @@ finna.multiSelect = (function multiSelect(){
       case 9:
         break;
       default:
+        openList($(this));
         filterOptions($(this));
         break;
       }
@@ -105,8 +106,6 @@ finna.multiSelect = (function multiSelect(){
 
     if (nextAvailable.length) {
       nextAvailable.first().focus();
-    } else {
-      element.parent().siblings('.multiselect-input').focus();
     }
   }
 
@@ -125,7 +124,9 @@ finna.multiSelect = (function multiSelect(){
   function jumpToList(element) {
     var visible = getVisibleObjects(element);
 
-    visible.first().focus();
+    if (visible.length) {
+      visible.first().focus();
+    }
   }
 
   //Find all the visible items in the dropdown
@@ -142,26 +143,11 @@ finna.multiSelect = (function multiSelect(){
     originalSelect.find("option" + "[value='" + dataTarget + "']").removeAttr('selected');
     element.parent().siblings('.multiselect-dropdown-menu')
       .find("li" + "[data-target='" + dataTarget + "']").removeClass('selected');
-    
-    var nextElement = element.nextAll('.multiselect-filter');
-    var previousElement = element.prevAll('.multiselect-filter');
-
-    //Lets focus on previous or next element, and if not found then back to the input
-    if (nextElement.length) {
-      nextElement.first().focus();
-    } else if (previousElement.length) {
-      previousElement.first().focus();
-    } else {
-      element.parent().siblings('.multiselect-input').focus();
-    }
 
     element.remove();
   }
 
   function addToFilters(element, isClick) {
-    if (!isClick) {
-      nextItem(element);
-    }
     var tempButton = $(selectedItem).clone();
     var selectedArea = element.parent().siblings('.multiselect-selected');
     var originalSelect = element.parent().siblings('select');
@@ -172,6 +158,7 @@ finna.multiSelect = (function multiSelect(){
     tempButton.attr('data-target', dataTarget);
     originalSelect.find("option[value='" + dataTarget + "']").attr('selected', true);
     selectedArea.append(tempButton);
+    element.parent().siblings('.multiselect-input').focus();
   }
 
   function filterOptions(element) {
