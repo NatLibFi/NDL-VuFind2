@@ -2,7 +2,6 @@
 finna.advSearch = (function advSearch() {
 
   function initForm() {
-    console.log("HEEEY");
     var form = $('.template-dir-search #advSearchForm');
     var container = form.find('.ranges-container .slider-container').closest('fieldset');
     var field = container.find('input[name="daterange[]"]').eq(0).val();
