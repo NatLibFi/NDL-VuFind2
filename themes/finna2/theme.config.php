@@ -139,7 +139,6 @@ return [
         'dataTables.bootstrap.custom.css',
         'vendor/slick.css',
         'vendor/slick-theme.css',
-        'vendor/bootstrap-multiselect.min.css',
         'vendor/chosen.min.css',
         'vendor/bootstrap-datepicker3.min.css',
         'vendor/video-js.min.css',
@@ -148,7 +147,7 @@ return [
         'vendor/priority-nav-core.css',
         'finna-flex-fallback.css::lt IE 10', // flex polyfill
         'vendor/leaflet.css',
-        'vendor/leaflet.draw.css'
+        'vendor/leaflet.draw.css',
     ],
     'js' => [
         'vendor/event-stub.js:lt IE 9',
@@ -177,7 +176,6 @@ return [
         'vendor/videojs-contrib-hls.min.js',
         'vendor/videojs.hotkeys.min.js',
         'vendor/jquery.touchSwipe.min.js',
-        'vendor/bootstrap-multiselect.min.js',
         'vendor/bootstrap-slider.min.js',
         'vendor/gauge.min.js',
         'vendor/priority-nav.min.js',
