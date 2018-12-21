@@ -226,7 +226,6 @@ VuFind.path = '{$root}';
 VuFind.defaultSearchBackend = '{$dsb}';
 VuFind.addTranslations({$translations});
 JS;
-      var_dump($translations);
       $this->headScript()->appendScript($setupJS);
     ?>
     <?=$this->headScript()?>
