@@ -170,7 +170,7 @@ finna.feed = (function finnaFeed() {
             // Text hover for touch devices
             if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
               $('.carousel-text').css('padding-bottom', '30px');
-              holder.find('.slick-slide a').click(function onClickSlideLink(/*event*/) {
+              holder.find('.slick-slide a, .slick-slide').click(function onClickSlideLink(/*event*/) {
                 if (!$(this).closest('.slick-slide').hasClass('clicked')) {
                   $(this).closest('.slick-slide').addClass('clicked');
                   return false;
@@ -190,7 +190,7 @@ finna.feed = (function finnaFeed() {
 
           // Bind lightbox if feed content is shown in modal
           if (typeof settings.modal !== 'undefined' && settings.modal) {
-            holder.find('a').click(function onClockHolderLink() {
+            holder.find('a').click(function onClickHolderLink() {
               $('#modal').addClass('feed-content');
             });
             VuFind.lightbox.bind(holder);

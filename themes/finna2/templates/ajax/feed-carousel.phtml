@@ -26,7 +26,7 @@
         <?php endif; ?>
         <p><?= $item['text']; ?>
         </p>
-        <?php if ($clickableLink): ?><a <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($item['link']); ?>" class="carousel-link"<?=$item['modal'] ? ' data-lightbox="" data-lightbox-title="' . $this->escapeHtmlAttr($item['title']) . '"' : ''?>><?=$this->transEsc($this->linkText ? $this->linkText : 'To the record')?></a><?php endif; ?>
+        <?php if ($clickableLink): ?><a <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($item['link']); ?>" class="carousel-link"<?=$item['modal'] ? ' data-lightbox="" data-lightbox-title="' . $this->escapeHtmlAttr($item['title']) . '"' : ''?>><i class="fa fa-arrow-alt-right" aria-hidden="true"> </i><?=$this->transEsc($this->linkText ? $this->linkText : 'To the record')?></a><?php endif; ?>
       </div>
       <?php endif; ?>
       <?php if (isset($item['image']) && isset($item['image']['url'])): ?>
