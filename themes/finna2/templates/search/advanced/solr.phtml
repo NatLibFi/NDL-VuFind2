@@ -33,9 +33,8 @@
           <?php foreach ($this->facetList as $field => $list): ?>
             <div class="facet">
               <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
-                <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>"><?=$this->transEsc($list['label'])?>:</label>
-                <select 
-                  data-placeholder="Choose option" 
+                <select
+                  data-label="<?=$this->transEsc($list['label'])?>"
                   class="finna-multiselect form-control" 
                   id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>" 
                   name="filter[]"

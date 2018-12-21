@@ -139,7 +139,6 @@ return [
         'dataTables.bootstrap.custom.css',
         'vendor/slick.css',
         'vendor/slick-theme.css',
-        'vendor/chosen.min.css',
         'vendor/bootstrap-datepicker3.min.css',
         'vendor/video-js.min.css',
         'vendor/bootstrap-slider.min.css',

@@ -1,39 +1,42 @@
 /*global finna, VuFind*/
 
 finna.multiSelect = (function multiSelect(){
-  var identifierNumber = 0;
-
   var inputElement;
   var listItem;
   var selectedItem;
-  var idStart = 'multiselect_id_';
 
   function initTemplates() {
-    inputElement = "<div class=\"multiselect-dropdown\">" +
+    inputElement = "<div aria-label=\"testi\" class=\"multiselect-dropdown\">" +
+      "<label for=\"\"></label>" +
       "<span class=\"describer\" id=\"\" hidden></span>" +
-      "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"\" class=\"form-control multiselect-input\" type=\"text\">" +
+      "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"" + VuFind.translate('add_selection') + "\" class=\"form-control multiselect-input\" type=\"text\">" +
       "<ul class=\"multiselect-dropdown-menu\">" +
       "</ul>" +
       "<div class=\"multiselect-selected\">" +
       "</div>" +
       "</div>";
     listItem = "<li data-target=\"\" tabindex=\"-1\"></li>";
-    selectedItem = "<button class=\"multiselect-filter\" data-target=\"\" type=\"button\" title=\"" + VuFind.translate('remove_filter') + "\"></button>";
+    selectedItem = "<button class=\"multiselect-filter\" data-target=\"\" type=\"button\" title=\"" + VuFind.translate('remove_selection') + "\"></button>";
   }
 
   function initFields() {
     initTemplates();
     $('.finna-multiselect').each(function createDropdowns(){
-      var id = idStart + identifierNumber++;
+      var originalSelect = $(this);
       var root = $(this).parent();
       var tempElement = $(inputElement).clone();
-      tempElement.find('.describer').attr('id', id);
-      tempElement.find('.multiselect-input').attr('aria-labelledby', id);
+      var input = tempElement.find('.multiselect-input');
+      var label = tempElement.find('label');
+      var inputLabel = originalSelect.data('label');
+      var ul = $(tempElement.find('ul'));
+
+      label.html(inputLabel);
+      var completedAria = input.attr('aria-label') + " " + inputLabel;
+      tempElement.find('.multiselect-input').attr('aria-label', completedAria);
       root.append(tempElement);
-      var ul = tempElement.find('ul');
-      $(this).css('display', 'none');
-      $(this).prependTo(tempElement);
-      initListItems($(this), $(ul));
+      originalSelect.css('display', 'none');
+      originalSelect.prependTo(tempElement);
+      initListItems(originalSelect, ul);
     });
     initKeyBindings();
   }
@@ -146,12 +149,19 @@ finna.multiSelect = (function multiSelect(){
   function removeFromSelected(element) {
     var dataTarget = element.attr('data-target');
     var originalSelect = element.parent().siblings('select');
-
+    var parent = element.parent();
     originalSelect.find("option" + "[value='" + dataTarget + "']").removeAttr('selected');
-    element.parent().siblings('.multiselect-dropdown-menu')
+    parent.siblings('.multiselect-dropdown-menu')
       .find("li" + "[data-target='" + dataTarget + "']").removeClass('selected');
 
+    var siblings = element.siblings('button');
     element.remove();
+
+    if (siblings.length) {
+      siblings.first().focus();
+    } else {
+      parent.siblings('.multiselect-input').focus();
+    }
   }
 
   function addToFilters(element) {
@@ -223,9 +233,7 @@ finna.multiSelect = (function multiSelect(){
   }
 
   var my = {
-    init: function init() {
-      initFields();
-    }
+    init: initFields
   };
 
   return my;
