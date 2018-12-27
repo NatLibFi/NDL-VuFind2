@@ -171,9 +171,15 @@ finna.feed = (function finnaFeed() {
             if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
               $('.carousel-text').css('padding-bottom', '30px');
               holder.find('.slick-slide a, .slick-slide').click(function onClickSlideLink(/*event*/) {
-                if (!$(this).closest('.slick-slide').hasClass('clicked')) {
-                  $(this).closest('.slick-slide').addClass('clicked');
+                var closestSlide = $(this).closest('.slick-slide');
+                if (!closestSlide.hasClass('clicked')) {
+                  closestSlide.addClass('clicked');
                   return false;
+                }
+              });
+              holder.find('.slick-slide').on('focusout', function removeClicked(/*event*/){
+                if ($(this).has(event.relatedTarget).length === 0) {
+                  $(this).removeClass('clicked');
                 }
               });
               if (navigator.userAgent.match(/iemobile/i)) {
