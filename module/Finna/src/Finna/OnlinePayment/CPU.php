@@ -136,19 +136,13 @@ class CPU extends BaseHandler
             return '';
         }
         $productCode = $this->config->productCode;
-        $productCodeMappings = [];
-        if (!empty($this->config->productCodeMappings)) {
-            foreach (explode(':', $this->config->productCodeMappings) as $item) {
-                $parts = explode('=', $item, 2);
-                if (count($parts) != 2) {
-                    continue;
-                }
-                $productCodeMappings[trim($parts[0])] = trim($parts[1]);
-            }
-        }
+        $productCodeMappings = $this->getProductCodeMappings();
+        $organizationProductCodeMappings
+            = $this->getOrganizationProductCodeMappings();
 
         foreach ($fines as $fine) {
             $fineType = $fine['fine'] ?? '';
+            $fineOrg = $fine['organization'] ?? '';
             $fineDesc = '';
             if (!empty($fineType)) {
                 $fineDesc = $this->translator->translate("fine_status_$fineType");
@@ -172,9 +166,15 @@ class CPU extends BaseHandler
                     'UTF-8',
                     iconv('UTF-8', 'ISO-8859-1//IGNORE', $fineDesc)
                 );
+                // Remove ' since that causes the string to be truncated
+                $fineDesc = str_replace("'", ' ', $fineDesc);
             }
 
             $code = $productCodeMappings[$fineType] ?? $productCode;
+            if (isset($organizationProductCodeMappings[$fineOrg])) {
+                $code = $organizationProductCodeMappings[$fineOrg] . $code;
+            }
+            $code = substr($code, 0, 25);
             $product = new \Cpu_Client_Product(
                 $code, 1, $fine['balance'], $fineDesc ?: null
             );

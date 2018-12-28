@@ -1450,6 +1450,22 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $message = isset($loan->loanStatus->status)
                 ? $this->mapStatus($loan->loanStatus->status, $function) : '';
 
+            if (!isset($this->config['Loans']['renewalLimit'])
+                || (isset($loan->loanStatus->status)
+                && $this->isPermanentRenewalBlock($loan->loanStatus->status))
+            ) {
+                $renewLimit = null;
+                $renewals = null;
+            } else {
+                $renewLimit = $this->config['Loans']['renewalLimit'];
+                $renewals = max(
+                    [
+                        0,
+                        $renewLimit - $loan->remainingRenewals
+                    ]
+                );
+            }
+
             $trans = [
                 'id' => $loan->catalogueRecord->id,
                 'item_id' => $loan->id,
@@ -1457,12 +1473,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'duedate' => $loan->loanDueDate,
                 'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
                 'message' => $message,
-                'renewalCount' => max(
-                    [0,
-                        $this->config['Loans']['renewalLimit']
-                        - $loan->remainingRenewals]
-                ),
-                'renewalLimit' => $this->config['Loans']['renewalLimit']
+                'renewalCount' => $renewals,
+                'renewalLimit' => $renewLimit,
             ];
 
             $transList[] = $trans;
@@ -1545,7 +1557,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'fine' => $debt->debtType . ' - ' . $debt->debtNote,
                 'balance' => $amount,
                 'createdate' => $debt->debtDate,
-                'payableOnline' => true
+                'payableOnline' => true,
+                'organization' => $debt->organisation ?? ''
             ];
             if (!empty($debt->organisation)) {
                 $debt->organisation = $debt->organisation;
@@ -1651,7 +1664,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $statusAWS = $result->$functionResult->status;
 
         if ($statusAWS->type != 'ok') {
-            $message = $this->handleError($function, $statusAWS->message, $username);
+            $message = $this->handleError(
+                $function, $statusAWS->message, $patron['cat_username']
+            );
             if ($message == 'ils_connection_failed') {
                 throw new ILSException('ils_offline_status');
             }
@@ -2497,6 +2512,23 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             return $statuses[$status];
         }
         return $status;
+    }
+
+    /**
+     * Check if renewal is permanently blocked
+     *
+     * @param string $status Status as a string
+     *
+     * @return bool
+     */
+    protected function isPermanentRenewalBlock($status)
+    {
+        $blocks = [
+            'copyHasSpecialCircCat',
+            'copyIsReserved'
+        ];
+
+        return in_array($status, $blocks);
     }
 
     /**

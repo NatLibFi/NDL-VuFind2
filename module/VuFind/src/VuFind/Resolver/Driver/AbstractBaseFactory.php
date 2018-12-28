@@ -1,10 +1,10 @@
 <?php
 /**
- * Cache controller factory.
+ * Generic factory suitable for most resolver drivers.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) Villanova University 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,26 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Resolver_Drivers
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\Controller;
+namespace VuFind\Resolver\Driver;
 
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Cache controller factory.
+ * Generic factory suitable for most resolver drivers.
  *
  * @category VuFind
- * @package  Controller
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Resolver_Drivers
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class CacheControllerFactory implements FactoryInterface
+class AbstractBaseFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -58,13 +58,10 @@ class CacheControllerFactory implements FactoryInterface
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
-        }
+        $config = $container->get('VuFind\Config\PluginManager')->get('config');
         return new $requestedName(
-            $container,
-            $container->get('VuFind\DbTablePluginManager')->get('FinnaCache'),
-            $container->get('VuFindTheme\ThemeInfo')
+            $config->OpenURL->url,
+            ...($options ?: [])
         );
     }
 }

@@ -1041,10 +1041,12 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     protected function getItemCallNumber($item)
     {
         $result = [];
-        if (!empty($item['ccode'])) {
+        if (!empty($item['ccode'])
+            && !empty($this->config['Holdings']['display_ccode'])
+        ) {
             $result[] = $this->translateCollection(
                 $item['ccode'],
-                $item['ccode_description'] ?? null
+                $item['ccode_description'] ?? $item['ccode']
             );
         }
         if (!$this->groupHoldingsByLocation) {
@@ -1079,7 +1081,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected function getItemStatusesForBiblio($id, $patron = null)
     {
-        $holdings = null;
+        $holdings = [];
         if (!empty($this->config['Holdings']['use_holding_records'])) {
             list($code, $holdingsResult) = $this->makeRequest(
                 ['v1', 'biblios', $id, 'holdings'],
@@ -1203,10 +1205,12 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $i++;
                 $location = $this->getBranchName($holding['holdingbranch']);
                 $callnumber = '';
-                if (!empty($holding['ccode'])) {
+                if (!empty($holding['ccode'])
+                    && !empty($this->config['Holdings']['display_ccode'])
+                ) {
                     $callnumber = $this->translateCollection(
                         $holding['ccode'],
-                        $holding['ccode_description'] ?? null
+                        $holding['ccode_description'] ?? $holding['ccode']
                     );
                 }
 

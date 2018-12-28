@@ -128,6 +128,15 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
+     * Permanent renewal blocks
+     */
+    protected $permanentRenewalBlocks = [
+        'onsite_checkout',
+        'on_reserve',
+        'too_many'
+    ];
+
+    /**
      * Whether to display home branch instead of holding branch
      *
      * @var bool
@@ -440,24 +449,62 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      * by a specific patron.
      *
      * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
      *
      * @throws DateException
      * @throws ILSException
      * @return array        Array of the patron's transactions on success.
      */
-    public function getMyTransactions($patron)
+    public function getMyTransactions($patron, $params = [])
     {
-        $result = $this->makeRequest(
-            ['v1', 'checkouts', 'expanded'],
-            ['borrowernumber' => $patron['id']],
-            'GET',
-            $patron
-        );
-        if (empty($result)) {
-            return [];
+        if (!empty($this->config['Catalog']['checkoutsSupportPaging'])) {
+            $sort = explode(
+                ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
+            );
+            if ($sort[0] == 'checkout') {
+                $sortKey = 'issuedate';
+            } elseif ($sort[0] == 'title') {
+                $sortKey = 'title';
+            } else {
+                $sortKey = 'date_due';
+            }
+            $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
+
+            $pageSize = $params['limit'] ?? 50;
+            $queryParams = [
+                'borrowernumber' => $patron['id'],
+                'sort' => $sortKey,
+                'order' => $direction,
+                'offset' => isset($params['page'])
+                    ? ($params['page'] - 1) * $pageSize : 0,
+                'limit' => $pageSize
+            ];
+            $result = $this->makeRequest(
+                ['v1', 'checkouts', 'expanded', 'paged'],
+                $queryParams,
+                'GET',
+                $patron
+            );
+        } else {
+            $records = $this->makeRequest(
+                ['v1', 'checkouts', 'expanded'],
+                ['borrowernumber' => $patron['id']],
+                'GET',
+                $patron
+            );
+            $result = [
+                'total' => count($records),
+                'records' => $records
+            ];
+        }
+        if (empty($result['records'])) {
+            return [
+                'count' => 0,
+                'records' => []
+            ];
         }
         $transactions = [];
-        foreach ($result as $entry) {
+        foreach ($result['records'] as $entry) {
             list($biblionumber, $title, $volume)
                 = $this->getCheckoutInformation($entry);
 
@@ -473,11 +520,20 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             }
 
             $renewable = $entry['renewable'];
+            $renewals = $entry['renewals'];
+            $renewLimit = $entry['max_renewals'];
             $message = '';
             if (!$renewable) {
                 $message = $this->mapRenewalBlockReason(
                     $entry['renewability_error']
                 );
+                $permanent = in_array(
+                    $entry['renewability_error'], $this->permanentRenewalBlocks
+                );
+                if ($permanent) {
+                    $renewals = null;
+                    $renewLimit = null;
+                }
             }
 
             $transaction = [
@@ -490,8 +546,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                     'Y-m-d\TH:i:sP', $entry['date_due']
                 ),
                 'dueStatus' => $dueStatus,
-                'renew' => $entry['renewals'],
-                'renewLimit' => $entry['max_renewals'],
+                'renew' => $renewals,
+                'renewLimit' => $renewLimit,
                 'renewable' => $renewable,
                 'message' => $message
             ];
@@ -499,7 +555,10 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $transactions[] = $transaction;
         }
 
-        return $transactions;
+        return [
+            'count' => $result['total'],
+            'records' => $transactions
+        ];
     }
 
     /**
@@ -1133,8 +1192,9 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             if (empty($this->config['TransactionHistory']['enabled'])) {
                 return false;
             }
+            $limit = $this->config['TransactionHistory']['max_page_size'] ?? 100;
             return [
-                'max_results' => 100,
+                'max_results' => $limit,
                 'sort' => [
                     'checkout desc' => 'sort_checkout_date_desc',
                     'checkout asc' => 'sort_checkout_date_asc',
@@ -1145,7 +1205,24 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 ],
                 'default_sort' => 'checkout desc'
             ];
+        } elseif ('getMyTransactions' === $function) {
+            if (empty($this->config['Catalog']['checkoutsSupportPaging'])) {
+                return [];
+            }
+            $limit = $this->config['Loans']['max_page_size'] ?? 100;
+            return [
+                'max_results' => $limit,
+                'sort' => [
+                    'checkout desc' => 'sort_checkout_date_desc',
+                    'checkout asc' => 'sort_checkout_date_asc',
+                    'due desc' => 'sort_due_date_desc',
+                    'due asc' => 'sort_due_date_asc',
+                    'title asc' => 'sort_title'
+                ],
+                'default_sort' => 'due asc'
+            ];
         }
+
         return isset($this->config[$function])
             ? $this->config[$function] : false;
     }
@@ -1562,6 +1639,13 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                     default:
                         $statuses[] = !empty($reason['code'])
                             ? $reason['code'] : $status;
+                    }
+                } elseif (strncmp($key, 'ItemType::', 10) == 0) {
+                    $status = substr($key, 10);
+                    switch ($status) {
+                    case 'NotForLoan':
+                        $statuses[] = 'On Reference Desk';
+                        break;
                     }
                 }
             }
