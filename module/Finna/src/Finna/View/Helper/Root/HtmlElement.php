@@ -59,7 +59,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     protected $elementBase = [];
 
     /**
-     * Escaper escaper
+     * HTML escaper
      *
      * @var \Zend\Escaper\Escaper
      */
