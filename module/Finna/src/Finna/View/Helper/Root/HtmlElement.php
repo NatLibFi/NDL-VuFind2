@@ -59,9 +59,9 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     protected $elementBase = [];
 
     /**
-     * \Zend\Escaper\Escaper
+     * Escaper escaper
      *
-     * @var Escaper
+     * @var \Zend\Escaper\Escaper
      */
     protected $escaper;
 
@@ -74,7 +74,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
-     * Adds a base-element to $this->elementBase array
+     * Adds a base element to $this->elementBase array
      * identified by $identifier
      *
      * @param string $identifier key for the element in base data
@@ -88,7 +88,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
-     * Removes a base-element from $this->elementBase array
+     * Removes a base element from $this->elementBase array
      * identified by $identifier
      *
      * @param string $identifier key for the element to remove
@@ -108,6 +108,7 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
 
     /**
      * Escapes given values from an array
+     * escapeHtmlAttr
      *
      * @param array $array with escapable data
      *
@@ -145,11 +146,11 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
             throw new \OutOfBoundsException("Element $identifier not defined.");
         }
 
-        $baseData = ($hasBaseElement) ? $this->elementBase[$identifier] : [];
+        $baseData = $hasBaseElement ? $this->elementBase[$identifier] : [];
         $newData = $this->escapeAttributes($data);
 
         if ($hasBaseElement) {
-            $newData = $this->appendAttributes($baseData, $newData);
+            $newData = $this->combineAttributes($baseData, $newData);
         }
 
         return $this->stringifyAttributes($newData);
@@ -174,14 +175,14 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
-     * Function to add attributes to an existing element
+     * Function to combine attributes from 2 arrays
      *
      * @param array $baseAttributes base attributes of element
      * @param array $newAttributes  attributes for element
      *
      * @return array combined array to return
      */
-    protected function appendAttributes(
+    protected function combineAttributes(
         array $baseAttributes,
         array $newAttributes
     ) {
@@ -189,11 +190,18 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
             if (in_array($key, $this->booleanAttributes)
                 && strlen($value) === 0
             ) {
+                if (isset($baseAttributes[$key])) {
+                    unset($baseAttributes[$key]);
+                }
                 continue;
             }
 
-            $baseAttributes[$key] = isset($baseAttributes[$key])
+            if ($key !== 'class') {
+                $baseAttributes[$key] = $value;
+            } else {
+                $baseAttributes[$key] = isset($baseAttributes[$key])
                 ? $baseAttributes[$key] . " $value" : $value;
+            }
         }
 
         return $baseAttributes;
