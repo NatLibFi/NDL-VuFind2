@@ -120,7 +120,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             $serverHelper = $this->renderer->plugin('serverurl');
             $homeUrl = $serverHelper($this->url->fromRoute('home'));
 
-            $feed = $this->feedService->readFeed($id, $this->url, $homeUrl);
+            $feed = $this->feedService->readFeed($id, $homeUrl);
         } catch (\Exception $e) {
             return $this->formatResponse($e->getMessage(), self::STATUS_HTTP_ERROR);
         }
@@ -132,7 +132,13 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         }
 
         return $this->formatResponse(
-            $this->formatFeed($feed, $this->config, $this->renderer, $touchDevice)
+            $this->formatFeed(
+                $feed,
+                $this->config,
+                $this->renderer,
+                false,
+                $touchDevice
+            )
         );
     }
 }

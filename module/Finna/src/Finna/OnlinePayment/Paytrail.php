@@ -155,24 +155,19 @@ class Paytrail extends BaseHandler
         if (!isset($this->config->productCode)
             && !isset($this->config->transactionFeeProductCode)
             && !isset($this->config->productCodeMappings)
+            && !isset($this->config->organizationProductCodeMappings)
         ) {
             $module->setTotalAmount($amount + $transactionFee);
         } else {
             $productCode = !empty($this->config->productCode)
                 ? $this->config->productCode : '';
-            $productCodeMappings = [];
-            if (!empty($this->config->productCodeMappings)) {
-                foreach (explode(':', $this->config->productCodeMappings) as $item) {
-                    $parts = explode('=', $item, 2);
-                    if (count($parts) != 2) {
-                        continue;
-                    }
-                    $productCodeMappings[trim($parts[0])] = trim($parts[1]);
-                }
-            }
+            $productCodeMappings = $this->getProductCodeMappings();
+            $organizationProductCodeMappings
+                = $this->getOrganizationProductCodeMappings();
 
             foreach ($fines as $fine) {
                 $fineType = $fine['fine'] ?? '';
+                $fineOrg = $fine['organization'] ?? '';
 
                 if (isset($productCodeMappings[$fineType])) {
                     $code = $productCodeMappings[$fineType];
@@ -180,6 +175,9 @@ class Paytrail extends BaseHandler
                     $code = $productCode;
                 } else {
                     $code = $fineType;
+                }
+                if (isset($organizationProductCodeMappings[$fineOrg])) {
+                    $code = $organizationProductCodeMappings[$fineOrg] . $code;
                 }
                 $code = substr($code, 0, 16);
 

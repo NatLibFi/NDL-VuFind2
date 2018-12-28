@@ -1,10 +1,10 @@
 <?php
 /**
- * Cache controller factory.
+ * BrowZine cover loader factory
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) Villanova University 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,26 +20,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Content
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-namespace Finna\Controller;
+namespace VuFind\Content\Covers;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Cache controller factory.
+ * BrowZine cover loader factory
  *
  * @category VuFind
- * @package  Controller
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Content
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class CacheControllerFactory implements FactoryInterface
+class BrowZineFactory implements \Zend\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object
@@ -54,17 +53,16 @@ class CacheControllerFactory implements FactoryInterface
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
      * @throws ContainerException if any other error occurs
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
+            throw new \Exception('Unexpected options passed to factory.');
         }
-        return new $requestedName(
-            $container,
-            $container->get('VuFind\DbTablePluginManager')->get('FinnaCache'),
-            $container->get('VuFindTheme\ThemeInfo')
-        );
+        $backend = $container->get('VuFind\Search\BackendManager')->get('BrowZine');
+        return new $requestedName($backend->getConnector());
     }
 }
