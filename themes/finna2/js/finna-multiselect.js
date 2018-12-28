@@ -1,5 +1,4 @@
 /*global finna, VuFind*/
-
 finna.multiSelect = (function multiSelect(){
   var inputElement;
   var listItem;
@@ -29,9 +28,9 @@ finna.multiSelect = (function multiSelect(){
       var label = tempElement.find('label');
       var inputLabel = originalSelect.data('label');
       var ul = $(tempElement.find('ul'));
+      var completedAria = input.attr('aria-label') + " " + inputLabel;
 
       label.html(inputLabel);
-      var completedAria = input.attr('aria-label') + " " + inputLabel;
       tempElement.find('.multiselect-input').attr('aria-label', completedAria);
       root.append(tempElement);
       originalSelect.css('display', 'none');
@@ -87,6 +86,18 @@ finna.multiSelect = (function multiSelect(){
         e.preventDefault();
         addToFilters($(this));
         break;
+      case 8:
+        e.preventDefault();
+        continueWriting($(this), e.key);
+        break;
+      default:
+        if (isSpecialButton(keyCode)) {
+          return;
+        }
+
+        e.preventDefault();
+        continueWriting($(this), e.key);
+        break;
       }
     });
 
@@ -96,19 +107,61 @@ finna.multiSelect = (function multiSelect(){
 
     $('.multiselect-input').on("keyup", function keyboardLogic(e){
       var keyCode = e.which;
+
       switch (keyCode) {
       case 40:
         e.preventDefault();
         jumpToList($(this));
         break;
+      case 8:
+        filterOptions($(this));
+        break;
       case 9:
         break;
       default:
+        if (isSpecialButton(keyCode)) {
+          return;
+        }
         openList($(this));
         filterOptions($(this));
         break;
       }
     });
+  }
+
+  function isSpecialButton(keycode) {
+    switch (keycode) {
+    case 8:
+    case 9:
+    case 16:
+    case 17:
+    case 18:
+    case 20:
+    case 27:
+    case 32:
+    case 33:
+    case 34:
+    case 35:
+    case 36:
+    case 45:
+    case 46:
+    case 91:
+    case 112:
+    case 113:
+    case 114:
+    case 115:
+    case 116:
+    case 117:
+    case 118:
+    case 119:
+    case 120:
+    case 121:
+    case 122:
+    case 123:
+      return true;
+    default:
+      return false;
+    }
   }
 
   function nextItem(element) {
@@ -127,7 +180,20 @@ finna.multiSelect = (function multiSelect(){
     } else {
       element.parent().siblings('.multiselect-input').focus();
     }
-    
+  }
+
+  function continueWriting(element, eventKey) {
+    var inputArea = element.parent().siblings('.multiselect-input');
+    var value = inputArea.val();
+
+    if (eventKey === 'Backspace' && value.length > 0) {
+      value = value.substring(0, value.length - 1)
+    } else if (eventKey !== 'Backspace') {
+      value = value + eventKey;
+    }
+
+    inputArea.focus();
+    inputArea.val(value);
   }
 
   //We want to focus only on the first visible item
@@ -150,7 +216,6 @@ finna.multiSelect = (function multiSelect(){
       .find("li" + "[data-target='" + dataTarget + "']").removeClass('selected');
 
     element.siblings('.removed-selection').focus();
-
     element.remove();
   }
 
@@ -203,9 +268,8 @@ finna.multiSelect = (function multiSelect(){
   function closeList(element) {
     if (element.hasClass('open')) {
       element.removeClass('open');
-      var menu = element.find('.multiselect-dropdown-menu');
       element.find('.multiselect-input').attr('aria-expanded', 'false');
-      menu.hide();
+      element.find('.multiselect-dropdown-menu').hide();
     }
   }
 
