@@ -12,6 +12,7 @@ finna.multiSelect = (function multiSelect(){
       "<ul class=\"multiselect-dropdown-menu\">" +
       "</ul>" +
       "<div class=\"multiselect-selected\">" +
+      "<span class=\"removed-selection sr-only\" aria-label=\"" + VuFind.translate('selection_removed') + "\" tabindex=\"-1\"></span>" +
       "</div>" +
       "</div>";
     listItem = "<li data-target=\"\" tabindex=\"-1\"></li>";
@@ -148,14 +149,9 @@ finna.multiSelect = (function multiSelect(){
     parent.siblings('.multiselect-dropdown-menu')
       .find("li" + "[data-target='" + dataTarget + "']").removeClass('selected');
 
-    var siblings = element.siblings('button');
-    element.remove();
+    element.siblings('.removed-selection').focus();
 
-    if (siblings.length) {
-      siblings.first().focus();
-    } else {
-      parent.siblings('.multiselect-input').focus();
-    }
+    element.remove();
   }
 
   function addToFilters(element) {
