@@ -145,12 +145,12 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
         if ($identifierSet && !$hasBaseElement) {
             throw new \OutOfBoundsException("Element $identifier not defined.");
         }
-        
+
         $newData = $this->escapeAttributes($data);
 
         if ($hasBaseElement) {
             $newData = $this->combineAttributes(
-                $this->elementBase[$identifier], 
+                $this->elementBase[$identifier],
                 $newData
             );
         }
