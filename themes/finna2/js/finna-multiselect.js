@@ -6,7 +6,7 @@ finna.multiSelect = (function multiSelect(){
   var selectedItem;
 
   function initTemplates() {
-    inputElement = "<div aria-label=\"testi\" class=\"multiselect-dropdown\">" +
+    inputElement = "<div class=\"multiselect-dropdown\">" +
       "<label for=\"\"></label>" +
       "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"" + VuFind.translate('add_selection') + "\" class=\"form-control multiselect-input\" type=\"text\">" +
       "<ul class=\"multiselect-dropdown-menu\">" +
@@ -15,7 +15,7 @@ finna.multiSelect = (function multiSelect(){
       "</div>" +
       "</div>";
     listItem = "<li data-target=\"\" tabindex=\"-1\"></li>";
-    selectedItem = "<button class=\"multiselect-filter\" data-target=\"\" type=\"button\" title=\"" + VuFind.translate('remove_selection') + "\"></button>";
+    selectedItem = "<button class=\"multiselect-selection\" data-target=\"\" type=\"button\" title=\"" + VuFind.translate('remove_selection') + "\"></button>";
   }
 
   function initFields() {
@@ -55,7 +55,7 @@ finna.multiSelect = (function multiSelect(){
     });
 
     //Dynamically during runtime created elements needs an external listener
-    $(document).on('click', '.multiselect-filter', function removeFilter(){
+    $(document).on('click', '.multiselect-selection', function removeFilter(){
       removeFromSelected($(this));
     });
 
@@ -131,17 +131,12 @@ finna.multiSelect = (function multiSelect(){
 
   //We want to focus only on the first visible item
   function jumpToList(element) {
-    var visible = getVisibleObjects(element);
+    var menu = element.siblings("ul.multiselect-dropdown-menu").first();
+    var visible = menu.children(':visible');
 
     if (visible.length) {
       visible.first().focus();
     }
-  }
-
-  //Find all the visible items in the dropdown
-  function getVisibleObjects(element) {
-    var menu = element.siblings("ul.multiselect-dropdown-menu").first();
-    return menu.children(':visible');
   }
 
   //Removes the given selected element
