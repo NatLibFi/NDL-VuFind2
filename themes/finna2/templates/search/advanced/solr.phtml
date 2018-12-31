@@ -30,19 +30,34 @@
       <fieldset class="well limit-to facets">
         <legend class="sr-only"><?=$this->transEsc('Limit To')?></legend>
         <div class="facet-container">
+          <?php
+          $this->htmlElement()->addAttributeTemplate('finna-multiselect', [
+            'class' => 'finna-multiselect form-control',
+            'name' => 'filter[]',
+            'multiple' => 'multiple'
+          ]);
+          ?>
           <?php foreach ($this->facetList as $field => $list): ?>
             <div class="facet">
               <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
-                <select
-                  data-label="<?=$this->transEsc($list['label'])?>"
-                  class="finna-multiselect form-control" 
-                  id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>" 
-                  name="filter[]"
-                  multiple>
+                <?php
+                $multiSelect = [
+                  'data-label' => $this->translate($list['label']),
+                  'id' => 'limit_' . str_replace(' ', '', $field)
+                ];
+                ?>
+                <select <?= $this->htmlElement()->getAttributes($multiSelect, 'finna-multiselect') ?>>
                   <?php if (is_array($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
                     <?php foreach ($list['list'] as $value): ?>
-                      <?php $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']); ?>
-                      <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
+                      <?php
+                      $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']);
+                      
+                      $listAttributes = [
+                        'value' => ($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"',
+                        'selected' => (isset($value['selected']) && $value['selected'])? 'selected' : ''
+                      ];
+                      ?>
+                      <option <?= $this->htmlElement()->getAttributes($listAttributes); ?>><?=$display?></option>
                     <?php endforeach; ?>
                   <?php else: ?>
                     <?php
