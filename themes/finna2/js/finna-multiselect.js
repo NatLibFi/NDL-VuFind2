@@ -7,7 +7,6 @@ finna.multiSelect = (function multiSelect(){
   function initTemplates() {
     inputElement = "<div class=\"multiselect-dropdown\">" +
       "<label></label>" +
-      "<span></span>" +
       "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"" + VuFind.translate('add_selection') + "\" class=\"form-control multiselect-input\" type=\"text\">" +
       "<ul class=\"multiselect-dropdown-menu\">" +
       "</ul>" +
