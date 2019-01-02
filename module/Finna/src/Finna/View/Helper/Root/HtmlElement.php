@@ -119,6 +119,11 @@ class HtmlElement extends \Zend\View\Helper\AbstractHelper
         $escaped = [];
 
         foreach ($array as $key => $value) {
+            if (in_array($key, $this->booleanAttributes)
+                && strlen($value) === 0
+            ) {
+                continue;
+            }
             $escaped[$key]
                 = $value ? $this->escaper->escapeHtmlAttr($value) : $value;
         }
