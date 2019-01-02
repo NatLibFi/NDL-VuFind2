@@ -6,7 +6,8 @@ finna.multiSelect = (function multiSelect(){
 
   function initTemplates() {
     inputElement = "<div class=\"multiselect-dropdown\">" +
-      "<label for=\"\"></label>" +
+      "<label></label>" +
+      "<span></span>" +
       "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"" + VuFind.translate('add_selection') + "\" class=\"form-control multiselect-input\" type=\"text\">" +
       "<ul class=\"multiselect-dropdown-menu\">" +
       "</ul>" +
@@ -14,28 +15,23 @@ finna.multiSelect = (function multiSelect(){
       "<span class=\"removed-selection sr-only\" aria-label=\"" + VuFind.translate('selection_removed') + "\" tabindex=\"-1\"></span>" +
       "</div>" +
       "</div>";
-    listItem = "<li data-target=\"\" tabindex=\"-1\"></li>";
+    listItem = "<li class=\"checkboxFilter\" data-inner=\"\" data-target=\"\" tabindex=\"-1\"><input tabindex=\"-1\" type=\"checkbox\" class=\"checkbox\"></li>";
     selectedItem = "<button class=\"multiselect-selection\" data-target=\"\" type=\"button\" title=\"" + VuFind.translate('remove_selection') + "\"></button>";
   }
 
   function initFields() {
     initTemplates();
     $('.finna-multiselect').each(function createDropdowns(){
-      var originalSelect = $(this);
-      var root = $(this).parent();
       var tempElement = $(inputElement).clone();
-      var input = tempElement.find('.multiselect-input');
-      var label = tempElement.find('label');
-      var inputLabel = originalSelect.data('label');
-      var ul = $(tempElement.find('ul'));
-      var completedAria = input.attr('aria-label') + " " + inputLabel;
+      var inputLabel = $(this).data('label');
+      var completedAria = tempElement.find('.multiselect-input').attr('aria-label') + " " + inputLabel;
 
-      label.html(inputLabel);
+      tempElement.find('label').html(inputLabel);
       tempElement.find('.multiselect-input').attr('aria-label', completedAria);
-      root.append(tempElement);
-      originalSelect.css('display', 'none');
-      originalSelect.prependTo(tempElement);
-      initListItems(originalSelect, ul);
+      $(this).parent().append(tempElement);
+      $(this).css('display', 'none');
+      $(this).prependTo(tempElement);
+      initListItems($(this), $(tempElement.find('ul')));
     });
     initKeyBindings();
   }
@@ -84,7 +80,7 @@ finna.multiSelect = (function multiSelect(){
         break;
       case 13:
         e.preventDefault();
-        addToFilters($(this));
+        onListElementClick($(this));
         break;
       case 8:
         e.preventDefault();
@@ -102,7 +98,7 @@ finna.multiSelect = (function multiSelect(){
     });
 
     $('.multiselect-dropdown-menu li').on('click', function clickItem(){
-      addToFilters($(this), true);
+      onListElementClick($(this));
     });
 
     $('.multiselect-input').on("keyup", function keyboardLogic(e){
@@ -164,8 +160,16 @@ finna.multiSelect = (function multiSelect(){
     }
   }
 
+  function onListElementClick(element) {
+    if (!element.hasClass('selected')) {
+      addToFilters(element);
+    } else {
+      removeFromListClick(element);
+    }
+  }
+
   function nextItem(element) {
-    var nextAvailable = $(element).nextAll('li:visible');
+    var nextAvailable = $(element).nextAll(':visible');
 
     if (nextAvailable.length) {
       nextAvailable.first().focus();
@@ -173,7 +177,7 @@ finna.multiSelect = (function multiSelect(){
   }
 
   function previousItem(element) {
-    var previousAvailable = $(element).prevAll('li:visible');
+    var previousAvailable = $(element).prevAll(':visible');
 
     if (previousAvailable.length) {
       previousAvailable.first().focus();
@@ -198,39 +202,55 @@ finna.multiSelect = (function multiSelect(){
 
   //We want to focus only on the first visible item
   function jumpToList(element) {
-    var menu = element.siblings("ul.multiselect-dropdown-menu").first();
-    var visible = menu.children(':visible');
+    var visible = element.siblings("ul.multiselect-dropdown-menu").first().children(':visible');
 
     if (visible.length) {
       visible.first().focus();
     }
   }
 
+  function removeFromListClick(element) {
+    var dataTarget = element.attr('data-target');
+    var parent = element.parent();
+
+    parent.siblings('select').find("option" + "[data-id='" + dataTarget + "']").removeAttr('selected');
+    parent.siblings('.multiselect-selected').find("button" + "[data-target='" + dataTarget + "']").remove();
+    element.removeClass('selected');
+    element.children('.checkbox').prop('checked', false);
+  }
+
   //Removes the given selected element
   function removeFromSelected(element) {
     var dataTarget = element.attr('data-target');
     var originalSelect = element.parent().siblings('select');
-    var parent = element.parent();
-    originalSelect.find("option" + "[value='" + dataTarget + "']").removeAttr('selected');
-    parent.siblings('.multiselect-dropdown-menu')
-      .find("li" + "[data-target='" + dataTarget + "']").removeClass('selected');
+    var liElement = element.parent().siblings('.multiselect-dropdown-menu')
+      .find("li" + "[data-target='" + dataTarget + "']");
 
+    originalSelect.find("option" + "[data-id='" + dataTarget + "']").removeAttr('selected');
+    liElement.removeClass('selected');
+    liElement.children('.checkbox').prop('checked', false);
     element.siblings('.removed-selection').focus();
     element.remove();
   }
 
   function addToFilters(element) {
+    if (element.hasClass('selected')) {
+      return;
+    }
+
     var tempButton = $(selectedItem).clone();
     var selectedArea = element.parent().siblings('.multiselect-selected');
     var originalSelect = element.parent().siblings('select');
     var dataTarget = element.attr('data-target');
+    var htmlTrimmed = element.html().replace(/&nbsp;/g, '');
 
     element.addClass('selected');
-    tempButton.html(element.html());
+    element.children('.checkbox').prop('checked', true);
+    tempButton.html(htmlTrimmed);
+    tempButton.find('.checkbox').remove();
     tempButton.attr('data-target', dataTarget);
-    originalSelect.find("option[value='" + dataTarget + "']").attr('selected', true);
+    originalSelect.find("option[data-id=" + dataTarget + "]").attr('selected', true);
     selectedArea.append(tempButton);
-    element.parent().siblings('.multiselect-input').focus();
   }
 
   function filterOptions(element) {
@@ -243,9 +263,9 @@ finna.multiSelect = (function multiSelect(){
       });
     } else {
       menu.children().each(function filterMatches(){
-        var lowerCase = $(this).html().toLowerCase();
+        var innerHtml = $(this).attr('data-inner');
 
-        if (lowerCase.indexOf(value) < 0) {
+        if (innerHtml.indexOf(value) < 0) {
           $(this).hide();
         } else if ($(this).is(':hidden')) {
           $(this).show();
@@ -274,13 +294,18 @@ finna.multiSelect = (function multiSelect(){
   }
 
   function initListItems(select, ul) {
+    var i = 0;
     select.children('option').each(function createList(){
       var listCopy = $(listItem).clone();
-      listCopy.html($(this).html());
-      listCopy.attr('data-target', $(this).val());
+      listCopy.append($(this).html());
+      $(this).attr('data-id', i);
+      listCopy.attr('data-target', i++);
+      listCopy.attr('data-inner', $(this).html().toLowerCase());
       ul.append(listCopy);
       var attr = $(this).attr('selected');
+
       if (typeof attr !== "undefined" && attr !== false) {
+        listCopy.find('.checkbox').attr('checked', true);
         addToFilters(listCopy);
       }
     });

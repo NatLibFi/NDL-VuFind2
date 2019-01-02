@@ -303,14 +303,20 @@ ol {
     }
     >li {
       border-bottom: none;
-      padding: 2px 4px;
+      padding: 6px 4px;
       border-radius: 0;
       cursor: pointer;
+      .checkbox {
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 4px;
+        cursor: pointer;
+      }
       &:focus {
         background-color: lightgray;
       }
       &.selected {
-        display: none !important;
+
       }
     }
   }
