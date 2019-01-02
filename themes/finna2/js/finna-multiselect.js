@@ -11,6 +11,7 @@ finna.multiSelect = (function multiSelect(){
       "<ul class=\"multiselect-dropdown-menu\">" +
       "</ul>" +
       "<div class=\"multiselect-selected\">" +
+      "<span class=\"removed-header\">" + VuFind.translate('none_selected') + "</span>" +
       "<span class=\"removed-selection sr-only\" aria-label=\"" + VuFind.translate('selection_removed') + "\" tabindex=\"-1\"></span>" +
       "</div>" +
       "</div>";
@@ -138,6 +139,8 @@ finna.multiSelect = (function multiSelect(){
     case 34:
     case 35:
     case 36:
+    case 37:
+    case 39:
     case 45:
     case 46:
     case 91:
@@ -211,11 +214,14 @@ finna.multiSelect = (function multiSelect(){
   function removeFromListClick(element) {
     var dataTarget = element.attr('data-target');
     var parent = element.parent();
+    var root = element.closest('.multiselect-dropdown');
+    var amount = parent.siblings('.multiselect-selected').children('button').length;
 
     parent.siblings('select').find("option" + "[data-id='" + dataTarget + "']").removeAttr('selected');
     parent.siblings('.multiselect-selected').find("button" + "[data-target='" + dataTarget + "']").remove();
     element.removeClass('selected');
     element.children('.checkbox').prop('checked', false);
+    setNoneSelected(root, amount - 1);
   }
 
   //Removes the given selected element
@@ -224,12 +230,23 @@ finna.multiSelect = (function multiSelect(){
     var originalSelect = element.parent().siblings('select');
     var liElement = element.parent().siblings('.multiselect-dropdown-menu')
       .find("li" + "[data-target='" + dataTarget + "']");
+    var root = element.closest('.multiselect-dropdown');
+    var amount = element.siblings('button').length;
 
     originalSelect.find("option" + "[data-id='" + dataTarget + "']").removeAttr('selected');
     liElement.removeClass('selected');
     liElement.children('.checkbox').prop('checked', false);
     element.siblings('.removed-selection').focus();
     element.remove();
+    setNoneSelected(root, amount);
+  }
+
+  function setNoneSelected(element, amount) {
+    if (amount === 0) {
+      element.find('.removed-header').show();
+    } else {
+      element.find('.removed-header').hide();
+    }
   }
 
   function addToFilters(element) {
@@ -241,7 +258,9 @@ finna.multiSelect = (function multiSelect(){
     var selectedArea = element.parent().siblings('.multiselect-selected');
     var originalSelect = element.parent().siblings('select');
     var dataTarget = element.attr('data-target');
-    var htmlTrimmed = element.html().replace(/&nbsp;/g, '');
+    var htmlTrimmed = element.attr('data-inner').replace(/&nbsp;/g, '');
+    var root = element.closest('.multiselect-dropdown');
+    var amount = selectedArea.children('button').length;
 
     element.addClass('selected');
     element.children('.checkbox').prop('checked', true);
@@ -250,6 +269,7 @@ finna.multiSelect = (function multiSelect(){
     tempButton.attr('data-target', dataTarget);
     originalSelect.find("option[data-id=" + dataTarget + "]").attr('selected', true);
     selectedArea.append(tempButton);
+    setNoneSelected(root, amount + 1);
   }
 
   function filterOptions(element) {
