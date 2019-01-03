@@ -63,6 +63,20 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     protected $groupHoldingsByLocation;
 
     /**
+     * Priority settings for the order of branches or branch/location combinations
+     *
+     * @var array
+     */
+    protected $holdingsBranchOrder;
+
+    /**
+     * Priority settings for the order of locations (in branches)
+     *
+     * @var array
+     */
+    protected $holdingsLocationOrder;
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -79,6 +93,23 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             = isset($this->config['Holdings']['group_by_location'])
             ? $this->config['Holdings']['group_by_location']
             : '';
+
+        if (isset($this->config['Holdings']['holdings_branch_order'])) {
+            $values = explode(
+                ':', $this->config['Holdings']['holdings_branch_order']
+            );
+            foreach ($values as $i => $value) {
+                $parts = explode('=', $value, 2);
+                $idx = $parts[1] ?? $i;
+                $this->holdingsBranchOrder[$parts[0]] = $idx;
+            }
+        }
+
+        $this->holdingsLocationOrder
+            = isset($this->config['Holdings']['holdings_location_order'])
+            ? explode(':', $this->config['Holdings']['holdings_location_order'])
+            : [];
+        $this->holdingsLocationOrder = array_flip($this->holdingsLocationOrder);
     }
 
     /**
@@ -959,6 +990,30 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
+     * Check if patron belongs to staff.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @return bool True if patron is staff, false if not
+     */
+    public function getPatronStaffAuthorizationStatus($patron)
+    {
+        $username = $patron['cat_username'];
+        if ($this->sessionCache->patron != $username) {
+            if (!$this->renewPatronCookie($patron)) {
+                return false;
+            }
+        }
+
+        return !empty(
+            array_intersect(
+                ['superlibrarian', 'catalogue'],
+                $this->sessionCache->patronPermissions
+            )
+        );
+    }
+
+    /**
      * Return summary of holdings items.
      *
      * @param array $holdings Parsed holdings items
@@ -1060,8 +1115,12 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             || !empty($item['itemcallnumber_display']))
             && !empty($this->config['Holdings']['display_full_call_number'])
         ) {
-            $result[] = !empty($item['itemcallnumber_display'])
-                ? $item['itemcallnumber_display'] : $item['itemcallnumber'];
+            if (!empty($this->config['Holdings']['use_non_display_call_number'])) {
+                $result[] = $item['itemcallnumber'];
+            } else {
+                $result[] = !empty($item['itemcallnumber_display'])
+                    ? $item['itemcallnumber_display'] : $item['itemcallnumber'];
+            }
         }
         $str = implode(', ', $result);
         return $str;
@@ -1146,6 +1205,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $location = $this->getItemLocationName($item);
             $callnumber = $this->getItemCallNumber($item);
             $sublocation = $item['sub_description'] ?? '';
+            $branchId = (!$this->useHomeBranch && null !== $item['holdingbranch'])
+                ? $item['holdingbranch'] : $item['homebranch'];
+            $locationId = $item['location'];
 
             $entry = [
                 'id' => $id,
@@ -1163,7 +1225,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'sort' => $i,
                 'requests_placed' => max(
                     [$item['hold_queue_length'], $result[0]['hold_queue_length']]
-                )
+                ),
+                'branchId' => $branchId,
+                'locationId' => $locationId
             ];
             if (!empty($item['itemnotes'])) {
                 $entry['item_notes'] = [$item['itemnotes']];
@@ -1239,6 +1303,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $callnumber .= ' ' . $holding['callnumber'];
                 }
                 $callnumber = trim($callnumber);
+                $branchId = $holding['holdingbranch'];
+                $locationId = $holding['location'];
 
                 $entry = [
                     'id' => $id,
@@ -1251,7 +1317,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     'duedate' => '',
                     'barcode' => '',
                     'callnumber' => $callnumber,
-                    'sort' => $i
+                    'sort' => $i,
+                    'branchId' => $branchId,
+                    'locationId' => $locationId
                 ];
                 $entry += $holdingData;
 
@@ -1469,26 +1537,37 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Check if patron belongs to staff.
+     * Status item sort function
      *
-     * @param array $patron The patron array from patronLogin
+     * @param array $a First status record to compare
+     * @param array $b Second status record to compare
      *
-     * @return bool True if patron is staff, false if not
+     * @return int
      */
-    public function getPatronStaffAuthorizationStatus($patron)
+    protected function statusSortFunction($a, $b)
     {
-        $username = $patron['cat_username'];
-        if ($this->sessionCache->patron != $username) {
-            if (!$this->renewPatronCookie($patron)) {
-                return false;
-            }
+        $orderA = $this->holdingsBranchOrder[$a['branchId'] . '/' . $a['locationId']]
+            ?? $this->holdingsBranchOrder[$a['branchId']]
+            ?? 999;
+        $orderB = $this->holdingsBranchOrder[$b['branchId'] . '/' . $b['locationId']]
+            ?? $this->holdingsBranchOrder[$b['branchId']]
+            ?? 999;
+        $result = $orderA - $orderB;
+
+        if (0 === $result) {
+            $orderA = $this->holdingsLocationOrder[$a['locationId']] ?? 999;
+            $orderB = $this->holdingsLocationOrder[$b['locationId']] ?? 999;
+            $result = $orderA - $orderB;
         }
 
-        return !empty(
-            array_intersect(
-                ['superlibrarian', 'catalogue'],
-                $this->sessionCache->patronPermissions
-            )
-        );
+        if (0 === $result) {
+            $result = strcmp($a['location'], $b['location']);
+        }
+
+        if (0 === $result) {
+            $result = $a['sort'] - $b['sort'];
+        }
+
+        return $result;
     }
 }
