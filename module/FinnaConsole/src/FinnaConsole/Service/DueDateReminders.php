@@ -349,6 +349,13 @@ class DueDateReminders extends AbstractService
             $todayTime = new \DateTime();
             try {
                 $loans = $this->catalog->getMyTransactions($patron);
+                // Support also older driver return value:
+                if (!isset($loans['count'])) {
+                    $loans = [
+                        'count' => count($loans),
+                        'records' => $loans
+                    ];
+                }
             } catch (\Exception $e) {
                 $this->err(
                     "Exception trying to get loans for user {$user->username}"
@@ -359,7 +366,7 @@ class DueDateReminders extends AbstractService
                 );
                 continue;
             }
-            foreach ($loans as $loan) {
+            foreach ($loans['records'] as $loan) {
                 $dueDate = new \DateTime($loan['duedate']);
                 $dayDiff = $dueDate->diff($todayTime)->days;
                 if ($todayTime >= $dueDate
@@ -382,6 +389,7 @@ class DueDateReminders extends AbstractService
                     $title = $loan['title']
                         ?? null;
 
+                    $record = null;
                     if (isset($loan['id'])) {
                         $record = $this->recordLoader->load(
                             $loan['id'], 'Solr', true
@@ -520,20 +528,37 @@ class DueDateReminders extends AbstractService
         }
         $message = $this->viewRenderer
             ->render('Email/due-date-reminder.phtml', $params);
-        try {
-            $to = $user->email;
-            $from = $this->currentSiteConfig['Site']['email'];
-            $this->serviceManager->get('VuFind\Mailer')->send(
-                $to, $from, $subject, $message
-            );
-        } catch (\Exception $e) {
-            $this->err(
-                "Failed to send due date reminders to user {$user->username} "
-                    . " (id {$user->id})",
-                'Failed to send due date reminders to a user'
-            );
-            $this->err('   ' . $e->getMessage());
-            return false;
+        for ($attempt = 1; $attempt <= 2; $attempt++) {
+            try {
+                $to = $user->email;
+                $from = $this->currentSiteConfig['Site']['email'];
+                $this->serviceManager->get('VuFind\Mailer')->send(
+                    $to,
+                    $from,
+                    $subject,
+                    $message
+                );
+            } catch (\Exception $e) {
+                if ($attempt === 1) {
+                    // Reset connection and try again
+                    $this->warn('First attempt at sending email failed');
+                    try {
+                        $this->serviceManager->get('VuFind\Mailer')->getTransport()
+                            ->disconnect();
+                    } catch (\Exception $e) {
+                        // Do nothing
+                    }
+                    continue;
+                }
+                $this->err(
+                    "Failed to send due date reminders to user {$user->username} "
+                        . " (id {$user->id})",
+                    'Failed to send due date reminders to a user'
+                );
+                $this->err('   ' . $e->getMessage());
+                return false;
+            }
+            break;
         }
 
         foreach ($remindLoans as $loan) {
