@@ -315,14 +315,29 @@ ol {
       &:focus {
         background-color: lightgray;
       }
-      &.selected {
-
-      }
     }
   }
 
   >.multiselect-input {
-    width: 100%;
+    max-width: 80%;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    display: inline-block;
+  }
+
+  >.caret {
+    display: inline-block;
+    line-height: 1.5;
+    font-size: 14px;
+    height: 35px;
+    background-color: lightgray;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    vertical-align: middle;
+    padding: 6px 1px;
   }
 
   >.multiselect-selected {

@@ -8,6 +8,7 @@ finna.multiSelect = (function multiSelect(){
     inputElement = "<div class=\"multiselect-dropdown\">" +
       "<label></label>" +
       "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"" + VuFind.translate('add_selection') + "\" class=\"form-control multiselect-input\" type=\"text\">" +
+      "<span class=\"caret\"></span>" +
       "<ul class=\"multiselect-dropdown-menu\">" +
       "</ul>" +
       "<div class=\"multiselect-selected\">" +
@@ -44,6 +45,10 @@ finna.multiSelect = (function multiSelect(){
         e.preventDefault();
         //Do not submit form on enter press
       }
+    });
+
+    $('.multiselect-dropdown .caret').on('click', function toggleList(){
+      $(this).siblings('.multiselect-input').focus();
     });
 
     $('.multiselect-input').focusin(function showList(){
@@ -184,12 +189,12 @@ finna.multiSelect = (function multiSelect(){
     if (previousAvailable.length) {
       previousAvailable.first().focus();
     } else {
-      element.parent().siblings('.multiselect-input').focus();
+      element.closest('.multiselect-dropdown').find('.multiselect-input').focus();
     }
   }
 
   function continueWriting(element, eventKey) {
-    var inputArea = element.parent().siblings('.multiselect-input');
+    var inputArea = element.closest('.multiselect-dropdown').find('.multiselect-input');
     var value = inputArea.val();
 
     if (eventKey === 'Backspace' && value.length > 0) {
