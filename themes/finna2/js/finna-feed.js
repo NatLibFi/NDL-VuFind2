@@ -170,10 +170,16 @@ finna.feed = (function finnaFeed() {
             // Text hover for touch devices
             if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
               $('.carousel-text').css('padding-bottom', '30px');
-              holder.find('.slick-slide a').click(function onClickSlideLink(/*event*/) {
-                if (!$(this).closest('.slick-slide').hasClass('clicked')) {
-                  $(this).closest('.slick-slide').addClass('clicked');
+              holder.find('.slick-slide a, .slick-slide').click(function onClickSlideLink(/*event*/) {
+                var closestSlide = $(this).closest('.slick-slide');
+                if (!closestSlide.hasClass('clicked')) {
+                  closestSlide.addClass('clicked');
                   return false;
+                }
+              });
+              holder.find('.slick-slide').on('focusout', function removeClicked(/*event*/){
+                if ($(this).has(event.relatedTarget).length === 0) {
+                  $(this).removeClass('clicked');
                 }
               });
               if (navigator.userAgent.match(/iemobile/i)) {
@@ -190,7 +196,7 @@ finna.feed = (function finnaFeed() {
 
           // Bind lightbox if feed content is shown in modal
           if (typeof settings.modal !== 'undefined' && settings.modal) {
-            holder.find('a').click(function onClockHolderLink() {
+            holder.find('a').click(function onClickHolderLink() {
               $('#modal').addClass('feed-content');
             });
             VuFind.lightbox.bind(holder);
@@ -213,6 +219,8 @@ finna.feed = (function finnaFeed() {
       dots: settings.dots,
       swipe: !settings.vertical,
       infinite: true,
+      prevArrow: '<button class="slick-prev" aria-label=' + VuFind.translate("Prev") + ' type="button">' + VuFind.translate("Prev") + '</button>',
+      nextArrow: '<button class="slick-next" aria-label=' + VuFind.translate("Next") + ' type="button">' + VuFind.translate("Next") + '</button>',
       touchThreshold: 8,
       autoplay: autoplay !== 0,
       autoplaySpeed: autoplay,
