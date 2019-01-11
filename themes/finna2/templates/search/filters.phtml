@@ -36,7 +36,7 @@
 
           $isonlineFacet = ('unrecognized_facet_label' === $field && in_array($value['field'], ['online_boolean', 'free_online_boolean']));
         ?>
-          <?php if ($index !== 0): ?>
+          <?php if ($index !== 0 || $operatorLabel === 'NOT'): ?>
             <span class="filters-term <?= $operatorClass ?>"><?= $operatorLabel ?></span>
           <?php endif; ?>
           <span class="filter-value <?= $operatorClass ?>">

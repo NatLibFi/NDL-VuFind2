@@ -885,7 +885,6 @@ finna.layout = (function finnaLayout() {
   }
 
   function initFiltersToggle () {
-    //Lets truncate stuff
     if ($(window).width() <= 991) {
       $('.finna-filters .filters').addClass('hidden');
     }
