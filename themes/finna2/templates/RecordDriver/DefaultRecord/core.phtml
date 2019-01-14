@@ -197,7 +197,6 @@
             <?php foreach($results as $index => $author): ?>
             <?php
             $mark = $index > 0 ? '; ' : '';
-
             $authorLink = $this->record($this->driver)->getLink('author', $author['name']);
             $authorName = $this->escapeHtml($author['name']);
 
