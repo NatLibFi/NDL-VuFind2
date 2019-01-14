@@ -36,28 +36,9 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?>">
 
-      <?php if (!empty($videoUrls)): ?>
-        <div class="recordURLs local-available-online-record">
-          <div class="truncate-field">
-              <?php foreach ($videoUrls as $url): ?>
-                <?php
-                  $renderedURLs[] = $url['url'];
-                  $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
-                 ?>
-                <div class="video-link-container">
-                  <a class="fulltext videourl" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
-                    <?php if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<?php endif; ?>
-                    <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
-                    <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-                  >
-                    <div class="video-icon"><i class="fa fa-lg fa-play-circle"></i></div>
-                    <div class="video-desc"><?=$this->transEsc('default::link_' . $desc, null, $desc) ?></div>
-                  </a>
-                </div>
-              <?php endforeach; ?>
-          </div>
-        </div>
-      <?php endif; ?>
+    <?php if (!empty($videoUrls)): ?>
+      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
+    <?php endif; ?>
 
     <div class="image-information">
       <div class="cover-wrapper">

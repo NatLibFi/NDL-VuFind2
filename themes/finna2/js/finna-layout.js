@@ -775,7 +775,7 @@ finna.layout = (function finnaLayout() {
   function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
-    container.find('a[data-embed-iframe]').click(function onClickEmbedLink(e) {
+    container.find('button[data-embed-iframe]').click(function onClickEmbedLink(e) {
       if (typeof $.magnificPopup.instance !== 'undefined' && $.magnificPopup.instance.isOpen) {
         // Close existing popup (such as image-popup) first without delay so that its
         // state doesn't get confused by the immediate reopening.
@@ -817,7 +817,7 @@ finna.layout = (function finnaLayout() {
   function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
-    container.find('a[data-embed-video]').click(function onClickVideoLink(e) {
+    container.find('button[data-embed-video]').click(function onClickVideoLink(e) {
       var videoSources = $(this).data('videoSources');
       var posterUrl = $(this).data('posterUrl');
       $.magnificPopup.open({

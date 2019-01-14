@@ -1,0 +1,41 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/record-video-player.phtml -->
+<?php
+  $videoElementBase = [
+    'class' => 'videourl fulltext btn btn-primary',
+    'target' => '_blank',
+    'type' => 'button'
+  ];
+  $this->htmlElement()->addAttributeTemplate('video-base', $videoElementBase);
+?>
+<div class="video-accordion">
+  <?php foreach ($videoUrls as $url): ?>
+    <?php
+    $embeddedVideo = $this->recordLink()->getEmbeddedVideo($url['url']);
+    $description = $url['desc'] ?? $this->truncateUrl($url['url']);
+    $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $description;
+    $currentVideo = [
+      'href' => $this->proxyUrl($url['url']),
+      'title' => $url['url'],
+    ];
+
+    if (!empty($embeddedVideo)) {
+      $currentVideo[$embeddedVideo] = '';
+    }
+
+    if (!empty($url['videoSources'])) {
+      $currentVideo['data-video-sources'] = json_encode($url['videoSources']);
+    }
+
+    if (!empty($url['embed']) && $url['embed'] === 'video') {
+      $currentVideo['data-embed-video'] = '';
+    }
+    ?>
+    <div class="video-link-container">
+      <button <?=$this->htmlElement()->getAttributes($currentVideo, 'video-base');?>>
+        <i class="fa fa-play-circle"></i>
+        <?=$this->escapeHtml($desc)?>
+      </button>
+    </div>
+  <?php endforeach; ?>
+</div>
+<!-- END of: finna - RecordDriver/DefaultRecord/record-video-player.phtml -->
