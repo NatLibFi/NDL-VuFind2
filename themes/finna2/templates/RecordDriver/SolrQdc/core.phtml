@@ -101,12 +101,17 @@
 <?php ob_end_clean(); ?>
 <?php $this->headScript()->appendFile("finna-record.js"); ?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+  <?php
+  $shortTitle = $this->escapeHtml($this->driver->getShortTitle());
+  $subTitle = $this->driver->getSubtitle();
+  $subTitle = $subTitle ? '&nbsp;: ' . $this->escapeHtml($subTitle) : '';
+  ?>
+  <h1 property="name" class="record-title visible-xs"><?=$shortTitle?><?=$subTitle?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-      <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+      <h1 property="name" class="record-title hidden-xs"><?=$shortTitle?><?=$subTitle?></h1>
       <div class="description">
         <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
           <i class="fa fa-spinner fa-spin"></i>
@@ -120,11 +125,21 @@
             <?php if (!empty($otherUrls)): ?>
               <?php foreach ($otherUrls as $url): ?>
                 <?php if (isset($images[$url['url']])) { continue; } ?>
-                <?php $desc = $url['desc'] ?? $this->truncateUrl($url['url']); ?>
+                <?php
+                $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
+                $urlElement = [
+                  'class' => 'fulltext',
+                  'href' => $this->proxyUrl($url['url']),
+                  'target' => '_blank',
+                  'title' => $url['url']
+                ];
+
+                if (!empty($url['posterUrl'])) {
+                  $urlElement['data-poster-url'] = $url['posterUrl'];
+                }
+                ?>
                 <div class="fulltextField">
-                  <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
-                    <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>
-                  >
+                  <a <?=$this->htmlElement()->getAttributes($urlElement)?>>
                     <i class="fa fa-external-link"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
                   </a>
                 </div>
@@ -133,7 +148,19 @@
             <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
               <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
                 <?php if (isset($images[$url['url']])) { continue; } ?>
-                <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+                <?php
+                $urlElement = [
+                  'class' => 'fulltext',
+                  'href' => $this->proxyUrl($url['url']),
+                  'taget' => '_blank',
+                  'title' => $url['url']
+                ];
+                $description = !empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url']));
+                ?>
+                <div class="fulltextField">
+                  <a <?=$this->htmlElement()->getAttributes($urlElement)?>>
+                    <i class="fa fa-external-link"></i> <?=$description?>
+                  </a>
                 <?php if ($url['source']): ?>
                   <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
                 <?php endif; ?>
@@ -157,7 +184,20 @@
         <div class="truncate-field recordAuthors">
           <span property="author">
           <?php foreach($results as $index => $author): ?>
-            <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=$this->escapeHtml($author['role']) ?></span><?php endif; ?>
+          <?php
+          $mark = $index > 0 ? '; ' : '';
+
+          $authorLink = $this->record($this->driver)->getLink('author', $author['name']);
+          $authorName = $this->escapeHtml($author['name']);
+
+          if (!empty($author['date'])) {
+            $authorDate = ', ' . $this->escapeHtml($author['date']);
+          }
+          if (!empty($author['role'])) {
+            $authorRole = ', ' . $this->escapeHtml($author['role']);
+          }
+          ?>
+            <?=$mark?><a href="<?=$authorLink?>"><?=$authorName?></a><?php if (!empty($author['date'])): ?><span class="author-date"><?=$authorDate?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role"><?=$authorRole?></span><?php endif; ?>
           <?php endforeach; ?>
           </span>
         </div>

@@ -17,6 +17,7 @@
       foreach ($urls as $url) {
         if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
           array_push($videoUrls, $url);
+          $renderedURLs[] = $url['url'];
         }
         else {
           array_push($otherUrls, $url);
@@ -37,7 +38,7 @@
   <div class="media-<?=$thumbnailAlignment ?>">
 
     <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
+      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'type' => 'SolrForward']);?>
     <?php endif; ?>
 
     <div class="image-information">
@@ -82,12 +83,18 @@
 <?php ob_end_clean(); ?>
 <?php $this->headScript()->appendFile("finna-record.js"); ?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+  <?php
+  $shortTitle = $this->escapeHtml($this->driver->getShortTitle());
+  $subTitle = $this->driver->getSubtitle();
+
+  $subTitle = $subTitle ? '&nbsp;: ' . $this->escapeHtml($subTitle) : '';
+  ?>
+  <h1 property="name" class="record-title visible-xs"><?=$shortTitle?><?=$subTitle?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-      <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+      <h1 property="name" class="record-title hidden-xs"><?=$shortTitle?><?=$subTitle?></h1>
       <?php if ($results = $this->driver->getAlternativeTitles()): ?>
         <div class="recordAltTitles record-alt-titles truncate-field" data-rows="2">
           <?php foreach ($results as $result): ?>
@@ -110,30 +117,55 @@
           <?php if(!empty($otherUrls)): ?>
             <?php foreach ($otherUrls as $url): ?>
                 <div class="fulltextField">
-                  <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" title="<?=$this->escapeHtmlAttr($url['url']) ?>"
-                    <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>
-                  >
-                    <i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
+                  <?php
+                  $urlElement = [
+                    'href' => $this->proxyUrl($url['url']),
+                    'title' => $url['url']
+                  ];
+
+                  if (!empty($url['posterUrl'])) {
+                    $ulrElement['data-poster-url'] = $url['posterUrl'];
+                  }
+                  ?>
+                  <a class="fulltext" <?= $this->htmlElement()->getAttributes($urlElement); ?>>
+                    <i class="fa <?=$icon?>"></i> 
+                    <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
                   </a>
                 </div>
             <?php endforeach; ?>
             <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
               <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
                 <?php
-                  $renderedURLs[] = $url['url'];
-                  $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
-                  if (!empty($url['desc'])) {
+                $renderedURLs[] = $url['url'];
+                $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
+                if (!empty($url['desc'])) {
                   $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
                   if (isset($map[$url['desc']])) {
-                  $icon = $map[$url['desc']];
+                    $icon = $map[$url['desc']];
                   }
-                  }
+                }
                 ?>
                 <?php if (in_array($url['url'], $renderedURLs)) { continue; } ?>
-                <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
-                <?php if ($url['source']): ?>
-                  <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
-                <?php endif; ?>
+                <?php
+                $urlElement = [
+                  'href' => $this->proxyUrl($url['url']),
+                  'title' => $url['url']
+                ];
+
+                if (!empty($url['embed']) && $url['embed'] === 'iframe') {
+                  $urlElement['data-embed-iframe'] = '';
+                }
+
+                $description = !empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url']));
+                ?>
+                <div class="fulltextField">
+                  <a class="fulltext" target="_blank" <?=$this->htmlElement()->getAttributes($urlElement)?>>
+                    <i class="fa fa-external-link"></i> 
+                    <?=$description?>
+                  </a>
+                  <?php if ($url['source']): ?>
+                    <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
+                  <?php endif; ?>
                 </div>
               <?php endforeach; ?>
             <?php endif; ?>
@@ -165,7 +197,20 @@
             <?php if ($primaryAuthors): ?>
               <span class="recordAuthors">
                 <?php foreach ($primaryAuthors as $index => $author): ?>
-                  <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><?php endif; ?>
+                <?php
+                $mark = $index > 0 ? '; ' : '';
+
+                $authorLink = $this->record($this->driver)->getLink('author', $author['name']);
+                $authorName = $this->escapeHtml($author['name']);
+
+                if (!empty($author['date'])) {
+                  $authorDate = ', ' . $author['date'];
+                }
+                if (!empty($author['role'])) {
+                  $authorRole = ', ' . mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8');
+                }
+                ?>
+                  <?=$mark?><a href="<?=$authorLink?>"><?=$authorName?></a><?php if (!empty($author['date'])): ?><span class="author-date"><?=$authorDate?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role"><?=$authorRole?></span><?php endif; ?>
                 <?php endforeach; ?>
               </span>
             <?php endif; ?>
@@ -176,7 +221,9 @@
               ?>
               <span class="recordContainerReference">
                 <?=$this->transEsc('Published in')?> <a href="<?=($containerID ? $this->recordLink()->getUrl("$containerSource|$containerID") : $this->record($this->driver)->getLink('title', $containerTitle))?>"><?=$this->escapeHtml($containerTitle)?></a>
-                <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } ?>
+                <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)):?>
+                  <?=$this->escapeHtml($ref);?>
+                <?php endif; ?>
               </span>
             <?php endif; ?>
           </div>

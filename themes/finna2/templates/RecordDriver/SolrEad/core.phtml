@@ -77,16 +77,24 @@
 <?php ob_end_clean(); ?>
 <?php $this->headScript()->appendFile("finna-record.js"); ?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+  <?php $title = $this->escapeHtml($this->driver->getTitle()) ?>
+  <h1 property="name" class="record-title visible-xs"><?=$title?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-      <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <h1 property="name" class="record-title hidden-xs"><?=$title?></h1>
       <?php if ($serviceURLs = $this->driver->getServiceURLs()): ?>
         <div class="recordURLs">
           <?php foreach ($serviceURLs as $current): ?>
-            <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><i class="fa fa-external-link"></i> <?=$this->escapeHtml($this->translate($this->driver->getDataSource() . '_' . $current['desc'], null, $this->translate($current['desc'])))?></a>
+          <?php
+          $urlElement = [
+            'href' => $this->proxyUrl($current['url']),
+            'target' => '_blank'
+          ];
+          $description = $this->escapeHtml($this->translate($this->driver->getDataSource() . '_' . $current['desc'], null, $this->translate($current['desc'])));
+          ?>
+            <a <?=$this->htmlElement()->getAttributes($urlElement)?>><i class="fa fa-external-link"></i> <?=$description?></a>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
@@ -95,9 +103,16 @@
         <div class="recordURLs local-available-online-record">
           <div class="truncate-field">
           <?php foreach ($otherUrls as $url): ?>
-              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" target="_blank"
-                <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>
-              >
+            <?php
+            $urlElement = [
+              'href' => $this->proxyUrl($url['url']),
+              'target' => '_blank'
+            ];
+            if (!empty($url['posterUrl'])) {
+              $urlElement['data-poster-url'] = $url['posterUrl'];
+            }
+            ?>
+              <a <?=$this->htmlElement()->getAttributes($urlElement);?>>
                 <i class="fa fa-external-link"></i> <?=$this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc']))?>
               </a>
               <br/>

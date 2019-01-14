@@ -49,7 +49,6 @@
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?>">
-
     <div class="image-information">
       <div class="cover-wrapper">
         <?php /* Display thumbnail if appropriate: */ ?>
@@ -96,12 +95,18 @@
 <?php ob_end_clean(); ?>
 <?php $this->headScript()->appendFile("finna-record.js"); ?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+  <?php
+  $shortTitle = $this->escapeHtml($this->driver->getShortTitle());
+  $subTitle = $this->driver->getSubtitle();
+
+  $subTitle = $subTitle ? '&nbsp;: ' . $this->escapeHtml($subTitle) : '';
+  ?>
+  <h1 property="name" class="record-title visible-xs"><?=$shortTitle?><?=$subTitle?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-    <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+    <h1 property="name" class="record-title hidden-xs"><?=$shortTitle?><?=$subTitle?></h1>
     <?php if ($titleAltScript = $this->driver->tryMethod('getShortTitleAltScript')): ?>
       <div class="record-title-alt-script">
         <?=$this->escapeHtml($titleAltScript)?><?php if ($subtitleAltScript = $this->driver->tryMethod('getSubtitleAltScript')): ?>&nbsp;: <?=$this->escapeHtml($subtitleAltScript)?><?php endif; ?>
@@ -132,9 +137,19 @@
                     $icon = $map[$url['desc']];
                   }
                 }
+                $urlElement = [
+                  'class' => 'fulltext',
+                  'href' => $this->proxyUrl($url['url']),
+                  'target' => '_blank',
+                  'title' => $url['url']
+                ];
+
+                if (!empty($url['posterUrl'])) {
+                  $urlElement['data-poster-url'] = $url['posterUrl'];
+                }
               ?>
               <div class="fulltextField">
-                <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>" <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>>
+                <a <?=$this->htmlElement()->getAttributes($urlElement)?>>
                   <i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
                 </a>
                 <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
@@ -144,7 +159,17 @@
           <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
             <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
               <?php if (in_array($url['url'], $renderedURLs)) { continue; } ?>
-              <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+              <?php
+              $urlElement = [
+                'class' => 'fulltext',
+                'href' => $this->proxyUrl($url['url']),
+                'target' => '_blank',
+                'title' => $url['url']
+              ];
+              $description = !empty($ulr['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url']));
+              ?>
+              <div class="fulltextField">
+                <a <?=$this->htmlElement()->getAttributes($urlElement)?>><i class="fa fa-external-link"></i> <?=$description?></a>
               <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
               <?php if ($url['source']): ?>
                 <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
@@ -171,13 +196,36 @@
         <div class="recordAuthors" property="author">
           <div class="truncate-field">
             <?php foreach($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><?php endif; ?>
+            <?php
+            $mark = $index > 0 ? '; ' : '';
+
+            $authorLink = $this->record($this->driver)->getLink('author', $author['name']);
+            $authorName = $this->escapeHtml($author['name']);
+
+            if (!empty($author['date'])) {
+              $authorDate = ', ' . $author['date'];
+            }
+            if (!empty($author['role'])) {
+              $authorRole = ', ' . mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8');
+            }
+            ?>
+            <?=$mark?><a href="<?=$authorLink?>"><?=$authorName?></a><?php if (!empty($author['date'])): ?><span class="author-date"><?=$authorDate?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role"><?=$authorRole?></span><?php endif; ?>
             <?php endforeach; ?>
             <?php $altScriptFound = false; ?>
             <?php foreach($results as $index => $author): ?>
               <?php if (!empty($author['name_alt'])): ?>
+              <?php
+              $authorNameAlt = $this->escapeHtml($author['name_alt']);
+
+              if (!empty($author['date'])) {
+                $authorDate = ', ' . $author['date'];
+              }
+              if (!empty($author['role'])) {
+                $authorRole = ', ' . mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8');
+              }
+              ?>
                 <?php if (!$altScriptFound): ?><br/><?php else: ?>; <?php endif; ?>
-                <?=$this->escapeHtml($author['name_alt'])?><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><?php endif; ?>
+                <?=$authorNameAlt?><?php if (!empty($author['date'])): ?><span class="author-date"><?=$authorDate?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role"><?=$authorRole?></span><?php endif; ?>
                 <?php $altScriptFound = true; ?>
               <?php endif; ?>
             <?php endforeach; ?>
@@ -200,7 +248,15 @@
                 <?=$i > 0 ? '<br/>' : ''?>
                 <?php if ($hostRecord['id'] || $hostRecord['title']): ?>
                   <?php // We should use RecordLink() helper below to create the record URL, but this is much faster. We can get away with it here, but this is not generally acceptable. ?>
-                  <?php $link = $hostRecord['id'] ? $this->escapeHtmlAttr($this->url($this->driver->getSourceIdentifier() === 'Search2' ? 'search2record' : 'record') . urlencode($hostRecord['id'])) : $this->record($this->driver)->getLink('title', $hostRecord['title']); ?>
+                  <?php
+                  $link = '';
+                  if ($hostRecord['id']) {
+                    $sourceIdentifier = $this->url($this->driver->getSourceIdentifier()) === 'Search2' ? 'search2record' : 'record';
+                    $link = $this->escapeHtmlAttr($sourceIdentifier . urlencode($hostRecord['id']));
+                  } else {
+                    $link = $this->record($this->driver)->getLink('title', $hostRecord['title']);
+                  }
+                  ?>
                   <a href="<?=$link?>"><?=$hostRecord['title']?></a>
                 <?php endif; ?>
                 <?=$this->escapeHtml($hostRecord['reference']); ?>

@@ -11,8 +11,17 @@
   <?php foreach ($videoUrls as $url): ?>
     <?php
     $embeddedVideo = $this->recordLink()->getEmbeddedVideo($url['url']);
-    $description = $url['desc'] ?? $this->truncateUrl($url['url']);
-    $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $description;
+    $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
+
+    if (isset($type) && $type === 'SolrEad') {
+      $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $this->translate('link_' . $url['desc'], null, $url['desc']);
+    } elseif (isset($type) && $type === 'SolrForward') {
+      $desc = $this->translate('default::link_' . $desc, null, $desc);
+    } else {
+      $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $desc;
+    }
+    $description = $this->escapeHtml($desc);
+
     $currentVideo = [
       'href' => $this->proxyUrl($url['url']),
       'title' => $url['url'],
@@ -33,7 +42,7 @@
     <div class="video-link-container">
       <button <?=$this->htmlElement()->getAttributes($currentVideo, 'video-base');?>>
         <i class="fa fa-play-circle"></i>
-        <?=$this->escapeHtml($desc)?>
+        <?=$description?>
       </button>
     </div>
   <?php endforeach; ?>
