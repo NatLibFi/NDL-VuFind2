@@ -46,7 +46,7 @@
 
     <?php $urls = $this->record($this->driver)->getLinkDetails(); ?>
     <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
+      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'type' => 'SolrEad']);?>
     <?php endif; ?>
 
     <?php if (!empty($audioUrls)): ?>
