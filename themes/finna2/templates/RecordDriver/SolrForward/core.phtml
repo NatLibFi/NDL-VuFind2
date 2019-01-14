@@ -86,7 +86,6 @@
   <?php
   $shortTitle = $this->escapeHtml($this->driver->getShortTitle());
   $subTitle = $this->driver->getSubtitle();
-
   $subTitle = $subTitle ? '&nbsp;: ' . $this->escapeHtml($subTitle) : '';
   ?>
   <h1 property="name" class="record-title visible-xs"><?=$shortTitle?><?=$subTitle?></h1>
