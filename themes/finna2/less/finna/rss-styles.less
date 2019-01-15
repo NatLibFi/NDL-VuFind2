@@ -1,0 +1,45 @@
+//Hides the dots from a carousel rss
+.rss-dotless {
+    .slick-dots {
+        display: none !important;
+    }
+}
+//Aligns items always to the left side if there is few items in carousel
+.rss-align-left {
+    .slick-track {
+        margin-left: 0;
+    }
+}
+//Aligns items always to the right side it there is few items in carousel
+.rss-align-right {
+    .slick-track {
+        margin-right: 0;
+    }
+}
+//Only show the first image in list style rss feed
+.rss-first-image {
+    li:not(:first-child) {
+        img {
+            display: none;
+            width: 0;
+        }
+        .title, .text {
+            width: 100% !important;
+            padding-left: 45px;
+            float: left !important;
+        }
+    }
+}
+//Hides the mobile link in the bottom carousel element
+.rss-mb-no-link {
+    .carousel-description {
+        display: none;
+    }
+}
+
+//Sets the default background color of rss feeds to white
+.rss-ca-bg-white {
+    .wrapper {
+        background-color: white !important;
+    }
+}
