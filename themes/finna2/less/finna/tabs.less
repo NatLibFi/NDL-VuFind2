@@ -36,6 +36,12 @@
       justify-content: center;
       padding-bottom: 1px;
       cursor: pointer;
+      @media (max-width: @screen-sm) {
+        &:not(.many-tabs) {
+          flex-basis: 50%;
+        }
+      }
+
       > a {
         background-color: @main-tabs-background-color;
         padding: 10px 5px;
@@ -51,6 +57,7 @@
         align-items: center;
         justify-content: center;
         height: 100%;
+        width: 100%;
         @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
           word-break: break-word;
         }
