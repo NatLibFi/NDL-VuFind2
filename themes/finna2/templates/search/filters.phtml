@@ -7,7 +7,9 @@
       <span class="filter-value">
         <?php $removeLink = isset($urlQuery) ? $urlQuery->removeFilter($filter['filter']) : ''; ?>
         <?=$this->translate($filter['desc']) ?>
-        <?php if($removeLink): ?><a aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><?php endif; ?>
+        <?php if($removeLink): ?>
+          <a aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a>
+        <?php endif; ?>
       </span>
     <?php endif ?>
   <?php endforeach; ?>
@@ -67,7 +69,7 @@
       <button type="button" class="btn-unstyled filters-toggle visible-xs visible-sm">
         <?=$this->transEsc("show_filters")?>
         <span class="active-filter-count">(<?=$filterCount?>)</span><i class="fa fa-arrow-down"></i>
-        </button>
+      </button>
       <div class="checkbox">
         <label>
           <input type="checkbox"<?=$defaultFilterState?> id="filter-checkbox" class="searchFormKeepFilters"/>
