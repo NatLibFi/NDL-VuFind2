@@ -786,7 +786,7 @@ finna.layout = (function finnaLayout() {
         type: 'iframe',
         tClose: VuFind.translate('close'),
         items: {
-          src: $(this).attr('href')
+          src: $(this).attr('data-link')
         },
         iframe: {
           markup: '<div class="mfp-iframe-scaler">'

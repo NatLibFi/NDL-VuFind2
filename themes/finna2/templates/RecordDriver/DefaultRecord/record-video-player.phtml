@@ -2,7 +2,6 @@
 <?php
   $videoElementBase = [
     'class' => 'videourl fulltext btn btn-primary',
-    'target' => '_blank',
     'type' => 'button'
   ];
   $this->htmlElement()->addAttributeTemplate('video-base', $videoElementBase);
@@ -23,7 +22,7 @@
     $description = $this->escapeHtml($desc);
 
     $currentVideo = [
-      'href' => $this->proxyUrl($url['url']),
+      'data-link' => $this->proxyUrl($url['url']),
       'title' => $url['url'],
     ];
 
