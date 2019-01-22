@@ -15,7 +15,6 @@
   <?php endforeach; ?>
 
   <?php foreach ($filterList as $field => $data): ?>
-    <div class="filter-group">
       <?php if (is_callable([$params, 'isGeographicFilter']) && $params->isGeographicFilter($data)): ?>
         <span class="filter-value">
           <?php $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($data[0]['field'], $data[0]['value'], $data[0]['operator']) : '';?>
@@ -23,7 +22,8 @@
           <?php if($removeLink): ?><a aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><?php endif; ?>
         </span>
       <?php else: ?>
-        <span class="filters-title"><?=$this->transEsc($field)?>:</span>
+        <div class="filter-title-group">
+          <span class="filters-title"><?=$this->transEsc($field)?>:</span>
         <?php foreach ($data as $index => $value): ?>
         <?php
           $operatorLabel = '';
@@ -36,7 +36,7 @@
             $operatorLabel = $this->transEsc('OR');
           }
 
-          $isonlineFacet = ('unrecognized_facet_label' === $field && in_array($value['field'], ['online_boolean', 'free_online_boolean']));
+          $isOnlineFacet = ('unrecognized_facet_label' === $field && in_array($value['field'], ['online_boolean', 'free_online_boolean']));
         ?>
           <?php if ($index !== 0 || $operatorLabel === 'NOT'): ?>
             <span class="filters-term <?= $operatorClass ?>"><?= $operatorLabel ?></span>
@@ -44,7 +44,7 @@
           <span class="filter-value <?= $operatorClass ?>">
             <p>
               <?php // Always handle online_boolean and free_online_boolean even if not configured ?>
-              <?php if ($isonlineFacet): ?>
+              <?php if ($isOnlineFacet): ?>
                 <?=$this->translate('online_boolean' === $value['field'] ? 'online_material_facet_html' : 'free_online_material_facet_html') ?>
               <?php else: ?>
                 <?=$this->escapeHtml($value['displayText'])?>
@@ -54,10 +54,13 @@
               <a aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a>
             <?php endif; ?>
           </span>
+          <?php if ($index === 0): ?>
+            </div>
+          <?php endif; ?>
         <?php endforeach; ?>
         <div class="clearfix"></div>
       <?php endif; ?>
-    </div>
+
   <?php endforeach; ?>
 <?php $filters = ob_get_contents(); ?>
 <?php ob_end_clean(); ?>
