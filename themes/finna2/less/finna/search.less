@@ -440,11 +440,17 @@ h2 {
     background: @filters-background-color;
     color: @filters-text-color;
     border-radius: @border-radius-large;
-    white-space: nowrap;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
     a {
       color: @filters-icon-color;
       margin: 4px;
+    }
+    .filter-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 0;
     }
   }
 }
