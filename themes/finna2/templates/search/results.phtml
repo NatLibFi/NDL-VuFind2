@@ -125,12 +125,16 @@
       <?php $geoRemoveLink = isset($urlQuery) ? $urlQuery->removeFacet($data[0]['field'], $data[0]['value'], $data[0]['operator']) : '';?>
     <?php else: ?>
       <?php foreach ($data as $index => $value): ?>
-        <?php $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator']) : '';?>
+        <?php
+          $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator']) : '';
+          $desc = $this->escapeHtml($value['displayText']);
+          $ariaLabel = $this->translate('Remove filter') . ' ' . $desc;
+        ?>
         <span class="filter-value">
           <span class="filter-text">
-            <?=$this->escapeHtml($value['displayText'])?>
+            <?=$desc?>
           </span>
-          <?php if ($removeLink): ?><a aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><?php endif; ?>
+          <?php if ($removeLink): ?><a aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><?php endif; ?>
         </span>
       <?php endforeach; ?>
     <?php endif; ?>
