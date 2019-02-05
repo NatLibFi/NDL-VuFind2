@@ -782,11 +782,15 @@ finna.layout = (function finnaLayout() {
         $.magnificPopup.instance.st.removalDelay = 0;
         $.magnificPopup.close();
       }
+
+      // Fallback if core has older style of initializing a video button
+      var attr = $(this).is('a') ? $(this).attr('href') : $(this).attr('data-link');
+
       $.magnificPopup.open({
         type: 'iframe',
         tClose: VuFind.translate('close'),
         items: {
-          src: $(this).attr('data-link')
+          src: attr
         },
         iframe: {
           markup: '<div class="mfp-iframe-scaler">'
