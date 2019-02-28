@@ -20,34 +20,50 @@ finna.imagePopup = (function finnaImagePopup() {
       });
     }
 
+    assignIndexes($('.image-popup'));
+
+    assignHandleCover($('.recordcovers'));
+
+    assignPopupTrigger($('.image-popup-trigger'));
+
+    // Roll-over thumbnail images: update medium size record image and indices.
+    assignUpdateImage($('.image-popup-navi'));
+  }
+
+  function assignIndexes(element) {
     // Assign image indices
     var index = 0;
-    $('.image-popup').each(function assignIndex() {
+    element.each(function assignIndex() {
       $(this).data('ind', index++);
       var recordIdx = $(this).closest('.recordcover-holder').find('.image-popup-trigger').data('recordInd');
       if (recordIdx) {
         $(this).data('recordInd', recordIdx);
       }
     });
+  }
 
+  function assignHandleCover(element) {
     // Assign image indices for individual images.
-    $('.recordcovers').each(function handleCover() {
+    element.each(function handleCover() {
       var thumbInd = 0;
       $(this).find('.image-popup').each(function handlePopup() {
         $(this).data('thumbInd', thumbInd++);
       });
     });
+  }
 
+  function assignPopupTrigger(element) {
     // Open image-popup from medium size record image.
-    $('.image-popup-trigger').each(function handlePopupTrigger() {
+    element.each(function handlePopupTrigger() {
       var links = $(this).closest('.recordcover-holder').find('.recordcovers .image-popup');
       var linkIndex = links.eq(0).data('ind');
       $(this).data('ind', linkIndex);
       $(this).data('thumbInd', 0);
     });
+  }
 
-    // Roll-over thumbnail images: update medium size record image and indices.
-    $('.image-popup-navi').click(function updateImage(e) {
+  function assignUpdateImage(element, pagerCallback) {
+    element.click(function updateImage(e) {
       var trigger = $(this).closest('.recordcover-holder').find('.image-popup-trigger');
       trigger.data('ind', $(this).data('ind'));
       trigger.data('thumbInd', $(this).data('thumbInd'));
@@ -62,6 +78,9 @@ finna.imagePopup = (function finnaImagePopup() {
       textContainers.addClass('hidden');
       textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
       initRecordImage();
+      if (typeof pagerCallback !== 'undefined') {
+        pagerCallback($(this).data('ind'));
+      }
       e.preventDefault();
     });
   }
@@ -442,7 +461,9 @@ finna.imagePopup = (function finnaImagePopup() {
   }
 
   var my = {
-    init: init
+    init: init,
+    initThumbnailNavi: initThumbnailNavi,
+    assignUpdateImage: assignUpdateImage
   };
 
   return my;

@@ -161,6 +161,46 @@ finna.layout = (function finnaLayout() {
   }
 
   function initTruncatedRecordImageNavi() {
+
+    //Lets slick the images first
+    /*$('.template-dir-record .recordcovers').slick({
+      autoplay: false,
+      arrows: true,
+      slidesPerRow: 6,
+      slidesToShow: 6,
+      lazyLoad: 'progressive',
+      rows: 1,
+      swipeToSlide: true,
+      variableWidth: true,
+      infinite: false,
+      responsive: [
+        {
+          breakpoint: 779,
+          settings: {
+            slidesToShow: 10
+          }
+        },
+        {
+          breakpoint: 480,
+          settings: {
+            slidesToShow: 4
+          }
+        }
+      ]
+    });
+
+    //When we have slicked the images, lets then show them properly
+    $('.template-dir-record .recordcovers span').each(function showRecordImages() {
+      var img = $('<img/>');
+      var self = $(this);
+      img.append($('<i class="fa fa-spinner fa-spin"/>')).one('load', function onLoadImage() {
+        $(this).empty();
+      });
+      img.attr('src', self.data('src'));
+      img.attr('alt', '');
+      self.replaceWith(img);
+    });*/
+
     function displayTruncatedImage(placeholder) {
       var img = $('<img/>');
       img.append($('<i class="fa fa-spinner fa-spin"/>')).one('load', function onLoadImage() {

@@ -185,19 +185,72 @@
   }
 
   &.record a {
-    margin: 0 5px 5px 0;
     background-position: 50% 50%;
     background-size: cover;
     display: inline-block;
-    height: 42px;
-    margin: 0 5px 5px 0;
+    height: 64px;
     overflow: hidden;
-    width: 42px;
+    margin: 0 2px;
+    max-width: 64px;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    img {
+      position: relative;
+      left: 50%;
+      max-width: initial;
+      transform: translate(-50%);
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
     &.truncate-change {
       opacity: 0;
     }
   }
 }
+
+.recordcovers.paginated {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: wrap;
+
+  .paginator-info {
+    width: 100%;
+  }
+
+  > button {
+    appearance: none;
+    -webkit-appearance: none;
+    height: 32px;
+    border: none;
+    background-color: #efefef;
+  }
+
+  .finna-paginated {
+    max-width: 85%;
+    margin-bottom: 6px;
+    display: inline-block;
+    .finna-element-track {
+      overflow: auto;
+      max-height: 100%;
+      touch-action: none;
+      height: 64px;
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      min-width: 100%;
+    }
+  }
+}
+
 
 .record-uniform-titles {
   font-size: 1.05em;

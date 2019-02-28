@@ -266,6 +266,7 @@ finna.feed = (function finnaFeed() {
 
   var my = {
     loadFeedFromUrl: loadFeedFromUrl,
+    getCarouselSettings: getCarouselSettings,
     init: function init() {
       initComponents();
     }
