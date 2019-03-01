@@ -74,6 +74,7 @@ finna.imagePopup = (function finnaImagePopup() {
       img.css('opacity', 0.5);
       img.one('load', function onLoadImage() {
         img.css('opacity', '');
+        $('.image-dimensions').text('(' + (this.naturalWidth + ' X ' + this.naturalHeight + ')'));
       });
       img.attr('src', $(this).attr('href'));
       var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
@@ -283,14 +284,11 @@ finna.imagePopup = (function finnaImagePopup() {
       $(".mfp-arrow-right, .mfp-arrow-left").addClass("hidden");
       mfp.updateItemHTML();
 
+      // Use a fairly small buffer for faster quality changes
+      videojs.Hls.GOAL_BUFFER_LENGTH = 10;
+      videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
       var player = videojs('video');
 
-      videojs.Html5DashJS.hook(
-        'beforeinitialize',
-        function onBeforeInit(videoJs, mediaPlayer) {
-          mediaPlayer.getDebug().setLogToBrowserConsole(false);
-        }
-      );
       player.ready(function onReady() {
         this.hotkeys({
           enableVolumeScroll: false,

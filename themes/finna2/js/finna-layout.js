@@ -1,4 +1,4 @@
-/*global VuFind, checkSaveStatuses, action, finna, initFacetTree, setupFacets, videojs, priorityNav, buildFacetNodes */
+/*global VuFind, checkSaveStatuses, action, finna, initFacetTree, videojs, priorityNav */
 finna.layout = (function finnaLayout() {
   var _fixFooterTimeout = null;
 
@@ -423,8 +423,8 @@ finna.layout = (function finnaLayout() {
       form.find('.searchForm_lookfor').focus();
     });
 
-    $('.searchForm_lookfor').bind('autocomplete:select', function onAutocompleteSelect() { 
-      $('.navbar-form').submit() 
+    $('.searchForm_lookfor').bind('autocomplete:select', function onAutocompleteSelect() {
+      $('.navbar-form').submit()
     });
 
     $('.select-type').on('click', function onClickSelectType(event) {
@@ -543,114 +543,18 @@ finna.layout = (function finnaLayout() {
   }
 
   function initSideFacets() {
-    // Load new-style ajax facets
-    $('.side-facets-container-ajax')
-      .find('div.collapse[data-facet]:not(.in)')
-      .on('shown.bs.collapse', function expandFacet() {
-        loadAjaxSideFacets();
-      });
-    loadAjaxSideFacets();
-
-    // Handle any old-style ajax facets
-    var $container = $('.side-facets-container');
-    if ($container.length === 0) {
+    if (!document.addEventListener) {
       return;
     }
-    $container.find('.facet-load-indicator').removeClass('hidden');
-    var query = window.location.href.split('?')[1];
-    $.getJSON(VuFind.path + '/AJAX/JSON?method=getSideFacets&' + query)
-      .done(function onGetSideFacetsDone(response) {
-        $container.replaceWith(response.data.html);
-        finna.dateRangeVis.init();
-        initToolTips($('.sidebar'));
-        initMobileNarrowSearch();
-        VuFind.lightbox.bind($('.sidebar'));
-        setupFacets();
-      })
-      .fail(function onGetSideFacetsFail() {
-        $container.find('.facet-load-indicator').addClass('hidden');
-        $container.find('.facet-load-failed').removeClass('hidden');
-      });
-  }
-
-  function loadAjaxSideFacets() {
-    var $container = $('.side-facets-container-ajax');
-    if ($container.length === 0) {
-      return;
-    }
-
-    var facetList = [];
-    var $facets = $container.find('div.collapse.in[data-facet], div.checkbox[data-facet]');
-    $facets.each(function addFacet() {
-      if (!$(this).data('loaded')) {
-        facetList.push($(this).data('facet'));
-      }
+    document.addEventListener('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
+      finna.dateRangeVis.init();
+      initToolTips($('.sidebar'));
+      initMobileNarrowSearch();
+      VuFind.lightbox.bind($('.sidebar'));
     });
-    if (facetList.length === 0) {
-      return;
-    }
-    var urlParts = window.location.href.split('?');
-    var query = urlParts.length > 1 ? urlParts[1] : '';
-    var request = {
-      method: 'getSideFacets',
-      query: query,
-      enabledFacets: facetList
-    }
-    $container.find('.facet-load-indicator').removeClass('hidden');
-    $.getJSON(VuFind.path + '/AJAX/JSON?' + query, request)
-      .done(function onGetSideFacetsDone(response) {
-        $.each(response.data.facets, function initFacet(facet, facetData) {
-          var $facetContainer = $container.find('div[data-facet="' + facet + '"]');
-          $facetContainer.data('loaded', 'true');
-          if (typeof facetData.checkboxCount !== 'undefined') {
-            $facetContainer.find('.avail-count').text(
-              facetData.checkboxCount.toString().replace(/\B(?=(\d{3})+\b)/g, VuFind.translate('number_thousands_separator'))
-            );
-          } else if (typeof facetData.html !== 'undefined') {
-            $facetContainer.html(facetData.html);
-          } else {
-            // TODO: this block copied from facets.js, refactor
-            var treeNode = $facetContainer.find('.jstree-facet');
-
-            // Enable keyboard navigation also when a screen reader is active
-            treeNode.bind('select_node.jstree', function selectNode(event, data) {
-              window.location = data.node.data.url;
-              event.preventDefault();
-              return false;
-            });
-
-            addJSTreeListener(treeNode);
-
-            var currentPath = treeNode.data('path');
-            var allowExclude = treeNode.data('exclude');
-            var excludeTitle = treeNode.data('exclude-title');
-
-            var results = buildFacetNodes(facetData.list, currentPath, allowExclude, excludeTitle, true);
-            treeNode.on('loaded.jstree open_node.jstree', function treeNodeOpen(/*e, data*/) {
-              treeNode.find('ul.jstree-container-ul > li.jstree-node').addClass('list-group-item');
-              treeNode.find('a.exclude').click(function excludeLinkClick(e) {
-                window.location = this.href;
-                e.preventDefault();
-                return false;
-              });
-            });
-            treeNode.jstree({
-              'core': {
-                'data': results
-              }
-            });
-          }
-          $facetContainer.find('.facet-load-indicator').remove();
-        });
-        finna.dateRangeVis.init();
-        initToolTips($('.sidebar'));
-        initMobileNarrowSearch();
-        VuFind.lightbox.bind($('.sidebar'));
-      })
-      .fail(function onGetSideFacetsFail() {
-        $container.find('.facet-load-indicator').remove();
-        $container.find('.facet-load-failed').removeClass('hidden');
-      });
+    document.addEventListener('VuFind.sidefacets.treenodeloaded', function onTreeNodeLoaded(e) {
+      addJSTreeListener(e.detail.node);
+    });
   }
 
   function initPiwikPopularSearches() {
@@ -864,6 +768,14 @@ finna.layout = (function finnaLayout() {
     container.find('[data-embed-video]').click(function onClickVideoLink(e) {
       var videoSources = $(this).data('videoSources');
       var posterUrl = $(this).data('posterUrl');
+
+      var resizeVideo = function resizeVideo() {
+        var width = $('.mfp-content').width();
+        var height = $('.mfp-container').height();
+        $('.video-popup').css('width', width);
+        $('.video-popup').css('height', height);
+      }
+
       $.magnificPopup.open({
         type: 'inline',
         items: {
@@ -871,14 +783,10 @@ finna.layout = (function finnaLayout() {
         },
         callbacks: {
           open: function onOpen() {
+            // Use a fairly small buffer for faster quality changes
+            videojs.Hls.GOAL_BUFFER_LENGTH = 10;
+            videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
             var player = videojs('video-player');
-
-            videojs.Html5DashJS.hook(
-              'beforeinitialize',
-              function onBeforeInit(videoJs, mediaPlayer) {
-                mediaPlayer.getDebug().setLogToBrowserConsole(false);
-              }
-            );
 
             player.ready(function onReady() {
               this.hotkeys({
@@ -887,13 +795,27 @@ finna.layout = (function finnaLayout() {
               });
             });
 
+            resizeVideo();
+
             player.src(videoSources);
             player.poster(posterUrl);
             player.load();
+
+            var handleCloseButton = function handleCloseButton() {
+              if (player.userActive()) {
+                $('.mfp-close').css('opacity', '1');
+              } else {
+                $('.mfp-close').css('opacity', '0');
+              }
+            }
+
+            player.on('useractive', handleCloseButton);
+            player.on('userinactive', handleCloseButton);
           },
           close: function onClose() {
             videojs('video-player').dispose();
-          }
+          },
+          resize: resizeVideo
         }
       });
       e.preventDefault();

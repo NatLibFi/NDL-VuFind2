@@ -74,7 +74,7 @@ class Bootstrapper
         $this->event = $event;
         $this->events = $event->getApplication()->getEventManager();
         $sm = $this->event->getApplication()->getServiceManager();
-        $this->config = $sm->get('VuFind\Config')->get('config');
+        $this->config = $sm->get(\VuFind\Config\PluginManager::class)->get('config');
     }
 
     /**
@@ -122,6 +122,7 @@ class Bootstrapper
                 || ($controller == 'Record' && $action == 'UserComments')
                 || ($controller == 'Record' && $action == 'Similar')
                 || ($controller == 'QRCode')
+                || ($controller == 'OAI')
             ) {
                 $response = $event->getResponse();
                 $response->setStatusCode(403);
@@ -172,7 +173,7 @@ class Bootstrapper
             }
 
             try {
-                $sm->get('VuFind\Translator')
+                $sm->get(\Zend\Mvc\I18n\Translator::class)
                     ->addTranslationFile('ExtendedIni', null, 'default', $language)
                     ->setLocale($language);
             } catch (\Zend\Mvc\Exception\BadMethodCallException $e) {
@@ -215,11 +216,11 @@ class Bootstrapper
             if (($language = $request->getPost()->get('mylang', false))
                 || ($language = $request->getQuery()->get('lng', false))
             ) {
-                $translator = $sm->get('VuFind\Translator');
+                $translator = $sm->get(\Zend\Mvc\I18n\Translator::class);
                 $language = $translator->getLocale();
 
                 // Update finna_language of logged-in user
-                if (($user = $sm->get('VuFind\AuthManager')->isLoggedIn())
+                if (($user = $sm->get(\VuFind\Auth\Manager::class)->isLoggedIn())
                     && $user->finna_language != $language
                 ) {
                     $user->updateFinnaLanguage($language);

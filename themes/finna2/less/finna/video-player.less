@@ -1,35 +1,19 @@
 .video-popup {
-  width: 100%;
-  min-width: 300px;
   max-width: 900px;
-
+  max-height: 768px;
+  margin: auto;
   .mfp-close {
     color: #fff;
     background: transparent;
-    text-align: right;
-    top: -40px;
+    transition: opacity 1s;
   }
 }
 
-.mfp-inline-holder {
-  & .mfp-content {
-    max-width: 900px;
-  }
-}
-
-video {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
 #video-player:focus, video:focus {
   outline: none;
 }
 
 .video-js {
-  position: relative;
-  height: 0 !important;
+  height: 100%;
   width: 100%;
-  max-width: 100%;
-  padding-top: 75%;
 }

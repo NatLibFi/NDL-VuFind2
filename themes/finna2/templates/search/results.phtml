@@ -6,7 +6,7 @@
   // Set up page title:
   $lookfor = $this->results->getUrlQuery()->isQuerySuppressed() ? '' : $this->params->getDisplayQuery();
   if (isset($this->overrideTitle)) {
-      $this->headTitle($this->overrideTitle);
+      $this->headTitle($this->translate($this->overrideTitle));
   } else {
       $this->headTitle((empty($lookfor) ? "{$this->transEsc('history_empty_search')}" : "{$lookfor}") . ' | ' . $this->translate('Search Results'));
   }
@@ -35,7 +35,7 @@
 
   // Set up breadcrumbs:
   if (isset($this->overrideTitle)) {
-    $this->layout()->breadcrumbs .= '<li class="active">' . $this->escapeHtml($this->overrideTitle) . '</li>';
+    $this->layout()->breadcrumbs .= '<li class="active">' . $this->transEsc($this->overrideTitle) . '</li>';
   } else {
     $this->layout()->breadcrumbs .= '<li class="active">' . $this->transEsc('Search') . ': ' . $this->escapeHtml($lookfor) . '</li>';
   }
@@ -67,9 +67,6 @@
   if (!$browse && !empty($params->getFilterList(false))){
       // Clone the params object to prevent its manipulation from affecting main facet functionality
       $params = clone $this->params;
-      if ($this->params->getSearchClassId() != 'Primo') {
-        $params->activateAllFacets();
-      }
       $filterList = $params->getFilterList(true);
       $checkboxFilters = $params->getCheckboxFacets();
       $lastSort = $this->searchMemory()->getLastSort($this->searchClassId);
@@ -176,7 +173,7 @@
               <div class="filters"><?= $this->transEsc('try_to_remove_filters')?>:<?= $filters ?></div>
             <?php endif; ?>
           </div>
-        <?php endif; ?> 
+        <?php endif; ?>
       <?php endif; ?>
       <?php if (isset($this->parseError)): ?>
         <p class="alert alert-danger"><?=$this->transEsc('nohit_parse_error')?></p>

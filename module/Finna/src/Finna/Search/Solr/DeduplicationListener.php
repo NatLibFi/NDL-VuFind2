@@ -62,12 +62,18 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
                 $fq = $params->get('fq');
                 if ($fq) {
                     $key = array_search('finna.deduplication:"1"', $fq);
+                    if (false === $key) {
+                        $key = array_search('(finna.deduplication:"1")', $fq);
+                    }
                     if (false !== $key) {
                         $this->enabled = true;
                         $params->set('finna.deduplication', '1');
                         unset($fq[$key]);
                     } else {
                         $key = array_search('finna.deduplication:"0"', $fq);
+                        if (false === $key) {
+                            $key = array_search('(finna.deduplication:"0")', $fq);
+                        }
                         if (false !== $key) {
                             $this->enabled = false;
                             $params->set('finna.deduplication', '0');
@@ -186,7 +192,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             return $result;
         }
 
-        $config = $this->serviceLocator->get('VuFind\Config');
+        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $searchConfig = $config->get($this->searchConfig);
         if (!isset($searchConfig->Records->apiExcludedSources)) {
             return $result;
@@ -201,17 +207,18 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     /**
      * Function that determines the priority for sources
      *
-     * @param string $recordSources Record sources defined in searches.ini
+     * @param array $recordSources Record sources defined in searches.ini
      *
      * @return array Array keyed by source with priority as the value
      */
     protected function determineSourcePriority($recordSources)
     {
-        $config = $this->serviceLocator->get('VuFind\Config');
+        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $mainConfig = $config->get('config');
         // Sort sources alphabetically if necessary
         if (!empty($mainConfig->Record->sort_sources)) {
-            $translator = $this->serviceLocator->get('VuFind\Translator');
+            $translator
+                = $this->serviceLocator->get(\Zend\Mvc\I18n\Translator::class);
             usort(
                 $recordSources,
                 function ($a, $b) use ($translator) {
@@ -229,7 +236,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         }
 
         // Secondary priority to selected library card
-        $authManager = $this->serviceLocator->get('VuFind\AuthManager');
+        $authManager = $this->serviceLocator->get(\VuFind\Auth\Manager::class);
         if ($user = $authManager->isLoggedIn()) {
             if ($user->cat_username) {
                 list($preferred) = explode('.', $user->cat_username, 2);
@@ -243,7 +250,8 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         }
 
         // Primary priority to cookie
-        $cookieManager = $this->serviceLocator->get('VuFind\CookieManager');
+        $cookieManager
+            = $this->serviceLocator->get(\VuFind\Cookie\CookieManager::class);
         if ($cookieManager) {
             $preferred = $cookieManager->get('preferredRecordSource');
             // array_search may return 0, but that's fine since it means the source
@@ -282,7 +290,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             return;
         }
 
-        $config = $this->serviceLocator->get('VuFind\Config');
+        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $searchConfig = $config->get($this->searchConfig);
         if (!isset($searchConfig->Records->apiExcludedSources)) {
             return;
