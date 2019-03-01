@@ -16,7 +16,7 @@
           'medium' => $img['urls']['medium'],
           'index' => $ind
         ];
-        if ($paginate && $ind > 19) {
+        if ($paginate && $ind > 4) {
           $ind++;
           continue;
         }
@@ -37,12 +37,13 @@
       <?php endif; ?>
       <?php $ind++; ?>
     <?php endforeach; ?>
-
   </div>
+<?php endif; ?>
+<?php if (!isset($isInitialized)) : ?>
   <script>
     $(document).ready(function setPaginatedLinks(){
       finna.imagePaginator.setPaginatedImages(<?= json_encode($paginatedLinks) ?>);
     })
   </script>
-<?php endif; ?>
+  <?php endif; ?>
 <!-- END of: finna - RecordDriver/DefaultRecord/record-image-navi.phtml -->

@@ -6,7 +6,7 @@ finna.imagePopup = (function finnaImagePopup() {
     var links = trigger.closest('.recordcover-holder').find('.image-popup');
     var link = links.filter(function filterLink() {
       return $(this).data('ind') === ind
-    } );
+    });
     link.click();
   }
 
@@ -20,7 +20,7 @@ finna.imagePopup = (function finnaImagePopup() {
       });
     }
 
-    assignIndexes($('.image-popup'));
+    assignIndexes($('.image-popup-trigger'));
 
     assignHandleCover($('.recordcovers'));
 
@@ -34,6 +34,8 @@ finna.imagePopup = (function finnaImagePopup() {
     // Assign image indices
     var index = 0;
     element.each(function assignIndex() {
+      var assignedImages = $(this).data('imagesData');
+      console.log($(this));
       $(this).data('ind', index++);
       var recordIdx = $(this).closest('.recordcover-holder').find('.image-popup-trigger').data('recordInd');
       if (recordIdx) {
@@ -142,8 +144,8 @@ finna.imagePopup = (function finnaImagePopup() {
         type: 'ajax',
         tLoading: '',
         tClose: VuFind.translate('close'),
-        preloader: true,
-        preload: [1, 3],
+        preloader: false,
+        //preload: [1, 3],
         removalDelay: 200,
         ajax: {
           cursor: '',
@@ -259,15 +261,6 @@ finna.imagePopup = (function finnaImagePopup() {
               videojs('video').dispose();
             }
           }
-        },
-        gallery: {
-          enabled: true,
-          preload: [0, 2],
-          navigateByImgClick: true,
-          arrowMarkup: '<button title="%title%" type="button" aria-label="%title%" class="mfp-arrow mfp-arrow-%dir%"></button>',
-          tPrev: VuFind.translate('Prev'),
-          tNext: VuFind.translate('Next'),
-          tCounter: ''
         }
       });
     });
@@ -443,7 +436,9 @@ finna.imagePopup = (function finnaImagePopup() {
   }
 
   function init() {
+    console.log(1);
     if (module !== 'record') {
+
       initThumbnailNavi();
       initRecordImage();
     } else {

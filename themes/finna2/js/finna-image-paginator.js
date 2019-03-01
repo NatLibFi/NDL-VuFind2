@@ -1,4 +1,4 @@
-/* global finna */
+/* global finna, VuFind */
 finna.imagePaginator = (function imagePaginator() {
   var paginatedImages = [];
   var imageElement = "<a draggable=\"false\" href=\"\" class=\"image-popup image-popup-navi hidden-print\" data-image-index=\"\"><img draggable=\"false\" alt=\"\" data-lazy=\"\"></img></a>";
@@ -17,7 +17,9 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   function init() {
-    area = $('.template-dir-record .recordcovers');
+    console.log(2);
+    area = $('.recordcovers');
+    area.data('imagesData', paginatedImages);
     area.addClass('paginated');
     var elementBaseObject = $(elementBase).clone();
     parentElement = elementBaseObject.find('.finna-element-track');
@@ -28,9 +30,9 @@ finna.imagePaginator = (function imagePaginator() {
     area.append(elementBaseObject);
     area.append($(rightButton));
     area.append(tmpInfoBar);
-    setPagerInfo(0);
+    //setPagerInfo(0);
     bindEvents();
-    loadPage(0);
+    //loadPage(0, paginatedImages);
   }
 
   function bindEvents() {
@@ -40,10 +42,10 @@ finna.imagePaginator = (function imagePaginator() {
     var leftBtn = area.find('.left-button');
     var rightBtn = area.find('.right-button');
     $(leftBtn).on('click', function toLeft(){
-      loadPage(-1);
+      loadPage(-1, $(this));
     });
     $(rightBtn).on('click', function toRight(){
-      loadPage(1);
+      loadPage(1, $(this));
     });
   }
   
@@ -56,11 +58,13 @@ finna.imagePaginator = (function imagePaginator() {
     
     switch (type) {
     case 'mousedown':
+      // Load images here 
       e.preventDefault();
       canDrag = true;
       oldPosX = e.originalEvent.clientX;
       break;
     case 'touchstart':
+      // Load images here 
       e.preventDefault();
       canDrag = true;
       oldPosX = e.originalEvent.touches[0].clientX;
@@ -68,7 +72,7 @@ finna.imagePaginator = (function imagePaginator() {
     case 'mousemove':
       // Our finger/mouse is moving, so lets get the direction where to move
       if (canDrag) {
-        checkLoadableContent(e.originalEvent.clientX);
+        checkLoadableContent(e.originalEvent.clientX, $(this));
       }
       break;
     case 'touchmove':
@@ -77,11 +81,12 @@ finna.imagePaginator = (function imagePaginator() {
         e.stopPropagation();
         e.preventDefault();
         
-        checkLoadableContent(e.originalEvent.touches[0].clientX);
+        checkLoadableContent(e.originalEvent.touches[0].clientX, $(this));
       }
       break;
     case 'mouseup':
     case 'touchend':
+      //Unload images
       canDrag = false;
       break;
     }
@@ -89,8 +94,7 @@ finna.imagePaginator = (function imagePaginator() {
 
   //Pixels to drag for next image to show
   var threshold = 40;
-
-  function checkLoadableContent(newPosX) {
+  function checkLoadableContent(newPosX, element) {
     // Our finger/mouse is moving, so lets get the direction where to move
     if (canDrag) {
       // Value is going to be negative, so lets invert the difference between oldpos and newpos
@@ -98,21 +102,21 @@ finna.imagePaginator = (function imagePaginator() {
 
       if (difference > threshold) {
         //Remove the first image in the list and load new last if found
-        loadOneImage(1);
+        loadOneImage(1, element);
         oldPosX = newPosX;
       } else if (difference < -threshold) {
         //Remove the last image in the list and load new first if found
         oldPosX = newPosX;
-        loadOneImage(-1);
+        loadOneImage(-1, element);
       }
     }
   }
 
   var offSet = 0;
-
-  function loadOneImage(direction) {
+  function loadOneImage(direction, element) {
     var searchIndex = 0;
     offSet += direction;
+    var currentPaginatedImages = element.closest('.recordcovers').data('imagesData');
 
     // On direction 1, we are going towards end of the array and vice versa
     if (direction > 0) {
@@ -125,8 +129,8 @@ finna.imagePaginator = (function imagePaginator() {
     if (searchIndex < 0) {
       offSet = 0;
       return;
-    } else if (searchIndex > paginatedImages.length - 1) {
-      offSet = paginatedImages.length - 5;
+    } else if (searchIndex > currentPaginatedImages.length - 1) {
+      offSet = currentPaginatedImages.length - 5;
       return;
     }
 
@@ -136,10 +140,10 @@ finna.imagePaginator = (function imagePaginator() {
       parentElement.find('a:first').remove();
     }
 
-    if (paginatedImages.length > 5 + offSet) {
+    if (currentPaginatedImages.length > 5 + offSet) {
       //We are allowed to do stuff now, otherwise there is less or equal to five images in array, Lets get the last index image
-      if (typeof paginatedImages[searchIndex] !== 'undefined') {
-        createImageObject(paginatedImages[searchIndex], (direction === 1));
+      if (typeof currentPaginatedImages[searchIndex] !== 'undefined') {
+        createImageObject(currentPaginatedImages[searchIndex], (direction === 1));
       }
     }
   }
@@ -151,17 +155,22 @@ finna.imagePaginator = (function imagePaginator() {
     pager.html(text);
   }
 
-  function startReached() {
-
-  }
-
-  function endReached() {
-
-  }
-  
-  function loadPage(direction) {
+  function loadPage(direction, element) {
     parentElement.empty();
     var oldOffset = offSet;
+    var currentPaginatedImages;
+    
+    //First time here, so lets load images from temp memory
+    if (direction === 0) {
+      currentPaginatedImages = paginatedImages;
+    } else {
+      currentPaginatedImages = element.closest('.recordcovers').data('imagesData');
+    }
+
+    if (typeof currentPaginatedImages === 'undefined' || currentPaginatedImages.length === 0) {
+      return;
+    }
+
     //We need to add 4 every time we load a new page
     if (direction < 0) {
       offSet -= 4;
@@ -178,17 +187,17 @@ finna.imagePaginator = (function imagePaginator() {
       lastImage = 4;
     }
 
-    if (lastImage > paginatedImages.length - 1) {
-      lastImage = paginatedImages.length - 1;
+    if (lastImage > currentPaginatedImages.length - 1) {
+      lastImage = currentPaginatedImages.length - 1;
       offSet = oldOffset;
     }
 
     var i = firstImage;
     var k = lastImage;
 
-    if (paginatedImages.length > 0) {
+    if (currentPaginatedImages.length > 0) {
       for (;i <= k; i++) {
-        createImageObject(paginatedImages[i], true);
+        createImageObject(currentPaginatedImages[i], true);
       }
     }
   }
@@ -205,17 +214,11 @@ finna.imagePaginator = (function imagePaginator() {
     }
     if (typeof link.index !== 'undefined') {
       tmpImg.data('ind', link.index);
-      var recordIdx = tmpImg.closest('.recordcover-holder').find('.image-popup-trigger').data('recordInd');
-      $(this).data('recordInd', recordIdx);
+      tmpImg.data('thmbInd', link.index);
     }
-
     if (typeof link.medium !== 'undefined') {
       tmpImg.attr('href', link.medium);
     }
-
-    tmpImg.append($('<i class="fa fa-spinner fa-spin"/>')).one('load', function onLoadImage() {
-      $(this).empty();
-    });
 
     if (append === true) {
       parentElement.append(tmpImg);
@@ -223,11 +226,31 @@ finna.imagePaginator = (function imagePaginator() {
       parentElement.prepend(tmpImg);
     }
 
-    var links = $(this).closest('.recordcover-holder').find('.recordcovers .image-popup');
-    var linkIndex = links.eq(0).data('ind');
-    $(this).data('ind', linkIndex);
-    $(this).data('thumbInd', 0);
-    finna.imagePopup.assignUpdateImage(tmpImg, setPagerInfo);
+    tmpImg.append($('<i class="fa fa-spinner fa-spin"/>')).one('load', function onLoadImage() {
+      $(this).empty();
+    });
+
+    initPopupTrigger(tmpImg);
+  }
+
+  function initPopupTrigger(element) {
+    element.click(function initPopupData(e) {
+      e.preventDefault();
+      var trigger = $(this).closest('.recordcover-holder').find('.image-popup-trigger');
+      trigger.data('ind', $(this).data('ind'));
+      trigger.data('thumbInd', $(this).data('thumbInd'));
+      // Temporarily adjust the image so that the user sees something is happening
+      var img = trigger.find('img');
+      img.css('opacity', 0.5);
+      img.one('load', function onLoadImage() {
+        img.css('opacity', '');
+      });
+      img.attr('src', $(this).attr('href'));
+      var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
+      textContainers.addClass('hidden');
+      textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
+      setPagerInfo($(this).data('ind'));
+    });
   }
 
   var my = {
