@@ -33,9 +33,10 @@ finna.imagePopup = (function finnaImagePopup() {
   function assignIndexes(element) {
     // Assign image indices
     var index = 0;
+    console.log(element);
     element.each(function assignIndex() {
-      var assignedImages = $(this).data('imagesData');
-      console.log($(this));
+      var assignedImages = $(this).data('images');
+      console.log($(this).data('images'));
       $(this).data('ind', index++);
       var recordIdx = $(this).closest('.recordcover-holder').find('.image-popup-trigger').data('recordInd');
       if (recordIdx) {

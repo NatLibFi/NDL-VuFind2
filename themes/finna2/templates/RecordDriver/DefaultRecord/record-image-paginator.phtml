@@ -13,7 +13,6 @@
         'small' => $img['urls']['small'],
         'medium' => $img['urls']['medium'],
         'large' => $img['urls']['large'] ?? $img['urls']['medium'],
-        'thmbIndex' => $ind,
         'index' => $ind++,
       ];
 
@@ -22,7 +21,7 @@
       $paginatedLinks[] = $obj;
     ?>
   <?php endforeach; ?>
-  <div class="recordcovers <?=$type?>">
+  <div class="recordcovers paginate <?=$type?>">
   </div>
   <?php if (!$this->userAgent()->isBot()): ?>
       <?php if (!empty($images[0]['urls']['medium']) || !empty($images[0]['urls']['large'])): ?>

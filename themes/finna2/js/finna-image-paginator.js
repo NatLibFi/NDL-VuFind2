@@ -1,4 +1,4 @@
-/* global finna, VuFind */
+/* global finna */
 finna.imagePaginator = (function imagePaginator() {
   var paginatedImages = [];
   var imageElement = "<a draggable=\"false\" href=\"\" class=\"image-popup image-popup-navi hidden-print\" data-image-index=\"\"><img draggable=\"false\" alt=\"\" data-lazy=\"\"></img></a>";
@@ -17,9 +17,10 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   function init() {
-    console.log(2);
-    area = $('.recordcovers');
-    area.data('imagesData', paginatedImages);
+    area = $('.recordcovers.paginate');
+    var trigger = area.closest('.recordcover-holder').find('.image-popup-trigger'); //Löydetty pääobjekti
+    trigger.data('images', paginatedImages);
+    area.removeClass('paginate');
     area.addClass('paginated');
     var elementBaseObject = $(elementBase).clone();
     parentElement = elementBaseObject.find('.finna-element-track');
@@ -30,9 +31,9 @@ finna.imagePaginator = (function imagePaginator() {
     area.append(elementBaseObject);
     area.append($(rightButton));
     area.append(tmpInfoBar);
-    //setPagerInfo(0);
+    setPagerInfo(0);
     bindEvents();
-    //loadPage(0, paginatedImages);
+    loadPage(0, paginatedImages);
   }
 
   function bindEvents() {
@@ -41,12 +42,20 @@ finna.imagePaginator = (function imagePaginator() {
 
     var leftBtn = area.find('.left-button');
     var rightBtn = area.find('.right-button');
+    $(document).on('click', '.image-popup', function setCurrentImage(){
+      var trigger = getHostElement($(this));
+      trigger.attr('currentImageIndex', $(this).data('ind'));
+    });
     $(leftBtn).on('click', function toLeft(){
       loadPage(-1, $(this));
     });
     $(rightBtn).on('click', function toRight(){
       loadPage(1, $(this));
     });
+  }
+
+  function getHostElement(element) {
+    return element.closest('.recordcover-holder').find('.image-popup-trigger');
   }
   
   var canDrag = false;
@@ -116,7 +125,7 @@ finna.imagePaginator = (function imagePaginator() {
   function loadOneImage(direction, element) {
     var searchIndex = 0;
     offSet += direction;
-    var currentPaginatedImages = element.closest('.recordcovers').data('imagesData');
+    var currentPaginatedImages = element.closest('.recordcover-holder').find('.image-popup-trigger').data('images');
 
     // On direction 1, we are going towards end of the array and vice versa
     if (direction > 0) {
@@ -164,7 +173,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (direction === 0) {
       currentPaginatedImages = paginatedImages;
     } else {
-      currentPaginatedImages = element.closest('.recordcovers').data('imagesData');
+      currentPaginatedImages = element.closest('.recordcover-holder').find('.image-popup-trigger').data('images');
     }
 
     if (typeof currentPaginatedImages === 'undefined' || currentPaginatedImages.length === 0) {
@@ -214,7 +223,6 @@ finna.imagePaginator = (function imagePaginator() {
     }
     if (typeof link.index !== 'undefined') {
       tmpImg.data('ind', link.index);
-      tmpImg.data('thmbInd', link.index);
     }
     if (typeof link.medium !== 'undefined') {
       tmpImg.attr('href', link.medium);
