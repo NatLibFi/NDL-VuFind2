@@ -37,6 +37,8 @@
 .mfp-ajax-holder {
     & .mfp-content {
         width: auto;
+        height: 100%;
+        max-height: 100%;
         background: @body-bg;
         max-width: 99%;
         box-shadow: 0px 10px 40px rgba(1,1,1,0.8);
@@ -86,7 +88,9 @@
 }
 .imagepopup-container {
     display: block;
-    width: auto;
+    display: flex;
+    flex-flow: wrap;
+    justify-content: space-between;
     background: @body-bg;
     padding-bottom: 5px;
     & .image-info {
@@ -100,7 +104,6 @@
     }
     & .image-index, .record-index {
         display: block;
-        margin: -34px 20px 0 0;
         & span.index {
             font-size: 1.2em;   
         }

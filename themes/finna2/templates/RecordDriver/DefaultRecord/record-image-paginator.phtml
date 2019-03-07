@@ -21,7 +21,7 @@
       $paginatedLinks[] = $obj;
     ?>
   <?php endforeach; ?>
-  <div class="recordcovers paginate <?=$type?>">
+  <div class="recordcovers <?=$type?>">
   </div>
   <?php if (!$this->userAgent()->isBot()): ?>
       <?php if (!empty($images[0]['urls']['medium']) || !empty($images[0]['urls']['large'])): ?>
@@ -36,7 +36,7 @@
               <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['medium']);?>"/>
             <?php endif; ?>
             <?php if (isset($images[0]['large'])): ?>
-            <i class="fa fa-magnify hidden-print"></i>
+              <i class="fa fa-magnify hidden-print"></i>
             <?php endif; ?>
           </a>
         </div>
@@ -48,6 +48,13 @@
       <?php endif; ?>
     <?php endif; ?>
   <script>
-    finna.imagePaginator.setPaginatedImages(<?= json_encode($paginatedLinks) ?>);
+    <?php $settings = [
+      'id' => $this->escapeHtmlAttr($this->driver->getUniqueId()),
+      'source' => $this->escapeHtmlAttr($this->driver->getSourceIdentifier())
+    ]?>
+    finna.imagePaginator.initPaginator(
+      <?= json_encode($paginatedLinks) ?>,
+      <?= json_encode($settings) ?>
+    );
   </script>
 <?php endif;?>

@@ -14,20 +14,18 @@
 ?>
 <div class="imagepopup-holder <?=$this->escapeHtmlAttr($recordType) ?>" data-type="<?=$this->escapeHtmlAttr($recordType) ?>" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID()) ?>">
   <div class="imagepopup-container">
-    <div class="image iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>">
+    <!-- This is the place to assign the image start -->
+    <div class="loaded image iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>">
       <div id="leaflet-map-image" class="image-wrapper" data-large-image-layout="<?=$largeImageLayout?>" data-enable-image-popup-zoom="<?=$enableImagePopupZoom?>" >
-      <?php if (! $enableImagePopupZoom): ?>
-        <img src="<?=$largeImage?>" />
-      <?php endif; ?>
-      <?php if ($largeImageLayout && $enableImagePopupZoom): ?>
+        <img />
         <div class="imagepopup-zoom-container">
           <div class="zoom-in zoom-button"><i class="fa fa-zoom-in" aria-hidden="true"></i><span class="sr-only">Zoom in</span></div>
           <div class="zoom-out zoom-button"><i class="fa fa-zoom-out" aria-hidden="true"></i><span class="sr-only">Zoom out</span></div>
           <div class="zoom-reset zoom-button"><i class="fa fa-zoom-100" aria-hidden="true"></i><span class="sr-only">Reset</span></div>
         </div>
-      <?php endif; ?>
-        </div>
+      </div>
     </div>
+    <!-- This is the place to assign the image end -->
     <div class="content">
       <h3 id="popup-image-title" class="title"><?=$this->escapeHtml($this->driver->getTitle()) ?></h3>
       <div class="author-and-dates">
@@ -184,6 +182,8 @@
         <div class="image-index"><?=$this->transEsc('Image') . " $currentImage / $numOfImages" ?></div>
       <?php endif; ?>
       <div class="record-index"><span class="index"></span> / <span class="total"></span></div>
+    </div>
+    <div class="finna-image-pagination" style="width: 100%;">
     </div>
     <div style="clear: both;"></div>
   </div>

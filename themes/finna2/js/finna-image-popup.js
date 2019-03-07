@@ -20,14 +20,14 @@ finna.imagePopup = (function finnaImagePopup() {
       });
     }
 
-    assignIndexes($('.image-popup-trigger'));
+    //assignIndexes($('.image-popup-trigger'));
 
-    assignHandleCover($('.recordcovers'));
+    //assignHandleCover($('.recordcovers'));
 
-    assignPopupTrigger($('.image-popup-trigger'));
+    //assignPopupTrigger($('.image-popup-trigger'));
 
     // Roll-over thumbnail images: update medium size record image and indices.
-    assignUpdateImage($('.image-popup-navi'));
+    //assignUpdateImage($('.image-popup-navi'));
   }
 
   function assignIndexes(element) {
@@ -81,7 +81,7 @@ finna.imagePopup = (function finnaImagePopup() {
       var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
       textContainers.addClass('hidden');
       textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
-      initRecordImage();
+      //initRecordImage();
       if (typeof pagerCallback !== 'undefined') {
         pagerCallback($(this).data('ind'));
       }
@@ -96,10 +96,10 @@ finna.imagePopup = (function finnaImagePopup() {
 
   function initRecordImage() {
     // Collect data for all image-popup triggers on page.
-    var urls = $('.image-popup').map(function mapPopupTriggers() {
+    var urls = $('.image-popup-trigger').data('imagesData').map(function mapPopupTriggers() {
       // result list
-      var id = $(this).closest('.result').find('.hiddenId');
-      if (!id.length) {
+      
+      /*if (!id.length) {
         // gallery view
         id = $(this).closest('.record-container').find('.hiddenId');
         if (!id.length) {
@@ -115,21 +115,12 @@ finna.imagePopup = (function finnaImagePopup() {
       if (!id.length) {
         return;
       }
-      id = id.val();
+      id = id.val();*/
 
       var ind = $(this).data('ind');
+      console.log(ind);
       var thumbInd = $(this).data('thumbInd');
       var recordInd = $(this).data('recordInd');
-      var src = VuFind.path + '/AJAX/JSON?method=getImagePopup&id=' + encodeURIComponent(id) + '&index=' + thumbInd;
-
-      if (typeof publicList !== 'undefined') {
-        src += '&publicList=1';
-      }
-
-      var listId = getActiveListId();
-      if (typeof listId !== 'undefined') {
-        src += '&listId=' + listId;
-      }
 
       return {
         src: src,
@@ -140,14 +131,26 @@ finna.imagePopup = (function finnaImagePopup() {
     }).toArray();
 
     $('.image-popup-trigger').each(function initPopup() {
+      var id = $(this).attr('data-record-id');
+      var src = VuFind.path + '/AJAX/JSON?method=getImagePopup&id=' + encodeURIComponent(id) + '&index=' + thumbInd;
+      if (typeof publicList !== 'undefined') {
+        src += '&publicList=1';
+      }
+
+      var listId = getActiveListId();
+      if (typeof listId !== 'undefined') {
+        src += '&listId=' + listId;
+      }
+      var item = [{
+        src: src,
+
+      }];
       $(this).magnificPopup({
         items: urls,
         index: $(this).data('ind'),
         type: 'ajax',
         tLoading: '',
         tClose: VuFind.translate('close'),
-        preloader: false,
-        //preload: [1, 3],
         removalDelay: 200,
         ajax: {
           cursor: '',
@@ -308,12 +311,12 @@ finna.imagePopup = (function finnaImagePopup() {
   function resolveRecordImageSize() {
     if ($('.image-popup-navi').length > 1) {
       initThumbnailNavi();
-      initRecordImage();
+      //initRecordImage();
     } else {
       $('.image-popup-trigger img').one('load', function onLoadImg() {
         if (this.naturalWidth > 10 && this.naturalHeight > 10) {
           initThumbnailNavi();
-          initRecordImage();
+          //initRecordImage();
         } else {
           $(this).closest('.recordcover-holder').hide();
           $('.access-rights p').first().hide();
@@ -438,27 +441,408 @@ finna.imagePopup = (function finnaImagePopup() {
     console.log(1);
     if (module !== 'record') {
 
-      initThumbnailNavi();
-      initRecordImage();
+      //initThumbnailNavi();
+      //initRecordImage();
     } else {
-      resolveRecordImageSize();
-      initDimensions();
+      //resolveRecordImageSize();
+      //initDimensions();
     }
 
-    if (location.hash === '#image') {
-      openPopup($('.image-popup-trigger'));
-    }
+    //if (location.hash === '#image') {
+    //  openPopup($('.image-popup-trigger'));
+    //}
     $.extend(true, $.magnificPopup.defaults, {
       tLoading: VuFind.translate('loading') + '...'
     });
-    initImageCheck();
+    //initImageCheck();
   }
 
   var my = {
-    init: init,
-    initThumbnailNavi: initThumbnailNavi,
-    assignUpdateImage: assignUpdateImage
+    init: function e() {
+      
+    },
+    //initThumbnailNavi: initThumbnailNavi,
+    //assignUpdateImage: assignUpdateImage
   };
 
   return my;
 })();
+
+
+function init() {
+  area = $('.recordcovers.paginate');
+  var trigger = area.closest('.recordcover-holder').find('.image-popup-trigger'); //Löydetty pääobjekti
+  trigger.data('images', paginatedImages).attr('data-record-id', trigger.closest('.hiddenId').val());
+  area.removeClass('paginate').addClass('paginated');
+  var elementBaseObject = $(elementBase).clone();
+  parentElement = elementBaseObject.find('.finna-element-track');
+  var tmpInfoBar = $(infoBar);
+  pager = tmpInfoBar.find('.paginator-pager');
+  area.empty();
+  area.append($(leftButton));
+  area.append(elementBaseObject);
+  area.append($(rightButton));
+  area.append(tmpInfoBar);
+  setPagerInfo(0);
+  bindEvents();
+  loadPage(0, parentElement);
+  setParent(area);
+}
+
+function bindEvents() {
+  $(document).on('touchstart touchmove mousedown mousemove', '.finna-element-track', handleMouseDrag);
+  $(document).on('mouseup touchend', handleMouseDrag);
+
+  $(document).on('click', '.image-popup', function setCurrentImage() {
+    setParent($(this));
+    setMagnificPopup($(this));
+  });
+
+  $(document).on('click', '.image-preview', function setLeafletImage(){
+
+  });
+
+
+  $(document).on('click', '.left-button', function toLeft(){
+    setParent($(this));
+    loadPage(-1, $(this).siblings('.paginator-mask').find('.finna-element-track'));
+  });
+  $(document).on('click', '.right-button', function toRight(){
+    setParent($(this));
+    loadPage(1, $(this).siblings('.paginator-mask').find('.finna-element-track'));
+  });
+}
+
+function setMagnificPopup(element) {
+  var trigger = getHostElement(element);
+  var ind = element.data('ind');
+  trigger.attr('currentImageIndex', ind);
+  var id = trigger.attr('data-record-id');
+  var src = VuFind.path + '/AJAX/JSON?method=getImagePopup&id=' + encodeURIComponent(id) + '&index=' + ind;
+  var currentElement = {
+    src: src,
+    index: ind,
+    href: element.attr('href')
+  };
+
+  trigger.magnificPopup({
+    items: currentElement,
+    type: 'ajax',
+    tLoading: '',
+    tClose: "sulje",
+    removalDelay: 200,
+    ajax: {
+      cursor: '',
+      settings: {
+        dataType: 'json'
+      }
+    },
+    callbacks: {
+      parseAjax: function onParseAjax(mfpResponse) {
+        mfpResponse.data = mfpResponse.data.data.html;
+      },
+      ajaxContentAdded: function onAjaxContentAdded() {
+        //Lets give popup info that it needs for perfect pagination to work
+        var paginatorTrack = $(trigger.closest('.recordcover-holder').find('.recordcovers.paginated').html()).clone(); //Lets create a duplicate from paginator track
+        paginatorTrack.find(".paginator-info").remove();
+        var popupPaginator = $('.imagepopup-holder').find('.finna-image-pagination');
+        popupPaginator.append(paginatorTrack);
+        var popupTrack = paginatorTrack.find('.finna-element-track');
+        popupTrack.addClass('is-popup-track');
+        popupTrack.empty();
+        popupPaginator.addClass('recordcovers record paginated');
+
+        map = L.map('leaflet-map-image', {
+          minZoom: 1,
+          maxZoom: 6,
+          center: [0, 0],
+          zoomControl: false,
+          zoom: 6,
+          crs: L.CRS.Simple,
+          dragging: true,
+          maxBoundsViscosity: 0.9,
+        });
+
+        map.on('zoomend', function adjustPopupSize() {
+          map.invalidateSize();
+        });
+
+        $('.zoom-in').click(function zoomIn() {
+          map.setZoom(map.getZoom() + 1)
+        });
+        $('.zoom-out').click(function zoomOut() {
+          map.setZoom(map.getZoom() - 1)
+        });
+        $('.zoom-reset').click(function zoomReset() {
+          map.setZoom(1)
+        });
+
+        $('#leaflet-map-image img').one('load', function onLoadLeafletImage(){
+          $(this).closest('.image').addClass('loaded');
+        }).each(function triggerImageLoad() {
+          if (this.complete) {
+            $(this).load();
+          }
+        });
+        
+        loadPage(0, popupTrack);
+      },
+      close: function closePopup() {
+        if ($("#video").length){
+          //videojs('video').dispose();
+        }
+      }
+    }
+  });
+}
+
+function setParent(element) {
+  var tmpParent = getHostElement(element);
+
+  if (tmpParent.length !== 0) {
+    if (typeof currentHostElement === 'undefined' || tmpParent.attr('data-record-id') !== currentHostElement.attr('data-record-id')) {
+      currentHostElement = tmpParent;
+      paginatedImages = tmpParent.data('images');
+    }
+  }
+}
+
+function getHostElement(element) {
+  return element.closest('.recordcover-holder').find('.image-popup-trigger');
+}
+
+var canDrag = false;
+var _oldPosX = 0;
+
+function handleMouseDrag(e) {
+  var type = e.type;
+
+  switch (type) {
+  case 'mousedown':
+    // Load images here 
+    e.preventDefault();
+    setParent($(e.target));
+    canDrag = true;
+    _oldPosX = e.originalEvent.clientX;
+    break;
+  case 'touchstart':
+    // Load images here 
+    e.preventDefault();
+    setParent($(e.target));
+    canDrag = true;
+    _oldPosX = e.originalEvent.touches[0].clientX;
+    break;
+  case 'mousemove':
+    // Our finger/mouse is moving, so lets get the direction where to move
+    if (canDrag) {
+      setParent($(e.target));
+      checkLoadableContent(e.originalEvent.clientX, $(this));
+    }
+    break;
+  case 'touchmove':
+    // Our finger/mouse is moving, so lets get the direction where to move
+    if (canDrag) {
+      e.stopPropagation();
+      e.preventDefault();
+      setParent($(e.target));
+      checkLoadableContent(e.originalEvent.touches[0].clientX, $(this));
+    }
+    break;
+  case 'mouseup':
+  case 'touchend':
+    //Unload images
+    canDrag = false;
+    break;
+  }
+}
+
+var _threshold = 40;
+
+function checkLoadableContent(newPosX, element) {
+  if (canDrag) {
+    var difference = (_oldPosX - newPosX);
+
+    if (difference > _threshold) {
+      loadOneImage(1, element.closest('.finna-element-track'));
+      _oldPosX = newPosX;
+    } else if (difference < -_threshold) {
+      _oldPosX = newPosX;
+      loadOneImage(-1, element.closest('.finna-element-track'));
+    }
+  }
+}
+
+var offSet = 0;
+/*function loadOneImage(direction, trackElement) {
+  var searchIndex = 0;
+  var currentPaginatedImages = paginatedImages;
+
+  if (typeof currentPaginatedImages === 'undefined' || currentPaginatedImages.length === 0) {
+    return;
+  }
+  offSet += direction;
+  // On direction 1, we are going towards end of the array and vice versa
+  if (direction > 0) {
+    searchIndex = 4 //Lets say we are looking at the 5 first five images so these are our indexes
+  } else {
+    searchIndex = 0; //this is our first images we are looking for
+  }
+
+  searchIndex += offSet;
+  if (searchIndex < 0) {
+    offSet = 0;
+    return;
+  } else if (searchIndex > currentPaginatedImages.length - 1) {
+    offSet = currentPaginatedImages.length - 5;
+    return;
+  }
+
+  if (direction < 0) {
+    trackElement.find('a:last').remove();
+  } else if (direction > 0) {
+    trackElement.find('a:first').remove();
+  }
+
+  if (currentPaginatedImages.length > 5 + offSet) {
+    //We are allowed to do stuff now, otherwise there is less or equal to five images in array, Lets get the last index image
+    if (typeof currentPaginatedImages[searchIndex] !== 'undefined') {
+      createImageObject(currentPaginatedImages[searchIndex], (direction === 1), trackElement);
+    }
+  }
+}*/
+
+//Lets take the images data
+function setPagerInfo(index) {
+  var max = paginatedImages.length;
+  var text = (index + 1) + "/" + max;
+  pager.html(text);
+}
+
+/*function loadPage(direction, trackElement) {
+  trackElement.empty();
+  var oldOffset = offSet;
+  var currentPaginatedImages = paginatedImages;
+
+  if (typeof currentPaginatedImages === 'undefined' || currentPaginatedImages.length === 0) {
+    return;
+  }
+
+  //We need to add 4 every time we load a new page
+  if (direction < 0) {
+    offSet -= 4;
+  } else if (direction > 0) {
+    offSet += 4;
+  }
+
+  var firstImage = 0 + offSet;
+  var lastImage = 4 + offSet;
+
+  if (firstImage < 0) {
+    offSet = 0;
+    firstImage = 0;
+    lastImage = 4;
+  }
+
+  if (lastImage > currentPaginatedImages.length - 1) {
+    lastImage = currentPaginatedImages.length - 1;
+    offSet = oldOffset;
+  }
+
+  var i = firstImage;
+  var k = lastImage;
+
+  if (currentPaginatedImages.length > 0) {
+    for (;i <= k; i++) {
+      createImageObject(currentPaginatedImages[i], true, trackElement);
+    }
+  }
+}*/
+
+function createImageObject(link, append, trackElement) {
+  if (typeof link === 'undefined') {
+    return;
+  }
+
+  var tmpImg = $(imageElement).clone();
+
+  if (trackElement.hasClass('is-popup-track')) {
+    tmpImg.addClass('popup-leaflet');
+  }
+
+  tmpImg.find('img').attr('src', link.small);
+  tmpImg.data('ind', link.index);
+  tmpImg.attr('href', link.medium);
+
+  if (append === true) {
+    trackElement.append(tmpImg);
+  } else {
+    trackElement.prepend(tmpImg);
+  }
+
+  tmpImg.append($('<i class="fa fa-spinner fa-spin"/>'));
+
+  initPopupTrigger(tmpImg);
+}
+
+function initPopupTrigger(element) {
+  element.click(function initPopupData(e) {
+    e.preventDefault();
+    if ($(this).hasClass('popup-leaflet')) {
+      setZoomedImage($(this));
+    } else {
+      var trigger = $(this).closest('.recordcover-holder').find('.image-popup-trigger');
+      trigger.data('ind', $(this).data('ind'));
+      // Temporarily adjust the image so that the user sees something is happening
+      var img = trigger.find('img');
+      img.css('opacity', 0.5);
+      img.one('load', function onLoadImage() {
+        img.css('opacity', '');
+      });
+      img.attr('src', $(this).attr('href'));
+      var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
+      textContainers.addClass('hidden');
+      textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
+      setPagerInfo($(this).data('ind'));
+    }
+  });
+}
+
+var oldLeafletImage;
+
+function setZoomedImage(element) {
+  var img = new Image();
+  img.src = element.attr('href');
+  console.log("Up");
+  img.onload = function onLoadImg() {
+    $(this).attr('alt', $('#popup-image-title').html());
+    var h = this.naturalHeight;
+    var w = this.naturalWidth;
+
+    if (h === 10 && w === 10) {
+      $('#leaflet-map-image').hide();
+      return;
+    }
+    var imageNaturalSizeZoomLevel = 3;
+    if (h < 2000 && w < 2000) {
+      imageNaturalSizeZoomLevel = 2;
+    }
+    if (h < 1000 && w < 1000) {
+      imageNaturalSizeZoomLevel = 1;
+    }
+    var southWest = map.unproject([0, h], imageNaturalSizeZoomLevel);
+    var northEast = map.unproject([w, 0], imageNaturalSizeZoomLevel);
+    var bounds = new L.LatLngBounds(southWest, northEast);
+    var overlay = L.imageOverlay(img.src, bounds);
+    if (typeof oldLeafletImage !== 'undefined') {
+      map.removeLayer(oldLeafletImage);
+    }
+    /*map.flyToBounds(bounds, {animate: false});
+    map.setMaxBounds(bounds);*/
+    map.flyToBounds(bounds, {animate: false});
+    map.setMaxBounds(bounds);
+    overlay.addTo(map);
+    oldLeafletImage = overlay;
+    map.fitBounds(bounds, {padding: [50, 50]});
+    map.invalidateSize();
+  }
+}
