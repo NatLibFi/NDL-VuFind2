@@ -4,7 +4,7 @@
   <?php
     $ind = 0;
     $paginatedLinks = [];
-    $usageRight = [];
+    $usageRights = [];
   ?>
   <?php foreach ($images as $img): ?>
     <?php
@@ -19,6 +19,10 @@
       $obj['description'] = $img['description'] ?? '';
 
       $paginatedLinks[] = $obj;
+
+      // Lets get all the image rights and objectify them
+      $rights = $img["rights"];
+      $rightsObj = [];
     ?>
   <?php endforeach; ?>
   <div class="recordcovers <?=$type?>">

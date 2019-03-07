@@ -95,6 +95,20 @@ finna.imagePaginator = (function imagePaginator() {
     });
   }
 
+  FinnaPaginator.prototype.setButtons = function setButtons() {
+    if (this.images.length <= this.imagesPerPage || this.offSet === this.images.length - 1) {
+      this.rightButton.attr('disabled', true);
+    } else {
+      this.rightButton.removeAttr('disabled');
+    }
+
+    if (this.images.length <= this.imagesPerPage || this.offSet < 1) {
+      this.leftButton.attr('disabled', true);
+    } else {
+      this.leftButton.removeAttr('disabled');
+    }
+  }
+
   FinnaPaginator.prototype.checkResize = function checkResize(e) {
     var width = $(window).width();
     var limits = Object.keys(this.breakPoints);
@@ -153,43 +167,43 @@ finna.imagePaginator = (function imagePaginator() {
 
   FinnaPaginator.prototype.loadPage = function loadPage(direction) {
     this.imageHolder.empty();
-
-    var oldOffset = this.offSet;
+  
     this.offSet += this.imagesPerPage * direction;
-
+    if (this.offSet < 0) {
+      this.offSet = 0;
+    }
     // Lets get first index and last index so we can safely load correct amount of data
     var imagesPerPageAsIndex = this.imagesPerPage - 1;
-    var firstImage = 0 + this.offSet;
     var lastImage = imagesPerPageAsIndex + this.offSet;
-
-    if (firstImage < 0) {
-      this.offSet = 0;
-      firstImage = 0;
-      lastImage = imagesPerPageAsIndex;
-    }
 
     if (lastImage > this.images.length - 1) {
       lastImage = this.images.length - 1;
-      this.offSet = oldOffset;
+      this.offSet = lastImage;
     }
 
-    var i = firstImage;
-    var k = lastImage;
+    var firstImage = lastImage - imagesPerPageAsIndex;
 
-    for (;i <= k; i++) {
-      this.createImagePopup(this.images[i], true);
+    if (firstImage < 1) {
+      this.offSet = 0;
+      firstImage = 0;
     }
+
+    for (;firstImage <= lastImage; firstImage++) {
+      this.createImagePopup(this.images[firstImage], true);
+    }
+    this.setButtons();
   }
 
   FinnaPaginator.prototype.loadOneImage = function loadOneImage(direction) {
+    var oldOffset = this.offSet;
     this.offSet += direction;
     // On direction 1, we are going towards end of the array and vice versa
-    var searchIndex = -1;
+    var searchIndex = 0;
     switch (direction) {
     case -1:
       searchIndex = this.offSet;
       if (searchIndex < 0) {
-        this.offSet = 0;
+        this.offSet = oldOffset;
         return;
       }
       this.imageHolder.find('a:last').remove();
@@ -197,7 +211,7 @@ finna.imagePaginator = (function imagePaginator() {
     case 1:
       searchIndex = this.imagesPerPage - 1 + this.offSet;
       if (searchIndex > this.images.length - 1) {
-        this.offSet = this.images.length - 1;
+        this.offSet = oldOffset;
         return;
       }
       this.imageHolder.find('a:first').remove();
@@ -214,6 +228,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (typeof this.images[searchIndex] !== 'undefined') {
       this.createImagePopup(this.images[searchIndex], (direction === 1));
     }
+    this.setButtons();
   }
 
   FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, append) {
