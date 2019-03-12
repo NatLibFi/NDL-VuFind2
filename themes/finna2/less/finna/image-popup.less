@@ -36,20 +36,13 @@
 }
 .mfp-ajax-holder {
     & .mfp-content {
-        width: auto;
-        height: 100%;
         max-height: 100%;
         background: @body-bg;
-        max-width: 99%;
+        max-width: 1000px;
         box-shadow: 0px 10px 40px rgba(1,1,1,0.8);
         @media (min-width: @screen-sm-min) {
             max-height: 100%;
         }
-    }
-    .full-size {
-        width: 100%;
-        height: 100%;
-        margin-top: -8px;
     }
 }
 .mfp-close-btn-in {
@@ -90,18 +83,20 @@
     display: block;
     display: flex;
     flex-flow: wrap;
-    justify-content: space-between;
-    background: @body-bg;
-    padding-bottom: 5px;
-    & .image-info {
-        text-align: right;
-        width: 100%;
-        padding-bottom: 10px;
-        color: #ABABAB;
-        font-size: 1em;
-        letter-spacing: 0.5px;
-        font-weight: normal;
+    @media (max-width: @screen-sm) {
+        flex-flow: column;
+        #leaflet-map-image {
+            order: 0;
+        }
+        .collapse-content-holder {
+            order: 2;
+        }
+        .finna-image-pagination {
+            order: 1;
+        }
     }
+    background: @body-bg;
+
     & .image-index, .record-index {
         display: block;
         & span.index {
@@ -145,7 +140,12 @@
                 left: 44%;
             }
     }
-    & .content {
+    button[data-target='#popup-content-collapse'] {
+        width: 100%;
+        border: 2px solid lightgray;
+        border-radius: 0;
+    }
+    .content:not('.in') {
         padding: 10px 40px 0 20px;
         text-align: left;
         vertical-align: top;
@@ -205,31 +205,35 @@
 .imagepopup-holder {
     text-align: left;
     margin: auto;
-    width: 100%;
-    height: 90%;  
-    .image {    
+    height: 90%;
+    #leaflet-map-image {
         display: inline-block;
-        max-width: 68%;
-        vertical-align: initial;
-        @media(max-width:@screen-md-max) and (min-width: @screen-md-min) {
-                max-width: 60%;
+        vertical-align: bottom;
+        flex: 1;
+        @media (max-width: @screen-xs-max) {
+            width: 100%;
         }
-        @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
-                max-width: 50%;
-                min-width: 200px;
+        height: 600px;
+        img {
+            width: 100%;
+            height: 100%;
+            background-color: #3d3d3d;
         }
-        @media (min-width: @screen-sm-min) {
-               max-height: 100%;
+    }
+    .finna-image-pagination {
+        background-color: #666666;
+        padding: 8px 0 0 4px;
+        .paginator-info {
+            text-align: center;
+            font-size: 12px;
+            color: rgb(231, 231, 231);
         }
-        z-index: 3000;
-        min-width: 130px;
-        min-height: 130px;
-        margin-bottom: -5px;
-        padding: 0px;
-        margin-right: 0px;
-        text-align: left;
-        background-position: 75px 60px;
+    }
+    /*.image { Might be unused code;
+        flex: 0 0 60%;
         
+        
+
         & .loading {
             position: absolute;
             left: 55px;
@@ -281,10 +285,7 @@
             @media (min-width: @screen-sm-min) {
                 max-height: ~"calc(100vh - 16px)";
             }
-        }
-        .leaflet-control-attribution {
-            display: none;
-        }
+        }*/
     }
 
     & .author-and-dates, .building {
@@ -396,7 +397,6 @@
             }
         }           
     }
-}
 
 .image-rights-default {
     font-size: 11px;
@@ -430,10 +430,6 @@
 }
 
 @media(max-width:@screen-xs-max) {
-    .imagepopup-container {
-        display: block;
-    }
-    .imagepopup-holder .image, 
     .imagepopup-holder.lido .image { 
         width: auto;
         float: none;
@@ -457,8 +453,10 @@
         & h3.title {
             border:none;
         }
-        & .image.loaded .noimage {
+        & .loaded.image .noimage {
             display: inline-block;
+            flex: 1;
+            height: 100%;
             text-align: center;
             top: 15px;
             left: auto;

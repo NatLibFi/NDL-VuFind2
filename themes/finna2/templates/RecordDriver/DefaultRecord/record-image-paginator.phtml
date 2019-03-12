@@ -53,12 +53,19 @@
     <?php endif; ?>
   <script>
     <?php $settings = [
-      'id' => $this->escapeHtmlAttr($this->driver->getUniqueId()),
-      'source' => $this->escapeHtmlAttr($this->driver->getSourceIdentifier())
+      'id' => $this->driver->getUniqueId(),
+      'source' => $this->driver->getSourceIdentifier()
     ]?>
-    finna.imagePaginator.initPaginator(
-      <?= json_encode($paginatedLinks) ?>,
-      <?= json_encode($settings) ?>
-    );
+    <?php if ($type === 'list' || $type === 'list-grid'): ?>
+      finna.imagePaginator.initMiniPaginator(
+        <?= json_encode($paginatedLinks) ?>,
+        <?= json_encode($settings) ?> // We doin a smaller version of the paginator
+      );
+    <?php else: ?>
+      finna.imagePaginator.initPaginator(
+        <?= json_encode($paginatedLinks) ?>,
+        <?= json_encode($settings) ?> // We doin a smaller version of the paginator
+      );
+    <?php endif; ?>
   </script>
 <?php endif;?>
