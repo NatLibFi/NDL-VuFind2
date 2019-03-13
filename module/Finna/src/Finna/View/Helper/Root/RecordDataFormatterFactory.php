@@ -31,7 +31,7 @@
  */
 namespace Finna\View\Helper\Root;
 
-use Finna\View\Helper\Root\RecordDataFormatter\SpecBuilder;
+use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
 
 /**
  * Factory for record driver data formatting view helper
