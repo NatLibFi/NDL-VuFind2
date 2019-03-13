@@ -140,9 +140,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     public function filterEAD3Fields($coreFields)
     {
         $filter = [
-            'Authors', 'Contributors', 'Organisation', 'Inventory ID', 'Online Access',
+            'Access Restrictions', 'Authors', 'Contributors', 'Organisation', 'Inventory ID', 'Online Access',
             'Access', 'Item Description FWD', 'Physical Description',
-            'Published in', 'Published', 'Source Collection'
+            'Published in', 'Published', 'Source Collection', 'Unit ID'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);

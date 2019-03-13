@@ -56,8 +56,6 @@ class RecordDataFormatterFactory
     {
         $helper = new RecordDataFormatter();
         $helper->setDefaults('core', $this->getDefaultCoreSpecs());
-        $helper->setDefaults('core-ead3', $this->getDefaultCoreEad3Specs());
-
         $helper->setDefaults('description', $this->getDefaultDescriptionSpecs());
         $helper->setDefaults('authority', $this->getDefaultAuthoritySpecs());
         
@@ -76,140 +74,17 @@ class RecordDataFormatterFactory
         $fields = $this->getDefaultCoreFields();
         
         foreach ($this->getDefaultCoreFields() as $key => $data) {
-            list($dataMethod, $template, $options) = $data;
-            $spec->setTemplateLine($key, $dataMethod, $template, $options);
+            if ($data[0] === true) {
+                list($multiLine, $dataMethod, $callback) = $data;
+            } else {
+                list($multiLine, $dataMethod, $template, $options) = $data;
+            }
+            if ($multiLine) {
+                $spec->setMultiLine($key, $dataMethod, $callback);
+            } else {
+                $spec->setTemplateLine($key, $dataMethod, $template, $options);
+            }
         }
-
-        return $spec->getArray();
-    }
-
-    /**
-     * Get default specifications for displaying data in core metadata.
-     *
-     * @return array
-     */
-    public function getDefaultCoreEad3Specs()
-    {
-        $fields = $this->getDefaultCoreFields();
-        unset($fields['Access Restrictions']);
-        unset($fields['Access']);
-
-
-        
-        $spec = new SpecBuilder();
-        
-        foreach ($fields as $key => $data) {
-            list($dataMethod, $template, $options) = $data;
-            $spec->setTemplateLine($key, $dataMethod, $template, $options);
-        }
-        
-        // Add arcrole-relations as multiple fields with role as field header
-        $getRelations = function ($data, $options) use ($spec) {
-            $final = [];
-            $cnt = $spec->getMaxPos();
-            foreach ($data as $type => $values) {
-                $final[] = [
-                    'label' => isset($values['role'])
-                        ? ('CreatorRoles::' . $values['role']) : null,
-                    'values' => [$type => $values],
-                    'options' => [
-                        'pos' => $cnt++,
-                        'renderType' => 'RecordDriverTemplate',
-                        'template' => 'data-authors.phtml',
-                        'context' => [
-                            'class' => 'recordRelations',
-                            'type' => $type,
-                            'schemaLabel' => null,
-                            // TODO: needed?
-                            /*
-                            'requiredDataFields' => [
-                                ['name' => 'role', 'prefix' => 'CreatorRoles::']
-                                ],*/
-                        ],
-                    ],
-                 ];
-            }
-            return $final;
-        };
-        $spec->setMultiLine(
-            'Relations', 'getNonPresenterAuthors', $getRelations
-        );
-
-        $spec->setTemplateLine(
-            'Sisällön luonne', 'getContentDescription', 'data-escapeHtml.phtml',
-            ['context' => ['class' => 'recordContentDescription']]
-        );
-
-        $spec->setTemplateLine(
-            'Aineiston syntyhistoria', 'getItemHistory', 'data-escapeHtml.phtml',
-            ['context' => ['class' => 'recordHistory']]
-        );
-        
-
-        // Add arcrole-relations as multiple fields with role as field header
-        $getAccessRestrictions = function ($data, $options) use ($spec) {
-            $final = [];
-            $cnt = $spec->getMaxPos();
-            foreach ($data as $type => $values) {
-                $final[] = [
-                    'label' => "Access Restrictions:$type",
-                    'values' => array_values($values),
-                    'options' => [
-                        'pos' => $cnt++,
-                        'renderType' => 'RecordDriverTemplate',
-                        'template' => 'data-escapeHtml.phtml',
-                        'context' => [
-                            'class' => 'extendedAccess',
-                            'type' => "Access Restrictions::$type",
-                            'schemaLabel' => null,
-                        ],
-                    ],
-                 ];
-            }
-            return $final;
-        };
-              
-        $spec->setMultiLine(
-            '', 'getExtendedAccessRestrictions', $getAccessRestrictions
-        );
-        
-        $spec->reorderKeys(
-            ['Archive Origination', 'Archive', 'Archive Series', 'Relations']
-        );
-
-        
-        $getUnitIds = function ($data, $options) {
-            $result = [];
-            foreach ($data as $type => $value) {
-                $result[] = [
-                    'label' => 'Unit ID',
-                    'values' => [ $type => "$value ($type)"],
-                    'options' => [
-                        'renderType' => 'RecordDriverTemplate',
-                        'template' => 'data-escapeHtml.phtml',
-                        'context' => [
-                            'class' => 'class',
-                            'type' => $type,
-                            'schemaLabel' => null,
-                        ]
-                    ]
-                ];
-            }
-            return $result;
-        };
-
-        $spec->setMultiLine('Unit ID', 'getUnitIDs', $getUnitIds);
-
-        /*
-        $fields = array_keys($spec->getArray());
-        unset($fields['Access Restrictions']);
-        unset($fields['Access']);
-        $spec->reorderKeys($fields);
-        */
-
-        $spec->reorderKeyToEnd('Käyttöluvan myöntäjä');
-        $spec->reorderKeyToEnd('Access Restrictions');
-        
         return $spec->getArray();
     }
 
@@ -220,13 +95,64 @@ class RecordDataFormatterFactory
      */
     protected function getDefaultCoreFields()
     {
+        $pos = 10;
         $lines = [];
         $setTemplateLine
-            = function ($key, $dataMethod, $template, $options = []) use (&$lines) {
-                $lines[$key] = [$dataMethod, $template, $options];
+            = function ($key, $dataMethod, $template, $options = []) use (
+                &$lines, &$pos
+            ) {
+                $pos += 100;
+                $options['pos'] = $pos;
+                $lines[$key] = [false, $dataMethod, $template, $options];
             };
 
         
+        $setMultiTemplateLine
+            = function ($key, $dataMethod, $callback) use (&$lines, &$pos) {
+                $pos += 100;
+                $lines[$key] = [true, $dataMethod, $callback];
+            };
+        
+        $setTemplateLine(
+            'Archive Origination', 'getOrigination', 'data-origination.phtml',
+            [
+                'context' => ['class' => 'record-origination']
+            ]
+        );
+        $setTemplateLine(
+            'Archive', true, 'data-archive.phtml',
+            [
+                'context' => ['class' => 'recordHierarchyLinks']
+            ]
+        );
+        $setTemplateLine(
+            'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
+            [
+                'context' => ['class' => 'recordSeries']
+            ]
+        );
+        $setTemplateLine(
+            'Organisation', 'getInstitutions', 'data-organisation.phtml',
+            [
+                'context' => ['class' => 'recordInstitution']
+            ]
+        );
+        $setTemplateLine(
+            'Collection', 'getCollections', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordCollection']
+            ]
+        );        
+        $setTemplateLine(
+            'Sisällön luonne', 'getContentDescription', 'data-escapeHtml.phtml',
+            ['context' => ['class' => 'recordContentDescription']]
+        );
+        
+        $setTemplateLine(
+            'Aineiston syntyhistoria', 'getItemHistory', 'data-escapeHtml.phtml',
+            ['context' => ['class' => 'recordHistory']]
+        );
+
         $setTemplateLine(
             'Genre', 'getGenres', 'data-genres.phtml',
             [
@@ -410,18 +336,6 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Organisation', 'getInstitutions', 'data-organisation.phtml',
-            [
-                'context' => ['class' => 'recordInstitution']
-            ]
-        );
-        $setTemplateLine(
-            'Collection', 'getCollections', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordCollection']
-            ]
-        );
-        $setTemplateLine(
             'Inventory ID', 'getIdentifier', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordIdentifier']
@@ -458,29 +372,64 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordEvents', 'title' => ""]
             ]
         );
-        $setTemplateLine(
-            'Archive Origination', 'getOrigination', 'data-origination.phtml',
-            [
-                'context' => ['class' => 'record-origination']
-            ]
+
+        // Add arcrole-relations as multiple fields with role as field header
+        $getRelations = function ($data, $options) use (&$pos) {
+            $final = [];
+            foreach ($data as $type => $values) {
+                $final[] = [
+                    'label' => isset($values['role'])
+                        ? ('CreatorRoles::' . $values['role']) : null,
+                    'values' => [$type => $values],
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-authors.phtml',
+                        'context' => [
+                            'class' => 'recordRelations',
+                            'type' => $type,
+                            'schemaLabel' => null,
+                        ],
+                    ],
+                 ];
+            }
+            return $final;
+        };
+        
+        $setMultiTemplateLine(
+            'Relations', 'getNonPresenterAuthors', $getRelations
         );
-        $setTemplateLine(
-            'Archive', true, 'data-archive.phtml',
-            [
-                'context' => ['class' => 'recordHierarchyLinks']
-            ]
-        );
-        $setTemplateLine(
-            'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
-            [
-                'context' => ['class' => 'recordSeries']
-            ]
-        );
+
         $setTemplateLine(
             'Unit ID', 'getUnitID', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordReferenceCode']
             ]
+        );
+
+        $getUnitIds = function ($data, $options) use (&$pos) {
+            $result = [];
+            foreach ($data as $type => $value) {
+                $result[] = [
+                    'label' => 'Unit ID',
+                    'values' => [ $type => "$value ($type)"],
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-escapeHtml.phtml',
+                        'context' => [
+                            'class' => 'class',
+                            'type' => $type,
+                            'schemaLabel' => null,
+                        ]
+                    ]
+                ];
+            }
+            return $result;
+        };
+        
+        $setMultiTemplateLine(
+            'Unit IDs', 'getUnitIds', $getUnitIds
         );
 
         $setTemplateLine(
@@ -754,6 +703,33 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'extendedAccess']
             ]
         );
+        
+        $getAccessRestrictions = function ($data, $options) use (&$pos) {
+            $final = [];
+            foreach ($data as $type => $values) {
+                $final[] = [
+                    'label' => "Access Restrictions:$type",
+                    'values' => array_values($values),
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-escapeHtml.phtml',
+                        'context' => [
+                            'class' => 'extendedAccess',
+                            'type' => "Access Restrictions::$type",
+                            'schemaLabel' => null,
+                        ],
+                    ],
+                 ];
+            }
+            return $final;
+        };
+        
+        $setMultiTemplateLine(
+            'Access Restrictions Extended',
+            'getExtendedAccessRestrictions', $getAccessRestrictions
+        );
+        
         $setTemplateLine(
             'Terms of Use', 'getTermsOfUse', 'data-termsOfUse.phtml',
             [
