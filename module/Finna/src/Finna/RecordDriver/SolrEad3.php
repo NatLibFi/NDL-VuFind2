@@ -368,6 +368,24 @@ class SolrEad3 extends SolrEad
         return parent::getSummary();
     }
 
+    /**
+     * Get identifier
+     *
+     * @return array
+     */
+    public function getIdentifier()
+    {
+        $xml = $this->getXmlRecord();
+        if (isset($xml->did->unitid)) {
+            foreach ($xml->did->unitid as $unitId) {
+                if (isset($unitId->attributes()->identifier)) {
+                    return [(string)$unitId->attributes()->identifier];
+                }
+            }
+        }
+        return [];
+    }
+    
     public function getItemHistory()
     {
         $xml = $this->getXmlRecord();
