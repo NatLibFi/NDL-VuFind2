@@ -5,7 +5,7 @@
  * PHP version 5
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2012-2017.
+ * Copyright (C) The National Library of Finland 2012-2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -69,8 +69,6 @@ class SolrEad3 extends SolrEad
     /**
      * Return building from index.
      *
-     * @param string $language User language version (locale)
-     *
      * @return array
      */
     public function getBuilding()
@@ -133,7 +131,7 @@ class SolrEad3 extends SolrEad
                 $localType = $name->attributes()->localType;
                 if ($localType === 'http://www.rdaregistry.info/Elements/u/P60672') {
                     if ($name = $this->getDisplayLabel($name)) {
-                        return current($name);
+                        return $name[0];
                     }
                 }
             }
@@ -241,11 +239,12 @@ class SolrEad3 extends SolrEad
                 continue;
                 }*/
 
+            $name = $this->getDisplayLabel($relation, 'relationentry');
             $result[] = [
                'id' => (string)$relation->attributes()->href,
                'type' => 'author-id',
                'role' => $arcRole,
-               'name' => current($this->getDisplayLabel($relation, 'relationentry'))
+               'name' => $name ? $name[0] : null
             ];
         }
         
@@ -253,17 +252,11 @@ class SolrEad3 extends SolrEad
         return $result;
     }
 
-    
-    public function getRelatedItems()
-    {
-        return [
-            'parents' => ['ahaa-ng.EAD_6336445_87831063', 'fsd.FSD_ess'],
-            'children' => ['ahaa-ng.EAD_6336445_87831063', 'fsd.FSD_ess'],
-            'continued-from' => ['ahaa-ng.EAD_6336445_87831063', 'fsd.FSD_ess'],
-            'other' => ['ahaa-ng.EAD_6336445_87831063', 'fsd.FSD_ess']
-        ];
-    }
-
+    /**
+     * Get location info to be used in LoacationsEad3-record page tab.
+     *
+     * @return array
+     */
     public function getLocations()
     {
         $xml = $this->getXmlRecord();
@@ -309,6 +302,11 @@ class SolrEad3 extends SolrEad
         return $result;
     }
 
+    /**
+     * Get unit ids
+     *
+     * @return string[]
+     */
     public function getUnitIds()
     {
         $xml = $this->getXmlRecord();
@@ -385,7 +383,12 @@ class SolrEad3 extends SolrEad
         }
         return [];
     }
-    
+
+    /**
+     * Get item history
+     *
+     * @return null|string
+     */
     public function getItemHistory()
     {
         $xml = $this->getXmlRecord();
@@ -465,7 +468,11 @@ class SolrEad3 extends SolrEad
         return $this->getDisplayLabel($xml->did, 'physdesc', true);
     }
 
-    // TODO rename
+    /**
+     * Get description of content.
+     *
+     * @return string
+     */
     public function getContentDescription()
     {
         $xml = $this->getXmlRecord();
@@ -475,45 +482,38 @@ class SolrEad3 extends SolrEad
 
         foreach ($xml->controlaccess->genreform as $genre) {
             if (! isset($genre->attributes()->encodinganalog)
-                || (string)$genre->attributes()->encodinganalog !== 'ahaa:AI46') {
+                || (string)$genre->attributes()->encodinganalog !== 'ahaa:AI46'
+            ) {
                 continue;
             }
-            return $this->getDisplayLabel($genre);
+            if ($label = $this->getDisplayLabel($genre)) {
+                return $label[0];
+            }
         }
 
-        return [];
+        return null;
     }
-    
+
+    /**
+     * Get the statement of responsibility that goes with the title (i.e. "by John
+     * Smith").
+     *
+     * @return string
+     */
     public function getTitleStatement()
     {
         $xml = $this->getXmlRecord();
         if (!isset($xml->bibliography->p)) {
             return null;
         }
-        return current($this->getDisplayLabel($xml->bibliography, 'p', true));
+        $label = $this->getDisplayLabel($xml->bibliography, 'p', true);
+        return $label ? $label[0] : null;
     }
 
-    // TODO rename this
-    public function getAccessRestrictGranter()
-    {
-        $xml = $this->getXmlRecord();
-        if (!isset($xml->accessrestrict->p)) {
-            return [];
-        }
-        $restrictions = [];
-        foreach ($xml->accessrestrict as $access) {
-            if (isset($access->attributes()->encodinganalog) && in_array($access->attributes()->encodinganalog, ['ahaa:KR7'])
-                && isset($access->p->name)
-            ) {
-                return $this->getDisplayLabel($access->p->name, 'part', true);
-            }
-        }
-    }
-        
     /**
-     * Get access restriction notes for the record.
+     * Get extended access restriction notes for the record.
      *
-     * @return string[] Notes
+     * @return string[]
      */
     public function getExtendedAccessRestrictions()
     {
@@ -522,7 +522,10 @@ class SolrEad3 extends SolrEad
             return [];
         }
         $restrictions = [];
-        $types = ['general', 'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4', 'ahaa:KR3', 'ahaa:KR1'];
+        $types = [
+            'general',
+            'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4', 'ahaa:KR3', 'ahaa:KR1'
+        ];
         foreach ($types as $type) {
             $restrictions[$type] = [];
         }
@@ -676,6 +679,11 @@ class SolrEad3 extends SolrEad
         return $unitdate;
     }
 
+    /**
+     * Get topics.
+     *
+     * @return string[]
+     */
     protected function getTopics()
     {
         $record = $this->getXmlRecord();
@@ -708,18 +716,30 @@ class SolrEad3 extends SolrEad
         if (isset($record->did->repository->corpname)) {
             foreach ($record->did->repository->corpname as $corpname) {
                 if ($name = $this->getDisplayLabel($corpname, 'part', true)) {
-                    return current($name);
+                    return $name[0];
                 }
             }
         }
         return null;
     }
 
+    /**
+     * Helper function for returning a specific language version of a display label.
+     *
+     * @param SimpleXMLElement $node                  XML node
+     * @param string           $childNodeName         Name of the child node that
+     * contains the display label.
+     * @param bool             $obeyPreferredLanguage If true, returns the translation that
+     * corresponds with the current locale.
+     * If false, the default language version 'fin' is returned. If not found,
+     * the first display label is retured. 
+     *
+     * @return string[]
+     */
     protected function getDisplayLabel(
         $node,
         $childNodeName = 'part',
-        $obeyPreferredLanguage = false,
-        $getLanguageFromChildNode = true
+        $obeyPreferredLanguage = false
     ) {
         if (! isset($node->$childNodeName)) {
             return null;
@@ -743,16 +763,13 @@ class SolrEad3 extends SolrEad
         $allResults = [];
         $defaultLanguageResults = [];
         $languageResults = [];
-        $lang = null;
-        if (!$getLanguageFromChildNode) {
-            $lang = $getTermLanguage($node);
-        }
+        $lang = $getTermLanguage($node);
 
         foreach ($node->{$childNodeName} as $child) {
             $name = trim((string)$child);
             $allResults[] = $name;
 
-            if ($getLanguageFromChildNode) {
+            if (!$lang) {
                 foreach ($child->attributes() as $key => $val) {
                     $lang = $getTermLanguage($child);
                     if ($lang) {

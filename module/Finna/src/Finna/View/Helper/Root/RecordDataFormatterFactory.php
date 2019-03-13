@@ -144,12 +144,12 @@ class RecordDataFormatterFactory
             ]
         );        
         $setTemplateLine(
-            'Sisällön luonne', 'getContentDescription', 'data-escapeHtml.phtml',
+            'Content Description', 'getContentDescription', 'data-escapeHtml.phtml',
             ['context' => ['class' => 'recordContentDescription']]
         );
         
         $setTemplateLine(
-            'Aineiston syntyhistoria', 'getItemHistory', 'data-escapeHtml.phtml',
+            'Item History', 'getItemHistory', 'data-escapeHtml.phtml',
             ['context' => ['class' => 'recordHistory']]
         );
 

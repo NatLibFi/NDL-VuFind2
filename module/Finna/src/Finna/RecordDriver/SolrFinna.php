@@ -826,7 +826,14 @@ trait SolrFinna
     }
 
     /**
-     * Get related records.
+     * Get related records (used by RelatedItems - Related module)
+     *
+     * Returns an associative array of record ids.
+     * The array may contain the following keys:
+     *   - parents
+     *   - children
+     *   - continued-from 
+     *   - other
      *
      * @return array
      */
