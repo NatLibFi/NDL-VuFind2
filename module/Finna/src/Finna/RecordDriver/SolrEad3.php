@@ -266,13 +266,13 @@ class SolrEad3 extends SolrEad
 
         $result = [];
         foreach ($xml->altformavail->altformavail as $altform) {
-            $id = $altform->attributes()->id;
+            $id = (string)$altform->attributes()->id;
             $owner = $label = $serviceLocation = null;
             foreach ($altform->list->defitem as $defitem) {
                 $type = $defitem->label;
                 $val = (string)$defitem->item;
                 switch($type) {
-                case 'Tekninen tyyppi':
+                case 'Tallennusalusta':
                     $label = $val;
                     break;
                 case 'Säilyttävä toimipiste':
@@ -283,11 +283,15 @@ class SolrEad3 extends SolrEad
                     break;
                 }
             }
+
+            if (!$owner) {
+                $owner = $serviceLocation;
+            }
             
             if (!$id || !$owner || !$label) {
                 continue;
             }
-
+            
             if (!isset($result[$owner]['items'])) {
                 $result[$owner] = [
                     'providesService' =>
