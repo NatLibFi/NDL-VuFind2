@@ -3,8 +3,7 @@
 <div class="truncate-field">
   
   <?php
-    $cnt = 0;
-    foreach ($data as $author): ?>
+    foreach ($data as $index => $author): ?>
     <?php
       $url = $this->record($this->driver)->getLink('author', $author['name']);
       $label = $this->escapeHtml($author['name']);
@@ -15,7 +14,7 @@
         );
       }
     ?>
-    <?php if (!empty($authorityLink)): ?><?=$authorityLink?><?php else: ?><?=($cnt++ > 0 ? '<br/>' : '')?><a href="<?=$url?>"><?=$label?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php endif; ?>
+    <?php if (!empty($authorityLink)): ?><?=$authorityLink?><?php else: ?><?=($index > 0 ? '<br/> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author])?><?php endif; ?>
   <?php endforeach; ?>
 </div>
 <?php endif; ?>

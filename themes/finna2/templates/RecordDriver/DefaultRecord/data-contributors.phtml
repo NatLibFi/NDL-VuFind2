@@ -8,8 +8,9 @@
     <?php endif; ?>
     <?php if (!empty($data['uncredited'])): ?>
       <div class="subheading"><?=$this->translate("Uncredited")?></div>
-      <?php foreach ($data['uncredited'] as $index => $author): ?>
-        <?=($index > 0 ? '<br/> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author])?>
+      <?php
+      foreach ($data['uncredited'] as $index => $author): ?>
+        <?=($index++ > 0 ? '<br/> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author])?>
       <?php endforeach; ?>
     <?php endif; ?>
   </div>
