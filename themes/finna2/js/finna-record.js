@@ -137,7 +137,7 @@ finna.record = (function finnaRecord() {
   }
 
   function setupLocationsEad3Tab() {
-    $('.holdings-container-heading').click(function onClickHeading(e) {
+    $('.holdings-container-heading').click(function onClickHeading() {
       $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
       if ($('.location .fa', this).hasClass('fa-arrow-down')) {
         $('.location .fa', this).removeClass('fa-arrow-down');
@@ -146,7 +146,6 @@ finna.record = (function finnaRecord() {
       else {
         $('.location .fa', this).removeClass('fa-arrow-right');
         $('.location .fa', this).addClass('fa-arrow-down');
-        var rows = $(this).nextUntil('.holdings-container-heading');
       }
     });
   }
