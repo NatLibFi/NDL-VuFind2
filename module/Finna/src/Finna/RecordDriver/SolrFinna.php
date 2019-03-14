@@ -832,7 +832,7 @@ trait SolrFinna
      * The array may contain the following keys:
      *   - parents
      *   - children
-     *   - continued-from 
+     *   - continued-from
      *   - other
      *
      * @return array
@@ -841,7 +841,7 @@ trait SolrFinna
     {
         return [];
     }
-    
+
     /**
      * Get work identification keys
      *

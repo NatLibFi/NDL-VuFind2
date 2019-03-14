@@ -126,7 +126,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         foreach ($filter as $key) {
             unset($coreFields[$key]);
         }
-        
+
         return $coreFields;
     }
 
@@ -147,7 +147,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         foreach ($filter as $key) {
             unset($coreFields[$key]);
         }
-        
+
         return $coreFields;
     }
 

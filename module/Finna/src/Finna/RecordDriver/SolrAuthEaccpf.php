@@ -96,5 +96,4 @@ class SolrAuthEacCpf extends \VuFind\RecordDriver\SolrAuthDefault
     public function setPreferredLanguage($language)
     {
     }
-
 }

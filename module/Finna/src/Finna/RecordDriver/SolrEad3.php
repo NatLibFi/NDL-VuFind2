@@ -247,8 +247,7 @@ class SolrEad3 extends SolrEad
                'name' => $name ? $name[0] : null
             ];
         }
-        
-        
+
         return $result;
     }
 
@@ -271,7 +270,7 @@ class SolrEad3 extends SolrEad
             foreach ($altform->list->defitem as $defitem) {
                 $type = $defitem->label;
                 $val = (string)$defitem->item;
-                switch($type) {
+                switch ($type) {
                 case 'Tallennusalusta':
                     $label = $val;
                     break;
@@ -294,7 +293,7 @@ class SolrEad3 extends SolrEad
             if (!$id || !$owner || !$label || $itemType !== 'Analoginen') {
                 continue;
             }
-            
+
             if (!isset($result[$owner]['items'])) {
                 $result[$owner] = [
                     'providesService' =>
@@ -414,7 +413,7 @@ class SolrEad3 extends SolrEad
         }
         return null;
     }
-    
+
     /**
      * Return an array of image URLs associated with this record with keys:
      * - urls        Image URLs
@@ -448,7 +447,7 @@ class SolrEad3 extends SolrEad
                     continue;
                 }
 
-                $href = (string)$attr->href; 
+                $href = (string)$attr->href;
                 $result[] = [
                     'urls' => ['small' => $href, 'medium' => $href],
                     'description' => (string)$attr->linktitle,
@@ -643,7 +642,7 @@ class SolrEad3 extends SolrEad
         $headings = [];
         $headings = $this->getTopics();
 
-        foreach (['geographic', 'genre', 'era'] as $field) {           
+        foreach (['geographic', 'genre', 'era'] as $field) {
             if (isset($this->fields[$field])) {
                 $headings = array_merge($headings, $this->fields[$field]);
             }
@@ -710,7 +709,7 @@ class SolrEad3 extends SolrEad
         }
         return $topics;
     }
-    
+
     /**
      * Return translated repository display name from metadata.
      *
@@ -739,7 +738,7 @@ class SolrEad3 extends SolrEad
      * @param bool             $obeyPreferredLanguage If true, returns the translation that
      * corresponds with the current locale.
      * If false, the default language version 'fin' is returned. If not found,
-     * the first display label is retured. 
+     * the first display label is retured.
      *
      * @return string[]
      */
@@ -766,7 +765,7 @@ class SolrEad3 extends SolrEad
                'preferred' => $language === $lang
             ];
         };
-        
+
         $allResults = [];
         $defaultLanguageResults = [];
         $languageResults = [];
@@ -791,7 +790,7 @@ class SolrEad3 extends SolrEad
                 $languageResults[] = $name;
             }
         }
-        
+
         if ($obeyPreferredLanguage) {
             return $languageResults;
         }

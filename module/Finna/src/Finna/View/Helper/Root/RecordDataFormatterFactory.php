@@ -58,7 +58,7 @@ class RecordDataFormatterFactory
         $helper->setDefaults('core', $this->getDefaultCoreSpecs());
         $helper->setDefaults('description', $this->getDefaultDescriptionSpecs());
         $helper->setDefaults('authority', $this->getDefaultAuthoritySpecs());
-        
+
         return $helper;
     }
 
@@ -72,7 +72,7 @@ class RecordDataFormatterFactory
         $spec = new SpecBuilder();
 
         $fields = $this->getDefaultCoreFields();
-        
+
         foreach ($this->getDefaultCoreFields() as $key => $data) {
             if ($data[0] === true) {
                 list($multiLine, $dataMethod, $callback) = $data;
@@ -113,7 +113,6 @@ class RecordDataFormatterFactory
                 $lines[$key] = [true, $dataMethod, $callback];
             };
 
-
         $setTemplateLine(
             'Genre', 'getGenres', 'data-genres.phtml',
             [
@@ -151,7 +150,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordPrevTitles']
             ]
         );
-        
+
         $setTemplateLine(
             'Secondary Authors', 'getNonPresenterSecondaryAuthors',
             'data-contributors.phtml',
@@ -233,7 +232,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordAltTitles']
             ]
         );
-        
+
         $setTemplateLine(
             'Format', 'getFormats', 'format-list.phtml',
             [
@@ -308,12 +307,12 @@ class RecordDataFormatterFactory
             [
                 'context' => ['class' => 'recordCollection']
             ]
-        );        
+        );
         $setTemplateLine(
             'Content Description', 'getContentDescription', 'data-escapeHtml.phtml',
             ['context' => ['class' => 'recordContentDescription']]
         );
-        
+
         $setTemplateLine(
             'Item History', 'getItemHistory', 'data-escapeHtml.phtml',
             ['context' => ['class' => 'recordHistory']]
@@ -325,7 +324,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordIdentifier']
             ]
         );
-        
+
         $setTemplateLine(
             'Measurements', 'getMeasurements', 'data-escapeHtml.phtml',
             [
@@ -357,7 +356,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordEvents', 'title' => ""]
             ]
         );
-        
+
         $setTemplateLine(
             'Archive Origination', 'getOrigination', 'data-origination.phtml',
             [
@@ -382,7 +381,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordReferenceCode']
             ]
         );
-        
+
         $getUnitIds = function ($data, $options) use (&$pos) {
             $result = [];
             foreach ($data as $type => $value) {
@@ -403,7 +402,7 @@ class RecordDataFormatterFactory
             }
             return $result;
         };
-        
+
         $setMultiTemplateLine(
             'Unit IDs', 'getUnitIds', $getUnitIds
         );
@@ -679,7 +678,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'extendedAccess']
             ]
         );
-        
+
         $getAccessRestrictions = function ($data, $options) use (&$pos) {
             $final = [];
             foreach ($data as $type => $values) {
@@ -700,12 +699,12 @@ class RecordDataFormatterFactory
             }
             return $final;
         };
-        
+
         $setMultiTemplateLine(
             'Access Restrictions Extended',
             'getExtendedAccessRestrictions', $getAccessRestrictions
         );
-        
+
         $setTemplateLine(
             'Terms of Use', 'getTermsOfUse', 'data-termsOfUse.phtml',
             [
@@ -879,7 +878,6 @@ class RecordDataFormatterFactory
             ]
         );
 
-
         // Add arcrole-relations as multiple fields with role as field header
         $getRelations = function ($data, $options) use (&$pos) {
             $final = [];
@@ -902,15 +900,14 @@ class RecordDataFormatterFactory
             }
             return $final;
         };
-        
+
         $setMultiTemplateLine(
             'Relations', 'getNonPresenterAuthors', $getRelations
         );
 
-
         return $lines;
     }
-    
+
     /**
      * Get default specifications for displaying data in the description tab.
      *

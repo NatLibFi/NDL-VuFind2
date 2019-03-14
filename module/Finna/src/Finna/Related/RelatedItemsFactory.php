@@ -30,8 +30,6 @@ namespace Finna\Related;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
-use Finna\Related\Ead3Related;
-
 /**
  * Ead3Related helper factory.
  *
@@ -58,7 +56,7 @@ class RelatedItemsFactory implements FactoryInterface
      * @throws ContainerException if any other error occurs
      */
     public function __invoke(
-        ContainerInterface $container,$requestedName, array $options = null
+        ContainerInterface $container, $requestedName, array $options = null
     ) {
         $recordLoader = $container->get('VuFind\Record\Loader');
         return new \Finna\Related\RelatedItems($recordLoader);

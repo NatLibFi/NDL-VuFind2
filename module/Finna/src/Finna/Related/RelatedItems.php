@@ -27,7 +27,6 @@
  */
 namespace Finna\Related;
 
-
 /**
  * Related Items for EAD3 records.
  *
@@ -75,7 +74,7 @@ class RelatedItems implements \VuFind\Related\RelatedInterface
     {
         foreach ($driver->getRelatedItems() as $type => $ids) {
             $this->results[$type] = $this->recordLoader->loadBatchForSource(
-                $ids, 'Solr', true 
+                $ids, 'Solr', true
             );
         }
     }
