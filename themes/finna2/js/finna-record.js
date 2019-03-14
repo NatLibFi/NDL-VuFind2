@@ -315,19 +315,6 @@ finna.record = (function finnaRecord() {
       });
     });
   }
-                            
-  function initWorkExpressions() {
-    $('.work-expressions .more-link.toggle').click(function moreClick() {
-      $('.work-expressions .list-group-item.hidden').addClass('was-hidden').removeClass('hidden');
-      $(this).addClass('hidden');
-      $('.work-expressions .less-link.toggle').removeClass('hidden');
-    });
-    $('.work-expressions .less-link.toggle').click(function lessClick() {
-      $('.work-expressions .list-group-item.was-hidden').removeClass('was-hidden').addClass('hidden');
-      $(this).addClass('hidden');
-      $('.work-expressions .more-link.toggle').removeClass('hidden');
-    });
-  }
 
   function init() {
     initHideDetails();
