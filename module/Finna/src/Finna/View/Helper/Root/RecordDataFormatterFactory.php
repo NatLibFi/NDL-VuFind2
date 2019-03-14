@@ -882,9 +882,16 @@ class RecordDataFormatterFactory
         $getRelations = function ($data, $options) use (&$pos) {
             $final = [];
             foreach ($data as $type => $values) {
+                $label = null;
+                if (isset($values['role'])) {
+                    $label = ucfirst(trim($values['role']));
+                    if (substr($label, -1) === '.') {
+                        $label = substr($label, 0, strlen($label)-1);
+                    }
+                    $label = "CreatorRoles::$label";
+                }
                 $final[] = [
-                    'label' => isset($values['role'])
-                        ? ('CreatorRoles::' . $values['role']) : null,
+                    'label' => $label,
                     'values' => [$type => $values],
                     'options' => [
                         'pos' => $pos++,
