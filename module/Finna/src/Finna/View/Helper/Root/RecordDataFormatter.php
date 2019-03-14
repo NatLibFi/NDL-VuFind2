@@ -147,7 +147,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         foreach ($filter as $key) {
             unset($coreFields[$key]);
         }
-
         return $coreFields;
     }
 
@@ -200,7 +199,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      *
      * @return array
      */
-    public function filterCollectionFields($coreFields)
+    public function filterCollectionFields($coreFields, $type = 'ead')
     {
         $filter = [
             'Contributors', 'Format', 'Online Access',
@@ -210,6 +209,11 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         foreach ($filter as $key) {
             unset($coreFields[$key]);
         }
+
+        $coreFields = $type === 'ead'
+            ? $this->filterEADFields($coreFields)
+            : $this->filterEAD3Fields($coreFields);
+
         return $coreFields;
     }
 }

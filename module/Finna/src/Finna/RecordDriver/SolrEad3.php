@@ -326,10 +326,12 @@ class SolrEad3 extends SolrEad
             $val = (string)$id;
             if (!$val) {
                 $val = (string)$id->attributes()->identifier;
+                $label = 'unique';
             }
             if (!$label || !$val) {
                 continue;
             }
+            $label = $this->translate("Unit ID:$label");
             $ids[$label] = $val;
         }
 
