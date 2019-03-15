@@ -5,20 +5,41 @@ finna.imagePaginator = (function imagePaginator() {
   var infoBar = "<div class=\"paginator-info\"><span class=\"paginator-pager\">0/0</span></div>";
   var leftButton = "<button class=\"left-button\" type=\"button\"><</button>";
   var rightButton = "<button class=\"right-button\" type=\"button\">></button>";
+  var mfpPopup = "<div class=\"imagepopup-holder\" data-type=\"\" data-id=\"\">" +
+  "<div class=\"imagepopup-container\">" +
+    "<div id=\"leaflet-map-image\" class=\"image-wrapper\">" +
+      "<img />" +
+      "<div class=\"imagepopup-zoom-container\">" +
+        "<div class=\"zoom-in zoom-button\"><i class=\"fa fa-zoom-in\" aria-hidden=\"true\"></i></div>" +
+        "<div class=\"zoom-out zoom-button\"><i class=\"fa fa-zoom-out\" aria-hidden=\"true\"></i></div>" +
+        "<div class=\"zoom-reset zoom-button\"><i class=\"fa fa-zoom-100\" aria-hidden=\"true\"></i></div>" +
+      "</div>" +
+    "</div>" +
+    "<div class=\"collapse-content-holder\">" +
+    "</div>" +
+    "<div class=\"finna-image-pagination\">" +
+    "</div>" +
+    "<div style=\"clear: both;\"></div>" +
+  "</div>" +
+  "</div>";
   var paginatedObjects = [];
 
-  function FinnaPaginator(images, paginatedArea, recordId, source, imagesPerPage) {
+  function FinnaPaginator(images, paginatedArea, settings) {
     if (images.length === 0) {
       // Lets init a dummyimage
     }
     this.images = images;
     this.root = $(paginatedArea); // Rootobject
     this.root.removeClass('paginate');
-    this.recordId = recordId;
-    this.source = source;
-    this.imagesPerPage = imagesPerPage;
-    this.trigger = this.root.find('.image-popup-trigger');
     
+    
+    this.trigger = this.root.find('.image-popup-trigger');
+    // Lets get all the data from the settings
+    this.recordId = settings.recordId;
+    this.source = settings.source;
+    this.imagesPerPage = typeof settings.imagesPerPage !== 'undefined' ? settings.imagesPerPage : 8;
+    this.recordType = settings.recordType;
+
     // Thershold for how long the swipe needs to be for new image to load
     this.swipeThreshold = 40;
     this.swipeDrag = false;
@@ -29,10 +50,10 @@ finna.imagePaginator = (function imagePaginator() {
 
     // When the window goes smaller than breakpoint, adjust the amount of images in paginator
     this.breakPoints = {
-      10000: imagesPerPage,
-      991: imagesPerPage - 2,
-      768: imagesPerPage,
-      500: imagesPerPage - 2
+      10000: this.imagesPerPage,
+      991: this.imagesPerPage - 2,
+      768: this.imagesPerPage,
+      500: this.imagesPerPage - 2
     };
     this.currentBreakPoint = 10000;
     // Objects which are initialized later
@@ -90,9 +111,9 @@ finna.imagePaginator = (function imagePaginator() {
         parent.swipeDrag = false;
       }
     });
-    $(window).resize(function checkReload(e){
+    /*$(window).resize(function checkReload(e){
       parent.checkResize(e);
-    });
+    });*/
   }
 
   FinnaPaginator.prototype.setButtons = function setButtons() {
@@ -131,10 +152,9 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
-  FinnaPaginator.prototype.setImageDetails = function setImageDetails(key) {
-
-  }
-
+  /**
+   * Needs to be checked for better structure
+   */
   FinnaPaginator.prototype.checkSwipe = function checkSwipe(e) {
     var type = e.type;
     var currentX = 0;
@@ -174,29 +194,60 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.setImagesPerPage = function setImagesPerPage(newAmount) {
     var difference = this.imagesPerPage - newAmount;
     this.offSet += difference;
+    // When the window goes smaller than breakpoint, adjust the amount of images in paginator
+    this.breakPoints = {
+      10000: newAmount,
+      991: newAmount - 2,
+      768: newAmount,
+      500: newAmount - 2
+    };
   }
 
   FinnaPaginator.prototype.createPopupTrack = function createPopupTrack(popupTrackArea, leafletArea) {
     var recordCovers = this.root.find('.recordcovers').clone(true);
+    var parent = this;
     var track = recordCovers.find('.finna-element-track').empty();
     this.leftButton = recordCovers.find('.left-button');
     this.rightButton = recordCovers.find('.right-button');
     this.imageHolder = track;
     this.trigger = leafletArea;
     this.pagerInfo = recordCovers.find('.paginator-info');
+    if (Object.getPrototypeOf(this) === FinnaMiniPaginator.prototype) {
+      // Lets remove class from the recordcovers so we get better results
+      recordCovers.removeClass('mini-paginator');
+      this.imagesPerPage = 8;
+      this.leftButton.off('click').click(function loadEarlierImages(){
+        parent.loadPage(-1);
+      });
+      this.rightButton.off('click').click(function loadLaterImages(){
+        parent.loadPage(1);
+      });
+    }
     popupTrackArea.append(recordCovers);
     this.loadPage(0);
   }
 
   FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imagePopup) {
     var img = this.trigger.find('img');
+    var parent = this;
+
     img.css('opacity', 0.5);
     img.one('load', function onLoadImage() {
       img.css('opacity', '');
+      if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
+        parent.trigger.off('click');
+        parent.trigger.addClass('no-image');
+      }
+      parent.setImageInformation(imagePopup.attr('index'));
     });
-    img.attr('src', imagePopup.attr('href'));
+
+    img.attr('data-src', imagePopup.attr('href'));
+    img.unveil();
   }
 
+  /**
+   * Needs to be checked for better structure
+   */
   FinnaPaginator.prototype.loadPage = function loadPage(direction) {
     this.imageHolder.empty();
   
@@ -226,6 +277,9 @@ finna.imagePaginator = (function imagePaginator() {
     this.setButtons();
   }
 
+  /**
+   * Needs to be checked for better structure
+   */
   FinnaPaginator.prototype.getImageFromArray = function getImageFromArray(direction) {
     var oldOffset = this.offSet;
     this.offSet += direction;
@@ -237,7 +291,7 @@ finna.imagePaginator = (function imagePaginator() {
       searchIndex = this.offSet;
       if (searchIndex < 0) {
         this.offSet = oldOffset;
-        return;
+        return null;
       }
       break;
     case 1:
@@ -245,7 +299,7 @@ finna.imagePaginator = (function imagePaginator() {
       searchIndex = startPosition + this.offSet;
       if (searchIndex > this.images.length - 1) {
         this.offSet = oldOffset;
-        return;
+        return null;
       }
       break;
     default:
@@ -258,9 +312,8 @@ finna.imagePaginator = (function imagePaginator() {
       this.offSet = 0;
       return null;
     }
-
+    console.log(searchIndex + " was " + this.offSet);
     if (typeof this.images[searchIndex] === 'undefined') {
-      console.log(this.images[searchIndex]);
       return null;
     } else {
       return this.images[searchIndex];
@@ -272,22 +325,45 @@ finna.imagePaginator = (function imagePaginator() {
     var elementToRemove = direction === 1 ? 'a:first' : 'a:last';
     image = this.getImageFromArray(direction);
 
-    if (typeof image !== 'undefined') {
+    if (typeof image !== 'undefined' && image !== null) {
       this.imageHolder.find(elementToRemove).remove();
       this.createImagePopup(image, (direction === 1));
-    } else {
-      console.log("Image was not found!");
     }
+
     this.setButtons();
+  }
+
+  // Need to fetch new part of information, some of the functions will work without adding them to the prototype
+  // As it increases the size of the created object
+  FinnaPaginator.prototype.loadImageInformation = function loadImageInformation(index) {
+    var src = VuFind.path + '/AJAX/JSON?method=getImageInformation&id=' + encodeURIComponent(this.recordId) + '&index=' + index;
+    if (typeof publicList !== 'undefined') {
+      src += '&publicList=1';
+    }
+    var listId = $('input[name="listID"]').val();
+
+    if (typeof listId !== 'undefined') {
+      src += '&listId=' + listId;
+    }
+    $('.collapse-content-holder').html('<div><i class="fa fa-spinner fa-spin"/></div>');
+    $.ajax({
+      url: src,
+      dataType: 'html'
+    }).done( function setImageData(response) {
+      var object = JSON.parse(response);
+      $('.collapse-content-holder').html(object.data.html);
+    }).fail( function setImageDataFailure(response) {
+      $('.collapse-content-holder').html('<p>Failed to fetch data</p>');
+    });
   }
 
   FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, append) {
     var tmpImg = $(this.imagePopup).clone(true);
 
-    tmpImg.find('img').attr('src', image.small);
+    var img = tmpImg.find('img');
+    img.attr('src', image.small);
     tmpImg.attr('index', image.index);
-    tmpImg.attr('href', image.medium);
-    tmpImg.attr('large-href', image.large);
+    tmpImg.attr('href', image.largest);
 
     if (append === true) {
       this.imageHolder.append(tmpImg);
@@ -300,22 +376,25 @@ finna.imagePaginator = (function imagePaginator() {
 
   FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(leafletImage) {
     var parent = this;
-    this.setPagerInfo(leafletImage.attr('index'));
+    var imageIndex = leafletImage.attr('index');
+    this.setPagerInfo(imageIndex);
     this.leafletHolder.eachLayer(function removeLayers(layer) {
       parent.leafletHolder.removeLayer(layer);
     });
+    this.leafletHolder.setZoom(0);
     var img = new Image();
     img.src = leafletImage.attr('href');
+    // We need to fetch some data from here
     img.onload = function onLoadImg() {
       var h = this.naturalHeight;
       var w = this.naturalWidth;
 
-      var imageNaturalSizeZoomLevel = 4;
+      var imageNaturalSizeZoomLevel = 3;
       if (h < 2000 && w < 2000) {
-        imageNaturalSizeZoomLevel = 3;
+        imageNaturalSizeZoomLevel = 2;
       }
       if (h < 1000 && w < 1000) {
-        imageNaturalSizeZoomLevel = 2;
+        imageNaturalSizeZoomLevel = 1;
       }
 
       var southWest = parent.leafletHolder.unproject([0, h], imageNaturalSizeZoomLevel);
@@ -325,11 +404,11 @@ finna.imagePaginator = (function imagePaginator() {
       L.imageOverlay(img.src, bounds).addTo(parent.leafletHolder, {animate: false});
       parent.leafletHolder.flyToBounds(bounds, {animate: false});
       parent.leafletHolder.setMaxBounds(bounds, {animate: false});
-
       parent.leafletHolder.on('zoomend', function adjustPopupSize() {
         parent.leafletHolder.invalidateSize(bounds, {animate: false});
       });
     }
+    this.loadImageInformation(imageIndex);
   }
 
   FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
@@ -337,37 +416,36 @@ finna.imagePaginator = (function imagePaginator() {
     this.setPagerInfo(imagePopup.attr('index'));
 
     var index = imagePopup.attr('index');
-    var src = VuFind.path + '/AJAX/JSON?method=getImagePopup&id=' + encodeURIComponent(this.recordId) + '&index=' + index;
+
     var parent = this;
-    var currentElement = {
-      src: src,
-      index: index,
-      href: imagePopup.attr('href')
-    };
     this.trigger.magnificPopup({
-      items: currentElement,
-      type: 'ajax',
-      tLoading: '',
-      tClose: "sulje",
-      removalDelay: 200,
-      ajax: {
-        cursor: '',
-        settings: {
-          dataType: 'json'
-        }
+      items: {
+        src: $(mfpPopup).clone(),
+        type: 'inline',
       },
+      tClose: "sulje",
       callbacks: {
-        parseAjax: function onParseAjax(mfpResponse) {
-          mfpResponse.data = mfpResponse.data.data.html;
-        },
-        ajaxContentAdded: function onAjaxContentAdded() {
+        open: function onPopupOpen() {
+          console.log("doins");
           parent.imagePopup.off('click').on('click', function onImageClick(e){
             e.preventDefault();
             parent.onLeafletImageClick($(this));
           });
+
           var leafletArea = $('#leaflet-map-image');
+          leafletArea.closest('.mfp-content').addClass('loaded');
+          var popupArea = leafletArea.closest('.imagepopup-holder');
+          popupArea.addClass(parent.recordType);
+          popupArea.attr('data-type', parent.recordType);
+          popupArea.attr('data-id', parent.recordId);
+          
+          parent.breakPoints[10000] = 15;
           parent.createPopupTrack($('.finna-image-pagination'), leafletArea);
-          // Lets init leaflet
+
+          if ($(window).width() > 768) {
+            $('#popup-content-collapse').addClass('in');
+          }
+          console.log(parent.offSet);
           parent.leafletHolder = L.map('leaflet-map-image', {
             minZoom: 1,
             maxZoom: 6,
@@ -377,14 +455,19 @@ finna.imagePaginator = (function imagePaginator() {
             crs: L.CRS.Simple,
             maxBoundsViscosity: 0.9,
           });
+          if (Object.getPrototypeOf(parent) === FinnaMiniPaginator.prototype) {
+            // Lets remove class from the recordcovers so we get better results
+            parent.imageHolder.closest('.recordcovers').removeClass('mini-paginator');
+          }
           parent.imageHolder.find('a[index="' + index + '"]').click();
         },
-        close: function closePopup() {
+        close: function onPopupClose() {
           parent.trigger = parent.root.find('.image-popup-trigger');
           parent.imageHolder = parent.root.find('.finna-element-track');
           parent.leftButton = parent.root.find('.left-button');
           parent.rightButton = parent.root.find('.right-button');
           parent.imageHolder.empty();
+          parent.breakPoints[10000] = parent.imagesPerPage;
           parent.imagePopup.off('click');
           parent.imagePopup.on('click', function setTriggerEvents(e){
             e.preventDefault();
@@ -392,7 +475,19 @@ finna.imagePaginator = (function imagePaginator() {
           });
           parent.pagerInfo = parent.root.find('.paginator-info');
           parent.leafletHolder = '';
-          parent.loadPage(0);
+          if (Object.getPrototypeOf(parent) === FinnaMiniPaginator.prototype) {
+            parent.leftButton.off('click').on('click', function setImage(){
+              parent.setMiniPaginatorButton(-1);
+            });
+            parent.rightButton.off('click').on('click', function setImage(){
+              parent.setMiniPaginatorButton(1);
+            });
+            var image = parent.getImageFromArray(0);
+            parent.setListImageTrigger(image);
+          } else {
+            parent.loadPage(0);
+            parent.imageHolder.find('a[index="' + index + '"]').click();
+          }
           if ($("#video").length){
             //videojs('video').dispose();
           }
@@ -401,8 +496,13 @@ finna.imagePaginator = (function imagePaginator() {
     });
   }
 
-  function FinnaMiniPaginator(images, paginatedArea, recordId, source, imagesPerPage) {
-    FinnaPaginator.call(this, images, paginatedArea, recordId, source, 0);
+  FinnaPaginator.prototype.setImageInformation = function setImageInformation(index) {
+    $('.image-details-container').addClass('hidden');
+    $('.image-details-container[data-img-index="' + index + '"]').removeClass('hidden');
+  }
+
+  function FinnaMiniPaginator(images, paginatedArea, settings) {
+    FinnaPaginator.call(this, images, paginatedArea, settings);
   }
 
   FinnaMiniPaginator.prototype = Object.create(FinnaPaginator.prototype);
@@ -411,45 +511,52 @@ finna.imagePaginator = (function imagePaginator() {
     var parent = this;
 
     this.leftButton.off('click').on('click', function setImage(){
-      var image = parent.getImageFromArray(-1);
-      if (image !== null) {
-        parent.setListImageTrigger(image);
-      }
-      parent.setButtons();
+      parent.setMiniPaginatorButton(-1);
     });
     this.rightButton.off('click').on('click', function setImage(){
-      var image = parent.getImageFromArray(1);
-      if (image !== null) {
-        parent.setListImageTrigger(image);
-      }
-      parent.setButtons();
+      parent.setMiniPaginatorButton(1);
     });
     var image = parent.getImageFromArray(0);
     if (image !== null) {
       this.setListImageTrigger(image);
     }
+    this.root.find('.recordcovers').addClass('mini-paginator');
+  }
+
+  FinnaMiniPaginator.prototype.setPageLoadButtons = function setPageLoadButtons(isPopup) {
+
+  }
+
+  FinnaMiniPaginator.prototype.setMiniPaginatorButton = function setMiniPaginatorButton(direction) {
+    var image = this.getImageFromArray(direction);
+    if (image !== null) {
+      this.setListImageTrigger(image);
+    }
+    this.setButtons();
   }
 
   FinnaMiniPaginator.prototype.setListImageTrigger = function setListImageTrigger(image) {
     var tmpImg = $(this.imagePopup).clone(true);
 
-    tmpImg.find('img').attr('src', image.small);
+    var img = tmpImg.find('img');
+    img.attr('data-src', image.small);
     tmpImg.attr('index', image.index);
-    tmpImg.attr('href', image.medium);
-    tmpImg.attr('large-href', image.large);
-
+    tmpImg.attr('href', image.largest);
+    
+    img.unveil();
     tmpImg.click();
   }
 
   FinnaMiniPaginator.prototype.constructor = FinnaMiniPaginator;
 
   function initPaginator(images, settings) {
-    var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings.id, settings.source, 8);
+    var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
     paginator.createElements();
   }
 
   function initMiniPaginator(images, settings) {
-    var paginator = new FinnaMiniPaginator(images, $('.recordcover-holder.paginate'), settings.id, settings.source, 0);
+    settings.imagesPerPage = 0;
+    var paginator = new FinnaMiniPaginator(images, $('.recordcover-holder.paginate'), settings);
     paginator.createElements();
     paginator.setMiniPaginator();
   }

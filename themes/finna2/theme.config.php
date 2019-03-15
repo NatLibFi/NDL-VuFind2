@@ -170,6 +170,7 @@ return [
         'vendor/jquery.inview.min.js',
         'vendor/jquery.magnific-popup.min.js',
         'vendor/jquery.cookie-1.4.1.min.js',
+        'vendor/jquery.unveil.min.js',
         'vendor/slick.min.js',
         'vendor/video.min.js',
         'vendor/videojs.hotkeys.min.js',

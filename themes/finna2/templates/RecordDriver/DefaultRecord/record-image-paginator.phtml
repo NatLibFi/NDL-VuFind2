@@ -1,28 +1,27 @@
 <!-- record-image-paginator.phtml -->
 <?php // Here is a new clean base for our paginated images ?>
+<?php $isList = ($type === 'list' || $type === 'list grid'); ?>
 <?php if ($type === 'record' || !$this->userAgent()->isBot()): ?>
   <?php
     $ind = 0;
     $paginatedLinks = [];
-    $usageRights = [];
   ?>
   <?php foreach ($images as $img): ?>
     <?php
       // We only need essential info about images, no need to create any html
       $obj = [
         'small' => $img['urls']['small'],
-        'medium' => $img['urls']['medium'],
-        'large' => $img['urls']['large'] ?? $img['urls']['medium'],
         'index' => $ind++,
+        'description' => ''
       ];
 
-      $obj['description'] = $img['description'] ?? '';
+      if ($isList) {
+        $obj['largest'] = $img['urls']['medium'] ?? $img['urls']['small'];
+      } else {
+        $obj['largest'] = $img['large'] ?? $img['urls']['medium'] ?? $img['urls']['small'];
+      }
 
       $paginatedLinks[] = $obj;
-
-      // Lets get all the image rights and objectify them
-      $rights = $img["rights"];
-      $rightsObj = [];
     ?>
   <?php endforeach; ?>
   <div class="recordcovers <?=$type?>">
@@ -34,38 +33,35 @@
             <?php if (count($images) <= 1): ?>
               <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
             <?php endif; ?>
-            <?php if (!empty($images[0]['urls']['large']) && $this->layout()->templateDir == 'record' && $largeImageLayout): ?>
-              <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['large']);?>"/>
-            <?php else: ?>
-              <img alt="<?=$this->transEsc('Cover Image')?>" class="recordcover" src="<?=$this->escapeHtmlAttr($images[0]['urls']['medium']);?>"/>
-            <?php endif; ?>
-            <?php if (isset($images[0]['large'])): ?>
-              <i class="fa fa-magnify hidden-print"></i>
-            <?php endif; ?>
+            <img data-src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
           </a>
         </div>
       <?php else: ?>
         <a class="image-popup-paginator-trigger no-image" href="<?=$this->recordLink()->getUrl($this->driver) ?>#image">
           <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
-          <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
+          <img data-src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
         </a>
       <?php endif; ?>
     <?php endif; ?>
-  <script>
-    <?php $settings = [
-      'id' => $this->driver->getUniqueId(),
-      'source' => $this->driver->getSourceIdentifier()
-    ]?>
-    <?php if ($type === 'list' || $type === 'list-grid'): ?>
-      finna.imagePaginator.initMiniPaginator(
-        <?= json_encode($paginatedLinks) ?>,
-        <?= json_encode($settings) ?> // We doin a smaller version of the paginator
-      );
-    <?php else: ?>
-      finna.imagePaginator.initPaginator(
-        <?= json_encode($paginatedLinks) ?>,
-        <?= json_encode($settings) ?> // We doin a smaller version of the paginator
-      );
-    <?php endif; ?>
-  </script>
+  <?php if (count($paginatedLinks) > 0): ?>
+    <script>
+      <?php $settings = [
+        'recordId' => $this->driver->getUniqueId(),
+        'source' => $this->driver->getSourceIdentifier(),
+        'recordType' =>  $this->driver->tryMethod('getRecordType'),
+        'imagesPerPage' => 12
+      ]?>
+      <?php if ($type === 'list' || $type === 'list grid'): ?>
+        finna.imagePaginator.initMiniPaginator(
+          <?= json_encode($paginatedLinks) ?>,
+          <?= json_encode($settings) ?> // We doin a smaller version of the paginator
+        );
+      <?php else: ?>
+        finna.imagePaginator.initPaginator(
+          <?= json_encode($paginatedLinks) ?>,
+          <?= json_encode($settings) ?> // We doin a smaller version of the paginator
+        );
+      <?php endif; ?>
+    </script>
+  <?php endif; ?>
 <?php endif;?>

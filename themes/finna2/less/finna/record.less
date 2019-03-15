@@ -158,15 +158,32 @@
 }
 
 .recordcovers {
-  &.list {
+  &.mini-paginator.paginated {
     position: absolute;
     left: auto;
     padding: 0;
-    width: auto;
     z-index: 3;
     min-height: 20px;
-    text-align: center;
     top: 0;
+    align-items: start;
+    justify-content: start;
+    button {
+      background-color: #efefefcc;
+      margin: 0 1px;
+    }
+
+    .paginator-info {
+      text-align: left;
+      width: initial;
+      .paginator-pager {
+        background-color: #efefefcc;
+      }
+    }
+    
+    .finna-paginated {
+      margin: 0 1px;
+      display: none;
+    }
     & a {
       background: @body-bg;
       text-decoration: none;
@@ -184,9 +201,8 @@
     }
   }
 
-  &.record a {
-    background-position: 50% 50%;
-    background-size: cover;
+  a {
+    background-color: #efefefcc;
     display: inline-block;
     height: 64px;
     overflow: hidden;
@@ -232,6 +248,9 @@
     height: 32px;
     border: none;
     background-color: #efefef;
+    &:disabled {
+      background-color: #efefef00 !important;
+    }
   }
 
   .finna-paginated {
