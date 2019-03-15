@@ -100,8 +100,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Contributors', 'Extent', 'Format', 'Organisation', 'Published',
             'Online Access', 'Original Work', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'Publisher', 'Access Restrictions', 'mainFormat',
-            'Archive', 'Item Description FWD', 'Publish date', 'Relations', 'Source Collection',
-            'ISBN'
+            'Archive', 'Item Description FWD', 'Publish date', 'Relations',
+            'Source Collection', 'ISBN'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
@@ -140,9 +140,10 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     public function filterEAD3Fields($coreFields)
     {
         $filter = [
-            'Access Restrictions', 'Authors', 'Contributors', 'Organisation', 'Inventory ID', 'Online Access',
-            'Access', 'Item Description FWD', 'Physical Description',
-            'Published in', 'Published', 'Series', 'Source Collection', 'Unit ID'
+            'Access Restrictions', 'Authors', 'Contributors', 'Organisation',
+            'Inventory ID', 'Online Access', 'Access', 'Item Description FWD',
+            'Physical Description', 'Published in', 'Published', 'Series',
+            'Source Collection', 'Unit ID'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);

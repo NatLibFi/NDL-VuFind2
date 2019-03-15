@@ -74,7 +74,6 @@ class Authority extends \Zend\View\Helper\AbstractHelper
      * @param string                            $label  Link label
      * @param string                            $id     Authority id
      * @param string                            $type   Authority type
-     * @param string                            $role   Authority role
      * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
      *
      * @return string|null
