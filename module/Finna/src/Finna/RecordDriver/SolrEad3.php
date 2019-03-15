@@ -737,8 +737,8 @@ class SolrEad3 extends SolrEad
      * @param SimpleXMLElement $node                  XML node
      * @param string           $childNodeName         Name of the child node that
      * contains the display label.
-     * @param bool             $obeyPreferredLanguage If true, returns the translation
-     * that corresponds with the current locale.
+     * @param bool             $obeyPreferredLanguage If true, returns the
+     * translation that corresponds with the current locale.
      * If false, the default language version 'fin' is returned. If not found,
      * the first display label is retured.
      *

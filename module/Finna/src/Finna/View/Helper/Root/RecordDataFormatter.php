@@ -196,7 +196,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     /**
      * Filter unnecessary fields from EAD-collection records.
      *
-     * @param array $coreFields data to filter.
+     * @param array  $coreFields data to filter.
+     * @param string $type       Collection type (ead|ead3)
      *
      * @return array
      */
