@@ -772,12 +772,12 @@ class SolrEad3 extends SolrEad
         $defaultLanguageResults = [];
         $languageResults = [];
         $lang = $getTermLanguage($node);
-
+        $resolveLangFromChildNode = $lang === null;
         foreach ($node->{$childNodeName} as $child) {
             $name = trim((string)$child);
             $allResults[] = $name;
 
-            if (!$lang) {
+            if ($resolveLangFromChildNode) {
                 foreach ($child->attributes() as $key => $val) {
                     $lang = $getTermLanguage($child);
                     if ($lang) {
