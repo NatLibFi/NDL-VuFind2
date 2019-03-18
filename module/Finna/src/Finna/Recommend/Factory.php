@@ -99,5 +99,4 @@ class Factory
         return
             new RecordDriverRelated($sm->get(\VuFind\Config\PluginManager::class));
     }
-
 }
