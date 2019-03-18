@@ -4,7 +4,7 @@
   <ul class="list-group">
     <?php foreach ($data as $type => $records): ?>
       <li class="list-group-item">
-        <p><?=$this->transEsc('Related Items-' . $type)?></p>
+        <p><?=$this->transEsc("record_driver_related:$type")?></p>
         <ul>  
         <?php foreach ($records as $record): ?>
         <?php $formats = $record->getFormats(); ?>
