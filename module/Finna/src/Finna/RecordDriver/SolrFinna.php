@@ -826,7 +826,7 @@ trait SolrFinna
     }
 
     /**
-     * Get related records (used by RelatedItems - Related module)
+     * Get related records (used by RecordDriverRelated - Related module)
      *
      * Returns an associative array of record ids.
      * The array may contain the following keys:

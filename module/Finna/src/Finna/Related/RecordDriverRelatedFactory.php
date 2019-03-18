@@ -1,10 +1,10 @@
 <?php
 /**
- * Ead3Related helper factory.
+ * Factory for RecordDriver based related record module
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,7 +31,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Ead3Related helper factory.
+ * Factory for RecordDriver based related record module
  *
  * @category VuFind
  * @package  View_Helpers
@@ -39,7 +39,7 @@ use Zend\ServiceManager\Factory\FactoryInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class RelatedItemsFactory implements FactoryInterface
+class RecordDriverRelatedFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -59,6 +59,6 @@ class RelatedItemsFactory implements FactoryInterface
         ContainerInterface $container, $requestedName, array $options = null
     ) {
         $recordLoader = $container->get('VuFind\Record\Loader');
-        return new \Finna\Related\RelatedItems($recordLoader);
+        return new \Finna\Related\RecordDriverRelated($recordLoader);
     }
 }

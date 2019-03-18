@@ -642,14 +642,14 @@ $config = [
             ],
             'related' => [
                 'factories' => [
-                    'Finna\Related\RelatedItems' => 'Finna\Related\RelatedItemsFactory',
+                    'Finna\Related\RecordDriverRelated' => 'Finna\Related\RecordDriverRelatedFactory',
                     'Finna\Related\Nothing' => 'Zend\ServiceManager\Factory\InvokableFactory',
                     'Finna\Related\SimilarDeferred' => 'Zend\ServiceManager\Factory\InvokableFactory',
                     'Finna\Related\WorkExpressions' => 'Finna\Related\WorkExpressionsFactory',
                 ],
                 'aliases' =>  [
                     'nothing' => 'Finna\Related\Nothing',
-                    'related' => 'Finna\Related\RelatedItems',
+                    'recorddriverrelated' => 'Finna\Related\RecordDriverRelated',
                     'similardeferred' => 'Finna\Related\SimilarDeferred',
                     'workexpressions' => 'Finna\Related\WorkExpressions',
                 ]

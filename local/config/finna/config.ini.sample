@@ -1131,7 +1131,7 @@ hide_holdings[] = "World Wide Web"
 ;
 ; Available options:
 ;    Editions - Alternate editions (in the Solr index) based on WorldCat lookup
-;    RelatedItems - Related records based on RecordDriver metadata
+;    RecordDriverRelated - Related records based on RecordDriver metadata
 ;    Similar - Similarity based on Solr lookup
 ;    SimilarDeferred - Like Similar but asynchronous
 ;    WorldCatEditions - Alternate editions (in the WorldCat index) based on WorldCat
