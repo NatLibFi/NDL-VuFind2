@@ -86,17 +86,4 @@ class Factory
     {
         return new SideFacetsDeferred($sm->get(\VuFind\Config\PluginManager::class));
     }
-
-    /**
-     * Factory for RelatedItems module.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return RecordDriverRelated
-     */
-    public static function getRecordDriverRelated(ServiceManager $sm)
-    {
-        return
-            new RecordDriverRelated($sm->get(\VuFind\Config\PluginManager::class));
-    }
 }
