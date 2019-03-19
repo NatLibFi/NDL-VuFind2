@@ -14,6 +14,7 @@ finna.imagePaginator = (function imagePaginator() {
         "<div class=\"zoom-out zoom-button\"><i class=\"fa fa-zoom-out\" aria-hidden=\"true\"></i></div>" +
         "<div class=\"zoom-reset zoom-button\"><i class=\"fa fa-zoom-100\" aria-hidden=\"true\"></i></div>" +
       "</div>" +
+      "<div class=\"leaflet-image-loading\"></div>" +
     "</div>" +
     "<div class=\"collapse-content-holder\">" +
     "</div>" +
@@ -22,7 +23,12 @@ finna.imagePaginator = (function imagePaginator() {
     "<div style=\"clear: both;\"></div>" +
   "</div>" +
   "</div>";
-  var paginatedObjects = [];
+
+  var masonryInitialized = false;
+
+  function setMasonryState(state) {
+    masonryInitialized = state;
+  }
 
   function FinnaPaginator(images, paginatedArea, settings) {
     if (images.length === 0) {
@@ -32,16 +38,16 @@ finna.imagePaginator = (function imagePaginator() {
     this.root = $(paginatedArea); // Rootobject
     this.root.removeClass('paginate');
     
-    
     this.trigger = this.root.find('.image-popup-trigger');
     // Lets get all the data from the settings
     this.recordId = settings.recordId;
     this.source = settings.source;
     this.imagesPerPage = typeof settings.imagesPerPage !== 'undefined' ? settings.imagesPerPage : 8;
     this.recordType = settings.recordType;
+    this.smallestZoomLevel = settings.smallestZoomLevel;
 
     // Thershold for how long the swipe needs to be for new image to load
-    this.swipeThreshold = 40;
+    this.swipeThreshold = 80;
     this.swipeDrag = false;
     this.oldPosX = 0;
 
@@ -63,6 +69,7 @@ finna.imagePaginator = (function imagePaginator() {
     this.rightButton = '';
     this.imagePopup = '';
     this.leafletHolder = '';
+    this.leafletLoader = '';
 
     this.openLeafletImageIndex = 0;
   }
@@ -178,9 +185,9 @@ finna.imagePaginator = (function imagePaginator() {
         var difference = (this.oldPosX - currentX);
 
         if (difference > this.swipeThreshold) {
-          this.loadOneImage(1);
+          this.loadPage(1);
         } else if (difference < -this.swipeThreshold) {
-          this.loadOneImage(-1);
+          this.loadPage(-1);
         } else {
           return;
         }
@@ -229,6 +236,7 @@ finna.imagePaginator = (function imagePaginator() {
     this.loadPage(0);
   }
 
+  var updateStarted = false;
   FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imagePopup) {
     var img = this.trigger.find('img');
     var parent = this;
@@ -239,20 +247,35 @@ finna.imagePaginator = (function imagePaginator() {
       if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
         parent.trigger.off('click');
         parent.trigger.addClass('no-image');
-        $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
-        $('.large-image-sidebar').addClass('visible-xs visible-sm');
-        $('.record-main').addClass('mainbody left');
-        var href = $(this).parent().attr('href');
-        $(this).parent().attr({'href': href.split('#')[0], 'title': ''});
-        $(this).parents('.grid').addClass('no-image');
-        $('.rating-stars').addClass('hidden-xs');
-        $('.image-rights-default').addClass('hidden');
+        if (Object.getPrototypeOf(parent) !== FinnaMiniPaginator.prototype) {
+          var mediaHolder = parent.root.closest('.media-left, .media-right');
+          mediaHolder.addClass('hidden-xs');
+          parent.root.css('display', 'none');
+          parent.root.siblings('.image-details-container').css('display', 'none');
+          mediaHolder.find('.organisation-menu').hide();
+          $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
+          $('.large-image-sidebar').addClass('visible-xs visible-sm');
+          $('.record-main').addClass('mainbody left');
+        } else {
+          $(this).parents('.grid').addClass('no-image');
+        }
       }
       parent.setImageInformation(imagePopup.attr('index'));
     });
 
     img.attr('data-src', imagePopup.attr('href'));
-    img.unveil();
+
+    if (Object.getPrototypeOf(parent) === FinnaMiniPaginator.prototype) {
+      img.unveil(0, function tryMasonry(){
+        $(this).load(function tryToResize(){
+          if (masonryInitialized) {
+            $('.result-view-grid .masonry-wrapper').masonry('layout');
+          }
+        });
+      });
+    } else {
+      img.unveil();
+    }
   }
 
   /**
@@ -326,19 +349,6 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
-  FinnaPaginator.prototype.loadOneImage = function loadOneImage(direction) {
-    var image;
-    var elementToRemove = direction === 1 ? 'a:first' : 'a:last';
-    image = this.getImageFromArray(direction);
-
-    if (typeof image !== 'undefined' && image !== null) {
-      this.imageHolder.find(elementToRemove).remove();
-      this.createImagePopup(image, (direction === 1));
-    }
-
-    this.setButtons();
-  }
-
   // Need to fetch new part of information, some of the functions will work without adding them to the prototype
   // As it increases the size of the created object
   FinnaPaginator.prototype.loadImageInformation = function loadImageInformation(index) {
@@ -391,7 +401,7 @@ finna.imagePaginator = (function imagePaginator() {
     this.leafletHolder.eachLayer(function removeLayers(layer) {
       parent.leafletHolder.removeLayer(layer);
     });
-    this.leafletHolder.setZoom(0);
+    this.leafletLoader.addClass('loading');
     var img = new Image();
     img.src = leafletImage.attr('href');
     // We need to fetch some data from here
@@ -414,9 +424,12 @@ finna.imagePaginator = (function imagePaginator() {
       L.imageOverlay(img.src, bounds).addTo(parent.leafletHolder, {animate: false});
       parent.leafletHolder.flyToBounds(bounds, {animate: false});
       parent.leafletHolder.setMaxBounds(bounds, {animate: false});
+      parent.leafletHolder.off('zoomend');
+      parent.leafletHolder.setZoom(parent.smallestZoomLevel, {animate: false});
       parent.leafletHolder.on('zoomend', function adjustPopupSize() {
         parent.leafletHolder.invalidateSize(bounds, {animate: false});
       });
+      parent.leafletLoader.removeClass('loading');
     }
     this.loadImageInformation(this.openLeafletImageIndex);
   }
@@ -448,7 +461,7 @@ finna.imagePaginator = (function imagePaginator() {
           popupArea.attr('data-type', parent.recordType);
           popupArea.attr('data-id', parent.recordId);
           
-          parent.breakPoints[10000] = 15;
+          parent.leafletLoader = leafletArea.find('.leaflet-image-loading');
           parent.createPopupTrack($('.finna-image-pagination'), leafletArea);
 
           if ($(window).width() > 768) {
@@ -551,28 +564,33 @@ finna.imagePaginator = (function imagePaginator() {
     img.attr('data-src', image.small);
     tmpImg.attr('index', image.index);
     tmpImg.attr('href', image.largest);
-    
-    img.unveil();
     tmpImg.click();
   }
 
   FinnaMiniPaginator.prototype.constructor = FinnaMiniPaginator;
 
   function initPaginator(images, settings) {
+    settings.smallestZoomLevel = 1;
     var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
     paginator.createElements();
   }
 
   function initMiniPaginator(images, settings) {
     settings.imagesPerPage = 0;
+    settings.smallestZoomLevel = 0;
     var paginator = new FinnaMiniPaginator(images, $('.recordcover-holder.paginate'), settings);
     paginator.createElements();
     paginator.setMiniPaginator();
   }
 
+  function setNoImageLayout() {
+    
+  }
+
   var my = {
     initPaginator: initPaginator,
-    initMiniPaginator: initMiniPaginator
+    initMiniPaginator: initMiniPaginator,
+    setMasonryState: setMasonryState
   };
 
   return my;

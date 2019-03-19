@@ -155,7 +155,7 @@ return [
         'finna.js',
         'finna-autocomplete.js',
         'finna-combined-results.js',
-        'finna-image-popup.js',
+        'finna-video-popup.js',
         'finna-image-paginator.js',
         'finna-adv-search.js',
         'finna-daterange-vis.js',

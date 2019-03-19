@@ -662,6 +662,7 @@ finna.layout = (function finnaLayout() {
           isResizeBound: 'true',
           horizontalOrder: 'true'
         });
+        finna.imagePaginator.setMasonryState(true);
       });
     }
   }

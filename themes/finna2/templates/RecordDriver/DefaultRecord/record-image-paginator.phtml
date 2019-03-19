@@ -49,7 +49,7 @@
         'recordId' => $this->driver->getUniqueId(),
         'source' => $this->driver->getSourceIdentifier(),
         'recordType' =>  $this->driver->tryMethod('getRecordType'),
-        'imagesPerPage' => 12
+        'imagesPerPage' => 8
       ]?>
       <?php if ($type === 'list' || $type === 'list grid'): ?>
         finna.imagePaginator.initMiniPaginator(
