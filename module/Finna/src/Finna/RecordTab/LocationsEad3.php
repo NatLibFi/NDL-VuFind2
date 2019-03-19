@@ -62,7 +62,7 @@ class LocationsEad3 extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
-        if (empty($this->driver->getLocations())) {
+        if (empty($this->driver->tryMethod('getLocations'))) {
             $this->enabled = false;
         }
         return $this->enabled;
