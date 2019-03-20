@@ -884,10 +884,7 @@ class RecordDataFormatterFactory
             foreach ($data as $type => $values) {
                 $label = null;
                 if (isset($values['role'])) {
-                    $label = ucfirst(trim($values['role']));
-                    if (substr($label, -1) === '.') {
-                        $label = substr($label, 0, strlen($label) - 1);
-                    }
+                    $label = $values['role'];
                     $label = "CreatorRoles::$label";
                 }
                 $final[] = [

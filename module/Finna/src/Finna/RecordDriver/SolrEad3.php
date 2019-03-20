@@ -160,39 +160,6 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Return contributors
-     *
-     * @return array|null
-     */
-    public function getContributors()
-    {
-        $result = [];
-        $xml = $this->getXmlRecord();
-        if (!isset($xml->did->controlaccess->name)) {
-            return $result;
-        }
-
-        foreach ($xml->did->controlaccess->name as $name) {
-            $data = [
-               'id' => $name->attributes()->identifier,
-               'type' => 'author-id',
-               'role' => $name->attributes()->relator
-            ];
-            if (isset($name->part)) {
-                foreach ($name->part as $part) {
-                    if ($part->attributes()->localtype == 'Ensisijainen nimi') {
-                        // Assume first entry is the current name
-                        $data['name'] = (string)$part;
-                        $result[] = $data;
-                        break;
-                    }
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * Get all authors apart from presenters
      *
      * @return array
@@ -205,46 +172,28 @@ class SolrEad3 extends SolrEad
             return $result;
         }
 
-        foreach ($xml->relations->relation as $relation) {
-            $type = (string)$relation->attributes()->relationtype;
-            if ('cpfrelation' !== $type) {
+        foreach ($xml->controlaccess->name as $node) {
+            $attr = $node->attributes();
+            $role = $this->getRole($node);
+            if (!$role) {
+                // non RDA role
+                if (isset($attr->localtype)) {
+                    // role id
+                    $role = (string)$attr->localtype;
+                } else if (isset($attr->relator)) {
+                    // role label
+                    $role = (string)$attr->relator;
+                }
+            }
+            $name = $this->getDisplayLabel($node);
+            if (empty($name) || !$name[0]) {
                 continue;
             }
-            $role = '';
-            $arcRole = trim((string)$relation->attributes()->arcrole);
-            if ($arcRole === 'Arkistonmuodostaja') {
-                continue;
-            }
-            /*
-            switch ($arcRole) {
-            case '':
-            case 'http://www.rdaregistry.info/Elements/u/P60672':
-                $role = 'pro';
-                break;
-            case 'http://www.rdaregistry.info/Elements/u/P60434':
-                $role = 'spk';
-                break;
-            case 'http://www.rdaregistry.info/Elements/u/P60444':
-                $role = 'aut';
-                break;
-            case 'http://www.rdaregistry.info/Elements/u/P60429':
-                $role = 'rcd';
-                break;
-            case 'http://www.rdaregistry.info/Elements/u/P60434':
-                $role = 'drt';
-                break;
-            default:
-            }
-            if ('' === $role) {
-                continue;
-                }*/
-
-            $name = $this->getDisplayLabel($relation, 'relationentry');
             $result[] = [
-               'id' => (string)$relation->attributes()->href,
+               'id' => (string)$node->attributes()->identifier,
                'type' => 'author-id',
-               'role' => $arcRole,
-               'name' => $name ? $name[0] : null
+               'role' => $role,
+               'name' => $name[0]
             ];
         }
 
@@ -816,5 +765,49 @@ class SolrEad3 extends SolrEad
     {
         $langMap = ['fi' => 'fin', 'sv' => 'swe', 'en-gb' => 'eng'];
         return $langMap[$languageCode] ?? $languageCode;
+    }
+
+    /**
+     * Convert EAD# role to RDA role,
+     *
+     * @param string $role EAD3 role
+     *
+     * @return string
+     */
+    protected function getRole($node)
+    {
+        // Map EAD3 roles to RDA roles
+        $roleMap = [
+            'http://rdaregistry.info/Elements/e/P20047' => 'ive',
+            'http://rdaregistry.info/Elements/e/P20032' => 'ivr',
+            'http://rdaregistry.info/Elements/w/P10046' => 'pbl',
+            'http://www.rdaregistry.info/Elements/w/#P10311' => 'fac',
+            'http://rdaregistry.info/Elements/e/P20042' => 'ctg',
+            'http://rdaregistry.info/Elements/a/P50190' => 'cng',
+            'http://rdaregistry.info/Elements/w/P10058' => 'art',
+            'http://rdaregistry.info/Elements/w/P10066' => 'drt',
+            'http://rdaregistry.info/Elements/e/P20033' => 'drm',
+            'http://rdaregistry.info/Elements/e/P20024' => 'spk',
+            'http://rdaregistry.info/Elements/w/P10204' => 'lyr',
+            'http://rdaregistry.info/Elements/e/P20029' => 'arr',
+            'http://rdaregistry.info/Elements/w/P10053' => 'cmp',
+            'http://rdaregistry.info/Elements/w/P10065' => 'aut',
+            'http://rdaregistry.info/Elements/w/P10298' => 'edt',
+            'http://rdaregistry.info/Elements/w/P10064' => 'pro',
+            'http://www.rdaregistry.info/Elements/u/P60429' => 'pht',
+            'http://www.rdaregistry.info/Elements/e/#P20052' => 'rpy',
+            'http://rdaregistry.info/Elements/w/P10304' => 'rpy',
+        ];
+
+        $attr = $node->attributes();
+        
+        if (isset($attr->localtype)) {
+            $role = (string)($attr->localtype);
+            if (isset($roleMap[$role])) {
+                return $roleMap[$role];
+            }
+        }
+
+        return null;
     }
 }
