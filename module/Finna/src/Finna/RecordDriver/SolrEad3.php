@@ -627,6 +627,60 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get related records (used by RecordDriverRelated - Related module)
+     *
+     * Returns an associative array of record ids.
+     * The array may contain the following keys:
+     *   - parents
+     *   - children
+     *   - continued-from
+     *   - other
+     *
+     * @return array
+     */
+    public function getRelatedItems()
+    {
+        $record = $this->getXmlRecord();
+
+        if (!isset($record->relations->relation)) {
+            return [];
+        }
+
+        $relationMap = [
+            'On jatkoa' => 'continued-from',
+            'Sisältyy' => 'part-of',
+            'Sisältää' => 'contains',
+            'Katso myös' => 'see-also'
+        ];
+
+        $relations = [];
+        foreach ($record->relations->relation as $relation) {
+            $attr = $relation->attributes();
+            foreach (['encodinganalog', 'relationtype', 'href', 'arcrole'] as $key) {
+                if (!isset($attr->{$key})) {
+                    continue 2;
+                }
+            }
+            if ((string)$attr->encodinganalog !== 'ahaa:AI30'
+                || (string)$attr->relationtype !== 'resourcerelation'
+            ) {
+                continue;
+            }
+            $role = (string)$attr->arcrole;
+            if (!isset($relationMap[$role])) {
+                continue;
+            }
+            $role = $relationMap[$role];
+            if (!isset($relations[$role])) {
+                $relations[$role] = [];
+            }
+            $relations[$role][] = (string)$attr->href;
+        }
+
+        return $relations;
+    }
+
+    /**
      * Get topics.
      *
      * @return string[]
