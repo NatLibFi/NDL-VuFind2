@@ -125,38 +125,50 @@ class SolrEad3 extends SolrEad
      */
     public function getOrigination()
     {
-        $record = $this->getXmlRecord();
-        if (isset($record->did->origination)) {
-            foreach ($record->did->origination->name as $name) {
-                $localType = $name->attributes()->localType;
-                if ($localType === 'http://www.rdaregistry.info/Elements/u/P60672') {
-                    if ($name = $this->getDisplayLabel($name)) {
-                        return $name[0];
-                    }
-                }
-            }
+        if ($origination = $this->getOriginationExtended()) {
+            return $origination['name'];
         }
-        return '';
+        return null;
     }
 
     /**
      * Get extended origination info
      *
-     * @return string
+     * @return array
      */
     public function getOriginationExtended()
     {
         $record = $this->getXmlRecord();
-        if (!isset($record->did->origination->name)
-            || !isset($record->did->origination->name->attributes()->identifier)
-        ) {
-            return false;
+        if (!isset($record->relations->relation)) {
+            return null;
         }
-        return [
-           'name' => $this->getOrigination(),
-           'id' => $record->did->origination->name->attributes()->identifier,
-           'type' => 'corporate-author-id'
-        ];
+
+        foreach ($record->relations->relation as $relation) {
+            $attr = $relation->attributes();
+            foreach (['relationtype', 'href', 'arcrole'] as $key) {
+                if (!isset($attr->{$key})) {
+                    continue;
+                }
+            }
+            if ((string)$attr->relationtype !== 'cpfrelation'
+                || (string)$attr->arcrole !== 'Arkistonmuodostaja'
+            ) {
+                continue;
+            }
+
+            $name = $this->getDisplayLabel($relation, 'relationentry');
+            if (!$name || !$name[0]) {
+                $name = $this->getOrigination();
+            }
+
+            return [
+                'name' => $name[0],
+                'id' => (string)$attr->href,
+                'type' => 'author-id'
+            ];
+        }
+
+        return null;
     }
 
     /**
@@ -174,9 +186,11 @@ class SolrEad3 extends SolrEad
 
         foreach ($xml->controlaccess->name as $node) {
             $attr = $node->attributes();
-            $role = $this->translateRole(
-                (string)$attr->localtype, (string)$attr->relator
-            );
+            $relator = (string)$attr->relator;
+            if ($relator === 'Arkistonmuodostaja') {
+                continue;
+            }
+            $role = $this->translateRole((string)$attr->localtype, $relator);
             $name = $this->getDisplayLabel($node);
             if (empty($name) || !$name[0]) {
                 continue;

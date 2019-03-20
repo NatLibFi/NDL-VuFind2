@@ -3,7 +3,7 @@
   $url = $this->record($this->driver)->getLink('author', $data);
   $authority = $this->driver->tryMethod('getOriginationExtended');
 ?>
-<?php if ($authority && ($authorityLink = $this->authority()->link($url, $data, $authority['id'], $authority['type'], $this->driver))): ?>
+<?php if ($authority && ($authorityLink = $this->authority()->link($url, $this->escapeHtml($authority['name']), $authority['id'], $authority['type'], $this->driver))): ?>
   <?=$authorityLink?>
 <?php else: ?>
   <a href="<?=$url?>"><?=$this->escapeHtml($data)?></a>
