@@ -796,7 +796,7 @@ class SolrEad3 extends SolrEad
         ];
 
         $attr = $node->attributes();
-        
+
         if (isset($attr->localtype)) {
             $role = (string)($attr->localtype);
             if (isset($roleMap[$role])) {
