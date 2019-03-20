@@ -174,7 +174,9 @@ class SolrEad3 extends SolrEad
 
         foreach ($xml->controlaccess->name as $node) {
             $attr = $node->attributes();
-            $role = $this->translateRole((string)$attr->localtype, (string)$attr->relator);
+            $role = $this->translateRole(
+                (string)$attr->localtype, (string)$attr->relator
+            );
             $name = $this->getDisplayLabel($node);
             if (empty($name) || !$name[0]) {
                 continue;
