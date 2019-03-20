@@ -174,17 +174,7 @@ class SolrEad3 extends SolrEad
 
         foreach ($xml->controlaccess->name as $node) {
             $attr = $node->attributes();
-            $role = $this->getRole($node);
-            if (!$role) {
-                // non RDA role
-                if (isset($attr->localtype)) {
-                    // role id
-                    $role = (string)$attr->localtype;
-                } else if (isset($attr->relator)) {
-                    // role label
-                    $role = (string)$attr->relator;
-                }
-            }
+            $role = $this->getRole($node, (string)$attr->relator);
             $name = $this->getDisplayLabel($node);
             if (empty($name) || !$name[0]) {
                 continue;
@@ -774,7 +764,7 @@ class SolrEad3 extends SolrEad
      *
      * @return string
      */
-    protected function getRole($node)
+    protected function getRole($node, $fallback = null)
     {
         // Map EAD3 roles to RDA roles
         $roleMap = [
@@ -797,6 +787,12 @@ class SolrEad3 extends SolrEad
             'http://www.rdaregistry.info/Elements/u/P60429' => 'pht',
             'http://www.rdaregistry.info/Elements/e/#P20052' => 'rpy',
             'http://rdaregistry.info/Elements/w/P10304' => 'rpy',
+
+            'http://rdaregistry.info/Elements/w/P10061' => 'rda:per',
+            'http://rdaregistry.info/Elements/w/P10061' => 'rda:host',
+            'http://rdaregistry.info/Elements/w/P10061' => 'rda:writer',
+            'http://rdaregistry.info/Elements/a/P50045' => 'rda:collector',
+            'http://www.rdaregistry.info/Elements/i/#P40019' => 'rda:former-owner'
         ];
 
         $attr = $node->attributes();
@@ -808,6 +804,6 @@ class SolrEad3 extends SolrEad
             }
         }
 
-        return null;
+        return $fallback;
     }
 }
