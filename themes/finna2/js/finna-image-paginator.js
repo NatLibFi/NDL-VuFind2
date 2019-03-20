@@ -140,6 +140,10 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   FinnaPaginator.prototype.checkResize = function checkResize(e) {
+    if (this.imagesPerPage === 0) {
+      return;
+    }
+
     var width = $(window).width();
     var limits = Object.keys(this.breakPoints);
 
@@ -236,7 +240,7 @@ finna.imagePaginator = (function imagePaginator() {
     this.loadPage(0);
   }
 
-  var updateStarted = false;
+
   FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imagePopup) {
     var img = this.trigger.find('img');
     var parent = this;
@@ -333,7 +337,7 @@ finna.imagePaginator = (function imagePaginator() {
       this.offSet = 0;
       break;
     }
-
+    
     if (searchIndex < 0) {
       this.offSet = 0;
       searchIndex = this.offSet;
@@ -341,6 +345,7 @@ finna.imagePaginator = (function imagePaginator() {
       this.offSet = imagesLengthAsIndex;
       searchIndex = this.offSet;
     }
+    
 
     if (typeof this.images[searchIndex] === 'undefined') {
       return null;
@@ -368,6 +373,10 @@ finna.imagePaginator = (function imagePaginator() {
     }).done( function setImageData(response) {
       var object = JSON.parse(response);
       $('.collapse-content-holder').html(object.data.html);
+      var summaryHolder = $('.imagepopup-holder .summary');
+      finna.layout.initTruncate(summaryHolder);
+      summaryHolder.removeClass('loading');
+      finna.layout.initTruncate($('.mfp-content'));
     }).fail( function setImageDataFailure(response) {
       $('.collapse-content-holder').html('<p>Failed to fetch data</p>');
     });
@@ -551,7 +560,7 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaMiniPaginator.prototype.setMiniPaginatorButton = function setMiniPaginatorButton(direction) {
     var image = this.getImageFromArray(direction);
 
-    if (image !== null) {
+    if (image !== null && typeof image !== 'undefined') {
       this.setListImageTrigger(image);
     }
     this.setButtons();
