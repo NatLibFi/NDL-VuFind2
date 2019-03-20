@@ -174,7 +174,7 @@ class SolrEad3 extends SolrEad
 
         foreach ($xml->controlaccess->name as $node) {
             $attr = $node->attributes();
-            $role = $this->getRole($node, (string)$attr->relator);
+            $role = $this->translateRole((string)$attr->localtype, (string)$attr->relator);
             $name = $this->getDisplayLabel($node);
             if (empty($name) || !$name[0]) {
                 continue;
@@ -758,15 +758,16 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Convert EAD# role to RDA role,
+     * Get role translation key
      *
-     * @param string $role EAD3 role
+     * @param string $role     EAD3 role
+     * @param string $fallback Fallback to use when no supported role is found
      *
-     * @return string
+     * @return string Translation key
      */
-    protected function getRole($node, $fallback = null)
+    protected function translateRole($role, $fallback = null)
     {
-        // Map EAD3 roles to RDA roles
+        // Map EAD3 roles to CreatorRole translations
         $roleMap = [
             'http://rdaregistry.info/Elements/e/P20047' => 'ive',
             'http://rdaregistry.info/Elements/e/P20032' => 'ivr',
@@ -795,15 +796,6 @@ class SolrEad3 extends SolrEad
             'http://www.rdaregistry.info/Elements/i/#P40019' => 'rda:former-owner'
         ];
 
-        $attr = $node->attributes();
-
-        if (isset($attr->localtype)) {
-            $role = (string)($attr->localtype);
-            if (isset($roleMap[$role])) {
-                return $roleMap[$role];
-            }
-        }
-
-        return $fallback;
+        return $roleMap[$role] ?? $fallback;
     }
 }
