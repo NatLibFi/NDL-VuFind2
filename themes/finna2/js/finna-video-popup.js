@@ -1,261 +1,7 @@
-/*global VuFind, finna, module, videojs, L */
-finna.imagePopup = (function finnaImagePopup() {
-
-  function openPopup(trigger) {
-    var ind = trigger.data('ind');
-    var links = trigger.closest('.recordcover-holder').find('.image-popup');
-    var link = links.filter(function filterLink() {
-      return $(this).data('ind') === ind
-    } );
-    link.click();
-  }
-
-  function initThumbnailNavi() {
-    // Assign record indices
-    var recordIndex = null;
-    if ($('.paginationSimple').length) {
-      recordIndex = $('.paginationSimple .index').text();
-      $('.image-popup-trigger').each(function handlePopupTrigger() {
-        $(this).data('recordInd', recordIndex++);
-      });
-    }
-
-    // Assign image indices
-    var index = 0;
-    $('.image-popup').each(function assignIndex() {
-      $(this).data('ind', index++);
-      var recordIdx = $(this).closest('.recordcover-holder').find('.image-popup-trigger').data('recordInd');
-      if (recordIdx) {
-        $(this).data('recordInd', recordIdx);
-      }
-    });
-
-    // Assign image indices for individual images.
-    $('.recordcovers').each(function handleCover() {
-      var thumbInd = 0;
-      $(this).find('.image-popup').each(function handlePopup() {
-        $(this).data('thumbInd', thumbInd++);
-      });
-    });
-
-    // Open image-popup from medium size record image.
-    $('.image-popup-trigger').each(function handlePopupTrigger() {
-      var links = $(this).closest('.recordcover-holder').find('.recordcovers .image-popup');
-      var linkIndex = links.eq(0).data('ind');
-      $(this).data('ind', linkIndex);
-      $(this).data('thumbInd', 0);
-    });
-
-    // Roll-over thumbnail images: update medium size record image and indices.
-    $('.image-popup-navi').click(function updateImage(e) {
-      var trigger = $(this).closest('.recordcover-holder').find('.image-popup-trigger');
-      trigger.data('ind', $(this).data('ind'));
-      trigger.data('thumbInd', $(this).data('thumbInd'));
-      // Temporarily adjust the image so that the user sees something is happening
-      var img = trigger.find('img');
-      img.css('opacity', 0.5);
-      img.one('load', function onLoadImage() {
-        img.css('opacity', '');
-        $('.image-dimensions').text('(' + (this.naturalWidth + ' X ' + this.naturalHeight + ')'));
-      });
-      img.attr('src', $(this).attr('href'));
-      var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
-      textContainers.addClass('hidden');
-      textContainers.filter('[data-img-index="' + $(this).data('imgIndex') + '"]').removeClass('hidden');
-      initRecordImage();
-      e.preventDefault();
-    });
-  }
-
-  // Copied from finna-mylist.js to avoid dependency
-  function getActiveListId() {
-    return $('input[name="listID"]').val();
-  }
-
-  function initRecordImage() {
-    // Collect data for all image-popup triggers on page.
-    var urls = $('.image-popup').map(function mapPopupTriggers() {
-      // result list
-      var id = $(this).closest('.result').find('.hiddenId');
-      if (!id.length) {
-        // gallery view
-        id = $(this).closest('.record-container').find('.hiddenId');
-        if (!id.length) {
-          // record page
-          id = $('.record .hiddenId');
-        }
-      }
-      if (!id.length) {
-        // my list
-        id = $(this).closest('.myresearch-row').find('.hiddenId');
-      }
-
-      if (!id.length) {
-        return;
-      }
-      id = id.val();
-
-      var ind = $(this).data('ind');
-      var thumbInd = $(this).data('thumbInd');
-      var recordInd = $(this).data('recordInd');
-      var src = VuFind.path + '/AJAX/JSON?method=getImagePopup&id=' + encodeURIComponent(id) + '&index=' + thumbInd;
-
-      if (typeof publicList !== 'undefined') {
-        src += '&publicList=1';
-      }
-
-      var listId = getActiveListId();
-      if (typeof listId !== 'undefined') {
-        src += '&listId=' + listId;
-      }
-
-      return {
-        src: src,
-        href: $(this).attr('href'),
-        ind: ind,
-        recordInd: recordInd
-      }
-    }).toArray();
-
-    $('.image-popup-trigger').each(function initPopup() {
-      $(this).magnificPopup({
-        items: urls,
-        index: $(this).data('ind'),
-        type: 'ajax',
-        tLoading: '',
-        tClose: VuFind.translate('close'),
-        preloader: true,
-        preload: [1, 3],
-        removalDelay: 200,
-        ajax: {
-          cursor: '',
-          settings: {
-            dataType: 'json'
-          }
-        },
-        callbacks: {
-          parseAjax: function onParseAjax(mfpResponse) {
-            mfpResponse.data = mfpResponse.data.data.html;
-          },
-          ajaxContentAdded: function onAjaxContentAdded() {
-            var popup = $('.imagepopup-holder');
-            var type = popup.data("type");
-            var id = popup.data("id");
-            var recordIndex = $.magnificPopup.instance.currItem.data.recordInd;
-            VuFind.lightbox.bind('.imagepopup-holder');
-            var zoomable = $('#leaflet-map-image').data('large-image-layout') && $('#leaflet-map-image').data('enable-image-popup-zoom');
-            if (zoomable) {
-              initImageZoom();
-            } else {
-              $('.image img').one('load', function onLoadImg() {
-                $('.imagepopup-holder .image').addClass('loaded');
-                initDimensions();
-                $(this).attr('alt', $('#popup-image-title').html());
-                $(this).attr('aria-labelledby', 'popup-image-title');
-                if ($('#popup-image-description').length) {
-                  $(this).attr('aria-describedby', 'popup-image-description');
-                }
-              }).each(function triggerImageLoad() {
-                if (this.complete) {
-                  $(this).load();
-                }
-              });
-            }
-
-            // Prevent navigation button CSS-transitions on touch-devices
-            if (finna.layout.isTouchDevice()) {
-              $('.mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left').addClass('touch-device');
-
-              $('.mfp-container').swipe({
-                allowPageScroll: 'vertical',
-                // Generic swipe handler for all directions
-                swipeRight: function onSwipeRight(/*event, phase, direction, distance, duration*/) {
-                  $('.mfp-container .mfp-arrow-left').click();
-                },
-                swipeLeft: function onSwipeLeft(/*event, direction, distance, duration*/) {
-                  $('.mfp-container .mfp-arrow-right').click();
-                },
-                threshold: 75,
-                cancelThreshold: 20
-              });
-            }
-
-            // Record index
-            if (recordIndex) {
-              var recIndex = $('.imagepopup-holder .image-info .record-index');
-              var recordCount = $(".paginationSimple .total").text();
-              recIndex.find('.index').html(recordIndex);
-              recIndex.find('.total').html(recordCount);
-              recIndex.show();
-            }
-
-            // Image copyright information
-            $('.imagepopup-holder .image-rights .copyright-link a').click(function onClickCopyright() {
-              var mode = $(this).data('mode') === '1';
-
-              var moreLink = $('.imagepopup-holder .image-rights .more-link');
-              var lessLink = $('.imagepopup-holder .image-rights .less-link');
-
-              moreLink.toggle(!mode);
-              lessLink.toggle(mode);
-
-              $('.imagepopup-holder .image-rights .copyright').toggle(mode);
-
-              return false;
-            });
-
-            // load feedback modal
-            if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
-              $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
-                $.magnificPopup.close();
-              });
-            }
-
-            // Load book description
-            var summaryHolder = $('.imagepopup-holder .summary');
-            if (type === 'marc') {
-              var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
-              $.getJSON(url)
-                .done(function onGetDescriptionDone(response) {
-                  var data = response.data.html;
-                  if (data.length > 0) {
-                    summaryHolder.find('> div p').html(data);
-                    finna.layout.initTruncate(summaryHolder);
-                    summaryHolder.removeClass('loading');
-                  }
-                })
-                .fail(function onGetDescriptionFail(/*response, textStatus*/) {
-                  summaryHolder.removeClass('loading');
-                });
-            } else {
-              finna.layout.initTruncate(summaryHolder);
-              summaryHolder.removeClass('loading');
-            }
-
-            // Init embedding
-            finna.layout.initIframeEmbed(popup);
-            initVideoPopup(popup);
-          },
-          close: function closePopup() {
-            if ($('#video-player').length) {
-              videojs('video-player').dispose();
-            }
-          }
-        },
-        gallery: {
-          enabled: true,
-          preload: [0, 2],
-          navigateByImgClick: true,
-          arrowMarkup: '<button title="%title%" type="button" aria-label="%title%" class="mfp-arrow mfp-arrow-%dir%"></button>',
-          tPrev: VuFind.translate('Prev'),
-          tNext: VuFind.translate('Next'),
-          tCounter: ''
-        }
-      });
-    });
-  }
-
-  function initVideoPopup(_container) {
+/*global VuFind, finna, videojs */
+finna.videoPopup = (function finnaVideoPopup() {
+  // Combine these 2 functions
+  /*function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
     container.find('a[data-embed-video]').click(function openVideoPopup(e) {
@@ -279,157 +25,240 @@ finna.imagePopup = (function finnaImagePopup() {
 
       e.preventDefault();
     });
-  }
+  }*/
 
-  function resolveRecordImageSize() {
-    if ($('.image-popup-navi').length > 1) {
-      initThumbnailNavi();
-      initRecordImage();
-    } else {
-      $('.image-popup-trigger img').one('load', function onLoadImg() {
-        if (this.naturalWidth > 10 && this.naturalHeight > 10) {
-          initThumbnailNavi();
-          initRecordImage();
-        } else {
-          $(this).closest('.recordcover-holder').hide();
-          $('.access-rights p').first().hide();
-          $('.image-rights').hide();
-          $('.media-left > .organisation-menu').hide();
-          if ( $('.access-rights').has('.more-link') ) {
-            $('.access-rights > .more-link').hide();
+  function initVideoPopup(isPopup, _container, parent) {
+    var container = typeof _container === 'undefined' ? $('body') : $(_container);
+
+    container.find('[data-embed-video]').click(function onClickVideoLink(e) {
+      var videoSources = $(this).data('videoSources');
+      var scripts = $(this).data('scripts');
+      var posterUrl = $(this).data('posterUrl');
+
+      if (!isPopup) {
+        $.magnificPopup.open({
+          type: 'inline',
+          items: {
+            src: "<div class='video-popup'><video id='video-player' class='video-js vjs-big-play-centered' controls></video></div>"
+          },
+          callbacks: {
+            open: function onOpen() {
+              finna.layout.loadScripts(scripts, function onScriptsLoaded() {
+                initVideoJs('.video-popup', videoSources, posterUrl);
+              });
+            },
+            close: function onClose() {
+              videojs('video-player').dispose();
+            },
+            resize: function resizeVideo() {
+              resizeVideoPopup($('.video-popup'));
+            }
           }
+        });
+        return false;
+      } else {
+        finna.layout.loadScripts(scripts, function onScriptsLoaded() {
+          initVideoJs('.video-popup', videoSources, posterUrl);
+        });
+        if (typeof parent !== 'undefined') {
+          parent.onVideoOpen();
         }
-      });
-    }
+      }
+      e.preventDefault();
+    });
   }
 
-  function initImageZoom() {
-    var img = new Image();
-    img.src = $('.imagepopup-holder .original-image-url').attr('href');
-    img.onload = function onLoadImg() {
-      $('.imagepopup-holder .image').addClass('loaded');
-      initDimensions();
-      $('.mfp-content').removeClass('full-size');
-      $(this).attr('alt', $('#popup-image-title').html());
-      $(this).attr('aria-labelledby', 'popup-image-title');
-      if ($('#popup-image-description').length) {
-        $(this).attr('aria-describedby', 'popup-image-description');
-      }
-      var map = L.map('leaflet-map-image', {
-        minZoom: 1,
-        maxZoom: 6,
-        center: [0, 0],
-        zoomControl: false,
-        zoom: 1,
-        crs: L.CRS.Simple,
-        maxBoundsViscosity: 0.9,
-        dragging: true,
-      });
-      $('.zoom-in').click(function zoomIn() {
-        map.setZoom(map.getZoom() + 1)
-      });
-      $('.zoom-out').click(function zoomOut() {
-        map.setZoom(map.getZoom() - 1)
-      });
-      $('.zoom-reset').click(function zoomReset() {
-        map.setZoom(1)
-      });
-      var h = this.naturalHeight;
-      var w = this.naturalWidth;
-      if (h === 10 && w === 10) {
-        $('#leaflet-map-image').hide();
-        return;
-      }
-      var imageNaturalSizeZoomLevel = 3;
-      if (h < 2000 && w < 2000) {
-        imageNaturalSizeZoomLevel = 2;
-      }
-      if (h < 1000 && w < 1000) {
-        imageNaturalSizeZoomLevel = 1;
-      }
-      var southWest = map.unproject([0, h], imageNaturalSizeZoomLevel);
-      var northEast = map.unproject([w, 0], imageNaturalSizeZoomLevel);
-      var bounds = new L.LatLngBounds(southWest, northEast);
-      var overlay = L.imageOverlay(img.src, bounds);
-      map.flyToBounds(bounds, {animate: false});
-      map.setMaxBounds(bounds);
-      overlay.addTo(map);
-      map.invalidateSize();
-      map.on('zoomend', function adjustPopupSize() {
-        if (map.getZoom() > 1) {
-          $('.mfp-content').addClass('full-size');
-        } else {
-          $('.mfp-content').removeClass('full-size');
-          map.flyToBounds(bounds, {animate: false});
-        }
-        map.invalidateSize();
-      });
+  function resizeVideoPopup($container) {
+    var mfp = $container.closest('.mfp-content');
+    if (mfp.length === 0) {
+      return;
     }
+    var width = $('.mfp-content').width();
+    var height = $('.mfp-container').height();
+    $container.css('width', width).css('height', height);
   }
 
-  function initDimensions() {
-    if (typeof $('.open-link a').attr('href') !== 'undefined') {
-      var img = document.createElement('img')
-      img.src = $('.open-link a').attr('href');
-      img.onload = function onLoadImg() {
-        if (this.width === 10 && this.height === 10) {
-          $('.open-link').hide();
-        }
-        else {
-          $('.open-link .image-dimensions').text( '(' + this.width + ' X ' + this.height + ')')
-        }
+  function initVideoJs(_container, videoSources, posterUrl) {
+    var $container = $(_container);
+    var $videoElem = $(_container).find('video');
+
+    // Use a fairly small buffer for faster quality changes
+    videojs.Hls.GOAL_BUFFER_LENGTH = 10;
+    videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
+    var player = videojs($videoElem.get(0));
+
+    player.ready(function onReady() {
+      this.hotkeys({
+        enableVolumeScroll: false,
+        enableModifiersForNumbers: false
+      });
+    });
+
+    resizeVideoPopup($container);
+
+    player.src(videoSources);
+    player.poster(posterUrl);
+
+    var handleCloseButton = function handleCloseButton() {
+      if (player.userActive()) {
+        $('.mfp-close').css('opacity', '1');
+      } else {
+        $('.mfp-close').css('opacity', '0');
       }
     }
-  }
 
-  function initImageCheck() {
-    $('.image-popup-trigger img').each(function setupImagePopup() {
-      $(this).one('load', function onLoadImage() {
-        // Don't hide anything if we have multiple images
-        var navi = $(this).closest('.image-popup-navi');
-        if (navi && navi.length > 1) {
+    player.on('useractive', handleCloseButton);
+    player.on('userinactive', handleCloseButton);
+
+    var selectedBitrate = 'auto';
+
+    player.qualityLevels().on('addqualitylevel', function onAddQualityLevel(event) {
+      event.qualityLevel.enabled = selectedBitrate === "auto" || event.qualityLevel.height.toString() === selectedBitrate;
+    });
+
+    player.on('loadedmetadata', function onMetadataLoaded() {
+      var qualityLevels = player.qualityLevels();
+      var addLevel = function addLevel(i, val) {
+        var $item = $('<li/>')
+          .addClass('vjs-menu-item')
+          .attr('tabindex', i)
+          .attr('role', 'menuitemcheckbox')
+          .attr('aria-live', 'polite')
+          .attr('aria-checked', 'false')
+          .data('bitrate', String(val).toLowerCase());
+        $('<span/>')
+          .addClass('vjs-menu-item-text')
+          .text(val)
+          .appendTo($item);
+        $item.appendTo($container.find('.quality-selection'));
+        return $item;
+      };
+      var qLevels = [];
+      for (var i = 0; i < qualityLevels.length; i++) {
+        var quality = qualityLevels[i];
+
+        if (quality.height !== undefined) {
+          qLevels.push(quality.height);
+
+          if (!$container.find('.quality-selection').length) {
+            var $qs = $('<div/>').addClass('vjs-menu-button vjs-menu-button-popup vjs-control vjs-button');
+            var $button = $('<button/>')
+              .addClass('vjs-menu-button vjs-menu-button-popup vjs-button')
+              .attr('type', 'button')
+              .attr('aria-live', 'polite')
+              .attr('aria-haspopup', 'true')
+              .attr('title', VuFind.translate('Quality'))
+              .appendTo($qs);
+            $('<span/>')
+              .addClass('vjs-icon-cog')
+              .attr('aria-hidden', 'true')
+              .appendTo($button);
+            $('<span/>')
+              .addClass('vjs-control-text')
+              .text(VuFind.translate('Quality'))
+              .appendTo($button);
+            var $menu = $('<div/>')
+              .addClass('vjs-menu')
+              .appendTo($qs);
+            $('<ul/>')
+              .addClass('quality-selection vjs-menu-content')
+              .attr('role', 'menu')
+              .appendTo($menu);
+
+            $container.find('.vjs-fullscreen-control').before($qs);
+          } else {
+            $container.find('.quality-selection').empty();
+          }
+
+          qLevels.sort(function compareFunc(a, b) {
+            return a - b;
+          });
+
+          $.each(qLevels, addLevel);
+
+          addLevel(qLevels.length, 'auto')
+            .addClass('vjs-selected')
+            .attr('aria-checked', 'true');
+        }
+      }
+    });
+
+    player.load();
+
+    $('body')
+      .unbind('click.videoQuality')
+      .on('click.videoQuality', '.quality-selection li', function onClickQuality() {
+        if ($container.find($(this)).length === 0) {
           return;
         }
-        if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
-          $(this).parent().addClass('no-image');
-          $(this).closest('a.image-popup-trigger').unbind('click');
-          $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
-          $('.large-image-sidebar').addClass('visible-xs visible-sm');
-          $('.record-main').addClass('mainbody left');
-          var href = $(this).parent().attr('href');
-          $(this).parent().attr({'href': href.split('#')[0], 'title': ''});
-          $(this).parents('.grid').addClass('no-image');
-          $('.rating-stars').addClass('hidden-xs');
-          $('.image-rights-default').addClass('hidden');
-        }
-      }).each(function loadImage() {
-        if (this.complete) {
-          $(this).load();
+        $container.find('.quality-selection li')
+          .removeClass('vjs-selected')
+          .prop('aria-checked', 'false');
+
+        $(this)
+          .addClass('vjs-selected')
+          .attr('aria-checked', 'true');
+
+        selectedBitrate = String($(this).data('bitrate'));
+        var levels = player.qualityLevels();
+        for (var i = 0; i < levels.length; i++) {
+          levels[i].enabled = 'auto' === selectedBitrate || String(levels[i].height) === selectedBitrate;
         }
       });
-    });
   }
 
-  function init() {
-    /*if (module !== 'record') {
-      initThumbnailNavi();
-      initRecordImage();
-    } else {
-      resolveRecordImageSize();
-      initDimensions();
-    }
+  function initIframeEmbed(isPopup, _container, parent) {
+    var container = typeof _container === 'undefined' ? $('body') : _container;
 
-    if (location.hash === '#image') {
-      openPopup($('.image-popup-trigger'));
-    }
-    $.extend(true, $.magnificPopup.defaults, {
-      tLoading: VuFind.translate('loading') + '...'
+    container.find('[data-embed-iframe]').click(function onClickEmbedLink(e) {
+      if (!isPopup) {
+        if (typeof $.magnificPopup.instance !== 'undefined' && $.magnificPopup.instance.isOpen) {
+          // Close existing popup (such as image-popup) first without delay so that its
+          // state doesn't get confused by the immediate reopening.
+          $.magnificPopup.instance.st.removalDelay = 0;
+          $.magnificPopup.close();
+        }
+  
+        // Fallback if core has older style of initializing a video button
+        var attr = $(this).is('a') ? $(this).attr('href') : $(this).attr('data-link');
+  
+        $.magnificPopup.open({
+          type: 'iframe',
+          tClose: VuFind.translate('close'),
+          items: {
+            src: attr
+          },
+          iframe: {
+            markup: '<div class="mfp-iframe-scaler">'
+              + '<div class="mfp-close"></div>'
+              + '<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
+              + '</div>',
+            patterns: {
+              youtube_short: {
+                index: 'youtu.be/',
+                id: 'youtu.be/',
+                src: '//www.youtube.com/embed/%id%?autoplay=1'
+              }
+            }
+          },
+          callbacks: {
+            open: function onOpen() {
+              if (finna.layout.isTouchDevice()) {
+                $('.mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left').addClass('touch-device');
+              }
+            }
+          }
+        });
+      } else {
+        parent.setIFrame();
+      }
+      e.preventDefault();
+      return false;
     });
-    initImageCheck();*/
   }
 
   var my = {
-    init: init
+    initVideoPopup: initVideoPopup
   };
 
   return my;

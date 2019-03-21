@@ -1,17 +1,117 @@
 <?php // Do not output this: <!-- START of: finna - RecordDriver/DefaultRecord/record-image-popup.phtml --> ?>
 <?php
   $recordImage = $this->recordImage($this->record($this->driver));
+  $largeImage = $recordImage->getLargeImage($this->index, ['w' => 1200, 'h' => 1200]);
+  $originalImage = $recordImage->getMasterImage($this->index);
+  $currentImage = $this->index + 1;
+  $numOfImages = $this->record($this->driver)->getNumOfRecordImages('large');
+  $imageDescription = $this->driver->tryMethod('getImageDescription', [$this->index]);
+  $rights = $recordImage->getImageRights($this->index);
+  $formats = $this->driver->tryMethod('getFormats');
+  $translatedFormat = $this->transEsc(end($formats));
   $recordType = $this->driver->tryMethod('getRecordType');
-<<<<<<< HEAD
-  $largeImageLayout = in_array($recordType, ['lido', 'forward', 'ead', 'qdc']);
-=======
   $largeImageLayout = in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward', 'ead', 'qdc']);
   $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
->>>>>>> master
 ?>
+<div class="imagepopup-holder <?=$this->escapeHtmlAttr($recordType) ?>" data-type="<?=$this->escapeHtmlAttr($recordType) ?>" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID()) ?>">
+  <div class="imagepopup-container">
+    <div class="image iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>">
+      <div id="leaflet-map-image" class="image-wrapper" data-large-image-layout="<?=$largeImageLayout?>" data-enable-image-popup-zoom="<?=$enableImagePopupZoom?>" >
+      <?php if (! $enableImagePopupZoom): ?>
+        <img src="<?=$largeImage?>" />
+      <?php endif; ?>
+      <?php if ($largeImageLayout && $enableImagePopupZoom): ?>
+        <div class="imagepopup-zoom-container">
+          <div class="zoom-in zoom-button"><i class="fa fa-zoom-in" aria-hidden="true"></i><span class="sr-only">Zoom in</span></div>
+          <div class="zoom-out zoom-button"><i class="fa fa-zoom-out" aria-hidden="true"></i><span class="sr-only">Zoom out</span></div>
+          <div class="zoom-reset zoom-button"><i class="fa fa-zoom-100" aria-hidden="true"></i><span class="sr-only">Reset</span></div>
+        </div>
+      <?php endif; ?>
+        </div>
+    </div>
+    <div class="content">
+      <h3 id="popup-image-title" class="title"><?=$this->escapeHtml($this->driver->getTitle()) ?></h3>
+      <div class="author-and-dates">
+        <?php if ($recordType != 'lido'): ?>
+          <p>
+          <?php if ($author = $this->driver->getPrimaryAuthor()): ?>
+            <?=$this->escapeHtml($author) ?>
+            <?php endif; ?>
+            <?php if ($dates = $this->driver->trymethod('getResultDateRange')): ?>
+              <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+          <?php else: ?>
+            <?php foreach ($this->driver->getPublicationDates() as $date): ?>
+            <?=$this->escapeHtml($date) ?>
+            <?php endforeach ?>
+          <?php endif; ?>
+          </p>
+        <?php else: ?>
+            <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
+              <div class="truncate-field">
+              <?php foreach($results as $index => $author): ?>
+                <?=($index > 0 ? '; ' : '')?><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['role'])): ?>, <?=$this->escapeHtml($author['role'])?><?php endif; ?>
+              <?php endforeach; ?>
+              <?php if ($dates = $this->driver->getResultDateRange()): ?>
+                <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+              <?php endif; ?>
+              <?php if ($results = $this->driver->getSubjectDates() && !isset($dates[0])): ?>
+                <?=implode('<br/>', array_map([$this, 'escapeHtml'], $results))?>
+              <?php endif; ?>
+              </div>
+            <?php endif; ?>
+          <?php if ($photo = $this->driver->getPhotoInfo()): ?>
+            <?=$this->transEsc('Photo Info') ?>: <?=$this->escapeHtml($photo) ?>
+          <?php endif; ?>
+        <?php endif; ?>
+      </div>
+      <div class="building">
+        <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
+      </div>
+      <div class="summary loading">
+        <div data-rows="6" class="truncate-field">
+        <?php if ($recordType == 'marc'): ?>
+          <p></p>
+        <?php else: ?>
+          <?php if ($imageDescription): ?>
+            <div id="popup-image-description" class="image-description">
+              <p><strong><?=$this->transEsc('Image') ?>:</strong> <?=$this->escapeHtml($imageDescription) ?></p>
+            </div>
+          <?php endif; ?>
+          <?php if ($summary = $this->driver->getSummary()): ?>
+            <?php foreach ($this->driver->getSummary() as $item): ?>
+              <p><?=$recordType == 'forward' ? $item : preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($item)) /* Allow <br> tag */ ?></p>
+            <?php endforeach ?>
+          <?php endif ?>
+        <?php endif ?>
+        </div>
+      </div>
+      <?php if ($listNotes): ?>
+        <div class="list-notes">
+          <strong><?=$this->transEsc('Description') ?></strong><?php if ($listUser): ?><span class="notes-user"> (<?=$this->escapeHtml(trim($this->userPublicName($this->listUser)))?>)</span><?php endif; ?>:
+          <ul>
+          <?php foreach ($listNotes as $note): ?>
+            <li><?=$this->markdown()->toHtml($note) ?></li>
+          <?php endforeach; ?>
+          </ul>
+        </div>
+      <?php endif; ?>
+          <div class="popup-link-buttons">
+          <?php
+            $urls = $this->driver->getURLs();
+            $onlineURLs = $this->driver->getOnlineURLs();
+            $mergedData = $this->driver->tryMethod('getMergedRecordData');
+            $images = $this->record($this->driver)->getAllRecordImageUrls();
+          ?>
+          <?php if (!empty($urls) || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
+            <?php $index = 0; ?>
+            <?php $renderedURLs = []; ?>
+            <?php if (!empty($urls)): ?>
+              <?php foreach ($urls as $url): ?>
+                <?php
+                  $renderedURLs[] = $url['url'];
+                  $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
+                ?>
 
-<<<<<<< HEAD
-=======
                 <div class="record-online-link">
                   <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"
                       <?php if (!empty($url['videoSources'])): ?> data-video-sources="<?=$this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>" data-scripts="<?=$this->escapeHtmlAttr($videoScripts)?>"<?php endif; ?>
@@ -102,5 +202,4 @@
      finna.layout.initOrganisationPageLinks();
   </script>
 </div>
->>>>>>> master
 <?php // Do not output this: <!-- END of: finna - RecordDriver/DefaultRecord/record-image-popup.phtml --> ?>

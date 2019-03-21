@@ -17,6 +17,10 @@ finna.imagePaginator = (function imagePaginator() {
   "</div>";
 
   var videoElement = '<div class="video-popup"><video id="video-player" class="video-js vjs-big-play-centered" controls></video></div>';
+  var iFrameElement = '<div class="mfp-iframe-scaler">'
+  + '<div class="mfp-close"></div>'
+  + '<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
+  + '</div>';
   var leafletElement = "<div id=\"leaflet-map-image\" class=\"image-wrapper\">" +
   "<img />" +
   "<div class=\"imagepopup-zoom-container\">" +
@@ -72,6 +76,7 @@ finna.imagePaginator = (function imagePaginator() {
     this.rightButton = '';
     this.imagePopup = '';
     this.leafletHolder = '';
+    this.videoHolder = '';
     this.leafletLoader = '';
     this.canvas = '';
 
@@ -407,42 +412,18 @@ finna.imagePaginator = (function imagePaginator() {
       var summaryHolder = $('.imagepopup-holder .summary');
       finna.layout.initTruncate($('.mfp-content'));
       summaryHolder.removeClass('loading');
-      parent.initVideoButtons($('.collapse-content-holder'));
+      finna.videoPopup.initVideoPopup(true, $('.collapse-content-holder'), parent);
     }).fail( function setImageDataFailure(response) {
       $('.collapse-content-holder').html('<p>Failed to fetch data</p>');
     });
   }
 
-  FinnaPaginator.prototype.initVideoButtons = function initVideoButtons(_container) {
-    var container = typeof _container === 'undefined' ? $('body') : _container;
-    var parent = this;
+  FinnaPaginator.prototype.onVideoOpen = function onVideoOpen() {
+    this.setCanvasContent('video')
+  }
 
-    container.find('a[data-embed-video]').click(function openVideoPopup(e) {
-      var videoSources = $(this).data('videoSources');
-      var posterUrl = $(this).data('posterUrl');
-      var scripts = $(this).data('scripts');
-
-      $('.mfp-arrow-right, .mfp-arrow-left').addClass('hidden');
-      parent.setCanvasContent(videoElement, 'video');
-
-      // Use a fairly small buffer for faster quality changes
-      videojs.Hls.GOAL_BUFFER_LENGTH = 10;
-      videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
-      var player = videojs('video-player');
-
-      player.ready(function onReady() {
-        this.hotkeys({
-          enableVolumeScroll: false,
-          enableModifiersForNumbers: false
-        });
-      });
-
-      player.src(videoSources);
-      player.poster(posterUrl);
-      player.load();
-
-      e.preventDefault();
-    });
+  FinnaPaginator.prototype.onIFrameOpen = function onIFrameOpen() {
+    this.setCanvasContent('iframe');
   }
 
   /**
@@ -473,7 +454,7 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(leafletImage) {
     var parent = this;
-    this.setCanvasContent(leafletElement, 'leaflet');
+    this.setCanvasContent('leaflet');
     this.setZoomButtons();
 
     this.openLeafletImageIndex = leafletImage.attr('index');
@@ -510,6 +491,7 @@ finna.imagePaginator = (function imagePaginator() {
         parent.leafletHolder.invalidateSize(bounds, {animate: false});
       });
       parent.leafletLoader.removeClass('loading');
+      parent.leafletHolder.invalidateSize(bounds, {animate: false});
     }
     this.loadImageInformation(this.openLeafletImageIndex);
   }
@@ -537,18 +519,23 @@ finna.imagePaginator = (function imagePaginator() {
             parent.onLeafletImageClick($(this));
           });
           parent.canvas = $('.paginator-canvas');
-          parent.setCanvasContent(leafletElement, 'leaflet');
+          var leafletClone = $(leafletElement).clone();
+          var videoClone = $(videoElement).clone();
+          var iFrameClone = $(iFrameElement).clone();
+          parent.canvas.append(leafletClone);
+          parent.canvas.append(videoClone);
+          parent.canvas.append(iFrameClone);
           var leafletArea = $('#leaflet-map-image');
           leafletArea.closest('.mfp-content').addClass('loaded');
           var popupArea = leafletArea.closest('.imagepopup-holder');
           popupArea.addClass(parent.recordType);
-          
-          parent.leafletLoader = leafletArea.find('.leaflet-image-loading');
-          parent.createPopupTrack($('.finna-image-pagination'), leafletArea);
 
           if ($(window).width() > 768) {
             $('#popup-content-collapse').addClass('in');
           }
+
+          parent.leafletLoader = leafletArea.find('.leaflet-image-loading');
+          parent.createPopupTrack($('.finna-image-pagination'), leafletArea);
 
           parent.leafletHolder = L.map('leaflet-map-image', {
             minZoom: 1,
@@ -559,6 +546,9 @@ finna.imagePaginator = (function imagePaginator() {
             crs: L.CRS.Simple,
             maxBoundsViscosity: 0.9,
           });
+
+          parent.videoHolder = videoClone;
+          parent.setCanvasContent('leaflet');
           if (Object.getPrototypeOf(parent) === FinnaMiniPaginator.prototype) {
             parent.imageHolder.closest('.recordcovers').removeClass('mini-paginator');
           }
@@ -627,27 +617,24 @@ finna.imagePaginator = (function imagePaginator() {
   /**
    * Function to set the contents of canvas to a new element like leaflet or video
    */
-  FinnaPaginator.prototype.setCanvasContent = function setCanvasContent(element, type) {
+  FinnaPaginator.prototype.setCanvasContent = function setCanvasContent(type) {
     
     switch (type) {
     case 'video':
-      if (this.canvas.find('.video-popup').length === 0) {
-        var videoClone = $(element).clone();
-        this.canvas.empty();
-        this.canvas.append(videoClone);
-        $('.mfp-arrow-right, .mfp-arrow-left').addClass('hidden');
-      }
+      $('#leaflet-map-image').hide();
+      this.videoHolder.show();
+      this.iFrameHolder.hide();
       break;
     case 'leaflet':
-      if (this.leafletHolder === '') { // First init
-        var leafletClone = $(element).clone();
-        this.canvas.append(leafletClone);
-      } else if (this.canvas.find('#leaflet-map-image').length === 0) {
-        videojs('video-popup').dispose();
-        this.canvas.empty();
-        this.canvas.append(this.leafletHolder);
-      }
-      $('.mfp-arrow-right, .mfp-arrow-left').removeClass('hidden');
+      console.log('wap');
+      this.videoHolder.hide();
+      $('#leaflet-map-image').show();
+      this.iFrameHolder.hide();
+      break;
+    case 'iframe':
+      $('#leaflet-map-image').hide();
+      this.videoHolder.hide();
+      this.iFrameHolder.show();
       break;
     }
   }

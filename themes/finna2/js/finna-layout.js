@@ -717,7 +717,7 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function initIframeEmbed(_container) {
+  /*function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
     container.find('[data-embed-iframe]').click(function onClickEmbedLink(e) {
@@ -761,9 +761,9 @@ finna.layout = (function finnaLayout() {
       e.preventDefault();
       return false;
     });
-  }
+  }*/
 
-  function resizeVideoPopup($container) {
+  /*function resizeVideoPopup($container) {
     var mfp = $container.closest('.mfp-content');
     if (mfp.length === 0) {
       return;
@@ -900,7 +900,7 @@ finna.layout = (function finnaLayout() {
           levels[i].enabled = 'auto' === selectedBitrate || String(levels[i].height) === selectedBitrate;
         }
       });
-  }
+  }*/
 
   function loadScripts(scripts, callback) {
     var needed = {};
@@ -936,7 +936,7 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-  function initVideoPopup(_container) {
+  /*function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : $(_container);
 
     container.find('[data-embed-video]').click(function onClickVideoLink(e) {
@@ -966,7 +966,7 @@ finna.layout = (function finnaLayout() {
       e.preventDefault();
       return false;
     });
-  }
+  }*/
 
   function initKeyboardNavigation() {
     $(window).keyup(function onKeyUp(e) {
@@ -1097,10 +1097,10 @@ finna.layout = (function finnaLayout() {
     initOrganisationPageLinks: initOrganisationPageLinks,
     initSecondaryLoginField: initSecondaryLoginField,
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
-    initIframeEmbed: initIframeEmbed,
+    //initIframeEmbed: initIframeEmbed,
     initLoginTabs: initLoginTabs,
     loadScripts: loadScripts,
-    initVideoJs: initVideoJs,
+    //initVideoJs: initVideoJs,
     init: function init() {
       initScrollRecord();
       initJumpMenus();
@@ -1128,8 +1128,8 @@ finna.layout = (function finnaLayout() {
       initLoadMasonry();
       initOrganisationInfoWidgets();
       initOrganisationPageLinks();
-      initIframeEmbed();
-      initVideoPopup();
+      //initIframeEmbed();
+      //initVideoPopup();
       initKeyboardNavigation();
       initPriorityNav();
       initFiltersToggle();
