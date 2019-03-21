@@ -5,6 +5,7 @@
     'type' => 'button'
   ];
   $this->htmlElement()->addAttributeTemplate('video-base', $videoElementBase);
+  $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 ?>
 <div class="video-accordion">
   <?php foreach ($videoUrls as $url): ?>
@@ -32,6 +33,7 @@
 
     if (!empty($url['videoSources'])) {
       $currentVideo['data-video-sources'] = json_encode($url['videoSources']);
+      $currentVideo['data-scripts'] = $videoScripts;
     }
 
     if (!empty($url['embed']) && $url['embed'] === 'video') {
