@@ -1,4 +1,4 @@
-/* global finna, VuFind, L */
+/* global finna, VuFind, L, videojs */
 finna.imagePaginator = (function imagePaginator() {
   var imageElement = "<a draggable=\"false\" href=\"\" class=\"image-popup image-popup-navi hidden-print\"><img draggable=\"false\" alt=\"\" data-lazy=\"\"></img></a>";
   var elementBase = "<div class=\"finna-paginated paginator-mask\"><div class=\"finna-element-track\"></div></div>";
@@ -7,15 +7,7 @@ finna.imagePaginator = (function imagePaginator() {
   var rightButton = "<button class=\"right-button\" type=\"button\">></button>";
   var mfpPopup = "<div class=\"imagepopup-holder\" data-type=\"\" data-id=\"\">" +
   "<div class=\"imagepopup-container\">" +
-    "<div id=\"leaflet-map-image\" class=\"image-wrapper\">" +
-      "<img />" +
-      "<div class=\"imagepopup-zoom-container\">" +
-        "<div class=\"zoom-in zoom-button\"><i class=\"fa fa-zoom-in\" aria-hidden=\"true\"></i></div>" +
-        "<div class=\"zoom-out zoom-button\"><i class=\"fa fa-zoom-out\" aria-hidden=\"true\"></i></div>" +
-        "<div class=\"zoom-reset zoom-button\"><i class=\"fa fa-zoom-100\" aria-hidden=\"true\"></i></div>" +
-      "</div>" +
-      "<div class=\"leaflet-image-loading\"></div>" +
-    "</div>" +
+    "<div class=\"paginator-canvas\"></div>" +
     "<div class=\"collapse-content-holder\">" +
     "</div>" +
     "<div class=\"finna-image-pagination\">" +
@@ -23,6 +15,17 @@ finna.imagePaginator = (function imagePaginator() {
     "<div style=\"clear: both;\"></div>" +
   "</div>" +
   "</div>";
+
+  var videoElement = '<div class="video-popup"><video id="video-player" class="video-js vjs-big-play-centered" controls></video></div>';
+  var leafletElement = "<div id=\"leaflet-map-image\" class=\"image-wrapper\">" +
+  "<img />" +
+  "<div class=\"imagepopup-zoom-container\">" +
+    "<div class=\"zoom-in zoom-button\"><i class=\"fa fa-zoom-in\" aria-hidden=\"true\"></i></div>" +
+    "<div class=\"zoom-out zoom-button\"><i class=\"fa fa-zoom-out\" aria-hidden=\"true\"></i></div>" +
+    "<div class=\"zoom-reset zoom-button\"><i class=\"fa fa-zoom-100\" aria-hidden=\"true\"></i></div>" +
+  "</div>" +
+  "<div class=\"leaflet-image-loading\"></div>" +
+"</div>";
 
   var masonryInitialized = false;
 
@@ -70,10 +73,14 @@ finna.imagePaginator = (function imagePaginator() {
     this.imagePopup = '';
     this.leafletHolder = '';
     this.leafletLoader = '';
+    this.canvas = '';
 
     this.openLeafletImageIndex = 0;
   }
 
+  /**
+   * Function to create proper elements for the paginator
+   */
   FinnaPaginator.prototype.createElements = function createElements() {
     var recordCovers = this.root.find('.recordcovers');
     
@@ -100,6 +107,9 @@ finna.imagePaginator = (function imagePaginator() {
     this.setTrigger(this.imageHolder.children('a').first());
   }
 
+  /**
+   * Function to properly initialize the buttons and clickevents
+   */
   FinnaPaginator.prototype.setEvents = function setEvents() {
     var parent = this;
     this.leftButton.click(function loadEarlierImages() {
@@ -125,6 +135,9 @@ finna.imagePaginator = (function imagePaginator() {
     });*/
   }
 
+  /**
+   * Function to set left and right button to correct states
+   */
   FinnaPaginator.prototype.setButtons = function setButtons() {
     if (this.images.length <= this.imagesPerPage || this.offSet === this.images.length - 1) {
       this.rightButton.attr('disabled', true);
@@ -139,6 +152,9 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
+  /**
+   * Function to check if the screen has been resized
+   */
   FinnaPaginator.prototype.checkResize = function checkResize(e) {
     if (this.imagesPerPage === 0) {
       return;
@@ -166,7 +182,7 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   /**
-   * Needs to be checked for better structure
+   * Function to detect if the user is swiping or dragging the track
    */
   FinnaPaginator.prototype.checkSwipe = function checkSwipe(e) {
     var type = e.type;
@@ -200,10 +216,16 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
+  /**
+   * Function to set correct info for page info
+   */
   FinnaPaginator.prototype.setPagerInfo = function setPagerInfo(index) {
     this.pagerInfo.find('.paginator-pager').html(+index + 1 + "/" + this.images.length);
   }
 
+  /**
+   * Function to set the amount of images we can show on the track
+   */
   FinnaPaginator.prototype.setImagesPerPage = function setImagesPerPage(newAmount) {
     var difference = this.imagesPerPage - newAmount;
     this.offSet += difference;
@@ -216,6 +238,9 @@ finna.imagePaginator = (function imagePaginator() {
     };
   }
 
+  /**
+   * Function to create the track which holds smaller images
+   */
   FinnaPaginator.prototype.createPopupTrack = function createPopupTrack(popupTrackArea, leafletArea) {
     var recordCovers = this.root.find('.recordcovers').clone(true);
     var parent = this;
@@ -240,7 +265,10 @@ finna.imagePaginator = (function imagePaginator() {
     this.loadPage(0);
   }
 
-
+  /**
+   * Function to load image popup trigger image, checks also if the image exists or do we have to hide something
+   * When the image does not exist, we remove the trigger event and let the user navigate directly to record
+   */
   FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imagePopup) {
     var img = this.trigger.find('img');
     var parent = this;
@@ -283,7 +311,7 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   /**
-   * Needs to be checked for better structure
+   * Function to clear track of images and load new amount of images
    */
   FinnaPaginator.prototype.loadPage = function loadPage(direction) {
     this.imageHolder.empty();
@@ -292,7 +320,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (this.offSet < 0) {
       this.offSet = 0;
     }
-    // Lets get first index and last index so we can safely load correct amount of data
+
     var imagesPerPageAsIndex = this.imagesPerPage - 1;
     var lastImage = imagesPerPageAsIndex + this.offSet;
 
@@ -315,7 +343,7 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   /**
-   * Needs to be checked for better structure
+   * Function to find a single image from array, direction is -1, 0, 1
    */
   FinnaPaginator.prototype.getImageFromArray = function getImageFromArray(direction) {
     this.offSet += direction;
@@ -354,10 +382,13 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
-  // Need to fetch new part of information, some of the functions will work without adding them to the prototype
-  // As it increases the size of the created object
+  /**
+   * Function to load information for specifix index
+   */
   FinnaPaginator.prototype.loadImageInformation = function loadImageInformation(index) {
     var src = VuFind.path + '/AJAX/JSON?method=getImageInformation&id=' + encodeURIComponent(this.recordId) + '&index=' + index;
+    var parent = this;
+
     if (typeof publicList !== 'undefined') {
       src += '&publicList=1';
     }
@@ -374,22 +405,56 @@ finna.imagePaginator = (function imagePaginator() {
       var object = JSON.parse(response);
       $('.collapse-content-holder').html(object.data.html);
       var summaryHolder = $('.imagepopup-holder .summary');
-      finna.layout.initTruncate(summaryHolder);
-      summaryHolder.removeClass('loading');
       finna.layout.initTruncate($('.mfp-content'));
+      summaryHolder.removeClass('loading');
+      parent.initVideoButtons($('.collapse-content-holder'));
     }).fail( function setImageDataFailure(response) {
       $('.collapse-content-holder').html('<p>Failed to fetch data</p>');
     });
   }
 
+  FinnaPaginator.prototype.initVideoButtons = function initVideoButtons(_container) {
+    var container = typeof _container === 'undefined' ? $('body') : _container;
+    var parent = this;
+
+    container.find('a[data-embed-video]').click(function openVideoPopup(e) {
+      var videoSources = $(this).data('videoSources');
+      var posterUrl = $(this).data('posterUrl');
+      var scripts = $(this).data('scripts');
+
+      $('.mfp-arrow-right, .mfp-arrow-left').addClass('hidden');
+      parent.setCanvasContent(videoElement, 'video');
+
+      // Use a fairly small buffer for faster quality changes
+      videojs.Hls.GOAL_BUFFER_LENGTH = 10;
+      videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
+      var player = videojs('video-player');
+
+      player.ready(function onReady() {
+        this.hotkeys({
+          enableVolumeScroll: false,
+          enableModifiersForNumbers: false
+        });
+      });
+
+      player.src(videoSources);
+      player.poster(posterUrl);
+      player.load();
+
+      e.preventDefault();
+    });
+  }
+
+  /**
+   * Function to create small images for the paginator track
+   */
   FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, append) {
     var tmpImg = $(this.imagePopup).clone(true);
 
     var img = tmpImg.find('img');
 
     img.attr('src', image.small);
-    tmpImg.attr('index', image.index);
-    tmpImg.attr('href', image.largest);
+    tmpImg.attr({'index': image.index, 'href': image.largest});
 
     tmpImg.append($('<i class="fa fa-spinner fa-spin"/>'));
     tmpImg.on('load', function clearLoadingCircle(){
@@ -403,8 +468,14 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
+  /**
+   * Function to handle when leaflet small image has been clicked
+   */
   FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(leafletImage) {
     var parent = this;
+    this.setCanvasContent(leafletElement, 'leaflet');
+    this.setZoomButtons();
+
     this.openLeafletImageIndex = leafletImage.attr('index');
     this.setPagerInfo(this.openLeafletImageIndex);
     this.leafletHolder.eachLayer(function removeLayers(layer) {
@@ -443,6 +514,9 @@ finna.imagePaginator = (function imagePaginator() {
     this.loadImageInformation(this.openLeafletImageIndex);
   }
 
+  /**
+   * Function to set image popup trigger click event and logic when popup is being opened
+   */
   FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
     this.changeTriggerImage(imagePopup);
     this.setPagerInfo(imagePopup.attr('index'));
@@ -462,13 +536,12 @@ finna.imagePaginator = (function imagePaginator() {
             e.preventDefault();
             parent.onLeafletImageClick($(this));
           });
-
+          parent.canvas = $('.paginator-canvas');
+          parent.setCanvasContent(leafletElement, 'leaflet');
           var leafletArea = $('#leaflet-map-image');
           leafletArea.closest('.mfp-content').addClass('loaded');
           var popupArea = leafletArea.closest('.imagepopup-holder');
           popupArea.addClass(parent.recordType);
-          popupArea.attr('data-type', parent.recordType);
-          popupArea.attr('data-id', parent.recordId);
           
           parent.leafletLoader = leafletArea.find('.leaflet-image-loading');
           parent.createPopupTrack($('.finna-image-pagination'), leafletArea);
@@ -524,9 +597,59 @@ finna.imagePaginator = (function imagePaginator() {
     });
   }
 
+  /**
+   * Function to initialize zoom button logics inside popup
+   */
+  FinnaPaginator.prototype.setZoomButtons = function setZoomButtons() {
+    var parent = this;
+    $('.zoom-in').click(function zoomIn(e) {
+      e.stopPropagation();
+      parent.leafletHolder.setZoom(parent.leafletHolder.getZoom() + 1)
+    });
+    $('.zoom-out').click(function zoomOut(e) {
+      e.stopPropagation();
+      parent.leafletHolder.setZoom(parent.leafletHolder.getZoom() - 1)
+    });
+    $('.zoom-reset').click(function zoomReset(e) {
+      e.stopPropagation();
+      parent.leafletHolder.setZoom(1)
+    });
+  }
+
+  /**
+   * Function to show detailed information about image in record view
+   */
   FinnaPaginator.prototype.setImageInformation = function setImageInformation(index) {
     $('.image-details-container').addClass('hidden');
     $('.image-details-container[data-img-index="' + index + '"]').removeClass('hidden');
+  }
+
+  /**
+   * Function to set the contents of canvas to a new element like leaflet or video
+   */
+  FinnaPaginator.prototype.setCanvasContent = function setCanvasContent(element, type) {
+    
+    switch (type) {
+    case 'video':
+      if (this.canvas.find('.video-popup').length === 0) {
+        var videoClone = $(element).clone();
+        this.canvas.empty();
+        this.canvas.append(videoClone);
+        $('.mfp-arrow-right, .mfp-arrow-left').addClass('hidden');
+      }
+      break;
+    case 'leaflet':
+      if (this.leafletHolder === '') { // First init
+        var leafletClone = $(element).clone();
+        this.canvas.append(leafletClone);
+      } else if (this.canvas.find('#leaflet-map-image').length === 0) {
+        videojs('video-popup').dispose();
+        this.canvas.empty();
+        this.canvas.append(this.leafletHolder);
+      }
+      $('.mfp-arrow-right, .mfp-arrow-left').removeClass('hidden');
+      break;
+    }
   }
 
   function FinnaMiniPaginator(images, paginatedArea, settings) {
@@ -555,6 +678,7 @@ finna.imagePaginator = (function imagePaginator() {
     this.rightButton.off('click').on('click', function setImage(){
       parent.setMiniPaginatorButton(1);
     });
+    this.setButtons();
   }
 
   FinnaMiniPaginator.prototype.setMiniPaginatorButton = function setMiniPaginatorButton(direction) {
@@ -592,8 +716,32 @@ finna.imagePaginator = (function imagePaginator() {
     paginator.setMiniPaginator();
   }
 
-  function setNoImageLayout() {
-    
+  function initFeedbackButton() {
+    if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
+      $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
+        $.magnificPopup.close();
+      });
+    }
+  }
+
+  function initVideoPopup(_container) {
+    var container = typeof _container === 'undefined' ? $('body') : _container;
+
+    container.find('a[data-embed-video]').click(function openVideoPopup(e) {
+      var videoSources = $(this).data('videoSources');
+      var posterUrl = $(this).data('posterUrl');
+      var scripts = $(this).data('scripts');
+
+      $('.mfp-arrow-right, .mfp-arrow-left').addClass('hidden');
+      $('#leaflet-map-image').remove();
+
+
+      finna.layout.loadScripts(scripts, function onScriptsLoaded() {
+        finna.layout.initVideoJs('.video-popup', videoSources, posterUrl);
+      });
+
+      e.preventDefault();
+    });
   }
 
   var my = {
