@@ -703,8 +703,8 @@ finna.layout = (function finnaLayout() {
             + '</div>',
           patterns: {
             youtube_short: {
-              index: 'youtube-nocookie.com/',
-              id: 'youtube-nocookie.com/',
+              index: 'youtu.be/',
+              id: 'youtu.be/',
               src: '//www.youtube-nocookie.com/embed/%id%?autoplay=1'
             }
           }
