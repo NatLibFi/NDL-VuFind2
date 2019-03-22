@@ -1,4 +1,4 @@
-/* global finna, VuFind, L, videojs */
+/* global finna, VuFind, L */
 finna.imagePaginator = (function imagePaginator() {
   var imageElement = "<a draggable=\"false\" href=\"\" class=\"image-popup image-popup-navi hidden-print\"><img draggable=\"false\" alt=\"\" data-lazy=\"\"></img></a>";
   var elementBase = "<div class=\"finna-paginated paginator-mask\"><div class=\"finna-element-track\"></div></div>";
@@ -6,6 +6,8 @@ finna.imagePaginator = (function imagePaginator() {
   var leftButton = "<button class=\"left-button\" type=\"button\"><</button>";
   var rightButton = "<button class=\"right-button\" type=\"button\">></button>";
   var mfpPopup = "<div class=\"imagepopup-holder\" data-type=\"\" data-id=\"\">" +
+  "<button class=\"popup-record-button previous-record\" type=\"button\"><</button>" +
+  "<button class=\"popup-record-button next-record\" type=\"button\">></button>" +
   "<div class=\"imagepopup-container\">" +
     "<div class=\"paginator-canvas\"></div>" +
     "<div class=\"collapse-content-holder\">" +
@@ -32,6 +34,18 @@ finna.imagePaginator = (function imagePaginator() {
 "</div>";
 
   var masonryInitialized = false;
+  var paginatorIndex = 0;
+
+  FinnaPaginator.prototype.getNextPaginator = function getNextPaginator(direction) {
+    var searchIndex = this.paginatorIndex + direction;
+
+    var foundPaginator = $('.image-popup-trigger[paginator-index="' + searchIndex + '"');
+
+    if (foundPaginator.length) {
+      $.magnificPopup.close()
+      foundPaginator.click();
+    }
+  }
 
   function setMasonryState(state) {
     masonryInitialized = state;
@@ -41,11 +55,13 @@ finna.imagePaginator = (function imagePaginator() {
     if (images.length === 0) {
       // Lets init a dummyimage
     }
+    this.paginatorIndex = paginatorIndex;
     this.images = images;
     this.root = $(paginatedArea); // Rootobject
     this.root.removeClass('paginate');
     
     this.trigger = this.root.find('.image-popup-trigger');
+    this.trigger.attr('paginator-index', paginatorIndex++);
     // Lets get all the data from the settings
     this.recordId = settings.recordId;
     this.source = settings.source;
@@ -402,7 +418,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (typeof listId !== 'undefined') {
       src += '&listId=' + listId;
     }
-    $('.collapse-content-holder').html('<div><i class="fa fa-spinner fa-spin"/></div>');
+    $('.collapse-content-holder').html('<div class="large-spinner"><i class="fa fa-spinner fa-spin"/></div>');
     $.ajax({
       url: src,
       dataType: 'html'
@@ -529,6 +545,12 @@ finna.imagePaginator = (function imagePaginator() {
           leafletArea.closest('.mfp-content').addClass('loaded');
           var popupArea = leafletArea.closest('.imagepopup-holder');
           popupArea.addClass(parent.recordType);
+          $('.previous-record').click(function getPreviousRecord(){
+            parent.getNextPaginator(-1);
+          });
+          $('.next-record').click(function getNextRecord(){
+            parent.getNextPaginator(1);
+          });
 
           if ($(window).width() > 768) {
             $('#popup-content-collapse').addClass('in');
@@ -548,6 +570,7 @@ finna.imagePaginator = (function imagePaginator() {
           });
 
           parent.videoHolder = videoClone;
+          parent.iFrameHolder = iFrameClone;
           parent.setCanvasContent('leaflet');
           if (Object.getPrototypeOf(parent) === FinnaMiniPaginator.prototype) {
             parent.imageHolder.closest('.recordcovers').removeClass('mini-paginator');
@@ -626,7 +649,6 @@ finna.imagePaginator = (function imagePaginator() {
       this.iFrameHolder.hide();
       break;
     case 'leaflet':
-      console.log('wap');
       this.videoHolder.hide();
       $('#leaflet-map-image').show();
       this.iFrameHolder.hide();
