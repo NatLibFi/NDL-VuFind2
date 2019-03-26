@@ -11,15 +11,11 @@
       // We only need essential info about images, no need to create any html
       $obj = [
         'small' => $img['urls']['small'],
+        'medium' => $img['urls']['medium'] ?? $img['urls']['small'],
+        'largest' => $img['urls']['large'] ?? $img['urls']['medium'] ?? $img['urls']['small'],
         'index' => $ind++,
         'description' => ''
       ];
-
-      if ($isList) {
-        $obj['largest'] = $img['urls']['medium'] ?? $img['urls']['small'];
-      } else {
-        $obj['largest'] = $img['large'] ?? $img['urls']['medium'] ?? $img['urls']['small'];
-      }
 
       $paginatedLinks[] = $obj;
     ?>

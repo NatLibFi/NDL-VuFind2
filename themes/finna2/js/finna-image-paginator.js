@@ -10,11 +10,11 @@ finna.imagePaginator = (function imagePaginator() {
   "<button class=\"popup-record-button next-record\" type=\"button\">></button>" +
   "<div class=\"imagepopup-container\">" +
     "<div class=\"paginator-canvas\"></div>" +
-    "<div class=\"collapse-content-holder\">" +
-    "</div>" +
     "<div class=\"finna-image-pagination\">" +
     "</div>" +
     "<div style=\"clear: both;\"></div>" +
+  "</div>" +
+  "<div class=\"collapse-content-holder\">" +
   "</div>" +
   "</div>";
 
@@ -283,6 +283,9 @@ finna.imagePaginator = (function imagePaginator() {
       });
     }
     popupTrackArea.append(recordCovers);
+    if (this.images.length < 2) {
+      popupTrackArea.hide();
+    }
     this.loadPage(0);
   }
 
@@ -451,7 +454,7 @@ finna.imagePaginator = (function imagePaginator() {
     var img = tmpImg.find('img');
 
     img.attr('src', image.small);
-    tmpImg.attr({'index': image.index, 'href': image.largest});
+    tmpImg.attr({'index': image.index, 'href': image.medium, 'data-largest': image.largest});
 
     tmpImg.append($('<i class="fa fa-spinner fa-spin"/>'));
     tmpImg.on('load', function clearLoadingCircle(){
@@ -480,34 +483,40 @@ finna.imagePaginator = (function imagePaginator() {
     });
     this.leafletLoader.addClass('loading');
     var img = new Image();
-    img.src = leafletImage.attr('href');
+    img.src = leafletImage.attr('data-largest');
     // We need to fetch some data from here
     img.onload = function onLoadImg() {
       var h = this.naturalHeight;
       var w = this.naturalWidth;
 
-      var imageNaturalSizeZoomLevel = 3;
-      if (h < 2000 && w < 2000) {
-        imageNaturalSizeZoomLevel = 2;
+      var imageNaturalSizeZoomLevel = 2.8;
+      var isMobileDevice = $(window).width() < 768;
+      //Mobile devices require bigger zoom value, as they are larger to view
+
+      var southWest = parent.leafletHolder.unproject([0, h], 5);
+      var northEast = parent.leafletHolder.unproject([w, 0], 5);
+      var bounds = new L.LatLngBounds(southWest, northEast);
+      L.imageOverlay(img.src, bounds).addTo(parent.leafletHolder);
+      parent.leafletHolder.setMaxBounds(bounds);
+      /*if (h < 2000 && w < 2000) {
+        imageNaturalSizeZoomLevel = isMobileDevice ? 2.6 : 1.5;
       }
       if (h < 1000 && w < 1000) {
-        imageNaturalSizeZoomLevel = 1;
+        imageNaturalSizeZoomLevel = isMobileDevice ? 2.4 : 0.5;
       }
-
-      var southWest = parent.leafletHolder.unproject([0, h], imageNaturalSizeZoomLevel);
-      var northEast = parent.leafletHolder.unproject([w, 0], imageNaturalSizeZoomLevel);
+      console.log(imageNaturalSizeZoomLevel);
+      
       var bounds = new L.LatLngBounds(southWest, northEast);
 
       L.imageOverlay(img.src, bounds).addTo(parent.leafletHolder, {animate: false});
       parent.leafletHolder.flyToBounds(bounds, {animate: false});
       parent.leafletHolder.setMaxBounds(bounds, {animate: false});
-      parent.leafletHolder.off('zoomend');
-      parent.leafletHolder.setZoom(parent.smallestZoomLevel, {animate: false});
-      parent.leafletHolder.on('zoomend', function adjustPopupSize() {
+      parent.leafletHolder.off('zoomend').on('zoomend', function adjustPopupSize() {
         parent.leafletHolder.invalidateSize(bounds, {animate: false});
       });
       parent.leafletLoader.removeClass('loading');
-      parent.leafletHolder.invalidateSize(bounds, {animate: false});
+      parent.leafletHolder.invalidateSize(bounds, {animate: false});*/
+
     }
     this.loadImageInformation(this.openLeafletImageIndex);
   }
@@ -545,16 +554,13 @@ finna.imagePaginator = (function imagePaginator() {
           leafletArea.closest('.mfp-content').addClass('loaded');
           var popupArea = leafletArea.closest('.imagepopup-holder');
           popupArea.addClass(parent.recordType);
-          $('.previous-record').click(function getPreviousRecord(){
+
+          $('.previous-record').off('click').click(function getPreviousRecord(){
             parent.getNextPaginator(-1);
           });
-          $('.next-record').click(function getNextRecord(){
+          $('.next-record').off('click').click(function getNextRecord(){
             parent.getNextPaginator(1);
           });
-
-          if ($(window).width() > 768) {
-            $('#popup-content-collapse').addClass('in');
-          }
 
           parent.leafletLoader = leafletArea.find('.leaflet-image-loading');
           parent.createPopupTrack($('.finna-image-pagination'), leafletArea);
