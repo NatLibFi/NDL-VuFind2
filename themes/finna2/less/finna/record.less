@@ -22,6 +22,7 @@
     }
     .recordcover-container {
       position: relative;
+      margin-bottom: 10px;
     }
   }
   @media(min-width: @screen-xs){
@@ -157,6 +158,13 @@
   }
 }
 
+.recordcover-image-detail {
+  .image-description {
+    text-align: left;
+    color: @gray-light;
+  }
+}
+
 .recordcovers {
   &.mini-paginator.paginated {
     position: absolute;
@@ -184,41 +192,27 @@
       margin: 0 1px;
       display: none;
     }
-    & a {
-      background: @body-bg;
-      text-decoration: none;
-      .opacity(.5);
-      font-size: 1em;
-      display: inline-block;
-      width: auto;
-      padding: 1px 5px;
-      margin: 0 4px 4px 0;
-      text-align: center;
-      transition: .2s linear;
-      &:hover {
-        .opacity(1);
-      }
-    }
   }
 
   a {
     background-color: #efefefcc;
     display: inline-block;
-    height: 64px;
+    height: 60px;
     overflow: hidden;
-    margin: 0 2px;
-    max-width: 64px;
+    margin: 0 4px;
+    max-width: 60px;
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    cursor: pointer;
 
     img {
       position: relative;
-      left: 50%;
+      left: -50%;
+      top: -50%;
       max-width: initial;
-      transform: translate(-50%);
       -moz-user-select: none;
       -khtml-user-select: none;
       -webkit-user-select: none;

@@ -56,6 +56,8 @@ finna.imagePaginator = (function imagePaginator() {
     if (foundPaginator.length) {
       $.magnificPopup.close()
       foundPaginator.click();
+    } else {
+      $.magnificPopup.close();
     }
   }
 
@@ -94,8 +96,10 @@ finna.imagePaginator = (function imagePaginator() {
       500: this.imagesPerPage - 2
     };
     this.currentBreakPoint = 10000;
-    // Objects which are initialized later
+
+    // References initialized later
     this.imageHolder = '';
+    this.imageDetail = this.root.find('.recordcover-image-detail .image-description');
     this.pagerInfo = '';
     this.leftButton = '';
     this.rightButton = '';
@@ -263,7 +267,9 @@ finna.imagePaginator = (function imagePaginator() {
     this.pagerInfo = newPager;
     target.append(this.pagerInfo);
     var total = $('.paginationSimple .total').html();
-    target.find('.total').html(total);
+    var current = +$('.paginationSimple .index').html() + this.paginatorIndex;
+
+    target.find('.total').html(current + '/' + total);
   }
 
   /**
@@ -297,6 +303,7 @@ finna.imagePaginator = (function imagePaginator() {
     });
 
     img.attr('data-src', imagePopup.attr('href'));
+    this.imageDetail.html(imagePopup.attr('data-description'));
 
     if (Object.getPrototypeOf(parent) === FinnaMiniPaginator.prototype) {
       img.unveil(0, function tryMasonry(){
@@ -431,7 +438,7 @@ finna.imagePaginator = (function imagePaginator() {
     var img = tmpImg.find('img');
 
     img.attr('src', image.small);
-    tmpImg.attr({'index': image.index, 'href': image.medium, 'data-largest': image.largest});
+    tmpImg.attr({'index': image.index, 'href': image.medium, 'data-largest': image.largest, 'data-description': image.description});
 
     tmpImg.append($('<i class="fa fa-spinner fa-spin"/>'));
     tmpImg.on('load', function clearLoadingCircle(){
@@ -529,12 +536,17 @@ finna.imagePaginator = (function imagePaginator() {
           var popupArea = leafletArea.closest('.imagepopup-holder');
           popupArea.addClass(parent.recordType);
 
-          $('.previous-record').off('click').click(function getPreviousRecord(){
-            parent.getNextPaginator(-1);
-          });
-          $('.next-record').off('click').click(function getNextRecord(){
-            parent.getNextPaginator(1);
-          });
+          if (paginatorIndex < 2) {
+            $('.previous-record, .next-record').hide();
+          } else {
+            $('.previous-record').off('click').click(function getPreviousRecord(){
+              parent.getNextPaginator(-1);
+            });
+            $('.next-record').off('click').click(function getNextRecord(){
+              parent.getNextPaginator(1);
+            });
+          }
+          
 
           parent.leafletLoader = leafletArea.find('.leaflet-image-loading');
           parent.createPopupTrack($('.finna-image-pagination'), leafletArea);
@@ -564,8 +576,7 @@ finna.imagePaginator = (function imagePaginator() {
           parent.rightButton = parent.root.find('.right-button');
           parent.imageHolder.empty();
           parent.breakPoints[10000] = parent.imagesPerPage;
-          parent.imagePopup.off('click');
-          parent.imagePopup.on('click', function setTriggerEvents(e){
+          parent.imagePopup.off('click').on('click', function setTriggerEvents(e){
             e.preventDefault();
             parent.setTrigger($(this));
           });
