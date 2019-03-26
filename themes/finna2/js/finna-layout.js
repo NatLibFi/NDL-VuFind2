@@ -717,6 +717,11 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  function initVideoButtons() {
+    finna.videoPopup.initVideoPopup(false, $('body'));
+    finna.videoPopup.initIframeEmbed(false, $('body'));
+  }
+
   /*function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
@@ -1128,8 +1133,7 @@ finna.layout = (function finnaLayout() {
       initLoadMasonry();
       initOrganisationInfoWidgets();
       initOrganisationPageLinks();
-      //initIframeEmbed();
-      //initVideoPopup();
+      initVideoButtons();
       initKeyboardNavigation();
       initPriorityNav();
       initFiltersToggle();

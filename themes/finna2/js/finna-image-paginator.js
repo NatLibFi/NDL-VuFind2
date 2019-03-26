@@ -6,16 +6,24 @@ finna.imagePaginator = (function imagePaginator() {
   var leftButton = "<button class=\"left-button\" type=\"button\"><</button>";
   var rightButton = "<button class=\"right-button\" type=\"button\">></button>";
   var mfpPopup = "<div class=\"imagepopup-holder\" data-type=\"\" data-id=\"\">" +
-  "<button class=\"popup-record-button previous-record\" type=\"button\"><</button>" +
-  "<button class=\"popup-record-button next-record\" type=\"button\">></button>" +
+  "<button class=\"mfp-arrow mfp-arrow-left previous-record\" type=\"button\"><</button>" +
+  "<button class=\"mfp-arrow mfp-arrow-right next-record\" type=\"button\">></button>" +
   "<div class=\"imagepopup-container\">" +
     "<div class=\"paginator-canvas\"></div>" +
     "<div class=\"finna-image-pagination\">" +
     "</div>" +
     "<div style=\"clear: both;\"></div>" +
   "</div>" +
-  "<div class=\"collapse-content-holder\">" +
-  "</div>" +
+  "<div class=\"image-information-holder\">" +
+  " <div class=\"collapse-content-holder\">" +
+  " </div>" +
+  " <div class=\"record-informations\">" +
+  "   <div class=\"record-index\">" +
+  "     <span class=\"current\"></span>" +
+  "     <span class=\"total\"></span>" +
+  "   </div>" +
+  "   </div>" +
+  " </div>" +
   "</div>";
 
   var videoElement = '<div class="video-popup"><video id="video-player" class="video-js vjs-big-play-centered" controls></video></div>';
@@ -32,9 +40,13 @@ finna.imagePaginator = (function imagePaginator() {
   "</div>" +
   "<div class=\"leaflet-image-loading\"></div>" +
 "</div>";
+  var nonZoomableElement = '<div class="non-zoomable">' +
+    '<img alt="Kansikuva"></img>' +
+  '</div>'
 
   var masonryInitialized = false;
   var paginatorIndex = 0;
+  var recordsFound = 0;
 
   FinnaPaginator.prototype.getNextPaginator = function getNextPaginator(direction) {
     var searchIndex = this.paginatorIndex + direction;
@@ -52,9 +64,6 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   function FinnaPaginator(images, paginatedArea, settings) {
-    if (images.length === 0) {
-      // Lets init a dummyimage
-    }
     this.paginatorIndex = paginatorIndex;
     this.images = images;
     this.root = $(paginatedArea); // Rootobject
@@ -66,8 +75,8 @@ finna.imagePaginator = (function imagePaginator() {
     this.recordId = settings.recordId;
     this.source = settings.source;
     this.imagesPerPage = typeof settings.imagesPerPage !== 'undefined' ? settings.imagesPerPage : 8;
+    this.allowZoomContent = settings.allowZoomContent;
     this.recordType = settings.recordType;
-    this.smallestZoomLevel = settings.smallestZoomLevel;
 
     // Thershold for how long the swipe needs to be for new image to load
     this.swipeThreshold = 80;
@@ -139,17 +148,9 @@ finna.imagePaginator = (function imagePaginator() {
     this.rightButton.click(function loadLaterImages() {
       parent.loadPage(1);
     });
-    this.imageHolder.on('mousedown mousemove touchmove', function checkScroll(e){
-      parent.checkSwipe(e);
-    });
     this.imagePopup.on('click', function setTriggerEvents(e){
       e.preventDefault();
       parent.setTrigger($(this));
-    });
-    $(document).on('mouseup touchend', function setDragToFalse(){
-      if (parent.swipeDrag) {
-        parent.swipeDrag = false;
-      }
     });
     /*$(window).resize(function checkReload(e){
       parent.checkResize(e);
@@ -203,41 +204,6 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   /**
-   * Function to detect if the user is swiping or dragging the track
-   */
-  FinnaPaginator.prototype.checkSwipe = function checkSwipe(e) {
-    var type = e.type;
-    var currentX = 0;
-    if (type !== 'touchend' && type !== 'mouseup') {
-      currentX = (type === 'mousedown' || type === 'mousemove') ? e.originalEvent.clientX : e.originalEvent.touches[0].clientX;
-    }
-
-    if (type === 'mousedown') {
-      e.preventDefault();
-      this.swipeDrag = true;
-      this.oldPosX = currentX; 
-    } else if (type === 'mousemove' || type === 'touchmove') {
-      if (this.swipeDrag === false && type === 'touchmove') {
-        this.swipeDrag = true;
-        this.oldPosX = currentX;
-      } else if (this.swipeDrag) {
-        e.preventDefault();
-        e.stopPropagation();
-        var difference = (this.oldPosX - currentX);
-
-        if (difference > this.swipeThreshold) {
-          this.loadPage(1);
-        } else if (difference < -this.swipeThreshold) {
-          this.loadPage(-1);
-        } else {
-          return;
-        }
-        this.oldPosX = currentX;
-      }
-    }
-  }
-
-  /**
    * Function to set correct info for page info
    */
   FinnaPaginator.prototype.setPagerInfo = function setPagerInfo(index) {
@@ -283,10 +249,21 @@ finna.imagePaginator = (function imagePaginator() {
       });
     }
     popupTrackArea.append(recordCovers);
+    this.createPopupInformation();
     if (this.images.length < 2) {
       popupTrackArea.hide();
     }
     this.loadPage(0);
+  }
+
+  FinnaPaginator.prototype.createPopupInformation = function createPopupInformation() {
+    var target = $('#leaflet-map-image').closest('.imagepopup-holder').find('.record-informations');
+    var newPager = this.pagerInfo.clone();
+    this.pagerInfo.hide();
+    this.pagerInfo = newPager;
+    target.append(this.pagerInfo);
+    var total = $('.paginationSimple .total').html();
+    target.find('.total').html(total);
   }
 
   /**
@@ -489,33 +466,30 @@ finna.imagePaginator = (function imagePaginator() {
       var h = this.naturalHeight;
       var w = this.naturalWidth;
 
-      var imageNaturalSizeZoomLevel = 2.8;
+      var imageNaturalSizeZoomLevel = 5.0;
       var isMobileDevice = $(window).width() < 768;
       //Mobile devices require bigger zoom value, as they are larger to view
 
-      var southWest = parent.leafletHolder.unproject([0, h], 5);
-      var northEast = parent.leafletHolder.unproject([w, 0], 5);
-      var bounds = new L.LatLngBounds(southWest, northEast);
-      L.imageOverlay(img.src, bounds).addTo(parent.leafletHolder);
-      parent.leafletHolder.setMaxBounds(bounds);
-      /*if (h < 2000 && w < 2000) {
+      if (h < 5000 && w < 5000) {
+        imageNaturalSizeZoomLevel = isMobileDevice ? 5 : 3.5;
+      }
+      if (h < 3500 && w < 3500) {
+        imageNaturalSizeZoomLevel = isMobileDevice ? 3.75 : 2.5;
+      }
+      if (h < 2000 && w < 2000) {
         imageNaturalSizeZoomLevel = isMobileDevice ? 2.6 : 1.5;
       }
       if (h < 1000 && w < 1000) {
         imageNaturalSizeZoomLevel = isMobileDevice ? 2.4 : 0.5;
       }
-      console.log(imageNaturalSizeZoomLevel);
-      
-      var bounds = new L.LatLngBounds(southWest, northEast);
 
-      L.imageOverlay(img.src, bounds).addTo(parent.leafletHolder, {animate: false});
-      parent.leafletHolder.flyToBounds(bounds, {animate: false});
-      parent.leafletHolder.setMaxBounds(bounds, {animate: false});
-      parent.leafletHolder.off('zoomend').on('zoomend', function adjustPopupSize() {
-        parent.leafletHolder.invalidateSize(bounds, {animate: false});
-      });
+      var southWest = parent.leafletHolder.unproject([0, h], imageNaturalSizeZoomLevel);
+      var northEast = parent.leafletHolder.unproject([w, 0], imageNaturalSizeZoomLevel);
+      var bounds = new L.LatLngBounds(southWest, northEast);
+      L.imageOverlay(img.src, bounds).addTo(parent.leafletHolder);
+      parent.leafletHolder.setMaxBounds(bounds);
       parent.leafletLoader.removeClass('loading');
-      parent.leafletHolder.invalidateSize(bounds, {animate: false});*/
+      parent.leafletHolder.invalidateSize(bounds, {animate: false});
 
     }
     this.loadImageInformation(this.openLeafletImageIndex);
@@ -718,14 +692,12 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaMiniPaginator.prototype.constructor = FinnaMiniPaginator;
 
   function initPaginator(images, settings) {
-    settings.smallestZoomLevel = 1;
     var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
     paginator.createElements();
   }
 
   function initMiniPaginator(images, settings) {
     settings.imagesPerPage = 0;
-    settings.smallestZoomLevel = 0;
     var paginator = new FinnaMiniPaginator(images, $('.recordcover-holder.paginate'), settings);
     paginator.createElements();
     paginator.setMiniPaginator();

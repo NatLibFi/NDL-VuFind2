@@ -50,12 +50,12 @@
       <?php if ($type === 'list' || $type === 'list grid'): ?>
         finna.imagePaginator.initMiniPaginator(
           <?= json_encode($paginatedLinks) ?>,
-          <?= json_encode($settings) ?> // We doin a smaller version of the paginator
+          <?= json_encode($settings) ?>
         );
       <?php else: ?>
         finna.imagePaginator.initPaginator(
           <?= json_encode($paginatedLinks) ?>,
-          <?= json_encode($settings) ?> // We doin a smaller version of the paginator
+          <?= json_encode($settings) ?>
         );
       <?php endif; ?>
     </script>

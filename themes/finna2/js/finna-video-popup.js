@@ -258,7 +258,8 @@ finna.videoPopup = (function finnaVideoPopup() {
   }
 
   var my = {
-    initVideoPopup: initVideoPopup
+    initVideoPopup: initVideoPopup,
+    initIframeEmbed: initIframeEmbed
   };
 
   return my;
