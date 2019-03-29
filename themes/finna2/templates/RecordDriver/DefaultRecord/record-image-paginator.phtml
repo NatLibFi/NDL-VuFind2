@@ -1,6 +1,9 @@
 <!-- record-image-paginator.phtml -->
 <?php // Here is a new clean base for our paginated images ?>
-<?php $isList = ($type === 'list' || $type === 'list grid'); ?>
+<?php
+  $isList = ($type === 'list' || $type === 'list grid');
+  $enableImageZoom = in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward', 'ead', 'qdc']);
+?>
 <?php if ($type === 'record' || !$this->userAgent()->isBot()): ?>
   <?php
     $ind = 0;
@@ -43,13 +46,19 @@
   </div>
   <div class="recordcovers <?=$type?>">
   </div>
+  <div class="recordcovers-more more-area">
+    <span class="line"></span>
+    <button type="button" class="show-more-images"><i class="fa fa-plus-small"></i> Lisää/Vähemmän</button>
+    <span class="line"></span>
+  </div>
   <?php if (count($paginatedLinks) > 0): ?>
     <script>
       <?php $settings = [
         'recordId' => $this->driver->getUniqueId(),
         'source' => $this->driver->getSourceIdentifier(),
         'recordType' =>  $this->driver->tryMethod('getRecordType'),
-        'imagesPerPage' => 8
+        'imagesPerPage' => 8,
+        'enableImageZoom' => $enableImageZoom
       ]?>
       <?php if ($type === 'list' || $type === 'list grid'): ?>
         finna.imagePaginator.initMiniPaginator(

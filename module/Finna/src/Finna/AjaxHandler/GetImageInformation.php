@@ -165,9 +165,6 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
                 $context['listUser'] = $user;
             }
         }
-        $context['enableImagePopupZoom']
-            = isset($this->config->Content->enableImagePopupZoom)
-            ? $this->config->Content->enableImagePopupZoom : false;
 
         $html = ($this->recordPlugin)($driver)
             ->renderTemplate('record-image-popup-information.phtml', $context);

@@ -165,7 +165,85 @@
   }
 }
 
+.all-covers-area, .recordcovers {
+  a {
+    background-color: #efefefcc;
+    display: inline-block;
+    height: 60px;
+    overflow: hidden;
+    margin: 1px;
+    max-width: 60px;
+    cursor: pointer;
+
+    img {
+      position: relative;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: initial;
+    }
+
+    &.truncate-change {
+      opacity: 0;
+    }
+  }
+}
+
+.all-covers-area {
+  max-height: 300px;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: space-between;
+}
+
 .recordcovers {
+  &.paginated {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: wrap;
+  
+    .paginator-info {
+      width: 100%;
+    }
+  
+    > button {
+      appearance: none;
+      -webkit-appearance: none;
+      height: 44px;
+      border: none;
+      background-color: #efefef;
+      &:disabled {
+        background-color: #efefef00 !important;
+        color: #efefef00 !important;
+      }
+    }
+  
+    .finna-paginated {
+      max-width: 85%;
+      display: inline-block;
+      .finna-element-track {
+        max-height: 100%;
+        touch-action: none;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        width: 100%;
+        min-width: 100%;
+        div {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          max-width: 100%;
+        }
+        &.more-images {
+          flex-flow: wrap;
+          justify-content: space-evenly;
+        }
+      }
+    }
+  }
+
   &.mini-paginator.paginated {
     position: absolute;
     left: auto;
@@ -193,78 +271,28 @@
       display: none;
     }
   }
-
-  a {
-    background-color: #efefefcc;
-    display: inline-block;
-    height: 60px;
-    overflow: hidden;
-    margin: 0 4px;
-    max-width: 60px;
-    -moz-user-select: none;
-    -khtml-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    cursor: pointer;
-
-    img {
-      position: relative;
-      left: -50%;
-      top: -50%;
-      max-width: initial;
-      -moz-user-select: none;
-      -khtml-user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-      user-select: none;
-    }
-
-    &.truncate-change {
-      opacity: 0;
-    }
-  }
 }
 
-.recordcovers.paginated {
+.recordcovers-more {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-flow: wrap;
-
-  .paginator-info {
-    width: 100%;
+  .line {
+    flex: 1;
+    border-bottom: 1px solid black;
   }
-
-  > button {
+  button {
+    flex: 1;
     appearance: none;
     -webkit-appearance: none;
-    height: 32px;
+    background-color: @body-bg;
     border: none;
-    background-color: #efefef;
-    &:disabled {
-      background-color: #efefef00 !important;
-      color: #efefef00 !important;
-    }
-  }
-
-  .finna-paginated {
-    max-width: 85%;
-    margin-bottom: 6px;
-    display: inline-block;
-    .finna-element-track {
-      overflow: auto;
-      max-height: 100%;
-      touch-action: none;
-      height: 64px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      min-width: 100%;
+    i {
+      color: @brand-primary;
     }
   }
 }
+
+
 
 
 .record-uniform-titles {

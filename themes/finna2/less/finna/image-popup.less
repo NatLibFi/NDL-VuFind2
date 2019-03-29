@@ -41,6 +41,10 @@
         @media (max-width: @screen-sm) {
             height: initial;
         }
+        &.nonzoomable {
+            height: initial;
+            width: initial;
+        }
     }
 
     max-height: 100%;
@@ -156,6 +160,14 @@
                 width: 100%;
                 height: 400px;
             }
+            .non-zoomable {
+                width: 100%;
+                padding: 6%;
+                img {
+                    width: initial;
+                    height: 100%;
+                }
+            }
             img {
                 width: 100%;
                 height: 100%;
@@ -194,7 +206,7 @@
         }
         .finna-image-pagination {
             background-color: #3d3d3d;
-            padding: 8px 0 0 4px;
+            padding: 4px;
             max-height: 80px;
             flex: 1;
             .paginator-info {

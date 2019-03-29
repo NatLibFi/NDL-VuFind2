@@ -1,31 +1,5 @@
 /*global VuFind, finna, videojs */
 finna.videoPopup = (function finnaVideoPopup() {
-  // Combine these 2 functions
-  /*function initVideoPopup(_container) {
-    var container = typeof _container === 'undefined' ? $('body') : _container;
-
-    container.find('a[data-embed-video]').click(function openVideoPopup(e) {
-      var videoSources = $(this).data('videoSources');
-      var posterUrl = $(this).data('posterUrl');
-      var scripts = $(this).data('scripts');
-
-      var mfp = $.magnificPopup.instance;
-      mfp.index = -1;
-      mfp.gallery = {enabled: false};
-      mfp.items[-1] = {
-        src: '<div class="video-popup"><video id="video-player" class="video-js vjs-big-play-centered" controls></video></div>',
-        type: 'inline'
-      };
-      $('.mfp-arrow-right, .mfp-arrow-left').addClass('hidden');
-      mfp.updateItemHTML();
-
-      finna.layout.loadScripts(scripts, function onScriptsLoaded() {
-        finna.layout.initVideoJs('.video-popup', videoSources, posterUrl);
-      });
-
-      e.preventDefault();
-    });
-  }*/
 
   function initVideoPopup(isPopup, _container, parent) {
     var container = typeof _container === 'undefined' ? $('body') : $(_container);
