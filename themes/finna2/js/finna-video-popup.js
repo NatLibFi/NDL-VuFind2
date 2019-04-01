@@ -181,51 +181,47 @@ finna.videoPopup = (function finnaVideoPopup() {
       });
   }
 
-  function initIframeEmbed(isPopup, _container, parent) {
+  function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
     container.find('[data-embed-iframe]').click(function onClickEmbedLink(e) {
-      if (!isPopup) {
-        if (typeof $.magnificPopup.instance !== 'undefined' && $.magnificPopup.instance.isOpen) {
-          // Close existing popup (such as image-popup) first without delay so that its
-          // state doesn't get confused by the immediate reopening.
-          $.magnificPopup.instance.st.removalDelay = 0;
-          $.magnificPopup.close();
-        }
-  
-        // Fallback if core has older style of initializing a video button
-        var attr = $(this).is('a') ? $(this).attr('href') : $(this).attr('data-link');
-  
-        $.magnificPopup.open({
-          type: 'iframe',
-          tClose: VuFind.translate('close'),
-          items: {
-            src: attr
-          },
-          iframe: {
-            markup: '<div class="mfp-iframe-scaler">'
-              + '<div class="mfp-close"></div>'
-              + '<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
-              + '</div>',
-            patterns: {
-              youtube_short: {
-                index: 'youtu.be/',
-                id: 'youtu.be/',
-                src: '//www.youtube.com/embed/%id%?autoplay=1'
-              }
-            }
-          },
-          callbacks: {
-            open: function onOpen() {
-              if (finna.layout.isTouchDevice()) {
-                $('.mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left').addClass('touch-device');
-              }
+      if (typeof $.magnificPopup.instance !== 'undefined' && $.magnificPopup.instance.isOpen) {
+        // Close existing popup (such as image-popup) first without delay so that its
+        // state doesn't get confused by the immediate reopening.
+        $.magnificPopup.instance.st.removalDelay = 0;
+        $.magnificPopup.close();
+      }
+
+      // Fallback if core has older style of initializing a video button
+      var attr = $(this).is('a') ? $(this).attr('href') : $(this).attr('data-link');
+
+      $.magnificPopup.open({
+        type: 'iframe',
+        tClose: VuFind.translate('close'),
+        items: {
+          src: attr
+        },
+        iframe: {
+          markup: '<div class="mfp-iframe-scaler">'
+            + '<div class="mfp-close"></div>'
+            + '<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
+            + '</div>',
+          patterns: {
+            youtube_short: {
+              index: 'youtu.be/',
+              id: 'youtu.be/',
+              src: '//www.youtube.com/embed/%id%?autoplay=1'
             }
           }
-        });
-      } else {
-        parent.setIFrame();
-      }
+        },
+        callbacks: {
+          open: function onOpen() {
+            if (finna.layout.isTouchDevice()) {
+              $('.mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left').addClass('touch-device');
+            }
+          }
+        }
+      });
       e.preventDefault();
       return false;
     });

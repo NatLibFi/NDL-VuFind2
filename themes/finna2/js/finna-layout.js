@@ -719,7 +719,7 @@ finna.layout = (function finnaLayout() {
 
   function initVideoButtons() {
     finna.videoPopup.initVideoPopup(false, $('body'));
-    finna.videoPopup.initIframeEmbed(false, $('body'));
+    finna.videoPopup.initIframeEmbed($('body'));
   }
 
   function loadScripts(scripts, callback) {
