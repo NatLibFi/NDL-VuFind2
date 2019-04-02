@@ -3,8 +3,8 @@ finna.imagePaginator = (function imagePaginator() {
   var imageElement = "<a draggable=\"false\" href=\"\" class=\"image-popup image-popup-navi hidden-print\"><img draggable=\"false\" alt=\"\" data-lazy=\"\"></img></a>";
   var elementBase = "<div class=\"finna-paginated paginator-mask\"><div class=\"finna-element-track\"></div></div>";
   var infoBar = "<div class=\"paginator-info\"><span class=\"paginator-pager\">0/0</span></div>";
-  var leftButton = "<button class=\"left-button\" type=\"button\"><</button>";
-  var rightButton = "<button class=\"right-button\" type=\"button\">></button>";
+  var leftButton = "<button class=\"left-button\" type=\"button\"><i class=\"fa fa-arrow-left\"></i></button>";
+  var rightButton = "<button class=\"right-button\" type=\"button\"><i class=\"fa fa-arrow-right\"></i></button>";
   var mfpPopup = "<div class=\"imagepopup-holder\" data-type=\"\" data-id=\"\">" +
   "<div class=\"imagepopup-container\">" +
     "<div class=\"paginator-canvas\"></div>" +
@@ -235,7 +235,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (this.images.length < 2) {
       popupTrackArea.hide();
     }
-    this.loadPage(0);
+    this.loadPage(0, this.openLeafletImageIndex);
   }
 
   FinnaPaginator.prototype.createPopupInformation = function createPopupInformation() {
@@ -299,8 +299,12 @@ finna.imagePaginator = (function imagePaginator() {
   /**
    * Function to clear track of images and load new amount of images
    */
-  FinnaPaginator.prototype.loadPage = function loadPage(direction) {
+  FinnaPaginator.prototype.loadPage = function loadPage(direction, openImageIndex) {
     this.imageHolder.empty();
+
+    if (typeof openImageIndex !== 'undefined') {
+      this.offSet = +openImageIndex;
+    }
 
     this.offSet += this.imagesPerPage * direction;
     if (this.offSet < 0) {
@@ -346,23 +350,7 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.getImageFromArray = function getImageFromArray(direction) {
     this.offSet += direction;
     var imagesLengthAsIndex = this.images.length - 1;
-
-    // On direction 1, we are going towards end of the array and vice versa
-    var searchIndex = 0;
-
-    switch (direction) {
-    case -1:
-      searchIndex = this.offSet;
-      break;
-    case 1:
-      var startPosition = this.imagesPerPage !== 0 ? this.imagesPerPage - 1 : 0;
-      searchIndex = startPosition + this.offSet;
-      break;
-    default:
-      searchIndex = 0;
-      this.offSet = 0;
-      break;
-    }
+    var searchIndex = this.offSet;
     
     if (searchIndex < 0) {
       this.offSet = 0;
@@ -371,7 +359,6 @@ finna.imagePaginator = (function imagePaginator() {
       this.offSet = imagesLengthAsIndex;
       searchIndex = this.offSet;
     }
-    
 
     if (typeof this.images[searchIndex] === 'undefined') {
       return null;
@@ -623,7 +610,7 @@ finna.imagePaginator = (function imagePaginator() {
         src: $(mfpPopup).clone(),
         type: 'inline',
       },
-      tClose: "sulje",
+      tClose: VuFind.translate('close'),
       callbacks: {
         open: function onPopupOpen() {
           parent.imagesPerPage = parent.rowAmount;
@@ -673,7 +660,7 @@ finna.imagePaginator = (function imagePaginator() {
             } else {
               parent.imagesPerPage = parent.rowAmount * 3;
             }
-            parent.loadPage(0);
+            parent.loadPage(0, parent.openLeafletImageIndex);
             parent.imageHolder.find('a[index="' + parent.openLeafletImageIndex + '"]').click();
           }
         }
