@@ -118,10 +118,7 @@ finna.videoPopup = (function finnaVideoPopup() {
             var $qs = $('<div/>').addClass('vjs-menu-button vjs-menu-button-popup vjs-control vjs-button');
             var $button = $('<button/>')
               .addClass('vjs-menu-button vjs-menu-button-popup vjs-button')
-              .attr('type', 'button')
-              .attr('aria-live', 'polite')
-              .attr('aria-haspopup', 'true')
-              .attr('title', VuFind.translate('Quality'))
+              .attr({'type': 'button', 'aria-live': 'polite', 'aria-haspopup': true, 'title': VuFind.translate('Quality')})
               .appendTo($qs);
             $('<span/>')
               .addClass('vjs-icon-cog')

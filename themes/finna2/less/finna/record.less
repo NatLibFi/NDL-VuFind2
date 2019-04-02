@@ -98,12 +98,6 @@
   }
 }
 
-@media(max-width: @screen-xs-max){
-  .truncate-field.recordcovers {
-    display: inline-block;
-  }
-}
-
 .record .record-title {
   margin: 0;
   margin-bottom: 3px;
@@ -165,7 +159,7 @@
   }
 }
 
-.all-covers-area, .recordcovers {
+.recordcovers {
   a {
     background-color: #efefefcc;
     display: inline-block;
@@ -174,6 +168,10 @@
     margin: 1px;
     max-width: 60px;
     cursor: pointer;
+
+    &.current {
+      border: 0.2em solid @brand-primary;
+    }
 
     img {
       position: relative;
@@ -220,7 +218,7 @@
     }
   
     .finna-paginated {
-      max-width: 85%;
+      max-width: 80%;
       display: inline-block;
       .finna-element-track {
         max-height: 100%;
