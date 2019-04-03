@@ -17,6 +17,7 @@ finna.videoPopup = (function finnaVideoPopup() {
           },
           callbacks: {
             open: function onOpen() {
+              $('#video-player').closest('.mfp-content').addClass('videoplayer-only');
               finna.layout.loadScripts(scripts, function onScriptsLoaded() {
                 initVideoJs('.video-popup', videoSources, posterUrl);
               });
