@@ -42,8 +42,13 @@
             height: initial;
         }
         &.nonzoomable {
-            height: initial;
-            width: initial;
+            width: 100%;
+            img {
+                width: initial;
+            }
+            @media (min-width: @screen-sm-min) {
+                width: 625px;
+            }
         }
     }
 
@@ -310,7 +315,10 @@
             }
         }
         & .popup-link-buttons {
-            margin-bottom: 20px;   
+            margin-bottom: 20px;
+            i {
+                margin-right: 2px;
+            }
         }
         & .record-online-link + .record-link {
             margin-top: 20px;   

@@ -1,4 +1,4 @@
-/* global finna, VuFind, L */
+/* global finna, VuFind, L, videojs */
 finna.imagePaginator = (function imagePaginator() {
   var imageElement = "<a draggable=\"false\" href=\"\" class=\"image-popup image-popup-navi hidden-print\"><img draggable=\"false\" alt=\"\" data-lazy=\"\"></img></a>";
   var elementBase = "<div class=\"finna-paginated paginator-mask\"><div class=\"finna-element-track\"></div></div>";
@@ -703,6 +703,7 @@ finna.imagePaginator = (function imagePaginator() {
     switch (type) {
     case 'video':
       $('#leaflet-map-image').hide();
+      this.videoHolder.addClass('initialized');
       this.videoHolder.show();
       if (this.nonZoomableHolder !== '') {
         this.nonZoomableHolder.hide();
@@ -714,12 +715,18 @@ finna.imagePaginator = (function imagePaginator() {
       if (this.nonZoomableHolder !== '') {
         this.nonZoomableHolder.hide();
       }
+      if (this.videoHolder.hasClass('initialized')) {
+        videojs('video-player').stop();
+      }
       break;
     case 'nonzoomable':
       $('#leaflet-map-image').hide();
       this.videoHolder.hide();
       if (this.nonZoomableHolder !== '') {
         this.nonZoomableHolder.show();
+      }
+      if (this.videoHolder.hasClass('initialized')) {
+        videojs('video-player').stop();
       }
       break;
     }

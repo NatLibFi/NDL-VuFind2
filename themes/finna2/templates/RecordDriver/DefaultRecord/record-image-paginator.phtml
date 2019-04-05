@@ -27,9 +27,7 @@
     <?php if (!empty($images[0]['urls']['medium']) || !empty($images[0]['urls']['large'])): ?>
       <div class="recordcover-container">
         <a class="image-popup-trigger" href="<?=$this->recordLink()->getUrl($this->driver) ?>#image">
-          <?php if (count($images) <= 1): ?>
-            <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
-          <?php endif; ?>
+          <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
           <img data-src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
         </a>
       </div>
@@ -39,6 +37,8 @@
         <img data-src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
       </a>
     <?php endif; ?>
+  <?php else: ?>
+    <a href="<?=$this->escapeHtmlAttr($img['urls']['large'] ?? $img['urls']['medium']) ?>"><?=($ind + 1) ?></a>
   <?php endif; ?>
   <div class="recordcover-image-detail">
     <p class="image-description">
