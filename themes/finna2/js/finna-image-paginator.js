@@ -499,7 +499,7 @@ finna.imagePaginator = (function imagePaginator() {
     img.src = leafletImage.attr('data-largest');
 
     img.onload = function onLoadImg() {
-      // If popup is closed before loading the image, return without hassle
+      // If popup is closed before loading the image, return without trying to set leaflet
       if (parent.leafletHolder.length === 0) {
         return;
       }
