@@ -43,9 +43,7 @@
         }
         &.nonzoomable {
             width: 100%;
-            img {
-                width: initial;
-            }
+            height: initial;
             @media (min-width: @screen-sm-min) {
                 width: 625px;
             }
@@ -169,17 +167,20 @@
                 width: 100%;
                 height: 400px;
             }
-            .non-zoomable {
-                width: 100%;
-                padding: 6px;
-                img {
-                    height: 100%;
-                }
-            }
             img {
                 width: 100%;
                 height: 100%;
                 background-color: #3d3d3d;
+            }
+            .non-zoomable {
+                width: 100%;
+                height: 100%;
+                padding: 6px;
+                img {
+                    max-height: 100%;
+                    height: initial;
+                    width: initial;
+                }
             }
             .leaflet-bottom.leaflet-right {
                 display: none;

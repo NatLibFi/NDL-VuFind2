@@ -37,6 +37,7 @@ finna.imagePaginator = (function imagePaginator() {
   "<div class=\"leaflet-image-loading\"></div>" +
 "</div>";
   var nonZoomableElement = '<div class="non-zoomable">' +
+    '<div class=""></div>' +
     '<img alt="Kansikuva"></img>' +
   '</div>'
   
@@ -50,7 +51,6 @@ finna.imagePaginator = (function imagePaginator() {
 
     if (foundPaginator.length) {
       $.magnificPopup.close();
-      console.log(foundPaginator);
       foundPaginator.click();
     } else {
       $.magnificPopup.close();
@@ -451,6 +451,7 @@ finna.imagePaginator = (function imagePaginator() {
     var img = this.nonZoomableHolder.find('img');
     img.attr('src', leafletImage.attr('data-largest'));
     this.openLeafletImageIndex = leafletImage.attr('index');
+    this.setCurrentVisuals(leafletImage);
     this.setPagerInfo(this.openLeafletImageIndex);
     this.loadImageInformation(this.openLeafletImageIndex);
   }
