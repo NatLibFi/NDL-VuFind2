@@ -82,6 +82,11 @@
         $onlineURLs = $this->driver->getOnlineURLs();
         $mergedData = $this->driver->tryMethod('getMergedRecordData');
         $images = $this->record($this->driver)->getAllRecordImageUrls();
+        $videoUrlElement = [
+          'class' => 'videourl fulltext btn btn-primary',
+          'data-scripts' => $videoScripts
+        ];
+        $this->htmlElement()->addAttributeTemplate('video-base', $videoUrlElement);
       ?>
       <?php if (!empty($urls) || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php $index = 0; ?>
@@ -91,16 +96,38 @@
             <?php
               $renderedURLs[] = $url['url'];
               $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
+              $isVideo = !empty($url['videoSources']);
+              $current = [
+                'title' => $url['url']
+              ];
+              if ($isVideo) {
+                $current['data-link'] = $this->proxyUrl($url['url']);
+                $current['data-video-sources'] = json_encode($url['videoSources']);
+              } else {
+                $link = [
+                  'href' => $this->proxyUrl($url['url']),
+                  'target' => '_blank'
+                ];
+                $current = array_merge($current, $link);
+              }
+              if (!empty($url['embed']) && $url['embed'] === 'video') {
+                $current['data-embed-video'] = '';
+              }
+              $embed = $this->recordLink()->getEmbeddedVideo($url['url']);
+              if ($embed !== '') {
+                $current[$embed] = '';
+              }
             ?>
-
             <div class="record-online-link">
-              <button data-link="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" class="videourl fulltext btn btn-primary"
-                  <?php if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>" data-scripts="<?=$this->escapeHtmlAttr($videoScripts)?>"<?php endif; ?>
-                  <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-                  <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
-                  title="<?=$this->escapeHtmlAttr($url['url']) ?>">
-                <i class="fa fa-external-link"></i> <?php if (count($urls) == 1): ?>  <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=$this->transEsc('default::link_' . $desc, null, $desc) ?><?php endif; ?>
-              </button>
+              <?php if ($isVideo): ?>
+                <button <?= $this->htmlElement()->getAttributes($current, 'video-base') ?>>
+                  <i class="fa fa-external-link"></i> <?php if (count($urls) == 1): ?>  <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=$this->transEsc('default::link_' . $desc, null, $desc) ?><?php endif; ?>
+                </button>
+              <?php else: ?>
+                <a <?= $this->htmlElement()->getAttributes($current); ?>>
+                  <i class="fa fa-external-link"></i><?php if (count($urls) == 1): ?>  <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=$this->transEsc('default::link_' . $desc, null, $desc) ?><?php endif; ?>
+                </a>
+              <?php endif; ?>
             </div>
             <?php $index++; ?>
             <?php if ($index > 4): ?>
