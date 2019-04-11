@@ -165,12 +165,13 @@
     display: inline-block;
     height: 60px;
     overflow: hidden;
-    margin: 1px;
+    margin: 2px;
     max-width: 60px;
     cursor: pointer;
 
     &.current {
       border: 0.2em solid @brand-primary;
+      margin: 1px;
     }
 
     img {
@@ -213,11 +214,13 @@
       background-color: transparent;
       padding: 0 2px;
       i {
+        .mfp-content &:not(:disabled){
+          color: white;
+        }
         cursor: pointer;
       }
       &:disabled {
         background-color: #efefef00 !important;
-        color: #efefef00 !important;
       }
     }
   

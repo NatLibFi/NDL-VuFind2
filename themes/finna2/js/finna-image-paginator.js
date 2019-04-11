@@ -3,8 +3,8 @@ finna.imagePaginator = (function imagePaginator() {
   var imageElement = "<a draggable=\"false\" href=\"\" class=\"image-popup image-popup-navi hidden-print\"><img draggable=\"false\" alt=\"\" data-lazy=\"\"></img></a>";
   var elementBase = "<div class=\"finna-paginated paginator-mask\"><div class=\"finna-element-track\"></div></div>";
   var infoBar = "<div class=\"paginator-info\"></span> <span class=\"paginator-pager\">0/0</span> <small><span class=\"pager-current\"></small></div>";
-  var leftButton = "<button class=\"left-button\" type=\"button\"><i class=\"fa fa-arrow-left\"></i></button>";
-  var rightButton = "<button class=\"right-button\" type=\"button\"><i class=\"fa fa-arrow-right\"></i></button>";
+  var leftButton = "<button class=\"left-button\" type=\"button\"><i class=\"fa fa-handle-left\"></i></button>";
+  var rightButton = "<button class=\"right-button\" type=\"button\"><i class=\"fa fa-handle-right\"></i></button>";
   var mfpPopup = "<div class=\"imagepopup-holder\" data-type=\"\" data-id=\"\">" +
   "<div class=\"imagepopup-container\">" +
     "<div id=\"popup-canvas\" class=\"paginator-canvas\">" +
@@ -43,6 +43,7 @@ finna.imagePaginator = (function imagePaginator() {
   
   var masonryInitialized = false;
   var paginatorIndex = 0;
+  var normalAmountImages = 0;
 
   FinnaPaginator.prototype.getNextPaginator = function getNextPaginator(direction) {
     var searchIndex = this.paginatorIndex + direction;
@@ -73,8 +74,10 @@ finna.imagePaginator = (function imagePaginator() {
     // Lets get all the data from the settings
     this.recordId = settings.recordId;
     this.source = settings.source;
-    this.imagesPerPage = typeof settings.imagesPerPage !== 'undefined' ? settings.imagesPerPage : 6;
-    this.rowAmount = this.imagesPerPage;
+    this.imagesPerPage = settings.imagesPerPage;
+    this.popupImageAmount = typeof settings.popupImageAmount !== 'undefined' ? settings.popupImageAmount : 8;
+    normalAmountImages = this.imagesPerPage;
+    this.setMaxImages(normalAmountImages);
     this.enableImageZoom = settings.enableImageZoom;
     this.recordType = settings.recordType;
 
@@ -95,7 +98,7 @@ finna.imagePaginator = (function imagePaginator() {
     this.previousRecordButton = '';
     this.nextRecordButton = '';
 
-    this.openLeafletImageIndex = 0;
+    this.openImageIndex = 0;
   }
 
   /**
@@ -122,18 +125,16 @@ finna.imagePaginator = (function imagePaginator() {
       this.moreImagesButton.find('.less-more').html(VuFind.translate('show_more'));
       this.moreImagesButton.addClass('less');
 
-      if (this.images.length < 9) {
+      this.loadPage(0);
+      var firstDiv = this.imageHolder.children('div');
+      this.setTrigger(firstDiv.children('a').first());
+
+      if (this.images.length <= this.imagesPerRow) {
         this.root.find('.recordcovers-more').hide();
       }
     }
 
     this.setEvents();
-
-    if (!this.isMiniPaginator) {
-      this.loadPage(0);
-      var firstDiv = this.imageHolder.children('div');
-      this.setTrigger(firstDiv.children('a').first());
-    }
   }
 
   /**
@@ -161,7 +162,7 @@ finna.imagePaginator = (function imagePaginator() {
 
   FinnaPaginator.prototype.onMoreImagesClick = function onMoreImagesClick() {
     if (this.moreImagesButton.hasClass('less')) {
-      this.loadPageWithNewAmount(this.imagesPerPage * 3);
+      this.loadPageWithNewAmount(this.imagesPerRow * 3);
       this.moreImagesButton
         .removeClass('less')
         .find('.less-more')
@@ -171,7 +172,7 @@ finna.imagePaginator = (function imagePaginator() {
         .removeClass('fa-arrow-down')
         .addClass("fa-arrow-up");
     } else {
-      this.loadPageWithNewAmount(this.rowAmount);
+      this.loadPageWithNewAmount(this.imagesPerRow);
       this.moreImagesButton
         .addClass('less')
         .find('.less-more')
@@ -209,11 +210,15 @@ finna.imagePaginator = (function imagePaginator() {
    * Function to set correct info for page info
    */
   FinnaPaginator.prototype.setPagerInfo = function setPagerInfo(index) {
-    this.pagerInfo.find('.paginator-pager').html(+index + 1 + "/" + this.images.length);
+    if (this.images.length < 2) {
+      this.pagerInfo.hide();
+    } else {
+      this.pagerInfo.find('.paginator-pager').html(+index + 1 + "/" + this.images.length);
+    }
   }
 
   FinnaPaginator.prototype.setFirstLast = function setFirstLast(first, last) {
-    if (this.images.length < this.rowAmount) {
+    if (this.images.length < this.imagesPerRow) {
       this.pagerInfo.find('.pager-current').hide();
     } else {
       this.pagerInfo.find('.pager-current').html('(' + first + '/' + last + ')');
@@ -247,7 +252,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (this.images.length < 2) {
       popupTrackArea.hide();
     }
-    this.loadPage(0, this.openLeafletImageIndex);
+    this.loadPage(0, this.openImageIndex);
   }
 
   FinnaPaginator.prototype.createPopupInformation = function createPopupInformation() {
@@ -276,7 +281,7 @@ finna.imagePaginator = (function imagePaginator() {
       img.css('opacity', '');
       if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
         parent.trigger.addClass('no-image');
-        if (!parent.isMiniPaginator) {
+        if (!parent.isMiniPaginator && parent.images.length <= 1) {
           var mediaHolder = parent.root.closest('.media-left, .media-right');
           mediaHolder.addClass('hidden-xs');
           parent.root.css('display', 'none');
@@ -347,12 +352,13 @@ finna.imagePaginator = (function imagePaginator() {
         this.imageHolder.append(currentDiv);
       }
       currentDiv.append(this.createImagePopup(this.images[firstImage]));
-      if (j === this.rowAmount - 1 || firstImage === lastImage) {
+      if (j === this.imagesPerRow - 1 || firstImage === lastImage) {
         j = 0;
       } else {
         j++;
       }
     }
+    this.setCurrentVisuals();
     this.setButtons();
   }
 
@@ -417,7 +423,7 @@ finna.imagePaginator = (function imagePaginator() {
           $.magnificPopup.close();
         });
       }
-    }).fail( function setImageDataFailure(response) {
+    }).fail( function setImageDataFailure() {
       $('.collapse-content-holder').html('<p>Failed to fetch data</p>');
     });
   }
@@ -462,10 +468,10 @@ finna.imagePaginator = (function imagePaginator() {
 
     var img = this.nonZoomableHolder.find('img');
     img.attr('src', leafletImage.attr('data-largest'));
-    this.openLeafletImageIndex = leafletImage.attr('index');
-    this.setCurrentVisuals(leafletImage);
-    this.setPagerInfo(this.openLeafletImageIndex);
-    this.loadImageInformation(this.openLeafletImageIndex);
+    this.openImageIndex = leafletImage.attr('index');
+    this.setCurrentVisuals();
+    this.setPagerInfo(this.openImageIndex);
+    this.loadImageInformation(this.openImageIndex);
   }
 
   FinnaPaginator.prototype.checkRecordButtons = function checkRecordButtons() {
@@ -487,9 +493,26 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
-  FinnaPaginator.prototype.setCurrentVisuals = function setCurrentVisuals(element) {
+  FinnaPaginator.prototype.setCurrentVisuals = function setCurrentVisuals() {
     $('a.image-popup-navi').removeClass('current');
-    element.addClass('current');
+    $('a[index="' + this.openImageIndex + '"]').addClass('current');
+  }
+
+  FinnaPaginator.prototype.setMaxImages = function setMaxImages(amount) {
+    var width = $(window).width();
+    if (width < 500) {
+      this.imagesPerRow = amount - 2;
+    } else if (width < 768) {
+      this.imagesPerRow = amount;
+    } else if (width < 991) {
+      this.imagesPerRow = amount - 2;
+    } else {
+      this.imagesPerRow = amount;
+    }
+    if (this.imagesPerRow < 0) {
+      this.imagesPerRow = 0;
+    }
+    this.imagesPerPage = this.imagesPerRow;
   }
 
   /**
@@ -500,9 +523,9 @@ finna.imagePaginator = (function imagePaginator() {
     setCanvasContent('leaflet');
     this.setZoomButtons();
 
-    this.openLeafletImageIndex = leafletImage.attr('index');
-    this.setPagerInfo(this.openLeafletImageIndex);
-    this.setCurrentVisuals(leafletImage);
+    this.openImageIndex = leafletImage.attr('index');
+    this.setPagerInfo(this.openImageIndex);
+    this.setCurrentVisuals();
     this.leafletHolder.eachLayer(function removeLayers(layer) {
       parent.leafletHolder.removeLayer(layer);
     });
@@ -544,7 +567,7 @@ finna.imagePaginator = (function imagePaginator() {
       L.imageOverlay(img.src, bounds).addTo(parent.leafletHolder);
     }
 
-    this.loadImageInformation(this.openLeafletImageIndex);
+    this.loadImageInformation(this.openImageIndex);
   }
 
   FinnaPaginator.prototype.onNonZoomableOpen = function onNonZoomableOpen() {
@@ -558,7 +581,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (this.isMiniPaginator) {
       this.imageHolder.closest('.recordcovers').removeClass('mini-paginator');
     }
-    this.imageHolder.find('a[index="' + this.openLeafletImageIndex + '"]').click();
+    this.imageHolder.find('a[index="' + this.openImageIndex + '"]').click();
 
     setCanvasContent('nonzoomable');
   }
@@ -588,7 +611,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (this.isMiniPaginator) {
       this.imageHolder.closest('.recordcovers').removeClass('mini-paginator');
     }
-    this.imageHolder.find('a[index="' + this.openLeafletImageIndex + '"]').click();
+    this.imageHolder.find('a[index="' + this.openImageIndex + '"]').click();
   }
 
   FinnaPaginator.prototype.onNoImageClick = function onNoImageClick() {
@@ -602,8 +625,8 @@ finna.imagePaginator = (function imagePaginator() {
     this.changeTriggerImage(imagePopup);
     this.setPagerInfo(imagePopup.attr('index'));
 
-    this.openLeafletImageIndex = imagePopup.attr('index');
-    this.setCurrentVisuals(imagePopup);
+    this.openImageIndex = imagePopup.attr('index');
+    this.setCurrentVisuals();
     var parent = this;
 
     this.trigger.magnificPopup({
@@ -615,9 +638,9 @@ finna.imagePaginator = (function imagePaginator() {
       callbacks: {
         open: function onPopupOpen() {
           if (parent.isMiniPaginator) {
-            parent.imagesPerPage = 8;
+            parent.setMaxImages(parent.popupImageAmount);
           } else {
-            parent.imagesPerPage = parent.rowAmount;
+            parent.setMaxImages(normalAmountImages);
           }
 
           var mfpContainer = $('.mfp-container');
@@ -659,20 +682,20 @@ finna.imagePaginator = (function imagePaginator() {
           parent.pagerInfo = parent.root.find('.paginator-info');
           parent.leafletHolder = '';
           if (parent.isMiniPaginator) {
-            parent.imagesPerPage = 0;
+            parent.setMaxImages(normalAmountImages);
             parent.setSingleImageLoadButtons();
-            var image = parent.images[parent.openLeafletImageIndex];
-            parent.offSet = +parent.openLeafletImageIndex;
+            var image = parent.images[parent.openImageIndex];
+            parent.offSet = +parent.openImageIndex;
             parent.setListImageTrigger(image);
             parent.setButtons();
           } else {
             if (parent.moreImagesButton.hasClass('less')) {
-              parent.imagesPerPage = parent.rowAmount;
+              parent.imagesPerPage = parent.imagesPerRow;
             } else {
-              parent.imagesPerPage = parent.rowAmount * 3;
+              parent.imagesPerPage = parent.imagesPerRow * 3;
             }
-            parent.loadPage(0, parent.openLeafletImageIndex);
-            parent.imageHolder.find('a[index="' + parent.openLeafletImageIndex + '"]').click();
+            parent.loadPage(0, parent.openImageIndex);
+            parent.imageHolder.find('a[index="' + parent.openImageIndex + '"]').click();
           }
         }
       }
@@ -711,7 +734,6 @@ finna.imagePaginator = (function imagePaginator() {
 
   FinnaPaginator.prototype.setSingleImageLoadButtons = function setSingleImageLoadButtons() {
     var parent = this;
-
     this.leftButton.off('click').on('click', function setImage(){
       parent.setMiniPaginatorButton(-1);
     });
@@ -723,10 +745,8 @@ finna.imagePaginator = (function imagePaginator() {
 
   FinnaPaginator.prototype.setMiniPaginatorButton = function setMiniPaginatorButton(direction) {
     var image = this.getImageFromArray(direction);
+    this.setListImageTrigger(image);
 
-    if (image !== null && typeof image !== 'undefined') {
-      this.setListImageTrigger(image);
-    }
     this.setButtons();
   }
 

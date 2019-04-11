@@ -258,6 +258,9 @@
             max-width: 100%;
         }
         .collapse-content-holder {
+            @media (max-width: @screen-sm) {
+                order: 2;
+            }
             flex: 1;
             .large-spinner {
                 width: 100%;
@@ -278,6 +281,9 @@
             letter-spacing: .5px;
             font-weight: 400;
             padding: 6px;
+            @media (max-width: @screen-sm) {
+                order: 1;
+            }
         }
 
         & .author-and-dates, .building {
