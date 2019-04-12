@@ -122,7 +122,11 @@
       .image-popup-trigger {
         img {
           max-height: 600px;
-          width: auto;
+        }
+      }
+      .image-popup-trigger.no-image {
+        img {
+          max-width: 200px;
         }
       }
       .open-link {
@@ -214,13 +218,17 @@
       background-color: transparent;
       padding: 0 2px;
       i {
-        .mfp-content &:not(:disabled){
-          color: white;
-        }
         cursor: pointer;
+      }
+      .mfp-content &:not(:disabled){
+        color: white;
+        i {
+          cursor: initial;
+        }
       }
       &:disabled {
         background-color: #efefef00 !important;
+        color:transparent !important;
       }
     }
   

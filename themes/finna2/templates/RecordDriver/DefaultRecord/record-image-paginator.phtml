@@ -45,10 +45,17 @@
     </p>
   </div>
   <div class="recordcovers <?=$type?>">
+    <button class="left-button" type="button"><i class="fa fa-handle-left"></i></button>
+    <div class="finna-paginated paginator-mask">
+      <div class="finna-element-track"></div>
+    </div>
+    <button class="right-button" type="button"><i class="fa fa-handle-right"></i></button>
+    <div class="paginator-info"></span> <span class="paginator-pager"></span> <small><span class="pager-current"></small></div>
   </div>
   <div class="recordcovers-more more-area">
     <span class="line"></span>
-    <button type="button" class="show-more-images more-link"><span class="less-more"></span> <i class="fa fa-arrow-down"></i></button>
+    <button type="button" class="show-more-images more-link"><?= $this->translate('more') ?> <i class="fa fa-arrow-down"></i></button>
+    <button type="button" class="show-less-images less-link"><?= $this->translate('less') ?> <i class="fa fa-arrow-up"></i></button>
     <span class="line"></span>
   </div>
   <?php if (count($paginatedLinks) > 0): ?>
@@ -58,7 +65,8 @@
         'source' => $this->driver->getSourceIdentifier(),
         'recordType' =>  $this->driver->tryMethod('getRecordType'),
         'imagesPerPage' => 8,
-        'enableImageZoom' => $enableImageZoom
+        'enableImageZoom' => $enableImageZoom,
+        'noImage' => "iconlabel format-" . $this->record($this->driver)->getFormatClass(end($formats))
       ]?>
       <?php if ($type === 'list' || $type === 'list grid'): ?>
         finna.imagePaginator.initMiniPaginator(
