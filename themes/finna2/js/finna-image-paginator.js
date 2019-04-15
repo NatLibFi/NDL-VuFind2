@@ -154,7 +154,7 @@ finna.imagePaginator = (function imagePaginator() {
       });
       _.moreBtn.click(function setImages(){
         toggleButtons(_.lessBtn, _.moreBtn);
-        _.loadPage(0, null, _.imagesPerRow * 3);
+        _.loadPage(0, null, _.imagesPerRow * _.maxRows);
       });
       _.lessBtn.click(function setImages(){
         toggleButtons(_.moreBtn, _.lessBtn);
