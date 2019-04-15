@@ -160,11 +160,6 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function initTruncatedRecordImageNavi() {
-    // GONE
-    // REMEMBER TO DELETE
-  }
-
   function initContentNavigation() {
     if ($('.content-navigation-menu')[0]) {
       $('.content-section').each(function initContentSection(index) {
@@ -816,16 +811,13 @@ finna.layout = (function finnaLayout() {
     initOrganisationPageLinks: initOrganisationPageLinks,
     initSecondaryLoginField: initSecondaryLoginField,
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
-    //initIframeEmbed: initIframeEmbed,
     initLoginTabs: initLoginTabs,
     loadScripts: loadScripts,
-    //initVideoJs: initVideoJs,
     init: function init() {
       initScrollRecord();
       initJumpMenus();
       initAnchorNavigationLinks();
       initFixFooter();
-      initTruncatedRecordImageNavi();
       initTruncate();
       initContentNavigation();
       initRecordSwipe();

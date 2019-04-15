@@ -156,6 +156,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
         foreach ($params as $size => $sizeParams) {
             $imageParams[$size] = $sizeParams;
         }
+
         $urlHelper = $this->getView()->plugin('url');
 
         $imageTypes = ['small', 'medium', 'large', 'master'];
@@ -167,7 +168,6 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
                     continue;
                 }
                 $params = $image['urls'][$imageType];
-
                 $image['urls'][$imageType] = $urlHelper('cover-show') . '?' .
                     http_build_query(
                         array_merge($params, $imageParams[$imageType])

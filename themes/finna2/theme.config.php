@@ -175,7 +175,6 @@ return [
         'finna-comments.js',
         'finna-common.js',
         'finna-content-feed.js',
-        'finna-image-popup.js',
         'finna-item-status.js',
         'finna-adv-search.js',
         'finna-daterange-vis.js',

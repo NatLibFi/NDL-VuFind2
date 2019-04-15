@@ -1,5 +1,4 @@
-<!-- record-image-paginator.phtml -->
-<?php // Here is a new clean base for our paginated images ?>
+<!-- START of: finna - RecordDriver/DefaultRecord/record-image-paginator.phtml -->
 <?php
   $isList = ($type === 'list' || $type === 'list grid');
   $enableImageZoom = in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward', 'ead', 'qdc']);
@@ -11,7 +10,6 @@
   ?>
   <?php foreach ($images as $img): ?>
     <?php
-      // We only need essential info about images, no need to create any html
       $obj = [
         'small' => $img['urls']['small'],
         'medium' => $img['urls']['medium'] ?? $img['urls']['small'],
@@ -19,7 +17,6 @@
         'index' => $ind++,
         'description' => $img['description'] ?? ''
       ];
-
       $paginatedLinks[] = $obj;
     ?>
   <?php endforeach; ?>
@@ -80,3 +77,4 @@
     </script>
   <?php endif; ?>
 <?php endif;?>
+<!-- END of: finna - RecordDriver/DefaultRecord/record-image-navi.phtml -->
