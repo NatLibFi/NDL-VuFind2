@@ -226,7 +226,6 @@ finna.imagePaginator = (function imagePaginator() {
     }
     popupTrackArea.append(covers);
     $('.record-informations').append(_.pagerInfo);
-    _.setRecordIndex();
     if (_.images.length < 2) {
       popupTrackArea.hide();
     }
@@ -238,7 +237,7 @@ finna.imagePaginator = (function imagePaginator() {
     if ($('.paginationSimple .index').length) {
       var total = $('.paginationSimple .total').html();
       var current = +$('.paginationSimple .index').html() + _.paginatorIndex;
-      _.pagerInfo.find('.total').html(current + "/" + total);
+      _.pagerInfo.siblings('.record-index').find('.total').html(current + "/" + total);
     }
   }
 
@@ -394,8 +393,10 @@ finna.imagePaginator = (function imagePaginator() {
           $.magnificPopup.close();
         });
       }
+      _.setRecordIndex();
     }).fail( function setImageDataFailure() {
       $('.collapse-content-holder').html('<p>Failed to fetch data</p>');
+      _.setRecordIndex();
     });
   }
 
