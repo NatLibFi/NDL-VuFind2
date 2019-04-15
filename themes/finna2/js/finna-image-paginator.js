@@ -635,6 +635,7 @@ finna.imagePaginator = (function imagePaginator() {
             _.setMaxImages(_.popupImageAmount);
           } else {
             _.setMaxImages(normalAmountImages);
+            toggleButtons(_.moreBtn, _.lessBtn);
           }
           var previousRecord = $(previousRecordButton).clone();
           var nextRecord = $(nextRecordButton).clone();
