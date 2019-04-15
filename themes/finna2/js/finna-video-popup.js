@@ -191,7 +191,7 @@ finna.videoPopup = (function finnaVideoPopup() {
       }
 
       // Fallback if core has older style of initializing a video button
-      var attr = $(this).is('a') ? $(this).attr('href') : $(this).attr('data-link');
+      var attr = $(this).is('a') ? $(this).attr('href') : $(this).data('link');
 
       $.magnificPopup.open({
         type: 'iframe',

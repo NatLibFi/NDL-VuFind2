@@ -1,41 +1,41 @@
 /* global finna, VuFind, L, videojs */
 finna.imagePaginator = (function imagePaginator() {
-  var imageElement = "<a draggable=\"false\" href=\"\" class=\"image-popup image-popup-navi hidden-print\"></a>";
-  var mfpPopup = "<div class=\"imagepopup-holder\" data-type=\"\" data-id=\"\">" +
-  "<div class=\"imagepopup-container\">" +
-    "<div id=\"popup-canvas\" class=\"paginator-canvas\">" +
+  var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print"></a>';
+  var mfpPopup = '<div class="imagepopup-holder">' +
+  '<div class="imagepopup-container">' +
+    '<div id="popup-canvas" class="paginator-canvas">' +
       '<div id="popup-nonzoom" class="non-zoomable">' +
-        '<div class=""></div>' +
-        '<img alt="Kansikuva"></img>' +
+        '<div class="iconlabel"></div>' +
+        '<img alt=""></img>' +
       '</div>' +
-      "<div id=\"leaflet-map-image\" class=\"image-wrapper\">" +
-        "<img />" +
-        "<div class=\"imagepopup-zoom-container\">" +
-          "<div class=\"zoom-in zoom-button\"><i class=\"fa fa-zoom-in\" aria-hidden=\"true\"></i></div>" +
-          "<div class=\"zoom-out zoom-button\"><i class=\"fa fa-zoom-out\" aria-hidden=\"true\"></i></div>" +
-          "<div class=\"zoom-reset zoom-button\"><i class=\"fa fa-zoom-100\" aria-hidden=\"true\"></i></div>" +
-        "</div>" +
-        "<div class=\"leaflet-image-loading\"></div>" +
-      "</div>" +
+      '<div id="leaflet-map-image" class="image-wrapper">' +
+        '<img />' +
+        '<div class="imagepopup-zoom-container">' +
+          '<div class="zoom-in zoom-button"><i class="fa fa-zoom-in" aria-hidden="true"></i></div>' +
+          '<div class="zoom-out zoom-button"><i class="fa fa-zoom-out" aria-hidden="true"></i></div>' +
+          '<div class="zoom-reset zoom-button"><i class="fa fa-zoom-100" aria-hidden="true"></i></div>' +
+        '</div>' +
+        '<div class="leaflet-image-loading"></div>' +
+      '</div>' +
       '<div id="popup-video" class="video-popup"><video id="video-player" class="video-js vjs-big-play-centered" controls></video></div>' +
-    "</div>" +
-    "<div class=\"finna-image-pagination\">" +
-    "</div>" +
-    "<div style=\"clear: both;\"></div>" +
-  "</div>" +
-  "<div class=\"image-information-holder\">" +
-  " <div class=\"collapse-content-holder\">" +
-  " </div>" +
-  " <div class=\"record-informations\">" +
-  "   <div class=\"record-index\">" +
-  "     <span class=\"total\"></span>" +
-  "   </div>" +
-  "   </div>" +
-  " </div>" +
-  "</div>";
+    '</div>' +
+    '<div class="finna-image-pagination">' +
+    '</div>' +
+    '<div style="clear: both;"></div>' +
+  '</div>' +
+  '<div class="image-information-holder">' +
+  ' <div class="collapse-content-holder">' +
+  ' </div>' +
+  ' <div class="record-informations">' +
+  '   <div class="record-index">' +
+  '     <span class="total"></span>' +
+  '   </div>' +
+  '   </div>' +
+  ' </div>' +
+  '</div>';
 
-  var previousRecordButton = "<button class=\"mfp-arrow mfp-arrow-left previous-record\" type=\"button\"><</button>";
-  var nextRecordButton = "<button class=\"mfp-arrow mfp-arrow-right next-record\" type=\"button\">></button>";
+  var previousRecordButton = '<button class="mfp-arrow mfp-arrow-left previous-record" type="button"><</button>';
+  var nextRecordButton = '<button class="mfp-arrow mfp-arrow-right next-record" type="button">></button>';
   
   var masonryInitialized = false;
   var paginatorIndex = 0;
@@ -74,6 +74,7 @@ finna.imagePaginator = (function imagePaginator() {
     _.source = settings.source;
     _.noImage = settings.noImage;
     _.imagesPerPage = typeof settings.imagesPerPage !== 'undefined' ? settings.imagesPerPage : 8;
+    _.maxRows = typeof settings.maxRows !== 'undefined' ? settings.maxRows : 0;
     normalAmountImages = _.imagesPerPage;
     _.popupImageAmount = typeof settings.popupImageAmount !== 'undefined' ? settings.popupImageAmount : 8;
     _.setMaxImages(normalAmountImages);
@@ -95,8 +96,6 @@ finna.imagePaginator = (function imagePaginator() {
     _.imagePopup = '';
     _.leafletHolder = '';
     _.leafletLoader = '';
-    _.previousRecordButton = '';
-    _.nextRecordButton = '';
 
     _.openImageIndex = 0;
   }
@@ -311,15 +310,15 @@ finna.imagePaginator = (function imagePaginator() {
       _.offSet = 0;
     }
 
-    var imagesPerPageAsIndex = _.imagesPerPage - 1;
-    var lastImage = imagesPerPageAsIndex + _.offSet;
+    var max = _.imagesPerPage - 1;
+    var lastImage = max + _.offSet;
 
     if (lastImage > _.images.length - 1) {
       lastImage = _.images.length - 1;
       _.offSet = lastImage;
     }
 
-    var firstImage = lastImage - imagesPerPageAsIndex;
+    var firstImage = lastImage - max;
 
     if (firstImage < 1) {
       _.offSet = 0;
@@ -433,8 +432,7 @@ finna.imagePaginator = (function imagePaginator() {
     img.src = image.small;
 
     img.onload = function onLoad() {
-      $(this).attr('alt', image.description);
-      $(this).siblings('i').remove();
+      $(this).attr('alt', image.description).siblings('i').remove();
     }
     holder.attr({'index': image.index, 'href': image.medium, 'data-largest': image.largest, 'data-description': image.description});
     return holder;
@@ -445,11 +443,12 @@ finna.imagePaginator = (function imagePaginator() {
     var img = new Image();
     img.src = image.data('largest');
     _.nonZoomableHolder.find('img').css('opacity', '0.5');
+    _.nonZoomableHolder.find('.iconlabel').hide();
     img.onload = function onLoad() {
       if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
-        _.nonZoomableHolder.addClass('no-image');
+        _.nonZoomableHolder.addClass('no-image').find('.iconlabel').show();
       } else if (_.nonZoomableHolder.hasClass('no-image')) {
-        _.nonZoomableHolder.removeClass('no-image');
+        _.nonZoomableHolder.removeClass('no-image').find('.iconlabel').hide();
       }
       _.nonZoomableHolder.find('img').replaceWith($(this));
     }
@@ -468,13 +467,11 @@ finna.imagePaginator = (function imagePaginator() {
       $('.previous-record, .next-record').hide();
       return;
     }
-
     if (_.paginatorIndex < 1) {
       $('.previous-record').hide();
     } else {
       $('.previous-record').show();
     }
-
     if (_.paginatorIndex === paginatorIndex - 1) {
       $('.next-record').hide();
     } else {
@@ -567,7 +564,7 @@ finna.imagePaginator = (function imagePaginator() {
       e.preventDefault();
       _.onNonZoomableClick($(this));
     });
-    _.createPopupTrack($('.finna-image-pagination'), $('.non-zoomable'));
+    _.createPopupTrack($('.finna-image-pagination'));
     _.imageHolder.find('a[index="' + _.openImageIndex + '"]').click();
     setCanvasContent('nonzoomable');
   }
@@ -626,18 +623,18 @@ finna.imagePaginator = (function imagePaginator() {
           } else {
             _.setMaxImages(normalAmountImages);
           }
-          _.previousRecordButton = $(previousRecordButton).clone();
-          _.nextRecordButton = $(nextRecordButton).clone();
+          var previousRecord = $(previousRecordButton).clone();
+          var nextRecord = $(nextRecordButton).clone();
 
           var mfpContainer = $('.mfp-container');
           mfpContainer.find('.mfp-content').addClass('loaded');
-          mfpContainer.append(_.previousRecordButton, _.nextRecordButton);
+          mfpContainer.append(previousRecord, nextRecord);
 
-          _.previousRecordButton.off('click').click(function loadNextPaginator(e){
+          previousRecord.off('click').click(function loadNextPaginator(e){
             e.preventDefault();
             _.getNextPaginator(-1);
           });
-          _.nextRecordButton.off('click').click(function loadNextPaginator(e){
+          nextRecord.off('click').click(function loadNextPaginator(e){
             e.preventDefault();
             _.getNextPaginator(1);
           });
@@ -680,15 +677,15 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setZoomButtons = function setZoomButtons() {
     var _ = this;
-    $('.zoom-in').click(function zoomIn(e) {
+    $('.zoom-in').off('click').click(function zoomIn(e) {
       e.stopPropagation();
       _.leafletHolder.setZoom(_.leafletHolder.getZoom() + 1)
     });
-    $('.zoom-out').click(function zoomOut(e) {
+    $('.zoom-out').off('click').click(function zoomOut(e) {
       e.stopPropagation();
       _.leafletHolder.setZoom(_.leafletHolder.getZoom() - 1)
     });
-    $('.zoom-reset').click(function zoomReset(e) {
+    $('.zoom-reset').off('click').click(function zoomReset(e) {
       e.stopPropagation();
       _.leafletHolder.setZoom(1)
     });
@@ -727,7 +724,7 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.setListTrigger = function setListTrigger(image) {
     var _ = this;
     var tmpImg = $(_.imagePopup).clone(true);
-    tmpImg.find('img').attr('data-src', image.small);
+    tmpImg.find('img').data('src', image.small);
     tmpImg.attr({'index': image.index, 'href': image.medium});
     tmpImg.click();
   }

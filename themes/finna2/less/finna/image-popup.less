@@ -46,7 +46,7 @@
             height: initial;
             @media (min-width: @screen-sm-min) {
                 width: 625px;
-                height: 900px;
+                max-height: 900px;
             }
         }
     }
@@ -183,14 +183,13 @@
                     width: initial;
                 }
                 &.no-image {
-                    height: initial;
+                    @media (min-width: @screen-sm) {
+                        height: initial;
+                    }
+                    position: relative;
                     img {
                         background-color: white;
                         width: 100%;
-                    }
-                    div {
-                        width: 100%;
-                        color: white;
                     }
                 }
             }

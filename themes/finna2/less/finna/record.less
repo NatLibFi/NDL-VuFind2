@@ -166,11 +166,13 @@
 .recordcovers {
   a {
     background-color: #efefefcc;
-    display: inline-block;
+    display: flex;
+    align-items: center;
     height: 60px;
     overflow: hidden;
     margin: 2px;
     max-width: 60px;
+    flex: 0 1 100%;
     cursor: pointer;
 
     &.current {
@@ -222,9 +224,6 @@
       }
       .mfp-content &:not(:disabled){
         color: white;
-        i {
-          cursor: initial;
-        }
       }
       &:disabled {
         background-color: #efefef00 !important;

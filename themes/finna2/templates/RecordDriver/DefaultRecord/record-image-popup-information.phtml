@@ -96,10 +96,15 @@
             <?php
               $renderedURLs[] = $url['url'];
               $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
-              $isVideo = !empty($url['videoSources']);
               $current = [
                 'title' => $url['url']
               ];
+              $isVideo = !empty($url['videoSources']);
+              $embed = $this->recordLink()->getEmbeddedVideo($url['url']);
+              if ($embed !== '') {
+                $current[$embed] = '';
+                $isVideo = true;
+              }
               if ($isVideo) {
                 $current['data-link'] = $this->proxyUrl($url['url']);
                 $current['data-video-sources'] = json_encode($url['videoSources']);
@@ -112,10 +117,6 @@
               }
               if (!empty($url['embed']) && $url['embed'] === 'video') {
                 $current['data-embed-video'] = '';
-              }
-              $embed = $this->recordLink()->getEmbeddedVideo($url['url']);
-              if ($embed !== '') {
-                $current[$embed] = '';
               }
             ?>
             <div class="record-online-link">

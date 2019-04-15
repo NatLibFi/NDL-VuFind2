@@ -31,11 +31,6 @@
           <img data-src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
         </a>
       </div>
-    <?php else: ?>
-      <a class="image-popup-paginator-trigger no-image" href="<?=$this->recordLink()->getUrl($this->driver) ?>#image">
-        <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
-        <img data-src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
-      </a>
     <?php endif; ?>
   <?php else: ?>
     <a href="<?=$this->escapeHtmlAttr($img['urls']['large'] ?? $img['urls']['medium']) ?>"><?=($ind + 1) ?></a>
@@ -66,7 +61,8 @@
         'recordType' =>  $this->driver->tryMethod('getRecordType'),
         'imagesPerPage' => 8,
         'enableImageZoom' => $enableImageZoom,
-        'noImage' => "iconlabel format-" . $this->record($this->driver)->getFormatClass(end($formats))
+        'maxRows' => 3,
+        'noImage' => "format-" . $this->record($this->driver)->getFormatClass(end($formats))
       ]?>
       <?php if ($type === 'list' || $type === 'list grid'): ?>
         finna.imagePaginator.initMiniPaginator(
