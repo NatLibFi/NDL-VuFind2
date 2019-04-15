@@ -30,6 +30,8 @@
           <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
           <img data-src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
         </a>
+        <a class="hidden-trigger" href="#" style="display: none;">
+        </a>
       </div>
     <?php endif; ?>
   <?php else: ?>

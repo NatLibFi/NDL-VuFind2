@@ -48,7 +48,11 @@ finna.imagePaginator = (function imagePaginator() {
 
     if (foundPaginator.length) {
       $.magnificPopup.close();
-      foundPaginator.click();
+      if (foundPaginator.hasClass('no-image')) {
+        foundPaginator.siblings('.hidden-trigger').click();
+      } else {
+        foundPaginator.click();
+      }
     } else {
       $.magnificPopup.close();
     }
@@ -254,8 +258,11 @@ finna.imagePaginator = (function imagePaginator() {
       img.css('opacity', '');
       if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
         _.trigger.addClass('no-image');
-        if (!_.isList && _.images.length <= 1) {
+        if (_.isList && _.images.length <= 1) {
           _.trigger.off('click');
+          _.trigger = _.trigger.siblings('.hidden-trigger');
+          _.setTrigger(imagePopup);
+        } else if (!_.isList && _.images.length <= 1) {
           _.root.closest('.media-left').addClass('hidden-xs').find('.organisation-menu').hide();
           _.root.css('display', 'none');
           _.root.siblings('.image-details-container').hide();
@@ -387,6 +394,7 @@ finna.imagePaginator = (function imagePaginator() {
       VuFind.lightbox.bind('.imagepopup-holder');
       finna.videoPopup.initVideoPopup(true, $('.collapse-content-holder'), _);
       finna.videoPopup.initIframeEmbed($('.collapse-content-holder'));
+      $('.previous-record, .next-record').show();
 
       if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
         $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
@@ -395,8 +403,9 @@ finna.imagePaginator = (function imagePaginator() {
       }
       _.setRecordIndex();
     }).fail( function setImageDataFailure() {
-      $('.collapse-content-holder').html('<p>Failed to fetch data</p>');
+      $('.collapse-content-holder').html('<p>500</p>');
       _.setRecordIndex();
+      $('.previous-record, .next-record').show();
     });
   }
 
@@ -630,6 +639,8 @@ finna.imagePaginator = (function imagePaginator() {
           var mfpContainer = $('.mfp-container');
           mfpContainer.find('.mfp-content').addClass('loaded');
           mfpContainer.append(previousRecord, nextRecord);
+          previousRecord.hide();
+          nextRecord.hide();
 
           previousRecord.off('click').click(function loadNextPaginator(e){
             e.preventDefault();
