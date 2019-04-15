@@ -47,6 +47,9 @@
             @media (min-width: @screen-sm-min) {
                 width: 625px;
                 max-height: 900px;
+                .paginator-canvas {
+                    height: initial;
+                }
             }
         }
     }
@@ -159,8 +162,8 @@
             height: 100%;
             flex: 1;
             #leaflet-map-image, .video-popup {
-                height: 100% !important;
-                width: 100% !important;
+                height: 100%;
+                width: 100%;
                 max-width: initial;
                 max-height: initial;
             }

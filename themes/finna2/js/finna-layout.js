@@ -1,4 +1,4 @@
-/*global VuFind, checkSaveStatuses, action, finna, initFacetTree, videojs, priorityNav */
+/*global VuFind, checkSaveStatuses, action, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
   var _fixFooterTimeout = null;
 
