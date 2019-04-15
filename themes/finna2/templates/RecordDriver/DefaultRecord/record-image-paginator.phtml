@@ -61,7 +61,7 @@
         'recordType' =>  $this->driver->tryMethod('getRecordType'),
         'imagesPerPage' => 8,
         'enableImageZoom' => $enableImageZoom,
-        'maxRows' => 5,
+        'maxRows' => 3,
         'noImage' => "format-" . $this->record($this->driver)->getFormatClass(end($formats))
       ]?>
       <?php if ($type === 'list' || $type === 'list grid'): ?>
