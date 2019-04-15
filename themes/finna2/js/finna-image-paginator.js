@@ -116,6 +116,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (!_.isList) {
       _.moreBtn = _.root.find('.show-more-images');
       _.lessBtn = _.root.find('.show-less-images');
+      toggleButtons(_.moreBtn, _.lessBtn);
     }
 
     _.setEvents();
@@ -440,9 +441,11 @@ finna.imagePaginator = (function imagePaginator() {
     var img = new Image();
     holder.append(img, $('<i class="fa fa-spinner fa-spin"/>'));
     img.src = image.small;
+    img.alt = image.description;
 
     img.onload = function onLoad() {
-      $(this).attr('alt', image.description).siblings('i').remove();
+      $(this).attr('alt', image.description);
+      $(this).siblings('i').remove();
     }
     holder.attr({'index': image.index, 'href': image.medium, 'data-largest': image.largest, 'data-description': image.description});
     return holder;
