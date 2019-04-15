@@ -17,11 +17,9 @@ $(document).ready(function() {
    finna.contentFeed.loadFeed($('#modal .feed-content'), true);
 });
 JS;
-    $this->headScript()->appendScript($setupJS);
+    echo $this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $setupJS, 'SET');
   }
 ?>
-
-<?=$this->headScript()?>
 <div>
   <div class="<?= $this->modal ? '' : 'page-content'?> feed-content" data-feed="<?=$this->escapeHtmlAttr($this->feed)?>" data-element="<?=$this->escapeHtmlAttr($this->element)?>" data-feed-url="<?=$this->escapeHtmlAttr($this->feedUrl)?>">
 

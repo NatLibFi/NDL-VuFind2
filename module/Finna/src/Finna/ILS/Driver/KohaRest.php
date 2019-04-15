@@ -309,6 +309,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'zip' => $result['zipcode'],
             'city' => $result['city'],
             'country' => $result['country'],
+            'category' => $result['categorycode'] ?? '',
             'expiration_date' => $expirationDate,
             'hold_identifier' => $result['othernames'],
             'guarantor' => $guarantor,
@@ -918,11 +919,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $itemId = $entry['itemnumber'] ?? null;
             $title = '';
             $volume = '';
-            $publicationYear = '';
             if ($itemId) {
                 $item = $this->getItem($itemId);
-                $bibId = $item['biblionumber'];
-                $volume = $item['enumchron'];
+                $bibId = $item['biblionumber'] ?? null;
+                $volume = $item['enumchron'] ?? '';
             }
             if (!empty($bibId)) {
                 $bib = $this->getBibRecord($bibId);

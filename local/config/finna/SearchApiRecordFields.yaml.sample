@@ -186,9 +186,23 @@ genres:
   type: array
   items:
     type: string
+geoCenter:
+  vufind.method: getGeoCenter
+  description: Geographic center point
+  type: object
+  properties:
+    lon:
+      description: Longitude
+      type: string
+    lat:
+      description: Latitude
+      type: string
+  required:
+    - lon
+    - lat
 geoLocations:
   vufind.method: getGeoLocations
-  description: Geographic locations (e.g. points, bounding boxes)
+  description: Geographic locations (e.g. points, bounding boxes) in WKT format
   type: array
   items:
     type: string
@@ -270,6 +284,12 @@ imagesExtended:
   type: array
   items:
     $ref: '#/definitions/Image'
+inscriptions:
+  vufind.method: getInscriptions
+  description: Inscriptions
+  type: array
+  items:
+    type: string
 institutions:
   vufind.method: "Formatter::getInstitutions"
   description: Institutions the record belongs to (see also **buildings**)
@@ -501,6 +521,27 @@ source:
   type: array
   items:
     $ref: '#/definitions/TranslatedField'
+subjectActors:
+  vufind.method: getSubjectActors
+  description: Subject actors
+  items:
+    type: array
+    items:
+      type: string
+subjectDetails:
+  vufind.method: getSubjectDetails
+  description: Detailed subject descriptions
+  items:
+    type: array
+    items:
+      type: string
+subjectPlaces:
+  vufind.method: getSubjectPlaces
+  description: Subject places
+  items:
+    type: array
+    items:
+      type: string
 subjects:
   vufind.method: getAllSubjectHeadings
   vufind.default: true

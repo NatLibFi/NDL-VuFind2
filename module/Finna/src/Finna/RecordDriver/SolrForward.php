@@ -1016,6 +1016,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             return [];
         }
         $sourceConfigs = [];
+        $sourcePriority = 0;
         foreach ($this->recordConfig->Record->video_sources as $current) {
             $settings = explode('|', $current, 4);
             if (!isset($settings[2]) || $source !== $settings[0]) {
@@ -1024,7 +1025,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $sourceConfigs[] = [
                 'mediaType' => $settings[1],
                 'src' => $settings[2],
-                'sourceTypes' => explode(',', $settings[3] ?? 'mp4')
+                'sourceTypes' => explode(',', $settings[3] ?? 'mp4'),
+                'priority' => $sourcePriority++
             ];
         }
         if (empty($sourceConfigs)) {
@@ -1052,12 +1054,20 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     );
                     $videoSources[] = [
                         'src' => $src,
-                        'type' => $config['mediaType']
+                        'type' => $config['mediaType'],
+                        'priority' => $config['priority']
                     ];
                 }
                 if (empty($videoSources)) {
                     continue;
                 }
+
+                usort(
+                    $videoSources,
+                    function ($a, $b) {
+                        return $a['priority'] - $b['priority'];
+                    }
+                );
 
                 $poster = '';
                 $videoType = 'elokuva';
@@ -1415,5 +1425,26 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
         }
         return $agerestriction ?? null;
+    }
+
+    /**
+     * Return an XML representation of the record using the specified format.
+     * Return false if the format is unsupported.
+     *
+     * @param string     $format     Name of format to use (corresponds with OAI-PMH
+     * metadataPrefix parameter).
+     * @param string     $baseUrl    Base URL of host containing VuFind (optional;
+     * may be used to inject record URLs into XML when appropriate).
+     * @param RecordLink $recordLink Record link helper (optional; may be used to
+     * inject record URLs into XML when appropriate).
+     *
+     * @return mixed         XML, or false if format unsupported.
+     */
+    public function getXML($format, $baseUrl = null, $recordLink = null)
+    {
+        if ('oai_forward' === $format) {
+            return $this->fields['fullrecord'];
+        }
+        return parent::getXML($format, $baseUrl, $recordLink);
     }
 }
