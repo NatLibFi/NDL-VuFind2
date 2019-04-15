@@ -253,6 +253,7 @@ finna.imagePaginator = (function imagePaginator() {
     var _ = this;
     var img = _.trigger.find('img');
     img.attr('data-src', imagePopup.attr('href')).css('opacity', 0.5);
+    img.attr('alt', imagePopup.description);
 
     img.one('load', function onLoadImage() {
       img.css('opacity', '');
@@ -262,6 +263,7 @@ finna.imagePaginator = (function imagePaginator() {
           _.trigger.off('click');
           _.trigger = _.trigger.siblings('.hidden-trigger');
           _.setTrigger(imagePopup);
+          $(this).parents('.grid').addClass('no-image');
         } else if (!_.isList && _.images.length <= 1) {
           _.root.closest('.media-left').addClass('hidden-xs').find('.organisation-menu').hide();
           _.root.css('display', 'none');
@@ -394,7 +396,6 @@ finna.imagePaginator = (function imagePaginator() {
       VuFind.lightbox.bind('.imagepopup-holder');
       finna.videoPopup.initVideoPopup(true, $('.collapse-content-holder'), _);
       finna.videoPopup.initIframeEmbed($('.collapse-content-holder'));
-      $('.previous-record, .next-record').show();
 
       if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
         $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
@@ -403,9 +404,8 @@ finna.imagePaginator = (function imagePaginator() {
       }
       _.setRecordIndex();
     }).fail( function setImageDataFailure() {
-      $('.collapse-content-holder').html('<p>500</p>');
+      $('.collapse-content-holder').html('');
       _.setRecordIndex();
-      $('.previous-record, .next-record').show();
     });
   }
 
@@ -639,8 +639,6 @@ finna.imagePaginator = (function imagePaginator() {
           var mfpContainer = $('.mfp-container');
           mfpContainer.find('.mfp-content').addClass('loaded');
           mfpContainer.append(previousRecord, nextRecord);
-          previousRecord.hide();
-          nextRecord.hide();
 
           previousRecord.off('click').click(function loadNextPaginator(e){
             e.preventDefault();
