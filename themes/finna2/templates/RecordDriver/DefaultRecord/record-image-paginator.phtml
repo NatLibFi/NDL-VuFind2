@@ -59,9 +59,11 @@
         'source' => $this->driver->getSourceIdentifier(),
         'recordType' => $this->driver->tryMethod('getRecordType'),
         'imagesPerPage' => 8,
+        'imagesOnMobile' => 6,
+        'popupImageAmount' => 12,
         'enableImageZoom' => $enableImageZoom,
         'maxRows' => 3,
-        'noImage' => "format-" . $this->record($this->driver)->getFormatClass(end($formats))
+        'iconlabelClass' => "format-" . $this->record($this->driver)->getFormatClass(end($formats))
       ]?>
       <?php if ($type === 'list' || $type === 'list grid'): ?>
         finna.imagePaginator.initMiniPaginator(

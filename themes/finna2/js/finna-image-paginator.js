@@ -39,7 +39,6 @@ finna.imagePaginator = (function imagePaginator() {
   
   var masonryInitialized = false;
   var paginatorIndex = 0;
-  var normalAmountImages = 0;
 
   FinnaPaginator.prototype.getNextPaginator = function getNextPaginator(direction) {
     var searchIndex = this.paginatorIndex + direction;
@@ -76,12 +75,13 @@ finna.imagePaginator = (function imagePaginator() {
     // Lets get all the data from the settings
     _.recordId = settings.recordId;
     _.source = settings.source;
-    _.noImage = settings.noImage;
-    _.imagesPerPage = typeof settings.imagesPerPage !== 'undefined' ? settings.imagesPerPage : 8;
+    _.iconlabelClass = settings.iconlabelClass;
     _.maxRows = typeof settings.maxRows !== 'undefined' ? settings.maxRows : 0;
-    normalAmountImages = _.imagesPerPage;
+    _.imagesPerPage = typeof settings.imagesPerPage !== 'undefined' ? settings.imagesPerPage : 8;
+    _.imagesOnMobile = typeof settings.imagesOnMobile !== 'undefined' ? settings.imagesOnMobile : 6;
     _.popupImageAmount = typeof settings.popupImageAmount !== 'undefined' ? settings.popupImageAmount : 8;
-    _.setMaxImages(normalAmountImages);
+    _.normalAmountImages = _.imagesPerPage;
+    _.setMaxImages(_.normalAmountImages);
     _.enableImageZoom = settings.enableImageZoom;
     _.recordType = settings.recordType;
 
@@ -260,35 +260,38 @@ finna.imagePaginator = (function imagePaginator() {
       img.css('opacity', '');
       if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
         _.trigger.addClass('no-image');
-        if (_.isList && _.images.length <= 1) {
+        if (_.isList) {
+          if (_.images.length < 2) {
+            _.enableImageZoom = false;
+          }
           _.trigger.off('click');
-          _.enableImageZoom = false;
+          var oldTrigger = _.trigger;
           _.trigger = _.trigger.siblings('.hidden-trigger');
           _.setTrigger(imagePopup);
+          _.trigger = oldTrigger;
           $(this).parents('.grid').addClass('no-image');
-        } else if (!_.isList && _.images.length <= 1) {
+        }
+        if (!_.isList && _.images.length <= 1) {
           _.root.closest('.media-left').addClass('hidden-xs').find('.organisation-menu').hide();
           _.root.css('display', 'none');
           _.root.siblings('.image-details-container').hide();
           $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
           $('.large-image-sidebar').addClass('visible-xs visible-sm');
           $('.record-main').addClass('mainbody left');
-        } else {
-          $(this).parents('.grid').addClass('no-image');
         }
       } else if (_.trigger.hasClass('no-image')) {
         _.trigger.removeClass('no-image');
       }
     });
     if (!_.isList) {
-      $('.image-details-container').hide();
-      $('.image-details-container[data-img-index="' + imagePopup.attr('index') + '"]').show();
+      $('.image-details-container').addClass('hidden');
+      $('.image-details-container[data-img-index="' + imagePopup.attr('index') + '"]').removeClass('hidden');
     }
 
     _.imageDetail.html(imagePopup.data('description'));
 
     if (_.isList) {
-      img.unveil(0, function tryMasonry(){
+      img.unveil(100, function tryMasonry(){
         $(this).load(function rearrange(){
           if (masonryInitialized) {
             $('.result-view-grid .masonry-wrapper').masonry('layout');
@@ -386,14 +389,12 @@ finna.imagePaginator = (function imagePaginator() {
       url: src,
       dataType: 'html'
     }).done( function setImageData(response) {
-      var object = JSON.parse(response);
-      $('.collapse-content-holder').html(object.data.html);
-      var summaryHolder = $('.imagepopup-holder .summary');
+      $('.collapse-content-holder').html(JSON.parse(response).data.html);
       if (_.recordType === 'marc') {
         _.loadBookDescription();
       } else {
         finna.layout.initTruncate($('.mfp-content'));
-        summaryHolder.removeClass('loading');
+        $('.imagepopup-holder .summary').removeClass('loading');
       }
       VuFind.lightbox.bind('.imagepopup-holder');
       finna.videoPopup.initVideoPopup(true, $('.collapse-content-holder'), _);
@@ -466,7 +467,7 @@ finna.imagePaginator = (function imagePaginator() {
       }
       _.nonZoomableHolder.find('img').replaceWith($(this));
     }
-    _.nonZoomableHolder.find('div').addClass(_.noImage);
+    _.nonZoomableHolder.find('.iconlabel').addClass(_.iconlabelClass);
     _.openImageIndex = image.attr('index');
   
     setCanvasContent('nonZoomable');
@@ -503,11 +504,11 @@ finna.imagePaginator = (function imagePaginator() {
     var _ = this;
     var width = $(window).width();
     if (width < 500) {
-      _.imagesPerRow = amount - 2;
+      _.imagesPerRow = _.imagesOnMobile;
     } else if (width < 768) {
       _.imagesPerRow = amount;
     } else if (width < 991) {
-      _.imagesPerRow = amount - 2;
+      _.imagesPerRow = _.imagesOnMobile;
     } else {
       _.imagesPerRow = amount;
     }
@@ -610,10 +611,6 @@ finna.imagePaginator = (function imagePaginator() {
     setCanvasContent('leaflet');
   }
 
-  FinnaPaginator.prototype.onNoImageClick = function onNoImageClick() {
-    this.setTrigger();
-  }
-
   /**
    * Function to set image popup trigger click event and logic when popup is being opened
    */
@@ -632,12 +629,12 @@ finna.imagePaginator = (function imagePaginator() {
       tClose: VuFind.translate('close'),
       callbacks: {
         open: function onPopupOpen() {
-          if (_.isList) {
-            _.setMaxImages(_.popupImageAmount);
-          } else {
-            _.setMaxImages(normalAmountImages);
+          _.setMaxImages(_.popupImageAmount);
+          
+          if (!_.isList) {
             toggleButtons(_.moreBtn, _.lessBtn);
           }
+          
           var previousRecord = $(previousRecordButton).clone();
           var nextRecord = $(nextRecordButton).clone();
 
@@ -674,9 +671,9 @@ finna.imagePaginator = (function imagePaginator() {
             _.setTrigger($(this));
           });
           _.leafletHolder = '';
+          _.setMaxImages(_.normalAmountImages);
           if (_.isList) {
-            _.setMaxImages(normalAmountImages);
-            _.offSet = +_.openImageIndex;
+            _.offSet = _.openImageIndex;
             _.onListButton(0);
           } else {
             _.loadPage(0, _.openImageIndex);
