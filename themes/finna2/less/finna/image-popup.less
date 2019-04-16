@@ -46,7 +46,7 @@
             height: initial;
             @media (min-width: @screen-sm-min) {
                 width: 625px;
-                max-height: 900px;
+                height: 900px;
                 .paginator-canvas {
                     height: initial;
                 }
@@ -189,6 +189,17 @@
                     @media (min-width: @screen-sm) {
                         height: initial;
                     }
+                    .iconlabel::before {
+                        display: block;
+                        position: absolute;
+                        top: 50%;
+                        left: 40%;
+                        @media(max-width: @screen-sm) {
+                            left: 45%;
+                        }
+                        color: #d1d1d1;
+                        font-size: 3.5em;
+                    }
                     position: relative;
                     img {
                         background-color: white;
@@ -256,7 +267,6 @@
         }
     }
 
-    
     .image-information-holder {
         max-width: 320px;
         flex: 1;
