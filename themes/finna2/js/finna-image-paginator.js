@@ -40,6 +40,19 @@ finna.imagePaginator = (function imagePaginator() {
   var masonryInitialized = false;
   var paginatorIndex = 0;
 
+  var defaults = {
+    recordId: 0,
+    iconlabelClass: 'default-icon',
+    maxRows: 3,
+    imagesPerPage: 8,
+    imagesOnMobile: 6,
+    imagesOnPopup: 10,
+    imagesOnNormal: 8,
+    imagesPerRow: 8,
+    enableImageZoom: false,
+    recordType: 'default-type'
+  };
+
   FinnaPaginator.prototype.getNextPaginator = function getNextPaginator(direction) {
     var searchIndex = this.paginatorIndex + direction;
 
@@ -69,37 +82,27 @@ finna.imagePaginator = (function imagePaginator() {
     _.images = images;
     _.root = $(paginatedArea);
     _.root.removeClass('paginate');
-    
+
     _.trigger = _.root.find('.image-popup-trigger');
     _.trigger.attr('paginator-index', paginatorIndex++);
-    // Lets get all the data from the settings
-    _.recordId = settings.recordId;
-    _.source = settings.source;
-    _.iconlabelClass = settings.iconlabelClass;
-    _.maxRows = typeof settings.maxRows !== 'undefined' ? settings.maxRows : 0;
-    _.imagesPerPage = typeof settings.imagesPerPage !== 'undefined' ? settings.imagesPerPage : 8;
-    _.imagesOnMobile = typeof settings.imagesOnMobile !== 'undefined' ? settings.imagesOnMobile : 6;
-    _.popupImageAmount = typeof settings.popupImageAmount !== 'undefined' ? settings.popupImageAmount : 8;
-    _.normalAmountImages = _.imagesPerPage;
-    _.setMaxImages(_.normalAmountImages);
-    _.enableImageZoom = settings.enableImageZoom;
-    _.recordType = settings.recordType;
 
-    // Indexes for loading correct images
+    _.settings = $.extend({}, defaults, settings);
+    _.setMaxImages(_.settings.imagesOnNormal);
+    // Index for loading correct images
     _.offSet = 0;
 
-    // References initialized later
-    _.imageHolder = '';
-    _.nonZoomableHolder = '';
+    // Needed references
+    _.imageHolder = null;
+    _.nonZoomableHolder = null;
     _.imageDetail = _.root.find('.recordcover-image-detail .image-description');
-    _.moreBtn = '';
-    _.lessBtn = '';
-    _.pagerInfo = '';
-    _.leftBtn = '';
-    _.rightBtn = '';
-    _.imagePopup = '';
-    _.leafletHolder = '';
-    _.leafletLoader = '';
+    _.moreBtn = null;
+    _.lessBtn = null;
+    _.pagerInfo = null;
+    _.leftBtn = null;
+    _.rightBtn = null;
+    _.imagePopup = null;
+    _.leafletHolder = null;
+    _.leafletLoader = null;
 
     _.openImageIndex = 0;
   }
@@ -141,7 +144,7 @@ finna.imagePaginator = (function imagePaginator() {
       _.pagerInfo.hide();
     }
 
-    if (_.images.length < _.imagesPerRow) {
+    if (_.images.length < _.settings.imagesPerRow) {
       _.pagerInfo.find('.pager-current').hide();
       $('.recordcovers-more').hide();
     }
@@ -159,11 +162,11 @@ finna.imagePaginator = (function imagePaginator() {
       });
       _.moreBtn.click(function setImages(){
         toggleButtons(_.lessBtn, _.moreBtn);
-        _.loadPage(0, null, _.imagesPerRow * _.maxRows);
+        _.loadPage(0, null, _.settings.imagesPerRow * _.settings.maxRows);
       });
       _.lessBtn.click(function setImages(){
         toggleButtons(_.moreBtn, _.lessBtn);
-        _.loadPage(0, null, _.imagesPerRow);
+        _.loadPage(0, null, _.settings.imagesPerRow);
       });
     }
     _.imagePopup.on('click', function setTriggerEvents(e){
@@ -182,13 +185,13 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setButtons = function setButtons() {
     var _ = this;
-    if (_.images.length <= _.imagesPerPage || _.offSet === _.images.length - 1) {
+    if (_.images.length <= _.settings.imagesPerPage || _.offSet === _.images.length - 1) {
       _.rightBtn.attr('disabled', true);
     } else {
       _.rightBtn.removeAttr('disabled');
     }
 
-    if (_.images.length <= _.imagesPerPage || _.offSet < 1) {
+    if (_.images.length <= _.settings.imagesPerPage || _.offSet < 1) {
       _.leftBtn.attr('disabled', true);
     } else {
       _.leftBtn.removeAttr('disabled');
@@ -205,7 +208,7 @@ finna.imagePaginator = (function imagePaginator() {
 
   FinnaPaginator.prototype.setFirstLast = function setFirstLast(first, last) {
     var _ = this;
-    if (_.images.length < _.imagesPerRow) {
+    if (_.images.length < _.settings.imagesPerRow) {
       _.pagerInfo.find('.pager-current').hide();
     } else {
       _.pagerInfo.find('.pager-current').html('(' + first + '/' + last + ')');
@@ -262,7 +265,7 @@ finna.imagePaginator = (function imagePaginator() {
         _.trigger.addClass('no-image');
         if (_.isList) {
           if (_.images.length < 2) {
-            _.enableImageZoom = false;
+            _.settings.enableImageZoom = false;
           }
           _.trigger.off('click');
           var oldTrigger = _.trigger;
@@ -311,19 +314,19 @@ finna.imagePaginator = (function imagePaginator() {
     _.imageHolder.empty();
 
     if (typeof imagesPerPage !== 'undefined') {
-      _.imagesPerPage = imagesPerPage
+      _.settings.imagesPerPage = imagesPerPage
     }
 
     if (typeof openImageIndex !== 'undefined' && openImageIndex !== null) {
       _.offSet = +openImageIndex;
     }
 
-    _.offSet += _.imagesPerPage * direction;
+    _.offSet += _.settings.imagesPerPage * direction;
     if (_.offSet < 0) {
       _.offSet = 0;
     }
 
-    var max = _.imagesPerPage - 1;
+    var max = _.settings.imagesPerPage - 1;
     var lastImage = max + _.offSet;
 
     if (lastImage > _.images.length - 1) {
@@ -338,15 +341,15 @@ finna.imagePaginator = (function imagePaginator() {
       firstImage = 0;
     }
     _.setFirstLast(+firstImage + 1, +lastImage + 1);
-    var j = 0;
+    var column = 1;
     var cur = '';
-    for (;firstImage <= lastImage; firstImage++) {
-      if (j === 0) {
+    for (var currentImage = firstImage; currentImage <= lastImage; currentImage++) {
+      if (column === 1) {
         cur = $('<div/>');
         _.imageHolder.append(cur);
       }
-      cur.append(_.createImagePopup(_.images[firstImage]));
-      j = (j === _.imagesPerRow - 1) ? 0 : j + 1;
+      cur.append(_.createImagePopup(_.images[currentImage]));
+      column = (column === _.settings.imagesPerRow) ? 1 : column + 1;
     }
     _.setCurrentVisuals();
     _.setButtons();
@@ -374,7 +377,7 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() {
     var _ = this;
-    var src = VuFind.path + '/AJAX/JSON?method=getImageInformation&id=' + encodeURIComponent(_.recordId) + '&index=' + _.openImageIndex;
+    var src = VuFind.path + '/AJAX/JSON?method=getImageInformation&id=' + encodeURIComponent(_.settings.recordId) + '&index=' + _.openImageIndex;
 
     if (typeof publicList !== 'undefined') {
       src += '&publicList=1';
@@ -390,7 +393,7 @@ finna.imagePaginator = (function imagePaginator() {
       dataType: 'html'
     }).done( function setImageData(response) {
       $('.collapse-content-holder').html(JSON.parse(response).data.html);
-      if (_.recordType === 'marc') {
+      if (_.settings.recordType === 'marc') {
         _.loadBookDescription();
       } else {
         finna.layout.initTruncate($('.mfp-content'));
@@ -414,7 +417,7 @@ finna.imagePaginator = (function imagePaginator() {
 
   FinnaPaginator.prototype.loadBookDescription = function loadBookDescription() {
     var _ = this;
-    var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + _.recordId;
+    var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + _.settings.recordId;
     var summaryHolder = $('.imagepopup-holder .summary');
     $.getJSON(url)
       .done(function onGetDescriptionDone(response) {
@@ -504,18 +507,15 @@ finna.imagePaginator = (function imagePaginator() {
     var _ = this;
     var width = $(window).width();
     if (width < 500) {
-      _.imagesPerRow = _.imagesOnMobile;
+      _.settings.imagesPerRow = _.settings.imagesOnMobile;
     } else if (width < 768) {
-      _.imagesPerRow = amount;
+      _.settings.imagesPerRow = amount;
     } else if (width < 991) {
-      _.imagesPerRow = _.imagesOnMobile;
+      _.settings.imagesPerRow = _.settings.imagesOnMobile;
     } else {
-      _.imagesPerRow = amount;
+      _.settings.imagesPerRow = amount;
     }
-    if (_.imagesPerRow < 0) {
-      _.imagesPerRow = 0;
-    }
-    _.imagesPerPage = _.imagesPerRow;
+    _.settings.imagesPerPage = _.settings.imagesPerRow;
   }
 
   /**
@@ -629,8 +629,8 @@ finna.imagePaginator = (function imagePaginator() {
       tClose: VuFind.translate('close'),
       callbacks: {
         open: function onPopupOpen() {
-          _.setMaxImages(_.popupImageAmount);
-          
+          _.setMaxImages(_.settings.imagesOnPopup);
+
           if (!_.isList) {
             toggleButtons(_.moreBtn, _.lessBtn);
           }
@@ -653,10 +653,9 @@ finna.imagePaginator = (function imagePaginator() {
           
           _.leafletHolder = $('#leaflet-map-image');
           _.nonZoomableHolder = $('#popup-nonzoom');
-
           _.videoHolder = $('#popup-video');
 
-          if (_.enableImageZoom) {
+          if (_.settings.enableImageZoom) {
             _.onZoomableOpen();
           } else {
             mfpContainer.find('.mfp-content').addClass('nonzoomable');
@@ -671,9 +670,9 @@ finna.imagePaginator = (function imagePaginator() {
             _.setTrigger($(this));
           });
           _.leafletHolder = '';
-          _.setMaxImages(_.normalAmountImages);
+          _.setMaxImages(_.settings.imagesOnNormal);
           if (_.isList) {
-            _.offSet = _.openImageIndex;
+            _.offSet = +_.openImageIndex;
             _.onListButton(0);
           } else {
             _.loadPage(0, _.openImageIndex);
@@ -747,7 +746,7 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   function initMiniPaginator(images, settings) {
-    settings.imagesPerPage = 0;
+    settings.imagesOnNormal = 0;
     var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings, true);
     paginator.init();
     paginator.setMiniPaginator();

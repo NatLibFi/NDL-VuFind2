@@ -56,13 +56,13 @@
     <script>
       <?php $settings = [
         'recordId' => $this->driver->getUniqueId(),
-        'source' => $this->driver->getSourceIdentifier(),
         'recordType' => $this->driver->tryMethod('getRecordType'),
         'imagesPerPage' => 8,
         'imagesOnMobile' => 6,
-        'popupImageAmount' => 12,
+        'imagesOnNormal' => 8,
+        'imagesOnPopup' => 10,
         'enableImageZoom' => $enableImageZoom,
-        'maxRows' => 3,
+        'maxRows' => 6,
         'iconlabelClass' => "format-" . $this->record($this->driver)->getFormatClass(end($formats))
       ]?>
       <?php if ($type === 'list' || $type === 'list grid'): ?>
