@@ -105,6 +105,7 @@ finna.imagePaginator = (function imagePaginator() {
     _.leafletLoader = null;
 
     _.openImageIndex = 0;
+    console.log(_.settings.imagesOnNormal);
   }
 
   /**
@@ -137,15 +138,13 @@ finna.imagePaginator = (function imagePaginator() {
     _.imageHolder = covers.find('.finna-element-track');
     _.leftBtn = covers.find('.left-button');
     _.rightBtn = covers.find('.right-button');
-    _.pagerInfo = covers.find('.paginator-info');
+    _.pagerInfo = _.root.find('.paginator-info');
 
     if (_.images.length < 2) {
       covers.hide();
-      _.pagerInfo.hide();
     }
 
     if (_.images.length < _.settings.imagesPerRow) {
-      _.pagerInfo.find('.pager-current').hide();
       $('.recordcovers-more').hide();
     }
   }
@@ -185,6 +184,7 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setButtons = function setButtons() {
     var _ = this;
+
     if (_.images.length <= _.settings.imagesPerPage || _.offSet === _.images.length - 1) {
       _.rightBtn.attr('disabled', true);
     } else {
@@ -203,16 +203,7 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setPagerInfo = function setPagerInfo() {
     var _ = this;
-    _.pagerInfo.find('.paginator-pager').html(+_.openImageIndex + 1 + "/" + _.images.length);
-  }
-
-  FinnaPaginator.prototype.setFirstLast = function setFirstLast(first, last) {
-    var _ = this;
-    if (_.images.length < _.settings.imagesPerRow) {
-      _.pagerInfo.find('.pager-current').hide();
-    } else {
-      _.pagerInfo.find('.pager-current').html('(' + first + '/' + last + ')');
-    }
+    _.pagerInfo.find('.image-index').html(+_.openImageIndex + 1 + " / " + _.images.length);
   }
 
   /**
@@ -240,6 +231,9 @@ finna.imagePaginator = (function imagePaginator() {
     _.loadPage(0, _.openImageIndex);
   }
 
+  /**
+   * Sets the current record index inside list view to the modal
+   */
   FinnaPaginator.prototype.setRecordIndex = function setRecordIndex() {
     var _ = this;
     if ($('.paginationSimple .index').length) {
@@ -340,7 +334,6 @@ finna.imagePaginator = (function imagePaginator() {
       _.offSet = 0;
       firstImage = 0;
     }
-    _.setFirstLast(+firstImage + 1, +lastImage + 1);
     var column = 1;
     var cur = '';
     for (var currentImage = firstImage; currentImage <= lastImage; currentImage++) {
@@ -470,7 +463,7 @@ finna.imagePaginator = (function imagePaginator() {
       }
       _.nonZoomableHolder.find('img').replaceWith($(this));
     }
-    _.nonZoomableHolder.find('.iconlabel').addClass(_.iconlabelClass);
+    _.nonZoomableHolder.find('.iconlabel').addClass(_.settings.iconlabelClass);
     _.openImageIndex = image.attr('index');
   
     setCanvasContent('nonZoomable');
@@ -506,14 +499,21 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.setMaxImages = function setMaxImages(amount) {
     var _ = this;
     var width = $(window).width();
-    if (width < 500) {
-      _.settings.imagesPerRow = _.settings.imagesOnMobile;
+
+    if (_.settings.enableImageZoom) {
+      if (width < 500) {
+        _.settings.imagesPerRow = _.settings.imagesOnMobile;
+      } else if (width < 768) {
+        _.settings.imagesPerRow = amount;
+      } else if (width < 991) {
+        _.settings.imagesPerRow = _.settings.imagesOnMobile;
+      } else {
+        _.settings.imagesPerRow = amount;
+      }
     } else if (width < 768) {
       _.settings.imagesPerRow = amount;
-    } else if (width < 991) {
-      _.settings.imagesPerRow = _.settings.imagesOnMobile;
     } else {
-      _.settings.imagesPerRow = amount;
+      _.settings.imagesPerRow = _.settings.imagesOnMobile;
     }
     _.settings.imagesPerPage = _.settings.imagesPerRow;
   }
@@ -566,9 +566,11 @@ finna.imagePaginator = (function imagePaginator() {
       var sw = _.leafletHolder.unproject([0, h], zoomLevel);
       var ne = _.leafletHolder.unproject([w, 0], zoomLevel);
       var bounds = new L.LatLngBounds(sw, ne);
-      _.leafletHolder.setMaxBounds(bounds).invalidateSize(bounds);
+      _.leafletHolder.flyToBounds(bounds, {animate: false});
+      _.leafletHolder.setMaxBounds(bounds, {animate: false}).invalidateSize(bounds, {animate: false});
       _.leafletLoader.removeClass('loading');
       L.imageOverlay(img.src, bounds).addTo(_.leafletHolder);
+      
     }
   }
 

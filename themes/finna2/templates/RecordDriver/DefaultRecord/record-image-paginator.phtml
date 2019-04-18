@@ -44,13 +44,11 @@
       <div class="finna-element-track"></div>
     </div>
     <button class="right-button" type="button"><i class="fa fa-handle-right"></i></button>
-    <div class="paginator-info"></span> <span class="paginator-pager"></span> <small><span class="pager-current"></small></div>
   </div>
   <div class="recordcovers-more more-area">
-    <span class="line"></span>
     <button type="button" class="show-more-images"><?= $this->translate('more') ?> <i class="fa fa-arrow-down"></i></button>
     <button type="button" class="show-less-images"><?= $this->translate('less') ?> <i class="fa fa-arrow-up"></i></button>
-    <span class="line"></span>
+    <div class="paginator-info"></span> <span class="image-index"></span></div>
   </div>
   <?php if (count($paginatedLinks) > 0): ?>
     <script>
@@ -60,9 +58,9 @@
         'imagesPerPage' => 8,
         'imagesOnMobile' => 6,
         'imagesOnNormal' => 8,
-        'imagesOnPopup' => 10,
+        'imagesOnPopup' => 8,
         'enableImageZoom' => $enableImageZoom,
-        'maxRows' => 6,
+        'maxRows' => 3,
         'iconlabelClass' => "format-" . $this->record($this->driver)->getFormatClass(end($formats))
       ]?>
       <?php if ($type === 'list' || $type === 'list grid'): ?>
