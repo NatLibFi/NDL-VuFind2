@@ -498,25 +498,22 @@ finna.imagePaginator = (function imagePaginator() {
     $('a[index="' + _.openImageIndex + '"]').addClass('current');
   }
 
-  FinnaPaginator.prototype.setMaxImages = function setMaxImages(amount) {
+  FinnaPaginator.prototype.setMaxImages = function setMaxImages(amount, isPopup) {
     var _ = this;
     var width = $(window).width();
-
-    if (_.settings.enableImageZoom) {
-      if (width < 500) {
-        _.settings.imagesPerRow = _.settings.imagesOnMobile;
-      } else if (width < 768) {
-        _.settings.imagesPerRow = amount;
-      } else if (width < 991) {
-        _.settings.imagesPerRow = _.settings.imagesOnMobile;
-      } else {
-        _.settings.imagesPerRow = amount;
-      }
+    var images = amount;
+    if ((typeof isPopup === 'undefined' || isPopup === false) && _.isList) {
+      images = 0;
+    } else if (width < 500) {
+      images = _.settings.imagesOnMobile;
     } else if (width < 768) {
-      _.settings.imagesPerRow = amount;
+      images = _.settings.imagesPerRow = amount;
+    } else if (width < 991) {
+      images = _.settings.imagesPerRow = _.settings.imagesOnMobile;
     } else {
-      _.settings.imagesPerRow = _.settings.imagesOnMobile;
+      images = _.settings.imagesPerRow = amount;
     }
+    _.settings.imagesPerRow = images;
     _.settings.imagesPerPage = _.settings.imagesPerRow;
   }
 
@@ -554,21 +551,26 @@ finna.imagePaginator = (function imagePaginator() {
       var width = $('#leaflet-map-image').width();
       var height = $('#leaflet-map-image').height();
 
-      if (w > h) {
+      if (w > width) {
         zoomLevel = +w / +width;
       } else {
         zoomLevel = +h / +height;
       }
+      var maxZoom = _.leafletHolder.getMaxZoom();
+      var minZoom = _.leafletHolder.getMinZoom();
 
-      if (zoomLevel > 5) {
-        zoomLevel = zoomLevel / 2;
+      if (zoomLevel > maxZoom) {
+        zoomLevel = maxZoom;
+      } else if (zoomLevel < minZoom) {
+        zoomLevel = minZoom * 2;
       }
 
       var sw = _.leafletHolder.unproject([0, h], zoomLevel);
       var ne = _.leafletHolder.unproject([w, 0], zoomLevel);
       var bounds = new L.LatLngBounds(sw, ne);
+      _.leafletHolder.invalidateSize(bounds);
       _.leafletHolder.flyToBounds(bounds, {animate: false});
-      _.leafletHolder.setMaxBounds(bounds).invalidateSize(bounds);
+      _.leafletHolder.setMaxBounds(bounds);
       _.leafletLoader.removeClass('loading');
       L.imageOverlay(img.src, bounds).addTo(_.leafletHolder);
     }
@@ -631,7 +633,7 @@ finna.imagePaginator = (function imagePaginator() {
       tClose: VuFind.translate('close'),
       callbacks: {
         open: function onPopupOpen() {
-          _.setMaxImages(_.settings.imagesOnPopup);
+          _.setMaxImages(_.settings.imagesOnPopup, true);
 
           if (!_.isList) {
             toggleButtons(_.moreBtn, _.lessBtn);
