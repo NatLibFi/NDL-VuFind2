@@ -345,10 +345,6 @@ a.authority {
     background-color: transparent;
     padding: 0;
   }
-  .line {
-    flex: 1;
-    border-bottom: 1px solid black;
-  }
   button {
     flex: 1;
     appearance: none;
@@ -357,6 +353,9 @@ a.authority {
     i {
       cursor: pointer;
     }
+  }
+  button:disabled i {
+    cursor: initial;
   }
 }
 

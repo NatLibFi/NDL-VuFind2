@@ -447,7 +447,12 @@ finna.imagePaginator = (function imagePaginator() {
       $(this).attr('alt', image.description);
       $(this).siblings('i').remove();
     }
-    holder.attr({'index': image.index, 'href': image.medium, 'data-largest': image.largest, 'data-description': image.description});
+    holder.attr({'index': image.index, 'data-largest': image.largest, 'data-description': image.description});
+    if (!_.isList && _.settings.enableImageZoom) {
+      holder.attr('href', image.largest);
+    } else {
+      holder.attr('href', image.medium);
+    }
     return holder;
   }
 
@@ -562,7 +567,7 @@ finna.imagePaginator = (function imagePaginator() {
       if (zoomLevel > maxZoom) {
         zoomLevel = maxZoom;
       } else if (zoomLevel < minZoom) {
-        zoomLevel = minZoom * 2;
+        zoomLevel = 2;
       }
 
       var sw = _.leafletHolder.unproject([0, h], zoomLevel);
