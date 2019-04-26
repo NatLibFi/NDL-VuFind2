@@ -12,7 +12,7 @@
 }
  .mfp-wrap {  
     &.mfp-removing {
-        & .mfp-content {
+        .mfp-content {
             margin-top: -150px;
             .opacity(0);
             transition: all .1s linear;
@@ -34,7 +34,7 @@
         .fa-spin();
     }
 }
-& .mfp-content {
+.mfp-content {
     &.loaded {
         height: 100%;
 
@@ -75,15 +75,15 @@
 }
 
 .mfp-close-btn-in {
-    & .mfp-ajax-holder {
-        & .mfp-close {
+    .mfp-ajax-holder {
+        .mfp-close {
             background: @body-bg;
         }
     }
 }
     
 .mfp-container {
-    padding: 32px;
+    padding: 72px;
     @media (max-width: @screen-sm) {
         height: initial;
         padding: 16px;
@@ -91,19 +91,19 @@
             top: 250px;
         }
     }
-    & .mfp-arrow-right.touch-device {
+    .mfp-arrow-right.touch-device {
         right:0px;
         transform: translate(0,0);
         .opacity(0.8);
         transition-delay: 0;
     }
-    & .mfp-arrow-left.touch-device {
+    .mfp-arrow-left.touch-device {
         left:0px;
         transform: translate(0,0);
         .opacity(0.8);
         transition-delay: 0;
     }
-     & .mfp-close.touch-device {
+     .mfp-close.touch-device {
           .opacity(0.8);
      }
 }
@@ -190,6 +190,7 @@
                 width: 100%;
                 height: 100%;
                 padding: 6px;
+                text-align: center;
                 img {
                     max-height: 100%;
                     height: initial;
@@ -279,7 +280,7 @@
             max-width: 100%;
             flex: 1;
         }
-        & .record-online-link {
+        .record-online-link {
             margin: 2px 0px;   
         }
         .collapse-content-holder {
@@ -311,33 +312,37 @@
             }
         }
 
-        & .author-and-dates, .building {
+        .author-and-dates, .building {
             font-size: 12px;
             letter-spacing: 0.5px;
             font-weight: 500;
             margin-top: -10px;
         }
         
-        & .author-and-dates p {
+        .author-and-dates p {
             margin: 0;
         }
     
         &.marc .building {
             display:none;
         }
-    
-        & h3.title {
+        
+        .record-organisation-header {
+            font-size: 24px;
+        }
+
+        h3.title {
             padding: 0px 0px 0px;
             letter-spacing: 0.2px;
             margin-top: 0px;
             margin-bottom: 10px;
         }
     
-        & .building {
+        .building {
             margin-top: 0;
         }
     
-        & .summary {
+        .summary {
             margin: 10px 0px;
             color: rgb(90, 90, 90);
             min-width: 200px;
@@ -347,7 +352,7 @@
                 overflow: hidden;
             }
         }
-        & .popup-link-buttons {
+        .popup-link-buttons {
             margin-bottom: 20px;
             i {
                 margin-right: 2px;
@@ -356,16 +361,16 @@
         .record-link {
             margin-top: 20px;
         }
-        & .image-dimensions {
+        .image-dimensions {
             color: @gray-light;
             font-size: .8em;
         }
     
-        & .image-info .record-index {
+        .image-info .record-index {
             display: none;
         }
     
-        & .image-rights {
+        .image-rights {
             text-align: left;
             padding: 10px 0px 50px;
             margin-top: 10px;
@@ -373,23 +378,23 @@
             color: @text-color;
             margin-right: 10px;
     
-            & .rights span {
+            .rights span {
                 font-weight: bold;
             }
-            & > div {
+            > div {
                 text-align: left;
             }
-            & .copyright {
+            .copyright {
                 clear: both;
                 display: none;
             }
-                & i {
+                i {
                     padding-right: 2px;
                 }
-            & .copyright-link {
+            .copyright-link {
                 margin-top: -1px;
                 position: inherit;
-                & a:after {
+                a:after {
                     background-position: 2px -2318px;
                     background-repeat: no-repeat;
                     display: inline-block;
@@ -400,23 +405,23 @@
                     content: "";
                 }
             }     
-            & .less-link {
+            .less-link {
                 display: none;
                 margin-left: 0;
                 margin-top: 10px;
                 clear: both;
-                & a:after {
+                a:after {
                     background-position: 2px -2270px;
                 }
             }
-            & .more-link.copyright-link i {
+            .more-link.copyright-link i {
                 padding-left: 2px;
             }
-            & .less-link.copyright-link {
-                & a {
+            .less-link.copyright-link {
+                a {
                     display: inline-block;
                 }
-                & i {
+                i {
                     padding-top: 1px;
                     padding-left: 2px;
                     vertical-align: middle;
@@ -468,7 +473,7 @@
         text-align: center;
         background-position: center center;
         
-        & .functions {
+        .functions {
           text-align: left; 
           padding-left: 15px;
         }
@@ -478,10 +483,10 @@
         width: 100%;
         max-height: 90%;
         text-align: center;
-        & h3.title {
+        h3.title {
             border:none;
         }
-        & .loaded.image .noimage {
+        .loaded.image .noimage {
             display: inline-block;
             flex: 1;
             height: 100%;
@@ -489,7 +494,7 @@
             top: 15px;
             left: auto;
         }
-        & .content {
+        .content {
             width: 100%;
             text-align: center;
             padding: 10px 0px 0px;
@@ -498,14 +503,14 @@
         .popup-link-buttons {
             padding-left: 20px;
         }
-        & .content h3 {
+        .content h3 {
             padding: 0px 10px;
         }
-        & .summary {
+        .summary {
             padding: 5px 20px 0px;
             text-align: left;
         }    
-        & .image-rights {
+        .image-rights {
             padding: 10px 0px;
             margin: 0px 20px 10px;
         }

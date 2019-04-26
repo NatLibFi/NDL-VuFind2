@@ -105,7 +105,6 @@ finna.imagePaginator = (function imagePaginator() {
     _.leafletLoader = null;
 
     _.openImageIndex = 0;
-    console.log(_.settings.imagesOnNormal);
   }
 
   /**
@@ -138,7 +137,7 @@ finna.imagePaginator = (function imagePaginator() {
     _.imageHolder = covers.find('.finna-element-track');
     _.leftBtn = covers.find('.left-button');
     _.rightBtn = covers.find('.right-button');
-    _.pagerInfo = _.root.find('.paginator-info');
+    _.pagerInfo = covers.find('.paginator-info');
 
     if (_.images.length < 2) {
       covers.hide();
@@ -408,6 +407,9 @@ finna.imagePaginator = (function imagePaginator() {
     });
   }
 
+  /**
+   * Function to load extra information for marc type records
+   */
   FinnaPaginator.prototype.loadBookDescription = function loadBookDescription() {
     var _ = this;
     var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + _.settings.recordId;
@@ -548,29 +550,27 @@ finna.imagePaginator = (function imagePaginator() {
       var w = this.naturalWidth;
 
       var zoomLevel = 5.0;
-      var isMobileDevice = $(window).width() < 768;
 
-      if (h < 5000 && w < 5000) {
-        zoomLevel = isMobileDevice ? 5 : 3.5;
+      var width = $('#leaflet-map-image').width();
+      var height = $('#leaflet-map-image').height();
+
+      if (w > h) {
+        zoomLevel = +w / +width;
+      } else {
+        zoomLevel = +h / +height;
       }
-      if (h < 3500 && w < 3500) {
-        zoomLevel = isMobileDevice ? 3.75 : 2.5;
-      }
-      if (h < 2000 && w < 2000) {
-        zoomLevel = isMobileDevice ? 2.6 : 1.5;
-      }
-      if (h < 1000 && w < 1000) {
-        zoomLevel = isMobileDevice ? 2.4 : 0.5;
+
+      if (zoomLevel > 5) {
+        zoomLevel = zoomLevel / 2;
       }
 
       var sw = _.leafletHolder.unproject([0, h], zoomLevel);
       var ne = _.leafletHolder.unproject([w, 0], zoomLevel);
       var bounds = new L.LatLngBounds(sw, ne);
       _.leafletHolder.flyToBounds(bounds, {animate: false});
-      _.leafletHolder.setMaxBounds(bounds, {animate: false}).invalidateSize(bounds, {animate: false});
+      _.leafletHolder.setMaxBounds(bounds).invalidateSize(bounds);
       _.leafletLoader.removeClass('loading');
       L.imageOverlay(img.src, bounds).addTo(_.leafletHolder);
-      
     }
   }
 

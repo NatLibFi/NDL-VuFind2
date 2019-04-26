@@ -248,7 +248,12 @@ a.authority {
     display: flex;
     align-items: center;
     justify-content: center;
-  
+    position: relative;
+    .paginator-info {
+      position: absolute;
+      right: 0;
+      bottom: -20px;
+    }
     > button {
       appearance: none;
       -webkit-appearance: none;
@@ -265,7 +270,7 @@ a.authority {
       }
       &:disabled {
         background-color: #d6d6d600;
-        color:lightgray;
+        color: lighten(@gray-light, 30%);
       }
     }
   
@@ -297,7 +302,7 @@ a.authority {
     z-index: 3;
     min-height: 20px;
     top: 0;
-    align-items: start;
+    align-items: center;
     justify-content: start;
     button {
       background-color: #efefefcc;
@@ -310,7 +315,8 @@ a.authority {
     .paginator-info {
       text-align: left;
       width: initial;
-      .paginator-pager {
+      position: initial;
+      .image-index {
         background-color: #efefefcc;
       }
     }
@@ -326,10 +332,6 @@ a.authority {
   display: flex;
   align-items: center;
     
-  .paginator-info {
-    position: absolute;
-    right: 0;
-  }
   .show-more-images, .show-less-images {
     cursor: pointer;
     font-weight: 600;
