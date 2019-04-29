@@ -358,7 +358,6 @@ finna.imagePaginator = (function imagePaginator() {
         $('.imagepopup-holder .summary').removeClass('loading');
       }
       VuFind.lightbox.bind('.imagepopup-holder');
-      finna.videoPopup.initRecordPopupVideo();
       $('.collapse-content-holder').find('[data-embed-video]').click(function onClickVideoLink(){
         var videoSources = $(this).data('videoSources');
         var scripts = $(this).data('scripts');
@@ -366,6 +365,7 @@ finna.imagePaginator = (function imagePaginator() {
         finna.layout.loadScripts(scripts, function onScriptsLoaded() {
           finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
         });
+        setCanvasContent('video');
       })
       finna.videoPopup.initIframeEmbed($('.collapse-content-holder'));
 
