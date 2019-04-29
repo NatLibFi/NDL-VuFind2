@@ -1,39 +1,6 @@
 /* global finna, VuFind, L, videojs */
 finna.imagePaginator = (function imagePaginator() {
   var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print"></a>';
-  var mfpPopup = '<div class="imagepopup-holder">' +
-  '<div class="imagepopup-container">' +
-    '<div id="popup-canvas" class="paginator-canvas">' +
-      '<div id="popup-nonzoom" class="non-zoomable">' +
-        '<div class="iconlabel"></div>' +
-        '<img alt=""></img>' +
-      '</div>' +
-      '<div id="leaflet-map-image" class="image-wrapper">' +
-        '<img />' +
-        '<div class="imagepopup-zoom-container">' +
-          '<div class="zoom-in zoom-button"><i class="fa fa-zoom-in" aria-hidden="true"></i></div>' +
-          '<div class="zoom-out zoom-button"><i class="fa fa-zoom-out" aria-hidden="true"></i></div>' +
-          '<div class="zoom-reset zoom-button"><i class="fa fa-zoom-100" aria-hidden="true"></i></div>' +
-        '</div>' +
-        '<div class="leaflet-image-loading"></div>' +
-      '</div>' +
-      '<div id="popup-video" class="video-popup"><video id="video-player" class="video-js vjs-big-play-centered" controls></video></div>' +
-    '</div>' +
-    '<div class="finna-image-pagination">' +
-    '</div>' +
-    '<div style="clear: both;"></div>' +
-  '</div>' +
-  '<div class="image-information-holder">' +
-  ' <div class="collapse-content-holder">' +
-  ' </div>' +
-  ' <div class="record-informations">' +
-  '   <div class="record-index">' +
-  '     <span class="total"></span>' +
-  '   </div>' +
-  '   </div>' +
-  ' </div>' +
-  '</div>';
-
   var previousRecordButton = '<button class="mfp-arrow mfp-arrow-left previous-record" type="button"><</button>';
   var nextRecordButton = '<button class="mfp-arrow mfp-arrow-right next-record" type="button">></button>';
   
@@ -130,14 +97,17 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
-  FinnaPaginator.prototype.setReferences = function setReferences(covers) {
+  FinnaPaginator.prototype.setReferences = function setReferences(covers, isPopup) {
     var _ = this;
     covers.addClass('paginated');
 
     _.imageHolder = covers.find('.finna-element-track');
     _.leftBtn = covers.find('.left-button');
     _.rightBtn = covers.find('.right-button');
-    _.pagerInfo = covers.find('.paginator-info');
+    if (typeof isPopup === 'undefined' || isPopup === false) {
+      _.pagerInfo = covers.find('.paginator-info');
+    }
+    _.imageHolder.empty();
 
     if (_.images.length < 2) {
       covers.hide();
@@ -203,15 +173,16 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.setPagerInfo = function setPagerInfo() {
     var _ = this;
     _.pagerInfo.find('.image-index').html(+_.openImageIndex + 1 + " / " + _.images.length);
+    console.log(_.pagerInfo);
   }
 
   /**
    * Function to create the track which holds smaller images
    */
-  FinnaPaginator.prototype.createPopupTrack = function createPopupTrack(popupTrackArea) {
+  FinnaPaginator.prototype.createPopupTrack = function createPopupTrack(popupTrackArea, isPopup) {
     var _ = this;
     var covers = _.root.find('.recordcovers').clone(true);
-    _.setReferences(covers);
+    _.setReferences(covers, isPopup);
 
     if (_.isList) {
       covers.removeClass('mini-paginator');
@@ -223,7 +194,6 @@ finna.imagePaginator = (function imagePaginator() {
       });
     }
     popupTrackArea.append(covers);
-    $('.record-informations').append(_.pagerInfo);
     if (_.images.length < 2) {
       popupTrackArea.hide();
     }
@@ -588,8 +558,6 @@ finna.imagePaginator = (function imagePaginator() {
       e.preventDefault();
       _.onNonZoomableClick($(this));
     });
-    _.createPopupTrack($('.finna-image-pagination'));
-    _.imageHolder.find('a[index="' + _.openImageIndex + '"]').click();
     setCanvasContent('nonzoomable');
   }
 
@@ -601,7 +569,6 @@ finna.imagePaginator = (function imagePaginator() {
       _.onLeafletImageClick($(this));
     });
     _.leafletLoader = _.leafletHolder.find('.leaflet-image-loading');
-    _.createPopupTrack($('.finna-image-pagination'));
 
     _.leafletHolder = L.map('leaflet-map-image', {
       minZoom: 1,
@@ -616,7 +583,6 @@ finna.imagePaginator = (function imagePaginator() {
     if (_.isList) {
       _.imageHolder.closest('.recordcovers').removeClass('mini-paginator');
     }
-    _.imageHolder.find('a[index="' + _.openImageIndex + '"]').click();
     setCanvasContent('leaflet');
   }
 
@@ -629,17 +595,23 @@ finna.imagePaginator = (function imagePaginator() {
     _.openImageIndex = imagePopup.attr('index');
     _.setPagerInfo();
     _.setCurrentVisuals();
+    var modal = $('#imagepopup-modal').find('.imagepopup-holder').clone();
 
     _.trigger.magnificPopup({
       items: {
-        src: $(mfpPopup).clone(),
+        src: modal,
         type: 'inline',
       },
       tClose: VuFind.translate('close'),
       callbacks: {
         open: function onPopupOpen() {
-          _.setMaxImages(_.settings.imagesOnPopup, true);
+          var mfpContainer = $(this)[0].container;
+          mfpContainer.find('.leaflet-map-image').attr('id', 'leaflet-map-image');
+          mfpContainer.find('.popup-nonzoom').attr('id', 'popup-nonzoom');
+          mfpContainer.find('.popup-video').attr('id', 'popup-video');
+          _.pagerInfo = mfpContainer.find('.paginator-info');
 
+          _.setMaxImages(_.settings.imagesOnPopup, true);
           if (!_.isList) {
             toggleButtons(_.moreBtn, _.lessBtn);
           }
@@ -647,7 +619,7 @@ finna.imagePaginator = (function imagePaginator() {
           var previousRecord = $(previousRecordButton).clone();
           var nextRecord = $(nextRecordButton).clone();
 
-          var mfpContainer = $('.mfp-container');
+          
           mfpContainer.find('.mfp-content').addClass('loaded');
           mfpContainer.append(previousRecord, nextRecord);
 
@@ -670,10 +642,13 @@ finna.imagePaginator = (function imagePaginator() {
             mfpContainer.find('.mfp-content').addClass('nonzoomable');
             _.onNonZoomableOpen();
           }
+          _.createPopupTrack(mfpContainer.find('.finna-image-pagination'), true);
+          _.imageHolder.find('a[index="' + _.openImageIndex + '"]').click();
           _.checkRecordButtons();
         },
         close: function onPopupClose() {
-          _.setReferences(_.root.find('.recordcovers'));
+          var covers = _.root.find('.recordcovers');
+          _.setReferences(covers);
           _.imagePopup.off('click').on('click', function setTriggerEvents(e){
             e.preventDefault();
             _.setTrigger($(this));
@@ -682,6 +657,7 @@ finna.imagePaginator = (function imagePaginator() {
           _.setMaxImages(_.settings.imagesOnNormal);
           if (_.isList) {
             _.offSet = +_.openImageIndex;
+            covers.addClass('mini-paginator');
             _.onListButton(0);
           } else {
             _.loadPage(0, _.openImageIndex);
@@ -760,6 +736,7 @@ finna.imagePaginator = (function imagePaginator() {
     paginator.init();
     paginator.setMiniPaginator();
   }
+
 
   /**
    * Function to set the contents of canvas to a new element like leaflet or video
