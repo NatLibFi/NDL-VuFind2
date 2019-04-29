@@ -1,6 +1,7 @@
 /*global VuFind, checkSaveStatuses, action, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
   var _fixFooterTimeout = null;
+  var masonryInitialized = false;
 
   function initResizeListener() {
     var intervalId = false;
@@ -588,9 +589,13 @@ finna.layout = (function finnaLayout() {
           isResizeBound: 'true',
           horizontalOrder: 'true'
         });
-        finna.imagePaginator.setMasonryState(true);
+        masonryInitialized = true;
       });
     }
+  }
+
+  function getMasonryState() {
+    return masonryInitialized;
   }
 
   function initOrganisationPageLinks() {
@@ -813,6 +818,7 @@ finna.layout = (function finnaLayout() {
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
     initLoginTabs: initLoginTabs,
     loadScripts: loadScripts,
+    getMasonryState: getMasonryState,
     init: function init() {
       initScrollRecord();
       initJumpMenus();

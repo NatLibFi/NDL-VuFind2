@@ -1,7 +1,7 @@
 /*global VuFind, finna, videojs */
 finna.videoPopup = (function finnaVideoPopup() {
 
-  function initVideoPopup(isPopup, _container, parent) {
+  function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : $(_container);
 
     container.find('[data-embed-video]').click(function onClickVideoLink(e) {
@@ -9,36 +9,26 @@ finna.videoPopup = (function finnaVideoPopup() {
       var scripts = $(this).data('scripts');
       var posterUrl = $(this).data('posterUrl');
 
-      if (!isPopup) {
-        $.magnificPopup.open({
-          type: 'inline',
-          items: {
-            src: "<div class='video-popup'><video id='video-player' class='video-js vjs-big-play-centered' controls></video></div>"
+      $.magnificPopup.open({
+        type: 'inline',
+        items: {
+          src: "<div class='video-popup'><video id='video-player' class='video-js vjs-big-play-centered' controls></video></div>"
+        },
+        callbacks: {
+          open: function onOpen() {
+            $('#video-player').closest('.mfp-content').addClass('videoplayer-only');
+            finna.layout.loadScripts(scripts, function onScriptsLoaded() {
+              initVideoJs('.video-popup', videoSources, posterUrl);
+            });
           },
-          callbacks: {
-            open: function onOpen() {
-              $('#video-player').closest('.mfp-content').addClass('videoplayer-only');
-              finna.layout.loadScripts(scripts, function onScriptsLoaded() {
-                initVideoJs('.video-popup', videoSources, posterUrl);
-              });
-            },
-            close: function onClose() {
-              videojs('video-player').dispose();
-            },
-            resize: function resizeVideo() {
-              resizeVideoPopup($('.video-popup'));
-            }
+          close: function onClose() {
+            videojs('video-player').dispose();
+          },
+          resize: function resizeVideo() {
+            resizeVideoPopup($('.video-popup'));
           }
-        });
-        return false;
-      } else {
-        finna.layout.loadScripts(scripts, function onScriptsLoaded() {
-          initVideoJs('.video-popup', videoSources, posterUrl);
-        });
-        if (typeof parent !== 'undefined') {
-          parent.onVideoOpen();
         }
-      }
+      });
       e.preventDefault();
     });
   }
@@ -227,7 +217,8 @@ finna.videoPopup = (function finnaVideoPopup() {
 
   var my = {
     initVideoPopup: initVideoPopup,
-    initIframeEmbed: initIframeEmbed
+    initVideoJs: initVideoJs,
+    initIframeEmbed: initIframeEmbed,
   };
 
   return my;
