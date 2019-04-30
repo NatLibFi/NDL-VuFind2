@@ -613,6 +613,7 @@ finna.imagePaginator = (function imagePaginator() {
           mfpContainer.find('.leaflet-map-image').attr('id', 'leaflet-map-image');
           mfpContainer.find('.popup-nonzoom').attr('id', 'popup-nonzoom');
           mfpContainer.find('.popup-video').attr('id', 'popup-video');
+          mfpContainer.find('video').attr('id', 'video-player');
 
           _.setMaxImages(_.settings.imagesOnPopup, true);
           if (!_.isList) {
