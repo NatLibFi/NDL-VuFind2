@@ -1,8 +1,8 @@
 /* global finna, VuFind, L, videojs */
 finna.imagePaginator = (function imagePaginator() {
   var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print"></a>';
-  var previousRecordButton = '<button class="mfp-arrow mfp-arrow-left previous-record" type="button"><</button>';
-  var nextRecordButton = '<button class="mfp-arrow mfp-arrow-right next-record" type="button">></button>';
+  var previousRecordButton = '<button class="mfp-arrow mfp-arrow-left previous-record" type="button">&lt;</button>';
+  var nextRecordButton = '<button class="mfp-arrow mfp-arrow-right next-record" type="button">&gt;</button>';
   var paginatorIndex = 0;
 
   var defaults = {
