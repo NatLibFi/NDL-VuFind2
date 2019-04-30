@@ -649,7 +649,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function initVideoButtons() {
-    finna.videoPopup.initVideoPopup(false, $('body'));
+    finna.videoPopup.initVideoPopup($('body'));
     finna.videoPopup.initIframeEmbed($('body'));
   }
 
