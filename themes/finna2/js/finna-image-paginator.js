@@ -4,6 +4,7 @@ finna.imagePaginator = (function imagePaginator() {
   var previousRecordButton = '<button class="mfp-arrow mfp-arrow-left previous-record" type="button">&lt;</button>';
   var nextRecordButton = '<button class="mfp-arrow mfp-arrow-right next-record" type="button">&gt;</button>';
   var paginatorIndex = 0;
+  var timeOut = null;
 
   var defaults = {
     recordId: 0,
@@ -509,6 +510,10 @@ finna.imagePaginator = (function imagePaginator() {
     _.setCurrentVisuals();
     _.loadImageInformation(_.openImageIndex);
 
+    if (timeOut !== null) {
+      clearTimeout(timeOut);
+    }
+
     _.leafletHolder.eachLayer(function removeLayers(layer) {
       _.leafletHolder.removeLayer(layer);
     });
@@ -549,10 +554,13 @@ finna.imagePaginator = (function imagePaginator() {
       var bounds = new L.LatLngBounds(sw, ne);
       _.leafletHolder.setMaxBounds(bounds);
       _.leafletHolder.fitBounds(bounds, {animate: false});
-      _.leafletHolder.flyToBounds(bounds, {animate: false, pan: false});
-      _.leafletLoader.removeClass('loading');
-      _.leafletHolder.invalidateSize(false);
-      L.imageOverlay(img.src, bounds, {animate: false}).addTo(_.leafletHolder, {animate: false});
+      _.leafletHolder.flyToBounds(bounds, {animate: false});
+
+      timeOut = setTimeout(function onLoadEnd() {
+        L.imageOverlay(img.src, bounds).addTo(_.leafletHolder);
+        _.leafletHolder.invalidateSize(false);
+        _.leafletLoader.removeClass('loading');
+      }, 300);
     }
   }
 

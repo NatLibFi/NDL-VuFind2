@@ -157,6 +157,13 @@
         flex-flow: column;
     }
 
+    .mfp-close {
+        @media (min-width: @screen-sm-min) {
+            right: -44px;
+            color: #5a5a5a;
+        }
+    }
+
     .imagepopup-container {
         display: flex;
         flex-flow: column;
@@ -463,22 +470,6 @@
 }
 
 @media(max-width:@screen-xs-max) {
-    .imagepopup-holder.lido .image { 
-        width: auto;
-        float: none;
-        margin: auto;
-        max-width: 100%;
-        padding: 0;
-        margin-right: 0px;
-        text-align: center;
-        background-position: center center;
-        
-        .functions {
-          text-align: left; 
-          padding-left: 15px;
-        }
-    }
-
     .imagepopup-holder {
         width: 100%;
         max-height: 90%;
