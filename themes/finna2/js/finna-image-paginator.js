@@ -513,7 +513,6 @@ finna.imagePaginator = (function imagePaginator() {
       _.leafletHolder.removeLayer(layer);
     });
     _.leafletLoader.addClass('loading');
-
     var img = new Image();
     img.src = image.data('largest');
 
@@ -548,11 +547,12 @@ finna.imagePaginator = (function imagePaginator() {
       var sw = _.leafletHolder.unproject([0, h], zoomLevel);
       var ne = _.leafletHolder.unproject([w, 0], zoomLevel);
       var bounds = new L.LatLngBounds(sw, ne);
-      _.leafletHolder.flyToBounds(bounds, {animate: false});
       _.leafletHolder.setMaxBounds(bounds);
-      _.leafletHolder.invalidateSize(bounds);
+      _.leafletHolder.fitBounds(bounds, {animate: false});
+      _.leafletHolder.flyToBounds(bounds, {animate: false, pan: false});
       _.leafletLoader.removeClass('loading');
-      L.imageOverlay(img.src, bounds).addTo(_.leafletHolder);
+      _.leafletHolder.invalidateSize(false);
+      L.imageOverlay(img.src, bounds, {animate: false}).addTo(_.leafletHolder, {animate: false});
     }
   }
 
