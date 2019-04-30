@@ -548,9 +548,9 @@ finna.imagePaginator = (function imagePaginator() {
       var sw = _.leafletHolder.unproject([0, h], zoomLevel);
       var ne = _.leafletHolder.unproject([w, 0], zoomLevel);
       var bounds = new L.LatLngBounds(sw, ne);
-      _.leafletHolder.invalidateSize(bounds);
       _.leafletHolder.flyToBounds(bounds, {animate: false});
       _.leafletHolder.setMaxBounds(bounds);
+      _.leafletHolder.invalidateSize(bounds);
       _.leafletLoader.removeClass('loading');
       L.imageOverlay(img.src, bounds).addTo(_.leafletHolder);
     }
