@@ -205,7 +205,7 @@ finna.imagePaginator = (function imagePaginator() {
     if ($('.paginationSimple .index').length) {
       var total = $('.paginationSimple .total').html();
       var current = +$('.paginationSimple .index').html() + _.paginatorIndex;
-      _.pagerInfo.siblings('.record-index').find('.total').html(current + "/" + total);
+      _.pagerInfo.siblings('.record-index').find('.total').html(current + " / " + total);
     }
   }
 
@@ -502,26 +502,34 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(image) {
     var _ = this;
-    _.openImageIndex = image.attr('index');
+ 
 
+
+    if (_.openImageIndex !== image.attr('index')) {
+      _.loadImageInformation(_.openImageIndex);
+    }
+    _.openImageIndex = image.attr('index');
     setCanvasContent('leaflet');
     _.setZoomButtons();
     _.setPagerInfo();
     _.setCurrentVisuals();
-    _.loadImageInformation(_.openImageIndex);
-
-    if (timeOut !== null) {
-      clearTimeout(timeOut);
-    }
 
     _.leafletHolder.eachLayer(function removeLayers(layer) {
       _.leafletHolder.removeLayer(layer);
     });
-    _.leafletLoader.addClass('loading');
+    _.leafletHolder.setMaxBounds(null);
+
     var img = new Image();
     img.src = image.data('largest');
+    timeOut = setTimeout(function onLoadStart() {
+      _.leafletLoader.addClass('loading');
+    }, 100);
 
     img.onload = function onLoadImg() {
+      if (timeOut !== null) {
+        clearTimeout(timeOut);
+        timeOut = null;
+      }
       if (_.leafletHolder.length === 0) {
         return;
       }
@@ -551,16 +559,14 @@ finna.imagePaginator = (function imagePaginator() {
 
       var sw = _.leafletHolder.unproject([0, h], zoomLevel);
       var ne = _.leafletHolder.unproject([w, 0], zoomLevel);
+
       var bounds = new L.LatLngBounds(sw, ne);
-      _.leafletHolder.setMaxBounds(bounds);
       _.leafletHolder.fitBounds(bounds, {animate: false});
       _.leafletHolder.flyToBounds(bounds, {animate: false});
-
-      timeOut = setTimeout(function onLoadEnd() {
-        L.imageOverlay(img.src, bounds).addTo(_.leafletHolder);
-        _.leafletHolder.invalidateSize(false);
-        _.leafletLoader.removeClass('loading');
-      }, 300);
+      L.imageOverlay(img.src, bounds).addTo(_.leafletHolder);
+      _.leafletHolder.invalidateSize(false);
+      _.leafletLoader.removeClass('loading');
+      _.leafletHolder.setMaxBounds(bounds);
     }
   }
 
@@ -589,7 +595,8 @@ finna.imagePaginator = (function imagePaginator() {
       zoomControl: false,
       zoom: 1,
       crs: L.CRS.Simple,
-      maxBoundsViscosity: 1,
+      maxBoundsViscosity: 0,
+      bounceAtZoomLimits: false
     });
 
     if (_.isList) {
@@ -654,7 +661,9 @@ finna.imagePaginator = (function imagePaginator() {
             _.onNonZoomableOpen();
           }
           _.createPopupTrack(mfpContainer.find('.finna-image-pagination'), true);
-          _.imageHolder.find('a[index="' + _.openImageIndex + '"]').click();
+          var foundImage = _.imageHolder.find('a[index="' + _.openImageIndex + '"]');
+          _.openImageIndex = null;
+          foundImage.click();
           _.checkRecordButtons();
         },
         close: function onPopupClose() {
