@@ -1,37 +1,17 @@
 /*global finna, VuFind*/
 finna.multiSelect = (function multiSelect(){
-  var inputElement;
-  var listItem;
-  var selectedItem;
-
-  function initTemplates() {
-    inputElement = "<div class=\"multiselect-dropdown\">" +
-      "<label></label>" +
-      "<input aria-expanded=\"false\" autocomplete=\"off\" aria-autocomplete=\"list\" aria-label=\"" + VuFind.translate('add_selection') + "\" class=\"form-control multiselect-input\" type=\"text\">" +
-      "<span class=\"caret\"></span>" +
-      "<ul class=\"multiselect-dropdown-menu\">" +
-      "</ul>" +
-      "<div class=\"multiselect-selected\">" +
-      "<span class=\"removed-header\">" + VuFind.translate('none_selected') + "</span>" +
-      "<span class=\"removed-selection sr-only\" aria-label=\"" + VuFind.translate('selection_removed') + "\" tabindex=\"-1\"></span>" +
-      "</div>" +
-      "</div>";
-    listItem = "<li class=\"checkboxFilter\" data-inner=\"\" data-target=\"\" tabindex=\"-1\"><input tabindex=\"-1\" type=\"checkbox\" class=\"checkbox\"></li>";
-    selectedItem = "<button class=\"multiselect-selection\" data-target=\"\" type=\"button\" title=\"" + VuFind.translate('remove_selection') + "\"></button>";
-  }
+  var listItem = '<li class="checkboxFilter" data-inner="" data-target="" tabindex="-1"><input tabindex="-1" type="checkbox" class="checkbox"></li>';
+  var selectedItem = '<button class="multiselect-selection" data-target="" type="button" title=""></button>';
 
   function initFields() {
-    initTemplates();
     $('.finna-multiselect').each(function createDropdowns(){
-      var tempElement = $(inputElement).clone();
+      var tempElement = $(this).closest('.multiselect-dropdown');
       var inputLabel = $(this).data('label');
       var completedAria = tempElement.find('.multiselect-input').attr('aria-label') + " " + inputLabel;
 
       tempElement.find('label').html(inputLabel);
       tempElement.find('.multiselect-input').attr('aria-label', completedAria);
-      $(this).parent().append(tempElement);
       $(this).css('display', 'none');
-      $(this).prependTo(tempElement);
       initListItems($(this), $(tempElement.find('ul')));
     });
     initKeyBindings();
@@ -39,9 +19,7 @@ finna.multiSelect = (function multiSelect(){
 
   function initKeyBindings() {
     $('.multiselect-input').on("keydown", function preventSubmit(e){
-      var keyCode = e.which;
-
-      if (keyCode === 13) {
+      if (e.which === 13) {
         e.preventDefault();
         //Do not submit form on enter press
       }
@@ -209,10 +187,10 @@ finna.multiSelect = (function multiSelect(){
 
   //We want to focus only on the first visible item
   function jumpToList(element) {
-    var visible = element.siblings("ul.multiselect-dropdown-menu").first().children(':visible');
+    var children = element.siblings("ul.multiselect-dropdown-menu").first().children('li');
 
-    if (visible.length) {
-      visible.first().focus();
+    if (children.length) {
+      children.first().focus();
     }
   }
 
@@ -235,22 +213,19 @@ finna.multiSelect = (function multiSelect(){
     var originalSelect = element.parent().siblings('select');
     var liElement = element.parent().siblings('.multiselect-dropdown-menu')
       .find("li" + "[data-target='" + dataTarget + "']");
-    var root = element.closest('.multiselect-dropdown');
-    var amount = element.siblings('button').length;
 
     originalSelect.find("option" + "[data-id='" + dataTarget + "']").removeAttr('selected');
     liElement.removeClass('selected');
     liElement.children('.checkbox').prop('checked', false);
     element.siblings('.removed-selection').focus();
-    element.remove();
-    setNoneSelected(root, amount);
+    setNoneSelected(element.closest('.multiselect-dropdown').find('.multiselect-selected'), );
   }
 
   function setNoneSelected(element, amount) {
     if (amount === 0) {
       element.find('.removed-header').show();
     } else {
-      element.find('.removed-header').hide();
+      
     }
   }
 
@@ -259,21 +234,16 @@ finna.multiSelect = (function multiSelect(){
       return;
     }
 
-    var tempButton = $(selectedItem).clone();
+    //var tempButton = $(selectedItem).clone();
     var selectedArea = element.parent().siblings('.multiselect-selected');
     var originalSelect = element.parent().siblings('select');
     var dataTarget = element.attr('data-target');
-    var htmlTrimmed = element.attr('data-inner').replace(/&nbsp;/g, '');
     var root = element.closest('.multiselect-dropdown');
     var amount = selectedArea.children('button').length;
 
     element.addClass('selected');
     element.children('.checkbox').prop('checked', true);
-    tempButton.html(htmlTrimmed);
-    tempButton.find('.checkbox').remove();
-    tempButton.attr('data-target', dataTarget);
     originalSelect.find("option[data-id=" + dataTarget + "]").attr('selected', true);
-    selectedArea.append(tempButton);
     setNoneSelected(root, amount + 1);
   }
 

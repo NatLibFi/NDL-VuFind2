@@ -137,7 +137,6 @@ return [
     'css' => [
         'vendor/bootstrap-datepicker3.min.css',
         'vendor/bootstrap-rating.min.css',
-        'vendor/bootstrap-multiselect.min.css',
         'vendor/bootstrap-slider.min.css',
         'vendor/dataTables.bootstrap.min.css',
         'vendor/L.Control.Locate.min.css',

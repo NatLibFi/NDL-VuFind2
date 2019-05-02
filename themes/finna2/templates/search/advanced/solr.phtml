@@ -46,38 +46,49 @@
                   'id' => 'limit_' . str_replace(' ', '', $field)
                 ];
                 ?>
-                <select <?= $this->htmlElement()->getAttributes($multiSelect, 'finna-multiselect') ?>>
-                  <?php if (is_array($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
-                    <?php foreach ($list['list'] as $value): ?>
-                      <?php
-                      $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']);
+                <div class="multiselect-dropdown">
+                  <select <?= $this->htmlElement()->getAttributes($multiSelect, 'finna-multiselect') ?>>
+                    <?php if (is_array($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
+                      <?php foreach ($list['list'] as $value): ?>
+                        <?php
+                        $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']);
 
-                      $listAttributes = [
-                        'value' => ($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"',
-                        'selected' => (isset($value['selected']) && $value['selected'])? 'selected' : ''
-                      ];
-                      ?>
-                      <option <?= $this->htmlElement()->getAttributes($listAttributes); ?>><?=$display?></option>
-                    <?php endforeach; ?>
-                  <?php else: ?>
-                    <?php
-                      // Sort the current facet list alphabetically; we'll use this data
-                      // along with the foreach below to display facet options in the
-                      // correct order.
-                      $sorted = [];
-                      foreach ($list['list'] as $i => $value) {
-                        if (!empty($value['displayText'])) {
-                          $sorted[$i] = $value['displayText'];
+                        $listAttributes = [
+                          'value' => ($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"',
+                          'selected' => (isset($value['selected']) && $value['selected'])? 'selected' : ''
+                        ];
+                        ?>
+                        <option <?= $this->htmlElement()->getAttributes($listAttributes); ?>><?=$display?></option>
+                      <?php endforeach; ?>
+                    <?php else: ?>
+                      <?php
+                        // Sort the current facet list alphabetically; we'll use this data
+                        // along with the foreach below to display facet options in the
+                        // correct order.
+                        $sorted = [];
+                        foreach ($list['list'] as $i => $value) {
+                          if (!empty($value['displayText'])) {
+                            $sorted[$i] = $value['displayText'];
+                          }
                         }
-                      }
-                      natcasesort($sorted);
-                    ?>
-                    <?php foreach ($sorted as $i => $display): ?>
-                      <?php $value = $list['list'][$i]; ?>
-                      <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$this->escapeHtml($display)?></option>
-                    <?php endforeach; ?>
-                  <?php endif; ?>
-                </select>
+                        natcasesort($sorted);
+                      ?>
+                      <?php foreach ($sorted as $i => $display): ?>
+                        <?php $value = $list['list'][$i]; ?>
+                        <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$this->escapeHtml($display)?></option>
+                      <?php endforeach; ?>
+                    <?php endif; ?>
+                  </select>
+                  <label></label>
+                  <input aria-expanded="false" autocomplete="off" aria-autocomplete="list" aria-label="<?= $this->translate('add_selection');?>" class="form-control multiselect-input" type="text">
+                  <span class="caret"></span>
+                  <ul class="multiselect-dropdown-menu">
+                  </ul>
+                  <div class="multiselect-selected">
+                    <span class="removed-header"><?= $this->translate('none_selected');?></span>
+                    <span class="removed-selection sr-only" aria-label="<?=$this->translate('selection_removed');?>" tabindex="-1"></span>
+                  </div>
+                </div>
               </div>
             </div>
           <?php endforeach; ?>
