@@ -1,4 +1,4 @@
-/*global VuFind, checkSaveStatuses, action, finna, initFacetTree, setupFacets, videojs, priorityNav, buildFacetNodes */
+/*global VuFind, checkSaveStatuses, action, finna, initFacetTree, videojs, priorityNav */
 finna.layout = (function finnaLayout() {
   var _fixFooterTimeout = null;
 
@@ -361,8 +361,8 @@ finna.layout = (function finnaLayout() {
       form.find('.searchForm_lookfor').focus();
     });
 
-    $('.searchForm_lookfor').bind('autocomplete:select', function onAutocompleteSelect() { 
-      $('.navbar-form').submit() 
+    $('.searchForm_lookfor').bind('autocomplete:select', function onAutocompleteSelect() {
+      $('.navbar-form').submit()
     });
 
     $('.select-type').on('click', function onClickSelectType(event) {
@@ -481,114 +481,18 @@ finna.layout = (function finnaLayout() {
   }
 
   function initSideFacets() {
-    // Load new-style ajax facets
-    $('.side-facets-container-ajax')
-      .find('div.collapse[data-facet]:not(.in)')
-      .on('shown.bs.collapse', function expandFacet() {
-        loadAjaxSideFacets();
-      });
-    loadAjaxSideFacets();
-
-    // Handle any old-style ajax facets
-    var $container = $('.side-facets-container');
-    if ($container.length === 0) {
+    if (!document.addEventListener) {
       return;
     }
-    $container.find('.facet-load-indicator').removeClass('hidden');
-    var query = window.location.href.split('?')[1];
-    $.getJSON(VuFind.path + '/AJAX/JSON?method=getSideFacets&' + query)
-      .done(function onGetSideFacetsDone(response) {
-        $container.replaceWith(response.data.html);
-        finna.dateRangeVis.init();
-        initToolTips($('.sidebar'));
-        initMobileNarrowSearch();
-        VuFind.lightbox.bind($('.sidebar'));
-        setupFacets();
-      })
-      .fail(function onGetSideFacetsFail() {
-        $container.find('.facet-load-indicator').addClass('hidden');
-        $container.find('.facet-load-failed').removeClass('hidden');
-      });
-  }
-
-  function loadAjaxSideFacets() {
-    var $container = $('.side-facets-container-ajax');
-    if ($container.length === 0) {
-      return;
-    }
-
-    var facetList = [];
-    var $facets = $container.find('div.collapse.in[data-facet], div.checkbox[data-facet]');
-    $facets.each(function addFacet() {
-      if (!$(this).data('loaded')) {
-        facetList.push($(this).data('facet'));
-      }
+    document.addEventListener('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
+      finna.dateRangeVis.init();
+      initToolTips($('.sidebar'));
+      initMobileNarrowSearch();
+      VuFind.lightbox.bind($('.sidebar'));
     });
-    if (facetList.length === 0) {
-      return;
-    }
-    var urlParts = window.location.href.split('?');
-    var query = urlParts.length > 1 ? urlParts[1] : '';
-    var request = {
-      method: 'getSideFacets',
-      query: query,
-      enabledFacets: facetList
-    }
-    $container.find('.facet-load-indicator').removeClass('hidden');
-    $.getJSON(VuFind.path + '/AJAX/JSON?' + query, request)
-      .done(function onGetSideFacetsDone(response) {
-        $.each(response.data.facets, function initFacet(facet, facetData) {
-          var $facetContainer = $container.find('div[data-facet="' + facet + '"]');
-          $facetContainer.data('loaded', 'true');
-          if (typeof facetData.checkboxCount !== 'undefined') {
-            $facetContainer.find('.avail-count').text(
-              facetData.checkboxCount.toString().replace(/\B(?=(\d{3})+\b)/g, VuFind.translate('number_thousands_separator'))
-            );
-          } else if (typeof facetData.html !== 'undefined') {
-            $facetContainer.html(facetData.html);
-          } else {
-            // TODO: this block copied from facets.js, refactor
-            var treeNode = $facetContainer.find('.jstree-facet');
-
-            // Enable keyboard navigation also when a screen reader is active
-            treeNode.bind('select_node.jstree', function selectNode(event, data) {
-              window.location = data.node.data.url;
-              event.preventDefault();
-              return false;
-            });
-
-            addJSTreeListener(treeNode);
-
-            var currentPath = treeNode.data('path');
-            var allowExclude = treeNode.data('exclude');
-            var excludeTitle = treeNode.data('exclude-title');
-
-            var results = buildFacetNodes(facetData.list, currentPath, allowExclude, excludeTitle, true);
-            treeNode.on('loaded.jstree open_node.jstree', function treeNodeOpen(/*e, data*/) {
-              treeNode.find('ul.jstree-container-ul > li.jstree-node').addClass('list-group-item');
-              treeNode.find('a.exclude').click(function excludeLinkClick(e) {
-                window.location = this.href;
-                e.preventDefault();
-                return false;
-              });
-            });
-            treeNode.jstree({
-              'core': {
-                'data': results
-              }
-            });
-          }
-          $facetContainer.find('.facet-load-indicator').remove();
-        });
-        finna.dateRangeVis.init();
-        initToolTips($('.sidebar'));
-        initMobileNarrowSearch();
-        VuFind.lightbox.bind($('.sidebar'));
-      })
-      .fail(function onGetSideFacetsFail() {
-        $container.find('.facet-load-indicator').remove();
-        $container.find('.facet-load-failed').removeClass('hidden');
-      });
+    document.addEventListener('VuFind.sidefacets.treenodeloaded', function onTreeNodeLoaded(e) {
+      addJSTreeListener(e.detail.node);
+    });
   }
 
   function initPiwikPopularSearches() {
@@ -753,18 +657,22 @@ finna.layout = (function finnaLayout() {
   function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
 
-    container.find('a[data-embed-iframe]').click(function onClickEmbedLink(e) {
+    container.find('[data-embed-iframe]').click(function onClickEmbedLink(e) {
       if (typeof $.magnificPopup.instance !== 'undefined' && $.magnificPopup.instance.isOpen) {
         // Close existing popup (such as image-popup) first without delay so that its
         // state doesn't get confused by the immediate reopening.
         $.magnificPopup.instance.st.removalDelay = 0;
         $.magnificPopup.close();
       }
+
+      // Fallback if core has older style of initializing a video button
+      var attr = $(this).is('a') ? $(this).attr('href') : $(this).attr('data-link');
+
       $.magnificPopup.open({
         type: 'iframe',
         tClose: VuFind.translate('close'),
         items: {
-          src: $(this).attr('href')
+          src: attr
         },
         iframe: {
           markup: '<div class="mfp-iframe-scaler">'
@@ -775,7 +683,7 @@ finna.layout = (function finnaLayout() {
             youtube_short: {
               index: 'youtu.be/',
               id: 'youtu.be/',
-              src: '//www.youtube.com/embed/%id%?autoplay=1'
+              src: '//www.youtube-nocookie.com/embed/%id%?autoplay=0'
             }
           }
         },
@@ -792,12 +700,184 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function initVideoPopup(_container) {
-    var container = typeof _container === 'undefined' ? $('body') : _container;
+  function resizeVideoPopup($container) {
+    var mfp = $container.closest('.mfp-content');
+    if (mfp.length === 0) {
+      return;
+    }
+    var width = $('.mfp-content').width();
+    var height = $('.mfp-container').height();
+    $container.css('width', width).css('height', height);
+  }
 
-    container.find('a[data-embed-video]').click(function onClickVideoLink(e) {
+  function initVideoJs(_container, videoSources, posterUrl) {
+    var $container = $(_container);
+    var $videoElem = $(_container).find('video');
+
+    var player = videojs($videoElem.get(0));
+
+    player.ready(function onReady() {
+      this.hotkeys({
+        enableVolumeScroll: false,
+        enableModifiersForNumbers: false
+      });
+    });
+
+    resizeVideoPopup($container);
+
+    player.src(videoSources);
+    player.poster(posterUrl);
+
+    var handleCloseButton = function handleCloseButton() {
+      if (player.userActive()) {
+        $('.mfp-close').css('opacity', '1');
+      } else {
+        $('.mfp-close').css('opacity', '0');
+      }
+    }
+
+    player.on('useractive', handleCloseButton);
+    player.on('userinactive', handleCloseButton);
+
+    var selectedBitrate = 'auto';
+
+    player.qualityLevels().on('addqualitylevel', function onAddQualityLevel(event) {
+      event.qualityLevel.enabled = selectedBitrate === "auto" || event.qualityLevel.height.toString() === selectedBitrate;
+    });
+
+    player.on('loadedmetadata', function onMetadataLoaded() {
+      var qualityLevels = player.qualityLevels();
+      var addLevel = function addLevel(i, val) {
+        var $item = $('<li/>')
+          .addClass('vjs-menu-item')
+          .attr('tabindex', i)
+          .attr('role', 'menuitemcheckbox')
+          .attr('aria-live', 'polite')
+          .attr('aria-checked', 'false')
+          .data('bitrate', String(val).toLowerCase());
+        $('<span/>')
+          .addClass('vjs-menu-item-text')
+          .text(val)
+          .appendTo($item);
+        $item.appendTo($container.find('.quality-selection'));
+        return $item;
+      };
+      var qLevels = [];
+      for (var i = 0; i < qualityLevels.length; i++) {
+        var quality = qualityLevels[i];
+
+        if (quality.height !== undefined) {
+          qLevels.push(quality.height);
+
+          if (!$container.find('.quality-selection').length) {
+            var $qs = $('<div/>').addClass('vjs-menu-button vjs-menu-button-popup vjs-control vjs-button');
+            var $button = $('<button/>')
+              .addClass('vjs-menu-button vjs-menu-button-popup vjs-button')
+              .attr('type', 'button')
+              .attr('aria-live', 'polite')
+              .attr('aria-haspopup', 'true')
+              .attr('title', VuFind.translate('Quality'))
+              .appendTo($qs);
+            $('<span/>')
+              .addClass('vjs-icon-cog')
+              .attr('aria-hidden', 'true')
+              .appendTo($button);
+            $('<span/>')
+              .addClass('vjs-control-text')
+              .text(VuFind.translate('Quality'))
+              .appendTo($button);
+            var $menu = $('<div/>')
+              .addClass('vjs-menu')
+              .appendTo($qs);
+            $('<ul/>')
+              .addClass('quality-selection vjs-menu-content')
+              .attr('role', 'menu')
+              .appendTo($menu);
+
+            $container.find('.vjs-fullscreen-control').before($qs);
+          } else {
+            $container.find('.quality-selection').empty();
+          }
+
+          qLevels.sort(function compareFunc(a, b) {
+            return a - b;
+          });
+
+          $.each(qLevels, addLevel);
+
+          addLevel(qLevels.length, 'auto')
+            .addClass('vjs-selected')
+            .attr('aria-checked', 'true');
+        }
+      }
+    });
+
+    player.load();
+
+    $('body')
+      .unbind('click.videoQuality')
+      .on('click.videoQuality', '.quality-selection li', function onClickQuality() {
+        if ($container.find($(this)).length === 0) {
+          return;
+        }
+        $container.find('.quality-selection li')
+          .removeClass('vjs-selected')
+          .prop('aria-checked', 'false');
+
+        $(this)
+          .addClass('vjs-selected')
+          .attr('aria-checked', 'true');
+
+        selectedBitrate = String($(this).data('bitrate'));
+        var levels = player.qualityLevels();
+        for (var i = 0; i < levels.length; i++) {
+          levels[i].enabled = 'auto' === selectedBitrate || String(levels[i].height) === selectedBitrate;
+        }
+      });
+  }
+
+  function loadScripts(scripts, callback) {
+    var needed = {};
+    // Check for required scripts that are not yet loaded
+    if (scripts) {
+      for (var item in scripts) {
+        if (scripts.hasOwnProperty(item) && $('#' + item).length === 0) {
+          needed[item] = scripts[item];
+        }
+      }
+    }
+    var loadCount = Object.keys(needed).length;
+    if (loadCount) {
+      // Load scripts and initialize player when all are loaded
+      var scriptLoaded = function scriptLoaded() {
+        if (--loadCount === 0) {
+          if (typeof callback === 'function') {
+            callback();
+          }
+        }
+      };
+      for (var itemNeeded in needed) {
+        if (needed.hasOwnProperty(itemNeeded)) {
+          $(needed[itemNeeded])
+            .load(scriptLoaded)
+            .attr('async', 'true')
+            .appendTo($('head'))
+            .load();
+        }
+      }
+    } else if (typeof callback === 'function') {
+      callback();
+    }
+  }
+
+  function initVideoPopup(_container) {
+    var container = typeof _container === 'undefined' ? $('body') : $(_container);
+
+    container.find('[data-embed-video]').click(function onClickVideoLink(e) {
       var videoSources = $(this).data('videoSources');
+      var scripts = $(this).data('scripts');
       var posterUrl = $(this).data('posterUrl');
+
       $.magnificPopup.open({
         type: 'inline',
         items: {
@@ -805,28 +885,15 @@ finna.layout = (function finnaLayout() {
         },
         callbacks: {
           open: function onOpen() {
-            var player = videojs('video-player');
-
-            videojs.Html5DashJS.hook(
-              'beforeinitialize',
-              function onBeforeInit(videoJs, mediaPlayer) {
-                mediaPlayer.getDebug().setLogToBrowserConsole(false);
-              }
-            );
-
-            player.ready(function onReady() {
-              this.hotkeys({
-                enableVolumeScroll: false,
-                enableModifiersForNumbers: false
-              });
+            loadScripts(scripts, function onScriptsLoaded() {
+              initVideoJs('.video-popup', videoSources, posterUrl);
             });
-
-            player.src(videoSources);
-            player.poster(posterUrl);
-            player.load();
           },
           close: function onClose() {
             videojs('video-player').dispose();
+          },
+          resize: function resizeVideo() {
+            resizeVideoPopup($('.video-popup'));
           }
         }
       });
@@ -863,16 +930,34 @@ finna.layout = (function finnaLayout() {
   }
 
   function initFiltersToggle () {
+    if ($(window).width() <= 991) {
+      $('.finna-filters .filters').addClass('hidden');
+    }
+
+    $(window).resize(function checkFiltersEnabled(){
+      if ($(window).width() > 991 && $('.finna-filters .filters').hasClass('hidden')) {
+        $('.finna-filters .filters').removeClass('hidden');
+      }
+    });
+
     $('.filters-toggle').click(function filterToggleClicked(e) {
       var finnaFilters = $(e.target).closest('.finna-filters');
-      var filtersBar = finnaFilters.find('.filters-bar');
-      if (filtersBar.hasClass('hidden')) {
-        filtersBar.removeClass('hidden');
+      var filters = finnaFilters.find('.filters');
+      if (filters.hasClass('hidden')) {
+        filters.removeClass('hidden');
         finnaFilters.find('.fa-arrow-down').removeClass('fa-arrow-down').addClass('fa-arrow-up');
       } else {
-        filtersBar.addClass('hidden');
+        filters.addClass('hidden');
         finnaFilters.find('.fa-arrow-up').removeClass('fa-arrow-up').addClass('fa-arrow-down');
       }
+    });
+  }
+
+  function initFiltersCheckbox() {
+    $('#filter-checkbox').change(function setCheckboxClass(){
+      $('.finna-filters .checkbox').toggleClass('checked');
+      var sort = $(this).closest('form').find('input[name=sort]');
+      sort.val($('.finna-filters .checkbox').hasClass('checked') ? sort.data('value') : '');
     });
   }
 
@@ -947,8 +1032,9 @@ finna.layout = (function finnaLayout() {
     initSecondaryLoginField: initSecondaryLoginField,
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
     initIframeEmbed: initIframeEmbed,
-    initVideoPopup: initVideoPopup,
     initLoginTabs: initLoginTabs,
+    loadScripts: loadScripts,
+    initVideoJs: initVideoJs,
     init: function init() {
       initScrollRecord();
       initJumpMenus();
@@ -980,6 +1066,7 @@ finna.layout = (function finnaLayout() {
       initKeyboardNavigation();
       initPriorityNav();
       initFiltersToggle();
+      initFiltersCheckbox();
       initCookieConsent();
     }
   };

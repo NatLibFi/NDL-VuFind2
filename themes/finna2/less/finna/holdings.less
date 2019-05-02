@@ -93,6 +93,10 @@
         margin-bottom: 5px;
         margin-left: 5px;
     }
+    & .placehold.btn {
+        white-space: normal;
+        height: auto;
+    }
     & .place-hold-wrapper {
         & p {
             margin-top: 5px;
@@ -139,7 +143,10 @@
         display: inline-block;
     }
 }
-.record-holdings-table {
+
+.record-holdings-table,
+.record-locationsead3-links,
+.record-locationsead3-table {
     margin: 20px 0px;
     border: 1px solid @record-holdings-border-color;
     border-top: none;
@@ -438,9 +445,18 @@
             & .all-holdings {
                 text-align: left;
             }
+            & .title-hold {
+                float: left;
+            }
         }
     }
     & .fa.arrow {
         color: @gray-light;
+    }
+}
+.record-locationsead3-links {
+    .links-container {
+        overflow-y: auto;
+        max-height: 300px;
     }
 }

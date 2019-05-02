@@ -10,23 +10,24 @@
   $formats = $this->driver->tryMethod('getFormats');
   $translatedFormat = $this->transEsc(end($formats));
   $recordType = $this->driver->tryMethod('getRecordType');
-  $largeImageLayout = in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward', 'ead']);
+  $largeImageLayout = in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward', 'ead', 'qdc']);
+  $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 ?>
 <div class="imagepopup-holder <?=$this->escapeHtmlAttr($recordType) ?>" data-type="<?=$this->escapeHtmlAttr($recordType) ?>" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID()) ?>">
   <div class="imagepopup-container">
     <div class="image iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>">
-      <div class="image-wrapper">
-        <div class="panzoom-wrapper">
-          <img src="<?=$largeImage ?>" />
-        </div>
-      </div>
+      <div id="leaflet-map-image" class="image-wrapper" data-large-image-layout="<?=$largeImageLayout?>" data-enable-image-popup-zoom="<?=$enableImagePopupZoom?>" >
+      <?php if (! $enableImagePopupZoom || ! $largeImageLayout): ?>
+        <img src="<?=$largeImage?>" />
+      <?php endif; ?>
       <?php if ($largeImageLayout && $enableImagePopupZoom): ?>
-        <div class="imagepopup-zoom-container inactive">
+        <div class="imagepopup-zoom-container">
           <div class="zoom-in zoom-button"><i class="fa fa-zoom-in" aria-hidden="true"></i><span class="sr-only">Zoom in</span></div>
           <div class="zoom-out zoom-button"><i class="fa fa-zoom-out" aria-hidden="true"></i><span class="sr-only">Zoom out</span></div>
           <div class="zoom-reset zoom-button"><i class="fa fa-zoom-100" aria-hidden="true"></i><span class="sr-only">Reset</span></div>
         </div>
       <?php endif; ?>
+        </div>
     </div>
     <div class="content">
       <h3 id="popup-image-title" class="title"><?=$this->escapeHtml($this->driver->getTitle()) ?></h3>
@@ -113,22 +114,22 @@
 
                 <div class="record-online-link">
                   <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"
-                      <?php if (!empty($url['videoSources'])): ?> data-video-sources="<?= $this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>"<?php endif; ?>
+                      <?php if (!empty($url['videoSources'])): ?> data-video-sources="<?=$this->escapeHtmlAttr(json_encode($url['videoSources'])) ?>" data-scripts="<?=$this->escapeHtmlAttr($videoScripts)?>"<?php endif; ?>
                       <?=!empty($url['embed']) && $url['embed'] == 'video' ? ' data-embed-video' : '' ?>
-                      <?= $this->recordLink()->getEmbeddedVideo($url['url']) ?>
-                      target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>">
-                    <i class="fa fa-external-link"></i> <?php if (count($urls) == 1): ?>  <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=$this->transEsc('default::link_' . $desc, null, $desc) ?><?php endif; ?></a></div>
-
-                  <?php $index++; ?>
-                <?php if ($index > 4): ?>
-                <div>...</div>
-                <?php break; endif; ?>
+                      <?=$this->recordLink()->getEmbeddedVideo($url['url']) ?>
+                      target="_blank" aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>">
+                    <i class="fa fa-external-link"></i> <?php if (count($urls) == 1): ?><?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=$this->transEsc('default::link_' . $desc, null, $desc) ?><?php endif; ?></a>
+                </div>
+                <?php if (++$index > 4): ?>
+                  <div>...</div>
+                <?php break; ?>
+              <?php endif; ?>
               <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
               <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
                 <?php if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs)) { continue; } ?>
-                <div class="record-online-link"><a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i><?php if (count($onlineURLs) == 1 || count($mergedData['urls']) == 1): ?> <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?><?php endif; ?></a>
+                <div class="record-online-link"><a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>"><i class="fa fa-external-link"></i><?php if (count($onlineURLs) == 1 || count($mergedData['urls']) == 1): ?> <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?><?php endif; ?></a>
                 <?php if ($url['source']): ?>
                   <span class="online-source"><?=is_array($url['source']) ? '(' . $this->transEsc('Multiple Organisations') . ')' : '';?></span>
                 <?php endif; ?>
@@ -198,7 +199,8 @@
   ]);
   ?>
   <script>
-     finna.layout.initOrganisationPageLinks();
+    finna.layout.initOrganisationPageLinks();
+    finna.layout.initTruncate($('.imagepopup-holder'));
   </script>
 </div>
 <?php // Do not output this: <!-- END of: finna - RecordDriver/DefaultRecord/record-image-popup.phtml --> ?>

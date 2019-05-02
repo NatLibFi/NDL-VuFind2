@@ -1,10 +1,5 @@
 <!-- START of: finna - collection/view.phtml -->
 <?php
-  // Set up standard record scripts:
-  $this->headScript()->appendFile("record.js");
-  $this->headScript()->appendFile("finna-record.js");
-  $this->headScript()->appendFile("check_save_statuses.js");
-  $this->headScript()->appendFile("finna-comments.js");
   // Activate Syndetics Plus if necessary:
   if ($this->syndeticsPlus()->isActive()) {
     $this->headScript()->appendFile($this->syndeticsPlus()->getScript());
@@ -27,7 +22,6 @@
 
   if ($lastUrl = $this->searchMemory()->getLastSearchUrl()) {
       $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-      $params->activateAllFacets();
       $filterList = $params->getFilterList(true);
 
       if (!empty($params->getFilterList(false))) {
@@ -80,7 +74,7 @@
     <?php
       $formatter = $this->recordDataFormatter();
       $coreFields = $formatter->getData(
-          $driver, $formatter->filterCollectionFields($formatter->getDefaults('core'))
+          $driver, $formatter->filterCollectionFields($formatter->getDefaults('core'), $driver->getRecordType())
       );
     ?>
     <?php if (!empty($coreFields)): ?>
@@ -134,7 +128,7 @@
               if (strtolower($tab) == 'details') { $tab_classes[] = 'hidden-xs tab-right'; }
             ?>
             <li class="<?=implode(' ', $tab_classes)?>" data-tab="<?=$tabName?>">
-            <a class="<?=strtolower($tab) ?>" aria-label="<?=$this->escapeHtmlAttr($tab)?>"
+            <a class="<?=strtolower($tab) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
               href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
               data-background<?php endif ?>>
               <?php if (strtolower($tab) == 'details'): ?><i class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>

@@ -57,15 +57,18 @@ class FormFactory extends \VuFind\Form\FormFactory
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
     ) {
-        $config = $container->get('VuFind\Config\PluginManager')
+        $config = $container->get(\VuFind\Config\PluginManager::class)
             ->get('config')->toArray();
 
         $form = parent::__invoke($container, $requestedName, $options);
         if (isset($config['Site']['institution'])) {
             $form->setInstitution($config['Site']['institution']);
         }
-        if ($user = $container->get('VuFind\Auth\Manager')->isLoggedIn()) {
-            $roles= $container->get('VuFind\Role\PermissionManager')
+        if (isset($config['Site']['email'])) {
+            $form->setInstitutionEmail($config['Site']['email']);
+        }
+        if ($user = $container->get(\VuFind\Auth\Manager::class)->isLoggedIn()) {
+            $roles= $container->get(\VuFind\Role\PermissionManager::class)
                 ->getActivePermissions();
             $form->setUser($user, $roles);
         }

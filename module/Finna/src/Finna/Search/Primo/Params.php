@@ -41,28 +41,6 @@ class Params extends \VuFind\Search\Primo\Params
     use \Finna\Search\FinnaParams;
 
     /**
-     * Add a checkbox facet.  When the checkbox is checked, the specified filter
-     * will be applied to the search.  When the checkbox is not checked, no filter
-     * will be applied.
-     *
-     * @param string $filter [field]:[value] pair to associate with checkbox
-     * @param string $desc   Description to associate with the checkbox
-     *
-     * @return void
-     */
-    public function addCheckboxFacet($filter, $desc)
-    {
-        // Extract the facet field name from the filter, then add the
-        // relevant information to the array.
-        list($fieldName) = explode(':', $filter);
-        if (!isset($this->checkboxFacets[$fieldName])) {
-            $this->checkboxFacets[$fieldName] = [];
-        }
-        $this->checkboxFacets[$fieldName][]
-            = ['desc' => $desc, 'filter' => $filter];
-    }
-
-    /**
      * Get a formatted list of checkbox filter values ($field => array of values).
      *
      * @return array
@@ -85,15 +63,22 @@ class Params extends \VuFind\Search\Primo\Params
     /**
      * Get information on the current state of the boolean checkbox facets.
      *
+     * @param array $whitelist Whitelist of checkbox filters to return (null for all)
+     *
      * @return array
      */
-    public function getCheckboxFacets()
+    public function getCheckboxFacets(array $whitelist = null)
     {
         // Build up an array of checkbox facets with status booleans and
         // toggle URLs.
         $res = [];
-        foreach ($this->checkboxFacets as $field => $facets) {
+        foreach ($this->checkboxFacets as $facets) {
             foreach ($facets as $facet) {
+                // If the current filter is not on the whitelist, skip it (but
+                // accept everything if the whitelist is empty).
+                if (!empty($whitelist) && !in_array($facet['filter'], $whitelist)) {
+                    continue;
+                }
                 if ($this->hasHiddenFilter($facet['filter'])) {
                     continue;
                 }

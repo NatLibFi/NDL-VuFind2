@@ -179,7 +179,8 @@ class Paytrail extends BaseHandler
                     $code = $fineType;
                 }
                 if (isset($organizationProductCodeMappings[$fineOrg])) {
-                    $code = $organizationProductCodeMappings[$fineOrg] . $code;
+                    $code = $organizationProductCodeMappings[$fineOrg]
+                        . ($productCodeMappings[$fineType] ?? '');
                 }
                 $code = substr($code, 0, 16);
 
@@ -299,7 +300,7 @@ class Paytrail extends BaseHandler
             $this->setTransactionCancelled($orderNum);
             return 'online_payment_canceled';
         } else {
-            $this->setTransactionUnknownResponse($orderNum, $status);
+            $this->setTransactionFailed($orderNum, "unknown status $status");
             return 'online_payment_failed';
         }
     }

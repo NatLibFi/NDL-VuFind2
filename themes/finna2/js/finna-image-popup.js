@@ -1,4 +1,4 @@
-/*global VuFind, finna, module, videojs */
+/*global VuFind, finna, module, videojs, L */
 finna.imagePopup = (function finnaImagePopup() {
 
   function openPopup(trigger) {
@@ -56,6 +56,7 @@ finna.imagePopup = (function finnaImagePopup() {
       img.css('opacity', 0.5);
       img.one('load', function onLoadImage() {
         img.css('opacity', '');
+        $('.image-dimensions').text('(' + (this.naturalWidth + ' X ' + this.naturalHeight + ')'));
       });
       img.attr('src', $(this).attr('href'));
       var textContainers = $(this).closest('.record-image-container').find('.image-details-container');
@@ -142,51 +143,24 @@ finna.imagePopup = (function finnaImagePopup() {
             var id = popup.data("id");
             var recordIndex = $.magnificPopup.instance.currItem.data.recordInd;
             VuFind.lightbox.bind('.imagepopup-holder');
-            $('.imagepopup-holder .image img').one('load', function onLoadImg() {
-              $('.imagepopup-holder .image').addClass('loaded');
-              initDimensions();
-              $('.imagepopup-zoom-container').addClass('inactive');
-              $(this).attr('alt', $('#popup-image-title').html());
-              $(this).attr('aria-labelledby', 'popup-image-title');
-              if ($('#popup-image-description').length) {
-                $(this).attr('aria-describedby', 'popup-image-description');
-              }
-              $(".zoom-in").click(function initPanzoom() {
-                $(".zoom-in").unbind();
-                $('.imagepopup-zoom-container').removeClass('inactive');
-                var $panZoomImage = $('.imagepopup-holder .image img');
-                $panZoomImage.attr('src', $('.imagepopup-holder .original-image-url').attr('href'));
-                $panZoomImage.addClass('panzoom-image');
-                $panZoomImage.panzoom({
-                  contain: 'invert',
-                  minScale: 1,
-                  maxScale: 15,
-                  increment: 1,
-                  exponential: false,
-                  $reset: $(".zoom-reset")
-                }).panzoom("zoom");
-                $panZoomImage.parent().on('mousewheel.focal', function mouseWheelZoom( e ) {
-                  e.preventDefault();
-                  var delta = e.delta || e.originalEvent.wheelDelta;
-                  var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
-                  $panZoomImage.panzoom('zoom', zoomOut, {
-                    increment: 0.1,
-                    animate: false,
-                    focal: e
-                  });
-                });
-                $(".zoom-in").click(function zoomIn() {
-                  $panZoomImage.panzoom("zoom");
-                });
-                $(".zoom-out").click(function zoomOut() {
-                  $panZoomImage.panzoom("zoom", true);
-                });
+            var zoomable = $('#leaflet-map-image').data('large-image-layout') && $('#leaflet-map-image').data('enable-image-popup-zoom');
+            if (zoomable) {
+              initImageZoom();
+            } else {
+              $('.image img').one('load', function onLoadImg() {
+                $('.imagepopup-holder .image').addClass('loaded');
+                initDimensions();
+                $(this).attr('alt', $('#popup-image-title').html());
+                $(this).attr('aria-labelledby', 'popup-image-title');
+                if ($('#popup-image-description').length) {
+                  $(this).attr('aria-describedby', 'popup-image-description');
+                }
+              }).each(function triggerImageLoad() {
+                if (this.complete) {
+                  $(this).load();
+                }
               });
-            }).each(function triggerImageLoad() {
-              if (this.complete) {
-                $(this).load();
-              }
-            });
+            }
 
             // Prevent navigation button CSS-transitions on touch-devices
             if (finna.layout.isTouchDevice()) {
@@ -263,8 +237,8 @@ finna.imagePopup = (function finnaImagePopup() {
             initVideoPopup(popup);
           },
           close: function closePopup() {
-            if ($("#video").length){
-              videojs('video').dispose();
+            if ($('#video-player').length) {
+              videojs('video-player').dispose();
             }
           }
         },
@@ -287,35 +261,21 @@ finna.imagePopup = (function finnaImagePopup() {
     container.find('a[data-embed-video]').click(function openVideoPopup(e) {
       var videoSources = $(this).data('videoSources');
       var posterUrl = $(this).data('posterUrl');
+      var scripts = $(this).data('scripts');
 
       var mfp = $.magnificPopup.instance;
-      mfp.index = 0;
+      mfp.index = -1;
       mfp.gallery = {enabled: false};
-      mfp.items[0] = {
-        src: "<div class='video-popup'><video id='video' class='video-js vjs-big-play-centered' controls></video></div>",
+      mfp.items[-1] = {
+        src: '<div class="video-popup"><video id="video-player" class="video-js vjs-big-play-centered" controls></video></div>',
         type: 'inline'
       };
-      $(".mfp-arrow-right, .mfp-arrow-left").addClass("hidden");
+      $('.mfp-arrow-right, .mfp-arrow-left').addClass('hidden');
       mfp.updateItemHTML();
 
-      var player = videojs('video');
-
-      videojs.Html5DashJS.hook(
-        'beforeinitialize',
-        function onBeforeInit(videoJs, mediaPlayer) {
-          mediaPlayer.getDebug().setLogToBrowserConsole(false);
-        }
-      );
-      player.ready(function onReady() {
-        this.hotkeys({
-          enableVolumeScroll: false,
-          enableModifiersForNumbers: false
-        });
+      finna.layout.loadScripts(scripts, function onScriptsLoaded() {
+        finna.layout.initVideoJs('.video-popup', videoSources, posterUrl);
       });
-
-      player.src(videoSources);
-      player.poster(posterUrl);
-      player.load();
 
       e.preventDefault();
     });
@@ -332,13 +292,73 @@ finna.imagePopup = (function finnaImagePopup() {
           initRecordImage();
         } else {
           $(this).closest('.recordcover-holder').hide();
-          $('.access-rights p').first().hide();
           $('.image-rights').hide();
           $('.media-left > .organisation-menu').hide();
-          if ( $('.access-rights').has('.more-link') ) {
-            $('.access-rights > .more-link').hide();
-          }
         }
+      });
+    }
+  }
+
+  function initImageZoom() {
+    var img = new Image();
+    img.src = $('.imagepopup-holder .original-image-url').attr('href');
+    img.onload = function onLoadImg() {
+      $('.imagepopup-holder .image').addClass('loaded');
+      initDimensions();
+      $('.mfp-content').removeClass('full-size');
+      $(this).attr('alt', $('#popup-image-title').html());
+      $(this).attr('aria-labelledby', 'popup-image-title');
+      if ($('#popup-image-description').length) {
+        $(this).attr('aria-describedby', 'popup-image-description');
+      }
+      var map = L.map('leaflet-map-image', {
+        minZoom: 1,
+        maxZoom: 6,
+        center: [0, 0],
+        zoomControl: false,
+        zoom: 1,
+        crs: L.CRS.Simple,
+        maxBoundsViscosity: 0.9,
+        dragging: true,
+      });
+      $('.zoom-in').click(function zoomIn() {
+        map.setZoom(map.getZoom() + 1)
+      });
+      $('.zoom-out').click(function zoomOut() {
+        map.setZoom(map.getZoom() - 1)
+      });
+      $('.zoom-reset').click(function zoomReset() {
+        map.setZoom(1)
+      });
+      var h = this.naturalHeight;
+      var w = this.naturalWidth;
+      if (h === 10 && w === 10) {
+        $('#leaflet-map-image').hide();
+        return;
+      }
+      var imageNaturalSizeZoomLevel = 3;
+      if (h < 2000 && w < 2000) {
+        imageNaturalSizeZoomLevel = 2;
+      }
+      if (h < 1000 && w < 1000) {
+        imageNaturalSizeZoomLevel = 1;
+      }
+      var southWest = map.unproject([0, h], imageNaturalSizeZoomLevel);
+      var northEast = map.unproject([w, 0], imageNaturalSizeZoomLevel);
+      var bounds = new L.LatLngBounds(southWest, northEast);
+      var overlay = L.imageOverlay(img.src, bounds);
+      map.flyToBounds(bounds, {animate: false});
+      map.setMaxBounds(bounds);
+      overlay.addTo(map);
+      map.invalidateSize();
+      map.on('zoomend', function adjustPopupSize() {
+        if (map.getZoom() > 1) {
+          $('.mfp-content').addClass('full-size');
+        } else {
+          $('.mfp-content').removeClass('full-size');
+          map.flyToBounds(bounds, {animate: false});
+        }
+        map.invalidateSize();
       });
     }
   }
@@ -370,7 +390,7 @@ finna.imagePopup = (function finnaImagePopup() {
           $(this).parent().addClass('no-image');
           $(this).closest('a.image-popup-trigger').unbind('click');
           $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
-          $('.large-image-sidebar').addClass('visible-xs');
+          $('.large-image-sidebar').addClass('visible-xs visible-sm');
           $('.record-main').addClass('mainbody left');
           var href = $(this).parent().attr('href');
           $(this).parent().attr({'href': href.split('#')[0], 'title': ''});

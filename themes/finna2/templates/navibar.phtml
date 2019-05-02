@@ -2,8 +2,7 @@
 <?php $account = $this->auth()->getManager(); ?>
 <div role="navigation" class="finna-navbar">
   <div class="navbar-header">
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse">
-      <span class="sr-only"><?=$this->transEsc('Toggle navigation');?></span>
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->escapeHtmlAttr($this->translate('Main Navigation')) ?>" aria-expanded="false">
       <i class="fa fa-bars" aria-hidden="true"></i>
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
@@ -15,8 +14,8 @@
         <?php foreach ($this->navibar()->getMenuItems($this->layout()->userLang) as $key => $val): ?>
           <?php if (count($val['items']) > 1): ?>
             <li class="dropdown" id="<?= $val['label'] ?>">
-              <a href="#"  role="menuitem" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-nav-<?=$val['label'] ?>" aria-hidden="true"></i><?= $this->transEsc($val['label']) ?> <b class="caret"></b></a>
-              <ul role="presentation" class="dropdown-menu">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-nav-<?=$val['label'] ?>" aria-hidden="true"></i><?= $this->transEsc($val['label']) ?> <b class="caret" aria-hidden="true"></b></a>
+              <ul role="group" class="dropdown-menu" aria-labelledby="<?= $val['label'] ?>">
                 <?php foreach ($val['items'] as $itemKey => $itemVal): ?>
                 <?php
                   if (!($itemUrl = $this->navibar()->getMenuItemUrl($itemVal))) {

@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library 2015-2018.
+ * Copyright (C) The National Library 2015-2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -826,6 +826,33 @@ trait SolrFinna
     }
 
     /**
+     * Get related records (used by RecordDriverRelated - Related module)
+     *
+     * Returns an associative array of record ids.
+     * The array may contain the following keys:
+     *   - parents
+     *   - children
+     *   - continued-from
+     *   - other
+     *
+     * @return array
+     */
+    public function getRelatedItems()
+    {
+        return [];
+    }
+
+    /**
+     * Get work identification keys
+     *
+     * @return array
+     */
+    public function getWorkKeys()
+    {
+        return $this->fields['work_keys_str_mv'] ?? [];
+    }
+
+    /**
      * A helper function that merges an array of JSON-encoded URLs
      *
      * @param array $urlArray Array of JSON-encoded URL attributes
@@ -934,5 +961,15 @@ trait SolrFinna
     protected function getSupportedCitationFormats()
     {
         return ['APA', 'Chicago', 'MLA', 'Harvard'];
+    }
+
+    /**
+     * Return MusicBrainz identifiers from index.
+     *
+     * @return array
+     */
+    public function getMusicBrainzIdentifiers()
+    {
+        return $this->fields['mbid_str_mv'] ?? [];
     }
 }

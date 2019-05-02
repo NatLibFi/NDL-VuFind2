@@ -400,11 +400,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             ? $this->config['messaging'] : null;
 
         $messagingSettings = [];
-        $messageTypes = [
-            'Item_Checkout' => 'checkoutNotice',
-            'Item_Due' => 'dueDateNotice',
-            'Notifications' => 'notifications'
-        ];
 
         $type = 'dueDateNotice';
         $dueDateNoticeActive = !$result['RefuseReminderMessages'];
@@ -469,18 +464,22 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         }
 
         $profile = [
-            'firstname' => trim($name[1]),
+            'firstname' => trim($name[1] ?? ''),
             'lastname' => ucfirst(trim($name[0])),
-            'phone' => $result['MainPhone'],
+            'phone' => !empty($result['MainPhone'])
+                ? $result['MainPhone'] : $result['Mobile'],
             'email' => $result['MainEmail'],
             'address1' => $result['MainAddrLine1'],
             'address2' => $result['MainAddrLine2'],
             'zip' => $result['MainZip'],
             'city' => $result['MainPlace'],
             'expiration_date' => $expirationDate,
-            'loan_history' => $result['StoreBorrowerHistory'] ? 0 : 1,
             'messagingServices' => $messagingSettings
         ];
+
+        if (isset($this->config['updateTransactionHistoryState']['method'])) {
+            $profile['loan_history'] = $result['StoreBorrowerHistory'];
+        }
 
         $profile = array_merge($patron, $profile);
         $this->putCachedData($cacheKey, $profile);
@@ -607,7 +606,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     public function getMyHolds($patron)
     {
         $request = [
-            '$filter' => 'BorrowerId eq' . ' ' . $patron['id'],
+            '$filter' => 'BorrowerId eq ' . $patron['id'],
             '$orderby' => 'DeliverAtLocalUnitId'
         ];
         $result = $this->makeRequest(
@@ -635,7 +634,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                     || $entry['ServiceCode'] === 'ReservationNoticeSent')
                         ? true : false,
                 'requestId' => $entry['Id'],
-                'frozen' => $entry['ResPausedTo'] ?? false
+                'frozen' => !$entry['ResActiveToday']
             ];
             if (!empty($entry['MarcRecordTitle'])) {
                 $hold['title'] = $entry['MarcRecordTitle'];
@@ -998,7 +997,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     public function updateTransactionHistoryState($patron, $state)
     {
         $code = $this->updatePatronInfo(
-            $patron, ['StoreBorrowerHistory' => ($state == 0)]
+            $patron, ['StoreBorrowerHistory' => $state == 1]
         );
 
         if ($code !== 200) {

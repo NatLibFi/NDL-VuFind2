@@ -60,6 +60,7 @@
     color: @btn-primary-color;
     vertical-align: inherit;
     font-weight: 500;
+    cursor: pointer;
   }
 }
 .searchHomeContent .btn-link {
@@ -188,5 +189,49 @@ button.multiselect {
     .form-info.post {
         margin-bottom: 20px;
     }
-}
+    .form-info {
+        font-weight: bold;
+        margin: 20px 0;
+    }
 
+    .form-group label.required::before,
+    .form-group .radio-label.required::before,
+    {
+        content: '* ';
+    }
+
+    input[type=radio] {
+        height: 1em;
+        position: absolute;
+        margin-left: -20px;
+    }
+
+    .form-group.checkbox,
+    .form-group.radio {
+        padding-left: 0;
+        margin-bottom: 15px;
+        label.control-label {
+            padding-left: 0;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        label {
+            display: table;
+            margin: 7px 0;
+            input {
+                width: auto;
+                margin-right: 10px;
+                margin-top: 3px;
+            }
+        }
+        .radio-label {
+            font-weight: 700;
+        }
+    }
+
+    .form-group.checkbox label input {
+        height: 1em;
+        margin-top: -1px;
+        display: inline-block;
+    }
+}

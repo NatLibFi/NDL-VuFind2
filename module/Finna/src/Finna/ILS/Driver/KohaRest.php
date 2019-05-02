@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2018.
+ * Copyright (C) The National Library of Finland 2017-2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -309,6 +309,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'zip' => $result['zipcode'],
             'city' => $result['city'],
             'country' => $result['country'],
+            'category' => $result['categorycode'] ?? '',
             'expiration_date' => $expirationDate,
             'hold_identifier' => $result['othernames'],
             'guarantor' => $guarantor,
@@ -791,8 +792,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         );
         if ($code != 204) {
             $error = "Failed to mark payment of $amount paid for patron"
-                . " {$patron['id']}: $code: $result";
-
+                . " {$patron['id']}: $code: " . print_r($result, true);
             $this->error($error);
             throw new ILSException($error);
         }
@@ -919,11 +919,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $itemId = $entry['itemnumber'] ?? null;
             $title = '';
             $volume = '';
-            $publicationYear = '';
             if ($itemId) {
                 $item = $this->getItem($itemId);
-                $bibId = $item['biblionumber'];
-                $volume = $item['enumchron'];
+                $bibId = $item['biblionumber'] ?? null;
+                $volume = $item['enumchron'] ?? '';
             }
             if (!empty($bibId)) {
                 $bib = $this->getBibRecord($bibId);
@@ -1011,6 +1010,82 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $this->sessionCache->patronPermissions
             )
         );
+    }
+
+    /**
+     * Get Pick Up Locations
+     *
+     * This is responsible for gettting a list of valid library locations for
+     * holds / recall retrieval
+     *
+     * @param array $patron      Patron information returned by the patronLogin
+     * method.
+     * @param array $holdDetails Optional array, only passed in when getting a list
+     * in the context of placing a hold; contains most of the same values passed to
+     * placeHold, minus the patron data.  May be used to limit the pickup options
+     * or may be ignored.  The driver must not add new options to the return array
+     * based on this data or other areas of VuFind may behave incorrectly.
+     *
+     * @throws ILSException
+     * @return array        An array of associative arrays with locationID and
+     * locationDisplay keys
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getPickUpLocations($patron = false, $holdDetails = null)
+    {
+        $result = $this->makeRequest(
+            ['v1', 'libraries'],
+            false,
+            'GET',
+            $patron
+        );
+        if (empty($result)) {
+            return [];
+        }
+        $section = array_key_exists('StorageRetrievalRequest', $holdDetails ?? [])
+            ? 'StorageRetrievalRequests' : 'Holds';
+        $locations = [];
+        $excluded = isset($this->config[$section]['excludePickupLocations'])
+            ? explode(':', $this->config[$section]['excludePickupLocations']) : [];
+        foreach ($result as $location) {
+            if (!$location['pickup_location']
+                || in_array($location['branchcode'], $excluded)
+            ) {
+                continue;
+            }
+            $locations[] = [
+                'locationID' => $location['branchcode'],
+                'locationDisplay' => $location['branchname']
+            ];
+        }
+
+        // Do we need to sort pickup locations? If the setting is false, don't
+        // bother doing any more work. If it's not set at all, default to
+        // alphabetical order.
+        $orderSetting = isset($this->config[$section]['pickUpLocationOrder'])
+            ? $this->config[$section]['pickUpLocationOrder'] : 'default';
+        if (count($locations) > 1 && !empty($orderSetting)) {
+            $locationOrder = $orderSetting === 'default'
+                ? [] : array_flip(explode(':', $orderSetting));
+            $sortFunction = function ($a, $b) use ($locationOrder) {
+                $aLoc = $a['locationID'];
+                $bLoc = $b['locationID'];
+                if (isset($locationOrder[$aLoc])) {
+                    if (isset($locationOrder[$bLoc])) {
+                        return $locationOrder[$aLoc] - $locationOrder[$bLoc];
+                    }
+                    return -1;
+                }
+                if (isset($locationOrder[$bLoc])) {
+                    return 1;
+                }
+                return strcasecmp($a['locationDisplay'], $b['locationDisplay']);
+            };
+            usort($locations, $sortFunction);
+        }
+
+        return $locations;
     }
 
     /**
@@ -1265,11 +1340,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     continue;
                 }
                 $holdingData = $this->getHoldingData($holding, true);
-                // Don't display a standalone holding unless there's some information
-                // available.
-                if (empty($holdingData)) {
-                    continue;
-                }
 
                 $i++;
                 $location = $this->getBranchName($holding['holdingbranch']);
@@ -1296,13 +1366,15 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                         $location .= $holdingLoc;
                     }
                 } else {
-                    $callnumber
-                        .= ', ' . $this->translateLocation(
-                            $holding['location'],
-                            !empty($holding['location_description'])
-                                ? $holding['location_description']
-                                : $holding['location']
-                        );
+                    if ($callnumber) {
+                        $callnumber .= ', ';
+                    }
+                    $callnumber .= $this->translateLocation(
+                        $holding['location'],
+                        !empty($holding['location_description'])
+                            ? $holding['location_description']
+                            : $holding['location']
+                    );
                 }
                 if ($holding['callnumber']) {
                     $callnumber .= ' ' . $holding['callnumber'];
@@ -1439,6 +1511,17 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
         }
 
+        // Get links
+        if (isset($this->config['Holdings']['links'])) {
+            $data = $this->getMFHDData(
+                $holding['_marcRecord'],
+                $this->config['Holdings']['links']
+            );
+            if ($data) {
+                $marcDetails['links'] = $data;
+            }
+        }
+
         // Make sure to return an empty array unless we have details to display
         if (!empty($marcDetails)) {
             $marcDetails['holdings_id'] = $holding['holding_id'];
@@ -1567,6 +1650,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         if (0 === $result) {
             $result = strcmp($a['location'], $b['location']);
+        }
+
+        if (0 === $result && $this->sortItemsByEnumChron) {
+            // Reverse chronological order
+            $result = strnatcmp($b['number'] ?? '', $a['number'] ?? '');
         }
 
         if (0 === $result) {

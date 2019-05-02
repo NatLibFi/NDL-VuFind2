@@ -48,12 +48,12 @@ defaultPickUpLocation = ""
 
 ; HMACKeys - A list of form element names that will be analyzed for consistency
 ; during form processing. Most users should not need to change this setting.
-;HMACKeys = item_id:holdings_id
+;HMACKeys = item_id:holdings_id:StorageRetrievalRequest
 
 ; extraFields - A colon-separated list used to display extra visible fields in the
 ; place request form. Supported values are "comments", "pickUpLocation",
 ; "item-issue" and "acceptTerms"
-;extraFields = item-issue:comments
+;extraFields = item-issue:pickUpLocation
 
 ; Optional help texts that can be displayed on the request form
 ;helpText = "Help text for all languages."
@@ -62,6 +62,9 @@ defaultPickUpLocation = ""
 ; Optional label for the "acceptTerms" extra field
 ;acceptTermsText = "I accept the terms in any language."
 ;acceptTermsText[en-gb] = "I accept the terms in English."
+
+; This setting can be used to exclude locations from the pickup location list
+;excludePickupLocations = "BRANCH:MOBILE"
 
 [Holdings]
 ; Whether item-specific hold counts are displayed
@@ -111,6 +114,8 @@ indexes = "868az"
 ; as a colon-separated list. This list is independent of the branch. Unlisted
 ; locations will get a default priority of 999.
 ;holdings_location_order = "112:111"
+; Whether to sort items by enumchron. Default is true.
+;sort_by_enum_chron = false
 
 [onlinePayment]
 ; Whether online payment is enabled. Default is false.

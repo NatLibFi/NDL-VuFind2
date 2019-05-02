@@ -264,6 +264,17 @@ title_level_holds_mode = "driver"
 ; - item_agency_id,location
 holdings_grouping = holdings_id,location
 
+; Text fields such as holdings_notes gathered from items to be displayed in each
+; holdings group in the display order.
+; The default list is 'holdings_notes', 'summary', 'supplements' and 'indexes'. The
+; deprecated field 'notes' is used as an alias for 'holdings_notes'.
+; Note that displayed information depends on what the ILS driver returns.
+holdings_text_fields[] = 'holdings_notes'
+holdings_text_fields[] = 'summary'
+holdings_text_fields[] = 'supplements'
+holdings_text_fields[] = 'indexes'
+holdings_text_fields[] = 'links'
+
 ; Whether support for multiple library cards is enabled. Default is false.
 library_cards = true
 
@@ -1120,11 +1131,13 @@ hide_holdings[] = "World Wide Web"
 ;
 ; Available options:
 ;    Editions - Alternate editions (in the Solr index) based on WorldCat lookup
+;    RecordDriverRelated - Related records based on RecordDriver metadata
 ;    Similar - Similarity based on Solr lookup
 ;    SimilarDeferred - Like Similar but asynchronous
 ;    WorldCatEditions - Alternate editions (in the WorldCat index) based on WorldCat
 ;        lookup
 ;    WorldCatSimilar - Similarity based on WorldCat lookup
+;    WorkExpressions - Other expressions or versions of the record
 related[] = "SimilarDeferred"
 
 ; Presenter roles that are displayed separately from other authors
@@ -1220,8 +1233,13 @@ url_blacklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
 ; in searches.ini).
 ;sort_sources = true
 
-; Video source configuration. First element is data source ID, second is media type
-; and third is the URL. {videoname} in the URL is replaced with the video ID.
+; Video source configuration. Elements separated by a pipe:
+; 1. Data source ID the configuration applies to
+; 2. Media type the configuration provides
+; 3. URL template, where {videoname} is replaced with the video ID
+; 4. Optional comma-separated list of video types the configuration applies to
+; (defaults to 'mp4')
+;video_sources[] = "kavi|application/x-mpegURL|https://elo.salama.tv.funet.fi/vod/live/smil:{videoname}/playlist.m3u8|smil"
 ;video_sources[] = "kavi|application/dash+xml|http://elo.salama.tv.funet.fi/vod/_definst_/mp4:{videoname}/manifest.mpd"
 ;video_sources[] = "kavi|application/x-mpegURL|http://elo.salama.tv.funet.fi/vod/_definst_/mp4:{videoname}/playlist.m3u8"
 
@@ -1471,3 +1489,9 @@ en-gb['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.ht
 [FinnaSurvey]
 enabled = false
 url = "https://my.surveypal.com/Finnasurvey"
+
+; Authority info
+[Authority]
+; Authority support is disabled by default. Uncomment the following line to enable
+; it.
+;enabled = true

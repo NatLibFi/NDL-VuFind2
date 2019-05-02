@@ -236,6 +236,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $hash = $this->params()->fromQuery(
             'hash', $this->params()->fromPost('hash', '')
         );
+        // Make sure to not include '>' if the mail client doesn't handle links
+        // properly
+        $hash = preg_replace('/>$/', '', $hash);
 
         // Check if hash is expired
         $hashtime = $this->getHashAge($hash);
@@ -413,7 +416,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
         // Validate new password
         try {
-            $ilsAuth = $this->serviceLocator->get('VuFind\AuthPluginManager')
+            $ilsAuth = $this->serviceLocator->get(\VuFind\Auth\PluginManager::class)
                 ->get('ILS');
             $ilsAuth->validatePasswordInUpdate(
                 ['password' => $password, 'password2' => $password2]
@@ -514,7 +517,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     '%%library%%' => $library
                 ]
             );
-            $this->serviceLocator->get('VuFind\Mailer')->send(
+            $this->serviceLocator->get(\VuFind\Mailer\Mailer::class)->send(
                 $email,
                 $config->Site->email,
                 $subject,

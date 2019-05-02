@@ -62,7 +62,8 @@ class OrganisationInfoFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
         return new $requestedName(
-            $container->get('VuFind\Config\PluginManager')->get('OrganisationInfo')
+            $container->get(\VuFind\Config\PluginManager::class)
+                ->get('OrganisationInfo')
         );
     }
 }

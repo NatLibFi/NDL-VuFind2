@@ -170,11 +170,15 @@ class CPU extends BaseHandler
                 );
                 // Remove ' since that causes the string to be truncated
                 $fineDesc = str_replace("'", ' ', $fineDesc);
+                // Make sure that description length does not exceed CPU
+                // max limit of 100 characters.
+                $fineDesc = substr($fineDesc, 0, 100);
             }
 
             $code = $productCodeMappings[$fineType] ?? $productCode;
             if (isset($organizationProductCodeMappings[$fineOrg])) {
-                $code = $organizationProductCodeMappings[$fineOrg] . $code;
+                $code = $organizationProductCodeMappings[$fineOrg]
+                    . ($productCodeMappings[$fineType] ?? '');
             }
             $code = substr($code, 0, 25);
             $product = new \Cpu_Client_Product(

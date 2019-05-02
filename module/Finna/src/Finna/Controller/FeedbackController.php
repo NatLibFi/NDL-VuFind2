@@ -29,6 +29,8 @@
  */
 namespace Finna\Controller;
 
+use Finna\Form\Form;
+
 /**
  * Feedback Controller
  *
@@ -89,5 +91,78 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
 
         $view->setTemplate('feedback/response');
         return $view;
+    }
+
+    /**
+     * Legacy support for locally customized forms.
+     *
+     * @return void
+     */
+    public function emailAction()
+    {
+        $post = $this->getRequest()->getPost();
+        $post->set('message', $post->get('comments'));
+
+        return $this->forwardTo('Feedback', 'Form');
+    }
+
+    /**
+     * Send submitted form data via email or save the data to the database.
+     *
+     * @param string $recipientName  Recipient name
+     * @param string $recipientEmail Recipient email
+     * @param string $senderName     Sender name
+     * @param string $senderEmail    Sender email
+     * @param string $replyToName    Reply-to name
+     * @param string $replyToEmail   Reply-to email
+     * @param string $emailSubject   Email subject
+     * @param string $emailMessage   Email message
+     *
+     * @return array with elements success:boolean, errorMessage:string (optional)
+     */
+    protected function sendEmail(
+        $recipientName, $recipientEmail, $senderName, $senderEmail,
+        $replyToName, $replyToEmail, $emailSubject, $emailMessage
+    ) {
+        $formId = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
+        if (!$formId) {
+            $formId = 'FeedbackSite';
+        }
+        $form = $this->serviceLocator->get(\VuFind\Form\Form::class);
+        $form->setFormId($formId);
+
+        if ($form->useEmailHandler()) {
+            return parent::sendEmail(...func_get_args());
+        }
+
+        // Save to database
+        $user = $this->getUser();
+        $userId = $user ? $user->id : null;
+
+        $url = rtrim($this->getServerUrl('home'), '/');
+        $url = substr($url, strpos($url, '://') + 3);
+
+        $formFields = $form->getFormFields();
+
+        $save = [];
+        $params = (array)$this->params()->fromPost();
+        foreach ($params as $key => $val) {
+            if (! in_array($key, $formFields)) {
+                continue;
+            }
+            $save[$key] = $val;
+        }
+        $save['emailSubject'] = $emailSubject;
+        $messageJson = json_encode($save);
+
+        $message
+            = $emailSubject . PHP_EOL . '-----' . PHP_EOL . PHP_EOL . $emailMessage;
+
+        $feedback = $this->getTable('Feedback');
+        $feedback->saveFeedback(
+            $url, $formId, $userId, $message, $messageJson
+        );
+
+        return [true, null];
     }
 }

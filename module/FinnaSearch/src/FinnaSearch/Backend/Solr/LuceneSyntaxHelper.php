@@ -176,11 +176,13 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
             if ($c == '"') {
                 $inQuotes = !$inQuotes;
             }
-            if (!$inQuotes && $c == '-' && $prev != "\\") {
-                if ($prev == '!' && $prev2 != "\\") {
+            if (!$inQuotes && '-' === $c) {
+                if ('!' === $prev && "\\" !== $prev2) {
                     $result = substr($result, 0, -1) . '-';
+                } elseif (' ' === $prev) {
+                    $result .= "\\-";
                 } else {
-                    $result .= "\\$c";
+                    $result .= '-';
                 }
             } else {
                 $result .= $c;

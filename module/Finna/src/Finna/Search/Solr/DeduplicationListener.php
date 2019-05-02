@@ -55,17 +55,25 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         if ($backend === $this->backend) {
             $params = $event->getParam('params');
             $context = $event->getParam('context');
-            if (($context == 'search' || $context == 'similar') && $params) {
+            if ($params
+                && in_array($context, ['search', 'similar', 'workExpressions'])
+            ) {
                 // Check for a special filter that enables deduplication
                 $fq = $params->get('fq');
                 if ($fq) {
                     $key = array_search('finna.deduplication:"1"', $fq);
+                    if (false === $key) {
+                        $key = array_search('(finna.deduplication:"1")', $fq);
+                    }
                     if (false !== $key) {
                         $this->enabled = true;
                         $params->set('finna.deduplication', '1');
                         unset($fq[$key]);
                     } else {
                         $key = array_search('finna.deduplication:"0"', $fq);
+                        if (false === $key) {
+                            $key = array_search('(finna.deduplication:"0")', $fq);
+                        }
                         if (false !== $key) {
                             $this->enabled = false;
                             $params->set('finna.deduplication', '0');
@@ -78,7 +86,14 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
                 }
             }
         }
-        $result = parent::onSearchPre($event);
+        if ($event->getParam('context') === 'workExpressions') {
+            // Handle workExpressions like similar records in the upstream code
+            $event->setParam('context', 'similar');
+            $result = parent::onSearchPre($event);
+            $event->setParam('context', 'workExpressions');
+        } else {
+            $result = parent::onSearchPre($event);
+        }
         $this->enabled = $saveEnabled;
         return $result;
     }
@@ -100,7 +115,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         }
         $context = $event->getParam('context');
         $params = $event->getParam('params');
-        if ($params && ($context == 'search' || $context == 'similar')) {
+        if ($params && in_array($context, ['search', 'similar', 'workExpression'])) {
             if ($params->contains('finna.deduplication', '1')) {
                 $this->enabled = true;
             } elseif ($params->contains('finna.deduplication', '0')) {
@@ -108,7 +123,14 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             }
         }
 
-        $result = parent::onSearchPost($event);
+        if ($event->getParam('context') === 'workExpressions') {
+            // Handle workExpressions like similar records in the upstream code
+            $event->setParam('context', 'similar');
+            $result = parent::onSearchPost($event);
+            $event->setParam('context', 'workExpressions');
+        } else {
+            $result = parent::onSearchPost($event);
+        }
         $this->enabled = $saveEnabled;
         return $result;
     }
@@ -170,7 +192,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             return $result;
         }
 
-        $config = $this->serviceLocator->get('VuFind\Config');
+        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $searchConfig = $config->get($this->searchConfig);
         if (!isset($searchConfig->Records->apiExcludedSources)) {
             return $result;
@@ -185,17 +207,18 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     /**
      * Function that determines the priority for sources
      *
-     * @param string $recordSources Record sources defined in searches.ini
+     * @param array $recordSources Record sources defined in searches.ini
      *
      * @return array Array keyed by source with priority as the value
      */
     protected function determineSourcePriority($recordSources)
     {
-        $config = $this->serviceLocator->get('VuFind\Config');
+        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $mainConfig = $config->get('config');
         // Sort sources alphabetically if necessary
         if (!empty($mainConfig->Record->sort_sources)) {
-            $translator = $this->serviceLocator->get('VuFind\Translator');
+            $translator
+                = $this->serviceLocator->get(\Zend\Mvc\I18n\Translator::class);
             usort(
                 $recordSources,
                 function ($a, $b) use ($translator) {
@@ -213,7 +236,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         }
 
         // Secondary priority to selected library card
-        $authManager = $this->serviceLocator->get('VuFind\AuthManager');
+        $authManager = $this->serviceLocator->get(\VuFind\Auth\Manager::class);
         if ($user = $authManager->isLoggedIn()) {
             if ($user->cat_username) {
                 list($preferred) = explode('.', $user->cat_username, 2);
@@ -227,7 +250,8 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         }
 
         // Primary priority to cookie
-        $cookieManager = $this->serviceLocator->get('VuFind\CookieManager');
+        $cookieManager
+            = $this->serviceLocator->get(\VuFind\Cookie\CookieManager::class);
         if ($cookieManager) {
             $preferred = $cookieManager->get('preferredRecordSource');
             // array_search may return 0, but that's fine since it means the source
@@ -266,7 +290,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             return;
         }
 
-        $config = $this->serviceLocator->get('VuFind\Config');
+        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $searchConfig = $config->get($this->searchConfig);
         if (!isset($searchConfig->Records->apiExcludedSources)) {
             return;

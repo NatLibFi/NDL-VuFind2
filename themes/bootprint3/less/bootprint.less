@@ -1,5 +1,11 @@
-@import "bootstrap";
+/* #LESS> */
+@import "../../bootstrap3/less/bootstrap";
 @import "variables";
+/* <#LESS */
+/* #SCSS>
+@import "variables", "../../bootstrap3/scss/bootstrap";
+<#SCSS */
+
 @import "icons";
 @import "search";
 @import "forms";
@@ -19,16 +25,16 @@ body {
 #dateVisColorSettings { stroke: @brand-primary; }
 #hierarchyRecord { background: #fff; }
 .cart-controls .checkbox { line-height: 2rem; }
+.myresearch-menu a:hover { text-decoration: none; }
 
 /* --- Layout --- */
 .main .container { padding-top: 1rem; }
 .main .sidebar { background-color: #fff; }
-body.offcanvas .sidebar {
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
+
 @media (min-width: 768px) {
   .main .sidebar { padding: 0; }
+  .sidebar.left { padding-right: 1rem; }
+  .sidebar.right { padding-left: 1rem;   }
 }
 
 /* --- Header --- */
@@ -139,9 +145,9 @@ ul.random.image li img { margin: 0 auto; }
   .jstree-node.active .badge,
   .jstree-node.active .badge .fa { color: @active-orange; }
   .facet .badge a { color: #fff; }
-
-  .facet.facetOR { padding-left: 1rem; }
 }
+.checkboxFilter .facet { padding-left: 1px; }
+
 .slider-container .slider-handle {
   background: @brand-primary;
   border: 1px solid @brand-primary;

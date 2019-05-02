@@ -580,16 +580,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         foreach ($this->getSimpleXML()->xpath(
             'lido/descriptiveMetadata/objectIdentificationWrap/inscriptionsWrap/'
-            . 'inscriptions/inscriptionDescription/descriptiveNoteValue'
-        ) as $node) {
-            $label = null;
-            $attributes = $node->attributes();
-            $label = isset($attributes->label) ? $attributes->label : '';
-            if ($label) {
-                $results[] = (string)$node . ' (' . $label . ')';
-            } else {
-                $results[] = (string)$node;
+            . 'inscriptions'
+        ) as $inscriptions) {
+            $group = [];
+            foreach ($inscriptions->inscriptionDescription as $node) {
+                $content = (string)$node->descriptiveNoteValue;
+                $type = $node->attributes()->type ?? '';
+                $label = $node->descriptiveNoteValue->attributes()->label ?? '';
+                $group[] = compact('type', 'label', 'content');
             }
+            $results[] = $group;
         }
         return $results;
     }
@@ -975,5 +975,26 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 ? (string)$this->fields['description'] : '';
         }
         return $results;
+    }
+
+    /**
+     * Return an XML representation of the record using the specified format.
+     * Return false if the format is unsupported.
+     *
+     * @param string     $format     Name of format to use (corresponds with OAI-PMH
+     * metadataPrefix parameter).
+     * @param string     $baseUrl    Base URL of host containing VuFind (optional;
+     * may be used to inject record URLs into XML when appropriate).
+     * @param RecordLink $recordLink Record link helper (optional; may be used to
+     * inject record URLs into XML when appropriate).
+     *
+     * @return mixed         XML, or false if format unsupported.
+     */
+    public function getXML($format, $baseUrl = null, $recordLink = null)
+    {
+        if ('oai_lido' === $format) {
+            return $this->fields['fullrecord'];
+        }
+        return parent::getXML($format, $baseUrl, $recordLink);
     }
 }
