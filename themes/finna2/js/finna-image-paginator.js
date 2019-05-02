@@ -502,8 +502,6 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(image) {
     var _ = this;
- 
-
 
     if (_.openImageIndex !== image.attr('index')) {
       _.loadImageInformation(_.openImageIndex);
