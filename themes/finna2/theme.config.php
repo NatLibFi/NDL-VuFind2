@@ -203,7 +203,6 @@ return [
         'vendor/bootstrap-datepicker.en-GB.min.js',
         'vendor/bootstrap-datepicker.fi.min.js',
         'vendor/bootstrap-datepicker.sv.min.js',
-        'vendor/bootstrap-multiselect.min.js',
         'vendor/bootstrap-rating.min.js',
         'vendor/bootstrap-slider.min.js',
         'vendor/classList.js',
