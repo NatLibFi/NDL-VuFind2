@@ -5,7 +5,6 @@ finna.imagePaginator = (function imagePaginator() {
   var nextRecordButton = '<button class="popup-arrow popup-right-arrow next-record" type="button"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>';
   var paginatorIndex = 0;
   var timeOut = null;
-  var loadPageTimeOut = null;
 
   var defaults = {
     recordId: 0,
