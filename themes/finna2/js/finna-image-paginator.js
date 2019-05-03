@@ -417,6 +417,7 @@ finna.imagePaginator = (function imagePaginator() {
     holder.append(img, $('<i class="fa fa-spinner fa-spin"/>'));
     img.src = image.small;
     img.alt = image.alt;
+    img.title = image.description;
     img.onload = function onLoad() {
       $(this).siblings('i').remove();
     }
