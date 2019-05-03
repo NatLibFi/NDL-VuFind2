@@ -10,12 +10,14 @@
   ?>
   <?php foreach ($images as $img): ?>
     <?php
+      $desc = isset($img['description']) && !empty($img['description']) ? $img['description'] : $this->transEsc('Image');
       $obj = [
         'small' => $img['urls']['small'],
         'medium' => $img['urls']['medium'] ?? $img['urls']['small'],
         'largest' => $img['urls']['large'] ?? $img['urls']['medium'] ?? $img['urls']['small'],
         'index' => $ind++,
-        'description' => $img['description'] ?? ''
+        'alt' => $desc,
+        'description' => $img['description']
       ];
       $paginatedLinks[] = $obj;
     ?>

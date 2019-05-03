@@ -64,7 +64,7 @@
     <?php endif ?>
     </div>
   </div>
-  <?php if ($listNotes): ?>
+  <?php if (isset($listNotes) && $listNotes): ?>
     <div class="list-notes">
       <strong><?=$this->transEsc('Description') ?></strong><?php if ($listUser): ?><span class="notes-user"> (<?=$this->escapeHtml(trim($this->userPublicName($this->listUser)))?>)</span><?php endif; ?>:
       <ul>
