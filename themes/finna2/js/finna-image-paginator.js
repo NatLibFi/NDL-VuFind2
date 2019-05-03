@@ -135,51 +135,10 @@ finna.imagePaginator = (function imagePaginator() {
         toggleButtons(_.moreBtn, _.lessBtn);
         _.loadPage(0, null, _.settings.imagesPerRow);
       });
-
-      _.trigger.on('wheel', function scrollImage(e) {
-        var delta = Math.sign(+e.originalEvent.deltaY);
-        e.preventDefault();
-        _.onScrollEvent(delta);
-      });
-
-      _.trigger.find('img').swipe({
-        swipeLeft: function swipeLeft(/*event, phase, direction, distance, duration*/) {
-          event.preventDefault();
-          _.onScrollEvent(1);
-        },
-        swipeRight: function swipeRight(/*event, phase, direction, distance, duration*/) {
-          event.preventDefault();
-          _.onScrollEvent(-1);
-        },
-        threshold: 75,
-        cancelThreshold: 20,
-        excludedElements: '.noSwipe a'
-      });
     }
-
-    _.imageHolder.on('wheel', function scrollPages(e){
-      e.preventDefault();
-      var delta = Math.sign(e.originalEvent.deltaY);
-      _.onScrollPopups(delta);
-    });
-
     _.imagePopup.on('click', function setTriggerEvents(e){
       e.preventDefault();
       _.setTrigger($(this));
-    });
-
-    _.imageHolder.swipe({
-      swipeLeft: function swipeLeft(/*event, phase, direction, distance, duration*/) {
-        event.preventDefault();
-        _.onScrollPopups(1);
-      },
-      swipeRight: function swipeRight(/*event, phase, direction, distance, duration*/) {
-        event.preventDefault();
-        _.onScrollPopups(-1);
-      },
-      threshold: 75,
-      cancelThreshold: 20,
-      excludedElements: '.noSwipe a'
     });
   }
 
@@ -204,36 +163,6 @@ finna.imagePaginator = (function imagePaginator() {
       _.leftBtn.attr('disabled', true);
     } else {
       _.leftBtn.removeAttr('disabled');
-    }
-  }
-
-  FinnaPaginator.prototype.onScrollEvent = function onScrollEvent(delta) {
-    var _ = this;
-    var nextImage = +_.openImageIndex + delta;
-    if (nextImage > _.images.length - 1 || nextImage < 0) {
-      return;
-    }
-
-    // Try to find next available image, if not found then load next page and try again
-    var foundImage = _.imageHolder.find('a[index="' + nextImage + '"]');
-    if (foundImage.length) {
-      foundImage.click();
-    } else {
-      _.loadPage(0, nextImage);
-      _.imageHolder.find('a[index="' + nextImage + '"]').click();
-    }
-  }
-
-  FinnaPaginator.prototype.onScrollPopups = function onScrollPopups(delta) {
-    var _ = this;
-    if (_.images.length < _.settings.imagesPerPage) {
-      return;
-    }
-    if (loadPageTimeOut === null) {
-      loadPageTimeOut = setTimeout(function loadPageWheel(){
-        loadPageTimeOut = null;
-      }, 500);
-      _.loadPage(delta);
     }
   }
 
