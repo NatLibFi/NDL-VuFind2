@@ -1,6 +1,6 @@
 /*global finna, VuFind*/
 finna.multiSelect = (function multiSelect(){
-  var listItem = '<li class="checkboxFilter" data-inner="" data-target="" tabindex="-1"><input tabindex="-1" type="checkbox" class="checkbox"></li>';
+  var listItem = '<li data-inner="" data-target="" tabindex="-1"><input tabindex="-1" type="checkbox" class="checkbox"></li>';
   var selectedItem = '<button class="multiselect-selection" data-target="" type="button" title=""></button>';
 
   function initFields() {
@@ -154,7 +154,7 @@ finna.multiSelect = (function multiSelect(){
   }
 
   function nextItem(element) {
-    var nextAvailable = $(element).nextAll(':visible');
+    var nextAvailable = $(element).nextAll('li:visible');
 
     if (nextAvailable.length) {
       nextAvailable.first().focus();
@@ -187,7 +187,7 @@ finna.multiSelect = (function multiSelect(){
 
   //We want to focus only on the first visible item
   function jumpToList(element) {
-    var children = element.siblings("ul.multiselect-dropdown-menu").first().children('li');
+    var children = element.siblings("ul.multiselect-dropdown-menu").first().children('li:visible');
 
     if (children.length) {
       children.first().focus();
