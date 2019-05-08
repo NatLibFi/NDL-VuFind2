@@ -302,6 +302,9 @@ ol {
       width: 96%;
     }
     >li {
+      &.current {
+        background-color: lightgray;
+      }
       border-bottom: none;
       padding: 6px 4px;
       border-radius: 0;
@@ -318,52 +321,28 @@ ol {
     }
   }
 
-  >.multiselect-input {
-    margin-right: -4px;
-    width: 90%;
-    border-right: none;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    display: inline-block;
-  }
-
-  >.caret {
-    display: inline-block;
-    line-height: 1.5;
-    font-size: 14px;
-    height: 35px;
-    background-color: lightgray;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    border-bottom-left-radius: 0;
-    border-top-left-radius: 0;
-    vertical-align: middle;
-    padding: 6px 1px;
-  }
-
-  >.multiselect-selected {
-    max-height: 300px;
-    overflow-x: hidden;
-    max-width: 96%;
-    >p {
-      margin: 10px 0;
+  .ms-input-wrapper {
+    >.multiselect-input {
+      margin-right: -4px;
+      width: 90%;
+      border-right: none;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      display: inline-block;
     }
-
-    button {
-      border: 1px solid lightgray;
-      border-radius: 6px;
-      background-color: @btn-default-color;
-      padding: 6px;
-      margin: 2px;
-      max-width: 100%;
-      word-wrap: break-word;
-
-      &::after {
-        font-family: icomoon;
-        content: "\e044";
-        vertical-align: middle;
-        padding-left: 2px;
-      }
+  
+    >.caret {
+      display: inline-block;
+      line-height: 1.5;
+      font-size: 14px;
+      height: 35px;
+      background-color: lightgray;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+      vertical-align: middle;
+      padding: 6px 1px;
     }
   }
 }

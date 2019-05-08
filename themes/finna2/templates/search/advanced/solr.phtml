@@ -37,17 +37,19 @@
             'multiple' => 'multiple'
           ]);
           ?>
+          <?php $i = 0; ?>
           <?php foreach ($this->facetList as $field => $list): ?>
             <div class="facet">
               <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
+                <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>"><?=$this->transEsc($list['label'])?>:</label>
                 <?php
                 $multiSelect = [
                   'data-label' => $this->translate($list['label']),
                   'id' => 'limit_' . str_replace(' ', '', $field)
                 ];
                 ?>
-                <div class="multiselect-dropdown">
-                  <select <?= $this->htmlElement()->getAttributes($multiSelect, 'finna-multiselect') ?>>
+                <div class="multiselect-dropdown" id="">
+                  <select aria-labelledby="" <?= $this->htmlElement()->getAttributes($multiSelect, 'finna-multiselect') ?>>
                     <?php if (is_array($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
                       <?php foreach ($list['list'] as $value): ?>
                         <?php
@@ -80,13 +82,14 @@
                     <?php endif; ?>
                   </select>
                   <label></label>
-                  <input aria-expanded="false" autocomplete="off" aria-autocomplete="list" aria-activedescendant="" aria-owns="" aria-disabled="false" aria-multiselectable="true" aria-label="<?= $this->translate('add_selection');?>" class="form-control multiselect-input" type="text">
-                  <span class="caret"></span>
-                  <ul class="multiselect-dropdown-menu">
+                  <div class="ms-input-wrapper" role="combobox" aria-expanded="false" aria-owns="<?= 'multiselect_' . $i ?>" aria-haspopup="listbox">
+                    <input aria-autocomplete="both" aria-controls="<?= 'multiselect_' . $i ?>" aria-activedescendant="" aria-label="<?= $this->translate('add_selection');?>" class="form-control multiselect-input" type="text">
+                    <span class="caret"></span>
+                  </div>
+                  <ul class="multiselect-dropdown-menu" role="listbox" aria-multiselectable="true" id="<?= 'multiselect_' . $i ?>">
                   </ul>
                   <div class="multiselect-selected">
                     <span class="removed-header"><?= $this->translate('none_selected');?></span>
-                    <span class="removed-selection sr-only" aria-label="<?=$this->translate('selection_removed');?>" tabindex="-1"></span>
                   </div>
                 </div>
               </div>
