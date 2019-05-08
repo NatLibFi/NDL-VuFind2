@@ -368,6 +368,11 @@
         margin: 0;
       }
     }
+    ul {
+      li.current {
+        background-color: lightgray;
+      }
+    }
   }
   .finna-main-tabs {
     padding-top: 15px;
@@ -399,6 +404,9 @@
       padding: 0 10px;
     }
   }
+
+  
+
   .multiselect-container {
     background-color: @well-bg;
     padding: 0;
@@ -433,15 +441,20 @@
   .facet-container {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
   }
   .facet {
-    width: 25%;
+    flex: 1 1 auto;
     margin-bottom: 10px;
+    @media (min-width: @screen-sm-min) {
+      max-width: 45%;
+    }
     @media (max-width: @screen-xs-max) {
-      width: 33.3%;
+      width: 50%;
     }
     @media (max-width: @screen-xxs-max) {
-      width: 50%;
+      width: 100%;
     }
     label {
       margin-bottom: 10px;

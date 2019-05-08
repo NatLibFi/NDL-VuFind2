@@ -263,25 +263,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function initMultiSelect() {
-    $('.multi-select').multiselect({
-      enableCaseInsensitiveFiltering: true,
-      maxHeight: 310,
-      nonSelectedText: VuFind.translate('none_selected'),
-      nSelectedText: VuFind.translate('selected'),
-      buttonClass: 'form-control'
-    });
-    // use click events only if there is a multi-select element
-    if ($('.multi-select').length) {
-      $('.multiselect.dropdown-toggle').click(function onClickDropdownToggle(/*e*/) {
-        $(this).siblings('.multiselect-container').toggleClass('show');
-      });
-      $('html').on('click', function onClickHtml(e) {
-        if (!$(e.target).hasClass('multiselect') && !$(e.target).parent().hasClass('multiselect')) {
-          $('.multiselect-container.show').removeClass('show');
-        }
-      });
-    }
-    $('.multiselect-search').attr('placeholder', VuFind.translate('search_placeholder'));
+
   }
 
   function initMobileNarrowSearch() {

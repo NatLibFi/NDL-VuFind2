@@ -32,8 +32,12 @@
         <div class="facet-container">
           <?php foreach ($this->facetList as $field => $list): ?>
             <div class="facet">
-              <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container">
+              <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>-container" aria-multiselect="true" aria-expanded="false" aria-haspopup="listbox">
                 <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>"><?=$this->transEsc($list['label'])?>:</label>
+                <span id="this-multi-select-label" aria-label="MONTA VALITTU">
+		              <label>Select a value</label>
+		              <span class="chevron">&lt;</span>
+	              </span>
                 <select class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $field))?>" name="filter[]"  multiple="multiple" >
                   <?php if (is_array($this->hierarchicalFacets) && in_array($field, $this->hierarchicalFacets)): ?>
                     <?php foreach ($list['list'] as $value): ?>
@@ -59,6 +63,7 @@
                     <?php endforeach; ?>
                   <?php endif; ?>
                 </select>
+                <ul aria-label="<?=$this->transEsc('Limit To') . " " . $this->transEsc($list['label'])?>" class="multiselect-list" role="listbox" tabindex="0" style="max-height: 200px; overflow: auto; background-color: white; border-radius: 6px; border: 1px solid #ccc; inset 0 1px 1px rgba(0, 0, 0, 0.075);"></ul>
               </div>
             </div>
           <?php endforeach; ?>
