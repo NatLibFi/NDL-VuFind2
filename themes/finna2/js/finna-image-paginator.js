@@ -65,6 +65,7 @@ finna.imagePaginator = (function imagePaginator() {
     _.imagePopup = null;
     _.leafletHolder = null;
     _.leafletLoader = null;
+    _.leafletStartBounds = null;
 
     _.openImageIndex = 0;
   }
@@ -403,10 +404,6 @@ finna.imagePaginator = (function imagePaginator() {
       });
   }
 
-  FinnaPaginator.prototype.onVideoOpen = function onVideoOpen() {
-    setCanvasContent('video')
-  }
-
   /**
    * Function to create small images for the paginator track
    */
@@ -430,6 +427,9 @@ finna.imagePaginator = (function imagePaginator() {
     return holder;
   }
 
+  /**
+   * If record is not counted as a zoomable record type, open normal popup
+   */
   FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image) {
     var _ = this;
     var img = new Image();
@@ -453,6 +453,9 @@ finna.imagePaginator = (function imagePaginator() {
     _.loadImageInformation();
   }
 
+  /**
+   * Check if we can go left and right for new record popup
+   */
   FinnaPaginator.prototype.checkRecordButtons = function checkRecordButtons() {
     var _ = this;
     if (paginatorIndex < 2) {
@@ -471,26 +474,35 @@ finna.imagePaginator = (function imagePaginator() {
     }
   }
 
+  /**
+   * Checks if current row of images has the active record
+   */
   FinnaPaginator.prototype.setCurrentVisuals = function setCurrentVisuals() {
     var _ = this;
     $('a.image-popup-navi').removeClass('current');
     $('a[index="' + _.openImageIndex + '"]').addClass('current');
   }
 
+  /**
+   * Sets the max amount of images to show in the track
+   */
   FinnaPaginator.prototype.setMaxImages = function setMaxImages(amount, isPopup) {
     var _ = this;
     var width = $(window).width();
+
     var images = amount;
     if ((typeof isPopup === 'undefined' || isPopup === false) && _.isList) {
       images = 0;
     } else if (width < 500) {
       images = _.settings.imagesOnMobile;
     } else if (width < 768) {
-      images = _.settings.imagesPerRow = amount;
+      images = amount;
     } else if (width < 991) {
-      images = _.settings.imagesPerRow = _.settings.imagesOnMobile;
-    } else {
-      images = _.settings.imagesPerRow = amount;
+      images = _.settings.imagesOnMobile;
+    } else if (width < 2000) {
+      images = amount;
+    } else if (isPopup && width < 5000) {
+      images = amount + 6;
     }
     _.settings.imagesPerRow = images;
     _.settings.imagesPerPage = _.settings.imagesPerRow;
@@ -563,6 +575,7 @@ finna.imagePaginator = (function imagePaginator() {
       _.leafletHolder.invalidateSize(false);
       _.leafletLoader.removeClass('loading');
       _.leafletHolder.setMaxBounds(bounds);
+      _.leafletStartBounds = bounds;
     }
   }
 
@@ -689,18 +702,41 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setZoomButtons = function setZoomButtons() {
     var _ = this;
-    $('.zoom-in').off('click').click(function zoomIn(e) {
-      e.stopPropagation();
+    _.zoomButtonState();
+    $('.zoom-in').off('click').click(function zoomIn() {
       _.leafletHolder.setZoom(_.leafletHolder.getZoom() + 1)
     });
-    $('.zoom-out').off('click').click(function zoomOut(e) {
-      e.stopPropagation();
+    $('.zoom-out').off('click').click(function zoomOut() {
       _.leafletHolder.setZoom(_.leafletHolder.getZoom() - 1)
+
     });
-    $('.zoom-reset').off('click').click(function zoomReset(e) {
+    $('.zoom-reset').off('click').click(function zoomReset() {
+      _.leafletHolder.flyToBounds(_.leafletStartBounds, {animate: false});
+    });
+    $('.zoom-in, .zoom-out, .zoom-reset').off('dblclick').on('dblclick', function preventPropagation(e){
+      e.preventDefault();
       e.stopPropagation();
-      _.leafletHolder.setZoom(1)
     });
+    _.leafletHolder.on('zoomend', function checkButtons() {
+      _.zoomButtonState();
+    });
+  }
+
+  FinnaPaginator.prototype.zoomButtonState = function zoomButtonState() {
+    var _ = this;
+    var min = _.leafletHolder.getMinZoom();
+    var max = _.leafletHolder.getMaxZoom();
+    var cur = _.leafletHolder.getZoom();
+    if (cur === min) {
+      $('.zoom-out').addClass('inactive');
+    } else {
+      $('.zoom-out').removeClass('inactive');
+    }
+    if (cur === max) {
+      $('.zoom-in').addClass('inactive');
+    } else {
+      $('.zoom-in').removeClass('inactive');
+    }
   }
 
   FinnaPaginator.prototype.setMiniPaginator = function setMiniPaginator() {

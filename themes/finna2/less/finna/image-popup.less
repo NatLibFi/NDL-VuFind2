@@ -156,13 +156,7 @@
     background: fadeout(@gray, 40%);
     color: white;
     border-radius: 5px;
-    &.inactive .zoom-button:not(.zoom-in) {
-        color: @gray-lighter;
-        cursor: not-allowed;
-        i {
-            cursor: not-allowed;
-        }
-    }
+
     .zoom-button {
         display: inline-block;
         height: 40px;
@@ -179,6 +173,13 @@
         }
         i {
             cursor: pointer;
+        }
+        &.inactive {
+            color: @gray-lighter;
+            cursor: not-allowed;
+            i {
+                cursor: not-allowed;
+            }
         }
     }
 }
