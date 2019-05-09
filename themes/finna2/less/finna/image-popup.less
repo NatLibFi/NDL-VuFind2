@@ -156,6 +156,9 @@
     background: fadeout(@gray, 40%);
     color: white;
     border-radius: 5px;
+    @media (min-width: @screen-sm-min) {
+        width: 64px;
+    }
 
     .zoom-button {
         display: inline-block;
@@ -168,6 +171,12 @@
         cursor: pointer;
         box-sizing: padding-box;
         border-bottom: 2px solid @gray-light;
+        @media (min-width: @screen-sm-min) {
+            height: 64px;
+            width: 64px;
+            font-size: 32px;
+            line-height: 64px;
+        }
         &:last-child {
             border-bottom: none;
         }
@@ -299,10 +308,25 @@
             }
         }
         .finna-image-pagination {
-            background-image: linear-gradient(#3d3d3d, #4d4d4d);
+            background-color: #383838;
             padding: 4px;
             height: 80px;
+            @media (min-width: @screen-sm-min) {
+                height: 105px;
+            }
             flex: 0 0 auto;
+            .recordcovers  .track-holder .finna-element-track {
+                div {
+                    a {
+                        background-color: #2e2e2ecc;
+                        @media (min-width: @screen-sm-min) {
+                            height: 96px;
+                            width: 96px;
+                            max-width: 96px;
+                        }
+                    }
+                }
+            }
             .paginator-info {
                 display: none;
             }

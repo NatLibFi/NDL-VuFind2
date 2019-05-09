@@ -212,31 +212,6 @@ a.authority {
 }
 
 .recordcovers {
-  a {
-    background-color: #efefefcc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 64px;
-    overflow: hidden;
-    margin: 2px 4px;
-    padding: 2px;
-    max-width: 64px;
-    width: 64px;
-    flex: 1 1 auto;
-    cursor: pointer;
-
-    &.current {
-      border: 0.2em solid @brand-primary;
-    }
-
-    &.truncate-change {
-      opacity: 0;
-    }
-  }
-}
-
-.recordcovers {
   &.paginated {
     display: flex;
     align-items: center;
@@ -287,6 +262,28 @@ a.authority {
           align-items: center;
           justify-content: space-around;
           max-width: 100%;
+          a {
+            background-color: #efefefcc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 64px;
+            overflow: hidden;
+            margin: 2px 4px;
+            padding: 2px;
+            max-width: 64px;
+            width: 64px;
+            flex: 1 1 auto;
+            cursor: pointer;
+        
+            &.current {
+              border: 0.2em solid @brand-primary;
+            }
+        
+            &.truncate-change {
+              opacity: 0;
+            }
+          }
         }
       }
     }
