@@ -7,8 +7,6 @@
   $translatedFormat = $this->transEsc(end($formats));
   $recordType = $this->driver->tryMethod('getRecordType');
   $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
-  
-  var_dump($this->index);
 ?>
 <div id="popup-content-collapse" class="content">
   <h3 id="popup-image-title" class="title"><?=$this->escapeHtml($this->driver->getTitle()) ?></h3>

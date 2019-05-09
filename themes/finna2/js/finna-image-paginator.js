@@ -338,7 +338,7 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() {
     var _ = this;
     var src = VuFind.path + '/AJAX/JSON?method=getImageInformation&id=' + encodeURIComponent(_.settings.recordId) + '&index=' + _.openImageIndex;
-    console.log(_.openImageIndex);
+
     if (typeof publicList !== 'undefined') {
       src += '&publicList=1';
     }
