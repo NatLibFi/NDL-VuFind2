@@ -599,7 +599,7 @@ finna.imagePaginator = (function imagePaginator() {
 
     _.leafletHolder = L.map('leaflet-map-image', {
       minZoom: 1,
-      maxZoom: 6,
+      maxZoom: 10,
       center: [0, 0],
       zoomControl: false,
       zoom: 1,
