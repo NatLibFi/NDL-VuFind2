@@ -65,9 +65,11 @@ finna.multiSelect = (function multiSelect(){
     _.root.on('focusin', function openul() {
       _.setul(true);
     });
-    _.input.on('blur', function closeul(e) {
+    _.root.on('focusout', function closeul(e) {
       e.preventDefault();
-      console.log(e);
+      if (e.relatedTarget !== null && e.relatedTarget !== this) {
+        _.setul(false);
+      }
     });
     _.liItem.on('click', function setThis(e){
       e.preventDefault();
