@@ -288,6 +288,14 @@ ol {
 }
 
 .multiselect-dropdown {
+  .multiselect-backdrop {
+		position: fixed;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 900;
+	}
   >.multiselect-dropdown-menu {
     width: 28%;
     max-height: 200px;
@@ -297,7 +305,7 @@ ol {
     border: 1px solid lightgray;
     position: absolute;
     display: none;
-    z-index: 100;
+    z-index: 1000;
     @media (max-width: @screen-xxs-max) {
       width: 96%;
     }

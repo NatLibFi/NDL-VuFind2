@@ -1,24 +1,47 @@
 /*global finna, VuFind*/
 finna.multiSelect = (function multiSelect(){
-  var listItem = '<li role="option" aria-selected="false" data-inner="" data-target=""><input aria-label="checkbox" tabindex="-1" type="checkbox" class="checkbox"></li>';
+  var listItem = '<li role="option" aria-selected="false" data-inner="" data-target=""><input title="checkbox" tabindex="-1" type="checkbox" class="checkbox"></li>';
+  var wrapper = '<div class="ms-input-wrapper" role="combobox" aria-expanded="false" aria-owns="" aria-haspopup="listbox">' +
+  '<input aria-autocomplete="both" aria-controls="" aria-activedescendant="" aria-label="" class="form-control multiselect-input" type="text">' +
+  '<span class="caret"></span>' +
+  '</div>';
+  var ul = '<ul class="multiselect-dropdown-menu" role="listbox" aria-multiselectable="true" id="">' +
+  '</ul>';
   var globalId = 0;
+  var backdrop = '<div class="multiselect-backdrop"></div>'
 
   function MultiSelect(root) {
     var _ = this;
     _.id = globalId++;
     _.root = $(root);
-    _.wrapper = _.root.find('.ms-input-wrapper');
+    _.wrapper = null;
     _.select = _.root.find('select');
+    _.backdrop = null;
     _.select.hide();
-    _.input = _.root.find('.multiselect-input');
-    _.dropdown = _.root.find('.multiselect-dropdown-menu');
+    _.input = null;
+    _.ul = null; //_.root.find('.multiselect-dropdown-menu');
     _.liItem = $(listItem).clone();
     _.current = null;
+    _.createElements();
     _.setEvents();
-    _.createDropdown();
+    _.createul();
   }
 
-  MultiSelect.prototype.createDropdown = function createDropdown() {
+  MultiSelect.prototype.createElements = function createElements() {
+    var _ = this;
+    var id = _.id + "_msd";
+    _.wrapper = $(wrapper).clone();
+    _.ul = $(ul).clone();
+    _.input = _.wrapper.find('input');
+    _.input.attr('aria-controls', id);
+    _.wrapper.attr('aria-owns', id);
+    _.ul.attr('id', id);
+
+    _.root.append(_.wrapper);
+    _.root.append(_.ul);
+  }
+
+  MultiSelect.prototype.createul = function createul() {
     var _ = this;
     var i = 0;
     _.select.children('option').each(function createList(){
@@ -26,30 +49,25 @@ finna.multiSelect = (function multiSelect(){
       li.append($(this).html());
       li.find(':checkbox').prop('checked', $(this).prop('selected'));
       li.attr({'data-target': i, 'data-inner': $(this).html().toLowerCase(), 'id': _.id + 'msd' + i});
-      _.dropdown.append(li);
+      _.ul.append(li);
       $(this).attr('data-id', i++);
     });
   }
 
   MultiSelect.prototype.setEvents = function setEvents() {
     var _ = this;
-    _.input.on('keydown', function cycleDropdown(e){
+    _.input.on('keydown', function cycleul(e){
       _.checkKeyDown(e);
     });
     _.input.on('keyup', function testkeyup(e){
       _.checkKeyUp(e);
     });
-    _.root.on('focusin', function openDropdown() {
-      _.setDropdown(true);
+    _.root.on('focusin', function openul() {
+      _.setul(true);
     });
-    _.input.on('blur', function closeDropdown(e) {
+    _.input.on('blur', function closeul(e) {
       e.preventDefault();
       console.log(e);
-      if (e.relatedTarget !== _.dropdown) {
-        _.setDropdown(false);
-      } else {
-        console.log("Wut");
-      }
     });
     _.liItem.on('click', function setThis(e){
       e.preventDefault();
@@ -57,13 +75,29 @@ finna.multiSelect = (function multiSelect(){
     });
   }
 
-  MultiSelect.prototype.setDropdown = function setDropdown(state) {
+  MultiSelect.prototype.onBackdropClick = function onBackdropClick() {
+    var _ = this;
+    _.setul(false);
+  }
+
+  MultiSelect.prototype.setul = function setul(state) {
     var _ = this;
     if (state) {
-      _.dropdown.show();
+      if (_.backdrop === null) {
+        _.backdrop = $(backdrop).clone();
+        _.backdrop.on('click', function handleBackdrop(){
+          _.onBackdropClick();
+        });
+        _.root.append(_.backdrop);
+      }
+      _.ul.show();
       _.wrapper.attr('aria-expanded', 'true');
     } else {
-      _.dropdown.hide();
+      if (_.backdrop !== null) {
+        _.backdrop.remove();
+        _.backdrop = null;
+      }
+      _.ul.hide();
       _.wrapper.attr('aria-expanded', state);
     }
 
@@ -72,7 +106,7 @@ finna.multiSelect = (function multiSelect(){
 
   MultiSelect.prototype.clearAll = function clearAll() {
     var _ = this;
-    _.dropdown.find('.current').removeClass('current');
+    _.ul.find('.current').removeClass('current');
     _.current = null;
     _.input.removeAttr('aria-activedescendant');
   }
@@ -81,11 +115,11 @@ finna.multiSelect = (function multiSelect(){
     var _ = this;
     var compare = $.trim(string.toLowerCase());
     if (compare === '') {
-      _.dropdown.children('li').show();
+      _.ul.children('li').show();
       return;
     }
 
-    _.dropdown.children().each(function checkMatch() {
+    _.ul.children().each(function checkMatch() {
       if ($(this).data('inner').indexOf(compare) < 0) {
         $(this).hide();
       } else {
@@ -161,7 +195,7 @@ finna.multiSelect = (function multiSelect(){
   MultiSelect.prototype.setCurrent = function setCurrent(dir) {
     var _ = this;
     if (_.current === null && dir === -1) {
-      _.current = _.dropdown.children('li:visible').first();
+      _.current = _.ul.children('li:visible').first();
       _.input.attr('aria-activedescendant', _.current.attr('id'));
       _.current.addClass('current');
       return;
@@ -202,7 +236,7 @@ finna.multiSelect = (function multiSelect(){
   }
 
   function initFields() {
-    $('.multiselect-dropdown').each(function createDropdowns(){
+    $('.multiselect-dropdown').each(function createuls(){
       new MultiSelect(this);
     });
     //initKeyBindings();
