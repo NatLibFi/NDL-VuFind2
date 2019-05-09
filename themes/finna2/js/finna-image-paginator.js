@@ -338,7 +338,7 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() {
     var _ = this;
     var src = VuFind.path + '/AJAX/JSON?method=getImageInformation&id=' + encodeURIComponent(_.settings.recordId) + '&index=' + _.openImageIndex;
-
+    console.log(_.openImageIndex);
     if (typeof publicList !== 'undefined') {
       src += '&publicList=1';
     }
@@ -515,9 +515,10 @@ finna.imagePaginator = (function imagePaginator() {
     var _ = this;
 
     if (_.openImageIndex !== image.attr('index')) {
+      _.openImageIndex = image.attr('index');
       _.loadImageInformation(_.openImageIndex);
     }
-    _.openImageIndex = image.attr('index');
+
     setCanvasContent('leaflet');
     _.setZoomButtons();
     _.setPagerInfo();
