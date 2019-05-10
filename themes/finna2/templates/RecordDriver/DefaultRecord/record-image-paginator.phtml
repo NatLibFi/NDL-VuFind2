@@ -63,19 +63,13 @@
         'imagesOnPopup' => 8,
         'enableImageZoom' => $enableImageZoom,
         'maxRows' => 3,
-        'iconlabelClass' => "format-" . $this->record($this->driver)->getFormatClass(end($formats))
+        'iconlabelClass' => "format-" . $this->record($this->driver)->getFormatClass(end($formats)),
+        'isList' => $type === 'list' || $type === 'list grid'
       ]?>
-      <?php if ($type === 'list' || $type === 'list grid'): ?>
-        finna.imagePaginator.initMiniPaginator(
-          <?= json_encode($paginatedLinks) ?>,
-          <?= json_encode($settings) ?>
-        );
-      <?php else: ?>
-        finna.imagePaginator.initPaginator(
-          <?= json_encode($paginatedLinks) ?>,
-          <?= json_encode($settings) ?>
-        );
-      <?php endif; ?>
+      finna.imagePaginator.initPaginator(
+        <?= json_encode($paginatedLinks) ?>,
+        <?= json_encode($settings) ?>
+      );
     </script>
   <?php endif; ?>
 <?php endif;?>
