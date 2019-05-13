@@ -73,7 +73,6 @@ finna.imagePaginator = (function imagePaginator() {
     _.leafletHolder = null;
     _.leafletLoader = null;
     _.leafletStartBounds = null;
-    _.imageDimensions = {width: 0, height: 0};
     _.openImageIndex = 0;
     _.imagePopup = $(imageElement).clone();
   }
@@ -196,15 +195,12 @@ finna.imagePaginator = (function imagePaginator() {
 
     var icon = _.nonZoomableHolder.find('.iconlabel');
     icon.addClass(_.settings.iconlabelClass).hide();
-    _.setDimensionState('reset');
     _.nonZoomableHolder.find('img').css('opacity', '0.5');
     _.openImageIndex = image.attr('index');
 
     var img = new Image();
     img.src = image.data('largest');
     img.onload = function onLoad() {
-      _.imageDimensions = {width: this.naturalWidth, height: this.naturalHeight};
-      _.setDimensionState('image');
       if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
         icon.show();
       } else if (_.nonZoomableHolder.hasClass('no-image')) {
@@ -229,7 +225,6 @@ finna.imagePaginator = (function imagePaginator() {
 
     if (_.openImageIndex !== image.attr('index')) {
       _.openImageIndex = image.attr('index');
-      _.setDimensionState('reset');
       _.loadImageInformation(_.openImageIndex);
     }
 
@@ -265,8 +260,6 @@ finna.imagePaginator = (function imagePaginator() {
       var maxZoom = _.leafletHolder.getMaxZoom();
       var minZoom = _.leafletHolder.getMinZoom();
       var zoomLevel = 5.0;
-      _.imageDimensions = {width: w, height: h};
-      _.setDimensionState('image');
 
       if (w > width) {
         zoomLevel = +w / +width;
@@ -419,11 +412,9 @@ finna.imagePaginator = (function imagePaginator() {
     var img = _.trigger.find('img');
     img.attr('data-src', imagePopup.attr('href')).css('opacity', 0.5);
     img.attr('alt', imagePopup.find('img').attr('alt'));
-    _.setDimensionState('reset');
 
     img.one('load', function onLoadImage() {
       img.css('opacity', '');
-      _.imageDimensions = {width: this.naturalWidth, height: this.naturalHeight};
       _.setDimensions();
       if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
         _.trigger.addClass('no-image');
@@ -562,7 +553,7 @@ finna.imagePaginator = (function imagePaginator() {
       dataType: 'html'
     }).done( function setImageData(response) {
       $('.collapse-content-holder').html(JSON.parse(response).data.html);
-      _.setDimensionState('information');
+      _.setDimensions();
       if (_.settings.recordType === 'marc') {
         _.loadBookDescription();
       } else {
@@ -570,6 +561,18 @@ finna.imagePaginator = (function imagePaginator() {
         $('.imagepopup-holder .summary').removeClass('loading');
       }
       VuFind.lightbox.bind('.imagepopup-holder');
+      if (typeof $('.open-link a').attr('href') !== 'undefined') {
+        var img = document.createElement('img')
+        img.src = $('.open-link a').attr('href');
+        img.onload = function onLoadImg() {
+          if (this.width === 10 && this.height === 10) {
+            $('.open-link').hide();
+          }
+          else {
+            $('.open-link .image-dimensions').text( '(' + this.width + ' X ' + this.height + ')')
+          }
+        }
+      }
       $('.collapse-content-holder').find('[data-embed-video]').click(function onClickVideoLink(){
         var videoSources = $(this).data('videoSources');
         var scripts = $(this).data('scripts');
@@ -697,36 +700,24 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   /**
-   * Function to check if popup has been completely loaded with image and information or reset it
-   * 
-   * @param {string} state image, information, reset
-   */
-  FinnaPaginator.prototype.setDimensionState = function setDimensionState(state) {
-    var _ = this;
-    switch (state) {
-    case 'image':
-      _.imageLoaded = true;
-      break;
-    case 'information':
-      _.informationLoaded = true;
-      break;
-    case 'reset':
-      _.imageLoaded = false;
-      _.informationLoaded = false;
-      break;
-    }
-
-    if (_.imageLoaded && _.informationLoaded) {
-      _.setDimensions();
-    }
-  }
-
-  /**
    * Function to set image dimensions to download image link
    */
   FinnaPaginator.prototype.setDimensions = function setDimensions() {
-    var _ = this;
-    $('.image-dimensions').html('(' + _.imageDimensions.width + ' x ' + _.imageDimensions.height + ')');
+    var openLink = $('.open-link a').attr('href');
+    if (typeof openLink !== 'undefined') {
+      var img = new Image();
+      img.src = openLink;
+      img.onload = function onLoadImg() {
+        var width = this.width;
+        var height = this.height;
+        if (width === 10 && height === 10) {
+          $('.open-link').hide();
+        }
+        else {
+          $('.open-link .image-dimensions').text( '(' + width + ' X ' + height + ')')
+        }
+      }
+    }
   }
 
   /**
