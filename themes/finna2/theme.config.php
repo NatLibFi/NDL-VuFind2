@@ -183,7 +183,6 @@ return [
         'finna-map.js',
         'finna-map-facet.js',
         'finna-menu.js',
-        'finna-multiselect.js',
         'finna-mylist.js',
         'finna-online-payment.js',
         'finna-organisation-info.js',

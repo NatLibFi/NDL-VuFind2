@@ -1,0 +1,63 @@
+<?php
+  $cleanArray = [];
+?>
+<div class="facet">
+  <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>-container">
+    <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>"><?=$this->transEsc($this->list['label'])?>:</label>
+    <?php
+      $i = 0;
+      $parentFound = false;
+      if (is_array($this->hierarchicalFacets) && in_array($this->field, $this->hierarchicalFacets)) {
+        foreach ($this->list['list'] as $value) {
+          if(isset($value['parent']) && null !== $value['parent']) {
+            if (!$parentFound) {
+              $parentFound = true;
+              $cleanArray[$i - 1]['optgroup_start'] = true;
+            }
+          }
+          $cleanArray[$i] = $value;
+          if (null === $value['parent'] && $parentFound) {
+            $parentFound = false;
+            $cleanArray[$i - 1]['optgroup_end'] = true;
+          }
+          $i++;
+        }
+        if (null !== $cleanArray[$i - 1]['parent'] && $parentFound) {
+          $cleanArray[$i - 1]['optgroup_end'] = true;
+        }
+      }
+    ?>
+    <select aria-label="<?=$this->transEsc('Add filter')?> <?=$this->transEsc($this->list['label'])?>" class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
+      <?php if (is_array($this->hierarchicalFacets) && in_array($this->field, $this->hierarchicalFacets)): ?>
+      <?php $previousLevel = 0; ?>
+        <?php foreach ($cleanArray as $key => $value): ?>
+          <?php if(isset($value['optgroup_start']) && $value['optgroup_start']): ?>
+            <optgroup label="<?= $this->escapeHtml($value['displayText']) ?>">
+          <?php endif; ?>
+          <?php $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']); ?>
+          <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
+          <?php if(isset($value['optgroup_end']) && $value['optgroup_end']): ?>
+            </optgroup>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <?php
+          // Sort the current facet list alphabetically; we'll use this data
+          // along with the foreach below to display facet options in the
+          // correct order.
+          $sorted = [];
+          foreach ($this->list['list'] as $i => $value) {
+            if (!empty($value['displayText'])) {
+              $sorted[$i] = $value['displayText'];
+            }
+          }
+          natcasesort($sorted);
+        ?>
+        <?php foreach ($sorted as $i => $display): ?>
+          <?php $value = $this->list['list'][$i]; ?>
+          <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$this->escapeHtml($display)?></option>
+        <?php endforeach; ?>
+      <?php endif; ?>
+    </select>
+  </div>
+</div>

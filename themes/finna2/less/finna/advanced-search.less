@@ -404,33 +404,6 @@
       padding: 0 10px;
     }
   }
-
-  
-
-  .multiselect-container {
-    background-color: @well-bg;
-    padding: 0;
-    li {
-      background: white;
-      &:first-child {
-        background-color: @well-bg;
-      }
-    }
-    .multiselect-clear-filter {
-      margin-left: 0;
-      &, &:hover {
-        background-color: @well-bg;
-        border-color: @well-bg;
-        color: @text-color;
-      }
-    }
-    .input-group {
-      width: 100%;
-      .form-control {
-        width: 100%;
-      }
-    }
-  }
   .label-block,
   .label-style {
     &:extend(label);
@@ -445,7 +418,6 @@
     align-items: center;
   }
   .facet {
-    flex: 1 1 auto;
     margin-bottom: 10px;
     @media (min-width: @screen-sm-min) {
       max-width: 45%;
@@ -458,6 +430,12 @@
     }
     label {
       margin-bottom: 10px;
+    }
+    select {
+      height: 200px;
+      option {
+        padding: 2px;
+      }
     }
   }
   .option-container {
