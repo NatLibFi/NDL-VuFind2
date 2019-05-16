@@ -368,11 +368,6 @@
         margin: 0;
       }
     }
-    ul {
-      li.current {
-        background-color: lightgray;
-      }
-    }
   }
   .finna-main-tabs {
     padding-top: 15px;
@@ -420,7 +415,7 @@
   .facet {
     margin-bottom: 10px;
     @media (min-width: @screen-sm-min) {
-      max-width: 45%;
+      width: 45%;
     }
     @media (max-width: @screen-xs-max) {
       width: 50%;
@@ -433,6 +428,7 @@
     }
     select {
       height: 200px;
+      width: 100%;
       option {
         padding: 2px;
       }

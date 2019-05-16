@@ -23,8 +23,7 @@ var finna = (function finnaModule() {
         'record',
         'searchTabsRecommendations',
         'StreetSearch',
-        'finnaSurvey',
-        'multiSelect'
+        'finnaSurvey'
       ];
 
       $.each(modules, function initModule(ind, module) {
