@@ -1,10 +1,8 @@
-<?php
-  $cleanArray = [];
-?>
+<!-- START of: finna - search/advanced/multiselect.phtml -->
 <div class="facet">
   <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>-container">
-    <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>"><?=$this->transEsc('Limit To')?> <?=$this->transEsc($this->list['label'])?>:</label>
-    <select class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
+    <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>"><?=$this->transEsc($this->list['label'])?>:</label>
+    <select aria-label="<?=$this->transEsc('Add filter')?> <?=$this->transEsc($this->list['label'])?>" class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
       <?php if (is_array($this->hierarchicalFacets) && in_array($this->field, $this->hierarchicalFacets)): ?>
         <?php foreach ($this->list['list'] as $key => $value): ?>
           <?php if (isset($value['opt_group_start']) && $value['opt_group_start']): ?>
@@ -37,3 +35,4 @@
     </select>
   </div>
 </div>
+<!-- END of: finna - search/advanced/multiselect.phtml -->
