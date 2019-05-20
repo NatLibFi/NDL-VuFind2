@@ -1479,7 +1479,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $organisationTotal = [];
         foreach ($result as $i => $item) {
             $status = $item['ItemStatus'];
-            if ($status == 'Discarded') {
+            if ($status == 'Discarded' || $status == 'Withdrawn') {
                 continue;
             }
 
