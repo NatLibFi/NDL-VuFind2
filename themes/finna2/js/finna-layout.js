@@ -262,10 +262,6 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-  function initMultiSelect() {
-
-  }
-
   function initMobileNarrowSearch() {
     $('.mobile-navigation .sidebar-navigation, .sidebar h4').unbind('click').click(function onClickMobileNav(e) {
       if ($(e.target).attr('class') !== 'fa fa-info-big') {
@@ -1048,7 +1044,6 @@ finna.layout = (function finnaLayout() {
       initTruncate();
       initContentNavigation();
       initRecordSwipe();
-      initMultiSelect();
       initMobileNarrowSearch();
       initCheckboxClicks();
       initToolTips();
