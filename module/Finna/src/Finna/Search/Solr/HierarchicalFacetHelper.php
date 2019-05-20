@@ -260,15 +260,13 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
                 : [];
             if ($children && $tmpFacet['level'] === '0') {
                 $tmpFacet['opt_group_start'] = true;
+                $lastChild = array_pop($children);
+                $lastChild['opt_group_end'] = true;
+                array_push($children, $lastChild);
             }
             unset($tmpFacet['children']);
             $results[] = $tmpFacet;
             if ($children) {
-                if ($tmpFacet['level'] === '0') {
-                    $lastChild = array_pop($children);
-                    $lastChild['opt_group_end'] = true;
-                    array_push($children, $lastChild);
-                }
                 $results = array_merge(
                     $results, $this->flattenFacetHierarchy($children)
                 );
