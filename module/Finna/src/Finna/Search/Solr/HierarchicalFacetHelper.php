@@ -251,7 +251,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
     public function flattenFacetHierarchy($facetList)
     {
         $results = [];
-        $rootFound = false;
+        $count = count($facetList);
         $i = 0;
         foreach ($facetList as $facetItem) {
             $tmpFacet = $facetItem;
@@ -260,11 +260,12 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
                 : [];
             if ($children && $tmpFacet['level'] === '0') {
                 $tmpFacet['opt_group_start'] = true;
-                $lastChild = array_pop($children);
-                $lastChild['opt_group_end'] = true;
-                array_push($children, $lastChild);
             }
             unset($tmpFacet['children']);
+            if (++$i === $count && ($tmpFacet['level'] !== '0' && !$children)) {
+                $tmpFacet['opt_group_end'] = true;
+                $i = 0;
+            }
             $results[] = $tmpFacet;
             if ($children) {
                 $results = array_merge(
@@ -272,6 +273,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
                 );
             }
         }
+
         return $results;
     }
 }

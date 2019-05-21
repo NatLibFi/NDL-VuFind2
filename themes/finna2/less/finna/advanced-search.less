@@ -414,11 +414,8 @@
   }
   .facet {
     margin-bottom: 10px;
-    @media (min-width: @screen-sm-min) {
+    @media (min-width: @screen-xs-min) {
       width: 45%;
-    }
-    @media (max-width: @screen-xs-max) {
-      width: 50%;
     }
     @media (max-width: @screen-xxs-max) {
       width: 100%;
@@ -430,7 +427,14 @@
       height: 200px;
       width: 100%;
       option {
-        padding: 2px;
+        padding: 4px 0;
+      }
+      optgroup {
+        option.option-parent::before {
+          content: '\f107';
+          margin-right: 4px;
+          font-family: FontAwesome;
+        }
       }
     }
   }

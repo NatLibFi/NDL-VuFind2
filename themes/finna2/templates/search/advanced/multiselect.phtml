@@ -5,12 +5,16 @@
     <select aria-label="<?=$this->transEsc('Add filter')?> <?=$this->transEsc($this->list['label'])?>" class="form-control multi-select" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
       <?php if (is_array($this->hierarchicalFacets) && in_array($this->field, $this->hierarchicalFacets)): ?>
         <?php foreach ($this->list['list'] as $key => $value): ?>
-          <?php if (isset($value['opt_group_start']) && $value['opt_group_start']): ?>
+          <?php
+            $isParent = isset($value['opt_group_start']) && $value['opt_group_start'];
+            $isLastChild = isset($value['opt_group_end']) && $value['opt_group_end'];
+            $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']);
+          ?>
+          <?php if ($isParent === true): ?>
             <optgroup label="<?=$this->escapeHtml($value['displayText'])?>">
           <?php endif; ?>
-          <?php $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']); ?>
-          <option value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
-          <?php if (isset($value['opt_group_end']) && $value['opt_group_end']): ?>
+          <option class="<?= $isParent ? 'option-parent' : ''; ?>" value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
+          <?php if ($isLastChild === true): ?>
             </optgroup>
           <?php endif; ?>
         <?php endforeach; ?>
