@@ -1020,6 +1020,18 @@ finna.layout = (function finnaLayout() {
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
   }
 
+  function initSelectize() {
+    $('.multiselect-filter').selectize({
+      plugins: ['selectize-plugin-a11y'],
+      render: {
+        option: function getOption($item/*, escape*/) {
+          // Every option must have a unique id
+          return '<div class="option" role="option" id="' + $item.text.replace(' ', '') + '"> ' + $item.text + '</div>';
+        }
+      }
+    });
+  }
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -1051,6 +1063,7 @@ finna.layout = (function finnaLayout() {
       initScrollLinks();
       initSearchboxFunctions();
       initCondensedList();
+      initSelectize();
       if (typeof checkSaveStatuses !== 'undefined') { checkSaveStatuses(); }
       initTouchDeviceGallery();
       initSideFacets();
