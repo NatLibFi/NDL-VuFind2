@@ -1021,14 +1021,8 @@ finna.layout = (function finnaLayout() {
   }
 
   function initSelectize() {
-    $('.multiselect-filter').selectize({
-      plugins: ['selectize-plugin-a11y'],
-      render: {
-        option: function getOption($item/*, escape*/) {
-          // Every option must have a unique id
-          return '<div class="option" role="option" id="' + $item.text.replace(' ', '') + '"> ' + $item.text + '</div>';
-        }
-      }
+    var combobo = new Combobo({
+      
     });
   }
 

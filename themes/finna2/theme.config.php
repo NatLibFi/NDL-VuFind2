@@ -151,7 +151,6 @@ return [
         'finna.css',
         'vendor/priority-nav-core.css',
         'finna-flex-fallback.css::lt IE 10', // flex polyfill
-        'vendor/selectize.default.css'
     ],
     'js' => [
         'vendor/event-stub.js:lt IE 9',
@@ -224,8 +223,7 @@ return [
         'vendor/priority-nav.min.js',
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
-        'vendor/selectize.min.js',
-        'vendor/selectize-plugin-a11y.js'
+        'vendor/combobo.js'
     ],
     'less' => [
         'active' => false
