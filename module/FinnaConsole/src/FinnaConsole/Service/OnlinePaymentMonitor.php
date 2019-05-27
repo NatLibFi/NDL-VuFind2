@@ -143,7 +143,8 @@ class OnlinePaymentMonitor extends AbstractService
     /**
      * Constructor
      *
-     * @param \Finna\ILS\Connection               $catalog          Catalog connection
+     * @param \Finna\ILS\Connection               $catalog          Catalog
+     *                                                              connection
      * @param \Finna\Db\Table\Transaction         $transactionTable Transaction table
      * @param \Finna\Db\Table\User                $userTable        User table
      * @param \VuFind\Config                      $configReader     Config reader
