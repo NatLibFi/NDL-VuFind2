@@ -28,6 +28,9 @@ finna.imagePaginator = (function imagePaginator() {
    * @param {object} settings 
    */
   function initPaginator(images, settings) {
+    if (!settings.enableImageZoom) {
+      settings.imagesOnPopup = 4
+    }
     var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
     paginator.init();
   }
@@ -171,7 +174,7 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.getNextPaginator = function getNextPaginator(direction) {
     var _ = this;
-    var foundPaginator = $('.image-popup-trigger[paginator-index="' + (+_.paginatorIndex + +direction) + '"');
+    var foundPaginator = $('.image-popup-trigger[paginator-index="' + (+_.paginatorIndex + +direction) + '"]');
 
     if (foundPaginator.length) {
       $.magnificPopup.close();
@@ -202,6 +205,7 @@ finna.imagePaginator = (function imagePaginator() {
     img.src = image.data('largest');
     img.onload = function onLoad() {
       if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
+        _.nonZoomableHolder.addClass('no-image');
         icon.show();
       } else if (_.nonZoomableHolder.hasClass('no-image')) {
         icon.hide();

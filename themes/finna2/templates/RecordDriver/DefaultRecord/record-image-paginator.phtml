@@ -61,7 +61,7 @@
         'imagesOnMobile' => 6,
         'imagesOnNormal' => 8,
         'imagesOnPopup' => 8,
-        'enableImageZoom' => $enableImageZoom,
+        'enableImageZoom' => !$enableImageZoom,
         'maxRows' => 3,
         'iconlabelClass' => "format-" . $this->record($this->driver)->getFormatClass(end($formats)),
         'isList' => $type === 'list' || $type === 'list grid'
