@@ -2,22 +2,15 @@
 <div class="facet">
   <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>-container">
     <label for="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>"><?=$this->transEsc($this->list['label'])?>:</label>
-    <input class="multiselect-input" type="text">
-    <select class="multiselect-filter" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
+    <select class="finna-multiselect init" id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
       <?php if (is_array($this->hierarchicalFacets) && in_array($this->field, $this->hierarchicalFacets)): ?>
         <?php foreach ($this->list['list'] as $key => $value): ?>
           <?php
             $isParent = isset($value['opt_group_start']) && $value['opt_group_start'];
-            $isLastChild = isset($value['opt_group_end']) && $value['opt_group_end'];
+            $isChild = $value['level'] !== '0';
             $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']);
           ?>
-          <?php if ($isParent === true): ?>
-            <optgroup label="<?=$this->escapeHtml($value['displayText'])?>">
-          <?php endif; ?>
-          <option class="<?= $isParent ? 'option-parent' : ''; ?>" value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
-          <?php if ($isLastChild === true): ?>
-            </optgroup>
-          <?php endif; ?>
+          <option class="<?= $isParent ? 'option-parent' : ''; ?> <?= $isChild ? 'option-child child-width-' . $value['level'] : ''?>" value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
         <?php endforeach; ?>
       <?php else: ?>
         <?php

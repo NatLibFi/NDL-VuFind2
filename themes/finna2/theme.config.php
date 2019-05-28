@@ -223,7 +223,7 @@ return [
         'vendor/priority-nav.min.js',
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
-        'vendor/combobo.js'
+        'finna-multiselect.js'
     ],
     'less' => [
         'active' => false

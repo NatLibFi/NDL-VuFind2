@@ -1021,9 +1021,6 @@ finna.layout = (function finnaLayout() {
   }
 
   function initSelectize() {
-    var combobo = new Combobo({
-      
-    });
   }
 
   var my = {
