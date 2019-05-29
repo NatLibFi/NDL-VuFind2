@@ -248,7 +248,7 @@ class Record extends \VuFind\View\Helper\Root\Record
 
     /**
      * Return if image popup zoom has been enabled in config
-     * 
+     *
      * @return boolean
      */
     public function getImagePopupZoom()

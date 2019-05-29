@@ -117,7 +117,15 @@ finna.imagePaginator = (function imagePaginator() {
     _.imageHolder.empty();
     _.leftBtn = covers.find('.left-button');
     _.rightBtn = covers.find('.right-button');
-    _.pagerInfo = (typeof isPopup === 'undefined' || !isPopup) ? covers.find('.paginator-info') : $('.mfp-container').find('.paginator-info');
+    if (typeof isPopup === 'undefined' || !isPopup) {
+      if (_.isList) {
+        _.pagerInfo = covers.find('.paginator-info');
+      } else {
+        _.pagerInfo = _.trigger.find('.paginator-info');
+      }
+    } else {
+      _.pagerInfo = $('.mfp-container').find('.paginator-info');
+    }
 
     if (_.images.length < 2) {
       covers.hide();
