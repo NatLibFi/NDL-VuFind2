@@ -30,6 +30,7 @@
           <img data-src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
         </a>
         <a class="hidden-trigger" href="#" style="display: none;">
+          <?= $this->transEsc('hidden_description') ?>
         </a>
       </div>
     <?php endif; ?>
@@ -41,16 +42,16 @@
     </p>
   </div>
   <div class="recordcovers <?=$type?>">
-    <button class="left-button" type="button"><i class="fa fa-handle-left"></i></button>
+    <button class="left-button" type="button" aria-label="<?= $this->transEsc("browse_to_left") ?>"><i class="fa fa-handle-left"></i></button>
     <div class="track-holder paginator-mask">
       <div class="finna-element-track"></div>
     </div>
-    <button class="right-button" type="button"><i class="fa fa-handle-right"></i></button>
+    <button class="right-button" type="button" aria-label="<?= $this->transEsc("browse_to_right") ?>"><i class="fa fa-handle-right"></i></button>
     <div class="paginator-info"></span> <span class="image-index"></span></div>
   </div>
   <div class="recordcovers-more more-area">
-    <button type="button" class="show-more-images"><?= $this->translate('more') ?> <i class="fa fa-arrow-down"></i></button>
-    <button type="button" class="show-less-images"><?= $this->translate('less') ?> <i class="fa fa-arrow-up"></i></button>
+    <button type="button" class="show-more-images"><?= $this->transEsc('more') ?> <i class="fa fa-arrow-down"></i></button>
+    <button type="button" class="show-less-images"><?= $this->transEsc('less') ?> <i class="fa fa-arrow-up"></i></button>
   </div>
   <?php if (count($paginatedLinks) > 0): ?>
     <script>
