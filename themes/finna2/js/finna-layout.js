@@ -393,6 +393,7 @@ finna.layout = (function finnaLayout() {
 
       $('input[name=type]:hidden').val($(this).siblings().val());
       dropdownToggle.find('span').text($(this).text());
+      dropdownToggle.attr('aria-label', ($(this).text()));
       dropdownToggle.dropdown('toggle');
       dropdownToggle.focus();
     });
