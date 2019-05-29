@@ -253,7 +253,8 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getImagePopupZoom()
     {
-        return $this->config->Content->enableImagePopupZoom === '1';
+        return isset($this->config->Content->enableImagePopupZoom)
+            && $this->config->Content->enableImagePopupZoom === '1';
     }
 
     /**
