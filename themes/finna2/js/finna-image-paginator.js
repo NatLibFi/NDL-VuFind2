@@ -245,6 +245,9 @@ finna.imagePaginator = (function imagePaginator() {
     _.setPagerInfo(true);
     _.setCurrentVisuals();
 
+    _.leafletHolder.eachLayer(function removeLayers(layer) {
+      _.leafletHolder.removeLayer(layer);
+    });
     _.leafletHolder.setMaxBounds(null);
 
     var img = new Image();
