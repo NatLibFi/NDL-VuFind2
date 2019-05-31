@@ -17,7 +17,8 @@
         'largest' => $img['urls']['large'] ?? $img['urls']['medium'] ?? $img['urls']['small'],
         'index' => $ind++,
         'alt' => $desc,
-        'description' => $img['description']
+        'description' => $img['description'],
+        'title' => $this->transEsc('Image') . ' ' . $ind
       ];
       $paginatedLinks[] = $obj;
     ?>

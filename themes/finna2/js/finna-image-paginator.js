@@ -223,7 +223,7 @@ finna.imagePaginator = (function imagePaginator() {
 
     setCanvasContent('nonZoomable');
     _.setCurrentVisuals();
-    _.setPagerInfo();
+    _.setPagerInfo(true);
     _.loadImageInformation();
   }
 
@@ -242,12 +242,9 @@ finna.imagePaginator = (function imagePaginator() {
 
     setCanvasContent('leaflet');
     _.setZoomButtons();
-    _.setPagerInfo();
+    _.setPagerInfo(true);
     _.setCurrentVisuals();
 
-    _.leafletHolder.eachLayer(function removeLayers(layer) {
-      _.leafletHolder.removeLayer(layer);
-    });
     _.leafletHolder.setMaxBounds(null);
 
     var img = new Image();
@@ -264,6 +261,10 @@ finna.imagePaginator = (function imagePaginator() {
       if (_.leafletHolder.length === 0) {
         return;
       }
+
+      _.leafletHolder.eachLayer(function removeLayers(layer) {
+        _.leafletHolder.removeLayer(layer);
+      });
 
       var h = this.naturalHeight;
       var w = this.naturalWidth;
@@ -367,11 +368,20 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   /**
-   * Function to set correct info for page info
+   * Function to set correct info for page info, for popup prepend text with image
+   * 
+   * @param {boolean} isPopup
    */
-  FinnaPaginator.prototype.setPagerInfo = function setPagerInfo() {
+  FinnaPaginator.prototype.setPagerInfo = function setPagerInfo(isPopup) {
     var _ = this;
-    _.pagerInfo.find('.image-index').html(+_.openImageIndex + 1 + " / " + _.images.length);
+    var infoText = '';
+    var imageIndex = +_.openImageIndex + 1;
+    if (typeof isPopup === 'undefined' || !isPopup) {
+      infoText = imageIndex + " / " + _.images.length;
+    } else {
+      infoText = VuFind.translate('Image') + ' ' + imageIndex + ' / ' + _.images.length;
+    }
+    _.pagerInfo.find('.image-index').html(infoText);
   }
 
   /**
@@ -640,7 +650,7 @@ finna.imagePaginator = (function imagePaginator() {
     holder.append(img, $('<i class="fa fa-spinner fa-spin"/>'));
     img.src = image.small;
     img.alt = image.alt;
-    img.title = image.description;
+    img.title = image.title;
     img.onload = function onLoad() {
       $(this).siblings('i').remove();
     }
@@ -739,7 +749,7 @@ finna.imagePaginator = (function imagePaginator() {
     var _ = this;
     _.changeTriggerImage(imagePopup);
     _.openImageIndex = imagePopup.attr('index');
-    _.setPagerInfo();
+    _.setPagerInfo(false);
     _.setCurrentVisuals();
     var modal = $('#imagepopup-modal').find('.imagepopup-holder').clone();
 
