@@ -425,6 +425,14 @@
     }
     .finna-multiselect.done {
       .option {
+        &:before {
+          content: '\f096';
+          font-family: 'FontAwesome';
+          margin: 0px 4px;
+        }
+        &[aria-selected="true"]:before {
+          content: '\f046';
+        }
         &.active {
           background-color: lightgray;
         }

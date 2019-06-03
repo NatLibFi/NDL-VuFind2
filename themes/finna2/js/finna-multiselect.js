@@ -1,13 +1,13 @@
 /* global finna */
 
 finna.multiSelect = (function multiSelect(){
-  var option = '<li class="option" aria-selected="false"></li>'
-  var area = '<ul tabindex="0" class="finna-multiselect done" style="max-height: 200px; background-color: white; overflow-y: scroll;" aria-activedescendant=""></ul>'
+  var option = '<li role="option" class="option" aria-selected="false"></li>'
+
   function init() {
     var i = 0;
     $('.finna-multiselect.init').each(function createMultiselect(){
       var _ = $(this);
-      var el = $(area).clone();
+      var el = $(this).siblings('ul').first();
       var msId = i++;
       var k = 0;
       _.hide();
@@ -32,7 +32,14 @@ finna.multiSelect = (function multiSelect(){
     });
     $('.finna-multiselect.done .option').on('click', function setActiveState(){
       var _ = $(this);
-
+      var ul = _.closest('.finna-multiselect.done');
+      var current = ul.find('.active');
+      if (current.length) {
+        current.removeClass('active');
+      }
+      _.addClass('active');
+      ul.attr('aria-activedescendant', _.attr('id'));
+      setSelectedState(ul);
     });
     $('.finna-multiselect.done').on('focusout', function clearActive(){
       var _ = $(this);
@@ -45,11 +52,7 @@ finna.multiSelect = (function multiSelect(){
       }
       e.preventDefault();
       var _ = $(this);
-      var current = _.find('.active').first();
-      var original = _.siblings('select').first().find('option[data-id=' + current.data('target') + ']');
-      var isSelected = original.prop('selected');
-      original.prop('selected', !isSelected);
-      current.attr('aria-selected', !isSelected);
+      setSelectedState(_);
     });
     $('.finna-multiselect.done').on('keydown', function checkButtons(e){
       if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
@@ -77,8 +80,19 @@ finna.multiSelect = (function multiSelect(){
         current.removeClass('active');
         found.addClass('active');
         _.attr('aria-activedescendant', found.attr('id'));
+        _.scrollTop(0).scrollTop(found.position().top - found.height());
+        /*var target = document.getElementById("target");
+        target.parentNode.scrollTop = target.offsetTop;*/
       }
     });
+  }
+
+  function setSelectedState(ul) {
+    var current = ul.find('.active').first();
+    var original = ul.siblings('select').first().find('option[data-id=' + current.data('target') + ']');
+    var isSelected = original.prop('selected');
+    original.prop('selected', !isSelected);
+    current.attr('aria-selected', !isSelected);
   }
 
   var my = {

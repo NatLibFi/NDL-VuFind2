@@ -31,6 +31,7 @@
         <?php endforeach; ?>
       <?php endif; ?>
     </select>
+    <ul aria-multiselectable="true" role="listbox" aria-label="<?= $this->transEsc('Add filter') . ' ' . $this->transEsc($this->list['label']) ?>" tabindex="0" class="finna-multiselect done" style="max-height: 200px; background-color: white; overflow-y: scroll;" aria-activedescendant=""></ul>
   </div>
 </div>
 <!-- END of: finna - search/advanced/multiselect.phtml -->
