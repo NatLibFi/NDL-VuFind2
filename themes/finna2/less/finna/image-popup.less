@@ -34,23 +34,25 @@
             height: initial;
         }
         &.nonzoomable {
+            @media (min-width: @screen-sm-min + 1) {
+                .imagepopup-container {
+                    max-width: 320px;
+                }
+            }
             width: 100%;
             height: initial;
-            @media (min-width: @screen-sm-min) {
+            @media (min-width: @screen-sm-min + 1) {
                 width: 625px;
                 height: 900px;
             }
-            @media (min-width: @screen-sm-min) {
-                .finna-image-pagination {
-                    max-width: 280px;
-                    background-color: transparent;
-                    flex: 0 0 auto;
-                    width: 100%;
-                    button:not(:disabled) {
-                        color: black;
-                    }
+            .finna-image-pagination {
+                background-color: transparent;
+                flex: 0 0 auto;
+                width: 100%;
+                button:not(:disabled) {
+                    color: black;
                 }
-            } 
+            }
         }
     }
 
