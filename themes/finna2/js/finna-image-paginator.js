@@ -761,6 +761,7 @@ finna.imagePaginator = (function imagePaginator() {
         src: modal,
         type: 'inline',
       },
+      fixedContentPos: true,
       tClose: VuFind.translate('close'),
       callbacks: {
         open: function onPopupOpen() {
