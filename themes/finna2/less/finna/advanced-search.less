@@ -425,10 +425,22 @@
     }
     .finna-multiselect.done {
       .option {
+        padding: 2px 0;
+        position: relative;
+        user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -webkit-user-select: none;
+        &.option-parent {
+          font-weight: bold;
+        }
         &:before {
           content: '\f096';
           font-family: 'FontAwesome';
           margin: 0px 4px;
+          font-weight: initial;
+          display: inline-block;
+          width: 12px;
         }
         &[aria-selected="true"]:before {
           content: '\f046';
@@ -436,9 +448,27 @@
         &.active {
           background-color: lightgray;
         }
+        
+        .hierarchy-line {
+          display: inline-block;
+          position: absolute;
+          border-bottom: 1px dotted black;
+          border-left: 1px dotted black;
+          height: 100%;
+          top: -25%;
+
+          .generate-hierarchy(6);
+          .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
+            &.child-width-@{i} {
+              width: (@i * 15px);
+            }
+            .generate-hierarchy(@n, (@i + 1));
+          }
+        }
       }
     }
-    select {
+
+    /*select {
       height: 200px;
       @media (max-width: @screen-sm-max) {
         height: initial;
@@ -471,7 +501,7 @@
           font-weight: bold;
         }
       }
-    }
+    }*/
   }
   .option-container {
     position: relative;
