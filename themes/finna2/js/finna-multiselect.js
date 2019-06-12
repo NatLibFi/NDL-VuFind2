@@ -68,19 +68,57 @@ finna.multiSelect = (function multiSelect(){
     $('.finna-multiselect.done').on('keyup', function checkKeyUp(e){
       e.preventDefault();
       var _ = $(this);
-      var inp = String.fromCharCode(e.keyCode);
+      var inp = e.key;
       if (/[a-öA-Ö0-9-_ ]/.test(inp)) {
-        /*var current = _.find('.active');
-        var childrenAsString = _.children('.option').map(function createStringArray() {
-          var html = $(this).html();
-          if (html.length === 0 || html.substring(0, 1) !== inp) {
-            return null;
+        var firstFound = null;
+        var current = null;
+        var active = _.find('.active').first();
+        var activeFound = active.length !== 0;
+        var activeStart = '';
+        console.log(inp);
+        if (activeFound) {
+          activeStart = active.html().substring(0, 1);
+        }
+        _.children('.option').each(function checkForSuitable() {
+          var cur = $(this);
+          var matches = cur.html().substring(0, 1) === inp;
+          if (matches) {
+            if (firstFound === null) {
+              if (activeStart !== cur.html().substring(0, 1)) {
+                // We assume that this is the first one so lets pick this
+                cur.addClass('active');
+                active.removeClass('active');
+                _.attr('aria-activedescendant', cur.attr('id'));
+                return false;
+              }
+              firstFound = cur;
+              // Is this the first one found
+              console.log("Yerp");
+            }
+
+            if (activeFound && cur.hasClass('active') && current === null) {
+              current = $(this);
+              console.log("Pa");
+              return true;
+              // Is this current
+            }
+
+            if (current !== null) {
+              // We assume that this is the first one so lets pick this
+              cur.addClass('active');
+              current.removeClass('active');
+              _.attr('aria-activedescendant', cur.attr('id'));
+            }
+          } else if (current !== null) {
+            if (current === firstFound) {
+              return true;
+            }
+            firstFound.addClass('active');
+            current.removeClass('active');
+            _.attr('aria-activedescendant', cur.attr('id'));
+            return false;
           }
-          return {
-            id: $(this).attr('id'),
-            html: html
-          }
-        }).toArray();*/
+        });
       }
         
       if (e.key !== 'Enter' && e.key !== ' ') {
