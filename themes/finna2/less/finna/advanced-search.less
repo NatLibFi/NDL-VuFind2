@@ -473,41 +473,6 @@
         }
       }
     }
-
-    /*select {
-      height: 200px;
-      @media (max-width: @screen-sm-max) {
-        height: initial;
-      }
-      width: 100%;
-      option {
-        padding: 4px 0;
-        position: relative;
-        &.option-child::before {
-          content: '';
-          margin-left: 4px;
-          width: 10px;
-          font-family: icomoon;
-          display: inline-block;
-          border-left: 1px dotted black;
-          border-bottom: 1px dotted black;
-          height: 100%;
-          margin-right: 2px;
-          position: absolute;
-          top: -4px;
-        }
-        .generate-hierarchy(6);
-        .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
-          &.child-width-@{i}::before {
-            width: (@i * 12.5px);
-          }
-          .generate-hierarchy(@n, (@i + 1));
-        }
-        &.option-parent {
-          font-weight: bold;
-        }
-      }
-    }*/
   }
   .option-container {
     position: relative;

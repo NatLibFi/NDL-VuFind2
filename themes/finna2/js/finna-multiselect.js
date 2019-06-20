@@ -108,7 +108,6 @@ finna.multiSelect = (function multiSelect(){
         }
       }
 
-        
       if (e.key !== 'Enter' && e.key !== ' ') {
         return;
       }
