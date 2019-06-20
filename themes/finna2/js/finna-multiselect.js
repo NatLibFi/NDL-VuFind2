@@ -19,7 +19,7 @@ finna.multiSelect = (function multiSelect(){
         temp.attr('data-target', k);
         temp.attr('id', msId + '_opt_' + k++);
         temp.attr('aria-selected', c.prop('selected'));
-        temp.html(c.html());
+        temp.html('<span class="value">' + c.html() + '</span>');
         if (c.hasClass('option-parent')) {
           temp.addClass('option-parent');
         }
@@ -70,56 +70,44 @@ finna.multiSelect = (function multiSelect(){
       var _ = $(this);
       var inp = e.key;
       if (/[a-öA-Ö0-9-_ ]/.test(inp)) {
-        var firstFound = null;
-        var current = null;
-        var active = _.find('.active').first();
-        var activeFound = active.length !== 0;
-        var activeStart = '';
-        console.log(inp);
-        if (activeFound) {
-          activeStart = active.html().substring(0, 1);
-        }
+        var hasActive = false;
+        var foundWithSame = [];
         _.children('.option').each(function checkForSuitable() {
-          var cur = $(this);
-          var matches = cur.html().substring(0, 1) === inp;
-          if (matches) {
-            if (firstFound === null) {
-              if (activeStart !== cur.html().substring(0, 1)) {
-                // We assume that this is the first one so lets pick this
-                cur.addClass('active');
-                active.removeClass('active');
-                _.attr('aria-activedescendant', cur.attr('id'));
-                return false;
-              }
-              firstFound = cur;
-              // Is this the first one found
-              console.log("Yerp");
-            }
+          var opt = $(this);
+          var optCh = opt.find('.value').html().replace(/&nbsp;/g, '').toLowerCase().substring(0, 1);
 
-            if (activeFound && cur.hasClass('active') && current === null) {
-              current = $(this);
-              console.log("Pa");
-              return true;
-              // Is this current
+          if (optCh === inp) {
+            foundWithSame.push(opt);
+            if (opt.hasClass('active')) {
+              hasActive = true;
             }
-
-            if (current !== null) {
-              // We assume that this is the first one so lets pick this
-              cur.addClass('active');
-              current.removeClass('active');
-              _.attr('aria-activedescendant', cur.attr('id'));
-            }
-          } else if (current !== null) {
-            if (current === firstFound) {
-              return true;
-            }
-            firstFound.addClass('active');
-            current.removeClass('active');
-            _.attr('aria-activedescendant', cur.attr('id'));
-            return false;
           }
         });
+        if (hasActive === false && foundWithSame.length > 0) {
+          _.children('.option').removeClass('active');
+          var tar = foundWithSame[0];
+          setActive(_, tar);
+        } else if ((hasActive || !hasActive) && foundWithSame.length > 0) {
+          var i = 0;
+          var activeFound = false;
+          for (; i <= foundWithSame.length; i++) {
+            var cur = i === foundWithSame.length ? $(foundWithSame[0]) : $(foundWithSame[i]);
+            if (i === foundWithSame.length) {
+              setActive(_, cur);
+              break;
+            }
+
+            if (activeFound) {
+              setActive(_, cur);
+              break;
+            } else if (cur.hasClass('active')) {
+              activeFound = true;
+              cur.removeClass('active');
+            }
+          }
+        }
       }
+
         
       if (e.key !== 'Enter' && e.key !== ' ') {
         return;
@@ -141,8 +129,7 @@ finna.multiSelect = (function multiSelect(){
         if (_.attr('aria-activedescendant') === '') {
           var first = _.find('.option').first();
           _.children('.option').removeClass('active');
-          first.addClass('active');
-          _.attr('aria-activedescendant', first.attr('id'));
+          setActive(_, first);
         }
         return;
       }
@@ -154,11 +141,15 @@ finna.multiSelect = (function multiSelect(){
       }
       if (found.length) {
         current.removeClass('active');
-        found.addClass('active');
-        _.attr('aria-activedescendant', found.attr('id'));
-        _.scrollTop(0).scrollTop(found.position().top - (found.height() + 4) * 3);
+        setActive(_, found);
       }
     });
+  }
+
+  function setActive(area, found) {
+    found.addClass('active');
+    area.attr('aria-activedescendant', found.attr('id'));
+    area.scrollTop(0).scrollTop(found.position().top - (found.height() + 4) * 3);
   }
 
   function setSelectedState(ul) {
