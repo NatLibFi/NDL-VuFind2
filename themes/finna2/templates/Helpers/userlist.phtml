@@ -1,0 +1,8 @@
+<div class="public-list-view results result-view-<?=$this->escapeHtmlAttr($this->params->getView())?>">
+  <?= $this->partial('search/list-' . $this->view . '.phtml',
+     [
+         'results' => $this->results,
+         'params' => $this->params
+     ])
+  ?>
+</div>
