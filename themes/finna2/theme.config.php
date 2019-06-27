@@ -58,7 +58,7 @@ return [
             'Finna\View\Helper\Root\TranslationEmpty' => 'Zend\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\TruncateUrl' => 'Zend\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\UserAgent' => 'Finna\View\Helper\Root\UserAgentFactory',
-            'Finna\View\Helper\Root\UserList' => 'Finna\View\Helper\Root\UserListFactory',
+            'Finna\View\Helper\Root\UserListEmbed' => 'Finna\View\Helper\Root\UserListEmbedFactory',
             'Finna\View\Helper\Root\UserPublicName' => 'Zend\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => [
@@ -104,7 +104,7 @@ return [
             'translationEmpty' => 'Finna\View\Helper\Root\TranslationEmpty',
             'truncateUrl' => 'Finna\View\Helper\Root\TruncateUrl',
             'userAgent' => 'Finna\View\Helper\Root\UserAgent',
-            'userList' => 'Finna\View\Helper\Root\UserList',
+            'userlistEmbed' => 'Finna\View\Helper\Root\UserListEmbed',
             'userPublicName' => 'Finna\View\Helper\Root\UserPublicName',
 
             // Overrides

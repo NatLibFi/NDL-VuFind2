@@ -38,7 +38,7 @@ use Zend\Stdlib\Parameters;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class UserList extends \Zend\View\Helper\AbstractHelper
+class UserListEmbed extends \Zend\View\Helper\AbstractHelper
 {
     /**
      * Favorites results
@@ -78,7 +78,11 @@ class UserList extends \Zend\View\Helper\AbstractHelper
     public function __invoke($opt)
     {
         foreach (array_keys($opt) as $key) {
-            if (!in_array($key, ['id', 'view', 'sort', 'limit'])) {
+            if (!in_array(
+                $key, ['id', 'view', 'sort', 'limit', 'page',
+                       'title', 'description', 'headingLevel']
+            )
+            ) {
                 unset($opt[$key]);
             }
         }
@@ -111,7 +115,14 @@ class UserList extends \Zend\View\Helper\AbstractHelper
             [
                 'results' => $this->results,
                 'params' => $params,
-                'view' => $view
+                'view' => $view,
+                'title' =>
+                    (isset($opt['title']) && $opt['title'] === false)
+                    ? null : $list->title,
+                'description' =>
+                    (isset($opt['description']) && $opt['description'] === false)
+                    ? null : $list->description,
+                'headingLevel' => $opt['headingLevel'] ?? 2
             ]
         );
     }

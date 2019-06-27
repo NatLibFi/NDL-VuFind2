@@ -1,8 +1,12 @@
-<div class="public-list-view results result-view-<?=$this->escapeHtmlAttr($this->params->getView())?>">
-  <?= $this->partial('search/list-' . $this->view . '.phtml',
-     [
-         'results' => $this->results,
-         'params' => $this->params
-     ])
-  ?>
+<div class="public-list-embed">
+  <div class="public-list-view results result-view-<?=$this->escapeHtmlAttr($this->params->getView())?>">
+    <? if ($this->title): ?><h<?=$this->headingLevel?>><?= $this->title ?></h<?=$this->headingLevel?>><? endif ?>
+    <? if ($this->description): ?><div class="public-list-desc"><?= $this->markdown()->toHtml($this->description) ?></div><? endif ?>
+    <?= $this->partial('search/list-' . $this->view . '.phtml',
+      [
+        'results' => $this->results,
+        'params' => $this->params
+      ])
+    ?>
+  </div>
 </div>
