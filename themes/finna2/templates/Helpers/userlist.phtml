@@ -14,7 +14,8 @@
     <?= $this->partial('search/list-' . $this->view . '.phtml',
     [
       'results' => $this->results,
-      'params' => $this->params
+      'params' => $this->params,
+      'hideCartControls' => true
     ])
     ?>
   </div>
