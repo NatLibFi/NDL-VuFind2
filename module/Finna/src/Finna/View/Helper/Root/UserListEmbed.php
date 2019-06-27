@@ -80,7 +80,7 @@ class UserListEmbed extends \Zend\View\Helper\AbstractHelper
         foreach (array_keys($opt) as $key) {
             if (!in_array(
                 $key, ['id', 'view', 'sort', 'limit', 'page',
-                       'title', 'description', 'headingLevel']
+                       'title', 'description', 'date', 'headingLevel']
             )
             ) {
                 unset($opt[$key]);
@@ -122,6 +122,9 @@ class UserListEmbed extends \Zend\View\Helper\AbstractHelper
                 'description' =>
                     (isset($opt['description']) && $opt['description'] === false)
                     ? null : $list->description,
+                'date' =>
+                    (isset($opt['date']) && $opt['date'] === false)
+                    ? null : $list->finna_updated ?? $list->created,
                 'headingLevel' => $opt['headingLevel'] ?? 2
             ]
         );
