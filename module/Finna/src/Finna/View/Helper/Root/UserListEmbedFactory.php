@@ -1,6 +1,6 @@
 <?php
 /**
- * UserList helper factory.
+ * UserListEmbed helper factory.
  *
  * PHP version 7
  *
@@ -31,7 +31,7 @@ use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 
 /**
- * UserList helper factory.
+ * UserListEmbed helper factory.
  *
  * @category VuFind
  * @package  View_Helpers
