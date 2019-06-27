@@ -1,0 +1,50 @@
+<?php $active = $this->feedIds[0]; ?>
+<div class="feed-tabs" data-id="<?=$this->id?>">
+  <?php if (count($this->feedIds) > 3): ?>
+  <div class="tabs-responsive">
+  <?php endif; ?>
+    <ul class="feedTabs nav nav-tabs visible-md visible-lg" role="tablist">
+      <?php foreach ($this->feedIds as $feed): ?>
+        <?php // add current tab to breadcrumbs if applicable:
+          $tabName = preg_replace("/\W/", "-", strtolower($feed));
+          $desc = 'desc';
+          $tabClasses = [ 'nav-item', 'feed-tab', $tabName ];
+          if (0 === strcasecmp($active, $feed)) {
+              $tabClasses[] = 'active';
+          }
+          $tabId = $this->id . '-' . $feed;
+        ?>
+      <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
+          <a class="<?=strtolower($feed) ?>"
+             aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
+             id="<?=$this->escapeHtmlAttr($tabId)?>-tab"
+             href="#<?=$this->escapeHtmlAttr($tabId)?>"
+             role="tab"
+             data-toggle="tab"
+             data-tab="<?=$feed?>"
+             araia-controls="<?=$this->escapeHtmlAttr($tabId)?>"><?= $feed ?></a>
+      </li>
+      <?php endforeach; ?>
+    </ul>
+  <?php if (count($this->feedIds) > 3): ?>
+  </div>
+  <?php endif; ?>
+
+  <div class="tab-content" id="<?=$this->id?>Content">
+    <?php foreach ($this->feedIds as $feed): ?>
+      <?php $tabId = $this->id . '-' . $feed; ?>
+      <div class="tab-pane<?= $feed === $active ? ' active' : ''?>" id="<?=$this->escapeHtmlAttr($tabId)?>" role="tabpanel" aria-labelledby="<?=$this->escapeHtmlAttr($tabId)?>-tab" data-tab="<?=$feed?>">
+        <?=$this->partial('Helpers/feed.phtml', ['id' => $feed, 'init' => false]);?>
+      </div>
+    <?php endforeach; ?>
+  </div>
+</div>
+<?php
+$this->headScript()->appendFile("finna-feed-tab.js");
+// Set up validation; we do this inline instead of in the header for lightbox compatibility:
+$js = <<<JS
+$(document).ready(function(){
+  finna.feedTab.init("$id");
+});
+JS;
+echo $this->inlineScript()->appendScript($js);
