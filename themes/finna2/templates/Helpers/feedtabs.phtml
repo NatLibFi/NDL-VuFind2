@@ -54,12 +54,7 @@
   </div>
 
   <div class="tab-content" id="<?=$this->id?>Content">
-    <?php foreach ($this->feedIds as $desc => $feed): ?>
-      <?php $tabId = $this->id . '-' . $feed; ?>
-      <div class="tab-pane<?= $feed === $active ? ' active' : ''?>" id="<?=$this->escapeHtmlAttr($tabId)?>" role="tabpanel" aria-labelledby="<?=$this->escapeHtmlAttr($tabId)?>-tab" data-tab="<?=$feed?>">
-        <?=$this->partial('Helpers/feed.phtml', ['id' => $feed, 'init' => false]);?>
-      </div>
-    <?php endforeach; ?>
+    <div class="feed-container" data-init="0"></div>
   </div>
 </div>
 <?php

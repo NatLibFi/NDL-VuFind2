@@ -3,12 +3,13 @@ finna.feedTab = (function finnaFeedTab() {
   var prevId = null;
 
   function getTabContainer(tabs, tabId) {
-    return tabs.find('.tab-content .tab-pane[data-tab="' + tabId + '"]');
+    return tabs.find('.tab-content');
   }
 
   function loadFeed(tabs, tabId) {
     var feedContainer = getTabContainer(tabs, tabId).find('.feed-container');
     feedContainer.data('init', null);
+    feedContainer.data('feed', tabId);
     finna.feed.loadFeed(feedContainer);
   }
 
@@ -19,26 +20,24 @@ finna.feedTab = (function finnaFeedTab() {
   }
 
   function toggleAccordion(container, accordion) {
-    var tabContent = container.find('.tab-content');
+    var tabContent = container.find('.tab-content').detach();
     var tabId = accordion.find('a.accordion-title').data('tab');
+    var loadContent = false;
 
     if (accordion.hasClass('active') && !accordion.hasClass('initial-active')) {
       container.find('.feed-accordions').find('.accordion.active').removeClass('active');
-      container.find('.tab-pane.active').removeClass('active');
       container.find('.nav-tabs li.active').removeClass('active');
-      tabContent.insertAfter($('.feed-accordions'));
     } else {
       container.find('.feed-accordions').find('.accordion.active').removeClass('active');
       accordion.addClass('active');
-      container.find('.tab-pane.active').removeClass('active');
       container.find('.feed-tab.active').removeClass('active');
-
-      tabContent.insertAfter(accordion);
+      container.find('.feed-tab[data-tab="' + tabId + '"]').addClass('active');
+      loadContent = true;
     }
+    tabContent.insertAfter(accordion);
     accordion.removeClass('initial-active');
-    
-    tabContent.find('.tab-pane[data-tab="' + tabId + '"]').addClass('active');
-    container.find('.feed-tab[data-tab="' + tabId + '"]').addClass('active');
+
+    return loadContent;
   }
 
 
@@ -65,8 +64,10 @@ finna.feedTab = (function finnaFeedTab() {
         deleteFeed(container, self.prevId);
         getTabContainer(container, self.prevId).removeClass('active');
       }
-      toggleAccordion(container, container.find('.feed-accordions .accordion-toggle[data-tab="' + tabId + '"]').closest('.accordion'));
-      loadFeed(container, tabId);
+      var accordion = container.find('.feed-accordions .accordion-toggle[data-tab="' + tabId + '"]').closest('.accordion');
+      if (toggleAccordion(container, accordion)) {
+        loadFeed(container, tabId);
+      }
       self.prevId = tabId;
 
       return false;
@@ -82,8 +83,9 @@ finna.feedTab = (function finnaFeedTab() {
         deleteFeed(tabs, self.prevId);
         getTabContainer(tabs, self.prevId).removeClass('active');
       }
-      toggleAccordion(container, accordion);
-      loadFeed(container, tabId);
+      if (toggleAccordion(container, accordion)) {
+        loadFeed(container, tabId);
+      }
       self.prevId = accordion.find('a.accordion-title').data('tab');
       return false;
     });
