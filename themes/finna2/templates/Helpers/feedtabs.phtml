@@ -1,16 +1,16 @@
-<?php $active = $this->feedIds[0]; ?>
 <div class="feed-tabs" data-id="<?=$this->id?>">
   <?php if (count($this->feedIds) > 3): ?>
   <div class="tabs-responsive">
   <?php endif; ?>
     <ul class="feedTabs nav nav-tabs visible-md visible-lg" role="tablist">
-      <?php foreach ($this->feedIds as $feed): ?>
+      <? $tabNames = []; ?>
+      <?php foreach ($this->feedIds as $desc => $feed): ?>
         <?php // add current tab to breadcrumbs if applicable:
           $tabName = preg_replace("/\W/", "-", strtolower($feed));
-          $desc = 'desc';
+          $tabNames[] = $tabName;
           $tabClasses = [ 'nav-item', 'feed-tab', $tabName ];
-          if (0 === strcasecmp($active, $feed)) {
-              $tabClasses[] = 'active';
+          if (0 === strcasecmp($this->active, $feed)) {
+              $tabClasses[] = 'active initial-active';
           }
           $tabId = $this->id . '-' . $feed;
         ?>
@@ -22,7 +22,7 @@
              role="tab"
              data-toggle="tab"
              data-tab="<?=$feed?>"
-             araia-controls="<?=$this->escapeHtmlAttr($tabId)?>"><?= $feed ?></a>
+             araia-controls="<?=$this->escapeHtmlAttr($tabId)?>"><?= $this->transEsc($desc) ?></a>
       </li>
       <?php endforeach; ?>
     </ul>
@@ -30,8 +30,31 @@
   </div>
   <?php endif; ?>
 
+  <div class="feed-accordions">
+    <?php $i = 0; foreach ($this->feedIds as $desc => $feed): ?>
+      <?php
+        $classes = ['accordion', 'accrodion' . $tabNames[$i++]];
+        if (0 === strcasecmp($this->active, $feed)) {
+          $classes[] = 'active initial-active';
+        }
+        $tabId = $this->id . '-' . $feed;
+      ?>
+      <div class="<?=implode(' ', $classes)?>">
+        <div class="accordion-toggle" data-tab="<?=$feed?>">
+          <a data-tab="<?=$feed?>"
+             class="accordion-title"
+             href="#"
+          >
+            <span class="title"><?=$this->transEsc($desc)?></span>
+            <i class="icon"></i>
+          </a>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+
   <div class="tab-content" id="<?=$this->id?>Content">
-    <?php foreach ($this->feedIds as $feed): ?>
+    <?php foreach ($this->feedIds as $desc => $feed): ?>
       <?php $tabId = $this->id . '-' . $feed; ?>
       <div class="tab-pane<?= $feed === $active ? ' active' : ''?>" id="<?=$this->escapeHtmlAttr($tabId)?>" role="tabpanel" aria-labelledby="<?=$this->escapeHtmlAttr($tabId)?>-tab" data-tab="<?=$feed?>">
         <?=$this->partial('Helpers/feed.phtml', ['id' => $feed, 'init' => false]);?>
@@ -44,7 +67,7 @@ $this->headScript()->appendFile("finna-feed-tab.js");
 // Set up validation; we do this inline instead of in the header for lightbox compatibility:
 $js = <<<JS
 $(document).ready(function(){
-  finna.feedTab.init("$id");
+  finna.feedTab.init("{$this->id}");
 });
 JS;
-echo $this->inlineScript()->appendScript($js);
+$this->headScript()->appendScript($js);

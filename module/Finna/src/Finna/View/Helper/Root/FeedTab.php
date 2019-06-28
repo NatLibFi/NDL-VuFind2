@@ -52,8 +52,9 @@ class FeedTab extends \Zend\View\Helper\AbstractHelper
         return $this->getView()->render(
             'Helpers/feedtabs.phtml',
             [
-                'id' => 'TODO',
-                'feedIds' => $feedIds
+                'id' => md5(json_encode($feedIds)),
+                'feedIds' => $feedIds,
+                'active' => array_shift($feedIds)
             ]
         );
     }
