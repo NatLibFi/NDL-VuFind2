@@ -1,7 +1,5 @@
-/*global VuFind, finna */
+/*global finna */
 finna.feedTabs = (function finnaFeedTab() {
-  var prevId = null;
-
   function getTabContainer(tabs) {
     return tabs.find('.tab-content');
   }
@@ -45,21 +43,18 @@ finna.feedTabs = (function finnaFeedTab() {
     // Init feed tabs
     container.find('li.nav-item a').click(function feedTabClick() {
       var tabId = $(this).data('tab');
-      var tabContainer = getTabContainer(container);
       var li = $(this).closest('li');
       if (li.hasClass('active') && !li.hasClass('initial-active')) {
         return false;
       }
       li.removeClass('initial-active');
 
-      if (self.prevId) {
-        getTabContainer(container).removeClass('active');
-      }
+      getTabContainer(container).removeClass('active');
+
       var accordion = container.find('.feed-accordions .accordion-toggle[data-tab="' + tabId + '"]').closest('.accordion');
       if (toggleAccordion(container, accordion)) {
         loadFeed(container, tabId);
       }
-      self.prevId = tabId;
 
       return false;
     });
@@ -69,14 +64,12 @@ finna.feedTabs = (function finnaFeedTab() {
       var accordion = $(e.target).closest('.accordion');
       var tabId = accordion.find('.accordion-toggle').data('tab');
 
-      if (self.prevId) {
-        var tabs = accordion.closest('.feed-tabs');
-        getTabContainer(tabs).removeClass('active');
-      }
+      var tabs = accordion.closest('.feed-tabs');
+      getTabContainer(tabs).removeClass('active');
+
       if (toggleAccordion(container, accordion)) {
         loadFeed(container, tabId);
       }
-      self.prevId = accordion.find('a.accordion-title').data('tab');
       return false;
     });
 
