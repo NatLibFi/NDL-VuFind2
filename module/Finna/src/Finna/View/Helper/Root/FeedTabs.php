@@ -41,7 +41,7 @@ use Zend\Stdlib\Parameters;
 class FeedTabs extends \Zend\View\Helper\AbstractHelper
 {
     /**
-     * Returns HTML for embedding a user list.
+     * Returns HTML for the widget.
      *
      * @param array $feedIds Feed ids to display.
      *
