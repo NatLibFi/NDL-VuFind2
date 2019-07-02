@@ -1,5 +1,6 @@
 .accordion {
   list-style-type: none;
+  cursor: pointer;
   .accordion-toggle {
     padding: 15px 10px;
     margin-bottom: 5px;
@@ -28,6 +29,7 @@
     text-overflow: ellipsis;
     line-height: @content-headings-line-height;
     width: 100%;
+    cursor: inherit;
     .title {
       flex: 1;
       font-size: @font-size-h2;
@@ -52,10 +54,11 @@
     }
   }
   &.active {
+    cursor: default;
     .accordion-toggle {
       border-left: 4px solid @action-link-color;
       .icon:after {
-        content: "\e916";
+        display: none;
       }
       @media print {
         border-left: none;

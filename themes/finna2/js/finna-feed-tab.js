@@ -7,28 +7,21 @@ finna.feedTab = (function finnaFeedTab() {
   }
 
   function loadFeed(tabs, tabId) {
-    var feedContainer = getTabContainer(tabs, tabId).find('.feed-container');
+    var tabContainer = getTabContainer(tabs, tabId);
+    var feedContainer = tabContainer.find('.feed-container');
     feedContainer.data('init', null);
     feedContainer.data('feed', tabId);
     finna.feed.loadFeed(feedContainer);
-  }
-
-  function deleteFeed(tabs, tabId) {
-    var tabContainer = getTabContainer(tabs, tabId);
-    tabContainer.removeClass('active');
-    tabContainer.find('.feed-container').empty();
   }
 
   function toggleAccordion(container, accordion) {
     var tabContent = container.find('.tab-content').detach();
     var tabId = accordion.find('a.accordion-title').data('tab');
     var loadContent = false;
-
-    if (accordion.hasClass('active') && !accordion.hasClass('initial-active')) {
-      container.find('.feed-accordions').find('.accordion.active').removeClass('active');
-      container.find('.nav-tabs li.active').removeClass('active');
-    } else {
-      container.find('.feed-accordions').find('.accordion.active').removeClass('active');
+    var accordions = container.find('.feed-accordions');
+    if (!accordion.hasClass('active') || accordion.hasClass('initial-active')) {
+      accordions.find('.accordion.active').removeClass('active');
+      accordions.toggleClass('all-closed', false);
       accordion.addClass('active');
       container.find('.feed-tab.active').removeClass('active');
       container.find('.feed-tab[data-tab="' + tabId + '"]').addClass('active');
@@ -61,7 +54,6 @@ finna.feedTab = (function finnaFeedTab() {
       li.removeClass('initial-active');
 
       if (self.prevId) {
-        deleteFeed(container, self.prevId);
         getTabContainer(container, self.prevId).removeClass('active');
       }
       var accordion = container.find('.feed-accordions .accordion-toggle[data-tab="' + tabId + '"]').closest('.accordion');
@@ -80,7 +72,6 @@ finna.feedTab = (function finnaFeedTab() {
 
       if (self.prevId) {
         var tabs = accordion.closest('.feed-tabs');
-        deleteFeed(tabs, self.prevId);
         getTabContainer(tabs, self.prevId).removeClass('active');
       }
       if (toggleAccordion(container, accordion)) {
