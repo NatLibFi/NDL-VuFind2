@@ -6,7 +6,7 @@
     <ul class="feedTabs nav nav-tabs visible-md visible-lg" role="tablist">
       <? $tabNames = []; ?>
       <?php foreach ($this->feedIds as $desc => $feed): ?>
-        <?php // add current tab to breadcrumbs if applicable:
+        <?php
           $tabName = preg_replace("/\W/", "-", strtolower($feed));
           $tabNames[] = $tabName;
           $tabClasses = [ 'nav-item', 'feed-tab', $tabName ];
