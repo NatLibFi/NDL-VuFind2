@@ -38,7 +38,6 @@ finna.feedTabs = (function finnaFeedTab() {
     }
     container.addClass('inited');
     container.tab('show');
-    var self = this;
 
     // Init feed tabs
     container.find('li.nav-item a').click(function feedTabClick() {
