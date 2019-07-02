@@ -27,8 +27,6 @@
  */
 namespace Finna\View\Helper\Root;
 
-use Zend\Stdlib\Parameters;
-
 /**
  * View helper for feed tabs.
  *
