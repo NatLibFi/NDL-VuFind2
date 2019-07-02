@@ -15,14 +15,14 @@
           }
           $tabId = $this->id . '-' . $feed;
         ?>
-      <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
-          <a class="<?=strtolower($feed) ?>"
+      <li class="<?=$this->escapeHtmlAttr(implode(' ', $tabClasses))?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>">
+          <a class="<?=$this->escapeHtmlAttr(strtolower($feed)) ?>"
              aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
              id="<?=$this->escapeHtmlAttr($tabId)?>-tab"
              href="#"
              role="tab"
              data-toggle="tab"
-             data-tab="<?=$feed?>"
+             data-tab="<?=$this->escapeHtmlAttr($feed)?>"
              araia-controls="<?=$this->escapeHtmlAttr($tabId)?>"><?= $this->transEsc($desc) ?></a>
       </li>
       <?php endforeach; ?>
@@ -42,7 +42,7 @@
       ?>
       <div class="<?=implode(' ', $classes)?>">
         <div class="accordion-toggle" data-tab="<?=$feed?>">
-          <a data-tab="<?=$feed?>"
+          <a data-tab="<?=$this->escapeHtmlAttr($feed)?>"
              class="accordion-title"
              href="#"
           >
