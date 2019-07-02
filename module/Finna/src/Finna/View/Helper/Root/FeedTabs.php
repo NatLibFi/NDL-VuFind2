@@ -38,12 +38,12 @@ use Zend\Stdlib\Parameters;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class FeedTab extends \Zend\View\Helper\AbstractHelper
+class FeedTabs extends \Zend\View\Helper\AbstractHelper
 {
     /**
      * Returns HTML for embedding a user list.
      *
-     * @param array $opt Options
+     * @param array $feedIds Feed ids to display.
      *
      * @return string
      */
