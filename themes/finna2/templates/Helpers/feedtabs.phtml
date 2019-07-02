@@ -1,5 +1,5 @@
 <!-- START of: finna - Helpers/feedtabs.phtml -->
-<div class="feed-tabs" data-id="<?=$this->id?>">
+<div class="feed-tabs" id="feed-tabs-<?=$this->escapeHtmlAttr($this->id)?>">
   <?php if (count($this->feedIds) > 3): ?>
   <div class="tabs-responsive">
   <?php endif; ?>
@@ -34,14 +34,14 @@
   <div class="feed-accordions">
     <?php $i = 0; foreach ($this->feedIds as $desc => $feed): ?>
       <?php
-        $classes = ['accordion', 'accrodion' . $tabNames[$i++]];
+        $classes = ['accordion', 'accordion-' . $tabNames[$i++]];
         if (0 === strcasecmp($this->active, $feed)) {
           $classes[] = 'active initial-active';
         }
         $tabId = $this->id . '-' . $feed;
       ?>
-      <div class="<?=implode(' ', $classes)?>">
-        <div class="accordion-toggle" data-tab="<?=$feed?>">
+      <div class="<?=$this->escapeHtmlAttr(implode(' ', $classes))?>">
+        <div class="accordion-toggle" data-tab="<?=$this->escapeHtmlAttr($feed)?>">
           <a data-tab="<?=$this->escapeHtmlAttr($feed)?>"
              class="accordion-title"
              href="#"
@@ -54,7 +54,7 @@
     <?php endforeach; ?>
   </div>
 
-  <div class="tab-content" id="<?=$this->id?>Content">
+  <div class="tab-content" id="tab-content-<?=$this->escapeHtmlAttr($this->id)?>">
     <div class="feed-container" data-init="0"></div>
   </div>
 </div>
@@ -63,7 +63,7 @@ $this->headScript()->appendFile("finna-feed-tabs.js");
 // Set up validation; we do this inline instead of in the header for lightbox compatibility:
 $js = <<<JS
 $(document).ready(function(){
-  finna.feedTabs.init("{$this->id}");
+  finna.feedTabs.init("feed-tabs-{$this->id}");
 });
 JS;
 $this->headScript()->appendScript($js);

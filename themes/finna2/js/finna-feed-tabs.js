@@ -2,12 +2,12 @@
 finna.feedTabs = (function finnaFeedTab() {
   var prevId = null;
 
-  function getTabContainer(tabs, tabId) {
+  function getTabContainer(tabs) {
     return tabs.find('.tab-content');
   }
 
   function loadFeed(tabs, tabId) {
-    var tabContainer = getTabContainer(tabs, tabId);
+    var tabContainer = getTabContainer(tabs);
     var feedContainer = tabContainer.find('.feed-container');
     feedContainer.data('init', null);
     feedContainer.data('feed', tabId);
@@ -33,9 +33,8 @@ finna.feedTabs = (function finnaFeedTab() {
     return loadContent;
   }
 
-
   function init(id) {
-    var container = $('.feed-tabs[data-id="' + id + '"]');
+    var container = $('.feed-tabs#' + id);
     if (container.hasClass('inited')) {
       return;
     }
@@ -46,7 +45,7 @@ finna.feedTabs = (function finnaFeedTab() {
     // Init feed tabs
     container.find('li.nav-item a').click(function feedTabClick() {
       var tabId = $(this).data('tab');
-      var tabContainer = getTabContainer(container, tabId);
+      var tabContainer = getTabContainer(container);
       var li = $(this).closest('li');
       if (li.hasClass('active') && !li.hasClass('initial-active')) {
         return false;
@@ -54,7 +53,7 @@ finna.feedTabs = (function finnaFeedTab() {
       li.removeClass('initial-active');
 
       if (self.prevId) {
-        getTabContainer(container, self.prevId).removeClass('active');
+        getTabContainer(container).removeClass('active');
       }
       var accordion = container.find('.feed-accordions .accordion-toggle[data-tab="' + tabId + '"]').closest('.accordion');
       if (toggleAccordion(container, accordion)) {
@@ -72,7 +71,7 @@ finna.feedTabs = (function finnaFeedTab() {
 
       if (self.prevId) {
         var tabs = accordion.closest('.feed-tabs');
-        getTabContainer(tabs, self.prevId).removeClass('active');
+        getTabContainer(tabs).removeClass('active');
       }
       if (toggleAccordion(container, accordion)) {
         loadFeed(container, tabId);
