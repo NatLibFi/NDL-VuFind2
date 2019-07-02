@@ -1,5 +1,5 @@
 /*global VuFind, finna */
-finna.feedTab = (function finnaFeedTab() {
+finna.feedTabs = (function finnaFeedTab() {
   var prevId = null;
 
   function getTabContainer(tabs, tabId) {

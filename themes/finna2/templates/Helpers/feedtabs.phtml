@@ -63,7 +63,7 @@ $this->headScript()->appendFile("finna-feed-tabs.js");
 // Set up validation; we do this inline instead of in the header for lightbox compatibility:
 $js = <<<JS
 $(document).ready(function(){
-  finna.feedTab.init("{$this->id}");
+  finna.feedTabs.init("{$this->id}");
 });
 JS;
 $this->headScript()->appendScript($js);
