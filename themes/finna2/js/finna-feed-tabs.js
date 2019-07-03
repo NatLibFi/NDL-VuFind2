@@ -12,7 +12,7 @@ finna.feedTabs = (function finnaFeedTab() {
     finna.feed.loadFeed(feedContainer);
   }
 
-  function keyHandler(e, cb) {
+  function keyHandler(e/*, cb*/) {
     if (e.which === 13 || e.which === 32) {
       $(e.target).click();
       e.preventDefault();
