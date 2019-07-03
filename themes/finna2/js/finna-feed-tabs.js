@@ -83,7 +83,7 @@ finna.feedTabs = (function finnaFeedTab() {
     });
 
     // Init accordions (mobile)
-    container.find('.feed-accordions .accordion').click(function accordionClicked(e) {
+    container.find('.feed-accordions .accordion').click(function accordionClicked(/*e*/) {
       var accordion = $(this);
       var tabId = accordion.data('tab');
 
