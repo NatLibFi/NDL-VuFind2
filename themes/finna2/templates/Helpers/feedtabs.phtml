@@ -10,7 +10,8 @@
           $tabName = preg_replace("/\W/", "-", strtolower($feed));
           $tabNames[] = $tabName;
           $tabClasses = [ 'nav-item', 'feed-tab', $tabName ];
-          if (0 === strcasecmp($this->active, $feed)) {
+          $isActive = 0 === strcasecmp($this->active, $feed);
+          if ($isActive) {
               $tabClasses[] = 'active initial-active';
           }
           $tabId = $this->id . '-' . $feed;
@@ -22,7 +23,8 @@
           role="tab"
           data-toggle="tab"
           data-tab="<?=$this->escapeHtmlAttr($feed)?>"
-          aria-controls="<?=$this->escapeHtmlAttr($tabId)?>"><?= $this->transEsc($desc) ?>
+          aria-controls="<?=$this->escapeHtmlAttr($tabId)?>"
+          aria-selected="<?= $isActive ? 'true' : 'false' ?>"><?= $this->transEsc($desc)?>
       </li>
       <?php endforeach; ?>
     </ul>

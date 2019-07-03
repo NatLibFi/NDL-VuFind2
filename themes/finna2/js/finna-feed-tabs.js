@@ -18,11 +18,24 @@ finna.feedTabs = (function finnaFeedTab() {
     var loadContent = false;
     var accordions = container.find('.feed-accordions');
     if (!accordion.hasClass('active') || accordion.hasClass('initial-active')) {
-      accordions.find('.accordion.active').removeClass('active');
+      accordions.find('.accordion.active')
+        .removeClass('active')
+        .attr('aria-selected', false);
+
+      container.find('.feed-tab.active')
+        .removeClass('active')
+        .attr('aria-selected', false);
+
       accordions.toggleClass('all-closed', false);
-      accordion.addClass('active');
-      container.find('.feed-tab.active').removeClass('active');
-      container.find('.feed-tab[data-tab="' + tabId + '"]').addClass('active');
+
+      accordion
+        .addClass('active')
+        .attr('aria-selected', true);
+
+      container.find('.feed-tab[data-tab="' + tabId + '"]')
+        .addClass('active')
+        .attr('aria-selected', true);
+
       loadContent = true;
     }
     tabContent.insertAfter(accordion);
