@@ -4,10 +4,15 @@ finna.myList = (function finnaMyList() {
   var editor = null;
   var editableSettings = {'minWidth': 200, 'addToHeight': 100};
   var save = false;
+  var listUrl = null;
 
   // This is duplicated in image-popup.js to avoid dependency
   function getActiveListId() {
     return $('input[name="listID"]').val();
+  }
+
+  function onCustomOrderSaved(ev, data) {
+    location.href = listUrl;
   }
 
   function updateList(params, callback, type) {
@@ -400,7 +405,9 @@ finna.myList = (function finnaMyList() {
     }
   }
 
-  function initFavoriteOrderingFunctionality() {
+  function initFavoriteOrderingFunctionality(url) {
+    listUrl = url;
+
     $('#sortable').sortable({cursor: 'move', opacity: 0.7});
 
     $('#sort_form').submit(function onSubmitSortForm(/*event*/) {
@@ -518,6 +525,7 @@ finna.myList = (function finnaMyList() {
   }
 
   var my = {
+    onCustomOrderSaved: onCustomOrderSaved,
     initFavoriteOrderingFunctionality: initFavoriteOrderingFunctionality,
     init: function init() {
       initEditComponents();
