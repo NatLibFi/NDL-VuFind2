@@ -41,8 +41,8 @@
         }
         $tabId = $this->id . '-' . $feed;
       ?>
-      <div class="<?=$this->escapeHtmlAttr(implode(' ', $classes))?>">
-        <div class="accordion-toggle" data-tab="<?=$this->escapeHtmlAttr($feed)?>">
+      <div class="<?=$this->escapeHtmlAttr(implode(' ', $classes))?>" role="tablist">
+        <div class="accordion-toggle" data-tab="<?=$this->escapeHtmlAttr($feed)?>" role="tab">
           <a data-tab="<?=$this->escapeHtmlAttr($feed)?>"
              class="accordion-title"
              href="#"
