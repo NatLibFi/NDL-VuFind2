@@ -15,15 +15,14 @@
           }
           $tabId = $this->id . '-' . $feed;
         ?>
-      <li class="<?=$this->escapeHtmlAttr(implode(' ', $tabClasses))?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>">
-          <a class="<?=$this->escapeHtmlAttr(strtolower($feed)) ?>"
-             aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
-             id="<?=$this->escapeHtmlAttr($tabId)?>-tab"
-             href="#"
-             role="tab"
-             data-toggle="tab"
-             data-tab="<?=$this->escapeHtmlAttr($feed)?>"
-             aria-controls="<?=$this->escapeHtmlAttr($tabId)?>"><?= $this->transEsc($desc) ?></a>
+      <li class="<?=$this->escapeHtmlAttr(implode(' ', $tabClasses))?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"
+          aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
+          id="<?=$this->escapeHtmlAttr($tabId)?>-tab"
+          href="#"
+          role="tab"
+          data-toggle="tab"
+          data-tab="<?=$this->escapeHtmlAttr($feed)?>"
+          aria-controls="<?=$this->escapeHtmlAttr($tabId)?>"><?= $this->transEsc($desc) ?>
       </li>
       <?php endforeach; ?>
     </ul>
