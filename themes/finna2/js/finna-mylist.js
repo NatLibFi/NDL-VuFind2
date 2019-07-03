@@ -11,7 +11,7 @@ finna.myList = (function finnaMyList() {
     return $('input[name="listID"]').val();
   }
 
-  function onCustomOrderSaved(ev, data) {
+  function onCustomOrderSaved(/*ev, data*/) {
     location.href = listUrl;
   }
 
