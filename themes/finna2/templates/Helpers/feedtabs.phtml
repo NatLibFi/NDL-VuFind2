@@ -19,11 +19,9 @@
       <li class="<?=$this->escapeHtmlAttr(implode(' ', $tabClasses))?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"
           aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
           id="<?=$this->escapeHtmlAttr($tabId)?>-tab"
-          href="#"
           role="tab"
-          data-toggle="tab"
+          tabindex="0"
           data-tab="<?=$this->escapeHtmlAttr($feed)?>"
-          aria-controls="<?=$this->escapeHtmlAttr($tabId)?>"
           aria-selected="<?= $isActive ? 'true' : 'false' ?>"><?= $this->transEsc($desc)?>
       </li>
       <?php endforeach; ?>
@@ -32,25 +30,23 @@
   </div>
   <?php endif; ?>
 
-  <div class="feed-accordions">
+  <div class="feed-accordions" role="tablist">
     <?php $i = 0; foreach ($this->feedIds as $desc => $feed): ?>
       <?php
         $classes = ['accordion', 'accordion-' . $tabNames[$i++]];
-        if (0 === strcasecmp($this->active, $feed)) {
+        $isActive = 0 === strcasecmp($this->active, $feed);
+        if ($isActive) {
           $classes[] = 'active initial-active';
         }
         $tabId = $this->id . '-' . $feed;
       ?>
-      <div class="<?=$this->escapeHtmlAttr(implode(' ', $classes))?>" role="tablist">
-        <div class="accordion-toggle" data-tab="<?=$this->escapeHtmlAttr($feed)?>" role="tab">
-          <a data-tab="<?=$this->escapeHtmlAttr($feed)?>"
-             class="accordion-title"
-             href="#"
-          >
-            <span class="title"><?=$this->transEsc($desc)?></span>
-            <i class="icon"></i>
-          </a>
-        </div>
+      <div class="<?=$this->escapeHtmlAttr(implode(' ', $classes))?>"
+           data-tab="<?=$this->escapeHtmlAttr($feed)?>"
+           role="tab"
+           tabindex="0"
+           aria-selected="<?= $isActive ? 'true' : 'false' ?>">
+          <span class="title"><?=$this->transEsc($desc)?></span>
+          <i class="icon"></i>
       </div>
     <?php endforeach; ?>
   </div>

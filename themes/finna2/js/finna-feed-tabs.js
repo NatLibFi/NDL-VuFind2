@@ -12,9 +12,18 @@ finna.feedTabs = (function finnaFeedTab() {
     finna.feed.loadFeed(feedContainer);
   }
 
+  function keyHandler(e, cb) {
+    if (e.which === 13 || e.which === 32) {
+      $(e.target).click();
+      e.preventDefault();
+      return false;
+    }
+    return true;
+  }
+
   function toggleAccordion(container, accordion) {
     var tabContent = container.find('.tab-content').detach();
-    var tabId = accordion.find('a.accordion-title').data('tab');
+    var tabId = accordion.data('tab');
     var loadContent = false;
     var accordions = container.find('.feed-accordions');
     if (!accordion.hasClass('active') || accordion.hasClass('initial-active')) {
@@ -63,18 +72,20 @@ finna.feedTabs = (function finnaFeedTab() {
 
       getTabContainer(container).removeClass('active');
 
-      var accordion = container.find('.feed-accordions .accordion-toggle[data-tab="' + tabId + '"]').closest('.accordion');
+      var accordion = container.find('.feed-accordions .accordion[data-tab="' + tabId + '"]');
       if (toggleAccordion(container, accordion)) {
         loadFeed(container, tabId);
       }
 
       return false;
+    }).keyup(function onKeyUp(e) {
+      return keyHandler(e);
     });
 
     // Init accordions (mobile)
-    container.find('.feed-accordions .accordion-toggle').click(function accordionClicked(e) {
+    container.find('.feed-accordions').click(function accordionClicked(e) {
       var accordion = $(e.target).closest('.accordion');
-      var tabId = accordion.find('.accordion-toggle').data('tab');
+      var tabId = accordion.data('tab');
 
       var tabs = accordion.closest('.feed-tabs');
       getTabContainer(tabs).removeClass('active');
@@ -83,9 +94,11 @@ finna.feedTabs = (function finnaFeedTab() {
         loadFeed(container, tabId);
       }
       return false;
+    }).keyup(function onKeyUp(e) {
+      return keyHandler(e);
     });
 
-    container.find('.feed-accordions .accordion.active .accordion-toggle').click();
+    container.find('.feed-accordions .accordion.active').click();
   }
 
   var my = {
