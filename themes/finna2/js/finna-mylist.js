@@ -4,24 +4,15 @@ finna.myList = (function finnaMyList() {
   var editor = null;
   var editableSettings = {'minWidth': 200, 'addToHeight': 100};
   var save = false;
-
-  function onSaveCustomOrder(ev, data) {
-    var url = '';
-    data.forEach(function redirectToList(element) {
-      if (element.name == 'list_url') {
-        url = element.value;
-      }
-    });
-    if (url) {
-      window.location.href = url;
-    } else {
-      location.reload();
-    }
-  }
+  var listUrl = null;
 
   // This is duplicated in image-popup.js to avoid dependency
   function getActiveListId() {
     return $('input[name="listID"]').val();
+  }
+
+  function onCustomOrderSaved(/*ev, data*/) {
+    location.href = listUrl;
   }
 
   function updateList(params, callback, type) {
@@ -359,15 +350,64 @@ finna.myList = (function finnaMyList() {
       }
     });
 
+    // hide/show notes on images
+    $('.notes').each(function initNotes() {
+      var noteButton = $(this).closest('.grid-body').find('.note-button');
+      var noteOverlay = $(this).closest('.grid-body').find('.note-overlay');
+      noteButton.click(function onClick() {
+        adjustNoteOverlaySize(noteOverlay);
+        if (!noteOverlay.hasClass('note-show')) {
+          noteButton.addClass('note-show');
+          noteOverlay.addClass('note-show');
+        } else {
+          noteButton.removeClass('note-show');
+          noteOverlay.removeClass('note-show');
+        }
+      });
+    });
+    
+    function adjustNoteOverlaySize(noteOverlay) {
+      var container = noteOverlay.closest('.grid-body');
+      var coverContainer = container.find('.grid-image');
+      var imageWidth = coverContainer.width();
+      var imageHeight = Math.min(container.find('.grid-title').position().top, container.find('.recordcover-container').height());
+      noteOverlay.height(imageHeight);
+      noteOverlay.width(imageWidth);
+    }
+
+    function adjustOpenedNoteOverlays() {
+      $('.note-overlay.note-show').each(function adjustOverlay() {
+        adjustNoteOverlaySize($(this));
+      });
+    }
+
     // Prompt before leaving page if Ajax load is in progress
     window.onbeforeunload = function onBeforeUnloadWindow(/*e*/) {
       if ($('.list-save').length) {
         return VuFind.translate('loading') + '...';
       }
     };
+
+    // Adjust opened note overlays when Masonry layout has been updated
+    var masonryWrapper = $('.result-view-grid .masonry-wrapper');
+    function addMasonryLayoutListener() {
+      masonryWrapper.on('layoutComplete', function onMasonryLayoutComplete(/*event, items*/) {
+        adjustOpenedNoteOverlays();
+      });
+    }
+    if (finna.layout.getMasonryState()) {
+      addMasonryLayoutListener();
+    } else {
+      masonryWrapper.on('masonryInited', function onMasonryInited() {
+        adjustOpenedNoteOverlays();
+        addMasonryLayoutListener();
+      });
+    }
   }
 
-  function initFavoriteOrderingFunctionality() {
+  function initFavoriteOrderingFunctionality(url) {
+    listUrl = url;
+
     $('#sortable').sortable({cursor: 'move', opacity: 0.7});
 
     $('#sort_form').submit(function onSubmitSortForm(/*event*/) {
@@ -485,8 +525,8 @@ finna.myList = (function finnaMyList() {
   }
 
   var my = {
+    onCustomOrderSaved: onCustomOrderSaved,
     initFavoriteOrderingFunctionality: initFavoriteOrderingFunctionality,
-    onSaveCustomOrder: onSaveCustomOrder,
     init: function init() {
       initEditComponents();
     }

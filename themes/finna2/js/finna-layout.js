@@ -587,6 +587,7 @@ finna.layout = (function finnaLayout() {
           isResizeBound: 'true',
           horizontalOrder: 'true'
         });
+        $(this).trigger('masonryInited');
         masonryInitialized = true;
       });
     }

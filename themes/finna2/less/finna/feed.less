@@ -51,7 +51,6 @@
                 color: @gray;
             }
         }
-        
     }
     .carousel-header {
         background: @carousel-header-background;
@@ -143,9 +142,16 @@
         }
         .carousel-slide-header p {
             background: @carousel-verticalslide-header-background;
+            color: @link-color;
+            text-shadow: none;
+            padding-left: 0;
+            font-weight: 400;
         }
         .carousel-text p {
-            margin-left: 5px;
+            color: @text-color;
+            text-shadow: none;
+            text-align: left;
+            right: 0;
         }
         .carousel-hover-title {
             display: none;  
@@ -171,13 +177,13 @@
         padding: 0px;
         margin-bottom: 110px;
         .wrapper {
-            overflow: hidden;   
+            overflow: hidden;
         }
         .carousel-slide-header {
             p {
                 max-width: 50%;
-                text-align: right;
-                right: 0;
+                text-align: left;
+                left: 50%;
             }
         }
         .carousel-text {
@@ -187,15 +193,15 @@
             background: @carousel-verticalslide-header-background;
             overflow: hidden;
             padding-right: 2px;
-            max-width: 55%;
+            max-width: 50%;
             height: 75px;
             bottom: auto;
-            right: 10px;
-            text-align: right;
+            right: 0;
+            text-align: left;
+            width: initial;
             p {
                 padding: 0px;
                 border-top: none;
-                
             }
         }
         .slick-prev, .slick-next {
@@ -276,7 +282,6 @@
     }
     .title {
         font-weight: normal;
-        letter-spacing: 0.3px;
     }
     .feed-header {
         display: inline-block;
@@ -403,4 +408,9 @@
         padding: 0;
         margin-bottom: 0;
     }
+}
+
+// Feed tabs
+.feed-tabs {
+    margin-top: 20px;
 }
