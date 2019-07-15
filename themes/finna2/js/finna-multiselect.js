@@ -88,9 +88,8 @@ finna.multiSelect = (function multiSelect(){
           var tar = foundWithSame[0];
           setActive(_, tar);
         } else if ((hasActive || !hasActive) && foundWithSame.length > 0) {
-          var i = 0;
           var activeFound = false;
-          for (; i <= foundWithSame.length; i++) {
+          for (var i = 0; i <= foundWithSame.length; i++) {
             var cur = i === foundWithSame.length ? $(foundWithSame[0]) : $(foundWithSame[i]);
             if (i === foundWithSame.length) {
               setActive(_, cur);
