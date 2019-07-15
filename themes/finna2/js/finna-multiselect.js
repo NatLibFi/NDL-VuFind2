@@ -36,7 +36,7 @@ finna.multiSelect = (function multiSelect(){
   }
 
   function setEvents() {
-    $('.finna-multiselect.done').on('focusin', function setActiveDescendant(e){
+    $('.finna-multiselect.done').on('focusin', function setActiveDescendant(){
       var _ = $(this);
       var current = _.find('.active');
       if (current.length === 0) {
