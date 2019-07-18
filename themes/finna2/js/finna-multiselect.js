@@ -8,7 +8,7 @@ finna.multiSelect = (function multiSelect(){
     var i = 0;
     $('.finna-multiselect.init').each(function createMultiselect(){
       var _ = $(this);
-      var el = $(this).siblings('ul').first();
+      var el = _.siblings('ul').first();
       var msId = i++;
       var k = 0;
       _.hide();
@@ -16,6 +16,7 @@ finna.multiSelect = (function multiSelect(){
         var c = $(this);
         c.attr('data-id', k);
         var temp = $(option).clone();
+        var isLong = c.html().replace(/&nbsp;/g, '').toLowerCase().length > 3;
         temp.attr('data-target', k);
         temp.attr('id', msId + '_opt_' + k++);
         temp.attr('aria-selected', c.prop('selected'));
@@ -29,7 +30,10 @@ finna.multiSelect = (function multiSelect(){
           hierarchyClone.addClass('hierarchy-line');
           temp.prepend(hierarchyClone);
         }
-        el.append(temp);
+        if (isLong) {
+          el.append(temp);
+        }
+        
       });
     });
     setEvents();
@@ -41,7 +45,7 @@ finna.multiSelect = (function multiSelect(){
       var current = _.find('.active');
       if (current.length === 0) {
         if (_.attr('aria-activedescendant') === '') {
-          var first = _.find('.option').first();
+          var first = _.find('.option:visible').first();
           _.children('.option').removeClass('active');
           first.addClass('active');
           _.attr('aria-activedescendant', first.attr('id'));
@@ -74,9 +78,9 @@ finna.multiSelect = (function multiSelect(){
         var foundWithSame = [];
         _.children('.option').each(function checkForSuitable() {
           var opt = $(this);
-          var optCh = opt.find('.value').html().replace(/&nbsp;/g, '').toLowerCase().substring(0, 1);
+          var optCh = formatValue(opt.find('.value').html()).substring(0, 1);
 
-          if (optCh === inp) {
+          if (optCh === inp && opt.is(':visible')) {
             foundWithSame.push(opt);
             if (opt.hasClass('active')) {
               hasActive = true;
@@ -95,7 +99,6 @@ finna.multiSelect = (function multiSelect(){
               setActive(_, cur);
               break;
             }
-
             if (activeFound) {
               setActive(_, cur);
               break;
@@ -133,15 +136,44 @@ finna.multiSelect = (function multiSelect(){
       }
       var found = null;
       if (e.key === 'ArrowUp') {
-        found = current.prev('.option');
+        found = current.prevAll('.option:visible').first();
       } else if (e.key === 'ArrowDown') {
-        found = current.next('.option');
+        found = current.nextAll('.option:visible').first();
       }
       if (found.length) {
         current.removeClass('active');
         setActive(_, found);
       }
     });
+
+    $('.finna-multiselect.search').on('keyup', function filterOptions() {
+      var ul = $(this).siblings('ul').first();
+      var curVal = $(this).val();
+      if (curVal.length === 0) {
+        ul.children().show();
+      } else {
+        ul.children().each(function setVisible() {
+          var value = formatValue($(this).find('.value').html());
+          var hierarchyLine = $(this).has('.hierarchy-line');
+
+          if (value.indexOf(curVal) !== -1) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+          if (hierarchyLine.length !== 0) {
+            var parent = $(this).prevAll('.option-parent').first();
+            if (parent.is(':hidden') && $(this).is(':visible')) {
+              parent.show();
+            }
+          }
+        });
+      }
+    });
+  }
+
+  function formatValue(original) {
+    return original.replace(/&nbsp;/g, '').toLowerCase();
   }
 
   function setActive(area, found) {
