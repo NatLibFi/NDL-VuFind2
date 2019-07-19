@@ -3,6 +3,7 @@
 finna.multiSelect = (function multiSelect(){
   var option = '<li class="option" role="option" aria-selected="false"></li>';
   var hierarchy = '<span aria-hidden="true"></span>';
+  var wasClicked = false;
 
   function init() {
     var i = 0;
@@ -40,20 +41,31 @@ finna.multiSelect = (function multiSelect(){
   }
 
   function setEvents() {
+    $('.finna-multiselect.done').on('touchstart mousedown', function preventFocusin(e){
+      e.preventDefault();
+      e.stopPropagation();
+      wasClicked = true;
+      $(this).focus();
+    });
     $('.finna-multiselect.done').on('focusin', function setActiveDescendant(){
-      var _ = $(this);
-      var current = _.find('.active');
-      if (current.length === 0) {
-        if (_.attr('aria-activedescendant') === '') {
-          var first = _.find('.option:visible').first();
-          _.children('.option').removeClass('active');
-          first.addClass('active');
-          _.attr('aria-activedescendant', first.attr('id'));
+      if (!wasClicked) {
+        var _ = $(this);
+        var current = _.find('.active');
+        if (current.length === 0) {
+          if (_.attr('aria-activedescendant') === '') {
+            var first = _.find('.option:visible').first();
+            _.children('.option').removeClass('active');
+            first.addClass('active');
+            _.attr('aria-activedescendant', first.attr('id'));
+            _.scrollTop(0);
+          }
+          return;
         }
-        return;
+      } else {
+        wasClicked = false;
       }
     });
-    $('.finna-multiselect.done .option').on('click', function setActiveState(){
+    $('.finna-multiselect.done .option').on('click touchstart', function setActiveState(e){
       var _ = $(this);
       var ul = _.closest('.finna-multiselect.done');
       var current = ul.find('.active');
@@ -135,17 +147,27 @@ finna.multiSelect = (function multiSelect(){
         return;
       }
       var found = null;
+      var dir = "down";
       if (e.key === 'ArrowUp') {
         found = current.prevAll('.option:visible').first();
+        dir = "up";
       } else if (e.key === 'ArrowDown') {
         found = current.nextAll('.option:visible').first();
+        dir = "down";
       }
       if (found.length) {
         current.removeClass('active');
-        setActive(_, found);
+        setActive(_, found, dir);
       }
     });
-
+    $('.finna-multiselect.clear').on('click', function clearSelections() {
+      var ul = $(this).siblings('ul').first();
+      var select = ul.siblings('select').first();
+      ul.children('[aria-selected=true]').each(function clearThis() {
+        $(this).attr('aria-selected', false);
+        select.find('option[data-id=' + $(this).data('target') + ']').prop('selected', false);
+      });
+    });
     $('.finna-multiselect.search').on('keyup', function filterOptions() {
       var ul = $(this).siblings('ul').first();
       var curVal = $(this).val();
@@ -176,10 +198,18 @@ finna.multiSelect = (function multiSelect(){
     return original.replace(/&nbsp;/g, '').toLowerCase();
   }
 
-  function setActive(area, found) {
+  function setActive(area, found, dir) {
     found.addClass('active');
     area.attr('aria-activedescendant', found.attr('id'));
-    area.scrollTop(0).scrollTop(found.position().top - (found.height() + 4) * 3);
+    if (dir === 'up') {
+      if (found.position().top - found.height() * 2 < 0) {
+        area.scrollTop(0).scrollTop(found.position().top - found.height() - area.height() / 2);
+      }
+    } else if (dir === "down") {
+      if (found.position().top - found.height() > area.height()) {
+        area.scrollTop(0).scrollTop(found.position().top - area.height() / 2);
+      }
+    }
   }
 
   function setSelectedState(ul) {
