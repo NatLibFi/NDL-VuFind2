@@ -9,32 +9,39 @@ finna.multiSelect = (function multiSelect(){
     var i = 0;
     $('.finna-multiselect.init').each(function createMultiselect(){
       var _ = $(this);
+      var long = [];
+      var short = [];
       var el = _.siblings('ul').first();
       var msId = i++;
       var k = 0;
+      
       _.hide();
       _.children('option').each(function createElements(){
         var c = $(this);
         c.attr('data-id', k);
         var temp = $(option).clone();
-        var isLong = c.html().replace(/&nbsp;/g, '').toLowerCase().length > 3;
-        temp.attr('data-target', k);
-        temp.attr('id', msId + '_opt_' + k++);
-        temp.attr('aria-selected', c.prop('selected'));
+        var isChild = false;
+        temp.attr({'data-target': k, 'id': msId + '_opt_' + k++, 'aria-selected': c.prop('selected')});
         temp.html('<span class="value">' + c.html() + '</span>');
         if (c.hasClass('option-parent')) {
           temp.addClass('option-parent');
         }
         if (c.hasClass('option-child')) {
+          isChild = true;
           var hierarchyClone = $(hierarchy).clone();
           hierarchyClone.attr('class', c.attr('class'));
           hierarchyClone.addClass('hierarchy-line');
           temp.prepend(hierarchyClone);
         }
-        if (isLong) {
-          el.append(temp);
+        if (c.html().replace(/&nbsp;/g, '').toLowerCase().length > 3 || isChild) {
+          long.push(temp);
+        } else {
+          short.push(temp);
         }
-        
+      });
+      var combined = $.merge(long, short);
+      $.each(combined, function addToUl(i, val) {
+        el.append(val);
       });
     });
     setEvents();
@@ -107,14 +114,11 @@ finna.multiSelect = (function multiSelect(){
           var activeFound = false;
           for (var i = 0; i <= foundWithSame.length; i++) {
             var cur = i === foundWithSame.length ? $(foundWithSame[0]) : $(foundWithSame[i]);
-            if (i === foundWithSame.length) {
+            if (i === foundWithSame.length || activeFound) {
               setActive(_, cur);
               break;
             }
-            if (activeFound) {
-              setActive(_, cur);
-              break;
-            } else if (cur.hasClass('active')) {
+            if (cur.hasClass('active')) {
               activeFound = true;
               cur.removeClass('active');
             }
@@ -209,6 +213,8 @@ finna.multiSelect = (function multiSelect(){
       if (found.position().top - found.height() > area.height()) {
         area.scrollTop(0).scrollTop(found.position().top - area.height() / 2);
       }
+    } else {
+      area.scrollTop(0).scrollTop(found.position().top - area.height() / 2);
     }
   }
 
