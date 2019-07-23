@@ -438,6 +438,7 @@
       border-radius: 4px 4px 0 0;
       margin-bottom: 0px;
       border-bottom: none;
+      position: relative;
 
       .option {
         padding: 2px 0;
@@ -470,12 +471,12 @@
           border-bottom: 1px dotted black;
           border-left: 1px dotted black;
           height: 100%;
-          top: -25%;
+          top: -20%;
 
           .generate-hierarchy(6);
           .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
             &.child-width-@{i} {
-              width: (@i * 15px);
+              width: (@i * 13px);
             }
             .generate-hierarchy(@n, (@i + 1));
           }

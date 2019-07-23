@@ -3,186 +3,200 @@
 finna.multiSelect = (function multiSelect(){
   var option = '<li class="option" role="option" aria-selected="false"></li>';
   var hierarchy = '<span aria-hidden="true"></span>';
-  var wasClicked = false;
+  var i = 0;
 
   function init() {
-    var i = 0;
-    $('.finna-multiselect.init').each(function createMultiselect(){
-      var _ = $(this);
-      var long = [];
-      var short = [];
-      var el = _.siblings('ul').first();
-      var msId = i++;
-      var k = 0;
-      
-      _.hide();
-      _.children('option').each(function createElements(){
-        var c = $(this);
-        c.attr('data-id', k);
-        var temp = $(option).clone();
-        var isChild = false;
-        temp.attr({'data-target': k, 'id': msId + '_opt_' + k++, 'aria-selected': c.prop('selected')});
-        temp.html('<span class="value">' + c.html() + '</span>');
-        if (c.hasClass('option-parent')) {
-          temp.addClass('option-parent');
-        }
-        if (c.hasClass('option-child')) {
-          isChild = true;
-          var hierarchyClone = $(hierarchy).clone();
-          hierarchyClone.attr('class', c.attr('class'));
-          hierarchyClone.addClass('hierarchy-line');
-          temp.prepend(hierarchyClone);
-        }
-        if (c.html().replace(/&nbsp;/g, '').toLowerCase().length > 3 || isChild) {
-          long.push(temp);
-        } else {
-          short.push(temp);
-        }
-      });
-      var combined = $.merge(long, short);
-      $.each(combined, function addToUl(i, val) {
-        el.append(val);
-      });
+    $('.finna-multiselect.init').each(function createMultiSelect(){
+      new MultiSelect(this, i++);
     });
-    setEvents();
   }
 
-  function setEvents() {
-    $('.finna-multiselect.done').on('touchstart mousedown', function preventFocusin(e){
+  function MultiSelect(select, id) {
+    var _ = this;
+    _.id = id;
+    _.select = $(select);
+    _.select.hide();
+    _.ul = $(select).siblings('ul.done').first();
+    _.searchField = $(select).siblings('input.search').first();
+    _.deleteButton = $(select).siblings('button.clear').first();
+    _.words = [];
+    _.wordCache = [];
+    _.charCache = "";
+    _.wasClicked = false;
+    _.active = null;
+    _.createList();
+  }
+
+  MultiSelect.prototype.createList = function createList() {
+    var _ = this;
+    var k = 0;
+    var longWords = [];
+    var shortWords = [];
+
+    _.select.children('option').each(function createUl(){
+      $(this).attr('data-id', k);
+      var optionClone = $(option).clone();
+      var isParent = $(this).hasClass('option-parent');
+      var isChild = $(this).hasClass('option-child');
+      var formattedHtml = $(this).html().replace(/&nbsp;/g, '');
+
+      optionClone.attr({
+        'data-target': k, 
+        'id': _.id + '_opt_' + k++, 
+        'aria-selected': $(this).prop('selected'),
+        'data-formatted': formattedHtml
+      });
+      optionClone.html('<span class="value">' + $(this).html() + '</span>');
+      if (isParent) {
+        optionClone.addClass('option-parent');
+      }
+      if (isChild) {
+        var hierarchyClone = $(hierarchy).clone();
+        hierarchyClone.attr('class', $(this).attr('class')).addClass('hierarchy-line');
+        optionClone.prepend(hierarchyClone);
+      }
+      if (formattedHtml.length > 3 || isChild) {
+        longWords.push(optionClone);
+      } else {
+        shortWords.push(optionClone);
+      }
+    });
+    _.words = $.merge(longWords, shortWords);
+    $.each(_.words, function appendToUl(_i, val) {
+      _.ul.append(val);
+    });
+    _.setEvents();
+  }
+
+  MultiSelect.prototype.setEvents = function setEvents() {
+    var _ = this;
+    _.ul.on('mousedown', function preventFocus(e) {
       e.preventDefault();
       e.stopPropagation();
-      wasClicked = true;
+      _.wasClicked = true;
       $(this).focus();
     });
-    $('.finna-multiselect.done').on('focusin', function setActiveDescendant(){
-      if (!wasClicked) {
-        var _ = $(this);
-        var current = _.find('.active');
-        if (current.length === 0) {
-          if (_.attr('aria-activedescendant') === '') {
-            var first = _.find('.option:visible').first();
-            _.children('.option').removeClass('active');
-            first.addClass('active');
-            _.attr('aria-activedescendant', first.attr('id'));
-            _.scrollTop(0);
-          }
-          return;
-        }
-      } else {
-        wasClicked = false;
+    _.ul.on('touchstart', function preventFocus(e) {
+      e.stopPropagation();
+      _.wasClicked = true;
+      $(this).focus();
+    });
+    _.ul.on('focusin', function setFirstActive() {
+      if (_.wasClicked) {
+        _.wasClicked = false;
+        return;
       }
-    });
-    $('.finna-multiselect.done .option').on('click touchstart', function setActiveState(e){
-      var _ = $(this);
-      var ul = _.closest('.finna-multiselect.done');
-      var current = ul.find('.active');
-      if (current.length) {
-        current.removeClass('active');
-      }
-      _.addClass('active');
-      ul.attr('aria-activedescendant', _.attr('id'));
-      setSelectedState(ul);
-    });
-    $('.finna-multiselect.done').on('focusout', function clearActive(){
-      var _ = $(this);
-      _.attr('aria-activedescendant', '');
-      _.children('.option').removeClass('active');
-    });
-    $('.finna-multiselect.done').on('keyup', function checkKeyUp(e){
-      e.preventDefault();
-      var _ = $(this);
-      var inp = e.key;
-      if (/[a-öA-Ö0-9-_ ]/.test(inp)) {
-        var hasActive = false;
-        var foundWithSame = [];
-        _.children('.option').each(function checkForSuitable() {
-          var opt = $(this);
-          var optCh = formatValue(opt.find('.value').html()).substring(0, 1);
 
-          if (optCh === inp && opt.is(':visible')) {
-            foundWithSame.push(opt);
-            if (opt.hasClass('active')) {
-              hasActive = true;
-            }
+      if (_.active === null) {
+        _.clearActives();
+        _.setActive($(this).find('.option:visible').first());
+      }
+    });
+    _.ul.children('.option').on('click', function setActiveClick() {
+      _.clearActives();
+      _.setActive($(this));
+      _.setSelected();
+    });
+    _.ul.on('focusout', function clearState() {
+      _.clearActives();
+      _.clearCaches();
+    });
+    _.ul.on('keyup', function charMatches(e) {
+      e.preventDefault();
+      if (new RegExp(/[a-öA-Ö0-9-_ ]/).test(e.key) === false) {
+        return;
+      }
+
+      if (_.charCache !== e.key) {
+        _.clearCaches();
+      }
+
+      var hasActive = _.active.data('formatted').substring(0, 1) === e.key;
+
+      if (_.wordCache.length === 0) {
+        $.each(_.words, function appendToUl(_i, val) {
+          var char = val.data('formatted').substring(0, 1);
+          if (char === e.key && val.is(':visible')) {
+            _.wordCache.push(val);
           }
         });
-        if (hasActive === false && foundWithSame.length > 0) {
-          _.children('.option').removeClass('active');
-          var tar = foundWithSame[0];
-          setActive(_, tar);
-        } else if ((hasActive || !hasActive) && foundWithSame.length > 0) {
-          var activeFound = false;
-          for (var i = 0; i <= foundWithSame.length; i++) {
-            var cur = i === foundWithSame.length ? $(foundWithSame[0]) : $(foundWithSame[i]);
-            if (i === foundWithSame.length || activeFound) {
-              setActive(_, cur);
-              break;
-            }
-            if (cur.hasClass('active')) {
-              activeFound = true;
-              cur.removeClass('active');
-            }
-          }
-        }
       }
+
+      if (_.wordCache.length === 0) {
+        return;
+      }
+
+      if (hasActive === false) {
+        _.clearActives();
+        _.setActive(_.wordCache[0]);
+      } else {
+        var oldId = null;
+        $.each(_.wordCache, function getNextActive(_i, val){
+          if (val.hasClass('active')) {
+            oldId = _i + 1;
+          }
+
+          if (oldId === _i) {
+            _.clearActives();
+            _.setActive(val);
+            return false;
+          }
+
+          if (oldId === _.wordCache.length) {
+            _.clearActives();
+            _.setActive(_.wordCache[0]);
+          }
+        });
+      }
+      _.charCache = e.key;
 
       if (e.key !== 'Enter' && e.key !== ' ') {
         return;
       }
 
-      setSelectedState(_);
+      _.setSelected();
     });
-    $('.finna-multiselect.done').on('keydown', function checkButtons(e){
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-      }
-      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') {
+    _.ul.on('keydown', function scrollArea(e) {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown' && e.key !== 'Enter' && e.key !== ' ') {
         return;
       }
       e.preventDefault();
-      var _ = $(this);
-      var current = _.find('.active');
-      if (current.length === 0) {
-        if (_.attr('aria-activedescendant') === '') {
-          var first = _.find('.option').first();
-          _.children('.option').removeClass('active');
-          setActive(_, first);
+
+      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        var found = null;
+
+        if (e.key === 'ArrowUp') {
+          found = _.active.prevAll('.option:visible').first();
+        } else if (e.key === 'ArrowDown') {
+          found = _.active.nextAll('.option:visible').first();
         }
-        return;
-      }
-      var found = null;
-      var dir = "down";
-      if (e.key === 'ArrowUp') {
-        found = current.prevAll('.option:visible').first();
-        dir = "up";
-      } else if (e.key === 'ArrowDown') {
-        found = current.nextAll('.option:visible').first();
-        dir = "down";
-      }
-      if (found.length) {
-        current.removeClass('active');
-        setActive(_, found, dir);
+  
+        if (found.length) {
+          _.clearActives();
+          _.setActive(found);
+        }
+      } else {
+        _.setSelected();
       }
     });
-    $('.finna-multiselect.clear').on('click', function clearSelections() {
-      var ul = $(this).siblings('ul').first();
-      var select = ul.siblings('select').first();
-      ul.children('[aria-selected=true]').each(function clearThis() {
+    _.deleteButton.on('click', function clearSelections() {
+      _.ul.children('[aria-selected=true]').each(function clearAll() {
         $(this).attr('aria-selected', false);
-        select.find('option[data-id=' + $(this).data('target') + ']').prop('selected', false);
+        _.select.find('option[data-id=' + $(this).data('target') + ']').prop('selected', false);
       });
     });
-    $('.finna-multiselect.search').on('keyup', function filterOptions() {
-      var ul = $(this).siblings('ul').first();
+    _.searchField.on('keyup', function filterOptions() {
+      if (_.wordCache.length !== 0) {
+        _.clearCaches();
+      }
       var curVal = $(this).val();
       if (curVal.length === 0) {
-        ul.children().show();
+        _.ul.children().show();
       } else {
-        ul.children().each(function setVisible() {
-          var value = formatValue($(this).find('.value').html());
+        _.ul.children().each(function setVisible() {
           var hierarchyLine = $(this).has('.hierarchy-line');
 
-          if (value.indexOf(curVal) !== -1) {
+          if ($(this).data('formatted').indexOf(curVal) !== -1) {
             $(this).show();
           } else {
             $(this).hide();
@@ -198,32 +212,44 @@ finna.multiSelect = (function multiSelect(){
     });
   }
 
-  function formatValue(original) {
-    return original.replace(/&nbsp;/g, '').toLowerCase();
-  }
-
-  function setActive(area, found, dir) {
-    found.addClass('active');
-    area.attr('aria-activedescendant', found.attr('id'));
-    if (dir === 'up') {
-      if (found.position().top - found.height() * 2 < 0) {
-        area.scrollTop(0).scrollTop(found.position().top - found.height() - area.height() / 2);
-      }
-    } else if (dir === "down") {
-      if (found.position().top - found.height() > area.height()) {
-        area.scrollTop(0).scrollTop(found.position().top - area.height() / 2);
-      }
-    } else {
-      area.scrollTop(0).scrollTop(found.position().top - area.height() / 2);
+  MultiSelect.prototype.scrollList = function scrollList() {
+    var _ = this;
+    var top = _.active.position().top;
+    
+    if (top + _.active.height() < _.active.height()) {
+      _.ul.scrollTop(_.ul.scrollTop() - _.ul.height());
+    } else if (top >= _.ul.height() - _.active.height()) {
+      _.ul.scrollTop(top + _.ul.scrollTop());
     }
   }
 
-  function setSelectedState(ul) {
-    var current = ul.find('.active').first();
-    var original = ul.siblings('select').first().find('option[data-id=' + current.data('target') + ']');
+  MultiSelect.prototype.clearCaches = function clearCaches() {
+    var _ = this;
+    _.wordCache = [];
+    _.charCache = "";
+  }
+
+  MultiSelect.prototype.clearActives = function clearActives() {
+    var _ = this;
+    _.ul.attr('aria-activedescendant', '');
+    _.ul.children('.option').removeClass('active');
+    _.active = null;
+  }
+
+  MultiSelect.prototype.setActive = function setActive(element) {
+    var _ = this;
+    _.active = $(element);
+    _.active.addClass('active');
+    _.ul.attr('aria-activedescendant', _.active.attr('id'));
+    _.scrollList();
+  }
+
+  MultiSelect.prototype.setSelected = function setSelected() {
+    var _ = this;
+    var original = _.select.find('option[data-id=' + _.active.data('target') + ']');
     var isSelected = original.prop('selected');
     original.prop('selected', !isSelected);
-    current.attr('aria-selected', !isSelected);
+    _.active.attr('aria-selected', !isSelected);
   }
 
   var my = {
