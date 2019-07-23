@@ -25,7 +25,8 @@
 ?>
 <?php if ($resultsTotal > 0): ?>
 <div class="side-facets-container-ajax">
-  <h1><i class="fa fa-arrow-down visible-xs pull-left"></i> <?=$this->transEsc(isset($this->overrideSideFacetCaption) ? $this->overrideSideFacetCaption : 'Narrow Search')?><?php if (!isset($this->overrideSideFacetCaption) && !$this->translationEmpty('tooltip_facet_html')): ?><span class="tooltip-facet pull-right" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_facet_html')?>"><i class="fa fa-info-big"></i></span><?php endif; ?></h1>
+  <?php $filterCount = $this->search()->getFilterCount($results->getParams()->getCheckboxFacets(), array_merge($results->getParams()->getFilterList(true), isset($this->extraSideFacetFilters) ? $this->extraSideFacetFilters : [])); ?>
+  <h1><i class="fa fa-arrow-down visible-xs pull-left"></i> <span aria-hidden="true"><?=$this->transEsc(isset($this->overrideSideFacetCaption) ? $this->overrideSideFacetCaption : 'Narrow Search')?></span><label class="sr-only" for="narrowSearch"><?=$this->transEsc(isset($this->overrideSideFacetCaption) ? $this->overrideSideFacetCaption : 'Narrow Search')?><input class="sr-only" type="text" id="narrowSearch" readonly<?php if ($filterCount > 0):?> autofocus<?php endif; ?>></label><?php if (!isset($this->overrideSideFacetCaption) && !$this->translationEmpty('tooltip_facet_html')): ?><span class="tooltip-facet pull-right" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_facet_html')?>"><i class="fa fa-info-big"></i></span><?php endif; ?></h1>
 <?php endif; ?>
 <?php $checkboxFilters = $results->getParams()->getCheckboxFacets(); ?>
 <?php $checkboxesShown = false; ?>
