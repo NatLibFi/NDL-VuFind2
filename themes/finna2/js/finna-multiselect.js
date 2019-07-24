@@ -222,7 +222,7 @@ finna.multiSelect = (function multiSelect(){
       return;
     }
 
-    if (top + _.active.height() < _.active.height()) {
+    if (top + _.active.height() < _.active.height() - 5) {
       _.ul.scrollTop(_.ul.scrollTop() - _.ul.height());
     } else if (top >= _.ul.height() - _.active.height()) {
       _.ul.scrollTop(top + _.ul.scrollTop());
