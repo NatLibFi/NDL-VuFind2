@@ -38,7 +38,7 @@ finna.multiSelect = (function multiSelect(){
       var optionClone = $(option).clone();
       var isParent = $(this).hasClass('option-parent');
       var isChild = $(this).hasClass('option-child');
-      var formattedHtml = $(this).html().replace(/&nbsp;/g, '');
+      var formattedHtml = $(this).html().replace(/&nbsp;/g, '').toLowerCase();
 
       optionClone.attr({
         'data-target': k, 
@@ -88,12 +88,11 @@ finna.multiSelect = (function multiSelect(){
       }
 
       if (_.active === null) {
-        _.clearActives();
         _.setActive($(this).find('.option:visible').first());
+        _.scrollList(true);
       }
     });
     _.ul.children('.option').on('click', function setActiveClick() {
-      _.clearActives();
       _.setActive($(this));
       _.setSelected();
     });
@@ -103,20 +102,21 @@ finna.multiSelect = (function multiSelect(){
     });
     _.ul.on('keyup', function charMatches(e) {
       e.preventDefault();
-      if (new RegExp(/[a-öA-Ö0-9-_ ]/).test(e.key) === false) {
+      var keyLower = e.key.toLowerCase();
+      if (new RegExp(/[a-öA-Ö0-9-_ ]/).test(keyLower) === false) {
         return;
       }
 
-      if (_.charCache !== e.key) {
+      if (_.charCache !== keyLower) {
         _.clearCaches();
       }
 
-      var hasActive = _.active.data('formatted').substring(0, 1) === e.key;
+      var hasActive = _.active.data('formatted').substring(0, 1) === keyLower;
 
       if (_.wordCache.length === 0) {
         $.each(_.words, function appendToUl(_i, val) {
           var char = val.data('formatted').substring(0, 1);
-          if (char === e.key && val.is(':visible')) {
+          if (char === keyLower && val.is(':visible')) {
             _.wordCache.push(val);
           }
         });
@@ -129,6 +129,7 @@ finna.multiSelect = (function multiSelect(){
       if (hasActive === false) {
         _.clearActives();
         _.setActive(_.wordCache[0]);
+        _.scrollList(true);
       } else {
         var oldId = null;
         $.each(_.wordCache, function getNextActive(_i, val){
@@ -137,18 +138,18 @@ finna.multiSelect = (function multiSelect(){
           }
 
           if (oldId === _i) {
-            _.clearActives();
             _.setActive(val);
+            _.scrollList(true);
             return false;
           }
 
           if (oldId === _.wordCache.length) {
-            _.clearActives();
             _.setActive(_.wordCache[0]);
+            _.scrollList(true);
           }
         });
       }
-      _.charCache = e.key;
+      _.charCache = keyLower;
 
       if (e.key !== 'Enter' && e.key !== ' ') {
         return;
@@ -172,8 +173,8 @@ finna.multiSelect = (function multiSelect(){
         }
   
         if (found.length) {
-          _.clearActives();
           _.setActive(found);
+          _.scrollList(false);
         }
       } else {
         _.setSelected();
@@ -212,10 +213,15 @@ finna.multiSelect = (function multiSelect(){
     });
   }
 
-  MultiSelect.prototype.scrollList = function scrollList() {
+  MultiSelect.prototype.scrollList = function scrollList(clipTo) {
     var _ = this;
     var top = _.active.position().top;
     
+    if (typeof clipTo !== 'undefined' && clipTo === true) {
+      _.ul.scrollTop(_.ul.scrollTop() + _.active.position().top);
+      return;
+    }
+
     if (top + _.active.height() < _.active.height()) {
       _.ul.scrollTop(_.ul.scrollTop() - _.ul.height());
     } else if (top >= _.ul.height() - _.active.height()) {
@@ -238,10 +244,10 @@ finna.multiSelect = (function multiSelect(){
 
   MultiSelect.prototype.setActive = function setActive(element) {
     var _ = this;
+    _.clearActives();
     _.active = $(element);
     _.active.addClass('active');
     _.ul.attr('aria-activedescendant', _.active.attr('id'));
-    _.scrollList();
   }
 
   MultiSelect.prototype.setSelected = function setSelected() {
