@@ -4,6 +4,7 @@ finna.multiSelect = (function multiSelect(){
   var option = '<li class="option" role="option" aria-selected="false"></li>';
   var hierarchy = '<span aria-hidden="true"></span>';
   var i = 0;
+  var regExp = new RegExp(/[a-öA-Ö0-9-_ ]/);
 
   function init() {
     $('.finna-multiselect.init').each(function createMultiSelect(){
@@ -103,7 +104,7 @@ finna.multiSelect = (function multiSelect(){
     _.ul.on('keyup', function charMatches(e) {
       e.preventDefault();
       var keyLower = e.key.toLowerCase();
-      if (new RegExp(/[a-öA-Ö0-9-_ ]/).test(keyLower) === false) {
+      if (regExp.test(keyLower) === false) {
         return;
       }
 
@@ -190,7 +191,7 @@ finna.multiSelect = (function multiSelect(){
       if (_.wordCache.length !== 0) {
         _.clearCaches();
       }
-      var curVal = $(this).val();
+      var curVal = $(this).val().toLowerCase();
       if (curVal.length === 0) {
         _.ul.children().show();
       } else {
