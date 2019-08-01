@@ -126,6 +126,9 @@ trait FinnaOnlinePaymentControllerTrait
 
         $catalog = $this->getILS();
 
+
+        $getLink = $this->formWasSubmitted('get-link');
+
         // Check if online payment configuration exists for the ILS driver
         $paymentConfig = $catalog->getConfig('onlinePayment', $patron);
         if (empty($paymentConfig)) {
@@ -187,6 +190,7 @@ trait FinnaOnlinePaymentControllerTrait
 
         $paymentParam = 'payment';
         $request = $this->getRequest();
+
         $pay = $this->formWasSubmitted('pay-confirm');
         $payment = $request->getQuery()->get(
             $paymentParam, $request->getPost($paymentParam)
@@ -231,7 +235,7 @@ trait FinnaOnlinePaymentControllerTrait
             $this->flashMessenger()->addMessage(
                 $result ? $result : 'online_payment_failed', 'error'
             );
-            header("Location: " . $this->getServerUrl('myresearch-fines'));
+            //header("Location: " . $this->getServerUrl('myresearch-fines'));
             exit();
         } elseif ($payment) {
             // Payment response received.
