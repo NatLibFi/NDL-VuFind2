@@ -38,10 +38,9 @@
             }
         }
     }
-    &.marc21.non-zoomable {
-        width: 625px;
-        .imagepopup-container {
-            max-width: 320px;
+    @media (min-width: @screen-sm-min) {
+        &.marc21 {
+            width: 800px;
         }
     }
 
@@ -292,7 +291,6 @@
                             background-color: #2e2e2ecc;
                             @media (min-width: @screen-sm-min) {
                                 height: 96px;
-                                width: 96px;
                                 max-width: 96px;
                             }
                         }
@@ -306,16 +304,17 @@
     }
 
     .image-information-holder {
-        flex: 1 1 420px;
+        flex: 1 1 80%;
+        @media (min-width: @screen-sm-min) {
+            max-width: 400px;
+        } 
         display: flex;
         flex-flow: column;
         justify-content: space-between;
         height: 100%;
         padding: 10px;
         overflow-y: auto;
-        @media (max-width: @screen-xs-max) {
-            width: 100%;
-        }
+        width: 100%;
         .record-online-link {
             margin: 2px 0px;
             .videourl {
