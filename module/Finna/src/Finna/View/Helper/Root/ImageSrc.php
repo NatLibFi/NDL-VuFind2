@@ -69,7 +69,7 @@ class ImageSrc extends ThemeSrc
 
     /**
      * Returns data string to generate a pixel placeholder used for lazyloading
-     * 
+     *
      * @return string
      */
     public function getDataPixel()
