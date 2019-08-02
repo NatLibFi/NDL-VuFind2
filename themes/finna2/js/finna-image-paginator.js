@@ -807,6 +807,9 @@ finna.imagePaginator = (function imagePaginator() {
           var nextRecord = $(nextRecordButton).clone();
           
           mfpContainer.find('.mfp-content').addClass('loaded');
+          if (_.recordType === 'Marc21') {
+            mfpContainer.find('.mfp-content').addClass('Marc21');
+          }
           mfpContainer.append(previousRecord, nextRecord);
 
           previousRecord.off('click').click(function loadNextPaginator(e){
