@@ -102,7 +102,7 @@ trait OnlinePaymentModuleTrait
                 . ", url: $url, body: $body, headers: " . var_export($headers, true)
             );
             $this->logger->logException($e, new \Zend\Stdlib\Parameters());
-            return $e->getMessage();
+            return false;
         }
 
         $status = $response->getStatusCode();
@@ -114,9 +114,7 @@ trait OnlinePaymentModuleTrait
                 . ", url: $url, body: $body, headers: " . var_export($headers, true)
                 . ", response: $content"
             );
-            return "Error posting request: invalid status code: $status"
-            . ", url: $url, body: $body, headers: " . var_export($headers, true)
-            . ", response: $content";
+            return false;
         }
 
         return [

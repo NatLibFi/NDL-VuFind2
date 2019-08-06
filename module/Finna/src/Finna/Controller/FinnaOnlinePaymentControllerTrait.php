@@ -166,7 +166,6 @@ trait FinnaOnlinePaymentControllerTrait
         $paymentPermittedForUser = $tr->isPaymentPermitted(
             $patron['cat_username'], $transactionMaxDuration
         );
-        var_dump($paymentPermittedForUser);
 
         if (!$paymentHandler = $this->getOnlinePaymentHandler($patron['source'])) {
             return;
@@ -232,7 +231,7 @@ trait FinnaOnlinePaymentControllerTrait
             $this->flashMessenger()->addMessage(
                 $result ? $result : 'online_payment_failed', 'error'
             );
-            //header("Location: " . $this->getServerUrl('myresearch-fines'));
+            header("Location: " . $this->getServerUrl('myresearch-fines'));
             exit();
         } elseif ($payment) {
             // Payment response received.
