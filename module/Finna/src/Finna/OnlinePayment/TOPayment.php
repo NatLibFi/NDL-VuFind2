@@ -76,7 +76,7 @@ class TOPayment extends Paytrail
       $patronId = $patron['cat_username'];
       $orderNumber = $this->generateTransactionId($patronId);
 
-      $module = $this->initPaytrail($orderNumber, $currency);
+      $module = $this->initCustomPayment($orderNumber, $currency);
 
       $successUrl = "$finesUrl?driver=$driver&$statusParam="
           . self::PAYMENT_SUCCESS;
@@ -122,7 +122,7 @@ class TOPayment extends Paytrail
       $module->setLastName(empty($lastname) ? 'ei tietoa' : $lastname);
 
       if ($user->email) {
-          $module->setEmail('juha.luoma@helsinki.fi');
+          $module->setEmail($user->email);
       }
 
       if (!isset($this->config->productCode)
@@ -191,7 +191,6 @@ class TOPayment extends Paytrail
           $err = 'Paytrail: error creating payment form data: '
               . $e->getMessage();
           $this->logger->err($err);
-          var_dump($err);
           return false;
       }
 
@@ -214,78 +213,88 @@ class TOPayment extends Paytrail
       //$this->redirectToPaymentForm($paytrailUrl, $formData);
   }
 
-  /**
-   * Initialize the Paytrail module
-   *
-   * @return PaytrailE2
-   */
-  protected function initPaytrail()
-  {
-      foreach (['merchantId', 'secret'] as $req) {
-          if (!isset($this->config[$req])) {
-              $this->logger->err("Paytrail: missing parameter $req");
-              throw new \Exception('Missing parameter');
-          }
-      }
+  protected function initCustomPayment() {
+    foreach (['merchantId', 'secret'] as $req) {
+        if (!isset($this->config[$req])) {
+            $this->logger->err("Paytrail: missing parameter $req");
+            throw new \Exception('Missing parameter');
+        }
+    }
 
-      $locale = $this->translator->getLocale();
-      $localeParts = explode('-', $locale);
-      $paytrailLocale = 'fi_FI';
-      if ('sv' === $localeParts[0]) {
-          $paytrailLocale = 'sv_SE';
-      } elseif ('en' === $localeParts[0]) {
-          $paytrailLocale = 'en_US';
-      }
+    $locale = $this->translator->getLocale();
+    $localeParts = explode('-', $locale);
+    $paytrailLocale = 'fi_FI';
+    if ('sv' === $localeParts[0]) {
+        $paytrailLocale = 'sv_SE';
+    } elseif ('en' === $localeParts[0]) {
+        $paytrailLocale = 'en_US';
+    }
 
-      return new TurkuOnline(
-          $this->config->merchantId, $this->config->secret, $paytrailLocale
-      );
+    return new TurkuOnline(
+        $this->config->merchantId, $this->config->secret, $paytrailLocale
+    );
   }
 
-  /**
-   * Redirect to payment handler.
-   *
-   * @param string $url      URL
-   * @param array  $formData Form fields
-   *
-   * @return void
-   */
-  protected function redirectToPaymentForm($url, $formData)
-  {
-      // Output a minimal form and submit it automatically
-      $formFields = '';
-      foreach ($formData as $key => $value) {
-          $formFields .= '<input type="hidden" name="' . htmlentities($key)
-              . '" value="' . htmlentities($value) . '">';
-      }
-      $locale = $this->translator->getLocale();
-      list($lang) = explode('-', $locale);
-      $title = $this->translator->translate('online_payment_go_to_pay');
-      $title = str_replace('%%amount%%', '', $title);
-      $jsRequired = $this->translator->translate('Please enable JavaScript.');
-      echo <<<EOT
-<!DOCTYPE html>
-<html lang="$lang">
-<head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>$title</title>
-</head>
-<body>
-  <noscript>
-      $jsRequired
-  </noscript>
-  <form id="paytrail-form" action="$url" method="POST">
-      $formFields
-  </form>
-  <script>
-      document.getElementById('paytrail-form').submit();
-  </script>
-</body>
-</html>
-EOT;
+      /**
+     * Process the response from payment service.
+     *
+     * @param Zend\Http\Request $request Request
+     *
+     * @return string error message (not translated)
+     *   or associative array with keys:
+     *     'markFeesAsPaid' (boolean) true if payment was successful and fees
+     *     should be registered as paid.
+     *     'transactionId' (string) Transaction ID.
+     *     'amount' (int) Amount to be registered (does not include transaction fee).
+     */
+    public function processResponse($request)
+    {
+        $params = $this->getPaymentResponseParams($request);
+        $status = $params['payment'];
+        $orderNum = $params['transaction'];
+        $timestamp = $params['TIMESTAMP'];
 
-      exit();
-  }
+        list($success, $data) = $this->getStartedTransaction($orderNum);
+        if (!$success) {
+            return $data;
+        }
+
+        $t = $data;
+
+        $amount = $t->amount;
+        if ($status === self::PAYMENT_SUCCESS || $status === self::PAYMENT_NOTIFY) {
+            if (!$module = $this->initCustomPayment()) {
+                return 'online_payment_failed';
+            }
+
+            $success = $module->validateRequest(
+                $params['ORDER_NUMBER'],
+                $params['PAID'],
+                $params['TIMESTAMP'],
+                $params['METHOD'],
+                $params['RETURN_AUTHCODE']
+            );
+            if (!$success) {
+                $this->logger->err(
+                    'Paytrail: error processing response: invalid checksum'
+                );
+                $this->logger->err("   " . var_export($params, true));
+                $this->setTransactionFailed($orderNum, 'invalid checksum');
+                return 'online_payment_failed';
+            }
+            $this->setTransactionPaid($orderNum, $timestamp);
+
+            return [
+                'markFeesAsPaid' => true,
+                'transactionId' => $orderNum,
+                'amount' => $amount
+            ];
+        } elseif ($status === self::PAYMENT_FAILURE) {
+            $this->setTransactionCancelled($orderNum);
+            return 'online_payment_canceled';
+        } else {
+            $this->setTransactionFailed($orderNum, "unknown status $status");
+            return 'online_payment_failed';
+        }
+    }
 }

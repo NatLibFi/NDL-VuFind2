@@ -126,9 +126,6 @@ trait FinnaOnlinePaymentControllerTrait
 
         $catalog = $this->getILS();
 
-
-        $getLink = $this->formWasSubmitted('get-link');
-
         // Check if online payment configuration exists for the ILS driver
         $paymentConfig = $catalog->getConfig('onlinePayment', $patron);
         if (empty($paymentConfig)) {
@@ -169,6 +166,7 @@ trait FinnaOnlinePaymentControllerTrait
         $paymentPermittedForUser = $tr->isPaymentPermitted(
             $patron['cat_username'], $transactionMaxDuration
         );
+        var_dump($paymentPermittedForUser);
 
         if (!$paymentHandler = $this->getOnlinePaymentHandler($patron['source'])) {
             return;
@@ -190,7 +188,6 @@ trait FinnaOnlinePaymentControllerTrait
 
         $paymentParam = 'payment';
         $request = $this->getRequest();
-
         $pay = $this->formWasSubmitted('pay-confirm');
         $payment = $request->getQuery()->get(
             $paymentParam, $request->getPost($paymentParam)

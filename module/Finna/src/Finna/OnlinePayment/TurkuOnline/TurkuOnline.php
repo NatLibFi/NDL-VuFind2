@@ -9,7 +9,7 @@ class TurkuOnline extends PaytrailE2 {
     
     use \Finna\OnlinePayment\OnlinePaymentModuleTrait;
 
-    protected $company = "finnatesti";
+    protected $company = "Finna (Auroran maksut)";
 
     protected $authType = "sha256";
 
@@ -48,12 +48,11 @@ class TurkuOnline extends PaytrailE2 {
     public function generateHeaders() {
         $this->generateHash();
         return [
-            'Authorization' => $this->hashedAuth,
+            'X-MERCHANT-ID' => 'TURKU',
+            'X-TURKU-SP' => $this->company,
             'X-TURKU-TS' => $this->timeStamp,
-            'charset' => 'utf-8',
-            'X-TURKU-SP' => 'finna',
-            'X-MERCHANT-ID' => $this->merchantId,
-            'X-TURKU-OID' => "ANONYYMI"
+            'X-TURKU-OID' => 'ANONYYMI',
+            'Authorization' => $this->hashedAuth
         ];
     }
 
@@ -83,12 +82,12 @@ class TurkuOnline extends PaytrailE2 {
         $this->products[] = [
             "title" => substr($name, 0, 255),
             "code" => $code,
-            "sapCode" => '000000000000010601',
+            "sapCode" => '000000000000011151',
             "amount" => $quantity,
             "price" => number_format($unitPrice / 100, 2, '.', ''),
             "vat" => "23.00",
             "discount" => "0.00",
-            "type" => $type
+            "type" => '1'
         ];
     }
 
@@ -97,9 +96,15 @@ class TurkuOnline extends PaytrailE2 {
         $this->requestBody = json_encode($this->generateBody());
         $headers = $this->generateHeaders();
         $response = $this->postRequest($url, $this->requestBody, [], $headers);
-        echo "<pre>";
-        var_dump($response);
-        echo "</pre>";
+        if (isset($response['httpCode']) && $response['httpCode'] === 200) {
+            $responseArray = json_decode($response['response'], true);
+            if (isset($responseArray['orderNumber']) && isset($responseArray['url'])) {
+                header('Location:' . $responseArray['url']); // Lets see if this works
+                exit();
+            }
+        } else {
+            var_dump("Failed");
+        }
     }
 
     public function generateBody() {
@@ -118,7 +123,6 @@ class TurkuOnline extends PaytrailE2 {
         }
 
         return [
-            'payment' => [
                 'orderNumber' => $this->orderNumber,
                 'locale' => $this->locale,
                 'currency' => 'EUR',
@@ -129,26 +133,34 @@ class TurkuOnline extends PaytrailE2 {
                     'notification' => $this->notifyUrl
                 ],
                 'orderDetails' => [
-                    'includeVat' => "0",
-                    'products' => [
-                        $this->products
-                    ]
+                    'includeVat' => '0',
+                    'products' => $this->products
                 ]
                 
-            ]
         ];
     }
 
-    public function tryRequest($body, $headers) {
-
-    }
-
-    public function getProductAsArray() {
-
-    }
-
     public function generateHash() {
-        $this->hashedAuth = hash('sha256', "finna" . $this->timeStamp . $this->requestBody . $this->secret);
+        $this->hashedAuth = hash('sha256', $this->company . $this->timeStamp . $this->requestBody . $this->secret);
+    }
+
+    /**
+     * Validate payment return and notify requests.
+     *
+     * @param string $orderNumber Order number
+     * @param string $paymentId   Payment signature
+     * @param int    $timeStamp   Timestamp
+     * @param string $status      Payment status
+     * @param string $authCode    Returned authentication code
+     *
+     * @return bool
+     */
+    public function validateRequest($orderNumber, $paid, $timeStamp, $method,
+        $authCode
+    ) {
+        $response = "$orderNumber|$timeStamp|$paid|$method|{$this->secret}";
+        $hash = md5($response);
+        return $hash;
     }
 }
 
