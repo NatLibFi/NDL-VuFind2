@@ -192,7 +192,9 @@ class TurkuPaytrail extends PaytrailE2
 
         if (isset($response['httpCode']) && $response['httpCode'] === 200) {
             $responseArray = json_decode($response['response'], true);
-            if (isset($responseArray['orderNumber']) && isset($responseArray['url'])) {
+            if (isset($responseArray['orderNumber']) 
+                && isset($responseArray['url'])
+            ) {
                 header('Location:' . $responseArray['url']);
                 exit();
             }

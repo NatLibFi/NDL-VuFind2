@@ -165,7 +165,8 @@ class TurkuPayment extends Paytrail
                     . ')';
                 }
                 $module->addProduct(
-                    $fineDesc, $code, 1, $fine['balance'], 0, TurkuPaytrail::TYPE_NORMAL
+                    $fineDesc, $code, 1, $fine['balance'], 0, 
+                    TurkuPaytrail::TYPE_NORMAL
                 );
             }
             if ($transactionFee) {
