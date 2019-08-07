@@ -27,12 +27,9 @@
  */
 namespace Finna\OnlinePayment;
 
-use Finna\OnlinePayment\Paytrail;
 use Finna\OnlinePayment\TurkuPayment\TurkuPaytrail;
 
 use Zend\Http\Request;
-use \DateTime;
-use \DateTimeZone;
 
 /**
  * Turku online payment handler module.
@@ -45,7 +42,7 @@ use \DateTimeZone;
  */
 class TurkuPayment extends Paytrail
 {
-  /**
+    /**
      * Start transaction.
      *
      * @param string             $finesUrl       Return URL to MyResearch/Fines
@@ -54,7 +51,7 @@ class TurkuPayment extends Paytrail
      * @param array              $patron         Patron information
      * @param string             $driver         Patron MultiBackend ILS source
      * @param int                $amount         Amount
-     * (excluding transaction fee)
+     *                                           (excluding transaction fee)
      * @param int                $transactionFee Transaction fee
      * @param array              $fines          Fines data
      * @param string             $currency       Currency
@@ -63,179 +60,181 @@ class TurkuPayment extends Paytrail
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-      $finesUrl, $ajaxUrl, $user, $patron, $driver, $amount, $transactionFee,
-      $fines, $currency, $statusParam
-  ) {
-      $patronId = $patron['cat_username'];
-      $orderNumber = $this->generateTransactionId($patronId);
+        $finesUrl, $ajaxUrl, $user, $patron, $driver, $amount, $transactionFee,
+        $fines, $currency, $statusParam
+    ) {
+        $patronId = $patron['cat_username'];
+        $orderNumber = $this->generateTransactionId($patronId);
 
-      $module = $this->initCustomPayment($orderNumber, $currency);
+        $module = $this->initCustomPayment($orderNumber, $currency);
 
-      $successUrl = "$finesUrl?driver=$driver&$statusParam="
-          . self::PAYMENT_SUCCESS;
-      $cancelUrl = "$finesUrl?driver=$driver&$statusParam="
-          . self::PAYMENT_FAILURE;
-      $notifyUrl = "$ajaxUrl/onlinePaymentNotify?driver=$driver&$statusParam="
-          . self::PAYMENT_NOTIFY;
+        $successUrl = "$finesUrl?driver=$driver&$statusParam="
+            . self::PAYMENT_SUCCESS;
+        $cancelUrl = "$finesUrl?driver=$driver&$statusParam="
+            . self::PAYMENT_FAILURE;
+        $notifyUrl = "$ajaxUrl/onlinePaymentNotify?driver=$driver&$statusParam="
+            . self::PAYMENT_NOTIFY;
 
-      $module->setUrls($successUrl, $cancelUrl, $notifyUrl);
-      $module->setOrderNumber($orderNumber);
-      $module->setCurrency($currency);
-      $module->setOid($this->config->oId);
-      $module->setApplicationName($this->config->applicationName);
-      $module->setSapCode($this->config->sapCode);
+        $module->setUrls($successUrl, $cancelUrl, $notifyUrl);
+        $module->setOrderNumber($orderNumber);
+        $module->setCurrency($currency);
+        $module->setOid($this->config->oId);
+        $module->setApplicationName($this->config->applicationName);
+        $module->setSapCode($this->config->sapCode);
 
-      if (!empty($this->config->paymentDescription)) {
-          $module->setMerchantDescription(
-              $this->config->paymentDescription . " - $patronId"
-          );
-      } else {
-          $module->setMerchantDescription($patronId);
-      }
+        if (!empty($this->config->paymentDescription)) {
+            $module->setMerchantDescription(
+                $this->config->paymentDescription . " - $patronId"
+            );
+        } else {
+            $module->setMerchantDescription($patronId);
+        }
 
-      $lastname = trim($user->lastname);
-      if (!empty($user->firstname)) {
-          $module->setFirstName(trim($user->firstname));
-      } else {
-          // We don't have both names separately, try to extract first name from
-          // last name.
-          if (strpos($lastname, ',') > 0) {
-              // Lastname, Firstname
-              list($lastname, $firstname) = explode(',', $lastname, 2);
-          } else {
-              // First Middle Last
-              if (preg_match('/^(.*) (.*?)$/', $lastname, $matches)) {
-                  $firstname = $matches[1];
-                  $lastname = $matches[2];
-              } else {
-                  $firstname = '';
-              }
-          }
-          $lastname = trim($lastname);
-          $firstname = trim($firstname);
-          $module->setFirstName(empty($firstname) ? 'ei tietoa' : $firstname);
-      }
-      $module->setLastName(empty($lastname) ? 'ei tietoa' : $lastname);
+        $lastname = trim($user->lastname);
+        if (!empty($user->firstname)) {
+            $module->setFirstName(trim($user->firstname));
+        } else {
+            // We don't have both names separately, try to extract first name from
+            // last name.
+            if (strpos($lastname, ',') > 0) {
+                // Lastname, Firstname
+                list($lastname, $firstname) = explode(',', $lastname, 2);
+            } else {
+                // First Middle Last
+                if (preg_match('/^(.*) (.*?)$/', $lastname, $matches)) {
+                    $firstname = $matches[1];
+                    $lastname = $matches[2];
+                } else {
+                    $firstname = '';
+                }
+            }
+            $lastname = trim($lastname);
+            $firstname = trim($firstname);
+            $module->setFirstName(empty($firstname) ? 'ei tietoa' : $firstname);
+        }
+        $module->setLastName(empty($lastname) ? 'ei tietoa' : $lastname);
 
-      if ($user->email) {
-          $module->setEmail($user->email);
-      }
+        if ($user->email) {
+            $module->setEmail($user->email);
+        }
 
-      if (!isset($this->config->productCode)
-          && !isset($this->config->transactionFeeProductCode)
-          && isset($this->config->productCodeMappings)
-          && isset($this->config->organizationProductCodeMappings)
-      ) {
-          $module->setTotalAmount($amount + $transactionFee);
-      } else {
-          $productCode = !empty($this->config->productCode)
-              ? $this->config->productCode : '';
-          $productCodeMappings = $this->getProductCodeMappings();
-          $organizationProductCodeMappings
-              = $this->getOrganizationProductCodeMappings();
+        if (!isset($this->config->productCode)
+            && !isset($this->config->transactionFeeProductCode)
+            && isset($this->config->productCodeMappings)
+            && isset($this->config->organizationProductCodeMappings)
+        ) {
+            $module->setTotalAmount($amount + $transactionFee);
+        } else {
+            $productCode = !empty($this->config->productCode)
+                ? $this->config->productCode : '';
+            $productCodeMappings = $this->getProductCodeMappings();
+            $organizationProductCodeMappings
+                = $this->getOrganizationProductCodeMappings();
 
-          foreach ($fines as $fine) {
-              $fineType = $fine['fine'] ?? '';
-              $fineOrg = $fine['organization'] ?? '';
+            foreach ($fines as $fine) {
+                $fineType = $fine['fine'] ?? '';
+                $fineOrg = $fine['organization'] ?? '';
 
-              if (isset($productCodeMappings[$fineType])) {
-                  $code = $productCodeMappings[$fineType];
-              } elseif ($productCode) {
-                  $code = $productCode;
-              } else {
-                  $code = $fineType;
-              }
-              if (isset($organizationProductCodeMappings[$fineOrg])) {
-                  $code = $organizationProductCodeMappings[$fineOrg]
-                      . ($productCodeMappings[$fineType] ?? '');
-              }
-              $code = substr($code, 0, 16);
+                if (isset($productCodeMappings[$fineType])) {
+                    $code = $productCodeMappings[$fineType];
+                } elseif ($productCode) {
+                    $code = $productCode;
+                } else {
+                    $code = $fineType;
+                }
+                if (isset($organizationProductCodeMappings[$fineOrg])) {
+                    $code = $organizationProductCodeMappings[$fineOrg]
+                        . ($productCodeMappings[$fineType] ?? '');
+                }
+                $code = substr($code, 0, 16);
 
-              $fineDesc = '';
-              if (!empty($fineType)) {
-                  $fineDesc
-                      = $this->translator->translate("fine_status_$fineType");
-                  if ("fine_status_$fineType" === $fineDesc) {
-                      $fineDesc = $this->translator->translate("status_$fineType");
-                      if ("status_$fineType" === $fineDesc) {
-                          $fineDesc = $fineType;
-                      }
-                  }
-              }
-              if (!empty($fine['title'])) {
-                  $fineDesc .= ' ('
-                      . substr($fine['title'], 0, 255 - 4 - strlen($fineDesc))
-                  . ')';
-              }
-              $module->addProduct(
-                  $fineDesc, $code, 1, $fine['balance'], 0, TurkuPaytrail::TYPE_NORMAL
-              );
-          }
-          if ($transactionFee) {
-              $code = isset($this->config->transactionFeeProductCode)
-                  ? $this->config->transactionFeeProductCode : $productCode;
-              $module->addProduct(
-                  'Palvelumaksu / Serviceavgift / Transaction fee', $code, 1,
-                  $transactionFee, 0, TurkuPaytrail::TYPE_HANDLING
-              );
-          }
-      }
+                $fineDesc = '';
+                if (!empty($fineType)) {
+                    $fineDesc
+                        = $this->translator->translate("fine_status_$fineType");
+                    if ("fine_status_$fineType" === $fineDesc) {
+                        $fineDesc = $this->translator->translate("status_$fineType");
+                        if ("status_$fineType" === $fineDesc) {
+                            $fineDesc = $fineType;
+                        }
+                    }
+                }
+                if (!empty($fine['title'])) {
+                    $fineDesc .= ' ('
+                        . substr($fine['title'], 0, 255 - 4 - strlen($fineDesc))
+                    . ')';
+                }
+                $module->addProduct(
+                    $fineDesc, $code, 1, $fine['balance'], 0, TurkuPaytrail::TYPE_NORMAL
+                );
+            }
+            if ($transactionFee) {
+                $code = isset($this->config->transactionFeeProductCode)
+                    ? $this->config->transactionFeeProductCode : $productCode;
+                $module->addProduct(
+                    'Palvelumaksu / Serviceavgift / Transaction fee', $code, 1,
+                    $transactionFee, 0, TurkuPaytrail::TYPE_HANDLING
+                );
+            }
+        }
 
-      try {
-          $requestBody = $module->generateBody();
-      } catch (\Exception $e) {
-          $err = 'Paytrail: error creating payment request body: '
-              . $e->getMessage();
-          $this->logger->err($err);
-          return false;
-      }
+        try {
+            $requestBody = $module->generateBody();
+        } catch (\Exception $e) {
+            $err = 'Paytrail: error creating payment request body: '
+                . $e->getMessage();
+            $this->logger->err($err);
+            return false;
+        }
 
-      $success = $this->createTransaction(
-          $orderNumber,
-          $driver,
-          $user->id,
-          $patronId,
-          $amount,
-          $transactionFee,
-          $currency,
-          $fines
-      );
-      if (!$success) {
-          return false;
-      }
-      $module->setHttpService($this->http);
-      $module->setLogger($this->logger);
-      $module->sendRequest($this->config->url);
-  }
+        $success = $this->createTransaction(
+            $orderNumber,
+            $driver,
+            $user->id,
+            $patronId,
+            $amount,
+            $transactionFee,
+            $currency,
+            $fines
+        );
+        if (!$success) {
+            return false;
+        }
+        $module->setHttpService($this->http);
+        $module->setLogger($this->logger);
+        $module->sendRequest($this->config->url);
+    }
 
     /**
      * Initialize the Turku Paytrail module
      *
      * @return TurkuPaytrail
      */
-  protected function initCustomPayment() {
-    foreach (['merchantId', 'secret', 'sapCode', 'oId', 'applicationName'] as $req) {
-        if (!isset($this->config[$req])) {
-            $this->logger->err("Paytrail: missing parameter $req");
-            throw new \Exception('Missing parameter');
+    protected function initCustomPayment()
+    {
+        $required = ['merchantId', 'secret', 'sapCode', 'oId', 'applicationName'];
+        foreach ($required as $req) {
+            if (!isset($this->config[$req])) {
+                $this->logger->err("Paytrail: missing parameter $req");
+                throw new \Exception('Missing parameter');
+            }
         }
+
+        $locale = $this->translator->getLocale();
+        $localeParts = explode('-', $locale);
+        $paytrailLocale = 'fi_FI';
+        if ('sv' === $localeParts[0]) {
+            $paytrailLocale = 'sv_SE';
+        } elseif ('en' === $localeParts[0]) {
+            $paytrailLocale = 'en_US';
+        }
+
+        return new TurkuPaytrail(
+            $this->config->merchantId, $this->config->secret, $paytrailLocale
+        );
     }
 
-    $locale = $this->translator->getLocale();
-    $localeParts = explode('-', $locale);
-    $paytrailLocale = 'fi_FI';
-    if ('sv' === $localeParts[0]) {
-        $paytrailLocale = 'sv_SE';
-    } elseif ('en' === $localeParts[0]) {
-        $paytrailLocale = 'en_US';
-    }
-
-    return new TurkuPaytrail(
-        $this->config->merchantId, $this->config->secret, $paytrailLocale
-    );
-  }
-
-      /**
+    /**
      * Process the response from payment service.
      *
      * @param Zend\Http\Request $request Request
