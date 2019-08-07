@@ -42,6 +42,21 @@ namespace Finna\View\Helper\Root;
 class ImageSrc extends ThemeSrc
 {
     /**
+     * Backwards-compatible __invoke that returns self or calls getSourceAddress
+     *
+     * @param string $arg Image filename without extension
+     *
+     * @return mixed
+     */
+    public function __invoke($arg = null)
+    {
+        if (null !== $arg) {
+            return $this->getSourceAddress($arg);
+        }
+        return $this;
+    }
+
+    /**
      * Return image source address. First check if svg image is found and
      * if not, check for png image.
      *
