@@ -19,22 +19,6 @@ finna.imagePaginator = (function imagePaginator() {
     recordType: 'default-type'
   };
 
-  /* Initializer functions */
-
-  /**
-   * Function to create a new paginator with given images object and settings object
-   * 
-   * @param {object} images 
-   * @param {object} settings 
-   */
-  function initPaginator(images, settings) {
-    if (settings.recordType !== 'marc') {
-      settings.imagesOnPopup = 4
-    }
-    var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
-    paginator.init();
-  }
-
   /**
    * Initializer function
    *
@@ -79,6 +63,23 @@ finna.imagePaginator = (function imagePaginator() {
     _.openImageIndex = 0;
     _.imagePopup = $(imageElement).clone();
   }
+
+  /* Initializer functions */
+
+  /**
+   * Function to create a new paginator with given images object and settings object
+   * 
+   * @param {object} images 
+   * @param {object} settings 
+   */
+  function initPaginator(images, settings) {
+    if (settings.recordType !== 'marc') {
+      settings.imagesOnPopup = 4;
+    }
+    var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
+    paginator.init();
+  }
+
 
   /**
    * Helper function to show a button and hide another
