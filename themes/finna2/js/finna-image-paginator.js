@@ -237,7 +237,7 @@ finna.imagePaginator = (function imagePaginator() {
       _.nonZoomableHolder.find('img').replaceWith($(this));
     }
 
-    setCanvasContent('nonZoomable');
+    setCanvasContent('nonzoomable');
     _.setCurrentVisuals();
     _.setPagerInfo(true);
     _.loadImageInformation();
