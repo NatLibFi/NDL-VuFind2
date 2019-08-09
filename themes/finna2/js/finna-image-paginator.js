@@ -28,7 +28,7 @@ finna.imagePaginator = (function imagePaginator() {
    * @param {object} settings 
    */
   function initPaginator(images, settings) {
-    if (!settings.recordType === 'marc') {
+    if (settings.recordType !== 'marc') {
       settings.imagesOnPopup = 4
     }
     var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
