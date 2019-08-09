@@ -267,7 +267,7 @@ class TurkuPaytrail extends PaytrailE2
         $authCode
     ) {
         $response = "$orderNumber|$timeStamp|$paid|$method|{$this->secret}";
-        $hash = md5($response);
-        return hash_equals($authCode, $hash);
+        $hash = strtoupper(md5($response));
+        return $authCode === $hash;
     }
 }
