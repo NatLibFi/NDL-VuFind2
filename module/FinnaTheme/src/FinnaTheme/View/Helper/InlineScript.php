@@ -39,25 +39,25 @@ namespace FinnaTheme\View\Helper;
 class InlineScript extends \VuFindTheme\View\Helper\InlineScript
 {
     /**
-     * Create script HTML
+     * Retrieve string representation
      *
-     * @param mixed  $item        Item to convert
-     * @param string $indent      String to add before the item
-     * @param string $escapeStart Starting sequence
-     * @param string $escapeEnd   Ending sequence
+     * @param string|int $indent Amount of whitespaces or string to use for indention
      *
      * @return string
      */
-    public function itemToString($item, $indent, $escapeStart, $escapeEnd)
+    public function toString($indent = null)
     {
-        // Remove default type for current html5 compatibility
-        if (!empty($item->type) && 'text/javascript' === $item->type) {
-            $item->type = '';
-            if ($this->view) {
-                $doctype = $this->view->plugin('doctype');
-                $doctype->setDoctype($doctype::HTML5);
+        foreach ($this as &$item) {
+            if (($item->type ?? '') === 'text/javascript') {
+                $item->type = '';
             }
         }
-        return parent::itemToString($item, $indent, $escapeStart, $escapeEnd);
+
+        if ($this->view) {
+            $doctype = $this->view->plugin('doctype');
+            $doctype->setDoctype($doctype::HTML5);
+        }
+
+        return parent::toString($indent);
     }
 }
