@@ -7,7 +7,7 @@
       <?php
         $paymentHandler = $this->transEsc('online_payment_handler_turku');
         $list = '<li>' . $this->transEsc('online_payment_description') . '</li>';
-        $extraTerms = $this->transEsc('online_payment_extra_paytrail');
+        $extraTerms = $this->translate('online_payment_extra_paytrail');
       ?>
       <?= $this->translate('online_payment_prologue_html', ['%%paymentHandler%%' => $paymentHandler, '%%list%%' => $list, '%%extraTerms%%' => $extraTerms]) ?>
     </div>
