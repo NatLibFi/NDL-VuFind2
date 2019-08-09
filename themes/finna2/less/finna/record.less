@@ -245,6 +245,7 @@ a.authority {
       border: none;
       background-color: transparent;
       padding: 0 2px;
+      flex: 0 0 0;
       i {
         cursor: pointer;
         font-size: 24px;
@@ -263,8 +264,8 @@ a.authority {
     }
 
     .track-holder {
-      max-width: 85%;
       display: inline-block;
+      flex: 1 1 auto;
       .finna-element-track {
         max-height: 100%;
         touch-action: none;
@@ -276,8 +277,8 @@ a.authority {
         div {
           display: flex;
           align-items: center;
-          justify-content: space-around;
-          max-width: 100%;
+          justify-content: center;
+          width: 100%;
           a {
             background-color: #efefefcc;
             display: flex;
@@ -288,7 +289,7 @@ a.authority {
             margin: 2px 4px;
             padding: 2px;
             max-width: 64px;
-            flex: 1 1 auto;
+            flex: 1 1 64px;
             cursor: pointer;
 
             &.current {
