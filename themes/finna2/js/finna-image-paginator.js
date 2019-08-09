@@ -64,8 +64,6 @@ finna.imagePaginator = (function imagePaginator() {
     _.imagePopup = $(imageElement).clone();
   }
 
-  /* Initializer functions */
-
   /**
    * Function to create a new paginator with given images object and settings object
    * 
@@ -79,7 +77,6 @@ finna.imagePaginator = (function imagePaginator() {
     var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
     paginator.init();
   }
-
 
   /**
    * Helper function to show a button and hide another
