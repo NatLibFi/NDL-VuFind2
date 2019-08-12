@@ -750,7 +750,7 @@ finna.layout = (function finnaLayout() {
       }
     });
 
-    $('.filters-toggle').click(function filterToggleClicked(e) {
+    $('.filters-toggle').click(function filterToggleClicked() {
       var button = $(this);
       var filters = button.closest('.finna-filters').find('.filters');
       
