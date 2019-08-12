@@ -1,5 +1,7 @@
 /*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab */
 finna.record = (function finnaRecord() {
+  var accordionTitleHeight = 64;
+
   function initDescription() {
     var description = $('#description_text');
     if (description.length) {
@@ -167,10 +169,54 @@ finna.record = (function finnaRecord() {
     });
   }
 
+  // The accordion has a delicate relationship with the tabs. Handle with care!
+  function _toggleAccordion(accordion, _initialLoad) {
+    var initialLoad = typeof _initialLoad === 'undefined' ? false : _initialLoad;
+    var tabid = accordion.find('.accordion-toggle a').data('tab');
+    var $recordTabs = $('.record-tabs');
+    var $tabContent = $recordTabs.find('.tab-content');
+    if (initialLoad || !accordion.hasClass('active')) {
+      // Move tab content under the correct accordion toggle
+      $tabContent.insertAfter(accordion);
+      if (accordion.hasClass('noajax') && !$recordTabs.find('.' + tabid + '-tab').length) {
+        return true;
+      }
+      $('.record-accordions').find('.accordion.active').removeClass('active');
+      accordion.addClass('active');
+      $recordTabs.find('.tab-pane.active').removeClass('active');
+      if (!initialLoad && $('.record-accordions').is(':visible')) {
+        $('html, body').animate({scrollTop: accordion.offset().top - accordionTitleHeight}, 150);
+      }
+
+      if ($recordTabs.find('.' + tabid + '-tab').length > 0) {
+        $recordTabs.find('.' + tabid + '-tab').addClass('active');
+        if (accordion.hasClass('initiallyActive')) {
+          removeHashFromLocation();
+        } else {
+          window.location.hash = tabid;
+        }
+        return false;
+      } else {
+        var newTab = getNewRecordTab(tabid).addClass('active');
+        $recordTabs.find('.tab-content').append(newTab);
+        return ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
+      }
+    }
+    return false;
+  }
+
   function initRecordAccordion() {
     $('.record-accordions .accordion-toggle').click(function accordionClicked(e) {
       return _toggleAccordion($(e.target).closest('.accordion'));
     });
+    if ($('.mobile-toolbar').length > 0 && $('.accordion-holdings').length > 0) {
+      $('.mobile-toolbar .library-link li').removeClass('hidden');
+      $('.mobile-toolbar .library-link li').click(function onLinkClick(e) {
+        e.stopPropagation();
+        $('html, body').animate({scrollTop: $('#tabnav').offset().top - accordionTitleHeight}, 150);
+        _toggleAccordion($('.accordion-holdings'));
+      });
+    }
   }
 
   function applyRecordAccordionHash(callback) {
@@ -190,42 +236,6 @@ finna.record = (function finnaRecord() {
         _toggleAccordion(accordion, true);
       }
     }
-  }
-
-  // The accordion has a delicate relationship with the tabs. Handle with care!
-  function _toggleAccordion(accordion, _initialLoad) {
-    var initialLoad = typeof _initialLoad === 'undefined' ? false : _initialLoad;
-    var tabid = accordion.find('.accordion-toggle a').data('tab');
-    var $recordTabs = $('.record-tabs');
-    var $tabContent = $recordTabs.find('.tab-content');
-    if (initialLoad || !accordion.hasClass('active')) {
-      // Move tab content under the correct accordion toggle
-      $tabContent.insertAfter(accordion);
-      if (accordion.hasClass('noajax') && !$recordTabs.find('.' + tabid + '-tab').length) {
-        return true;
-      }
-      $('.record-accordions').find('.accordion.active').removeClass('active');
-      accordion.addClass('active');
-      $recordTabs.find('.tab-pane.active').removeClass('active');
-      if (!initialLoad && $('.record-accordions').is(':visible')) {
-        $('html, body').animate({scrollTop: accordion.offset().top - 64}, 150);
-      }
-
-      if ($recordTabs.find('.' + tabid + '-tab').length > 0) {
-        $recordTabs.find('.' + tabid + '-tab').addClass('active');
-        if (accordion.hasClass('initiallyActive')) {
-          removeHashFromLocation();
-        } else {
-          window.location.hash = tabid;
-        }
-        return false;
-      } else {
-        var newTab = getNewRecordTab(tabid).addClass('active');
-        $recordTabs.find('.tab-content').append(newTab);
-        return ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
-      }
-    }
-    return false;
   }
 
   //Toggle accordion at the start so the accordions work properly
