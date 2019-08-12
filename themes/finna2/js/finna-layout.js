@@ -754,7 +754,7 @@ finna.layout = (function finnaLayout() {
       var button = $(this);
       var filters = button.closest('.finna-filters').find('.filters');
       
-      if (filters.hasClass('hidden')) { 
+      if (filters.hasClass('hidden')) {
         setState(false, 'fa fa-arrow-up', 'hide_filters');
       } else {
         setState(true, 'fa fa-arrow-down', 'show_filters');
