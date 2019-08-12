@@ -31,13 +31,19 @@ finna.multiSelect = (function multiSelect(){
   MultiSelect.prototype.createList = function createList() {
     var _ = this;
     var k = 0;
+    var reg = /&nbsp;/g;
+    var mark = '&nbsp;';
 
     _.select.children('option').each(function createUl(){
       $(this).attr('data-id', k);
       var optionClone = $(option).clone();
       var isParent = $(this).hasClass('option-parent');
       var isChild = $(this).hasClass('option-child');
-      var formattedHtml = $(this).html().replace(/&nbsp;/g, '').toLowerCase();
+      var spaces = $(this).html().match(reg);
+      if (spaces !== null) {
+        spaces = spaces.length;
+      }
+      var formattedHtml = $(this).html().replace(reg, '').toLowerCase();
 
       optionClone.attr({
         'data-target': k, 
@@ -45,7 +51,7 @@ finna.multiSelect = (function multiSelect(){
         'aria-selected': $(this).prop('selected'),
         'data-formatted': formattedHtml
       });
-      optionClone.html('<span class="value">' + $(this).html() + '</span>');
+      optionClone.html(mark.repeat(spaces) + '<span class="value">' + formattedHtml + '</span>');
       if (isParent) {
         optionClone.addClass('option-parent');
       }
@@ -54,6 +60,7 @@ finna.multiSelect = (function multiSelect(){
         hierarchyClone.attr('class', $(this).attr('class')).addClass('hierarchy-line');
         optionClone.prepend(hierarchyClone);
       }
+      _.words.push(optionClone);
       _.ul.append(optionClone);
     });
     _.setEvents();

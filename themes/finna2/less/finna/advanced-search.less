@@ -450,15 +450,15 @@
         &.option-parent {
           font-weight: bold;
         }
-        &:before {
-          content: '\f096';
-          font-family: 'FontAwesome';
-          margin: 0px 4px;
-          font-weight: initial;
-          display: inline-block;
-          width: 12px;
+        .value:before {
+            content: '\f096';
+            font-family: 'FontAwesome';
+            margin: 0px 4px;
+            font-weight: initial;
+            display: inline-block;
+            width: 12px;
         }
-        &[aria-selected="true"]:before {
+        &[aria-selected="true"] .value:before {
           content: '\f046';
         }
         &.active {
@@ -468,10 +468,11 @@
         .hierarchy-line {
           display: inline-block;
           position: absolute;
-          border-bottom: 1px dotted black;
-          border-left: 1px dotted black;
+          border-bottom: 2px solid lightgray;
+          border-left: 2px solid lightgray;
           height: 100%;
-          top: -20%;
+          left: 4px;
+          top: -30%;
 
           .generate-hierarchy(6);
           .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
