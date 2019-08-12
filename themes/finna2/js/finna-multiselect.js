@@ -58,7 +58,7 @@ finna.multiSelect = (function multiSelect(){
       _.ul.append(optionClone);
     });
     _.setEvents();
-  }
+  };
 
   MultiSelect.prototype.setEvents = function setEvents() {
     var _ = this;
@@ -203,7 +203,7 @@ finna.multiSelect = (function multiSelect(){
         });
       }
     });
-  }
+  };
 
   MultiSelect.prototype.scrollList = function scrollList(clipTo) {
     var _ = this;
@@ -219,20 +219,20 @@ finna.multiSelect = (function multiSelect(){
     } else if (top >= _.ul.height() - _.active.height()) {
       _.ul.scrollTop(top + _.ul.scrollTop());
     }
-  }
+  };
 
   MultiSelect.prototype.clearCaches = function clearCaches() {
     var _ = this;
     _.wordCache = [];
     _.charCache = "";
-  }
+  };
 
   MultiSelect.prototype.clearActives = function clearActives() {
     var _ = this;
     _.ul.attr('aria-activedescendant', '');
     _.ul.children('.option').removeClass('active');
     _.active = null;
-  }
+  };
 
   MultiSelect.prototype.setActive = function setActive(element) {
     var _ = this;
@@ -240,7 +240,7 @@ finna.multiSelect = (function multiSelect(){
     _.active = $(element);
     _.active.addClass('active');
     _.ul.attr('aria-activedescendant', _.active.attr('id'));
-  }
+  };
 
   MultiSelect.prototype.setSelected = function setSelected() {
     var _ = this;
@@ -248,7 +248,7 @@ finna.multiSelect = (function multiSelect(){
     var isSelected = original.prop('selected');
     original.prop('selected', !isSelected);
     _.active.attr('aria-selected', !isSelected);
-  }
+  };
 
 
   function init() {
