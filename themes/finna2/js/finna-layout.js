@@ -754,16 +754,16 @@ finna.layout = (function finnaLayout() {
       var button = $(this);
       var filters = button.closest('.finna-filters').find('.filters');
       
-      if (filters.hasClass('hidden')) {
-        setState(false, 'fa fa-arrow-up', 'hide_filters');
-      } else {
-        setState(true, 'fa fa-arrow-down', 'show_filters');
-      }
-
       function setState(setHidden, arrowClass, text) {
         filters.toggleClass('hidden', setHidden);
         button.find('.fa').attr('class', arrowClass);
         button.find('.toggle-text').html(VuFind.translate(text));
+      }
+
+      if (filters.hasClass('hidden')) {
+        setState(false, 'fa fa-arrow-up', 'hide_filters');
+      } else {
+        setState(true, 'fa fa-arrow-down', 'show_filters');
       }
     });
   }
