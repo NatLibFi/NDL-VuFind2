@@ -4,12 +4,7 @@
   <img src="<?=$this->imageLink('online-payment-vaski.png')?>" id="vaski-logo" alt="vaskilogo" />
   <div class="terms-of-service terms-of-service-text">
     <div class="terms-of-service-info-box">
-      <?php
-        $paymentHandler = $this->transEsc('online_payment_handler_turku');
-        $list = '<li>' . $this->transEsc('online_payment_fee_description') . '</li>';
-        $extraTerms = $this->translate('online_payment_extra_paytrail');
-      ?>
-      <?= $this->translate('online_payment_base_html', ['%%paymentHandler%%' => $paymentHandler, '%%list%%' => $list, '%%extraTerms%%' => $extraTerms]) ?>
+      <?= $this->translate('online_payment_terms_TurkuPayment_html', ['%%paymentHandler%%' => $paymentHandler]) ?>
     </div>
   </div>
   <input name="transactionId" type="hidden" value="<?=$this->transactionId?>">
