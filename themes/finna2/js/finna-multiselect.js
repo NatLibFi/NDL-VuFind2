@@ -31,8 +31,6 @@ finna.multiSelect = (function multiSelect(){
   MultiSelect.prototype.createList = function createList() {
     var _ = this;
     var k = 0;
-    var longWords = [];
-    var shortWords = [];
 
     _.select.children('option').each(function createUl(){
       $(this).attr('data-id', k);
@@ -56,15 +54,7 @@ finna.multiSelect = (function multiSelect(){
         hierarchyClone.attr('class', $(this).attr('class')).addClass('hierarchy-line');
         optionClone.prepend(hierarchyClone);
       }
-      if (formattedHtml.length > 3 || isChild) {
-        longWords.push(optionClone);
-      } else {
-        shortWords.push(optionClone);
-      }
-    });
-    _.words = $.merge(longWords, shortWords);
-    $.each(_.words, function appendToUl(_i, val) {
-      _.ul.append(val);
+      _.ul.append(optionClone);
     });
     _.setEvents();
   }
