@@ -807,9 +807,6 @@ finna.layout = (function finnaLayout() {
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
   }
 
-  function initSelectize() {
-  }
-
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -840,7 +837,6 @@ finna.layout = (function finnaLayout() {
       initScrollLinks();
       initSearchboxFunctions();
       initCondensedList();
-      initSelectize();
       if (typeof checkSaveStatuses !== 'undefined') { checkSaveStatuses(); }
       initTouchDeviceGallery();
       initSideFacets();
