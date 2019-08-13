@@ -19,7 +19,7 @@
             $originalImage = $recordImage->getMasterImage($ind);
             $formats = $this->driver->tryMethod('getFormats');
             $translatedFormat = $this->transEsc(end($formats));
-            $rights = $this->rights ?? $image['rights'];
+            $rights = $image['rights'];
           ?>
           <?php if (isset($rights['copyright']) && $rights['copyright'] !== $this->transEsc('usage_F')): ?>
           <div class="open-link">
