@@ -441,15 +441,16 @@
       position: relative;
 
       .option {
+        &.option-parent {
+          background-color: white;
+          z-index: 1;
+        }
         padding: 2px 0;
         position: relative;
         user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
-        &.option-parent {
-          font-weight: bold;
-        }
         .value:before {
             content: '\f096';
             font-family: 'FontAwesome';
@@ -457,6 +458,7 @@
             font-weight: initial;
             display: inline-block;
             width: 12px;
+            font-size: 16px;
         }
         &[aria-selected="true"] .value:before {
           content: '\f046';
@@ -464,15 +466,16 @@
         &.active {
           background-color: lightgray;
         }
-        
+
         .hierarchy-line {
           display: inline-block;
           position: absolute;
+          z-index: 0;
           border-bottom: 2px solid lightgray;
           border-left: 2px solid lightgray;
           height: 100%;
           left: 4px;
-          top: -30%;
+          top: -50%;
 
           .generate-hierarchy(6);
           .generate-hierarchy(@n, @i: 1) when (@i =< @n) {

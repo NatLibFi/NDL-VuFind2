@@ -175,7 +175,9 @@ finna.multiSelect = (function multiSelect(){
     _.deleteButton.on('click', function clearSelections() {
       _.ul.children('[aria-selected=true]').each(function clearAll() {
         $(this).attr('aria-selected', false);
-        _.select.find('option[data-id=' + $(this).data('target') + ']').prop('selected', false);
+      });
+      _.select.children('option:selected').each(function clearAll() {
+        $(this).prop('selected', false);
       });
     });
     _.searchField.on('keyup', function filterOptions() {
