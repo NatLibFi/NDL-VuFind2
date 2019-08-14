@@ -252,7 +252,6 @@ finna.multiSelect = (function multiSelect(){
     _.active.attr('aria-selected', !isSelected);
   };
 
-
   function init() {
     $('.finna-multiselect.init').each(function createMultiSelect(){
       new MultiSelect(this, i++);
