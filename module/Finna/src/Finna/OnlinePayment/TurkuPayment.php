@@ -90,99 +90,41 @@ class TurkuPayment extends Paytrail
             $module->setMerchantDescription($patronId);
         }
 
-        $lastname = trim($user->lastname);
-        if (!empty($user->firstname)) {
-            $module->setFirstName(trim($user->firstname));
-        } else {
-            // We don't have both names separately, try to extract first name from
-            // last name.
-            if (strpos($lastname, ',') > 0) {
-                // Lastname, Firstname
-                list($lastname, $firstname) = explode(',', $lastname, 2);
-            } else {
-                // First Middle Last
-                if (preg_match('/^(.*) (.*?)$/', $lastname, $matches)) {
-                    $firstname = $matches[1];
-                    $lastname = $matches[2];
-                } else {
-                    $firstname = '';
-                }
-            }
-            $lastname = trim($lastname);
-            $firstname = trim($firstname);
-            $module->setFirstName(empty($firstname) ? 'ei tietoa' : $firstname);
-        }
-        $module->setLastName(empty($lastname) ? 'ei tietoa' : $lastname);
+        foreach ($fines as $fine) {
+            $fineType = $fine['fine'] ?? '';
+            $fineOrg = $fine['organization'] ?? '';
+            $code = substr($fineType, 0, 16);
 
-        if ($user->email) {
-            $module->setEmail($user->email);
-        }
-
-        if (!isset($this->config->productCode)
-            && !isset($this->config->transactionFeeProductCode)
-            && isset($this->config->productCodeMappings)
-            && isset($this->config->organizationProductCodeMappings)
-        ) {
-            $module->setTotalAmount($amount + $transactionFee);
-        } else {
-            $productCode = !empty($this->config->productCode)
-                ? $this->config->productCode : '';
-            $productCodeMappings = $this->getProductCodeMappings();
-            $organizationProductCodeMappings
-                = $this->getOrganizationProductCodeMappings();
-
-            foreach ($fines as $fine) {
-                $fineType = $fine['fine'] ?? '';
-                $fineOrg = $fine['organization'] ?? '';
-
-                if (isset($productCodeMappings[$fineType])) {
-                    $code = $productCodeMappings[$fineType];
-                } elseif ($productCode) {
-                    $code = $productCode;
-                } else {
-                    $code = $fineType;
-                }
-                if (isset($organizationProductCodeMappings[$fineOrg])) {
-                    $code = $organizationProductCodeMappings[$fineOrg]
-                        . ($productCodeMappings[$fineType] ?? '');
-                }
-                $code = substr($code, 0, 16);
-
-                $fineDesc = '';
-                if (!empty($fineType)) {
-                    $fineDesc
-                        = $this->translator->translate("fine_status_$fineType");
-                    if ("fine_status_$fineType" === $fineDesc) {
-                        $fineDesc = $this->translator->translate("status_$fineType");
-                        if ("status_$fineType" === $fineDesc) {
-                            $fineDesc = $fineType;
-                        }
+            $fineDesc = '';
+            if (!empty($fineType)) {
+                $fineDesc
+                    = $this->translator->translate("fine_status_$fineType");
+                if ("fine_status_$fineType" === $fineDesc) {
+                    $fineDesc = $this->translator->translate("status_$fineType");
+                    if ("status_$fineType" === $fineDesc) {
+                        $fineDesc = $fineType;
                     }
                 }
-                if (!empty($fine['title'])) {
-                    $fineDesc .= ' ('
-                        . substr($fine['title'], 0, 255 - 4 - strlen($fineDesc))
-                    . ')';
-                }
-                $module->addProduct(
-                    $fineDesc, $code, 1, $fine['balance'], 0,
-                    TurkuPaytrail::TYPE_NORMAL
-                );
             }
-            if ($transactionFee) {
-                $code = isset($this->config->transactionFeeProductCode)
-                    ? $this->config->transactionFeeProductCode : $productCode;
-                $module->addProduct(
-                    'Palvelumaksu / Serviceavgift / Transaction fee', $code, 1,
-                    $transactionFee, 0, TurkuPaytrail::TYPE_HANDLING
-                );
-            }
+
+            $module->addProduct(
+                $fineDesc, $code, 1, $fine['balance'], 0,
+                TurkuPaytrail::TYPE_NORMAL
+            );
+        }
+        if ($transactionFee) {
+            $code = isset($this->config->transactionFeeProductCode)
+                ? $this->config->transactionFeeProductCode : $productCode;
+            $module->addProduct(
+                'Palvelumaksu / Serviceavgift / Transaction fee', $code, 1,
+                $transactionFee, 0, TurkuPaytrail::TYPE_HANDLING
+            );
         }
 
         try {
             $requestBody = $module->generateBody();
         } catch (\Exception $e) {
-            $err = 'Paytrail: error creating payment request body: '
+            $err = 'TurkuPayment: error creating payment request body: '
                 . $e->getMessage();
             $this->logger->err($err);
             return false;
@@ -216,7 +158,7 @@ class TurkuPayment extends Paytrail
         $required = ['merchantId', 'secret', 'sapCode', 'oId', 'applicationName'];
         foreach ($required as $req) {
             if (!isset($this->config[$req])) {
-                $this->logger->err("Paytrail: missing parameter $req");
+                $this->logger->err("TurkuPayment: missing parameter $req");
                 throw new \Exception('Missing parameter');
             }
         }
@@ -276,7 +218,7 @@ class TurkuPayment extends Paytrail
             );
             if (!$success) {
                 $this->logger->err(
-                    'Paytrail: error processing response: invalid checksum'
+                    'TurkuPayment: error processing response: invalid checksum'
                 );
                 $this->logger->err("   " . var_export($params, true));
                 $this->setTransactionFailed($orderNum, 'invalid checksum');
