@@ -1,6 +1,6 @@
 <?php
 /**
- * Turku paytrail client
+ * Turku Paytrail client
  *
  * PHP version 7
  *
@@ -30,7 +30,7 @@ namespace Finna\OnlinePayment\TurkuPayment;
 use Finna\OnlinePayment\Paytrail\PaytrailE2;
 
 /**
- * Turku paytrail client
+ * Turku Paytrail client
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -38,7 +38,7 @@ use Finna\OnlinePayment\Paytrail\PaytrailE2;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class TurkuPaytrail extends PaytrailE2
+class TurkuPaytrailE2 extends PaytrailE2
 {
     use \Finna\OnlinePayment\OnlinePaymentModuleTrait;
 

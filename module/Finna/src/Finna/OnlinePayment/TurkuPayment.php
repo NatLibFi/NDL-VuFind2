@@ -27,7 +27,7 @@
  */
 namespace Finna\OnlinePayment;
 
-use Finna\OnlinePayment\TurkuPayment\TurkuPaytrail;
+use Finna\OnlinePayment\TurkuPayment\TurkuPaytrailE2;
 
 use Zend\Http\Request;
 
@@ -63,10 +63,18 @@ class TurkuPayment extends Paytrail
         $finesUrl, $ajaxUrl, $user, $patron, $driver, $amount, $transactionFee,
         $fines, $currency, $statusParam
     ) {
+        $required = ['merchantId', 'secret', 'sapCode', 'oId', 'applicationName'];
+        foreach ($required as $req) {
+            if (!isset($this->config[$req])) {
+                $this->logger->err("TurkuPayment: missing parameter $req");
+                throw new \Exception('Missing parameter');
+            }
+        }
+
         $patronId = $patron['cat_username'];
         $orderNumber = $this->generateTransactionId($patronId);
 
-        $module = $this->initCustomPayment($orderNumber, $currency);
+        $module = $this->initTurkuPaytrail();
 
         $successUrl = "$finesUrl?driver=$driver&$statusParam="
             . self::PAYMENT_SUCCESS;
@@ -109,7 +117,7 @@ class TurkuPayment extends Paytrail
 
             $module->addProduct(
                 $fineDesc, $code, 1, $fine['balance'], 0,
-                TurkuPaytrail::TYPE_NORMAL
+                TurkuPaytrailE2::TYPE_NORMAL
             );
         }
         if ($transactionFee) {
@@ -117,7 +125,7 @@ class TurkuPayment extends Paytrail
                 ? $this->config->transactionFeeProductCode : $productCode;
             $module->addProduct(
                 'Palvelumaksu / Serviceavgift / Transaction fee', $code, 1,
-                $transactionFee, 0, TurkuPaytrail::TYPE_HANDLING
+                $transactionFee, 0, TurkuPaytrailE2::TYPE_HANDLING
             );
         }
 
@@ -151,18 +159,10 @@ class TurkuPayment extends Paytrail
     /**
      * Initialize the Turku Paytrail module
      *
-     * @return TurkuPaytrail
+     * @return TurkuPaytrailE2
      */
-    protected function initCustomPayment()
+    protected function initTurkuPaytrail()
     {
-        $required = ['merchantId', 'secret', 'sapCode', 'oId', 'applicationName'];
-        foreach ($required as $req) {
-            if (!isset($this->config[$req])) {
-                $this->logger->err("TurkuPayment: missing parameter $req");
-                throw new \Exception('Missing parameter');
-            }
-        }
-
         $locale = $this->translator->getLocale();
         $localeParts = explode('-', $locale);
         $paytrailLocale = 'fi_FI';
@@ -172,7 +172,7 @@ class TurkuPayment extends Paytrail
             $paytrailLocale = 'en_US';
         }
 
-        return new TurkuPaytrail(
+        return new TurkuPaytrailE2(
             $this->config->merchantId, $this->config->secret, $paytrailLocale
         );
     }
@@ -205,7 +205,7 @@ class TurkuPayment extends Paytrail
 
         $amount = $t->amount;
         if ($status === self::PAYMENT_SUCCESS || $status === self::PAYMENT_NOTIFY) {
-            if (!$module = $this->initCustomPayment()) {
+            if (!$module = $this->initTurkuPaytrail()) {
                 return 'online_payment_failed';
             }
 
