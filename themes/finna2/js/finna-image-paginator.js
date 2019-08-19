@@ -58,6 +58,8 @@ finna.imagePaginator = (function imagePaginator() {
     _.pagerInfo = null;
     _.leftBtn = null;
     _.rightBtn = null;
+    _.leftBrowseBtn = null;
+    _.rightBrowseBtn = null;
     _.imagePopup = null;
     _.leafletHolder = null;
     _.leafletLoader = null;
@@ -129,15 +131,26 @@ finna.imagePaginator = (function imagePaginator() {
     _.leftBtn = covers.find('.left-button');
     _.rightBtn = covers.find('.right-button');
     if (typeof isPopup === 'undefined' || !isPopup) {
+      _.leftBrowseBtn = _.root.find('.next-image.left');
+      _.rightBrowseBtn = _.root.find('.next-image.right');
       if (_.isList) {
         _.pagerInfo = covers.find('.paginator-info');
       } else {
         _.pagerInfo = _.trigger.find('.paginator-info');
       }
     } else {
-      _.pagerInfo = $('.mfp-container').find('.paginator-info');
+      var mfpContainer = $('.mfp-container');
+      _.pagerInfo = mfpContainer.find('.paginator-info');
+      _.leftBrowseBtn = mfpContainer.find('.next-image.left');
+      _.rightBrowseBtn = mfpContainer.find('.next-image.right');
     }
-
+    _.leftBrowseBtn.click(function browseLeft() {
+      _.onBrowseButton(-1);
+    });
+    _.rightBrowseBtn.click(function browseRight() {
+      _.onBrowseButton(1);
+    });
+    _.setBrowseButtons(isPopup);
     if (_.images.length < 2) {
       covers.hide();
       _.pagerInfo.hide();
@@ -146,6 +159,20 @@ finna.imagePaginator = (function imagePaginator() {
     if (_.images.length < _.settings.imagesPerRow) {
       $('.recordcovers-more').hide();
     }
+  };
+
+  /**
+   * Function to set browse button states
+   */
+  FinnaPaginator.prototype.setBrowseButtons = function setBrowseButtons(isPopup) {
+    var _ = this;
+    if (_.isList && typeof isPopup === 'undefined' || isPopup === false) {
+      _.leftBrowseBtn.hide();
+      _.rightBrowseBtn.hide();
+    }
+
+    _.leftBrowseBtn.prop('disabled', _.openImageIndex < 1);
+    _.rightBrowseBtn.prop('disabled', _.openImageIndex >= _.images.length - 1);
   };
 
   /**
@@ -161,11 +188,11 @@ finna.imagePaginator = (function imagePaginator() {
       _.rightBtn.click(function loadImages() {
         _.loadPage(1);
       });
-      _.moreBtn.click(function setImages(){
+      _.moreBtn.click(function setImages() {
         toggleButtons(_.lessBtn, _.moreBtn);
         _.loadPage(0, null, _.settings.imagesPerRow * _.settings.maxRows);
       });
-      _.lessBtn.click(function setImages(){
+      _.lessBtn.click(function setImages() {
         toggleButtons(_.moreBtn, _.lessBtn);
         _.loadPage(0, null, _.settings.imagesPerRow);
       });
@@ -353,6 +380,21 @@ finna.imagePaginator = (function imagePaginator() {
       _.leafletHolder.setMaxBounds(bounds);
       _.leafletStartBounds = bounds;
     };
+  };
+
+  FinnaPaginator.prototype.onBrowseButton = function onBrowseButton(direction) {
+    var _ = this;
+    var index = +direction + (+_.openImageIndex);
+    var found = _.findSmallImage(index);
+    if (found.length) {
+      found.click();
+      _.setBrowseButtons();
+    } else {
+      _.loadPage(direction);
+      found = _.findSmallImage(index);
+      found.click();
+      _.setBrowseButtons();
+    }
   };
 
   /**
@@ -738,7 +780,7 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.setCurrentVisuals = function setCurrentVisuals() {
     var _ = this;
     $('a.image-popup-navi').removeClass('current');
-    $('a[index="' + _.openImageIndex + '"]').addClass('current');
+    _.findSmallImage(_.openImageIndex).addClass('current');
   };
 
   /**
@@ -774,9 +816,7 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setDimensions = function setDimensions() {
     var popupHidden = $('.mfp-content').length === 0;
-    var container = popupHidden
-      ? $('.image-details-container').not('.hidden')
-      : $('.image-information-holder');
+    var container = popupHidden ? $('.image-details-container').not('.hidden') : $('.image-information-holder');
     var openLink = container.find('.open-link a').attr('href');
     if (typeof openLink !== 'undefined') {
       var img = new Image();
@@ -858,7 +898,7 @@ finna.imagePaginator = (function imagePaginator() {
             _.onNonZoomableOpen();
           }
           _.createPopupTrack(mfpContainer.find('.finna-image-pagination'), true);
-          var foundImage = _.imageHolder.find('a[index="' + _.openImageIndex + '"]');
+          var foundImage = _.findSmallImage(_.openImageIndex);
           _.openImageIndex = null;
           foundImage.click();
           _.checkRecordButtons();
@@ -878,7 +918,7 @@ finna.imagePaginator = (function imagePaginator() {
             _.onListButton(0);
           } else {
             _.loadPage(0, _.openImageIndex);
-            _.imageHolder.find('a[index="' + _.openImageIndex + '"]').click();
+            _.findSmallImage(_.openImageIndex).click();
           }
         }
       }
@@ -939,6 +979,16 @@ finna.imagePaginator = (function imagePaginator() {
     tmpImg.find('img').data('src', image.small);
     tmpImg.attr({'index': image.index, 'href': image.medium});
     tmpImg.click();
+  };
+
+  /**
+   * Function to find an image element from imageHolder track
+   * 
+   * @param index int index of wanted image element
+   */
+  FinnaPaginator.prototype.findSmallImage = function findSmallImage(index) {
+    var _ = this;
+    return _.imageHolder.find('a[index="' + index + '"]');
   };
 
   var my = {
