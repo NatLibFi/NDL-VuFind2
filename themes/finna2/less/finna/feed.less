@@ -114,7 +114,18 @@
             
             word-break: break-word;
             word-wrap: break-word;
-        }   
+        }
+        p.xcal {
+            padding: 0px;
+            i {
+                padding: 0px;
+                padding-right: 5px;
+                padding-top: 3px;
+            }
+        }
+        .text {
+            padding-top: 5px;
+        }
         span.carousel-description {
             position: absolute;
             text-decoration: underline;
@@ -303,6 +314,16 @@
         }
     }
 
+    .xcal {
+        padding-bottom: 0px;
+        display: block;
+        margin-bottom: 0px;
+        color: @gray;
+        i {
+            padding-right: 5px;
+        }
+    }
+
     &.with-image {
         li {
           clear: both;  
@@ -327,6 +348,12 @@
         }  
         .text {
             padding-bottom: 15px;
+        }
+        p {
+            &.xcal {
+                float: right;
+                width: 55%
+            }
         }
         .more-link {
             display: block;
@@ -401,7 +428,6 @@
     }
 }
 
-
 // rss-feed on organisation page
 .organisation-info-page .feed-container.info-element {
     .list-feed {
@@ -413,4 +439,67 @@
 // Feed tabs
 .feed-tabs {
     margin-top: 20px;
+}
+
+// Grid styling
+.feed-grid {
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    .grid-item {
+        flex-basis: 30%;
+        max-height: 125px;
+        margin-bottom: 20px;
+        overflow: hidden;
+        @media (max-width: @screen-sm-max) {
+            flex-basis: 50%;
+        }
+        @media (max-width: @screen-xs-max) {
+            flex-basis: 100%;
+        }
+        .grid-info {
+            color: @text-color;
+            .title {
+                font-weight: 700;
+                color: @link-color;
+            }
+            .xcal {
+                i {
+                    padding-right: 5px;
+                }
+            }
+        }
+    }
+    &.with-image {
+        .grid-item {
+            .grid-info {
+                width: 55%;
+            }
+        }
+        .grid-image {
+            width: 40%;
+        }
+        img {
+            max-height: 100%;
+            float: right;
+        }
+        .grid-link {
+            display: flex;
+            justify-content: space-between;
+            height: 100%;
+        }
+    }
+}
+
+// xCal fields
+.xcal-fields {
+    margin-bottom: 20px;
+   .xcal-value {
+       float: right;
+       width: 70%;
+   }
+   div {
+       display: inline-block;
+       width: 100%;
+   }
 }

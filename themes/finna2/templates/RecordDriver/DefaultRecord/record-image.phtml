@@ -13,61 +13,30 @@
     <?php foreach ($images as $image): ?>
       <?php ++$ind; ?>
       <div class="image-details-container<?=$ind > 0 ? ' hidden' : '' ?> text-left" data-img-index="<?=$ind ?>">
-        <div class="image-link">
-          <?php
-            $recordImage = $this->recordImage($this->record($this->driver));
-            $originalImage = $recordImage->getMasterImage($ind);
-            $formats = $this->driver->tryMethod('getFormats');
-            $translatedFormat = $this->transEsc(end($formats));
-            $rights = $image['rights'];
-          ?>
-          <?php if (isset($rights['copyright']) && $rights['copyright'] !== $this->transEsc('usage_F')): ?>
-          <div class="open-link">
-            <a target="_blank" href="<?=$this->escapeHtmlAttr($originalImage) ?>" download="<?=$this->escapeHtmlAttr($originalImage) ?>">
-              <i aria-hidden="true" class="fa fa-download"></i>
-              <span><?=$this->transEsc('Download the image') ?></span>
-            </a>
-            <span class="image-dimensions"></span>
-          </div>
-          <?php endif ?>
-        </div>
-        <?php if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
-          <p class="image-rights-default"><?=$this->transEsc('Image Rights Default') ?></p>
-        <?php endif; ?>
-        <div class="access-rights">
-          <?php if (!empty($rights)): ?>
-            <div class="image-rights">
-              <?php $hasLink = isset($rights['link']); ?>
-              <strong><?=$this->transEsc('Image Rights') ?></strong><br>
-              <span class="cc-rights">
-                <?php if (!empty($rights['copyright'])): ?>
-                  <?php $copyright = $this->transEsc($rights['copyright']) ?>
-                  <?php if (!empty($copyright)): ?>
-                    <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?><?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><?php if ($copyright === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$copyright ?><?php endif; ?><?php if ($hasLink): ?></a><?php endif; ?>
-                  <?php endif; ?>
-                <?php else: ?>
-                  <?php if (isset($rights['description'])): ?>
-                    <?php foreach ($rights['description'] as $item): ?>
-                      <?php if (!empty($item)): ?>
-                        <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $item])?> <?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><?=$item ?><?php if ($hasLink): ?></a><?php endif; ?>
-                      <?php endif; ?>
-                    <?php endforeach ?>
-                  <?php endif; ?>
-                <?php endif; ?>
-              </span> <p class="copyright-meaning"><a target="_blank" <?php if ($hasLink): ?>aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php else: ?>href="<?=$this->url('content-page', ['page' => 'terms'])?>"><?php endif; ?><?=$this->transEsc('usage_meaning') ?></a></p>
-            </div>
-          <?php endif ?>
-          <div class="copyright truncate-field">
-            <?php if (isset($rights['description'])): ?>
-              <?php foreach ($rights['description'] as $item): ?>
-                <p><?=$this->transEsc($item) ?></p>
-              <?php endforeach ?>
+        <?php
+          $recordImage = $this->recordImage($this->record($this->driver));
+          $originalImage = $recordImage->getMasterImage($ind);
+          $formats = $this->driver->tryMethod('getFormats');
+          $translatedFormat = $this->transEsc(end($formats));
+          $rights = $image['rights'];
+        ?>
+        <?php if ($this->record($this->driver)->allowRecordImageDownload()): ?>
+          <div class="image-link">
+            <?php if (isset($rights['copyright']) && $rights['copyright'] !== $this->transEsc('usage_F')): ?>
+              <div class="open-link">
+                <a target="_blank" href="<?=$this->escapeHtmlAttr($originalImage) ?>" download="<?=$this->escapeHtmlAttr($originalImage) ?>">
+                  <i aria-hidden="true" class="fa fa-download"></i>
+                  <span><?=$this->transEsc('Download the image') ?></span>
+                </a>
+                <span class="image-dimensions"></span>
+              </div>
             <?php endif ?>
           </div>
           <?php if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
-            <p><a href="<?= $this->url('content-page', ['page' => 'terms']) . '#image_rights' ?>"><i class="fa fa-arrow-right"></i><?= $this->translate('See terms and conditions') ?></a></p>
+            <p class="image-rights-default"><?=$this->transEsc('Image Rights Default') ?></p>
           <?php endif; ?>
-        </div>
+        <?php endif; ?>
+      <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-rights.phtml', ['rights' => $rights]); ?>
       </div>
     <?php endforeach; ?>
   <?php endif; ?>
