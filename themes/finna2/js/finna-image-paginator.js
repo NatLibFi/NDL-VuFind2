@@ -570,7 +570,6 @@ finna.imagePaginator = (function imagePaginator() {
       $('.image-details-container').addClass('hidden');
       $('.image-details-container[data-img-index="' + imagePopup.attr('index') + '"]').removeClass('hidden');
     }
-    _.setBrowseButtons();
     _.imageDetail.html(imagePopup.data('description'));
 
     if (_.isList) {
@@ -857,6 +856,7 @@ finna.imagePaginator = (function imagePaginator() {
     var _ = this;
     _.changeTriggerImage(imagePopup);
     _.openImageIndex = imagePopup.attr('index');
+    _.setBrowseButtons();
     _.setPagerInfo(false);
     _.setCurrentVisuals();
     var modal = $('#imagepopup-modal').find('.imagepopup-holder').clone();
