@@ -389,6 +389,11 @@ finna.imagePaginator = (function imagePaginator() {
     };
   };
 
+  /**
+   * Function to browse images presented in image holder object
+   * 
+   * @param int direction to try and find an image from
+   */
   FinnaPaginator.prototype.onBrowseButton = function onBrowseButton(direction) {
     var _ = this;
     var index = +direction + (+_.openImageIndex);
