@@ -148,7 +148,8 @@ finna.imagePaginator = (function imagePaginator() {
     _.rightBrowseBtn.off('click').click(function browseRight() {
       _.onBrowseButton(1);
     });
-    _.setBrowseButtons(isPopup);
+    _.toggleBrowseButtons(isPopup);
+    _.setBrowseButtons();
     if (_.images.length < 2) {
       covers.hide();
       _.pagerInfo.hide();
@@ -160,16 +161,21 @@ finna.imagePaginator = (function imagePaginator() {
   };
 
   /**
+   * Function to display browse buttons when necessary
+   */
+  FinnaPaginator.prototype.toggleBrowseButtons = function toggleBrowseButtons(isPopup) {
+    var _ = this;
+    var state = _.isList === false || (typeof isPopup !== 'undefined' && isPopup === true);
+
+    _.leftBrowseBtn.toggle(state);
+    _.rightBrowseBtn.toggle(state);
+  };
+
+  /**
    * Function to set browse button states
    */
-  FinnaPaginator.prototype.setBrowseButtons = function setBrowseButtons(isPopup) {
+  FinnaPaginator.prototype.setBrowseButtons = function setBrowseButtons() {
     var _ = this;
-    if (_.isList && (typeof isPopup === 'undefined' || isPopup === false)) {
-      _.leftBrowseBtn.hide();
-      _.rightBrowseBtn.hide();
-      console.log(isPopup);
-    }
-
     _.leftBrowseBtn.prop('disabled', _.openImageIndex < 1);
     _.rightBrowseBtn.prop('disabled', _.openImageIndex >= _.images.length - 1);
   };
@@ -485,6 +491,7 @@ finna.imagePaginator = (function imagePaginator() {
     var _ = this;
     var covers = _.root.find('.recordcovers').clone(true);
     _.setReferences(covers, isPopup);
+    _.setBrowseButtons();
 
     if (_.isList) {
       covers.removeClass('mini-paginator');
