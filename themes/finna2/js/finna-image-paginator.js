@@ -531,12 +531,11 @@ finna.imagePaginator = (function imagePaginator() {
     var img = _.trigger.find('img');
     img.attr('data-src', imagePopup.attr('href')).css('opacity', 0.5);
     img.attr('alt', imagePopup.find('img').attr('alt'));
-    img.attr('src', '');
 
-    img.one('load', function onLoadImage() {
-      img.css('opacity', '');
+    function setImageProperties(image) {
+      $(image).css('opacity', '');
       _.setDimensions();
-      if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
+      if (image.naturalWidth && image.naturalWidth === 10 && image.naturalHeight === 10) {
         _.trigger.addClass('no-image');
         if (_.isList) {
           if (_.images.length < 2) {
@@ -547,7 +546,7 @@ finna.imagePaginator = (function imagePaginator() {
           _.trigger = _.trigger.siblings('.hidden-trigger');
           _.setTrigger(imagePopup);
           _.trigger = oldTrigger;
-          $(this).parents('.grid').addClass('no-image');
+          $(image).parents('.grid').addClass('no-image');
         }
         if (!_.isList && _.images.length <= 1) {
           _.root.closest('.media-left').addClass('hidden-xs').find('.organisation-menu').hide();
@@ -560,7 +559,8 @@ finna.imagePaginator = (function imagePaginator() {
       } else if (_.trigger.hasClass('no-image')) {
         _.trigger.removeClass('no-image');
       }
-    });
+    }
+
     if (!_.isList) {
       $('.image-details-container').addClass('hidden');
       $('.image-details-container[data-img-index="' + imagePopup.attr('index') + '"]').removeClass('hidden');
@@ -568,15 +568,20 @@ finna.imagePaginator = (function imagePaginator() {
     _.imageDetail.html(imagePopup.data('description'));
 
     if (_.isList) {
-      img.unveil(100, function tryMasonry(){
-        $(this).load(function rearrange(){
+      img.unveil(200, function tryMasonry(){
+        $(this).load(function handleImage() {
+          setImageProperties(this);
           if (finna.layout.getMasonryState()) {
             $('.result-view-grid .masonry-wrapper').masonry('layout');
           }
         });
       });
     } else {
-      img.unveil();
+      img.unveil(100, function handleLoading() {
+        $(this).load(function handleImage() {
+          setImageProperties(this);
+        });
+      });
     }
   };
 
