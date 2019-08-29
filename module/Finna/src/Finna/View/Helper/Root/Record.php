@@ -67,18 +67,18 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $recordImageHelper;
 
     /**
-     * Image memory
+     * Image cache
      *
      * @var array
      */
-    protected $images;
+    protected $cachedImages = [];
 
     /**
-     * Old id of record
+     * Cached id of old record
      *
      * @var string
      */
-    protected $oldId = null;
+    protected $cachedId = null;
 
     /**
      * Constructor
@@ -339,16 +339,11 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $recordId = $this->driver->getUniqueID();
 
-        if ($this->oldId !== null && $recordId !== $this->oldId) {
-            $this->oldId = $recordId;
-            $this->images = null;
-        } elseif ($this->oldId === null) {
-            $this->oldId = $recordId;
+        if ($this->cachedId === $recordId) {
+            return $this->cachedImages;
         }
 
-        if ($this->images !== null) {
-            return $this->images;
-        }
+        $this->cachedId = $recordId;
 
         $sizes = ['small', 'medium', 'large', 'master'];
         $images = $this->driver->tryMethod('getAllImages', [$language, $includePdf]);
@@ -389,7 +384,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
         }
-        return $this->images = $images;
+        return $this->cachedImages = $images;
     }
 
     /**
