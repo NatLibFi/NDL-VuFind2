@@ -109,13 +109,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (is_string($driver)) {
             $driver = $this->loader->load($driver);
         }
-
         return parent::__invoke($driver);
-    }
-
-    public function getUniqueId()
-    {
-        return $this->driver->getUniqueId();
     }
 
     /**
@@ -404,7 +398,6 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
         }
-        
         return $this->images = $images;
     }
 
