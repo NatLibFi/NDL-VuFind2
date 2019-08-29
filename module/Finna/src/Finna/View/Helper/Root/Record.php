@@ -350,7 +350,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @return array
      */
-    public function getAllImages($language = 'fi', $thumbnails = true, $includePdf = true)
+    public function getAllImages($language, $thumbnails = true, $includePdf = true)
     {
         $recordId = $this->driver->getUniqueID();
         $this->handleImageMemory($recordId);
