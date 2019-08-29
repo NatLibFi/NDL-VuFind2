@@ -65,6 +65,20 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $recordImageHelper;
 
     /**
+     * Image memory
+     * 
+     * @var array
+     */
+    protected $images;
+
+    /**
+     * Old id of record
+     * 
+     * @var string
+     */
+    protected $oldId;
+
+    /**
      * Constructor
      *
      * @param \Zend\Config\Config                 $config      VuFind configuration
@@ -95,7 +109,13 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (is_string($driver)) {
             $driver = $this->loader->load($driver);
         }
+
         return parent::__invoke($driver);
+    }
+
+    public function getUniqueId()
+    {
+        return $this->driver->getUniqueId();
     }
 
     /**
@@ -309,6 +329,23 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Saves the data of images to array if new record is being loaded
+     * 
+     * @param string $id Record id
+     */
+    public function handleImageMemory($id)
+    {
+        if ($this->oldId !== null) {
+            if ($id !== $this->oldId) {
+                $this->oldId = $id;
+                $this->images = null;
+            }
+        } else {
+            $this->oldId = $id;
+        }
+    }
+
+    /**
      * Return an array of all record images in all sizes
      *
      * @param string $language   Language for description and rights
@@ -319,10 +356,16 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @return array
      */
-    public function getAllImages($language, $thumbnails = true, $includePdf = true)
+    public function getAllImages($language = 'fi', $thumbnails = true, $includePdf = true)
     {
-        $sizes = ['small', 'medium', 'large', 'master'];
         $recordId = $this->driver->getUniqueID();
+        $this->handleImageMemory($recordId);
+
+        if ($this->images !== null) {
+            return $this->images;
+        }
+
+        $sizes = ['small', 'medium', 'large', 'master'];
         $images = $this->driver->tryMethod('getAllImages', [$language, $includePdf]);
         if (null === $images) {
             $images = [];
@@ -361,7 +404,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
         }
-        return $images;
+        
+        return $this->images = $images;
     }
 
     /**
