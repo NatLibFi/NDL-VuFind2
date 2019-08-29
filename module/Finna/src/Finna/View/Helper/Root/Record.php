@@ -325,23 +325,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Saves the data of images to array if new record is being loaded
-     * 
-     * @param string $id Record id
-     */
-    public function handleImageMemory($id)
-    {
-        if ($this->oldId !== null) {
-            if ($id !== $this->oldId) {
-                $this->oldId = $id;
-                $this->images = null;
-            }
-        } else {
-            $this->oldId = $id;
-        }
-    }
-
-    /**
      * Return an array of all record images in all sizes
      *
      * @param string $language   Language for description and rights
@@ -355,7 +338,15 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function getAllImages($language, $thumbnails = true, $includePdf = true)
     {
         $recordId = $this->driver->getUniqueID();
-        $this->handleImageMemory($recordId);
+
+        if ($this->oldId !== null) {
+            if ($recordId !== $this->oldId) {
+                $this->oldId = $recordId;
+                $this->images = null;
+            }
+        } else {
+            $this->oldId = $recordId;
+        }
 
         if ($this->images !== null) {
             return $this->images;
