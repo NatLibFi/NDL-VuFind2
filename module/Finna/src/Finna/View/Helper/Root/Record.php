@@ -339,12 +339,10 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $recordId = $this->driver->getUniqueID();
 
-        if ($this->oldId !== null) {
-            if ($recordId !== $this->oldId) {
-                $this->oldId = $recordId;
-                $this->images = null;
-            }
-        } else {
+        if ($this->oldId !== null && $recordId !== $this->oldId) {
+            $this->oldId = $recordId;
+            $this->images = null;
+        } else if ($this->oldId === null) {
             $this->oldId = $recordId;
         }
 
