@@ -78,7 +78,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @var string
      */
-    protected $oldId;
+    protected $oldId = null;
 
     /**
      * Constructor
