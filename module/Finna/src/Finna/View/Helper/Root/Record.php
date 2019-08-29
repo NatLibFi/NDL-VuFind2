@@ -68,14 +68,14 @@ class Record extends \VuFind\View\Helper\Root\Record
 
     /**
      * Image memory
-     * 
+     *
      * @var array
      */
     protected $images;
 
     /**
      * Old id of record
-     * 
+     *
      * @var string
      */
     protected $oldId;
@@ -342,7 +342,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         if ($this->oldId !== null && $recordId !== $this->oldId) {
             $this->oldId = $recordId;
             $this->images = null;
-        } else if ($this->oldId === null) {
+        } elseif ($this->oldId === null) {
             $this->oldId = $recordId;
         }
 
