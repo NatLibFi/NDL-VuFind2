@@ -142,6 +142,38 @@
   }
 }
 
+.next-image {
+  position: absolute;
+  top: calc(50% - 20px);
+  z-index: 500;
+  appearance: none;
+  -webkit-appearance: none;
+  border: none;
+  background-color: rgba(138, 138, 138, 0.5);
+  .paginator-canvas & {
+    background-color: rgba(138, 138, 138, 0.9);
+  }
+  font-size: 22px;
+  border-radius: 2px;
+  padding: 0 4px;
+  color: white;
+  margin: 0 4px;
+  height: 40px;
+  &:disabled {
+    display: none;
+  }
+  .fa {
+    text-shadow: 1px 1px 2px #555;
+    cursor: pointer;
+  }
+  &.left {
+    left: 0%;
+  }
+  &.right {
+    right: 0%;
+  }
+}
+
 a.authority {
   float: left;
   clear: left;
@@ -172,6 +204,7 @@ a.authority {
         position: relative;
         display: inline-block;
         height: 100%;
+        max-width: 100%;
         img {
           max-height: 600px;
         }
@@ -245,6 +278,7 @@ a.authority {
       border: none;
       background-color: transparent;
       padding: 0 2px;
+      flex: 0 0 0;
       i {
         cursor: pointer;
         font-size: 24px;
@@ -255,7 +289,7 @@ a.authority {
       &:disabled {
         background-color: #d6d6d600;
         color: lighten(@gray-light, 30%);
-        color: #00000000;
+        color: transparent;
         i {
           cursor: not-allowed;
         }
@@ -263,8 +297,8 @@ a.authority {
     }
 
     .track-holder {
-      max-width: 85%;
       display: inline-block;
+      flex: 1 1 auto;
       .finna-element-track {
         max-height: 100%;
         touch-action: none;
@@ -276,8 +310,8 @@ a.authority {
         div {
           display: flex;
           align-items: center;
-          justify-content: space-around;
-          max-width: 100%;
+          justify-content: center;
+          width: 100%;
           a {
             background-color: #efefefcc;
             display: flex;
@@ -288,8 +322,7 @@ a.authority {
             margin: 2px 4px;
             padding: 2px;
             max-width: 64px;
-            width: 64px;
-            flex: 1 1 auto;
+            flex: 1 1 64px;
             cursor: pointer;
 
             &.current {

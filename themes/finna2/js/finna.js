@@ -1,4 +1,5 @@
-/*global finna, finnaCustomInit */
+/*global finnaCustomInit */
+/*exported finna */
 var finna = (function finnaModule() {
 
   var my = {
@@ -23,7 +24,8 @@ var finna = (function finnaModule() {
         'record',
         'searchTabsRecommendations',
         'StreetSearch',
-        'finnaSurvey'
+        'finnaSurvey',
+        'multiSelect'
       ];
 
       $.each(modules, function initModule(ind, module) {

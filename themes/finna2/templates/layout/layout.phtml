@@ -15,10 +15,10 @@
       }
     ?>
 
-    <?php if ($appleTouchIcon = $this->imageSrc('webapp-icon-180.png')): ?>
+    <?php if ($appleTouchIcon = $this->imageSrc()->getSourceAddress('webapp-icon-180.png')): ?>
       <link rel="apple-touch-icon" sizes="180x180" href="<?=$appleTouchIcon?>">
     <?php endif ?>
-    <?php if ($webAppManifest = $this->imageSrc('manifest.json')): ?>
+    <?php if ($webAppManifest = $this->imageSrc()->getSourceAddress('manifest.json')): ?>
       <link rel="manifest" href="<?=$webAppManifest?>">
     <?php endif ?>
 
@@ -78,7 +78,9 @@
             'other_records' => 'other_records',
             'records' => 'records',
             'search_placeholder' => 'search_placeholder',
-            'Image' => 'Image'
+            'Image' => 'Image',
+            'show_filters' => 'show_filters',
+            'hide_filters' => 'hide_filters'
           ]
         );
         // Add translation strings

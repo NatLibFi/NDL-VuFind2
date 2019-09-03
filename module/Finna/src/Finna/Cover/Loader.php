@@ -351,24 +351,16 @@ class Loader extends \VuFind\Cover\Loader
      */
     protected function processImageURL($url, $cache = true)
     {
+        // We can't proceed if we don't have image conversion functions:
+        if (!is_callable('imagecreatefromstring')) {
+            return false;
+        }
+
         $url = str_replace(
             [' ', 'ä','ö','å','Ä','Ö','Å'],
             ['%20','%C3%A4','%C3%B6','%C3%A5','%C3%84','%C3%96','%C3%85'],
             trim($url)
         );
-
-        // Attempt to pull down the image:
-        $result = $this->httpService->createClient($url)->send();
-        if (!$result->isSuccess()) {
-            $this->debug("Failed to retrieve image from $url");
-            return false;
-        }
-
-        $image = $result->getBody();
-
-        if ('' == $image) {
-            return false;
-        }
 
         // Figure out file paths -- $tempFile will be used to store the
         // image for analysis.  $finalFile will be used for long-term storage if
@@ -376,13 +368,32 @@ class Loader extends \VuFind\Cover\Loader
         $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
         $finalFile = $cache ? $this->localFile : $tempFile . '.jpg';
 
-        // Write image data to disk:
-        if (!@file_put_contents($tempFile, $image)) {
-            throw new \Exception("Unable to write to image directory.");
+        $pdfFile = preg_match('/\.pdf$/i', $url);
+        $convertPdfService
+            = $this->config->Content->convertPdfToCoverImageService
+            ?? false;
+
+        if ($pdfFile && !$convertPdfService) {
+            return false;
         }
 
-        // We can't proceed if we don't have image conversion functions:
-        if (!is_callable('imagecreatefromstring')) {
+        if ($pdfFile) {
+            // Convert pdf to jpg
+            $url = "$convertPdfService?url=" . urlencode($url);
+        }
+
+        // Attempt to pull down the image:
+        $client = $this->httpService->createClient($url);
+        $client->setStream($tempFile);
+        $result = $client->send();
+
+        if (!$result->isSuccess()) {
+            $this->debug("Failed to retrieve image from $url");
+            return false;
+        }
+
+        $image = file_get_contents($tempFile);
+        if (strlen($image) === 0) {
             return false;
         }
 

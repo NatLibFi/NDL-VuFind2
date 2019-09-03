@@ -1,6 +1,7 @@
 <?php
   $recordImage = $this->recordImage($this->record($this->driver));
-  $originalImage = $recordImage->getMasterImage($this->index);
+  $originalImageData = $recordImage->getMasterImageWithInfo($this->index);
+  $originalImage = $originalImageData['url'] ?? false;
   $imageDescription = $this->driver->tryMethod('getImageDescription', [$this->index]);
   $rights = $recordImage->getImageRights($this->index);
   $formats = $this->driver->tryMethod('getFormats');
@@ -155,45 +156,16 @@
     <?php endif; ?>
     <div class="record-link"><a href="<?=$this->recordLink()->getUrl($this->driver) ?>"><i class="fa fa-arrow-circle-right"></i><span><?=$this->transEsc('To the record') ?></span></a></div>
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i><span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
-    <?php if (isset($rights['copyright']) && $rights['copyright'] !== $this->transEsc('usage_F')): ?>
+    <?php if ($this->record($this->driver)->allowRecordImageDownload() && isset($rights['copyright']) && $rights['copyright'] !== $this->transEsc('usage_F')): ?>
       <div class="open-link"><a target="_blank" class="original-image-url" href="<?=$this->escapeHtmlAttr($originalImage) ?>" download="<?=$this->escapeHtmlAttr($originalImage) ?>"><i class="fa fa-download"></i><span><?=$this->transEsc('Download the image') ?></span></a> <span class="image-dimensions"></span></div>
     <?php else: ?>
       <a class="original-image-url hidden" href="<?=$originalImage ?>">Hidden</a>
     <?php endif ?>
   </div>
-  <div class="image-rights">
-    <div class="rights">
-      <?php $hasLink = isset($rights['link']); ?>
-      <span><?=$this->transEsc('Image Rights') ?>:</span>
-      <?php if (!empty($rights['copyright'])): ?>
-        <?php if ($hasLink): ?><a target="_blank" href="<?=$rights['link'] ?>"><?php endif; ?><?php if ($this->transEsc($rights['copyright']) === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$this->transEsc($rights['copyright']) ?><?php endif; ?><?php if ($hasLink): ?></a><?php endif; ?>
-      <?php else: ?>
-        <?php if (in_array('usage_F', $this->driver->tryMethod('getUsageRights', [], []))): ?>
-          <?=$this->transEsc('usage_F') ?><br>
-        <?php endif; ?>
-      <?php endif; ?>
-    </div>
-    <?php if (!empty($rights['copyright']) && (isset($rights['description']))): ?>
-      <div class="more-link copyright-link"><a data-mode="1" href=""><?=$this->transEsc('show_more') ?><i class="fa fa-arrow-down"></i></a></div>
-      <div class="copyright">
-    <?php endif; ?>
-    <?php if (isset($rights['description'])): ?>
-      <?php foreach ($rights['description'] as $item): ?>
-        <p><?=$this->transEsc($item) ?></p>
-      <?php endforeach; ?>
-    <?php endif; ?>
-    <?php if (!isset($rights['copyright']) && !isset($rights['description'])): ?>
-      <p><?=$this->transEsc('Image Rights Default') ?>
-      <p><a href="<?=$this->url('content-page', ['page' => 'terms']) . '#image_rights' ?>"><i class="fa fa-arrow-right"></i><?=$this->transEsc('See terms and conditions') ?></a>
-    <?php endif; ?>
-    <?php if (!empty($rights['copyright']) && (isset($rights['description']))): ?>
-      </div>
-      <div class="less-link copyright-link"><a data-mode="0" href=""><?=$this->transEsc('show_less') ?><i class="fa fa-arrow-up"></i></a></div>
-    <?php endif; ?>
-    <?php if ($this->resolver('record/record-organisation-menu.phtml')): ?>
-      <?=$this->render('record/record-organisation-menu.phtml') ?>
-    <?php endif; ?>
-  </div>
+  <?php if ($this->resolver('record/record-organisation-menu.phtml')): ?>
+    <?=$this->render('record/record-organisation-menu.phtml') ?>
+  <?php endif; ?>
+  <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-rights.phtml', ['rights' => $rights]); ?>
   <div style="clear: both;"></div>
 </div>
 <?php

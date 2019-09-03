@@ -57,6 +57,20 @@ $config = [
                     ]
                 ],
             ],
+            'list-save' => [
+                'type'    => 'Zend\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/List/[:id]/save',
+                    'constraints' => [
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => 'ListPage',
+                        'action'     => 'Save',
+                    ]
+                ]
+            ],
             'list-page' => [
                 'type'    => 'Zend\Router\Http\Segment',
                 'options' => [
@@ -255,6 +269,7 @@ $config = [
             'Finna\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
             'Finna\Search\Memory' => 'VuFind\Search\MemoryFactory',
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
 
             'FinnaSearch\Service' => 'VuFind\Service\SearchServiceFactory',
 
@@ -270,6 +285,7 @@ $config = [
             'VuFind\Config\SearchSpecsReader' => 'Finna\Config\SearchSpecsReader',
             'VuFind\Config\YamlReader' => 'Finna\Config\YamlReader',
             'VuFind\Cover\Loader' => 'Finna\Cover\Loader',
+            'VuFind\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesService',
             'VuFind\Form\Form' => 'Finna\Form\Form',
             'VuFind\ILS\Connection' => 'Finna\ILS\Connection',
             'VuFind\Mailer\Mailer' => 'Finna\Mailer\Mailer',
@@ -412,7 +428,7 @@ $config = [
                     'Finna\Db\Row\Transaction' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\User' => 'VuFind\Db\Row\UserFactory',
                     'Finna\Db\Row\UserCard' => 'Finna\Db\Row\UserCardFactory',
-                    'Finna\Db\Row\UserList' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory'
                 ],
                 'aliases' => [
                     'VuFind\Db\Row\PrivateUser' => 'Finna\Db\Row\PrivateUser',
@@ -668,113 +684,6 @@ $config = [
                     'similardeferred' => 'Finna\Related\SimilarDeferred',
                     'workexpressions' => 'Finna\Related\WorkExpressions',
                 ]
-            ],
-        ],
-        'recorddriver_collection_tabs' => [
-            'Finna\RecordDriver\SolrEad' => [
-                'tabs' => [
-                    'CollectionList' => 'CollectionList',
-                    'HierarchyTree' => 'CollectionHierarchyTree',
-                    'UserComments' => 'UserComments',
-                    'Details' => 'StaffViewArray',
-                ],
-                'defaultTab' => null,
-            ],
-        ],
-        'recorddriver_tabs' => [
-            'Finna\RecordDriver\EDS' => [
-                'tabs' => [
-                    'TOC' => 'TOC', 'UserComments' => 'UserComments',
-                    'Reviews' => 'Reviews', 'Excerpt' => 'Excerpt',
-                    'Preview' => 'preview',
-                    'Details' => 'StaffViewArray',
-                ],
-                'defaultTab' => null,
-            ],
-            'Finna\RecordDriver\SolrDefault' => [
-                'tabs' => [
-                    'Holdings' => 'HoldingsILS',
-                    'ComponentParts' => 'ComponentParts',
-                    'TOC' => 'TOC', 'UserComments' => 'UserComments',
-                    'Reviews' => 'Reviews', 'Excerpt' => 'Excerpt',
-                    'Preview' => 'preview',
-                    'HierarchyTree' => 'HierarchyTree', 'Map' => 'Map',
-                    'Details' => 'StaffViewArray',
-                ],
-                'defaultTab' => null,
-            ],
-            'Finna\RecordDriver\SolrMarc' => [
-                'tabs' => [
-                    'Holdings' => 'HoldingsILS',
-                    'ComponentParts' => 'ComponentParts',
-                    'TOC' => 'TOC', 'UserComments' => 'UserComments',
-                    'Reviews' => 'Reviews', 'Excerpt' => 'Excerpt',
-                    'Preview' => 'preview',
-                    'HierarchyTree' => 'HierarchyTree', 'Map' => 'Map',
-                    'Details' => 'StaffViewMARC',
-                ],
-                'defaultTab' => null,
-            ],
-            'Finna\RecordDriver\SolrEad' => [
-                'tabs' => [
-                    'HierarchyTree' => 'HierarchyTree',
-                    'UserComments' => 'UserComments',
-                    'Reviews' => 'Reviews',
-                    'Map' => 'Map',
-                    'Details' => 'StaffViewArray',
-                ],
-                'defaultTab' => null,
-            ],
-            'Finna\RecordDriver\SolrEad3' => [
-                'tabs' => [
-                    'LocationsEad3' => 'LocationsEad3',
-                    'HierarchyTree' => 'HierarchyTree',
-                    'UserComments' => 'UserComments',
-                    'Reviews' => 'Reviews',
-                    'Map' => 'Map',
-                    'Details' => 'StaffViewArray',
-                ],
-                'defaultTab' => null,
-            ],
-            'Finna\RecordDriver\SolrForward' => [
-                'tabs' => [
-                    'UserComments' => 'UserComments',
-                    'Reviews' => 'Reviews',
-                    'Map' => 'Map',
-                    'PressReview' => 'PressReview',
-                    'Music' => 'Music',
-                    'Distribution' => 'Distribution',
-                    'InspectionDetails' => 'InspectionDetails',
-                    'DescriptionFWD' => 'DescriptionFWD',
-                    'ItemDescription' => 'ItemDescription',
-                    'Details' => 'StaffViewArray',
-                ],
-                'defaultTab' => null,
-            ],
-            'Finna\RecordDriver\SolrLido' => [
-                'tabs' => [
-                    'UserComments' => 'UserComments',
-                    'Reviews' => 'Reviews',
-                    'Map' => 'Map',
-                    'Details' => 'StaffViewArray',
-                ],
-                'defaultTab' => null,
-            ],
-            'Finna\RecordDriver\SolrQdc' => [
-                'tabs' => [
-                    'UserComments' => 'UserComments',
-                    'Reviews' => 'Reviews',
-                    'Map' => 'Map',
-                    'Details' => 'StaffViewArray',
-                ],
-                'defaultTab' => null,
-            ],
-            'Finna\RecordDriver\Primo' => [
-                'tabs' => [
-                    'UserComments' => 'UserComments',
-                    'Details' => 'StaffViewArray'
-                ],
-                'defaultTab' => null,
             ],
         ],
     ],

@@ -13,12 +13,21 @@
     try {
         $holdings = $this->driver->getRealTimeHoldings();
     } catch (\VuFind\Exception\ILS $e) {
-        $holdings = [];
+        $holdings = [
+          'holdings' => [],
+          'electronic_holdings' => [],
+          'total' => 0,
+          'page' => 0,
+          'itemLimit' => 0
+        ];
         $offlineMode = 'ils-offline';
     }
     $holdsAllowed = $this->driver->tryMethod('getHoldsAllowed');
     if (!isset($holdings['holdings'])) {
         $holdings['holdings'] = [];
+        $holdings['total'] = 0;
+        $holdings['page'] = 1;
+        $holdings['itemLimit'] = 10;
     }
 
     $illRequestLink = false;
@@ -71,6 +80,7 @@
 ?>
 
 <?=($offlineMode == "ils-offline") ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
+
 <?php if ($holdsAllowed && !$disableTitleHold && (($this->ils()->getHoldsMode() == 'driver' && !empty($holdings['holdings'])) || $this->ils()->getTitleHoldsMode() == 'driver')): ?>
   <?php if ($account->loginEnabled() && $offlineMode != 'ils-offline' && $ilsLoginAvailable): ?>
     <?php if (!$user): ?>
@@ -80,7 +90,7 @@
       <div class="clearfix"></div>
     <?php elseif (!$user->cat_username): ?>
       <div class="alert alert-info">
-        <?=$this->translate("hold_profile_html", ['%%url%%' => $this->recordLink()->getTabUrl($this->driver, 'Holdings') . '?catalogLogin=true'])?>
+        <?=$this->translate("hold_profile_html", ['%%url%%' => $this->recordLink()->getTabUrl($this->driver, 'Holdings', ['catalogLogin' => 'true'])])?>
       </div>
     <?php endif; ?>
   <?php endif; ?>
@@ -130,19 +140,26 @@
   </div>
 <?php endif; ?>
 
+<?php if (!empty($holdings['electronic_holdings'])): ?>
+  <?=$this->context($this)->renderInContext(
+      'RecordTab/holdingsils/electronic.phtml',
+      ['holdings' => $holdings['electronic_holdings']]
+  );?>
+<?php endif; ?>
+
 <div class="table record-holdings-table">
   <div class="headers">
     <?php $currentSource = $this->driver->tryMethod('getDataSource'); ?>
     <?php $mergedData = $this->driver->tryMethod('getMergedRecordData'); ?>
+    <?php $recordSourceId = $this->driver->getSourceIdentifier(); ?>
     <div class="dedup-information">
       <span class="holdings-title"><?=$this->transEsc("source_$currentSource", null, $currentSource) ?></span>
       <?php if ($mergedData && count($mergedData['records']) > 1): ?>
         <select class="dedup-select form-control jumpMenuUrl hidden-print" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>">
           <option value="#" role="option" selected="selected"><?=$this->transEsc('Other Libraries'); ?></option>
           <?php foreach ($mergedData['records'] as $current): ?>
-            <?php // We should use RecordLink() helper below to create the record URL, but this is much faster. We can get away with it here, but this is not generally acceptable. ?>
             <?php if ($currentSource != $current['source']): ?>
-              <option value="<?=$this->escapeHtmlAttr($this->url('record') . urlencode($current['id'])) ?>" role="option"><?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?></option>
+              <option value="<?=$this->recordLink()->getUrl($recordSourceId . '|' . $current['id']) ?>" role="option"><?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?></option>
             <?php endif; ?>
           <?php endforeach; ?>
         </select>
@@ -432,6 +449,10 @@
   </div>
 <?php endif; ?>
 </div>
+
+<?php if ($paginator = $this->tab->getPaginator($holdings['total'], $holdings['page'], $holdings['itemLimit'])): ?>
+  <?=$this->paginationControl($paginator, 'Sliding', 'Helpers/pagination.phtml', ['page' => $holdings['page']])?>
+<?php endif; ?>
 
 <?php $history = $this->driver->getRealTimeHistory(); ?>
 <?php if (is_array($history) && !empty($history)): ?>

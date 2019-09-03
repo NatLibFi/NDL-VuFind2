@@ -19,9 +19,7 @@ return [
             'Finna\View\Helper\Root\FeedTabs' => 'Zend\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\FileSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\FinnaSurvey' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
-            'FinnaTheme\View\Helper\HeadScript' => 'FinnaTheme\View\Helper\Factory::getHeadScript',
             'Finna\View\Helper\Root\HtmlElement' => 'Zend\ServiceManager\Factory\InvokableFactory',
-            'FinnaTheme\View\Helper\InlineScript' => \VuFindTheme\View\Helper\PipelineInjectorFactory::class,
             'Finna\View\Helper\Root\HeadTitle' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
             'Finna\View\Helper\Root\HoldingsSettings' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
             'Finna\View\Helper\Root\ImageSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
@@ -77,7 +75,6 @@ return [
             'feedTabs' => 'Finna\View\Helper\Root\FeedTabs',
             'fileSrc' => 'Finna\View\Helper\Root\FileSrc',
             'finnaSurvey' => 'Finna\View\Helper\Root\FinnaSurvey',
-            'inlineScript' => 'FinnaTheme\View\Helper\InlineScript',
             'headTitle' => 'Finna\View\Helper\Root\HeadTitle',
             'holdingsSettings' => 'Finna\View\Helper\Root\HoldingsSettings',
             'htmlElement' => 'Finna\View\Helper\Root\HtmlElement',
@@ -141,7 +138,6 @@ return [
     'css' => [
         'vendor/bootstrap-datepicker3.min.css',
         'vendor/bootstrap-rating.min.css',
-        'vendor/bootstrap-multiselect.min.css',
         'vendor/bootstrap-slider.min.css',
         'vendor/dataTables.bootstrap.min.css',
         'vendor/L.Control.Locate.min.css',
@@ -204,7 +200,6 @@ return [
         'vendor/bootstrap-datepicker.en-GB.min.js',
         'vendor/bootstrap-datepicker.fi.min.js',
         'vendor/bootstrap-datepicker.sv.min.js',
-        'vendor/bootstrap-multiselect.min.js',
         'vendor/bootstrap-rating.min.js',
         'vendor/bootstrap-slider.min.js',
         'vendor/classList.js',
@@ -231,6 +226,7 @@ return [
         'vendor/priority-nav.min.js',
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
+        'finna-multiselect.js'
     ],
     'less' => [
         'active' => false
