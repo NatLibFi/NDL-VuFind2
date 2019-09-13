@@ -23,11 +23,10 @@ finna.imagePaginator = (function imagePaginator() {
    * Initializer function
    *
    * @param {object} images
-   * @param {HTMLEelement} paginatedArea
    * @param {object} settings
    * @param {boolean} isList
    */
-  function FinnaPaginator(images, paginatedArea, settings) {
+  function FinnaPaginator(images, settings) {
     var _ = this;
 
     _.paginatorIndex = paginatorIndex;
@@ -36,7 +35,7 @@ finna.imagePaginator = (function imagePaginator() {
       settings.imagesOnNormal = 0;
     }
     _.images = images;
-    _.root = $(paginatedArea);
+    _.root = $('.recordcover-holder.paginate.' + settings.recordId.replace(/\./g, '\\.'));
     _.root.removeClass('paginate');
 
     _.trigger = _.root.find('.image-popup-trigger');
@@ -76,7 +75,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (settings.recordType === 'marc') {
       settings.imagesOnPopup = 4;
     }
-    var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
+    var paginator = new FinnaPaginator(images, settings);
     paginator.init();
   }
 
