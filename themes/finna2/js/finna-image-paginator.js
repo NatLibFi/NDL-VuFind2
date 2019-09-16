@@ -33,10 +33,12 @@ finna.imagePaginator = (function imagePaginator() {
     _.isList = settings.isList;
     if (_.isList) {
       settings.imagesOnNormal = 0;
+      _.root = $('.hiddenId[value="' + settings.recordId + '"]').closest('.result').find('.recordcover-holder');
+    } else {
+      _.root = $('.recordcover-holder.paginate');
     }
-    _.images = images;
-    _.root = $('.recordcover-holder.paginate.' + settings.recordId.replace(/\./g, '\\.'));
     _.root.removeClass('paginate');
+    _.images = images;
 
     _.trigger = _.root.find('.image-popup-trigger');
     _.trigger.attr('paginator-index', paginatorIndex++);
