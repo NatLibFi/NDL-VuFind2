@@ -181,16 +181,9 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setBrowseButtons = function setBrowseButtons(isList) {
     var _ = this;
-
     var state = typeof isList !== "undefined" && isList !== false;
-
-    if (state) {
-      _.leftBrowseBtn.prop('disabled', true);
-      _.rightBrowseBtn.prop('disabled', true);
-    } else {
-      _.leftBrowseBtn.prop('disabled', _.openImageIndex < 1);
-      _.rightBrowseBtn.prop('disabled', _.openImageIndex >= _.images.length - 1);
-    }
+    _.leftBrowseBtn.prop('disabled', state || _.openImageIndex < 1);
+    _.rightBrowseBtn.prop('disabled', state || _.openImageIndex >= _.images.length - 1);
   };
 
   /**
@@ -383,6 +376,7 @@ finna.imagePaginator = (function imagePaginator() {
       _.leafletHolder.setMinZoom(_.leafletHolder.getZoom());
       _.setZoomButtons();
     };
+    _.setBrowseButtons();
   };
 
   /**
@@ -762,11 +756,7 @@ finna.imagePaginator = (function imagePaginator() {
       };
     }
     holder.attr({'index': image.index, 'data-largest': image.largest, 'data-description': image.description});
-    if (!_.isList && _.settings.enableImageZoom) {
-      holder.attr('href', image.largest);
-    } else {
-      holder.attr('href', image.medium);
-    }
+    holder.attr('href', (!_.isList && _.settings.enableImageZoom) ? image.largest : image.medium);
     return holder;
   };
 
@@ -779,16 +769,8 @@ finna.imagePaginator = (function imagePaginator() {
       $('.previous-record, .next-record').hide();
       return;
     }
-    if (_.paginatorIndex < 1) {
-      $('.previous-record').hide();
-    } else {
-      $('.previous-record').show();
-    }
-    if (_.paginatorIndex === paginatorIndex - 1) {
-      $('.next-record').hide();
-    } else {
-      $('.next-record').show();
-    }
+    $('.previous-record').toggle(_.paginatorIndex > 0);
+    $('.next-record').toggle(_.paginatorIndex !== paginatorIndex - 1);
   };
 
   /**
@@ -878,6 +860,7 @@ finna.imagePaginator = (function imagePaginator() {
         },
         open: function onPopupOpen() {
           var mfpContainer = $(this)[0].container;
+          var mfpContent = mfpContainer.find('.mfp-content');
           mfpContainer.find('.leaflet-map-image').attr('id', 'leaflet-map-image');
           mfpContainer.find('.popup-nonzoom').attr('id', 'popup-nonzoom');
           mfpContainer.find('.popup-video').attr('id', 'popup-video');
@@ -891,7 +874,7 @@ finna.imagePaginator = (function imagePaginator() {
           var previousRecord = $(previousRecordButton).clone();
           var nextRecord = $(nextRecordButton).clone();
           
-          mfpContainer.find('.mfp-content').addClass('loaded ' + _.settings.recordType);
+          mfpContent.addClass('loaded ' + _.settings.recordType);
           mfpContainer.append(previousRecord, nextRecord);
 
           previousRecord.off('click').click(function loadNextPaginator(e){
@@ -912,7 +895,7 @@ finna.imagePaginator = (function imagePaginator() {
           if (_.settings.enableImageZoom) {
             _.onZoomableOpen();
           } else {
-            mfpContainer.find('.mfp-content').addClass('nonzoomable');
+            mfpContent.addClass('nonzoomable');
             _.onNonZoomableOpen();
           }
           _.createPopupTrack(mfpContainer.find('.finna-image-pagination'), true);
