@@ -19,6 +19,14 @@ finna.imagePaginator = (function imagePaginator() {
     recordType: 'default-type'
   };
 
+  var translations = {
+    image: '',
+    close: '',
+    next_record: '',
+    previous_record: '',
+    isSet: false
+  };
+
   /**
    * Initializer function
    *
@@ -73,6 +81,15 @@ finna.imagePaginator = (function imagePaginator() {
    * @param {object} settings 
    */
   function initPaginator(images, settings) {
+    if (translations.isSet === false) {
+      translations = {
+        image: VuFind.translate('Image'),
+        close: VuFind.translate('close'),
+        next_record: VuFind.translate('Next Record'),
+        previous_record: VuFind.translate('Previous Record'),
+        isSet: true
+      };
+    }
     if (settings.recordType === 'marc') {
       settings.imagesOnPopup = 4;
     }
@@ -476,7 +493,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (typeof isPopup === 'undefined' || !isPopup) {
       infoText = imageIndex + " / " + _.images.length;
     } else {
-      infoText = VuFind.translate('Image') + ' ' + imageIndex + ' / ' + _.images.length;
+      infoText = translations.image + ' ' + imageIndex + ' / ' + _.images.length;
     }
     _.pagerInfo.find('.image-index').html(infoText);
   };
@@ -867,7 +884,7 @@ finna.imagePaginator = (function imagePaginator() {
         type: 'inline',
       },
       fixedContentPos: true,
-      tClose: VuFind.translate('close'),
+      tClose: translations.close,
       callbacks: {
         beforeOpen: function unveilClosest() {
           if (_.isList) {
@@ -896,12 +913,12 @@ finna.imagePaginator = (function imagePaginator() {
             e.preventDefault();
             e.stopPropagation();
             _.getNextPaginator(-1);
-          });
+          }).attr('title', translations.previous_record);
           nextRecord.off('click').click(function loadNextPaginator(e){
             e.preventDefault();
             e.stopPropagation();
             _.getNextPaginator(1);
-          });
+          }).attr('title', translations.next_record);
 
           _.leafletHolder = $('#leaflet-map-image');
           _.nonZoomableHolder = $('#popup-nonzoom');
