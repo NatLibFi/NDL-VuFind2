@@ -473,7 +473,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param array $urls Array of urls in the format returned by
      *                    getUrls and getOnlineUrls
-     * 
+     *
      * @return boolean
      */
     public function containsPdfUrl($urls)

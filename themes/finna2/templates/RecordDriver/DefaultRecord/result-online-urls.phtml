@@ -71,7 +71,7 @@
       <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $i => $url): ?>
           <?php
-            if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs)) 
+            if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs))
             {
               continue;
             }
