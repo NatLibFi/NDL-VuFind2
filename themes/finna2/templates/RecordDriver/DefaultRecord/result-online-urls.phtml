@@ -7,7 +7,6 @@
     $urls = $this->driver->getURLs();
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
     $mergedData = $this->driver->tryMethod('getMergedRecordData');
-    // Exclude image from a check
 
     if (!empty($images)
       && !$this->record($this->driver)->containsNonImageURL($urls, $images)
@@ -16,7 +15,7 @@
       && (empty($mergedData['urls']) || !$this->record($this->driver)->containsNonImageURL($mergedData['urls'], $images))
       && !$openUrlActive
     ) {
-       // All online URLs are record images that are handled by image-popup, but not anymore...
+       // Some onlineurls might be links to pdf files, but otherwise they are imageurls
        return;
     }
     $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
