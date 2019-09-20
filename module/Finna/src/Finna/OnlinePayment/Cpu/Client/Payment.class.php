@@ -157,8 +157,8 @@ class Cpu_Client_Payment
         if (empty($this->NotificationAddress) || !filter_var($this->NotificationAddress, FILTER_VALIDATE_URL)) {
             $errorCode = 'Empty or invalid notification address given';
         }
-        
-        return $errorCode; 
+
+        return $errorCode;
     }
 
     /**

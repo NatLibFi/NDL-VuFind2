@@ -94,8 +94,8 @@ class Cpu_Client
 
             if (!$response) {
                 return ['error' => 'Failed to send payment'];
-            } 
-            
+            }
+
             return $response['response'];
         }
 
