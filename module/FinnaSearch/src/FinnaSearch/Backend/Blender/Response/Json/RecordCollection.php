@@ -189,10 +189,10 @@ class RecordCollection
             $mappings = [];
             $hierarchical = false;
             foreach ($this->mappings['Facets'] ?? [] as $key => $current) {
-                if ($facet === $current['secondary']) {
+                if ($facet === $current['Secondary']) {
                     $facet = $key;
-                    $mappings = $current['values'] ?? [];
-                    $hierarchical = $current['hierarchical'] ?? false;
+                    $mappings = $current['Values'] ?? [];
+                    $hierarchical = $current['Hierarchical'] ?? false;
                     break;
                 }
             }

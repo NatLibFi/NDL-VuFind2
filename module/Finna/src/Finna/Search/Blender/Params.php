@@ -28,8 +28,6 @@
  */
 namespace Finna\Search\Blender;
 
-use VuFindSearch\Backend\EDS\SearchRequestModel as SearchRequestModel;
-
 /**
  * Blender Search Parameters
  *
@@ -142,10 +140,10 @@ class Params extends \Finna\Search\Solr\Params
                     $field = substr($field, 1);
                 }
                 $values = [$value];
-                if (isset($mappings[$field]['secondary'])) {
+                if (isset($mappings[$field]['Secondary'])) {
                     // Map facet value
                     $resultValues = [];
-                    foreach ($mappings[$field]['values'] ?? [] as $k => $v) {
+                    foreach ($mappings[$field]['Values'] ?? [] as $k => $v) {
                         if ($value === $v) {
                             $resultValues[] = $k;
                         }
@@ -154,8 +152,8 @@ class Params extends \Finna\Search\Solr\Params
                         $values = $resultValues;
                     }
                     // Map facet type (only after $field is no longer needed)
-                    if (isset($mappings[$field]['secondary'])) {
-                        $field = $mappings[$field]['secondary'];
+                    if (isset($mappings[$field]['Secondary'])) {
+                        $field = $mappings[$field]['Secondary'];
                     } else {
                         // Facet not supported by secondary
                         continue;
@@ -163,7 +161,10 @@ class Params extends \Finna\Search\Solr\Params
                 }
                 if ('EDS' === $secondary) {
                     array_map(
-                        ['SearchRequestModel', 'escapeSpecialCharacters'],
+                        [
+                            '\VuFindSearch\Backend\EDS\SearchRequestModel',
+                            'escapeSpecialCharacters'
+                        ],
                         $values
                     );
                 }
@@ -175,6 +176,22 @@ class Params extends \Finna\Search\Solr\Params
                 }
             }
             $request->set('filter', $newFilters);
+        }
+
+        $type = $request->get('type');
+        if (!empty($type)) {
+            $key = array_search($type, $this->mappings['Search']['Fields'] ?? []);
+            if (false !== $key) {
+                $request->set('type', $key);
+            }
+        }
+
+        $sort = $request->get('sort');
+        if (!empty($sort)) {
+            $key = array_search($sort, $this->mappings['Sorting']['Fields'] ?? []);
+            if (false !== $key) {
+                $request->set('sort', $key);
+            }
         }
 
         return $request;
