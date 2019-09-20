@@ -19,25 +19,34 @@ finna.imagePaginator = (function imagePaginator() {
     recordType: 'default-type'
   };
 
+  var translations = {
+    image: '',
+    close: '',
+    next_record: '',
+    previous_record: '',
+    isSet: false
+  };
+
   /**
    * Initializer function
    *
    * @param {object} images
-   * @param {HTMLEelement} paginatedArea
    * @param {object} settings
    * @param {boolean} isList
    */
-  function FinnaPaginator(images, paginatedArea, settings) {
+  function FinnaPaginator(images, settings) {
     var _ = this;
 
     _.paginatorIndex = paginatorIndex;
     _.isList = settings.isList;
     if (_.isList) {
       settings.imagesOnNormal = 0;
+      _.root = $('.hiddenId[value="' + settings.recordId + '"]').closest('.result').find('.recordcover-holder');
+    } else {
+      _.root = $('.recordcover-holder.paginate');
     }
-    _.images = images;
-    _.root = $(paginatedArea);
     _.root.removeClass('paginate');
+    _.images = images;
 
     _.trigger = _.root.find('.image-popup-trigger');
     _.trigger.attr('paginator-index', paginatorIndex++);
@@ -73,10 +82,19 @@ finna.imagePaginator = (function imagePaginator() {
    * @param {object} settings 
    */
   function initPaginator(images, settings) {
+    if (translations.isSet === false) {
+      translations = {
+        image: VuFind.translate('Image'),
+        close: VuFind.translate('close'),
+        next_record: VuFind.translate('Next Record'),
+        previous_record: VuFind.translate('Previous Record'),
+        isSet: true
+      };
+    }
     if (settings.recordType === 'marc') {
       settings.imagesOnPopup = 4;
     }
-    var paginator = new FinnaPaginator(images, $('.recordcover-holder.paginate'), settings);
+    var paginator = new FinnaPaginator(images, settings);
     paginator.init();
   }
 
@@ -163,16 +181,9 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setBrowseButtons = function setBrowseButtons(isList) {
     var _ = this;
-
     var state = typeof isList !== "undefined" && isList !== false;
-
-    if (state) {
-      _.leftBrowseBtn.prop('disabled', true);
-      _.rightBrowseBtn.prop('disabled', true);
-    } else {
-      _.leftBrowseBtn.prop('disabled', _.openImageIndex < 1);
-      _.rightBrowseBtn.prop('disabled', _.openImageIndex >= _.images.length - 1);
-    }
+    _.leftBrowseBtn.prop('disabled', state || _.openImageIndex < 1);
+    _.rightBrowseBtn.prop('disabled', state || _.openImageIndex >= _.images.length - 1);
   };
 
   /**
@@ -365,6 +376,7 @@ finna.imagePaginator = (function imagePaginator() {
       _.leafletHolder.setMinZoom(_.leafletHolder.getZoom());
       _.setZoomButtons();
     };
+    _.setBrowseButtons();
   };
 
   /**
@@ -460,7 +472,7 @@ finna.imagePaginator = (function imagePaginator() {
     if (typeof isPopup === 'undefined' || !isPopup) {
       infoText = imageIndex + " / " + _.images.length;
     } else {
-      infoText = VuFind.translate('Image') + ' ' + imageIndex + ' / ' + _.images.length;
+      infoText = translations.image + ' ' + imageIndex + ' / ' + _.images.length;
     }
     _.pagerInfo.find('.image-index').html(infoText);
   };
@@ -744,11 +756,7 @@ finna.imagePaginator = (function imagePaginator() {
       };
     }
     holder.attr({'index': image.index, 'data-largest': image.largest, 'data-description': image.description});
-    if (!_.isList && _.settings.enableImageZoom) {
-      holder.attr('href', image.largest);
-    } else {
-      holder.attr('href', image.medium);
-    }
+    holder.attr('href', (!_.isList && _.settings.enableImageZoom) ? image.largest : image.medium);
     return holder;
   };
 
@@ -761,16 +769,8 @@ finna.imagePaginator = (function imagePaginator() {
       $('.previous-record, .next-record').hide();
       return;
     }
-    if (_.paginatorIndex < 1) {
-      $('.previous-record').hide();
-    } else {
-      $('.previous-record').show();
-    }
-    if (_.paginatorIndex === paginatorIndex - 1) {
-      $('.next-record').hide();
-    } else {
-      $('.next-record').show();
-    }
+    $('.previous-record').toggle(_.paginatorIndex > 0);
+    $('.next-record').toggle(_.paginatorIndex !== paginatorIndex - 1);
   };
 
   /**
@@ -851,7 +851,7 @@ finna.imagePaginator = (function imagePaginator() {
         type: 'inline',
       },
       fixedContentPos: true,
-      tClose: VuFind.translate('close'),
+      tClose: translations.close,
       callbacks: {
         beforeOpen: function unveilClosest() {
           if (_.isList) {
@@ -860,6 +860,7 @@ finna.imagePaginator = (function imagePaginator() {
         },
         open: function onPopupOpen() {
           var mfpContainer = $(this)[0].container;
+          var mfpContent = mfpContainer.find('.mfp-content');
           mfpContainer.find('.leaflet-map-image').attr('id', 'leaflet-map-image');
           mfpContainer.find('.popup-nonzoom').attr('id', 'popup-nonzoom');
           mfpContainer.find('.popup-video').attr('id', 'popup-video');
@@ -873,19 +874,19 @@ finna.imagePaginator = (function imagePaginator() {
           var previousRecord = $(previousRecordButton).clone();
           var nextRecord = $(nextRecordButton).clone();
           
-          mfpContainer.find('.mfp-content').addClass('loaded ' + _.settings.recordType);
+          mfpContent.addClass('loaded ' + _.settings.recordType);
           mfpContainer.append(previousRecord, nextRecord);
 
           previousRecord.off('click').click(function loadNextPaginator(e){
             e.preventDefault();
             e.stopPropagation();
             _.getNextPaginator(-1);
-          });
+          }).attr('title', translations.previous_record);
           nextRecord.off('click').click(function loadNextPaginator(e){
             e.preventDefault();
             e.stopPropagation();
             _.getNextPaginator(1);
-          });
+          }).attr('title', translations.next_record);
 
           _.leafletHolder = $('#leaflet-map-image');
           _.nonZoomableHolder = $('#popup-nonzoom');
@@ -894,7 +895,7 @@ finna.imagePaginator = (function imagePaginator() {
           if (_.settings.enableImageZoom) {
             _.onZoomableOpen();
           } else {
-            mfpContainer.find('.mfp-content').addClass('nonzoomable');
+            mfpContent.addClass('nonzoomable');
             _.onNonZoomableOpen();
           }
           _.createPopupTrack(mfpContainer.find('.finna-image-pagination'), true);
