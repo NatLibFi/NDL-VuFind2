@@ -146,7 +146,7 @@ class Cpu_Client_Payment
             $result = 'Empty id given to payment';
         }
         if ($this->Mode !== self::MODE_ECOMMERCE) {
-            $result = 'Mode is not 3';
+            $result = 'Mode is not eCommerce';
         }
         if (count($this->Products) === 0) {
             $result = 'No products given';
