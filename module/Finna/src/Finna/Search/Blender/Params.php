@@ -141,12 +141,19 @@ class Params extends \Finna\Search\Solr\Params
                     $prefix = '~';
                     $field = substr($field, 1);
                 }
+                $values = [$value];
                 if (isset($mappings[$field]['secondary'])) {
                     // Map facet value
-                    if (isset($mappings[$field]['values'][$value])) {
-                        $value = $mappings[$field]['values'][$value];
+                    $resultValues = [];
+                    foreach ($mappings[$field]['values'] ?? [] as $k => $v) {
+                        if ($value === $v) {
+                            $resultValues[] = $k;
+                        }
                     }
-                    // Map facet type
+                    if ($resultValues) {
+                        $values = $resultValues;
+                    }
+                    // Map facet type (only after $field is no longer needed)
                     if (isset($mappings[$field]['secondary'])) {
                         $field = $mappings[$field]['secondary'];
                     } else {
@@ -154,14 +161,18 @@ class Params extends \Finna\Search\Solr\Params
                         continue;
                     }
                 }
-
                 if ('EDS' === $secondary) {
-                    $value = SearchRequestModel::escapeSpecialCharacters($value);
+                    array_map(
+                        ['SearchRequestModel', 'escapeSpecialCharacters'],
+                        $values
+                    );
                 }
                 if ('Primo' === $secondary) {
                     $prefix = '';
                 }
-                $newFilters[] = $prefix . $field . ':"' . $value . '"';
+                foreach ($values as $value) {
+                    $newFilters[] = $prefix . $field . ':"' . $value . '"';
+                }
             }
             $request->set('filter', $newFilters);
         }

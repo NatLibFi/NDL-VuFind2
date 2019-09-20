@@ -110,8 +110,7 @@ class RecordCollection
         $primaryRecords = $primaryCollection->getRecords();
         $secondaryRecords = $secondaryCollection->getRecords();
         foreach ($primaryRecords as &$record) {
-            $record
-                ->setSourceIdentifier($record->getSourceIdentifier() . '/p');
+            $record->setExtraDetail('blendSource', 'primary');
         }
         $initialPrimary = $this->config['Blending']['boostPosition'] ?? $blockSize;
         $boostRecordCount = $this->config['Blending']['boostCount'] ?? 0;
@@ -137,10 +136,8 @@ class RecordCollection
         $this->primaryCount = 0;
         $this->secondaryCount = 0;
         foreach ($this->records as $record) {
-            $sid = $record->getSourceIdentifier();
-            if (substr($sid, -2) === '/p') {
+            if ($record->getExtraDetail('blendSource') === 'primary') {
                 ++$this->primaryCount;
-                $record->setSourceIdentifier(substr($sid, 0, -2));
             } else {
                 ++$this->secondaryCount;
             }
@@ -205,8 +202,8 @@ class RecordCollection
             $list = $facets[$facet] ?? [];
             foreach ($values as $field => $count) {
                 $mapped = array_search($field, $mappings);
-                if (false !== $mapped) {
-                    $field = $mapped;
+                if (isset($mappings[$field])) {
+                    $field = $mappings[$field];
                 } elseif ($hierarchical) {
                     $field = "0/$field/";
                 }
@@ -231,6 +228,14 @@ class RecordCollection
                     }
                 }
             }
+            // Re-sort the list
+            uasort(
+                $list,
+                function ($a, $b) {
+                    return $b - $a;
+                }
+            );
+
             $facets[$facet] = $list;
         }
 
