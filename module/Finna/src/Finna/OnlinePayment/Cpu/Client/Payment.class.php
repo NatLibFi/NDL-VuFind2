@@ -137,28 +137,28 @@ class Cpu_Client_Payment
      */
     public function isValid()
     {
-        $errorCode = true;
+        $result = true;
 
         if (empty($this->ApiVersion)) {
-            $errorCode = 'Empty apiversion given to payment';
+            $result = 'Empty apiversion given to payment';
         }
         if (empty($this->Id)) {
-            $errorCode = 'No id given to payment';
+            $result = 'Empty id given to payment';
         }
         if ($this->Mode !== self::MODE_ECOMMERCE) {
-            $errorCode = 'Mode is not 3';
+            $result = 'Mode is not 3';
         }
         if (count($this->Products) === 0) {
-            $errorCode = 'No products given';
+            $result = 'No products given';
         }
         if (empty($this->ReturnAddress) || !filter_var($this->ReturnAddress, FILTER_VALIDATE_URL)) {
-            $errorCode = 'Empty or invalid return address given';
+            $result = 'Empty or invalid return address given';
         }
         if (empty($this->NotificationAddress) || !filter_var($this->NotificationAddress, FILTER_VALIDATE_URL)) {
-            $errorCode = 'Empty or invalid notification address given';
+            $result = 'Empty or invalid notification address given';
         }
 
-        return $errorCode;
+        return $result;
     }
 
     /**
