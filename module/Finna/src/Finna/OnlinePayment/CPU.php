@@ -209,8 +209,9 @@ class CPU extends BaseHandler
             $this->handleCPUError('exception sending payment: ' . $e->getMessage());
             return '';
         }
-        if (isset($response['error'])) {
-            $this->handleCPUError('error sending payment: ' . $response['error']);
+        if (isset($response['error']) || !$response) {
+            $errorMessage = $response['error'] ?? 'Sendpayment returned false';
+            $this->handleCPUError('error sending payment: ' . $errorMessage);
             return '';
         }
 

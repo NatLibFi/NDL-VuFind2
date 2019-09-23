@@ -58,7 +58,7 @@ class Cpu_Client
      * Redirect customer to PaymentAddress after validating response data.
      *
      * @param Cpu_Client_Payment $payment Payment data
-     * @return mixed|NULL JSON response from eCommerce
+     * @return array|string JSON response from eCommerce or an errormessage
      */
     public function sendPayment(Cpu_Client_Payment $payment)
     {
