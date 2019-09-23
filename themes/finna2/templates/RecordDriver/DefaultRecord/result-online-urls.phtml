@@ -35,7 +35,7 @@
       <?php if (!empty($urls)): ?>
         <?php foreach ($urls as $i => $url): ?>
           <?php
-            if (isset($images[$url['url']]) && pathinfo($url['url'], PATHINFO_EXTENSION) !== 'pdf') {
+            if (isset($images[$url['url']]) && strcasecmp(pathinfo($url['url'], PATHINFO_EXTENSION), 'pdf') !== 0) {
               continue;
             } else {
               $renderedURLs[] = $url['url'];

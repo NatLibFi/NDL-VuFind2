@@ -479,7 +479,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function containsPdfUrl($urls)
     {
         foreach ($urls as $url) {
-            if (pathinfo($url['url'], PATHINFO_EXTENSION) === 'pdf') {
+            if (strcasecmp(pathinfo($url['url'], PATHINFO_EXTENSION), 'pdf') === 0) {
                 return true;
             }
         }
