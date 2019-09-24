@@ -3,6 +3,8 @@
 # by copying the full section from it to this file and modifying it here.
 # Below is a commented-out example.
 
+"@parent_yaml": "../finna/BlenderMappings.yaml"
+
 #Sorting:
 #  Fields:
 #    relevance: "relevance,id asc"
