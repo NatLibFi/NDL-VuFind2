@@ -48,47 +48,6 @@ class Alma extends \VuFind\ILS\Driver\Alma
     protected $cachedRequest = [];
 
     /**
-     * Patron Login
-     *
-     * This is responsible for authenticating a patron against the catalog.
-     *
-     * Finna: Get also account type
-     *
-     * @param string $username The patrons barcode or other username.
-     * @param string $password The patrons password.
-     *
-     * @return string[]|NULL
-     */
-    public function patronLogin($username, $password)
-    {
-        $patron = parent::patronLogin($username, $password);
-        if ($patron) {
-            $loginMethod = $this->config['Catalog']['loginMethod'] ?? 'vufind';
-
-            $patronId = 'email' === $loginMethod ? $patron['id'] : $username;
-
-            // Create parameters for API call
-            $getParams = [
-                'user_id_type' => 'all_unique',
-                'view' => 'full',
-                'expand' => 'none'
-            ];
-
-            // Check for patron in Alma
-            $response = $this->makeRequest(
-                '/users/' . urlencode($patronId),
-                $getParams
-            );
-
-            if ($response !== null) {
-                $patron['account_type'] = (string)$response->account_type;
-            }
-        }
-
-        return $patron;
-    }
-
-    /**
      * Get Patron Fines
      *
      * This is responsible for retrieving all fines by a specific patron.
@@ -253,7 +212,8 @@ class Alma extends \VuFind\ILS\Driver\Alma
                                 : null,
             'group_code' => isset($xml->user_group)
                                 ? (string)$xml->user_group
-                                : null
+                                : null,
+            'account_type' => strtolower((string)$xml->account_type)
         ];
         $contact = $xml->contact_info;
         if ($contact) {
@@ -579,20 +539,23 @@ class Alma extends \VuFind\ILS\Driver\Alma
             $function = 'updateProfile';
         }
         $config = parent::getConfig($function, $params);
-        if ('updateProfile' === $function) {
+        if ('updateProfile' === $function && isset($config['fields'])) {
             // Allow only a limited set of fields for external users
-            if (($params['patron']['account_type'] ?? '') === 'EXTERNAL') {
-                $fields = [];
-                foreach ($config['fields'] as &$field) {
-                    list($label, $fieldId) = explode(':', $field);
-                    if (in_array($fieldId, ['self_service_pin'])) {
-                        $fields[] = $field;
+            if (isset($params['patron'])) {
+                $profile = $this->getMyProfile($params['patron']);
+                if ('external' === $profile['account_type']) {
+                    $fields = [];
+                    foreach ($config['fields'] as &$field) {
+                        list($label, $fieldId) = explode(':', $field);
+                        if (in_array($fieldId, ['self_service_pin'])) {
+                            $fields[] = $field;
+                        }
                     }
+                    if (!$fields) {
+                        return false;
+                    }
+                    $config['fields'] = $fields;
                 }
-                if (!$fields) {
-                    return false;
-                }
-                $config['fields'] = $fields;
             }
             // Add code tables
             if (!empty($config['fields'])) {
@@ -706,7 +669,7 @@ class Alma extends \VuFind\ILS\Driver\Alma
         $allowedErrors = [],
         $returnStatus = false
     ) {
-        // Primitive cache (mainly for patronLogin)
+        // Primitive cache (mainly for getConfig())
         $cachedRequest = $this->cachedRequest['request'] ?? '';
         $reqIdParts = [
             $path,

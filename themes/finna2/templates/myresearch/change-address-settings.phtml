@@ -1,6 +1,6 @@
 <!-- START of: finna - myresearch/change-address-settings.phtml -->
 <?php
-    $patron = $this->auth()->isLoggedIn();
+    $patron = $this->auth()->getILSPatron();
     $updatePhone = $this->ils()->checkFunction('updatePhone', compact('patron'));
     $updateEmail = $this->ils()->checkFunction('updateEmail', compact('patron'));
     $updateAddress = $this->ils()->checkFunction('updateAddress', compact('patron'));
@@ -48,10 +48,15 @@
 <?php if ($needsApproval): ?>
   <div class="address-change-description">
     <?php if ('driver' === $this->config['method']): ?>
-      <?=$this->transEsc('request_change_description_html') ?>
+      <?=$this->translate('request_change_description_html') ?>
     <?php else: ?>
-      <?=$this->transEsc('request_change_email_description_html') ?>
+      <?=$this->translate('request_change_email_description_html') ?>
     <?php endif; ?>
+  </div>
+<?php endif; ?>
+<?php if ('external' === $this->profile['account_type'] ?? ''): ?>
+  <div class="address-change-description">
+    <?=$this->translate('external_account_desc_html');?>
   </div>
 <?php endif; ?>
 <!-- END of: finna - myresearch/change-address-settings.phtml -->
