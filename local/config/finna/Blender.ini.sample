@@ -12,7 +12,7 @@ boostCount = 3
 
 [General]
 default_handler = AllFields
-default_sort = relevance
+default_sort = "relevance,id asc"
 default_view = list
 default_limit = 20
 ;limit_options        = 10,20,40,60,80,100
