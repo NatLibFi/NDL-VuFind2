@@ -142,8 +142,15 @@ class Params extends \Finna\Search\Solr\Params
                 $values = [$value];
                 if (isset($mappings[$field]['Secondary'])) {
                     // Map facet value
+                    $facetType = $mappings[$field]['Type'] ?? '';
+                    if ('boolean' === $facetType) {
+                        $value = (bool)$value;
+                    }
                     $resultValues = [];
                     foreach ($mappings[$field]['Values'] ?? [] as $k => $v) {
+                        if ('boolean' === $facetType) {
+                            $v = (bool)$v;
+                        }
                         if ($value === $v) {
                             $resultValues[] = $k;
                         }

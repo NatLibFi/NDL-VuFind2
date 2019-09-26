@@ -185,14 +185,15 @@ class RecordCollection
                 $values = $values->toArray();
             }
         }
+        unset($values);
         foreach ($secondary as $facet => $values) {
             $mappings = [];
-            $hierarchical = false;
+            $facetType = '';
             foreach ($this->mappings['Facets'] ?? [] as $key => $current) {
                 if ($facet === $current['Secondary']) {
                     $facet = $key;
                     $mappings = $current['Values'] ?? [];
-                    $hierarchical = $current['Hierarchical'] ?? false;
+                    $facetType = $current['Type'] ?? '';
                     break;
                 }
             }
@@ -201,11 +202,16 @@ class RecordCollection
             }
             $list = $facets[$facet] ?? [];
             foreach ($values as $field => $count) {
-                $mapped = array_search($field, $mappings);
                 if (isset($mappings[$field])) {
                     $field = $mappings[$field];
-                } elseif ($hierarchical) {
+                    if ('boolean' === $facetType) {
+                        $field = $field ? 'true' : 'false';
+                    }
+                } elseif ('hierarchical' === $facetType) {
                     $field = "0/$field/";
+                } elseif ('boolean' === $facetType) {
+                    // No mapping for boolean facet, ignore the value
+                    continue;
                 }
                 if (isset($list[$field])) {
                     $list[$field] += $count;
@@ -213,7 +219,7 @@ class RecordCollection
                     $list[$field] = $count;
                 }
 
-                if ($hierarchical) {
+                if ('hierarchical' === $facetType) {
                     $parts = explode('/', $field);
                     $level = array_shift($parts);
                     for ($i = $level - 1; $i >= 0; $i--) {

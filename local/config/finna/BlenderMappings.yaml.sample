@@ -3,7 +3,7 @@ Facets:
     Secondary: domain
   format_ext_str_mv:
     Secondary: rtype
-    Hierarchical: true
+    Type: hierarchical
     Values:
       articles: "1/Journal/eArticle/"
       book_chapters: "1/Book/eBookSection/"
@@ -36,6 +36,11 @@ Facets:
     Secondary: creationdate
   language:
     Secondary: lang
+  online_boolean:
+    Secondary: tlevel
+    Type: boolean
+    Values:
+      online_resources: true
 Search:
   Fields:
     AllFields: AllFields
