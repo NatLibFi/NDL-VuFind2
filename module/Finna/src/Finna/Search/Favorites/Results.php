@@ -145,4 +145,17 @@ class Results extends \VuFind\Search\Favorites\Results
         }
         return $this->list;
     }
+
+    /**
+     * Init id of a Userlist that is used via UserListEmbed view helper.
+     *
+     * @param int $id List id
+     *
+     * @return void
+     */
+    public function initEmbedList($id)
+    {
+        $this->params->initListId($id);
+        $this->list = false;
+    }
 }
