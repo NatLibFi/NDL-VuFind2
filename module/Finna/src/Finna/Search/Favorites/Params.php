@@ -39,17 +39,4 @@ namespace Finna\Search\Favorites;
 class Params extends \VuFind\Search\Favorites\Params
 {
     use \Finna\Search\FinnaParams;
-
-    /**
-     * Init Userlist id (used when displaying the list
-     * via UserListEmbed view helper)
-     *
-     * @param int $id List id
-     *
-     * @return void
-     */
-    public function initListId($id)
-    {
-        $this->filterList['lists'] = [$id];
-    }
 }
