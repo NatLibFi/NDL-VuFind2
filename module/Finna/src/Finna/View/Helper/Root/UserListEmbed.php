@@ -105,7 +105,7 @@ class UserListEmbed extends \Zend\View\Helper\AbstractHelper
 
         $params = $this->results->getParams();
         $params->initFromRequest(new Parameters($opt));
-        $this->results->initEmbedList($opt['id']);
+        $params->initListId($opt['id']);
         $this->results->performAndProcessSearch();
         $list = $this->results->getListObject();
 

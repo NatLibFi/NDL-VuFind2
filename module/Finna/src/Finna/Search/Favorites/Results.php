@@ -131,12 +131,11 @@ class Results extends \VuFind\Search\Favorites\Results
     public function getListObject()
     {
         // If we haven't previously tried to load a list, do it now:
-        if ($this->list === false) {
+        $filters = $this->getParams()->getFilters();
+        $listId = $filters['lists'][0] ?? null;
+        if ($this->list === false || $this->list['id'] !== $listId) {
             // Check the filters for a list ID, and load the corresponding object
             // if one is found:
-            $filters = $this->getParams()->getFilters();
-            $listId = $filters['lists'][0] ?? null;
-
             if (null === $listId) {
                 $this->list = null;
             } else {
@@ -144,18 +143,5 @@ class Results extends \VuFind\Search\Favorites\Results
             }
         }
         return $this->list;
-    }
-
-    /**
-     * Init id of a Userlist that is used via UserListEmbed view helper.
-     *
-     * @param int $id List id
-     *
-     * @return void
-     */
-    public function initEmbedList($id)
-    {
-        $this->params->initListId($id);
-        $this->list = false;
     }
 }

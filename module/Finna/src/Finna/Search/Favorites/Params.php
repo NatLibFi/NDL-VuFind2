@@ -41,7 +41,8 @@ class Params extends \VuFind\Search\Favorites\Params
     use \Finna\Search\FinnaParams;
 
     /**
-     * Init Userlist id.
+     * Init Userlist id (used when displaying the list
+     * via UserListEmbed view helper)
      *
      * @param int $id List id
      *
