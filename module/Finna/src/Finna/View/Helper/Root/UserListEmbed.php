@@ -103,7 +103,7 @@ class UserListEmbed extends \Zend\View\Helper\AbstractHelper
 
         $opt['limit'] = $opt['limit'] ?? 100;
 
-        $resultsCopy = clone($this->results);
+        $resultsCopy = clone $this->results;
         $params = $resultsCopy->getParams();
         $params->initFromRequest(new Parameters($opt));
         $resultsCopy->performAndProcessSearch();
