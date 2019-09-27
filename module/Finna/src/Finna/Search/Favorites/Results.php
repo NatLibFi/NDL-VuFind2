@@ -133,7 +133,7 @@ class Results extends \VuFind\Search\Favorites\Results
         // If we haven't previously tried to load a list, do it now:
         $filters = $this->getParams()->getFilters();
         $listId = $filters['lists'][0] ?? null;
-        if ($this->list === false || $this->list['id'] !== $listId) {
+        if ($this->list === false || ($listId && $this->list['id'] !== $listId)) {
             // Check the filters for a list ID, and load the corresponding object
             // if one is found:
             if (null === $listId) {
