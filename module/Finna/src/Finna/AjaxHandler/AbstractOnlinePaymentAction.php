@@ -155,11 +155,10 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         }
 
         if (!$this->transactionTable->isTransactionInProgress($transactionId)) {
-            $this->logError(
-                'Error processing payment: '
-                . "transaction $transactionId already processed."
+            $this->logger->info(
+                "Processing payment: transaction $transactionId already processed."
             );
-            return ['success' => false];
+            return ['success' => true];
         }
 
         $driver = $t['driver'];
@@ -208,31 +207,34 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         }
 
         $tId = $res['transactionId'];
-        try {
-            $fines = $this->ils->getMyFines($patron);
-            $finesAmount = $this->ils->getOnlinePayableAmount($patron, $fines);
-        } catch (\Exception $e) {
-            $this->logger->logException($e, new \Zend\Stdlib\Parameters());
-            return ['success' => false];
-        }
-
-        // Check that payable sum has not been updated
-        if ($finesAmount['payable']
-            && !empty($finesAmount['amount']) && !empty($res['amount'])
-            && $finesAmount['amount'] != $res['amount']
-        ) {
-            // Payable sum updated. Skip registration and inform user
-            // that payment processing has been delayed.
-            if (!$this->transactionTable->setTransactionFinesUpdated($tId)) {
-                $this->logError(
-                    "Error updating transaction $transactionId"
-                    . " status: payable sum updated"
-                );
+        $paymentConfig = $this->ils->getConfig('onlinePayment', $patron);
+        if ($paymentConfig['exactBalanceRequired'] ?? true) {
+            try {
+                $fines = $this->ils->getMyFines($patron);
+                $finesAmount = $this->ils->getOnlinePayableAmount($patron, $fines);
+            } catch (\Exception $e) {
+                $this->logger->logException($e, new \Zend\Stdlib\Parameters());
+                return ['success' => false];
             }
-            return [
-                'success' => false,
-                'msg' => 'online_payment_registration_failed'
-            ];
+
+            // Check that payable sum has not been updated
+            if ($finesAmount['payable']
+                && !empty($finesAmount['amount']) && !empty($res['amount'])
+                && $finesAmount['amount'] != $res['amount']
+            ) {
+                // Payable sum updated. Skip registration and inform user
+                // that payment processing has been delayed.
+                if (!$this->transactionTable->setTransactionFinesUpdated($tId)) {
+                    $this->logError(
+                        "Error updating transaction $transactionId"
+                        . " status: payable sum updated"
+                    );
+                }
+                return [
+                    'success' => false,
+                    'msg' => 'online_payment_registration_failed'
+                ];
+            }
         }
 
         try {

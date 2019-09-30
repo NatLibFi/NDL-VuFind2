@@ -989,7 +989,13 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         } elseif ('getPatronStaffAuthorizationStatus' === $function) {
             return ['enabled' => true];
         }
-        return parent::getConfig($function, $params);
+        $functionConfig = parent::getConfig($function, $params);
+        if ($functionConfig && 'onlinePayment' === $function) {
+            if (!isset($functionConfig['exactBalanceRequired'])) {
+                $functionConfig['exactBalanceRequired'] = false;
+            }
+        }
+        return $functionConfig;
     }
 
     /**
