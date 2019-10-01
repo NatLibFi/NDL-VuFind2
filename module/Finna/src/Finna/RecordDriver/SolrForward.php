@@ -561,7 +561,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $result = [];
         foreach ($authors as $author) {
             $isPrimary = isset($author['role'])
-                && in_array(strtolower($author['role']), $this->primaryAuthorRelators);
+                && in_array(
+                    strtolower($author['role']), $this->primaryAuthorRelators
+                );
             if ($isPrimary === $primary) {
                 $result[] = $author;
             }
