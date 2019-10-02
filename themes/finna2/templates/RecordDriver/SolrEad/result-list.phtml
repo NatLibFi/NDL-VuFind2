@@ -102,13 +102,10 @@ if ($img):
         <?php endif; ?>
 
         <?php $recordHelper = $this->record($this->driver); ?>
-        <?=$recordHelper->renderTemplate('holdings.phtml');?>
         <?=$recordHelper->getOnlineUrls('results');?>
         <?=$recordHelper->getPreviews();?>
 
-        <?php if ($this->layout()->templateDir === 'list'): ?>
-          <?=$this->render('list/list-notes.phtml')?>
-        <?php endif; ?>
+        <?=$this->render('list/list-notes.phtml')?>
         <?php /* Hierarchy tree link */ ?>
         <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
