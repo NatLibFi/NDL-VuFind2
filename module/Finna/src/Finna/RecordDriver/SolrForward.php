@@ -1068,7 +1068,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $vimeo_url = $this->recordConfig->Record->vimeo_url;
                 if (!empty($vimeo) && !empty($vimeo_url)) {
                     $src = str_replace(
-                        '{videoname}', $vimeo, $vimeo_url
+                        '{videoid}', $vimeo, $vimeo_url
                     );
                     $videoUrls[] = [
                         'url' => $src,

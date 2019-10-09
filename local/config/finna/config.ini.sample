@@ -1307,7 +1307,7 @@ url_blacklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
 ;video_sources[] = "kavi|application/x-mpegURL|http://elo.salama.tv.funet.fi/vod/_definst_/mp4:{videoname}/playlist.m3u8"
 
 ; Source url for vimeo videos, leave blank or comment out to prevent from working
-;vimeo_url = "https://vimeo.com/{videoname}"
+;vimeo_url = "https://vimeo.com/{videoid}"
 
 ; Video poster source configuration keyed by data source. {filename} is replaced with
 ; the actual filename.
