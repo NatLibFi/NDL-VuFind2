@@ -1095,7 +1095,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'priority' => $config['priority']
                     ];
                 }
-                
+
                 if (empty($videoSources)) {
                     continue;
                 }
