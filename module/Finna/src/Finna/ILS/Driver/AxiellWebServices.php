@@ -138,6 +138,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected $loans_wsdl = '';
 
+    protected $loansAurora_wsdl = '';
+
     /**
      * Wsdl file name or url for accessing the payment section of AWS
      *
@@ -317,6 +319,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 = $this->getWsdlPath($this->config['Catalog']['loans_wsdl']);
         } else {
             throw new ILSException('loans_wsdl configuration needs to be set.');
+        }
+
+        if (isset($this->config['Catalog']['loansaurora_wsdl'])) {
+            $this->loansaurora_wsdl
+                = $this->getWsdlPath($this->config['Catalog']['loansaurora_wsdl']);
+        } else {
+            throw new ILSException(
+                'loansaurora_wsdl configuration needs to be set.'
+            );
         }
 
         if (isset($this->config['Catalog']['payments_wsdl'])) {
@@ -1495,6 +1506,25 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         return $transList;
+    }
+
+    public function getLoansHistory($user)
+    {
+        $username = $user['cat_username'];
+        $password = $password['cat_password'];
+
+        $function = 'GetLoanHistory';
+        $functionResult = 'GetLoanHistoryResponse';
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password,
+            'language' => $this->getLanguage()
+        ];
+        $result = $this->doSOAPRequest(
+            $this->loansaurora_wsdl, $function, $functionResult, $username,
+            ['loanHistoryRequest' => $conf]
+        );
     }
 
     /**
