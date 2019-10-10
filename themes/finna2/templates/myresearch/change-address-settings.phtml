@@ -1,33 +1,43 @@
 <!-- START of: finna - myresearch/change-address-settings.phtml -->
 <?php
-    $user = $this->auth()->isLoggedIn();
-    $updatePhone = $this->ils()->checkFunction('updatePhone', compact($user));
-    $updateEmail = $this->ils()->checkFunction('updateEmail', compact($user));
-    $updateAddress = $this->ils()->checkFunction('updateAddress', compact($user));
+    $patron = $this->auth()->getILSPatron();
+    $updatePhone = $this->ils()->checkFunction('updatePhone', compact('patron'));
+    $updateEmail = $this->ils()->checkFunction('updateEmail', compact('patron'));
+    $updateAddress = $this->ils()->checkFunction('updateAddress', compact('patron'));
     $needsApproval = $updateAddress['needsApproval'] ?? true;
     // Set up page title:
     $title = $this->translate(($updatePhone || $updateEmail) ? 'request_address_change' : 'request_contact_information_change');
     $this->headTitle($title);
 
-    // Set up myresearch menu
-    $this->layout()->finnaMainTabs = $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'profile']);
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Profile') . '</li>';
 ?>
+
 <h2><?=$this->escapeHtml($title) ?></h2>
 <?=$this->flashmessages()?>
 <?php if (!isset($this->requestCompleted) || !$this->requestCompleted): ?>
-  <form  name="requestAddressChange" method="post" action="<?=$this->url('myresearch-changeprofileaddress')?>" class="address-form profile-form">
+  <form  name="requestAddressChange" method="post" action="<?=$this->url('myresearch-changeprofileaddress')?>" class="address-form profile-form" data-toggle="validator">
     <?php foreach ($this->fields as $field => $data): ?>
       <div class="form-group">
         <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
         <?php
-          $value = isset($this->profile[$field]) ? $this->profile[$field] : '';
-          if (!$value) {
-            $value = isset($this->profile['full_data'][$field]) ? $this->profile['full_data'][$field] : '';
+          $value = $this->profile[$field] ?? $this->profile['full_data'][$field] ?? '';
+          if ($value instanceof \VuFind\I18n\TranslatableString) {
+            $value = (string)$value;
           }
         ?>
-        <input id="<?=$this->escapeHtmlAttr($field)?>" name="<?=$this->escapeHtmlAttr($field)?>" type="text" value="<?=$this->escapeHtmlAttr($value) ?>" class="form-control"/>
+        <?php if ('select' === $data['type']): ?>
+          <select id="<?=$this->escapeHtmlAttr($field)?>" name="<?=$this->escapeHtmlAttr($field)?>" class="form-control">
+            <option value=""><?=$this->transEsc('choose_from_list')?></option>
+            <?php foreach($data['options'] as $optionId => $option): ?>
+              <?php $name = $option['name'] ?? $optionId; ?>
+              <option value="<?=$this->escapeHtmlAttr($optionId)?>"<?php if ($optionId == $value): ?> selected<?php endif; ?><?=$data['required'] ? ' required' : ''?>><?=$this->translate($name)?></option>
+            <?php endforeach; ?>
+          </select>
+        <?php else: ?>
+          <input id="<?=$this->escapeHtmlAttr($field)?>" name="<?=$this->escapeHtmlAttr($field)?>" type="<?=$data['type']?>" value="<?=$this->escapeHtmlAttr($value) ?>" class="form-control"<?=$data['required'] ? ' required' : ''?>>
+        <?php endif; ?>
+        <div class="help-block with-errors"></div>
       </div>
     <?php endforeach; ?>
     <div class="form-group">
@@ -38,10 +48,24 @@
 <?php if ($needsApproval): ?>
   <div class="address-change-description">
     <?php if ('driver' === $this->config['method']): ?>
-      <?=$this->transEsc('request_change_description_html') ?>
+      <?=$this->translate('request_change_description_html') ?>
     <?php else: ?>
-      <?=$this->transEsc('request_change_email_description_html') ?>
+      <?=$this->translate('request_change_email_description_html') ?>
     <?php endif; ?>
   </div>
 <?php endif; ?>
+<?php if ('external' === ($this->profile['account_type'] ?? '')): ?>
+  <div class="address-change-description">
+    <?=$this->translate('external_account_desc_html');?>
+  </div>
+<?php endif; ?>
+
+
+<?php
+  $script = "$('form[name=requestAddressChange]').validator();";
+
+  // Inline the script for lightbox compatibility
+  echo $this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+?>
+
 <!-- END of: finna - myresearch/change-address-settings.phtml -->

@@ -2130,7 +2130,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getItem($id)
     {
-        static $cachedRecord = [];
+        static $cachedRecords = [];
         if (!isset($cachedRecords[$id])) {
             $cachedRecords[$id] = $this->makeRequest(['v1', 'items', $id]);
         }
@@ -2182,7 +2182,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      *
      * @return array
      */
-    protected function holdError($code, $result)
+    protected function holdError($code, $result = null)
     {
         $message = $result['error'] ?? 'hold_error_fail';
         switch ($message) {
@@ -2325,7 +2325,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             // New fields available
             $biblionumber = $entry['biblionumber'];
             $title = $entry['title'];
-            if (!empty($empty['title_remainder'])) {
+            if (!empty($entry['title_remainder'])) {
                 $title .= ' ' . $entry['title_remainder'];
                 $title = trim($title);
             }

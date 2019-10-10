@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2017.
+ * Copyright (C) The National Library of Finland 2014-2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -458,8 +458,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 $partArrangers = [];
                 $partOtherAuthors = [];
                 foreach ($partAuthors as $author) {
-                    if (isset($configArray['Record']['presenter_roles'])) {
-                        foreach ($configArray['Record']['presenter_roles']
+                    if (isset($this->recordConfig['Record']['presenter_roles'])) {
+                        foreach ($this->recordConfig['Record']['presenter_roles']
                             as $role
                         ) {
                             $author = trim($author);
@@ -469,8 +469,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                             }
                         }
                     }
-                    if (isset($configArray['Record']['arranger_roles'])) {
-                        foreach ($configArray['Record']['arranger_roles'] as $role) {
+                    if (isset($this->recordConfig['Record']['arranger_roles'])) {
+                        foreach ($this->recordConfig['Record']['arranger_roles']
+                            as $role
+                        ) {
                             if (substr($author, -strlen($role) - 2) == ", $role") {
                                 $partArrangers[] = $author;
                                 continue 2;
@@ -988,12 +990,39 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      */
     public function getSfxObjectId()
     {
-        $field001 = $this->getMarcRecord()->getField('001');
+        $record = $this->getMarcRecord();
+        $field001 = $record->getField('001');
         $id = $field001 ? $field001->getData() : '';
-        $field090 = $this->getMarcRecord()->getField('090');
+        $field090 = $record->getField('090');
         $objectId = $field090 ? $field090->getSubfield('a') : '';
         if ($objectId) {
             $objectId = $objectId->getData();
+        }
+        if ($id == $objectId) {
+            return $objectId;
+        }
+        return '';
+    }
+
+    /**
+     * Return Alma MMS ID
+     *
+     * @return string
+     */
+    public function getAlmaMmsId()
+    {
+        $record = $this->getMarcRecord();
+        $field001 = $record->getField('001');
+        $id = $field001 ? $field001->getData() : '';
+        $field090 = $record->getField('090');
+        $objectId = $field090 ? $field090->getSubfield('a') : '';
+        if ($objectId) {
+            $objectId = $objectId->getData();
+            if (strncmp($objectId, '(Alma)', 6) === 0) {
+                $objectId = substr($objectId, 6);
+            } else {
+                $objectId = '';
+            }
         }
         if ($id == $objectId) {
             return $objectId;
@@ -1462,10 +1491,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     /**
      * Strip trailing spaces and punctuation characters from a string
      *
-     * @param string|string[] $input      String to strip
-     * @param string          $additional Additional punctuation characters
+     * @param string|array $input      String to strip
+     * @param string       $additional Additional punctuation characters
      *
-     * @return string
+     * @return string|array
      */
     protected function stripTrailingPunctuation($input, $additional = '')
     {

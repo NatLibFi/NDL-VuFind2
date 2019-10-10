@@ -184,6 +184,9 @@ $config = [
             'VuFind\Controller\WorldcatController' => 'VuFind\Controller\AbstractBaseFactory',
             'VuFind\Controller\WorldcatrecordController' => 'VuFind\Controller\AbstractBaseFactory',
         ],
+        'initializers' => [
+            'VuFind\ServiceManager\ServiceInitializer',
+        ],
         'aliases' => [
             'AJAX' => 'VuFind\Controller\AjaxController',
             'ajax' => 'VuFind\Controller\AjaxController',
@@ -305,6 +308,9 @@ $config = [
             'VuFind\Controller\Plugin\StorageRetrievalRequests' => 'VuFind\Controller\Plugin\AbstractRequestBaseFactory',
             'Zend\Mvc\Plugin\FlashMessenger\FlashMessenger' => 'VuFind\Controller\Plugin\FlashMessengerFactory',
         ],
+        'initializers' => [
+            'VuFind\ServiceManager\ServiceInitializer',
+        ],
         'aliases' => [
             'dbUpgrade' => 'VuFind\Controller\Plugin\DbUpgrade',
             'favorites' => 'VuFind\Controller\Plugin\Favorites',
@@ -326,6 +332,7 @@ $config = [
         'factories' => [
             'ProxyManager\Configuration' => 'VuFind\Service\ProxyConfigFactory',
             'VuFind\AjaxHandler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'VuFind\Auth\EmailAuthenticator' => 'VuFind\Auth\EmailAuthenticatorFactory',
             'VuFind\Auth\ILSAuthenticator' => 'VuFind\Auth\ILSAuthenticatorFactory',
             'VuFind\Auth\Manager' => 'VuFind\Auth\ManagerFactory',
             'VuFind\Auth\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',

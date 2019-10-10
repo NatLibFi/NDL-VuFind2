@@ -197,54 +197,12 @@ class Bootstrapper
     }
 
     /**
-     * Store selected language for a logged-in user.
-     *
-     * @return void
-     */
-    protected function initFinnaLanguage()
-    {
-        // Don't do anything on console
-        if (Console::isConsole()) {
-            return;
-        }
-
-        $config = &$this->config;
-        $sm = $this->event->getApplication()->getServiceManager();
-
-        $callback = function ($event) use ($config, $sm) {
-            $request = $event->getRequest();
-            if (($language = $request->getPost()->get('mylang', false))
-                || ($language = $request->getQuery()->get('lng', false))
-            ) {
-                $translator = $sm->get(\Zend\Mvc\I18n\Translator::class);
-                $language = $translator->getLocale();
-
-                // Update finna_language of logged-in user
-                if (($user = $sm->get(\VuFind\Auth\Manager::class)->isLoggedIn())
-                    && $user->finna_language != $language
-                ) {
-                    $user->updateFinnaLanguage($language);
-                }
-            }
-        };
-        $this->events->attach('dispatch.error', $callback, 9000);
-        $this->events->attach('dispatch', $callback, 9000);
-    }
-
-    /**
      * Set up theme handling.
      *
      * @return void
      */
     protected function initTheme()
     {
-        if (!Console::isConsole()) {
-            // Attach template injection configuration to the route event:
-            $this->events->attach(
-                'route', ['FinnaTheme\Initializer', 'configureTemplateInjection']
-            );
-        }
-
         // Attach remaining theme configuration to the dispatch event at high
         // priority (TODO: use priority constant once defined by framework):
         $config = $this->config->Site;
@@ -252,7 +210,7 @@ class Bootstrapper
             if ($this->isApiRoute($event)) {
                 return;
             }
-            $theme = new \FinnaTheme\Initializer($config, $event);
+            $theme = new \VuFindTheme\Initializer($config, $event);
             $theme->init();
         };
         $this->events->attach('dispatch.error', $callback, 9000);

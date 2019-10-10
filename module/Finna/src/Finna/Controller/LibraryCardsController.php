@@ -119,7 +119,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
         // Connect to the ILS and check if it supports changing password
         $catalog = $this->getILS();
-        if (!$catalog->checkFunction('changePassword', $card->toArray())) {
+        if (!$catalog->checkFunction('changePassword', ['card' => $card->toArray()])
+        ) {
             throw new \Exception('Changing password not supported for this card');
         }
         // It's not exactly correct to send a card to getPasswordPolicy, but it has
@@ -157,7 +158,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         );
         $catalog = $this->getILS();
         $recoveryConfig = $catalog->checkFunction(
-            'getPasswordRecoveryToken', ['cat_username' => "$target.123"]
+            'getPasswordRecoveryToken',
+            ['patron' => ['cat_username' => "$target.123"]]
         );
         $view = $this->createViewModel(
             [
@@ -271,7 +273,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $catalog = $this->getILS();
         $recoveryConfig = $catalog->checkFunction(
             'recoverPassword',
-            ['cat_username' => "$target." . $recoveryData['username']]
+            ['patron' => ['cat_username' => "$target." . $recoveryData['username']]]
         );
         if (!$recoveryConfig) {
             $this->flashMessenger()->addMessage('recovery_disabled', 'error');
@@ -339,8 +341,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $target = $this->params()->fromPost('target', '');
         $username = $this->params()->fromPost('username', '');
         $password = $this->params()->fromPost('password', '');
+        $id = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
 
-        if (!$username || !$password) {
+        if (!$username) {
             $this->flashMessenger()
                 ->addMessage('authentication_error_blank', 'error');
             return false;
@@ -354,15 +357,32 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $secondaryUsername = trim($this->params()->fromPost('secondary_username'));
 
         // Connect to the ILS and check that the credentials are correct:
+        $loginMethod = $this->getILSLoginMethod($target);
         $catalog = $this->getILS();
         $patron = $catalog->patronLogin($username, $password, $secondaryUsername);
-        if (!$patron) {
+        if ('password' === $loginMethod && !$patron) {
             $this->flashMessenger()
                 ->addMessage('authentication_error_invalid', 'error');
             return false;
         }
-
-        $id = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
+        if ('email' === $loginMethod) {
+            if ($patron) {
+                $info = $patron;
+                $info['cardID'] = $id;
+                $info['cardName'] = $cardName;
+                $emailAuthenticator = $this->serviceLocator
+                    ->get(\VuFind\Auth\EmailAuthenticator::class);
+                $emailAuthenticator->sendAuthenticationLink(
+                    $info['email'],
+                    $info,
+                    ['auth_method' => 'Email'],
+                    'editLibraryCard'
+                );
+            }
+            // Don't reveal the result
+            $this->flashMessenger()->addSuccessMessage('email_login_link_sent');
+            return $this->redirect()->toRoute('librarycards-home');
+        }
 
         if (!empty($cardName)) {
             list($cardInstitution) = explode('.', $username, 2);

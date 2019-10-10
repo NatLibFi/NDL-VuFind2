@@ -1401,6 +1401,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         if (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
+            if ('onlinePayment' === $function) {
+                $functionConfig['exactBalanceRequired'] = true;
+            }
         } else {
             $functionConfig = false;
         }
@@ -1711,7 +1714,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         // Clear patron cache
-        $cacheKey = $this->getPatronCacheKey($username);
+        $cacheKey = $this->getPatronCacheKey($patron['cat_username']);
         $this->putCachedData($cacheKey, null);
 
         return true;

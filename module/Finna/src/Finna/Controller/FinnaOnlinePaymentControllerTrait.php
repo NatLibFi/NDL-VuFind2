@@ -140,7 +140,7 @@ trait FinnaOnlinePaymentControllerTrait
         }
 
         // Check if online payment is enabled for the ILS driver
-        if (!$catalog->checkFunction('markFeesAsPaid', $patron)) {
+        if (!$catalog->checkFunction('markFeesAsPaid', compact('patron'))) {
             return;
         }
 
@@ -195,7 +195,9 @@ trait FinnaOnlinePaymentControllerTrait
             && $payableOnline['payable'] && $payableOnline['amount']
         ) {
             // Payment started, check that fee list has not been updated
-            if ($this->checkIfFinesUpdated($patron, $fines)) {
+            if (($paymentConfig['exactBalanceRequired'] ?? true)
+                && $this->checkIfFinesUpdated($patron, $fines)
+            ) {
                 // Fines updated, redirect and show updated list.
                 $session->payment_fines_changed = true;
                 header("Location: " . $this->getServerUrl('myresearch-fines'));
