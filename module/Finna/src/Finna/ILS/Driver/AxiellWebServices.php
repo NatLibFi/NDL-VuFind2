@@ -1511,23 +1511,91 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         return $transList;
     }
 
-    public function getLoansHistory($user)
+    public function getMyTransactionHistory($user)
     {
+        $patronId = $this->authenticatePatron($user);
         $username = $user['cat_username'];
-        $password = $password['cat_password'];
+        $password = $user['cat_password'];
 
         $function = 'GetLoanHistory';
-        $functionResult = 'GetLoanHistoryResponse';
+        $functionResult = 'loanHistoryResponse';
         $conf = [
             'arenaMember' => $this->arenaMember,
-            'user' => $username,
-            'password' => $password,
-            'language' => $this->getLanguage()
+            'language' => $this->getLanguage(),
+            'patronId' => $patronId,
+            'start' => 0,
+            'count' => 100,
+            'sortDirection' => 'ASCENDING'
         ];
+
         $result = $this->doSOAPRequest(
             $this->loansaurora_wsdl, $function, $functionResult, $username,
             ['loanHistoryRequest' => $conf]
         );
+
+        $statusAWS = $result->$functionResult->status;
+
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                
+                throw new ILSException($message);
+            }
+            return [];
+        }
+
+        $formatted = [];
+        $transList = [];
+        $transActions = $this->objectToArray(
+            $result->loanHistoryResponse->loanHistoryItems->loanHistoryItem
+        );
+        foreach ($transActions as $transAction => $record) {
+            $obj = $record->catalogueRecord;
+            $trans = [
+                'id' => $obj->id,
+                'title' => $obj->title,
+                'checkOutDate' => $this->formatDate($record->checkOutDate),
+                'checkInDate' => $record->checkInDate ?? ''
+            ];
+            $transList[] = $trans;
+        }
+
+        $formatted['success'] = $statusAWS->type === 'ok';
+        $formatted['transactions'] = $transList;
+        $formatted['count'] = $result->loanHistoryResponse->loanHistoryItems->totalCount;
+
+        return $formatted;
+    }
+
+    public function authenticatePatron($patron)
+    {
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
+
+        $function = 'authenticatePatron';
+        $functionResult = 'authenticatePatronResult';
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->patron_wsdl, $function, $functionResult, $username,
+            ['authenticatePatronParam' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                
+                throw new ILSException($message);
+            }
+            return [];
+        }
+
+        return $result->authenticatePatronResult->patronId;
     }
 
     /**

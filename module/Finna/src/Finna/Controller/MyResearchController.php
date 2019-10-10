@@ -262,6 +262,129 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
+     * Send list of historic loans to view
+     *
+     * @return mixed
+     */
+    public function historicloansAction()
+    {
+        // Stop now if the user does not have valid catalog credentials available:
+        if (!is_array($patron = $this->catalogLogin())) {
+            return $patron;
+        }
+
+        // Connect to the ILS:
+        $catalog = $this->getILS();
+
+        // Check function config
+        $functionConfig = $catalog->checkFunction(
+            'getMyTransactionHistory', $patron
+        );
+
+        if (false === $functionConfig) {
+            $this->flashMessenger()->addErrorMessage('ils_action_unavailable');
+            return $this->createViewModel();
+        }
+
+        // Get paging setup:
+        $config = $this->getConfig();
+        $pageOptions = $this->getPaginationHelper()->getOptions(
+            (int)$this->params()->fromQuery('page', 1),
+            $this->params()->fromQuery('sort'),
+            $config->Catalog->historic_loan_page_size ?? 50,
+            $functionConfig
+        );
+
+        // Get checked out item details:
+        $result
+            = $catalog->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
+
+        if (isset($result['success']) && !$result['success']) {
+            $this->flashMessenger()->addErrorMessage($result['status']);
+            return $this->createViewModel();
+        }
+
+        $paginator = $this->getPaginationHelper()->getPaginator(
+            $pageOptions, $result['count'], $result['transactions']
+        );
+        if ($paginator) {
+            $pageStart = $paginator->getAbsoluteItemNumber(1) - 1;
+            $pageEnd = $paginator->getAbsoluteItemNumber($pageOptions['limit']) - 1;
+        } else {
+            $pageStart = 0;
+            $pageEnd = $result['count'];
+        }
+
+        $transactions = $hiddenTransactions = [];
+        foreach ($result['transactions'] as $i => $current) {
+            // Build record driver (only for the current visible page):
+            if ($pageOptions['ilsPaging'] || ($i >= $pageStart && $i <= $pageEnd)) {
+                $transactions[] = $this->getDriverForILSRecord($current);
+            } else {
+                $hiddenTransactions[] = $current;
+            }
+        }
+
+        if (!$pageOptions['ilsPaging']) {
+            // Handle sorting
+            $currentSort = $this->getRequest()->getQuery('sort', 'duedate');
+            if (!in_array($currentSort, ['duedate', 'title'])) {
+                $currentSort = 'duedate';
+            }
+            $pageOptions['ilsParams']['sort'] = $currentSort;
+            $sortList = [
+                'duedate' => [
+                    'desc' => 'Due Date',
+                    'url' => '?sort=duedate',
+                    'selected' => $currentSort == 'duedate'
+                ],
+                'title' => [
+                    'desc' => 'Title',
+                    'url' => '?sort=title',
+                    'selected' => $currentSort == 'title'
+                ]
+            ];
+
+            $date = $this->serviceLocator->get(\VuFind\Date\Converter::class);
+            $sortFunc = function ($a, $b) use ($currentSort, $date) {
+                if ($currentSort == 'title') {
+                    $aTitle = $a['title'] ?? '';
+                    $bTitle = $b['title'] ?? '';
+                    $result = strcmp($aTitle, $bTitle);
+                    if ($result != 0) {
+                        return $result;
+                    }
+                }
+
+                try {
+                    $aDate = isset($a['checkOutDate'])
+                        ? $date->convertFromDisplayDate('U', $a['checkOutDate'])
+                        : 0;
+                    $bDate = isset($b['checkOutDate'])
+                        ? $date->convertFromDisplayDate('U', $b['checkOutDate'])
+                        : 0;
+                } catch (Exception $e) {
+                    return 0;
+                }
+
+                return $aDate - $bDate;
+            };
+
+            usort($result['transactions'], $sortFunc);
+        } else {
+            $sortList = $pageOptions['sortList'];
+        }
+
+        $params = $pageOptions['ilsParams'];
+        return $this->createViewModel(
+            compact(
+                'transactions', 'paginator', 'params',
+                'hiddenTransactions', 'sortList', 'functionConfig'
+            )
+        );
+    }
+
+    /**
      * Purge historic loans action.
      *
      * @return mixed

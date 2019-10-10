@@ -1364,6 +1364,7 @@ class MyResearchController extends AbstractBase
         $functionConfig = $catalog->checkFunction(
             'getMyTransactionHistory', $patron
         );
+
         if (false === $functionConfig) {
             $this->flashMessenger()->addErrorMessage('ils_action_unavailable');
             return $this->createViewModel();
@@ -1409,6 +1410,7 @@ class MyResearchController extends AbstractBase
         }
 
         $sortList = $pageOptions['sortList'];
+
         $params = $pageOptions['ilsParams'];
         return $this->createViewModel(
             compact(
