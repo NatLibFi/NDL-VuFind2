@@ -130,20 +130,35 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
         $params->remove('secondary_backend');
         // If offset is less than the limit, fetch from both backends
         // up to the limit first.
+        $exception = null;
         if ($offset <= $this->blendLimit) {
-            $primaryCollection = $this->primaryBackend->search(
-                $query,
-                0,
-                $this->blendLimit,
-                $params
-            );
+            try {
+                $primaryCollection = $this->primaryBackend->search(
+                    $query,
+                    0,
+                    $this->blendLimit,
+                    $params
+                );
+            } catch (\Exception $e) {
+                $exception = $e;
+                $primaryCollection = null;
+            }
 
-            $secondaryCollection = $this->secondaryBackend->search(
-                $secondaryQuery,
-                0,
-                $this->blendLimit,
-                $secondaryParams
-            );
+            try {
+                $secondaryCollection = $this->secondaryBackend->search(
+                    $secondaryQuery,
+                    0,
+                    $this->blendLimit,
+                    $secondaryParams
+                );
+            } catch (\Exception $e) {
+                if (null !== $exception) {
+                    // Both searches failed, throw the previous exception
+                    throw $exception;
+                }
+                $exception = $e;
+                $secondaryCollection = null;
+            }
 
             $mergedCollection->initBlended(
                 $primaryCollection,

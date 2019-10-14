@@ -44,4 +44,51 @@ class Results extends \Finna\Search\Solr\Results
      * @var string
      */
     protected $backendId = 'Blender';
+
+    /**
+     * Support method for performAndProcessSearch -- perform a search based on the
+     * parameters passed to the object.
+     *
+     * @return void
+     */
+    protected function performSearch()
+    {
+        $query  = $this->getParams()->getQuery();
+        $limit  = $this->getParams()->getLimit();
+        $offset = $this->getStartRecord() - 1;
+        $params = $this->getParams()->getBackendParameters();
+        $searchService = $this->getSearchService();
+
+        try {
+            $collection = $searchService
+                ->search($this->backendId, $query, $offset, $limit, $params);
+        } catch (\VuFindSearch\Backend\Exception\BackendException $e) {
+            // If the query caused a parser error, see if we can clean it up:
+            if ($e->hasTag('VuFind\Search\ParserError')
+                && $newQuery = $this->fixBadQuery($query)
+            ) {
+                // We need to get a fresh set of $params, since the previous one was
+                // manipulated by the previous search() call.
+                $params = $this->getParams()->getBackendParameters();
+                $collection = $searchService
+                    ->search($this->backendId, $newQuery, $offset, $limit, $params);
+            } else {
+                throw $e;
+            }
+        }
+
+        $this->responseFacets = $collection->getFacets();
+        $this->resultTotal = $collection->getTotal();
+
+        // Process spelling suggestions
+        $spellcheck = $collection->getSpellcheck();
+        $this->spellingQuery = $spellcheck->getQuery();
+        $this->suggestions = $this->getSpellingProcessor()
+            ->getSuggestions($spellcheck, $this->getParams()->getQuery());
+
+        // Construct record drivers for all the items in the response:
+        $this->results = $collection->getRecords();
+
+        $this->errors = $collection->getErrors();
+    }
 }

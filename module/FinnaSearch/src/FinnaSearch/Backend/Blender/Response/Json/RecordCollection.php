@@ -60,6 +60,13 @@ class RecordCollection
     protected $mappings;
 
     /**
+     * Any errors encountered
+     *
+     * @var array
+     */
+    protected $errors = [];
+
+    /**
      * Constructor
      *
      * @param \Zend\Config\Config $config   Configuration
@@ -98,17 +105,20 @@ class RecordCollection
      *
      * @return void
      */
-    public function initBlended(RecordCollectionInterface $primaryCollection,
-        RecordCollectionInterface $secondaryCollection, $offset, $limit, $blockSize
+    public function initBlended(RecordCollectionInterface $primaryCollection = null,
+        RecordCollectionInterface $secondaryCollection = null,
+        $offset, $limit, $blockSize
     ) {
         $this->response = static::$template;
-        $this->response['response']['numFound'] = $primaryCollection->getTotal()
-            + $secondaryCollection->getTotal();
+        $this->response['response']['numFound'] =
+            ($primaryCollection ? $primaryCollection->getTotal() : 0)
+            + ($secondaryCollection ? $secondaryCollection->getTotal() : 0);
         $this->offset = $this->response['response']['start'] = $offset;
         $this->rewind();
 
-        $primaryRecords = $primaryCollection->getRecords();
-        $secondaryRecords = $secondaryCollection->getRecords();
+        $primaryRecords = $primaryCollection ? $primaryCollection->getRecords() : [];
+        $secondaryRecords = $secondaryCollection
+            ? $secondaryCollection->getRecords() : [];
         foreach ($primaryRecords as &$record) {
             $record->setExtraDetail('blendSource', 'primary');
         }
@@ -144,6 +154,10 @@ class RecordCollection
         }
 
         $this->mergeFacets($primaryCollection, $secondaryCollection);
+
+        if (null === $primaryCollection || null === $secondaryCollection) {
+            $this->errors = ['search_backend_partial_failure'];
+        }
     }
 
     /**
@@ -167,6 +181,16 @@ class RecordCollection
     }
 
     /**
+     * Return any errors.
+     *
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
      * Merge facets
      *
      * @param RecordCollectionInterface $primaryCollection   Primary record
@@ -176,10 +200,12 @@ class RecordCollection
      *
      * @return void
      */
-    protected function mergeFacets($primaryCollection, $secondaryCollection)
-    {
-        $facets = $primaryCollection->getFacets()->getFieldFacets();
-        $secondary = $secondaryCollection->getFacets();
+    protected function mergeFacets($primaryCollection = null,
+        $secondaryCollection = null
+    ) {
+        $facets = $primaryCollection
+            ? $primaryCollection->getFacets()->getFieldFacets() : [];
+        $secondary = $secondaryCollection ? $secondaryCollection->getFacets() : [];
         foreach ($facets as $facet => &$values) {
             if (is_object($values)) {
                 $values = $values->toArray();
