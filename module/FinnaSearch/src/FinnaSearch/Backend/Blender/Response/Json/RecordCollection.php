@@ -110,8 +110,8 @@ class RecordCollection
         $offset, $limit, $blockSize
     ) {
         $this->response = static::$template;
-        $this->response['response']['numFound'] =
-            ($primaryCollection ? $primaryCollection->getTotal() : 0)
+        $this->response['response']['numFound']
+            = ($primaryCollection ? $primaryCollection->getTotal() : 0)
             + ($secondaryCollection ? $secondaryCollection->getTotal() : 0);
         $this->offset = $this->response['response']['start'] = $offset;
         $this->rewind();
