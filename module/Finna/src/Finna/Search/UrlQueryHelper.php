@@ -27,6 +27,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 namespace Finna\Search;
+use \Finna\Search\Solr\AuthorityHelper;
 
 /**
  * Class to help build URLs and forms in the view based on search settings.
@@ -165,5 +166,46 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         $params = $this->urlParams;
         unset($params['page']);
         return '?' . $this->buildQueryString($params, $escape);
+    }
+
+    /**
+     * Get the current search parameters with an author id-role filter.
+     * Current active filters for the same author are discarded.
+     *
+     * @param string $id   Author id
+     * @param string $role Author role
+     *
+     * @return string
+     */
+    public function setAuthorIdWithRole($id, $role)
+    {
+        $separator = AuthorityHelper::AUTHOR_ID_ROLE_SEPARATOR;
+        list($id, $role) = explode($separator, $role);
+
+        $params = $this->urlParams;
+
+        $filters = [];
+        foreach (($params['filter'] ?? []) as $filter) {
+            list($field, $authId) = $this->parseFilter($filter);
+            $authId = substr($authId, 1, -1);
+
+            if (strpos($authId, $separator) !== false) {
+                list($authId, $authRole) = explode($separator, $authId, 2);
+            }
+
+            if (!in_array(
+                $field,
+                [AuthorityHelper::AUTHOR2_ID_FACET,
+                 AuthorityHelper::AUTHOR_ID_ROLE_FACET]
+            ) || $id !== $authId
+            ) {
+                $filters[] = $filter;
+            }
+        }
+        $filters[]
+            = AuthorityHelper::AUTHOR_ID_ROLE_FACET . ":{$id}{$separator}{$role}";
+        $params['filter'] = $filters;
+
+        return '?' . $this->buildQueryString($params, true);
     }
 }

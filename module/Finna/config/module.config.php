@@ -268,6 +268,7 @@ $config = [
             'Finna\RecordTab\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
             'Finna\Search\Memory' => 'VuFind\Search\MemoryFactory',
+            'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'Zend\ServiceManager\Factory\InvokableFactory',
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
 
@@ -323,6 +324,8 @@ $config = [
                         'Finna\AjaxHandler\EditListResourceFactory',
                     'Finna\AjaxHandler\GetAuthorityInfo' =>
                         'Finna\AjaxHandler\GetAuthorityInfoFactory',
+                    'Finna\AjaxHandler\GetAuthorityFullInfo' =>
+                        'Finna\AjaxHandler\GetAuthorityFullInfoFactory',
                     'Finna\AjaxHandler\GetACSuggestions' =>
                         'VuFind\AjaxHandler\GetACSuggestionsFactory',
                     'Finna\AjaxHandler\GetContentFeed' =>
@@ -368,6 +371,7 @@ $config = [
                     'editList' => 'Finna\AjaxHandler\EditList',
                     'editListResource' => 'Finna\AjaxHandler\EditListResource',
                     'getAuthorityInfo' => 'Finna\AjaxHandler\GetAuthorityInfo',
+                    'getAuthorityFullInfo' => 'Finna\AjaxHandler\GetAuthorityFullInfo',
                     'getContentFeed' => 'Finna\AjaxHandler\GetContentFeed',
                     'getDescription' => 'Finna\AjaxHandler\GetDescription',
                     'getDateRangeVisual' => 'Finna\AjaxHandler\GetDateRangeVisual',
@@ -520,9 +524,11 @@ $config = [
                 'factories' => [
                     'VuFind\Recommend\CollectionSideFacets' => 'Finna\Recommend\Factory::getCollectionSideFacets',
                     'VuFind\Recommend\SideFacets' => 'Finna\Recommend\Factory::getSideFacets',
+                    'Finna\Recommend\AuthorityRecommend' => 'Finna\Recommend\AuthorityRecommendFactory',
                     'Finna\Recommend\SideFacetsDeferred' => 'Finna\Recommend\Factory::getSideFacetsDeferred',
                 ],
                 'aliases' => [
+                    'authorityrecommend' => 'Finna\Recommend\AuthorityRecommend',
                     'sidefacetsdeferred' => 'Finna\Recommend\SideFacetsDeferred',
                 ]
             ],
@@ -611,6 +617,8 @@ $config = [
                         'VuFind\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrAuthEaccpf' =>
                         'VuFind\RecordDriver\SolrDefaultFactory',
+                    'Finna\RecordDriver\SolrAuthForward' =>
+                        'VuFind\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrEad' =>
                         'VuFind\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrEad3' =>
@@ -626,6 +634,7 @@ $config = [
                 ],
                 'aliases' => [
                     'SolrAuthEaccpf' => 'Finna\RecordDriver\SolrAuthEaccpf',
+                    'SolrAuthForwardAuthority' => 'Finna\RecordDriver\SolrAuthForward',
                     'SolrEad' => 'Finna\RecordDriver\SolrEad',
                     'SolrEad3' => 'Finna\RecordDriver\SolrEad3',
                     'SolrForward' => 'Finna\RecordDriver\SolrForward',
@@ -633,6 +642,7 @@ $config = [
                     'SolrQdc' => 'Finna\RecordDriver\SolrQdc',
 
                     'VuFind\RecordDriver\EDS' => 'Finna\RecordDriver\EDS',
+                    'VuFind\RecordDriver\SolrAuthDefault' => 'Finna\RecordDriver\SolrAuthDefault',
                     'VuFind\RecordDriver\SolrDefault' => 'Finna\RecordDriver\SolrDefault',
                     'VuFind\RecordDriver\SolrMarc' => 'Finna\RecordDriver\SolrMarc',
                     'VuFind\RecordDriver\Primo' => 'Finna\RecordDriver\Primo',

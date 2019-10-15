@@ -21,6 +21,7 @@
           <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
             <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
           </a>
+          <?=$this->authorId ? ('<span class="author-role">(' . implode(', ', array_map(function ($role) { return mb_strtolower($this->transEsc('CreatorRoles::' . $role), 'UTF-8'); }, $this->driver->getAuthorRoles($this->authorId))) . ')</span>') : ''?>
         </h2>
         <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
           <div class="result-uniform-titles">
@@ -55,7 +56,7 @@
           <?php else: ?>
             <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
               <?php $author = $authors[0]; ?>
-              <a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a>
+                <?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
               <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
             <?php endif; ?>
             <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>

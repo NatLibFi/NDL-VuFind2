@@ -1,0 +1,1 @@
+<?php // No ending line feed ?><?=$this->url($this->searchAction ?: $this->searchOptions('Solr')->getSearchAction())?>?<?= !is_array($this->filter) ? ('filter[]=' . urlencode($this->filter)) : implode('&', array_map(function($filter) { return 'filter[]=' . urlencode($filter); }, $this->filter)) ?>

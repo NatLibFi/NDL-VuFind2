@@ -110,6 +110,8 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
         $this->disableSessionWrites();  // avoid session write timing bug
 
         $id = $params->fromPost('id', $params->fromQuery('id'));
+        $source = $params->fromPost('source', $params->fromQuery('source'))
+            ?? 'Solr';
 
         if (!$id) {
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
@@ -134,7 +136,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
             }
         } else {
             // Get URL
-            $driver = $this->recordLoader->load($id, 'Solr');
+            $driver = $this->recordLoader->load($id, $source);
             $url = $driver->getDescriptionURL();
             // Get, manipulate, save and display content if available
             if ($url) {

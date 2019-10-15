@@ -752,6 +752,16 @@ trait SolrFinna
     }
 
     /**
+     * Is this an authority index record?
+     *
+     * @return bool
+     */
+    public function isAuthorityRecord()
+    {
+        return false;
+    }
+
+    /**
      * Support method for getOpenURL() -- pick the OpenURL format.
      *
      * @return string

@@ -4,7 +4,6 @@ return [
     'helpers' => [
         'factories' => [
             'Finna\View\Helper\Root\Auth' => 'Finna\View\Helper\Root\AuthFactory',
-            'Finna\View\Helper\Root\Authority' => 'Finna\View\Helper\Root\AuthorityFactory',
             'Finna\View\Helper\Root\AuthorizationNotification' => 'Finna\View\Helper\Root\AuthorizationNotificationFactory',
             'Finna\View\Helper\Root\Autocomplete' => 'Finna\View\Helper\Root\AutocompleteFactory',
             'Finna\View\Helper\Root\Barcode' => 'Zend\ServiceManager\Factory\InvokableFactory',
@@ -59,10 +58,10 @@ return [
             'Finna\View\Helper\Root\UserAgent' => 'Finna\View\Helper\Root\UserAgentFactory',
             'Finna\View\Helper\Root\UserListEmbed' => 'Finna\View\Helper\Root\UserListEmbedFactory',
             'Finna\View\Helper\Root\UserPublicName' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'Finna\View\Helper\Root\Url' => 'VuFind\View\Helper\Root\UrlFactory'
         ],
         'aliases' => [
             'auth' => 'Finna\View\Helper\Root\Auth',
-            'authority' => 'Finna\View\Helper\Root\Authority',
             'authorizationNote' => 'Finna\View\Helper\Root\AuthorizationNotification',
             'autocomplete' => 'Finna\View\Helper\Root\Autocomplete',
             'barcode' => 'Finna\View\Helper\Root\Barcode',
@@ -120,6 +119,7 @@ return [
             'VuFind\View\Helper\Root\ResultFeed' => 'Finna\View\Helper\Root\ResultFeed',
             'VuFind\View\Helper\Root\SearchTabs' => 'Finna\View\Helper\Root\SearchTabs',
             'VuFind\View\Helper\Root\Summon' => 'Finna\View\Helper\Root\Summon',
+            'VuFind\View\Helper\Root\Url' => 'Finna\View\Helper\Root\Url',
             'VuFind\View\Helper\Bootstrap3\LayoutClass' => 'Finna\View\Helper\Root\LayoutClass',
             'VuFind\View\Helper\Bootstrap3\Recaptcha' => 'Finna\View\Helper\Root\Recaptcha',
 
@@ -169,6 +169,7 @@ return [
         'record.js',
         'finna.js',
         'finna-autocomplete.js',
+        'finna-authority.js',
         'finna-combined-results.js',
         'finna-video-popup.js',
         'finna-image-paginator.js',
