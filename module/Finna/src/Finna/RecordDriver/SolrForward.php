@@ -1074,8 +1074,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'url' => $src,
                         'posterUrl' => $poster,
                         // Include both 'text' and 'desc' for online and normal urls
-                        'text' => $description ? $description : $videoType,
-                        'desc' => $description ? $description : $videoType,
+                        'text' => $description ?: $videoType,
+                        'desc' => $description ?: $videoType,
                         'source' => $source,
                     ];
                 }
