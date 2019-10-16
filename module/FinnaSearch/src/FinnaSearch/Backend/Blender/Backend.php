@@ -342,8 +342,8 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
      *
      * @param AbstractBackend           $backend          Backend
      * @param Params                    $params           Search params
-     * @param RecordCollectionInterface $collection       Record collection
      * @param AbstractQuery             $query            Query
+     * @param RecordCollectionInterface $collection       Record collection
      * @param int                       $collectionOffset Start offset of the
      * collection
      * @param int                       $offset           Record offset
