@@ -272,13 +272,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Render a link to the authority page or fallback to Author search.
+     * Render a authority search link or fallback to Author search.
      * This returns an a-tag.
      *
      * @param string $type    Link type
      * @param string $lookfor Link label or string to search for at link
      *                        when authority functionality id disabled.
-     * @param string $id      Authority record id
+     * @param array  $data    Additional link data
      * @param array  $params  Optional array of parameters for the link template
      *
      * @return string
@@ -370,6 +370,14 @@ class Record extends \VuFind\View\Helper\Root\Record
         return $authSrc ? $this->getAuthorityIdForSource($id, $authSrc) : null;
     }
 
+    /**
+     * Prefix authority id with authority record source.
+     *
+     * @param string $id     Authority id
+     * @param string $source Authority source
+     *
+     * @return string
+     */
     protected function getAuthorityIdForSource($id, $source)
     {
         return "$source.$id";
