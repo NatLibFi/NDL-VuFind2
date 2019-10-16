@@ -565,18 +565,16 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Set facet field filtering.
+     * Filter facets by prefix.
      *
-     * @param string  $field  Facet field
-     * @param string  $value  Facet value
-     * @param boolean $prefix Filter by prefix (true) or contains (false).
+     * @param string $field Facet field
+     * @param string $value Facet value
      *
      * @return void
      */
-    public function addFacetFilter($field, $value, $prefix = true)
+    public function addFacetFilter($field, $value)
     {
-        $key = $prefix ? 'prefix' : 'contains';
-        $this->facetFilters["f.{$field}.facet.{$key}"] = $value;
+        $this->facetFilters["f.{$field}.facet.prefix"] = $value;
     }
 
     /**
