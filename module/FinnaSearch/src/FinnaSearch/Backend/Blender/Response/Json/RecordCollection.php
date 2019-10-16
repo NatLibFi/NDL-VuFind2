@@ -79,34 +79,6 @@ class RecordCollection
     }
 
     /**
-     * Number of records included from the primary collection when blending
-     *
-     * @var int
-     */
-    protected $primaryCount;
-
-    /**
-     * Number of records included from the secondary collection when blending
-     *
-     * @var int
-     */
-    protected $secondaryCount;
-
-    /**
-     * Total number of records in the primary results
-     *
-     * @var int
-     */
-    protected $primaryTotal;
-
-    /**
-     * Total number of records in the secondary results
-     *
-     * @var int
-     */
-    protected $secondaryTotal;
-
-    /**
      * Initialize blended results
      *
      * @param RecordCollectionInterface $primaryCollection   Primary record
@@ -150,41 +122,11 @@ class RecordCollection
             $records, $offset, $limit
         );
 
-        $this->primaryCount = 0;
-        $this->secondaryCount = 0;
-        foreach ($this->records as $record) {
-            if ($record->getExtraDetail('blendSource') === 'primary') {
-                ++$this->primaryCount;
-            } else {
-                ++$this->secondaryCount;
-            }
-        }
-
         $this->mergeFacets($primaryCollection, $secondaryCollection);
 
         if (null === $primaryCollection || null === $secondaryCollection) {
             $this->errors = ['search_backend_partial_failure'];
         }
-    }
-
-    /**
-     * Get number of records included from the primary collection
-     *
-     * @return int
-     */
-    public function getPrimaryCount()
-    {
-        return $this->primaryCount;
-    }
-
-    /**
-     * Get number of records included from the secondary collection
-     *
-     * @return int
-     */
-    public function getSecondaryCount()
-    {
-        return $this->secondaryCount;
     }
 
     /**
