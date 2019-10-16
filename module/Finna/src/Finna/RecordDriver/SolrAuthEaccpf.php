@@ -39,7 +39,7 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrAuthEacCpf extends SolrAuthDefault
+class SolrAuthEacCpf extends \VuFind\RecordDriver\SolrAuthDefault
 {
     use XmlReaderTrait;
 
@@ -80,12 +80,10 @@ class SolrAuthEacCpf extends SolrAuthDefault
     public function getTitle()
     {
         $record = $this->getXmlRecord();
-        $title
-            = $record->cpfDescription->identity->nameEntryParallel->nameEntry
-                ->part[0]
-            ?? '';
-
-        return $title ? (string)$title : '';
+        if (isset($record->cpfDescription->identity->nameEntry->part[0])) {
+            return (string)$record->cpfDescription->identity->nameEntry->part[0];
+        }
+        return null;
     }
 
     /**
