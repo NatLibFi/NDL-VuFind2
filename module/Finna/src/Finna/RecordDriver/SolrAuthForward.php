@@ -185,10 +185,7 @@ class SolrAuthForward extends SolrAuthDefault
                 if (isset($attr->{$type})
                     && (string)$attr->{$type} === $typeVal
                 ) {
-                    return strip_tags(
-                        (string)$bio,
-                        '<h1><h2><h3><h4><h5><b><i>'
-                    );
+                    return $this->sanitizeHTML((string)$bio);
                 }
             }
         }
