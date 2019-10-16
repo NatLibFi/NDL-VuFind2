@@ -796,7 +796,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     ? (string)$agent->AgentIdentifier->IDTypeName . ':' .
                     (string)$agent->AgentIdentifier->IDValue
                     : null;
-                $authType = (string)$agent->AgentIdentifier->IDTypeName;
+                $authType = (string)$agent->AgentIdentifier->IDTypeName ?? null;
 
                 $item = [
                     'name' => (string)$agent->AgentName,
