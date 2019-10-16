@@ -291,7 +291,6 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
                 $params = $results->getParams();
                 $authorIdFilters = $params->getAuthorIdFilter(true);
 
-
                 $params->addFacet(AuthorityHelper::AUTHOR_ID_ROLE_FACET);
                 $paramsCopy = clone $params;
 
