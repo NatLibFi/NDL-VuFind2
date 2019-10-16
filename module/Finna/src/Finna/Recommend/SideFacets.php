@@ -71,8 +71,8 @@ class SideFacets extends \VuFind\Recommend\SideFacets
     /**
      * Constructor
      *
-     * @param \VuFind\Config\PluginManager                $configLoader
-     * Configuration loader
+     * @param \VuFind\Config\PluginManager                $configLoader    Configu-
+     * ration loader
      * @param \Finna\Search\Solr\AuthorityHelper          $authorityHelper Authority
      * helper
      * @param \VuFind\Search\Solr\HierarchicalFacetHelper $facetHelper     Helper for
