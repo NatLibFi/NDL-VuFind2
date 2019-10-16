@@ -71,7 +71,10 @@ class SolrAuthForward extends SolrAuthDefault
      */
     public function getSummary()
     {
-        return explode(PHP_EOL, $this->getBiographicalNote('henkilo-biografia-tyyppi', 'biografia'));
+        return explode(
+            PHP_EOL,
+            $this->getBiographicalNote('henkilo-biografia-tyyppi', 'biografia')
+        );
     }
 
     /**
