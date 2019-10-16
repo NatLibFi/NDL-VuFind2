@@ -226,6 +226,26 @@ class SearchController extends \VuFind\Controller\SearchController
     }
 
     /**
+     * Results action.
+     *
+     * @return mixed
+     */
+    public function resultsAction()
+    {
+        if ($this->getRequest()->getQuery()->get('combined')) {
+            $this->saveToHistory = false;
+        }
+
+        $this->initCombinedViewFilters();
+        $view = parent::resultsAction();
+        $view->browse = false;
+        $this->initSavedTabs();
+        $view->fromStreetSearch = $this->getRequest()->getQuery()
+            ->get('streetsearch', false);
+        return $view;
+    }
+
+    /**
      * StreetSearch action.
      *
      * @return \Zend\View\Model\ViewModel
