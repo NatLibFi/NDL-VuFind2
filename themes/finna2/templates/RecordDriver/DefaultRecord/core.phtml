@@ -154,7 +154,7 @@
         <div class="recordAuthors" property="author">
           <div class="truncate-field">
             <?php foreach($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?><?php if (!empty($author['role'])): ?><span class="author-role">, <?=mb_strtolower($this->transEsc('CreatorRoles::' . $author['role']), 'UTF-8') ?></span><?php endif; ?>
             <?php endforeach; ?>
             <?php $altScriptFound = false; ?>
             <?php foreach($results as $index => $author): ?>
@@ -220,7 +220,7 @@
     </div> <?php // record-core-metadata ?>
 
     <div class="description recordSummary">
-      <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+      <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
         <i class="fa fa-spinner fa-spin"></i>
       </span>
     </div>

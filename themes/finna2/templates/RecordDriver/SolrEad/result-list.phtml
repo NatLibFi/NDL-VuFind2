@@ -55,9 +55,9 @@ if ($img):
             <?php // The funky comparison below is due to Zend translator not supporting empty values (see ExtendedIniReader) ?>
             <?php if (!$this->translationEmpty('Archive Repository')): ?><span class="small"><?=$this->transEsc('Archive Repository')?>:</span><?php endif; ?>
             <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
-              <?php $originationExt = $this->driver->tryMethod('getOriginationExtended'); $origination = $this->driver->getOrigination(); if ($originationExt || $origination): ?>
+            <?php if ($origination = $this->driver->getOrigination()): ?>
               <br/><span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
-              <?=$this->record($this->driver)->getAuthorityLinkElement('author', $originationExt['name'] ?? $origination, $originationExt ?? null, ['authorityType' => $originationExt['type'] ?? null])?>
+              <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a>
             <?php endif; ?>
             <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>
               <?php $parentSource = $this->driver->getSourceIdentifier(); ?>
