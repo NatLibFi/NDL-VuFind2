@@ -21,7 +21,6 @@
           <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
             <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
           </a>
-          <?=$this->authorId ? ('<span class="author-role">(' . implode(', ', array_map(function ($role) { return mb_strtolower($this->transEsc('CreatorRoles::' . $role), 'UTF-8'); }, $this->driver->getAuthorRoles($this->authorId))) . ')</span>') : ''?>
         </h2>
         <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
           <div class="result-uniform-titles">
