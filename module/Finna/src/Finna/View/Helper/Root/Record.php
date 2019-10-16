@@ -678,19 +678,4 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         return $this->renderedUrls;
     }
-
-    /**
-     * Render a search result for the specified view mode.
-     *
-     * @param string $view View mode to use.
-     *
-     * @return string
-     */
-    public function getSearchResult($view, $params = [])
-    {
-        $params += ['driver' => $this->driver];
-        return $this->renderTemplate(
-            'result-' . $view . '.phtml', $params
-        );
-    }
 }
