@@ -202,9 +202,9 @@ class AuthorityHelper
      */
     public function getAuthorIdRole($id, $role = null)
     {
-        $result = $id . self::AUTHOR_ID_ROLE_SEPARATOR;
+        $result = $id;
         if ($role) {
-            $result .= $role;
+            $result .= (self::AUTHOR_ID_ROLE_SEPARATOR . $role);
         }
         return $result;
     }
