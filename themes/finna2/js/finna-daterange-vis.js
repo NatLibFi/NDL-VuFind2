@@ -222,8 +222,10 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       }
     );
 
-    // Re-encode '#' (required for advanced filters)
-    url = url.replace('#', '%23');
+    // Re-encode '#'
+    // (required for advanced filters and for authority-role filters,
+    // where authority id and role is separated with '###')
+    url = url.replace(/#/g, '%23');
 
     holder.find('.content').addClass('loading');
     loading = true;
