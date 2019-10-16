@@ -150,7 +150,7 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
 
         // Save active author ID and active authority filters
         $this->session->activeId = $id;
-        $this->session->ids = $searchParams->getAuthorIdFilter();
+        $this->session->idsWithRoles = $searchParams->getAuthorIdFilter(true);
 
         $html = $this->renderer->partial(
             'ajax/authority-recommend.phtml',

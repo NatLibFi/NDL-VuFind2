@@ -169,13 +169,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
     public function init($params, $request)
     {
         if ($ids = $params->getAuthorIdFilter()) {
-            // Retrieve records from authority index for filtered authors.
             $this->authorId = $ids;
-            if ($this->session->ids && $this->session->ids !== $ids) {
-                // Reset active authority if filters have been changed.
-                // This activated the last selected authority in the UI.
-                $this->session->activeId = null;
-            }
             $this->lookfor = implode(
                 ' OR ',
                 array_map(
@@ -186,6 +180,28 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
                 )
             );
             $this->header = 'Author';
+
+            
+            // Detect if authority filters have been changed and switch active
+            // authority recommendation tab accordingly.
+            $idsWithRoles = $params->getAuthorIdFilter(true);
+            if ($this->session->idsWithRoles
+                && $this->session->idsWithRoles !== $idsWithRoles
+            ) {
+                $added = array_values(
+                    array_diff($idsWithRoles, $this->session->idsWithRoles)
+                );
+                if ($added) {
+                    // New authority filter added, activate it
+                    list($activeId, $activeRole)
+                        = $this->authorityHelper->extractRole($added[0]);
+                    $this->session->activeId = $activeId;
+                } else {
+                    // Active filter removed, reset session so that the last tab
+                    // is rendered as active
+                    $this->session->activeId;
+                }
+            }
         } else {
             parent::init($params, $request);
         }
