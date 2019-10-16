@@ -54,7 +54,7 @@ JS;
       $coreFields = $formatter->getDefaults('authority');
     ?>
     <div class="authoritybox filtered<?= $collapseAuthorityInfo ? ' hide' : ''?>" data-id="<?= $this->escapeHtmlAttr($activeRecord->getUniqueID())?>">
-      <?= $this->partial('ajax/authority-recommend.phtml', ['recommend' => $this->recommend, 'authority' => $activeRecord, 'params' => $results->getParams()]); ?>
+      <?= $this->partial('ajax/authority-recommend.phtml', ['recommend' => $this->recommend, 'authority' => $activeRecord, 'params' => $results->getParams(), 'collapsed' => $collapseAuthorityInfo]); ?>
     </div>
   <?php else: ?>
     <?php

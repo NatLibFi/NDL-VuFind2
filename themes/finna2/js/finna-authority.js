@@ -11,6 +11,13 @@ finna.authority = (function finnaAuthority() {
       authoritybox.toggleClass('hide');
     }
     var collapsed = authoritybox.hasClass('hide');
+    var recordSummary = authoritybox.find('.recordSummary');
+
+    if (!collapsed && !recordSummary.hasClass('truncate-field')) {
+      recordSummary.addClass('truncate-field');
+      finna.layout.initTruncate(authoritybox);
+    }
+
     tabs.toggleClass('collapsed', mode);
     authorityRecommend.find('li.toggle').toggleClass('collapsed', mode);
     $.cookie('collapseAuthorityInfo', collapsed, {path: VuFind.path});
@@ -21,11 +28,14 @@ finna.authority = (function finnaAuthority() {
     $('div.authority-recommend .nav-tabs li').not('.toggle').click(function onTabClick() {
      var self = $(this);
      var id = self.data('id');
-     if (self.hasClass('active')) {
-       return;
-     }
      var parent = self.closest('.authority-recommend');
      var authoritybox = parent.find('.authoritybox');
+     var collapsed = authoritybox.hasClass('hide');
+
+     if (self.hasClass('active') && !collapsed) {
+       return;
+     }
+
      parent.find('.nav-tabs li').toggleClass('active', false);
      self.addClass('active');
 
@@ -42,10 +52,12 @@ finna.authority = (function finnaAuthority() {
      )
         .done(function onGetAuthorityInfoDone(response) {
           authoritybox.html(typeof response.data.html !== 'undefined' ? response.data.html : '--');
-          var summary = authoritybox.find('.recordSummary');
-          finna.layout.initTruncate(authoritybox);
-          spinner.hide();
           toggleAuthorityInfoCollapse(false);
+          var summary = authoritybox.find('.recordSummary');
+          if (!authoritybox.hasClass('hide')) {
+            finna.layout.initTruncate(authoritybox);
+          }
+          spinner.hide();
         })
         .fail(function onGetAuthorityInfoFail() {
           authoritybox.text(VuFind.translate('error_occurred'));
