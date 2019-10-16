@@ -56,7 +56,6 @@ class Factory
     {
         return new CollectionSideFacets(
             $sm->get(\VuFind\Config\PluginManager::class),
-            $sm->get(\Finna\Search\Solr\AuthorityHelper::class),
             $sm->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class)
         );
     }
