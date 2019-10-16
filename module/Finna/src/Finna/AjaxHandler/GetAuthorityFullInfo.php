@@ -148,8 +148,7 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
 
         $html = $this->renderer->partial(
             'ajax/authority-recommend.phtml',
-            ['recommend' => $this->authorityRecommend,
-             'params' => $searchParams, 'authority' => $authority]
+            ['recommend' => $this->authorityRecommend, 'authority' => $authority]
         );
 
         return $this->formatResponse(compact('html'));

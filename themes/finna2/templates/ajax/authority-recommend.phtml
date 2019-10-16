@@ -1,15 +1,8 @@
 <!-- START of: finna - ajax/authority-recommend.phtml -->
 <?php
-/*
-$data = $this->recommend->getRecommendations();
-if (empty($data)) {
-  return;
-}
-$activeInd = count($data) ? count($data)-1 : 0;
-*/
 $results = $this->recommend->getResults();
 $that = $this;
-$record = $this->authority; //data[$activeInd];
+$record = $this->authority;
 $formats = $record->getFormats();
 $formatter = $this->recordDataFormatter();
 $coreFields = $formatter->getDefaults('authority');
