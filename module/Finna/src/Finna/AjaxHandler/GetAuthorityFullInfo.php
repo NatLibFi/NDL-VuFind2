@@ -113,7 +113,6 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
     public function handleRequest(Params $params)
     {
         $id = $params->fromQuery('id');
-        $source = $params->fromQuery('source');
 
         if (!$id) {
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
