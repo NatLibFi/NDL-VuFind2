@@ -39,13 +39,6 @@ namespace Finna\Search\Solr;
 class AuthorityHelper
 {
     /**
-     * Index field for author-ids.
-     *
-     * @var string
-     */
-    const AUTHOR_ID_FACET = 'author_id_str_mv';
-
-    /**
      * Index field for author2-ids.
      *
      * @var string
@@ -67,14 +60,14 @@ class AuthorityHelper
     const AUTHOR_ID_ROLE_SEPARATOR = '###';
 
     /**
-     * Results plugin manager
+     * Record loader
      *
-     * @var \VuFind\Search\Results\PluginManager
+     * @var \VuFind\Record\Loader
      */
     protected $recordLoader;
 
     /**
-     * Results plugin manager
+     * Translator
      *
      * @var \VuFind\Translator
      */
@@ -174,7 +167,6 @@ class AuthorityHelper
     {
         return [
             AuthorityHelper::AUTHOR_ID_ROLE_FACET,
-            AuthorityHelper::AUTHOR_ID_FACET,
             AuthorityHelper::AUTHOR2_ID_FACET
         ];
     }
