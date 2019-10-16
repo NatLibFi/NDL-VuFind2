@@ -93,6 +93,20 @@ class RecordCollection
     protected $secondaryCount;
 
     /**
+     * Total number of records in the primary results
+     *
+     * @var int
+     */
+    protected $primaryTotal;
+
+    /**
+     * Total number of records in the secondary results
+     *
+     * @var int
+     */
+    protected $secondaryTotal;
+
+    /**
      * Initialize blended results
      *
      * @param RecordCollectionInterface $primaryCollection   Primary record
@@ -122,21 +136,14 @@ class RecordCollection
         foreach ($primaryRecords as &$record) {
             $record->setExtraDetail('blendSource', 'primary');
         }
-        $initialPrimary = $this->config['Blending']['boostPosition'] ?? $blockSize;
-        $boostRecordCount = $this->config['Blending']['boostCount'] ?? 0;
-        $records = array_merge(
-            array_splice($primaryRecords, 0, $initialPrimary),
-            array_splice($secondaryRecords, 0, $boostRecordCount),
-            array_splice(
-                $primaryRecords, 0, $blockSize - $initialPrimary
-            )
-        );
-        for ($pos = count($records); $pos < $offset + $limit; $pos += $blockSize) {
-            $records = array_merge(
-                $records,
-                array_splice($secondaryRecords, 0, $blockSize),
-                array_splice($primaryRecords, 0, $blockSize)
-            );
+
+        $records = [];
+        for ($pos = 0; $pos <= $offset + $limit; $pos++) {
+            if ($this->isPrimaryAtOffset($pos, $blockSize) && $primaryRecords) {
+                $records[] = array_shift($primaryRecords);
+            } elseif ($secondaryRecords) {
+                $records[] = array_shift($secondaryRecords);
+            }
         }
 
         $this->records = array_slice(
@@ -178,6 +185,34 @@ class RecordCollection
     public function getSecondaryCount()
     {
         return $this->secondaryCount;
+    }
+
+    /**
+     * Calculate if the record at given offset should be from the primary source
+     *
+     * Note: This does not take into account whether there are enough records in the
+     * source.
+     *
+     * @param int $offset    Offset
+     * @param int $blockSize Record block size
+     *
+     * @return int
+     */
+    public function isPrimaryAtOffset($offset, $blockSize)
+    {
+        $boostPos = $this->config['Blending']['boostPosition'] ?? $blockSize;
+        $boostCount = $this->config['Blending']['boostCount'] ?? 0;
+        if ($offset < $boostPos
+            || 0 === $boostCount
+            || $offset >= $boostPos + $boostCount
+        ) {
+            // We're outside any boosted records, calculate by block
+            $currentBlock = floor($offset / $blockSize);
+            return $currentBlock % 2 === 0;
+        }
+
+        // We're in a boost block
+        return false;
     }
 
     /**

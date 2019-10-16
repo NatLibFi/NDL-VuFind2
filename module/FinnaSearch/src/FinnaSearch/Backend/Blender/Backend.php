@@ -168,19 +168,33 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
                 $this->blockSize
             );
         } else {
-            $primaryCollection = $this->primaryBackend->search(
-                $query,
-                0,
-                0,
-                $params
-            );
+            try {
+                $primaryCollection = $this->primaryBackend->search(
+                    $query,
+                    0,
+                    0,
+                    $params
+                );
+            } catch (\Exception $e) {
+                $exception = $e;
+                $primaryCollection = null;
+            }
 
-            $secondaryCollection = $this->secondaryBackend->search(
-                $secondaryQuery,
-                0,
-                0,
-                $secondaryParams
-            );
+            try {
+                $secondaryCollection = $this->secondaryBackend->search(
+                    $secondaryQuery,
+                    0,
+                    0,
+                    $secondaryParams
+                );
+            } catch (\Exception $e) {
+                if (null !== $exception) {
+                    // Both searches failed, throw the previous exception
+                    throw $exception;
+                }
+                $exception = $e;
+                $secondaryCollection = null;
+            }
 
             $mergedCollection->initBlended(
                 $primaryCollection,
@@ -195,13 +209,29 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
         if ($offset + $limit > $this->blendLimit) {
             $primaryTotal = $primaryCollection->getTotal();
             $secondaryTotal = $secondaryCollection->getTotal();
-            $primaryOffset = $mergedCollection->getPrimaryCount();
-            $secondaryOffset = $mergedCollection->getSecondaryCount();
+            $primaryCollectionOffset = 0;
+            $secondaryCollectionOffset = 0;
+            $primaryOffset = 0;
+            $secondaryOffset = 0;
 
-            for ($offset = $this->blendLimit; $offset < $limit; $offset++) {
-                $primary = ($offset / $this->blockSize) % 2 === 0;
-                if ($primary && $offset >= $primaryTotal) {
-                    if ($offset >= $secondaryTotal) {
+            // First iterate through the records before the offset to calculate
+            // proper source offsets
+            for ($pos = 0; $pos < $offset; $pos++) {
+                if ($mergedCollection->isPrimaryAtOffset($pos, $this->blockSize)
+                    && $primaryOffset < $primaryTotal
+                ) {
+                    ++$primaryOffset;
+                } elseif ($secondaryOffset < $secondaryTotal) {
+                    ++$secondaryOffset;
+                }
+            }
+
+            // Fetch records
+            for ($pos = $offset; $pos < $limit + $offset; $pos++) {
+                $primary = $mergedCollection
+                    ->isPrimaryAtOffset($pos, $this->blockSize);
+                if ($primary && $pos >= $primaryTotal) {
+                    if ($pos >= $secondaryTotal) {
                         break;
                     }
                     $primary = false;
@@ -210,8 +240,9 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
                     $record = $this->getRecord(
                         $this->primaryBackend,
                         $params,
-                        $primaryCollection,
                         $query,
+                        $primaryCollection,
+                        $primaryCollectionOffset,
                         $primaryOffset
                     );
                     ++$primaryOffset;
@@ -219,8 +250,9 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
                     $record = $this->getRecord(
                         $this->secondaryBackend,
                         $secondaryParams,
-                        $secondaryCollection,
                         $query,
+                        $secondaryCollection,
+                        $secondaryCollectionOffset,
                         $secondaryOffset
                     );
                     ++$secondaryOffset;
@@ -308,25 +340,32 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
     /**
      * Get a record from the given backend by offset
      *
-     * @param AbstractBackend           $backend    Backend
-     * @param Params                    $params     Search params
-     * @param RecordCollectionInterface $collection Record collection
-     * @param AbstractQuery             $query      Query
-     * @param int                       $offset     Record offset
+     * @param AbstractBackend           $backend          Backend
+     * @param Params                    $params           Search params
+     * @param RecordCollectionInterface $collection       Record collection
+     * @param AbstractQuery             $query            Query
+     * @param int                       $collectionOffset Start offset of the
+     * collection
+     * @param int                       $offset           Record offset
      *
      * @return array
      */
     protected function getRecord(AbstractBackend $backend,
-        ParamBag $params, RecordCollectionInterface $collection,
-        AbstractQuery $query, $offset
+        ParamBag $params, AbstractQuery $query,
+        RecordCollectionInterface &$collection,
+        &$collectionOffset,
+        $offset
     ) {
         $records = $collection->getRecords();
-        if ($offset < count($records)) {
-            return $records[offset];
+        if ($offset >= $collectionOffset
+            && $offset < $collectionOffset + count($records)
+        ) {
+            return $records[$offset - $collectionOffset];
         }
         $collection = $backend->search($query, $offset, $this->blockSize, $params);
+        $collectionOffset = $offset;
         $records = $collection->getRecords();
-        return $records[$offset] ?? null;
+        return $records[0] ?? null;
     }
 
     /**
