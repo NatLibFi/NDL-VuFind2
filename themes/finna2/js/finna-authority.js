@@ -26,34 +26,33 @@ finna.authority = (function finnaAuthority() {
   function initAuthorityRecommendTabs()
   {
     $('div.authority-recommend .nav-tabs li').not('.toggle').click(function onTabClick() {
-     var self = $(this);
-     var id = self.data('id');
-     var parent = self.closest('.authority-recommend');
-     var authoritybox = parent.find('.authoritybox');
-     var collapsed = authoritybox.hasClass('hide');
+      var self = $(this);
+      var id = self.data('id');
+      var parent = self.closest('.authority-recommend');
+      var authoritybox = parent.find('.authoritybox');
+      var collapsed = authoritybox.hasClass('hide');
 
-     if (self.hasClass('active') && !collapsed) {
-       return;
-     }
+      if (self.hasClass('active') && !collapsed) {
+        return;
+      }
 
-     parent.find('.nav-tabs li').toggleClass('active', false);
-     self.addClass('active');
+      parent.find('.nav-tabs li').toggleClass('active', false);
+      self.addClass('active');
 
-     var spinner = parent.find('li.spinner');
-     spinner.toggleClass('hide', false).show();
+      var spinner = parent.find('li.spinner');
+      spinner.toggleClass('hide', false).show();
 
-     $.getJSON(
-       VuFind.path + '/AJAX/JSON',
-       {
-         method: 'getAuthorityFullInfo',
-         id: id,
-         searchId: parent.data('search-id')
-       }
-     )
+      $.getJSON(
+        VuFind.path + '/AJAX/JSON',
+        {
+          method: 'getAuthorityFullInfo',
+          id: id,
+          searchId: parent.data('search-id')
+        }
+      )
         .done(function onGetAuthorityInfoDone(response) {
           authoritybox.html(typeof response.data.html !== 'undefined' ? response.data.html : '--');
           toggleAuthorityInfoCollapse(false);
-          var summary = authoritybox.find('.recordSummary');
           if (!authoritybox.hasClass('hide')) {
             finna.layout.initTruncate(authoritybox);
           }
