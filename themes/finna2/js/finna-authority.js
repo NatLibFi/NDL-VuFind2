@@ -37,7 +37,6 @@ finna.authority = (function finnaAuthority() {
        {
          method: 'getAuthorityFullInfo',
          id: id,
-         context: 'recommend',
          searchId: parent.data('search-id')
        }
      )

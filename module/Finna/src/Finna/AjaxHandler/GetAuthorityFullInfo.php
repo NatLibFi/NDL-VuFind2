@@ -113,12 +113,12 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
     public function handleRequest(Params $params)
     {
         $id = $params->fromQuery('id');
+        $searchId = $params->fromQuery('searchId');
 
-        if (!$id) {
+        if (!$id || !$searchId) {
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }
 
-        $searchId = $params->fromPost('searchId', $params->fromQuery('searchId'));
         $search = $this->searchTable->select(['id' => $searchId])->current();
         if (empty($search)) {
             return $this->formatResponse(
