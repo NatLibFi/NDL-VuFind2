@@ -27,7 +27,6 @@
  */
 namespace Finna\View\Helper\Root;
 
-use Finna\Search\Factory\UrlQueryHelperFactory;
 use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\Factory\FactoryInterface;
 

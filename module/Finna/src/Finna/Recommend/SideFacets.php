@@ -30,7 +30,6 @@
  */
 namespace Finna\Recommend;
 
-use VuFind\Search\Solr\HierarchicalFacetHelper;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 

@@ -245,7 +245,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         // Attempt to switch Author search link to Authority link.
         if ($this->isAuthorityLinksEnabled()
             && $type === 'author'
-            && isset($params['id'])            
+            && isset($params['id'])
             && $authId = $this->getAuthorityId($type, $params['id'])
         ) {
             $filter = $this->urlHelper->getRecordsByAuthorFilter($authId);
@@ -330,7 +330,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         return $this->isAuthorityEnabled()
             && ($this->config->Authority->authority_links ?? false);
     }
-    
+
     /**
      * Is authority inline info enabled?
      *
@@ -353,7 +353,6 @@ class Record extends \VuFind\View\Helper\Root\Record
         return isset($this->datasourceConfig[$recordSource]['authority']);
     }
 
-    
     /**
      * Format authority id by prefixing the given id with authority record source.
      *

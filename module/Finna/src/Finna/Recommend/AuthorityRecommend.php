@@ -83,7 +83,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
      * @var \VuFind\Cookie\CookieManager
      */
     protected $cookieManager = null;
-    
+
     /**
      * Constructor
      *
@@ -151,7 +151,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
     {
         return $this->cookieManager->get('collapseAuthorityInfo') === 'true';
     }
-    
+
     /**
      * Called at the end of the Search Params objects' initFromRequest() method.
      * This method is responsible for setting search parameters needed by the
@@ -181,7 +181,6 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
             );
             $this->header = 'Author';
 
-            
             // Detect if authority filters have been changed and switch active
             // authority recommendation tab accordingly.
             $idsWithRoles = $params->getAuthorIdFilter(true);
@@ -219,7 +218,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
     public function process($results)
     {
         // Override parent::process to allow advanced search
-        
+
         $this->results = $results;
 
         // empty searches such as New Items will return blank
@@ -246,7 +245,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
 
         $this->addRoles();
     }
-    
+
     /**
      * Return roles for author.
      *
@@ -307,7 +306,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
                 if (!isset($facets[AuthorityHelper::AUTHOR_ID_ROLE_FACET])) {
                     continue;
                 }
-                
+
                 $roles
                     = $facets[AuthorityHelper::AUTHOR_ID_ROLE_FACET]['list'] ?? [];
                 if ($this->authorityHelper) {

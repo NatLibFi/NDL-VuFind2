@@ -29,11 +29,6 @@ namespace Finna\AjaxHandler;
 
 use Finna\Recommend\AuthorityRecommend;
 
-use VuFind\Record\Loader;
-use VuFind\Search\Results\PluginManager;
-use VuFind\Session\Settings as SessionSettings;
-use VuFindSearch\ParamBag;
-
 use Zend\Mvc\Controller\Plugin\Params;
 use Zend\View\Renderer\RendererInterface;
 

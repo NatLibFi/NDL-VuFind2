@@ -42,7 +42,7 @@ class Url extends \VuFind\View\Helper\Root\Url
 {
     /**
      * Get a filter query that returns records by author id.
-     * 
+     *
      * @param string $id Author id
      *
      * @return string

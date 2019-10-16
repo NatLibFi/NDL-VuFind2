@@ -12,7 +12,7 @@ if ($data) {
     }
   }
   if (!$activeRecord) {
-    $activeInd = count($data) ? count($data)-1 : 0;
+    $activeInd = count($data) ? count($data) - 1 : 0;
     $activeRecord = $data[$activeInd];
   }
 }
@@ -28,7 +28,7 @@ $that = $this;
       <div class="tabs-table">
         <ul class="nav nav-tabs">
           <?php foreach ($data as $ind => $record): ?>
-            <?
+            <?php
               $formats = $record->getFormats();
               $institutions = $record->getInstitutions();
             ?>
@@ -80,10 +80,10 @@ JS;
     };
     $content = implode(', ', array_map($callback, $data));
     if (!empty($content)) {
-      echo('<div class="authoritybox">');
-      echo('<div><strong>' . $this->transEsc($this->recommend->getHeader()) . ':</strong></div>');
-      echo("<div>$content</div>");
-      echo('</div>');
+      echo '<div class="authoritybox">';
+      echo '<div><strong>' . $this->transEsc($this->recommend->getHeader()) . ':</strong></div>';
+      echo "<div>$content</div>";
+      echo '</div>';
     }
     ?>
   <?php endif; ?>

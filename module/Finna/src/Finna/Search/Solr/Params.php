@@ -28,7 +28,6 @@
  */
 namespace Finna\Search\Solr;
 
-use Finna\Search\Solr\AuthorityHelper;
 use VuFind\Solr\Utils;
 
 /**

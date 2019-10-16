@@ -65,7 +65,7 @@ class AuthorityHelper
      * @var string
      */
     const AUTHOR_ID_ROLE_SEPARATOR = '###';
-    
+
     /**
      * Results plugin manager
      *
@@ -199,7 +199,7 @@ class AuthorityHelper
             ? ['id' => $id, 'displayText' => $displayText, 'role' => $role]
             : $displayText;
     }
-    
+
     /**
      * Get string with author id and role.
      *
@@ -215,7 +215,6 @@ class AuthorityHelper
             $result .= $role;
         }
         return $result;
-        
     }
 
     /**
