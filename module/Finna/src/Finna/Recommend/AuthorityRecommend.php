@@ -50,11 +50,11 @@ use Zend\StdLib\Parameters;
 class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
 {
     /**
-     * View renderer
+     * Author ids
      *
-     * @var RendererInterface
+     * @var array
      */
-    protected $authorId = null;
+    protected $authorIds = null;
 
     /**
      * Authority roles
@@ -112,7 +112,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
      */
     public function getRecommendations()
     {
-        if (!$this->authorId) {
+        if (!$this->authorIds) {
             return array_unique($this->recommendations, SORT_REGULAR);
         }
 
@@ -121,7 +121,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
         $sorted = [];
         $rest = [];
         foreach ($this->recommendations as $r) {
-            $pos = array_search($r->getUniqueID(), $this->authorId);
+            $pos = array_search($r->getUniqueID(), $this->authorIds);
             if (false === $pos) {
                 $rest[] = $r;
             } else {
@@ -169,7 +169,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
     public function init($params, $request)
     {
         if ($ids = $params->getAuthorIdFilter()) {
-            $this->authorId = $ids;
+            $this->authorIds = $ids;
             $this->lookfor = implode(
                 ' OR ',
                 array_map(
@@ -278,14 +278,14 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
      */
     protected function addRoles()
     {
-        if (!$this->authorId) {
+        if (!$this->authorIds) {
             return;
         }
 
         try {
             $resultsOrig = $this->results;
 
-            foreach ($this->authorId as $id) {
+            foreach ($this->authorIds as $id) {
                 $results = clone $resultsOrig;
                 $params = $results->getParams();
 
