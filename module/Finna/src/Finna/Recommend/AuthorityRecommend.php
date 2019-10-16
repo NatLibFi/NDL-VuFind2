@@ -50,7 +50,7 @@ use Zend\StdLib\Parameters;
 class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
 {
     /**
-     * Author ids
+     * Authority ids
      *
      * @var array
      */
@@ -286,10 +286,11 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
             $resultsOrig = $this->results;
 
             foreach ($this->authorIds as $id) {
+                // For each recommended authority, facet results by role
                 $results = clone $resultsOrig;
                 $params = $results->getParams();
-
                 $authorIdFilters = $params->getAuthorIdFilter(true);
+
 
                 $params->addFacet(AuthorityHelper::AUTHOR_ID_ROLE_FACET);
                 $paramsCopy = clone $params;
