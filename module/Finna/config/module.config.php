@@ -736,7 +736,6 @@ $config = [
 $recordRoutes = [
    'metalibrecord' => 'MetaLibRecord',
    'solrrecord' => 'Record',
-   'solrrecor'
 ];
 
 // Define dynamic routes -- controller => [route name => action]
