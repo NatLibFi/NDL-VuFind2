@@ -47,6 +47,7 @@ use Zend\Db\Sql\Ddl\Column\Boolean;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
@@ -1399,7 +1400,23 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function getConfig($function)
     {
-        if (isset($this->config[$function])) {
+        if ('getMyTransactionHistory' === $function) {
+            $limit = $this->config['TransactionHistory']['max_page_size'] ?? 100;
+            return [
+                'max_results' => $limit,
+                'sort' => [
+                    'CHECK_OUT_DATE DESCENDING' => 'sort_checkout_date_desc',
+                    'CHECK_OUT_DATE ASCENDING' => 'sort_checkout_date_asc',
+                    'CHECK_IN_DATE DESCENDING' => 'sort_return_date_desc',
+                    'CHECK_IN_DATE ASCENDING' => 'sort_return_date_asc',
+                    'AUTHOR DESCENDING' => 'sort_author_desc',
+                    'AUTHOR ASCENDING' => 'sort_author_asc',
+                    'TITLE DESCENDING' => 'sort_title_desc',
+                    'TITLE ASCENDING' => 'sort_title_asc'
+                ],
+                'default_sort' => 'CHECK_OUT_DATE DESCENDING'
+            ];
+        } else if (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
             if ('onlinePayment' === $function) {
                 $functionConfig['exactBalanceRequired'] = true;
@@ -1511,21 +1528,51 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         return $transList;
     }
 
-    public function getMyTransactionHistory($user)
+    /**
+     * Get Patron Transaction History
+     *
+     * This is responsible for retrieving all historical transactions
+     * (i.e. checked out items)
+     * by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    public function getMyTransactionHistory($patron, $params)
     {
-        $patronId = $this->authenticatePatron($user);
-        $username = $user['cat_username'];
-        $password = $user['cat_password'];
+        $patronId = $this->authenticatePatron($patron);
+        if (null === $patronId) {
+            return [];
+        }
+
+        $sort = explode(
+            ' ',
+            !empty($params['sort']) 
+                ? $params['sort'] : 'CHECK_OUT_DATE DESCENDING', 2
+        );
+
+        $sortField = $sort[0] ?? 'CHECK_OUT_DATE';
+        $sortKey = $sort[1] ?? 'DESCENDING';
+
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
 
         $function = 'GetLoanHistory';
         $functionResult = 'loanHistoryResponse';
+        $pageSize = $params['limit'] ?? 50;
         $conf = [
             'arenaMember' => $this->arenaMember,
             'language' => $this->getLanguage(),
             'patronId' => $patronId,
-            'start' => 0,
-            'count' => 100,
-            'sortDirection' => 'ASCENDING'
+            'start' => isset($params['page'])
+            ? ($params['page'] - 1) * $pageSize : 0,
+            'count' => $pageSize,
+            'sortField' => $sortField,
+            'sortDirection' => $sortKey
         ];
 
         $result = $this->doSOAPRequest(
@@ -1538,7 +1585,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS, $username);
             if ($message == 'ils_connection_failed') {
-                
                 throw new ILSException($message);
             }
             return [];
@@ -1562,11 +1608,19 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $formatted['success'] = $statusAWS->type === 'ok';
         $formatted['transactions'] = $transList;
-        $formatted['count'] = $result->loanHistoryResponse->loanHistoryItems->totalCount;
+        $formatted['count'] = $result->loanHistoryResponse
+            ->loanHistoryItems->totalCount;
 
         return $formatted;
     }
 
+    /**
+     * Returns an id which is used to authenticate current session in restApi
+     * 
+     * @param array $patron data
+     * 
+     * @return mixed id as string if succesfull, null if failed
+     */
     public function authenticatePatron($patron)
     {
         $username = $patron['cat_username'];
@@ -1589,10 +1643,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError($function, $statusAWS, $username);
             if ($message == 'ils_connection_failed') {
-                
                 throw new ILSException($message);
             }
-            return [];
+            return null;
         }
 
         return $result->authenticatePatronResult->patronId;
