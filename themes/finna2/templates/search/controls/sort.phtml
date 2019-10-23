@@ -1,5 +1,5 @@
 <!-- START of: finna - search/controls/sort.phtml -->
-<?php $list = !empty($this->sortList) ? $this->sortList : $this->params->getSortList(); if (!empty($list)): ?>
+<?php $list = $this->sortList ? $this->sortList : $this->params->getSortList(); if (!empty($list)): ?>
 <div class="sort-option-container">
   <span class="hidden-sm hidden-xs hidden-md button-label"><?=$this->transEsc('Sort')?></span>
   <span class="sr-only hidden-lg hidden-md"><?=$this->transEsc('Sort')?></span>
