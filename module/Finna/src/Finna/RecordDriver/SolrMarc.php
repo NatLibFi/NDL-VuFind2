@@ -317,8 +317,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             if ($type) {
                 $type = $type->getData();
                 if ("TEXT" == $type || "text/html" == $type) {
-                    $address = $url->getSubfield('u');
-                    if ($address && !$this->urlBlacklisted($address->getData())) {
+                    if ($address = $url->getSubfield('u')) {
                         $address = $address->getData();
                         return $address;
                     }
