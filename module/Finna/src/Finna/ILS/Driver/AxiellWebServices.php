@@ -1416,7 +1416,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 ],
                 'default_sort' => 'CHECK_OUT_DATE DESCENDING'
             ];
-        } else if (isset($this->config[$function])) {
+        } elseif (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
             if ('onlinePayment' === $function) {
                 $functionConfig['exactBalanceRequired'] = true;
@@ -1551,7 +1551,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $sort = explode(
             ' ',
-            !empty($params['sort']) 
+            !empty($params['sort'])
                 ? $params['sort'] : 'CHECK_OUT_DATE DESCENDING', 2
         );
 
@@ -1616,9 +1616,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
     /**
      * Returns an id which is used to authenticate current session in restApi
-     * 
+     *
      * @param array $patron data
-     * 
+     *
      * @return mixed id as string if succesfull, null if failed
      */
     public function authenticatePatron($patron)
