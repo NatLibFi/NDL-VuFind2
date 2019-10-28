@@ -203,13 +203,13 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     // Load and display timeline (called at initial open and after timeline navigation)
 
     // Check if daterange filter is active and widen selected data range.
-    params = params
+    var paramsProcessed = params
       .split("&")
       .map(
-        function(param /* field=value */) {
+        function splitParams(param /* field=value */) {
           return param.split("=");
         })
-      .map(function(param) {
+      .map(function splitParam(param) {
         var field = decodeURIComponent(param[0]);
         if (field.substring(0, 1) === '?') {
           field = field.substring(1);
@@ -240,7 +240,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
         return {'name': field, 'value': (value)};
       });
 
-    var url = VuFind.path + '/AJAX/JSON?' + $.param(params) + '&method=getDateRangeVisual&backend=' + backend;
+    var url = VuFind.path + '/AJAX/JSON?' + $.param(paramsProcessed) + '&method=getDateRangeVisual&backend=' + backend;
 
     holder.find('.content').addClass('loading');
     loading = true;
