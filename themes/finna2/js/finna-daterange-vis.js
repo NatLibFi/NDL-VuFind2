@@ -211,7 +211,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
         })
       .map(function(param) {
         var field = decodeURIComponent(param[0]);
-        if (field.substring(0,1) === '?') {
+        if (field.substring(0, 1) === '?') {
           field = field.substring(1);
         }
         var value = decodeURIComponent(param[1]);
