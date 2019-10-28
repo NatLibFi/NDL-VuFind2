@@ -88,20 +88,20 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
 
         $backend = $params->fromQuery('backend');
         if (!$backend) {
-            $backend = 'solr';
+            $backend = 'Solr';
         }
-        $isSolr = $backend == 'solr';
+        $isSolr = $backend == 'Solr';
 
-        $configFile = $isSolr ? 'facets' : 'Primo';
+        $configFile = $isSolr ? 'facets' : $backend;
         $config = $this->configManager->get($configFile);
         if (!isset($config->SpecialFacets->dateRangeVis)) {
-            return $this->formatResponse([], self::STATUS_ERROR, 400);
+            return $this->formatResponse([], self::STATUS_HTTP_ERROR, 400);
         }
 
         list($filterField, $facet)
             = explode(':', $config->SpecialFacets->dateRangeVis);
 
-        $results = $this->resultsManager->get($isSolr ? 'Solr' : 'Primo');
+        $results = $this->resultsManager->get($backend);
         $searchParams = $results->getParams();
         $searchParams->addFacet($filterField);
         $searchParams->initFromRequest(new Parameters($params->fromQuery()));

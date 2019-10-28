@@ -392,7 +392,7 @@ trait SolrFinna
 
         if (!empty($this->fields['dedup_id_str_mv'])) {
             $records = $this->searchService->retrieve(
-                DEFAULT_SEARCH_BACKEND, $this->fields['dedup_id_str_mv'][0]
+                $this->getSourceIdentifier(), $this->fields['dedup_id_str_mv'][0]
             )->getRecords();
         } else {
             $safeId = addcslashes($this->getUniqueID(), '"');
@@ -403,7 +403,7 @@ trait SolrFinna
                 ['hl' => 'false', 'spellcheck' => 'false', 'sort' => '']
             );
             $records = $this->searchService->search(
-                DEFAULT_SEARCH_BACKEND, $query, 0, 1, $params
+                $this->getSourceIdentifier(), $query, 0, 1, $params
             )->getRecords();
         }
         if (!isset($records[0])) {
@@ -1037,5 +1037,30 @@ trait SolrFinna
         }
 
         return $result;
+    }
+    
+    /**
+     * Get a link for placing a title level hold.
+     *
+     * @return mixed A url if a hold is possible, boolean false if not
+     */
+    public function getRealTimeTitleHold()
+    {
+        $biblioLevel = strtolower($this->tryMethod('getBibliographicLevel'));
+        if ($this->hasILS()) {
+            $bibLevels = $this->ils->getConfig(
+                'getTitleHoldBibLevels',
+                ['id' => $this->getUniqueID()]
+            );
+            if (false === $bibLevels) {
+                $bibLevels = ['monograph', 'part'];
+            }
+            if (in_array($biblioLevel, $bibLevels)) {
+                if ($this->ils->getTitleHoldsMode() != "disabled") {
+                    return $this->titleHoldLogic->getHold($this->getUniqueID());
+                }
+            }
+        }
+        return false;
     }
 }

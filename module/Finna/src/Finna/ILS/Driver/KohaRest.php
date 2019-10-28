@@ -328,12 +328,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ? $this->config['Profile']['phoneNumberField']
             : 'mobile';
 
+        $smsField = isset($this->config['Profile']['smsNumberField'])
+            ? $this->config['Profile']['smsNumberField']
+            : 'smsalertnumber';
+
         return [
             'firstname' => $result['firstname'],
             'lastname' => $result['surname'],
             'phone' => $phoneField && !empty($result[$phoneField])
                 ? $result[$phoneField] : '',
-            'smsnumber' => $result['smsalertnumber'],
+            'smsnumber' => $smsField ? $result[$smsField] : '',
             'email' => $result['email'],
             'address1' => $result['address'],
             'address2' => $result['address2'],
@@ -1129,12 +1133,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             }
         }
 
-        $result = $this->makeRequest(
-            ['v1', 'libraries'],
-            false,
-            'GET',
-            $patron
-        );
+        $result = $this->getBranches();
         if (empty($result)) {
             return [];
         }
@@ -1769,18 +1768,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $name = $this->translate("location_$branchId");
         if ($name === "location_$branchId") {
-            $branches = $this->getCachedData('branches');
-            if (null === $branches) {
-                $result = $this->makeRequest(
-                    ['v1', 'libraries'], false, 'GET'
-                );
-                $branches = [];
-                foreach ($result as $branch) {
-                    $branches[$branch['branchcode']] = $branch['branchname'];
-                }
-                $this->putCachedData('branches', $branches);
-            }
-            $name = $branches[$branchId] ?? $branchId;
+            $branches = $this->getBranches();
+            $name = isset($branches[$branchId])
+                ? $branches[$branchId]['branchname'] : $branchId;
         }
         return $name;
     }
