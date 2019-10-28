@@ -200,6 +200,9 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
   }
 
   function loadVis(backend, action, params) {
+    // Load and display timeline (called at initial open and after timeline navigation)
+
+    // Check if daterange filter is active and widen selected data range.
     params = params
       .split("&")
       .map(
@@ -213,11 +216,10 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
         }
         var value = decodeURIComponent(param[1]);
 
-        // Check if daterange filter is active
         if (field === 'filter[]') {
           var valueParts = value.split(':');
           if (valueParts[0] === facetField) {
-            // Daterange filter: widen selected date range by configured amount of years
+            // Daterange filter active: widen selected date range by configured amount of years
             var regex = new RegExp('\\[(\\d+|\\*)\\+TO\\+(\\d+|\\*)\\]');
             value = value.replace(
               regex,
@@ -238,7 +240,6 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
         return {'name': field, 'value': (value)};
       });
 
-    // Load and display timeline (called at initial open and after timeline navigation)
     var url = VuFind.path + '/AJAX/JSON?' + $.param(params) + '&method=getDateRangeVisual&backend=' + backend;
 
     holder.find('.content').addClass('loading');
