@@ -200,32 +200,46 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
   }
 
   function loadVis(backend, action, params) {
+    params = params
+      .split("&")
+      .map(
+        function(param /* field=value */) {
+          return param.split("=");
+        })
+      .map(function(param) {
+        var field = decodeURIComponent(param[0]);
+        if (field.substring(0,1) === '?') {
+          field = field.substring(1);
+        }
+        var value = decodeURIComponent(param[1]);
+
+        // Check if daterange filter is active
+        if (field === 'filter[]') {
+          var valueParts = value.split(':');
+          if (valueParts[0] === facetField) {
+            // Daterange filter: widen selected date range by configured amount of years
+            var regex = new RegExp('\\[(\\d+|\\*)\\+TO\\+(\\d+|\\*)\\]');
+            value = value.replace(
+              regex,
+              function urlReplace(match, $1, $2/*, offset, original*/) {
+                var from = $1;
+                if (from !== '*') {
+                  from = parseInt($1, 10) - plotExtra;
+                }
+                var to = $2;
+                if (to !== '*') {
+                  to = parseInt($2, 10) + plotExtra;
+                }
+                return '[' + from + "+TO+" + to + ']';
+              }
+            );
+          }
+        }
+        return {'name': field, 'value': (value)};
+      });
+
     // Load and display timeline (called at initial open and after timeline navigation)
-    var url = VuFind.path + '/AJAX/JSON' + params + '&method=getDateRangeVisual&backend=' + backend;
-
-    // Widen selected date range by configured amount of years
-    var regex = new RegExp('filter\\[\\]=' + facetField + '.*\\[(\\d+|\\*)\\+TO\\+(\\d+|\\*)\\]"');
-    url = decodeURIComponent(url).replace(
-      regex,
-      function urlReplace(match, $1, $2/*, offset, original*/) {
-        var from = $1;
-        if (from !== '*') {
-          from = parseInt($1, 10) - plotExtra;
-        }
-        var to = $2;
-        if (to !== '*') {
-          to = parseInt($2, 10) + plotExtra;
-        }
-
-        var val = facetField + ':"[' + from + "+TO+" + to + ']"';
-        return 'filter[]=' + val;
-      }
-    );
-
-    // Re-encode '#'
-    // (required for advanced filters and for authority-role filters,
-    // where authority id and role is separated with '###')
-    url = url.replace(/#/g, '%23');
+    var url = VuFind.path + '/AJAX/JSON?' + $.param(params) + '&method=getDateRangeVisual&backend=' + backend;
 
     holder.find('.content').addClass('loading');
     loading = true;
