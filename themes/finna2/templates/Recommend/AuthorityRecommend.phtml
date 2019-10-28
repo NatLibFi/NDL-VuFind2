@@ -74,7 +74,7 @@ JS;
         $id = $record->getUniqueId();
         $formats = $record->getFormats();
         $authoritySearchUrl = $that->url(null) . '?filter[]=' . urlencode($that->url()->getRecordsByAuthorFilter($id)) . $hiddenFilters;
-        $html = '<span class="authority-page-link"><a class="authority-page" href="' . $authoritySearchUrl . '"><i class="fa fa-authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0])) . '"></i> ' . $that->escapeHtml($record->getBreadCrumb()) . '</a></span>';
+        $html = '<span class="authority-page-link"><a class="authority-page" href="' . $authoritySearchUrl . '"><i class="fa'. (!empty($formats) ? ' fa-authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0])) : '') . '"></i> ' . $that->escapeHtml($record->getBreadCrumb()) . '</a></span>';
         return $html;
     };
     $content = implode(', ', array_map($callback, $data));
