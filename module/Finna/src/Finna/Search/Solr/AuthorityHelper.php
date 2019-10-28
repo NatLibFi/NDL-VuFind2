@@ -53,7 +53,7 @@ class AuthorityHelper
     const AUTHOR_ID_ROLE_FACET = 'author2_id_role_str_mv';
 
     /**
-     * Delimeter used to separate author id and role.
+     * Delimiter used to separate author id and role.
      *
      * @var string
      */
