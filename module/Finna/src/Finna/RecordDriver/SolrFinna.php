@@ -1038,7 +1038,7 @@ trait SolrFinna
 
         return $result;
     }
-    
+
     /**
      * Get a link for placing a title level hold.
      *
