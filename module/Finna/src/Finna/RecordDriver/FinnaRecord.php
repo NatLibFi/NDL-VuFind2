@@ -171,7 +171,7 @@ trait FinnaRecord
      *
      * @param int $user_id user user_id
      *
-     * @return User|boolean on success or false
+     * @return User|boolean
      */
     public function getUserById($user_id)
     {
