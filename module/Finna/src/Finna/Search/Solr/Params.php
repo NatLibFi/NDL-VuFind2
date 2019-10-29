@@ -638,7 +638,18 @@ class Params extends \VuFind\Search\Solr\Params
             $result = parent::formatFilterListEntry(
                 $field, $value, $operator, $translate
             );
-            $result = $this->formatDateRangeFilterListEntry($result, $field, $value);
+
+            if ($this->isDateRangeFilter($field)) {
+                return $this->formatDateRangeFilterListEntry(
+                    $result, $field, $value
+                );
+            }
+            if ($this->isGeographicFilter($field)) {
+                return $this->formatGeographicFilterListEntry(
+                    $result, $field, $value
+                );
+            }
+
             return $this->formatAuthorIdFilterListEntry($result, $field, $value);
         }
 
