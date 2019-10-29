@@ -1080,7 +1080,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
 
-                //If there is no productionEvent set, continue
+                //If there is no ProductionEventType set, continue
                 if (!isset($xml->ProductionEvent->ProductionEventType)) {
                     continue;
                 }
