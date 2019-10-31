@@ -160,6 +160,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
                     $content = preg_replace(
                         '/(\r\n|\n|\r){3,}/', '<br><br>', $content
                     );
+
                     file_put_contents($localFile, $content);
 
                     return $this->formatResponse(['html' => $content]);
