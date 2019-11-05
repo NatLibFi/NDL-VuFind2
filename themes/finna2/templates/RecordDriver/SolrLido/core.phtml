@@ -51,7 +51,7 @@
   <?php $this->headScript()->appendFile("finna-record.js"); ?>
   <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
     <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getShortTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></h1>
-    <?php if ($summary) : ?>
+    <?php if ($summary): ?>
       <div class="truncate-wrapper visible-xs">
         <div class="truncate-field wide recordSummary">
           <p class="summary"><?=preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($summary)); /* Allow <br> tag */ ?></p>
