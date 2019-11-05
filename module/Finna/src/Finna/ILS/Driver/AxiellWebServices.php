@@ -139,7 +139,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected $loans_wsdl = '';
 
-    protected $loansAurora_wsdl = '';
+    /**
+     * Wsdl file name or url for accessing the loansaurora section of aws
+     * 
+     * @var string
+     */
+    protected $loansaurora_wsdl = '';
 
     /**
      * Wsdl file name or url for accessing the payment section of AWS
