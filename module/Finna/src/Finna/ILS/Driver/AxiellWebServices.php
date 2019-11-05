@@ -1214,6 +1214,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $lastname = array_pop($names);
         $firstname = implode(' ', $names);
 
+        /** 
+         * Request an authentication id used in certain requests e.g:
+         * GetTransactionHistory
+        */
+
+        $patronId = $this->authenticatePatron($username, $password);
+
         $user = [
             'id' => $info->backendPatronId,
             'cat_username' => $username,
@@ -1221,7 +1228,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'lastname' => $lastname,
             'firstname' => $firstname,
             'major' => null,
-            'college' => null
+            'college' => null,
+            'patronId' => $patronId
         ];
 
         $userCached = [
@@ -1242,7 +1250,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'phoneLocalCode' => '',
             'phoneAreaCode' => '',
             'major' => null,
-            'college' => null
+            'college' => null,
+            'patronId' => $patronId
         ];
 
         if (!empty($info->emailAddresses->emailAddress)) {
@@ -1409,9 +1418,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     'CHECK_OUT_DATE ASCENDING' => 'sort_checkout_date_asc',
                     'CHECK_IN_DATE DESCENDING' => 'sort_return_date_desc',
                     'CHECK_IN_DATE ASCENDING' => 'sort_return_date_asc',
-                    'AUTHOR DESCENDING' => 'sort_author_desc',
                     'AUTHOR ASCENDING' => 'sort_author_asc',
-                    'TITLE DESCENDING' => 'sort_title_desc',
                     'TITLE ASCENDING' => 'sort_title_asc'
                 ],
                 'default_sort' => 'CHECK_OUT_DATE DESCENDING'
@@ -1544,11 +1551,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function getMyTransactionHistory($patron, $params)
     {
-        $patronId = $this->authenticatePatron($patron);
-        if (null === $patronId) {
-            return [];
-        }
-
         $sort = explode(
             ' ',
             !empty($params['sort'])
@@ -1559,7 +1561,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $sortKey = $sort[1] ?? 'DESCENDING';
 
         $username = $patron['cat_username'];
-        $password = $patron['cat_password'];
 
         $function = 'GetLoanHistory';
         $functionResult = 'loanHistoryResponse';
@@ -1567,7 +1568,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $conf = [
             'arenaMember' => $this->arenaMember,
             'language' => $this->getLanguage(),
-            'patronId' => $patronId,
+            'patronId' => $patron['patronId'],
             'start' => isset($params['page'])
             ? ($params['page'] - 1) * $pageSize : 0,
             'count' => $pageSize,
@@ -1617,15 +1618,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Returns an id which is used to authenticate current session in restApi
      *
-     * @param array $patron data
+     * @param string $username patron username
+     * @param string $password patron password
      *
      * @return mixed id as string if succesfull, null if failed
      */
-    public function authenticatePatron($patron)
+    public function authenticatePatron($username, $password)
     {
-        $username = $patron['cat_username'];
-        $password = $patron['cat_password'];
-
         $function = 'authenticatePatron';
         $functionResult = 'authenticatePatronResult';
         $conf = [

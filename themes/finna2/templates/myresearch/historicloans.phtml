@@ -39,9 +39,11 @@
           <div class="text-right hidden-print right-control">
             <?=$this->render('search/controls/sort.phtml')?>
           </div>
-          <div class="hidden-print left-control">
-            <a class="btn btn-primary" href="<?=$this->url('myresearch-purgehistoricloans');?>" data-lightbox><?=$this->transEsc('loan_history_purge')?></a>
-          </div>
+          <?php if ($this->purgeAllowed): ?>
+            <div class="hidden-print left-control">
+              <a class="btn btn-primary" href="<?=$this->url('myresearch-purgehistoricloans');?>" data-lightbox><?=$this->transEsc('loan_history_purge')?></a>
+            </div>
+          <?php endif; ?>
           <div class="pagination-container">
             <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination-simple.phtml') : ''?>
           </div>
