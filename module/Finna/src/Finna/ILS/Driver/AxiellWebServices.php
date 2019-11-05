@@ -1214,11 +1214,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $lastname = array_pop($names);
         $firstname = implode(' ', $names);
 
-        /** 
+        /**
          * Request an authentication id used in certain requests e.g:
          * GetTransactionHistory
-        */
-
+         */
         $patronId = $this->authenticatePatron($username, $password);
 
         $user = [
@@ -1418,8 +1417,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     'CHECK_OUT_DATE ASCENDING' => 'sort_checkout_date_asc',
                     'CHECK_IN_DATE DESCENDING' => 'sort_return_date_desc',
                     'CHECK_IN_DATE ASCENDING' => 'sort_return_date_asc',
-                    'AUTHOR ASCENDING' => 'sort_author_asc',
-                    'TITLE ASCENDING' => 'sort_title_asc'
+                    'AUTHOR ASCENDING' => 'sort_author',
+                    'TITLE ASCENDING' => 'sort_title'
                 ],
                 'default_sort' => 'CHECK_OUT_DATE DESCENDING'
             ];
@@ -1616,7 +1615,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Returns an id which is used to authenticate current session in restApi
+     * Returns an id which is used to authenticate current session in SOAP API
      *
      * @param string $username patron username
      * @param string $password patron password
