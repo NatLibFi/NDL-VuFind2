@@ -89,6 +89,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             $data['record_id'] = $id;
         }
         $view->form->populateValues($data);
+
         if (!$this->submitOk) {
             return $view;
         }
