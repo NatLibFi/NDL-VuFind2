@@ -1502,8 +1502,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-<<<<<<< Updated upstream
-=======
      * Get Patron Transaction History
      *
      * This is responsible for retrieving all historical transactions
@@ -1691,7 +1689,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
->>>>>>> Stashed changes
      * Get Patron Fines
      *
      * This is responsible for retrieving all fines by a specific patron.
