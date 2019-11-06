@@ -330,6 +330,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (isset($this->config['Catalog']['loansaurora_wsdl'])) {
             $this->loansaurora_wsdl
                 = $this->getWsdlPath($this->config['Catalog']['loansaurora_wsdl']);
+            var_dump($this->loansaurora_wsdl);
         } else {
             throw new ILSException(
                 'loansaurora_wsdl configuration needs to be set.'
@@ -1413,21 +1414,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function getConfig($function)
     {
-        if ('getMyTransactionHistory' === $function) {
-            $limit = $this->config['TransactionHistory']['max_page_size'] ?? 100;
-            return [
-                'max_results' => $limit,
-                'sort' => [
-                    'CHECK_OUT_DATE DESCENDING' => 'sort_checkout_date_desc',
-                    'CHECK_OUT_DATE ASCENDING' => 'sort_checkout_date_asc',
-                    'CHECK_IN_DATE DESCENDING' => 'sort_return_date_desc',
-                    'CHECK_IN_DATE ASCENDING' => 'sort_return_date_asc',
-                    'AUTHOR ASCENDING' => 'sort_author',
-                    'TITLE ASCENDING' => 'sort_title'
-                ],
-                'default_sort' => 'CHECK_OUT_DATE DESCENDING'
-            ];
-        } elseif (isset($this->config[$function])) {
+        if (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
             if ('onlinePayment' === $function) {
                 $functionConfig['exactBalanceRequired'] = true;
