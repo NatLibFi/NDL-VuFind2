@@ -47,6 +47,7 @@ use Zend\Db\Sql\Ddl\Column\Boolean;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
@@ -137,6 +138,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @var string
      */
     protected $loans_wsdl = '';
+
+    /**
+     * Wsdl file name or url for accessing the loansaurora section of aws
+     *
+     * @var string
+     */
+    protected $loansaurora_wsdl = '';
 
     /**
      * Wsdl file name or url for accessing the payment section of AWS
@@ -315,6 +323,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 = $this->getWsdlPath($this->config['Catalog']['loans_wsdl']);
         } else {
             throw new ILSException('loans_wsdl configuration needs to be set.');
+        }
+
+        if (isset($this->config['Catalog']['loansaurora_wsdl'])) {
+            $this->loansaurora_wsdl
+                = $this->getWsdlPath($this->config['Catalog']['loansaurora_wsdl']);
+        } else {
+            throw new ILSException(
+                'loansaurora_wsdl configuration needs to be set.'
+            );
         }
 
         if (isset($this->config['Catalog']['payments_wsdl'])) {
@@ -1200,6 +1217,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $lastname = array_pop($names);
         $firstname = implode(' ', $names);
 
+        /**
+         * Request an authentication id used in certain requests e.g:
+         * GetTransactionHistory
+         */
+        $patronId = $this->authenticatePatron($username, $password);
+
         $user = [
             'id' => $info->backendPatronId,
             'cat_username' => $username,
@@ -1207,7 +1230,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'lastname' => $lastname,
             'firstname' => $firstname,
             'major' => null,
-            'college' => null
+            'college' => null,
+            'patronId' => $patronId
         ];
 
         $userCached = [
@@ -1228,7 +1252,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'phoneLocalCode' => '',
             'phoneAreaCode' => '',
             'major' => null,
-            'college' => null
+            'college' => null,
+            'patronId' => $patronId
         ];
 
         if (!empty($info->emailAddresses->emailAddress)) {
@@ -1517,11 +1542,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function getMyTransactionHistory($patron, $params)
     {
-        $patronId = $this->authenticatePatron($patron);
-        if (null === $patronId) {
-            return [];
-        }
-
         $sort = explode(
             ' ',
             !empty($params['sort'])
@@ -1532,7 +1552,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $sortKey = $sort[1] ?? 'DESCENDING';
 
         $username = $patron['cat_username'];
-        $password = $patron['cat_password'];
 
         $function = 'GetLoanHistory';
         $functionResult = 'loanHistoryResponse';
@@ -1540,7 +1559,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $conf = [
             'arenaMember' => $this->arenaMember,
             'language' => $this->getLanguage(),
-            'patronId' => $patronId,
+            'patronId' => $patron['patronId'],
             'start' => isset($params['page'])
             ? ($params['page'] - 1) * $pageSize : 0,
             'count' => $pageSize,
@@ -1588,17 +1607,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Returns an id which is used to authenticate current session in restApi
+     * Returns an id which is used to authenticate current session in SOAP API
      *
-     * @param array $patron data
+     * @param string $username patron username
+     * @param string $password patron password
      *
      * @return mixed id as string if succesfull, null if failed
      */
-    public function authenticatePatron($patron)
+    public function authenticatePatron($username, $password)
     {
-        $username = $patron['cat_username'];
-        $password = $patron['cat_password'];
-
         $function = 'authenticatePatron';
         $functionResult = 'authenticatePatronResult';
         $conf = [
