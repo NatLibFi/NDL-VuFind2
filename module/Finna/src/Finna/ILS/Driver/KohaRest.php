@@ -328,6 +328,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ? $this->config['Profile']['phoneNumberField']
             : 'mobile';
 
+        echo "<pre>";
+        var_dump($messagingSettings);
+        echo "</pre>";
+
         return [
             'firstname' => $result['firstname'],
             'lastname' => $result['surname'],

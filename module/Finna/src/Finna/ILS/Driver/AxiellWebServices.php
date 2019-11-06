@@ -263,8 +263,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function getMyProfile($patron)
     {
-        $this->debug("getMyProfile called");
-
         $username = $patron['cat_username'];
         $cacheKey = $this->getPatronCacheKey($username);
         $profile = $this->getCachedData($cacheKey);
@@ -1334,7 +1332,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $numOfDays = isset($service->nofDays->value)
                     ? $service->nofDays->value : 'none';
                 $active = $service->isActive === 'yes';
-
                 $sendMethods = $this->objectToArray($service->sendMethods);
 
                 foreach ($sendMethods as $method) {
@@ -1348,14 +1345,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 foreach ($services[$serviceType]['sendMethods'] as $key => &$data) {
                     $methodLabel
                         = $this->translate("messaging_settings_method_$key");
-
-                    if ($numOfDays > 0 && $key == 'email') {
-                        $methodLabel =  $this->translate(
-                            $numOfDays == 1
-                            ? 'messaging_settings_num_of_days'
-                            : 'messaging_settings_num_of_days_plural',
-                            ['%%days%%' => $numOfDays]
-                        );
+                    if ($key == 'email' && $numOfDays > 0) {
+                        for ($i = 1; $i < 5; $i++) {
+                            $methodLabel =  $this->translate(
+                                $numOfDays == 1
+                                ? 'messaging_settings_num_of_days'
+                                : 'messaging_settings_num_of_days_plural',
+                                ['%%days%%' => $i]
+                            );
+                        }
                     }
 
                     if (!$active) {
@@ -1372,6 +1370,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             }
         }
         $userCached['messagingServices'] = $services;
+        echo "<pre>";
+        var_dump($services);
+        echo "</pre>";
 
         $this->putCachedData($cacheKey, $userCached);
 
@@ -1501,6 +1502,196 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
+<<<<<<< Updated upstream
+=======
+     * Get Patron Transaction History
+     *
+     * This is responsible for retrieving all historical transactions
+     * (i.e. checked out items)
+     * by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    public function getMyTransactionHistory($patron, $params)
+    {
+        $patronId = $this->authenticatePatron($patron);
+        if (null === $patronId) {
+            return [];
+        }
+
+        $sort = explode(
+            ' ',
+            !empty($params['sort'])
+                ? $params['sort'] : 'CHECK_OUT_DATE DESCENDING', 2
+        );
+
+        $sortField = $sort[0] ?? 'CHECK_OUT_DATE';
+        $sortKey = $sort[1] ?? 'DESCENDING';
+
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
+
+        $function = 'GetLoanHistory';
+        $functionResult = 'loanHistoryResponse';
+        $pageSize = $params['limit'] ?? 50;
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'language' => $this->getLanguage(),
+            'patronId' => $patronId,
+            'start' => isset($params['page'])
+            ? ($params['page'] - 1) * $pageSize : 0,
+            'count' => $pageSize,
+            'sortField' => $sortField,
+            'sortDirection' => $sortKey
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->loansaurora_wsdl, $function, $functionResult, $username,
+            ['loanHistoryRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [];
+        }
+
+        $formatted = [];
+        $transList = [];
+        $transActions = $this->objectToArray(
+            $result->loanHistoryResponse->loanHistoryItems->loanHistoryItem
+        );
+        foreach ($transActions as $transAction => $record) {
+            $obj = $record->catalogueRecord;
+            $trans = [
+                'id' => $obj->id,
+                'title' => $obj->title,
+                'checkOutDate' => $this->formatDate($record->checkOutDate),
+                'checkInDate' => $record->checkInDate ?? ''
+            ];
+            $transList[] = $trans;
+        }
+
+        $formatted['success'] = $statusAWS->type === 'ok';
+        $formatted['transactions'] = $transList;
+        $formatted['count'] = $result->loanHistoryResponse
+            ->loanHistoryItems->totalCount;
+
+        return $formatted;
+    }
+
+    /**
+     * Returns an id which is used to authenticate current session in restApi
+     *
+     * @param array $patron data
+     *
+     * @return mixed id as string if succesfull, null if failed
+     */
+    public function authenticatePatron($patron)
+    {
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
+
+        $function = 'authenticatePatron';
+        $functionResult = 'authenticatePatronResult';
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->patron_wsdl, $function, $functionResult, $username,
+            ['authenticatePatronParam' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return null;
+        }
+
+        return $result->authenticatePatronResult->patronId;
+    }
+
+    public function getMessagingSetting($patron)
+    {
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
+        /* Lets check the patron call */
+        $testFunc = 'getMessageServices';
+        $testfunctionResult = 'getMessageServicesResult';
+        $testconf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password,
+            'language' => $this->getLanguage()
+        ];
+
+        $testResult = $this->doSOAPRequest(
+            $this->patronaurora_wsdl, $testFunc, $testfunctionResult, $username,
+            ['getMessageServicesRequest' => $testconf]
+        );
+    }
+
+    public function updateMessagingSettings($patron, $details)
+    {
+        $patronId = $this->authenticatePatron($patron);
+        if (null === $patron) {
+            return [];
+        }
+
+        $function = 'changeMessageService';
+        $functionResult = 'changeMessageServiceResponse';
+
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
+
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'language' => $this->getLanguage(),
+            'patronId' => $patronId,
+            'user' => $username,
+            'password' => $password,
+            'isActive' => 'yes',
+            'sendMethod' => [
+                'value' => $details['sendMethod']
+            ],
+            'serviceType' => $details['serviceType']
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->patronaurora_wsdl, $function, $functionResult, $username,
+            ['changeMessageServiceRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [];
+        }
+        var_dump($statusAWS);
+        die();
+    }
+
+    /**
+>>>>>>> Stashed changes
      * Get Patron Fines
      *
      * This is responsible for retrieving all fines by a specific patron.

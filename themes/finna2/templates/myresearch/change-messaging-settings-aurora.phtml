@@ -1,0 +1,59 @@
+<!-- START of: finna - myresearch/change-messaging-settings.phtml -->
+<?php
+    // Set up page title:
+    $this->headTitle($this->translate('request_messaging_settings_change'));
+
+    // Set up myresearch menu
+    $this->layout()->finnaMainTabs = $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'profile']);
+    // Set up breadcrumbs:
+    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Profile') . '</li>';
+?>
+<h2><?=$this->transEsc('request_messaging_settings_change'); ?></h2>
+<?=$this->flashmessages()?>
+<?php if (empty($profile['email'])): ?>
+  <div class="alert alert-danger">
+    <?=$this->transEsc('no_email_address')?>
+    <?=$this->transEsc('no_email_address_text')?>
+  </div>
+<?php else: ?>
+    <?php $i = 0;?>
+    <select id="messaging-select" class="form-control">
+        <?php foreach($this->services as $service => $data): ?>
+            <option value="<?=$i++?>"><?=$this->escapeHtml($data['type'])?></option>
+        <?php endforeach; ?>
+    </select>
+    <?php $i = 0;?>
+    
+    <div class="tab-content">
+        <?php foreach($this->services as $service => $data): ?>
+            <div class="tab-pane <?php if ($i++ === 0): ?>active<?php endif; ?>"><?=$this->escapeHtml($data['type'])?>
+                <form name="changeMessagingSettings" method="post" action="<?=$this->url('myresearch-changemessagingsettings') ?>" class="messaging-settings-form profile-form">
+                    <input type="hidden" name="serviceName" value="<?=$service?>">
+                    <select name="<?=$service?>" class="form-control">
+                        <?php if ($service !== 'dueDateAlert'): ?>
+                            <?php foreach($data['sendMethods'] as $method => $methodData): ?>
+                                <option value="<?=$this->escapeHtmlAttr($methodData['type']) ?? ''?>"<?php if($methodData['active']): ?> selected<?php endif;?>><?=$this->escapeHtml($methodData['method'])?></option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php foreach ($this->emailDays as $day => $label): ?>
+                                <option value="<?=$day + 1 ?>"<?php if ($data['numOfDays'] == $day + 1): ?> selected<?php endif; ?>><?=$this->escapeHtml($label) ?></option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <div class="form-group">
+                        <input name="messaging_update_request" class="btn btn-primary" type="submit" value="<?=$this->transEsc('Send') ?>" />
+                    </div>
+                </form>
+            </div>
+        <?php endforeach; ?>
+    </div>
+<?php endif;?>
+<script>
+    $(document).ready(function initMessagingSelect() {
+        $('#messaging-select').change(function setProperTab() {
+            $('.tab-pane').removeClass('active');
+            $('.tab-pane').eq($(this).val()).addClass('active'); 
+        });
+    });
+</script>
+<!-- END of: finna - myresearch/change-messaging-settings.phtml -->

@@ -1,0 +1,35 @@
+<!-- START of: finna - myresearch/change-messaging-settings.phtml -->
+<?php if (empty($profile['email'])): ?>
+  <div class="alert alert-danger">
+    <?=$this->transEsc('no_email_address')?>
+    <?=$this->transEsc('no_email_address_text')?>
+  </div>
+<?php else: ?>
+    <div class="tab-content">
+        <?php foreach($this->profile['messagingServices'] as $service => $data): ?>
+            <form name="changeMessagingSettings" method="post" action="<?=$this->url('myresearch-changemessagingsetting') ?>" class="messaging-settings-form profile-form">
+                <input type="hidden" name="serviceName" value="<?=$service?>">
+                <div class="my-profile-col profile-title"><?=$this->escapeHtml($data['type'])?></div>
+                <div>
+                    <select name="<?=$service?>" class="form-control messaging-settings-select">
+                        <?php if ($service !== 'dueDateAlert'): ?>
+                            <?php foreach($data['sendMethods'] as $method => $methodData): ?>
+                                <option value="<?=$this->escapeHtmlAttr($methodData['type']) ?? ''?>"<?php if($methodData['active']): ?> selected<?php endif;?>><?=$this->escapeHtml($methodData['method'])?></option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            
+                        <?php endif; ?>
+                    </select>
+                </div>
+            </form>
+        <?php endforeach; ?>
+    </div>
+<?php endif;?>
+<script>
+    $(document).ready(function () {
+        $('.messaging-settings-select').change(function submitForm() {
+            $(this).closest('form').submit();
+        });
+    });
+</script>
+<!-- END of: finna - myresearch/change-messaging-settings.phtml -->
