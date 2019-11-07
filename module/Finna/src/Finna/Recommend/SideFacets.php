@@ -177,6 +177,9 @@ class SideFacets extends \VuFind\Recommend\SideFacets
     public function getFacetSet()
     {
         $facetSet = parent::getFacetSet();
-        return $this->authorityHelper->formatFacetSet($facetSet);
+        if ($this->authorityHelper) {
+            $facetSet = $this->authorityHelper->formatFacetSet($facetSet);
+        }
+        return $facetSet;
     }
 }
