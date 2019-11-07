@@ -76,7 +76,8 @@ class GetAuthorityFullInfoFactory
             $tablePluginManager->get(\VuFind\Db\Table\Search::class),
             new \Zend\Session\Container(
                 'Authority', $container->get(\Zend\Session\SessionManager::class)
-            )
+            ),
+            $container->get(\Zend\Session\SessionManager::class)
         );
         return $result;
     }

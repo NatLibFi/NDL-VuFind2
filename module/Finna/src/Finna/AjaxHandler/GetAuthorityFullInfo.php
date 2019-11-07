@@ -79,6 +79,13 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
     protected $session;
 
     /**
+     * Session manager
+     *
+     * @var \Zend\Session\SessionManager
+     */
+    protected $sessionManager;
+
+    /**
      * Constructor
      *
      * @param \Zend\View\Renderer\RendererInterface $renderer           View renderer
@@ -88,19 +95,22 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
      * results manager
      * @param \VuFInd\Db\Table\Search               $searchTable        Search table
      * @param \Zend\Session\Container               $session            Session
+     * @param \Zend\Session\SessionManager          $sessionManager     Session manager
      */
     public function __construct(
         \Zend\View\Renderer\RendererInterface $renderer,
         \Finna\Recommend\AuthorityRecommend $authorityRecommend,
         \VuFind\Search\Results\PluginManager $resultsManager,
         \VuFInd\Db\Table\Search $searchTable,
-        \Zend\Session\Container $session
+        \Zend\Session\Container $session,
+        \Zend\Session\SessionManager $sessionManager
     ) {
         $this->renderer = $renderer;
         $this->authorityRecommend = $authorityRecommend;
         $this->resultsManager = $resultsManager;
         $this->searchTable = $searchTable;
         $this->session = $session;
+        $this->sessionManager = $sessionManager;
     }
 
     /**
@@ -118,8 +128,8 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
         if (!$id || !$searchId) {
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }
-
-        $search = $this->searchTable->select(['id' => $searchId])->current();
+        $sessId = $this->sessionManager->getId();
+        $search = $this->searchTable->getOwnedRowById($searchId, $sessId, null);
         if (empty($search)) {
             return $this->formatResponse(
                 'Search not found', self::STATUS_HTTP_BAD_REQUEST
