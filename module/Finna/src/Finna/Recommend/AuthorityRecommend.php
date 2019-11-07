@@ -190,16 +190,33 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
                 $added = array_values(
                     array_diff($idsWithRoles, $this->session->idsWithRoles)
                 );
+                $removed = array_values(
+                    array_diff($this->session->idsWithRoles, $idsWithRoles)
+                );
+
                 if ($added) {
                     // New authority filter added, activate it
                     list($activeId, $activeRole)
                         = $this->authorityHelper->extractRole($added[0]);
                     $this->session->activeId = $activeId;
+                    $this->session->idsWithRoles[] = $added[0];
                 } else {
                     // Active filter removed, reset session so that the last tab
                     // is rendered as active
                     $this->session->activeId;
+
+                    if ($removed) {
+                        $remaining = array_filter(
+                            $removed,
+                            function ($id) use ($removed) {
+                                return $id !== $removed[0];
+                            }
+                        );
+                        $this->session->idsWithRoles = $remaining;
+                    }
                 }
+            } else {
+                $this->session->idsWithRoles = $idsWithRoles;
             }
         } else {
             parent::init($params, $request);
