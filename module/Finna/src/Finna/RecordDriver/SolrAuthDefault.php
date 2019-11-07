@@ -118,8 +118,7 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
      */
     public function getInstitutions()
     {
-        return isset($this->fields['institution'])
-            ? $this->fields['institution'] : [];
+        return $this->fields['institution'] ?? [];
     }
 
     /**
