@@ -65,15 +65,13 @@ JS;
     }
     $that = $this;
     $searchIndex = $this->contextParams['searchIndex'] ?? null;
-    $hiddenFilters = $searchIndex
-        ? $this->searchTabs()->getCurrentHiddenFilterParams($searchIndex)
-        : '';
-    $callback = function ($record) use ($displayQuery, $hiddenFilters, $that) {
+    $urlQuery = $results->getUrlQuery();
+    $callback = function ($record) use ($displayQuery, $that, $urlQuery) {
         // Generate a new search URL that replaces the user's current term
         // with the authority term:
         $id = $record->getUniqueId();
         $formats = $record->getFormats();
-        $authoritySearchUrl = $that->url(null) . '?filter[]=' . urlencode($that->url()->getRecordsByAuthorFilter($id)) . $hiddenFilters;
+        $authoritySearchUrl = $urlQuery->setAuthorId($id);
         $html = '<span class="authority-page-link"><a class="authority-page" href="' . $authoritySearchUrl . '"><i class="fa' . (!empty($formats) ? ' fa-authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0])) : '') . '"></i> ' . $that->escapeHtml($record->getBreadCrumb()) . '</a></span>';
         return $html;
     };

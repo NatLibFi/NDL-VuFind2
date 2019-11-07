@@ -13,7 +13,7 @@ $coreFields = $formatter->getDefaults('authority');
   <?php foreach ($roles as $role): ?>
     <li>
     <?php if (!$role['enabled']): ?>
-      <a href="<?=$results->getUrlQuery()->setAuthorIdWithRole($record->getUniqueID(), $role['value'])?>">
+      <a href="<?=$results->getUrlQuery()->setAuthorIdWithRole($role['value'])?>">
     <?php endif; ?>
     <?=$role['role']?> (<?=$role['count']?>)
     <?php if (!$role['enabled']): ?>

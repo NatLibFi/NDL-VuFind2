@@ -171,42 +171,38 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
 
     /**
      * Get the current search parameters with an author id-role filter.
-     * Current active filters for the same author are discarded.
      *
-     * @param string $id   Author id
-     * @param string $role Author role
+     * @param string $idWithRole Author id with role
      *
      * @return string
      */
-    public function setAuthorIdWithRole($id, $role)
+    public function setAuthorIdWithRole($idWithRole)
     {
         $separator = AuthorityHelper::AUTHOR_ID_ROLE_SEPARATOR;
-        list($id, $role) = explode($separator, $role);
+        list($id, $role) = explode($separator, $idWithRole);
 
         $params = $this->urlParams;
-
-        $filters = [];
-        foreach (($params['filter'] ?? []) as $filter) {
-            list($field, $authId) = $this->parseFilter($filter);
-            $authId = substr($authId, 1, -1);
-
-            if (strpos($authId, $separator) !== false) {
-                list($authId, $authRole) = explode($separator, $authId, 2);
-            }
-
-            if (!in_array(
-                $field,
-                [AuthorityHelper::AUTHOR2_ID_FACET,
-                 AuthorityHelper::AUTHOR_ID_ROLE_FACET]
-            ) || $id !== $authId
-            ) {
-                $filters[] = $filter;
-            }
-        }
+        $filters = $params['filter'] ?? [];
         $filters[]
             = AuthorityHelper::AUTHOR_ID_ROLE_FACET . ":{$id}{$separator}{$role}";
         $params['filter'] = $filters;
+        return '?' . $this->buildQueryString($params, true);
+    }
 
+    /**
+     * Get the current search parameters with an author id filter.
+     *
+     * @param string $id Author id
+     *
+     * @return string
+     */
+    public function setAuthorId($id)
+    {
+        $filters = $this->urlParams['filter'] ?? [];
+        $filters[]
+            = AuthorityHelper::AUTHOR2_ID_FACET . ":{$id}";
+        $params = $this->urlParams;
+        $params['filter'] = $filters;
         return '?' . $this->buildQueryString($params, true);
     }
 }
