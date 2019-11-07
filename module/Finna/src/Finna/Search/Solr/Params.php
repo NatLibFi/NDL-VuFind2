@@ -687,8 +687,7 @@ class Params extends \VuFind\Search\Solr\Params
      */
     public function getFacetLabel($field, $value = null, $default = null)
     {
-        if ($field === AuthorityHelper::AUTHOR2_ID_FACET
-        ) {
+        if ($field === AuthorityHelper::AUTHOR2_ID_FACET) {
             return 'authority_id_label';
         }
         return parent::getFacetLabel($field, $value, $default);
