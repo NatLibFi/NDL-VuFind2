@@ -132,8 +132,7 @@ class AuthorityHelper
     {
         foreach ($this->getAuthorIdFacets() as $field) {
             $ids = [];
-            $facetList
-                = $facetSet[$field]['list'] ?? [];
+            $facetList = $facetSet[$field]['list'] ?? [];
             foreach ($facetList as $facet) {
                 list($id, $role) = $this->extractRole($facet['displayText']);
                 $ids[] = $id;
