@@ -192,23 +192,6 @@ class AuthorityHelper
     }
 
     /**
-     * Get string with author id and role.
-     *
-     * @param string $id   Id
-     * @param string $role Role
-     *
-     * @return string
-     */
-    public function getAuthorIdRole($id, $role = null)
-    {
-        $result = $id;
-        if ($role) {
-            $result .= (self::AUTHOR_ID_ROLE_SEPARATOR . $role);
-        }
-        return $result;
-    }
-
-    /**
      * Parse authority id and role.
      *
      * @param string $value Authority id-role

@@ -265,7 +265,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
 
             $paramsCopy->addFacetFilter(
                 AuthorityHelper::AUTHOR_ID_ROLE_FACET,
-                $this->authorityHelper->getAuthorIdRole($id) .
+                $id,
                 AuthorityHelper::AUTHOR_ID_ROLE_SEPARATOR
             );
 
