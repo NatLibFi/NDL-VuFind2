@@ -31,6 +31,8 @@
  */
 namespace Finna\View\Helper\Root;
 
+use Finna\Search\Solr\AuthorityHelper;
+
 /**
  * Record driver view helper
  *
@@ -249,7 +251,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             && isset($params['id'])
             && $authId = $this->getAuthorityId($type, $params['id'])
         ) {
-            $filter = $this->urlHelper->getRecordsByAuthorFilter($authId);
+            $filter = sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId);
             $type = 'author-id';
         }
 
