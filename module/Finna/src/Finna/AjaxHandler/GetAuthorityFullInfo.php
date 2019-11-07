@@ -95,7 +95,8 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
      * results manager
      * @param \VuFInd\Db\Table\Search               $searchTable        Search table
      * @param \Zend\Session\Container               $session            Session
-     * @param \Zend\Session\SessionManager          $sessionManager     Session manager
+     * @param \Zend\Session\SessionManager          $sessionManager     Session
+     * manager
      */
     public function __construct(
         \Zend\View\Renderer\RendererInterface $renderer,
