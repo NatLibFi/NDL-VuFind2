@@ -242,8 +242,6 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
         if ($this->isModeActive('seealso')) {
             $this->addSeeAlsoReferences();
         }
-
-        $this->addRoles();
     }
 
     /**
@@ -255,7 +253,48 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
      */
     public function getRoles($id)
     {
-        return $this->roles[$id] ?? [];
+        try {
+            $resultsOrig = $this->results;
+
+            $results = clone $resultsOrig;
+            $params = $results->getParams();
+            $authorIdFilters = $params->getAuthorIdFilter(true);
+
+            $params->addFacet(AuthorityHelper::AUTHOR_ID_ROLE_FACET);
+            $paramsCopy = clone $params;
+
+            $paramsCopy->addFacetFilter(
+                AuthorityHelper::AUTHOR_ID_ROLE_FACET,
+                $this->authorityHelper->getAuthorIdRole($id) .
+                AuthorityHelper::AUTHOR_ID_ROLE_SEPARATOR
+            );
+
+            $results->setParams($paramsCopy);
+            $results->performAndProcessSearch();
+            $facets = $results->getFacetList();
+
+            if (!isset($facets[AuthorityHelper::AUTHOR_ID_ROLE_FACET])) {
+                return [];
+            }
+
+            $roles
+                = $facets[AuthorityHelper::AUTHOR_ID_ROLE_FACET]['list'] ?? [];
+            if ($this->authorityHelper) {
+                foreach ($roles as &$role) {
+                    $authorityInfo = $this->authorityHelper->formatFacet(
+                        $role['displayText'], true
+                    );
+                    $role['displayText'] = $authorityInfo['displayText'];
+                    $role['role'] = $authorityInfo['role'];
+                    $role['enabled']
+                        = in_array($role['value'], $authorIdFilters);
+                }
+            }
+        } catch (RequestErrorException $e) {
+            return [];
+        }
+
+        return $roles;
     }
 
     /**
@@ -268,63 +307,6 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
         $params = ['lookfor' => $this->lookfor, 'type' => 'MainHeading'];
         foreach ($this->performSearch($params) as $result) {
             $this->recommendations[] = $result;
-        }
-    }
-
-    /**
-     * Resolve roles for recommended authors.
-     *
-     * @return void
-     */
-    protected function addRoles()
-    {
-        if (!$this->authorIds) {
-            return;
-        }
-
-        try {
-            $resultsOrig = $this->results;
-
-            foreach ($this->authorIds as $id) {
-                // For each recommended authority, facet results by role
-                $results = clone $resultsOrig;
-                $params = $results->getParams();
-                $authorIdFilters = $params->getAuthorIdFilter(true);
-
-                $params->addFacet(AuthorityHelper::AUTHOR_ID_ROLE_FACET);
-                $paramsCopy = clone $params;
-
-                $paramsCopy->addFacetFilter(
-                    AuthorityHelper::AUTHOR_ID_ROLE_FACET,
-                    $this->authorityHelper->getAuthorIdRole($id) .
-                        AuthorityHelper::AUTHOR_ID_ROLE_SEPARATOR
-                );
-
-                $results->setParams($paramsCopy);
-                $results->performAndProcessSearch();
-                $facets = $results->getFacetList();
-
-                if (!isset($facets[AuthorityHelper::AUTHOR_ID_ROLE_FACET])) {
-                    continue;
-                }
-
-                $roles
-                    = $facets[AuthorityHelper::AUTHOR_ID_ROLE_FACET]['list'] ?? [];
-                if ($this->authorityHelper) {
-                    foreach ($roles as &$role) {
-                        $authorityInfo = $this->authorityHelper->formatFacet(
-                            $role['displayText'], true
-                        );
-                        $role['displayText'] = $authorityInfo['displayText'];
-                        $role['role'] = $authorityInfo['role'];
-                        $role['enabled']
-                            = in_array($role['value'], $authorIdFilters);
-                    }
-                }
-                $this->roles[$id] = $roles;
-            }
-        } catch (RequestErrorException $e) {
-            return;
         }
     }
 }
