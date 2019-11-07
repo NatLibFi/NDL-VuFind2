@@ -91,13 +91,6 @@ class Params extends \VuFind\Search\Solr\Params
     protected $hierarchicalFacetLimit = null;
 
     /**
-     * Search runner for performing authority index lookups.
-     *
-     * @var \VuFind\Search\SearchRunner
-     */
-    protected $searchRunner = null;
-
-    /**
      * Helper for formatting authority id filter display texts.
      *
      * @var AuthorityHelper
@@ -120,15 +113,13 @@ class Params extends \VuFind\Search\Solr\Params
      * facet helper
      * @param AuthorityHelper              $authorityHelper Authority helper
      * @param \VuFind\Date\Converter       $dateConverter   Date converter
-     * @param \VuFind\Search\SearchRunner  $searchRunner    Search runner
      */
     public function __construct(
         $options,
         \VuFind\Config\PluginManager $configLoader,
         HierarchicalFacetHelper $facetHelper,
         AuthorityHelper $authorityHelper,
-        \VuFind\Date\Converter $dateConverter,
-        \VuFind\Search\SearchRunner $searchRunner
+        \VuFind\Date\Converter $dateConverter
     ) {
         parent::__construct($options, $configLoader, $facetHelper);
 
@@ -140,7 +131,6 @@ class Params extends \VuFind\Search\Solr\Params
             $this->newItemsFacets = $config->SpecialFacets->newItems->toArray();
         }
 
-        $this->searchRunner = $searchRunner;
         $this->authorityHelper = $authorityHelper;
     }
 
