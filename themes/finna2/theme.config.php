@@ -58,7 +58,6 @@ return [
             'Finna\View\Helper\Root\UserAgent' => 'Finna\View\Helper\Root\UserAgentFactory',
             'Finna\View\Helper\Root\UserListEmbed' => 'Finna\View\Helper\Root\UserListEmbedFactory',
             'Finna\View\Helper\Root\UserPublicName' => 'Zend\ServiceManager\Factory\InvokableFactory',
-            'Finna\View\Helper\Root\Url' => 'VuFind\View\Helper\Root\UrlFactory'
         ],
         'aliases' => [
             'auth' => 'Finna\View\Helper\Root\Auth',
@@ -119,7 +118,6 @@ return [
             'VuFind\View\Helper\Root\ResultFeed' => 'Finna\View\Helper\Root\ResultFeed',
             'VuFind\View\Helper\Root\SearchTabs' => 'Finna\View\Helper\Root\SearchTabs',
             'VuFind\View\Helper\Root\Summon' => 'Finna\View\Helper\Root\Summon',
-            'VuFind\View\Helper\Root\Url' => 'Finna\View\Helper\Root\Url',
             'VuFind\View\Helper\Bootstrap3\LayoutClass' => 'Finna\View\Helper\Root\LayoutClass',
             'VuFind\View\Helper\Bootstrap3\Recaptcha' => 'Finna\View\Helper\Root\Recaptcha',
 

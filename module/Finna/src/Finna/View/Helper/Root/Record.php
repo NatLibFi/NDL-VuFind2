@@ -85,7 +85,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Url helper
      *
-     * @var \Finna\View\Helper\Root\Url
+     * @var \VuFind\View\Helper\Root\Url
      */
     protected $urlHelper;
 
@@ -114,7 +114,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param \Finna\View\Helper\Root\RecordImage $recordImage      Record image
      * helper
      * @param \Finna\Search\Solr\AuthorityHelper  $authorityHelper  Authority helper
-     * @param \Finna\View\Helper\Root\Url         $urlHelper        Url helper
+     * @param \VuFind\View\Helper\Root\Url        $urlHelper        Url helper
      */
     public function __construct(
         \Zend\Config\Config $config,
@@ -122,7 +122,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         \VuFind\Record\Loader $loader,
         \Finna\View\Helper\Root\RecordImage $recordImage,
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
-        \Finna\View\Helper\Root\Url $urlHelper
+        \VuFind\View\Helper\Root\Url $urlHelper
     ) {
         parent::__construct($config);
         $this->datasourceConfig = $datasourceConfig;
