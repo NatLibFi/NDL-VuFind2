@@ -1486,31 +1486,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return author roles.
-     *
-     * @param string $authorId Author ID
-     *
-     * @return string[]
-     */
-    public function getAuthorRoles($authorId)
-    {
-        $xml = $this->getRecordXML();
-
-        $authorId = explode(':', $authorId);
-        $authorId = $authorId[1];
-        $roles = [];
-        foreach ($xml->HasAgent as $agent) {
-            if ((string)$agent->AgentIdentifier->IDValue === $authorId) {
-                $relator = (string)$agent->Activity;
-                if ($role = $this->getAuthorRole($agent, $relator)) {
-                    $roles[] = $role;
-                }
-            }
-        }
-        return $roles;
-    }
-
-    /**
      * Convert author relator to role.
      *
      * @param SimpleXMLNode $agent   Agent
