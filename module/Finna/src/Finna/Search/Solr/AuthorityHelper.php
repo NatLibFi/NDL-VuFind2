@@ -221,7 +221,7 @@ class AuthorityHelper
     {
         $displayText = $record->getTitle();
         if ($role) {
-            $role = strtolower(
+            $role = mb_strtolower(
                 $this->translator->translate("CreatorRoles::$role")
             );
             $displayText .= " ($role)";
