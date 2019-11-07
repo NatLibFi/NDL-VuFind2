@@ -1496,8 +1496,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected function getAuthorRole($agent, $relator)
     {
         $normalizedRelator = mb_strtoupper($relator, 'UTF-8');
-        $role = isset($this->roleMap[$normalizedRelator])
-            ? $this->roleMap[$normalizedRelator] : $relator;
+        $role = $this->roleMap[$normalizedRelator] ?? $relator;
 
         $attributes = $agent->Activity->attributes();
         if (in_array(
