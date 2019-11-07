@@ -26,10 +26,8 @@ $coreFields = $formatter->getDefaults('authority');
 <?php $summ = $record->getSummary(); if (!empty($summ)): ?>
   <div class="wide recordSummary<?=!($this->collapsed ?? false) ? ' truncate-field' : ''?>" data-rows="5">
     <p class="summary">
-      <?php foreach ($summ as $field): ?>
-        <?// NOTE: the driver is responsible for returning only safe tags ?>
-        <?=$field?><br/>
-      <?php endforeach; ?>
+      <?php // NOTE: the driver is responsible for returning only safe tags ?>
+      <?=implode('<br>', $summ)?>
     </p>
   </div>
 <?php endif; ?>
