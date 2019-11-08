@@ -7,18 +7,20 @@
 <?php else: ?>
     <div class="tab-content">
         <?php foreach($this->profile['messagingServices'] as $service => $data): ?>
-            <form name="changeMessagingSettings" method="post" action="<?=$this->url('myresearch-changemessagingsetting') ?>" class="messaging-settings-form profile-form">
-                <input type="hidden" name="serviceName" value="<?=$service?>">
+            <form method="post" class="messaging-settings-form profile-form">
+                <input type="hidden" name="changeMessagingSetting" value="<?=$data['name']?>">
                 <div class="my-profile-col profile-title"><?=$this->escapeHtml($data['type'])?></div>
                 <div>
-                    <select name="<?=$service?>" class="form-control messaging-settings-select">
-                        <?php if ($service !== 'dueDateAlert'): ?>
-                            <?php foreach($data['sendMethods'] as $method => $methodData): ?>
-                                <option value="<?=$this->escapeHtmlAttr($methodData['type']) ?? ''?>"<?php if($methodData['active']): ?> selected<?php endif;?>><?=$this->escapeHtml($methodData['method'])?></option>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            
-                        <?php endif; ?>
+                    <select name="option" class="form-control messaging-settings-select">
+                        <?php foreach($data['sendMethods'] as $method => $methodData): ?>
+                            <?php if (isset($methodData['options'])): ?>
+                                <?php foreach($methodData['options'] as $option): ?>
+                                    <option value="<?=$this->escapeHtmlAttr($option['value']) ?? ''?>"<?php if($option['selected']): ?> selected<?php endif;?>><?=$this->escapeHtml($option['name'])?></option>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <option value="<?=$this->escapeHtmlAttr($methodData['type']) ?? ''?>"<?php if($methodData['selected'] === 'yes'): ?> selected<?php endif;?>><?=$this->escapeHtml($methodData['method'])?></option>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </select>
                 </div>
             </form>

@@ -542,12 +542,34 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
 
+        if ($this->formWasSubmitted('changeMessagingSetting')) {
+            $params = [
+                'serviceType' => $values->changeMessagingSetting
+            ];
+            if ($values->option !== 'none') {
+                if ($values->changeMessagingSetting === 'dueDateAlert') {
+                    $params['nofDays'] = $values['option'];
+                    $params['sendMethod'] = 'email';
+                } else {
+                    $params['sendMethod'] = $values->option;
+                }
+                $catalog->updateMessagingSettings($patron, $params);
+            } else {
+                var_dump("Here");
+                die();
+                $catalog->removeMessagingSettings($patron, $params);
+            }
+
+            $this->flashMessenger()->setNamespace('info')
+                ->addMessage('onnistui lähets');
+        }
         // Check whether to hide email address in profile
         $view->hideProfileEmailAddress
             = isset($config->Site->hideProfileEmailAddress)
             && $config->Site->hideProfileEmailAddress;
 
-        $updateMessagingConfig = $catalog->getConfig('updateMessagingSettings', $patron);
+        $updateMessagingConfig 
+            = $catalog->getConfig('updateMessagingSettings', $patron);
 
         if (isset($updateMessagingConfig['template'])) {
             $view->messagingSettingsTemplate = $updateMessagingConfig['template'];
@@ -849,12 +871,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $view->days = [1, 2, 3, 4, 5];
             $view->profile = $profile;
         }
-        if (isset($config['method']) && 'driver' === $config['method']) {
-            $view->setTemplate('myresearch/change-messaging-settings-driver');
-            $view->approvalRequired = !empty($config['approvalRequired']); 
-        } else {
-            $view->setTemplate('myresearch/change-messaging-settings');
-        }
+
+        $view->setTemplate('myresearch/change-messaging-settings');
         return $view;
     }
 

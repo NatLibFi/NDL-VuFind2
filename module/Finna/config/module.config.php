@@ -84,16 +84,6 @@ $config = [
                     ]
                 ],
             ],
-            'myresearch-changemessagingsetting' => [
-                'type' => 'Zend\Router\Http\Literal',
-                'options' => [
-                    'route'    => '/MyResearch/ChangeMessagingSetting',
-                    'defaults' => [
-                        'controller' => 'MyResearch',
-                        'action'     => 'ChangeMessagingSetting',
-                    ]
-                ],
-            ],
             'myresearch-changemessagingsettings' => [
                 'type' => 'Zend\Router\Http\Literal',
                 'options' => [

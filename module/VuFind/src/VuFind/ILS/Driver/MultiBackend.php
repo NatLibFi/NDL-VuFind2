@@ -1591,13 +1591,16 @@ class MultiBackend extends AbstractBase implements \Zend\Log\LoggerAwareInterfac
                 );
             } else {
                 $prefixLen = strlen($source) + 1;
+                
                 if ((!is_array($data) || in_array($key, $modifyFields))
                     && strncmp("$source.", $value, $prefixLen) == 0
                 ) {
                     $array[$key] = substr($value, $prefixLen);
                 }
+                
             }
         }
+
         return is_array($data) ? $array : $array[0];
     }
 
