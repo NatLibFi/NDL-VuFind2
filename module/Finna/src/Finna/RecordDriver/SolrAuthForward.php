@@ -78,44 +78,6 @@ class SolrAuthForward extends SolrAuthDefault
     }
 
     /**
-     * Return birth date and place.
-     *
-     * @param boolean $force Return established date for corporations?
-     *
-     * @return string
-     */
-    public function getBirthDate($force = false)
-    {
-        if (!$this->isPerson() && !$force) {
-            return '';
-        }
-
-        if ($date = $this->getAgentDate('birth')) {
-            return $this->formatDateAndPlace($date);
-        }
-        return '';
-    }
-
-    /**
-     * Return death date and place.
-     *
-     * @param boolean $force Return terminated date for corporations?
-     *
-     * @return string
-     */
-    public function getDeathDate($force = false)
-    {
-        if (!$this->isPerson() && !$force) {
-            return '';
-        }
-
-        if ($date = $this->getAgentDate('death')) {
-            return $this->formatDateAndPlace($date);
-        }
-        return '';
-    }
-
-    /**
      * Return corporation establishment date date and place.
      *
      * @return string
@@ -125,7 +87,10 @@ class SolrAuthForward extends SolrAuthDefault
         if ($this->isPerson()) {
             return '';
         }
-        return $this->getBirthDate(true);
+        if ($date = $this->getAgentDate('birth')) {
+            return $this->formatDateAndPlace($date);
+        }
+        return '';
     }
 
     /**
@@ -138,7 +103,10 @@ class SolrAuthForward extends SolrAuthDefault
         if ($this->isPerson()) {
             return '';
         }
-        return $this->getDeathDate(true);
+        if ($date = $this->getAgentDate('death')) {
+            return $this->formatDateAndPlace($date);
+        }
+        return '';
     }
 
     /**
