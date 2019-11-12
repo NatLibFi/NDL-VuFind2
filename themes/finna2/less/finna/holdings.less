@@ -160,10 +160,7 @@
         flex-flow: row;
         @media (max-width: @screen-xs-max) {
             flex-flow: column;
-            flex-wrap: wrap;
         }
-        flex-wrap: nowrap;
-        vertical-align: middle;
 
         &:hover {
             cursor: pointer;
@@ -179,29 +176,29 @@
                 font-size: .87em;
             }
         }
+        .location, .holdings-details, .location-link {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .holdings-details, .location {
+            @media (max-width: @screen-xs-max) {
+                padding-top: 4px;
+                padding-bottom: 4px;
+            }
+        }
         .holdings-details, .location-link {
             vertical-align: middle;
-            padding-top: 8px;
             flex: 1 1 100%;
             @media (min-width: @screen-sm-min) {
                 border-top: 2px solid @record-holdings-border-color;
             }
         }
         .location {
-            padding-top: 8px;
             flex: 1 0 50%;
             border-top: 2px solid @record-holdings-border-color;
             @media (max-width: @screen-xs-max) {   
                 width: 70%;
-            }
-        }
-
-        .location, .holdings-details, .location-link {
-            padding-top: 10px;
-            padding-bottom: 10px;
-            @media (max-width: @screen-xs-max) {
-                padding-top: 4px;
-                padding-bottom: 4px;
             }
         }
 
