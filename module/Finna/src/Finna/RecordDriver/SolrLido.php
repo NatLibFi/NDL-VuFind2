@@ -59,6 +59,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $dateConverter;
 
     /**
+     * Blacklist for undisplayable file formats
+     * 
+     * @var array
+     */
+    protected $formatBlacklist = [
+        '3d-pdf', 'gltf'
+    ];
+
+    /**
      * Attach date converter
      *
      * @param \VuFind\Date\Converter $dateConverter Date Converter
@@ -170,6 +179,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         ) as $resourceSet) {
             if (empty($resourceSet->resourceRepresentation->linkResource)) {
                 continue;
+            }
+            $linkResource = $resourceSet->resourceRepresentation
+                ->linkResource;
+
+            if (isset($linkResource->attributes()->formatResource)) {
+                $format = trim((string)$linkResource->attributes()->formatResource);
+                if (in_array(strtolower($format), $this->formatBlacklist)) {
+                    continue;
+                }
             }
 
             // Process rights first since we may need to duplicate them if there
