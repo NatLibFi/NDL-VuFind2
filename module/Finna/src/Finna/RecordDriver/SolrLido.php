@@ -60,7 +60,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Blacklist for undisplayable file formats
-     * 
+     *
      * @var array
      */
     protected $formatBlacklist = [
