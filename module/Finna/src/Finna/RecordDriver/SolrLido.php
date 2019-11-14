@@ -262,7 +262,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $urls[$size] = $url;
                 }
             }
-            // If current set has no good images to show, continue to next one
+            // If current set has no images to show, continue to next one
             if (empty($urls)) {
                 continue;
             }
