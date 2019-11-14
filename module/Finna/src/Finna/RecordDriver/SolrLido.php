@@ -64,7 +64,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $formatBlacklist = [
-        '3d-pdf', 'gltf'
+        '3d-pdf', 'gltf', 'tif'
     ];
 
     /**
@@ -180,15 +180,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             if (empty($resourceSet->resourceRepresentation->linkResource)) {
                 continue;
             }
-            $linkResource = $resourceSet->resourceRepresentation
-                ->linkResource;
-
-            if (isset($linkResource->attributes()->formatResource)) {
-                $format = trim((string)$linkResource->attributes()->formatResource);
-                if (in_array(strtolower($format), $this->formatBlacklist)) {
-                    continue;
-                }
-            }
 
             // Process rights first since we may need to duplicate them if there
             // are multiple images in the set (non-standard)
@@ -222,6 +213,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
             $urls = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
+                $linkResource = $representation->linkResource;
+
+                if (isset($linkResource->attributes()->formatResource)) {
+                    $format = trim(
+                        (string)$linkResource->attributes()->formatResource
+                    );
+                    $formatDisallowed
+                        = in_array(strtolower($format), $this->formatBlacklist);
+                    if ($formatDisallowed) {
+                        continue;
+                    }
+                }
                 $attributes = $representation->attributes();
                 $size = '';
                 switch ($attributes->type) {
@@ -242,7 +245,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     break;
                 }
 
-                $url = (string)$representation->linkResource;
+                $url = (string)$linkResource;
                 if (!$size) {
                     if ($urls) {
                         // We already have URL's, store them in the results first.
@@ -259,7 +262,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $urls[$size] = $url;
                 }
             }
-
+            // If current set has no good images to show, continue to next one
+            if (empty($urls)) {
+                continue;
+            }
             if (!isset($urls['small'])) {
                 $urls['small'] = $urls['medium']
                     ?? $urls['large'];
