@@ -1347,7 +1347,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 ];
             }
             foreach ($methods as $methodId => $method) {
-                $settings['settings']['transport_types']['options'][$this->mapCode($method)] = [
+                $coded = $this->mapCode($method);
+                $settings['settings']['transport_types']['options'][$coded] = [
                         'active' => $setServices[$service]['transport_type']
                             === $method
                     ];
@@ -1605,7 +1606,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
      *
-     * @return array        Array of the patron's transactions on success.
+     * @return array        Status of request and if it was successful.
      */
     public function updateMessagingSettings($patron, $params)
     {
@@ -1647,7 +1648,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @throws DateException
      * @throws ILSException
-     * @return array        Array of the patron's transactions on success.
+     * @return array        Array of used message services and methods.
      */
     private function _getMessageServices($patron)
     {
@@ -1703,7 +1704,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @throws DateException
      * @throws ILSException
-     * @return array        Array of the patron's transactions on success.
+     * @return array        Status of request and if it was successful.
      */
     private function _changeMessageService($patron, $params)
     {
@@ -1759,7 +1760,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @throws DateException
      * @throws ILSException
-     * @return array        Array of the patron's transactions on success.
+     * @return array        Status of request and if it was successful.
      */
     private function _removeMessageService($patron, $params)
     {
@@ -2838,8 +2839,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     /**
      * Map codes
      *
-     * @param string $code as a string
-     * @param boolean $key if key is returned instead
+     * @param string  $code as a string
+     * @param boolean $key  if key is returned instead
      *
      * @return string Mapped code
      */
