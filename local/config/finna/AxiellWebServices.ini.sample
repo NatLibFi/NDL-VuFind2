@@ -4,9 +4,6 @@ Uncomment in order to log the response time of AWS
 Uncomment in order to active verbose debug mode
 ;verbose = true
 
-[Parent_Config]
-relative_path = ../finna/AxiellWebServices_common.ini
-
 [Catalog]
 arena_member = XXXXXXXXXXX
 

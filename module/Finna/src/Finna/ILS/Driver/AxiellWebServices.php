@@ -328,10 +328,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (isset($this->config['Catalog']['loansaurora_wsdl'])) {
             $this->loansaurora_wsdl
                 = $this->getWsdlPath($this->config['Catalog']['loansaurora_wsdl']);
-        } else {
-            throw new ILSException(
-                'loansaurora_wsdl configuration needs to be set.'
-            );
         }
 
         if (isset($this->config['Catalog']['payments_wsdl'])) {
