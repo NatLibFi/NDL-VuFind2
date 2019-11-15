@@ -1327,7 +1327,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     ],
                 ]
             ];
-            var_dump($setServices[$service]['transport_type']);
             if ($service === 'dueDateAlert') {
                 $options = [];
                 for ($i = 0; $i <= 4; $i++) {
