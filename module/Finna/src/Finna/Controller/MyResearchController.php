@@ -542,38 +542,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
 
-        if ($this->formWasSubmitted('changeMessagingSetting')) {
-            $params = [
-                'serviceType' => $values->changeMessagingSetting
-            ];
-            if ($values->option !== 'none') {
-                if ($values->changeMessagingSetting === 'dueDateAlert') {
-                    $params['nofDays'] = $values['option'];
-                    $params['sendMethod'] = 'email';
-                } else {
-                    $params['sendMethod'] = $values->option;
-                }
-                $catalog->updateMessagingSettings($patron, $params);
-            } else {
-                var_dump("Here");
-                die();
-                $catalog->removeMessagingSettings($patron, $params);
-            }
-
-            $this->flashMessenger()->setNamespace('info')
-                ->addMessage('onnistui lähets');
-        }
         // Check whether to hide email address in profile
         $view->hideProfileEmailAddress
             = isset($config->Site->hideProfileEmailAddress)
             && $config->Site->hideProfileEmailAddress;
-
-        $updateMessagingConfig 
-            = $catalog->getConfig('updateMessagingSettings', $patron);
-
-        if (isset($updateMessagingConfig['template'])) {
-            $view->messagingSettingsTemplate = $updateMessagingConfig['template'];
-        }
 
         if (is_array($patron)) {
             $view->blocks = $this->getAccountBlocks($patron);
@@ -716,23 +688,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         return $view;
     }
 
-    public function changeMessagingSettingAction()
-    {
-        if (!is_array($patron = $this->catalogLogin())) {
-            return $patron;
-        }
-
-        $request = $this->getRequest();
-        $catalog = $this->getILS();
-        $profile = $catalog->getMyProfile($patron);
-        $catalog->getMessagingSetting($profile);
-        $this->flashMessenger()->addSuccessMessage('Asetus vaihdettu onnistuneesti');
-        var_dump("HERE");
-        die();
-        Header("Location: " . $this->getServerUrl('myresearch-profile'));
-        exit();
-    }
-
     /**
      * Messaging settings change form
      *
@@ -751,64 +706,41 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         if ($this->formWasSubmitted('messaging_update_request')) {
             if (isset($config['method']) && 'driver' === $config['method']) {
                 $data = $profile['messagingServices'];
-                if (!isset($config['template'])) {
-                    $request = $this->getRequest();
-                    // Collect results from the POST request and update settings
-                    foreach ($data as $serviceId => &$service) {
-                        foreach ($service['settings'] as $settingId => &$setting) {
-                            if (!empty($setting['readonly'])) {
-                                continue;
-                            }
-                            if ('boolean' == $setting['type']) {
-                                $setting['active'] = (bool)$request->getPost(
-                                    $serviceId . '_' . $settingId, false
+                $request = $this->getRequest();
+                // Collect results from the POST request and update settings
+                foreach ($data as $serviceId => &$service) {
+                    foreach ($service['settings'] as $settingId => &$setting) {
+                        if (!empty($setting['readonly'])) {
+                            continue;
+                        }
+                        if ('boolean' == $setting['type']) {
+                            $setting['active'] = (bool)$request->getPost(
+                                $serviceId . '_' . $settingId, false
+                            );
+                        } elseif ('select' == $setting['type']) {
+                            $setting['value'] = $request->getPost(
+                                $serviceId . '_' . $settingId, ''
+                            );
+                        } elseif ('multiselect' == $setting['type']) {
+                            foreach ($setting['options'] as $optionId
+                                => &$option
+                            ) {
+                                $option['active'] = (bool)$request->getPost(
+                                    $serviceId . '_' 
+                                        . $settingId . '_' . $optionId,
+                                    false
                                 );
-                            } elseif ('select' == $setting['type']) {
-                                $setting['value'] = $request->getPost(
-                                    $serviceId . '_' . $settingId, ''
-                                );
-                            } elseif ('multiselect' == $setting['type']) {
-                                foreach ($setting['options'] as $optionId
-                                    => &$option
-                                ) {
-                                    $option['active'] = (bool)$request->getPost(
-                                        $serviceId . '_' 
-                                            . $settingId . '_' . $optionId,
-                                        false
-                                    );
-                                }
                             }
                         }
                     }
-                    $result = $catalog->updateMessagingSettings($patron, $data);
-                    if ($result['success']) {
-                        $this->flashMessenger()
-                            ->addSuccessMessage($result['status']);
-                        $view->requestCompleted = true;
-                    } else {
-                        $this->flashMessenger()->addErrorMessage($result['status']);
-                    }
+                }
+                $result = $catalog->updateMessagingSettings($patron, $data);
+                if ($result['success']) {
+                    $this->flashMessenger()
+                        ->addSuccessMessage($result['status']);
+                    $view->requestCompleted = true;
                 } else {
-                    switch($config['template']) {
-                    case 'axiell':
-                        $request = $this->getRequest();
-                        $keys = array_keys($data);
-                        foreach ($keys as $key) {
-                            $setting = $request->getPost($key, false);
-                            if ($setting !== false) {
-                                $params = [
-                                    'serviceType' => $key,
-                                    'sendMethod' => $setting
-                                ];
-                                var_dump($setting);
-                                /*$result = $catalog
-                                    ->updateMessagingSettings($patron, $params);
-                                */
-                            }
-                        }
-                        die();
-                        break;
-                    }
+                    $this->flashMessenger()->addErrorMessage($result['status']);
                 }
             } else {
                 if (!isset($config['emailAddress'])) {
@@ -871,8 +803,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $view->days = [1, 2, 3, 4, 5];
             $view->profile = $profile;
         }
-
-        $view->setTemplate('myresearch/change-messaging-settings');
+        if (isset($config['method']) && 'driver' === $config['method']) {
+            $view->setTemplate('myresearch/change-messaging-settings-driver');
+            $view->approvalRequired = !empty($config['approvalRequired']); 
+        } else {
+            $view->setTemplate('myresearch/change-messaging-settings');
+        }
         return $view;
     }
 

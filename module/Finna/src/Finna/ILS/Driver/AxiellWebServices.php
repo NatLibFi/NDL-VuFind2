@@ -1300,77 +1300,61 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $validServices = [
            'pickUpNotice'  => [
-               'letter', 'email', 'sms', 'none'
+               'snailMail', 'email', 'sms', 'ilsDefined'
            ],
            'overdueNotice' => [
-               'letter', 'email', 'sms', 'none'
+               'snailMail', 'email', 'sms', 'ilsDefined'
            ],
            'dueDateAlert' => [
-               'email', 'none'
+                'sms', 'email', 'ilsDefined'
            ]
         ];
 
         $infoSet = isset($info->messageServices) 
             ? $info->messageServices->messageService : [];
         $services = [];
+        $messagingSettings = [];
         foreach ($validServices as $service => $methods) {
-            $foundService = [];
-            $translationString = 'dueDateAlert' === $service
-                ? 'messaging_settings_type_dueDateAlertEmail'
-                : "messaging_settings_type_$service";
-
-            foreach ($infoSet as $infoService) {
-                if ($infoService->serviceType === $service) {
-                    $foundService = $infoService;
-                    break;
-                }
-            }
-
-            $current = [
-                'name' => $service,
-                'type' => $this->translate($translationString),
-                'sendMethods' => []
+            $settings = [
+                'type' => $service,
+                'settings' => [
+                    'transport_types' => [
+                        'type' => 'select',
+                        'options' => [],
+                        'value' => ''
+                    ],
+                ]
             ];
-
-            $infoMethod = $infoService->sendMethods->sendMethod ?? [];
-            foreach ($methods as $method) {
-                $coded = $this->mapCode($method);
-                $comparison = $infoMethod->value === $coded ? $infoMethod : [];
-                $formattedMethod = [
-                    'selected' => $comparison->isActive ?? 'no',
-                    'type' => $coded,
-                    'method' => $this->translate("messaging_settings_method_$method")
-                ];
-
-                if ($service === 'dueDateAlert' && $method === 'email') {
-                    $options = [];
-                    $targetValue = $infoService->nofDays->value;
-
-                    for ($i = 1; $i < 5; $i++) {
-                        $option = [
-                            'selected' => $infoService->nofDays->value === $i,
-                            'value' => $i,
-                            'name' => $this->translate(
-                                $i === 1 ?
-                                'messaging_settings_num_of_days' : 
-                                'messaging_settings_num_of_days_plural',
-                                ['%%days%%' => $i]
-                            )
-                        ];
-                        $options[] = $option;
-                    }
-                    $formattedMethod['options'] = $options;
+            if ($service === 'dueDateAlert') {
+                $options = [];
+                for ($i = 0; $i <= 30; $i++) {
+                    $options[$i] = [
+                        'name' => $this->translate(
+                            1 === $i ? 'messaging_settings_num_of_days'
+                            : 'messaging_settings_num_of_days_plural',
+                            ['%%days%%' => $i]
+                        ),
+                        'active' => $i == 1
+                    ];
                 }
-                $current['sendMethods'][] = $formattedMethod;
+                $settings['settings']['days_in_advance'] = [
+                    'type' => 'select',
+                    'value' => 1,
+                    'options' => $options,
+                    'readonly' => false
+                ];
             }
-
-            $services[] = $current;
+            foreach ($methods as $methodId => $method) {
+                $settings['settings']['transport_types']['options']
+                    [$this->mapCode($method)] = [
+                        'active' => false
+                    ];
+            }
+            $messagingSettings[$service] = $settings;
         }
 
-        $userCached['messagingServices'] = $services;
-        echo "<pre>";
-        var_dump($services);
-        echo "</pre>";
+        $userCached['messagingServices'] = $messagingSettings;
+
         $this->putCachedData($cacheKey, $userCached);
         
         return $user;
@@ -1623,35 +1607,71 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
      *
+     * @return array        Array of the patron's transactions on success.
+     */
+    public function updateMessagingSettings($patron, $params)
+    {
+        $results = [];
+        // We need data about what was the old info so we dont call this too many t
+        foreach ($params as $service => $settings) {
+            $transport = $settings['settings']['transport_types'] ?? '';
+            if (empty($transport)) {
+                continue;
+            }
+            $current = [
+                'serviceType' => $service,
+                'sendMethod' => $transport['value']
+            ];
+            if ($transport['value'] === $this->mapCode('ilsDefined')) {
+                $results[] = $this->_removeMessagingSetting($patron, $current);
+            } else {
+                if (isset($settings['settings']['days_in_advance'])) {
+                    $current['nofDays']
+                        = $settings['settings']['days_in_advance']['value'];
+                }
+                $results[] = $this->_changeMessageService($patron, $current);
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Function to request change message service function of SOAP API
+     * 
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
+     *
      * @throws DateException
      * @throws ILSException
      * @return array        Array of the patron's transactions on success.
      */
-    public function updateMessagingSettings($patron, $params)
-    {  
+    private function _changeMessageService($patron, $params)
+    {
         $function = 'changeMessageService';
         $functionResult = 'changeMessageServiceResponse';
 
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
+        $patronId = $patron['patronId'];
 
         $conf = [
             'arenaMember' => $this->arenaMember,
             'language' => $this->getLanguage(),
             'user' => $username,
             'password' => $password,
+            'patronId' => $patronId,
             'sendMethod' => [
                 'value' => $params['sendMethod']
             ],
             'serviceType' => $params['serviceType']
         ];
-        var_dump($params);
+
         if ($params['serviceType'] === 'dueDateAlert') {
             $conf['nofDays'] = [
                 'value' => $params['nofDays']
             ];
         }
-        var_dump($conf);
+
         $result = $this->doSOAPRequest(
             $this->patronaurora_wsdl, $function, $functionResult, $username,
             ['changeMessageServiceRequest' => $conf]
@@ -1664,8 +1684,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             if ($message == 'ils_connection_failed') {
                 throw new ILSException($message);
             }
-            return [];
+            return [
+                'success' => false,
+                'status' => $statusAWS
+            ];
         }
+
+        return [
+            'success' => true,
+            'status' => $statusAWS
+        ];
     }
 
     /**
@@ -1682,7 +1710,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @throws ILSException
      * @return array        Array of the patron's transactions on success.
      */
-    public function removeMessagingSettings($patron, $params)
+    private function _removeMessagingSetting($patron, $params)
     {  
         $function = 'removeMessageService';
         $functionResult = 'removeMessageServiceResponse';
@@ -1710,8 +1738,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             if ($message == 'ils_connection_failed') {
                 throw new ILSException($message);
             }
-            return [];
+            return [
+                'success' => false,
+                'status' => $statusAWS
+            ];
         }
+
+        return [
+            'success' => true,
+            'status' => $statusAWS
+        ];
     }
 
     /**
@@ -2755,16 +2791,22 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * Map codes
      *
      * @param string $code as a string
+     * @param boolean $key if key is returned instead
      *
      * @return string Mapped code
      */
-    protected function mapCode($code)
+    protected function mapCode($code, $key = false)
     {
         $statuses =  [
             //Map messaging settings
-            'letter'             => 'snailMail',
-            'ilsDefined'            => 'none'
+            'snailMail'             => 'print',
+            'ilsDefined'            => 'inactive',
         ];
+
+        if ($key) {
+            $found = array_search($code, $statuses);
+            return $found !== false ? $found : $code;
+        }
 
         if (isset($statuses[$code])) {
             return $statuses[$code];
