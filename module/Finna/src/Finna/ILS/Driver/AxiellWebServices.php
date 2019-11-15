@@ -1294,23 +1294,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             }
         }
 
-        $validServices = [
-           'pickUpNotice'  => [
-               'snailMail', 'email', 'sms', 'ilsDefined'
-           ],
-           'overdueNotice' => [
-               'snailMail', 'email', 'sms', 'ilsDefined'
-           ],
-           'dueDateAlert' => [
-                'email', 'ilsDefined'
-           ]
-        ];
+        $validServices = $this->_getMessageServices($user, []);
 
         $infoSet = isset($info->messageServices)
             ? $info->messageServices->messageService : [];
         $services = [];
         $setServices = [];
         $messagingSettings = [];
+
         foreach ($infoSet as $service => $options) {
             $current = [
                 'transport_type' =>
@@ -1330,10 +1321,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     'transport_types' => [
                         'type' => 'select',
                         'options' => [],
-                        'value' => $setServices[$service]['transport_type']
+                        'value' => $this->mapCode(
+                            $setServices[$service]['transport_type']
+                        )
                     ],
                 ]
             ];
+            var_dump($setServices[$service]['transport_type']);
             if ($service === 'dueDateAlert') {
                 $options = [];
                 for ($i = 0; $i <= 4; $i++) {
@@ -1607,11 +1601,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Get Patron Transaction History
-     *
-     * This is responsible for retrieving all historical transactions
-     * (i.e. checked out items)
-     * by a specific patron.
+     * Update patron messaging settings
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -1620,44 +1610,94 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function updateMessagingSettings($patron, $params)
     {
-        $results = [
+        $result = [
             'success' => true,
-            'status' => '',
-            'amountFailed' => 0
+            'status' => 'request_change_done'
         ];
-        // We need data about what was the old info so we dont call this too many t
+
         foreach ($params as $service => $settings) {
             $transport = $settings['settings']['transport_types'] ?? '';
             if (empty($transport)) {
                 continue;
             }
+            $coded = $this->mapCode($transport['value'], true);
             $current = [
                 'serviceType' => $service,
-                'sendMethod' => $transport['value']
+                'sendMethod' => $coded
             ];
-            if ($transport['value'] === $this->mapCode('ilsDefined')) {
-                $result = $this->_removeMessagingSetting($patron, $current);
-                if (!$result['success']) {
-                    $results['success'] = false;
-                    $results['amountFailed']++;
-                }
+            if ($coded === 'ilsDefined') {
+                $status = $this->_removeMessageService($patron, $current);
             } else {
                 if (isset($settings['settings']['days_in_advance'])) {
                     $current['nofDays']
                         = $settings['settings']['days_in_advance']['value'];
                 }
-                $result = $this->_changeMessageService($patron, $current);
-                if (!$result['success']) {
-                    $results['success'] = false;
-                    $results['amountFailed']++;
-                }
+                $status = $this->_changeMessageService($patron, $current);
+            }
+            if (!$status['success']) {
+                $result = $status;
             }
         }
-        return $results;
+        return $result;
     }
 
     /**
-     * Function to request change message service function of SOAP API
+     * Get message services available
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    private function _getMessageServices($patron)
+    {
+        $function = 'getMessageServices';
+        $functionResult = 'messageServicesResponse';
+
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
+
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'language' => $this->getLanguage(),
+            'user' => $username,
+            'password' => $password,
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->patronaurora_wsdl, $function, $functionResult, $username,
+            ['messageServicesRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [];
+        }
+
+        $resultArray = $this->objectToArray(
+            $result->$functionResult->messageServices->messageService
+        );
+        $returnable = [];
+        foreach ($resultArray as $service => $sendMethods) {
+            $current = [];
+            $currentMethods = $sendMethods->sendMethods->sendMethod;
+            foreach ($currentMethods as $key => $value) {
+                $current[] = $value->value;
+            }
+            $returnable[$sendMethods->serviceType] = $current;
+        }
+
+        return $returnable;
+    }
+
+    /**
+     * Function to change message service in SOAP API
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -1709,18 +1749,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ];
         }
 
-        return [
-            'success' => true,
-            'status' => $statusAWS
-        ];
+        return ['success' => true];
     }
 
     /**
-     * Remove messaging setting from use
-     *
-     * This is responsible for retrieving all historical transactions
-     * (i.e. checked out items)
-     * by a specific patron.
+     * Function to remove message service from use in SOAP API
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -1729,7 +1762,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @throws ILSException
      * @return array        Array of the patron's transactions on success.
      */
-    private function _removeMessagingSetting($patron, $params)
+    private function _removeMessageService($patron, $params)
     {
         $function = 'removeMessageService';
         $functionResult = 'removeMessageServiceResponse';
@@ -1763,10 +1796,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ];
         }
 
-        return [
-            'success' => true,
-            'status' => $statusAWS
-        ];
+        return ['success' => true];
     }
 
     /**
