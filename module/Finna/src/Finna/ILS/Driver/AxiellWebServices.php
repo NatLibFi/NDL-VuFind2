@@ -1294,7 +1294,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             }
         }
 
-        $validServices = $this->_getMessageServices($user, []);
+        $validServices = $this->_getMessageServices($user);
 
         $infoSet = isset($info->messageServices)
             ? $info->messageServices->messageService : [];
