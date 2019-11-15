@@ -705,6 +705,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         if ($this->formWasSubmitted('messaging_update_request')) {
             if (isset($config['method']) && 'driver' === $config['method']) {
+                var_dump('ADSASDASDAS');
                 $data = $profile['messagingServices'];
                 $request = $this->getRequest();
                 // Collect results from the POST request and update settings
@@ -726,8 +727,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                                 => &$option
                             ) {
                                 $option['active'] = (bool)$request->getPost(
-                                    $serviceId . '_' 
-                                        . $settingId . '_' . $optionId,
+                                    $serviceId . '_' . $settingId . '_' . $optionId,
                                     false
                                 );
                             }
@@ -735,9 +735,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     }
                 }
                 $result = $catalog->updateMessagingSettings($patron, $data);
+
                 if ($result['success']) {
-                    $this->flashMessenger()
-                        ->addSuccessMessage($result['status']);
+                    $this->flashMessenger()->addSuccessMessage($result['status']);
                     $view->requestCompleted = true;
                 } else {
                     $this->flashMessenger()->addErrorMessage($result['status']);
@@ -805,7 +805,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
         if (isset($config['method']) && 'driver' === $config['method']) {
             $view->setTemplate('myresearch/change-messaging-settings-driver');
-            $view->approvalRequired = !empty($config['approvalRequired']); 
+            $view->approvalRequired = !empty($config['approvalRequired']);
         } else {
             $view->setTemplate('myresearch/change-messaging-settings');
         }

@@ -82,14 +82,7 @@
           <?php endif; ?>
 
           <?php if (isset($profile['messagingServices']) && !empty($profile['messagingServices'])): ?>
-            <?php
-              $template = 'myresearch/profile-messaging';
-              if (isset($messagingSettingsTemplate)) {
-                $template .= '-' . $messagingSettingsTemplate;
-              }
-              $template .= '.phtml';
-            ?>
-            <?= $this->partial($template, ['profile' => $profile, 'user' => $user, 'capabilityParams' => $capabilityParams]); ?>
+            <?= $this->partial('myresearch/profile-messaging.phtml', ['profile' => $profile, 'user' => $user, 'capabilityParams' => $capabilityParams]); ?>
           <?php endif; ?>
 
           <?php
