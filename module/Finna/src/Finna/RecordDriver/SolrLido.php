@@ -232,7 +232,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
 
-                if (isset($linkResource->attributes()->formatResource)) {
+                if (isset($linkResource->attributes()->formatResource)
+                    && !empty($this->formatBlacklist)
+                ) {
                     $format = trim(
                         (string)$linkResource->attributes()->formatResource
                     );
