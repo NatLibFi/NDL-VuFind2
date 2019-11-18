@@ -63,9 +63,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @var array
      */
-    protected $formatBlacklist = [
-        '3d-pdf', 'gltf', 'tif'
-    ];
+    protected $formatBlacklist = [];
 
     /**
      * Attach date converter
@@ -77,6 +75,25 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function attachDateConverter($dateConverter)
     {
         $this->dateConverter = $dateConverter;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param \Zend\Config\Config $mainConfig     VuFind main configuration (omit for
+     * built-in defaults)
+     * @param \Zend\Config\Config $recordConfig   Record-specific configuration file
+     * (omit to use $mainConfig as $recordConfig)
+     * @param \Zend\Config\Config $searchSettings Search-specific configuration file
+     */
+    public function __construct($mainConfig = null, $recordConfig = null,
+        $searchSettings = null
+    ) {
+        if (isset($mainConfig['Content']['lidoBlackList'])) {
+            $blackList = $mainConfig['Content']['lidoBlackList'];
+            $this->formatBlacklist = explode(',', $blackList);
+        }
+        parent::__construct($mainConfig, $recordConfig, $searchSettings);
     }
 
     /**
