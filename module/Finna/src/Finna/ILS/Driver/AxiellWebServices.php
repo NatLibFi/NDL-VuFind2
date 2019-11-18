@@ -1556,7 +1556,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'language' => $this->getLanguage(),
             'patronId' => $patron['patronId'],
             'start' => isset($params['page'])
-            ? ($params['page'] - 1) * $pageSize : 0,
+                ? ($params['page'] - 1) * $pageSize : 0,
             'count' => $pageSize,
             'sortField' => $sortField,
             'sortDirection' => $sortKey
@@ -1579,10 +1579,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $formatted = [];
         $transList = [];
-        $transActions = $this->objectToArray(
+        $transactions = $this->objectToArray(
             $result->loanHistoryResponse->loanHistoryItems->loanHistoryItem
         );
-        foreach ($transActions as $transAction => $record) {
+        foreach ($transactions as $transaction => $record) {
             $obj = $record->catalogueRecord;
             $trans = [
                 'id' => $obj->id,
@@ -2748,11 +2748,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function supportsMethod($method, $params)
     {
-        //Special case: change password is only available if properly configured.
-        if ($method == 'changePassword') {
+        switch ($method) {
+        case 'changePassword':
             return isset($this->config['changePassword']);
+        case 'getMyTransactionHistory':
+            return !empty($this->loansaurora_wsdl);
+        case 'updateAddress':
+            return !empty($this->patronaurora_wsdl);
+        default:
+            return is_callable([$this, $method]);
         }
-        return is_callable([$this, $method]);
     }
 
     /**

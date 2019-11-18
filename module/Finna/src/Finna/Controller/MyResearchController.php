@@ -264,28 +264,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send list of historic loans to view
-     *
-     * @return mixed
-     */
-    public function historicLoansAction()
-    {
-        // Stop now if the user does not have valid catalog credentials available:
-        if (!is_array($patron = $this->catalogLogin())) {
-            return $patron;
-        }
-
-        $view = parent::historicLoansAction();
-        $catalog = $this->getILS();
-
-        $view->purgeAllowed = $catalog->checkCapability(
-            'purgeTransactionHistory', compact('patron')
-        ) !== false;
-
-        return $view;
-    }
-
-    /**
      * Purge historic loans action.
      *
      * @return mixed

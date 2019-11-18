@@ -9,6 +9,9 @@
     $user = $this->auth()->isLoggedIn();
 
     $recordCount = $this->paginator ? $this->paginator->getTotalItemCount() : count($this->transactions ?? []);
+
+    $catalog = $this->ils();
+    $purgeAllowed = $catalog->checkCapability('purgeTransactionHistory');
 ?>
 
 <!-- Leftside navigationbar -->
@@ -39,7 +42,7 @@
           <div class="text-right hidden-print right-control">
             <?=$this->render('search/controls/sort.phtml')?>
           </div>
-          <?php if ($this->purgeAllowed): ?>
+          <?php if ($purgeAllowed): ?>
             <div class="hidden-print left-control">
               <a class="btn btn-primary" href="<?=$this->url('myresearch-purgehistoricloans');?>" data-lightbox><?=$this->transEsc('loan_history_purge')?></a>
             </div>
