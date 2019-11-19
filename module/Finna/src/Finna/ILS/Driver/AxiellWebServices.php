@@ -1296,13 +1296,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         $validServices = $this->_getMessageServices($user);
 
-        $infoSet = isset($info->messageServices)
+        $infoServices = isset($info->messageServices)
             ? $info->messageServices->messageService : [];
         $services = [];
-        $setServices = [];
         $messagingSettings = [];
 
-        foreach ($infoSet as $service => $options) {
+        foreach ($infoServices as $service => $options) {
             $current = [
                 'transport_type' =>
                     (string)$options->sendMethods->sendMethod->value,
@@ -1310,7 +1309,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             if (isset($options->nofDays)) {
                 $current['nofDays'] = $options->nofDays->value;
             }
-            $setServices[$options->serviceType] = $current;
+            $services[$options->serviceType] = $current;
         }
 
         // We need to find proper options for current service
@@ -1322,7 +1321,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                         'type' => 'select',
                         'options' => [],
                         'value' => $this->mapCode(
-                            $setServices[$service]['transport_type']
+                            $services[$service]['transport_type']
                         )
                     ],
                 ]
@@ -1336,12 +1335,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                             : 'messaging_settings_num_of_days_plural',
                             ['%%days%%' => $i]
                         ),
-                        'active' => $i === $setServices[$service]['nofDays']
+                        'active' => $i === $services[$service]['nofDays']
                     ];
                 }
                 $settings['settings']['days_in_advance'] = [
                     'type' => 'select',
-                    'value' => $setServices[$service]['nofDays'],
+                    'value' => $services[$service]['nofDays'],
                     'options' => $options,
                     'readonly' => false
                 ];
@@ -1349,13 +1348,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             foreach ($methods as $methodId => $method) {
                 $coded = $this->mapCode($method);
                 $settings['settings']['transport_types']['options'][$coded] = [
-                        'active' => $setServices[$service]['transport_type']
+                        'active' => $services[$service]['transport_type']
                             === $method
                     ];
             }
             $messagingSettings[$service] = $settings;
         }
-
         $userCached['messagingServices'] = $messagingSettings;
 
         $this->putCachedData($cacheKey, $userCached);

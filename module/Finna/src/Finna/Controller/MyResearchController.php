@@ -509,7 +509,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         // Check if due date reminder settings should be displayed
         $config = $this->getConfig();
-
         $view->hideDueDateReminder = $user->finna_due_date_reminder == 0
             && isset($config->Site->hideDueDateReminder)
             && $config->Site->hideDueDateReminder;
@@ -713,10 +712,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     }
                 }
                 $result = $catalog->updateMessagingSettings($patron, $data);
-
                 if ($result['success']) {
-                    $this->flashMessenger()
-                        ->addSuccessMessage($result['status']);
+                    $this->flashMessenger()->addSuccessMessage($result['status']);
                     $view->requestCompleted = true;
                 } else {
                     $this->flashMessenger()->addErrorMessage($result['status']);
