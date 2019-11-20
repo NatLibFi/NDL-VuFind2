@@ -106,7 +106,9 @@ class CoverController extends \VuFind\Controller\CoverController
         $this->loader->setDatasourceConfig($datasourceCovers);
 
         if ($id = $params->fromQuery('id')) {
-            $driver = $this->recordLoader->load($id, 'Solr');
+            $driver = $this->recordLoader->load(
+                $id, $params->fromQuery('source') ?? 'Solr'
+            );
             $index = $params->fromQuery('index');
             $this->loader->loadRecordImage($driver, $index, $size);
             $response = parent::displayImage();

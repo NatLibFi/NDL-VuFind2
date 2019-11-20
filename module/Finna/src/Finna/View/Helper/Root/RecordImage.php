@@ -199,11 +199,12 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      * are found
      * @param bool   $includePdf Whether to include first PDF file when no image
      * links are found
+     * @param string $source     Record source
      *
      * @return array
      */
     public function getAllImagesAsCoverLinks($language, $params = [],
-        $thumbnails = true, $includePdf = true
+        $thumbnails = true, $includePdf = true, $source = 'Solr'
     ) {
         $imageParams = [
             'small' => [],
@@ -228,7 +229,11 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
                 $params = $image['urls'][$imageType];
                 $image['urls'][$imageType] = $urlHelper('cover-show') . '?' .
                     http_build_query(
-                        array_merge($params, $imageParams[$imageType])
+                        array_merge(
+                            $params,
+                            $imageParams[$imageType],
+                            ['source' => $source]
+                        )
                     );
             }
         }
@@ -238,19 +243,22 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     /**
      * Return rendered record image HTML.
      *
-     * @param string $type   Page type (list, record).
-     * @param array  $params Optional array of image parameters as
-     *                       an associative array of parameter => value pairs:
-     *                       - w  Width
-     *                       - h  Height
+     * @param string $type          Page type (list, record).
+     * @param array  $params        Optional array of image parameters as
+     *                              an associative array of parameter => value pairs:
+     *                              - w  Width
+     *                              - h  Height
+     * @param boolean $disableModal Whether to disable MagnificPopup modal.
+     * @param string  $source       Record source
      *
      * @return string
      */
-    public function render($type = 'list', $params = null)
-    {
+    public function render(
+        $type = 'list', $params = null,$disableModal = false, $source = 'Solr'
+    ) {
         $view = $this->getView();
         $images = $this->getAllImagesAsCoverLinks(
-            $view->layout()->userLang, $params
+            $view->layout()->userLang, $params, true, true, $source
         );
         if ($images && $view->layout()->templateDir === 'combined') {
             // Limit combined results to a single image
@@ -259,7 +267,8 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
 
         $context = [
             'type' => $type,
-            'images' => $images
+            'images' => $images,
+            'disableModal' => $disableModal
         ];
 
         return $this->record->renderTemplate('record-image.phtml', $context);

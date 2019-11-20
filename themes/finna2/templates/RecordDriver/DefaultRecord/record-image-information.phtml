@@ -6,7 +6,7 @@
   <div class="cover-wrapper">
     <?php /* Display thumbnail if appropriate: */ ?>
     <?php if ($img): ?>
-      <?=$img->render('record', $localSizes) ?>
+      <?=$img->render('record', $localSizes, $this->disableModal ?? null, $this->source ?? null) ?>
     <?php endif;?>
     <?php /* Display qrcode if appropriate: */ ?>
     <?php $QRCode = $this->record($this->driver)->getQRCode("core"); ?>
