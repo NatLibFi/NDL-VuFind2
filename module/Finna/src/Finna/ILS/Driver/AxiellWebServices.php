@@ -1213,6 +1213,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $lastname = array_pop($names);
         $firstname = implode(' ', $names);
 
+        $loanHistoryEnabled = $info->isLoanHistoryEnabled ?? false;
+
         /**
          * Request an authentication id used in certain requests e.g:
          * GetTransactionHistory
@@ -1249,7 +1251,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             'phoneAreaCode' => '',
             'major' => null,
             'college' => null,
-            'patronId' => $patronId
+            'patronId' => $patronId,
+            'loan_history' => (bool)$loanHistoryEnabled
         ];
 
         if (!empty($info->emailAddresses->emailAddress)) {
@@ -2247,6 +2250,52 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'status' => 'Phone number changed',
                 'sys_message' => ''
             ];
+    }
+
+    /**
+     * Update Patron Transaction History State
+     *
+     * Enable or disable patron's transaction history
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param mixed $state  Any of the configured values
+     *
+     * @return array Associative array of the results
+     */
+    public function updateTransactionHistoryState($patron, $state)
+    {
+        $username = $patron['cat_username'];
+        $function = 'changeLoanHistoryStatus';
+        $functionResult = 'changeLoanHistoryStatusResult';
+
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'patronId' => $patron['patronId'],
+            'isLoanHistoryEnabled' => $state
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->patronaurora_wsdl, $function, $functionResult, $username,
+            ['changeLoanHistoryStatusParam' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [
+                'success' => false,
+                'status' => 'Changing the checkout history state failed'
+            ];
+        }
+
+        return [
+            'success' => true,
+            'status' => 'request_change_done',
+        ];
     }
 
     /**
