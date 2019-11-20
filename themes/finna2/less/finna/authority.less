@@ -62,6 +62,12 @@ a.authority-link {
    padding: 10px;
    overflow: hidden;
 
+
+   @media (min-width: @screen-sm) {
+       .media-left {
+           width: 60%;
+       }
+   }
    .media-right {
        .access-rights {
            text-align: center;
@@ -72,17 +78,8 @@ a.authority-link {
        }
    }
    @media (min-width: @screen-sm-max) {
-       .content {
-           width: 60%;
-           float: left;
-       }
-       .images {
-           .access-rights {
-               text-align: initial;
-           }
+       .media-right {
            width: 40%;
-           float: left;
-           padding-left: 10px;
        }
    }
    &.filtered {
