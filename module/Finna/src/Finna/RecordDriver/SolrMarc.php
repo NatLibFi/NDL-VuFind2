@@ -313,12 +313,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $url = '';
         $type = '';
         foreach ($this->getMarcRecord()->getFields('856') as $url) {
-            $type = $url->getSubfield('q');
-            if ($type) {
-                $type = $type->getData();
-                if ("TEXT" == $type || "text/html" == $type) {
-                    $address = $url->getSubfield('u');
-                    if ($address && !$this->urlBlacklisted($address->getData())) {
+            if ($type = $url->getSubfield('q')) {
+                $type = strtolower($type->getData());
+                if ("text" == $type || "text/html" == $type) {
+                    if ($address = $url->getSubfield('u')) {
                         $address = $address->getData();
                         return $address;
                     }

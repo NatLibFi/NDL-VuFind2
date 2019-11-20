@@ -128,7 +128,8 @@
             'Prev' => 'Prev',
             'Next' => 'Next',
             'Next Record' => 'Next Record',
-            'Previous Record' => 'Previous Record'
+            'Previous Record' => 'Previous Record',
+            'No Cover Image' => 'No Cover Image'
           ]
         );
         // Add libphonenumber.js strings
@@ -277,7 +278,7 @@ JS;
               if (strpos($key, 'filter') !== false) {
                 //used filters to filterArray
                 foreach ($filter as $value) {
-                  $filterArray = explode(':', $value);
+                  $filterArray = explode(':', $value, 2);
                   $filterKey = $filterArray[0];
                   $filterValue = trim($filterArray[1], '"');
                   if (array_key_exists($filterKey, $filters)) {

@@ -47,7 +47,7 @@
             </div>
           <?php endif; ?>
           <div class="pagination-container">
-            <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination-simple.phtml') : ''?>
+            <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination-simple.phtml', ['params' => $this->params]) : ''?>
           </div>
         </div>
         <table class="myresearch-table">

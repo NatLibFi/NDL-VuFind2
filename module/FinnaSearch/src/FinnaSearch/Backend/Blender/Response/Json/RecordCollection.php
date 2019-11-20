@@ -141,18 +141,32 @@ class RecordCollection
      */
     public function isPrimaryAtOffset($offset, $blockSize)
     {
-        $boostPos = $this->config['Blending']['boostPosition'] ?? $blockSize;
+        // Account for configuration being 1-based
+        $boostPos = ($this->config['Blending']['boostPosition'] ?? $blockSize) - 1;
         $boostCount = $this->config['Blending']['boostCount'] ?? 0;
+        $maxBoostedPos = $boostPos + $boostCount;
+        $maxAffectedPos = ceil($maxBoostedPos / $blockSize) * $blockSize
+            + $boostCount - 1;
         if ($offset < $boostPos
             || 0 === $boostCount
-            || $offset >= $boostPos + $boostCount
+            || $offset > $maxAffectedPos
+            || $maxBoostedPos > $blockSize
         ) {
-            // We're outside any boosted records, calculate by block
+            // We're outside the blocks affected by boosting, calculate by block
             $currentBlock = floor($offset / $blockSize);
             return $currentBlock % 2 === 0;
         }
 
-        // We're in a boost block
+        // Check if we're in a boost block
+        if ($boostCount > 0
+            && $offset >= $boostPos && $offset < $boostPos + $boostCount
+        ) {
+            return false;
+        }
+        // Check if we're in the first primary block
+        if ($offset < $blockSize + $boostCount) {
+            return true;
+        }
         return false;
     }
 
@@ -188,20 +202,23 @@ class RecordCollection
             }
         }
         unset($values);
-        foreach ($secondary as $facet => $values) {
-            $mappings = [];
-            $facetType = '';
-            foreach ($this->mappings['Facets'] ?? [] as $key => $current) {
-                if ($facet === $current['Secondary']) {
-                    $facet = $key;
-                    $mappings = $current['Values'] ?? [];
-                    $facetType = $current['Type'] ?? '';
-                    break;
-                }
-            }
+
+        // Iterate through mappings and merge secondary values.
+        // It is vital to do it this way since multiple facets may map to a secondary
+        // facet in checkbox facets.
+        foreach ($this->mappings['Facets'] as $facet => $settings) {
+            $secondaryFacet = $settings['Secondary'];
+            $mappings = $settings['Values'] ?? [];
+            $facetType = $settings['Type'] ?? '';
+
+            $values = $secondary[$secondaryFacet] ?? [];
             if (is_object($values)) {
                 $values = $values->toArray();
             }
+            if (empty($values)) {
+                continue;
+            }
+
             $list = $facets[$facet] ?? [];
             foreach ($values as $field => $count) {
                 if (isset($mappings[$field])) {

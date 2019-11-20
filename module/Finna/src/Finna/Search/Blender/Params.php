@@ -28,6 +28,9 @@
  */
 namespace Finna\Search\Blender;
 
+use Finna\Search\Solr\AuthorityHelper;
+use Finna\Search\Solr\HierarchicalFacetHelper;
+
 /**
  * Blender Search Parameters
  *
@@ -67,6 +70,7 @@ class Params extends \Finna\Search\Solr\Params
      * @param \VuFind\Search\Base\Options  $options         Options to use
      * @param \VuFind\Config\PluginManager $configLoader    Config loader
      * @param HierarchicalFacetHelper      $facetHelper     Hierarchical facet helper
+     * @param AuthorityHelper              $authorityHelper Authority helper
      * @param \VuFind\Date\Converter       $dateConverter   Date converter
      * @param \VuFind\Search\Base\Params   $secondaryParams Secondary search params
      * @param \Zend\Config\Config          $blenderConfig   Blender configuration
@@ -74,13 +78,16 @@ class Params extends \Finna\Search\Solr\Params
      */
     public function __construct(\VuFind\Search\Base\Options $options,
         \VuFind\Config\PluginManager $configLoader,
-        \Finna\Search\Solr\HierarchicalFacetHelper $facetHelper,
+        HierarchicalFacetHelper $facetHelper,
+        AuthorityHelper $authorityHelper,
         \VuFind\Date\Converter $dateConverter,
         \VuFind\Search\Base\Params $secondaryParams,
         \Zend\Config\Config $blenderConfig,
         $mappings
     ) {
-        parent::__construct($options, $configLoader, $facetHelper, $dateConverter);
+        parent::__construct(
+            $options, $configLoader, $facetHelper, $authorityHelper, $dateConverter
+        );
 
         $this->secondaryParams = $secondaryParams;
         $this->blenderConfig = $blenderConfig;
