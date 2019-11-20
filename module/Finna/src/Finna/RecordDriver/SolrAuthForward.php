@@ -139,6 +139,90 @@ class SolrAuthForward extends SolrAuthDefault
     }
 
     /**
+     * Return an array of image URLs associated with this record with keys:
+     * - url         Image URL
+     * - description Description text
+     * - rights      Rights
+     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
+     *   - description Human readable description (array)
+     *   - link        Link to copyright info
+     *
+     * @param string $language Language for copyright information
+     *
+     * @return array
+     */
+    public function getAllImages($language = 'fi', $includePdf = false)
+    {
+        $images = [];
+
+        foreach ($this->getXmlRecord()->children() as $xml) {
+            foreach ($xml->ProductionEvent as $event) {
+                $attributes = $event->ProductionEventType->attributes();
+                if (empty($attributes{'elokuva-elonet-materiaali-kuva-url'})) {
+                    continue;
+                }
+                $url = (string)$attributes{'elokuva-elonet-materiaali-kuva-url'};
+                if (!empty($xml->Title->PartDesignation->Value)) {
+                    $partAttrs = $xml->Title->PartDesignation->Value->attributes();
+                    $desc = (string)$partAttrs{'kuva-kuvateksti'};
+                } else {
+                    $desc = '';
+                }
+                $rights = [];
+                if (!empty($attributes{'finna-kayttooikeus'})) {
+                    $rights['copyright'] = (string)$attributes{'finna-kayttooikeus'};
+                    $link = $this->getRightsLink(
+                                                 strtoupper($rights['copyright']), $language
+                                                 );
+                    if ($link) {
+                        $rights['link'] = $link;
+                    }
+                }
+                $images[] = [
+                             'urls' => [
+                                        'small' => $url,
+                                        'medium' => $url,
+                                        'large' => $url
+                                        ],
+                             'description' => $desc,
+                             'rights' => $rights
+                             ];
+            }
+        }
+        return $images;
+    }
+
+    /**
+     * Returns an array of parameter to send to Finna's cover generator.
+     * Falls back to VuFind's getThumbnail if no record image with the
+     * given index was found.
+     *
+     * @param string $size  Size of thumbnail
+     * @param int    $index Image index
+     *
+     * @return array|bool
+     */
+    public function getRecordImage($size = 'small', $index = 0)
+    {
+        if ($images = $this->getAllImages()) {
+            if (isset($images[$index]['urls'][$size])) {
+                $params = $images[$index]['urls'][$size];
+                if (!is_array($params)) {
+                    $params = [
+                        'url' => $params
+                    ];
+                }
+                if ($size == 'large') {
+                    $params['fullres'] = 1;
+                }
+                $params['id'] = $this->getUniqueId();
+                return $params;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Return biographical note.
      *
      * @param string $type    Note type

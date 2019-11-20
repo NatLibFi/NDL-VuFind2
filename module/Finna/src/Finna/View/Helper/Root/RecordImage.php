@@ -254,7 +254,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      * @return string
      */
     public function render(
-        $type = 'list', $params = null,$disableModal = false, $source = 'Solr'
+        $type = 'list', $params = null, $disableModal = false, $source = 'Solr'
     ) {
         $view = $this->getView();
         $images = $this->getAllImagesAsCoverLinks(

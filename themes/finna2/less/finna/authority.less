@@ -60,7 +60,46 @@ a.authority-link {
    background-color: @gray-ultralight;
    margin-bottom: 20px;
    padding: 10px;
+   overflow: hidden;
 
+   .images {
+       .access-rights {
+           text-align: center;
+           font-size: 12px;
+           .cc-rights {
+               padding: 0;
+           }
+       }
+       .recordcover-container {
+           position: relative;
+           margin-bottom: 10px;
+           text-align: center;
+       }
+       
+       .image-popup-trigger {
+           position: relative;
+           display: inline-block;
+           height: 100%;
+           max-width: 100%;
+           img {
+               max-height: 600px;
+           }
+       }
+   }
+   @media (min-width: @screen-sm-max) {
+       .content {
+           width: 60%;
+           float: left;
+       }
+       .images {
+           .access-rights {
+               text-align: initial;
+           }
+           width: 40%;
+           float: left;
+           padding-left: 10px;
+       }
+   }
    &.filtered {
      border-top: none;
    }
