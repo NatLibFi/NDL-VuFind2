@@ -93,6 +93,9 @@ finna.imagePaginator = (function imagePaginator() {
         isSet: true
       };
     }
+    if (settings.recordType === 'marc') {
+      settings.imagesOnPopup = 4;
+    }
     var paginator = new FinnaPaginator(images, settings);
     paginator.init();
   }
