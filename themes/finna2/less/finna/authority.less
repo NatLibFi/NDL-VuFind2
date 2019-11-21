@@ -61,15 +61,24 @@ a.authority-link {
    margin-bottom: 20px;
    padding: 10px;
    overflow: hidden;
+   display: flex;
+   flex-wrap: wrap;
+   flex-direction: row;
 
-
-   @media (min-width: @screen-sm) {
-       .media-left {
-           width: 60%;
-       }
+   @media (min-width: @screen-md) {
+     .media-left {
+       width: initial;
+     }
+   }
+   .media-left {
+     flex-direction: column;
+     width: initial;
+     flex: 1 1 100%;
    }
    .media-right {
-       overflow: hidden;
+       flex-direction: column;
+       flex: 1 1 100%;
+       
        .access-rights {
            text-align: center;
            font-size: 12px;
@@ -78,10 +87,13 @@ a.authority-link {
            }
        }
    }
-   @media (min-width: @screen-sm-max) {
-       .media-right {
-           width: 40%;
-       }
+   @media (min-width: @screen-md) {
+     .media-left {
+       flex-basis: 60%;
+     }
+     .media-right {
+       flex-basis: 40%;
+     }
    }
    &.filtered {
      border-top: none;
