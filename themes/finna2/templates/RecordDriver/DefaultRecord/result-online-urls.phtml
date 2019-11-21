@@ -59,7 +59,7 @@
             }
             if (!empty($url['embed']) && $url['embed'] === 'video') {
               $currentUrl['data-embed-video'] = '';
-            } else if(!empty($url['embed']) && $url['embed'] === 'iframe') {
+            } elseif(!empty($url['embed']) && $url['embed'] === 'iframe') {
               $currentUrl['data-embed-iframe'] = '';
             }
           ?>
