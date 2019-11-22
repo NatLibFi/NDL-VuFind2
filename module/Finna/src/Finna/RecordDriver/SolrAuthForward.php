@@ -140,36 +140,6 @@ class SolrAuthForward extends SolrAuthDefault
     }
 
     /**
-     * Returns an array of parameter to send to Finna's cover generator.
-     * Falls back to VuFind's getThumbnail if no record image with the
-     * given index was found.
-     *
-     * @param string $size  Size of thumbnail
-     * @param int    $index Image index
-     *
-     * @return array|bool
-     */
-    public function getRecordImage($size = 'small', $index = 0)
-    {
-        if ($images = $this->getAllImages()) {
-            if (isset($images[$index]['urls'][$size])) {
-                $params = $images[$index]['urls'][$size];
-                if (!is_array($params)) {
-                    $params = [
-                        'url' => $params
-                    ];
-                }
-                if ($size == 'large') {
-                    $params['fullres'] = 1;
-                }
-                $params['id'] = $this->getUniqueId();
-                return $params;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Allow record image to be downloaded?
      *
      * @return boolean
