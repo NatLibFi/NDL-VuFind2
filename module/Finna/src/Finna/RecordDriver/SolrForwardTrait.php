@@ -52,6 +52,8 @@ trait SolrForwardTrait
      *   - link        Link to copyright info
      *
      * @param string $language Language for copyright information
+     * @param bool   $includePdf Whether to include first PDF file when no image
+     * links are found
      *
      * @return array
      */
