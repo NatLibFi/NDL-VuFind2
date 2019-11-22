@@ -508,6 +508,29 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Returns one of three things: a full URL to a thumbnail preview of the record
+     * if an image is available in an external system; an array of parameters to
+     * send to VuFind's internal cover generator if no fixed URL exists; or false
+     * if no thumbnail can be generated.
+     *
+     * @param string $size Size of thumbnail (small, medium or large -- small is
+     * default).
+     *
+     * @return string|array|bool
+     */
+    public function getThumbnail($size = 'small')
+    {
+        $result = parent::getThumbnail($size);
+        if (is_array($result) && !isset($result['isbn'])) {
+            // Allow also invalid ISBNs
+            if ($isbn = $this->getFirstISBN()) {
+                $result['invisbn'] = $isbn;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Get usage rights (empty if none).
      *
      * @return array
