@@ -252,6 +252,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      * @param array   $extraParams  Optional extra parameters:
      * - boolean $disableModal     Whether to disable MagnificPopup modal (default false)
      * - string  $imageRightsLabel Label for image rights statement (defalt 'Image Rights')
+     * - array   $numOfImages      Number of images to show in thumbnail navigation.
      *
      * @return string
      */
