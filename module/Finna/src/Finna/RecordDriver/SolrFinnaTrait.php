@@ -521,12 +521,14 @@ trait SolrFinnaTrait
     public function getThumbnail($size = 'small')
     {
         $result = parent::getThumbnail($size);
+
         if (is_array($result) && !isset($result['isbn'])) {
             // Allow also invalid ISBNs
             if ($isbn = $this->getFirstISBN()) {
                 $result['invisbn'] = $isbn;
             }
         }
+
         return $result;
     }
 
