@@ -243,15 +243,15 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     /**
      * Return rendered record image HTML.
      *
-     * @param string $type          Page type (list, record).
-     * @param array  $params        Optional array of image parameters as
-     *                              an associative array of parameter => value pairs:
-     *                              - w  Width
-     *                              - h  Height
-     * @param string  $source       Record source
-     * @param array   $extraParams  Optional extra parameters:
-     * - boolean $disableModal     Whether to disable MagnificPopup modal (default false)
-     * - string  $imageRightsLabel Label for image rights statement (defalt 'Image Rights')
+     * @param string $type         Page type (list, record).
+     * @param array  $params       Optional array of image parameters as
+     *                             an associative array of parameter => value pairs:
+     *                             - w  Width
+     *                             - h  Height
+     * @param string  $source      Record source
+     * @param array   $extraParams Optional extra parameters:
+     * - boolean $disableModal     Whether to disable MagnificPopup modal
+     * - string  $imageRightsLabel Label for image rights statement
      * - array   $numOfImages      Number of images to show in thumbnail navigation.
      *
      * @return string
