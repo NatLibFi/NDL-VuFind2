@@ -40,8 +40,8 @@ namespace Finna\RecordDriver;
  */
 class SolrForward extends \VuFind\RecordDriver\SolrDefault
 {
-    use SolrFinna, SolrForwardTrait {
-        SolrForwardTrait::getAllImages insteadof SolrFinna;
+    use SolrFinnaTrait, SolrForwardTrait {
+        SolrForwardTrait::getAllImages insteadof SolrFinnaTrait;
     }
 
     /**

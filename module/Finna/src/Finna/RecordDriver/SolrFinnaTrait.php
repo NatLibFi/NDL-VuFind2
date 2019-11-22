@@ -40,9 +40,9 @@ namespace Finna\RecordDriver;
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-trait SolrFinna
+trait SolrFinnaTrait
 {
-    use SolrCommonFinna;
+    use SolrCommonFinnaTrait;
 
     /**
      * Search settings

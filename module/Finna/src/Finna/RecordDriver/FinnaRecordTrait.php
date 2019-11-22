@@ -40,7 +40,7 @@ use Finna\Db\Row\User;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-trait FinnaRecord
+trait FinnaRecordTrait
 {
     /**
      * Preferred language for display strings
