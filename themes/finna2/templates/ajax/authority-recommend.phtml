@@ -24,6 +24,12 @@ $coreFields = $formatter->getDefaults('authority');
         <?php endforeach; ?>
     </ul>
     <?php endif; ?>
+    <?php $coreFields = $formatter->getData($record, $coreFields); ?>
+    <?php if (!empty($coreFields)): ?>
+    <table class="table table-finna-record record-details">
+        <?=$this->record($record)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
+    </table>
+    <?php endif; ?>
     <?php $summ = $record->getSummary(); if (!empty($summ)): ?>
     <div class="wide recordSummary<?=!($this->collapsed ?? false) ? ' truncate-field' : ''?>" data-rows="5">
         <p class="summary">
@@ -31,12 +37,6 @@ $coreFields = $formatter->getDefaults('authority');
             <?=implode('<br>', $summ)?>
         </p>
     </div>
-    <?php endif; ?>
-    <?php $coreFields = $formatter->getData($record, $coreFields); ?>
-    <?php if (!empty($coreFields)): ?>
-    <table class="table table-finna-record record-details">
-        <?=$this->record($record)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
-    </table>
     <?php endif; ?>
 </div>
 <?php if ($record->getRecordImage()): ?>
