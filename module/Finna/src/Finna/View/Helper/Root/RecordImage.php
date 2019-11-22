@@ -260,6 +260,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     ) {
         $disableModal = $extraParams['disableModal'] ?? false;
         $imageRightsLabel = $extraParams['imageRightsLabel'] ?? 'Image Rights';
+        $numOfImages = $extraParams['numOfImages'] ?? null;
 
         $view = $this->getView();
         $images = $this->getAllImagesAsCoverLinks(
@@ -274,7 +275,8 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
             'type' => $type,
             'images' => $images,
             'disableModal' => $disableModal,
-            'imageRightsLabel' => $imageRightsLabel
+            'imageRightsLabel' => $imageRightsLabel,
+            'numOfImages' => $numOfImages
         ];
 
         return $this->record->renderTemplate('record-image.phtml', $context);
