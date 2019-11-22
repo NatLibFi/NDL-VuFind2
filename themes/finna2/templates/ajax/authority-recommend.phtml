@@ -7,49 +7,49 @@ $formatter = $this->recordDataFormatter();
 $coreFields = $formatter->getDefaults('authority');
 ?>
 <div class="media-left">
-    <h3 property="name" class="record-title"><?=$this->escapeHtml($record->getTitle())?></h3>
-    <div class="resultItemFormat"><?=$this->translate('authority_' . $formats[0])?></div>
-    <?php if ($roles = $this->recommend->getRoles($record->getUniqueID())): ?>
-    <ul class="roles">
-        <?php foreach ($roles as $role): ?>
-        <li>
-            <?php if (!$role['enabled']): ?>
-            <a href="<?=$results->getUrlQuery()->setAuthorIdWithRole($role['value'])?>">
-            <?php endif; ?>
-                <?=$role['role']?> (<?=$role['count']?>)
-                <?php if (!$role['enabled']): ?>
-            </a>
-                <?php endif; ?>
-        </li>
-        <?php endforeach; ?>
-    </ul>
-    <?php endif; ?>
-    <?php $coreFields = $formatter->getData($record, $coreFields); ?>
-    <?php if (!empty($coreFields)): ?>
-    <table class="table table-finna-record record-details">
-        <?=$this->record($record)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
-    </table>
-    <?php endif; ?>
-    <?php $summ = $record->getSummary(); if (!empty($summ)): ?>
-    <div class="wide recordSummary<?=!($this->collapsed ?? false) ? ' truncate-field' : ''?>" data-rows="5">
-        <p class="summary">
-            <?php // NOTE: the driver is responsible for returning only safe tags ?>
-            <?=implode('<br>', $summ)?>
-        </p>
-    </div>
-    <?php endif; ?>
+  <h3 property="name" class="record-title"><?=$this->escapeHtml($record->getTitle())?></h3>
+  <div class="resultItemFormat"><?=$this->translate('authority_' . $formats[0])?></div>
+  <?php if ($roles = $this->recommend->getRoles($record->getUniqueID())): ?>
+  <ul class="roles">
+    <?php foreach ($roles as $role): ?>
+    <li>
+      <?php if (!$role['enabled']): ?>
+      <a href="<?=$results->getUrlQuery()->setAuthorIdWithRole($role['value'])?>">
+      <?php endif; ?>
+      <?=$role['role']?> (<?=$role['count']?>)
+      <?php if (!$role['enabled']): ?>
+      </a>
+      <?php endif; ?>
+    </li>
+    <?php endforeach; ?>
+  </ul>
+  <?php endif; ?>
+  <?php $coreFields = $formatter->getData($record, $coreFields); ?>
+  <?php if (!empty($coreFields)): ?>
+  <table class="table table-finna-record record-details">
+    <?=$this->record($record)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
+  </table>
+  <?php endif; ?>
+  <?php $summ = $record->getSummary(); if (!empty($summ)): ?>
+  <div class="wide recordSummary<?=!($this->collapsed ?? false) ? ' truncate-field' : ''?>" data-rows="5">
+    <p class="summary">
+      <?php // NOTE: the driver is responsible for returning only safe tags ?>
+      <?=implode('<br>', $summ)?>
+    </p>
+  </div>
+  <?php endif; ?>
 </div>
 <?php if ($record->getRecordImage()): ?>
-<div class="media-right">
-    <?php
+  <div class="media-right">
+  <?php
     $this->driver = $record;
     $img = $this->recordImage($this->record($this->driver));
-    ?>
-    <?=$this->record($this->driver)->renderTemplate(
-      'record-image-information.phtml',
-      ['img' => $img, 'disableModal' => true, 'source' => 'SolrAuth', 'imageRightsLabel' => 'Image Rights Authority',
-       'numOfImages' => ['mobile' => 4, 'normal' => 4]]);
-    ?>
-</div>
+  ?>
+  <?=$this->record($this->driver)->renderTemplate(
+    'record-image-information.phtml',
+    ['img' => $img, 'disableModal' => true, 'source' => 'SolrAuth', 'imageRightsLabel' => 'Image Rights Authority',
+     'numOfImages' => ['mobile' => 4, 'normal' => 4]]);
+  ?>
+  </div>
 <?php endif; ?>
 <!-- END of: finna - ajax/authority-recommend.phtml -->
