@@ -1,6 +1,6 @@
 <?php
 /**
- * Additional functionality for Finna records.
+ * Additional functionality for Finna and Primo records.
  *
  * PHP version 7
  *
@@ -31,7 +31,7 @@ namespace Finna\RecordDriver;
 use Finna\Db\Row\User;
 
 /**
- * Additional functionality for Finna records.
+ * Additional functionality for Finna and Primo records.
  *
  * @category VuFind
  * @package  RecordDrivers

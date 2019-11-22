@@ -38,6 +38,7 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthForward extends SolrAuthDefault
 {
+    use SolrForwardTrait;
     use XmlReaderTrait;
 
     /**
@@ -136,62 +137,6 @@ class SolrAuthForward extends SolrAuthDefault
             PHP_EOL,
             $this->getBiographicalNote('henkilo-biografia-tyyppi', 'palkinnot')
         );
-    }
-
-    /**
-     * Return an array of image URLs associated with this record with keys:
-     * - url         Image URL
-     * - description Description text
-     * - rights      Rights
-     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
-     *   - description Human readable description (array)
-     *   - link        Link to copyright info
-     *
-     * @param string $language Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
-     *
-     * @return array
-     */
-    public function getAllImages($language = 'fi', $includePdf = false)
-    {
-        $images = [];
-
-        foreach ($this->getXmlRecord()->children() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                $attributes = $event->ProductionEventType->attributes();
-                if (empty($attributes{'elokuva-elonet-materiaali-kuva-url'})) {
-                    continue;
-                }
-                $url = (string)$attributes{'elokuva-elonet-materiaali-kuva-url'};
-                if (!empty($xml->Title->PartDesignation->Value)) {
-                    $partAttrs = $xml->Title->PartDesignation->Value->attributes();
-                    $desc = (string)$partAttrs{'kuva-kuvateksti'};
-                } else {
-                    $desc = '';
-                }
-                $rights = [];
-                if (!empty($attributes{'finna-kayttooikeus'})) {
-                    $rights['copyright'] = (string)$attributes{'finna-kayttooikeus'};
-                    $link = $this->getRightsLink(
-                        strtoupper($rights['copyright']), $language
-                    );
-                    if ($link) {
-                        $rights['link'] = $link;
-                    }
-                }
-                $images[] = [
-                    'urls' => [
-                        'small' => $url,
-                        'medium' => $url,
-                        'large' => $url
-                     ],
-                    'description' => $desc,
-                    'rights' => $rights
-                ];
-            }
-        }
-        return $images;
     }
 
     /**
@@ -297,5 +242,15 @@ class SolrAuthForward extends SolrAuthDefault
         }
 
         return null;
+    }
+
+    /**
+     * Get all original records as a SimpleXML object
+     *
+     * @return SimpleXMLElement The record as SimpleXML
+     */
+    protected function getAllRecordsXML()
+    {
+        return $this->getXmlRecord()->children();
     }
 }

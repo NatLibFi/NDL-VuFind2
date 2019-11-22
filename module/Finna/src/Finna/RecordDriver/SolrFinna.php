@@ -42,7 +42,7 @@ namespace Finna\RecordDriver;
  */
 trait SolrFinna
 {
-    use FinnaRecord;
+    use SolrCommonFinna;
 
     /**
      * Search settings
@@ -50,29 +50,6 @@ trait SolrFinna
      * @var array
      */
     protected $searchSettings = [];
-
-    /**
-     * Return an array of image URLs associated with this record with keys:
-     * - urls        Image URLs
-     *   - small     Small image (mandatory)
-     *   - medium    Medium image (mandatory)
-     *   - large     Large image (optional)
-     * - description Description text
-     * - rights      Rights
-     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
-     *   - description Human readable description (array)
-     *   - link        Link to copyright info
-     *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
-     *
-     * @return array
-     */
-    public function getAllImages($language = 'fi', $includePdf = true)
-    {
-        return [];
-    }
 
     /**
      * Return access restriction notes for the record.
@@ -521,40 +498,6 @@ trait SolrFinna
     }
 
     /**
-     * Returns an array of parameter to send to Finna's cover generator.
-     * Falls back to VuFind's getThumbnail if no record image with the
-     * given index was found.
-     *
-     * @param string $size  Size of thumbnail
-     * @param int    $index Image index
-     *
-     * @return array|bool
-     */
-    public function getRecordImage($size = 'small', $index = 0)
-    {
-        if ($images = $this->getAllImages()) {
-            if (isset($images[$index]['urls'][$size])) {
-                $params = $images[$index]['urls'][$size];
-                if (!is_array($params)) {
-                    $params = [
-                        'url' => $params
-                    ];
-                }
-                if ($size == 'large') {
-                    $params['fullres'] = 1;
-                }
-                $params['id'] = $this->getUniqueId();
-                return $params;
-            }
-        }
-        $params = parent::getThumbnail($size);
-        if ($params && !is_array($params)) {
-            $params = ['url' => $params];
-        }
-        return $params;
-    }
-
-    /**
      * Return record format.
      *
      * @return string
@@ -562,47 +505,6 @@ trait SolrFinna
     public function getRecordType()
     {
         return $this->fields['recordtype'] ?? '';
-    }
-
-    /**
-     * Return URL to copyright information.
-     *
-     * @param string $copyright Copyright
-     * @param string $language  Language
-     *
-     * @return mixed URL or false if no URL for the given copyright
-     */
-    public function getRightsLink($copyright, $language)
-    {
-        if (isset($this->mainConfig['ImageRights'][$language][$copyright])) {
-            return $this->mainConfig['ImageRights'][$language][$copyright];
-        }
-        return false;
-    }
-
-    /**
-     * Returns one of three things: a full URL to a thumbnail preview of the record
-     * if an image is available in an external system; an array of parameters to
-     * send to VuFind's internal cover generator if no fixed URL exists; or false
-     * if no thumbnail can be generated.
-     *
-     * @param string $size Size of thumbnail (small, medium or large -- small is
-     * default).
-     *
-     * @return string|array|bool
-     */
-    public function getThumbnail($size = 'small')
-    {
-        $result = parent::getThumbnail($size);
-
-        if (is_array($result) && !isset($result['isbn'])) {
-            // Allow also invalid ISBNs
-            if ($isbn = $this->getFirstISBN()) {
-                $result['invisbn'] = $isbn;
-            }
-        }
-
-        return $result;
     }
 
     /**
@@ -1005,38 +907,6 @@ trait SolrFinna
     public function getMusicBrainzIdentifiers()
     {
         return $this->fields['mbid_str_mv'] ?? [];
-    }
-
-    /**
-     * Sanitize HTML.
-     * If validation is enabled and the stripped HTML is invalid,
-     * all tags are stripped.
-     *
-     * @param string  $html      HTML
-     * @param string  $allowTags Allowed tags
-     * @param boolean $validate  Validate output?
-     *
-     * @return array
-     */
-    protected function sanitizeHTML(
-        $html,
-        $allowTags = '<h1><h2><h3><h4><h5><b><i>',
-        $validate = true
-    ) {
-        $result = strip_tags($html, $allowTags);
-
-        if ($validate) {
-            libxml_use_internal_errors(true);
-            $doc = new \DOMDocument();
-            $doc->loadXML("<body>{$result}</body>");
-            if (libxml_get_errors()) {
-                // Invalid HTML, strip all tags
-                $result = strip_tags($html);
-            }
-            libxml_clear_errors();
-        }
-
-        return $result;
     }
 
     /**
