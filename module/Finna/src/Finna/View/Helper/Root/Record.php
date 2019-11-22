@@ -481,6 +481,9 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function allowRecordImageDownload()
     {
+        if (!$this->driver->allowRecordImageDownload()) {
+            return false;
+        }
         $master = $this->recordImageHelper->getMasterImageWithInfo(0);
         if (!$master['pdf']) {
             return true;

@@ -177,4 +177,14 @@ trait FinnaRecord
     {
         return $this->getDbTable('User')->getById($user_id);
     }
+
+    /**
+     * Allow record image to be downloaded?
+     *
+     * @return boolean
+     */
+    public function allowRecordImageDownload()
+    {
+        return true;
+    }
 }

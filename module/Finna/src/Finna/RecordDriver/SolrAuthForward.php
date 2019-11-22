@@ -223,6 +223,16 @@ class SolrAuthForward extends SolrAuthDefault
     }
 
     /**
+     * Allow record image to be downloaded?
+     *
+     * @return boolean
+     */
+    public function allowRecordImageDownload()
+    {
+        return false;
+    }
+
+    /**
      * Return biographical note.
      *
      * @param string $type    Note type
