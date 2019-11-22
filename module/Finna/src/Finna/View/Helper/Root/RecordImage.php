@@ -248,14 +248,19 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      *                              an associative array of parameter => value pairs:
      *                              - w  Width
      *                              - h  Height
-     * @param boolean $disableModal Whether to disable MagnificPopup modal.
      * @param string  $source       Record source
+     * @param array   $extraParams  Optional extra parameters:
+     * - boolean $disableModal     Whether to disable MagnificPopup modal (default false)
+     * - string  $imageRightsLabel Label for image rights statement (defalt 'Image Rights')
      *
      * @return string
      */
     public function render(
-        $type = 'list', $params = null, $disableModal = false, $source = 'Solr'
+        $type = 'list', $params = null, $source = 'Solr', $extraParams = []
     ) {
+        $disableModal = $extraParams['disableModal'] ?? false;
+        $imageRightsLabel = $extraParams['imageRightsLabel'] ?? 'Image Rights';
+
         $view = $this->getView();
         $images = $this->getAllImagesAsCoverLinks(
             $view->layout()->userLang, $params, true, true, $source
@@ -268,7 +273,8 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
         $context = [
             'type' => $type,
             'images' => $images,
-            'disableModal' => $disableModal
+            'disableModal' => $disableModal,
+            'imageRightsLabel' => $imageRightsLabel
         ];
 
         return $this->record->renderTemplate('record-image.phtml', $context);

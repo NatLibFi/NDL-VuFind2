@@ -45,7 +45,10 @@ $coreFields = $formatter->getDefaults('authority');
     $this->driver = $record;
     $img = $this->recordImage($this->record($this->driver));
     ?>
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'disableModal' => true, 'source' => 'SolrAuth']);?>
+    <?=$this->record($this->driver)->renderTemplate(
+      'record-image-information.phtml',
+      ['img' => $img, 'disableModal' => true, 'source' => 'SolrAuth', 'imageRightsLabel' => 'Image Rights Authority']);
+    ?>
 </div>
 <?php endif; ?>
 <!-- END of: finna - ajax/authority-recommend.phtml -->

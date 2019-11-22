@@ -36,7 +36,7 @@
             <p class="image-rights-default"><?=$this->transEsc('Image Rights Default') ?></p>
           <?php endif; ?>
         <?php endif; ?>
-      <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-rights.phtml', ['rights' => $rights]); ?>
+      <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-rights.phtml', ['imageRightsLabel' => $imageRightsLabel, 'rights' => $rights]); ?>
       </div>
     <?php endforeach; ?>
   <?php endif; ?>

@@ -27,9 +27,9 @@ a.authority-link {
    .authority-info {
     border-top: 1px solid gray;
     border-bottom: 1px solid gray;
-     margin: 10px 0;
+    margin: 10px 0;
     padding: 10px 0 10px 0px;
-     table {
+    table {
       margin-bottom: 0;
       margin-top: 1em;  
     }
@@ -76,18 +76,17 @@ a.authority-link {
      flex: 1 1 100%;
    }
    .media-right {
-       flex-direction: column;
-       flex: 1 1 100%;
-       
-       .access-rights {
-           text-align: center;
-           font-size: 12px;
-           .cc-rights {
-               padding: 0;
-           }
+     flex-direction: column;
+     flex: 1 1 100%;
+     font-size: 12px;
+     .access-rights {
+       .cc-rights {
+         padding: 0;
+         margin: 0;
        }
+     }
    }
-   @media (min-width: @screen-md) {
+   @media (min-width: @screen-sm) {
      .media-left {
        flex-basis: 60%;
      }
