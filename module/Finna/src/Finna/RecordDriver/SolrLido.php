@@ -63,7 +63,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @var array
      */
-    protected $formatBlacklist = [];
+    protected $fileFormatBlackList = [];
 
     /**
      * Attach date converter
@@ -89,9 +89,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function __construct($mainConfig = null, $recordConfig = null,
         $searchSettings = null
     ) {
-        if (isset($mainConfig['Content']['lidoBlackList'])) {
-            $blackList = $mainConfig['Content']['lidoBlackList'];
-            $this->formatBlacklist = explode(',', $blackList);
+        if (isset($mainConfig['Content']['lidoFileFormatBlackList'])) {
+            $blackList = $mainConfig['Content']['lidoFileFormatBlackList'];
+            $this->fileFormatBlackList = explode(',', $blackList);
         }
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
     }
@@ -232,14 +232,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
 
-                if (!empty($this->formatBlacklist)
+                if (!empty($this->fileFormatBlackList)
                     && isset($linkResource->attributes()->formatResource)
                 ) {
                     $format = trim(
                         (string)$linkResource->attributes()->formatResource
                     );
                     $formatDisallowed
-                        = in_array(strtolower($format), $this->formatBlacklist);
+                        = in_array(strtolower($format), $this->fileFormatBlackList);
                     if ($formatDisallowed) {
                         continue;
                     }
