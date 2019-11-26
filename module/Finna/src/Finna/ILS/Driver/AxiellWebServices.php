@@ -1297,10 +1297,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             }
         }
 
-        $validServices = $this->_getMessageServices($user);
-
-        $infoServices = isset($info->messageServices)
-            ? $info->messageServices->messageService : [];
+        $infoServices = $info->messageServices->messageService ?? [];
         $services = [];
         $messagingSettings = [];
 
@@ -1316,7 +1313,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         // We need to find proper options for current service
-        foreach ($validServices as $service => $methods) {
+        foreach ($this->_getMessageServices($user) as $service => $methods) {
             $settings = [
                 'type' => $service,
                 'settings' => [
