@@ -833,71 +833,50 @@ class Alma extends \VuFind\ILS\Driver\Alma
             $bibId = $holdDetails['id'];
             $itemId = $holdDetails['item_id'] ?? false;
 
-            $itemLocations = [];
-            $availableLocations = [];
-            $unavailableLocations = [];
+            $allItems = [];
+            $availableItems = [];
+            $unavailableItems = [];
             if ('copy' === $level && $itemId) {
                 $item = $this->makeRequest(
                     '/bibs/' . urlencode($bibId) . '/holdings/ALL/items/'
                     . urlencode($itemId)
                 );
-                if ($item) {
-                    $lib = (string)$item->item_data->library;
-                    $loc = (string)$item->item_data->location;
-                    $libLoc = [
-                        'lib' => $lib,
-                        'loc' => $loc
-                    ];
-                    $itemLocations[] = $libLoc;
-                    $status = (string)$item->item_data->base_status;
-                    if ('0' === $status) {
-                        $unavailableLocations[] = $libLoc;
-                    } else {
-                        $availableLocations[] = $libLoc;
-                    }
-                }
+                $items = [$item];
             } else {
-                $params = [
-                    'mms_id' => $bibId,
-                    'expand' => 'p_avail'
+                $items = $this->makeRequest(
+                    '/bibs/' . urlencode($bibId) . '/holdings/ALL/items'
+                );
+                $items = $items->item;
+            }
+            foreach ($items as $item) {
+                $lib = (string)$item->item_data->library;
+                $loc = (string)$item->item_data->location;
+                $policy = !empty($item->item_data->policy) ?
+                    (string)$item->item_data->policy : '';
+                $entry = [
+                    'lib' => $lib,
+                    'loc' => $loc,
+                    'policy' => $policy
                 ];
-                if ($bibs = $this->makeRequest('/bibs', $params)) {
-                    foreach ($bibs as $bib) {
-                        $marc = new \File_MARCXML(
-                            $bib->record->asXML(),
-                            \File_MARCXML::SOURCE_STRING
-                        );
-                        if ($record = $marc->next()) {
-                            // Physical
-                            $physicalItems = $record->getFields('AVA');
-                            foreach ($physicalItems as $field) {
-                                $lib = $this->getMarcSubfield($field, 'b');
-                                $loc = $this->getMarcSubfield($field, 'j');
-                                $libLoc = [
-                                    'lib' => $lib,
-                                    'loc' => $loc
-                                ];
-                                $itemLocations[] = $libLoc;
-                                $avail = $this->getMarcSubfield($field, 'e');
-                                if (strtolower($avail) === 'available') {
-                                    $availableLocations[] = $libLoc;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                foreach ($itemLocations as $itemLoc) {
-                    foreach ($availableLocations as $availLoc) {
-                        if ($itemLoc['lib'] === $availLoc['lib']
-                            && $itemLoc['loc'] === $availLoc['loc']
-                        ) {
-                            continue 2;
-                        }
-                    }
-                    $unavailableLocations[] = $itemLoc;
+                $allItems[] = $entry;
+                $status = (string)$item->item_data->base_status;
+                if ('1' === $status) {
+                    $availableItems[] = $entry;
                 }
             }
+
+            foreach ($allItems as $item) {
+                foreach ($availableItems as $availItem) {
+                    if ($item['lib'] === $availItem['lib']
+                        && $item['loc'] === $availItem['loc']
+                        && $item['policy'] === $availItem['policy']
+                    ) {
+                        continue 2;
+                    }
+                }
+                $unavailableItems[] = $entry;
+            }
+
             $profile = $this->getMyProfile($patron);
             $patronGroup = $profile['group_code'] ?? '';
             $libraryFilter = null;
@@ -909,31 +888,41 @@ class Alma extends \VuFind\ILS\Driver\Alma
                 ) {
                     continue;
                 }
-                if ((!empty($rule['loc']) || !empty($rule['lib']))
-                    && !$this->compareLocationRule(
-                        $rule['lib'][0] ?? '', $rule['loc'] ?? [], $itemLocations
+
+                if ((!empty($rule['loc']) || !empty($rule['lib'])
+                    || !empty($rule['policy']))
+                    && !$this->compareItemRule(
+                        $rule['lib'][0] ?? '',
+                        $rule['loc'] ?? [],
+                        $rule['policy'] ?? [],
+                        $allItems
                     )
                 ) {
                     continue;
                 }
-                if ((!empty($rule['avail']) || !empty($rule['availlib']))
-                    && !$this->compareLocationRule(
+                if ((!empty($rule['avail']) || !empty($rule['availlib'])
+                    || !empty($rule['availpolicy']))
+                    && !$this->compareItemRule(
                         $rule['availlib'][0] ?? '',
                         $rule['avail'] ?? [],
-                        $availableLocations
+                        $rule['availpolicy'] ?? [],
+                        $availableItems
                     )
                 ) {
                     continue;
                 }
-                if ((!empty($rule['unavail']) || !empty($rule['unavaillib']))
-                    && !$this->compareLocationRule(
+                if ((!empty($rule['unavail']) || !empty($rule['unavaillib'])
+                    || !empty($rule['unavailpolicy']))
+                    && !$this->compareItemRule(
                         $rule['unavaillib'][0] ?? '',
                         $rule['unavail'] ?? [],
-                        $unavailableLocations
+                        $rule['unavailpolicy'] ?? [],
+                        $unavailableItems
                     )
                 ) {
                     continue;
                 }
+
                 if (!empty($rule['group'])) {
                     $match = $this->compareRuleWithArray(
                         $rule['group'], (array)$patronGroup
@@ -949,11 +938,17 @@ class Alma extends \VuFind\ILS\Driver\Alma
                 }
                 $libraryFilter = array_merge($libraryFilter, $rule['pickup'] ?? []);
 
-                if (!empty($rule['home']) && !empty($profile['homeAddress'])) {
-                    $home = true;
+                if (!empty($rule['home'])) {
+                    $home = !empty($profile['homeAddress'])
+                        && $this->compareRuleWithArray(
+                            $rule['home'], ['true']
+                        );
                 }
-                if (!empty($rule['work']) && !empty($profile['workAddress'])) {
-                    $work = true;
+                if (!empty($rule['work'])) {
+                    $work = !empty($profile['workAddress'])
+                        && $this->compareRuleWithArray(
+                            $rule['work'], ['true']
+                        );
                 }
 
                 if (in_array('stop', $rule['match'] ?? [])) {
@@ -1019,6 +1014,7 @@ class Alma extends \VuFind\ILS\Driver\Alma
      */
     public function checkRequestIsValid($id, $data, $patron)
     {
+        $patronId = $patron['id'];
         $level = $data['level'] ?? 'copy';
         if ('copy' === $level) {
             if (isset($this->config['Holds']['enableItemHolds'])
@@ -1026,8 +1022,41 @@ class Alma extends \VuFind\ILS\Driver\Alma
             ) {
                 return false;
             }
+
+            // Call the request-options API for the logged-in user
+            $requestOptionsPath = '/bibs/' . urlencode($id)
+                . '/holdings/' . urlencode($data['holding_id']) . '/items/'
+                . urlencode($data['item_id']) . '/request-options?user_id='
+                . urlencode($patronId);
+
+            // Make the API request
+            $requestOptions = $this->makeRequest($requestOptionsPath);
+        } elseif ('title' === $level) {
+            $hmac = explode(':', $this->config['Holds']['HMACKeys'] ?? '');
+            if (!in_array('level', $hmac) || !in_array('description', $hmac)) {
+                return false;
+            }
+            // Call the request-options API for the logged-in user
+            $requestOptionsPath = '/bibs/' . urlencode($id)
+                . '/request-options?user_id=' . urlencode($patronId);
+
+            // Make the API request
+            $requestOptions = $this->makeRequest($requestOptionsPath);
+        } else {
+            return false;
         }
-        return parent::checkRequestIsValid($id, $data, $patron);
+
+        // Check possible request types from the API answer
+        $requestTypes = $requestOptions->xpath(
+            '/request_options/request_option//type'
+        );
+        foreach ($requestTypes as $requestType) {
+            if (in_array((string)$requestType, ['HOLD', 'PURCHASE'])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1169,6 +1198,8 @@ class Alma extends \VuFind\ILS\Driver\Alma
      * This is responsible for retrieving the holding information of a certain
      * record.
      *
+     * Finna: Don't use a running number as item number.
+     *
      * @param string $id      The record id to retrieve the holdings for
      * @param array  $patron  Patron data
      * @param array  $options Additional options
@@ -1181,7 +1212,119 @@ class Alma extends \VuFind\ILS\Driver\Alma
      */
     public function getHolding($id, $patron = null, array $options = [])
     {
-        $results = parent::getHolding($id, $patron, $options);
+        // Prepare result array with default values. If no API result can be received
+        // these will be returned.
+        $results['total'] = 0;
+        $results['holdings'] = [];
+
+        $itemHolds = $this->config['Holds']['enableItemHolds'] ?? null;
+
+        // Paging parameters for paginated API call. The "limit" tells the API how
+        // many items the call should return at once (e. g. 10). The "offset" defines
+        // the range (e. g. get items 30 to 40). With these parameters we are able to
+        // use a paginator for paging through many items.
+        $apiPagingParams = '';
+        if ($options['itemLimit'] ?? null) {
+            $apiPagingParams = 'limit=' . urlencode($options['itemLimit'])
+                . '&offset=' . urlencode($options['offset'] ?? 0);
+        }
+
+        // The path for the API call. We call "ALL" available items, but not at once
+        // as a pagination mechanism is used. If paging params are not set for some
+        // reason, the first 10 items are called which is the default API behaviour.
+        $itemsPath = '/bibs/' . urlencode($id) . '/holdings/ALL/items?'
+            . $apiPagingParams
+            . '&order_by=library,location,enum_a,enum_b&direction=desc'
+            . '&expand=due_date';
+
+        if ($items = $this->makeRequest($itemsPath)) {
+            // Get the total number of items returned from the API call and set it to
+            // a class variable. It is then used in VuFind\RecordTab\HoldingsILS for
+            // the items paginator.
+            $results['total'] = (int)$items->attributes()->total_record_count;
+
+            foreach ($items->item as $item) {
+                $holdingId = (string)$item->holding_data->holding_id;
+                $itemId = (string)$item->item_data->pid;
+                $barcode = (string)$item->item_data->barcode;
+                $status = (string)$item->item_data->base_status[0]
+                    ->attributes()['desc'];
+                $duedate = $item->item_data->due_date
+                    ? $this->parseDate((string)$item->item_data->due_date) : null;
+                if ($duedate && 'Item not in place' === $status) {
+                    $status = 'Checked Out';
+                }
+
+                $itemNotes = !empty($item->item_data->public_note)
+                    ? [(string)$item->item_data->public_note] : null;
+
+                $processType = (string)($item->item_data->process_type ?? '');
+                if ($processType && 'LOAN' !== $processType) {
+                    $status = $this->getTranslatableStatusString(
+                        $item->item_data->process_type
+                    );
+                }
+
+                $description = null;
+                $number = null;
+                if (!empty($item->item_data->description)) {
+                    $number = (string)$item->item_data->description;
+                    $description = (string)$item->item_data->description;
+                }
+
+                $addLink = $patron ? 'check' : false;
+                if ($addLink && null !== $itemHolds) {
+                    if ('description' === $itemHolds) {
+                        $addLink = null !== $description;
+                    } elseif (!$itemHolds) {
+                        $addLink = false;
+                    }
+                }
+
+                $results['holdings'][] = [
+                    'id' => $id,
+                    'source' => 'Solr',
+                    'availability' => $this->getAvailabilityFromItem($item),
+                    'status' => $status,
+                    'location' => $this->getItemLocation($item),
+                    'reserve' => 'N',   // TODO: support reserve status
+                    'callnumber' => $this->getTranslatableString(
+                        $item->holding_data->call_number
+                    ),
+                    'duedate' => $duedate,
+                    'returnDate' => false, // TODO: support recent returns
+                    'number' => $number,
+                    'barcode' => empty($barcode) ? 'n/a' : $barcode,
+                    'item_notes' => $itemNotes ?? null,
+                    'item_id' => $itemId,
+                    'holding_id' => $holdingId,
+                    'holdtype' => 'auto',
+                    'addLink' => $addLink,
+                    // For Alma title-level hold requests
+                    'description' => $description ?? null
+                ];
+            }
+        }
+
+        // Fetch also digital and/or electronic inventory if configured
+        $types = $this->getInventoryTypes();
+        if (in_array('d_avail', $types) || in_array('e_avail', $types)) {
+            // No need for physical items
+            $key = array_search('p_avail', $types);
+            if (false !== $key) {
+                unset($types[$key]);
+            }
+            $statuses = $this->getStatusesForInventoryTypes((array)$id, $types);
+            $electronic = [];
+            foreach ($statuses as $record) {
+                foreach ($record as $status) {
+                    $electronic[] = $status;
+                }
+            }
+            $results['electronic_holdings'] = $electronic;
+        }
+
+        // The rest is completely Finna-specific:
 
         $itemsTotal = $results['total'];
 
@@ -1212,16 +1355,6 @@ class Alma extends \VuFind\ILS\Driver\Alma
                 $results['holdings'][] = $entry;
                 ++$results['total'];
             }
-        }
-
-        // Clear out hold check flag if item holds are disabled
-        if (isset($this->config['Holds']['enableItemHolds'])
-            && !$this->config['Holds']['enableItemHolds']
-        ) {
-            foreach ($results['holdings'] as &$holding) {
-                $holding['addLink'] = false;
-            }
-            unset($holding);
         }
 
         // Add summary
@@ -1609,35 +1742,41 @@ class Alma extends \VuFind\ILS\Driver\Alma
     }
 
     /**
-     * Compare a location rule
+     * Compare an item rule
      *
      * @param string       $lib    Library
      * @param string|array $loc    Locations
-     * @param array        $values Values
+     * @param string|array $policy Item policies
+     * @param array        $items  Item information
      *
      * @return bool
      */
-    protected function compareLocationRule($lib, $loc, $values)
+    protected function compareItemRule($lib, $loc, $policy, $items)
     {
-        if (empty($loc)) {
-            foreach ($values as $value) {
-                if ($lib && $value['lib'] !== $lib) {
+        foreach ($items as $item) {
+            if ($lib && $item['lib'] !== $lib) {
+                continue;
+            }
+            if ($loc) {
+                $match = false;
+                foreach ((array)$loc as $ruleValue) {
+                    $ruleValue = addcslashes($ruleValue, '\\');
+                    if (preg_match("/^$ruleValue\$/i", $item['loc'])) {
+                        $match = true;
+                        break;
+                    }
+                }
+                if (!$match) {
                     continue;
                 }
-                return true;
             }
-            return false;
-        }
-        foreach ((array)$loc as $ruleValue) {
-            $ruleValue = addcslashes($ruleValue, '\\');
-            foreach ($values as $value) {
-                if ($lib && $value['lib'] !== $lib) {
-                    continue;
-                }
-                if (preg_match("/^$ruleValue\$/i", $value['loc'])) {
-                    return true;
-                }
+            if ($policy
+                && !$this->compareRuleWithArray($policy, (array)$item['policy'])
+            ) {
+                continue;
             }
+
+            return true;
         }
         return false;
     }
