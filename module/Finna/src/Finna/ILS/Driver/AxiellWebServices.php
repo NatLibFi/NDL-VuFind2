@@ -1323,7 +1323,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         // We need to find proper options for current service
-        foreach ($this->_getMessageServices($user) as $service => $methods) {
+        foreach ($this->getMessageServices($user) as $service => $methods) {
             $settings = [
                 'type' => $service,
                 'settings' => [
@@ -1635,13 +1635,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'sendMethod' => $coded
             ];
             if ($coded === 'ilsDefined') {
-                $status = $this->_removeMessageService($patron, $current);
+                $status = $this->removeMessageService($patron, $current);
             } else {
                 if (isset($settings['settings']['days_in_advance'])) {
                     $current['nofDays']
                         = $settings['settings']['days_in_advance']['value'];
                 }
-                $status = $this->_changeMessageService($patron, $current);
+                $status = $this->changeMessageService($patron, $current);
             }
             if (!$status['success']) {
                 $result = $status;
@@ -1659,7 +1659,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @throws ILSException
      * @return array        Array of used message services and methods.
      */
-    private function _getMessageServices($patron)
+    protected function getMessageServices($patron)
     {
         $function = 'getMessageServices';
         $functionResult = 'messageServicesResponse';
@@ -1715,7 +1715,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @throws ILSException
      * @return array        Status of request and if it was successful.
      */
-    private function _changeMessageService($patron, $params)
+    protected function changeMessageService($patron, $params)
     {
         $function = 'changeMessageService';
         $functionResult = 'changeMessageServiceResponse';
@@ -1771,7 +1771,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @throws ILSException
      * @return array        Status of request and if it was successful.
      */
-    private function _removeMessageService($patron, $params)
+    protected function removeMessageService($patron, $params)
     {
         $function = 'removeMessageService';
         $functionResult = 'removeMessageServiceResponse';
