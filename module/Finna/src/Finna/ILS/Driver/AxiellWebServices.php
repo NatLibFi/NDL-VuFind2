@@ -2901,7 +2901,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     protected function mapCodeToStatus($code)
     {
         if (isset($this->statuses[$code])) {
-            return $this->codeStatuses[$code];
+            return $this->statuses[$code];
         }
         return $code;
     }
