@@ -211,7 +211,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         'pickUpNotice' => [],
         'overdueNotice' => [],
         'dueDateAlert' => []
-     ];
+    ];
+
+    /**
+     * Messaging settings status code mappings
+     * 
+     * @var array
+     */
+    protected $statuses =  [
+        'snailMail'             => 'print',
+        'ilsDefined'            => 'inactive',
+    ];
 
     /**
      * SOAP Options
@@ -1320,7 +1330,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     'transport_types' => [
                         'type' => 'select',
                         'options' => [],
-                        'value' => $this->mapCode(
+                        'value' => $this->mapCodeToStatus(
                             $services[$service]['transport_type']
                         )
                     ],
@@ -1346,7 +1356,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 ];
             }
             foreach ($methods as $methodId => $method) {
-                $coded = $this->mapCode($method);
+                $coded = $this->mapCodeToStatus($method);
                 $settings['settings']['transport_types']['options'][$coded] = [
                         'active' => $services[$service]['transport_type']
                             === $method
@@ -1619,7 +1629,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             if (empty($transport)) {
                 continue;
             }
-            $coded = $this->mapCode($transport['value'], true);
+            $coded = $this->mapStatusToCode($transport['value']);
             $current = [
                 'serviceType' => $service,
                 'sendMethod' => $coded
@@ -2882,30 +2892,31 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Map codes
+     * Code to status
      *
-     * @param string  $code as a string
-     * @param boolean $key  if key is returned instead
+     * @param string $code as a string
      *
      * @return string Mapped code
      */
-    protected function mapCode($code, $key = false)
+    protected function mapCodeToStatus($code)
     {
-        $statuses =  [
-            //Map messaging settings
-            'snailMail'             => 'print',
-            'ilsDefined'            => 'inactive',
-        ];
-
-        if ($key) {
-            $found = array_search($code, $statuses);
-            return $found !== false ? $found : $code;
-        }
-
-        if (isset($statuses[$code])) {
-            return $statuses[$code];
+        if (isset($this->statuses[$code])) {
+            return $this->codeStatuses[$code];
         }
         return $code;
+    }
+
+    /**
+     * Status to code
+     *
+     * @param string $status as a string
+     *
+     * @return string Mapped code
+     */
+    protected function mapStatusToCode($status)
+    {
+        $found = array_search($status, $this->statuses);
+        return $found !== false ? $found : $status;
     }
 
     /**
