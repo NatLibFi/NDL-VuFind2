@@ -25,6 +25,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
@@ -2911,7 +2912,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @param string $status as a string
      *
-     * @return string Mapped code
+     * @return string Mapped status
      */
     protected function mapStatusToCode($status)
     {
