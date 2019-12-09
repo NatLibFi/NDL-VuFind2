@@ -215,7 +215,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
     /**
      * Messaging settings status code mappings
-     * 
+     *
      * @var array
      */
     protected $statuses =  [
