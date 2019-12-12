@@ -204,7 +204,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      * @return array
      */
     public function getAllImagesAsCoverLinks($language, $params = [],
-        $thumbnails = true, $includePdf = true, $source = 'Solr'
+        $thumbnails = true, $includePdf = true, $source = DEFAULT_SEARCH_BACKEND
     ) {
         $imageParams = [
             'small' => [],
