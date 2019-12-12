@@ -673,9 +673,13 @@ trait SolrFinnaTrait
      */
     public function supportsOpenUrl()
     {
-        // OpenURL is supported only if we have an ISSN, ISBN or SFX Object ID.
+        // OpenURL is supported only if we have an ISSN, ISBN or SFX Object ID,
+        // or Alma MMS ID .
+        $formats = $this->getFormats();
+        $isDatabase = '0/Database/' === (string)($formats[0] ?? '');
         return $this->getCleanISSN() || $this->getCleanISBN()
-            || $this->getSfxObjectId() || $this->getAlmaMmsId();
+            || $this->getSfxObjectId()
+            || ($this->getAlmaMmsId() && !$isDatabase);
     }
 
     /**
@@ -943,22 +947,82 @@ trait SolrFinnaTrait
     {
         $biblioLevel = strtolower($this->tryMethod('getBibliographicLevel'));
         if ($this->hasILS()) {
-            $bibLevels = $this->ils->getConfig(
-                'getTitleHoldBibLevels',
+            if ($this->ils->getTitleHoldsMode() === 'disabled') {
+                return false;
+            }
+            $holdConfig = $this->ils->getConfig(
+                'Holds',
                 ['id' => $this->getUniqueID()]
             );
-            if (false === $bibLevels) {
-                $bibLevels = [
+            $bibLevels = $holdConfig['titleHoldBibLevels']
+                ?? [
                     'monograph', 'monographpart',
                     'serialpart', 'collectionpart'
                 ];
-            }
             if (in_array($biblioLevel, $bibLevels)) {
-                if ($this->ils->getTitleHoldsMode() != "disabled") {
-                    return $this->titleHoldLogic->getHold($this->getUniqueID());
-                }
+                return $this->titleHoldLogic->getHold($this->getUniqueID());
             }
         }
         return false;
+    }
+
+    /**
+     * Return count of other versions available
+     *
+     * @return int
+     */
+    public function getOtherVersionCount()
+    {
+        if (null === $this->searchService) {
+            return false;
+        }
+
+        if (!($workKeys = $this->getWorkKeys())) {
+            return false;
+        }
+
+        if (!isset($this->otherVersionsCount)) {
+            $params = new \VuFindSearch\ParamBag();
+            $params->add('rows', 0);
+            $results = $this->searchService->workExpressions(
+                $this->getSourceIdentifier(),
+                $this->getUniqueID(),
+                $workKeys,
+                $params
+            );
+            $this->otherVersionsCount = $results->getTotal();
+        }
+        return $this->otherVersionsCount;
+    }
+
+    /**
+     * Retrieve versions as a search result
+     *
+     * @param bool $includeSelf Whether to include this record
+     * @param int  $count       Maximum number of records to display
+     *
+     * @return \VuFindSearch\Response\RecordCollectionInterface
+     */
+    public function getVersions($includeSelf = false, $count = 20)
+    {
+        if (null === $this->searchService) {
+            return false;
+        }
+
+        if (!($workKeys = $this->getWorkKeys())) {
+            return false;
+        }
+
+        if (!isset($this->otherVersions)) {
+            $params = new \VuFindSearch\ParamBag();
+            $params->add('rows', min($count, 100));
+            $this->otherVersions = $this->searchService->workExpressions(
+                $this->getSourceIdentifier(),
+                $includeSelf ? '' : $this->getUniqueID(),
+                $workKeys,
+                $params
+            );
+        }
+        return $this->otherVersions;
     }
 }

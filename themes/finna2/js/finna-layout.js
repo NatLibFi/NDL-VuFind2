@@ -1,4 +1,4 @@
-/*global VuFind, checkSaveStatuses, action, finna, initFacetTree, priorityNav */
+/*global VuFind, videojs, checkSaveStatuses, action, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
   var _fixFooterTimeout = null;
   var masonryInitialized = false;
@@ -483,6 +483,18 @@ finna.layout = (function finnaLayout() {
     }).change();
   }
 
+  function initILSSelfRegistrationLink(links, idPrefix) {
+    var searchPrefix = idPrefix ? '#' + idPrefix : '#';
+    $(searchPrefix + 'target').change(function onChangeLoginTargetLink() {
+      var target = $(searchPrefix + 'target').val();
+      if (links[target]) {
+        $('#login_library_card_register').attr('href', links[target]).show();
+      } else {
+        $('#login_library_card_register').hide();
+      }
+    }).change();
+  }
+
   function initSideFacets() {
     if (!document.addEventListener) {
       return;
@@ -649,6 +661,32 @@ finna.layout = (function finnaLayout() {
       var widget = finna.organisationInfoWidget;
       widget.init($(this), service);
       widget.loadOrganisationList();
+    });
+  }
+
+  function initAudioButtons() {
+    $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
+      var self = $(this);
+      var play = self.find('.play');
+      var source = self.find('source');
+      play.click(function onPlay() {
+        self.find('.audio-player-wrapper').removeClass('hide');
+        var audio = self.find('audio');
+        audio.removeClass('hide');
+        audio.addClass('video-js');
+        source.attr('src', source.data('src'));
+        finna.layout.loadScripts(
+          $(this).data('scripts'),
+          function onVideoJsLoaded() {
+            videojs(
+              audio.attr('id'),
+              { controlBar: { volumePanel: false, muteToggle: false } },
+              function onVideoJsInited() {}
+            );
+          }
+        );
+        play.remove();
+      });
     });
   }
 
@@ -826,6 +864,7 @@ finna.layout = (function finnaLayout() {
     initOrganisationPageLinks: initOrganisationPageLinks,
     initSecondaryLoginField: initSecondaryLoginField,
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
+    initILSSelfRegistrationLink: initILSSelfRegistrationLink,
     initLoginTabs: initLoginTabs,
     loadScripts: loadScripts,
     getMasonryState: getMasonryState,
@@ -855,6 +894,7 @@ finna.layout = (function finnaLayout() {
       initLoadMasonry();
       initOrganisationInfoWidgets();
       initOrganisationPageLinks();
+      initAudioButtons();
       initVideoButtons();
       initKeyboardNavigation();
       initPriorityNav();

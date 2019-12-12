@@ -56,7 +56,13 @@ trait FinnaParams
         $showField = [$this->getOptions(), 'getHumanReadableFieldName'];
 
         // Build display query:
-        return QueryAdapter::display($this->getQuery(), $translate, $showField);
+        $result = QueryAdapter::display($this->getQuery(), $translate, $showField);
+
+        // Hack to display WorkKeys search nicer
+        $str = preg_quote($showField('WorkKeys'));
+        $result = preg_replace("/$str:\"[^\"]+\"/", $str, $result);
+
+        return $result;
     }
 
     /**
@@ -377,7 +383,7 @@ trait FinnaParams
             ? $options->getDefaultLimitByView($this->view)
             : $options->getDefaultLimit();
 
-        if (($limit = $request->get('limit')) != $defaultLimit) {
+        if (($limit = (int)$request->get('limit')) != $defaultLimit) {
             // make sure the url parameter is a valid limit -- either
             // one of the explicitly allowed values, or at least smaller
             // than the largest allowed. (This leniency is useful in

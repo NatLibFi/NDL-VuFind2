@@ -104,6 +104,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $cachedId = null;
 
     /**
+     * Tab Manager
+     *
+     * @var \VuFind\RecordTab\TabManager
+     */
+    protected $tabManager;
+
+    /**
      * Constructor
      *
      * @param \Zend\Config\Config                 $config           VuFind
@@ -115,6 +122,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * helper
      * @param \Finna\Search\Solr\AuthorityHelper  $authorityHelper  Authority helper
      * @param \VuFind\View\Helper\Root\Url        $urlHelper        Url helper
+     * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
      */
     public function __construct(
         \Zend\Config\Config $config,
@@ -122,7 +130,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         \VuFind\Record\Loader $loader,
         \Finna\View\Helper\Root\RecordImage $recordImage,
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
-        \VuFind\View\Helper\Root\Url $urlHelper
+        \VuFind\View\Helper\Root\Url $urlHelper,
+        \VuFind\RecordTab\TabManager $tabManager
     ) {
         parent::__construct($config);
         $this->datasourceConfig = $datasourceConfig;
@@ -130,6 +139,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordImageHelper = $recordImage;
         $this->authorityHelper = $authorityHelper;
         $this->urlHelper = $urlHelper;
+        $this->tabManager = $tabManager;
     }
 
     /**
@@ -459,8 +469,6 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getRecordImage($size)
     {
-        $images = $this->getAllImages('');
-
         $params = $this->driver->tryMethod('getRecordImage', [$size]);
         if (empty($params)) {
             $params = [
@@ -686,5 +694,34 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function getRenderedUrls()
     {
         return $this->renderedUrls;
+    }
+
+    /**
+     * Render a source id element if necessary
+     *
+     * @return string
+     */
+    public function getSourceIdElement()
+    {
+        $view = $this->getView();
+        if (isset($view->results) && is_callable([$view->results, 'getBackendId'])) {
+            if ($view->results->getBackendId() === 'Blender') {
+                return $this->renderTemplate('source-id-label.phtml');
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Check if the record driver has a tab (regardless of whether it's active)
+     *
+     * @param string $tab Tab
+     *
+     * @return bool
+     */
+    public function hasTab($tab)
+    {
+        $tabs = $this->tabManager->getTabServices($this->driver);
+        return isset($tabs[$tab]);
     }
 }

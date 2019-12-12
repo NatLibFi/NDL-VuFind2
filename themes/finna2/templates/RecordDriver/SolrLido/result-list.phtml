@@ -42,7 +42,7 @@ if ($img):
         </div>
 
         <div class="dateyeartype">
-          <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
+          <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?> <?=$this->record($this->driver)->getSourceIdElement() ?></div>
           <?php if ($this->driver->isCollection()): ?>
             <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
           <?php else: ?>
@@ -70,8 +70,14 @@ if ($img):
             <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>
-        <?=$this->record($this->driver)->getOnlineUrls('results')?>
-        <?=$this->record($this->driver)->getPreviews()?>
+
+        <?php if ($this->driver->tryMethod('getWorkKeys') && $this->record($this->driver)->hasTab('Versions')): ?>
+          <div class="record-versions ajax"></div>
+        <?php endif; ?>
+
+        <?php $recordHelper = $this->record($this->driver); ?>
+        <?=$recordHelper->getOnlineUrls('results');?>
+        <?=$recordHelper->getPreviews();?>
         <?=$this->render('list/list-notes.phtml')?>
 
         <?php /* Saved lists */ ?>

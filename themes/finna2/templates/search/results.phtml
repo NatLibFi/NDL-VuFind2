@@ -24,7 +24,7 @@
             'searchId' => $this->results->getSearchId(),
             'searchClassId' => $this->params->getSearchClassId(),
             'checkboxFilters' => $this->params->getCheckboxFacets(),
-            'filterList' => $this->params->getFilters(),
+            'filterList' => $this->params->getFilterList(true),
             'hasDefaultsApplied' => $this->params->hasDefaultsApplied(),
             'selectedShards' => $this->params->getSelectedShards(),
             'savedSearches' => $this->layout()->savedTabs,
@@ -64,7 +64,7 @@
   }
 
   $filterCount = 0;
-  if (!$browse && !empty($params->getFilterList(false))){
+  if (!empty($params->getFilterList(false))){
       // Clone the params object to prevent its manipulation from affecting main facet functionality
       $params = clone $this->params;
       $filterList = $params->getFilterList(true);
@@ -125,13 +125,13 @@
         <?php
           $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator']) : '';
           $desc = $this->escapeHtml($value['displayText']);
-          $ariaLabel = $this->translate('Remove filter') . ' ' . $desc;
+          $ariaLabel = $this->escapeHtmlAttr($this->translate('Remove filter') . ' ' . $value['displayText']);
         ?>
         <span class="filter-value">
           <span class="filter-text">
             <?=$desc?>
           </span>
-          <?php if ($removeLink): ?><a aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><?php endif; ?>
+          <?php if ($removeLink): ?><a aria-label="<?=$ariaLabel?>" href="<?=$this->escapeHtmlAttr($removeLink)?>"><i class="fa fa-window-close" aria-hidden="true"></i></a><?php endif; ?>
         </span>
       <?php endforeach; ?>
     <?php endif; ?>

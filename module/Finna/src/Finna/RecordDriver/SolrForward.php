@@ -1049,6 +1049,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'text' => $description ?: $videoType,
                         'desc' => $description ?: $videoType,
                         'source' => $source,
+                        'embed' => 'iframe'
                     ];
                 }
 

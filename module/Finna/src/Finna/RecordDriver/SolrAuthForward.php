@@ -79,7 +79,45 @@ class SolrAuthForward extends SolrAuthDefault
     }
 
     /**
-     * Return corporation establishment date date and place.
+     * Return birth date and place.
+     *
+     * @param boolean $force Return established date for corporations?
+     *
+     * @return string
+     */
+    public function getBirthDate($force = false)
+    {
+        if (!$this->isPerson() && !$force) {
+            return '';
+        }
+
+        if ($date = $this->getAgentDate('birth')) {
+            return $this->formatDateAndPlace($date);
+        }
+        return '';
+    }
+
+    /**
+     * Return death date and place.
+     *
+     * @param boolean $force Return terminated date for corporations?
+     *
+     * @return string
+     */
+    public function getDeathDate($force = false)
+    {
+        if (!$this->isPerson() && !$force) {
+            return '';
+        }
+
+        if ($date = $this->getAgentDate('death')) {
+            return $this->formatDateAndPlace($date);
+        }
+        return '';
+    }
+
+    /**
+     * Return corporation establishment date and place.
      *
      * @return string
      */
@@ -88,14 +126,11 @@ class SolrAuthForward extends SolrAuthDefault
         if ($this->isPerson()) {
             return '';
         }
-        if ($date = $this->getAgentDate('birth')) {
-            return $this->formatDateAndPlace($date);
-        }
-        return '';
+        return $this->getBirthDate(true);
     }
 
     /**
-     * Return corporation termination date date and place.
+     * Return corporation termination date and place.
      *
      * @return string
      */
@@ -104,10 +139,7 @@ class SolrAuthForward extends SolrAuthDefault
         if ($this->isPerson()) {
             return '';
         }
-        if ($date = $this->getAgentDate('death')) {
-            return $this->formatDateAndPlace($date);
-        }
-        return '';
+        return $this->getDeathDate(true);
     }
 
     /**
@@ -162,12 +194,11 @@ class SolrAuthForward extends SolrAuthDefault
         $doc = $this->getMainElement();
         if (isset($doc->BiographicalNote)) {
             foreach ($doc->BiographicalNote as $bio) {
-                $txt = (string)$bio;
                 $attr = $bio->attributes();
                 if (isset($attr->{$type})
                     && (string)$attr->{$type} === $typeVal
                 ) {
-                    return $this->sanitizeHTML((string)$bio);
+                    return (string)$bio;
                 }
             }
         }

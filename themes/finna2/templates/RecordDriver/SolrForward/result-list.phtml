@@ -52,6 +52,7 @@ if ($img):
             <?php else: ?>
               <?=$this->escapeHtml($type) ?><?=$this->escapeHtml($country) ?>
             <?php endif; ?>
+            <?=$this->record($this->driver)->getSourceIdElement() ?>
           </div>
 
           <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
@@ -154,6 +155,10 @@ if ($img):
               <span class="quotestart">&#8220;</span>...<?=$this->highlight(strip_tags($snippet['snippet'])); ?>...</i><span class="quoteend">&#8221;</span><br/>
             <?php endif; ?>
           <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if ($this->driver->tryMethod('getWorkKeys') && $this->record($this->driver)->hasTab('Versions')): ?>
+          <div class="record-versions ajax"></div>
         <?php endif; ?>
 
         <?php $recordHelper = $this->record($this->driver); ?>
