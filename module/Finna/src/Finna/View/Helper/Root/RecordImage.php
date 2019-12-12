@@ -80,7 +80,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      * @param array $params     Optional array of image parameters.
      *                          See RecordImage::render.
      * @param bool  $canonical  Whether to return a canonical URL instead of relative
-     * @param boo   $includePdf Whether to include first PDF file when no image
+     * @param bool  $includePdf Whether to include first PDF file when no image
      *                          links are found
      *
      * @return mixed string URL or false if no
@@ -104,7 +104,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
      * @param array $params     Optional array of image parameters.
      *                          See RecordImage::render.
      * @param bool  $canonical  Whether to return a canonical URL instead of relative
-     * @param boo   $includePdf Whether to include first PDF file when no image
+     * @param bool  $includePdf Whether to include first PDF file when no image
      *                          links are found
      *
      * @return mixed array with image data or false if no
