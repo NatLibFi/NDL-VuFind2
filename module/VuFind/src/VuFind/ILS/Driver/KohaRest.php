@@ -648,13 +648,22 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         $sort = explode(
             ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
         );
-        if ($sort[0] == 'checkout') {
+
+        switch ($sort[0]) {
+        case 'checkout':
             $sortKey = 'issuedate';
-        } elseif ($sort[0] == 'return') {
+            break;
+        case 'return':
             $sortKey = 'returndate';
-        } else {
+            break;
+        case 'lastrenewed':
+            $sortKey = 'lastreneweddate';
+            break;
+        default:
             $sortKey = 'date_due';
+            break;
         }
+
         $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
 
         $pageSize = $params['limit'] ?? 50;
@@ -1484,6 +1493,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'sort' => [
                     'checkout desc' => 'sort_checkout_date_desc',
                     'checkout asc' => 'sort_checkout_date_asc',
+                    'lastrenewed desc' => 'sort_lastrenewed_date_desc',
+                    'lastrenewed asc' => 'sort_lastrenewed_date_asc',
                     'return desc' => 'sort_return_date_desc',
                     'return asc' => 'sort_return_date_asc',
                     'due desc' => 'sort_due_date_desc',
