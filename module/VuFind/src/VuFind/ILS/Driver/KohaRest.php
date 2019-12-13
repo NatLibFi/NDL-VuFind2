@@ -476,13 +476,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $sort = explode(
                 ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
             );
-            if ($sort[0] == 'checkout') {
-                $sortKey = 'issuedate';
-            } elseif ($sort[0] == 'title') {
-                $sortKey = 'title';
-            } else {
-                $sortKey = 'date_due';
-            }
+            $sortKey = $this->getParamValue($sort[0], 'date_due');
             $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
 
             $pageSize = $params['limit'] ?? 50;
@@ -648,22 +642,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         $sort = explode(
             ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
         );
-
-        switch ($sort[0]) {
-        case 'checkout':
-            $sortKey = 'issuedate';
-            break;
-        case 'return':
-            $sortKey = 'returndate';
-            break;
-        case 'lastrenewed':
-            $sortKey = 'lastreneweddate';
-            break;
-        default:
-            $sortKey = 'date_due';
-            break;
-        }
-
+        $sortKey = $this->getParamValue($sort[0], 'date_due');
         $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
 
         $pageSize = $params['limit'] ?? 50;
@@ -2377,5 +2356,25 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             }
         }
         return [$biblionumber, $title, $volume];
+    }
+
+    /**
+     * Converts given key to corresponding parameter
+     *
+     * @param string $key     to convert
+     * @param string $default value to return
+     *
+     * @return string
+     */
+    public function getParamValue($key, $default = '')
+    {
+        $params = [
+            'checkout' => 'issuedate',
+            'return' => 'returndate',
+            'lastrenewed' => 'lastreneweddate',
+            'title' => 'title'
+        ];
+
+        return $params[$key] ?? $default;
     }
 }
