@@ -7,54 +7,53 @@
     $showLibraryTabs = $this->ils()->loginAvailable();
     $ilsOffline = 'ils-none' === $this->ils()->getOfflineMode();
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
+    $activeToLower = strtolower($this->active ?? '');
     //Get the data for vertical menu to show lists on correct site
     if ($listOpen) {
       $list = $this->results->getListObject();
-      $activeId = $list['id'];
-      $activeUrl = $this->serverUrl() . $this->url('home') . 'List/' . $activeId;
-      $activePublic = $list['public'];
-      $isDefaultList = !isset($list);
-      $lists = $user ? $user->getLists() : null;
+      $listParams = [
+        'activeId' => $list['id'],
+        'activeUrl' => $this->serverUrl() . $this->url('home') . 'List/' . $list['id'],
+        'activePublic' => $list['public'],
+        'isDefaultList' => !isset($list),
+        'lists' => $user ? $user->getLists() : null,
+        'results' => $this->results,
+        'user' => $user
+      ];
     }
 
     $menuListItems = [];
     if ($showLibraryTabs && !$ilsOffline) {
       $menuListItems = [
-        'menu-loans' => [
-          'active' => $this->active === 'checkedout',
+        'checkedout' => [
           'url' => $this->url('myresearch-checkedout'),
           'translation' => $this->transEsc('Checked Out Items')
         ],
-        'menu-historic-loans' => [
-          'active' => $this->active === 'historicLoans',
+        'historicloans' => [
           'url' => $this->url('myresearch-historicloans'),
           'translation' => $this->transEsc('Loan History'),
           'show' => $this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)
         ],
-        'menu-holds' => [
+        'holds' => [
           'active' => $this->active === 'holds',
           'url' => $this->url('myresearch-holds'),
           'translation' => $this->transEsc('Holds and Recalls')
         ],
-        'menu-storage-retrieval-requests' => [
-          'active' => $this->active === 'storageRetrievalRequests',
+        'storageretrievalrequests' => [
           'url' => $this->url('myresearch-storageretrievalrequests'),
           'translation' => $this->transEsc('Storage Retrieval Requests'),
           'show' => $this->ils()->checkFunction('storageRetrievalRequests', $capabilityParams)
         ],
-        'menu-ill-requests' => [
-          'active' => $this->active === 'ILLRequests',
+        'illrequests' => [
           'url' => $this->url('myresearch-illrequests'),
           'translation' => $this->transEsc('Interlibrary Loan Requests'),
           'show' => $this->ils()->checkFunction('ILLRequests', $capabilityParams)
         ],
-        'menu-fines' => [
-          'active' => $this->active === 'Fines',
+        'fines' => [
           'url' => $this->url('myresearch-fines'),
           'translation' => $this->transEsc('Fines')
         ],
-        'menu-library-cards' => [
-          'active' => $this->active === 'librarycards',
+        'librarycards' => [
           'url' => $this->url('librarycards-home'),
           'translation' => $this->transEsc('Library Cards'),
           'show' => $user && $user->libraryCardsEnabled()
@@ -63,54 +62,49 @@
     }
 
     $nonLibraryItems = [
-      'menu-profile' => [
-        'active' => $this->active === 'profile',
+      'profile' => [
         'url' => $this->url('myresearch-profile'),
         'translation' => $this->transEsc('Profile'),
         'show' => !$ilsOffline && $this->ils()->checkCapability('getMyProfile')
       ],
-      'menu-history' => [
-        'active' => $this->active === 'history',
+      'history' => [
         'url' => $this->url('search-history') . "?require_login",
         'translation' => $this->transEsc('history_saved_searches')
       ],
-      'menu-favorites' => [
-        'active' => $listOpen,
+      'favorites' => [
         'url' => $this->url('myresearch-favorites'),
         'translation' => $this->transEsc('Favorites'),
         'show' => $this->userlist()->getMode() !== 'disabled'
       ],
-      'menu-logout' => [
-        'active' => false,
+      'logout' => [
         'url' => $this->url('myresearch-logout'),
         'translation' => $this->transEsc('Log Out'),
         'iconClass' => 'pull-right fa fa-sign-out fa-lg',
         'desktopOnly' => true
       ]
     ];
-
     $menuListItems = array_merge($menuListItems, $nonLibraryItems);
 
     $desktopList = [
       'open-loans' => [
-        'active' => $this->active == 'checkedout' || $this->active == 'historicLoans' || $this->active == 'holds' || $this->active == 'storageRetrievalRequests' || $this->active == 'ILLRequests',
+        'active' => in_array($activeToLower, ['checkedout', 'historicloans', 'holds', 'storageretrievalrequests', 'illrequests']),
         'url' => $this->url('myresearch-checkedout'),
         'translation' => $this->transEsc('Checked Out Header'),
         'dropdown' => true,
         'ulId' => 'myLoans',
         'show' => !$ilsOffline && $showLibraryTabs,
         'children' => [
-          'menu-loans',
-          'menu-historic-loans',
-          'menu-holds',
-          'menu-storage-retrieval-requests',
-          'menu-ill-requests'
+          'checkedout',
+          'historicloans',
+          'holds',
+          'storageretrievalrequests',
+          'illrequests'
         ]
       ],
-      'menu-fines',
-      'menu-library-cards',
-      'menu-profile',
-      'menu-history',
+      'fines',
+      'librarycards',
+      'profile',
+      'history',
       'open-list' => [
         'active' => $listOpen,
         'url' => $this->url('myresearch-favorites'),
@@ -119,123 +113,106 @@
         'partial' => [
           'url' => 'myresearch/mylist-navi.phtml',
           'wrapperClass' => 'mylist-bar',
-          'params' => [
-            'user' => $user ?? '',
-            'isDefaultList' => $isDefaultList ?? '',
-            'activeId' => $activeId ?? '',
-            'activePublic' => $activePublic ?? '',
-            'lists' => $lists ?? '',
-            'results' => $this->results ?? ''
-          ]
+          'params' => $listParams ?? []
         ]
       ],
-      'menu-logout'
+      'logout'
     ];
-    $activeMobileTab = 'none';
-?>
-<?php ob_start(); ?>
-<?php foreach ($menuListItems as $id => $listItem) : ?>
-  <?php if (isset($listItem['desktopOnly']) && $listItem['desktopOnly']) { continue; } ?>
-  <?php if (!isset($listItem['show']) || $listItem['show'] !== false): ?>
-    <?php
-      if ($activeMobileTab === 'none' && $listItem['active']) {
-        $activeMobileTab = $listItem['translation'];
-      }
-    ?>
-    <li role="menuitem" class="<?=$id?><?= $listItem['active'] ? ' active' : ''?>">
-      <a href="<?=$listItem['url']?>" class="list-group-item">
-      <?=$listItem['translation']?>
-      </a>
-    </li>
-  <?php endif; ?>
-<?php endforeach; ?>
-<?php $menuEntriesMobile = ob_get_clean(); ?>
-<?php ob_start(); ?>
 
-<li class="menu-header hidden-xs hidden-sm">
-  <h1>
-    <?= $this->transEsc('Your Account') ?>
-    <?php if (!$this->translationEmpty('tooltip_myaccount_html')): ?>
-      <span class="tooltip-myaccount" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?= $this->transEsc("tooltip_myaccount_html") ?>"><i class="fa fa-info-big"></i></span>
-    <?php endif; ?>
-  </h1>
-</li>
-<?php foreach ($desktopList as $id => $value) : ?>
-<?php
-  $isArray = is_array($value);
-  $listItem = $isArray ? $value : $menuListItems[$value];
-  if (isset($listItem['show']) && !$listItem['show']) {
-    continue;
-  }
-  $name = $isArray ? $id : $value;
-  $hasChildren = $listItem['children'] ?? false;
-  $hasPartial = $listItem['partial'] ?? false;
-  $showSpinner = $listItem['showSpinner'] ?? false;
+    $headerKey = substr($activeToLower, 0, 4) === 'list' ? 'favorites' : $activeToLower;
+    $activeMobileTab = $menuListItems[$headerKey]['translation'] ?? $this->transEsc('Your Account');
 ?>
-  <?php if ($hasChildren || $hasPartial): ?>
-    <li role="menuitem" class="dropdown hidden-xs hidden-sm <?= $listItem['active'] ? ' active' : ''?>">
-      <a href="<?=$listItem['url']?>" id="<?=$id?>" class=" list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" >
-        <?=$listItem['translation']?>
-        <?php if ($showSpinner) : ?>
-          <i class="hidden fa fa-spinner fa-spin"></i><span class="ajax-error hidden"><small> <?=$this->translate('An error has occurred'); ?></small></span>
-        <?php endif; ?>
-        <span class="caret"></span>
-      </a>
-      <?php if ($hasPartial) : ?>
-        <div class="<?= $value['partial']['wrapperClass'] ?? 'ajax-wrapper'?>">
-          <?php if ($listItem['active']): ?>
-            <?= $this->partial($value['partial']['url'], $value['partial']['params']); ?>
-          <?php endif; ?>
-        </div>
-      <?php else: ?>
-        <ul id="<?=$listItem['ulId']?>" role="presentation" class="dropdown-menu subtabs collapse <?= $listItem['active'] ? ' in' : ''?>">
-          <?php foreach ($listItem['children'] as $childKey) : ?>
-            <?php
-              $childItem = $menuListItems[$childKey] ?? ['show' => false];
-              if (isset($childItem['show']) && !$childItem['show']) { continue; }
-            ?>
-              <li role="menuitem" class="<?=$childKey?>  <?=$childItem['active'] ? ' active' : ''?>">
-                <a href="<?=$childItem['url']?>" class="list-group-item" aria-current="<?= $childItem['active'] ? 'page' : 'false' ?>">
-                  <?=$childItem['translation']?>
-                </a>
-              </li>
-          <?php endforeach; ?>
-        </ul>
-      <?php endif; ?>
-    </li>
-  <?php else: ?>
-    <li role="menuitem" class="<?=$name?> <?=$listItem['active'] ? ' active' : ''?>">
-      <a href="<?=$listItem['url']?>" class="list-group-item" aria-current="<?= $listItem['active'] ? 'page' : 'false' ?>">
-        <?=$listItem['translation']?>
-        <?php if (isset($listItem['iconClass'])): ?>
-          <i class="<?=$listItem['iconClass']?>" aria-hidden="true"></i>
-        <?php endif; ?>
-      </a>
-    </li>
-  <?php endif; ?>
-<?php endforeach; ?>
 
-<?php $menuEntries = ob_get_clean(); ?>
 <div class="mobile-main-tabs visible-xs visible-sm">
   <div class="dropdown useraccount-nav-mobile" role="menu">
     <div class="dropdown-toggle" data-toggle="dropdown">
       <div class="tab-title">
-        <?= $activeMobileTab !== 'none' ? $activeMobileTab : $this->transEsc('Your Account'); ?>
+        <?=$activeMobileTab?>
       </div>
       <div class="more"><?= $this->transEsc('Your Account') ?><b class="caret"></b></div>
     </div>
     <ul class="dropdown-menu">
-      <?=$menuEntriesMobile?>
+      <?php foreach ($menuListItems as $id => $listItem) : ?>
+        <?php if (isset($listItem['desktopOnly']) && $listItem['desktopOnly']) { continue; } ?>
+        <?php if (!isset($listItem['show']) || $listItem['show'] !== false): ?>
+          <li role="menuitem" class="<?=$id?><?= $this->active === $id ? ' active' : ''?>">
+            <a href="<?=$listItem['url']?>" class="list-group-item">
+            <?=$listItem['translation']?>
+            </a>
+          </li>
+        <?php endif; ?>
+      <?php endforeach; ?>
     </ul>
   </div>
 </div>
+
 <ul class="<?=$this->layoutClass('sidebar-myresearch')?> <?= $listOpen ? '' : 'move-list' ?> nav-tabs-personal list-group useraccount-nav nav-tabs" role="menu">
-  <?=$menuEntries?>
+  <li class="menu-header hidden-xs hidden-sm">
+    <h1>
+      <?= $this->transEsc('Your Account') ?>
+      <?php if (!$this->translationEmpty('tooltip_myaccount_html')): ?>
+        <span class="tooltip-myaccount" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?= $this->transEsc("tooltip_myaccount_html") ?>"><i class="fa fa-info-big"></i></span>
+      <?php endif; ?>
+    </h1>
+  </li>
+  <?php foreach ($desktopList as $id => $value) : ?>
+  <?php
+    $isArray = is_array($value);
+    $listItem = $isArray ? $value : $menuListItems[$value];
+    if (isset($listItem['show']) && !$listItem['show']) {
+      continue;
+    }
+    $name = $isArray ? $id : $value;
+    $hasChildren = $listItem['children'] ?? false;
+    $hasPartial = $listItem['partial'] ?? false;
+    $showSpinner = $listItem['showSpinner'] ?? false;
+  ?>
+    <?php if ($hasChildren || $hasPartial): ?>
+      <li role="menuitem" class="dropdown <?= $listItem['active'] ? ' active' : ''?>">
+        <a href="<?=$listItem['url']?>" id="<?=$id?>" class="hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" >
+          <?=$listItem['translation']?>
+          <?php if ($showSpinner) : ?>
+            <i class="hidden fa fa-spinner fa-spin"></i><span class="ajax-error hidden"><small> <?=$this->translate('An error has occurred'); ?></small></span>
+          <?php endif; ?>
+          <span class="caret"></span>
+        </a>
+        <?php if ($hasPartial) : ?>
+          <div class="<?= $value['partial']['wrapperClass'] ?? 'ajax-wrapper'?>">
+            <?php if ($listItem['active']): ?>
+              <?= $this->partial($value['partial']['url'], $value['partial']['params']); ?>
+            <?php endif; ?>
+          </div>
+        <?php else: ?>
+          <ul id="<?=$listItem['ulId']?>" role="presentation" class="dropdown-menu subtabs collapse <?= $listItem['active'] ? ' in' : ''?>">
+            <?php foreach ($listItem['children'] as $childKey) : ?>
+              <?php
+                $childItem = $menuListItems[$childKey] ?? ['show' => false];
+                if (isset($childItem['show']) && !$childItem['show']) { continue; }
+              ?>
+                <li role="menuitem" class="<?="menu-$name"?>  <?=$activeToLower === $childKey ? ' active' : ''?>">
+                  <a href="<?=$childItem['url']?>" class="list-group-item" aria-current="<?= $activeToLower === $childKey ? 'page' : 'false' ?>">
+                    <?=$childItem['translation']?>
+                  </a>
+                </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php endif; ?>
+      </li>
+    <?php else: ?>
+      <li role="menuitem" class="hidden-xs hidden-sm <?="menu-$name"?> <?=$activeToLower === $name ? ' active' : ''?>">
+        <a href="<?=$listItem['url']?>" class="list-group-item" aria-current="<?= $activeToLower === $name ? 'page' : 'false' ?>">
+          <?=$listItem['translation']?>
+          <?php if (isset($listItem['iconClass'])): ?>
+            <i class="<?=$listItem['iconClass']?>" aria-hidden="true"></i>
+          <?php endif; ?>
+        </a>
+      </li>
+    <?php endif; ?>
+  <?php endforeach; ?>
 </ul>
 
 <script>
     finna.menu.init();
 </script>
-
 
 <!-- END of: finna - myresearch/menu.phtml -->
