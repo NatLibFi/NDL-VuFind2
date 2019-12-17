@@ -158,7 +158,7 @@
   <?php foreach ($desktopList as $id => $value) : ?>
   <?php
     $isArray = is_array($value);
-    $listItem = $isArray ? $value : $menuListItems[$value];
+    $listItem = $isArray ? $value : $menuListItems[$value] ?? ['show' => false];
     if (isset($listItem['show']) && !$listItem['show']) {
       continue;
     }
