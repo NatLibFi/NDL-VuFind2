@@ -135,8 +135,8 @@
       <?php foreach ($menuListItems as $id => $listItem) : ?>
         <?php if (isset($listItem['desktopOnly']) && $listItem['desktopOnly']) { continue; } ?>
         <?php if (!isset($listItem['show']) || $listItem['show'] !== false): ?>
-          <li role="menuitem" class="<?=$id?><?= $this->active === $id ? ' active' : ''?>">
-            <a href="<?=$listItem['url']?>" class="list-group-item">
+          <li role="menuitem" class="<?=$id?><?= $activeToLower === $id ? ' active' : ''?>">
+            <a href="<?=$listItem['url']?>" class="list-group-item" <?=$activeToLower === $id ? 'aria-current="page"' : ''?>>
             <?=$listItem['translation']?>
             </a>
           </li>
@@ -190,7 +190,7 @@
                 if (isset($childItem['show']) && !$childItem['show']) { continue; }
               ?>
                 <li role="menuitem" class="<?="menu-$name"?>  <?=$activeToLower === $childKey ? ' active' : ''?>">
-                  <a href="<?=$childItem['url']?>" class="list-group-item" aria-current="<?= $activeToLower === $childKey ? 'page' : 'false' ?>">
+                  <a href="<?=$childItem['url']?>" class="list-group-item" <?=$activeToLower === $childKey ? 'aria-current="page"' : ''?>>
                     <?=$childItem['translation']?>
                   </a>
                 </li>
@@ -200,7 +200,7 @@
       </li>
     <?php else: ?>
       <li role="menuitem" class="hidden-xs hidden-sm <?="menu-$name"?> <?=$activeToLower === $name ? ' active' : ''?>">
-        <a href="<?=$listItem['url']?>" class="list-group-item" aria-current="<?= $activeToLower === $name ? 'page' : 'false' ?>">
+        <a href="<?=$listItem['url']?>" class="list-group-item" <?=$activeToLower === $name ? 'aria-current="page"' : ''?>>
           <?=$listItem['translation']?>
           <?php if (isset($listItem['iconClass'])): ?>
             <i class="<?=$listItem['iconClass']?>" aria-hidden="true"></i>
