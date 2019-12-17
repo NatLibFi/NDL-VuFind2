@@ -846,6 +846,14 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $config['titleHoldBibLevels']
                     = explode(':', $config['titleHoldBibLevels']);
             }
+            if (!empty($params['id']) && !empty($params['patron']['id'])) {
+                // Add a flag so that checkRequestIsValid knows to check valid pickup
+                // locations
+                $config['HMACKeys']
+                    = empty($config['HMACKeys'])
+                        ? '__check_pickup'
+                        : $config['HMACKeys'] . ':__check_pickup';
+            }
         }
         return $config;
     }
@@ -1097,17 +1105,27 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             return false;
         }
 
+        $result = false;
+
         // Check possible request types from the API answer
         $requestTypes = $requestOptions->xpath(
             '/request_options/request_option//type'
         );
         foreach ($requestTypes as $requestType) {
             if (in_array((string)$requestType, ['HOLD', 'PURCHASE'])) {
-                return true;
+                $result = true;
+                break;
             }
         }
 
-        return false;
+        if ($result && array_key_exists('__check_pickup', $data)) {
+            // Check valid pickup locations
+            if (empty($this->getPickupLocations($patron, $data))) {
+                $result = false;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -1237,10 +1255,28 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 ?? 'hold_error_fail';
         }
 
+        if ('Missing mandatory field: Description.' === $errorMsg) {
+            $errorMsg = $this->translate('This field is required') . ': '
+                . $this->translate('hold_issue');
+        }
+
         return [
             'success' => false,
             'sysMessage' => $errorMsg
         ];
+    }
+
+    /**
+     * Get details of a single hold request.
+     *
+     * @param array $holdDetails One of the item arrays returned by the
+     *                           getMyHolds method
+     *
+     * @return string            The Alma request ID
+     */
+    public function getCancelHoldDetails($holdDetails)
+    {
+        return empty($holdDetails['available']) ? $holdDetails['id'] : '';
     }
 
     /**
