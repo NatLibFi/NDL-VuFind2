@@ -476,7 +476,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             $sort = explode(
                 ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
             );
-            $sortKey = $this->getParamValue($sort[0], 'date_due');
+            $sortKey = $this->getSortParamValue($sort[0], 'date_due');
             $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
 
             $pageSize = $params['limit'] ?? 50;
@@ -642,7 +642,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         $sort = explode(
             ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
         );
-        $sortKey = $this->getParamValue($sort[0], 'date_due');
+        $sortKey = $this->getSortParamValue($sort[0], 'date_due');
         $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
 
         $pageSize = $params['limit'] ?? 50;
@@ -2366,7 +2366,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      *
      * @return string
      */
-    public function getParamValue($key, $default = '')
+    public function getSortParamValue($key, $default = '')
     {
         $params = [
             'checkout' => 'issuedate',
