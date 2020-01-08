@@ -377,7 +377,7 @@ finna.imagePaginator = (function imagePaginator() {
       var zoomLevel = 1;
       var alt = h === 10 && w === 10 ? translations.no_cover : image.data('alt');
 
-      var offsetPercentage = 4;
+      var offsetPercentage = _.settings.leaflet.offsetPercentage;
 
       // We need a double check of the image
       function calculateRatio(boundWidth, imageWidth, boundHeight, imageHeight) {
