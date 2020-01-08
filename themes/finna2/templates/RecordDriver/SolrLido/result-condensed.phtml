@@ -69,7 +69,7 @@
     <?php if ($disableExpand): ?>
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
-    <? else: ?>
+    <?php else: ?>
       <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
         <div class="media-left condensed-image resultThumb">
           <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
