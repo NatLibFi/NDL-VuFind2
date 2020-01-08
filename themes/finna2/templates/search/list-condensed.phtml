@@ -1,9 +1,16 @@
 <!-- START of: finna - search/list-condensed.phtml -->
 <?php if (!isset($this->indexStart)) $this->indexStart = 0; ?>
-<?php $showCheckboxes = !isset($this->hideCartControls) && $this->cart()->isActive() ?>
+<?php
+  $showCheckboxes = !isset($this->hideCartControls) && $this->cart()->isActive();
+  $disableExpand = null;
+?>
 <?php $i = $this->indexStart; foreach ($this->results->getResults() as $current):
-  $recordNumber = $this->results->getStartRecord() + $i - $this->indexStart; ?>
-  <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
+  $recordNumber = $this->results->getStartRecord() + $i - $this->indexStart;
+  if (null === $disableExpand) {
+    $disableExpand = $this->record($current)->disableCondensedViewExpand();
+  }
+?>
+  <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?><?=$disableExpand ? ' disable-expand' : ''?>">
     <?php if (isset($this->showCheckboxes) && $this->showCheckboxes): ?>
       <div class="record-checkbox">
         <?=$this->record($current)->getCheckbox('', 'search-cart-form')?>

@@ -6,6 +6,13 @@
 //    border-bottom: 1px solid @gray-lighter;
     transition: background .1s linear;
     background: rgba(100,100,100,0.04);
+    .record-container {
+        position: relative;
+    }
+    &.disable-expand {
+        padding-left: 0;
+        background: none;
+    }
     &.open {
         background: @body-bg;
     }
@@ -29,6 +36,7 @@
     }
     .condensed-collapse-toggle {
         display: flex;
+        margin-right: 20px;
         & h2.title {
             font-size: 1.25em;
             font-weight: 400;

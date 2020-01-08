@@ -1,5 +1,6 @@
 <!-- START of: finna - RecordDriver/SolrEad/result-condensed.phtml -->
 <?php
+  $disableExpand = $this->record($this->driver)->disableCondensedViewExpand();
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
@@ -12,7 +13,9 @@
 <div class="record-container<?=$this->driver->supportsAjaxStatus()?' ajaxItem ':''?> list-view" id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-col-title">
+    <?php if (!$disableExpand): ?>
       <i class="fa fa-arrow-right"></i>
+    <?php endif; ?>
       <h2 class="title">
         <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
         <?php
@@ -56,118 +59,122 @@
       <?php endif; ?>
     </div>
   </div>
+  <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+    <div class="hidden-print add-to-favorite-col">
+      <?php /* Add to favorites */ ?>
+      <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
+    </div>
+    <?php /* Saved lists */ ?>
+    <div class="savedLists">
+      <strong><?=$this->transEsc("Saved in")?>:</strong>
+    </div>
+    <?=$this->render('list/list-notes.phtml')?>
+  <?php endif; ?>
   <div class="clearfix"></div>
   <div class="media condensed-collapse-data">
-    <?php if ($thumbnail && $thumbnailAlignment === 'left'): ?>
-      <div class="media-left resultThumb">
+    <?php if ($disableExpand): ?>
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+    <?php else: ?>
+      <?php if ($thumbnail && $thumbnailAlignment === 'left'): ?>
+        <div class="media-left resultThumb">
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+            <?=$thumbnail ?>
+        </div>
+      <?php endif; ?>
+      <div class="media-body">
+        <div class="result-body">
+          <?php if ($origination = $this->driver->getOrigination()): ?>
+              <span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
+              <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a>
+              <br/>
+            <?php endif; ?>
+            <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>
+              <?php $parentSource = $this->driver->getSourceIdentifier(); ?>
+              <?php if ($this->driver->isPartOfArchiveSeries()): ?>
+                <?php $topIds = $this->driver->getHierarchyTopId(); $topTitles = $this->driver->getHierarchyTopTitle(); ?>
+              <?php else: ?>
+                <?php $topIds = $this->driver->getHierarchyParentId(); $topTitles = $this->driver->getHierarchyParentTitle(); ?>
+              <?php endif; ?>
+              <?php if (count($topIds) > 0) : ?>
+              <span class="archive-label"><?=$this->transEsc('Archive')?>:</span>
+              <?php foreach ($topIds as $index => $parentId): ?>
+                <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($topTitles[$index]) ? $this->truncate($topTitles[$index], 180) : ''?></a>
+              <?php endforeach; ?>
+              <br/>
+              <?php endif; ?>
+            <?php endif; ?>
+            <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
+              <span class="archive-label"><?=$this->transEsc('Archive Series')?>:</span>
+              <?php $parentIds = $this->driver->getHierarchyParentId(); $parentTitles = $this->driver->getHierarchyParentTitle(); ?>
+              <?php foreach ($parentIds as $index => $parentId): ?>
+                <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+              <?php endforeach; ?>
+              <br/>
+            <?php endif; ?>
+          <div class="summary">
+          <?php if($this->driver->isCollection()): ?>
+            <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
+          <?php else: ?>
+            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+              <?php $author = $authors[0]; ?>
+              <a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a>
+              <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
+            <?php endif; ?>
+          <?php endif; ?>
+          </div>
+          <div class="callnumAndLocation ajax-availability hidden">
+            <?php if ($this->driver->supportsAjaxStatus()): ?>
+              <strong class="hideIfDetailed"><?=$this->transEsc('Call Number')?>:</strong>
+              <span class="callnumber ajax-availability hidden">
+                <?=$this->transEsc('Loading')?>...<br/>
+              </span>
+              <strong><?=$this->transEsc('Located')?>:</strong>
+              <span class="location ajax-availability hidden">
+                <?=$this->transEsc('Loading')?>...
+              </span>
+              <div class="locationDetails"></div>
+            <?php else: ?>
+              <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
+                <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
+              <?php endif; ?>
+            <?php endif; ?>
+          </div>
+          <div class="hidden-print add-to-favorite-col">
+              <?php /* Display qrcode if appropriate: */ ?>
+              <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
+                  <?php
+                  // Add JS Variables for QrCode
+                  $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
+                  ?>
+                <div class="hidden-xs">
+                  <a href="<?=$this->escapeHtmlAttr($QRCode);?>" class="finnaQrcodeLink" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
+                    <i class="fa fa-qr-code" aria-hidden="true"><span class="sr-only"><?=$this->transEsc('QR Code')?></span></i>
+                  </a>
+                  <div class="qrcode hidden">
+                    <script type="text/template" class="qrCodeImgTag">
+                      <img alt="" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
+                    </script>
+                  </div><br/>
+                </div>
+              <?php endif; ?>
+
+              <?php $openUrl = $this->driver->getOpenURL(); ?>
+              <?=$openUrl?'<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>':''?>
+          </div>
+        </div>
+      </div>
+      <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>
+      <div class="media-right resultThumb">
         <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
         <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
           <?=$thumbnail ?>
       </div>
     <?php endif; ?>
-    <div class="media-body">
-      <div class="result-body">
-        <?php if ($origination = $this->driver->getOrigination()): ?>
-            <span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
-            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a>
-            <br/>
-          <?php endif; ?>
-          <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>
-            <?php $parentSource = $this->driver->getSourceIdentifier(); ?>
-            <?php if ($this->driver->isPartOfArchiveSeries()): ?>
-              <?php $topIds = $this->driver->getHierarchyTopId(); $topTitles = $this->driver->getHierarchyTopTitle(); ?>
-            <?php else: ?>
-              <?php $topIds = $this->driver->getHierarchyParentId(); $topTitles = $this->driver->getHierarchyParentTitle(); ?>
-            <?php endif; ?>
-            <?php if (count($topIds) > 0) : ?>
-            <span class="archive-label"><?=$this->transEsc('Archive')?>:</span>
-            <?php foreach ($topIds as $index => $parentId): ?>
-              <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($topTitles[$index]) ? $this->truncate($topTitles[$index], 180) : ''?></a>
-            <?php endforeach; ?>
-            <br/>
-            <?php endif; ?>
-          <?php endif; ?>
-          <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-            <span class="archive-label"><?=$this->transEsc('Archive Series')?>:</span>
-            <?php $parentIds = $this->driver->getHierarchyParentId(); $parentTitles = $this->driver->getHierarchyParentTitle(); ?>
-            <?php foreach ($parentIds as $index => $parentId): ?>
-              <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
-            <?php endforeach; ?>
-            <br/>
-          <?php endif; ?>
-        <div class="summary">
-        <?php if($this->driver->isCollection()): ?>
-          <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
-        <?php else: ?>
-          <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
-            <?php $author = $authors[0]; ?>
-            <a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a>
-            <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
-          <?php endif; ?>
-        <?php endif; ?>
-        </div>
-        <div class="callnumAndLocation ajax-availability hidden">
-          <?php if ($this->driver->supportsAjaxStatus()): ?>
-            <strong class="hideIfDetailed"><?=$this->transEsc('Call Number')?>:</strong>
-            <span class="callnumber ajax-availability hidden">
-              <?=$this->transEsc('Loading')?>...<br/>
-            </span>
-            <strong><?=$this->transEsc('Located')?>:</strong>
-            <span class="location ajax-availability hidden">
-              <?=$this->transEsc('Loading')?>...
-            </span>
-            <div class="locationDetails"></div>
-          <?php else: ?>
-            <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
-              <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
-            <?php endif; ?>
-          <?php endif; ?>
-        </div>
-        <div class="hidden-print add-to-favorite-col">
-            <?php /* Display qrcode if appropriate: */ ?>
-            <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
-                <?php
-                // Add JS Variables for QrCode
-                $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
-                ?>
-              <div class="hidden-xs">
-                <a href="<?=$this->escapeHtmlAttr($QRCode);?>" class="finnaQrcodeLink" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
-                  <i class="fa fa-qr-code" aria-hidden="true"><span class="sr-only"><?=$this->transEsc('QR Code')?></span></i>
-                </a>
-                <div class="qrcode hidden">
-                  <script type="text/template" class="qrCodeImgTag">
-                    <img alt="" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
-                  </script>
-                </div><br/>
-              </div>
-            <?php endif; ?>
-
-            <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-                <?php /* Add to favorites */ ?>
-              <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
-            <?php endif; ?>
-
-            <?php $openUrl = $this->driver->getOpenURL(); ?>
-            <?=$openUrl?'<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>':''?>
-        </div>
-        <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-          <?php /* Saved lists */ ?>
-          <div class="savedLists">
-            <strong><?=$this->transEsc("Saved in")?>:</strong>
-          </div>
-        <?php endif; ?>
-        <?=$this->render('list/list-notes.phtml')?>
-      </div>
-    </div>
-    <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>
-    <div class="media-right resultThumb">
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
-        <?=$thumbnail ?>
-    </div>
-    <?php endif; ?>
 
     <div class="clearfix visible-xs"></div>
+    <?php endif; ?>
   </div>
 </div>
 <!-- END of: finna - RecordDriver/SolrEad/result-condensed.phtml -->
