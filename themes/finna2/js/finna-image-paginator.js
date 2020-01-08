@@ -379,8 +379,7 @@ finna.imagePaginator = (function imagePaginator() {
 
       var offsetPercentage = _.settings.leaflet.offsetPercentage;
 
-      // We need a double check of the image
-      function calculateRatio(boundWidth, imageWidth, boundHeight, imageHeight) {
+      function calculateBounds(boundWidth, imageWidth, boundHeight, imageHeight) {
         var heightPercentage = 0;
         var widthPercentage = 0;
         var newHeight = imageHeight;
@@ -408,7 +407,7 @@ finna.imagePaginator = (function imagePaginator() {
         };
       }
 
-      var bounds = calculateRatio(leafletHolderWidth, w, leafletHolderHeight, h);
+      var bounds = calculateBounds(leafletHolderWidth, w, leafletHolderHeight, h);
       var imageBounds = new L.LatLngBounds(_.leafletHolder.unproject([0, bounds.height], zoomLevel), _.leafletHolder.unproject([bounds.width, 0], zoomLevel));
 
       L.imageOverlay(img.src, imageBounds, {alt: alt}).addTo(_.leafletHolder);
