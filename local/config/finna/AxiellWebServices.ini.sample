@@ -152,7 +152,7 @@ method = driver
 
 ; Blacklist for removing certain methods from a service
 [messagingBlackLists]
-; A colon-separated list used to remove certain method types of a service
+; A colon-separated list used to remove certain method types from a service
 ; Meanings: snailMail = letter, ilsDefined = none
 ; Allowed options:
 ; pickUpNotice = "email:snailMail:sms" 
