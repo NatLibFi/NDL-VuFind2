@@ -65,6 +65,14 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     protected $sortItemsByEnumChron = true;
 
     /**
+     * Process types hidden from holdings. The array is keyed by physical material
+     * type, or '*' to match all types.
+     *
+     * @var array
+     */
+    protected $hiddenProcessTypes = [];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -91,6 +99,14 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         $this->sortItemsByEnumChron
             = $this->config['Holdings']['sortByEnumChron'] ?? true;
+
+        if (!empty($this->config['Holdings']['hiddenProcessTypes'])) {
+            foreach ($this->config['Holdings']['hiddenProcessTypes']
+                as $key => $value
+            ) {
+                $this->hiddenProcessTypes[$key] = explode(':', $value);
+            }
+        }
     }
 
     /**
@@ -130,6 +146,118 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             ];
         }
         return $fineList;
+    }
+
+    /**
+     * Get transactions of the current patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
+     *
+     * @return array Transaction information as array.
+     *
+     * @author Michael Birkner
+     */
+    public function getMyTransactions($patron, $params = [])
+    {
+        // Defining the return value
+        $returnArray = [];
+
+        // Get the patron id
+        $patronId = $patron['id'];
+
+        // Create a timestamp for calculating the due / overdue status
+        $nowTS = time();
+
+        $sort = explode(
+            ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
+        );
+        if ($sort[0] == 'checkout') {
+            $sortKey = 'loan_date';
+        } elseif ($sort[0] == 'title') {
+            $sortKey = 'title';
+        } else {
+            $sortKey = 'due_date';
+        }
+        $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'DESC' : 'ASC';
+
+        $pageSize = $params['limit'] ?? 50;
+        $params = [
+            'limit' => $pageSize,
+            'offset' => isset($params['page'])
+                ? ($params['page'] - 1) * $pageSize : 0,
+            'order_by' => $sortKey,
+            'direction' => $direction,
+            'expand' => 'renewable'
+        ];
+
+        // Get user loans from Alma API
+        $apiResult = $this->makeRequest(
+            '/users/' . $patronId . '/loans',
+            $params
+        );
+
+        // If there is an API result, process it
+        $totalCount = 0;
+        if ($apiResult) {
+            $totalCount = $apiResult->attributes()->total_record_count;
+            // Iterate over all item loans
+            foreach ($apiResult->item_loan as $itemLoan) {
+                $loan['duedate'] = $this->parseDate(
+                    (string)$itemLoan->due_date,
+                    true
+                );
+                //$loan['dueTime'] = ;
+                $loan['checkoutDate'] = $this->parseDate(
+                    (string)$itemLoan->loan_date,
+                    false
+                );
+                $loan['dueStatus'] = null; // Calculated below
+                $loan['id'] = (string)$itemLoan->mms_id;
+                //$loan['source'] = 'Solr';
+                $loan['barcode'] = (string)$itemLoan->item_barcode;
+                //$loan['renew'] = ;
+                //$loan['renewLimit'] = ;
+                //$loan['request'] = ;
+                //$loan['volume'] = ;
+                $loan['publication_year'] = (string)$itemLoan->publication_year;
+                $loan['renewable']
+                    = (strtolower((string)$itemLoan->renewable) == 'true')
+                    ? true
+                    : false;
+                //$loan['message'] = ;
+                $loan['title'] = (string)$itemLoan->title;
+                $loan['item_id'] = (string)$itemLoan->loan_id;
+                $loan['institution_name']
+                    = $this->getTranslatableString($itemLoan->library);
+                //$loan['isbn'] = ;
+                //$loan['issn'] = ;
+                //$loan['oclc'] = ;
+                //$loan['upc'] = ;
+                /*
+                Apparently this is not useful for us
+                $loan['borrowingLocation']
+                    = $this->getTranslatableString($itemLoan->circ_desk);
+                */
+
+                // Calculate due status
+                $dueDateTS = strtotime($loan['duedate']);
+                if ($nowTS > $dueDateTS) {
+                    // Loan is overdue
+                    $loan['dueStatus'] = 'overdue';
+                } elseif (($dueDateTS - $nowTS) < 86400) {
+                    // Due date within one day
+                    $loan['dueStatus'] = 'due';
+                }
+
+                $returnArray[] = $loan;
+            }
+        }
+
+        return [
+            'count' => $totalCount,
+            'records' => $returnArray
+        ];
     }
 
     /**
@@ -1456,6 +1584,13 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $results['total'] = (int)$items->attributes()->total_record_count;
 
             foreach ($items->item as $item) {
+                $processType = (string)($item->item_data->process_type ?? '');
+                $format = (string)($item->item_data->physical_material_type ?? '');
+                if (in_array($processType, $this->hiddenProcessTypes[$format] ?? [])
+                    || in_array($processType, $this->hiddenProcessTypes['*'] ?? [])
+                ) {
+                    continue;
+                }
                 $holdingId = (string)$item->holding_data->holding_id;
                 if ($holding = $holdings[$holdingId] ?? null) {
                     if ('true' === (string)$holding->suppress_from_publishing) {
@@ -1476,7 +1611,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $itemNotes = !empty($item->item_data->public_note)
                     ? [(string)$item->item_data->public_note] : null;
 
-                $processType = (string)($item->item_data->process_type ?? '');
                 if ($processType && 'LOAN' !== $processType) {
                     $status = $this->getTranslatableStatusString(
                         $item->item_data->process_type
@@ -1904,6 +2038,11 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     // Physical
                     $physicalItems = $record->getFields('AVA');
                     foreach ($physicalItems as $field) {
+                        // Filter out suggestions for other records
+                        $mmsId = $this->getMarcSubfield($field, '0');
+                        if ($mmsId !== (string)$bib->mms_id) {
+                            continue;
+                        }
                         $avail = $this->getMarcSubfield($field, 'e');
                         $item = $tmpl;
                         $item['availability'] = strtolower($avail) === 'available';
