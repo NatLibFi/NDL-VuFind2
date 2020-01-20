@@ -229,10 +229,12 @@ class Record extends \VuFind\View\Helper\Root\Record
 
     /**
      * Render the link of the specified type.
+     * Fallbacks from 'authority-page' to 'author' when needed.
      *
-     * @param string $type    Link type
-     * @param string $lookfor String to search for at link
-     * @param array  $params  Optional array of parameters for the link template
+     * @param string $type     Link type
+     * @param string $lookfor  String to search for at link
+     * @param array  $params   Optional array of parameters for the link template
+     * @param bool   $withInfo return an array with link HTML and returned link type.
      *
      * @return string
      */
@@ -282,7 +284,6 @@ class Record extends \VuFind\View\Helper\Root\Record
 
     /**
      * Render a authority search link or fallback to Author search.
-     * This returns an a-tag.
      *
      * @param string $type    Link type
      * @param string $lookfor Link label or string to search for at link
@@ -290,7 +291,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param array  $data    Additional link data
      * @param array  $params  Optional array of parameters for the link template
      *
-     * @return string
+     * @return string HTML
      */
     public function getAuthorityLinkElement(
         $type, $lookfor, $data, $params = []
@@ -298,10 +299,17 @@ class Record extends \VuFind\View\Helper\Root\Record
         $id = $data['id'] ?? null;
         list($url, $urlType)
             = $this->getLink($type, $lookfor, $params + ['id' => $id], true);
-        $fallback = $urlType !== 'author-page';
 
+        if ($urlType !== 'author-page') {
+            $author = [
+               'name' => $data['name'] ?? null,
+               'date' => !empty($data['date']) ?? null,
+               'role' => $data['role'] ?? null
+            ];            
+            return $this->getAuthorLinkElement($url, $author);
+        }
+        
         $authId = $this->driver->getAuthorityId($id, $type);
-
         $authorityType = $params['authorityType'] ?? null;
         $authorityType
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
@@ -310,38 +318,47 @@ class Record extends \VuFind\View\Helper\Root\Record
            'url' => trim($url),
            'record' => $this->driver,
            'searchAction' => $params['searchAction'] ?? null,
-           'author' => ['name' => $data['name'] ?? null, 'date' => $data['date'] ?? null, 'role' => $data['role'] ?? null],
-           'authorityLink' => !$fallback && $id && $this->getAuthorityLinkType()
+           'label' => $lookfor,
+           'id' => $authId,
+           'showInlineInfo' => !empty($params['showInlineInfo'])
+           && $this->isAuthorityInlineInfoEnabled(),
+           'recordSource' => $this->driver->getDataSource(),
+           'type' => $type,
+           'authorityType' => $authorityType,
         ];
 
-
-        if (!$fallback) {
-            $elementParams = array_merge(
-                $elementParams, [
-                   'label' => $lookfor,
-                   'id' => $authId,
-                   'showInlineInfo' => !empty($params['showInlineInfo'])
-                       && $this->isAuthorityInlineInfoEnabled(),
-                   'recordSource' => $this->driver->getDataSource(),
-                   'type' => $type,
-                   'authorityType' => $authorityType,
-                ]
-            );
-        }
-
         if (isset($params['role'])) {
-            $elementParams['roleName'] = $data['roleName'] ?? null;
-            $elementParams['role'] = $data['role'] ?? null;
+            $elementParams['roleName']
+                = !empty($data['roleName']) ? $data['roleName'] : null;
+            $elementParams['role']
+                = !empty($data['role']) ? $data['role'] : null;
         }
         if (isset($params['date'])) {
-            $elementParams['date'] = $data['date'] ?? null;
+            $elementParams['date'] = !empty($data['date']) ? $data['date'] : null;
         }
 
-        return $this->renderTemplate(
-            'authority-link-element.phtml', $elementParams
-        );
+        return $this->renderTemplate('authority-link-element.phtml', $elementParams);
     }
 
+    /**
+     * Utility function for rendering an author search link element.
+     *
+     * @param string $url  Link URL
+     * @param array  $data Author data (name, role, date)
+     *
+     * @return string HTML
+     */
+    protected function getAuthorLinkElement($url, $data)
+    {
+        $params = [
+           'url' => trim($url),
+           'record' => $this->driver,
+           'author' => $data
+        ];
+
+        return $this->renderTemplate('author-link-element.phtml', $params);
+    }
+    
     /**
      * Get authority link type.
      *
