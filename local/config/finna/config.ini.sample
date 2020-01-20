@@ -1565,9 +1565,11 @@ url = "https://my.surveypal.com/Finnasurvey"
 
 ; Authority info
 [Authority]
-; Uncomment to convert Author search links to authority links
-; (filters by author ID instead of doing a type = Author search)
-;authority_links = true
+; Uncomment to convert Author search links to authority links.
+; The link type is one of
+; - author-id   : performs a search filtered by author ID
+; - author-page : links to authority page
+;authority_links = author-id|author-page
 
 ; Uncomment to enable Authority info (displayed beside author links on record page)
 ;authority_info = true

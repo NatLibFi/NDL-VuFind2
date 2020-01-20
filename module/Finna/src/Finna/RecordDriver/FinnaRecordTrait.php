@@ -50,6 +50,20 @@ trait FinnaRecordTrait
     protected $preferredLanguage = null;
 
     /**
+     * Search settings
+     *
+     * @var array
+     */
+    protected $authorityHelper = null;
+
+    /**
+     * Search settings
+     *
+     * @var array
+     */
+    protected $datasourceSettings = null;
+
+    /**
      * Get inappropriate comments for this record reported by the given user.
      *
      * @param object $userId Reporter ID
@@ -186,5 +200,86 @@ trait FinnaRecordTrait
     public function allowRecordImageDownload()
     {
         return true;
+    }
+
+    /**
+     * Is authority functionality enabled?
+     *
+     * @return bool
+     */
+    public function isAuthorityEnabled()
+    {
+        if (!is_callable([$this, 'getDatasource'])) {
+            return false;
+        }
+        $recordSource = $this->getDatasource();
+        return isset($this->datasourceSettings[$recordSource]['authority']);
+    }
+
+    /**
+     * Format authority id by prefixing the given id with authority record source.
+     *
+     * @param string $type Authority type (e.g. author)
+     * @param string $id   Authority id
+     *
+     * @return null|string
+     */
+    public function getAuthorityId($id, $type = '*')
+    {
+        if (!$this->datasourceSettings) {
+            return $id;
+        }
+
+        $recordSource = $this->getDataSource();
+        $authSrc = $this->datasourceSettings[$recordSource]['authority'][$type]
+            ?? $this->datasourceSettings[$recordSource]['authority']['*']
+            ?? null;
+
+        $idRegex
+            = $this->datasourceSettings[$recordSource]['authority_id_regex'][$type]
+            ?? $this->datasourceSettings[$recordSource]['authority_id_regex']['*']
+            ?? null;
+
+        if ($idRegex && 1 !== preg_match($idRegex, $id)) {
+            return null;
+        }
+        return $authSrc ? $this->getAuthorityIdForSource($id, $authSrc) : null;
+    }
+
+    /**
+     * Attach a AuthorityHelper to the driver.
+     *
+     * @param \Finna\Search\Solr\AuthorityHelper $helper Authority helper
+     *
+     * @return void
+     */
+    public function attachAuthorityHelper(\Finna\Search\Solr\AuthorityHelper $helper)
+    {
+        $this->authorityHelper = $helper;
+    }
+
+    /**
+     * Attach datasource settings to the driver.
+     *
+     * @param array $settings Settings
+     *
+     * @return void
+     */
+    public function attachDatasourceSettings($settings)
+    {
+        $this->datasourceSettings = $settings;
+    }
+
+    /**
+     * Prefix authority id with authority record source.
+     *
+     * @param string $id     Authority id
+     * @param string $source Authority source
+     *
+     * @return string
+     */
+    protected function getAuthorityIdForSource($id, $source)
+    {
+        return "$source.$id";
     }
 }

@@ -31,6 +31,7 @@ namespace FinnaSearch;
 use VuFindSearch\Backend\Exception\BackendException;
 use VuFindSearch\ParamBag;
 use VuFindSearch\Response\RecordCollectionInterface;
+use VuFindSearch\Query\Query;
 
 /**
  * Search service.
@@ -43,6 +44,33 @@ use VuFindSearch\Response\RecordCollectionInterface;
  */
 class Service extends \VuFindSearch\Service
 {
+    /**
+     * Retrieve a single record.
+     *
+     * @param string   $backend Search backend identifier
+     * @param string   $id      Record identifier
+     * @param ParamBag $params  Search backend parameters
+     *
+     * @return RecordCollectionInterface
+     */
+    public function retrieve($backend, $id, ParamBag $params = null)
+    {
+        if ($backend !== 'SolrAuth') {
+            return parent::retrieve(...func_get_args());
+        }
+
+        // Convert SolrAuth queries to target id_str_mv
+        list($datasource, $id) = explode('.', $id, 2);
+        $id = str_replace('(', '\(', $id);
+        $id = str_replace(')', '\)', $id);
+
+        $params = $params ?? new ParamBag();
+        $params->add('fq', "id_str_mv:$id");
+        $params->add('fq', "source:$datasource");
+
+        return $this->search($backend, new Query(), 0, 1, $params);
+    }
+
     /**
      * Return records for work expressions.
      *

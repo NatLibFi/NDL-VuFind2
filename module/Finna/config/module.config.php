@@ -182,6 +182,8 @@ $config = [
     'controllers' => [
         'factories' => [
             'Finna\Controller\AjaxController' => 'VuFind\Controller\AjaxControllerFactory',
+            'Finna\Controller\AuthorityController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\AuthorityRecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\BarcodeController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\BrowseController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\CartController' => 'VuFind\Controller\CartControllerFactory',
@@ -210,6 +212,7 @@ $config = [
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
         ],
         'aliases' => [
+            'AuthorityRecord' => 'Finna\Controller\AuthorityRecordController',
             'Barcode' => 'Finna\Controller\BarcodeController',
             'barcode' => 'Finna\Controller\BarcodeController',
             'Comments' => 'Finna\Controller\CommentsController',
@@ -228,6 +231,7 @@ $config = [
             'listpage' => 'Finna\Controller\ListController',
 
             // Overrides:
+            'VuFind\Controller\AuthorityController' => 'Finna\Controller\AuthorityController',
             'VuFind\Controller\AjaxController' => 'Finna\Controller\AjaxController',
             'VuFind\Controller\BrowseController' => 'Finna\Controller\BrowseController',
             'VuFind\Controller\CartController' => 'Finna\Controller\CartController',
@@ -645,24 +649,26 @@ $config = [
                 'factories' => [
                     'Finna\RecordDriver\EDS' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
-                    'Finna\RecordDriver\SolrDefault' =>
-                        'VuFind\RecordDriver\SolrDefaultFactory',
-                    'Finna\RecordDriver\SolrMarc' =>
-                        'VuFind\RecordDriver\SolrDefaultFactory',
-                    'Finna\RecordDriver\SolrAuthEaccpf' =>
-                        'VuFind\RecordDriver\SolrDefaultFactory',
+                    'VuFind\RecordDriver\SolrDefault' =>
+                        'Finna\RecordDriver\SolrDefaultFactory',
+                    'VuFind\RecordDriver\SolrMarc' =>
+                        'Finna\RecordDriver\SolrDefaultFactory',
+                    'VuFind\RecordDriver\SolrAuthEaccpf' =>
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrAuthForward' =>
-                        'VuFind\RecordDriver\SolrDefaultFactory',
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrEad' =>
-                        'VuFind\RecordDriver\SolrDefaultFactory',
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrEad3' =>
-                        'VuFind\RecordDriver\SolrDefaultFactory',
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrForward' =>
-                        'VuFind\RecordDriver\SolrDefaultFactory',
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrLido'
                         => 'Finna\RecordDriver\SolrLidoFactory',
+                    'Finna\RecordDriver\SolrMarc'
+                        => 'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrQdc' =>
-                        'VuFind\RecordDriver\SolrDefaultFactory',
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\Primo' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
                 ],
@@ -689,6 +695,8 @@ $config = [
             ],
             'recordtab' => [
                 'factories' => [
+                    'Finna\RecordTab\AuthorityRecordsAuthor' => 'Finna\RecordTab\AuthorityRecordsFactory',
+                    'Finna\RecordTab\AuthorityRecordsTopic' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\DescriptionFWD' => 'Finna\RecordTab\Factory::getDescriptionFWD',
                     'Finna\RecordTab\Distribution' => 'Finna\RecordTab\Factory::getDistribution',
                     'Finna\RecordTab\InspectionDetails' => 'Finna\RecordTab\Factory::getInspectionDetails',
@@ -704,6 +712,8 @@ $config = [
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
                 ],
                 'aliases' => [
+                    'authorityrecordsauthor' => 'Finna\RecordTab\AuthorityRecordsAuthor',
+                    'authorityrecordstopic' => 'Finna\RecordTab\AuthorityRecordsTopic',
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
                     'descriptionFWD' => 'Finna\RecordTab\DescriptionFWD',
                     'distribution' => 'Finna\RecordTab\Distribution',
@@ -754,7 +764,8 @@ $config = [
 ];
 
 $recordRoutes = [
-   'metalibrecord' => 'MetaLibRecord',
+    'authorityrecord' => 'AuthorityRecord',
+    'metalibrecord' => 'MetaLibRecord',
 ];
 
 // Define dynamic routes -- controller => [route name => action]

@@ -759,12 +759,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     );
                     $altSubfields = $this->stripTrailingPunctuation($altSubfields);
 
+                    $id = $field->getSubfield('0');
                     if (!empty($subfields)) {
                         $result[] = [
                             'name' => $this->stripTrailingPunctuation($subfields[0]),
                             'name_alt' => $altSubfields,
                             'date' => !empty($dates) ? $dates[0] : '',
-                            'role' => $role
+                            'role' => $role,
+                            'id' => $id ? $id->getData() : null
                         ];
                     }
                 }

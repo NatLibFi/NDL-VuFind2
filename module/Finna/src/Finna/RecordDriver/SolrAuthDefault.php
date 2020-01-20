@@ -5,7 +5,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) The National Library of Finland 2019-20.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -50,6 +50,21 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
     protected $sourceIdentifier = 'SolrAuth';
 
     /**
+     * Return the unique identifier of this record within the index;
+     * useful for retrieving additional information (like tags and user
+     * comments) from the external MySQL database.
+     *
+     * @return string Unique identifier.
+     */
+    public function getUniqueID()
+    {
+        if (!isset($this->fields['id'])) {
+            throw new \Exception('ID not set!');
+        }
+        return $this->fields['id'];
+    }
+
+    /**
      * Is this an authority index record?
      *
      * @return bool
@@ -87,6 +102,16 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
     public function getAwards()
     {
         return [];
+    }
+
+    /**
+     * Return summary
+     *
+     * @return array|null
+     */
+    public function getSummary()
+    {
+        return null;
     }
 
     /**

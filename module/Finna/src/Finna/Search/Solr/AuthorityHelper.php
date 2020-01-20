@@ -122,6 +122,47 @@ class AuthorityHelper
     }
 
     /**
+     * Resolve authority types for a list of authorities with unknown types.
+     * Authority types are needed to display suitable icons together with the
+     * link in the UI.
+     *
+     * @param array                              $authorities List of authority data
+     * with 'id' fields. Entries with 'type' fields are omitted.
+     * @param \VuFind\RecordDriver\DefaultRecord $driver      Biblio record driver
+     *
+     * @return array Authority data with 'type' fields.
+     */
+    public function resolveAuthorityTypes($authorities, $driver)
+    {
+        if (!$this->recordLoader) {
+            return $authorities;
+        }
+
+        $ids = [];
+        foreach ($authorities as $author) {
+            if (!isset($author['type'])) {
+                $ids[] = $driver->getAuthorityId($author['id']);
+            }
+        }
+        if ($ids) {
+            $records
+                = $this->recordLoader->loadBatchForSource($ids, 'SolrAuth', true);
+            foreach ($authorities as &$author) {
+                foreach ($records as $rec) {
+                    list($source, $recId) = explode('.', $rec->getUniqueID(), 2);
+                    if ($author['id'] === $recId) {
+                        if ($formats = $rec->getFormats()) {
+                            $author['type'] = reset($formats);
+                        }
+                        continue;
+                    }
+                }
+            }
+        }
+        return $authorities;
+    }
+
+    /**
      * Helper function for processing a facet set.
      *
      * @param array $facetSet Facet set

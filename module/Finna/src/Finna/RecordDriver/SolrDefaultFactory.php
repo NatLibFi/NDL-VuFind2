@@ -1,11 +1,11 @@
 <?php
 /**
- * Factory for SolrLido record drivers.
+ * Factory for SolrDefault record drivers.
  *
  * PHP version 7
  *
  * Copyright (C) Villanova University 2018.
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,7 +23,7 @@
  * @category VuFind
  * @package  RecordDrivers
  * @author   Demian Katz <demian.katz@villanova.edu>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -32,16 +32,17 @@ namespace Finna\RecordDriver;
 use Interop\Container\ContainerInterface;
 
 /**
- * Factory for SolrLido record drivers.
+ * Factory for SolrDefault record drivers.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Demian Katz <demian.katz@villanova.edu>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class SolrLidoFactory extends SolrDefaultFactory
+class SolrDefaultFactory
+    extends \VuFind\RecordDriver\SolrDefaultWithoutSearchServiceFactory
 {
     /**
      * Create an object
@@ -61,7 +62,14 @@ class SolrLidoFactory extends SolrDefaultFactory
         array $options = null
     ) {
         $driver = parent::__invoke($container, $requestedName, $options);
-        $driver->attachDateConverter($container->get(\VuFind\Date\Converter::class));
+        $driver->attachSearchService($container->get(\VuFindSearch\Service::class));
+        $driver->attachAuthorityHelper(
+            $container->get(\Finna\Search\Solr\AuthorityHelper::class)
+        );
+        $driver->attachDatasourceSettings(
+            $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
+        );
+
         return $driver;
     }
 }

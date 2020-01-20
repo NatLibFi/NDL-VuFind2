@@ -1,0 +1,33 @@
+<!-- START of: finna - RecordTab/authorityrecords.phtml -->
+<?php
+  $script = <<<JS
+$(document).ready(function() {
+  finna.layout.initCondensedList();
+});
+JS;
+  echo $this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+
+$results = $this->tab->loadRecords($this->driver);
+$resultCnt = $results->getResultTotal();
+$i = 0;
+?>
+<div>
+  <?php foreach ($results->getResults() as $current): ?>
+  <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
+    <span class="sr-only"><?=$this->transEsc('Search Result');?> <?=$i ?></span>
+    <?=$this->record($current)->getSearchResult('condensed', ['authorId' => $this->driver->getUniqueId()])?>
+  </div>
+  <?php endforeach ?>
+</div>
+<?php if ($resultCnt): ?>
+  <?php
+    $urlQuery = $results->getUrlQuery();
+    $params = $urlQuery->getParamArray();
+    $lookfor = $params['lookfor'];
+  ?>
+<div>
+  <p><a href="<?=$this->escapeHtmlAttr($this->record($this->driver)->getLink('author', '', ['id' => $this->driver->getUniqueID(), 'linkType' => 'author-id', 'searchAction' => 'search-results']))?>"><?= $this->translate('show_all_results', ['%%total%%' => $this->localizedNumber($results->getResultTotal())]);?></a>
+  </p>
+</div>
+<?php endif ?>
+<!-- END of: finna - RecordTab/authorityrecords.phtml -->

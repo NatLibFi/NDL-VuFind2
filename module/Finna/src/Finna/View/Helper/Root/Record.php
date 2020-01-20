@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2015-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -47,13 +47,6 @@ use Finna\Search\Solr\AuthorityHelper;
  */
 class Record extends \VuFind\View\Helper\Root\Record
 {
-    /**
-     * Datasource configuration
-     *
-     * @var \Zend\Config\Config
-     */
-    protected $datasourceConfig;
-
     /**
      * Record loader
      *
@@ -126,7 +119,6 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function __construct(
         \Zend\Config\Config $config,
-        \Zend\Config\Config $datasourceConfig,
         \VuFind\Record\Loader $loader,
         \Finna\View\Helper\Root\RecordImage $recordImage,
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
@@ -134,7 +126,6 @@ class Record extends \VuFind\View\Helper\Root\Record
         \VuFind\RecordTab\TabManager $tabManager
     ) {
         parent::__construct($config);
-        $this->datasourceConfig = $datasourceConfig;
         $this->loader = $loader;
         $this->recordImageHelper = $recordImage;
         $this->authorityHelper = $authorityHelper;
@@ -245,24 +236,29 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @return string
      */
-    public function getLink($type, $lookfor, $params = [])
+    public function getLink($type, $lookfor, $params = [], $withInfo = false)
     {
         if (is_array($lookfor)) {
             $lookfor = $lookfor['name'];
         }
         $searchAction = !empty($this->getView()->browse)
-            ? 'browse-' . $this->getView()->browse : '';
+            ? 'browse-' . $this->getView()->browse : $params['searchAction'] ?? '';
         $params = $params ?? [];
         $filter = null;
 
         // Attempt to switch Author search link to Authority link.
-        if ($this->isAuthorityLinksEnabled()
+        if (isset($params['id'])) {
+            $linkType = $params['linkType'] ?? $this->getAuthorityLinkType();
+        }
+        if (null !== ($linkType = $params['linkType'] ?? $this->getAuthorityLinkType())
             && $type === 'author'
             && isset($params['id'])
-            && $authId = $this->getAuthorityId($type, $params['id'])
+            && $authId = $this->driver->getAuthorityId($params['id'], $type)
         ) {
-            $filter = sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId);
-            $type = 'author-id';
+            $type = (string)$linkType === '1' ? 'author-id' : $linkType;
+            $filter = $type === 'author-id'
+                ? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
+                : $authId;
         }
 
         $params = array_merge(
@@ -281,7 +277,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $result .= $this->getView()->plugin('searchTabs')
             ->getCurrentHiddenFilterParams($this->driver->getSourceIdentifier());
 
-        return $result;
+        return $withInfo ? [$result, $type] : $result;
     }
 
     /**
@@ -300,8 +296,11 @@ class Record extends \VuFind\View\Helper\Root\Record
         $type, $lookfor, $data, $params = []
     ) {
         $id = $data['id'] ?? null;
-        $url = $this->getLink($type, $lookfor, $params + ['id' => $id]);
-        $authId = $this->getAuthorityId($type, $id);
+        list($url, $urlType)
+            = $this->getLink($type, $lookfor, $params + ['id' => $id], true);
+        $fallback = $urlType !== 'author-page';
+
+        $authId = $this->driver->getAuthorityId($id, $type);
 
         $authorityType = $params['authorityType'] ?? null;
         $authorityType
@@ -309,16 +308,26 @@ class Record extends \VuFind\View\Helper\Root\Record
 
         $elementParams = [
            'url' => trim($url),
-           'label' => $lookfor,
-           'id' => $authId,
-           'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
-           'showInlineInfo' => !empty($params['showInlineInfo'])
-             && $this->isAuthorityInlineInfoEnabled(),
-           'recordSource' => $this->driver->getDataSource(),
-           'type' => $type,
-           'authorityType' => $authorityType,
-           'record' => $this->driver
+           'record' => $this->driver,
+           'searchAction' => $params['searchAction'] ?? null,
+           'author' => ['name' => $data['name'] ?? null, 'date' => $data['date'] ?? null, 'role' => $data['role'] ?? null],
+           'authorityLink' => !$fallback && $id && $this->getAuthorityLinkType()
         ];
+
+
+        if (!$fallback) {
+            $elementParams = array_merge(
+                $elementParams, [
+                   'label' => $lookfor,
+                   'id' => $authId,
+                   'showInlineInfo' => !empty($params['showInlineInfo'])
+                       && $this->isAuthorityInlineInfoEnabled(),
+                   'recordSource' => $this->driver->getDataSource(),
+                   'type' => $type,
+                   'authorityType' => $authorityType,
+                ]
+            );
+        }
 
         if (isset($params['role'])) {
             $elementParams['roleName'] = $data['roleName'] ?? null;
@@ -334,14 +343,14 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Is authority links enabled?
+     * Get authority link type.
      *
-     * @return bool
+     * @return Link type (string) or null when authority links are disabled.
      */
-    protected function isAuthorityLinksEnabled()
+    protected function getAuthorityLinkType()
     {
-        return $this->isAuthorityEnabled()
-            && ($this->config->Authority->authority_links ?? false);
+        return $this->driver->isAuthorityEnabled()
+            ? $this->config->Authority->authority_links : null;
     }
 
     /**
@@ -351,52 +360,8 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     protected function isAuthorityInlineInfoEnabled()
     {
-        return $this->isAuthorityEnabled()
+        return $this->driver->isAuthorityEnabled()
             && ($this->config->Authority->authority_info ?? false);
-    }
-
-    /**
-     * Is authority functionality enabled?
-     *
-     * @return bool
-     */
-    protected function isAuthorityEnabled()
-    {
-        if (!is_callable([$this->driver, 'getDatasource'])) {
-            return false;
-        }
-        $recordSource = $this->driver->getDatasource();
-        return isset($this->datasourceConfig[$recordSource]['authority']);
-    }
-
-    /**
-     * Format authority id by prefixing the given id with authority record source.
-     *
-     * @param string $type Authority type (e.g. author)
-     * @param string $id   Authority id
-     *
-     * @return string
-     */
-    protected function getAuthorityId($type, $id)
-    {
-        $recordSource = $this->driver->getDataSource();
-        $authSrc = $this->datasourceConfig[$recordSource]['authority'][$type]
-            ?? $this->datasourceConfig[$recordSource]['authority']['*']
-            ?? null;
-        return $authSrc ? $this->getAuthorityIdForSource($id, $authSrc) : null;
-    }
-
-    /**
-     * Prefix authority id with authority record source.
-     *
-     * @param string $id     Authority id
-     * @param string $source Authority source
-     *
-     * @return string
-     */
-    protected function getAuthorityIdForSource($id, $source)
-    {
-        return "$source.$id";
     }
 
     /**

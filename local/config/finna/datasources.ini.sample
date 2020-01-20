@@ -8,6 +8,7 @@
 ; disablePatronFunctions  Set true if datasource does not have patron functionality, can be left out
 ; authority[<type>]     Map to authority index sources where <type> is authority record type
 ;                         (corporateBody, person) or * for any;
+; authority_id_regex[<type>] = "/^(FI-ASTERI-N)*/"
 ; This configuration file is compatible with RecordManager's datasources.ini, so the
 ; same file can be shared by RecordManager and VuFind.
 
