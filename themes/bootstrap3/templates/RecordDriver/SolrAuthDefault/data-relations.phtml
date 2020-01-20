@@ -1,0 +1,4 @@
+<?php foreach ($data as $relation): ?>
+  <a href="<?=$this->url('authorityrecord', ['id' => $relation['id']])?>"><?= $relation['name']?></a> <span class="relation-type">(<?=$relation['type']?></span>)
+  <br />
+<?php endforeach; ?>

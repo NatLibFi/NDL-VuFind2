@@ -1,0 +1,9 @@
+<?php foreach ($data as $url): ?>
+  <?php if (!empty($url['url'])): ?>
+    <a href="<?=$url['url']?>"><?=$this->transEsc($url['title'])?></a>
+  <?php else: ?>
+    <?=$this->transEsc($url['title'])?>
+  <?php endif; ?>
+  <br />
+<?php endforeach; ?>
+

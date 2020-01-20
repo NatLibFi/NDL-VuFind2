@@ -115,6 +115,56 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
     }
 
     /**
+     * Return authority data sources
+     *
+     * @return array|null
+     */
+    public function getSources()
+    {
+        return null;
+    }
+
+    /**
+     * Return fields of activity.
+     *
+     * @return array
+     */
+    public function getFieldsOfActivity()
+    {
+        return $this->fields['field_of_activity'] ?? [];
+    }
+
+    /**
+     * Return occupations.
+     *
+     * @return array
+     */
+    public function getOccupations()
+    {
+        return $this->fields['occupation'] ?? [];
+    }
+
+    /**
+     * Return place of residence.
+     *
+     * @return string
+     */
+    public function getPlaceOfResidence()
+    {
+        return '';
+    }
+
+    /**
+     * Return relations to other authority records.
+     *
+     * @return array
+     */
+    public function getRelations()
+    {
+        return [];
+    }
+
+    /**
      * Get an array of all the formats associated with the record.
      *
      * @return array

@@ -766,7 +766,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                             'name_alt' => $altSubfields,
                             'date' => !empty($dates) ? $dates[0] : '',
                             'role' => $role,
-                            'id' => $id ? $id->getData() : null
+                            'id' => $id ? $id->getData() : null,
+                            'type' => in_array($fieldCode, ['100', '700'])
+                                ? 'Personal Name' : 'Corporate Name'
                         ];
                     }
                 }

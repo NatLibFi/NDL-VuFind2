@@ -958,6 +958,11 @@ class RecordDataFormatterFactory
         $spec->setLine('Established', 'getEstablishedDate');
         $spec->setLine('Terminated', 'getTerminatedDate');
         $spec->setLine('Awards', 'getAwards');
+        $spec->setLine('Occupations', 'getOccupations');
+        $spec->setLine('Fields of Activity', 'getFieldsOfActivity');
+        $spec->setLine('Place of Residence', 'getPlaceOfResidence');
+        $spec->setTemplateLine('Sources', 'getSources', 'data-sources.phtml');
+        $spec->setTemplateLine('Relations', 'getRelations', 'data-relations.phtml');
 
         return $spec->getArray();
     }

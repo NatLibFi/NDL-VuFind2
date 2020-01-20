@@ -658,6 +658,8 @@ $config = [
                         'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrAuthForward' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
+                    'Finna\RecordDriver\SolrAuthMarc' =>
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrEad' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrEad3' =>
@@ -676,6 +678,7 @@ $config = [
                 'aliases' => [
                     'SolrAuthEaccpf' => 'Finna\RecordDriver\SolrAuthEaccpf',
                     'SolrAuthForwardAuthority' => 'Finna\RecordDriver\SolrAuthForward',
+                    'SolrAuthMarcAuthority' => 'Finna\RecordDriver\SolrAuthMarc',
                     'SolrEad' => 'Finna\RecordDriver\SolrEad',
                     'SolrEad3' => 'Finna\RecordDriver\SolrEad3',
                     'SolrForward' => 'Finna\RecordDriver\SolrForward',
