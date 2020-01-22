@@ -961,6 +961,7 @@ class RecordDataFormatterFactory
         $spec->setLine('Fields of Activity', 'getFieldsOfActivity');
         $spec->setLine('Place of Residence', 'getPlaceOfResidence');
         $spec->setLine('Other Titles', 'getAlternativeTitles');
+        $spec->setLine('Associated Place', 'getAssociatedPlace');
         $spec->setTemplateLine('Sources', 'getSources', 'data-sources.phtml');
         $spec->setTemplateLine('Relations', 'getRelations', 'data-relations.phtml');
         $spec->setLine('Additional Information', 'getAdditionalInformation');

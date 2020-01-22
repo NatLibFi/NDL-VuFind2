@@ -125,6 +125,16 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
     }
 
     /**
+     * Return associated place.
+     *
+     * @return string
+     */
+    public function getAssociatedPlace()
+    {
+        return '';
+    }
+
+    /**
      * Return summary
      *
      * @return array|null

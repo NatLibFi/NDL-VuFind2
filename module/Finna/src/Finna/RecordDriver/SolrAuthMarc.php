@@ -53,15 +53,21 @@ class SolrAuthMarc extends SolrAuthDefault
                 $id = $field->getSubfield('0');
                 $name = $field->getSubfield('a');
                 $type = $field->getSubfield('i');
-                if (!$type || !$name || !$id) {
+                if (empty($type)) {
+                    $type = $field->getSubfield('b');
+                }
+                if (!$name || !$id) {
                     continue;
                 }
-                $type = trim($type->getData());
-                if (':' === substr($type, -1)) {
-                    $type = substr($type, 0, -1);
+                $id = $this->getDataSource() . '.' . $id->getData();
+                if ($type) {
+                    $type = trim($type->getData());
+                    if (':' === substr($type, -1)) {
+                        $type = substr($type, 0, -1);
+                    }
                 }
                 $result[] = [
-                    'id' => $this->getDataSource() . '.' . $id->getData(),
+                    'id' => $id,
                     'name' => $name->getData(),
                     'type' => $type
                 ];
@@ -188,16 +194,34 @@ class SolrAuthMarc extends SolrAuthDefault
     public function getAlternativeTitles()
     {
         $result = [];
-        foreach ($this->getMarcRecord()->getFields('400') as $field) {
-            if ($subfield = $field->getSubfield('a')) {
-                $name = $subfield->getData();
-                if ($date = $field->getSubfield('d')) {
-                    $name .= ' (' . $date->getData() . ')';
+        foreach (['400', '410'] as $fieldCode) {
+            foreach ($this->getMarcRecord()->getFields($fieldCode) as $field) {
+                if ($subfield = $field->getSubfield('a')) {
+                    $name = $subfield->getData();
+                    if ($date = $field->getSubfield('d')) {
+                        $name .= ' (' . $date->getData() . ')';
+                    }
+                    $result[] = $name;
                 }
-                $result[] = $name;
             }
         }
         
         return $result;
     }
+
+    /**
+     * Return associated place.
+     *
+     * @return string
+     */
+    public function getAssociatedPlace()
+    {
+        if ($field = $this->getMarcRecord()->getField('370')) {
+            if ($subfield = $field->getSubfield('f')) {
+                return $subfield->getData();
+            }
+        }
+        return '';
+    }
+
 }
