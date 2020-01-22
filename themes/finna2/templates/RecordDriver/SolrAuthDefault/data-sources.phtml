@@ -1,8 +1,14 @@
 <?php foreach ($data as $url): ?>
+  <?
+    $title = $url['title'];
+    if (!empty($url['info'])) {
+      $title .= ' <span class="info">' . $url['info'] . '</span>';
+    }
+  ?>
   <?php if (!empty($url['url'])): ?>
-    <a href="<?=$url['url']?>"><?=$this->transEsc($url['title'])?></a>
+    <a href="<?=$url['url']?>"><?=$title?></a>
   <?php else: ?>
-    <?=$this->transEsc($url['title'])?>
+    <?=$title?>
   <?php endif; ?>
   <br />
 <?php endforeach; ?>

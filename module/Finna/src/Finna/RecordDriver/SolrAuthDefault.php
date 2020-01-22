@@ -95,6 +95,26 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
     }
 
     /**
+     * Return corporation establishment date and place.
+     *
+     * @return string
+     */
+    public function getEstablishedDate()
+    {
+        return '';
+    }
+
+    /**
+     * Return corporation termination date and place.
+     *
+     * @return string
+     */
+    public function getTerminatedDate()
+    {
+        return '';
+    }
+
+    /**
      * Return awards.
      *
      * @return string[]
@@ -194,6 +214,16 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
     public function getInstitutions()
     {
         return $this->fields['institution'] ?? [];
+    }
+
+    /**
+     * Return additional information.
+     *
+     * @return string
+     */
+    public function getAdditionalInformation()
+    {
+        return '';
     }
 
     /**
