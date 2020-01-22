@@ -300,11 +300,11 @@ class Record extends \VuFind\View\Helper\Root\Record
         list($url, $urlType)
             = $this->getLink($type, $lookfor, $params + ['id' => $id], true);
 
-        if ($urlType !== 'author-page') {
+        if (!$this->isAuthorityEnabled() || $urlType !== 'author-page') {
             $author = [
                'name' => $data['name'] ?? null,
-               'date' => !empty($data['date']) ?? null,
-               'role' => $data['role'] ?? null
+               'date' => !empty($data['date']) ? $data['date'] :  null,
+               'role' => !empty($data['role']) ? $data['role'] : null
             ];            
             return $this->getAuthorLinkElement($url, $author);
         }
@@ -357,6 +357,16 @@ class Record extends \VuFind\View\Helper\Root\Record
         ];
 
         return $this->renderTemplate('author-link-element.phtml', $params);
+    }
+
+    /**
+     * Is authority functionality enabled?
+     *
+     * @return bool
+     */
+    protected function isAuthorityEnabled()
+    {
+        return (bool)$this->config->Authority->enabled ?? false;
     }
     
     /**
