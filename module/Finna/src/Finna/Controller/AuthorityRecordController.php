@@ -41,20 +41,6 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 class AuthorityRecordController extends RecordController
 {
     /**
-     * Constructor
-     *
-     * @param ServiceLocatorInterface $sm Service locator
-     */
-    public function __construct(ServiceLocatorInterface $sm)
-    {
-        $this->serviceLocator = $sm;
-        $config = $sm->get(\VuFind\Config\PluginManager::class)->get('config');
-        if (!($config->Authority->enabled ?? false)) {
-            throw new \Exception('Authority page is not enabled');
-        }
-    }
-
-    /**
      * Load the record requested by the user; note that this is not done in the
      * init() method since we don't want to perform an expensive search twice
      * when homeAction() forwards to another method.
