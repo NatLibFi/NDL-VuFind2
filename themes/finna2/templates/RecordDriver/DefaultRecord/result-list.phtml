@@ -70,7 +70,7 @@
             <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="1">
                 <?php foreach($authors as $index => $author): ?>
-                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type']])?>
+                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
