@@ -107,5 +107,5 @@ defaultTab = null
 
 [Finna\RecordDriver\SolrAuthForward]
 tabs[AuthorityRecordsAuthor] = AuthorityRecordsAuthor
-tabs[Details] = StaffViewArray
+tabs[Details] = StaffViewMarc
 defaultTab = null

@@ -36,9 +36,9 @@ namespace Finna\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrAuthMarc extends SolrAuthDefault
+class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 {
-    use \VuFind\RecordDriver\MarcReaderTrait;
+    use SolrFinnaTrait;
 
     /**
      * Return relations to other authority records.
