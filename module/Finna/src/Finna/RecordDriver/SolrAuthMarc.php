@@ -38,7 +38,8 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 {
-    use SolrFinnaTrait;
+    use SolrAuthFinnaTrait;
+    use SolrCommonFinnaTrait;
 
     /**
      * Return relations to other authority records.
