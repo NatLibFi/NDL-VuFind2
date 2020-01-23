@@ -65,7 +65,7 @@ class AuthorityRecordsFactory
         }
         return new $requestedName(
             $container->get(\VuFind\Config\PluginManager::class)->get('config'),
-            $container->get(\VuFind\Search\SearchRunner::class)
+            $container->get(\Finna\Search\Solr\AuthorityHelper::class)
         );
     }
 }

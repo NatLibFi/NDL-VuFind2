@@ -50,5 +50,5 @@ class AuthorityRecordsTopic extends AuthorityRecordsBase
      *
      * @var array
      */
-    protected $relation = ['topic'];
+    protected $relation = ['topic_id_str_mv'];
 }

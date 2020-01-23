@@ -63,6 +63,7 @@ class AuthorityHelperFactory implements FactoryInterface
         }
         return new $requestedName(
             $container->get(\VuFind\Record\Loader::class),
+            $container->get(\VuFind\Search\SearchRunner::class),
             $container->get('ViewRenderer')->plugin('translate')
         );
     }

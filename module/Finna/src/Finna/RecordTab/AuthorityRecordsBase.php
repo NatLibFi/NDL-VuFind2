@@ -27,6 +27,9 @@
  */
 namespace Finna\RecordTab;
 
+use VuFind\I18n\Translator\TranslatorAwareInterface;
+use VuFind\I18n\Translator\TranslatorAwareTrait;
+
 /**
  * Base class for Authority records record tabs.
  *
@@ -37,25 +40,42 @@ namespace Finna\RecordTab;
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
 class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
+    implements TranslatorAwareInterface
 {
+    use TranslatorAwareTrait;
+
     /**
-     * Search runner
+     * Authority helper
      *
-     * @var \VuFind\Search\SearchRunner
+     * @var \Finna\Search\Solr\AuthorityHelper
      */
-    protected $searchRunner;
+    protected $authorityHelper;
+
+    /**
+     * Records.
+     *
+     * @var \VuFind\Search\Results
+     */
+    protected $records = null;
+
+    /**
+     * Record driver.
+     *
+     * @var \Finna\RecordDriver\SolrDefault
+     */
+    protected $driver;
 
     /**
      * Constructor
      *
-     * @param \Zend\Config\Config         $config       Configuration
-     * @param \VuFind\Search\SearchRunner $searchRunner Search runner
+     * @param \Zend\Config\Config                $config          Configuration
+     * @param \Finna\Search\Solr\AuthorityHelper $authorityHelper Authority helper
      */
     public function __construct(
         \Zend\Config\Config $config,
-        $searchRunner
+        \Finna\Search\Solr\AuthorityHelper $authorityHelper
     ) {
-        $this->searchRunner = $searchRunner;
+        $this->authorityHelper = $authorityHelper;
     }
 
     /**
@@ -65,7 +85,7 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
-        return true;
+        return $this->getNumOfRecords() > 0;
     }
 
     /**
@@ -75,7 +95,10 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      */
     public function getDescription()
     {
-        return 'authority_records_' . $this->label;
+        $count = $this->getNumOfRecords();
+        return $this->translate(
+            'authority_records_' . $this->label, ['%%count%%' => $count]
+        );
     }
 
     /**
@@ -87,23 +110,52 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      */
     public function loadRecords($driver)
     {
-        $id = $driver->getUniqueID();
-        $query = implode(
-            ' OR ', array_map(
-                function ($relation) use ($id) {
-                    return "(${relation}_id_str_mv:\"$id\")";
-                },
-                $this->relation
-            )
+         return $this->getRecords();
+    }
+    
+    /**
+     * Get results (records from biblio index).
+     *
+     * @return \VuFind\Search\Results
+     */
+    protected function getRecords()
+    {
+        if ($this->records) {
+             return $this->records;
+        }
+        $this->records = $this->authorityHelper->getRecordsByAuthor(
+            $this->driver->getUniqueID(), $this->relation
         );
-        return $this->searchRunner->run(
-            ['lookfor' => $query],
-            'Solr',
-            function ($runner, $params, $searchId) {
-                $params->setLimit(100);
-                $params->setPage(1);
-                $params->setSort('title', true);
-            }
+        return $this->records;
+    }
+
+    /**
+     * Get num of results (records from biblio index).
+     *
+     * @return int
+     */
+    protected function getNumOfRecords()
+    {
+        $records = $this->getRecords();
+        return $records->getResultTotal();
+    }
+    
+    /**
+     * Set the record driver to operate on
+     *
+     * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
+     *
+     * @return AbstractBase
+     */
+    public function setRecordDriver(\VuFind\RecordDriver\AbstractBase $driver)
+    {
+         $this->driver = $driver;
+    }
+
+    public function getSearchQuery()
+    {
+        return $this->authorityHelper->getRecordsByAuthorQuery(
+            $this->driver->getUniqueID(), $this->relation
         );
     }
 }

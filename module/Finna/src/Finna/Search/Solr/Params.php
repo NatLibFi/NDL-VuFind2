@@ -582,7 +582,12 @@ class Params extends \VuFind\Search\Solr\Params
                     continue;
                 }
                 $field = $filterItem['field'];
-                if ($field === AuthorityHelper::AUTHOR2_ID_FACET) {
+                if (in_array(
+                    $field,
+                    [AuthorityHelper::AUTHOR2_ID_FACET,
+                     AuthorityHelper::AUTHOR_CORPORATE_ID_FACET,
+                     AuthorityHelper::TOPIC_ID_FACET]
+                )) {
                     // Author id filter
                     $result[] = $filter;
                 } elseif ($field === AuthorityHelper::AUTHOR_ID_ROLE_FACET) {
@@ -736,13 +741,23 @@ class Params extends \VuFind\Search\Solr\Params
      */
     protected function parseAuthorIdFilter($filter, $idRoleFilter = false)
     {
-        $field = $idRoleFilter
-            ? AuthorityHelper::AUTHOR_ID_ROLE_FACET
-            : AuthorityHelper::AUTHOR2_ID_FACET;
-
-        $pat = sprintf('/%s:"([a-z0-9_.:]*)"/', $field);
-
-        if (!preg_match($pat, $filter, $matches)) {
+        $pat = '([a-zA-Z0-9_\-.:\)\(]*)';
+        if ($idRoleFilter) {
+            // TODO: verify this
+            $field = AuthorityHelper::AUTHOR_ID_ROLE_FACET;
+        } else {
+            $field = AuthorityHelper::AUTHOR2_ID_FACET;
+            $parts = explode(' OR ', $filter);
+            if (count($parts) > 1) {
+                // OR filter
+                $filter = $parts[0];
+                $orPat = "{$field}:\"({$pat})\"";
+                preg_match("/{$orPat}/", $filter, $matches);
+                $filter = $matches[1];
+            }
+        }
+        $isMatch = preg_match("/{$pat}/", $filter, $matches);
+        if (!$isMatch || !isset($matches[1])) {
             return null;
         }
         return $matches[1];

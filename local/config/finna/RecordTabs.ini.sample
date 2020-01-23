@@ -109,3 +109,9 @@ defaultTab = null
 tabs[AuthorityRecordsAuthor] = AuthorityRecordsAuthor
 tabs[Details] = StaffViewMarc
 defaultTab = null
+
+[Finna\RecordDriver\SolrAuthMarc]
+tabs[AuthorityRecordsAuthor] = AuthorityRecordsAuthor
+tabs[AuthorityRecordsTopic] = AuthorityRecordsTopic
+tabs[Details] = StaffViewMarc
+defaultTab = null

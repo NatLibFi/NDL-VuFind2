@@ -253,13 +253,13 @@ class Record extends \VuFind\View\Helper\Root\Record
             $linkType = $params['linkType'] ?? $this->getAuthorityLinkType();
         }
         if (null !== ($linkType = $params['linkType'] ?? $this->getAuthorityLinkType())
-            && $type === 'author'
-            && isset($params['id'])
-            && $authId = $this->driver->getAuthorityId($params['id'], $type)
+            && in_array($type, ['author', 'author-id'])
+            && (isset($params['id']) || isset($params['authId']))
+            && $authId = $params['authId'] ?? $this->driver->getAuthorityId($params['id'], $type)
         ) {
             $type = (string)$linkType === '1' ? 'author-id' : $linkType;
             $filter = $type === 'author-id'
-                ? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
+                ? $params['filter'] ?? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
                 : $authId;
         }
 

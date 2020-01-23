@@ -10,8 +10,18 @@ JS;
 $results = $this->tab->loadRecords($this->driver);
 $resultCnt = $results->getResultTotal();
 $i = 0;
+$moreUrl = $this->record($this->driver)->getLink('author-id', '', ['authId' => $this->driver->getUniqueID(), 'filter' => $this->tab->getSearchQuery(), 'linkType' => 'author-id', 'searchAction' => 'search-results']);
 ?>
-<div>
+<div class="authority-records">
+  <div class="pagination-container">
+    <span class="showing"><?=$this->translate(
+      'showing_results_html', [
+        '%%start%%' => 1,
+        '%%end%%' => count($results->getResults())
+      ]
+    ) . "</span> / <span class=\"search-link\"><a href=\"{$moreUrl}\">" . $this->translate('authority_records_search_link', ['%%count%%' => $this->localizedNumber($results->getResultTotal())]) . '</a></span>'
+    ?>
+  </div>
   <?php foreach ($results->getResults() as $current): ?>
   <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
     <span class="sr-only"><?=$this->transEsc('Search Result');?> <?=$i ?></span>
@@ -19,15 +29,4 @@ $i = 0;
   </div>
   <?php endforeach ?>
 </div>
-<?php if ($resultCnt): ?>
-  <?php
-    $urlQuery = $results->getUrlQuery();
-    $params = $urlQuery->getParamArray();
-    $lookfor = $params['lookfor'];
-  ?>
-<div>
-  <p><a href="<?=$this->escapeHtmlAttr($this->record($this->driver)->getLink('author', '', ['id' => $this->driver->getUniqueID(), 'linkType' => 'author-id', 'searchAction' => 'search-results']))?>"><?= $this->translate('show_all_results', ['%%total%%' => $this->localizedNumber($results->getResultTotal())]);?></a>
-  </p>
-</div>
-<?php endif ?>
 <!-- END of: finna - RecordTab/authorityrecords.phtml -->

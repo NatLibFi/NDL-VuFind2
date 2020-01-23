@@ -46,11 +46,25 @@ class AuthorityHelper
     const AUTHOR2_ID_FACET = 'author2_id_str_mv';
 
     /**
+     * Index field for author2-ids.
+     *
+     * @var string
+     */
+    const AUTHOR_CORPORATE_ID_FACET = 'author_corporate_id_str_mv';
+
+    /**
      * Index field for author id-role combinations
      *
      * @var string
      */
     const AUTHOR_ID_ROLE_FACET = 'author2_id_role_str_mv';
+
+    /**
+     * Index field for author2-ids.
+     *
+     * @var string
+     */
+    const TOPIC_ID_FACET = 'topic_id_str_mv';
 
     /**
      * Delimiter used to separate author id and role.
@@ -67,6 +81,13 @@ class AuthorityHelper
     protected $recordLoader;
 
     /**
+     * Search runner
+     *
+     * @var \VuFind\Search\SearchRunner
+     */
+    protected $searchRunner;
+
+    /**
      * Translator
      *
      * @var \VuFind\Translator
@@ -81,9 +102,11 @@ class AuthorityHelper
      */
     public function __construct(
         \VuFind\Record\Loader $recordLoader,
+        \VuFind\Search\SearchRunner $searchRunner,
         \VuFind\View\Helper\Root\Translate $translator
     ) {
         $this->recordLoader = $recordLoader;
+        $this->searchRunner = $searchRunner;
         $this->translator = $translator;
     }
 
@@ -207,7 +230,9 @@ class AuthorityHelper
     {
         return [
             AuthorityHelper::AUTHOR_ID_ROLE_FACET,
-            AuthorityHelper::AUTHOR2_ID_FACET
+            AuthorityHelper::AUTHOR2_ID_FACET,
+            AuthorityHelper::AUTHOR_CORPORATE_ID_FACET,
+            AuthorityHelper::TOPIC_ID_FACET
         ];
     }
 
@@ -250,6 +275,44 @@ class AuthorityHelper
         return [$id, $role];
     }
 
+    /**
+     * Return biblio records that are linked to author.
+     *
+     * @param string $id     Authority id
+     * @param array  $fields Solr fields to search by (author, topic)
+     *
+     * @return \VuFind\Search\Results
+     */
+    public function getRecordsByAuthor(
+        $id, $fields = ['author2_id_str_mv', 'author_corporate_id_str_mv']
+    ) {
+        $query = $this->getRecordsByAuthorQuery($id, $fields);
+        return $this->searchRunner->run(
+            ['lookfor' => $query, 'fl' => 'id'],
+            'Solr',
+            function ($runner, $params, $searchId) {
+                $params->setLimit(100);
+                $params->setPage(1);
+            }
+        );
+    }
+
+    public function getRecordsByAuthorQuery($id, $fields)
+    {
+        if (count($fields) === 1) {
+            return $fields[0] . ":\"$id\"";
+        } else {
+            return implode(
+                ' OR ', array_map(
+                    function ($field) use ($id) {
+                        return "(${field}:\"$id\")";
+                    },
+                    $fields
+                )
+            );
+        }
+    }
+    
     /**
      * Helper function for formatting author-role display text.
      *

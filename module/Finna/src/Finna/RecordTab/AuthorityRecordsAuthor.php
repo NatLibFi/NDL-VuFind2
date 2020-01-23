@@ -50,5 +50,5 @@ class AuthorityRecordsAuthor extends AuthorityRecordsBase
      *
      * @var array
      */
-    protected $relation = ['author2', 'author_corporate'];
+    protected $relation = ['author2_id_str_mv', 'author_corporate_id_str_mv'];
 }
