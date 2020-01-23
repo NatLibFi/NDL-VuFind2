@@ -421,17 +421,6 @@ class AccountExpirationReminders extends AbstractService
             return false;
         }
 
-        if (isset($this->currentSiteConfig['System']['available'])
-            && !$this->currentSiteConfig['System']['available']
-        ) {
-            $this->msg(
-                "User {$user->username} (id {$user->id}) institution"
-                . " $userInstitution: site is marked unavailable,"
-                . ' bypassing expiration reminder'
-            );
-            return false;
-        }
-
         if (!empty($this->currentSiteConfig['Authentication']['hideLogin'])) {
             $this->msg(
                 "User {$user->username} (id {$user->id}) institution"
