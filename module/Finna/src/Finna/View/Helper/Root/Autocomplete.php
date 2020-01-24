@@ -46,13 +46,25 @@ class Autocomplete extends \Zend\View\Helper\AbstractHelper
     protected $searchConfig = null;
 
     /**
+     * Search options pluginmanager
+     *
+     * @var \VuFind\Search\Options\PluginManager
+     */
+    protected $optionsPluginManager = null;
+
+    /**
      * Constructor
      *
-     * @param \Zend\Config\Config $searchConfig Search configiration.
+     * @param \Zend\Config\Config                  $searchConfig  Search configiration.
+     * @param \VuFind\Search\Options\PluginManager $pluginManager Search
+     * options pluginmanager
      */
-    public function __construct(\Zend\Config\Config $searchConfig)
-    {
+    public function __construct(
+        \Zend\Config\Config $searchConfig,
+        \VuFind\Search\Options\PluginManager $pluginManager
+    ) {
         $this->searchConfig = $searchConfig;
+        $this->optionsPluginManager = $pluginManager;
     }
 
     /**
@@ -113,8 +125,17 @@ class Autocomplete extends \Zend\View\Helper\AbstractHelper
             if ($searchTab) {
                 $tabs = count($handlerItem) > 2 && !empty($handlerItem[2])
                     ? explode('&', $handlerItem[2]) : [];
-                if (!empty($tabs) && !in_array($searchTab, $tabs)) {
-                    continue;
+                if (!empty($tabs)) {
+                    if (!in_array($searchTab, $tabs)) {
+                        continue;
+                    }
+                }
+                // Discard handler if not supported by search backend
+                if ($options = $this->optionsPluginManager->get($searchTab)) {
+                    $searchTabHandlers = $options->getBasicHandlers();
+                    if (!in_array($handlerItem[0], array_keys($searchTabHandlers))) {
+                        continue;
+                    }
                 }
             }
             $result[] = [
