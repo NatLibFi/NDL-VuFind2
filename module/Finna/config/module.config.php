@@ -769,6 +769,7 @@ $config = [
 
 $recordRoutes = [
     'authorityrecord' => 'AuthorityRecord',
+    'solrauthrecord' => 'AuthorityRecord',
     'metalibrecord' => 'MetaLibRecord',
 ];
 
