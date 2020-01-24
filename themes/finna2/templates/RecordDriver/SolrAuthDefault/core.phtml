@@ -8,6 +8,32 @@
   <div class="media-body record-information">
       <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
 
+      <?/* Display anchor links to authority records tabs */?>
+      <?php if ($authSummary = $this->record($this->driver)->getAuthoritySummary()): ?>
+        <div class="authority-records-summary">
+          <?php if (!empty($authSummary['author'] && in_array('AuthorityRecordsAuthor', array_keys($this->tabs)))): ?>
+            <div>
+              <div class="text"><?= $this->transEsc('authority_records_author')?></div>
+              <div class="count">
+                <a href="<?=$this->recordLink()->getTabUrl($this->driver, 'AuthorityRecordsAuthor')?>#tabnav">
+                  <?=$this->translate('authority_records_count', ['%%count%%' => $authSummary['author']]);?>
+                </a>
+              </div>
+            </div>
+          <?php endif; ?>
+          <?php if (!empty($authSummary['topic']) && in_array('AuthorityRecordsTopic', array_keys($this->tabs))): ?>
+            <div>
+              <div class="text"><?= $this->transEsc('authority_records_topic')?></div>
+              <div class="count">
+                <a href="<?=$this->recordLink()->getTabUrl($this->driver, 'AuthorityRecordsTopic')?>#tabnav">
+                  <?=$this->translate('authority_records_count', ['%%count%%' => $authSummary['topic']]);?>
+                </a>
+              </div>
+            </div>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
+
       <?php $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
       <div class="truncate-field wide recordSummary">
         <p class="summary">

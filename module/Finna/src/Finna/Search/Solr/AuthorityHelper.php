@@ -278,25 +278,37 @@ class AuthorityHelper
     /**
      * Return biblio records that are linked to author.
      *
+     * @param string $id        Authority id
+     * @param array  $fields    Solr fields to search by (author, topic)
+     * @param bool   $onlyCount Return only record count
+     * (does not fetch record data from index)
+     *
+     * @return \VuFind\Search\Results|int
+     */
+    public function getRecordsByAuthor(
+        $id, $fields = ['author2_id_str_mv', 'author_corporate_id_str_mv'],
+        $onlyCount = false
+    ) {
+        $query = $this->getRecordsByAuthorQuery($id, $fields);
+        $results = $this->searchRunner->run(
+            ['lookfor' => $query, 'fl' => 'id'],
+            'Solr',
+            function ($runner, $params, $searchId) use ($onlyCount) {
+                $params->setLimit($onlyCount ? 0 : 100);
+                $params->setPage(1);
+            }
+        );
+        return $onlyCount ? $results->getResultTotal() : $results;
+    }
+
+    /**
+     * Return query for fetching biblio records by authority id.
+     *
      * @param string $id     Authority id
      * @param array  $fields Solr fields to search by (author, topic)
      *
      * @return \VuFind\Search\Results
      */
-    public function getRecordsByAuthor(
-        $id, $fields = ['author2_id_str_mv', 'author_corporate_id_str_mv']
-    ) {
-        $query = $this->getRecordsByAuthorQuery($id, $fields);
-        return $this->searchRunner->run(
-            ['lookfor' => $query, 'fl' => 'id'],
-            'Solr',
-            function ($runner, $params, $searchId) {
-                $params->setLimit(100);
-                $params->setPage(1);
-            }
-        );
-    }
-
     public function getRecordsByAuthorQuery($id, $fields)
     {
         if (count($fields) === 1) {

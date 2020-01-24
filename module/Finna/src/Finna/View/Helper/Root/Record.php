@@ -629,6 +629,9 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function containsNonImageURL($urls, $imageURLs)
     {
+        if (!$urls) {
+            return false;
+        }
         foreach ($urls as $url) {
             if (!isset($imageURLs[$url['url']])) {
                 return true;
@@ -647,6 +650,9 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function containsPdfUrl($urls)
     {
+        if (!$urls) {
+            return false;
+        }
         foreach ($urls as $url) {
             if (strcasecmp(pathinfo($url['url'], PATHINFO_EXTENSION), 'pdf') === 0) {
                 return true;
@@ -715,5 +721,24 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $tabs = $this->tabManager->getTabServices($this->driver);
         return isset($tabs[$tab]);
+    }
+
+    /**
+     * Return number of linked biblio records for an authority record.
+     * Returns an array with keys 'author' and 'topic'
+     * (number of biblio records where the authority is an author/topic)
+     *
+     * @return array
+     */
+    public function getAuthoritySummary()
+    {
+        $id = $this->driver->getUniqueID();
+        $authorCnt = $this->authorityHelper->getRecordsByAuthor(
+            $id, ['author2_id_str_mv'], true
+        );
+        $topicCnt = $this->authorityHelper->getRecordsByAuthor(
+            $id, ['topic_id_str_mv'], true
+        );
+        return ['author' => $authorCnt, 'topic' => $topicCnt];
     }
 }

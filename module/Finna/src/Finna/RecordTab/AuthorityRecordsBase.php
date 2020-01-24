@@ -97,7 +97,7 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     {
         $count = $this->getNumOfRecords();
         return $this->translate(
-            'authority_records_' . $this->label, ['%%count%%' => $count]
+            'authority_records_' . $this->label . '_count', ['%%count%%' => $count]
         );
     }
 

@@ -13,11 +13,28 @@ a.authority-link {
 .record-information .record-core-metadata .recordAuthors .authority {
     display: inline-block;
 }
-.table-finna-record record-details {
-    .info {
-        color: @gray;
-        font-size: 0.9em;
+.record-main {
+  .authority-records-summary {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    > div {
+      display: flex;
+      align-items: baseline;
+      .text {
+        font-weight: 700;
+        min-width: 80px;
+      }
+      .count {
+        font-size: 1.4em;
+      }
     }
+  }
+  .table-finna-record record-details {
+    .info {
+      color: @gray;
+      font-size: 0.9em;
+    }
+  }
 }
 .authority {
   + br {
