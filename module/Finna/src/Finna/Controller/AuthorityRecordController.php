@@ -40,33 +40,5 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  */
 class AuthorityRecordController extends RecordController
 {
-    /**
-     * Load the record requested by the user; note that this is not done in the
-     * init() method since we don't want to perform an expensive search twice
-     * when homeAction() forwards to another method.
-     *
-     * @return AbstractRecordDriver
-     */
-    protected function loadRecord()
-    {
-        // Temporarily switch searchClassId to get results from Authority index.
-        // This way we can render searchbox.phtml with Solr searchClassId
-        // so that a new search from AuthorityRecord page is sent to Solr.
-        $this->searchClassId = 'SolrAuth';
-        $rec = parent::loadRecord();
-        $this->searchClassId = 'Solr';
-        return $rec;
-    }
-
-    /**
-     * Record action -- display a record
-     *
-     * @return \Zend\View\Model\ViewModel
-     */
-    public function recordAction()
-    {
-        return $this->forwardTo(
-            'authorityrecord', 'home', ['id' => $this->params()->fromQuery('id')]
-        );
-    }
+    protected $searchClassId = 'SolrAuth';
 }
