@@ -55,7 +55,7 @@ class Service extends \VuFindSearch\Service
      */
     public function retrieve($backend, $id, ParamBag $params = null)
     {
-        if ($backend !== 'SolrAuth') {
+        if ($backend !== 'SolrAuth' || false === strpos($id, '.')) {
             return parent::retrieve(...func_get_args());
         }
 
