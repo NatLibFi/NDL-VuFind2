@@ -20,7 +20,7 @@ $moreLabel = $this->transEsc('authority_records_search_link', ['%%count%%' => $t
         '%%start%%' => 1,
         '%%end%%' => count($results->getResults())
       ]
-    ) . "</span> / <span class=\"search-link\"><a href=\"{$moreUrl}\">{$moreLabel}</a></span>"
+    ) . '</span>' . ($resultCnt > 10 ? " / <span class=\"search-link\"><a href=\"{$moreUrl}\">{$moreLabel}</a></span>" : '');
     ?>
   </div>
   <?php foreach ($results->getResults() as $current): ?>
