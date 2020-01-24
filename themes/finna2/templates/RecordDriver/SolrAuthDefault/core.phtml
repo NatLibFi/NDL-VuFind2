@@ -38,7 +38,7 @@
       <div class="truncate-field wide recordSummary">
         <p class="summary">
         <?php foreach ($summ as $field): ?>
-          <?=$this->escapeHtml($field)?><br/>
+          <?=$this->cleanHtml($field)?><br/>
         <?php endforeach; ?>
         </p>
       </div>
