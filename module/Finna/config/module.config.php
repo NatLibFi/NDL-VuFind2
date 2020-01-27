@@ -611,6 +611,7 @@ $config = [
                     'VuFind\Search\Favorites\Params' => 'Finna\Search\Favorites\Params',
                     'VuFind\Search\MixedList\Params' => 'Finna\Search\MixedList\Params',
                     'VuFind\Search\Solr\Params' => 'Finna\Search\Solr\Params',
+                    'Finna\Search\SolrAuth\Params' => 'VuFind\Search\SolrAuth\Params',
 
                     'Blender' => 'Finna\Search\Blender\Params',
                 ]
@@ -622,12 +623,14 @@ $config = [
                     'Finna\Search\Favorites\Results' => 'Finna\Search\Favorites\ResultsFactory',
                     'Finna\Search\Primo\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Solr\Results' => 'VuFind\Search\Solr\ResultsFactory',
+                    'Finna\Search\SolrAuth\Results' => 'VuFind\Search\Solr\ResultsFactory',
                 ],
                 'aliases' => [
                     'VuFind\Search\Combined\Results' => 'Finna\Search\Combined\Results',
                     'VuFind\Search\Favorites\Results' => 'Finna\Search\Favorites\Results',
                     'VuFind\Search\Primo\Results' => 'Finna\Search\Primo\Results',
                     'VuFind\Search\Solr\Results' => 'Finna\Search\Solr\Results',
+                    'VuFind\Search\SolrAuth\Results' => 'Finna\Search\SolrAuth\Results',
 
                     'Blender' => 'Finna\Search\Blender\Results',
                 ]

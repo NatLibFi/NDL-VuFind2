@@ -1,10 +1,10 @@
 <?php
 /**
- * Authority Controller
+ * Solr Authority aspect of the Search Multi-class (Results)
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2019-20.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,36 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
+ * @package  Search_Solr
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org Main Page
  */
-namespace Finna\Controller;
+namespace Finna\Search\SolrAuth;
 
 /**
- * Authority Record Controller
+ * Solr Authority Search Parameters
  *
  * @category VuFind
- * @package  Controller
+ * @package  Search_Solr
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org Main Page
  */
-class AuthorityController extends \VuFind\Controller\AuthorityController
+class Results extends \VuFind\Search\SolrAuth\Results
 {
-    use FinnaSearchControllerTrait;
-
-    /**
-     * Record action -- display a record
-     *
-     * @return \Zend\View\Model\ViewModel
-     */
-    public function recordAction()
-    {
-        return $this->redirect()->toRoute(
-            'authorityrecord',
-            ['id' => $this->params()->fromQuery('id')]
-        );
-    }
+    use \Finna\Search\Results\SearchResultsTrait;
 }

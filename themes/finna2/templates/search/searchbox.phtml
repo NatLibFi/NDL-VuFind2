@@ -105,7 +105,7 @@
             $html = '<span><i class="fa fa-arrow-alt-left"></i></span>';
             $html .= '<span class="back-to-search-text hidden-xs hidden-sm">' . $this->transEsc('Back to search results') . '</span>';
             $previousSearch = $this->searchMemory()->getLastSearchLink($html);
-            if ($previousSearch !== ''):
+            if ($previousSearch !== '' && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId):
           ?>
             <div class="back-to-search"><?=$previousSearch?></div>
           <?php endif; ?>

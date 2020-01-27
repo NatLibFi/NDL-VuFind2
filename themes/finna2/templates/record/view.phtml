@@ -39,7 +39,8 @@
       'map_zoom_in' => 'map_zoom_in',
       'map_zoom_out' => 'map_zoom_out'
   ]);
-  if ($lastUrl = $this->searchMemory()->getLastSearchUrl()) {
+
+  if ($lastUrl = $this->searchMemory()->getLastSearchUrl() && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId) {
       $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
       $filterList = $params->getFilterList(true);
 
