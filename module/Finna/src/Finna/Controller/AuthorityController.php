@@ -46,7 +46,7 @@ class AuthorityController extends \VuFind\Controller\AuthorityController
     public function recordAction()
     {
         return $this->redirect()->toRoute(
-            'authorityrecord-home',
+            'authorityrecord',
             ['id' => $this->params()->fromQuery('id')]
         );
     }
