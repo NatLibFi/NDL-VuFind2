@@ -55,3 +55,9 @@ Heading = "SolrAuth:Heading"
 [Views]
 list = List
 condensed = Condensed
+
+; This section defines how records are handled when being fetched from Solr.
+[Records]
+; Priority order (descending) for record sources (record ID prefixes separated
+; from the actual record by period, e.g. testsrc.12345)
+;sources = testsrc

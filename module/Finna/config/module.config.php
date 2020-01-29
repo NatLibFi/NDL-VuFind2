@@ -571,6 +571,7 @@ $config = [
                 'factories' => [
                     'Primo' => 'Finna\Search\Factory\PrimoBackendFactory',
                     'Solr' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
+                    'SolrAuth' => 'Finna\Search\Factory\SolrAuthBackendFactory',
                     'Blender' => 'Finna\Search\Factory\BlenderBackendFactory',
                 ],
             ],
