@@ -581,16 +581,19 @@ $config = [
                     'Finna\Search\Combined\Options' => 'VuFind\Search\OptionsFactory',
                     'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\OptionsFactory',
                     'Finna\Search\Primo\Options' => 'VuFind\Search\OptionsFactory',
+                    'Finna\Search\SolrAuth\Options' => 'VuFind\Search\OptionsFactory',
                 ],
                 'aliases' => [
                     'VuFind\Search\Combined\Options' => 'Finna\Search\Combined\Options',
                     'VuFind\Search\EDS\Options' => 'Finna\Search\EDS\Options',
                     'VuFind\Search\Primo\Options' => 'Finna\Search\Primo\Options',
+                    'VuFind\Search\SolrAuth\Options' => 'Finna\Search\SolrAuth\Options',
 
                     // Counterpart for EmptySet Params:
                     'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
                     'Finna\Search\MixedList\Options' => 'VuFind\Search\MixedList\Options',
                     'Blender' => 'Finna\Search\Blender\Options',
+                    'SolrAuth' => 'Finna\Search\SolrAuth\Options'
                 ]
             ],
             'search_params' => [
@@ -603,6 +606,7 @@ $config = [
                     'Finna\Search\Favorites\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\MixedList\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
+                    'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
                 ],
                 'aliases' => [
                     'VuFind\Search\Combined\Params' => 'Finna\Search\Combined\Params',
@@ -611,9 +615,11 @@ $config = [
                     'VuFind\Search\Favorites\Params' => 'Finna\Search\Favorites\Params',
                     'VuFind\Search\MixedList\Params' => 'Finna\Search\MixedList\Params',
                     'VuFind\Search\Solr\Params' => 'Finna\Search\Solr\Params',
-                    'Finna\Search\SolrAuth\Params' => 'VuFind\Search\SolrAuth\Params',
+
+                    'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
 
                     'Blender' => 'Finna\Search\Blender\Params',
+                    'SolrAuth' => 'Finna\Search\SolrAuth\Params'
                 ]
             ],
             'search_results' => [

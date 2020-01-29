@@ -494,12 +494,14 @@ Browse_Journal = "Solr:Title:title:title:format:1/Journal/eSerial/"
 ; 4. Search handlers
 ;   Search handlers for performing a search using the current search term and selected handler.
 ;
-;   handlers[] = "[handler]|[label]"
+;   handlers[] = "[handler]|[label]|[tab]"
 ;
 ;   Each handler consists of the following options delimited by '|':
 ;     - [handler] Handler
 ;     - [label]   Handler label translation key.
 ;                 Note: the key should not contain special characters (for example whitespace, punctuation, '-').
+;     - [tab]     Search tabs where the handler should be displayed, delimited by '&'.
+;                 If none specified, the handler is shown on all tabs.
 ;
 ;   Example:
 ;     handlers[] = "Title|autocomplete_handler_title"

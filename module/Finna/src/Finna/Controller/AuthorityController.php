@@ -36,9 +36,11 @@ namespace Finna\Controller;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class AuthorityController extends \VuFind\Controller\AuthorityController
+class AuthorityController extends \Finna\Controller\SearchController
 {
     use FinnaSearchControllerTrait;
+
+    protected $searchClassId = 'SolrAuth';
 
     /**
      * Record action -- display a record
@@ -51,5 +53,15 @@ class AuthorityController extends \VuFind\Controller\AuthorityController
             'authorityrecord',
             ['id' => $this->params()->fromQuery('id')]
         );
+    }
+
+    /**
+     * Search action -- call standard results action
+     *
+     * @return mixed
+     */
+    public function searchAction()
+    {
+        return $this->resultsAction();
     }
 }

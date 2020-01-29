@@ -1,6 +1,6 @@
 <?php
 /**
- * Solr Authority aspect of the Search Multi-class (Results)
+ * SolrAuth Search Parameters
  *
  * PHP version 7
  *
@@ -28,7 +28,7 @@
 namespace Finna\Search\SolrAuth;
 
 /**
- * Solr Authority Search Parameters
+ * SolrAuth Search Parameters
  *
  * @category VuFind
  * @package  Search_Solr
@@ -36,9 +36,6 @@ namespace Finna\Search\SolrAuth;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class Results extends \VuFind\Search\SolrAuth\Results
+class Params extends \Finna\Search\Solr\Params
 {
-    use \Finna\Search\Results\SearchResultsTrait;
-
-    protected $backendId = 'SolrAuth';
 }

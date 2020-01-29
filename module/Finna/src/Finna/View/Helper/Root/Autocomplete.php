@@ -131,7 +131,14 @@ class Autocomplete extends \Zend\View\Helper\AbstractHelper
                     }
                 }
                 // Discard handler if not supported by search backend
-                if ($options = $this->optionsPluginManager->get($searchTab)) {
+                //   Remove ':<tab_postfix> to map tab id's to their common
+                //   backend id so that we can retrieve search options.
+                //   For eaxample Solr:1 > Solr
+
+                $searchClassId = explode(':', $searchTab);
+                $searchClassId = reset($searchClassId);
+
+                if ($options = $this->optionsPluginManager->get($searchClassId)) {
                     $searchTabHandlers = $options->getBasicHandlers();
                     if (!in_array($handlerItem[0], array_keys($searchTabHandlers))) {
                         continue;
