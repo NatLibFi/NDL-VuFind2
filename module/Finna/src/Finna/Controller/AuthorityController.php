@@ -64,4 +64,24 @@ class AuthorityController extends \Finna\Controller\SearchController
     {
         return $this->resultsAction();
     }
+
+    /**
+     * Handle onDispatch event
+     *
+     * @param \Zend\Mvc\MvcEvent $e Event
+     *
+     * @return mixed
+     */
+    public function onDispatch(\Zend\Mvc\MvcEvent $e)
+    {
+        $config
+            = $this->serviceLocator->get(\VuFind\Config\PluginManager::class)
+                ->get('authority');
+
+        if (!($config->General->enabled ?? false)) {
+            throw new \Exception('Authority search is disabled');
+        }
+
+        return parent::onDispatch($e);
+    }
 }

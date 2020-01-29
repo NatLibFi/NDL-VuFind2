@@ -95,19 +95,31 @@ class AuthorityHelper
     protected $translator;
 
     /**
+     * Authority search config
+     *
+     * @var \Zend\Config\Config
+     */
+    protected $authoritySearchConfig;
+
+    /**
      * Constructor
      *
-     * @param \VuFind\Record\Loader              $recordLoader Record loader
-     * @param \VuFind\View\Helper\Root\Translate $translator   Translator view helper
+     * @param \VuFind\Record\Loader              $recordLoader          Record loader
+     * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
+     * @param \VuFind\View\Helper\Root\Translate $translator            Translator view helper
+     * @param \Zend\Config\Config                $authoritySearchConfig Authority
+     * search config
      */
     public function __construct(
         \VuFind\Record\Loader $recordLoader,
         \VuFind\Search\SearchRunner $searchRunner,
-        \VuFind\View\Helper\Root\Translate $translator
+        \VuFind\View\Helper\Root\Translate $translator,
+        \Zend\Config\Config $authoritySearchConfig
     ) {
         $this->recordLoader = $recordLoader;
         $this->searchRunner = $searchRunner;
         $this->translator = $translator;
+        $this->authoritySearchConfig = $authoritySearchConfig;
     }
 
     /**
@@ -325,6 +337,16 @@ class AuthorityHelper
         }
     }
     
+    /**
+     * Check if authority search is enabled.
+     *
+     * @return bool
+     */
+    public function isAuthoritySearchEnabled()
+    {
+        return $this->authoritySearchConfig->General->enabled ?? false;
+    }
+
     /**
      * Helper function for formatting author-role display text.
      *
