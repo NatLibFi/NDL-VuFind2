@@ -84,29 +84,19 @@ class Navibar extends \Zend\View\Helper\AbstractHelper
     protected $router;
 
     /**
-     * Authority helper
-     *
-     * @var AuthorityHelper
-     */
-    protected $authorityHelper;
-
-    /**
      * Constructor
      *
      * @param Zend\Config\Config              $config           Menu configuration
      * @param OrganisationInfo                $organisationInfo Organisation info
      * @param Zend\Router\Http\TreeRouteStack $router           Route helper
-     * @param AuthorityHelper                 $authorityHelper  Authority helper
      */
     public function __construct(\Zend\Config\Config $config,
         \Finna\OrganisationInfo\OrganisationInfo $organisationInfo,
-        \Zend\Router\Http\TreeRouteStack $router,
-        AuthorityHelper $authorityHelper
+        \Zend\Router\Http\TreeRouteStack $router
     ) {
         $this->config = $config;
         $this->organisationInfo = $organisationInfo;
         $this->router = $router;
-        $this->authorityHelper = $authorityHelper;
     }
 
     /**
@@ -377,7 +367,7 @@ class Navibar extends \Zend\View\Helper\AbstractHelper
             return $this->getViewHelper('organisationInfo')->isAvailable();
         }
         if ($url === 'authority-home') {
-            return $this->authorityHelper->isAuthoritySearchEnabled();
+            return $this->getViewHelper('authority')->isAvailable();
         }
         return true;
     }

@@ -244,6 +244,10 @@
           <?php if ($this->summon()->isAvailable() && ($browse || $this->searchClassId !== 'Summon')) : ?>
           <a href="<?=$this->url('summon-home');?>" class="btn btn-link btn-primo"><i class="fa fa-search"></i> <?=$this->transEsc("Summon Search")?></a>
           <?php endif; ?>
+
+          <?php if ($this->authority()->isAvailable() && ($browse || $this->searchClassId !== 'SolrAuth')) : ?>
+          <a href="<?=$this->url('authority-home');?>" class="btn btn-link btn-authority"><i class="fa fa-search"></i> <?=$this->transEsc("Authority Search")?></a>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
     <?php else: ?>
