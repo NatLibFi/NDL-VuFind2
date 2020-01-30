@@ -724,6 +724,30 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Return author birth and death info (dates and optionally place).
+     *
+     * @param bool $includePlace Include birth/death place?
+     *
+     * @return string HTML
+     */
+    public function getAuthorityBirthDeath($includePlace = true)
+    {
+        if (!$this->driver->isAuthorityRecord()) {
+            return null;
+        }
+        return $this->renderTemplate(
+            'birth_death.phtml',
+            ['birth' => $includePlace
+                 ? $this->driver->getBirthDateAndPlace()
+                 : $this->driver->getBirthDate(),
+             'death' => $includePlace
+                 ? $this->driver->getDeathDateAndPlace()
+                 : $this->driver->getDeathDate()
+            ]
+        );
+    }
+
+    /**
      * Return number of linked biblio records for an authority record.
      * Returns an array with keys 'author' and 'topic'
      * (number of biblio records where the authority is an author/topic)

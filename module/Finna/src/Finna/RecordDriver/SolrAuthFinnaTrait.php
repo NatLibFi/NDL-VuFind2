@@ -245,7 +245,7 @@ trait SolrAuthFinnaTrait
      *
      * @return boolean
      */
-    protected function isPerson()
+    public function isPerson()
     {
         return $this->fields['record_type'] === 'Personal Name';
     }

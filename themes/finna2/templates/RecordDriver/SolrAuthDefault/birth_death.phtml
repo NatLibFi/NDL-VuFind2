@@ -1,0 +1,9 @@
+<div class="date-info">
+    <?php if ($this->birth): ?>
+    <span class="birth"><?=$this->transEsc('authority_date_birth', ['%%date%%' => $this->birth])?></span>  
+    <?php endif ?>
+    <?php if ($this->death): ?>
+    <?= $this->birth ? ' - ' : ''?>
+    <span class="death"><?=$this->transEsc('authority_date_death', ['%%date%%' => $this->death])?></span>  
+    <?php endif ?>
+</div>  

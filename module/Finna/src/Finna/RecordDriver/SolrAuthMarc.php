@@ -108,7 +108,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Return birth date and place.
+     * Return birth date.
      *
      * @param boolean $force Return established date for corporations?
      *
@@ -116,7 +116,19 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
      */
     public function getBirthDate($force = false)
     {
-        $date = $this->fields['birth_date'] ?? '';
+        return $this->fields['birth_date'] ?? '';
+    }
+
+    /**
+     * Return birth date and place.
+     *
+     * @param boolean $force Return established date for corporations?
+     *
+     * @return string
+     */
+    public function getBirthDateAndPlace($force = false)
+    {
+        $date = $this->getBirthDate();
         $place = $this->fields['birth_place'] ?? '';
 
         if (empty($place)) {
@@ -126,7 +138,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Return death date and place.
+     * Return death date.
      *
      * @param boolean $force Return terminated date for corporations?
      *
@@ -134,7 +146,19 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
      */
     public function getDeathDate($force = false)
     {
-        $date = $this->fields['death_date'] ?? '';
+        return $this->fields['death_date'] ?? '';
+    }
+
+    /**
+     * Return birth date and place.
+     *
+     * @param boolean $force Return established date for corporations?
+     *
+     * @return string
+     */
+    public function getDeathDateAndPlace($force = false)
+    {
+        $date = $this->getDeathDate();
         $place = $this->fields['death_place'] ?? '';
 
         if (empty($place)) {
