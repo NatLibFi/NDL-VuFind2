@@ -172,6 +172,21 @@ $config = [
                     ]
                 ]
             ],
+            'solrauthrecord-feedback' => [
+                'type'    => 'Zend\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/AuthorityRecord/[:id]/Feedback',
+                    'constraints' => [
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => 'AuthorityRecord',
+                        'action'     => 'Feedback',
+                    ]
+                ]
+            ],
+
         ],
     ],
     'route_manager' => [
@@ -778,7 +793,6 @@ $config = [
 ];
 
 $recordRoutes = [
-    'authorityrecord' => 'AuthorityRecord',
     'solrauthrecord' => 'AuthorityRecord',
     'metalibrecord' => 'MetaLibRecord',
 ];
