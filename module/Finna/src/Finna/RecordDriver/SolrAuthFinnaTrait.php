@@ -228,6 +228,19 @@ trait SolrAuthFinnaTrait
     }
 
     /**
+     * Get organisation info ID (Kirjastohakemisto Finna ID).
+     *
+     * @return string
+     */
+    public function getOrganisationInfoId()
+    {
+        if ($institutions = $this->getInstitutions()) {
+            return $institutions[0];
+        }
+        return null;
+    }
+
+    /**
      * Is this a Person authority record?
      *
      * @return boolean

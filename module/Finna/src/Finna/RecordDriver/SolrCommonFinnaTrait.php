@@ -148,4 +148,15 @@ trait SolrCommonFinnaTrait
         }
         return $params;
     }
+
+    /**
+     * Get sector
+     *
+     * @return string
+     */
+    public function getSector()
+    {
+        $sector = (string)($this->fields['sector_str_mv'][0] ?? '');
+        return $sector;
+    }
 }
