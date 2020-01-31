@@ -8,7 +8,7 @@ $coreFields = $formatter->getDefaults('authority');
 ?>
 <div class="media-left">
   <h3 property="name" class="record-title"><?=$this->escapeHtml($record->getTitle())?></h3>
-  <div class="resultItemFormat"><?=$this->translate('authority_' . $formats[0])?></div>
+  <div class="resultItemFormat"><?=!$this->translationEmpty('authority_' . $formats[0]) ? translate('authority_' . $formats[0]) : $this->escapeHtml($formats[0]) ?></div>
   <?php if ($roles = $this->recommend->getRoles($record->getUniqueID())): ?>
     <ul class="roles truncate-field" data-rows="8">
     <?php foreach ($roles as $role): ?>
