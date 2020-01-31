@@ -386,6 +386,7 @@ finna.record = (function finnaRecord() {
     $(window).on('hashchange', applyRecordAccordionHash);
     loadSimilarRecords();
     initRecordVersions();
+    finna.authority.initAuthorityResultRecordCounts();
   }
 
   var my = {

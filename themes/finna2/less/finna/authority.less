@@ -13,6 +13,15 @@
 .result.condensed-list-view .condensed-collapse-toggle .condensed-body.authority {
   width: 100%;
 }
+.result {
+  .authority-record-info .authority-record-count-container {
+    display: flex;
+    align-items: baseline;
+    .author {
+      margin-right: 20px;
+    }
+  }
+}
 .result.condensed-list-view {
   .title-container {
     display: flex;
@@ -42,8 +51,10 @@ a.authority-link {
     margin-top: 10px;
     margin-bottom: 10px;
     > div {
-      display: flex;
-      align-items: baseline;
+      .info-row {
+        display: flex;
+        align-items: baseline;
+      }
       .text {
         font-weight: 700;
         min-width: 80px;

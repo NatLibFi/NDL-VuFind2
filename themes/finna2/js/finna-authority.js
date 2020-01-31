@@ -104,11 +104,54 @@ finna.authority = (function finnaAuthority() {
     });
   }
 
+  function initAuthorityResultRecordCounts(_holder) {
+    var holder = typeof _holder === 'undefined' ? $(document) : _holder;
+
+    holder.find('.authority-record-info').each(function checkVersions() {
+      $(this).one('inview', function onInView() {
+        var $elem = $(this);
+        if ($elem.hasClass('loaded')) {
+          return;
+        }
+        $elem.addClass('loaded');
+        $elem.addClass('loading');
+        $elem.removeClass('hidden');
+        $elem.append('<span class="js-load">' + VuFind.translate('loading') + '...</span>');
+        var $item = $(this).parents('.record-container');
+        if ($item.length === 0) {
+          return;
+        }
+        var id = $item.find('.hiddenId')[0].value;
+        $.getJSON(
+          VuFind.path + '/AJAX/JSON',
+          {
+            method: 'getRecordInfoByAuthority',
+            id: id,
+            context: 'search'
+          }
+        )
+          .done(function onGetAuthorityRecordCountDone(response) {
+            if (response.data.length > 0) {
+              $elem.html(response.data);
+            } else {
+              $elem.text('');
+            }
+            $elem.removeClass('loading');
+          })
+          .fail(function onGetAuthorityRecordCountFail() {
+            $elem.text(VuFind.translate('error_occurred'));
+            $elem.removeClass('loading');
+          });
+      });
+    });
+  }
+
   var my = {
     init: function init() {
       initInlineInfoLinks();
     },
-    initAuthorityRecommendTabs: initAuthorityRecommendTabs
+    initAuthorityRecommendTabs: initAuthorityRecommendTabs,
+    initAuthorityResultRecordCounts: initAuthorityResultRecordCounts
   };
 
   return my;
