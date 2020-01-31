@@ -85,6 +85,13 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
     protected $cookieManager = null;
 
     /**
+     * Config
+     *
+     * @var \Zend\Config\Config
+     */
+    protected $config = null;
+
+    /**
      * Constructor
      *
      * @param \VuFind\Search\Results\PluginManager $results         Results
@@ -97,12 +104,14 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
         \VuFind\Search\Results\PluginManager $results,
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
         \Zend\Session\Container $session,
-        \VuFind\Cookie\CookieManager $cookieManager
+        \VuFind\Cookie\CookieManager $cookieManager,
+        \Zend\Config\Config $config
     ) {
         $this->resultsManager = $results;
         $this->authorityHelper = $authorityHelper;
         $this->session = $session;
         $this->cookieManager = $cookieManager;
+        $this->config = $config;
     }
 
     /**
@@ -130,6 +139,16 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
         }
         ksort($sorted);
         return array_merge($sorted, $rest);
+    }
+
+    /**
+     * Get authority link type (authority page or search by authority-id)
+     *
+     * @return string
+     */
+    public function getAuthorityLinkType()
+    {
+        return $this->config->Authority->authority_links ?? 'author-id';
     }
 
     /**

@@ -42,4 +42,29 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
 {
     use SolrCommonFinnaTrait;
     use SolrAuthFinnaTrait;
+
+
+    /**
+     * Return birth date and place.
+     *
+     * @param boolean $force Return established date for corporations?
+     *
+     * @return string
+     */
+    public function getBirthDateAndPlace($force = false)
+    {
+        return $this->getBirthDate($force);
+    }
+
+    /**
+     * Return death date and place.
+     *
+     * @param boolean $force Return established date for corporations?
+     *
+     * @return string
+     */
+    public function getDeathDateAndPlace($force = false)
+    {
+        return $this->getDeathDate($force);
+    }
 }
