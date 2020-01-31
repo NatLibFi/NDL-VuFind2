@@ -38,4 +38,27 @@ namespace Finna\Search\SolrAuth;
  */
 class Params extends \Finna\Search\Solr\Params
 {
+    /**
+     * Config sections to search for facet labels if no override configuration
+     * is set.
+     *
+     * @var array
+     */
+    protected $defaultFacetLabelSections = ['Facets'];
+
+
+    /**
+     * Format display text for a author-id filter entry.
+     *
+     * @param array  $filter Filter
+     * @param string $field  Filter field
+     * @param string $value  Filter value
+     *
+     * @return array
+     */
+    protected function formatAuthorIdFilterListEntry($filter, $field, $value)
+    {
+        // Author id filters are used only in biblio searches.
+        return $filter;
+    }
 }
