@@ -758,10 +758,10 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $id = $this->driver->getUniqueID();
         $authorCnt = $this->authorityHelper->getRecordsByAuthor(
-            $id, ['author2_id_str_mv'], true
+            $id, 'author2_id_str_mv', true
         );
         $topicCnt = $this->authorityHelper->getRecordsByAuthor(
-            $id, ['topic_id_str_mv'], true
+            $id, 'topic_id_str_mv', true
         );
         return ['author' => $authorCnt, 'topic' => $topicCnt];
     }

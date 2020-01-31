@@ -291,17 +291,16 @@ class AuthorityHelper
      * Return biblio records that are linked to author.
      *
      * @param string $id        Authority id
-     * @param array  $fields    Solr fields to search by (author, topic)
+     * @param string $field     Solr field to search by (author, topic)
      * @param bool   $onlyCount Return only record count
      * (does not fetch record data from index)
      *
      * @return \VuFind\Search\Results|int
      */
     public function getRecordsByAuthor(
-        $id, $fields = ['author2_id_str_mv', 'author_corporate_id_str_mv'],
-        $onlyCount = false
+        $id, $field = 'author2_id_str_mv', $onlyCount = false
     ) {
-        $query = $this->getRecordsByAuthorQuery($id, $fields);
+        $query = $this->getRecordsByAuthorQuery($id, $field);
         $results = $this->searchRunner->run(
             ['lookfor' => $query, 'fl' => 'id'],
             'Solr',
@@ -316,25 +315,14 @@ class AuthorityHelper
     /**
      * Return query for fetching biblio records by authority id.
      *
-     * @param string $id     Authority id
-     * @param array  $fields Solr fields to search by (author, topic)
+     * @param string $id    Authority id
+     * @param string $field Solr field to search by (author, topic)
      *
      * @return \VuFind\Search\Results
      */
-    public function getRecordsByAuthorQuery($id, $fields)
+    public function getRecordsByAuthorQuery($id, $field)
     {
-        if (count($fields) === 1) {
-            return $fields[0] . ":\"$id\"";
-        } else {
-            return implode(
-                ' OR ', array_map(
-                    function ($field) use ($id) {
-                        return "(${field}:\"$id\")";
-                    },
-                    $fields
-                )
-            );
-        }
+        return "$field:\"$id\"";
     }
     
     /**

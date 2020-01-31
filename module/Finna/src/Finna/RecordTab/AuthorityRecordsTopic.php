@@ -46,9 +46,9 @@ class AuthorityRecordsTopic extends AuthorityRecordsBase
     protected $label = 'topic';
 
     /**
-     * Index fields that are used when listing records.
+     * Index field that is used when listing records.
      *
-     * @var array
+     * @var string
      */
-    protected $relation = ['topic_id_str_mv'];
+    protected $relation = 'topic_id_str_mv';
 }

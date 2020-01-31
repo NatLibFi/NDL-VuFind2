@@ -124,7 +124,7 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
              return $this->records;
         }
         $this->records = $this->authorityHelper->getRecordsByAuthor(
-            $this->driver->getUniqueID(), $this->relation
+            $this->driver->getUniqueID(), $this->getRelation()
         );
         return $this->records;
     }
@@ -155,7 +155,17 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     public function getSearchQuery()
     {
         return $this->authorityHelper->getRecordsByAuthorQuery(
-            $this->driver->getUniqueID(), $this->relation
+            $this->driver->getUniqueID(), $this->getRelation()
         );
+    }
+
+    /**
+     * Return index fields that is used when listing records.
+     *
+     * @return string
+     */
+    protected function getRelation()
+    {
+        return $this->relation;
     }
 }
