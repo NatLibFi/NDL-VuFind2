@@ -26,35 +26,35 @@
     if ($showLibraryTabs && !$ilsOffline) {
       $menuListItems = [
         'checkedout' => [
-          'url' => $this->url('myresearch-checkedout'),
-          'translation' => $this->transEsc('Checked Out Items')
+          'url' => 'myresearch-checkedout',
+          'translation' => 'Checked Out Items'
         ],
         'historicloans' => [
-          'url' => $this->url('myresearch-historicloans'),
-          'translation' => $this->transEsc('Loan History'),
+          'url' => 'myresearch-historicloans',
+          'translation' => 'Loan History',
           'show' => $this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)
         ],
         'holds' => [
-          'url' => $this->url('myresearch-holds'),
-          'translation' => $this->transEsc('Holds and Recalls')
+          'url' => 'myresearch-holds',
+          'translation' => 'Holds and Recalls'
         ],
         'storageretrievalrequests' => [
-          'url' => $this->url('myresearch-storageretrievalrequests'),
-          'translation' => $this->transEsc('Storage Retrieval Requests'),
+          'url' => 'myresearch-storageretrievalrequests',
+          'translation' => 'Storage Retrieval Requests',
           'show' => $this->ils()->checkFunction('storageRetrievalRequests', $capabilityParams)
         ],
         'illrequests' => [
-          'url' => $this->url('myresearch-illrequests'),
-          'translation' => $this->transEsc('Interlibrary Loan Requests'),
+          'url' => 'myresearch-illrequests',
+          'translation' => 'Interlibrary Loan Requests',
           'show' => $this->ils()->checkFunction('ILLRequests', $capabilityParams)
         ],
         'fines' => [
-          'url' => $this->url('myresearch-fines'),
-          'translation' => $this->transEsc('Fines')
+          'url' => 'myresearch-fines',
+          'translation' => 'Fines'
         ],
         'librarycards' => [
-          'url' => $this->url('librarycards-home'),
-          'translation' => $this->transEsc('Library Cards'),
+          'url' => 'librarycards-home',
+          'translation' => 'Library Cards',
           'show' => $user && $user->libraryCardsEnabled()
         ]
       ];
@@ -62,22 +62,23 @@
 
     $nonLibraryItems = [
       'profile' => [
-        'url' => $this->url('myresearch-profile'),
-        'translation' => $this->transEsc('Profile'),
+        'url' => 'myresearch-profile',
+        'translation' => 'Profile',
         'show' => !$ilsOffline && $this->ils()->checkCapability('getMyProfile')
       ],
       'history' => [
-        'url' => $this->url('search-history') . "?require_login",
-        'translation' => $this->transEsc('history_saved_searches')
+        'url' => 'search-history',
+        'query' => '?require_login',
+        'translation' => 'history_saved_searches'
       ],
       'favorites' => [
-        'url' => $this->url('myresearch-favorites'),
-        'translation' => $this->transEsc('Favorites'),
+        'url' => 'myresearch-favorites',
+        'translation' => 'Favorites',
         'show' => $this->userlist()->getMode() !== 'disabled'
       ],
       'logout' => [
-        'url' => $this->url('myresearch-logout'),
-        'translation' => $this->transEsc('Log Out'),
+        'url' => 'myresearch-logout',
+        'translation' => 'Log Out',
         'iconClass' => 'pull-right fa fa-sign-out fa-lg',
         'desktopOnly' => true
       ]
@@ -87,8 +88,8 @@
     $desktopList = [
       'open-loans' => [
         'active' => in_array($activeToLower, ['checkedout', 'historicloans', 'holds', 'storageretrievalrequests', 'illrequests']),
-        'url' => $this->url('myresearch-checkedout'),
-        'translation' => $this->transEsc('Checked Out Header'),
+        'url' => 'myresearch-checkedout',
+        'translation' => 'checked_out_menu_heading',
         'dropdown' => true,
         'ulId' => 'myLoans',
         'show' => !$ilsOffline && $showLibraryTabs,
@@ -106,8 +107,8 @@
       'history',
       'open-list' => [
         'active' => $listOpen,
-        'url' => $this->url('myresearch-favorites'),
-        'translation' => $this->transEsc('Favorites'),
+        'url' => 'myresearch-favorites',
+        'translation' => 'Favorites',
         'show' => $this->userlist()->getMode() !== 'disabled',
         'partial' => [
           'url' => 'myresearch/mylist-navi.phtml',
@@ -119,14 +120,14 @@
     ];
 
     $headerKey = substr($activeToLower, 0, 4) === 'list' ? 'favorites' : $activeToLower;
-    $activeMobileTab = $menuListItems[$headerKey]['translation'] ?? $this->transEsc('Your Account');
+    $activeMobileTab = $menuListItems[$headerKey]['translation'] ?? 'Your Account';
 ?>
 
 <div class="mobile-main-tabs visible-xs visible-sm">
   <div class="dropdown useraccount-nav-mobile" role="menu">
     <div class="dropdown-toggle" data-toggle="dropdown">
       <div class="tab-title">
-        <?=$activeMobileTab?>
+        <?=$this->transEsc($activeMobileTab)?>
       </div>
       <div class="more"><?= $this->transEsc('Your Account') ?><b class="caret"></b></div>
     </div>
@@ -135,8 +136,8 @@
         <?php if (isset($listItem['desktopOnly']) && $listItem['desktopOnly']) { continue; } ?>
         <?php if (!isset($listItem['show']) || $listItem['show'] !== false): ?>
           <li role="menuitem" class="<?=$id?><?= $activeToLower === $id ? ' active' : ''?>">
-            <a href="<?=$listItem['url']?>" class="list-group-item" <?=$activeToLower === $id ? 'aria-current="page"' : ''?>>
-            <?=$listItem['translation']?>
+            <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $id ? 'aria-current="page"' : ''?>>
+            <?=$this->transEsc($listItem['translation'])?>
             </a>
           </li>
         <?php endif; ?>
@@ -168,8 +169,8 @@
   ?>
     <?php if ($hasChildren || $hasPartial): ?>
       <li role="menuitem" class="dropdown <?= $listItem['active'] ? ' active' : ''?>">
-        <a href="<?=$listItem['url']?>" id="<?=$id?>" class="hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" >
-          <?=$listItem['translation']?>
+        <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" id="<?=$id?>" class="hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" >
+          <?=$this->transEsc($listItem['translation'])?>
           <?php if ($showSpinner) : ?>
             <i class="hidden fa fa-spinner fa-spin"></i><span class="ajax-error hidden"><small> <?=$this->translate('An error has occurred'); ?></small></span>
           <?php endif; ?>
@@ -189,8 +190,8 @@
                 if (isset($childItem['show']) && !$childItem['show']) { continue; }
               ?>
                 <li role="menuitem" class="<?="menu-$name"?>  <?=$activeToLower === $childKey ? ' active' : ''?>">
-                  <a href="<?=$childItem['url']?>" class="list-group-item" <?=$activeToLower === $childKey ? 'aria-current="page"' : ''?>>
-                    <?=$childItem['translation']?>
+                  <a href="<?=$this->escapeHtmlAttr($this->url($childItem['url']) . ($childItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $childKey ? 'aria-current="page"' : ''?>>
+                    <?=$this->transEsc($childItem['translation'])?>
                   </a>
                 </li>
             <?php endforeach; ?>
@@ -199,8 +200,8 @@
       </li>
     <?php else: ?>
       <li role="menuitem" class="hidden-xs hidden-sm <?="menu-$name"?> <?=$activeToLower === $name ? ' active' : ''?>">
-        <a href="<?=$listItem['url']?>" class="list-group-item" <?=$activeToLower === $name ? 'aria-current="page"' : ''?>>
-          <?=$listItem['translation']?>
+        <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="list-group-item" <?=$activeToLower === $name ? 'aria-current="page"' : ''?>>
+          <?=$this->transEsc($listItem['translation'])?>
           <?php if (isset($listItem['iconClass'])): ?>
             <i class="<?=$listItem['iconClass']?>" aria-hidden="true"></i>
           <?php endif; ?>
