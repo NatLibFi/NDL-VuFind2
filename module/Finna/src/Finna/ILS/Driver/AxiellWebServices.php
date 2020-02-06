@@ -1319,20 +1319,26 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $serviceSendMethod
-            = $this->config['updateMessagingSettings']['method'] ?? 'email';
+            = $this->config['updateMessagingSettings']['method'] ?? 'none';
         $infoServices = $info->messageServices->messageService ?? [];
 
-        if ($serviceSendMethod !== 'email') {
+        switch ($serviceSendMethod) {
+        case 'email':
+            $userCached['messagingServices']
+                = $this->parseEmailMessagingSettings(
+                    $info->messageServices->messageService ?? []
+                );
+            break;
+        case 'driver':
             $userCached['messagingServices']
                 = $this->parseDriverMessagingSettings(
                     $info->messageServices->messageService ?? [],
                     $user
                 );
-        } else {
-            $userCached['messagingServices']
-                = $this->parseEmailMessagingSettings(
-                    $info->messageServices->messageService ?? []
-                );
+            break;
+        default:
+            $userCached['messagingServices'] = [];
+            break;
         }
 
         $this->putCachedData($cacheKey, $userCached);
