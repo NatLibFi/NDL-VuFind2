@@ -662,7 +662,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
                 $recipient = $updateConfig['emailAddress'];
 
-                $this->sendChangeRequestEmail(
+                $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, $fields, $recipient,
                     'Yhteystietojen muutospyyntö', 'change-address'
                 );
@@ -728,11 +728,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $this->flashMessenger()->addErrorMessage($result['status']);
                 }
             } else {
-                if (!isset($config['emailAddress'])) {
-                    throw new \Exception(
-                        'Missing emailAddress in ILS updateMessagingSettings'
-                    );
-                }
+                /**
+                 * Will change to admininterface, no more emails with user informations
+                 * How do we know which institution is being called, and the url to be sent in feedback request  
+                 */
                 $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $data['pickUpNotice'] = $this->translate(
                     'messaging_settings_method_' . $data['pickUpNotice'],
@@ -759,7 +758,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
                 $recipient = $config['emailAddress'];
 
-                $this->sendChangeRequestEmail(
+                $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, [], $recipient,
                     'Viestiasetusten muutospyyntö', 'change-messaging-settings'
                 );
@@ -1284,6 +1283,113 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
         return $success;
+    }
+
+    /**
+     * Save a feedback to database for library to change messaging settings
+     *
+     * @param array  $patron    Patron
+     * @param array  $profile   Patron profile
+     * @param array  $data      Change data
+     * @param array  $fields    Form fields for address change request
+     * @param string $recipient Email recipient
+     * @param string $subject   Email subject
+     * @param string $template  Email template
+     *
+     * @return void
+     */
+    protected function saveChangeRequestFeedback($patron, $profile, $data,
+        $fields, $recipient, $subject, $template
+    ) {
+        list($library, $username) = explode('.', $patron['cat_username']);
+        
+        //Feedback url must be pointed to certain library instead of view -->
+        $url = "$library.finna.fi/";
+        $name = trim(
+            ($patron['firstname'] ?? '')
+            . ' '
+            . ($patron['lastname'] ?? '')
+        );
+        $user = $this->getUser();
+        $email = $patron['email'] ?? (empty($user['email']) ? $user['email'] : '');
+        $userId = $user->id;
+        $homeLibrary = $user->home_library ?? '';
+        $formId = $subject;
+
+        $userData = [
+            'Kirjasto' => $library,
+            'Käyttäjätunnus' => $username,
+            'Nimi' => $name,
+            'Sähköposti' => $email
+        ];
+
+        $message = [];
+        $oldMessage = [];
+        $messageString = '';
+
+        if (!empty($fields)) {
+            foreach ($fields as $field => $fieldData) {
+                $key = $this->translate($fieldData['label']);
+                $value = $data[$field] ?? '';
+                $message[$key] = $value;
+
+                if (isset($profile[$field])) {
+                    $oldMessage[$key] = $profile[$field];
+                }
+            }
+        } else {
+            foreach ($data as $type => $sendMethod) {
+                if (strtolower($type) !== 'messaging_update_request') {
+                    $key = $this->translate("messaging_settings_type_$type");
+                    $message[$key] = $sendMethod; 
+                }
+            }
+        }
+
+        $mergedArrays = array_merge($userData, array_merge($message, $oldMessage));
+        $messageJson = json_encode($mergedArrays);
+
+        $messageString = $this->getMessageString($userData, $message, $oldMessage);
+        $feedback = $this->getTable('feedback');
+        $feedback->saveFeedback(
+            $url, $formId, $userId, $messageString, $messageJson
+        );
+    }
+
+    /**
+     * Function to get message strig from arrays
+     * 
+     * @param array $userData   containing personal information
+     * @param array $message    containing data about new values
+     * @param array $oldMessage containing data about old values
+     * 
+     * @return string
+     */
+    protected function getMessageString($userData, $message, $oldMessage = [])
+    {
+        $messageString = '';
+        $messageString .= 'Käyttäjätiedot:' . PHP_EOL
+            . '--------------' . PHP_EOL;
+        foreach ($userData as $key => $value) {
+            $messageString .= $key . ': ' . $value . PHP_EOL;
+        }
+
+        $messageString .= PHP_EOL;
+        $messageString .= 'Uudet tiedot:' . PHP_EOL
+            . '--------------' . PHP_EOL;
+        foreach ($message as $key => $value) {
+            $messageString .= $key . ': ' . $value . PHP_EOL;
+        }
+        $messageString .= PHP_EOL;
+        if (!empty($oldMessage)) {
+            $messageString .= 'Vanhat tiedot:' . PHP_EOL 
+            . '--------------' . PHP_EOL;
+            foreach ($oldMessage as $key => $value) {
+                $messageString .= $key . ': ' . $value . PHP_EOL;
+            }
+        }
+
+        return $messageString;
     }
 
     /**
