@@ -730,7 +730,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             } else {
                 /**
                  * Will change to admininterface, no more emails with user informations
-                 * How do we know which institution is being called, and the url to be sent in feedback request  
+                 * How do we know which institution is being called, and the url to be sent in feedback request
                  */
                 $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $data['pickUpNotice'] = $this->translate(
@@ -1302,7 +1302,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $fields, $recipient, $subject, $template
     ) {
         list($library, $username) = explode('.', $patron['cat_username']);
-        
+
         // Feedback url must be pointed to certain library subdomain
         $url = "$library.finna.fi/";
         $name = trim(
@@ -1341,7 +1341,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             foreach ($data as $type => $sendMethod) {
                 if (strtolower($type) !== 'messaging_update_request') {
                     $key = $this->translate("messaging_settings_type_$type");
-                    $message[$key] = $sendMethod; 
+                    $message[$key] = $sendMethod;
                 }
             }
         }
@@ -1358,11 +1358,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
     /**
      * Function to get message strig from arrays
-     * 
+     *
      * @param array $userData   containing personal information
      * @param array $message    containing data about new values
      * @param array $oldMessage containing data about old values
-     * 
+     *
      * @return string
      */
     protected function getMessageString($userData, $message, $oldMessage = [])
@@ -1382,7 +1382,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
         $messageString .= PHP_EOL;
         if (!empty($oldMessage)) {
-            $messageString .= 'Old information:' . PHP_EOL 
+            $messageString .= 'Old information:' . PHP_EOL
             . '--------------' . PHP_EOL;
             foreach ($oldMessage as $key => $value) {
                 $messageString .= $key . ': ' . $value . PHP_EOL;
