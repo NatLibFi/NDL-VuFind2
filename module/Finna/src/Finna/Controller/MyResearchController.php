@@ -1303,7 +1303,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     ) {
         list($library, $username) = explode('.', $patron['cat_username']);
         
-        //Feedback url must be pointed to certain library instead of view -->
+        //Feedback url must be pointed to certain library so its
+        //Properly displayed in admininterface
         $url = "$library.finna.fi/";
         $name = trim(
             ($patron['firstname'] ?? '')
@@ -1317,10 +1318,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $formId = $subject;
 
         $userData = [
-            'Kirjasto' => $library,
-            'Käyttäjätunnus' => $username,
-            'Nimi' => $name,
-            'Sähköposti' => $email
+            'Library' => $library,
+            'Username' => $username,
+            'Name' => $name,
+            'Email' => $email
         ];
 
         $message = [];
@@ -1368,21 +1369,21 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     protected function getMessageString($userData, $message, $oldMessage = [])
     {
         $messageString = '';
-        $messageString .= 'Käyttäjätiedot:' . PHP_EOL
+        $messageString .= 'User information:' . PHP_EOL
             . '--------------' . PHP_EOL;
         foreach ($userData as $key => $value) {
             $messageString .= $key . ': ' . $value . PHP_EOL;
         }
 
         $messageString .= PHP_EOL;
-        $messageString .= 'Uudet tiedot:' . PHP_EOL
+        $messageString .= 'New information:' . PHP_EOL
             . '--------------' . PHP_EOL;
         foreach ($message as $key => $value) {
             $messageString .= $key . ': ' . $value . PHP_EOL;
         }
         $messageString .= PHP_EOL;
         if (!empty($oldMessage)) {
-            $messageString .= 'Vanhat tiedot:' . PHP_EOL 
+            $messageString .= 'Old information:' . PHP_EOL 
             . '--------------' . PHP_EOL;
             foreach ($oldMessage as $key => $value) {
                 $messageString .= $key . ': ' . $value . PHP_EOL;
