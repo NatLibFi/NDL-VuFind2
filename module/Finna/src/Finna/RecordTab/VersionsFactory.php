@@ -1,10 +1,10 @@
 <?php
 /**
- * Factory for KohaRest ILS driver.
+ * Factory for Versions tab.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2018.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,25 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  ILS_Drivers
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  RecordTabs
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\ILS\Driver;
+namespace Finna\RecordTab;
 
 use Interop\Container\ContainerInterface;
+use VuFind\Config\PluginManager as ConfigManager;
 
 /**
- * Factory for KohaRest ILS driver.
+ * Factory for Versions tab.
  *
  * @category VuFind
- * @package  ILS_Drivers
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  RecordTabs
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class KohaRestFactory extends \VuFind\ILS\Driver\DriverWithDateConverterFactory
+class VersionsFactory implements \Zend\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object
@@ -53,6 +54,8 @@ class KohaRestFactory extends \VuFind\ILS\Driver\DriverWithDateConverterFactory
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
      * @throws ContainerException if any other error occurs
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
@@ -60,10 +63,7 @@ class KohaRestFactory extends \VuFind\ILS\Driver\DriverWithDateConverterFactory
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $sessionFactory = function ($namespace) use ($container) {
-            $manager = $container->get(\Zend\Session\SessionManager::class);
-            return new \Zend\Session\Container("KohaRest_$namespace", $manager);
-        };
-        return parent::__invoke($container, $requestedName, [$sessionFactory]);
+        $config = $container->get(ConfigManager::class)->get('config');
+        return new $requestedName($config);
     }
 }

@@ -65,6 +65,14 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     protected $sortItemsByEnumChron = true;
 
     /**
+     * Process types hidden from holdings. The array is keyed by physical material
+     * type, or '*' to match all types.
+     *
+     * @var array
+     */
+    protected $hiddenProcessTypes = [];
+
+    /**
      * Initialize the driver.
      *
      * Validate configuration and perform all resource-intensive tasks needed to
@@ -91,6 +99,14 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         $this->sortItemsByEnumChron
             = $this->config['Holdings']['sortByEnumChron'] ?? true;
+
+        if (!empty($this->config['Holdings']['hiddenProcessTypes'])) {
+            foreach ($this->config['Holdings']['hiddenProcessTypes']
+                as $key => $value
+            ) {
+                $this->hiddenProcessTypes[$key] = explode(':', $value);
+            }
+        }
     }
 
     /**
@@ -130,6 +146,118 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             ];
         }
         return $fineList;
+    }
+
+    /**
+     * Get transactions of the current patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
+     *
+     * @return array Transaction information as array.
+     *
+     * @author Michael Birkner
+     */
+    public function getMyTransactions($patron, $params = [])
+    {
+        // Defining the return value
+        $returnArray = [];
+
+        // Get the patron id
+        $patronId = $patron['id'];
+
+        // Create a timestamp for calculating the due / overdue status
+        $nowTS = time();
+
+        $sort = explode(
+            ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
+        );
+        if ($sort[0] == 'checkout') {
+            $sortKey = 'loan_date';
+        } elseif ($sort[0] == 'title') {
+            $sortKey = 'title';
+        } else {
+            $sortKey = 'due_date';
+        }
+        $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'DESC' : 'ASC';
+
+        $pageSize = $params['limit'] ?? 50;
+        $params = [
+            'limit' => $pageSize,
+            'offset' => isset($params['page'])
+                ? ($params['page'] - 1) * $pageSize : 0,
+            'order_by' => $sortKey,
+            'direction' => $direction,
+            'expand' => 'renewable'
+        ];
+
+        // Get user loans from Alma API
+        $apiResult = $this->makeRequest(
+            '/users/' . $patronId . '/loans',
+            $params
+        );
+
+        // If there is an API result, process it
+        $totalCount = 0;
+        if ($apiResult) {
+            $totalCount = $apiResult->attributes()->total_record_count;
+            // Iterate over all item loans
+            foreach ($apiResult->item_loan as $itemLoan) {
+                $loan['duedate'] = $this->parseDate(
+                    (string)$itemLoan->due_date,
+                    true
+                );
+                //$loan['dueTime'] = ;
+                $loan['checkoutDate'] = $this->parseDate(
+                    (string)$itemLoan->loan_date,
+                    false
+                );
+                $loan['dueStatus'] = null; // Calculated below
+                $loan['id'] = (string)$itemLoan->mms_id;
+                //$loan['source'] = 'Solr';
+                $loan['barcode'] = (string)$itemLoan->item_barcode;
+                //$loan['renew'] = ;
+                //$loan['renewLimit'] = ;
+                //$loan['request'] = ;
+                //$loan['volume'] = ;
+                $loan['publication_year'] = (string)$itemLoan->publication_year;
+                $loan['renewable']
+                    = (strtolower((string)$itemLoan->renewable) == 'true')
+                    ? true
+                    : false;
+                //$loan['message'] = ;
+                $loan['title'] = (string)$itemLoan->title;
+                $loan['item_id'] = (string)$itemLoan->loan_id;
+                $loan['institution_name']
+                    = $this->getTranslatableString($itemLoan->library);
+                //$loan['isbn'] = ;
+                //$loan['issn'] = ;
+                //$loan['oclc'] = ;
+                //$loan['upc'] = ;
+                /*
+                Apparently this is not useful for us
+                $loan['borrowingLocation']
+                    = $this->getTranslatableString($itemLoan->circ_desk);
+                */
+
+                // Calculate due status
+                $dueDateTS = strtotime($loan['duedate']);
+                if ($nowTS > $dueDateTS) {
+                    // Loan is overdue
+                    $loan['dueStatus'] = 'overdue';
+                } elseif (($dueDateTS - $nowTS) < 86400) {
+                    // Due date within one day
+                    $loan['dueStatus'] = 'due';
+                }
+
+                $returnArray[] = $loan;
+            }
+        }
+
+        return [
+            'count' => $totalCount,
+            'records' => $returnArray
+        ];
     }
 
     /**
@@ -924,6 +1052,27 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     = explode(':', $config['titleHoldBibLevels']);
             }
             if (!empty($params['id']) && !empty($params['patron']['id'])) {
+                // Check if we require the part_issue (description) field
+                $requestOptionsPath = '/bibs/' . urlencode($params['id'])
+                    . '/request-options?user_id='
+                    . urlencode($params['patron']['id']);
+                // Make the API request
+                $requestOptions = $this->makeRequest($requestOptionsPath);
+                // Check possible request types from the API answer
+                $requestTypes = $requestOptions->xpath(
+                    '/request_options/request_option//type'
+                );
+                $types = [];
+                foreach ($requestTypes as $requestType) {
+                    $types[] = (string)$requestType;
+                }
+                if ($types === ['PURCHASE']) {
+                    $config['extraHoldFields']
+                        = empty($config['extraHoldFields'])
+                            ? 'part_issue'
+                            : $config['extraHoldFields'] . ':part_issue';
+                }
+
                 // Add a flag so that checkRequestIsValid knows to check valid pickup
                 // locations
                 $config['HMACKeys']
@@ -1144,6 +1293,74 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
+     * Get Patron Holds
+     *
+     * This is responsible for retrieving all holds by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @return mixed        Array of the patron's holds on success.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getMyHolds($patron)
+    {
+        $holdList = [];
+        $offset = 0;
+        $totalCount = 1;
+        while ($offset < $totalCount) {
+            $xml = $this->makeRequest(
+                '/users/' . $patron['id'] . '/requests',
+                ['request_type' => 'HOLD', 'offset' => $offset, 'limit' => 100]
+            );
+            $offset += 100;
+            $totalCount = (int)$xml->attributes()->{'total_record_count'};
+            foreach ($xml as $request) {
+                $lastInterestDate = $request->last_interest_date
+                    ? $this->dateConverter->convertToDisplayDate(
+                        'Y-m-dT',
+                        (string)$request->last_interest_date
+                    ) : null;
+                $available = (string)$request->request_status === 'On Hold Shelf';
+                $lastPickupDate = null;
+                if ($available) {
+                    $lastPickupDate = $request->expiry_date
+                        ? $this->dateConverter->convertToDisplayDate(
+                            'Y-m-dT',
+                            (string)$request->expiry_date
+                        ) : null;
+                    $lastInterestDate = null;
+                }
+                $hold = [
+                    'create' => $this->dateConverter->convertToDisplayDate(
+                        'Y-m-dT',
+                        (string)$request->request_date
+                    ),
+                    'expire' => $lastInterestDate,
+                    'id' => (string)$request->request_id,
+                    'available' => $available,
+                    'last_pickup_date' => $lastPickupDate,
+                    'item_id' => (string)$request->mms_id,
+                    'location' => (string)$request->pickup_location,
+                    'processed' => $request->item_policy === 'InterlibraryLoan'
+                        && (string)$request->request_status !== 'Not Started',
+                    'title' => (string)$request->title,
+                ];
+                if (!$available) {
+                    if ('In Process' === (string)$request->request_status) {
+                        $hold['position'] = $this->translate('status_In Process');
+                    } else {
+                        $hold['position'] = (int)($request->place_in_queue ?? 1);
+                    }
+                }
+
+                $holdList[] = $hold;
+            }
+        }
+        return $holdList;
+    }
+
+    /**
      * Check if request is valid
      *
      * This is responsible for determining if an item is requestable
@@ -1175,7 +1392,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $requestOptions = $this->makeRequest($requestOptionsPath);
         } elseif ('title' === $level) {
             $hmac = explode(':', $this->config['Holds']['HMACKeys'] ?? '');
-            if (!in_array('level', $hmac) || !in_array('description', $hmac)) {
+            if (!in_array('level', $hmac)) {
                 return false;
             }
             // Call the request-options API for the logged-in user
@@ -1262,12 +1479,23 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         // Check if we have a title level request or an item level request
         if ($level === 'title') {
-            // Add description if we have one for title level requests as Alma
-            // needs it under certain circumstances. See: https://developers.
-            // exlibrisgroup.com/alma/apis/xsd/rest_user_request.xsd?tags=POST
-            $description = isset($holdDetails['description']) ?? null;
-            if ($description) {
-                $body['description'] = $description;
+            $partIssue = $holdDetails['part_issue'] ?? null;
+            if ($partIssue) {
+                // Alma doesn't have a way of placing an "other item" request via the
+                // API (it would need to fill the manual_description field). And this
+                // one will require a description. Take one, whichever, and add the
+                // part or issue description in the comment field.
+                $items = $this->makeRequest(
+                    '/bibs/' . urlencode($mmsId) . '/holdings/ALL/items?limit=1'
+                );
+                $item = $items->item;
+                if ($item->item_data->description) {
+                    $body['description'] = (string)$item->item_data->description;
+                }
+                $body['comment'] = "Part or issue: $partIssue";
+                if ($comment) {
+                    $body['comment'] .= " -- Comment: $comment";
+                }
             }
 
             // Create HTTP client with Alma API URL for title level requests
@@ -1340,7 +1568,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         if ('Missing mandatory field: Description.' === $errorMsg) {
             $errorMsg = $this->translate('This field is required') . ': '
-                . $this->translate('hold_issue');
+                . $this->translate('hold_part_issue');
         }
 
         return [
@@ -1424,6 +1652,13 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $results['total'] = (int)$items->attributes()->total_record_count;
 
             foreach ($items->item as $item) {
+                $processType = (string)($item->item_data->process_type ?? '');
+                $format = (string)($item->item_data->physical_material_type ?? '');
+                if (in_array($processType, $this->hiddenProcessTypes[$format] ?? [])
+                    || in_array($processType, $this->hiddenProcessTypes['*'] ?? [])
+                ) {
+                    continue;
+                }
                 $holdingId = (string)$item->holding_data->holding_id;
                 if ($holding = $holdings[$holdingId] ?? null) {
                     if ('true' === (string)$holding->suppress_from_publishing) {
@@ -1444,7 +1679,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $itemNotes = !empty($item->item_data->public_note)
                     ? [(string)$item->item_data->public_note] : null;
 
-                $processType = (string)($item->item_data->process_type ?? '');
                 if ($processType && 'LOAN' !== $processType) {
                     $status = $this->getTranslatableStatusString(
                         $item->item_data->process_type
@@ -1473,6 +1707,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     'availability' => $this->getAvailabilityFromItem($item),
                     'status' => $status,
                     'location' => $this->getItemLocation($item),
+                    'location_code' => (string)$item->item_data->location,
                     'reserve' => 'N',   // TODO: support reserve status
                     'callnumber' => $this->getTranslatableString(
                         $item->holding_data->call_number
@@ -1727,6 +1962,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             'id' => $id,
             'item_id' => 'HLD_' . (string)$holding->holding_id,
             'location' => $location,
+            'location_code' => (string)$holding->library,
             'requests_placed' => 0,
             'status' => '',
             'use_unknown_message' => true,
@@ -1872,11 +2108,17 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     // Physical
                     $physicalItems = $record->getFields('AVA');
                     foreach ($physicalItems as $field) {
+                        // Filter out suggestions for other records
+                        $mmsId = $this->getMarcSubfield($field, '0');
+                        if ($mmsId !== (string)$bib->mms_id) {
+                            continue;
+                        }
                         $avail = $this->getMarcSubfield($field, 'e');
                         $item = $tmpl;
                         $item['availability'] = strtolower($avail) === 'available';
+                        $item['location_code'] = $this->getMarcSubfield($field, 'j');
                         $item['location'] = $this->getTranslatableStringForCode(
-                            $this->getMarcSubfield($field, 'j'),
+                            $item['location_code'],
                             $this->getMarcSubfield($field, 'c')
                         );
                         $item['callnumber'] = $this->getMarcSubfield($field, 'd');
@@ -2178,9 +2420,15 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     protected function statusSortFunction($a, $b)
     {
-        $orderA = $this->holdingsLocationOrder[(string)$a['location']] ?? 999;
-        $orderB = $this->holdingsLocationOrder[(string)$b['location']] ?? 999;
+        $orderA = $this->holdingsLocationOrder[$a['location_code']] ?? 999;
+        $orderB = $this->holdingsLocationOrder[$b['location_code']] ?? 999;
         $result = $orderA - $orderB;
+
+        if (0 === $result) {
+            $orderA = $this->holdingsLocationOrder[(string)$a['location']] ?? 999;
+            $orderB = $this->holdingsLocationOrder[(string)$b['location']] ?? 999;
+            $result = $orderA - $orderB;
+        }
 
         if (0 === $result) {
             $result = strcmp(

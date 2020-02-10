@@ -724,19 +724,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if the record driver has a tab (regardless of whether it's active)
-     *
-     * @param string $tab Tab
-     *
-     * @return bool
-     */
-    public function hasTab($tab)
-    {
-        $tabs = $this->tabManager->getTabServices($this->driver);
-        return isset($tabs[$tab]);
-    }
-
-    /**
      * Check if condendsed view result item can be expanded.
      *
      * @return bool
