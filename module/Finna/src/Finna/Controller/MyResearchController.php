@@ -1353,7 +1353,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Function to get message strig from arrays
+     * Function to get feedback message string from arrays
      *
      * @param array $userData   containing personal information
      * @param array $message    containing data about new values
