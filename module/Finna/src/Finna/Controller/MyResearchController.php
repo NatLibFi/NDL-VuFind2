@@ -1389,57 +1389,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send a change request message (e.g. address change) to the library
-     *
-     * @param array  $patron    Patron
-     * @param array  $profile   Patron profile
-     * @param array  $data      Change data
-     * @param array  $fields    Form fields for address change request
-     * @param string $recipient Email recipient
-     * @param string $subject   Email subject
-     * @param string $template  Email template
-     *
-     * @return void
-     */
-    protected function sendChangeRequestEmail($patron, $profile, $data, $fields,
-        $recipient, $subject, $template
-    ) {
-        list($library, $username) = explode('.', $patron['cat_username']);
-        $library = $this->translate("source_$library", null, $library);
-        $name = trim(
-            ($patron['firstname'] ?? '')
-            . ' '
-            . ($patron['lastname'] ?? '')
-        );
-        $email = $patron['email'] ?? '';
-        if (!$email) {
-            $user = $this->getUser();
-            if (!empty($user['email'])) {
-                $email = $user['email'];
-            }
-        }
-
-        $params = [
-            'library' => $library,
-            'username' => $patron['cat_username'],
-            'name' => $name,
-            'email' => $email,
-            'patron' => $patron,
-            'profile' => $profile,
-            'data' => $data,
-            'fields' => $fields
-        ];
-        $renderer = $this->getViewRenderer();
-        $message = $renderer->render("Email/$template.phtml", $params);
-        $subject = $this->getConfig()->Site->title . ": $subject";
-        $from = $this->getConfig()->Site->email;
-
-        $this->serviceLocator->get(\VuFind\Mailer\Mailer::class)->send(
-            $recipient, $from, $subject, $message
-        );
-    }
-
-    /**
      * Exports user's saved searches into an array.
      *
      * @param int $userId User id
