@@ -664,7 +664,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
                 $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, $fields, $recipient,
-                    'Yhteystietojen muutospyyntö', 'change-address'
+                    'UpdatePersonalInformation', 'change-address'
                 );
                 $this->flashMessenger()
                     ->addSuccessMessage('request_change_done');
@@ -760,7 +760,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
                 $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, [], $recipient,
-                    'Viestiasetusten muutospyyntö', 'change-messaging-settings'
+                    'UpdateMessagingSettings', 'change-messaging-settings'
                 );
                 $this->flashMessenger()
                     ->addSuccessMessage('request_change_done');
