@@ -728,10 +728,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $this->flashMessenger()->addErrorMessage($result['status']);
                 }
             } else {
-                /**
-                 * Will change to admininterface, no more emails with user informations
-                 * How do we know which institution is being called, and the url to be sent in feedback request
-                 */
                 $data = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
                 $data['pickUpNotice'] = $this->translate(
                     'messaging_settings_method_' . $data['pickUpNotice'],
