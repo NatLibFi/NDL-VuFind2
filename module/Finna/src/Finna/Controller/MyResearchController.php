@@ -1303,8 +1303,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     ) {
         list($library, $username) = explode('.', $patron['cat_username']);
         
-        //Feedback url must be pointed to certain library so its
-        //Properly displayed in admininterface
+        // Feedback url must be pointed to certain library subdomain
         $url = "$library.finna.fi/";
         $name = trim(
             ($patron['firstname'] ?? '')
