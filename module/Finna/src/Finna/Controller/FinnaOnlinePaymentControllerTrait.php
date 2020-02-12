@@ -60,8 +60,8 @@ trait FinnaOnlinePaymentControllerTrait
         if (!$session) {
             $this->logError(
                 'PaymentSessionError: Session was empty for: '
-                . json_encode($patron) . ' and fines were '
-                . json_encode($fines)
+                . json_encode($patron) . ' and amount was '
+                . json_encode($amount)
             );
             return true;
         }
