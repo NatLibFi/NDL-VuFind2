@@ -56,8 +56,7 @@ trait FinnaOnlinePaymentControllerTrait
     protected function checkIfFinesUpdated($patron, $fines)
     {
         $session = $this->getOnlinePaymentSession();
-        $sessionId = $this->generateFingerprint($patron);
-        $finesId = $this->generateFingerprint($fines);
+
         if (!$session) {
             $this->logError(
                 "PaymentError: Session was empty for: "
@@ -65,28 +64,29 @@ trait FinnaOnlinePaymentControllerTrait
                 . json_encode($fines)
             );
             return true;
-        } else if ($session->sessionId !== $sessionId) {
+        } 
+
+        $finesUpdated = false;
+        $sessionId = $this->generateFingerprint($patron);
+        $finesId = $this->generateFingerprint($fines);
+
+        if ($session->sessionId !== $sessionId) {
             $this->logError(
                 "PaymentError: Sessionid does not match for: "
                 . json_encode($patron) . ". Old id / new id hashes = "
                 . $sessions->sessionId . " and " . $sessionId
             );
-            return true;
-        } else if ($session->fines !== $finesId) {
+            $finesUpdated = true;
+        }
+        if ($session->fines !== $finesId) {
             $this->logError(
                 "PaymentError: SessionFines does not match for: "
                 . json_encode($fines) . ". Old fines / new fines hashes = "
                 . $session->fines . " and " . $fines
             );
-            return true;
-        } else {
-            return false;
+            $finesUpdated = true;
         }
-
-        return !$session
-            || ($session->sessionId !== $this->generateFingerprint($patron))
-            || ($session->fines !== $this->generateFingerprint($fines))
-        ;
+        return $finesUpdated;
     }
 
     /**
