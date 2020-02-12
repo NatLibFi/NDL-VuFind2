@@ -48,8 +48,8 @@ trait FinnaOnlinePaymentControllerTrait
      * Checks if the given list of fines is identical to the listing
      * preserved in the session variable.
      *
-     * @param object $patron Patron.
-     * @param array  $fines  Listing of fines.
+     * @param array $patron Patron.
+     * @param array $fines  Listing of fines.
      *
      * @return boolean updated
      */
