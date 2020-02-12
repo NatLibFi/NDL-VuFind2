@@ -655,15 +655,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $this->flashMessenger()->addErrorMessage($e->getMessage());
                 }
             } else {
-                if (!isset($updateConfig['emailAddress'])) {
-                    throw new \Exception(
-                        'Missing emailAddress in ILS updateAddress settings'
-                    );
-                }
-                $recipient = $updateConfig['emailAddress'];
-
                 $this->saveChangeRequestFeedback(
-                    $patron, $profile, $data, $fields, $recipient,
+                    $patron, $profile, $data, $fields,
                     'UpdatePersonalInformation', 'change-address'
                 );
                 $this->flashMessenger()
@@ -752,10 +745,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     );
                 }
 
-                $recipient = $config['emailAddress'];
-
                 $this->saveChangeRequestFeedback(
-                    $patron, $profile, $data, [], $recipient,
+                    $patron, $profile, $data, [],
                     'UpdateMessagingSettings', 'change-messaging-settings'
                 );
                 $this->flashMessenger()
@@ -1284,18 +1275,17 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     /**
      * Save a feedback to database for library to change messaging settings
      *
-     * @param array  $patron    Patron
-     * @param array  $profile   Patron profile
-     * @param array  $data      Change data
-     * @param array  $fields    Form fields for address change request
-     * @param string $recipient Email recipient
-     * @param string $subject   Email subject
-     * @param string $template  Email template
+     * @param array  $patron   Patron
+     * @param array  $profile  Patron profile
+     * @param array  $data     Change data
+     * @param array  $fields   Form fields for address change request
+     * @param string $subject  Email subject
+     * @param string $template Email template
      *
      * @return void
      */
     protected function saveChangeRequestFeedback($patron, $profile, $data,
-        $fields, $recipient, $subject, $template
+        $fields, $subject, $template
     ) {
         list($library, $username) = explode('.', $patron['cat_username']);
 
