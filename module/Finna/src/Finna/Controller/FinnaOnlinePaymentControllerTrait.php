@@ -64,7 +64,7 @@ trait FinnaOnlinePaymentControllerTrait
                 . json_encode($fines)
             );
             return true;
-        } 
+        }
 
         $finesUpdated = false;
         $sessionId = $this->generateFingerprint($patron);
