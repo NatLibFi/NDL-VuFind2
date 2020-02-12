@@ -59,8 +59,8 @@ trait FinnaOnlinePaymentControllerTrait
 
         if (!$session) {
             $this->logError(
-                "PaymentError: Session was empty for: "
-                . json_encode($patron) . " and fines were "
+                'PaymentSessionError: Session was empty for: '
+                . json_encode($patron) . ' and fines were '
                 . json_encode($fines)
             );
             return true;
@@ -72,17 +72,17 @@ trait FinnaOnlinePaymentControllerTrait
 
         if ($session->sessionId !== $sessionId) {
             $this->logError(
-                "PaymentError: Sessionid does not match for: "
-                . json_encode($patron) . ". Old id / new id hashes = "
-                . $sessions->sessionId . " and " . $sessionId
+                'PaymentSessionError: Sessionid does not match for: '
+                . json_encode($patron) . '. Old id / new id hashes = '
+                . $sessions->sessionId . ' and ' . $sessionId
             );
             $finesUpdated = true;
         }
         if ($session->fines !== $finesId) {
             $this->logError(
-                "PaymentError: SessionFines does not match for: "
-                . json_encode($fines) . ". Old fines / new fines hashes = "
-                . $session->fines . " and " . $fines
+                'PaymentSessionError: SessionFines does not match for: '
+                . json_encode($fines) . '. Old fines / new fines hashes = '
+                . $session->fines . ' and ' . $fines
             );
             $finesUpdated = true;
         }
