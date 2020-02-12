@@ -657,7 +657,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             } else {
                 $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, $fields,
-                    'UpdatePersonalInformation', 'change-address'
+                    'finna_UpdatePersonalInformation', 'change-address'
                 );
                 $this->flashMessenger()
                     ->addSuccessMessage('request_change_done');
@@ -747,7 +747,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
                 $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, [],
-                    'UpdateMessagingSettings', 'change-messaging-settings'
+                    'finna_UpdateMessagingSettings', 'change-messaging-settings'
                 );
                 $this->flashMessenger()
                     ->addSuccessMessage('request_change_done');
@@ -1297,7 +1297,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             . ($patron['lastname'] ?? '')
         );
         $user = $this->getUser();
-        $email = $patron['email'] ?? (empty($user['email']) ? $user['email'] : '');
+        $email = $patron['email'] ?? $user['email'] ?? '';
         $userId = $user->id;
         $homeLibrary = $user->home_library ?? '';
         $formId = $subject;

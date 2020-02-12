@@ -1389,18 +1389,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     continue;
                 }
 
-                if (in_array($methodKey, $validMethods)) {
-                    $data['sendMethods'] += [
-                        "$methodKey" => [
-                            'active' => false,
-                            'type' => $methodKey
-                        ]
-                    ];
-                } else {
-                    $this->error(
-                        "Messaging settings for $service are invalid: $methodKey"
-                    );
-                }
+                $data['sendMethods'] += [
+                    "$methodKey" => [
+                        'active' => false,
+                        'type' => $methodKey
+                    ]
+                ];
             }
             $services[$service] = $data;
         }
