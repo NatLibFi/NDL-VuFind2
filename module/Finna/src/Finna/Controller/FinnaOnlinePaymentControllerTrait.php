@@ -49,11 +49,11 @@ trait FinnaOnlinePaymentControllerTrait
      * preserved in the session variable.
      *
      * @param array $patron Patron.
-     * @param array $fines  Listing of fines.
+     * @param int   $amount Total amount to pay without fees
      *
      * @return boolean updated
      */
-    protected function checkIfFinesUpdated($patron, $fines)
+    protected function checkIfFinesUpdated($patron, $amount)
     {
         $session = $this->getOnlinePaymentSession();
 
@@ -68,7 +68,6 @@ trait FinnaOnlinePaymentControllerTrait
 
         $finesUpdated = false;
         $sessionId = $this->generateFingerprint($patron);
-        $finesId = $this->generateFingerprint($fines);
 
         if ($session->sessionId !== $sessionId) {
             $this->logError(
@@ -78,11 +77,10 @@ trait FinnaOnlinePaymentControllerTrait
             );
             $finesUpdated = true;
         }
-        if ($session->fines !== $finesId) {
+        if ($session->amount !== $amount) {
             $this->logError(
-                'PaymentSessionError: SessionFines does not match for: '
-                . json_encode($fines) . '. Old fines / new fines hashes = '
-                . $session->fines . ' and ' . $fines
+                'PaymentSessionError: Payment amount updated: '
+                . $session->amount . ' and ' . $amount
             );
             $finesUpdated = true;
         }
@@ -223,7 +221,7 @@ trait FinnaOnlinePaymentControllerTrait
         ) {
             // Payment started, check that fee list has not been updated
             if (($paymentConfig['exactBalanceRequired'] ?? true)
-                && $this->checkIfFinesUpdated($patron, $fines)
+                && $this->checkIfFinesUpdated($patron, $payableOnline['amount'])
             ) {
                 // Fines updated, redirect and show updated list.
                 $session->payment_fines_changed = true;
@@ -285,7 +283,7 @@ trait FinnaOnlinePaymentControllerTrait
                 && $payableOnline['payable'] && $payableOnline['amount'];
 
             // Display possible warning and store fines to session.
-            $this->storeFines($patron, $fines);
+            $this->storeFines($patron, $payableOnline['amount']);
             $session = $this->getOnlinePaymentSession();
             $view->transactionId = $session->sessionId;
 
@@ -322,15 +320,15 @@ trait FinnaOnlinePaymentControllerTrait
      * Store fines to session.
      *
      * @param object $patron Patron.
-     * @param array  $fines  Listing of fines.
+     * @param int    $amount Total amount to pay without fees
      *
      * @return void
      */
-    protected function storeFines($patron, $fines)
+    protected function storeFines($patron, $amount)
     {
         $session = $this->getOnlinePaymentSession();
         $session->sessionId = $this->generateFingerprint($patron);
-        $session->fines = $this->generateFingerprint($fines);
+        $session->amount = $amount;
     }
 
     /**
