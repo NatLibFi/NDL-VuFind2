@@ -1288,9 +1288,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $fields, $subject, $template
     ) {
         list($library, $username) = explode('.', $patron['cat_username']);
+        $catalog = $this->getILS();
+        $config = $catalog->getConfig('Feedback', $patron);
 
-        // Feedback url must be pointed to certain library subdomain
-        $url = "$library.finna.fi/";
+        if (!isset($config['domain'])) {
+            $this->flashMessenger()->addErrorMessage('An error has occurred');
+        }
+
+        $domain = $config['domain'];
+        $url = "$domain.finna.fi/";
         $name = trim(
             ($patron['firstname'] ?? '')
             . ' '
@@ -1353,8 +1359,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      */
     protected function getMessageString($userData, $message, $oldMessage = [])
     {
-        $messageString = '';
-        $messageString .= 'User information:' . PHP_EOL
+        $messageString = 'User information:' . PHP_EOL
             . '--------------' . PHP_EOL;
         foreach ($userData as $key => $value) {
             $messageString .= $key . ': ' . $value . PHP_EOL;

@@ -6,10 +6,6 @@
 #
 # The main Feedback form (id: FeedbackSite) can be accessed with a shorter URL /Feedback
 #
-# Two form titles are reserved for Finna
-# - finna_UpdateMessagingSettings (AxiellWebServices update message settings with email)
-# - finna_UpdatePersonalInformation (Change personal settings with email)
-#
 # Form supports the following options:
 #
 #   enabled (boolean) Is the form enabled? (default = true)
@@ -94,6 +90,10 @@
 #-----------------------------------------------------------------------------------
 
 forms:
+
+  # These forms are reserved for finna internal use and should not be used:
+  # - finna_UpdatePersonalInformation
+  # - finna_UpdateMessagingSettings
 
   # Main Feedback form
   FeedbackSite:
