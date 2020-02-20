@@ -79,6 +79,10 @@ defaultPickUpLocation = 1.001
 ;acceptTermsText = "I accept the terms in any language."
 ;acceptTermsText[en-gb] = "I accept the terms in English."
 
+[Feedback]
+; domain = The starting subdomain of url without www., 
+; for saving updateMessagingSettings / updateAddress to database for correct institution.
+
 [cancelHolds]
 HMACKeys = id
 
@@ -175,6 +179,8 @@ enabled = false
 ;sort['CHECK_IN_DATE ASCENDING'] = 'sort_return_date_asc'
 ;sort['AUTHOR ASCENDING'] = 'sort_author'
 ;sort['TITLE ASCENDING'] = 'sort_title'
+
+
 
 [onlinePayment]
 ; Whether online payment is enabled. Default is false.
