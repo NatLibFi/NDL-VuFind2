@@ -655,12 +655,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $this->flashMessenger()->addErrorMessage($e->getMessage());
                 }
             } else {
-                $this->saveChangeRequestFeedback(
+                $result = $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, $fields,
                     'finna_UpdatePersonalInformation', 'change-address'
                 );
-                $this->flashMessenger()
-                    ->addSuccessMessage('request_change_done');
+                if ($result) {
+                    $this->flashMessenger()
+                        ->addSuccessMessage('request_change_done');
+                }
                 $view->requestCompleted = true;
             }
         }
@@ -745,12 +747,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     );
                 }
 
-                $this->saveChangeRequestFeedback(
+                $result = $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, [],
                     'finna_UpdateMessagingSettings', 'change-messaging-settings'
                 );
-                $this->flashMessenger()
-                    ->addSuccessMessage('request_change_done');
+                if ($result) {
+                    $this->flashMessenger()
+                        ->addSuccessMessage('request_change_done');
+                }
                 $view->requestCompleted = true;
             }
         }
@@ -1293,6 +1297,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         if (!isset($config['domain'])) {
             $this->flashMessenger()->addErrorMessage('An error has occurred');
+            return false;
         }
 
         $domain = $config['domain'];
@@ -1346,6 +1351,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $feedback->saveFeedback(
             $url, $formId, $userId, $messageString, $messageJson
         );
+
+        return true;
     }
 
     /**
