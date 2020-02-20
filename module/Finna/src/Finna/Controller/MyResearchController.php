@@ -1301,7 +1301,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $domain = $config['domain'];
-        $url = "$domain.finna.fi/";
+        $url = "$domain.test.nakyma";
         $name = trim(
             ($patron['firstname'] ?? '')
             . ' '
@@ -1324,6 +1324,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $oldMessage = [];
         $messageString = '';
 
+        $ignoredTypes = [
+            'layout',
+            'messaging_update_request'
+        ];
         if (!empty($fields)) {
             foreach ($fields as $field => $fieldData) {
                 $key = $this->translate($fieldData['label']);
@@ -1336,7 +1340,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         } else {
             foreach ($data as $type => $sendMethod) {
-                if (strtolower($type) !== 'messaging_update_request') {
+                if (!in_array(strtolower($type), $ignoredTypes)) {
                     $key = $this->translate("messaging_settings_type_$type");
                     $message[$key] = $sendMethod;
                 }
