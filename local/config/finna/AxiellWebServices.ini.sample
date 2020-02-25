@@ -178,8 +178,6 @@ enabled = false
 ;sort['AUTHOR ASCENDING'] = 'sort_author'
 ;sort['TITLE ASCENDING'] = 'sort_title'
 
-
-
 [onlinePayment]
 ; Whether online payment is enabled. Default is false.
 enabled = true
