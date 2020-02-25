@@ -1304,7 +1304,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $host = $urlParsed['host'];
         $url = '';
 
-        if (strpos($host, '.') !== false && substr_count($host, '.') > 1) {
+        if (substr_count($host, '.') > 1) {
             $url = strstr($host, '.');
         } else {
             $url = '.' . $host;
@@ -1312,6 +1312,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $domain = $config['domain'];
         $url = $domain . $url;
+
         $name = trim(
             ($patron['firstname'] ?? '')
             . ' '
