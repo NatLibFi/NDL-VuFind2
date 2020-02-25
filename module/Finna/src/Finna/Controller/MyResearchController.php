@@ -1302,16 +1302,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $urlParsed = parse_url($this->getRequest()->getUri());
         $host = $urlParsed['host'];
-        $url = '';
-
-        if (substr_count($host, '.') > 1) {
-            $url = strstr($host, '.');
-        } else {
-            $url = '.' . $host;
-        }
-
-        $domain = $config['domain'];
-        $url = $domain . $url;
+        $url = $config['domain'];
+        $url .= (substr_count($host, '.') > 1) ? strstr($host, '.') : ".$host";
 
         $name = trim(
             ($patron['firstname'] ?? '')
