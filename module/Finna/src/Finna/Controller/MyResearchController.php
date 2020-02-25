@@ -1350,7 +1350,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
 
-        $mergedArrays = array_merge($userData, array_merge($message, $oldMessage));
+        $mergedArrays = array_merge($userData, $message);
         $messageJson = json_encode($mergedArrays);
 
         $messageString = $this->getMessageString($userData, $message, $oldMessage);
