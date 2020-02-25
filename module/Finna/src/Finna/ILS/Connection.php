@@ -217,9 +217,7 @@ class Connection extends \VuFind\ILS\Connection
         if (!isset($functionConfig['method'])) {
             return false;
         }
-        if ($functionConfig['method'] == 'email'
-            && !empty($functionConfig['emailAddress'])
-        ) {
+        if ($functionConfig['method'] === 'database') {
             return $functionConfig;
         }
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {
@@ -372,9 +370,7 @@ class Connection extends \VuFind\ILS\Connection
         if (!isset($functionConfig['method'])) {
             return false;
         }
-        if ($functionConfig['method'] == 'email'
-            && !empty($functionConfig['emailAddress'])
-        ) {
+        if ($functionConfig['method'] === 'database') {
             return $functionConfig;
         }
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {

@@ -97,12 +97,10 @@ maxLength = 4
 method = driver
 
 ; Uncomment the following lines to enable updating of address information.
-; Choose a method on how to update the address information (email or url).
+; Choose a method on how to update the address information (database or url).
 ; if you have patronaurora you can use driver method.
 [updateAddress]
-;method = email
-; emailAddress is required for the email method
-;emailAddress =
+;method = database
 ; Uncomment needsApproval and keep it as false when using driver and patronaurora
 ;needsApproval = false
 ; Uncomment the following lines to change which fields are included in the form
@@ -140,10 +138,10 @@ method = driver
 ;method = driver
 
 ; Uncomment the following lines to enable update messaging settings
-; Choose a method on how to update the phone number (email, url or driver)
+; Choose a method on how to update the phone number (database or driver)
 [updateMessagingSettings]
-; Accepted methods are; email, driver.
-;method = email
+; Accepted methods are; database, driver.
+;method = database
 ; emailAddress is required for the email method
 ;emailAddress =
 ; url is required for the url method. url can be a single address or an array of

@@ -1323,7 +1323,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $infoServices = $info->messageServices->messageService ?? [];
 
         switch ($serviceSendMethod) {
-        case 'email':
+        case 'database':
             $userCached['messagingServices']
                 = $this->parseEmailMessagingSettings(
                     $info->messageServices->messageService ?? []
