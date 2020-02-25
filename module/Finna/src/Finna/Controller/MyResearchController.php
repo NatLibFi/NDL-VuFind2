@@ -1277,7 +1277,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Save a feedback to database for library to change messaging settings
+     * Save a feedback to database for library
      *
      * @param array  $patron   Patron
      * @param array  $profile  Patron profile
@@ -1286,7 +1286,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      * @param string $subject  Email subject
      * @param string $template Email template
      *
-     * @return void
+     * @return bool
      */
     protected function saveChangeRequestFeedback($patron, $profile, $data,
         $fields, $subject, $template
