@@ -657,7 +657,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             } else {
                 $result = $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, $fields,
-                    'finna_UpdatePersonalInformation', 'change-address'
+                    'finna_UpdatePersonalInformation'
                 );
                 if ($result) {
                     $this->flashMessenger()
@@ -749,7 +749,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
                 $result = $this->saveChangeRequestFeedback(
                     $patron, $profile, $data, [],
-                    'finna_UpdateMessagingSettings', 'change-messaging-settings'
+                    'finna_UpdateMessagingSettings'
                 );
                 if ($result) {
                     $this->flashMessenger()
@@ -1279,17 +1279,16 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     /**
      * Save a feedback to database for library
      *
-     * @param array  $patron   Patron
-     * @param array  $profile  Patron profile
-     * @param array  $data     Change data
-     * @param array  $fields   Form fields for address change request
-     * @param string $subject  Email subject
-     * @param string $template Email template
+     * @param array  $patron  Patron
+     * @param array  $profile Patron profile
+     * @param array  $data    Change data
+     * @param array  $fields  Form fields for address change request
+     * @param string $subject Email subject
      *
      * @return bool
      */
     protected function saveChangeRequestFeedback($patron, $profile, $data,
-        $fields, $subject, $template
+        $fields, $subject
     ) {
         list($library, $username) = explode('.', $patron['cat_username']);
         $catalog = $this->getILS();
