@@ -142,8 +142,6 @@ method = driver
 [updateMessagingSettings]
 ; Accepted methods are; database, driver.
 ;method = database
-; emailAddress is required for the email method
-;emailAddress =
 ; url is required for the url method. url can be a single address or an array of
 ; language-specific addresses. First example is a single one:
 ;url = "http://address.of.change.form"

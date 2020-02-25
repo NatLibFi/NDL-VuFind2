@@ -1300,11 +1300,16 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return false;
         }
 
-        $origin = $this->getRequest()->getHeader('Origin');
-        $origin = explode('://', $origin->getFieldValue());
-        $url = strstr($origin[1], '.');
-        // Empty url is needed to check for local testing environments
-        $url = ($url === '.fi' || empty($url)) ? '.' . $origin[1] : $url;
+        $urlParsed = parse_url($this->getRequest()->getUri());
+        $host = $urlParsed['host'];
+        $url = '';
+
+        if (strpos($host, '.') !== false && substr_count($host, '.') > 1) {
+            $url = strstr($host, '.');
+        } else {
+            $url = '.' . $host;
+        }
+
         $domain = $config['domain'];
         $url = $domain . $url;
         $name = trim(
