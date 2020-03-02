@@ -3,6 +3,7 @@
   $formats = $this->driver->tryMethod('getFormats');
   $database = $this->record($this->driver)->getFormatClass(end($formats)) === '0database';
   $ejournal = $this->record($this->driver)->getFormatClass(end($formats)) === '1journaleserial';
+  $disableExpand = $this->record($this->driver)->disableCondensedViewExpand();
   // Thumbnail
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
@@ -16,7 +17,9 @@
 <div class="record-container<?=$this->driver->supportsAjaxStatus()?' ajaxItem ':''?> list-view">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body">
-      <i class="fa fa-arrow-right"></i>
+      <?php if (!$disableExpand): ?>
+        <i class="fa fa-arrow-right"></i>
+      <?php endif; ?>
         <h2 class="title">
           <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
             <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
@@ -94,152 +97,156 @@
           <?=$this->record($this->driver)->getPreviews()?>
         </div>
       </div>
+      <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+        <div class="hidden-print add-to-favorite-col">
+          <?php /* Add to favorites */ ?>
+          <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
+        </div>
+        <?php /* Saved lists */ ?>
+        <div class="savedLists">
+          <strong><?=$this->transEsc("Saved in")?>:</strong>
+        </div>
+        <?=$this->render('list/list-notes.phtml')?>
+      <?php endif; ?>
       <div class="clearfix"></div>
       <div class="media condensed-collapse-data">
-        <?php if (!$database && !$ejournal): ?>
-          <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-            <div class="media-left resultThumb">
+        <?php if ($disableExpand): ?>
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+        <?php else: ?>
+          <?php if (!$database && !$ejournal): ?>
+            <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+              <div class="media-left resultThumb">
+                <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
+                <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+                <?=$thumbnail ?>
+              </div>
+            <?php endif; ?>
+            <div class="media-body">
+              <div class="result-body">
+                <?php $classifications = $this->driver->tryMethod('getClassifications'); if (!empty($classifications)): ?>
+                  <div class="resultClassification">
+                    <?php
+                      $result = '';
+                      $i = 0;
+                      foreach ($classifications as $class => $field) {
+                        foreach ($field as $j => $subfield) {
+                          $result = $this->escapeHtml($class) . ' ' . $this->escapeHtml($subfield);
+                          ?>
+                          <a title="<?=$this->escapeHtmlAttr($result)?>" href="<?=$this->record($this->driver)->getLink('classification', $result)?>"><?php if (!$this->translationEmpty('classification::' . $result)): ?><?=$this->transEsc('classification::' . $result) . '<span class="classification-detail"> (' . $result . ')</span>';?><?php else: ?><?= $result; ?><?php endif; ?></a>
+                      <?php
+                        }
+                      }
+                      ?>
+                  </div>
+                <?php endif; ?>
+
+                <?php $summInCollection = $this->driver->getContainingCollections(); if (!empty($summInCollection)): ?>
+                  <?php foreach ($summInCollection as $collId => $collText): ?>
+                    <div>
+                      <b><?=$this->transEsc("in_collection_label")?></b>
+                      <a class="collectionLinkText" href="<?=$this->url('collection', ['id' => $collId])?>?recordID=<?=urlencode($this->driver->getUniqueID())?>">
+                        <?=$this->escapeHtml($collText)?>
+                      </a>
+                    </div>
+                  <?php endforeach; ?>
+                <?php endif; ?>
+
+                <div class="holding-details">
+                <?php
+                /* Display information on duplicate records if available */
+                $dedupData = $this->driver->getDedupData();
+                if (count($dedupData) > 1): ?>
+                  <div class="dedupInformation">
+                      <select class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>">
+                      <?php foreach ($dedupData as $source => $current): ?>
+                        <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"><?=$this->transEsc("source_$source", null, $source) ?></option>
+                      <?php endforeach; ?>
+                      </select>
+                  </div>
+                <?php else: ?>
+                  <?php
+                    if (!empty($dedupData)) {
+                      reset($dedupData);
+                      $source = key($dedupData);
+                    } else {
+                      $source = $this->driver->tryMethod('getDataSource');
+                    }
+                  ?>
+                  <?php if ($source): ?>
+                    <div class="dedupInformation">
+                      <strong><?=$this->transEsc("source_$source", null, $source) ?></strong>
+                    </div>
+                  <?php endif; ?>
+                <?php endif; ?>
+
+                <div class="callnumAndLocation ajax-availability<?=$this->driver->supportsAjaxStatus() ? ' hidden' : ''?>">
+                  <span class="availability-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...<br/></span>
+                  <?php if ($this->driver->supportsAjaxStatus()): ?>
+                    <strong class="hideIfDetailed"></strong>
+                    <span class="callnumber ajax-availability hidden">
+                    </span>
+                    <span class="location ajax-availability hidden">
+                    </span>
+                    <div class="locationDetails clearfix"></div>
+                  <?php else: ?>
+                    <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
+                      <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
+                    <?php endif; ?>
+                  <?php endif; ?>
+                  <div class="no-holdings hidden">
+                    <?=$this->transEsc('No Holdings Available')?>
+                  </div>
+                </div>
+                </div>
+                <div class="hidden-print add-to-favorite-col">
+                    <?php /* Display qrcode if appropriate: */ ?>
+                    <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
+                        <?php
+                        // Add JS Variables for QrCode
+                        $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
+                        ?>
+                      <div class="hidden-xs">
+                        <a href="<?=$this->escapeHtmlAttr($QRCode);?>" class="finnaQrcodeLink" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
+                          <i class="fa fa-qr-code" aria-hidden="true"><span class="sr-only"><?=$this->transEsc('QR Code')?></span></i>
+                        </a>
+                        <div class="qrcode hidden">
+                          <script type="text/template" class="qrCodeImgTag">
+                            <img alt="" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
+                          </script>
+                        </div><br/>
+                      </div>
+                    <?php endif; ?>
+
+                    <?=$this->driver->supportsCoinsOpenUrl()?'<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()) . '"></span>':''?>
+                </div>
+                  <?php /* Hierarchy tree link */ ?>
+                  <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+                      <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
+                      <div class="hierarchyTreeLink">
+                        <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
+                        <i class="fa fa-sitemap"></i>
+                        <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID])?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->recordLink()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID])?>" data-lightbox-post="tab=hierarchytree">
+                            <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
+                        </a>
+                      </div>
+                      <?php endforeach; ?>
+                  <?php endif; ?>
+              </div>
+          </div>
+          <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>
+            <div class="media-right resultThumb">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
               <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
-                  <?=$thumbnail ?>
+              <?=$thumbnail ?>
             </div>
           <?php endif; ?>
-          <div class="media-body">
-            <div class="result-body">
-              <?php $classifications = $this->driver->tryMethod('getClassifications'); if (!empty($classifications)): ?>
-                <div class="resultClassification">
-                  <?php
-                    $result = '';
-                    $i = 0;
-                    foreach ($classifications as $class => $field) {
-                      foreach ($field as $j => $subfield) {
-                        $result = $this->escapeHtml($class) . ' ' . $this->escapeHtml($subfield);
-                        ?>
-                        <a title="<?=$this->escapeHtmlAttr($result)?>" href="<?=$this->record($this->driver)->getLink('classification', $result)?>"><?php if (!$this->translationEmpty('classification::' . $result)): ?><?=$this->transEsc('classification::' . $result) . '<span class="classification-detail"> (' . $result . ')</span>';?><?php else: ?><?= $result; ?><?php endif; ?></a>
-                    <?php
-                      }
-                    }
-                    ?>
-                </div>
-              <?php endif; ?>
-
-              <?php $summInCollection = $this->driver->getContainingCollections(); if (!empty($summInCollection)): ?>
-                <?php foreach ($summInCollection as $collId => $collText): ?>
-                  <div>
-                    <b><?=$this->transEsc("in_collection_label")?></b>
-                    <a class="collectionLinkText" href="<?=$this->url('collection', ['id' => $collId])?>?recordID=<?=urlencode($this->driver->getUniqueID())?>">
-                      <?=$this->escapeHtml($collText)?>
-                    </a>
-                  </div>
-                <?php endforeach; ?>
-              <?php endif; ?>
-
-              <div class="holding-details">
-              <?php
-              /* Display information on duplicate records if available */
-              $dedupData = $this->driver->getDedupData();
-              if (count($dedupData) > 1): ?>
-                <div class="dedupInformation">
-                    <select class="dedup-select form-control" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>">
-                    <?php foreach ($dedupData as $source => $current): ?>
-                      <option value="<?=$this->escapeHtmlAttr($current['id']) ?>" class="dedup-data-id" data-source="<?=$this->escapeHtmlAttr($source) ?>"><?=$this->transEsc("source_$source", null, $source) ?></option>
-                    <?php endforeach; ?>
-                    </select>
-                </div>
-              <?php else: ?>
-                <?php
-                  if (!empty($dedupData)) {
-                    reset($dedupData);
-                    $source = key($dedupData);
-                  } else {
-                    $source = $this->driver->tryMethod('getDataSource');
-                  }
-                ?>
-                <?php if ($source): ?>
-                  <div class="dedupInformation">
-                    <strong><?=$this->transEsc("source_$source", null, $source) ?></strong>
-                  </div>
-                <?php endif; ?>
-              <?php endif; ?>
-
-              <div class="callnumAndLocation ajax-availability<?=$this->driver->supportsAjaxStatus() ? ' hidden' : ''?>">
-                <span class="availability-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...<br/></span>
-                <?php if ($this->driver->supportsAjaxStatus()): ?>
-                  <strong class="hideIfDetailed"></strong>
-                  <span class="callnumber ajax-availability hidden">
-                  </span>
-                  <span class="location ajax-availability hidden">
-                  </span>
-                  <div class="locationDetails clearfix"></div>
-                <?php else: ?>
-                  <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
-                    <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
-                  <?php endif; ?>
-                <?php endif; ?>
-                <div class="no-holdings hidden">
-                  <?=$this->transEsc('No Holdings Available')?>
-                </div>
-              </div>
-              <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-                <?php /* Saved lists */ ?>
-                <div class="savedLists">
-                  <strong><?=$this->transEsc("Saved in")?>:</strong>
-                </div>
-              <?php endif; ?>
-              <?=$this->render('list/list-notes.phtml')?>
-              </div>
-              <div class="hidden-print add-to-favorite-col">
-                  <?php /* Display qrcode if appropriate: */ ?>
-                  <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
-                      <?php
-                      // Add JS Variables for QrCode
-                      $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
-                      ?>
-                    <div class="hidden-xs">
-                      <a href="<?=$this->escapeHtmlAttr($QRCode);?>" class="finnaQrcodeLink" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
-                        <i class="fa fa-qr-code" aria-hidden="true"><span class="sr-only"><?=$this->transEsc('QR Code')?></span></i>
-                      </a>
-                      <div class="qrcode hidden">
-                        <script type="text/template" class="qrCodeImgTag">
-                          <img alt="" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
-                        </script>
-                      </div><br/>
-                    </div>
-                  <?php endif; ?>
-
-                  <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-                      <?php /* Add to favorites */ ?>
-                    <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
-                  <?php endif; ?>
-
-                  <?=$this->driver->supportsCoinsOpenUrl()?'<span class="Z3988" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()) . '"></span>':''?>
-              </div>
-                <?php /* Hierarchy tree link */ ?>
-                <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
-                    <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
-                    <div class="hierarchyTreeLink">
-                      <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
-                      <i class="fa fa-sitemap"></i>
-                      <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID])?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->recordLink()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID])?>" data-lightbox-post="tab=hierarchytree">
-                          <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
-                      </a>
-                    </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>
-          <div class="media-right resultThumb">
-            <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-            <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
-            <?=$thumbnail ?>
-          </div>
-        <?php endif; ?>
-        <?php endif; ?><?php /* this will end layout for format other than database or e-magazines */ ?>
-        <?php if ($database): ?>
-          <?=$this->record($this->driver)->renderTemplate('result-condensed-database.phtml'); ?>
-        <?php elseif ($ejournal): ?>
-          <?=$this->record($this->driver)->renderTemplate('result-condensed-ejournal.phtml'); ?>
+          <?php endif; ?><?php /* this will end layout for format other than database or e-magazines */ ?>
+          <?php if ($database): ?>
+            <?=$this->record($this->driver)->renderTemplate('result-condensed-database.phtml'); ?>
+          <?php elseif ($ejournal): ?>
+            <?=$this->record($this->driver)->renderTemplate('result-condensed-ejournal.phtml'); ?>
+          <?php endif; ?>
         <?php endif; ?>
       <?php endif; ?>
     <div class="clearfix visible-xs"></div>

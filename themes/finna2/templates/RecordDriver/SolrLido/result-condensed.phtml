@@ -1,5 +1,6 @@
 <!-- START of: finna - RecordDriver/SolrLido/result-condensed.phtml -->
 <?php
+  $disableExpand = $this->record($this->driver)->disableCondensedViewExpand();
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
@@ -12,7 +13,9 @@
 <div class="record-container<?=$this->driver->supportsAjaxStatus()?' ajaxItem ':''?> list-view" id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body">
-      <i class="fa fa-arrow-right"></i>
+      <?php if (!$disableExpand): ?>
+        <i class="fa fa-arrow-right"></i>
+      <?php endif; ?>
       <h2 class="title">
         <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
         <?php
@@ -50,80 +53,85 @@
       <?=$this->record($this->driver)->getOnlineUrls('results')?>
     </div>
   </div>
+  <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+    <div class="hidden-print add-to-favorite-col">
+      <?php /* Add to favorites */ ?>
+      <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
+    </div>
+    <?php /* Saved lists */ ?>
+    <div class="savedLists">
+      <strong><?=$this->transEsc("Saved in")?>:</strong>
+    </div>
+    <?=$this->render('list/list-notes.phtml')?>
+  <?php endif; ?>
   <div class="clearfix"></div>
   <div class="media condensed-collapse-data">
-    <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-      <div class="media-left condensed-image resultThumb">
+    <?php if ($disableExpand): ?>
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+    <?php else: ?>
+      <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+        <div class="media-left condensed-image resultThumb">
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
+          <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+            <?=$thumbnail ?>
+        </div>
+      <?php endif; ?>
+      <div class="media-body">
+        <div class="result-body">
+          <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
+          <?php if ($summary): ?>
+            <div class="truncate-field wide">
+              <p class="summary"><?=$summary?></p>
+            </div>
+          <?php endif; ?>
+          <div class="hidden-print add-to-favorite-col">
+            <?php /* Display qrcode if appropriate: */ ?>
+            <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
+                <?php
+                // Add JS Variables for QrCode
+                $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
+                ?>
+              <div class="hidden-xs">
+                <a href="<?=$this->escapeHtmlAttr($QRCode);?>" class="finnaQrcodeLink" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
+                  <i class="fa fa-qr-code" aria-hidden="true"><span class="sr-only"><?=$this->transEsc('QR Code')?></span></i>
+                </a>
+                <div class="qrcode hidden">
+                  <script type="text/template" class="qrCodeImgTag">
+                    <img alt="" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
+                  </script>
+                </div><br/>
+              </div>
+            <?php endif; ?>
+          </div>
+
+          <?php /* Hierarchy tree link */ ?>
+          <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+            <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
+            <div class="hierarchyTreeLink">
+              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
+              <i class="fa fa-sitemap"></i>
+              <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID])?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->recordLink()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID])?>" data-lightbox-post="tab=hierarchytree">
+                  <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
+              </a>
+            </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+
+            <?php $openUrl = $this->driver->getOpenURL(); ?>
+            <?=$openUrl?'<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>':''?>
+        </div>
+      </div>
+      <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>
+      <div class="media-right condensed-image resultThumb">
         <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
         <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
           <?=$thumbnail ?>
       </div>
+      <?php endif; ?>
+      <div class="clearfix visible-xs"></div>
+      <?=$this->record($this->driver)->getPreviews()?>
     <?php endif; ?>
-    <div class="media-body">
-      <div class="result-body">
-        <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
-        <?php if ($summary): ?>
-          <div class="truncate-field wide">
-            <p class="summary"><?=$summary?></p>
-          </div>
-        <?php endif; ?>
-        <div class="hidden-print add-to-favorite-col">
-          <?php /* Display qrcode if appropriate: */ ?>
-          <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
-              <?php
-              // Add JS Variables for QrCode
-              $this->jsTranslations()->addStrings(['qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show']);
-              ?>
-            <div class="hidden-xs">
-              <a href="<?=$this->escapeHtmlAttr($QRCode);?>" class="finnaQrcodeLink" title="<?=$this->transEsc('qrcode_show')?>" rel="nofollow">
-                <i class="fa fa-qr-code" aria-hidden="true"><span class="sr-only"><?=$this->transEsc('QR Code')?></span></i>
-              </a>
-              <div class="qrcode hidden">
-                <script type="text/template" class="qrCodeImgTag">
-                  <img alt="" src="<?=$this->escapeHtmlAttr($QRCode);?>"/>
-                </script>
-              </div><br/>
-            </div>
-          <?php endif; ?>
-
-          <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-              <?php /* Add to favorites */ ?>
-            <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
-          <?php endif; ?>
-        </div>
-
-        <?php /* Hierarchy tree link */ ?>
-        <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
-          <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
-          <div class="hierarchyTreeLink">
-            <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
-            <i class="fa fa-sitemap"></i>
-            <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID])?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->recordLink()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID])?>" data-lightbox-post="tab=hierarchytree">
-                <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
-            </a>
-          </div>
-          <?php endforeach; ?>
-        <?php endif; ?>
-
-          <?php $openUrl = $this->driver->getOpenURL(); ?>
-          <?=$openUrl?'<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>':''?>
-
-        <?php /* Saved lists */ ?>
-        <div class="savedLists">
-          <strong><?=$this->transEsc("Saved in")?>:</strong>
-        </div>
-      </div>
-    </div>
-    <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>
-    <div class="media-right condensed-image resultThumb">
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
-      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
-        <?=$thumbnail ?>
-    </div>
-    <?php endif; ?>
-    <div class="clearfix visible-xs"></div>
-    <?=$this->record($this->driver)->getPreviews()?>
-    <?=$this->render('list/list-notes.phtml')?>
   </div>
 </div>
 <!-- END of: finna - RecordDriver/SolrLido/result-condensed.phtml -->

@@ -55,6 +55,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $datasourceConfig;
 
     /**
+     * Search configuration
+     *
+     * @var \Zend\Config\Config
+     */
+    protected $searchConfig;
+
+    /**
      * Record loader
      *
      * @var \VuFind\Record\Loader
@@ -117,6 +124,8 @@ class Record extends \VuFind\View\Helper\Root\Record
      * configuration
      * @param \Zend\Config\Config                 $datasourceConfig Datasource
      * configuration
+     * @param \Zend\Config\Config                 $searchConfig     Search
+     * configuration
      * @param \VuFind\Record\Loader               $loader           Record loader
      * @param \Finna\View\Helper\Root\RecordImage $recordImage      Record image
      * helper
@@ -127,6 +136,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function __construct(
         \Zend\Config\Config $config,
         \Zend\Config\Config $datasourceConfig,
+        \Zend\Config\Config $searchConfig,
         \VuFind\Record\Loader $loader,
         \Finna\View\Helper\Root\RecordImage $recordImage,
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
@@ -135,6 +145,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     ) {
         parent::__construct($config);
         $this->datasourceConfig = $datasourceConfig;
+        $this->searchConfig = $searchConfig;
         $this->loader = $loader;
         $this->recordImageHelper = $recordImage;
         $this->authorityHelper = $authorityHelper;
@@ -710,5 +721,15 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return '';
+    }
+
+    /**
+     * Check if condendsed view result item can be expanded.
+     *
+     * @return bool
+     */
+    public function disableCondensedViewExpand()
+    {
+        return $this->searchConfig->General->disable_condensed_view_expand ?? false;
     }
 }

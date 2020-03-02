@@ -83,6 +83,9 @@ hide_component_parts = true
 ; Maximum result to display
 result_limit = 100000
 
+; Whether to disable result item expanding in condensed view
+; disable_condensed_view_expand = true
+
 [Cache]
 ; This controls whether the parsed searchspecs.yaml file will be stored to
 ; improve search performance; legal options are APC (use APC cache), File (store
