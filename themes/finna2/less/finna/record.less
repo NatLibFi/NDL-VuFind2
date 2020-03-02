@@ -28,8 +28,6 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      resize: vertical;
-      overflow: auto;
     }
   }
   @media(min-width: @screen-xs){
@@ -77,9 +75,6 @@
         content: " (" attr(href) ")";
       }
     }
-  }
-  .video-link-container {
-    margin-bottom: 10px;
   }
   button.videourl {
     display: flex;
@@ -208,10 +203,6 @@ a.authority {
         }
       }
     }
-  }
-  .video-link-container {
-    width: 100%;
-    padding-right: 10px;
   }
   .smaller-image-sidebar {
     display: none;
@@ -415,6 +406,15 @@ a.authority {
   .subheading{
     text-transform: uppercase;
     margin-top: 10px;
+  }
+  table.record-data {
+    width: 100%;
+    tr {
+      line-height: 25px;
+      td:nth-child(2) {
+        padding-left: 10px;
+      }
+    }
   }
 }
 .record-alt-titles {

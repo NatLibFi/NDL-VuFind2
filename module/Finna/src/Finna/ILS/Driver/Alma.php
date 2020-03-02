@@ -128,7 +128,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $fineList = [];
         foreach ($xml as $fee) {
             $created = (string)$fee->creation_time;
-            $checkout = (string)$fee->status_time;
             $payable = false;
             if (!empty($paymentConfig['enabled'])) {
                 $type = (string)$fee->type;
@@ -140,11 +139,43 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 "amount"   => round(floatval($fee->original_amount) * 100),
                 "balance"  => round(floatval($fee->balance) * 100),
                 "createdate" => $this->parseDate($created, true),
-                "checkout" => $this->parseDate($checkout, true),
                 "fine"     => (string)$fee->type['desc'],
-                'payableOnline' => $payable
+                'payableOnline' => $payable,
+                '_create_time' => (string)$fee->creation_time,
+                '_status_time' => (string)$fee->status_time,
+                '_barcode'    => (string)($fee->barcode ?? ''),
+                '_status'  => (string)$fee->status ?? '',
             ];
         }
+        if (!empty($this->config['Catalog']['groupFees'])) {
+            $finesGrouped = [];
+            foreach ($fineList as $fine) {
+                $key = $fine['fine'] . '||' . $fine['_status'] . '||'
+                    . $fine['title'] . '||' . $fine['_barcode'] . '||'
+                    . $fine['payableOnline'];
+                if (isset($finesGrouped[$key])) {
+                    $dateCmp = strcmp(
+                        $finesGrouped[$key]['_create_time'], $fine['_create_time']
+                    );
+                    if ($dateCmp < 0) {
+                        $finesGrouped[$key]['_create_time'] = $fine['_create_time'];
+                        $finesGrouped[$key]['createdate'] = $fine['createdate'];
+                    }
+                    $finesGrouped[$key]['amount'] += $fine['amount'];
+                    $finesGrouped[$key]['balance'] += $fine['balance'];
+                } else {
+                    $finesGrouped[$key] = $fine;
+                }
+            }
+            $fineList = array_values($finesGrouped);
+        }
+        usort(
+            $fineList,
+            function ($a, $b) {
+                return strnatcasecmp($a['title'], $b['title'])
+                    ?: strcmp($a['_status_time'], $b['_status_time']);
+            }
+        );
         return $fineList;
     }
 
@@ -681,8 +712,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     unset($address[0]);
                     continue;
                 }
-                $addressTypes = $address->address_types ??
-                    $address->addChild('address_types');
+                if ($address->address_types) {
+                    unset($address->address_types[0]);
+                }
+                $addressTypes = $address->addChild('address_types');
 
                 foreach ($newAddress['types'] ?? ['home'] as $type) {
                     foreach ($addressTypes->address_type as $existing) {
@@ -1719,6 +1752,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     'item_notes' => $itemNotes ?? null,
                     'item_id' => $itemId,
                     'holding_id' => $holdingId,
+                    'details_ajax' => $holdingId,
                     'holdtype' => 'auto',
                     'addLink' => $addLink,
                     // For Alma title-level hold requests
@@ -1760,17 +1794,12 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 if ('true' === (string)$record->suppress_from_publishing) {
                     continue;
                 }
-                $itemsFound = false;
-                foreach ($results['holdings'] as &$holding) {
+                foreach ($results['holdings'] as $holding) {
                     if ($holding['holding_id'] === (string)$record->holding_id) {
-                        $holding['details_ajax'] = $holding['holding_id'];
-                        $itemsFound = true;
+                        continue 2;
                     }
                 }
-                unset($holding);
-                if (!$itemsFound) {
-                    $noItemsHoldings[] = $record;
-                }
+                $noItemsHoldings[] = $record;
             }
 
             foreach ($noItemsHoldings as $record) {
@@ -2024,12 +2053,19 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     protected function getItemLocation($item)
     {
-        $value = ($this->config['Catalog']['translationPrefix'] ?? '')
-            . (string)$item->item_data->location;
-        $desc = $this->getLocationExternalName(
-            (string)$item->item_data->library,
-            (string)$item->item_data->location
-        );
+        // Yes, temporary location is in holding data while permanent location is in
+        // item data.
+        if ('true' === (string)$item->holding_data->in_temp_location) {
+            $library = $item->holding_data->temp_library
+                ?: $item->item_data->library;
+            $location = $item->holding_data->temp_location
+                ?: $item->item_data->location;
+        } else {
+            $library = $item->item_data->library;
+            $location = $item->item_data->location;
+        }
+        $value = ($this->config['Catalog']['translationPrefix'] ?? '') . $location;
+        $desc = $this->getLocationExternalName((string)$library, (string)$location);
         if (null === $desc) {
             $desc
                 = (string)($item->item_data->location->attributes()->desc ?? $value);
@@ -2066,7 +2102,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             }
             $this->putCachedData($cacheId, $locations);
         }
-        return $locations[$location]['externalName'] ?? null;
+        return !empty($locations[$location]['externalName'])
+            ? $locations[$location]['externalName']
+            : ($locations[$location]['name'] ?? null);
     }
 
     /**
@@ -2420,8 +2458,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     protected function statusSortFunction($a, $b)
     {
-        $orderA = $this->holdingsLocationOrder[$a['location_code']] ?? 999;
-        $orderB = $this->holdingsLocationOrder[$b['location_code']] ?? 999;
+        $orderA = $this->holdingsLocationOrder[$a['location_code'] ?? ''] ?? 999;
+        $orderB = $this->holdingsLocationOrder[$b['location_code'] ?? ''] ?? 999;
         $result = $orderA - $orderB;
 
         if (0 === $result) {

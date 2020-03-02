@@ -64,7 +64,8 @@ class UserListEmbedFactory implements FactoryInterface
         return new $requestedName(
             $container->get(\VuFind\Search\Results\PluginManager::class)
                 ->get('Favorites'),
-            $container->get(\VuFind\Db\Table\PluginManager::class)->get('UserList')
+            $container->get(\VuFind\Db\Table\PluginManager::class)->get('UserList'),
+            $container->get('ViewManager')->getViewModel()
         );
     }
 }
