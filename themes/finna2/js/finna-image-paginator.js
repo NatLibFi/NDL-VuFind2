@@ -883,7 +883,7 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.setDimensions = function setDimensions() {
     var popupHidden = $('.mfp-content').length === 0;
     var container = popupHidden ? $('.image-details-container').not('.hidden') : $('.image-information-holder');
-    var openLink = container.find('.open-link a').attr('href');
+    var openLink = container.find('.open-link a, .display-image a').attr('href');
     if (typeof openLink !== 'undefined') {
       var img = new Image();
       img.src = openLink;
@@ -892,9 +892,8 @@ finna.imagePaginator = (function imagePaginator() {
         var height = this.height;
         if (width === 10 && height === 10) {
           $('.open-link').hide();
-        }
-        else {
-          container.find('.open-link .image-dimensions').text( '(' + width + ' X ' + height + ')');
+        } else {
+          container.find('.open-link .image-dimensions, .display-image .image-dimensions').text( '(' + width + ' x ' + height + ' px)');
         }
       };
     }

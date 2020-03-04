@@ -45,6 +45,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     use SolrFinnaTrait;
 
     /**
+     * Integer to divide bytes to get the value in MB
+     * 
+     * @var int
+     */
+    const BYTES_TO_MB = 1000000;
+
+    /**
      * Record metadata
      *
      * @var \SimpleXMLElement
@@ -64,6 +71,32 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $fileFormatBlackList = [];
+
+    /**
+     * Images cache
+     * 
+     * @var array
+     */
+    protected $imagesCache;
+
+    /**
+     * High resolution image data cache
+     * 
+     * @var array
+     */
+    protected $cachedHires;
+
+    /**
+     * Measurement units to displayable formats
+     * 
+     * @var array
+     */
+    protected $unitShorts = [
+        'tavua' => 'MB',
+        'bytes' => 'MB',
+        'pikseli' => 'px',
+        'pixel' => 'px'
+    ];
 
     /**
      * Attach date converter
@@ -171,6 +204,66 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Returns found high resolution images from the XML
+     * We can try to get resourceId for the hires image to save
+     * 
+     * @param int|null $index of the image to get data for
+     * 
+     * @return array
+     */
+    public function getHighResolutionData($index = null)
+    {
+        $allowedTypes = ['original', 'master'];
+
+        $result = [];
+        $i = -1;
+        foreach ($this->getSimpleXML()->xpath(
+            '/lidoWrap/lido/administrativeMetadata/'
+            . 'resourceWrap/resourceSet'
+        ) as $set) {
+            $i++;
+            if (null !== $index && $index !== $i) {
+                continue;
+            }
+            if (!empty($set->resourceID)) {
+                $result[$i]['resourceID'] = (int)$set->resourceID;
+            }
+            foreach ($set->resourceRepresentation as $representation) {
+                $linkResource = $representation->linkResource;
+                if (empty((string)$linkResource)) {
+                    continue;
+                }
+                $attributes = $representation->attributes();
+                $size = '';
+                switch ((string)$attributes->type) {
+                case 'image_master':
+                    $size = 'master';
+                    break;
+                case 'image_original':
+                    $size = 'original';
+                    break;
+                }
+                if (!in_array($size, $allowedTypes)) {
+                    continue;
+                }
+                $hiRes = [];
+                // Good place to loop through metadata
+                $hiRes['data']
+                    = $this->formatImageMeasurements(
+                        $representation->resourceMeasurementsSet
+                    );
+                $hiRes['url'] = (string)$linkResource;
+                $format = (string)$linkResource->attributes()->formatResource;
+    
+                // Save as a sub value to allow multiple types of same image
+                $result[$i][$size][$format?: 'jpg'] = $hiRes;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - urls        Image URLs
      *   - small     Small image (mandatory)
@@ -188,6 +281,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = 'fi')
     {
+        if (null !== $this->imagesCache) {
+            return $this->imagesCache;
+        }
         $result = [];
         $defaultRights = $this->getImageRights($language, true);
         foreach ($this->getSimpleXML()->xpath(
@@ -230,6 +326,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
             $urls = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
+                $attributes = $representation->attributes();
                 $linkResource = $representation->linkResource;
 
                 if (!empty($this->fileFormatBlackList)
@@ -244,7 +341,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         continue;
                     }
                 }
-                $attributes = $representation->attributes();
                 $size = '';
                 switch ($attributes->type) {
                 case 'image_thumb':
@@ -262,14 +358,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 case 'image_master':
                     $size = 'master';
                     break;
+                case 'image_original':
+                    $size = 'original';
+                    break;
                 }
 
                 $url = (string)$linkResource;
+                
                 if (!$size) {
                     if ($urls) {
                         // We already have URL's, store them in the results first.
                         // This shouldn't happen unless there are multiple images
                         // without type in the same set.
+
                         $result[] = [
                             'urls' => $urls,
                             'description' => '',
@@ -279,28 +380,84 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $urls['small'] = $urls['medium'] = $urls['large'] = $url;
                 } else {
                     $urls[$size] = $url;
-                }
+                }   
             }
             // If current set has no images to show, continue to next one
             if (empty($urls)) {
                 continue;
             }
             if (!isset($urls['small'])) {
-                $urls['small'] = $urls['medium']
-                    ?? $urls['large'];
+                $urls['small'] = $urls['large']
+                    ?? $urls['medium'];
             }
             if (!isset($urls['medium'])) {
-                $urls['medium'] = $urls['small']
-                    ?? $urls['large'];
+                $urls['medium'] = $urls['large']
+                    ?? $urls['small'];
             }
-
+            
             $result[] = [
                 'urls' => $urls,
                 'description' => '',
                 'rights' => $rights
             ];
         }
-        return $result;
+
+        return $this->imagesCache = $result;
+    }
+
+    /**
+     * Function to format given resourceMeasurementsSet to readable format
+     * 
+     * @param object $measurements of the image
+     * @param string $language     to search data for
+     * 
+     * @return array
+     */
+    public function formatImageMeasurements($measurements, $language = 'en')
+    {
+        $data = [];
+        foreach ($measurements as $set) {
+            if (!isset($set->measurementValue)
+                || empty((string)$set->measurementValue)
+            ) {
+                continue;
+            }
+
+            $type = '';
+            foreach ($set->measurementType as $t) {
+                if ((string)$t->attributes()->lang !== $language) {
+                    continue;
+                }
+                $type = trim((string)$t);
+                break;
+            }
+            $unit = '';
+            foreach ($set->measurementUnit as $u) {
+                if ((string)$u->attributes()->lang !== $language) {
+                    continue;
+                }
+                $unit = $this->mapUnitToShort(trim((string)$u));
+                break;
+            }
+            $value = ($type === 'size')
+                ? round((int)$set->measurementValue / self::BYTES_TO_MB, 0)
+                : trim((string)$set->measurementValue);
+            $data[$type] = compact('unit', 'value');
+        }
+
+        return $data;
+    }
+
+    /**
+     * Function to get short version of a unit
+     * 
+     * @param string $key to find
+     * 
+     * @return string
+     */
+    public function mapUnitToShort($key)
+    {
+        return $this->unitShorts[$key] ?? $key;
     }
 
     /**

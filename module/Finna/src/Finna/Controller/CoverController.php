@@ -80,6 +80,40 @@ class CoverController extends \VuFind\Controller\CoverController
     }
 
     /**
+     * Function to download images from the provider instead of cache
+     * 
+     * @return \Zend\Http\Response
+     */
+    public function downloadAction()
+    {
+        $this->sessionSettings->disableWrite(); // avoid session write timing bug
+        $allowedSizes = ['original', 'master'];
+
+        $params = $this->params();
+        $size = $params->fromQuery('size');
+        $format = $params->fromQuery('format', 'jpg');
+        $response = $this->getResponse();
+
+        if (($id = $params->fromQuery('id')) && in_array($size, $allowedSizes)) {
+            $driver = $this->recordLoader->load(
+                $id, $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
+            );
+            $index = (int)$params->fromQuery('index');
+            $image = $driver->tryMethod('getHighResolutionData', [$index]);
+            if ($image && isset($image[$index][$size][$format]['url'])) {
+                $url = $image[$index][$size][$format]['url'];
+                $res = $this->loader->loadExternalImage($url, $format);
+            } else {
+                $response->setStatusCode(404);
+            }
+        } else {
+            $response->setStatusCode(400);
+        }
+
+        return $response;
+    }
+
+    /**
      * Send image data for display in the view
      *
      * @return \Zend\Http\Response

@@ -170,6 +170,42 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
+     * Loads an external image from provider and sends it to browser
+     * in chunks. Used for big image files
+     * 
+     * @param string $url    to load
+     * @param string $format type of the image to load
+     * 
+     * @return void
+     */
+    public function loadExternalImage($url, $format)
+    {
+        $contentType = '';
+        switch ($format) {
+        case 'tif':
+        case 'tiff':
+            $contentType = 'image/tiff';
+            break;
+        default:
+            $contentType = 'image/jpeg';
+            break;
+        }
+        if ($handle = fopen($url, 'rb')) {
+            header("Content-Type: $contentType");
+            while (!feof($handle)) {
+                $block = fread($handle, 1024 * 8);
+                if ($block === false) {
+                    break;
+                }
+                print $block;
+                ob_flush();
+                flush();
+            }
+            fclose($handle);
+        }
+    }
+
+    /**
      * Load a record image.
      *
      * @param \Vufind\RecordDriver\SolrDefault $driver Record

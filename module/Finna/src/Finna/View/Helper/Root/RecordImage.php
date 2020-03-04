@@ -188,6 +188,37 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
+     * Returns high resolution data with download links
+     * 
+     * @param int $index of wanted data
+     * 
+     * @return mixed
+     */
+    public function getHighResolutionDownloadData($index = null)
+    {
+        $data = $this->record->getHighResolutionData($index);
+        if (!$data) {
+            return false;
+        }
+
+        $urlHelper = $this->getView()->plugin('url');
+        foreach ($data as $i => &$images) {
+            foreach ($images as $size => &$links) {
+                if ($size === 'resourceID') {
+                    continue;
+                }
+                foreach ($links as $format => &$values) {
+                    $values['url'] = $urlHelper('cover-download') . '?' .
+                        http_build_query($values['params']);
+                    unset($values['params']);
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Get all images as Cover links
      *
      * @param string $language   Language for copyright information
@@ -269,6 +300,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
         $images = $this->getAllImagesAsCoverLinks(
             $view->layout()->userLang, $params, true, true, $source
         );
+        $hiRes = $this->getHighResolutionDownloadData();
         if ($images && $view->layout()->templateDir === 'combined') {
             // Limit combined results to a single image
             $images = [$images[0]];
@@ -277,6 +309,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
         $context = [
             'type' => $type,
             'images' => $images,
+            'hiRes' => $hiRes,
             'disableModal' => $disableModal,
             'imageRightsLabel' => $imageRightsLabel,
             'numOfImages' => $numOfImages
