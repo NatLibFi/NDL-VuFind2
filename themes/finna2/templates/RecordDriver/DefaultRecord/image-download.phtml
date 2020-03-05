@@ -29,7 +29,7 @@
                                     $dimensions = "({$data['width']['value']} x {$data['height']['value']} {$data['height']['unit']})";
                                 }
 
-                                $downloadName =  str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($hiRes['resourceID'] ?? $key) . '-' . $size;
+                                $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($hiRes['resourceID'] ?? $key) . '-' . $size;
                             ?>
                             <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($info['url'])?>"> <?= $this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$dimensions?></span> <span class="image-size"><?=$imageSize?></span>  <?=$key?></a></li>
                         <?php endforeach; ?>

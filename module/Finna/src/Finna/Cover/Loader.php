@@ -172,10 +172,10 @@ class Loader extends \VuFind\Cover\Loader
     /**
      * Loads an external image from provider and sends it to browser
      * in chunks. Used for big image files
-     * 
+     *
      * @param string $url    to load
      * @param string $format type of the image to load
-     * 
+     *
      * @return void
      */
     public function loadExternalImage($url, $format)
@@ -197,7 +197,7 @@ class Loader extends \VuFind\Cover\Loader
                 if ($block === false) {
                     break;
                 }
-                print $block;
+                echo $block;
                 ob_flush();
                 flush();
             }

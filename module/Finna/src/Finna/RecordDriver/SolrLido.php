@@ -46,7 +46,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Integer to divide bytes to get the value in MB
-     * 
+     *
      * @var int
      */
     const BYTES_TO_MB = 1000000;
@@ -74,21 +74,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Images cache
-     * 
+     *
      * @var array
      */
     protected $imagesCache;
 
     /**
      * High resolution image data cache
-     * 
+     *
      * @var array
      */
     protected $cachedHires;
 
     /**
      * Measurement units to displayable formats
-     * 
+     *
      * @var array
      */
     protected $unitShorts = [
@@ -206,9 +206,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Returns found high resolution images from the XML
      * We can try to get resourceId for the hires image to save
-     * 
+     *
      * @param int|null $index of the image to get data for
-     * 
+     *
      * @return array
      */
     public function getHighResolutionData($index = null)
@@ -254,9 +254,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     );
                 $hiRes['url'] = (string)$linkResource;
                 $format = (string)$linkResource->attributes()->formatResource;
-    
+
                 // Save as a sub value to allow multiple types of same image
-                $result[$i][$size][$format?: 'jpg'] = $hiRes;
+                $result[$i][$size][$format ?: 'jpg'] = $hiRes;
             }
         }
 
@@ -343,7 +343,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
                 $size = '';
                 switch ($attributes->type) {
-                case 'image_thumb':
+                case 'image_thumb' :
                 case 'thumb':
                     $size = 'small';
                     break;
@@ -364,7 +364,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
 
                 $url = (string)$linkResource;
-                
+
                 if (!$size) {
                     if ($urls) {
                         // We already have URL's, store them in the results first.
@@ -380,7 +380,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $urls['small'] = $urls['medium'] = $urls['large'] = $url;
                 } else {
                     $urls[$size] = $url;
-                }   
+                }
             }
             // If current set has no images to show, continue to next one
             if (empty($urls)) {
@@ -394,7 +394,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $urls['medium'] = $urls['large']
                     ?? $urls['small'];
             }
-            
+
             $result[] = [
                 'urls' => $urls,
                 'description' => '',
@@ -407,10 +407,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Function to format given resourceMeasurementsSet to readable format
-     * 
+     *
      * @param object $measurements of the image
      * @param string $language     to search data for
-     * 
+     *
      * @return array
      */
     public function formatImageMeasurements($measurements, $language = 'en')
@@ -450,9 +450,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Function to get short version of a unit
-     * 
+     *
      * @param string $key to find
-     * 
+     *
      * @return string
      */
     public function mapUnitToShort($key)

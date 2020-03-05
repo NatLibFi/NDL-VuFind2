@@ -189,10 +189,10 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
 
     /**
      * Returns high resolution data with download links
-     * 
+     *
      * @param int    $index  Record image data
      * @param string $source Record source
-     * 
+     *
      * @return mixed
      */
     public function getHighResolutionDownloadData(

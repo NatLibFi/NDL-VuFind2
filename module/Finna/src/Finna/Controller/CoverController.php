@@ -81,7 +81,7 @@ class CoverController extends \VuFind\Controller\CoverController
 
     /**
      * Function to download images from the provider instead of cache
-     * 
+     *
      * @return \Zend\Http\Response
      */
     public function downloadAction()

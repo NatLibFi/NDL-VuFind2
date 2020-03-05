@@ -503,15 +503,15 @@ class Record extends \VuFind\View\Helper\Root\Record
 
     /**
      * Get data for higher resolution images
-     * 
+     *
      * @param int    $index  Record image data
      * @param string $source Record source
-     * 
+     *
      * @return mixed
      */
     public function getHighResolutionData(
         $index = null, $source = DEFAULT_SEARCH_BACKEND
-    ) {   
+    ) {
         $data = $this->driver->tryMethod('getHighResolutionData', [$index], false);
         if (!$data) {
             return false;
