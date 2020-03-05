@@ -1,7 +1,7 @@
 <?php
   $recordImage = $this->recordImage($this->record($this->driver));
   $hiRes = $recordImage->getHighResolutionDownloadData((int)$this->index);
-  $largeImage = $recordImage->getLargeImageWithInfo($this->index);
+  $largeImage = $recordImage->getLargeImageWithInfo($this->index)['url'];
   $imageDescription = $this->driver->tryMethod('getImageDescription', [$this->index]);
   $rights = $recordImage->getImageRights($this->index);
   $formats = $this->driver->tryMethod('getFormats');

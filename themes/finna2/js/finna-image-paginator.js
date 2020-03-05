@@ -747,12 +747,7 @@ finna.imagePaginator = (function imagePaginator() {
         var img = document.createElement('img');
         img.src = $('.open-link a').attr('href');
         img.onload = function onLoadImg() {
-          if (this.width === 10 && this.height === 10) {
-            $('.open-link').hide();
-          }
-          else {
-            $('.open-link .image-dimensions').text( '(' + this.width + ' X ' + this.height + ')');
-          }
+          _.setDimensions();
         };
       }
       $('.collapse-content-holder').find('[data-embed-video]').click(function onClickVideoLink(){

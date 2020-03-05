@@ -190,13 +190,15 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     /**
      * Returns high resolution data with download links
      * 
-     * @param int $index of wanted data
+     * @param int    $index  Record image data
+     * @param string $source Record source
      * 
      * @return mixed
      */
-    public function getHighResolutionDownloadData($index = null)
-    {
-        $data = $this->record->getHighResolutionData($index);
+    public function getHighResolutionDownloadData(
+        $index = null, $source = DEFAULT_SEARCH_BACKEND
+    ) {
+        $data = $this->record->getHighResolutionData($index, $source);
         if (!$data) {
             return false;
         }
@@ -300,7 +302,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
         $images = $this->getAllImagesAsCoverLinks(
             $view->layout()->userLang, $params, true, true, $source
         );
-        $hiRes = $this->getHighResolutionDownloadData();
+        $hiRes = $this->getHighResolutionDownloadData(null, $source);
         if ($images && $view->layout()->templateDir === 'combined') {
             // Limit combined results to a single image
             $images = [$images[0]];

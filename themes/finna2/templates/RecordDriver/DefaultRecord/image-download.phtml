@@ -6,13 +6,14 @@
             $links = [];
         ?>
         <?php if ($hiRes): ?>
+            <i aria-hidden="true" class="fa fa-download"></i>
             <div class="dropdown">
                 <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <?=$this->transEsc('Download the image') ?> <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu download" aira-labelledby="downloadMenu-<?=$index?>">
                     <?php if (isset($urls['large'])): ?>
-                        <li class="display-image" ><a href="<?= $this->escapeHtmlAttr($urls['large']['url'] ?? $urls['large'])?>" download target="_blank"><?= $this->transEsc('display_image') ?> <span class="image-dimensions"></span></a></li>
+                        <li class="display-image" ><a href="<?= $this->escapeHtmlAttr($urls['large']['url'] ?? $urls['large'])?>" download target="_blank"><?= $this->transEsc('display_image') ?> <span class="image-dimensions"></span> jpg</a></li>
                     <?php endif; ?>
                     <?php foreach ($hiRes ?? [] as $size => $img): ?>
                         <?php if ($size === 'resourceID') { continue; } ?>
@@ -27,13 +28,10 @@
                                 if (isset($data['width']) && isset($data['height'])) {
                                     $dimensions = "({$data['width']['value']} x {$data['height']['value']} {$data['height']['unit']})";
                                 }
-                                $format = '.jpg';
-                                if (!is_numeric($key)) {
-                                    $format = ".$key";
-                                }
-                                $downloadName =  str_replace('.', '-', $this->driver->getUniqueID()) . '-' . $hiRes['resourceID'] ?? $key . '-' . $size;
+
+                                $downloadName =  str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($hiRes['resourceID'] ?? $key) . '-' . $size;
                             ?>
-                            <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($info['url'])?>"> <?= $this->transEsc('high_resolution_image') ?> <span class="image-dimensions"><?= $dimensions ?></span> <?= $format ?> <?= $imageSize ?></a></li>
+                            <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($info['url'])?>"> <?= $this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$dimensions?></span> <span class="image-size"><?=$imageSize?></span>  <?=$key?></a></li>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                 </ul>

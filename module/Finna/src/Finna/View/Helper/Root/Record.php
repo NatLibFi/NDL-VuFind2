@@ -504,18 +504,19 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Get data for higher resolution images
      * 
-     * @param int $index for wanted image data
+     * @param int    $index  Record image data
+     * @param string $source Record source
      * 
      * @return mixed
      */
-    public function getHighResolutionData($index = null)
-    {   
+    public function getHighResolutionData(
+        $index = null, $source = DEFAULT_SEARCH_BACKEND
+    ) {   
         $data = $this->driver->tryMethod('getHighResolutionData', [$index], false);
         if (!$data) {
             return false;
         }
         $recordId = $this->driver->getUniqueID();
-        $urlHelper = $this->getView()->plugin('url');
         foreach ($data as $i => &$images) {
             foreach ($images as $size => &$links) {
                 if ($size === 'resourceID') {
@@ -524,6 +525,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 foreach ($links as $format => &$values) {
                     $values['params'] = [
                         'id' => $recordId,
+                        'source' => $source,
                         'index' => $i,
                         'size' => $size,
                         'format' => $format ?? 'jpg'
