@@ -385,14 +385,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $urls['medium'] = $urls['small']
                     ?? $urls['large'];
             }
-
             $result[] = [
                 'urls' => $urls,
                 'description' => '',
                 'rights' => $rights
             ];
         }
-
         return $this->cachedImages = $result;
     }
 
@@ -413,7 +411,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             ) {
                 continue;
             }
-
             $type = '';
             foreach ($set->measurementType as $t) {
                 if ((string)$t->attributes()->lang !== $language) {
@@ -435,7 +432,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 : trim((string)$set->measurementValue);
             $data[$type] = compact('unit', 'value');
         }
-
         return $data;
     }
 

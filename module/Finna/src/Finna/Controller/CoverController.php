@@ -88,7 +88,6 @@ class CoverController extends \VuFind\Controller\CoverController
     {
         $this->sessionSettings->disableWrite(); // avoid session write timing bug
         $allowedSizes = ['original', 'master'];
-
         $params = $this->params();
         $size = $params->fromQuery('size');
         $format = $params->fromQuery('format', 'jpg');

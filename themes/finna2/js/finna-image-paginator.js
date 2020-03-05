@@ -744,11 +744,7 @@ finna.imagePaginator = (function imagePaginator() {
       }
       VuFind.lightbox.bind('.imagepopup-holder');
       if (typeof $('.open-link a').attr('href') !== 'undefined') {
-        var img = document.createElement('img');
-        img.src = $('.open-link a').attr('href');
-        img.onload = function onLoadImg() {
-          _.setDimensions();
-        };
+        _.setDimensions();
       }
       $('.collapse-content-holder').find('[data-embed-video]').click(function onClickVideoLink(){
         var videoSources = $(this).data('videoSources');
