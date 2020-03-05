@@ -77,14 +77,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @var array
      */
-    protected $imagesCache;
-
-    /**
-     * High resolution image data cache
-     *
-     * @var array
-     */
-    protected $cachedHires;
+    protected $cachedImages;
 
     /**
      * Measurement units to displayable formats
@@ -204,8 +197,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Returns found high resolution images from the XML
-     * We can try to get resourceId for the hires image to save
+     * Returns high resolution data for records
      *
      * @param int|null $index of the image to get data for
      *
@@ -225,6 +217,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             if (null !== $index && $index !== $i) {
                 continue;
             }
+            $result[$i] = [];
             if (!empty($set->resourceID)) {
                 $result[$i]['resourceID'] = (int)$set->resourceID;
             }
@@ -247,7 +240,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     continue;
                 }
                 $hiRes = [];
-                // Good place to loop through metadata
                 $hiRes['data']
                     = $this->formatImageMeasurements(
                         $representation->resourceMeasurementsSet
@@ -255,7 +247,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $hiRes['url'] = (string)$linkResource;
                 $format = (string)$linkResource->attributes()->formatResource;
 
-                // Save as a sub value to allow multiple types of same image
                 $result[$i][$size][$format ?: 'jpg'] = $hiRes;
             }
         }
@@ -281,8 +272,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = 'fi')
     {
-        if (null !== $this->imagesCache) {
-            return $this->imagesCache;
+        if (null !== $this->cachedImages) {
+            return $this->cachedImages;
         }
         $result = [];
         $defaultRights = $this->getImageRights($language, true);
@@ -387,12 +378,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 continue;
             }
             if (!isset($urls['small'])) {
-                $urls['small'] = $urls['large']
-                    ?? $urls['medium'];
+                $urls['small'] = $urls['medium']
+                    ?? $urls['large'];
             }
             if (!isset($urls['medium'])) {
-                $urls['medium'] = $urls['large']
-                    ?? $urls['small'];
+                $urls['medium'] = $urls['small']
+                    ?? $urls['large'];
             }
 
             $result[] = [
@@ -402,7 +393,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             ];
         }
 
-        return $this->imagesCache = $result;
+        return $this->cachedImages = $result;
     }
 
     /**
