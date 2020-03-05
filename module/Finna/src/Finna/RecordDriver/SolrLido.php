@@ -312,14 +312,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $rights['description'][] = $term;
                 }
             }
-
             if (empty($rights)) {
                 $rights = $defaultRights;
             }
-
             $urls = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
-                $attributes = $representation->attributes();
                 $linkResource = $representation->linkResource;
 
                 if (!empty($this->fileFormatBlackList)
@@ -334,6 +331,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         continue;
                     }
                 }
+                $attributes = $representation->attributes();
                 $size = '';
                 switch ($attributes->type) {
                 case 'image_thumb':
@@ -357,13 +355,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
 
                 $url = (string)$linkResource;
-
                 if (!$size) {
                     if ($urls) {
                         // We already have URL's, store them in the results first.
                         // This shouldn't happen unless there are multiple images
                         // without type in the same set.
-
                         $result[] = [
                             'urls' => $urls,
                             'description' => '',
