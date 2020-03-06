@@ -253,7 +253,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             '/lidoWrap/lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
         ) as $resourceSet) {
-            $highResolution[$i++] = [];
+            $highResolution[++$i] = [];
             if (!empty($set->resourceID)) {
                 $highResolution[$i]['resourceID'] = (int)$set->resourceID;
             }
