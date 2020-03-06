@@ -82,6 +82,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $cachedImages;
 
     /**
+     * High resolution cache
+     *
+     * @var array
+     */
+    protected $cachedHighResolution;
+
+    /**
      * Measurement units to displayable formats
      *
      * @var array
@@ -207,53 +214,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getHighResolutionData($index = null)
     {
-        $allowedTypes = ['original', 'master'];
-
-        $result = [];
-        $i = -1;
-        foreach ($this->getSimpleXML()->xpath(
-            '/lidoWrap/lido/administrativeMetadata/'
-            . 'resourceWrap/resourceSet'
-        ) as $set) {
-            $i++;
-            if (null !== $index && $index !== $i) {
-                continue;
-            }
-            $result[$i] = [];
-            if (!empty($set->resourceID)) {
-                $result[$i]['resourceID'] = (int)$set->resourceID;
-            }
-            foreach ($set->resourceRepresentation as $representation) {
-                $linkResource = $representation->linkResource;
-                if (empty((string)$linkResource)) {
-                    continue;
-                }
-                $attributes = $representation->attributes();
-                $size = '';
-                switch ((string)$attributes->type) {
-                case 'image_master':
-                    $size = 'master';
-                    break;
-                case 'image_original':
-                    $size = 'original';
-                    break;
-                }
-                if (!in_array($size, $allowedTypes)) {
-                    continue;
-                }
-                $hiRes = [];
-                $hiRes['data']
-                    = $this->formatImageMeasurements(
-                        $representation->resourceMeasurementsSet
-                    );
-                $hiRes['url'] = (string)$linkResource;
-                $format = (string)$linkResource->attributes()->formatResource;
-
-                $result[$i][$size][$format ?: 'jpg'] = $hiRes;
-            }
+        if (null === $this->cachedHighResolution) {
+            $this->getAllImages();
         }
 
-        return $result;
+        return !isset($index)
+            ? $this->cachedHighResolution
+            : [$index => ($this->cachedHighResolution[$index] ?? [])];
     }
 
     /**
@@ -277,16 +244,22 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         if (null !== $this->cachedImages) {
             return $this->cachedImages;
         }
+
         $result = [];
+        $highResolution = [];
+        $i = -1;
         $defaultRights = $this->getImageRights($language, true);
         foreach ($this->getSimpleXML()->xpath(
             '/lidoWrap/lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
         ) as $resourceSet) {
+            $highResolution[$i++] = [];
+            if (!empty($set->resourceID)) {
+                $highResolution[$i]['resourceID'] = (int)$set->resourceID;
+            }
             if (empty($resourceSet->resourceRepresentation->linkResource)) {
                 continue;
             }
-
             // Process rights first since we may need to duplicate them if there
             // are multiple images in the set (non-standard)
             $rights = [];
@@ -318,9 +291,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $urls = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
-
+                $attributes = $representation->attributes();
+                if (empty((string)$linkResource)) {
+                    continue;
+                }
                 if (!empty($this->fileFormatBlackList)
                     && isset($linkResource->attributes()->formatResource)
+                    && $attributes->type !== 'image_original'
                 ) {
                     $format = trim(
                         (string)$linkResource->attributes()->formatResource
@@ -331,7 +308,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         continue;
                     }
                 }
-                $attributes = $representation->attributes();
+
                 $size = '';
                 switch ($attributes->type) {
                 case 'image_thumb':
@@ -370,6 +347,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 } else {
                     $urls[$size] = $url;
                 }
+
+                if ($size === 'master' || $size === 'original') {
+                    $currentHighRes = [];
+                    $currentHighRes['data']
+                        = $this->formatImageMeasurements(
+                            $representation->resourceMeasurementsSet
+                        );
+                    $currentHighRes['url'] = (string)$linkResource;
+                    $format = (string)$linkResource->attributes()->formatResource;
+
+                    $highResolution[$i][$size][$format ?: 'jpg'] = $currentHighRes;
+                }
             }
             // If current set has no images to show, continue to next one
             if (empty($urls)) {
@@ -389,6 +378,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'rights' => $rights
             ];
         }
+        $this->cachedHighResolution = $highResolution;
         return $this->cachedImages = $result;
     }
 
