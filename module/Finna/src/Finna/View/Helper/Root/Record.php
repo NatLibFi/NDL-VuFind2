@@ -559,7 +559,9 @@ class Record extends \VuFind\View\Helper\Root\Record
                     ];
                     $image['urls'][$size] = $params;
                 }
-                if (isset($image['highResolution']) && !empty($image['highResolution'])) {
+                if (isset($image['highResolution'])
+                    && !empty($image['highResolution'])
+                ) {
                     foreach ($image['highResolution'] as $size => &$values) {
                         foreach ($values as $format => &$data) {
                             $data['params'] = [
