@@ -89,18 +89,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $cachedHighResolution;
 
     /**
-     * Measurement units to displayable formats
-     *
-     * @var array
-     */
-    protected $unitShorts = [
-        'tavua' => 'MB',
-        'bytes' => 'MB',
-        'pikseli' => 'px',
-        'pixel' => 'px'
-    ];
-
-    /**
      * Attach date converter
      *
      * @param \VuFind\Date\Converter $dateConverter Date Converter
@@ -224,7 +212,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getAllImages($language = 'fi')
     {
         if (null !== $this->cachedImages) {
-            var_dump('saved');
             return $this->cachedImages;
         }
 
@@ -394,27 +381,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if ((string)$u->attributes()->lang !== $language) {
                     continue;
                 }
-                $unit = $this->mapUnitToShort(trim((string)$u));
+                $unit = trim((string)$u);
                 break;
             }
-            $value = ($type === 'size')
-                ? round((int)$set->measurementValue / self::BYTES_TO_MB, 0)
-                : trim((string)$set->measurementValue);
+
+            $value = trim((string)$set->measurementValue);
             $data[$type] = compact('unit', 'value');
         }
         return $data;
-    }
-
-    /**
-     * Function to get short version of a unit
-     *
-     * @param string $key to find
-     *
-     * @return string
-     */
-    public function mapUnitToShort($key)
-    {
-        return $this->unitShorts[$key] ?? $key;
     }
 
     /**

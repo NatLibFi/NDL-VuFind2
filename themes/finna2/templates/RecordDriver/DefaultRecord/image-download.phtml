@@ -17,21 +17,36 @@
                     <?php endif; ?>
                     <?php foreach ($hiRes as $size => $img): ?>
                         <?php if ($size === 'resourceID') { continue; } ?>
-                        <?php foreach ($img as $key => $info): ?>
+                        <?php foreach ($img as $key => &$info): ?>
                             <?php
                                 $data = $info['data'];
                                 $imageSize = '';
                                 if (isset($data['size'])) {
-                                    $imageSize = "({$data['size']['value']} {$data['size']['unit']})";
+                                    $en = '';
+                                    $bytes = (int)$data['size']['value'];
+                                    $converted = '';
+                                    $convertedTo = '';
+                                    switch ($data['size']['unit']) {
+                                    case 'tavua':
+                                    case 'bytes':
+                                        $converted = number_format($bytes / 1000000, 2);
+                                        $convertedTo = 'MB';
+                                        if ($converted < 1) {
+                                            $converted = number_format($bytes / 1000, 2);
+                                            $convertedTo = 'KB';
+                                        }
+                                        break;
+                                    }
+
+                                    $imageSize = "($converted $convertedTo)";
                                 }
                                 $dimensions = '';
                                 if (isset($data['width']) && isset($data['height'])) {
                                     $dimensions = "({$data['width']['value']} x {$data['height']['value']} {$data['height']['unit']})";
                                 }
-
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($hiRes['resourceID'] ?? $key) . '-' . $size;
                             ?>
-                            <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($info['url'])?>"> <?= $this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$dimensions?></span> <span class="image-size"><?=$imageSize?></span>  <?=$key?></a></li>
+                            <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('cover-download', [], ['query' => $info['params']]))?>"> <?= $this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$dimensions?></span> <span class="image-size"><?=$imageSize?></span>  <?=$key?></a></li>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                 </ul>

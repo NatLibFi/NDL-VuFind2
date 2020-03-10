@@ -192,32 +192,14 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     /**
      * Returns an array of containing all the high resolution images for record image
      *
-     * @param int    $index  Record image index
-     * @param string $source Record source
+     * @param int $index Record image index
      *
      * @return array|false
      */
-    public function getHighResolutionImages($index, $source = DEFAULT_SEARCH_BACKEND)
+    public function getHighResolutionImages($index)
     {
         $images = $this->record->getAllImages($this->view->layout()->userLang);
-        if (!isset($images[$index])
-            || !isset($images[$index]['urls']['highResolution'])
-        ) {
-            return false;
-        }
-        $urlHelper = $this->getView()->plugin('url');
-        foreach ($images[$index]['urls']['highResolution'] as $size => &$values) {
-            foreach ($values as $format => &$data) {
-                $data['url'] = $urlHelper('cover-download') . '?'
-                    . http_build_query(
-                        array_merge(
-                            $data['params'],
-                            ['source' => $source]
-                        )
-                    );
-            }
-        }
-        return $images[$index]['urls']['highResolution'];
+        return $images[$index]['urls']['highResolution'] ?? false;
     }
 
     /**
@@ -268,19 +250,6 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
                             ['source' => $source]
                         )
                     );
-            }
-            if (isset($image['urls']['highResolution'])) {
-                foreach ($image['urls']['highResolution'] as $size => &$values) {
-                    foreach ($values as $format => &$data) {
-                        $data['url'] = $urlHelper('cover-download') . '?'
-                            . http_build_query(
-                                array_merge(
-                                    $data['params'],
-                                    ['source' => $source]
-                                )
-                            );
-                    }
-                }
             }
         }
         return $images;
