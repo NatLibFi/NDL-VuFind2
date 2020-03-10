@@ -312,7 +312,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 } else {
                     $urls[$size] = $url;
                 }
-                
+
                 if ($size === 'master' || $size === 'original') {
                     $currentHiRes = [];
                     $currentHiRes['data']
