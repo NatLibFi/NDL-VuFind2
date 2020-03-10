@@ -13,7 +13,7 @@
                 </button>
                 <ul class="dropdown-menu download" aira-labelledby="downloadMenu-<?=$index?>">
                     <?php if (isset($urls['large'])): ?>
-                        <li class="display-image" ><a href="<?= $this->escapeHtmlAttr($urls['large']['url'] ?? $urls['large'])?>" download target="_blank"><?= $this->transEsc('display_image') ?> <span class="image-dimensions"></span> jpg</a></li>
+                        <li class="display-image"><a href="<?= $this->escapeHtmlAttr($urls['large']['url'] ?? $urls['large'])?>" download target="_blank"><?= $this->transEsc('display_image') ?> <span class="image-dimensions"></span> jpg</a></li>
                     <?php endif; ?>
                     <?php foreach ($hiRes as $size => $img): ?>
                         <?php if ($size === 'resourceID') { continue; } ?>
