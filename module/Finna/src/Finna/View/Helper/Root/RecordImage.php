@@ -199,7 +199,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     public function getHighResolutionImages($index)
     {
         $images = $this->record->getAllImages($this->view->layout()->userLang);
-        return $images[$index]['urls']['highResolution'] ?? false;
+        return $images[$index]['highResolution'] ?? false;
     }
 
     /**

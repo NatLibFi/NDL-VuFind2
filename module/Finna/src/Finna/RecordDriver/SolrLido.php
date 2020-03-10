@@ -253,6 +253,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $rights = $defaultRights;
             }
             $urls = [];
+            $highResolution = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
                 $attributes = $representation->attributes();
@@ -311,22 +312,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 } else {
                     $urls[$size] = $url;
                 }
-
+                
                 if ($size === 'master' || $size === 'original') {
-                    $highResolution = [];
-                    $highResolution['data']
+                    $currentHiRes = [];
+                    $currentHiRes['data']
                         = $this->formatImageMeasurements(
                             $representation->resourceMeasurementsSet
                         );
-                    $highResolution['url'] = (string)$linkResource;
+                    $currentHiRes['url'] = (string)$linkResource;
                     if (!empty($resourceSet->resourceID)) {
-                        $highResolution['resourceID']
+                        $currentHiRes['resourceID']
                             = (int)$resourceSet->resourceID;
                     }
                     $format = (string)$linkResource->attributes()->formatResource;
 
-                    $urls['highResolution'][$size][$format ?: 'jpg']
-                        = $highResolution;
+                    $highResolution[$size][$format ?: 'jpg'] = $currentHiRes;
                 }
             }
             // If current set has no images to show, continue to next one
@@ -344,7 +344,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $result[] = [
                 'urls' => $urls,
                 'description' => '',
-                'rights' => $rights
+                'rights' => $rights,
+                'highResolution' => $highResolution
             ];
         }
 

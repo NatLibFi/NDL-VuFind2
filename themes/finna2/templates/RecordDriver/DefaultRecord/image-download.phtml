@@ -28,19 +28,19 @@
                                     case 'tavua':
                                     case 'bytes':
                                         $bytes = (int)$data['size']['value'];
-                                        if (($converted = number_format($bytes / 1000000, 2)) < 1) {
+                                        if (($converted = number_format($bytes / 1000000, 2)) > 1) {
+                                            $convertedTo = 'MB';
+                                        } else {
                                             $converted = number_format($bytes / 1000, 2);
                                             $convertedTo = 'KB';
-                                        } else {
-                                            $convertedTo = 'MB';
                                         }
+                                        $imageSize = "($converted $convertedTo)";
                                         break;
                                     }
-                                    $imageSize = "($converted $convertedTo)";
                                 }
                                 $dimensions = '';
                                 if (isset($data['width']) && isset($data['height'])) {
-                                    $dimensions = "({$data['width']['value']} x {$data['height']['value']} {$data['height']['unit']})";
+                                    $dimensions = "({$data['width']['value']} x {$data['height']['value']} px)";
                                 }
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($hiRes['resourceID'] ?? $key) . '-' . $size;
                             ?>
