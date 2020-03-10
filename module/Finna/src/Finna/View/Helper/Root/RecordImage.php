@@ -190,7 +190,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
-     * Returns an array of containing all the high resolution images for record image
+     * Returns an array containing all the high resolution images for record image
      *
      * @param int $index Record image index
      *
