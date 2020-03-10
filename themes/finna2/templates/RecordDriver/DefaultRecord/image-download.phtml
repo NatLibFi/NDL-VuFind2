@@ -22,22 +22,20 @@
                                 $data = $info['data'];
                                 $imageSize = '';
                                 if (isset($data['size'])) {
-                                    $en = '';
-                                    $bytes = (int)$data['size']['value'];
                                     $converted = '';
                                     $convertedTo = '';
                                     switch ($data['size']['unit']) {
                                     case 'tavua':
                                     case 'bytes':
-                                        $converted = number_format($bytes / 1000000, 2);
-                                        $convertedTo = 'MB';
-                                        if ($converted < 1) {
+                                        $bytes = (int)$data['size']['value'];
+                                        if (($converted = number_format($bytes / 1000000, 2)) < 1) {
                                             $converted = number_format($bytes / 1000, 2);
                                             $convertedTo = 'KB';
+                                        } else {
+                                            $convertedTo = 'MB';
                                         }
                                         break;
                                     }
-
                                     $imageSize = "($converted $convertedTo)";
                                 }
                                 $dimensions = '';
