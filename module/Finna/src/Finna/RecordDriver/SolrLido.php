@@ -341,7 +341,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'highResolution' => $highResolution
             ];
         }
-
         return $this->cachedImages = $result;
     }
 
