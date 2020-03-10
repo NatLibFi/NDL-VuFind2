@@ -75,13 +75,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $cachedImages;
 
     /**
-     * High resolution cache
-     *
-     * @var array
-     */
-    protected $cachedHighResolution;
-
-    /**
      * Attach date converter
      *
      * @param \VuFind\Date\Converter $dateConverter Date Converter
