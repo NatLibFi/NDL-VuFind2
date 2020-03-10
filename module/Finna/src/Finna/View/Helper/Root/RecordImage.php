@@ -284,7 +284,6 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
         $images = $this->getAllImagesAsCoverLinks(
             $view->layout()->userLang, $params, true, true, $source
         );
-
         if ($images && $view->layout()->templateDir === 'combined') {
             // Limit combined results to a single image
             $images = [$images[0]];
