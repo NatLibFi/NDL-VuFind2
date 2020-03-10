@@ -100,9 +100,10 @@ class CoverController extends \VuFind\Controller\CoverController
                 $id, $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
             );
             $index = (int)$params->fromQuery('index');
-            $image = $driver->tryMethod('getHighResolutionData', [$index]);
-            if ($image && isset($image[$index][$size][$format]['url'])) {
-                $url = $image[$index][$size][$format]['url'];
+            $images = $driver->getAllImages();
+            $highResolution = $images[$index]['urls']['highResolution'] ?? [];
+            if ($images && isset($highResolution[$size][$format]['url'])) {
+                $url = $highResolution[$size][$format]['url'];
                 $res = $this->loader->loadExternalImage($url, $format);
             } else {
                 $response->setStatusCode(404);

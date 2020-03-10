@@ -502,42 +502,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Get data for higher resolution images
-     *
-     * @param int    $index  Record image data
-     * @param string $source Record source
-     *
-     * @return mixed
-     */
-    public function getHighResolutionData(
-        $index = null, $source = DEFAULT_SEARCH_BACKEND
-    ) {
-        $data = $this->driver->tryMethod('getHighResolutionData', [$index], false);
-        if (!$data) {
-            return false;
-        }
-        $recordId = $this->driver->getUniqueID();
-        foreach ($data as $i => &$images) {
-            foreach ($images as $size => &$links) {
-                if ($size === 'resourceID') {
-                    continue;
-                }
-                foreach ($links as $format => &$values) {
-                    $values['params'] = [
-                        'id' => $recordId,
-                        'source' => $source,
-                        'index' => $i,
-                        'size' => $size,
-                        'format' => $format ?? 'jpg'
-                    ];
-                }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
      * Return an array of all record images in all sizes
      *
      * @param string $language   Language for description and rights
@@ -594,6 +558,18 @@ class Record extends \VuFind\View\Helper\Root\Record
                         'size' => $size
                     ];
                     $image['urls'][$size] = $params;
+                }
+                if (isset($image['urls']['highResolution'])) {
+                    foreach ($image['urls']['highResolution'] as $size => &$values) {
+                        foreach ($values as $format => &$data) {
+                            $data['params'] = [
+                                'id' => $recordId,
+                                'index' => $idx,
+                                'size' => $size,
+                                'format' => $format ?? 'jpg'
+                            ];
+                        }
+                    }
                 }
             }
         }

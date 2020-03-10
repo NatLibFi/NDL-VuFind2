@@ -190,36 +190,34 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
     }
 
     /**
-     * Returns high resolution data with download links
+     * Returns an array of containing all the high resolution images for record image
      *
-     * @param int    $index  Record image data
+     * @param int    $index  Record image index
      * @param string $source Record source
      *
-     * @return mixed
+     * @return array|false
      */
-    public function getHighResolutionDownloadData(
-        $index = null, $source = DEFAULT_SEARCH_BACKEND
-    ) {
-        $data = $this->record->getHighResolutionData($index, $source);
-        if (!$data) {
+    public function getHighResolutionImages($index, $source = DEFAULT_SEARCH_BACKEND)
+    {
+        $images = $this->record->getAllImages($this->view->layout()->userLang);
+        if (!isset($images[$index])
+            || !isset($images[$index]['urls']['highResolution'])
+        ) {
             return false;
         }
-
         $urlHelper = $this->getView()->plugin('url');
-        foreach ($data as $i => &$images) {
-            foreach ($images as $size => &$links) {
-                if ($size === 'resourceID') {
-                    continue;
-                }
-                foreach ($links as $format => &$values) {
-                    $values['url'] = $urlHelper('cover-download') . '?' .
-                        http_build_query($values['params']);
-                    unset($values['params']);
-                }
+        foreach ($images[$index]['urls']['highResolution'] as $size => &$values) {
+            foreach ($values as $format => &$data) {
+                $data['url'] = $urlHelper('cover-download') . '?'
+                    . http_build_query(
+                        array_merge(
+                            $data['params'],
+                            ['source' => $source]
+                        )
+                    );
             }
         }
-
-        return $data;
+        return $images[$index]['urls']['highResolution'];
     }
 
     /**
@@ -271,6 +269,19 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
                         )
                     );
             }
+            if (isset($image['urls']['highResolution'])) {
+                foreach ($image['urls']['highResolution'] as $size => &$values) {
+                    foreach ($values as $format => &$data) {
+                        $data['url'] = $urlHelper('cover-download') . '?'
+                            . http_build_query(
+                                array_merge(
+                                    $data['params'],
+                                    ['source' => $source]
+                                )
+                            );
+                    }
+                }
+            }
         }
         return $images;
     }
@@ -304,7 +315,7 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
         $images = $this->getAllImagesAsCoverLinks(
             $view->layout()->userLang, $params, true, true, $source
         );
-        $hiRes = $this->getHighResolutionDownloadData(null, $source);
+
         if ($images && $view->layout()->templateDir === 'combined') {
             // Limit combined results to a single image
             $images = [$images[0]];
@@ -313,7 +324,6 @@ class RecordImage extends \Zend\View\Helper\AbstractHelper
         $context = [
             'type' => $type,
             'images' => $images,
-            'hiRes' => $hiRes,
             'disableModal' => $disableModal,
             'imageRightsLabel' => $imageRightsLabel,
             'numOfImages' => $numOfImages

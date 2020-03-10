@@ -206,24 +206,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Returns high resolution data for records
-     *
-     * @param int|null $index of the image to get data for
-     *
-     * @return array
-     */
-    public function getHighResolutionData($index = null)
-    {
-        if (null === $this->cachedHighResolution) {
-            $this->getAllImages();
-        }
-
-        return !isset($index)
-            ? $this->cachedHighResolution
-            : [$index => ($this->cachedHighResolution[$index] ?? [])];
-    }
-
-    /**
      * Return an array of image URLs associated with this record with keys:
      * - urls        Image URLs
      *   - small     Small image (mandatory)
@@ -242,21 +224,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getAllImages($language = 'fi')
     {
         if (null !== $this->cachedImages) {
+            var_dump('saved');
             return $this->cachedImages;
         }
 
         $result = [];
-        $highResolution = [];
-        $i = -1;
         $defaultRights = $this->getImageRights($language, true);
         foreach ($this->getSimpleXML()->xpath(
             '/lidoWrap/lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
         ) as $resourceSet) {
-            $highResolution[++$i] = [];
-            if (!empty($set->resourceID)) {
-                $highResolution[$i]['resourceID'] = (int)$set->resourceID;
-            }
             if (empty($resourceSet->resourceRepresentation->linkResource)) {
                 continue;
             }
@@ -349,15 +326,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
 
                 if ($size === 'master' || $size === 'original') {
-                    $currentHighRes = [];
-                    $currentHighRes['data']
+                    $highResolution = [];
+                    $highResolution['data']
                         = $this->formatImageMeasurements(
                             $representation->resourceMeasurementsSet
                         );
-                    $currentHighRes['url'] = (string)$linkResource;
+                    $highResolution['url'] = (string)$linkResource;
+                    if (!empty($resourceSet->resourceID)) {
+                        $highResolution['resourceID']
+                            = (int)$resourceSet->resourceID;
+                    }
                     $format = (string)$linkResource->attributes()->formatResource;
 
-                    $highResolution[$i][$size][$format ?: 'jpg'] = $currentHighRes;
+                    $urls['highResolution'][$size][$format ?: 'jpg']
+                        = $highResolution;
                 }
             }
             // If current set has no images to show, continue to next one
@@ -378,7 +360,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'rights' => $rights
             ];
         }
-        $this->cachedHighResolution = $highResolution;
+
         return $this->cachedImages = $result;
     }
 
