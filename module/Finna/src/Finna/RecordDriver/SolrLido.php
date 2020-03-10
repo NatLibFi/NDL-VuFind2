@@ -47,13 +47,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     use SolrFinnaTrait;
 
     /**
-     * Integer to divide bytes to get the value in MB
-     *
-     * @var int
-     */
-    const BYTES_TO_MB = 1000000;
-
-    /**
      * Record metadata
      *
      * @var \SimpleXMLElement
