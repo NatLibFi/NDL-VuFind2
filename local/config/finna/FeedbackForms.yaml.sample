@@ -87,6 +87,12 @@
 #       settings:
 #         - [placeholder, Please select...]
 #
+#
+#     Only for select-elements:
+#
+#     recipient (boolean) Use the submitted value of this element as the form recipient address.
+#                         This overrrides other recipient settings.
+#
 #-----------------------------------------------------------------------------------
 
 forms:
