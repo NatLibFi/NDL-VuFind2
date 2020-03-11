@@ -541,7 +541,7 @@ class Form extends \VuFind\Form\Form
                     if (isset($el['options'])) {
                         // Select element with options
                         foreach ($el['options'] as &$opt) {
-                            if (empty($opt['value'])) {
+                            if (empty($opt['name']) || empty($opt['value'])) {
                                 continue;
                             }
                             $opt['value'] = $ind++;
