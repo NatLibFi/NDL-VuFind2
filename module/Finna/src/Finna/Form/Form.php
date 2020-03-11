@@ -225,7 +225,7 @@ class Form extends \VuFind\Form\Form
      *
      * @param array $postParams Posted form data
      *
-     * @return array with name, email or null if no form element
+     * @return array with 'name' and 'email' keys or null if no form element
      * is configured to carry recipient address.
      */
     protected function getRecipientFromFormData($postParams)
@@ -243,6 +243,9 @@ class Form extends \VuFind\Form\Form
             if (($el['name'] ?? null) !== $recipientField) {
                 continue;
             }
+
+            // Selected recipient is posted as a numeric index.
+            // Find the related option element.
             $selected = (int)$recipientValue;
             $option = null;
             if (isset($el['options'])) {
@@ -382,13 +385,12 @@ class Form extends \VuFind\Form\Form
             $this->formSettings['fields']
         )
         ) {
-            // Form recipient email address is taken from posted select element
-            // value. Convert the value of the field from a numerical index to
-            // configured label.
             $recipient = $this->getRecipientFromFormData($requestParams);
             if (!$recipientName = $recipient['name'] ?? null) {
                 unset($requestParams[$recipientField]);
             } else {
+                // Convert posted recipient value from a numerical index to
+                // configured label.
                 foreach ($requestParams as $key => &$val) {
                     if ($key === $recipientField) {
                         $val = $this->translate($recipientName);
@@ -533,15 +535,15 @@ class Form extends \VuFind\Form\Form
 
         if ($recipientField = $this->getRecipientField($config['fields'])) {
             // Form recipient email address is taken from a select element value.
-            // Change element option values to numeric indexes so that emails are
-            // not exposed in the UI.
+            // Change element option values to numeric indexes so that email
+            // addresses are not exposed in the UI.
             foreach ($elements as &$el) {
                 if ($el['name'] === $recipientField) {
                     $ind = 0;
                     if (isset($el['options'])) {
                         // Select element with options
                         foreach ($el['options'] as &$opt) {
-                            if (empty($opt['name']) || empty($opt['value'])) {
+                            if (empty($opt['label']) || empty($opt['value'])) {
                                 continue;
                             }
                             $opt['value'] = $ind++;
