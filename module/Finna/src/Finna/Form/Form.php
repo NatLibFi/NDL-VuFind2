@@ -106,7 +106,7 @@ class Form extends \VuFind\Form\Form
      *
      * @var array
      */
-    protected $formSettings;
+    protected $formSettings = [];
 
     /**
      * Set form id
@@ -239,7 +239,7 @@ class Form extends \VuFind\Form\Form
             return null;
         }
 
-        foreach ($this->formSettings['fields'] as $el) {
+        foreach ($this->formSettings['fields'] ?? [] as $el) {
             if (($el['name'] ?? null) !== $recipientField) {
                 continue;
             }
@@ -382,7 +382,7 @@ class Form extends \VuFind\Form\Form
         }
 
         if ($recipientField = $this->getRecipientField(
-            $this->formSettings['fields']
+            $this->formSettings['fields'] ?? []
         )
         ) {
             $recipient = $this->getRecipientFromFormData($requestParams);
