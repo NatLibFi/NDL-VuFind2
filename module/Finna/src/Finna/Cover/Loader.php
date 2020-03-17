@@ -178,7 +178,7 @@ class Loader extends \VuFind\Cover\Loader
      * @param string $url    to load
      * @param string $format type of the image to load
      *
-     * @return void
+     * @return bool
      */
     public function loadExternalImage($url, $format)
     {
@@ -192,19 +192,37 @@ class Loader extends \VuFind\Cover\Loader
             $contentType = 'image/jpeg';
             break;
         }
-        if ($handle = fopen($url, 'rb')) {
-            header("Content-Type: $contentType");
-            while (!feof($handle)) {
-                $block = fread($handle, 1024 * 8);
-                if ($block === false) {
-                    break;
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true);
+        // Lets see if we have proxy settings
+        if (isset($this->config->Proxy->host)) {
+            $proxy = $this->config->Proxy;
+            if (isset($proxy['host']) && isset($proxy['host'])) {
+                $proxyUrl = $proxy['host'] . ':' . $proxy['port'];
+                $proxyType = CURLPROXY_HTTP;
+                if (isset($proxy['type']) && $proxy['type'] === 'socks5') {
+                    $proxyType = CURLPROXY_SOCKS5;
                 }
-                echo $block;
-                ob_flush();
-                flush();
+                curl_setopt($ch, CURLOPT_PROXY, $proxyUrl);
+                curl_setopt($ch, CURLOPT_PROXYTYPE, $proxyType);
             }
-            fclose($handle);
         }
+        $iterator = 0;
+        curl_setopt(
+            $ch, CURLOPT_WRITEFUNCTION, function ($ch, $str) use ($iterator) {
+                echo $str;
+                return strlen($str);
+            }
+        );
+        header("Content-Type: $contentType");
+        $success = curl_exec($ch);
+        curl_close($ch);
+        return $success;
     }
 
     /**

@@ -105,6 +105,9 @@ class CoverController extends \VuFind\Controller\CoverController
             if (isset($highResolution[$size][$format]['url'])) {
                 $url = $highResolution[$size][$format]['url'];
                 $res = $this->loader->loadExternalImage($url, $format);
+                if (!$res) {
+                    $response->setStatusCode(500);
+                }
             } else {
                 $response->setStatusCode(404);
             }
