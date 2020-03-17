@@ -16,8 +16,7 @@
                         <li class="display-image"><a href="<?= $this->escapeHtmlAttr($urls['large']['url'] ?? $urls['large'])?>" download target="_blank"><?= $this->transEsc('display_image') ?> <span class="image-dimensions"></span> jpg</a></li>
                     <?php endif; ?>
                     <?php foreach ($hiRes as $size => $img): ?>
-                        <?php if ($size === 'resourceID') { continue; } ?>
-                        <?php foreach ($img as $key => &$info): ?>
+                        <?php foreach ($img as $key => $info): ?>
                             <?php
                                 $data = $info['data'];
                                 $imageSize = '';
@@ -42,7 +41,7 @@
                                 if (isset($data['width']) && isset($data['height'])) {
                                     $dimensions = "({$data['width']['value']} x {$data['height']['value']} px)";
                                 }
-                                $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($hiRes['resourceID'] ?? $key) . '-' . $size;
+                                $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $key) . '-' . $size;
                             ?>
                             <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('cover-download', [], ['query' => $info['params']]))?>"> <?= $this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$dimensions?></span> <span class="image-size"><?=$imageSize?></span>  <?=$key?></a></li>
                         <?php endforeach; ?>
