@@ -200,7 +200,7 @@ class Loader extends \VuFind\Cover\Loader
         curl_setopt($ch, CURLOPT_TIMEOUT, 300);
         curl_setopt($ch, CURLOPT_FAILONERROR, true);
 
-        if (isset($this->config->Proxy->host)) {
+        if (isset($this->config->Proxy)) {
             $proxy = $this->config->Proxy;
             if (isset($proxy['host']) && isset($proxy['port'])) {
                 $proxyUrl = $proxy['host'] . ':' . $proxy['port'];
