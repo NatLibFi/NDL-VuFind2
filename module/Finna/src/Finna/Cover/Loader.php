@@ -192,37 +192,30 @@ class Loader extends \VuFind\Cover\Loader
             $contentType = 'image/jpeg';
             break;
         }
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HEADER, 0);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 300);
-        curl_setopt($ch, CURLOPT_FAILONERROR, true);
-
-        if (isset($this->config->Proxy)) {
-            $proxy = $this->config->Proxy;
-            if (isset($proxy['host']) && isset($proxy['port'])) {
-                $proxyUrl = $proxy['host'] . ':' . $proxy['port'];
-                $proxyType = CURLPROXY_HTTP;
-                if (isset($proxy['type']) && $proxy['type'] === 'socks5') {
-                    $proxyType = CURLPROXY_SOCKS5;
-                }
-                curl_setopt($ch, CURLOPT_PROXY, $proxyUrl);
-                curl_setopt($ch, CURLOPT_PROXYTYPE, $proxyType);
-            }
-        }
-        $iterator = 0;
-        curl_setopt(
-            $ch, CURLOPT_WRITEFUNCTION, function ($ch, $str) use ($iterator) {
-                echo $str;
-                return strlen($str);
-            }
-        );
         header("Content-Type: $contentType");
-        $success = curl_exec($ch);
-        curl_close($ch);
-        return $success;
+        $client = $this->httpService->createClient(
+            $url, \Zend\Http\Request::METHOD_GET, 300
+        );
+        $client->setStream();
+        $adapter = $client->getAdapter();
+        $adapter->setOptions(
+            [
+                'curloptions' => [
+                    CURLOPT_WRITEFUNCTION => function ($ch, $str) {
+                        echo $str;
+                        return strlen($str);
+                    }
+                ]
+            ]
+        );
+        $result = $client->send();
+
+        if (!$result->isSuccess()) {
+            $this->debug("Failed to retrieve image from $url");
+            return false;
+        }
+
+        return true;
     }
 
     /**
