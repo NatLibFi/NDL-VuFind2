@@ -202,7 +202,7 @@ class Loader extends \VuFind\Cover\Loader
 
         if (isset($this->config->Proxy->host)) {
             $proxy = $this->config->Proxy;
-            if (isset($proxy['host']) && isset($proxy['host'])) {
+            if (isset($proxy['host']) && isset($proxy['port'])) {
                 $proxyUrl = $proxy['host'] . ':' . $proxy['port'];
                 $proxyType = CURLPROXY_HTTP;
                 if (isset($proxy['type']) && $proxy['type'] === 'socks5') {
