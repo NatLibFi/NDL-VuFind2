@@ -28,10 +28,10 @@
                                     case 'tavua':
                                     case 'bytes':
                                         $bytes = (int)$data['size']['value'];
-                                        if (($converted = number_format($bytes / 1000000, 2)) > 1) {
+                                        if (($converted = number_format($bytes / 1024 / 1024, 2)) > 1) {
                                             $convertedTo = 'MB';
                                         } else {
-                                            $converted = number_format($bytes / 1000, 2);
+                                            $converted = number_format($bytes / 1024, 2);
                                             $convertedTo = 'KB';
                                         }
                                         $imageSize = "($converted $convertedTo)";
