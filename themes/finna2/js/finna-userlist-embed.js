@@ -27,7 +27,7 @@ finna.userListEmbed = (function userListEmbed() {
               id: id,
               offset: offset,
               indexStart: indexStart,
-              view: 'list',
+              view: view,
               sort: sort,
               method: 'getUserList' 
             }
