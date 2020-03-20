@@ -381,7 +381,7 @@ finna.layout = (function finnaLayout() {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear');
         $('.fa-arrow-right', this).toggleClass('fa-arrow-down');
-        var holder = $(this).parent().parent();
+        holder = $(this).parent().parent();
         holder.toggleClass('open');
         if (holder.hasClass('open') && !holder.hasClass('opened')) {
           holder.addClass('opened');
