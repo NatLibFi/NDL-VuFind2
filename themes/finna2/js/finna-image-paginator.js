@@ -220,7 +220,7 @@ finna.imagePaginator = (function imagePaginator() {
     _.trigger.off('setPaginatorIndex').on('setPaginatorIndex', function setIndex(event, index) {
       _.setPaginatorIndex(index);
     });
-    _.trigger.off('unVeilNextAndPrev').on('unVeilNextAndPrev', function setIndex(event, index) {
+    _.trigger.off('unVeilNextAndPrev').on('unVeilNextAndPrev', function unVeilNextAndPrev(event, index) {
       _.unVeilNextAndPrev(index);
     });
 
