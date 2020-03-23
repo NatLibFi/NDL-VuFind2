@@ -154,6 +154,7 @@ class UserListEmbed extends \Zend\View\Helper\AbstractHelper
                 'indexStart' => $idStart,
                 'view' => $view,
                 'total' => $total,
+                'sort' => $opt['sort'] ?? null,
                 'showAllLink' =>
                     ($opt['showAllLink'] ?? false)
                     && $opt['limit'] < $total,
@@ -181,10 +182,11 @@ class UserListEmbed extends \Zend\View\Helper\AbstractHelper
      * @param int    $offset     Record offset
      * @param int    $startIndex Result item offset in DOM
      * @param string $view       Result view type
+     * @param int    $sort       Sort
      *
      * @return string
      */
-    public function loadMore($id, $offset, $startIndex, $view = 'grid')
+    public function loadMore($id, $offset, $startIndex, $view, $sort)
     {
         // These need to differ from Search/Results so that
         // list notes are shown...
@@ -202,7 +204,10 @@ class UserListEmbed extends \Zend\View\Helper\AbstractHelper
         $limit = $resultsTotal - 1;
 
         return $this->__invoke(
-            ['id' => $id, 'page' => 1, 'limit' => $limit, 'view' => $view],
+            [
+                'id' => $id, 'page' => 1, 'limit' => $limit,
+                'view' => $view, 'sort' => $sort
+            ],
             $offset,
             $startIndex
         );
