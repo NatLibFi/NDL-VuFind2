@@ -89,7 +89,7 @@ class CoverController extends \VuFind\Controller\CoverController
     public function downloadAction()
     {
         $this->sessionSettings->disableWrite(); // avoid session write timing bug
-        $allowedSizes = ['original', 'master', 'large'];
+        $allowedSizes = ['original', 'master'];
         $params = $this->params();
         $size = $params->fromQuery('size');
         $format = $params->fromQuery('format', 'jpg');
@@ -101,19 +101,10 @@ class CoverController extends \VuFind\Controller\CoverController
             );
             $index = (int)$params->fromQuery('index');
             $images = $driver->getAllImages();
-            $highResolution = $size !== 'large';
-            $url = null;
-            if ($highResolution) {
-                $url
-                    = $images[$index]['highResolution'][$size][$format]['url']
-                    ?? null;
-            } else {
-                $url = $images[$index]['urls'][$size] ?? null;
-            }
-            if ($url) {
-                $res = $this->loader->loadExternalImage(
-                    $url, $format, "{$id}_{$index}_{$size}.{$format}"
-                );
+            $highResolution = $images[$index]['highResolution'] ?? [];
+            if (isset($highResolution[$size][$format]['url'])) {
+                $url = $highResolution[$size][$format]['url'];
+                $res = $this->loader->loadExternalImage($url, $format);
                 if (!$res) {
                     $response->setStatusCode(500);
                 }
