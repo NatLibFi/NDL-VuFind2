@@ -113,7 +113,7 @@
       <?php endif; ?>
     <?php endif; ?>
     </div>
-    <ul <?php if ($this->auth()->isLoggedIn()): ?>role="menubar" <?php endif; ?>aria-label="<?=$this->transEsc('Your Account')?>" class="nav navbar-nav nav-absolute">
+    <ul role="menubar" class="nav navbar-nav nav-absolute">
       <?php if (is_object($account) && $account->loginEnabled()): ?>
         <?php if ($user): ?>
           <li class="logoutOptions">
@@ -169,11 +169,11 @@
           <?php else: ?>
             <?php if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
               <div>
-                <a class="btn btn-primary btn-uppercase"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
+                <a role="menuitem" class="btn btn-primary btn-uppercase"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span  class="login-text"><?=$this->transEsc("Login")?></span></a>
               </div>
             <?php else: ?>
               <div>
-                <a href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a>
+                <a role="menuitem" href="<?=$this->url('myresearch-userlogin')?>" class="btn btn-primary btn-uppercase" data-lightbox data-lightbox-onclose="window.location.href='<?=$this->escapeHtmlAttr($this->url('myresearch-home')) ?>'"><i class="fa fa-user fa-lg" aria-hidden="true"></i><span class="login-text"><?=$this->transEsc("Login")?></span></a>
               </div>
             <?php endif; ?>
           <?php endif; ?>
