@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2012-2016.
+ * Copyright (C) The National Library of Finland 2012-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -36,6 +37,7 @@ namespace Finna\RecordDriver;
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -432,6 +434,34 @@ class Primo extends \VuFind\RecordDriver\Primo
             $params = ['url' => $params];
         }
         return $params;
+    }
+
+    /**
+     * Return information whether this is a peer reviewed record.
+     *
+     * @return bool
+     */
+    public function getPeerReviewed()
+    {
+        $rec = $this->getSimpleXML();
+        if (isset($rec->display->lds50)) {
+            return $rec->display->lds50 == 'peer_reviewed';
+        }
+        return false;
+    }
+
+    /**
+     * Return information whether this is an open access record.
+     *
+     * @return bool
+     */
+    public function getOpenAccess()
+    {
+        $rec = $this->getSimpleXML();
+        if (isset($rec->display->oa)) {
+            return $rec->display->oa == 'free_for_read';
+        }
+        return false;
     }
 
     /**

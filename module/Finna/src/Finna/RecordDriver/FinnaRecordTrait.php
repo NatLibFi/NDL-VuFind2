@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library 2015-2019.
+ * Copyright (C) The National Library 2015-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -37,6 +38,7 @@ use Finna\Db\Row\User;
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -186,5 +188,42 @@ trait FinnaRecordTrait
     public function allowRecordImageDownload()
     {
         return true;
+    }
+
+    /**
+     * Return information whether this is a peer reviewed record.
+     *
+     * @return bool|null
+     */
+    public function getPeerReviewed()
+    {
+        return null;
+    }
+
+    /**
+     * Return information whether this is an open access record.
+     *
+     * @return bool|null
+     */
+    public function getOpenAccess()
+    {
+        return null;
+    }
+
+    /**
+     * Get metadata labels for the record.
+     *
+     * @return array
+     */
+    public function getMetadataLabels()
+    {
+        $labels = [];
+        if ($this->getPeerReviewed()) {
+            $labels[] = FinnaRecordInterface::PEER_REVIEWED;
+        }
+        if ($this->getOpenAccess()) {
+            $labels[] = FinnaRecordInterface::OPEN_ACCESS;
+        }
+        return $labels;
     }
 }

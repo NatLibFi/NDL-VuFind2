@@ -161,6 +161,7 @@
         $openUrl = $this->openUrl($driver, 'results');
         $openUrlActive = $openUrl->isActive();
         ?>
+        <?=$this->render('record/metadata-labels.phtml', ['labels' => $this->driver->getMetadataLabels()]); ?>
         <div>
             <?=$this->record($this->driver)->getOnlineUrls('results')?>
         </div>
