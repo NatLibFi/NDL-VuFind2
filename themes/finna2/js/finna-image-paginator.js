@@ -41,7 +41,6 @@ finna.imagePaginator = (function imagePaginator() {
   function FinnaPaginator(images, settings) {
     var _ = this;
 
-    _.paginatorIndex = paginatorIndex;
     _.isList = settings.isList;
     if (_.isList) {
       settings.imagesOnNormal = 0;
@@ -53,7 +52,7 @@ finna.imagePaginator = (function imagePaginator() {
     _.images = images;
 
     _.trigger = _.root.find('.image-popup-trigger');
-    _.trigger.attr('paginator-index', paginatorIndex++);
+    _.setPaginatorIndex(paginatorIndex++);
 
     _.settings = $.extend({}, defaults, settings);
     _.setMaxImages(_.settings.imagesOnNormal);
@@ -81,9 +80,9 @@ finna.imagePaginator = (function imagePaginator() {
 
   /**
    * Function to create a new paginator with given images object and settings object
-   * 
-   * @param {object} images 
-   * @param {object} settings 
+   *
+   * @param {object} images
+   * @param {object} settings
    */
   function initPaginator(images, settings) {
     if (translations.isSet === false) {
@@ -102,6 +101,27 @@ finna.imagePaginator = (function imagePaginator() {
     var paginator = new FinnaPaginator(images, settings);
     paginator.init();
   }
+
+  /**
+   * Reindex all paginators. Required if new paginators are appended to the DOM after initial page load.
+   */
+  function reindexPaginators() {
+    $('.image-popup-trigger').each(function reindexPaginator(index) {
+      $(this).trigger('setPaginatorIndex', index);
+      $(this).trigger('unVeilNextAndPrev', index);
+    });
+  }
+
+  /**
+   * Helper function for setting paginator index.
+   *
+   * @param {int} index
+   */
+  FinnaPaginator.prototype.setPaginatorIndex = function setPaginatorIndex(index) {
+    var _ = this;
+    _.paginatorIndex = index;
+    _.trigger.attr('paginator-index', index);
+  };
 
   /**
    * Helper function to show a button and hide another
@@ -196,6 +216,13 @@ finna.imagePaginator = (function imagePaginator() {
    */
   FinnaPaginator.prototype.setEvents = function setEvents() {
     var _ = this;
+
+    _.trigger.off('setPaginatorIndex').on('setPaginatorIndex', function setIndex(event, index) {
+      _.setPaginatorIndex(index);
+    });
+    _.trigger.off('unVeilNextAndPrev').on('unVeilNextAndPrev', function unVeilNextAndPrev(event, index) {
+      _.unVeilNextAndPrev(index);
+    });
 
     if (!_.isList) {
       _.leftBtn.click(function loadImages() {
@@ -373,7 +400,7 @@ finna.imagePaginator = (function imagePaginator() {
       var w = this.naturalWidth;
       var leafletHolderWidth = $('#leaflet-map-image').width();
       var leafletHolderHeight = $('#leaflet-map-image').height();
-      
+
       var zoomLevel = 1;
       var alt = h === 10 && w === 10 ? translations.no_cover : image.data('alt');
 
@@ -389,7 +416,7 @@ finna.imagePaginator = (function imagePaginator() {
           newHeight = boundHeight - (boundHeight / 100 * offsetPercentage);
           heightPercentage = 100 - (newHeight / imageHeight * 100);
         }
-        
+
         if (imageWidth >= boundWidth) {
           newWidth = boundWidth - (boundWidth / 100 * offsetPercentage);
           widthPercentage = 100 - (newWidth / imageWidth * 100);
@@ -424,7 +451,7 @@ finna.imagePaginator = (function imagePaginator() {
 
   /**
    * Function to browse images presented in image holder object
-   * 
+   *
    * @param int direction to try and find an image from
    */
   FinnaPaginator.prototype.onBrowseButton = function onBrowseButton(direction) {
@@ -608,12 +635,18 @@ finna.imagePaginator = (function imagePaginator() {
 
     if (!_.isList) {
       $('.image-details-container').addClass('hidden');
-      $('.image-details-container[data-img-index="' + imagePopup.attr('index') + '"]').removeClass('hidden');
+      var details = $('.image-details-container[data-img-index="' + imagePopup.attr('index') + '"]');
+      details.removeClass('hidden');
+      var license = details.find('.truncate-field');
+      if (license.length && !license.hasClass('truncated')) {
+        license.removeClass('truncate-done');
+        finna.layout.initTruncate(details);
+      }
     }
     _.imageDetail.html(imagePopup.data('description'));
 
     img.unveil(100, function handleLoading() {
-      $(this).load(function handleImage() {
+      $(this).on('load', function handleImage() {
         setImageProperties(this);
       });
     });
@@ -721,16 +754,7 @@ finna.imagePaginator = (function imagePaginator() {
       }
       VuFind.lightbox.bind('.imagepopup-holder');
       if (typeof $('.open-link a').attr('href') !== 'undefined') {
-        var img = document.createElement('img');
-        img.src = $('.open-link a').attr('href');
-        img.onload = function onLoadImg() {
-          if (this.width === 10 && this.height === 10) {
-            $('.open-link').hide();
-          }
-          else {
-            $('.open-link .image-dimensions').text( '(' + this.width + ' X ' + this.height + ')');
-          }
-        };
+        _.setDimensions();
       }
       $('.collapse-content-holder').find('[data-embed-video]').click(function onClickVideoLink(){
         var videoSources = $(this).data('videoSources');
@@ -860,7 +884,7 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.setDimensions = function setDimensions() {
     var popupHidden = $('.mfp-content').length === 0;
     var container = popupHidden ? $('.image-details-container').not('.hidden') : $('.image-information-holder');
-    var openLink = container.find('.open-link a').attr('href');
+    var openLink = container.find('.open-link a, .display-image a').attr('href');
     if (typeof openLink !== 'undefined') {
       var img = new Image();
       img.src = openLink;
@@ -869,9 +893,8 @@ finna.imagePaginator = (function imagePaginator() {
         var height = this.height;
         if (width === 10 && height === 10) {
           $('.open-link').hide();
-        }
-        else {
-          container.find('.open-link .image-dimensions').text( '(' + width + ' X ' + height + ')');
+        } else {
+          container.find('.open-link .image-dimensions, .display-image .image-dimensions').text( '(' + width + ' x ' + height + ' px)');
         }
       };
     }
@@ -917,7 +940,7 @@ finna.imagePaginator = (function imagePaginator() {
 
           var previousRecord = $(previousRecordButton).clone();
           var nextRecord = $(nextRecordButton).clone();
-          
+
           mfpContent.addClass('loaded ' + _.settings.recordType);
           mfpContainer.append(previousRecord, nextRecord);
 
@@ -1032,7 +1055,7 @@ finna.imagePaginator = (function imagePaginator() {
 
   /**
    * Function to find an image element from imageHolder track
-   * 
+   *
    * @param index int index of wanted image element
    */
   FinnaPaginator.prototype.findSmallImage = function findSmallImage(index) {
@@ -1042,6 +1065,7 @@ finna.imagePaginator = (function imagePaginator() {
 
   var my = {
     initPaginator: initPaginator,
+    reindexPaginators: reindexPaginators,
     setCanvasContent: setCanvasContent
   };
 

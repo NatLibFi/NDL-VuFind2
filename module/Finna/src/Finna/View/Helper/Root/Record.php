@@ -26,6 +26,7 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -42,6 +43,7 @@ use Finna\Search\Solr\AuthorityHelper;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -283,6 +285,35 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Render additional data for an authority link.
+     *
+     * @param array  $additionalData Additional data to render
+     * @param string $format         Format (optional)
+     *
+     * @return string
+     */
+    public function getAuthorityLinkAdditionalData($additionalData, $format = null)
+    {
+        if (empty($additionalData)) {
+            return '';
+        }
+        $escaper = $this->getView()->plugin('escapeHtml');
+        foreach ($additionalData as $key => &$item) {
+            $item = $escaper($item);
+            if (!is_numeric($key)) {
+                $item = '<span class="author-'
+                    . preg_replace('/[^A-Za-z0-9_-]/', '', $key)
+                    . '">' . $item . '</span>';
+            }
+        }
+        if ($format) {
+            return vsprintf($format, $additionalData);
+        } else {
+            return ', ' . implode(', ', $additionalData);
+        }
+    }
+
+    /**
      * Render a authority search link or fallback to Author search.
      *
      * @param string $type    Link type
@@ -327,14 +358,27 @@ class Record extends \VuFind\View\Helper\Root\Record
            'authorityType' => $authorityType,
         ];
 
-        if (isset($params['role'])) {
-            $elementParams['roleName']
-                = !empty($data['roleName']) ? $data['roleName'] : null;
-            $elementParams['role']
-                = !empty($data['role']) ? $data['role'] : null;
-        }
-        if (isset($params['date'])) {
-            $elementParams['date'] = !empty($data['date']) ? $data['date'] : null;
+        if (isset($params['additionalData'])) {
+            $elementParams['additionalData'] = $params['additionalData'];
+        } else {
+            // Special handling for backwards compatibility.
+            $additionalData = [];
+            if (isset($params['role'])) {
+                if (!empty($data['roleName'])) {
+                    $additionalData['role'] = $data['roleName'];
+                } elseif (!empty($data['role'])) {
+                    $translator = $this->getView()->plugin('translate');
+                    $additionalData['role']
+                        = $translator('CreatorRoles::' . $data['role']);
+                }
+            }
+            if (isset($params['date']) && !empty($data['date'])) {
+                $additionalData['date'] = $data['date'];
+            }
+            if (!empty($additionalData)) {
+                $elementParams['additionalData']
+                    = $this->getAuthorityLinkAdditionalData($additionalData);
+            }
         }
 
         return $this->renderTemplate('authority-link-element.phtml', $elementParams);
@@ -498,9 +542,9 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param string $language   Language for description and rights
      * @param bool   $thumbnails Whether to include thumbnail links if no image links
-     * are found
+     *                           are found
      * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     *                           links are found
      *
      * @return array
      */
@@ -551,6 +595,20 @@ class Record extends \VuFind\View\Helper\Root\Record
                     ];
                     $image['urls'][$size] = $params;
                 }
+                if (isset($image['highResolution'])
+                    && !empty($image['highResolution'])
+                ) {
+                    foreach ($image['highResolution'] as $size => &$values) {
+                        foreach ($values as $format => &$data) {
+                            $data['params'] = [
+                                'id' => $recordId,
+                                'index' => $idx,
+                                'size' => $size,
+                                'format' => $format ?? 'jpg'
+                            ];
+                        }
+                    }
+                }
             }
         }
         return $this->cachedImages = $images;
@@ -567,7 +625,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getNumOfRecordImages($size, $includePdf = true)
     {
-        $images = $this->driver->trymethod('getAllImages', ['', $includePdf]);
+        $images = $this->driver->tryMethod('getAllImages', ['', $includePdf]);
         return count($images);
     }
 
@@ -607,7 +665,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function getRating()
     {
         if ($this->ratingAllowed()
-            && $average = $this->driver->trymethod('getAverageRating')
+            && $average = $this->driver->tryMethod('getAverageRating')
         ) {
             return $this->getView()->render(
                 'Helpers/record-rating.phtml',

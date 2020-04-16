@@ -1,6 +1,7 @@
 /*global VuFind, videojs, checkSaveStatuses, action, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
   var _fixFooterTimeout = null;
+  var currentOpenTooltips = [];
 
   function initResizeListener() {
     var intervalId = false;
@@ -360,8 +361,20 @@ finna.layout = (function finnaLayout() {
 
   function initToolTips(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-
-    holder.find('[data-toggle="tooltip"]').tooltip({trigger: 'click', viewport: '.container'});
+    holder.find('[data-toggle="tooltip"]')
+      .on('show.bs.tooltip', function() {
+        var self = $(this);
+        $(currentOpenTooltips).each(function() {
+          if ($(this)[0] !== self[0]) {
+            $(this).tooltip('hide');
+          }
+        });
+        currentOpenTooltips = [self];
+      })
+      .on('hidden.bs.tooltip', function (e) {
+        $(e.target).data('bs.tooltip').inState.click = false;
+      })
+      .tooltip({trigger: 'click', viewport: '.container'});
     // prevent link opening if tooltip is placed inside link element
     holder.find('[data-toggle="tooltip"] > i').click(function onClickTooltip(event) {
       event.preventDefault();
@@ -370,16 +383,19 @@ finna.layout = (function finnaLayout() {
     $('html').click(function onClickHtml(e) {
       if (typeof $(e.target).parent().data('original-title') == 'undefined' && typeof $(e.target).data('original-title') == 'undefined') {
         $('[data-toggle="tooltip"]').tooltip('hide');
+        currentOpenTooltips = [];
       }
     });
   }
 
-  function initCondensedList() {
-    $('.condensed-collapse-toggle').click(function onClickCollapseToggle(event) {
+  function initCondensedList(_holder) {
+    var holder = typeof _holder === 'undefined' ? $(document) : _holder;
+
+    holder.find('.condensed-collapse-toggle').off('click').click(function onClickCollapseToggle(event) {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear');
         $('.fa-arrow-right', this).toggleClass('fa-arrow-down');
-        var holder = $(this).parent().parent();
+        holder = $(this).parent().parent();
         holder.toggleClass('open');
         if (holder.hasClass('open') && !holder.hasClass('opened')) {
           holder.addClass('opened');
@@ -682,10 +698,10 @@ finna.layout = (function finnaLayout() {
       for (var itemNeeded in needed) {
         if (needed.hasOwnProperty(itemNeeded)) {
           $(needed[itemNeeded])
-            .load(scriptLoaded)
+            .on('load', scriptLoaded)
             .attr('async', 'true')
             .appendTo($('head'))
-            .load();
+            .trigger('load');
         }
       }
     } else if (typeof callback === 'function') {
@@ -820,6 +836,7 @@ finna.layout = (function finnaLayout() {
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
+    initCondensedList: initCondensedList,
     initTruncate: initTruncate,
     initLocationService: initLocationService,
     initHierarchicalFacet: initHierarchicalFacet,
@@ -832,6 +849,7 @@ finna.layout = (function finnaLayout() {
     initLoginTabs: initLoginTabs,
     initCondensedList: initCondensedList,
     loadScripts: loadScripts,
+    initToolTips: initToolTips,
     init: function init() {
       initScrollRecord();
       initJumpMenus();

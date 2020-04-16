@@ -28,7 +28,31 @@
     color: @tooltip-header-color;
   }
 }
-
+.list-group-item , .logoutOptions , .status {
+  .tooltip-inner {
+    min-width: auto;
+    padding: 4px 8px;
+    text-align: left;
+    font-size: 0.9em;
+    font-weight: normal;
+    box-shadow: none !important;
+    color: #fff;
+    background: @gray;
+    border-radius: 4px;
+  }
+  .tooltip.top .tooltip-arrow, .tooltip.top-left .tooltip-arrow, .tooltip.top-right .tooltip-arrow  {
+    border-top-color: @gray;
+  }
+  .tooltip.right .tooltip-arrow {
+    border-right-color: @gray;
+  }
+  .tooltip.left .tooltip-arrow {
+    border-left-color: @gray;
+  }
+  .tooltip.bottom .tooltip-arrow, .tooltip.bottom-left .tooltip-arrow, .tooltip.bottom-right .tooltip-arrow {
+    border-bottom-color: @gray;
+  }
+}
 .tooltip {
   &.bottom .tooltip-inner{
     box-shadow: 0px 5px 20px -4px @gray;
@@ -37,7 +61,6 @@
     box-shadow: 0px -5px 20px -4px @gray;
   }
 }
-
 .tooltip-tabs_local {
   display: @tooltip-tabs-local;
 }
@@ -87,18 +110,19 @@
   }
 }
 
-
 .searchbox-home {
   .tooltip-search-pci, .tooltip-search-local {
     i {
       font-size: 36px;
+      width: 40px;
+      height: 40px;
+      line-height: 38px;
       margin-left: 0px;
       position: relative;
       text-align: center;
       cursor: pointer;
       background: rgba(255,255,255,.6);
       border-radius: 50%;
-      padding: 2px 3.5px;
     }
   }
 }

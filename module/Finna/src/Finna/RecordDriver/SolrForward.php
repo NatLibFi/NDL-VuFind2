@@ -402,7 +402,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'finna-activity-code=fnd',
             [
                 'amount' => 'elokuva-elorahoitusyhtio-summa',
-                'type' => 'elokuva-elorahoitusyhtio-rahoitustapa'
+                'fundingType' => 'elokuva-elorahoitusyhtio-rahoitustapa'
             ]
         );
     }
@@ -717,6 +717,29 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         parent::setRawData($data);
         $this->lazyRecordXML = null;
+    }
+
+    /**
+     * Return full record as filtered XML for public APIs.
+     *
+     * @return string
+     */
+    public function getFilteredXML()
+    {
+        $record = clone $this->getRecordXML();
+        $remove = [];
+        foreach ($record->ProductionEvent as $event) {
+            $attributes = $event->attributes();
+            if (isset($attributes->{'elonet-tag'})
+                && 'lehdistoarvio' === (string)$attributes->{'elonet-tag'}
+            ) {
+                $remove[] = $event;
+            }
+        }
+        foreach ($remove as $node) {
+            unset($node[0]);
+        }
+        return $record->asXMl();
     }
 
     /**

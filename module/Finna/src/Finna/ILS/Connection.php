@@ -7,7 +7,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -64,6 +64,87 @@ class Connection extends \VuFind\ILS\Connection
             );
         }
         return $this->getDriver()->changePassword($details);
+    }
+
+    /**
+     * Check driver capability -- return true if the driver supports the specified
+     * method; false otherwise.
+     *
+     * @param string $method Method to check
+     * @param array  $params Array of passed parameters (optional)
+     * @param bool   $throw  Whether to throw exceptions instead of returning false
+     *
+     * @return bool
+     * @throws ILSException
+     */
+    public function checkCapability($method, $params = [], $throw = false)
+    {
+        // Alma driver calls the ILS for getConfig. Avoid useless calls by checking
+        // the sources beforehand.
+        if ('getConfig' === $method && 'Holds' === ($params[0] ?? '')) {
+            // Check source of record id vs. patron id
+            list($recordSource) = explode('.', $params[1]['id'] ?? '');
+            list($patronSource) = explode('.', $params[1]['patron']['id'] ?? '');
+            if ($patronSource && $patronSource !== $recordSource) {
+                return false;
+            }
+        }
+        return parent::checkCapability($method, $params, $throw);
+    }
+
+    /**
+     * Get holdings
+     *
+     * Retrieve holdings from ILS driver class and normalize result array if needed.
+     *
+     * @param string $id      The record id to retrieve the holdings for
+     * @param array  $patron  Patron data
+     * @param array  $options Additional options
+     *
+     * @return array Array with holding data
+     */
+    public function getHolding($id, $patron = null, $options = [])
+    {
+        // Get pagination options for holdings tab:
+        $params = compact('id', 'patron');
+        $config = $this->checkCapability('getConfig', ['Holdings', $params])
+            ? $this->getDriver()->getConfig('Holdings', $params) : [];
+        if (empty($config['itemLimit'])) {
+            // Use itemLimit in Holds as fallback for backward compatibility:
+            $config
+                = $this->checkCapability('getConfig', ['Holds', $params])
+                ? $this->getDriver()->getConfig('Holds', $params) : [];
+        }
+        $itemLimit = !empty($config['itemLimit']) ? $config['itemLimit'] : null;
+
+        $page = $this->request ? $this->request->getQuery('page', 1) : 1;
+        $offset = ($itemLimit && is_numeric($itemLimit))
+            ? ($page * $itemLimit) - $itemLimit
+            : null;
+        $defaultOptions = compact('page', 'itemLimit', 'offset');
+        $finalOptions = $options + $defaultOptions;
+
+        // Get the holdings from the ILS
+        $holdings = $this->__call('getHolding', [$id, $patron, $finalOptions]);
+
+        // Return all the necessary details:
+        if (!isset($holdings['holdings'])) {
+            $holdings = [
+                'total' => count($holdings),
+                'holdings' => $holdings,
+                'electronic_holdings' => [],
+            ];
+        } else {
+            if (!isset($holdings['total'])) {
+                $holdings['total'] = count($holdings['holdings']);
+            }
+            if (!isset($holdings['electronic_holdings'])) {
+                $holdings['electronic_holdings'] = [];
+            }
+        }
+        $holdings['page'] = $finalOptions['page'];
+        $holdings['itemLimit'] = $finalOptions['itemLimit'];
+        return $holdings;
     }
 
     /**
@@ -217,9 +298,7 @@ class Connection extends \VuFind\ILS\Connection
         if (!isset($functionConfig['method'])) {
             return false;
         }
-        if ($functionConfig['method'] == 'email'
-            && !empty($functionConfig['emailAddress'])
-        ) {
+        if ($functionConfig['method'] === 'database') {
             return $functionConfig;
         }
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {
@@ -372,9 +451,7 @@ class Connection extends \VuFind\ILS\Connection
         if (!isset($functionConfig['method'])) {
             return false;
         }
-        if ($functionConfig['method'] == 'email'
-            && !empty($functionConfig['emailAddress'])
-        ) {
+        if ($functionConfig['method'] === 'database') {
             return $functionConfig;
         }
         if ($functionConfig['method'] == 'url' && !empty($functionConfig['url'])) {

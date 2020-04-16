@@ -2,7 +2,7 @@
 enabled = 0
 
 ; Kirjastohakemisto API URL
-url = "https://api.kirjastot.fi/v3"
+url = "https://api.kirjastot.fi/"
 
 ; Language settings.
 ; Language codes are given in Kirjastohakemisto format (fi, sv, en...)
@@ -10,9 +10,6 @@ url = "https://api.kirjastot.fi/v3"
 ; Language version used for translated strings.
 ; If defined, this overrides the current user language.
 ; language = fi
-
-; Fallback language version to use when no translation has been defined for the current language.
-fallbackLanguage = 'fi'
 
 ; Allowed language versions
 languages[] = fi

@@ -149,7 +149,7 @@
           <?php endif; ?>
         <?php endif; ?>
 
-        <?php if ($this->driver->tryMethod('getWorkKeys') && $this->record($this->driver)->hasTab('Versions')): ?>
+        <?php if ($this->driver->tryMethod('getWorkKeys') && !empty($this->config()->get('config')->Record->display_versions)): ?>
           <div class="record-versions ajax"></div>
         <?php endif; ?>
 
@@ -159,7 +159,7 @@
         <?=$recordHelper->getPreviews();?>
         <?=$this->render('list/list-notes.phtml')?>
 
-        <div class="clearfix visible-xs"></div>
+        <div class="clearfix"></div>
         <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
             <?php /* Saved lists */ ?>
           <div class="savedLists">
