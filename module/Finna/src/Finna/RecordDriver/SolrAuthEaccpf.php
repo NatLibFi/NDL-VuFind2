@@ -44,6 +44,21 @@ class SolrAuthEacCpf extends SolrAuthDefault
     use XmlReaderTrait;
 
     /**
+     * Get authority title
+     *
+     * @return string|null
+     */
+    public function getTitle()
+    {
+        $record = $this->getXmlRecord();
+        if (isset($record->cpfDescription->identity->nameEntry->part[0])) {
+            return (string)$record->cpfDescription->identity->nameEntry->part[0];
+            return [(string)$record->cpfDescription->description->biogHist->p];
+        }
+        return null;
+    }
+
+    /**
      * Get an array of alternative titles for the record.
      *
      * @return array

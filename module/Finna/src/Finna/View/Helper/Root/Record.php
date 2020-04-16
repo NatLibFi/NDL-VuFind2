@@ -331,7 +331,9 @@ class Record extends \VuFind\View\Helper\Root\Record
         list($url, $urlType)
             = $this->getLink($type, $lookfor, $params + ['id' => $id], true);
 
-        if (!$this->isAuthorityEnabled() || $urlType !== 'author-page') {
+        if (!$this->isAuthorityEnabled()
+            || !in_array($urlType, ['author-id', 'author-page'])
+        ) {
             $author = [
                'name' => $data['name'] ?? null,
                'date' => !empty($data['date']) ? $data['date'] :  null,
@@ -351,8 +353,9 @@ class Record extends \VuFind\View\Helper\Root\Record
            'searchAction' => $params['searchAction'] ?? null,
            'label' => $lookfor,
            'id' => $authId,
+           'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
            'showInlineInfo' => !empty($params['showInlineInfo'])
-           && $this->isAuthorityInlineInfoEnabled(),
+               && $this->isAuthorityInlineInfoEnabled(),
            'recordSource' => $this->driver->getDataSource(),
            'type' => $type,
            'authorityType' => $authorityType,
@@ -382,6 +385,18 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
 
         return $this->renderTemplate('authority-link-element.phtml', $elementParams);
+    }
+
+    /**
+     * Is authority links enabled?
+     * Utility function for rendering an author search link element.
+     *
+     * @return bool
+     */
+    protected function isAuthorityLinksEnabled()
+    {
+        return $this->isAuthorityEnabled()
+            && ($this->config->Authority->authority_links ?? false);
     }
 
     /**
