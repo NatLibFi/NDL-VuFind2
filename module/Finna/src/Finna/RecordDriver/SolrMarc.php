@@ -41,6 +41,7 @@ namespace Finna\RecordDriver;
 class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 {
     use SolrFinnaTrait;
+    use MarcReaderTrait;
 
     /**
      * Fields that may contain subject headings, and their descriptions
@@ -1363,25 +1364,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             'value' => $title,
             'link'  => $link
         ];
-    }
-
-    /**
-     * Get selected subfields from a MARC field
-     *
-     * @param \File_MARC_Data_Field $field     Field
-     * @param array                 $subfields Subfields
-     *
-     * @return string
-     */
-    protected function getFieldSubfields(\File_MARC_Data_Field $field, $subfields)
-    {
-        $result = [];
-        foreach ($field->getSubfields() as $code => $content) {
-            if (in_array($code, $subfields)) {
-                $result[] = $content->getData();
-            }
-        }
-        return implode(' ', $result);
     }
 
     /**

@@ -38,6 +38,7 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 {
+    use MarcReaderTrait;
     use SolrAuthFinnaTrait;
     use SolrCommonFinnaTrait;
 
@@ -237,16 +238,37 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     /**
      * Return associated place.
      *
-     * @return string
+     * @return string|null
      */
     public function getAssociatedPlace()
     {
-        if ($field = $this->getMarcRecord()->getField('370')) {
-            if ($subfield = $field->getSubfield('f')) {
-                return $subfield->getData();
+        return $this->fields['country'] ?? '';
+    }
+
+    /**
+     * Return related places.
+     *
+     * @return array
+     */
+    public function getRelatedPlaces()
+    {
+        $result = [];
+        foreach ($this->getMarcRecord()->getFields('370') as $field) {
+            $data = $this->getFieldSubfields($field, ['e','f','s','t'], false);
+            if ($place = $data['e'] ?? $data['f'] ?? null) {
+                $startYear = $data['s'] ?? null;
+                $endYear = $data['t'] ?? null;
+                if ($startYear !== null && $endYear !== null) {
+                    $place = "$place ({$startYear}-{$endYear})";
+                } elseif ($startYear !== null) {
+                    $place = "$place ($startYear-)";
+                } elseif ($endYear !== null) {
+                    $place = "$place (-{$endYear})";
+                }
+                $result[] = $place;
             }
         }
-        return '';
+        return $result;
     }
 
 }

@@ -126,6 +126,16 @@ trait SolrAuthFinnaTrait
     }
 
     /**
+     * Return related places.
+     *
+     * @return string[]
+     */
+    public function getRelatedPlaces()
+    {
+        return [];
+    }
+
+    /**
      * Return summary
      *
      * @return array|null
