@@ -223,7 +223,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
         foreach (['400', '410'] as $fieldCode) {
             foreach ($this->getMarcRecord()->getFields($fieldCode) as $field) {
                 if ($subfield = $field->getSubfield('a')) {
-                    $name = $subfield->getData();
+                    $name = rtrim($subfield->getData(), '. ');
                     if ($date = $field->getSubfield('d')) {
                         $name .= ' (' . $date->getData() . ')';
                     }
