@@ -56,6 +56,16 @@ trait SolrAuthFinnaTrait
     }
 
     /**
+     * Get additional identifiers (isni etc).
+     *
+     * @return array
+     */
+    public function getOtherIdentifiers()
+    {
+        return [];
+    }
+
+    /**
      * Is this an authority index record?
      *
      * @return bool

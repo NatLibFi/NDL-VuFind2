@@ -271,4 +271,24 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
         return $result;
     }
 
+    /**
+     * Get additional identifiers (isni etc).
+     *
+     * @return array
+     */
+    public function getOtherIdentifiers()
+    {
+        $result = [];
+        foreach ($this->getMarcRecord()->getFields('024') as $field) {
+            $data = $this->getFieldSubfields($field, ['a','2','q'], false);
+            if ($id = ($data['a'] ?? null)) {
+                if ($type = $data['2'] ?? $data['q']) {
+                    $type = mb_strtolower(rtrim($type, ': '), 'UTF-8');
+                    $id = "$id ($type)";
+                }
+                $result[] = $id;
+            }
+        }
+        return $result;
+    }
 }
