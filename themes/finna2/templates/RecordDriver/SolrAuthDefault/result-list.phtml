@@ -26,13 +26,6 @@
               <?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
             </a>
           </h2>
-          <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
-            <div class="result-uniform-titles">
-              <?php foreach ($uniformTitles as $uniformTitle): ?>
-                <?=$this->escapeHtml($uniformTitle) ?><br/>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
         </div>
         <?php if ($titleAltScript = $this->driver->tryMethod('getShortTitleAltScript')): ?>
           <div class="title-alt-script">
@@ -63,7 +56,9 @@
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
-          <?=implode('<br>', $this->driver->getSummary()); ?>
+          <div class="summary truncate-field">
+            <?=implode('<br>', $this->driver->getSummary() ?? []); ?>
+          </div>
         </div>
         <?php if ($snippet = $this->driver->getHighlightedSnippet()): ?>
           <?php if (!empty($snippet['caption'])): ?>
