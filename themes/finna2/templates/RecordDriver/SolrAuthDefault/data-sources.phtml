@@ -6,7 +6,7 @@
     }
   ?>
   <?php if (!empty($url['url'])): ?>
-    <a href="<?=$url['url']?>"><?=$title?></a>
+    <a href="<?=$url['url']?>"><?=$title?></a><?= $url['subtitle'] ? (' ' . $url['subtitle']) : '' ?>
   <?php else: ?>
     <?=$title?>
   <?php endif; ?>

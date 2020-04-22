@@ -70,8 +70,10 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 }
                 $result[] = [
                     'id' => $id,
-                    'name' => $name->getData(),
-                    'type' => $type
+                    'name' =>
+                        $this->stripTrailingPunctuation($name->getData(), '. '),
+                    'type' =>
+                        $this->stripTrailingPunctuation($type, '. ')
                 ];
             }
         }
@@ -194,16 +196,19 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     {
         $result = [];
         foreach ($this->getMarcRecord()->getFields('670') as $field) {
-            $source = $field->getSubfield('a');
-
-            $url = $field->getSubfield('u');
-            if (!$source ) {
+            if (!$title = $field->getSubfield('a')) {
                 continue;
             }
-            $source = $source->getData();
+            $title = $title->getData();
+            $subtitle = null;
+            if (false !== ($pos = strpos($title, ', '))) {
+                list($title, $subtitle) = explode(', ', $title, 2);
+            }
+            $url = $field->getSubfield('u');
             $info = $field->getSubfield('b');
             $result[] = [
-                'title' => $source,
+                'title' => $title,
+                'subtitle' => $subtitle,
                 'info' => $info ? $info->getData() : null,
                 'url' => $url ? $url->getData() : null
             ];

@@ -71,4 +71,36 @@ trait MarcReaderTrait
         }
         return $result;
     }
+
+    /**
+     * Strip trailing spaces and punctuation characters from a string
+     *
+     * @param string|array $input      String to strip
+     * @param string       $additional Additional punctuation characters
+     *
+     * @return string|array
+     */
+    protected function stripTrailingPunctuation($input, $additional = '')
+    {
+        $array = is_array($input);
+        if (!$array) {
+            $input = [$input];
+        }
+        foreach ($input as &$str) {
+            $str = mb_ereg_replace("[\s\/:;\,=\($additional]+\$", '', $str);
+            // Don't replace an initial letter (e.g. string "Smith, A.") followed by
+            // period
+            $thirdLast = substr($str, -3, 1);
+            if (substr($str, -1) == '.' && $thirdLast != ' ') {
+                $role = in_array(
+                    substr($str, -4),
+                    ['nid.', 'sid.', 'kuv.', 'ill.', 'säv.', 'col.']
+                );
+                if (!$role) {
+                    $str = substr($str, 0, -1);
+                }
+            }
+        }
+        return $array ? $input : $input[0];
+    }
 }
