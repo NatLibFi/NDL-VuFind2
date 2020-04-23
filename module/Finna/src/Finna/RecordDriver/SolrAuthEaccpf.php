@@ -41,6 +41,7 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthEacCpf extends SolrAuthDefault
 {
+    use SolrAuthFinnaTrait;
     use XmlReaderTrait;
 
     /**

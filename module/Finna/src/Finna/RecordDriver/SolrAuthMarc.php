@@ -61,7 +61,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 if (!$name || !$id) {
                     continue;
                 }
-                $id = $this->getDataSource() . '.' . $id->getData();
+                $id = $id->getData();
                 if ($type) {
                     $type = trim($type->getData());
                     if (':' === substr($type, -1)) {

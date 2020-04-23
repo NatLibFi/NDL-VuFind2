@@ -58,7 +58,9 @@ class RecordDataFormatterFactory
         $helper->setDefaults('core', $this->getDefaultCoreSpecs());
         $helper->setDefaults('description', $this->getDefaultDescriptionSpecs());
         $helper->setDefaults('authority', $this->getDefaultAuthoritySpecs());
-
+        $helper->setDefaults(
+            'authorityRecommend', $this->getDefaultAuthorityRecommendSpecs()
+        );
         return $helper;
     }
 
@@ -974,5 +976,20 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine('Relations', 'getRelations', 'data-relations.phtml');
         $spec->setLine('Additional Information', 'getAdditionalInformation');
         return $spec->getArray();
+    }
+
+    /**
+     * Get default specifications for displaying data in the
+     * authority recommend module.
+     *
+     * @return array
+     */
+    public function getDefaultAuthorityRecommendSpecs()
+    {
+        $specs = $this->getDefaultAuthoritySpecs();
+        if (isset($specs['Relations'])) {
+            $specs['Relations']['template'] = 'data-relations-recommend.phtml';
+        }
+        return $specs;
     }
 }

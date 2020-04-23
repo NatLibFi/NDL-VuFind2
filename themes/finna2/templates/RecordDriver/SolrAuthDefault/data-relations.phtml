@@ -1,4 +1,8 @@
+<?php
+  if ($data) {
+    $helper = $this->record($this->driver);
+  }
+?>
 <?php foreach ($data as $relation): ?>
-  <a href="<?=$this->url('solrauthrecord', ['id' => $relation['id']])?>"><?= $relation['name']?></a><?php if (!empty($relation['type'])): ?> <span class="relation-type">(<?=$relation['type']?></span>)<?php endif; ?>
-  <br />
+  <?=$helper->getAuthorityLinkElement('author', $relation['name'], $relation, ['authorityType' => $relation['type'] ?? null, 'additional' => $helper->getAuthorityLinkAdditionalData(['date', 'role']), 'linkType' => 'author-page'])?>
 <?php endforeach; ?>

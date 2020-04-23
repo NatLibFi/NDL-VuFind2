@@ -219,8 +219,8 @@ trait FinnaRecordTrait
     /**
      * Format authority id by prefixing the given id with authority record source.
      *
-     * @param string $type Authority type (e.g. author)
      * @param string $id   Authority id
+     * @param string $type Authority type (e.g. author)
      *
      * @return null|string
      */

@@ -38,6 +38,7 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthForward extends SolrAuthDefault
 {
+    use SolrAuthFinnaTrait;
     use SolrForwardTrait;
     use XmlReaderTrait;
 
