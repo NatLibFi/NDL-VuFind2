@@ -212,7 +212,7 @@ trait SolrAuthFinnaTrait
      */
     public function getFormats()
     {
-        return [$this->fields['record_type']];
+        return ['authority_' . $this->fields['record_type']];
     }
 
     /**
