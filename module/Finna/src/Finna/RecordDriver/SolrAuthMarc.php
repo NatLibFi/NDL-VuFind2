@@ -27,6 +27,8 @@
  */
 namespace Finna\RecordDriver;
 
+use Finna\Util\MetadataUtils;
+
 /**
  * Model for Forward authority records in Solr.
  *
@@ -53,7 +55,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     {
         foreach ($this->getMarcRecord()->getFields('368') as $field) {
             if ($res = $field->getSubfield('a')) {
-                return [$res->getData()];
+                return [MetadataUtils::ucFirst($res->getData())];
             }
         }
         return $this->_getFormats();
@@ -136,7 +138,12 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
      */
     public function getBirthDate($force = false)
     {
-        return $this->fields['birth_date'] ?? '';
+        foreach ($this->getMarcRecord()->getFields('046') as $field) {
+            if ($res = $field->getSubfield('f')) {
+                return $this->formatDate($res->getData());
+            }
+        }
+        return '';
     }
 
     /**
@@ -166,7 +173,12 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
      */
     public function getDeathDate($force = false)
     {
-        return $this->fields['death_date'] ?? '';
+        foreach ($this->getMarcRecord()->getFields('046') as $field) {
+            if ($res = $field->getSubfield('g')) {
+                return $this->formatDate($res->getData());
+            }
+        }
+        return '';
     }
 
     /**
@@ -312,5 +324,24 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
             }
         }
         return $result;
+    }
+
+    /**
+     * Format date
+     *
+     * @param string $date   Date
+     * @param string $format Format of converted date
+     *
+     * @return string
+     */
+    protected function formatDate($date, $format = 'j.n.Y')
+    {
+        if (false === (strpos($date, '-'))) {
+            return $date;
+        }
+        if (false === ($time = strtotime($date))) {
+            return $date;
+        }
+        return date($format, $time);
     }
 }
