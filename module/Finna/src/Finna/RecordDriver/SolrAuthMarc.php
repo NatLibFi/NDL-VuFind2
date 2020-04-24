@@ -39,8 +39,25 @@ namespace Finna\RecordDriver;
 class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 {
     use MarcReaderTrait;
-    use SolrAuthFinnaTrait;
     use SolrCommonFinnaTrait;
+    use SolrAuthFinnaTrait {
+        getFormats as _getFormats;
+    }
+
+    /**
+     * Get an array of all the formats associated with the record.
+     *
+     * @return array
+     */
+    public function getFormats()
+    {
+        foreach ($this->getMarcRecord()->getFields('368') as $field) {
+            if ($res = $field->getSubfield('a')) {
+                return [$res->getData()];
+            }
+        }
+        return $this->_getFormats();
+    }
 
     /**
      * Return relations to other authority records.
