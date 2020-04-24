@@ -22,7 +22,7 @@ heading   = "Heading"
 
 [Facets]
 source             = "Authority File"
-record_type        = "Record Type"
+record_type        = "Type"
 field_of_activity    = "Field of activity"
 occupation         = "Occupation"
 gender             = "Gender"
@@ -61,3 +61,6 @@ condensed = Condensed
 ; Priority order (descending) for record sources (record ID prefixes separated
 ; from the actual record by period, e.g. testsrc.12345)
 ;sources = testsrc
+
+[Advanced_Settings]
+translated_facets[] = record_type
