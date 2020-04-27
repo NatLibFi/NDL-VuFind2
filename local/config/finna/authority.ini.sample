@@ -1,7 +1,7 @@
 ; This configuration file controls the Authority module; see facets.ini and
 ; searches.ini for detailed comments on the meaning of all settings.
 [General]
-default_handler      = AllFields    ; Search handler to use if none is specified
+default_handler      = MainHeading    ; Search handler to use if none is specified
 default_sort         = relevance
 case_sensitive_bools = true
 default_side_recommend[] = SideFacets:Facets:CheckboxFacets:authority
