@@ -916,7 +916,7 @@ class RecordDataFormatterFactory
         };
 
         $setMultiTemplateLine(
-            'Related Authorities', 'getNonPresenterAuthors', $getRelations
+            'Archive Relations', 'getNonPresenterAuthors', $getRelations
         );
 
         return $lines;
