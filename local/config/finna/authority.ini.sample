@@ -52,14 +52,9 @@ death_date          = "Date of death"
 death_place         = "Place of death"
 country            = "Associated country"
 related_place       = "Other associated place"
-form_facet_str_mv  = "Form"
-general_facet_str_mv  = "General"
-chronological_facet_str_mv  = "Chronological"
-geographic_facet_str_mv  = "Geographic"
 
 [FacetLabels]
 labelSections[] = Facets
-checkboxSections[] = CheckboxFacets
 
 [Autocomplete]
 enabled = true
@@ -68,8 +63,6 @@ enabled = true
 AllFields = SolrAuth
 MainHeading = "SolrAuth:MainHeading"
 Heading = "SolrAuth:Heading"
-
-[CheckboxFacets]
 
 [Views]
 list = List

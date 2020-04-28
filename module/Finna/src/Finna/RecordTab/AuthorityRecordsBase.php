@@ -110,9 +110,9 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      */
     public function loadRecords($driver)
     {
-         return $this->getRecords();
+        return $this->getRecords();
     }
-    
+
     /**
      * Get results (records from biblio index).
      *
@@ -121,7 +121,7 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     protected function getRecords()
     {
         if ($this->records) {
-             return $this->records;
+            return $this->records;
         }
         $this->records = $this->authorityHelper->getRecordsByAuthor(
             $this->driver->getUniqueID(), $this->getRelation()
@@ -139,7 +139,7 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
         $records = $this->getRecords();
         return $records->getResultTotal();
     }
-    
+
     /**
      * Set the record driver to operate on
      *
@@ -149,7 +149,7 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      */
     public function setRecordDriver(\VuFind\RecordDriver\AbstractBase $driver)
     {
-         $this->driver = $driver;
+        $this->driver = $driver;
     }
 
     public function getSearchQuery()

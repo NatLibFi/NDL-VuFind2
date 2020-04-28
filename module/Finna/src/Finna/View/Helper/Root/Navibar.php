@@ -27,7 +27,6 @@
  */
 namespace Finna\View\Helper\Root;
 
-use Finna\Search\Solr\AuthorityHelper;
 use Zend\Http\Request;
 
 /**

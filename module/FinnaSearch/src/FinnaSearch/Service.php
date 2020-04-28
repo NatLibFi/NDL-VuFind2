@@ -31,7 +31,6 @@ namespace FinnaSearch;
 use VuFindSearch\Backend\Exception\BackendException;
 use VuFindSearch\ParamBag;
 use VuFindSearch\Response\RecordCollectionInterface;
-use VuFindSearch\Query\Query;
 
 /**
  * Search service.

@@ -46,7 +46,6 @@ class Params extends \Finna\Search\Solr\Params
      */
     protected $defaultFacetLabelSections = ['Facets'];
 
-
     /**
      * Format display text for a author-id filter entry.
      *

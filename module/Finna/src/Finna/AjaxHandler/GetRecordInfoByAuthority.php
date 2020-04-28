@@ -21,7 +21,7 @@
  *
  * @category VuFind
  * @package  AJAX
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -30,15 +30,15 @@ namespace Finna\AjaxHandler;
 use VuFind\Record\Loader;
 use VuFind\RecordTab\TabManager;
 use VuFind\Session\Settings as SessionSettings;
-use VuFind\View\Helper\Root\Record;
+use VuFind\View\Helper\Root\Record as RecordHelper;
 use Zend\Mvc\Controller\Plugin\Params;
 
 /**
- * AJAX handler for fetching versions link
+ * AJAX handler for fetching record info by authority id.
  *
  * @category VuFind
  * @package  AJAX
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -68,11 +68,14 @@ class GetRecordInfoByAuthority extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Constructor
      *
-     * @param SessionSettings $ss     Session settings
-     * @param TabManager      $tm     Tab manager
+     * @param SessionSettings $ss           Session settings
+     * @param Loader          $loader       Record loader
+     * @param RecordHelper    $recordHelper Record view helper
+     * @param TabManager      $tm           Recordtab manager
      */
-    public function __construct(SessionSettings $ss, $loader, $recordHelper, $tm)
-    {
+    public function __construct(
+        SessionSettings $ss, Loader $loader, RecordHelper $recordHelper, $tm
+    ) {
         $this->sessionSettings = $ss;
         $this->recordLoader = $loader;
         $this->recordHelper = $recordHelper;
@@ -102,6 +105,6 @@ class GetRecordInfoByAuthority extends \VuFind\AjaxHandler\AbstractBase
             'record-count.phtml', compact('driver', 'tabs', 'count', 'context')
         );
 
-        return $this->formatResponse($html);                
+        return $this->formatResponse($html);
     }
 }

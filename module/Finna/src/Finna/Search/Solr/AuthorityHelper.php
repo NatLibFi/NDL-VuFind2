@@ -324,7 +324,7 @@ class AuthorityHelper
     {
         return "$field:\"$id\"";
     }
-    
+
     /**
      * Check if authority search is enabled.
      *

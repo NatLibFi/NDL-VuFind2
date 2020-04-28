@@ -142,7 +142,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
     }
 
     /**
-     * Get authority link type (authority page or search by authority-id)
+     * Get authority link type (authority page or search by authority-id).
      *
      * @return string
      */

@@ -205,15 +205,13 @@ trait FinnaRecordTrait
     /**
      * Is authority functionality enabled?
      *
+     * @param string $type Authority type
+     *
      * @return bool
      */
-    public function isAuthorityEnabled()
+    public function isAuthorityEnabled($type = '*')
     {
-        if (!is_callable([$this, 'getDatasource'])) {
-            return false;
-        }
-        $recordSource = $this->getDatasource();
-        return isset($this->datasourceSettings[$recordSource]['authority']);
+        return (bool)$this->getAuthoritySource($type);
     }
 
     /**
@@ -231,9 +229,9 @@ trait FinnaRecordTrait
         }
 
         $recordSource = $this->getDataSource();
-        $authSrc = $this->datasourceSettings[$recordSource]['authority'][$type]
-            ?? $this->datasourceSettings[$recordSource]['authority']['*']
-            ?? null;
+        if (!$authSrc = $this->getAuthoritySource($type)) {
+            return null;
+        }
 
         $idRegex
             = $this->datasourceSettings[$recordSource]['authority_id_regex'][$type]
@@ -243,7 +241,7 @@ trait FinnaRecordTrait
         if ($idRegex && 1 !== preg_match($idRegex, $id)) {
             return null;
         }
-        return $authSrc ? $this->getAuthorityIdForSource($id, $authSrc) : null;
+        return "$authSrc.$id";
     }
 
     /**
@@ -271,15 +269,20 @@ trait FinnaRecordTrait
     }
 
     /**
-     * Prefix authority id with authority record source.
+     * Get authority record source.
      *
-     * @param string $id     Authority id
-     * @param string $source Authority source
+     * @param string $type Authority type
      *
-     * @return string
+     * @return string|null
      */
-    protected function getAuthorityIdForSource($id, $source)
+    protected function getAuthoritySource($type = '*')
     {
-        return "$source.$id";
+        if (!is_callable([$this, 'getDatasource'])) {
+            return null;
+        }
+        $recordSource = $this->getDataSource();
+        return $this->datasourceSettings[$recordSource]['authority'][$type]
+            ?? $this->datasourceSettings[$recordSource]['authority']['*']
+            ?? null;
     }
 }

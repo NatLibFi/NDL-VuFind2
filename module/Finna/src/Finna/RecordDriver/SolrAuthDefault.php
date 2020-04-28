@@ -43,7 +43,6 @@ class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
     use SolrCommonFinnaTrait;
     use SolrAuthFinnaTrait;
 
-
     /**
      * Return birth date and place.
      *

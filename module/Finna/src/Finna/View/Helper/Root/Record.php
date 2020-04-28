@@ -336,12 +336,12 @@ class Record extends \VuFind\View\Helper\Root\Record
         ) {
             $author = [
                'name' => $data['name'] ?? null,
-               'date' => !empty($data['date']) ? $data['date'] :  null,
+               'date' => !empty($data['date']) ? $data['date'] : null,
                'role' => !empty($data['role']) ? $data['role'] : null
-            ];            
+            ];
             return $this->getAuthorLinkElement($url, $author);
         }
-        
+
         $authId = $this->driver->getAuthorityId($id, $type);
         $authorityType = $params['authorityType'] ?? null;
         $authorityType
@@ -427,7 +427,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         return (bool)$this->config->Authority->enabled ?? false;
     }
-    
+
     /**
      * Get authority link type.
      *

@@ -46,25 +46,13 @@ class Autocomplete extends \Zend\View\Helper\AbstractHelper
     protected $searchConfig = null;
 
     /**
-     * Search options pluginmanager
-     *
-     * @var \VuFind\Search\Options\PluginManager
-     */
-    protected $optionsPluginManager = null;
-
-    /**
      * Constructor
      *
-     * @param \Zend\Config\Config                  $searchConfig  Search configiration.
-     * @param \VuFind\Search\Options\PluginManager $pluginManager Search
-     * options pluginmanager
+     * @param \Zend\Config\Config $searchConfig Search configiration.
      */
-    public function __construct(
-        \Zend\Config\Config $searchConfig,
-        \VuFind\Search\Options\PluginManager $pluginManager
-    ) {
+    public function __construct(\Zend\Config\Config $searchConfig)
+    {
         $this->searchConfig = $searchConfig;
-        $this->optionsPluginManager = $pluginManager;
     }
 
     /**
@@ -125,24 +113,8 @@ class Autocomplete extends \Zend\View\Helper\AbstractHelper
             if ($searchTab) {
                 $tabs = count($handlerItem) > 2 && !empty($handlerItem[2])
                     ? explode('&', $handlerItem[2]) : [];
-                if (!empty($tabs)) {
-                    if (!in_array($searchTab, $tabs)) {
-                        continue;
-                    }
-                }
-                // Discard handler if not supported by search backend
-                //   Remove ':<tab_postfix> to map tab id's to their common
-                //   backend id so that we can retrieve search options.
-                //   For eaxample Solr:1 > Solr
-
-                $searchClassId = explode(':', $searchTab);
-                $searchClassId = reset($searchClassId);
-
-                if ($options = $this->optionsPluginManager->get($searchClassId)) {
-                    $searchTabHandlers = $options->getBasicHandlers();
-                    if (!in_array($handlerItem[0], array_keys($searchTabHandlers))) {
-                        continue;
-                    }
+                if (!empty($tabs) && !in_array($searchTab, $tabs)) {
+                    continue;
                 }
             }
             $result[] = [

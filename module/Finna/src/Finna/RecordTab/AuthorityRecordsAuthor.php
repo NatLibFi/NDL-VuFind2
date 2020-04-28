@@ -46,10 +46,12 @@ class AuthorityRecordsAuthor extends AuthorityRecordsBase
     protected $label = 'author';
 
     /**
-     * Return index fields that is used when listing records.
+     * Index field that is used when listing records.
      *
-     * @return string
+     * @var string
      */
+    protected $relation = 'author2_id_str_mv';
+
     protected function getRelation()
     {
         return $this->driver->isPerson()

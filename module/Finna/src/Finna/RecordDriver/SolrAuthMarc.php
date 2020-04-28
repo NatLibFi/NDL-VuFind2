@@ -81,12 +81,6 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                     continue;
                 }
                 $id = $id->getData();
-                if ($type) {
-                    $type = trim($type->getData());
-                    if (':' === substr($type, -1)) {
-                        $type = substr($type, 0, -1);
-                    }
-                }
                 $result[] = [
                     'id' => $id,
                     'name' =>
@@ -211,7 +205,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 $result[] = $subfield->getData();
             }
         }
-        
+
         return $result;
     }
 
@@ -240,7 +234,6 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 'info' => $info ? $info->getData() : null,
                 'url' => $url ? $url->getData() : null
             ];
-
         }
         return $result;
     }
@@ -264,7 +257,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 }
             }
         }
-        
+
         return $result;
     }
 

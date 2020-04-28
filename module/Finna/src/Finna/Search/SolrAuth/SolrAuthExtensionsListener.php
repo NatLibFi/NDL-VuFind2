@@ -29,11 +29,8 @@
  */
 namespace Finna\Search\SolrAuth;
 
-use VuFindSearch\Backend\BackendInterface;
-
 use Zend\EventManager\EventInterface;
 use Zend\EventManager\SharedEventManagerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Finna Solr extensions listener.

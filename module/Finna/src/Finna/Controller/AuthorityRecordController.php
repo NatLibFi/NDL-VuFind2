@@ -27,8 +27,6 @@
  */
 namespace Finna\Controller;
 
-use Zend\ServiceManager\ServiceLocatorInterface;
-
 /**
  * Authority Record Controller
  *

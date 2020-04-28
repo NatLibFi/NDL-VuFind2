@@ -34,7 +34,6 @@ use Finna\Search\SolrAuth\SolrAuthExtensionsListener;
 
 use VuFindSearch\Backend\Solr\Backend;
 
-
 /**
  * Abstract factory for SOLR Auth backends.
  *
@@ -71,5 +70,4 @@ class SolrAuthBackendFactory
         );
         $solrExtensions->attach($events);
     }
-
 }
