@@ -585,9 +585,9 @@ class Params extends \VuFind\Search\Solr\Params
                 if (in_array(
                     $field,
                     [AuthorityHelper::AUTHOR2_ID_FACET,
-                     AuthorityHelper::AUTHOR_CORPORATE_ID_FACET,
                      AuthorityHelper::TOPIC_ID_FACET]
-                )) {
+                )
+                ) {
                     // Author id filter
                     $result[] = $filter;
                 } elseif ($field === AuthorityHelper::AUTHOR_ID_ROLE_FACET) {

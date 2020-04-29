@@ -51,10 +51,4 @@ class AuthorityRecordsAuthor extends AuthorityRecordsBase
      * @var string
      */
     protected $relation = 'author2_id_str_mv';
-
-    protected function getRelation()
-    {
-        return $this->driver->isPerson()
-            ? 'author2_id_str_mv' : 'author_corporate_id_str_mv';
-    }
 }

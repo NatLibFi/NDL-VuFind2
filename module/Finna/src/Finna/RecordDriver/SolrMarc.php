@@ -1270,6 +1270,68 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get all subject headings associated with this record with extended data.
+     * (see getAllSubjectHeadings).
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadingsExtended()
+    {
+        return $this->getAllSubjectHeadings(true);
+    }
+
+    /**
+     * Get all subject headings associated with this record.  Each heading is
+     * returned as an array of chunks, increasing from least specific to most
+     * specific.
+     *
+     * @param bool $extended Whether to return a keyed array with the following
+     * keys:
+     * - heading: the actual subject heading chunks
+     * - type: heading type
+     * - source: source vocabulary
+     * - id: authority id (if defined)
+     * - authType: authority type (if id is defined)
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadings($extended = false)
+    {
+        $result = parent::getAllSubjectHeadings($extended);
+        if (!$extended) {
+            return $result;
+        }
+
+        $subjectIdFields = ['Personal Name' => ['600'], 'Corporate Name' => ['610']];
+        foreach ($result as &$subject) {
+            if (!$heading = $subject['heading'][0] ?? null) {
+                continue;
+            }
+            $authId = $authType = null;
+
+            // Check if we can find an authority id with a matching heading
+            foreach ($subjectIdFields as $type => $codes) {
+                foreach ($codes as $code) {
+                    foreach ($this->getMarcRecord()->getFields($code) as $field) {
+                        $subfield = $field->getSubfield('a');
+                        if (!$subfield || trim($subfield->getData()) !== $heading) {
+                            continue;
+                        }
+                        if ($authId = $field->getSubfield('0')) {
+                            $authId = $authId->getData();
+                            $authType = $type;
+                            break 3;
+                        }
+                    }
+                }
+            }
+            $subject['id'] = $authId;
+            $subject['authType'] = $authType;
+        }
+        return $result;
+    }
+
+    /**
      * Returns the array element for the 'getAllRecordLinks' method
      *
      * @param File_MARC_Data_Field $field Field to examine

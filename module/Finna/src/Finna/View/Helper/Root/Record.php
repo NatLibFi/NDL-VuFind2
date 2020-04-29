@@ -250,18 +250,19 @@ class Record extends \VuFind\View\Helper\Root\Record
         $params = $params ?? [];
         $filter = null;
 
+        $linkType = $params['linkType'] ?? $this->getAuthorityLinkType();
         // Attempt to switch Author search link to Authority link.
-        if (isset($params['id'])) {
-            $linkType = $params['linkType'] ?? $this->getAuthorityLinkType();
-        }
-        if (null !== ($linkType = $params['linkType'] ?? $this->getAuthorityLinkType())
-            && in_array($type, ['author', 'author-id'])
+        if (null !== $linkType
+            && in_array($type, ['author', 'author-id', 'subject'])
             && (isset($params['id']) || isset($params['authId']))
-            && $authId = $params['authId'] ?? $this->driver->getAuthorityId($params['id'], $type)
+            && $authId = $params['authId'] ?? $this->driver->getAuthorityId(
+                $params['id'], $type
+            )
         ) {
             $type = (string)$linkType === '1' ? 'author-id' : $linkType;
             $filter = $type === 'author-id'
-                ? $params['filter'] ?? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
+                ? $params['filter']
+                    ?? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
                 : $authId;
         }
 
@@ -359,6 +360,8 @@ class Record extends \VuFind\View\Helper\Root\Record
            'recordSource' => $this->driver->getDataSource(),
            'type' => $type,
            'authorityType' => $authorityType,
+           'title' => $params['title'] ?? null,
+           'classes' => $params['class'] ?? []
         ];
 
         if (isset($params['additionalData'])) {
