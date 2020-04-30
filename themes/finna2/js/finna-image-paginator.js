@@ -1,8 +1,6 @@
-/* global finna, VuFind, L, videojs */
+/* global finna, VuFind, L */
 finna.imagePaginator = (function imagePaginator() {
   var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print"></a>';
-  var previousRecordButton = '<button class="popup-arrow popup-left-arrow previous-record" type="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>';
-  var nextRecordButton = '<button class="popup-arrow popup-right-arrow next-record" type="button"><i class="fa fa-angle-double-right" aria-hidden="true"></i></button>';
   var paginatorIndex = 0;
   var timeOut = null;
 
@@ -102,27 +100,6 @@ finna.imagePaginator = (function imagePaginator() {
   }
 
   /**
-   * Reindex all paginators. Required if new paginators are appended to the DOM after initial page load.
-   */
-  function reindexPaginators() {
-    $('.image-popup-trigger').each(function reindexPaginator(index) {
-      $(this).trigger('setPaginatorIndex', index);
-      $(this).trigger('unVeilNextAndPrev', index);
-    });
-  }
-
-  /**
-   * Helper function for setting paginator index.
-   *
-   * @param {int} index
-   */
-  FinnaPaginator.prototype.setPaginatorIndex = function setPaginatorIndex(index) {
-    var _ = this;
-    _.paginatorIndex = index;
-    _.trigger.attr('paginator-index', index);
-  };
-
-  /**
    * Helper function to show a button and hide another
    *
    * @param {HTMLElement} show
@@ -216,13 +193,6 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.setEvents = function setEvents() {
     var _ = this;
 
-    _.trigger.off('setPaginatorIndex').on('setPaginatorIndex', function setIndex(event, index) {
-      _.setPaginatorIndex(index);
-    });
-    _.trigger.off('unVeilNextAndPrev').on('unVeilNextAndPrev', function unVeilNextAndPrev(event, index) {
-      _.unVeilNextAndPrev(index);
-    });
-
     if (!_.isList) {
       _.leftBtn.click(function loadImages() {
         _.loadPage(-1);
@@ -251,24 +221,6 @@ finna.imagePaginator = (function imagePaginator() {
       e.preventDefault();
       _.setTrigger($(this));
     });
-  };
-
-  /* Logics for clickable elements */
-
-  FinnaPaginator.prototype.unVeilNextAndPrev = function unVeilNextAndPrev(limit) {
-    var _ = this;
-    var i = 0 - limit;
-
-    for (;i <= limit; i++) {
-      var current = +_.paginatorIndex + i;
-      if (current === _.paginatorIndex) {
-        continue;
-      }
-      var found = $('.image-popup-trigger[paginator-index="' + current + '"]');
-      if (found.length) {
-        found.find('img').trigger('unveil');
-      }
-    }
   };
 
   FinnaPaginator.prototype.setCanvasElement = function setCanvasElement(type) {
@@ -762,7 +714,7 @@ finna.imagePaginator = (function imagePaginator() {
 
       if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
         $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
-          $.magnificPopup.close();
+          
         });
       }
       _.setRecordIndex();
@@ -820,19 +772,6 @@ finna.imagePaginator = (function imagePaginator() {
     });
 
     return holder;
-  };
-
-  /**
-   * Check if we can go left and right for new record popup
-   */
-  FinnaPaginator.prototype.checkRecordButtons = function checkRecordButtons() {
-    var _ = this;
-    if (paginatorIndex < 2) {
-      $('.previous-record, .next-record').hide();
-      return;
-    }
-    $('.previous-record').toggle(_.paginatorIndex > 0);
-    $('.next-record').toggle(_.paginatorIndex !== paginatorIndex - 1);
   };
 
   /**

@@ -1,6 +1,9 @@
 (function popupModule($) {
   $.fn.finnaPopup = function finnaPopup(params) {
     var _ = $(this);
+    if (typeof $.fn.finnaPopup.popups === 'undefined') {
+      $.fn.finnaPopup.popups = {};
+    }
     var tmp = params.id;
     if (typeof tmp === 'undefined') {
       tmp = 'default';
@@ -8,10 +11,10 @@
     if (typeof _.data('popup-' + tmp + '-index') !== 'undefined') {
       return; //Already found in the list, so lets not double init this
     }
-    if (typeof popups[tmp] === 'undefined') {
-      popups[tmp] = new FinnaPopup($(this), params, params.id);
+    if (typeof $.fn.finnaPopup.popups[tmp] === 'undefined') {
+      $.fn.finnaPopup.popups[tmp] = new FinnaPopup($(this), params, params.id);
     } else {
-      popups[tmp].addTrigger($(this));
+      $.fn.finnaPopup.popups[tmp].addTrigger($(this));
     }
     _.data('popup-id', tmp);
     var events = (typeof params.noClick === 'undefined' || !params.noClick) ? 'click openmodal.finna' : 'openmodal.finna';
@@ -21,18 +24,22 @@
         _.off('click');
       });
       // We need to tell which triggers is being used
-      popups[tmp].openIndex = _.data('popup-' + tmp + '-index');
-      popups[tmp].onPopupOpen(params.onPopupOpen, params.onPopupClose);
+      $.fn.finnaPopup.popups[tmp].openIndex = _.data('popup-' + tmp + '-index');
+      $.fn.finnaPopup.popups[tmp].onPopupOpen(params.onPopupOpen, params.onPopupClose);
     });
     if (typeof params.embed !== 'undefined' && params.embed) {
-      if (typeof popups[tmp].content === 'undefined') {
-        popups[tmp].triggers[0].trigger('openmodal.finna');
+      if (typeof $.fn.finnaPopup.popups[tmp].content === 'undefined') {
+        $.fn.finnaPopup.popups[tmp].triggers[0].trigger('openmodal.finna');
       }
     }
   };
+  $.fn.finnaPopup.reIndex = function reIndex() {
+    $.each($.fn.finnaPopup.popups, function callReindex(key, obj) {
+      obj.reIndex();
+    });
+  };
 })(jQuery);
 
-var popups = {};
 var previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>';
 var next = '<button class="popup-arrow popup-right-arrow next-record" type="button"><i class="fa fa-angle-double-right" aria-hidden="true"></i></button>';
 var closeTemplate = '<button class="finna-popup close-button" title="close_translation">X</button>';
@@ -102,6 +109,7 @@ FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
   var _ = this;
   _.triggers.push(trigger);
   trigger.data('popup-' + _.id + '-index', _.triggers.length - 1);
+  console.log( _.triggers.length - 1);
   _.onPopupInit(trigger);
 };
 
@@ -112,8 +120,10 @@ FinnaPopup.prototype.customClose = function customClose(){};
 FinnaPopup.prototype.reIndex = function reIndex() {
   var _ = this;
   _.triggers = [];
-  $('[popup-id="' + _.id + '"]').each(function toList() {
-    _.addTrigger($(this));
+  $(':data(popup-id)').each(function toList() {
+    if ($(this).data('popup-id') === _.id) {
+      _.addTrigger($(this));
+    }
   });
 };
 
@@ -151,7 +161,6 @@ FinnaPopup.prototype.show = function show() {
     });
     _.toggleScroll(false);
   }
-
 
   if (typeof _.backDrop === 'undefined' && !hasParent) {
     _.backDrop = $('<div class="finna-popup backdrop"></div>');

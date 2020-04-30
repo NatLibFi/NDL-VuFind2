@@ -43,7 +43,7 @@ finna.userListEmbed = (function userListEmbed() {
               });
               
               finna.myList.init();
-              finna.imagePaginator.reindexPaginators();
+              $.fn.finnaPopup.reIndex();
               finna.layout.initCondensedList(resultsContainer);
               finna.layout.initTruncate();
               finna.openUrl.initLinks(resultsContainer);
