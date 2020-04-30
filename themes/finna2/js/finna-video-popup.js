@@ -1,16 +1,6 @@
 /*global VuFind, finna, videojs */
 finna.videoPopup = (function finnaVideoPopup() {
 
-  function resizeVideoPopup($container) {
-    var mfp = $container.closest('.mfp-content');
-    if (mfp.length === 0) {
-      return;
-    }
-    var width = $('.mfp-content').width();
-    var height = $('.mfp-container').height();
-    $container.css('width', width).css('height', height);
-  }
-
   function initVideoJs(_container, videoSources, posterUrl) {
     var $container = $(_container);
     var $videoElem = $(_container).find('video');
@@ -19,15 +9,12 @@ finna.videoPopup = (function finnaVideoPopup() {
     videojs.Hls.GOAL_BUFFER_LENGTH = 10;
     videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
     var player = videojs($videoElem.get(0));
-
     player.ready(function onReady() {
       this.hotkeys({
         enableVolumeScroll: false,
         enableModifiersForNumbers: false
       });
     });
-
-    resizeVideoPopup($container);
 
     player.src(videoSources);
     player.poster(posterUrl);
@@ -137,126 +124,95 @@ finna.videoPopup = (function finnaVideoPopup() {
       });
   }
 
-  function displayVideo(video) {
-    var videoSources = video.data('videoSources');
-    var scripts = video.data('scripts');
-    var posterUrl = video.data('posterUrl');
-    var videoPlayer = "<video id='video-player' class='video-js video-js-player vjs-big-play-centered' controls></video>";
-    if ($('[data-inline]').length > 0) {
-      $('.inline-video').html(videoPlayer);
-      $('[data-inline].active-video').removeClass('active-video');
-      video.addClass('active-video');
-      finna.layout.loadScripts(scripts, function onScriptsLoaded() {
-        initVideoJs('.inline-video', videoSources, posterUrl);
-      });
-      $('.vjs-big-play-button').focus();
-    } else {
-      $.magnificPopup.open({
-        type: 'inline',
-        items: {
-          src: "<div class='video-popup'>" + videoPlayer + "</div>"
-        },
-        callbacks: {
-          open: function onOpen() {
-            $('#video-player').closest('.mfp-content').addClass('videoplayer-only');
-            finna.layout.loadScripts(scripts, function onScriptsLoaded() {
-              initVideoJs('.video-popup', videoSources, posterUrl);
-            });
-          },
-          close: function onClose() {
-            videojs('video-player').dispose();
-          },
-          resize: function resizeVideo() {
-            resizeVideoPopup($('.video-popup'));
-          }
-        }
-      });
-    }
-  }
-
   function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : $(_container);
-
-    container.find('[data-embed-video]').click(function onClickVideoLink(e) {
-      displayVideo($(this));
-      e.preventDefault();
-    });
-
-    if (container.find('[data-inline]').length > 0) {
-      var defaultVideo = container.find('[data-inline]').first();
+    var inline = container.find('[data-inline]');
+    var parent;
+    var embed = inline.length > 0;
+    if (inline.length) {
+      parent = 'inline-video';
       $('.inline-video-container').insertAfter($('.search-form-container'));
       $('.inline-video-container').removeClass('hidden');
-      if (container.find('[data-inline]').length < 2 ) {
-        container.find('[data-inline]').addClass('hidden');
+
+      if (inline.length < 2) {
+        inline.addClass('hidden');
       }
-      displayVideo(defaultVideo);
     }
-  }
 
-  function displayIframe(video) {
-    var source = video.is('a') ? video.attr('href') : video.data('link');
-    if ($('[data-inline-iframe]').length) {
-      var embedUrl = video.data('embed-url');
-      var player = '<iframe class="embed-responsive-item" src="' + embedUrl + '" allowfullscreen>';
-      $('.inline-video').html(player);
-
-      // If using Chrome + VoiceOver, Chrome crashes if vimeo player video settings button has aria-haspopup=true
-      $('.vp-prefs .js-prefs').attr('aria-haspopup', false);
-      $('[data-inline-iframe].active-video').removeClass('active-video');
-      video.addClass('active-video');
-    } else {
-      $.magnificPopup.open({
-        type: 'iframe',
-        tClose: VuFind.translate('close'),
-        items: {
-          src: source
-        },
-        iframe: {
-          markup: '<div class="mfp-iframe-scaler">'
-            + '<div class="mfp-close"></div>'
-            + '<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>'
-            + '</div>',
-          patterns: {
-            youtube_short: {
-              index: 'youtu.be/',
-              id: 'youtu.be/',
-              src: '//www.youtube.com/embed/%id%?autoplay=1'
-            }
+    container.find('[data-embed-video]').each(function initVideo() {
+      var videoSources = $(this).data('videoSources');
+      var scripts = $(this).data('scripts');
+      var posterUrl = $(this).data('posterUrl');
+      $(this).finnaPopup({
+        id: 'recordvideo',
+        modal: '<video class="video-js vjs-big-play-centered video-popup" controls></video>',
+        classes: 'video-popup',
+        parent: parent,
+        cycle: !embed,
+        embed: embed,
+        onPopupInit: function onPopupInit(t) {
+          if (this.embed) {
+            t.removeClass('active-video');
           }
         },
-        callbacks: {
-          open: function onOpen() {
-            if (finna.layout.isTouchDevice()) {
-              $('.mfp-container .mfp-close, .mfp-container .mfp-arrow-right, .mfp-container .mfp-arrow-left').addClass('touch-device');
-            }
+        onPopupOpen: function onPopupOpen() {
+          if (this.embed) {
+            this.triggers.forEach(function classRemove(t) {
+              $(t).removeClass('active-video');
+            });
+            this.currentTrigger().addClass('active-video');
+          } else {
+            this.content.css('height', '100%');
           }
+          finna.layout.loadScripts(scripts, function onScriptsLoaded() {
+            finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
+          });
         }
       });
-    }
+    });
   }
+
   function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
-
-    container.find('[data-embed-iframe]').click(function onClickEmbedLink(e) {
-      if (typeof $.magnificPopup.instance !== 'undefined' && $.magnificPopup.instance.isOpen) {
-        // Close existing popup (such as image-popup) first without delay so that its
-        // state doesn't get confused by the immediate reopening.
-        $.magnificPopup.instance.st.removalDelay = 0;
-        $.magnificPopup.close();
-      }
-      displayIframe($(this));
-      e.preventDefault();
-      return false;
-    });
-    if (container.find('[data-inline-iframe]').length > 0) {
-      var defaultVideo = container.find('[data-inline-iframe]').first();
-      $('.inline-video-container').insertAfter($('.search-form-container'));
-      $('.inline-video-container').removeClass('hidden');
-      if (container.find('[data-inline-iframe]').length < 2 ) { 
-        container.find('[data-inline-iframe]').addClass('hidden');
-      }
-      displayIframe(defaultVideo);
+    var inline = container.find('[data-inline]');
+    var parent;
+    var embed = inline.length > 0;
+    if (inline.length) {
+      parent = 'inline-video';
     }
+
+    container.find('[data-embed-iframe]').each(function setIframes() {
+      var source = $(this).is('a') ? $(this).attr('href') : $(this).data('link');
+      $(this).finnaPopup({
+        id: 'recordiframe',
+        cycle: !embed,
+        classes: 'finna-iframe',
+        close: VuFind.translate('close'),
+        modal: '<div style="height:100%">' +
+          '<div class="mfp-close"></div>' +
+          '<iframe class="player mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
+          '</div>',
+        parent: parent,
+        embed: embed,
+        onPopupInit: function onPopupInit(t) {
+          if (this.embed) {
+            t.removeClass('active-video');
+          }
+        },
+        onPopupOpen: function onPopupOpen() {
+          if (this.embed) {
+            this.triggers.forEach(function classRemove(t) {
+              $(t).removeClass('active-video');
+            });
+            this.currentTrigger().addClass('active-video');
+          } else {
+            this.content.css('height', '100%');
+          }
+          var player = this.content.find('iframe');
+          player.attr('src', this.adjustEmbedLink(source));
+        }
+      });
+    });
   }
 
   var my = {

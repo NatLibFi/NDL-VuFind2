@@ -174,6 +174,7 @@ return [
         'openurl.js',
         'record.js',
         'finna.js',
+        'finna-popup.js',
         'finna-autocomplete.js',
         'finna-authority.js',
         'finna-combined-results.js',
