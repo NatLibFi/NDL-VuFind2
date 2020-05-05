@@ -179,6 +179,12 @@ finna.videoPopup = (function finnaVideoPopup() {
     var embed = inline.length > 0;
     if (inline.length) {
       parent = 'inline-video';
+      $('.inline-video-container').insertAfter($('.search-form-container'));
+      $('.inline-video-container').removeClass('hidden');
+
+      if (inline.length < 2) {
+        inline.addClass('hidden');
+      }
     }
 
     container.find('[data-embed-iframe]').each(function setIframes() {

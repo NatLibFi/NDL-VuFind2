@@ -1,6 +1,8 @@
-/* global finna, VuFind, L */
+/* global finna, VuFind, L, videojs */
 finna.imagePaginator = (function imagePaginator() {
   var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print"></a>';
+  var previousRecordButton = '<button class="popup-arrow popup-left-arrow previous-record" type="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>';
+  var nextRecordButton = '<button class="popup-arrow popup-right-arrow next-record" type="button"><i class="fa fa-angle-double-right" aria-hidden="true"></i></button>';
   var paginatorIndex = 0;
   var timeOut = null;
 
@@ -98,6 +100,16 @@ finna.imagePaginator = (function imagePaginator() {
     var paginator = new FinnaPaginator(images, settings);
     paginator.init();
   }
+
+  /**
+   * Helper function for setting paginator index.
+   *
+   * @param {int} index
+   */
+  FinnaPaginator.prototype.setPaginatorIndex = function setPaginatorIndex(index) {
+    var _ = this;
+    _.paginatorIndex = index;
+  };
 
   /**
    * Helper function to show a button and hide another
@@ -493,7 +505,7 @@ finna.imagePaginator = (function imagePaginator() {
     var _ = this;
     if ($('.paginationSimple .index').length) {
       var total = $('.paginationSimple .total').html();
-      var current = +$('.paginationSimple .index').html() + _.paginatorIndex;
+      var current = +$('.paginationSimple .index').html() + $.fn.finnaPopup.getCurrent('paginator');
       _.pagerInfo.siblings('.record-index').find('.total').html(current + " / " + total);
     }
   };
@@ -714,7 +726,7 @@ finna.imagePaginator = (function imagePaginator() {
 
       if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
         $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
-          
+          $.fn.finnaPopup.closeOpen();
         });
       }
       _.setRecordIndex();
@@ -876,7 +888,6 @@ finna.imagePaginator = (function imagePaginator() {
         var foundImage = _.findSmallImage(_.openImageIndex);
         _.openImageIndex = null;
         foundImage.click();
-        //_.checkRecordButtons();
         _.setBrowseButtons();
       },
       onPopupClose: function onPopupClose() {
@@ -962,8 +973,7 @@ finna.imagePaginator = (function imagePaginator() {
   };
 
   var my = {
-    initPaginator: initPaginator,
-    reindexPaginators: reindexPaginators
+    initPaginator: initPaginator
   };
 
   return my;

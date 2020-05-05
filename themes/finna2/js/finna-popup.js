@@ -38,6 +38,19 @@
       obj.reIndex();
     });
   };
+  $.fn.finnaPopup.getCurrent = function getCurrent(id) {
+    if (typeof $.fn.finnaPopup.popups !== 'undefined') {
+      return $.fn.finnaPopup.popups[id].openIndex;
+    }
+    return undefined;
+  };
+  $.fn.finnaPopup.closeOpen = function closeOpen() {
+    $.each($.fn.finnaPopup.popups, function callReindex(key, obj) {
+      if (obj.isOpen) {
+        obj.onPopupClose();
+      }
+    });
+  };
 })(jQuery);
 
 var previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>';
@@ -46,6 +59,7 @@ var closeTemplate = '<button class="finna-popup close-button" title="close_trans
 function FinnaPopup(trigger, params, id) {
   var _ = this;
   _.triggers = [];
+  _.isOpen = false;
   _.openIndex = 0;
   _.id = id;
   if (typeof params.onPopupInit !== 'undefined') {
@@ -109,7 +123,6 @@ FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
   var _ = this;
   _.triggers.push(trigger);
   trigger.data('popup-' + _.id + '-index', _.triggers.length - 1);
-  console.log( _.triggers.length - 1);
   _.onPopupInit(trigger);
 };
 
@@ -218,6 +231,7 @@ FinnaPopup.prototype.show = function show() {
     _.nextPopup = nClone;
     _.content.append(_.nextPopup);
   }
+  _.isOpen = true;
   _.checkButtons();
 };
 
@@ -244,13 +258,12 @@ FinnaPopup.prototype.toggleScroll = function toggleScroll(value) {
 
 FinnaPopup.prototype.onPopupClose = function onPopupClose(change) {
   var _ = this;
-  if (typeof change === 'undefined' || !change) {
+
+  if (typeof _.backDrop !== 'undefined') {
     _.backDrop.remove();
-    _.content.remove();
     _.backDrop = undefined;
-  } else {
-    _.modalHolder.remove();
   }
+
   _.modalHolder = undefined;
   _.content = undefined;
   _.nextPopup = undefined;
@@ -259,7 +272,7 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose(change) {
   _.customClose();
   _.customOpen = undefined;
   _.customClose = undefined;
-
+  _.isOpen = false;
   if (!_.embed) {
     _.toggleScroll(true);
     $(document).off('focusin.finna');
