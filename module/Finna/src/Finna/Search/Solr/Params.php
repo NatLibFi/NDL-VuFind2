@@ -743,7 +743,6 @@ class Params extends \VuFind\Search\Solr\Params
     {
         $pat = '([a-zA-Z0-9_\-.:\)\(]*)';
         if ($idRoleFilter) {
-            // TODO: verify this
             $field = AuthorityHelper::AUTHOR_ID_ROLE_FACET;
         } else {
             $field = AuthorityHelper::AUTHOR2_ID_FACET;
