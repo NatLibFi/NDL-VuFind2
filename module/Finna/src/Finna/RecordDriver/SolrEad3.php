@@ -654,7 +654,7 @@ class SolrEad3 extends SolrEad
      *
      * @return array
      */
-    public function getRelatedRecords()
+    public function getRelatedItems()
     {
         $record = $this->getXmlRecord();
 
