@@ -46,15 +46,15 @@ use Zend\ServiceManager\ServiceManager;
 class Factory
 {
     /**
-     * Factory for ExternalData tab plugin.
+     * Factory for LocationsEad3 tab plugin.
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return ExternalData
+     * @return LocationsEad3
      */
-    public static function getExternalData(ServiceManager $sm)
+    public static function getLocationsEad3(ServiceManager $sm)
     {
-        return new ExternalData();
+        return new LocationsEad3();
     }
 
     /**
