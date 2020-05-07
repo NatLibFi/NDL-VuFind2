@@ -72,7 +72,7 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
      */
     public function init($settings, $driver)
     {
-        foreach ($driver->getRelatedItems() as $type => $ids) {
+        foreach ($driver->getRelatedRecords() as $type => $ids) {
             $this->results[$type] = $this->recordLoader->loadBatchForSource(
                 $ids, 'Solr', true
             );
