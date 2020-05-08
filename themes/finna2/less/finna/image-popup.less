@@ -1,17 +1,3 @@
-.mfp-bg {
-    background: #000;
-    .opacity(0.9);
-}
- .mfp-wrap {  
-    &.mfp-removing {
-        .mfp-content {
-            margin-top: -150px;
-            .opacity(0);
-            transition: all .1s linear;
-        }
-    }
-}
-
 .finna-popup {
     width: 100%;
     @media (min-width: @screen-sm-min) {
@@ -76,31 +62,6 @@
         text-shadow: 2px 2px 2px black;
     }
 }
-
-.mfp-preloader {
-    width: 260px;
-    margin: auto;
-    padding: 60px;
-    color: #000;
-    margin-top: -70px;
-    .opacity(.4);
-    &:before {
-        font-family:'Fontawesome';
-        content: "\f110";
-        color: @gray-lighter;
-        font-size: 20px;
-        .fa-spin();
-    }
-}
-
-
-.mfp-close-btn-in {
-    .mfp-ajax-holder {
-        .mfp-close {
-            background: @body-bg;
-        }
-    }
-}
     
 .finna-popup {
     &.content {
@@ -152,21 +113,6 @@
                 text-shadow: 2px 2px 4px rgba(128, 128, 128, 0.3);
             }
         }
-    }
-    .mfp-arrow-right.touch-device {
-        right:0px;
-        transform: translate(0,0);
-        .opacity(0.8);
-        transition-delay: 0;
-    }
-    .mfp-arrow-left.touch-device {
-        left:0px;
-        transform: translate(0,0);
-        .opacity(0.8);
-        transition-delay: 0;
-    }
-    .mfp-close.touch-device {
-      .opacity(0.8);
     }
 }
 
@@ -224,14 +170,6 @@
 
     @media (max-width: @screen-xs-max) {
         flex-flow: column;
-    }
-
-    .mfp-close {
-        text-shadow: 2px 2px 2px black;
-        color: #fff;
-        @media (min-width: @screen-sm-min) {
-            right: -44px;
-        }
     }
 
     .imagepopup-container {

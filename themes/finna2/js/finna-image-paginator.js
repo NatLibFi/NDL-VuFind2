@@ -713,8 +713,7 @@ finna.imagePaginator = (function imagePaginator() {
           classes: 'finna-iframe',
           translations: translations,
           modal: '<div style="height:100%">' +
-            '<div class="mfp-close"></div>' +
-            '<iframe class="player mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
+            '<iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>' +
             '</div>',
           parent: 'video-player',
           onPopupOpen: function onPopupOpen() {
@@ -831,7 +830,7 @@ finna.imagePaginator = (function imagePaginator() {
    * Function to set image dimensions to download image link
    */
   FinnaPaginator.prototype.setDimensions = function setDimensions() {
-    var popupHidden = $('.mfp-content').length === 0;
+    var popupHidden = $.fn.finnaPopup.isOpen() === false;
     var container = popupHidden ? $('.image-details-container').not('.hidden') : $('.image-information-holder');
     var openLink = container.find('.open-link a, .display-image a').attr('href');
     if (typeof openLink !== 'undefined') {

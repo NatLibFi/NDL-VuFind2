@@ -52,6 +52,16 @@
       }
     });
   };
+  $.fn.finnaPopup.isOpen = function isOpen() {
+    var open = false;
+    $.each($.fn.finnaPopup.popups, function callReindex(key, obj) {
+      if (obj.isOpen) {
+        open = true;
+        return false;
+      }
+    });
+    return open;
+  };
 })(jQuery);
 
 var previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>';

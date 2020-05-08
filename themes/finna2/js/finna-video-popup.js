@@ -19,17 +19,6 @@ finna.videoPopup = (function finnaVideoPopup() {
     player.src(videoSources);
     player.poster(posterUrl);
 
-    var handleCloseButton = function handleCloseButton() {
-      if (player.userActive()) {
-        $('.mfp-close').css('opacity', '1');
-      } else {
-        $('.mfp-close').css('opacity', '0');
-      }
-    };
-
-    player.on('useractive', handleCloseButton);
-    player.on('userinactive', handleCloseButton);
-
     var selectedBitrate = 'auto';
 
     player.qualityLevels().on('addqualitylevel', function onAddQualityLevel(event) {
@@ -204,8 +193,7 @@ finna.videoPopup = (function finnaVideoPopup() {
         cycle: !embed,
         classes: 'finna-iframe',
         modal: '<div style="height:100%">' +
-          '<div class="mfp-close"></div>' +
-          '<iframe class="player mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
+          '<iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>' +
           '</div>',
         parent: parent,
         translations: translations,
