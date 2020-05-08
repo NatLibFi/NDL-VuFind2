@@ -8,6 +8,7 @@
     if (typeof tmp === 'undefined') {
       tmp = 'default';
     }
+
     if (typeof _.data('popup-' + tmp + '-index') !== 'undefined') {
       return; //Already found in the list, so lets not double init this
     }
@@ -75,6 +76,7 @@ function FinnaPopup(trigger, params, id) {
   _.nextPopup = undefined;
   _.previousPopup = undefined;
   _.closeButton = undefined;
+  _.translations = typeof params.translations !== 'undefined' ? params.translations : {close: 'close'};
   _.unveil = typeof params.unveil !== 'undefined' ? params.unveil : false;
   _.embed = typeof params.embed !== 'undefined' ? params.embed : false;
   _.patterns = {
@@ -204,6 +206,7 @@ FinnaPopup.prototype.show = function show() {
       e.stopPropagation();
       _.onPopupClose();
     });
+    _.closeButton.attr('title', _.getTranslation('close'));
     _.content.append(_.closeButton);
   }
   _.modalHolder.on('click', function preventClickThrough(e) {
@@ -211,28 +214,33 @@ FinnaPopup.prototype.show = function show() {
     e.preventDefault();
   });
   if (typeof _.previousPopup === 'undefined' && _.cycle) {
-    var pClone = $(previous).clone();
-    pClone.off('click').on('click', function nextPopup(e) {
+    _.previousPopup = $(previous).clone();
+    _.previousPopup.off('click').on('click', function nextPopup(e) {
       e.preventDefault();
       e.stopPropagation();
       _.getTrigger(-1);
     });
-    _.previousPopup = pClone;
+    _.previousPopup.attr('title', _.getTranslation('previous'));
     _.content.append(_.previousPopup);
   }
 
   if (typeof _.nextPopup === 'undefined' && _.cycle) {
-    var nClone = $(next).clone();
-    nClone.off('click').on('click', function nextPopup(e) {
+    _.nextPopup = $(next).clone();
+    _.nextPopup.off('click').on('click', function nextPopup(e) {
       e.preventDefault();
       e.stopPropagation();
       _.getTrigger(+1);
     });
-    _.nextPopup = nClone;
+    _.nextPopup.attr('title', _.getTranslation('next'));
     _.content.append(_.nextPopup);
   }
   _.isOpen = true;
   _.checkButtons();
+};
+
+FinnaPopup.prototype.getTranslation = function getTranslation(key) {
+  var _ = this;
+  return typeof _.translations[key] === 'undefined' ? key : _.translations[key];
 };
 
 FinnaPopup.prototype.onPopupInit = function onPopupInit(trigger) { };

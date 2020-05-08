@@ -25,8 +25,8 @@ finna.imagePaginator = (function imagePaginator() {
   var translations = {
     image: '',
     close: '',
-    next_record: '',
-    previous_record: '',
+    next: '',
+    previous: '',
     no_cover: '',
     isSet: false
   };
@@ -88,8 +88,8 @@ finna.imagePaginator = (function imagePaginator() {
       translations = {
         image: VuFind.translate('Image'),
         close: VuFind.translate('close'),
-        next_record: VuFind.translate('Next Record'),
-        previous_record: VuFind.translate('Previous Record'),
+        next: VuFind.translate('Next Record'),
+        previous: VuFind.translate('Previous Record'),
         no_cover: VuFind.translate('No Cover Image'),
         isSet: true
       };
@@ -275,7 +275,9 @@ finna.imagePaginator = (function imagePaginator() {
     _.setCanvasElement('noZoom');
     _.setCurrentVisuals();
     _.setPagerInfo(true);
-    _.loadImageInformation();
+    if (typeof _.settings.onlyImage === 'undefined' || _.settings.onlyImage === false) {
+      _.loadImageInformation();
+    }
     _.setBrowseButtons();
   };
 
@@ -289,7 +291,9 @@ finna.imagePaginator = (function imagePaginator() {
 
     if (_.openImageIndex !== image.attr('index')) {
       _.openImageIndex = image.attr('index');
-      _.loadImageInformation(_.openImageIndex);
+      if (typeof _.settings.onlyImage === 'undefined' || _.settings.onlyImage === false) {
+        _.loadImageInformation();
+      }
     }
 
     _.setCanvasElement('leaflet');
@@ -686,7 +690,7 @@ finna.imagePaginator = (function imagePaginator() {
           cycle: false,
           parent: 'video-player',
           classes: 'canvas-player',
-          close: translations.close,
+          translations: translations,
           modal: '<video class="video-js vjs-big-play-centered" controls></video>',
           onPopupOpen: function onPopupOpen() {
             // Lets find the active trigger
@@ -707,7 +711,7 @@ finna.imagePaginator = (function imagePaginator() {
           id: 'popupiframe',
           cycle: false,
           classes: 'finna-iframe',
-          close: VuFind.translate('close'),
+          translations: translations,
           modal: '<div style="height:100%">' +
             '<div class="mfp-close"></div>' +
             '<iframe class="player mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
@@ -860,6 +864,7 @@ finna.imagePaginator = (function imagePaginator() {
     _.trigger.finnaPopup({
       modal: modal,
       id: 'paginator',
+      translations: translations,
       onPopupOpen: function onPopupOpen() {
         var obj = this;
         var content = obj.content;

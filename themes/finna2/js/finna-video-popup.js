@@ -139,6 +139,12 @@ finna.videoPopup = (function finnaVideoPopup() {
       }
     }
 
+    var translations = {
+      close: VuFind.translate('close'),
+      next: VuFind.translate('Next Record'),
+      previous: VuFind.translate('Previous Record'),
+    };
+
     container.find('[data-embed-video]').each(function initVideo() {
       var videoSources = $(this).data('videoSources');
       var scripts = $(this).data('scripts');
@@ -150,6 +156,7 @@ finna.videoPopup = (function finnaVideoPopup() {
         parent: parent,
         cycle: !embed,
         embed: embed,
+        translations: translations,
         onPopupInit: function onPopupInit(t) {
           if (this.embed) {
             t.removeClass('active-video');
@@ -157,9 +164,7 @@ finna.videoPopup = (function finnaVideoPopup() {
         },
         onPopupOpen: function onPopupOpen() {
           if (this.embed) {
-            this.triggers.forEach(function classRemove(t) {
-              $(t).removeClass('active-video');
-            });
+            $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
           } else {
             this.content.css('height', '100%');
@@ -174,7 +179,7 @@ finna.videoPopup = (function finnaVideoPopup() {
 
   function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
-    var inline = container.find('[data-inline]');
+    var inline = container.find('[data-inline-iframe]');
     var parent;
     var embed = inline.length > 0;
     if (inline.length) {
@@ -186,6 +191,11 @@ finna.videoPopup = (function finnaVideoPopup() {
         inline.addClass('hidden');
       }
     }
+    var translations = {
+      close: VuFind.translate('close'),
+      next: VuFind.translate('Next Record'),
+      previous: VuFind.translate('Previous Record'),
+    };
 
     container.find('[data-embed-iframe]').each(function setIframes() {
       var source = $(this).is('a') ? $(this).attr('href') : $(this).data('link');
@@ -193,12 +203,12 @@ finna.videoPopup = (function finnaVideoPopup() {
         id: 'recordiframe',
         cycle: !embed,
         classes: 'finna-iframe',
-        close: VuFind.translate('close'),
         modal: '<div style="height:100%">' +
           '<div class="mfp-close"></div>' +
           '<iframe class="player mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
           '</div>',
         parent: parent,
+        translations: translations,
         embed: embed,
         onPopupInit: function onPopupInit(t) {
           if (this.embed) {
@@ -207,9 +217,7 @@ finna.videoPopup = (function finnaVideoPopup() {
         },
         onPopupOpen: function onPopupOpen() {
           if (this.embed) {
-            this.triggers.forEach(function classRemove(t) {
-              $(t).removeClass('active-video');
-            });
+            $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
           } else {
             this.content.css('height', '100%');
