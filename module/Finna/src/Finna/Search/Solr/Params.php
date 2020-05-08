@@ -716,7 +716,7 @@ class Params extends \VuFind\Search\Solr\Params
     protected function formatAuthorIdFilterListEntry($filter, $field, $value)
     {
         $displayText = $filter['displayText'];
-        if ($id = $this->parseAuthorIdFilter($value, false)) {
+        if ($id = $this->parseAuthorIdFilter($value)) {
             // Author id filter  (OR query with <field>:<author-id> pairs)
             $displayText = $this->authorityHelper->formatFacet($id);
         } elseif (in_array(
@@ -733,30 +733,15 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Attempt to parse author id from a author-id filter.
      *
-     * @param array   $filter       Filter
-     * @param boolean $idRoleFilter Does the filter include author role
-     * (true) or only author id (false)?
+     * @param array $filter Filter
      *
      * @return mixed null|string
      */
-    protected function parseAuthorIdFilter($filter, $idRoleFilter = false)
+    protected function parseAuthorIdFilter($filter)
     {
-        $pat = '([a-zA-Z0-9_\-.:\)\(]*)';
-        if ($idRoleFilter) {
-            $field = AuthorityHelper::AUTHOR_ID_ROLE_FACET;
-        } else {
-            $field = AuthorityHelper::AUTHOR2_ID_FACET;
-            $parts = explode(' OR ', $filter);
-            if (count($parts) > 1) {
-                // OR filter
-                $filter = $parts[0];
-                $orPat = "{$field}:\"({$pat})\"";
-                preg_match("/{$orPat}/", $filter, $matches);
-                $filter = $matches[1];
-            }
-        }
-        $isMatch = preg_match("/{$pat}/", $filter, $matches);
-        if (!$isMatch || !isset($matches[1])) {
+        $pat = sprintf('/%s:"([a-z0-9_.:]*)"/', AuthorityHelper::AUTHOR2_ID_FACET);
+
+        if (!preg_match($pat, $filter, $matches)) {
             return null;
         }
         return $matches[1];

@@ -158,14 +158,18 @@ class AuthorityHelper
      */
     protected function processFacets($facetSet)
     {
+        $authIds = [];
         foreach ($this->getAuthorIdFacets() as $field) {
-            $ids = [];
             $facetList = $facetSet[$field]['list'] ?? [];
+            $authIds[$field] = [];
             foreach ($facetList as $facet) {
                 list($id, $role) = $this->extractRole($facet['displayText']);
-                $ids[] = $id;
+                $authIds[$field][] = $id;
             }
-
+        }
+        foreach ($this->getAuthorIdFacets() as $field) {
+            $facetList = $facetSet[$field]['list'] ?? [];
+            $ids = $authIds[$field] ?? [];
             $records
                 = $this->recordLoader->loadBatchForSource($ids, 'SolrAuth', true);
             foreach ($facetList as &$facet) {
