@@ -186,6 +186,7 @@ FinnaPopup.prototype.show = function show() {
     });
     _.toggleScroll(false);
   }
+  _.setKeyBinds();
 
   if (typeof _.backDrop === 'undefined' && !hasParent) {
     _.backDrop = $('<div class="finna-popup backdrop"></div>');
@@ -253,6 +254,26 @@ FinnaPopup.prototype.getTranslation = function getTranslation(key) {
   return typeof _.translations[key] === 'undefined' ? key : _.translations[key];
 };
 
+FinnaPopup.prototype.setKeyBinds = function setKeyBinds() {
+  var _ = this;
+  $(document).off('keyup.finna').on('keyup.finna', function checkKey(e) {
+    var key = e.key;
+    if (key !== 'undefined') {
+      switch (key) {
+      case 'Esc':
+      case 'Escape':
+        _.onPopupClose();
+        break;
+      default:
+        break;
+      }
+    }
+  });
+};
+FinnaPopup.prototype.clearKeyBinds = function clearKeyBinds() {
+  $(document).off('keyup.finna');
+};
+
 FinnaPopup.prototype.onPopupInit = function onPopupInit(trigger) { };
 
 FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
@@ -274,9 +295,8 @@ FinnaPopup.prototype.toggleScroll = function toggleScroll(value) {
   $(document.body).css('overflow', value ? 'auto' : 'hidden');
 };
 
-FinnaPopup.prototype.onPopupClose = function onPopupClose(change) {
+FinnaPopup.prototype.onPopupClose = function onPopupClose() {
   var _ = this;
-
   if (typeof _.backDrop !== 'undefined') {
     _.backDrop.remove();
     _.backDrop = undefined;
@@ -288,13 +308,14 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose(change) {
   _.previousPopup = undefined;
   _.closeButton = undefined;
   _.customClose();
-  _.customOpen = undefined;
-  _.customClose = undefined;
+  _.customOpen = function customOpen() {};
+  _.customClose = function customClose() {};
   _.isOpen = false;
   if (!_.embed) {
     _.toggleScroll(true);
     $(document).off('focusin.finna');
   }
+  _.clearKeyBinds();
 };
 
 FinnaPopup.prototype.focusTrap = function focusTrap(e) {

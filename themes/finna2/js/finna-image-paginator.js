@@ -860,7 +860,7 @@ finna.imagePaginator = (function imagePaginator() {
     _.setCurrentVisuals();
     var modal = $('#imagepopup-modal').find('.imagepopup-holder').clone();
 
-    _.trigger.finnaPopup({
+    _.trigger.not('[data-disable-modal="1"]').finnaPopup({
       modal: modal,
       id: 'paginator',
       translations: translations,
