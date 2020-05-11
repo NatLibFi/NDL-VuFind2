@@ -73,10 +73,13 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
             foreach ($this->getMarcRecord()->getFields($code) as $field) {
                 $id = $field->getSubfield('0');
                 $name = $field->getSubfield('a');
-                $type = $field->getSubfield('i');
-                if (empty($type)) {
-                    $type = $field->getSubfield('b');
+                $role = $field->getSubfield('i');
+                if (empty($role)) {
+                    $role = $field->getSubfield('b');
                 }
+                $role = $role
+                    ? $this->stripTrailingPunctuation($role->getData(), ': ')
+                    : null;
                 if (!$name || !$id) {
                     continue;
                 }
@@ -85,6 +88,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                     'id' => $id,
                     'name' =>
                         $this->stripTrailingPunctuation($name->getData(), '. '),
+                    'role' => $role,
                     'type' => $code === '500' ? 'Personal Name' : 'Corporate Name'
                 ];
             }
