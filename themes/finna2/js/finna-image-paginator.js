@@ -828,7 +828,7 @@ finna.imagePaginator = (function imagePaginator() {
    * Function to set image dimensions to download image link
    */
   FinnaPaginator.prototype.setDimensions = function setDimensions() {
-    var popupHidden = $.fn.finnaPopup.isOpen() === false;
+    var popupHidden = !$.fn.finnaPopup.isOpen();
     var container = popupHidden ? $('.image-details-container').not('.hidden') : $('.image-information-holder');
     var openLink = container.find('.open-link a, .display-image a').attr('href');
     if (typeof openLink !== 'undefined') {

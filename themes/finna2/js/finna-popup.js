@@ -4,20 +4,17 @@
     if (typeof $.fn.finnaPopup.popups === 'undefined') {
       $.fn.finnaPopup.popups = {};
     }
-    var tmp = params.id;
-    if (typeof tmp === 'undefined') {
-      tmp = 'default';
-    }
+    var id = typeof params.id === 'undefined' ? 'default' : params.id;
 
-    if (typeof _.data('popup-' + tmp + '-index') !== 'undefined') {
+    if (typeof _.data('popup-' + id + '-index') !== 'undefined') {
       return; //Already found in the list, so lets not double init this
     }
-    if (typeof $.fn.finnaPopup.popups[tmp] === 'undefined') {
-      $.fn.finnaPopup.popups[tmp] = new FinnaPopup($(this), params, params.id);
+    if (typeof $.fn.finnaPopup.popups[id] === 'undefined') {
+      $.fn.finnaPopup.popups[id] = new FinnaPopup($(this), params, params.id);
     } else {
-      $.fn.finnaPopup.popups[tmp].addTrigger($(this));
+      $.fn.finnaPopup.popups[id].addTrigger($(this));
     }
-    _.data('popup-id', tmp);
+    _.data('popup-id', id);
     var events = (typeof params.noClick === 'undefined' || !params.noClick) ? 'click openmodal.finna' : 'openmodal.finna';
     _.off(events).on(events, function showModal(e) {
       e.preventDefault();
@@ -25,12 +22,12 @@
         _.off('click');
       });
       // We need to tell which triggers is being used
-      $.fn.finnaPopup.popups[tmp].openIndex = _.data('popup-' + tmp + '-index');
-      $.fn.finnaPopup.popups[tmp].onPopupOpen(params.onPopupOpen, params.onPopupClose);
+      $.fn.finnaPopup.popups[id].openIndex = _.data('popup-' + id + '-index');
+      $.fn.finnaPopup.popups[id].onPopupOpen(params.onPopupOpen, params.onPopupClose);
     });
     if (typeof params.embed !== 'undefined' && params.embed) {
-      if (typeof $.fn.finnaPopup.popups[tmp].content === 'undefined') {
-        $.fn.finnaPopup.popups[tmp].triggers[0].trigger('openmodal.finna');
+      if (typeof $.fn.finnaPopup.popups[id].content === 'undefined') {
+        $.fn.finnaPopup.popups[id].triggers[0].trigger('openmodal.finna');
       }
     }
   };
@@ -46,7 +43,7 @@
     return undefined;
   };
   $.fn.finnaPopup.closeOpen = function closeOpen() {
-    $.each($.fn.finnaPopup.popups, function callReindex(key, obj) {
+    $.each($.fn.finnaPopup.popups, function callClose(key, obj) {
       if (obj.isOpen) {
         obj.onPopupClose();
       }
@@ -54,7 +51,7 @@
   };
   $.fn.finnaPopup.isOpen = function isOpen() {
     var open = false;
-    $.each($.fn.finnaPopup.popups, function callReindex(key, obj) {
+    $.each($.fn.finnaPopup.popups, function hasOpen(key, obj) {
       if (obj.isOpen) {
         open = true;
         return false;
@@ -81,11 +78,11 @@ function FinnaPopup(trigger, params, id) {
   _.cycle = typeof params.cycle !== 'undefined' ? params.cycle : true;
   _.backDrop = undefined;
   _.content = undefined;
-  _.classes = typeof params.classes === 'undefined' ? '' : params.classes;
-  _.modalBase = typeof params.modal !== 'undefined' ? $(params.modal) : $('<div class="finna-popup default-modal"/>');
   _.nextPopup = undefined;
   _.previousPopup = undefined;
   _.closeButton = undefined;
+  _.classes = typeof params.classes === 'undefined' ? '' : params.classes;
+  _.modalBase = typeof params.modal !== 'undefined' ? $(params.modal) : $('<div class="finna-popup default-modal"/>');
   _.translations = typeof params.translations !== 'undefined' ? params.translations : {close: 'close'};
   _.unveil = typeof params.unveil !== 'undefined' ? params.unveil : false;
   _.embed = typeof params.embed !== 'undefined' ? params.embed : false;
@@ -117,13 +114,7 @@ FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
   $.each(_.patterns, function findPattern() {
     var p = this;
     if (embedSrc.indexOf(p.index) > -1) {
-      if (p.id) {
-        if (typeof p.id === 'string') {
-          embedSrc = embedSrc.substr(embedSrc.lastIndexOf(p.id) + p.id.length, embedSrc.length);
-        } else {
-          embedSrc = p.id.call(p, embedSrc);
-        }
-      }
+      embedSrc = embedSrc.substr(embedSrc.lastIndexOf(p.id) + p.id.length, embedSrc.length);
       embedSrc = p.src.replace('%id%', embedSrc );
       return false;
     }
@@ -219,7 +210,6 @@ FinnaPopup.prototype.show = function show() {
       e.preventDefault();
       e.stopPropagation();
       _.onPopupClose();
-      console.log("Clicked");
     });
     _.modalHolder.prepend(_.closeButton);
   }
