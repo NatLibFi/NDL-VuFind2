@@ -7,7 +7,7 @@
     <?php endif ?>
     <div class="count">
       <a href="<?=$this->recordLink()->getTabUrl($driver, 'AuthorityRecordsAuthor')?>#tabnav">
-        <?=$this->translate(($onAuthorityPage ? 'authority_records_count' : 'authority_records_count_author'), ['%%count%%' => $count['author']]);?>
+        <?=$this->translate(($onAuthorityPage ? 'authority_records_count' : 'authority_records_author_count'), ['%%count%%' => $count['author']]);?>
       </a>
     </div>
   </div>
@@ -20,7 +20,7 @@
     <?php endif ?>
     <div class="count">
       <a href="<?=$this->recordLink()->getTabUrl($driver, 'AuthorityRecordsTopic')?>#tabnav">
-        <?=$this->translate(($onAuthorityPage ? 'authority_records_count' : 'authority_records_count_topic'), ['%%count%%' => $count['topic']]);?>
+        <?=$this->translate(($onAuthorityPage ? 'authority_records_count' : 'authority_records_topic_count'), ['%%count%%' => $count['topic']]);?>
       </a>
     </div>
   </div>
