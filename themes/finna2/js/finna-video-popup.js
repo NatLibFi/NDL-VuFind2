@@ -210,6 +210,8 @@ finna.videoPopup = (function finnaVideoPopup() {
           } else {
             this.content.css('height', '100%');
           }
+          // If using Chrome + VoiceOver, Chrome crashes if vimeo player video settings button has aria-haspopup=true
+          $('.vp-prefs .js-prefs').attr('aria-haspopup', false);
           var player = this.content.find('iframe');
           player.attr('src', this.adjustEmbedLink(source));
         }
