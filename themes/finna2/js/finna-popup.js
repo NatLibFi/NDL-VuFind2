@@ -210,15 +210,18 @@ FinnaPopup.prototype.show = function show() {
   }
   _.modalHolder = $('<div class="finna-popup ' + _.classes + ' modal-holder"/>');
   _.content.prepend(_.modalHolder);
-  if (typeof _.parent === 'undefined' && typeof _.closeButton === 'undefined') {
-    _.closeButton = $(closeTemplate).clone();
+  if (typeof _.parent === 'undefined') {
+    if (typeof _.closeButton === 'undefined') {
+      _.closeButton = $(closeTemplate).clone();
+      _.closeButton.attr('title', _.getTranslation('close'));
+    }
     _.closeButton.on('click', function callClose(e) {
       e.preventDefault();
       e.stopPropagation();
       _.onPopupClose();
+      console.log("Clicked");
     });
-    _.closeButton.attr('title', _.getTranslation('close'));
-    _.content.append(_.closeButton);
+    _.modalHolder.prepend(_.closeButton);
   }
   _.modalHolder.on('click', function preventClickThrough(e) {
     e.stopPropagation();
