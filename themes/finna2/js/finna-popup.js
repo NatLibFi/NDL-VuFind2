@@ -180,7 +180,7 @@ FinnaPopup.prototype.checkButtons = function checkButtons() {
 FinnaPopup.prototype.show = function show() {
   var _ = this;
   var hasParent = typeof _.parent !== 'undefined';
-  if (!_.embed) {
+  if (!_.embed && !hasParent) {
     $(document).on('focusin.finna', function setFocusTrap(e) {
       _.focusTrap(e);
     });
@@ -297,6 +297,10 @@ FinnaPopup.prototype.toggleScroll = function toggleScroll(value) {
 
 FinnaPopup.prototype.onPopupClose = function onPopupClose() {
   var _ = this;
+  if (!_.embed && typeof _.parent === 'undefined') {
+    _.toggleScroll(true);
+    $(document).off('focusin.finna');
+  }
   if (typeof _.backDrop !== 'undefined') {
     _.backDrop.remove();
     _.backDrop = undefined;
@@ -311,10 +315,7 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
   _.customOpen = function customOpen() {};
   _.customClose = function customClose() {};
   _.isOpen = false;
-  if (!_.embed) {
-    _.toggleScroll(true);
-    $(document).off('focusin.finna');
-  }
+
   _.clearKeyBinds();
 };
 
