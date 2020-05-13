@@ -51,7 +51,7 @@
   };
   $.fn.finnaPopup.isOpen = function isOpen() {
     var open = false;
-    $.each($.fn.finnaPopup.popups, function hasOpen(key, obj) {
+    $.each($.fn.finnaPopup.popups, function checkOpen(key, obj) {
       if (obj.isOpen) {
         open = true;
         return false;
@@ -63,7 +63,7 @@
 
 var previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button"><i class="fa fa-angle-double-left" aria-hidden="true"></i></button>';
 var next = '<button class="popup-arrow popup-right-arrow next-record" type="button"><i class="fa fa-angle-double-right" aria-hidden="true"></i></button>';
-var closeTemplate = '<button class="finna-popup close-button" title="close_translation">X</button>';
+var closeTemplate = '<button class="finna-popup close-button" title="close_translation" aria-label="close_translation">x</button>';
 function FinnaPopup(trigger, params, id) {
   var _ = this;
   _.triggers = [];
@@ -205,6 +205,7 @@ FinnaPopup.prototype.show = function show() {
     if (typeof _.closeButton === 'undefined') {
       _.closeButton = $(closeTemplate).clone();
       _.closeButton.attr('title', _.getTranslation('close'));
+      _.closeButton.attr('aria-label', _.getTranslation('close'));
     }
     _.closeButton.on('click', function callClose(e) {
       e.preventDefault();
