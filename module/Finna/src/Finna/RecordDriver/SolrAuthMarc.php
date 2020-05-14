@@ -89,7 +89,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                     'name' =>
                         $this->stripTrailingPunctuation($name->getData(), '. '),
                     'role' => $role,
-                    'type' => $code === '500' ? 'Personal Name' : 'Corporate Name'
+                    'type' => $code === '500' ? 'Personal Name' : 'Community Name'
                 ];
             }
         }
