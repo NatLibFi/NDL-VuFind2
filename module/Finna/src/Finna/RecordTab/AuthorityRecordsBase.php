@@ -152,6 +152,11 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
         $this->driver = $driver;
     }
 
+    /**
+     * Get search query for returning biblio records by authority.
+     *
+     * @return string
+     */
     public function getSearchQuery()
     {
         return $this->authorityHelper->getRecordsByAuthorQuery(

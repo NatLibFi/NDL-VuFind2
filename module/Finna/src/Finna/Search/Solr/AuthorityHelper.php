@@ -273,7 +273,7 @@ class AuthorityHelper
      * @param string $id    Authority id
      * @param string $field Solr field to search by (author, topic)
      *
-     * @return \VuFind\Search\Results
+     * @return string
      */
     public function getRecordsByAuthorQuery($id, $field)
     {
