@@ -847,7 +847,6 @@ finna.layout = (function finnaLayout() {
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
     initILSSelfRegistrationLink: initILSSelfRegistrationLink,
     initLoginTabs: initLoginTabs,
-    initCondensedList: initCondensedList,
     loadScripts: loadScripts,
     initToolTips: initToolTips,
     init: function init() {
