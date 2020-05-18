@@ -110,8 +110,6 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param \Zend\Config\Config                 $config           VuFind
      * configuration
-     * @param \Zend\Config\Config                 $datasourceConfig Datasource
-     * configuration
      * @param \VuFind\Record\Loader               $loader           Record loader
      * @param \Finna\View\Helper\Root\RecordImage $recordImage      Record image
      * helper

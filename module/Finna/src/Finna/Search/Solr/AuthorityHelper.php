@@ -99,7 +99,8 @@ class AuthorityHelper
      *
      * @param \VuFind\Record\Loader              $recordLoader          Record loader
      * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
-     * @param \VuFind\View\Helper\Root\Translate $translator            Translator view helper
+     * @param \VuFind\View\Helper\Root\Translate $translator            Translator
+     * view helper
      * @param \Zend\Config\Config                $authoritySearchConfig Authority
      * search config
      */

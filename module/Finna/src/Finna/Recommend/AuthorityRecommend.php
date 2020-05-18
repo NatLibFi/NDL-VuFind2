@@ -99,6 +99,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
      * @param \Finna\Search\Solr\AuthorityHelper   $authorityHelper Authority helper
      * @param \Zend\Session\Container              $session         Session
      * @param \VuFind\Cookie\CookieManager         $cookieManager   Cookiemanager
+     * @param \Zend\Config\Config                  $config          Configuration
      */
     public function __construct(
         \VuFind\Search\Results\PluginManager $results,
