@@ -108,14 +108,14 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Constructor
      *
-     * @param \Zend\Config\Config                 $config           VuFind
+     * @param \Zend\Config\Config                 $config          VuFind
      * configuration
-     * @param \VuFind\Record\Loader               $loader           Record loader
-     * @param \Finna\View\Helper\Root\RecordImage $recordImage      Record image
+     * @param \VuFind\Record\Loader               $loader          Record loader
+     * @param \Finna\View\Helper\Root\RecordImage $recordImage     Record image
      * helper
-     * @param \Finna\Search\Solr\AuthorityHelper  $authorityHelper  Authority helper
-     * @param \VuFind\View\Helper\Root\Url        $urlHelper        Url helper
-     * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
+     * @param \Finna\Search\Solr\AuthorityHelper  $authorityHelper Authority helper
+     * @param \VuFind\View\Helper\Root\Url        $urlHelper       Url helper
+     * @param \VuFind\RecordTab\TabManager        $tabManager      Tab manager
      */
     public function __construct(
         \Zend\Config\Config $config,
