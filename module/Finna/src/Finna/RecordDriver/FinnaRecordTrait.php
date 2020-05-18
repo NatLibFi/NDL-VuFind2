@@ -286,7 +286,7 @@ trait FinnaRecordTrait
             ?? null;
     }
 
-    /**    
+    /**
      * Whether to show record labels for this record.
      *
      * @return boolean

@@ -797,7 +797,7 @@ trait SolrFinnaTrait
     {
         return [];
     }
-    
+
     /**
      * Get work identification keys
      *
