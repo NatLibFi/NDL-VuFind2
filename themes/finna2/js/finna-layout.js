@@ -386,6 +386,8 @@ finna.layout = (function finnaLayout() {
         currentOpenTooltips = [];
       }
     });
+    // show hover tooltips on grid image notes
+    $('.grid-image .note-button').tooltip();
   }
 
   function initCondensedList(_holder) {
