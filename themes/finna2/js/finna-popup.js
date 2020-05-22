@@ -119,6 +119,11 @@ FinnaPopup.prototype.show = function show() {
   if (typeof _.backDrop === 'undefined' && !hasParent) {
     _.backDrop = $('<div class="finna-popup backdrop"></div>');
     $(document.body).prepend(_.backDrop);
+    _.backDrop.off('click').on('click', function checkClose(e) {
+      if (!$.contains(_.modalHolder[0], e.target)) {
+        _.onPopupClose();
+      }
+    });
   }
   if (typeof _.modalHolder !== 'undefined') {
     _.modalHolder.remove();
@@ -135,11 +140,7 @@ FinnaPopup.prototype.show = function show() {
   }
   _.modalHolder = $('<div class="finna-popup ' + _.classes + ' modal-holder"/>');
   _.content.prepend(_.modalHolder);
-  _.backDrop.off('click').on('click', function checkClose(e) {
-    if (!$.contains(_.modalHolder[0], e.target)) {
-      _.onPopupClose();
-    }
-  });
+
   if (typeof _.parent === 'undefined') {
     if (typeof _.closeButton === 'undefined') {
       _.closeButton = $(closeTemplate).clone();
