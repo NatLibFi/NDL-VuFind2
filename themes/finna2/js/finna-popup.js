@@ -140,7 +140,6 @@ FinnaPopup.prototype.show = function show() {
   }
   _.modalHolder = $('<div class="finna-popup ' + _.classes + ' modal-holder"/>');
   _.content.prepend(_.modalHolder);
-
   if (typeof _.parent === 'undefined') {
     if (typeof _.closeButton === 'undefined') {
       _.closeButton = $(closeTemplate).clone();
