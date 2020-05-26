@@ -1,26 +1,25 @@
-<?php $onAuthorityPage = ($context === 'authority-page' ?? true) ?>
 <div class="authority-record-count-container">
-<?php if (!empty($count['author'] && in_array('AuthorityRecordsAuthor', array_keys($tabs)))): ?>
+<?php if (!empty($this->count['author'] && in_array('AuthorityRecordsAuthor', array_keys($this->tabs)))): ?>
   <div class="info-row author">
-    <?php if ($onAuthorityPage): ?>
-      <div class="text"><?= $this->transEsc('authority_records_author')?></div>
+    <?php if ($title = ($this->titles['author'] ?? null)): ?>
+      <div class="text"><?= $this->transEsc($title)?></div>
     <?php endif ?>
     <div class="count">
       <a href="<?=$this->recordLink()->getTabUrl($driver, 'AuthorityRecordsAuthor')?>#tabnav">
-        <?=$this->translate(($onAuthorityPage ? 'authority_records_count' : 'authority_records_author_count'), ['%%count%%' => $count['author']]);?>
+        <?=$this->transEsc($this->labels['author'], ['%%count%%' => $this->count['author']]);?>
       </a>
     </div>
   </div>
 <?php endif; ?>
 
-<?php if (!empty($count['topic']) && in_array('AuthorityRecordsTopic', array_keys($tabs))): ?>
+<?php if (!empty($this->count['topic']) && in_array('AuthorityRecordsTopic', array_keys($this->tabs))): ?>
   <div class="info-row topic">
-    <?php if ($onAuthorityPage): ?>
-      <div class="text"><?= $this->transEsc('authority_records_topic')?></div>
+    <?php if ($title = ($this->titles['topic'] ?? null)): ?>
+      <div class="text"><?= $this->transEsc($title)?></div>
     <?php endif ?>
     <div class="count">
       <a href="<?=$this->recordLink()->getTabUrl($driver, 'AuthorityRecordsTopic')?>#tabnav">
-        <?=$this->translate(($onAuthorityPage ? 'authority_records_count' : 'authority_records_topic_count'), ['%%count%%' => $count['topic']]);?>
+        <?=$this->transEsc($this->labels['topic'], ['%%count%%' => $this->count['topic']]);?>
       </a>
     </div>
   </div>

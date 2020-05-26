@@ -50,9 +50,9 @@
         <?= $this->record($this->driver)->getAuthorityBirthDeath()?>
       <?php endif; ?>
       <?/* Display anchor links to authority records tabs */?>
-      <?php if ($authSummary = $this->record($this->driver)->getAuthoritySummary()): ?>
+      <?php if ($authSummary = $this->record($this->driver)->getAuthoritySummary(true)): ?>
         <div class="authority-records-summary">
-          <?= $this->record($this->driver)->renderTemplate('record-count.phtml', ['driver' => $this->driver, 'tabs' => $this->tabs, 'count' => $authSummary, 'context' => 'authority-page']) ?>
+          <?= $authSummary ?>
         </div>
       <?php endif; ?>
 

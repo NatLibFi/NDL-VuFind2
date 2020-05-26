@@ -826,9 +826,11 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Returns an array with keys 'author' and 'topic'
      * (number of biblio records where the authority is an author/topic)
      *
+     * @param bool $onAuthorityPage Called from authority record page?
+     *
      * @return array
      */
-    public function getAuthoritySummary()
+    public function getAuthoritySummary($onAuthorityPage = false)
     {
         $id = $this->driver->getUniqueID();
         $authorCnt = $this->authorityHelper->getRecordsByAuthor(
@@ -837,6 +839,24 @@ class Record extends \VuFind\View\Helper\Root\Record
         $topicCnt = $this->authorityHelper->getRecordsByAuthor(
             $id, 'topic_id_str_mv', true
         );
-        return ['author' => $authorCnt, 'topic' => $topicCnt];
+        $count = ['author' => $authorCnt, 'topic' => $topicCnt];
+
+        $tabs = $this->tabManager->getTabsForRecord($this->driver);
+        $driver = $this->driver;
+
+        $titles = $labels = [];
+        if ($onAuthorityPage) {
+            $titles['author'] = 'authority_records_author';
+            $titles['topic'] = 'authority_records_topic';
+            $labels['author'] = $labels['topic'] = 'authority_records_count';
+        } else {
+            $labels['author'] = 'authority_records_author_count';
+            $labels['topic'] = 'authority_records_topic_count';
+        }
+
+        return $this->renderTemplate(
+            'record-count.phtml',
+            compact('driver', 'tabs', 'count', 'context', 'titles', 'labels')
+        );
     }
 }

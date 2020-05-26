@@ -94,16 +94,8 @@ class GetRecordInfoByAuthority extends \VuFind\AjaxHandler\AbstractBase
         $this->disableSessionWrites(); // avoid session write timing bug
 
         $id = $params->fromPost('id', $params->fromQuery('id'));
-        $context = $params->fromPost('context', $params->fromQuery('context'));
-
         $driver = $this->recordLoader->load($id, 'SolrAuth');
-
-        $count = $this->recordHelper->__invoke($driver)->getAuthoritySummary();
-        $tabs = $this->tabManager->getTabsForRecord($driver);
-
-        $html = $this->recordHelper->renderTemplate(
-            'record-count.phtml', compact('driver', 'tabs', 'count', 'context')
-        );
+        $html = $this->recordHelper->__invoke($driver)->getAuthoritySummary();
 
         return $this->formatResponse($html);
     }
