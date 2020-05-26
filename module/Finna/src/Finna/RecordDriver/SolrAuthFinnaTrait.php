@@ -166,6 +166,16 @@ trait SolrAuthFinnaTrait
     }
 
     /**
+     * Return description (for backward compatibility)
+     *
+     * @return string|null
+     */
+    public function getDescription()
+    {
+        return $this->getSummary();
+    }
+
+    /**
      * Return authority data sources
      *
      * @return array|null
