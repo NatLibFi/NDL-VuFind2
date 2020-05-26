@@ -39,6 +39,7 @@ namespace Finna\Controller;
 class AuthorityController extends \Finna\Controller\SearchController
 {
     use FinnaSearchControllerTrait;
+    use FinnaAuthorityControllerTrait;
 
     protected $searchClassId = 'SolrAuth';
 
@@ -63,22 +64,5 @@ class AuthorityController extends \Finna\Controller\SearchController
     public function searchAction()
     {
         return $this->resultsAction();
-    }
-
-    /**
-     * Handle onDispatch event
-     *
-     * @param \Zend\Mvc\MvcEvent $e Event
-     *
-     * @return mixed
-     */
-    public function onDispatch(\Zend\Mvc\MvcEvent $e)
-    {
-        $authorityHelper = $this->getViewRenderer()->plugin('authority');
-        if (!$authorityHelper->isAvailable()) {
-            throw new \Exception('Authority search is disabled');
-        }
-
-        return parent::onDispatch($e);
     }
 }
