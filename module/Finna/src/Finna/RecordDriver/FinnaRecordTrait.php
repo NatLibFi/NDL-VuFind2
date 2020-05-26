@@ -54,13 +54,6 @@ trait FinnaRecordTrait
      *
      * @var array
      */
-    protected $authorityHelper = null;
-
-    /**
-     * Search settings
-     *
-     * @var array
-     */
     protected $datasourceSettings = null;
 
     /**
@@ -229,7 +222,7 @@ trait FinnaRecordTrait
         }
 
         $recordSource = $this->getDataSource();
-        if (!$authSrc = $this->getAuthoritySource($type)) {
+        if (!($authSrc = $this->getAuthoritySource($type))) {
             return null;
         }
 
@@ -238,22 +231,10 @@ trait FinnaRecordTrait
             ?? $this->datasourceSettings[$recordSource]['authority_id_regex']['*']
             ?? null;
 
-        if ($idRegex && 1 !== preg_match($idRegex, $id)) {
+        if ($idRegex && preg_match($idRegex, $id)) {
             return null;
         }
         return "$authSrc.$id";
-    }
-
-    /**
-     * Attach a AuthorityHelper to the driver.
-     *
-     * @param \Finna\Search\Solr\AuthorityHelper $helper Authority helper
-     *
-     * @return void
-     */
-    public function attachAuthorityHelper(\Finna\Search\Solr\AuthorityHelper $helper)
-    {
-        $this->authorityHelper = $helper;
     }
 
     /**

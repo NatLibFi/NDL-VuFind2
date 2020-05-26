@@ -63,9 +63,6 @@ class SolrDefaultFactory
     ) {
         $driver = parent::__invoke($container, $requestedName, $options);
         $driver->attachSearchService($container->get(\VuFindSearch\Service::class));
-        $driver->attachAuthorityHelper(
-            $container->get(\Finna\Search\Solr\AuthorityHelper::class)
-        );
         $driver->attachDatasourceSettings(
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
         );
