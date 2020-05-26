@@ -211,7 +211,7 @@ trait FinnaRecordTrait
      */
     public function isAuthorityEnabled($type = '*')
     {
-        return (bool)$this->getAuthoritySource($type);
+        return !empty($this->getAuthoritySource($type));
     }
 
     /**
