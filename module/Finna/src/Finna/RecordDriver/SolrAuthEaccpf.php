@@ -77,7 +77,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
     /**
      * Return description
      *
-     * @return string|null
+     * @return array|null
      */
     public function getSummary()
     {
