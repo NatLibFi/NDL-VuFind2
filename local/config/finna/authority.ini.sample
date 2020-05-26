@@ -26,14 +26,9 @@ default_limit        = 50
 limit_options        = 20,50,100
 
 [Basic_Searches]
-MainHeading         = "Name"
+MainHeading         = "Author Name"
 Heading             = "All Names"
 AllFields           = "All Fields"
-
-[Advanced_Searches]
-AllFields           = "All Fields"
-MainHeading         = "Main Heading"
-Heading             = "Any Heading"
 
 [Sorting]
 relevance = sort_relevance

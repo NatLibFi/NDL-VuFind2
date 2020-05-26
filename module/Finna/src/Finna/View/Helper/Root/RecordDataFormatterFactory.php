@@ -969,7 +969,7 @@ class RecordDataFormatterFactory
         $spec->setLine('Occupation', 'getOccupations');
         $spec->setLine('Field of Activity', 'getFieldsOfActivity');
         $spec->setLine('Place of Residence', 'getPlaceOfResidence');
-        $spec->setLine('Other Names', 'getAlternativeTitles');
+        $spec->setLine('Other Forms of Name', 'getAlternativeTitles');
         $spec->setLine('Associated Place', 'getAssociatedPlace');
         $spec->setLine('Related Places', 'getRelatedPlaces');
         $spec->setLine('Identifiers', 'getOtherIdentifiers');
