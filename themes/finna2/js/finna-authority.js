@@ -104,7 +104,7 @@ finna.authority = (function finnaAuthority() {
     });
   }
 
-  function initAuthorityResultRecordCounts(_holder) {
+  function initAuthorityResultInfo(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
     holder.find('.authority-record-info').each(function checkVersions() {
@@ -151,7 +151,7 @@ finna.authority = (function finnaAuthority() {
       initInlineInfoLinks();
     },
     initAuthorityRecommendTabs: initAuthorityRecommendTabs,
-    initAuthorityResultRecordCounts: initAuthorityResultRecordCounts
+    initAuthorityResultInfo: initAuthorityResultInfo
   };
 
   return my;

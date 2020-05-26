@@ -402,7 +402,7 @@ finna.record = (function finnaRecord() {
     $(window).on('hashchange', applyRecordAccordionHash);
     loadSimilarRecords();
     initRecordVersions();
-    finna.authority.initAuthorityResultRecordCounts();
+    finna.authority.initAuthorityResultInfo();
   }
 
   var my = {
