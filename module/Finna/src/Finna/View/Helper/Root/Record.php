@@ -85,6 +85,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $urlHelper;
 
     /**
+     * Record link helper
+     *
+     * @var \VuFind\View\Helper\Root\RecordLink
+     */
+    protected $recordLinkHelper;
+
+    /**
      * Image cache
      *
      * @var array
@@ -108,14 +115,16 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Constructor
      *
-     * @param \Zend\Config\Config                 $config          VuFind
+     * @param \Zend\Config\Config                 $config           VuFind
      * configuration
-     * @param \VuFind\Record\Loader               $loader          Record loader
-     * @param \Finna\View\Helper\Root\RecordImage $recordImage     Record image
+     * @param \VuFind\Record\Loader               $loader           Record loader
+     * @param \Finna\View\Helper\Root\RecordImage $recordImage      Record image
      * helper
-     * @param \Finna\Search\Solr\AuthorityHelper  $authorityHelper Authority helper
-     * @param \VuFind\View\Helper\Root\Url        $urlHelper       Url helper
-     * @param \VuFind\RecordTab\TabManager        $tabManager      Tab manager
+     * @param \Finna\Search\Solr\AuthorityHelper  $authorityHelper  Authority helper
+     * @param \VuFind\View\Helper\Root\Url        $urlHelper        Url helper
+     * @param \VuFind\View\Helper\Root\RecordLink $recordLinkHelper Record link
+     * helper
+     * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
      */
     public function __construct(
         \Zend\Config\Config $config,
@@ -123,6 +132,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         \Finna\View\Helper\Root\RecordImage $recordImage,
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
         \VuFind\View\Helper\Root\Url $urlHelper,
+        \VuFind\View\Helper\Root\RecordLink $recordLinkHelper,
         \VuFind\RecordTab\TabManager $tabManager
     ) {
         parent::__construct($config);
@@ -130,6 +140,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->recordImageHelper = $recordImage;
         $this->authorityHelper = $authorityHelper;
         $this->urlHelper = $urlHelper;
+        $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
     }
 
@@ -839,24 +850,41 @@ class Record extends \VuFind\View\Helper\Root\Record
         $topicCnt = $this->authorityHelper->getRecordsByAuthor(
             $id, 'topic_id_str_mv', true
         );
-        $count = ['author' => $authorCnt, 'topic' => $topicCnt];
 
-        $tabs = $this->tabManager->getTabsForRecord($this->driver);
-        $driver = $this->driver;
+        $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
+        
+        $summary = [
+            'author' => [
+                'cnt' => $authorCnt,
+                'tabUrl' => in_array('AuthorityRecordsAuthor', $tabs)
+                    ? $this->recordLinkHelper->getTabUrl(
+                        $this->driver, 'AuthorityRecordsAuthor'
+                    )
+                    : null
+            ],
+            'topic' => [
+                'cnt' => $topicCnt,
+                'tabUrl' => in_array('AuthorityRecordsTopic', $tabs)
+                    ? $this->recordLinkHelper->getTabUrl(
+                        $this->driver, 'AuthorityRecordsTopic'
+                    )
+                    : null
+            ]
+        ];
 
-        $titles = $labels = [];
         if ($onAuthorityPage) {
-            $titles['author'] = 'authority_records_author';
-            $titles['topic'] = 'authority_records_topic';
-            $labels['author'] = $labels['topic'] = 'authority_records_count';
+            $summary['author']['title'] = 'authority_records_author';
+            $summary['topic']['title'] = 'authority_records_topic';
+            $summary['author']['label'] = $summary['topic']['label']
+                = 'authority_records_count';
         } else {
-            $labels['author'] = 'authority_records_author_count';
-            $labels['topic'] = 'authority_records_topic_count';
+            $summary['author']['label'] = 'authority_records_author_count';
+            $summary['topic']['label'] = 'authority_records_topic_count';
         }
 
         return $this->renderTemplate(
-            'record-count.phtml',
-            compact('driver', 'tabs', 'count', 'context', 'titles', 'labels')
+            'record-summaries.phtml',
+            ['summary' => $summary, 'driver' => $this->driver]
         );
     }
 }

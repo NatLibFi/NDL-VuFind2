@@ -67,6 +67,7 @@ class RecordFactory implements FactoryInterface
             $container->get('ViewHelperManager')->get('recordImage'),
             $container->get(\Finna\Search\Solr\AuthorityHelper::class),
             $container->get('ViewHelperManager')->get('url'),
+            $container->get('ViewHelperManager')->get('recordLink'),
             $container->get(\VuFind\RecordTab\TabManager::class)
         );
         if ('cli' !== php_sapi_name()) {
