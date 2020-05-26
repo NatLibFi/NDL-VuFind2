@@ -227,10 +227,9 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
             }
             $title = $title->getData();
             $subtitle = null;
-
+            $setting = 'authority_external_link_label_regex';
             $regex
-                = $this->datasourceSettings[$this->getDatasource()]
-                ['authority_external_link_label_regex']
+                = $this->datasourceSettings[$this->getDatasource()][$setting]
                 ?? null;
 
             if ($regex && preg_match($regex, $title, $matches)) {
