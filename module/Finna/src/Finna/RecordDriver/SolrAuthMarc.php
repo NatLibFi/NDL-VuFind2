@@ -289,11 +289,11 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 $startYear = $data['s'] ?? null;
                 $endYear = $data['t'] ?? null;
                 if ($startYear !== null && $endYear !== null) {
-                    $place = "$place ({$startYear}-{$endYear})";
+                    $place .= " ({$startYear}-{$endYear})";
                 } elseif ($startYear !== null) {
-                    $place = "$place ($startYear-)";
+                    $place .= " ($startYear-)";
                 } elseif ($endYear !== null) {
-                    $place = "$place (-{$endYear})";
+                    $place .= " (-{$endYear})";
                 }
                 $result[] = $place;
             }
