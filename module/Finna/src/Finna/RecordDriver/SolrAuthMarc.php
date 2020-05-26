@@ -199,7 +199,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     /**
      * Return description
      *
-     * @return string|null
+     * @return array
      */
     public function getSummary()
     {
