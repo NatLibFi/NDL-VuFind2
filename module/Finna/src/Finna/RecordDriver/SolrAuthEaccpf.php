@@ -52,11 +52,9 @@ class SolrAuthEacCpf extends SolrAuthDefault
     public function getTitle()
     {
         $record = $this->getXmlRecord();
-        if (isset($record->cpfDescription->identity->nameEntry->part[0])) {
-            return (string)$record->cpfDescription->identity->nameEntry->part[0];
-            return [(string)$record->cpfDescription->description->biogHist->p];
-        }
-        return null;
+        return isset($record->cpfDescription->identity->nameEntry->part[0])
+            ? (string)$record->cpfDescription->identity->nameEntry->part[0]
+            : null;
     }
 
     /**
