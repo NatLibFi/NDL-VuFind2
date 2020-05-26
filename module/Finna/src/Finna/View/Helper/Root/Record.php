@@ -852,7 +852,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         );
 
         $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
-        
+
         $summary = [
             'author' => [
                 'cnt' => $authorCnt,

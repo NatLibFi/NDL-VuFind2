@@ -681,11 +681,11 @@ $config = [
                 'factories' => [
                     'Finna\RecordDriver\EDS' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
-                    'VuFind\RecordDriver\SolrDefault' =>
+                    'Finna\RecordDriver\SolrDefault' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
-                    'VuFind\RecordDriver\SolrMarc' =>
+                    'Finna\RecordDriver\SolrMarc' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
-                    'VuFind\RecordDriver\SolrAuthEaccpf' =>
+                    'Finna\RecordDriver\SolrAuthEaccpf' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrAuthForward' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
@@ -697,10 +697,10 @@ $config = [
                         'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrForward' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
-                    'Finna\RecordDriver\SolrLido'
-                        => 'Finna\RecordDriver\SolrLidoFactory',
-                    'Finna\RecordDriver\SolrMarc'
-                        => 'Finna\RecordDriver\SolrDefaultFactory',
+                    'Finna\RecordDriver\SolrLido' =>
+                        'Finna\RecordDriver\SolrDefaultFactory',
+                    'Finna\RecordDriver\SolrMarc' =>
+                        'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrQdc' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\Primo' =>
@@ -787,8 +787,8 @@ $config = [
 ];
 
 $recordRoutes = [
-    'solrauthrecord' => 'AuthorityRecord',
     'metalibrecord' => 'MetaLibRecord',
+    'solrauthrecord' => 'AuthorityRecord'
 ];
 
 // Define dynamic routes -- controller => [route name => action]

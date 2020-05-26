@@ -63,6 +63,7 @@ class SolrDefaultFactory
     ) {
         $driver = parent::__invoke($container, $requestedName, $options);
         $driver->attachSearchService($container->get(\VuFindSearch\Service::class));
+        $driver->attachDateConverter($container->get(\VuFind\Date\Converter::class));
         $driver->attachDatasourceSettings(
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
         );

@@ -330,14 +330,14 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
      *
      * @return string
      */
-    protected function formatDate($date, $format = 'j.n.Y')
+    protected function formatDate($date, $format = 'd-m-Y')
     {
-        if (false === (strpos($date, '-'))) {
+        try {
+            return $this->dateConverter->convertToDisplayDate(
+                'Y-m-d', $date
+            );
+        } catch (\Exception $e) {
             return $date;
         }
-        if (false === ($time = strtotime($date))) {
-            return $date;
-        }
-        return date($format, $time);
     }
 }
