@@ -92,7 +92,7 @@ trait SolrAuthFinnaTrait
      */
     public function getBirthDate()
     {
-        return null;
+        return '';
     }
 
     /**
@@ -102,7 +102,7 @@ trait SolrAuthFinnaTrait
      */
     public function getDeathDate()
     {
-        return null;
+        return '';
     }
 
     /**
