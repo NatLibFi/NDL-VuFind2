@@ -364,7 +364,7 @@ finna.layout = (function finnaLayout() {
     // show hover tooltips on grid image notes
     if (window.matchMedia("(min-width: 768px)").matches) {
       holder.find('.grid-image .note-button').tooltip();
-      holder.find('.grid-image .note-button').click(function() {
+      holder.find('.grid-image .note-button').click(function clickHideTooltip() {
         $("[data-toggle='tooltip']").tooltip('hide');
       });
     }
