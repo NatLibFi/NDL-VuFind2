@@ -56,6 +56,7 @@
               <?php endforeach; ?>
             </div>
           <?php endif; ?>
+          <?= $this->record($this->driver)->getAuthorityBirthDeath()?>
           <div class="summary truncate-field">
             <?=$this->cleanHtml(implode('<br>', $this->driver->getSummary()) ?? []); ?>
           </div>

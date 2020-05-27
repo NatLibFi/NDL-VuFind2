@@ -809,27 +809,41 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Return author birth and death info (dates and optionally place).
-     *
-     * @param bool $includePlace Include birth/death place?
+     * Return author birth and death date.
      *
      * @return string HTML
      */
-    public function getAuthorityBirthDeath($includePlace = true)
+    public function getAuthorityBirthDeath()
     {
         if (!$this->driver->isAuthorityRecord()) {
             return null;
         }
-        return $this->renderTemplate(
-            'birth_death.phtml',
-            ['birth' => $includePlace
-                 ? $this->driver->getBirthDateAndPlace()
-                 : $this->driver->getBirthDate(),
-             'death' => $includePlace
-                 ? $this->driver->getDeathDateAndPlace()
-                 : $this->driver->getDeathDate()
-            ]
-        );
+        $birth = $this->driver->getBirthDateAndPlace();
+        $death = $this->driver->getDeathDateAndPlace();
+        if ($birth) {
+            $birth['detail'] = null;
+        }
+        if ($death) {
+            $death['detail'] = null;
+        }
+
+        return $this->renderTemplate('birth_death.phtml', compact('birth', 'death'));
+    }
+
+    /**
+     * Return author birth and death date and place.
+     *
+     * @return string HTML
+     */
+    public function getAuthorityBirthDeathWithPlace()
+    {
+        if (!$this->driver->isAuthorityRecord()) {
+            return null;
+        }
+        $birth = $this->driver->getBirthDateAndPlace();
+        $death = $this->driver->getDeathDateAndPlace();
+
+        return $this->renderTemplate('birth_death.phtml', compact('birth', 'death'));
     }
 
     /**

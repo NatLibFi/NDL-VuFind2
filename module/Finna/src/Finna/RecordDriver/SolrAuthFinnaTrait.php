@@ -86,7 +86,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return birth date and place.
+     * Return birth date.
      *
      * @return string
      */
@@ -96,13 +96,63 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return death date and place.
+     * Return birth place.
+     *
+     * @return string
+     */
+    public function getBirthPlace()
+    {
+        return $this->fields['birth_place'] ?? '';
+    }
+
+    /**
+     * Return death date.
      *
      * @return string
      */
     public function getDeathDate()
     {
         return '';
+    }
+
+    /**
+     * Return death place.
+     *
+     * @return string
+     */
+    public function getDeathPlace()
+    {
+        return $this->fields['death_place'] ?? '';
+    }
+
+    /**
+     * Return birth place and date.
+     *
+     * @param boolean $force Return established date for corporations?
+     *
+     * @return array
+     */
+    public function getBirthDateAndPlace($force = false)
+    {
+        return [
+            'data' => $this->getBirthDate($force),
+            'detail' => $this->getBirthPlace()
+        ];
+    }
+
+    /**
+     * Return death place and date.
+     *
+     * @param boolean $force Return established date for corporations?
+     *
+     * @return array
+     */
+    public function getDeathDateAndPlace($force = false)
+    {
+        return [
+            'data' => $this->getDeathDate($force),
+            'detail' => $this->getDeathPlace()
+        ];
     }
 
     /**
@@ -148,7 +198,7 @@ trait SolrAuthFinnaTrait
     /**
      * Return related places.
      *
-     * @return string[]
+     * @return array
      */
     public function getRelatedPlaces()
     {
@@ -288,29 +338,5 @@ trait SolrAuthFinnaTrait
     public function isPerson()
     {
         return $this->fields['record_type'] === 'Personal Name';
-    }
-
-    /**
-     * Return birth date and place.
-     *
-     * @param boolean $force Return established date for corporations?
-     *
-     * @return string
-     */
-    public function getBirthDateAndPlace($force = false)
-    {
-        return $this->getBirthDate($force);
-    }
-
-    /**
-     * Return death date and place.
-     *
-     * @param boolean $force Return established date for corporations?
-     *
-     * @return string
-     */
-    public function getDeathDateAndPlace($force = false)
-    {
-        return $this->getDeathDate($force);
     }
 }

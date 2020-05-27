@@ -39,7 +39,10 @@ namespace Finna\RecordDriver;
 class SolrAuthForward extends SolrAuthDefault
 {
     use SolrAuthFinnaTrait;
-    use SolrForwardTrait;
+    use SolrForwardTrait {
+        getBirthPlace as _getBirthPlace;
+        getDeathPlace as _getDeathPlace;
+    }
     use XmlReaderTrait;
 
     /**
@@ -82,7 +85,7 @@ class SolrAuthForward extends SolrAuthDefault
     }
 
     /**
-     * Return birth date and place.
+     * Return birth date.
      *
      * @param boolean $force Return established date for corporations?
      *
@@ -93,15 +96,26 @@ class SolrAuthForward extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
-
-        if ($date = $this->getAgentDate('birth')) {
-            return $this->formatDateAndPlace($date);
-        }
-        return '';
+        return $this->getAgentDate('birth')['date'] ?? '';
     }
 
     /**
-     * Return death date and place.
+     * Return birth place.
+     *
+     * @param boolean $force Return established date for corporations?
+     *
+     * @return string
+     */
+    public function getBirthPlace($force = false)
+    {
+        if (!$this->isPerson() && !$force) {
+            return '';
+        }
+        return $this->_getBirthPlace();
+    }
+
+    /**
+     * Return death date.
      *
      * @param boolean $force Return terminated date for corporations?
      *
@@ -112,11 +126,22 @@ class SolrAuthForward extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
+        return $this->getAgentDate('death')['date'] ?? '';
+    }
 
-        if ($date = $this->getAgentDate('death')) {
-            return $this->formatDateAndPlace($date);
+    /**
+     * Return death place.
+     *
+     * @param boolean $force Return terminated date for corporations?
+     *
+     * @return string
+     */
+    public function getDeathPlace($force = false)
+    {
+        if (!$this->isPerson() && !$force) {
+            return '';
         }
-        return '';
+        return $this->_getDeathPlace();
     }
 
     /**
@@ -143,22 +168,6 @@ class SolrAuthForward extends SolrAuthDefault
             return '';
         }
         return $this->getDeathDate(true);
-    }
-
-    /**
-     * Format death/birth date and place.
-     *
-     * @param array $date Array with keys 'date' and possibly 'place'
-     *
-     * @return string
-     */
-    protected function formatDateAndPlace($date)
-    {
-        $result = $date['date'];
-        if ($place = ($date['place'] ?? null)) {
-            $result .= " ($place)";
-        }
-        return $result;
     }
 
     /**

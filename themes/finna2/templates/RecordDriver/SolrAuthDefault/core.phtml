@@ -47,7 +47,7 @@
         <div class="occupation"><?=implode(', ', $occupations)?></div>
       <?php endif; ?>
       <?php if ($this->driver->isPerson()): ?>
-        <?= $this->record($this->driver)->getAuthorityBirthDeath()?>
+        <?= $this->record($this->driver)->getAuthorityBirthDeathWithPlace()?>
       <?php endif; ?>
       <?/* Display anchor links to authority records tabs */?>
       <?php if ($authSummary = $this->record($this->driver)->getAuthoritySummary(true)): ?>

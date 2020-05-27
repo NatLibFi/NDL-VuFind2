@@ -144,24 +144,6 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Return birth date and place.
-     *
-     * @param boolean $force Return established date for corporations?
-     *
-     * @return string
-     */
-    public function getBirthDateAndPlace($force = false)
-    {
-        $date = $this->getBirthDate();
-        $place = $this->fields['birth_place'] ?? '';
-
-        if (empty($place)) {
-            return $date;
-        }
-        return "$date ({$place})";
-    }
-
-    /**
      * Return death date.
      *
      * @param boolean $force Return terminated date for corporations?
@@ -176,24 +158,6 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
             }
         }
         return '';
-    }
-
-    /**
-     * Return birth date and place.
-     *
-     * @param boolean $force Return established date for corporations?
-     *
-     * @return string
-     */
-    public function getDeathDateAndPlace($force = false)
-    {
-        $date = $this->getDeathDate();
-        $place = $this->fields['death_place'] ?? '';
-
-        if (empty($place)) {
-            return $date;
-        }
-        return "$date ({$place})";
     }
 
     /**
@@ -259,15 +223,15 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
         foreach (['400', '410'] as $fieldCode) {
             foreach ($this->getMarcRecord()->getFields($fieldCode) as $field) {
                 if ($subfield = $field->getSubfield('a')) {
-                    $name = rtrim($subfield->getData(), '. ');
+                    $data = rtrim($subfield->getData(), ', ');
+                    $detail = null;
                     if ($date = $field->getSubfield('d')) {
-                        $name .= ' (' . $date->getData() . ')';
+                        $detail = $date->getData();
                     }
-                    $result[] = $name;
+                    $result[] = compact('data', 'detail');
                 }
             }
         }
-
         return $result;
     }
 
@@ -294,14 +258,15 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
             if ($place = $data['e'] ?? $data['f'] ?? null) {
                 $startYear = $data['s'] ?? null;
                 $endYear = $data['t'] ?? null;
+                $date = null;
                 if ($startYear !== null && $endYear !== null) {
-                    $place .= " ({$startYear}-{$endYear})";
+                    $date = "{$startYear}-{$endYear}";
                 } elseif ($startYear !== null) {
-                    $place .= " ($startYear-)";
+                    $date = "$startYear-";
                 } elseif ($endYear !== null) {
-                    $place .= " (-{$endYear})";
+                    $date = "-{$endYear}";
                 }
-                $result[] = $place;
+                $result[] = ['data' => $place, 'detail' => $date];
             }
         }
         return $result;
@@ -318,11 +283,12 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
         foreach ($this->getMarcRecord()->getFields('024') as $field) {
             $data = $this->getFieldSubfields($field, ['a','2','q'], false);
             if ($id = ($data['a'] ?? null)) {
+                $type = null;
                 if ($type = $data['2'] ?? $data['q']) {
                     $type = mb_strtolower(rtrim($type, ': '), 'UTF-8');
                     $id = "$id ($type)";
                 }
-                $result[] = $id;
+                $result[] = ['data' => $id, 'detail' => $type];
             }
         }
         return $result;
