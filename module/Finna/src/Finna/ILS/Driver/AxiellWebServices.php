@@ -32,12 +32,10 @@
 namespace Finna\ILS\Driver;
 
 use DOMDocument;
-use SoapClient;
 use VuFind\Config\Locator;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
-use Zend\Db\Sql\Ddl\Column\Boolean;
 
 /**
  * Axiell Web Services ILS Driver
@@ -699,7 +697,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * This is responsible for canceling holds.
      *
-     * @param string $cancelDetails The request details
+     * @param array $cancelDetails The request details
      *
      * @throws ILSException
      *
@@ -2696,7 +2694,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function doSOAPRequest($wsdl, $function, $functionResult, $id, $params)
     {
-        $client = new SoapClient($wsdl, $this->soapOptions);
+        $client = new ProxySoapClient($this->httpService, $wsdl, $this->soapOptions);
 
         $this->debug("$function Request for '$this->arenaMember'.'$id'");
 
