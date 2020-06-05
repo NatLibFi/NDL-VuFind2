@@ -157,7 +157,7 @@ class FinnaSuggestions implements \VuFind\Recommend\RecommendInterface,
         // Output suggestions only for basic search with
         // AllFields handler and no filters.
         if (!empty($lookfor)
-            && !$params->getFilters()
+            && !$params->getRawFilters()
             && $searchHandler === 'AllFields'
             && $searchType === 'basic'
         ) {
