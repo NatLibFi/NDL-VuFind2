@@ -192,8 +192,8 @@ class FinnaSuggestions implements \VuFind\Recommend\RecommendInterface,
     {
         $this->settings = $settings;
         $settings = explode(':', $settings);
-        $this->apiUrl = ('https://' . $settings[0]) ?? null;
-        $this->searchUrl = ('https://' . $settings[1]) ?? null;
+        $this->apiUrl = !empty($settings[0]) ? ('https://' . $settings[0]) : null;
+        $this->searchUrl = !empty($settings[1]) ? ('https://' . $settings[1]) : null;
     }
 
     /**
@@ -207,7 +207,7 @@ class FinnaSuggestions implements \VuFind\Recommend\RecommendInterface,
      */
     public function process($results)
     {
-        if (!$this->lookfor) {
+        if (!$this->lookfor || !$this->apiUrl) {
             return;
         }
 
