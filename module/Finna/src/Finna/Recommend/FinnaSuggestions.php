@@ -41,9 +41,13 @@ use Zend\Http\Client;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class FinnaSuggestions implements \VuFind\Recommend\RecommendInterface,
-    \VuFindHttp\HttpServiceAwareInterface, \Zend\Log\LoggerAwareInterface
+class FinnaSuggestions implements
+    \VuFind\I18n\Translator\TranslatorAwareInterface,
+    \VuFind\Recommend\RecommendInterface,
+    \VuFindHttp\HttpServiceAwareInterface,
+    \Zend\Log\LoggerAwareInterface
 {
+    use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
 
@@ -121,14 +125,12 @@ class FinnaSuggestions implements \VuFind\Recommend\RecommendInterface,
      * FinnaSuggestions constructor.
      *
      * @param Client $client    HTTP client
-     * @param string $locale    Current locale
      * @param Url    $urlHelper URL helper
      */
     public function __construct(
-        Client $client, string $locale, Url $urlHelper
+        Client $client, Url $urlHelper
     ) {
         $this->client = $client;
-        $this->locale = $locale;
         $this->urlHelper = $urlHelper;
     }
 
@@ -252,7 +254,7 @@ class FinnaSuggestions implements \VuFind\Recommend\RecommendInterface,
         $search = substr($search, strlen($base));
 
         $query = http_build_query(
-            ['lookfor' => $this->lookfor, 'lng' => $this->locale]
+            ['lookfor' => $this->lookfor, 'lng' => $this->getTranslatorLocale()]
         );
 
         $base = $this->searchUrl;

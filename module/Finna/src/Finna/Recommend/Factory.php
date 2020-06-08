@@ -102,7 +102,6 @@ class Factory
     {
         return new FinnaSuggestions(
             $sm->get(\VuFindHttp\HttpService::class)->createClient(),
-            $sm->get('VuFind\Translator')->getLocale(),
             $sm->get('ViewHelperManager')->get('url')
         );
     }
@@ -118,7 +117,6 @@ class Factory
     {
         return new FinnaSuggestionsDeferred(
             $sm->get(\VuFindHttp\HttpService::class)->createClient(),
-            $sm->get('VuFind\Translator')->getLocale(),
             $sm->get('ViewHelperManager')->get('url')
         );
     }
