@@ -131,8 +131,8 @@ finna.authority = (function finnaAuthority() {
           }
         )
           .done(function onGetAuthorityRecordCountDone(response) {
-            if (response.data.length > 0) {
-              $elem.html(response.data);
+            if (response.data.html.length > 0) {
+              $elem.html(response.data.html);
             } else {
               $elem.text('');
             }
