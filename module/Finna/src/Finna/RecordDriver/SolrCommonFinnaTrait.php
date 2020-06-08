@@ -49,7 +49,7 @@ trait SolrCommonFinnaTrait
      *
      * @var \VuFind\Date\Converter
      */
-    protected $dateConverter;
+    protected $dateConverter = null;
 
     /**
      * Attach date converter

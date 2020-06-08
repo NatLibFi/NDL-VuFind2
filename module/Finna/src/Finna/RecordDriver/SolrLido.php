@@ -434,13 +434,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     if (strlen($endDate) == 7) {
                         $endDateType = 'Y-m';
                     }
-                    $date = $this->dateConverter->convertToDisplayDate(
-                        $startDateType, $startDate
-                    );
+
+                    $date = $this->dateConverter
+                        ? $this->dateConverter->convertToDisplayDate(
+                            $startDateType, $startDate
+                        )
+                        : $startDate;
+
                     if ($startDate != $endDate) {
-                        $date .= '-' . $this->dateConverter->convertToDisplayDate(
-                            $endDateType, $endDate
-                        );
+                        $date .= '-' . ($this->dateConverter
+                            ? $this->dateConverter->convertToDisplayDate(
+                                $endDateType, $endDate
+                            )
+                            : $endDate);
                     }
                 }
             }
