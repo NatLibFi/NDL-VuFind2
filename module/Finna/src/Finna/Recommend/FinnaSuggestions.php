@@ -108,13 +108,6 @@ class FinnaSuggestions implements
     protected $client;
 
     /**
-     * Current locale.
-     *
-     * @var string
-     */
-    protected $locale;
-
-    /**
      * URL helper.
      *
      * @var \VuFind\View\Helper\Root\Url
