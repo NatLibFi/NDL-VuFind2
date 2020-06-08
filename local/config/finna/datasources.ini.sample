@@ -10,7 +10,7 @@
 ;                         (corporateBody, person) or * for any;
 ; authority_id_regex[<type>] = Regex for whitelisting allowed authority ids.
 ; authority_external_link_label_regex = Regex for parsing external link label into title and subtitle,
-;                                       parts, for example: /^([a-z,A-Z]*)\, ([\s\S]*)$/
+;                                       parts, for example: /^(Verkkosivut|Kotisivut|Wikipedia),\s*(.*)$/
 ;
 ; This configuration file is compatible with RecordManager's datasources.ini, so the
 ; same file can be shared by RecordManager and VuFind.
