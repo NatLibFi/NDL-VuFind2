@@ -862,10 +862,10 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function getAuthoritySummary($onAuthorityPage = false)
     {
         $id = $this->driver->getUniqueID();
-        $authorCnt = $this->authorityHelper->getRecordsByAuthor(
+        $authorCnt = $this->authorityHelper->getRecordsByAuthorityId(
             $id, AuthorityHelper::AUTHOR2_ID_FACET, true
         );
-        $topicCnt = $this->authorityHelper->getRecordsByAuthor(
+        $topicCnt = $this->authorityHelper->getRecordsByAuthorityId(
             $id, AuthorityHelper::TOPIC_ID_FACET, true
         );
 

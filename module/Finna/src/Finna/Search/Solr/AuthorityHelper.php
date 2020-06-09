@@ -264,10 +264,10 @@ class AuthorityHelper
      *
      * @return \VuFind\Search\Results|int
      */
-    public function getRecordsByAuthor(
+    public function getRecordsByAuthorityId(
         $id, $field = AUTHOR2_ID_FACET, $onlyCount = false
     ) {
-        $query = $this->getRecordsByAuthorQuery($id, $field);
+        $query = $this->getRecordsByAuthorityQuery($id, $field);
         $results = $this->searchRunner->run(
             ['lookfor' => $query, 'fl' => 'id'],
             'Solr',
@@ -287,7 +287,7 @@ class AuthorityHelper
      *
      * @return string
      */
-    public function getRecordsByAuthorQuery($id, $field)
+    public function getRecordsByAuthorityQuery($id, $field)
     {
         return "$field:\"$id\"";
     }

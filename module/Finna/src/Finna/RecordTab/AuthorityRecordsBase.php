@@ -123,7 +123,7 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
         if ($this->records) {
             return $this->records;
         }
-        $this->records = $this->authorityHelper->getRecordsByAuthor(
+        $this->records = $this->authorityHelper->getRecordsByAuthorityId(
             $this->driver->getUniqueID(), $this->getRelation()
         );
         return $this->records;
@@ -159,7 +159,7 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
      */
     public function getSearchQuery()
     {
-        return $this->authorityHelper->getRecordsByAuthorQuery(
+        return $this->authorityHelper->getRecordsByAuthorityQuery(
             $this->driver->getUniqueID(), $this->getRelation()
         );
     }
