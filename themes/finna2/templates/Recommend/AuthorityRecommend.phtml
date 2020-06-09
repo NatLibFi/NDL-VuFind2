@@ -69,7 +69,7 @@ JS;
           // with the authority term:
           $id = $record->getUniqueId();
           $formats = $record->getFormats();
-          $authorityUrl = $authorityLinkType === 'author-id' ? $urlQuery->setAuthorId($id) : $this->url('solrauthrecord', ['id' => $id]);
+          $authorityUrl = $authorityLinkType === 'search' ? $urlQuery->setAuthorId($id) : $this->url('solrauthrecord', ['id' => $id]);
           $html = '<span class="authority-page-link"><a class="authority-page" href="' . $authorityUrl . '"><i class="fa' . (!empty($formats) ? ' fa-authority-' . $this->escapeHtmlAttr($this->record($record)->getFormatClass($formats[0])) : '') . '"></i> ' . $that->escapeHtml($record->getBreadCrumb()) . '</a></span>';
           return $html;
       };

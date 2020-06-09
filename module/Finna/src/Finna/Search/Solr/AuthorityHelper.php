@@ -88,6 +88,13 @@ class AuthorityHelper
     protected $translator;
 
     /**
+     * Authority config
+     *
+     * @var \Zend\Config\Config
+     */
+    protected $authorityConfig;
+
+    /**
      * Authority search config
      *
      * @var \Zend\Config\Config
@@ -101,6 +108,8 @@ class AuthorityHelper
      * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
      * @param \VuFind\View\Helper\Root\Translate $translator            Translator
      * view helper
+     * @param \Zend\Config\Config                $authorityConfig       Authority
+     * config
      * @param \Zend\Config\Config                $authoritySearchConfig Authority
      * search config
      */
@@ -108,11 +117,13 @@ class AuthorityHelper
         \VuFind\Record\Loader $recordLoader,
         \VuFind\Search\SearchRunner $searchRunner,
         \VuFind\View\Helper\Root\Translate $translator,
+        \Zend\Config\Config $authorityConfig,
         \Zend\Config\Config $authoritySearchConfig
     ) {
         $this->recordLoader = $recordLoader;
         $this->searchRunner = $searchRunner;
         $this->translator = $translator;
+        $this->authorityConfig = $authorityConfig;
         $this->authoritySearchConfig = $authoritySearchConfig;
     }
 
@@ -289,6 +300,24 @@ class AuthorityHelper
     public function isAuthoritySearchEnabled()
     {
         return $this->authoritySearchConfig->General->enabled ?? false;
+    }
+
+    /**
+     * Get authority link type.
+     *
+     * @param string $type authority type
+     *
+     * @return Link type (string) or null when authority links are disabled.
+     */
+    public function getAuthorityLinkType($type = 'author')
+    {
+        $setting = $this->authorityConfig->authority_links ?? null;
+        $setting = $setting[$type] ?? $setting['*'] ?? $setting;
+        if ($setting === '1') {
+            // Backward compatibility
+            $setting = 'search';
+        }
+        return $setting;
     }
 
     /**

@@ -145,16 +145,13 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
     /**
      * Get authority link type (authority page or search by authority-id).
      *
+     * @param string $type Authority type
+     *
      * @return string
      */
-    public function getAuthorityLinkType()
+    public function getAuthorityLinkType($type = 'author')
     {
-        $type = $this->config->Authority->authority_links ?? 'author-id';
-        if ($type === '1') {
-            // Backward compatibility
-            $type = 'author-id';
-        }
-        return $type;
+        return $this->authorityHelper->getAuthorityLinkType($type);
     }
 
     /**

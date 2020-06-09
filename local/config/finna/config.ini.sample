@@ -1581,11 +1581,15 @@ url = "https://my.surveypal.com/Finnasurvey"
 
 ; Authority info
 [Authority]
-; Uncomment to convert Author search links to authority links.
-; The link type is one of
-; - author-id   : performs a search filtered by author ID
-; - author-page : links to authority page
-;authority_links = author-id|author-page
+; Whether to change author-search links to authority-links.
+; The link type is one of:
+;   - author  links to the authority page
+;   - search  performs a search filtered by authority ID
+; authority_links[*] can be used to set the link type for all authority types.
+; The global setting can be overridden with authority type specific settings
+; (author or subject), for example: authority_links[author] = page
+
+; authority_links[*] = page
 
 ; Uncomment to enable Authority info (displayed beside author links on record page)
 ;authority_info = true

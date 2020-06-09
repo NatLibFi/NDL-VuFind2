@@ -259,7 +259,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $params = $params ?? [];
         $filter = null;
 
-        $linkType = $params['linkType'] ?? $this->getAuthorityLinkType();
+        $linkType = $params['linkType'] ?? $this->getAuthorityLinkType($type);
         // Attempt to switch Author search link to Authority link.
         if (null !== $linkType
             && in_array($type, ['author', 'author-id', 'subject'])
@@ -268,8 +268,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                 $params['id'], $type
             )
         ) {
-            $type = (string)$linkType === '1' ? 'author-id' : $linkType;
-            $filter = $type === 'author-id'
+            $type = "authority-$linkType";
+            $filter = $linkType === 'search'
                 ? $params['filter']
                     ?? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
                 : $authId;
@@ -342,7 +342,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             = $this->getLink($type, $lookfor, $params + ['id' => $id], true);
 
         if (!$this->isAuthorityEnabled()
-            || !in_array($urlType, ['author-id', 'author-page'])
+            || !in_array($urlType, ['authority-search', 'authority-page'])
         ) {
             $author = [
                'name' => $data['name'] ?? null,
@@ -443,12 +443,16 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Get authority link type.
      *
+     * @param string $type authority type
+     *
      * @return Link type (string) or null when authority links are disabled.
      */
-    protected function getAuthorityLinkType()
+    protected function getAuthorityLinkType($type = 'author')
     {
-        return $this->driver->isAuthorityEnabled()
-            ? $this->config->Authority->authority_links : null;
+        if (!$this->driver->isAuthorityEnabled()) {
+            return null;
+        }
+        return $this->authorityHelper->getAuthorityLinkType($type);
     }
 
     /**

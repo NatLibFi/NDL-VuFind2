@@ -5,5 +5,5 @@
   }
 ?>
 <?php foreach ($data as $relation): ?>
-  <?=$helper->getAuthorityLinkElement('author', $relation['name'], $relation, ['authorityType' => $relation['type'] ?? null, 'additional' => $additional, 'searchAction' => 'search-results', 'linkType' => 'author-id'])?>
+  <?=$helper->getAuthorityLinkElement('author', $relation['name'], $relation, ['authorityType' => $relation['type'] ?? null, 'additional' => $additional, 'searchAction' => 'search-results'])?>
 <?php endforeach; ?>
