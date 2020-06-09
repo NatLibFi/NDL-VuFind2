@@ -349,6 +349,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                'date' => !empty($data['date']) ? $data['date'] : null,
                'role' => !empty($data['role']) ? $data['role'] : null
             ];
+            // NOTE: currently this fallbacks always to a author-link
+            // (extend to handle subject/topic fallbacks when needed).
             return $this->getAuthorLinkElement($url, $author);
         }
 
