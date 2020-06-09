@@ -175,7 +175,6 @@ trait SolrCommonFinnaTrait
      */
     public function getSector()
     {
-        $sector = (string)($this->fields['sector_str_mv'][0] ?? '');
-        return $sector;
+        return (string)($this->fields['sector_str_mv'][0] ?? '');
     }
 }
