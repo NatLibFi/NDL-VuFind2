@@ -231,7 +231,7 @@ trait FinnaRecordTrait
             ?? $this->datasourceSettings[$recordSource]['authority_id_regex']['*']
             ?? null;
 
-        if ($idRegex && preg_match($idRegex, $id)) {
+        if ($idRegex && !preg_match($idRegex, $id)) {
             return null;
         }
         return "$authSrc.$id";
