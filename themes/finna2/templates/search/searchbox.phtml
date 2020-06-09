@@ -246,7 +246,7 @@
           <?php endif; ?>
 
           <?php if ($this->authority()->isAvailable() && ($browse || $this->searchClassId !== 'SolrAuth')) : ?>
-          <a href="<?=$this->url('authority-home');?>" class="btn btn-link btn-authority"><i class="fa fa-search"></i> <?=$this->transEsc("Authority Search")?></a>
+            <a href="<?=$this->url('authority-home');?>" class="btn btn-link btn-authority"><i class="fa fa-search"></i> <?=$this->transEsc("Authority Search")?></a>
           <?php endif; ?>
         </div>
       <?php endif; ?>
