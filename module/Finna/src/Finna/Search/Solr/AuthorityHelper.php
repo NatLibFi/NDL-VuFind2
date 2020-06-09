@@ -307,7 +307,7 @@ class AuthorityHelper
      *
      * @param string $type authority type
      *
-     * @return Link type (string) or null when authority links are disabled.
+     * @return Link type (page or search) or null when authority links are disabled.
      */
     public function getAuthorityLinkType($type = 'author')
     {
@@ -317,7 +317,7 @@ class AuthorityHelper
             // Backward compatibility
             $setting = 'search';
         }
-        return $setting;
+        return in_array($setting, ['page', 'search']) ? $setting : null;
     }
 
     /**
