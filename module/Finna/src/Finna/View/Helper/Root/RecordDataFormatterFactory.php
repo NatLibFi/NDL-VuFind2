@@ -987,7 +987,7 @@ class RecordDataFormatterFactory
         );
         $spec->setTemplateLine('Sources', 'getSources', 'data-sources.phtml');
         $spec->setTemplateLine(
-            'Related Authorities', 'getRelations', 'data-relations.phtml'
+            'Related Authorities', 'getRelations', 'data-relations-author.phtml'
         );
         $spec->setLine('Additional Information', 'getAdditionalInformation');
         return $spec->getArray();
@@ -1003,7 +1003,7 @@ class RecordDataFormatterFactory
     {
         $specs = $this->getDefaultAuthoritySpecs();
         if (isset($specs['Relations'])) {
-            $specs['Relations']['template'] = 'data-relations-recommend.phtml';
+            $specs['Relations']['template'] = 'data-relations-author-recommend.phtml';
         }
         return $specs;
     }
