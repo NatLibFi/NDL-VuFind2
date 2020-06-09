@@ -64,8 +64,7 @@ class NavibarFactory implements FactoryInterface
         return new $requestedName(
             $container->get(\VuFind\Config\PluginManager::class)->get('navibar'),
             $container->get('Finna\OrganisationInfo\OrganisationInfo'),
-            $container->get('Router'),
-            $container->get(\Finna\Search\Solr\AuthorityHelper::class)
+            $container->get('Router')
         );
     }
 }
