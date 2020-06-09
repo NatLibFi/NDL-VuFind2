@@ -2,7 +2,7 @@
 <?php
   // Set page title.
   $this->headTitle($this->translate('Authority Search'));
-  $this->layout()->finnaMainHeader = '<div><h1 class="content-header">' . $this->translate('Authority Search') . '</h1></div>';
+  $this->layout()->finnaMainHeader = '<div><h1 class="content-header">' . $this->transEsc('Authority Search') . '</h1></div>';
 
   // Set default value if necessary:
   if (!isset($this->searchClassId)) {
@@ -19,7 +19,7 @@
   <div class="container">
     <div>
       <?php if ($template = $this->content()->findTemplateForLng('authority/home-1')): ?>
-      <?=$this->render($template)?>
+        <?=$this->render($template)?>
       <?php endif; ?>
     </div>
   </div>
