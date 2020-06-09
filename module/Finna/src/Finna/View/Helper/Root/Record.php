@@ -816,7 +816,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function getAuthorityBirthDeath()
     {
         if (!$this->driver->isAuthorityRecord()) {
-            return null;
+            return '';
         }
         $birth = $this->driver->getBirthDateAndPlace();
         $death = $this->driver->getDeathDateAndPlace();
@@ -838,7 +838,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     public function getAuthorityBirthDeathWithPlace()
     {
         if (!$this->driver->isAuthorityRecord()) {
-            return null;
+            return '';
         }
         $birth = $this->driver->getBirthDateAndPlace();
         $death = $this->driver->getDeathDateAndPlace();
