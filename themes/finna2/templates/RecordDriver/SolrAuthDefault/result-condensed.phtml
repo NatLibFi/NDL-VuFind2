@@ -27,7 +27,7 @@
         <?= $this->record($this->driver)->getAuthorityBirthDeath()?>
       </div>
       <?php if ($occupations = $this->driver->getOccupations()): ?>
-        <div class="occupation"><?=implode(', ', $occupations)?></div>
+        <div class="occupation"><?=$this->escapeHtml(implode(', ', $occupations))?></div>
       <?php endif; ?>
       <div class="authority-record-info"></div>
     </div>
