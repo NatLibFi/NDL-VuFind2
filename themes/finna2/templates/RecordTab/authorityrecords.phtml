@@ -7,21 +7,20 @@ $(document).ready(function() {
 JS;
   echo $this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 
-$results = $this->tab->loadRecords($this->driver);
-$resultCnt = $results->getResultTotal();
-$i = 0;
-$moreUrl = $this->record($this->driver)->getLink('author-id', '', ['authId' => $this->driver->getUniqueID(), 'filter' => $this->tab->getSearchQuery(), 'linkType' => 'author-id', 'searchAction' => 'search-results']);
-$moreLabel = $this->transEsc('authority_records_search_link', ['%%count%%' => $this->localizedNumber($results->getResultTotal())]);
+  $results = $this->tab->loadRecords($this->driver);
+  $resultCnt = $results->getResultTotal();
+  $i = 0;
+  $moreUrl = $this->record($this->driver)->getLink('author-id', '', ['authId' => $this->driver->getUniqueID(), 'filter' => $this->tab->getSearchQuery(), 'linkType' => 'author-id', 'searchAction' => 'search-results']);
+  $moreLabel = $this->transEsc('authority_records_search_link', ['%%count%%' => $this->localizedNumber($results->getResultTotal())]);
 ?>
 <div class="authority-records">
   <div class="pagination-container">
-    <span class="showing"><?=$this->translate(
-      'showing_results_html', [
-        '%%start%%' => 1,
-        '%%end%%' => count($results->getResults())
-      ]
-    ) . '</span>' . ($resultCnt > 10 ? " / <span class=\"search-link\"><a href=\"{$moreUrl}\">{$moreLabel}</a></span>" : '');
-    ?>
+    <span class="showing">
+      <?=$this->translate('showing_results_html', ['%%start%%' => 1, '%%end%%' => count($results->getResults())])?>
+    </span>
+    <?php if ($resultCnt > 10): ?>
+      <?= " / <span class=\"search-link\"><a href=\"{$moreUrl}\">{$moreLabel}</a></span>" ?>
+    <?php endif ?>
   </div>
   <?php foreach ($results->getResults() as $current): ?>
     <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
