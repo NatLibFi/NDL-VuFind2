@@ -263,8 +263,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         // Attempt to switch Author search link to Authority link.
         if (null !== $linkType
             && in_array($type, ['author', 'author-id', 'subject'])
-            && (isset($params['id']) || isset($params['authId']))
-            && $authId = $params['authId'] ?? $this->driver->getAuthorityId(
+            && isset($params['id'])
+            && $authId = $this->driver->getAuthorityId(
                 $params['id'], $type
             )
         ) {
