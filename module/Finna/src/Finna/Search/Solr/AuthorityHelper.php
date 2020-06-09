@@ -254,7 +254,7 @@ class AuthorityHelper
      * @return \VuFind\Search\Results|int
      */
     public function getRecordsByAuthor(
-        $id, $field = 'author2_id_str_mv', $onlyCount = false
+        $id, $field = AUTHOR2_ID_FACET, $onlyCount = false
     ) {
         $query = $this->getRecordsByAuthorQuery($id, $field);
         $results = $this->searchRunner->run(

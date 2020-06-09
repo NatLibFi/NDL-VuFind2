@@ -859,10 +859,10 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $id = $this->driver->getUniqueID();
         $authorCnt = $this->authorityHelper->getRecordsByAuthor(
-            $id, 'author2_id_str_mv', true
+            $id, AuthorityHelper::AUTHOR2_ID_FACET, true
         );
         $topicCnt = $this->authorityHelper->getRecordsByAuthor(
-            $id, 'topic_id_str_mv', true
+            $id, AuthorityHelper::TOPIC_ID_FACET, true
         );
 
         $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
