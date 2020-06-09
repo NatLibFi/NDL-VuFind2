@@ -107,20 +107,20 @@ finna.authority = (function finnaAuthority() {
   function initAuthorityResultInfo(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    holder.find('.authority-record-info').each(function checkVersions() {
+    holder.find('.authority-record-info').each(function getAuthorityRecordInfo() {
       $(this).one('inview', function onInView() {
         var $elem = $(this);
         if ($elem.hasClass('loaded')) {
+          return;
+        }
+        var $item = $(this).parents('.record-container');
+        if ($item.length === 0) {
           return;
         }
         $elem.addClass('loaded');
         $elem.addClass('loading');
         $elem.removeClass('hidden');
         $elem.append('<span class="js-load">' + VuFind.translate('loading') + '...</span>');
-        var $item = $(this).parents('.record-container');
-        if ($item.length === 0) {
-          return;
-        }
         var id = $item.find('.hiddenId')[0].value;
         $.getJSON(
           VuFind.path + '/AJAX/JSON',
