@@ -1003,7 +1003,8 @@ class RecordDataFormatterFactory
     {
         $specs = $this->getDefaultAuthoritySpecs();
         if (isset($specs['Relations'])) {
-            $specs['Relations']['template'] = 'data-relations-author-recommend.phtml';
+            $specs['Relations']['template']
+                = 'data-relations-author-recommend.phtml';
         }
         return $specs;
     }
