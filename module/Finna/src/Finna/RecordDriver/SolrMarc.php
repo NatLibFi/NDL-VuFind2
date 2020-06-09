@@ -769,7 +769,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                             'role' => $role,
                             'id' => $id ? $id->getData() : null,
                             'type' => in_array($fieldCode, ['100', '700'])
-                                ? 'Personal Name' : 'Community Name'
+                                ? 'Personal Name' : 'Corporate Name'
                         ];
                     }
                 }
@@ -1302,7 +1302,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             return $result;
         }
 
-        $subjectIdFields = ['Personal Name' => ['600'], 'Community Name' => ['610']];
+        $subjectIdFields = ['Personal Name' => ['600'], 'Corporate Name' => ['610']];
         foreach ($result as &$subject) {
             if (!$heading = $subject['heading'][0] ?? null) {
                 continue;

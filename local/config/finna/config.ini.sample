@@ -1592,7 +1592,7 @@ url = "https://my.surveypal.com/Finnasurvey"
 
 ; Mapping to Finna authority record types
 ; typeMap[elonet_henkilo] = Personal Name
-; typeMap[elonet_kokoonpano] = Group Name
+; typeMap[elonet_kokoonpano] = Corporate Name
 ; typeMap[elonet_yhtio] = Corporate Name
 
 ; Record labels
