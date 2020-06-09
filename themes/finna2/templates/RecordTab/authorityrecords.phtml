@@ -24,10 +24,10 @@ $moreLabel = $this->transEsc('authority_records_search_link', ['%%count%%' => $t
     ?>
   </div>
   <?php foreach ($results->getResults() as $current): ?>
-  <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
-    <span class="sr-only"><?=$this->transEsc('Search Result');?> <?=$i ?></span>
-    <?=$this->record($current)->getSearchResult('condensed', ['authorId' => $this->driver->getUniqueId()])?>
-  </div>
+    <div id="result<?=$i++ ?>" class="result condensed-list-view clearfix<?=$current->supportsAjaxStatus()?' ajaxItem':''?>">
+      <span class="sr-only"><?=$this->transEsc('Search Result');?> <?=$i ?></span>
+      <?=$this->record($current)->getSearchResult('condensed', ['authorId' => $this->driver->getUniqueId()])?>
+    </div>
   <?php endforeach ?>
   <div class="search-btn-container">
     <a href="<?=$moreUrl?>" class="btn btn-outline-primary search-btn" aria-label="<?=$moreLabel?>"><i class="fa fa-arrow-right" aria-hidden="true"></i> <?=$moreLabel?></a>
