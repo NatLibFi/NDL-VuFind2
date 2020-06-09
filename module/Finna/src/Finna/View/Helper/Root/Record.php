@@ -422,7 +422,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected function getAuthorLinkElement($url, $data)
     {
         $params = [
-           'url' => trim($url),
+           'url' => $url,
            'record' => $this->driver,
            'author' => $data
         ];
