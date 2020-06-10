@@ -101,8 +101,7 @@ class Factory
     public static function getFinnaSuggestions(ServiceManager $sm)
     {
         return new FinnaSuggestions(
-            $sm->get(\VuFindHttp\HttpService::class)->createClient(),
-            $sm->get('ViewHelperManager')->get('url')
+            $sm->get(\VuFindHttp\HttpService::class)->createClient()
         );
     }
 
@@ -116,8 +115,7 @@ class Factory
     public static function getFinnaSuggestionsDeferred(ServiceManager $sm)
     {
         return new FinnaSuggestionsDeferred(
-            $sm->get(\VuFindHttp\HttpService::class)->createClient(),
-            $sm->get('ViewHelperManager')->get('url')
+            $sm->get(\VuFindHttp\HttpService::class)->createClient()
         );
     }
 }

@@ -117,14 +117,11 @@ class FinnaSuggestions implements
     /**
      * FinnaSuggestions constructor.
      *
-     * @param Client $client    HTTP client
-     * @param Url    $urlHelper URL helper
+     * @param Client $client HTTP client
      */
-    public function __construct(
-        Client $client, Url $urlHelper
-    ) {
+    public function __construct(Client $client)
+    {
         $this->client = $client;
-        $this->urlHelper = $urlHelper;
     }
 
     /**
@@ -206,8 +203,7 @@ class FinnaSuggestions implements
             return;
         }
 
-        $url = $this->apiUrl;
-
+        $url = str_replace('%%lookfor%%', $this->lookfor, $this->apiUrl);
         $client = $this->client->setUri($url);
         $client->setOptions(
             [
@@ -218,7 +214,7 @@ class FinnaSuggestions implements
         $client->getRequest()->getHeaders()->addHeaderLine(
             'Accept', 'application/json'
         );
-        $client->setParameterGet(['lookfor' => $this->lookfor, 'limit' => 0]);
+        $client->setParameterGet(['limit' => 0]);
         $response = $client->setMethod('GET')->send();
 
         if (!$response->isSuccess()) {
@@ -242,18 +238,10 @@ class FinnaSuggestions implements
      */
     protected function getSearchLink()
     {
-        $base = $this->urlHelper->__invoke('home');
-        $search = $this->urlHelper->__invoke('search-results');
-        $search = substr($search, strlen($base));
-
-        $query = http_build_query(
-            ['lookfor' => $this->lookfor, 'lng' => $this->getTranslatorLocale()]
+        return str_replace(
+            ['%%lookfor%%', '%%lng%%'],
+            [$this->lookfor, $this->getTranslatorLocale()],
+            $this->searchUrl
         );
-
-        $base = $this->searchUrl;
-        if (substr($base, -1) !== '/') {
-            $base .= '/';
-        }
-        return "$base$search?$query";
     }
 }
