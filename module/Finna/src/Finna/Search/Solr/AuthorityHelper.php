@@ -108,8 +108,7 @@ class AuthorityHelper
      * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
      * @param \VuFind\View\Helper\Root\Translate $translator            Translator
      * view helper
-     * @param \Zend\Config\Config|null           $authorityConfig       Authority
-     * config
+     * @param \Zend\Config\Config                $config                Config
      * @param \Zend\Config\Config                $authoritySearchConfig Authority
      * search config
      */
@@ -117,13 +116,13 @@ class AuthorityHelper
         \VuFind\Record\Loader $recordLoader,
         \VuFind\Search\SearchRunner $searchRunner,
         \VuFind\View\Helper\Root\Translate $translator,
-        $authorityConfig,
+        \Zend\Config\Config $config,
         \Zend\Config\Config $authoritySearchConfig
     ) {
         $this->recordLoader = $recordLoader;
         $this->searchRunner = $searchRunner;
         $this->translator = $translator;
-        $this->authorityConfig = $authorityConfig;
+        $this->authorityConfig = $config->Authority ?? null;
         $this->authoritySearchConfig = $authoritySearchConfig;
     }
 

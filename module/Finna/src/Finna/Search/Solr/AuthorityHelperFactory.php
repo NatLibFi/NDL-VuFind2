@@ -66,7 +66,7 @@ class AuthorityHelperFactory implements FactoryInterface
             $container->get(\VuFind\Search\SearchRunner::class),
             $container->get('ViewRenderer')->plugin('translate'),
             $container->get(\VuFind\Config\PluginManager::class)
-                ->get('config')->Authority ?? null,
+                ->get('config'),
             $container->get(\VuFind\Config\PluginManager::class)->get('authority')
         );
     }
