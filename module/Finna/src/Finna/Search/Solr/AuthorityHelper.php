@@ -90,7 +90,7 @@ class AuthorityHelper
     /**
      * Authority config
      *
-     * @var \Zend\Config\Config
+     * @var \Zend\Config\Config|null
      */
     protected $authorityConfig;
 
@@ -108,7 +108,7 @@ class AuthorityHelper
      * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
      * @param \VuFind\View\Helper\Root\Translate $translator            Translator
      * view helper
-     * @param \Zend\Config\Config                $authorityConfig       Authority
+     * @param \Zend\Config\Config|null           $authorityConfig       Authority
      * config
      * @param \Zend\Config\Config                $authoritySearchConfig Authority
      * search config
@@ -117,7 +117,7 @@ class AuthorityHelper
         \VuFind\Record\Loader $recordLoader,
         \VuFind\Search\SearchRunner $searchRunner,
         \VuFind\View\Helper\Root\Translate $translator,
-        \Zend\Config\Config $authorityConfig,
+        $authorityConfig,
         \Zend\Config\Config $authoritySearchConfig
     ) {
         $this->recordLoader = $recordLoader;
