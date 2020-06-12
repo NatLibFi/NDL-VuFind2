@@ -119,7 +119,7 @@ class FinnaSuggestions implements
      *
      * @param Client $client HTTP client
      */
-    public function __construct(Client $client)
+    public function __construct(Client $client = null)
     {
         $this->client = $client;
     }
@@ -199,7 +199,7 @@ class FinnaSuggestions implements
      */
     public function process($results)
     {
-        if (!$this->lookfor || !$this->apiUrl) {
+        if (!$this->client || !$this->lookfor || !$this->apiUrl) {
             return;
         }
 
