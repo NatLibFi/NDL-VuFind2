@@ -1,6 +1,6 @@
 <?php
 /**
- * FinnaSuggestions Recommendatios module factory.
+ * FinnaSuggestions Recommendations Module factory.
  *
  * PHP version 7
  *
@@ -32,7 +32,7 @@ use Interop\Container\ContainerInterface;
 use VuFind\Search\Results\PluginManager as ResultsManager;
 
 /**
- * FinnaSuggestions Recommendatios module factory.
+ * FinnaSuggestions Recommendations Module factory.
  *
  * @category VuFind
  * @package  Recommendations
