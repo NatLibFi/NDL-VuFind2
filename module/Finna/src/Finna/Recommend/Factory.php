@@ -90,32 +90,4 @@ class Factory
             $sm->get(\Finna\Search\Solr\AuthorityHelper::class)
         );
     }
-
-    /**
-     * Factory for FinnaSuggestions module.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return SideFacets
-     */
-    public static function getFinnaSuggestions(ServiceManager $sm)
-    {
-        return new FinnaSuggestions(
-            $sm->get(\VuFindHttp\HttpService::class)->createClient()
-        );
-    }
-
-    /**
-     * Factory for FinnaSuggestionsDeferred module.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return SideFacets
-     */
-    public static function getFinnaSuggestionsDeferred(ServiceManager $sm)
-    {
-        return new FinnaSuggestionsDeferred(
-            $sm->get(\VuFindHttp\HttpService::class)->createClient()
-        );
-    }
 }
