@@ -1,6 +1,6 @@
 <?php
 /**
- * FinnaSuggestionsDeferred Recommendations Module
+ * FinnaSuggestions Recommendations Module
  *
  * PHP version 7
  *
@@ -31,7 +31,7 @@ use VuFind\View\Helper\Root\Url;
 use Zend\Http\Client;
 
 /**
- * FinnaSuggestionsDeferred Recommendations Module
+ * FinnaSuggestions Recommendations Module
  *
  * This class provides recommendations via VuFind REST API (deferred).
  *
