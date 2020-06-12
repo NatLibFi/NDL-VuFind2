@@ -29,7 +29,6 @@
 namespace Finna\Recommend;
 
 use Interop\Container\ContainerInterface;
-use VuFind\Search\Results\PluginManager as ResultsManager;
 
 /**
  * FinnaSuggestions Recommendations Module factory.
