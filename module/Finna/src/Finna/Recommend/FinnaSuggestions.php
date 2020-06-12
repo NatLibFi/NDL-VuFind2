@@ -203,7 +203,7 @@ class FinnaSuggestions implements
             return;
         }
 
-        $url = str_replace('%%lookfor%%', $this->lookfor, $this->apiUrl);
+        $url = str_replace('%%lookfor%%', urlencode($this->lookfor), $this->apiUrl);
         $client = $this->client->setUri($url);
         $client->setOptions(
             [
@@ -240,7 +240,7 @@ class FinnaSuggestions implements
     {
         return str_replace(
             ['%%lookfor%%', '%%lng%%'],
-            [$this->lookfor, $this->getTranslatorLocale()],
+            [urlencode($this->lookfor), urlencode($this->getTranslatorLocale())],
             $this->searchUrl
         );
     }
