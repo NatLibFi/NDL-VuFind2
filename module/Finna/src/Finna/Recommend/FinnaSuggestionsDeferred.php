@@ -41,6 +41,13 @@ namespace Finna\Recommend;
 class FinnaSuggestionsDeferred extends FinnaSuggestions
 {
     /**
+     * FinnaSuggestionsDeferred constructor.
+     */
+    public function __construct()
+    {
+    }
+
+    /**
      * Get the URL parameters needed to make the AJAX recommendation request.
      *
      * @return string|null
