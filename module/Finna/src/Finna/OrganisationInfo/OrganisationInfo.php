@@ -549,8 +549,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         $with = 'schedules';
         if ($fullDetails) {
             $with .=
-                ',phoneNumbers,mailAddress,pictures,links,services,customData,
-                schedules';
+                ',phoneNumbers,emailAddresses,mailAddress,pictures,links,services,
+                customData,schedules';
         }
 
         $params = [
@@ -730,7 +730,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
 
                 if (!empty($item['address']['area'])) {
                     $address['city']
-                        = "{$item['address']['area']} / {$item['address']['city']}";
+                        = "{$item['address']['area']} ({$item['address']['city']})";
                 } else {
                     $address['city'] = $item['address']['city'];
                 }
@@ -839,6 +839,23 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             }
         }
 
+        if (!empty($response['emailAddresses'])) {
+            $emails = [];
+            $dedupEmails = array_unique($response['emailAddresses'], SORT_REGULAR);
+            foreach ($dedupEmails as $address) {
+                $emails[]
+                    = ['name' => $address['name'], 'email' => $address['email']];
+            }
+            try {
+                $result['emails'] = $this->viewRenderer->partial(
+                    "Helpers/organisation-info-email-{$target}.phtml",
+                    ['emails' => $emails]
+                );
+            } catch (\Exception $e) {
+                $this->logError($e->getmessage());
+            }
+        }
+
         if (!empty($response['pictures'])) {
             $pics = [];
             foreach ($response['pictures'] as $pic) {
@@ -911,6 +928,14 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 $result['services'] = $services;
             }
             if (!empty($allServices)) {
+                foreach ($allServices as &$serviceType) {
+                    usort(
+                        $serviceType,
+                        function ($service1, $service2) {
+                            return strnatcasecmp($service1[0], $service2[0]);
+                        }
+                    );
+                }
                 $result['allServices'] = $allServices;
             }
         }

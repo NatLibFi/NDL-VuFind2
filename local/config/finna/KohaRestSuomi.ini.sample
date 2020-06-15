@@ -1,0 +1,173 @@
+[Parent_Config]
+relative_path = ../finna/KohaRestSuomi_common.ini
+override_full_sections = "UpdateAddress"
+
+[Catalog]
+; An optional catalog id that is used in the translation string when translating
+; location names and opac messages (e.g. location_{id}_ADU)
+id = "outi"
+; URL of the Koha Rest API without the version
+host = "http://koha-server/api"
+; Whether the "paged" API endpoint is available for loans. Default is false.
+;checkoutsSupportPaging = true
+; Whether the availability API endpoint supports returning pickup locations.
+; Default is false.
+;availabilitySupportsPickupLocations = true
+
+[Holds]
+; defaultRequiredDate - A colon-separated list used to set the default "not required
+; after" date for holds in the format days:months:years
+; e.g. 0:1:0 will set a "not required after" date of 1 month from the current date
+defaultRequiredDate = 0:0:2
+
+; A Pick Up Location Code used to pre-select the pick up location drop down list and
+; provide a default option if others are not available. Must be one of the following:
+; 1) empty string to indicate that the first location is default (default setting)
+; 2) "user-selected" to indicate that the user always has to choose the location
+; 3) a value within the Location IDs returned by getPickUpLocations()
+defaultPickUpLocation = ""
+
+; By default the pick up location list is sorted alphabetically. This setting can be
+; used to manually set the order by entering location IDs as a colon-separated list.
+; You can also disable sorting by setting this to false.
+;pickUpLocationOrder = 158:155
+
+; This setting can be used to exclude locations from the pickup location list
+;excludePickupLocations = 1:6:10:15:29:32:34:37:38:39:53:79:87:88
+
+; Optional help texts that can be displayed on the hold form
+;helpText = "Help text for all languages."
+;helpText[en-gb] = "Help text for English language."
+
+; Optional label for the "acceptTerms" extra field
+;acceptTermsText = "I accept the terms in any language."
+;acceptTermsText[en-gb] = "I accept the terms in English."
+
+; This section controls article request behavior. To enable, uncomment (at minimum)
+; the HMACKeys and extraFields settings below.
+[StorageRetrievalRequests]
+; Whether to allow article requests on checked out items. Default is false.
+;allow_checked_out = true
+
+; HMACKeys - A list of form element names that will be analyzed for consistency
+; during form processing. Most users should not need to change this setting.
+;HMACKeys = item_id:holdings_id:StorageRetrievalRequest
+
+; extraFields - A colon-separated list used to display extra visible fields in the
+; place request form. Supported values are "comments", "pickUpLocation",
+; "item-issue" and "acceptTerms"
+;extraFields = item-issue:pickUpLocation
+
+; Optional help texts that can be displayed on the request form
+;helpText = "Help text for all languages."
+;helpText[en-gb] = "Help text for English language."
+
+; Optional label for the "acceptTerms" extra field
+;acceptTermsText = "I accept the terms in any language."
+;acceptTermsText[en-gb] = "I accept the terms in English."
+
+; This setting can be used to exclude locations from the pickup location list
+;excludePickupLocations = "BRANCH:MOBILE"
+
+[Holdings]
+; Whether item-specific hold counts are displayed
+display_item_hold_counts = false
+; Whether total count of holds is displayed
+display_total_hold_count = true
+; Whether total item count is displayed in results list
+display_total_item_count_in_results = true
+; Whether to include item's ccode in the shelf location
+display_ccode = true
+; Whether to include item's call number in the shelf location
+display_full_call_number = true
+; Whether to use the original call number field instead of the display version.
+; Default is false.
+;use_non_display_call_number = true
+; Whether to display title hold links in results list
+display_title_hold_in_results = true
+; Whether to use holding records. Default is false.
+use_holding_records = true
+; Whether to use serial subscriptions. Default is false.
+use_serial_subscriptions = true
+; How the list of serials is filtered. Valid settings are:
+;   empty = No filtering, display all (default)
+;   "last year" = Display only latest received year
+;   "current+1" = Current and previous years
+;serial_subscription_filter = ""
+; Whether to group holdings by location in addition to branch. Default is false.
+;group_by_location = true
+; Fields to include in notes. Default is "852z".
+notes = "506au:845a:852z"
+; Fields to include in summary. Default is "866a".
+summary = "863abiz:866az"
+; Fields to include in supplements. Default is none.
+supplements = "867az"
+; Fields to include in indexes. Default is none.
+indexes = "868az"
+; Whether to display home branch instead of holding branch. Default is false.
+;use_home_branch = true
+; By default the holdings list is sorted alphabetically. This setting can be
+; used to manually set the order of branches and locations by entering codes as a
+; colon-separated list. Branch and location may be combined with a slash. By default
+; the first entry has the highest priority (0), but each entry can be given a custom
+; priority after an equals sign (higher number means lower priority). Unlisted
+; branches will get a default priority of 999.
+;
+; Examples:
+; "MAIN:BRANCH"
+; "MAIN:DEPOSIT=9999"
+; "MAIN:MAIN/111:MAIN/112:MAIN/300=800"
+;
+;holdings_branch_order = "MAIN:BRANCH"
+; By default the holdings list is sorted alphabetically. This setting can be
+; used to manually set the order of locations in branches by entering location codes
+; as a colon-separated list. This list is independent of the branch. Unlisted
+; locations will get a default priority of 999.
+;holdings_location_order = "112:111"
+; Whether to sort items by enumchron. Default is true.
+;sort_by_enum_chron = false
+
+[onlinePayment]
+; Whether online payment is enabled. Default is false.
+enabled = true
+; Transaction fee (in cents) added to each payment
+;transactionFee = 50
+; Minimum fee (in cents) allowed to be paid online
+minimumFee = 65
+; Email address for transactions that could not be registered.
+;errorEmail = ''
+; Payment processing operator card ID in Koha
+userId = 'admin'
+; Payment processing operator password in Koha
+userPassword = ''
+; Maximum duration (in minutes) for a transaction.
+transactionMaxDuration = 15
+; Currency
+currency = 'EUR'
+
+[PasswordRecovery]
+enabled = true
+; Recovery processing operator card ID in Koha
+userId = 'admin'
+; Recovery processing operator password in Koha
+userPassword = '1234'
+
+[Loans]
+; How many loans can be displayed on a single page
+;max_page_size = 25
+
+[Profile]
+; The field to display as the phone number. Default is mobile.
+; Set to empty string for "none".
+;phoneNumberField = ""
+; The field to display as the SMS number. Default is smsalertnumber.
+; Set to empty string for "none".
+;smsNumberField = ""
+
+; Changing of SMS alert number is enabled if method parameter is set. Only valid
+; value for Koha is 'driver'. Set to empty string to disable.
+[updateSmsNumber]
+;method = driver
+; Link the SMS number to the following Koha fields. Default for Finna is
+; "smsalertnumber,phone".
+;fields = "smsalertnumber,phone"

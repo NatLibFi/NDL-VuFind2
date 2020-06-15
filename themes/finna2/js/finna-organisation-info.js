@@ -119,9 +119,9 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     if (zipcode) {
       address += ', ' + zipcode;
     }
-    var area = getField(data.address, 'area');
-    if (area) {
-      address += ' ' + area;
+    var city = getField(data.address, 'city');
+    if (city) {
+      address += ' ' + city;
     }
 
     details.address = address;
@@ -166,7 +166,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       cacheSchedules(id, obj);
 
       var result = {};
-      $(['openTimes', 'scheduleDescriptions', 'periodStart', 'weekNum', 'currentWeek', 'phone', 'links', 'facility-image', 'services', 'pictures', 'rss'])
+      $(['openTimes', 'scheduleDescriptions', 'periodStart', 'weekNum', 'currentWeek', 'phone', 'emails', 'links', 'facility-image', 'services', 'pictures', 'rss'])
         .each(function handleField(ind, field) {
           var val = getField(obj, field, id);
           if (val) {

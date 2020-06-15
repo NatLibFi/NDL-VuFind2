@@ -6,13 +6,12 @@ override_full_sections = "UpdateAddress"
 ; An optional catalog id that is used in the translation string when translating
 ; location names and opac messages (e.g. location_{id}_ADU)
 id = "outi"
-; URL of the Koha Rest API without the version
+; The API address without any version such as v1
 host = "http://koha-server/api"
-; Whether the "paged" API endpoint is available for loans. Default is false.
-;checkoutsSupportPaging = true
-; Whether the availability API endpoint supports returning pickup locations.
-; Default is false.
-;availabilitySupportsPickupLocations = true
+; OAuth2 client ID
+clientId = ""
+; OAuth2 client secret
+clientSecret = ""
 
 [Holds]
 ; defaultRequiredDate - A colon-separated list used to set the default "not required
@@ -136,10 +135,6 @@ enabled = true
 minimumFee = 65
 ; Email address for transactions that could not be registered.
 ;errorEmail = ''
-; Payment processing operator card ID in Koha
-userId = 'admin'
-; Payment processing operator password in Koha
-userPassword = ''
 ; Maximum duration (in minutes) for a transaction.
 transactionMaxDuration = 15
 ; Currency
@@ -147,10 +142,6 @@ currency = 'EUR'
 
 [PasswordRecovery]
 enabled = true
-; Recovery processing operator card ID in Koha
-userId = 'admin'
-; Recovery processing operator password in Koha
-userPassword = '1234'
 
 [Loans]
 ; How many loans can be displayed on a single page
