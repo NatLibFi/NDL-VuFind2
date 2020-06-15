@@ -310,7 +310,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
         try {
             if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date)) {
                 return $this->dateConverter->convertToDisplayDate('Y-m-d', $date);
-            } else if (preg_match('/^(\d{4})$/', $date)) {
+            } elseif (preg_match('/^(\d{4})$/', $date)) {
                 return $this->dateConverter->convertFromDisplayDate(
                     'Y',
                     $this->dateConverter->convertToDisplayDate('Y', $date)
