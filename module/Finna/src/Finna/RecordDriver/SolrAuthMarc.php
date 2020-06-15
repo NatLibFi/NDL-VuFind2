@@ -308,9 +308,13 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
             return $date;
         }
         try {
-            return $this->dateConverter->convertToDisplayDate(
-                'Y-m-d', $date
-            );
+            if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date)) {
+                return $this->dateConverter->convert('Y-m-d', 'j.n.Y', $date);
+            } else if (preg_match('/^(\d{4})$/', $date)) {
+                return $this->dateConverter->convert('Y', 'Y', $date);
+            } else {
+                return $date;
+            }
         } catch (\Exception $e) {
             return $date;
         }
