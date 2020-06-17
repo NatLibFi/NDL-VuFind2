@@ -475,7 +475,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordSubjects']
             ]
         );
-        //
+
         $setTemplateLine(
             'Manufacturer', 'getManufacturer', 'data-transEsc.phtml',
             [
