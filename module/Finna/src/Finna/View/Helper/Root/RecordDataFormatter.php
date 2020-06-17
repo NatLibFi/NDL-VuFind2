@@ -65,6 +65,14 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         foreach ($filter as $key) {
             unset($coreFields[$key]);
         }
+
+        $replace = ['SubjectsExteded' => 'Subjects'];
+        foreach ($replace as $from => $to) {
+            if (isset($coreFields[$from])) {
+                $coreFields[$to] = $coreFields[$from];
+                unset($coreFields[$from]);
+            }
+        }
         return $coreFields;
     }
 

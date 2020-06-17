@@ -461,11 +461,21 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Subjects',
+            'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        // Used by SolrMarc. Translation key is renamed to 'Subjects' in
+        // RecordDataformatter::filterMarcFields
+        $setTemplateLine(
+            'SubjectsExteded',
             'getAllSubjectHeadingsExtended', 'data-allSubjectHeadingsExtended.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
             ]
         );
+        //
         $setTemplateLine(
             'Manufacturer', 'getManufacturer', 'data-transEsc.phtml',
             [
