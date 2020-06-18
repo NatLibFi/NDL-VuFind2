@@ -23,9 +23,6 @@ timeout = 30
 ; a query string if necessary.
 url = "https://ndl-pc-fe1.hosted.exlibrisgroup.com"
 
-; Extra HTTP parameters for API requests
-; extraHttpParams[] = "key:value"
-
 ; This section controls the result limit options for search results. default_limit
 ; sets the default number of results per page. limit_options is a comma-separated
 ; list of numbers to be presented to the end-user. If only one limit is required,
