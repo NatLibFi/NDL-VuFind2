@@ -85,7 +85,7 @@ class PrimoBackendFactory
         if ($extraParams = ($this->primoConfig->General->extraHttpParams ?? [])) {
             $extra = [];
             foreach ($extraParams as $param) {
-                list($key,$val) = explode(':', $param, 2);
+                list($key, $val) = explode(':', $param, 2);
                 $extra[$key] = $val;
             }
             $connector->setExtraHttpParams($extra);
