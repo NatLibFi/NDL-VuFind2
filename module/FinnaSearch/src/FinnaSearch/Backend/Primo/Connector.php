@@ -117,18 +117,6 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
     }
 
     /**
-     * Set extra HTTP parameters for API requests.
-     *
-     * @param array $extraParams Parameters (key-value array)
-     *
-     * @return void
-     */
-    public function setExtraHttpParams($extraParams)
-    {
-        $this->extraHttpParams = $extraParams;
-    }
-
-    /**
      * Small wrapper for sendRequest, process to simplify error handling.
      *
      * @param string $qs     Query string
@@ -145,10 +133,6 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
             foreach ($fields as $field) {
                 $qs .= "&displayField=$field";
             }
-        }
-
-        if ($extra = http_build_query($this->extraHttpParams)) {
-            $qs .= "&{$extra}";
         }
 
         $cacheKey = md5(
