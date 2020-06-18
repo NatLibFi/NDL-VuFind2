@@ -82,6 +82,15 @@ class PrimoBackendFactory
             $this->serviceLocator->get(\VuFind\Cache\Manager::class)
         );
 
+        if ($extraParams = ($this->primoConfig->General->extraHttpParams ?? [])) {
+            $extra = [];
+            foreach ($extraParams as $param) {
+                list($key,$val) = explode(':', $param, 2);
+                $extra[$key] = $val;
+            }
+            $connector->setExtraHttpParams($extra);
+        }
+
         if ($this->primoConfig->HiddenFilters) {
             $connector->setHiddenFilters(
                 $this->primoConfig->HiddenFilters->toArray()
