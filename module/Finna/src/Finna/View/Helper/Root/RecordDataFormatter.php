@@ -60,18 +60,11 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Online Access', 'Original Work', 'Assistants', 'Authors', 'Music',
             'Press Reviews', 'mainFormat', 'Access Restrictions', 'Edition',
             'Archive', 'Archive Series', 'Archive Origination', 'Archive Relations',
-            'Item Description FWD', 'Published in', 'Relations', 'Source Collection'
+            'Item Description FWD', 'Published in', 'Relations', 'Source Collection',
+            'Subjects'
         ];
         foreach ($filter as $key) {
             unset($coreFields[$key]);
-        }
-
-        $replace = ['SubjectsExtended' => 'Subjects'];
-        foreach ($replace as $from => $to) {
-            if (isset($coreFields[$from])) {
-                $coreFields[$to] = $coreFields[$from];
-                unset($coreFields[$from]);
-            }
         }
         return $coreFields;
     }

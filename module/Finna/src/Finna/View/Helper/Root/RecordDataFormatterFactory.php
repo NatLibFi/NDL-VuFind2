@@ -469,7 +469,7 @@ class RecordDataFormatterFactory
         // Used by SolrMarc. Translation key is renamed to 'Subjects' in
         // RecordDataformatter::filterMarcFields
         $setTemplateLine(
-            'SubjectsExtended',
+            'subjects_extended',
             'getAllSubjectHeadingsExtended', 'data-allSubjectHeadingsExtended.phtml',
             [
                 'context' => ['class' => 'recordSubjects']
