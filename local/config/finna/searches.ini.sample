@@ -116,13 +116,13 @@ Subject             = Subject
 [Advanced_Searches]
 AllFields           = adv_search_all
 Title               = adv_search_title
-;JournalTitle       = adv_search_journaltitle
+;JournalTitle        = adv_search_journaltitle
 Author              = adv_search_author
 Subject             = adv_search_subject
 description         = adv_search_description
 geographic          = adv_search_geographic
 Classification      = adv_search_classification
-;CallNumber         = adv_search_callnumber
+;CallNumber          = adv_search_callnumber
 ISN                 = adv_search_isn
 Series              = adv_search_series
 toc                 = adv_search_toc
