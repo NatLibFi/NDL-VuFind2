@@ -89,6 +89,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         parent::init();
 
+        $this->patronStatusMappings['Patron::DebarredWithReason']
+            = 'patron_status_restricted_with_reason';
+
         $this->groupHoldingsByLocation
             = isset($this->config['Holdings']['group_by_location'])
             ? $this->config['Holdings']['group_by_location']
@@ -236,6 +239,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     'query_blocks' => 1,
                     'query_relationships' => 1,
                     'query_messaging_preferences' => 1,
+                    'query_messages' => 1,
                 ]
             ]
         );
@@ -310,6 +314,15 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $messagingSettings[$type] = $settings;
         }
 
+        $messages = [];
+        foreach ($result['messages'] ?? [] as $message) {
+            $messages[] = [
+                'date' => $this->convertDate($message['date']),
+                'library' => $this->getLibraryName($message['library_id']),
+                'message' => $message['message']
+            ];
+        }
+
         $phoneField = isset($this->config['Profile']['phoneNumberField'])
             ? $this->config['Profile']['phoneNumberField']
             : 'mobile';
@@ -332,12 +345,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'country' => $result['country'],
             'category' => $result['category_id'] ?? '',
             'expiration_date' => $expirationDate,
+            'expiration_soon' => !empty($result['expiry_date_near']),
             'hold_identifier' => $result['other_name'],
             'guarantors' => $guarantors,
             'guarantees' => $guarantees,
             'loan_history' => $result['privacy'],
             'messagingServices' => $messagingSettings,
             'notes' => $result['opac_notes'],
+            'messages' => $messages,
             'full_data' => $result
         ];
     }
@@ -578,7 +593,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         return [
             'success' => true,
-            'status' => $code == 202
+            'status' => $result['code'] == 202
                 ? 'request_change_done' : 'request_change_accepted',
             'sys_message' => ''
         ];
@@ -1303,7 +1318,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         return [
             'id' => $id,
-            'item_id' => 'HLD_' . $holding['biblionumber'],
+            'item_id' => 'HLD_' . $holdings['biblionumber'],
             'location' => $location,
             'requests_placed' => 0,
             'status' => '',
@@ -1555,5 +1570,63 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $result['reservations'] = $requests;
         }
         return $result;
+    }
+
+    /**
+     * Translate collection name
+     *
+     * @param string $code        Collection code
+     * @param string $description Collection description
+     *
+     * @return string
+     */
+    protected function translateCollection($code, $description)
+    {
+        $prefix = 'collection_';
+        if (!empty($this->config['Catalog']['id'])) {
+            $prefix .= $this->config['Catalog']['id'] . '_';
+        }
+        return $this->translate(
+            "$prefix$code",
+            null,
+            $description
+        );
+    }
+
+    /**
+     * Get a description for a block
+     *
+     * @param string $reason  Koha block reason
+     * @param array  $details Any details related to the reason
+     *
+     * @return string
+     */
+    protected function getPatronBlockReason($reason, $details)
+    {
+        $params = [];
+        switch ($reason) {
+        case 'Hold::MaximumHoldsReached':
+            $params = [
+                '%%blockCount%%' => $details['current_hold_count'],
+                '%%blockLimit%%' => $details['max_holds_allowed']
+            ];
+            break;
+        case 'Patron::Debt':
+        case 'Patron::DebtGuarantees':
+            $params = [
+                '%%blockCount%%' => $details['current_outstanding'] ?? '-',
+                '%%blockLimit%%' => $details['max_outstanding'] ?? '-'
+            ];
+            break;
+        case 'Patron::Debarred':
+            if (!empty($details['comment'])) {
+                $params = [
+                    '%%reason%%' => $details['comment']
+                ];
+                $reason = 'Patron::DebarredWithReason';
+            }
+            break;
+        }
+        return $this->translate($this->patronStatusMappings[$reason] ?? '', $params);
     }
 }

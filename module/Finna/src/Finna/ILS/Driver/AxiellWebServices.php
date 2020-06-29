@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -51,7 +51,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
  * @link     https://vufind.org/wiki/development:plugins:ils_drivers Wiki
  */
 class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
-    implements TranslatorAwareInterface, \Zend\Log\LoggerAwareInterface,
+    implements TranslatorAwareInterface, \Laminas\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
