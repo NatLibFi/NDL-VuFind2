@@ -116,7 +116,7 @@ Subject             = Subject
 [Advanced_Searches]
 AllFields           = adv_search_all
 Title               = adv_search_title
-;JournalTitle        = adv_search_journaltitle
+;JournalTitle         = adv_search_journaltitle
 Author              = adv_search_author
 Subject             = adv_search_subject
 description         = adv_search_description
