@@ -836,9 +836,6 @@ finna.imagePaginator = (function imagePaginator() {
       var img = new Image();
       img.src = openLink;
       img.onload = function onLoadImg() {
-        if (typeof this === 'undefined') {
-          return;
-        }
         var width = this.width;
         var height = this.height;
         if (width === 10 && height === 10) {
