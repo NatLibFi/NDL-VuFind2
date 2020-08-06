@@ -332,7 +332,7 @@ finna.myList = (function finnaMyList() {
     initListTagComponent();
   }
 
-  initListTagComponent = function() {
+  initListTagComponent = function _initListTagComponent() {
     $('.list-tags form').unbind('submit').submit(function onSubmitAddListTagForm(/*event*/) {
       updateList({}, listTagsChanged, 'tags');
       return false;
