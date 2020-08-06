@@ -321,6 +321,14 @@ finna.myList = (function finnaMyList() {
     toggleTitleEditable(true);
   }
 
+  function listTagsChanged(data) {
+    $('.list-tags .tags').html(data.tags);
+    $('.list-tags .new-tag').val('');
+    $('.list-tags form fieldset').attr('disabled', false);
+    $('.list-tags .fa-spinner').hide();
+    initListTagComponent();
+  }
+
   function initListTagComponent() {
     $('.list-tags form').unbind('submit').submit(function onSubmitAddListTagForm(/*event*/) {
       updateList({}, listTagsChanged, 'tags');
@@ -334,14 +342,6 @@ finna.myList = (function finnaMyList() {
     $('.list-tags .toggle').unbind('click').on('click', function onToggleTags(/*event*/) {
       $('.list-tags').toggleClass('collapsed');
     });
-  }
-
-  function listTagsChanged(data) {
-    $('.list-tags .tags').html(data.tags);
-    $('.list-tags .new-tag').val('');
-    $('.list-tags form fieldset').attr('disabled', false);
-    $('.list-tags .fa-spinner').hide();
-    initListTagComponent();
   }
 
   function newListAdded(data) {
