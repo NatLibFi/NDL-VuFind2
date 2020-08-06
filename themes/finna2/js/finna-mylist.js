@@ -184,7 +184,7 @@ finna.myList = (function finnaMyList() {
       var tags = $('.list-tags .tags .tag .text');
       var listTags = [];
       if (tags.length) {
-        tags.each(function(ind, tag) {
+        tags.each(function extractTag(ind, tag) {
           listTags.push($(tag).text());
         });
       }
