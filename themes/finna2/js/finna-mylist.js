@@ -180,12 +180,26 @@ finna.myList = (function finnaMyList() {
       } else {
         listParams.desc = description;
       }
+
+      var tags = $('.list-tags .tags .tag .text');
+      var listTags = [];
+      if (tags.length) {
+        tags.each(function(ind, tag) {
+          listTags.push($(tag).text());
+        });
+      }
+      var newTag = $('.list-tags .new-tag');
+      listTags.push(newTag.val());
+      listParams.tags = listTags;
     }
 
     if (type === 'title') {
       spinner = $('.list-title .fa');
     } else if (type === 'desc') {
       spinner = $('.list-description .fa:not(.fa-arrow-down)');
+    } else if (type === 'tags') {
+      $('.list-tags form fieldset').attr('disabled', 'disabled');
+      $('.list-tags .fa-spinner').toggleClass('hide', false).show();
     } else if (type === 'add-list') {
       spinner = $('.add-new-list .fa');
     } else if (type === 'visibility') {
@@ -305,6 +319,29 @@ finna.myList = (function finnaMyList() {
       $('input[name=listDescription]').val(description.data('markdown'));
     }
     toggleTitleEditable(true);
+  }
+
+  function initListTagComponent() {
+    $('.list-tags form').unbind('submit').submit(function onSubmitAddListTagForm(/*event*/) {
+      updateList({}, listTagsChanged, 'tags');
+      return false;
+    });
+    $('.list-tags .tags .tag .delete-tag').unbind('click').on('click', function onDeleteTag(/*event*/) {
+      $('.list-tags form fieldset').attr('disabled', 'disabled');
+      $(this).closest('.tag').remove();
+      updateList({}, listTagsChanged, 'tags');
+    });
+    $('.list-tags .toggle').unbind('click').on('click', function onToggleTags(/*event*/) {
+      $('.list-tags').toggleClass('collapsed');
+    });
+  }
+
+  function listTagsChanged(data) {
+    $('.list-tags .tags').html(data.tags);
+    $('.list-tags .new-tag').val('');
+    $('.list-tags form fieldset').attr('disabled', false);
+    $('.list-tags .fa-spinner').hide();
+    initListTagComponent();
   }
 
   function newListAdded(data) {
@@ -493,6 +530,9 @@ finna.myList = (function finnaMyList() {
       initEditableMarkdownField($('.list-description'), function onDoneEditDescription(/*markdown*/) {
         updateList({}, listDescriptionChanged, 'desc');
       });
+
+      // list tags
+      initListTagComponent();
 
       // list visibility
       $(".list-visibility input[type='radio']").unbind('change').change(function onChangeVisibility() {
