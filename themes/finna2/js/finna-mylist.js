@@ -321,6 +321,9 @@ finna.myList = (function finnaMyList() {
     toggleTitleEditable(true);
   }
 
+  // fixes jshint error from using initListTagComponent before it's defined.
+  var initListTagComponent;
+
   function listTagsChanged(data) {
     $('.list-tags .tags').html(data.tags);
     $('.list-tags .new-tag').val('');
@@ -329,7 +332,7 @@ finna.myList = (function finnaMyList() {
     initListTagComponent();
   }
 
-  function initListTagComponent() {
+  initListTagComponent = function() {
     $('.list-tags form').unbind('submit').submit(function onSubmitAddListTagForm(/*event*/) {
       updateList({}, listTagsChanged, 'tags');
       return false;
@@ -342,7 +345,7 @@ finna.myList = (function finnaMyList() {
     $('.list-tags .toggle').unbind('click').on('click', function onToggleTags(/*event*/) {
       $('.list-tags').toggleClass('collapsed');
     });
-  }
+  };
 
   function newListAdded(data) {
     var title = data.title;
