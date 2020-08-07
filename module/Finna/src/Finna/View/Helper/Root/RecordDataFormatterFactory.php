@@ -968,12 +968,10 @@ class RecordDataFormatterFactory
     public function getDefaultAuthoritySpecs()
     {
         $spec = new SpecBuilder();
-        $spec->setTemplateLine(
-            'Date of birth', 'getBirthDateAndPlace', 'data-line-with-detail.phtml'
-        );
-        $spec->setTemplateLine(
-            'Date of death', 'getDeathDateAndPlace', 'data-line-with-detail.phtml'
-        );
+        $spec->setLine('Date of birth', 'getBirthDate');
+        $spec->setLine('Place of birth', 'getBirthPlace');
+        $spec->setLine('Date of death', 'getDeathDate');
+        $spec->setLine('Place of death', 'getDeathPlace');
 
         $spec->setLine('Established', 'getEstablishedDate');
         $spec->setLine('Terminated', 'getTerminatedDate');
