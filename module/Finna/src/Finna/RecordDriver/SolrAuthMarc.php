@@ -286,7 +286,6 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 $type = null;
                 if ($type = $data['2'] ?? $data['q']) {
                     $type = mb_strtolower(rtrim($type, ': '), 'UTF-8');
-                    $id = "$id ($type)";
                 }
                 $result[] = ['data' => $id, 'detail' => $type];
             }
