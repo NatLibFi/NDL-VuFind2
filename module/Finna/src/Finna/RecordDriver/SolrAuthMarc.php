@@ -47,18 +47,18 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Get an array of all the formats associated with the record.
+     * Return corporate record type.
      *
-     * @return array
+     * @return string
      */
-    public function getFormats()
+    public function getCorporateType()
     {
         foreach ($this->getMarcRecord()->getFields('368') as $field) {
             if ($res = $field->getSubfield('a')) {
-                return [MetadataUtils::ucFirst($res->getData())];
+                return MetadataUtils::ucFirst($res->getData());
             }
         }
-        return $this->_getFormats();
+        return '';
     }
 
     /**
