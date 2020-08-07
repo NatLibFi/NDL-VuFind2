@@ -212,6 +212,16 @@ trait SolrAuthFinnaTrait
      */
     public function getSummary()
     {
+        return [];
+    }
+
+    /**
+     * Return historical information.
+     *
+     * @return array|null
+     */
+    public function getHistory()
+    {
         return null;
     }
 

@@ -161,11 +161,11 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Return description
+     * Return historical information
      *
      * @return array
      */
-    public function getSummary()
+    public function getHistory()
     {
         $result = [];
         foreach ($this->getMarcRecord()->getFields('678') as $field) {

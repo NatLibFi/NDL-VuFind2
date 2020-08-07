@@ -990,6 +990,8 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine(
             'Identifiers', 'getOtherIdentifiers', 'data-lines-with-detail.phtml'
         );
+        $spec->setLine('Historical Information', 'getHistory');
+
         $spec->setTemplateLine('Sources', 'getSources', 'data-sources.phtml');
         $spec->setTemplateLine(
             'Related Authorities', 'getRelations', 'data-relations-author.phtml'
