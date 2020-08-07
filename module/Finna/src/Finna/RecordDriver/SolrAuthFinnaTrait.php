@@ -236,16 +236,6 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return historical information.
-     *
-     * @return array|null
-     */
-    public function getHistory()
-    {
-        return null;
-    }
-
-    /**
      * Return description (for backward compatibility)
      *
      * @return string|null
