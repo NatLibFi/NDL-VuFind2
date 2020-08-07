@@ -222,7 +222,7 @@ trait SolrAuthFinnaTrait
      */
     public function getSummary()
     {
-        return [];
+        return null;
     }
 
     /**
