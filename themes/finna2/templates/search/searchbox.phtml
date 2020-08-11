@@ -43,12 +43,15 @@
 
     $ignoreHiddenFilterMemory = $this->ignoreHiddenFilterMemory ?? false;
     $ignoreHiddenFiltersInRequest = $this->ignoreHiddenFiltersInRequest ?? false;
-    $hiddenFilters = $this->searchtabs()->getHiddenFilters($this->searchClassId, $ignoreHiddenFilterMemory, $ignoreHiddenFiltersInRequest);
-    if (empty($hiddenFilters) && !$ignoreHiddenFilterMemory) {
+    $hiddenFilters = [];
+    if ($module !== 'collection') {
+      $hiddenFilters = $this->searchtabs()->getHiddenFilters($this->searchClassId, $ignoreHiddenFilterMemory, $ignoreHiddenFiltersInRequest);
+      if (empty($hiddenFilters) && !$ignoreHiddenFilterMemory) {
         $hiddenFilters = $this->searchMemory()->getLastHiddenFilters($this->searchClassId);
         if (empty($hiddenFilters)) {
-            $hiddenFilters = $this->searchtabs()->getHiddenFilters($this->searchClassId);
+          $hiddenFilters = $this->searchtabs()->getHiddenFilters($this->searchClassId);
         }
+      }
     }
 
     $searchTabs = $this->searchtabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $hiddenFilters, $this->layout()->savedTabs);
