@@ -140,7 +140,15 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase
             : $this->userList->getExisting($listParams['id']);
 
         if (isset($listParams['tags'])) {
-            $listParams['tags'] = implode(' ', $listParams['tags']);
+            $tags = array_map(
+                function ($tag) {
+                    $tag = urldecode($tag);
+                    // Quote tag with whitespace to prevent VuFind
+                    // from creating multiple tags.
+                    return false !== strpos($tag, ' ') ? "\"{$tag}\"" : $tag;
+                }, $listParams['tags']
+            );
+            $listParams['tags'] = implode(' ', $tags);
         }
 
         $finalId = $list->updateFromRequest(
