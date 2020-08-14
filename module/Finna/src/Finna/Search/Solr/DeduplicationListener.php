@@ -27,9 +27,9 @@
  */
 namespace Finna\Search\Solr;
 
-use VuFindSearch\Query\QueryGroup;
-
 use Laminas\EventManager\EventInterface;
+
+use VuFindSearch\Query\QueryGroup;
 
 /**
  * Solr merged record handling listener.
