@@ -1570,6 +1570,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         } else {
             $functionConfig = false;
         }
+        if ($function === 'getTitleList') {
+            if (isset($this->config['Catalog']['catalogueaurora_wsdl'])) {
+                $functionConfig = [
+                    'enabled' => true
+                ];
+            }
+        }
         return $functionConfig;
     }
 

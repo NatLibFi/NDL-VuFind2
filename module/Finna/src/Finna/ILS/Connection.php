@@ -555,7 +555,7 @@ class Connection extends \VuFind\ILS\Connection
      */
     protected function checkMethodgetTitleList($functionConfig, $params)
     {
-        if (!empty($functionConfig['max_results'])
+        if (!empty($functionConfig['enabled'])
             && isset($params['id'])
         ) {
             return $functionConfig;
