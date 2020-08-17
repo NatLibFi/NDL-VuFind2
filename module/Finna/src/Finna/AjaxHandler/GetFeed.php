@@ -194,7 +194,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 $feed->setId(' ');
                 $feed->setDescription(' ');
                 foreach ($records as $rec) {
-                    $isRecord = is_a($rec, 'VuFind\\RecordDriver\\SolrDefault');
+                    $isRecord = !$rec instanceof \VuFind\RecordDriver\Missing;
                     $entry = $feed->createEntry();
                     $entry->setTitle($rec->getTitle());
                     $entry->setDateModified(time());
