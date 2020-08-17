@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Solr deduplication (merged records) listener.
  *
@@ -30,6 +29,8 @@ namespace Finna\Search\Solr;
 
 use Laminas\EventManager\EventInterface;
 
+use VuFindSearch\Query\QueryGroup;
+
 /**
  * Solr merged record handling listener.
  *
@@ -53,6 +54,13 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         $saveEnabled = $this->enabled;
         $backend = $event->getTarget();
         if ($backend === $this->backend) {
+            // Check that we're not doing a known record search
+            $query = $event->getParam('query');
+            if ($query && !($query instanceof QueryGroup)
+                && $query->getHandler() === 'id'
+            ) {
+                return $event;
+            }
             $params = $event->getParam('params');
             $context = $event->getParam('context');
             $allowedContexts = ['search', 'similar', 'workExpressions', 'getids'];

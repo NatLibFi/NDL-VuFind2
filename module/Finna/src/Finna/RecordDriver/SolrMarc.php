@@ -259,7 +259,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
                     $subfields = $this->getSubfieldArray($field, ['a', 'b']);
                     if (!empty($subfields)) {
-                        $result[$classification][] = $subfields[0];
+                        $class = $subfields[0];
+                        if ($x = $this->getSubfieldArray($field, ['x'])) {
+                            if (preg_match('/^\w/', $x[0])) {
+                                $class .= '-';
+                            }
+                            $class .= $x[0];
+                        }
+                        $result[$classification][] = $class;
                     }
                 }
             }
@@ -440,7 +447,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         // Try field 700 if 979 is empty
         if (!$componentParts) {
             foreach ($this->getMarcRecord()->getFields('700') as $field) {
-                if (!$field->getSubfield('t')) {
+                if ($field->getIndicator(2) != 2 || !$field->getSubfield('t')) {
                     continue;
                 }
                 $partOrderCounter++;
@@ -1165,6 +1172,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $results = [];
         foreach (['130', '240'] as $fieldCode) {
             foreach ($this->getMarcRecord()->getFields($fieldCode) as $field) {
+                $subfields = [];
                 foreach ($field->getSubfields() as $subfield) {
                     $subfields[] = $subfield->getData();
                 }
@@ -1263,7 +1271,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         }
         // Alternatively, are there titles in 700 fields?
         foreach ($this->getMarcRecord()->getFields('700') as $field) {
-            if ($field->getSubfield('t')) {
+            if ($field->getIndicator(2) == 2 && $field->getSubfield('t')) {
                 return true;
             }
         }

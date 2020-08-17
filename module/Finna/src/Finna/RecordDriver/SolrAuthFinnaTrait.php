@@ -51,6 +51,16 @@ trait SolrAuthFinnaTrait
     }
 
     /**
+     * Return corporate record type.
+     *
+     * @return string
+     */
+    public function getCorporateType()
+    {
+        return '';
+    }
+
+    /**
      * Return the unique identifier of this record within the index;
      * useful for retrieving additional information (like tags and user
      * comments) from the external MySQL database.
@@ -216,6 +226,16 @@ trait SolrAuthFinnaTrait
     }
 
     /**
+     * Return historical information.
+     *
+     * @return array|null
+     */
+    public function getHistory()
+    {
+        return null;
+    }
+
+    /**
      * Return description (for backward compatibility)
      *
      * @return string|null
@@ -253,16 +273,6 @@ trait SolrAuthFinnaTrait
     public function getOccupations()
     {
         return $this->fields['occupation'] ?? [];
-    }
-
-    /**
-     * Return place of residence.
-     *
-     * @return string
-     */
-    public function getPlaceOfResidence()
-    {
-        return '';
     }
 
     /**

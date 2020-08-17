@@ -285,7 +285,7 @@ if (!$disableTitleHold
       $logged = $account->isLoggedIn();
       $link = null;
       if (!$logged) {
-        $link = $this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true');
+        $link = $this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true&target=' . $source);
       } elseif ($journal) {
         $link = $this->escapeHtmlAttr($holdingsLink);
       } else {
@@ -321,5 +321,13 @@ if (!$disableTitleHold
 <?php if ($driver && $source && $externalInterfaceUrl = $summary['externalInterfaceUrl'] ?? ''):?>
   <?=$this->record($driver)->renderTemplate('external-interface-link.phtml', ['driver' => $driver, 'source' => $source, 'link' => $externalInterfaceUrl ?? ''])?>
 <?php endif;?>
+
+<?php
+  $js = <<<JS
+finna.layout.initTruncate($('.holding-details'));
+VuFind.lightbox.bind($('.holding-details'));
+JS;
+  echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $js, 'SET');
+?>
 
 <!-- END of: finna - ajax/status-full.phtml -->
