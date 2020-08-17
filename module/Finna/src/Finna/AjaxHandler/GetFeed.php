@@ -35,6 +35,7 @@ use Laminas\Feed\Writer\Feed;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Renderer\RendererInterface;
+use Laminas\Escaper\Escaper;
 use Vufind\ILS\Connection;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
@@ -68,7 +69,18 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
      */
     protected $feedService;
 
+    /**
+     * ILS connection
+     * 
+     * @var Connection
+     */
     protected $ils;
+
+    /**
+     * Record loader
+     * 
+     * @var Loader
+     */
     protected $recordLoader;
     
     /**
@@ -88,14 +100,17 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Constructor
      *
-     * @param SessionSettings   $ss       Session settings
-     * @param Config            $config   RSS configuration
-     * @param FeedService       $fs       Feed service
-     * @param RendererInterface $renderer View renderer
-     * @param Url               $url      URL helper
+     * @param SessionSettings   $ss           Session settings
+     * @param Config            $config       RSS configuration
+     * @param FeedService       $fs           Feed service
+     * @param Loader            $recordLoader Record Loader
+     * @param Connection        $ils          ILS connection
+     * @param RendererInterface $renderer     View renderer
+     * @param Url               $url          URL helper
      */
     public function __construct(SessionSettings $ss, Config $config,
-        FeedService $fs, Loader $recordLoader, Connection $ils, RendererInterface $renderer, Url $url
+        FeedService $fs, Loader $recordLoader, Connection $ils,
+        RendererInterface $renderer, Url $url
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;
@@ -137,71 +152,87 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 $feed = $this->feedService->readFeed($id, $homeUrl);
             } else {
                 // ILS list to be converted to a feed
-
-                
-                // TODO: read from params
                 $query = $ilsList ?? 'new';
-                $amount = 20;
-                $type = 'carousel';
-                $source = 'Solr';
+                $amount = $config['amount'] ?? 20;
+                $type = $config['type'] ?? 'carousel';
+                $source = $config['source'] ?? 'Solr';
                 $ilsId = $config['ilsId'];
 
-                // Create a fake patron id so ILS driver can be properly acquired
-
-                // TODO: remove hard-coded
-                $sourceId = 'satakirjastot';
-                $patronId = !empty($sourceId) ? $sourceId . '.123' : '';
+                $patronId = !empty($ilsId) ? $ilsId . '.123' : '';
                 $amount = $amount > 20 ? 20 : $amount;
                 
-                $result = $this->ils->checkFunction('getTitleList', ['id' => $patronId]);
+                $result = $this->ils->checkFunction(
+                    'getTitleList', ['id' => $patronId]
+                );
                 if (!$result) {
                     return $this->formatResponse('Missing configurations', 501);
                 }
                 
                 $records = [];
                 $data = $this->ils->getTitleList(
-                    ['query' => $query, 'pageSize' => $amount, 'id' => $id]
+                    ['query' => $query, 'pageSize' => $amount, 'id' => $ilsId]
                 );
 
-                //die(var_export($data['records'], true));
-                
                 foreach ($data['records'] ?? [] as $key => $obj) {
-                    $loadedRecord = $this->recordLoader->load($ilsId . '.' . $obj['id'], $source, true);
+                    $loadedRecord = $this->recordLoader->load(
+                        $ilsId . '.' . $obj['id'], $source, true
+                    );
                     $loadedRecord->setExtraDetail('ils_details', $obj);
                     $records[] = $loadedRecord;
                 }
 
-                // Create feed
-                
                 $serverUrl = $this->renderer->plugin('serverUrl');
                 $recordHelper = $this->renderer->plugin('record');
                 $recordImage = $this->renderer->plugin('recordImage');
+                $recordUrl = $this->renderer->plugin('recordLink');
+                $escaper = new Escaper('utf-8');
 
-
-                $feed = new Feed;
+                $feed = new Feed();
                 $feed->setTitle($query);
-                $feed->setLink('https://finna.fi');
+                $feed->setLink($serverUrl());
                 $feed->setDateModified(time());
                 $feed->setId(' ');
-                $feed->setDescription(' ');
+                $feed->setDescription('Ils content');
                 foreach ($records as $rec) {
+                    $isRecord = is_a($rec, 'VuFind\\RecordDriver\\SolrDefault');
                     $entry = $feed->createEntry();
                     $entry->setTitle($rec->getTitle());
                     $entry->setDateModified(time());
                     $entry->setDateCreated(time());
                     $entry->setId($rec->getUniqueID());
-                    $entry->setLink('https://finna.fi'); // TODO proper link
+                    if ($isRecord) {
+                        $entry->setLink($recordUrl->getUrl($rec));
+                    }
+                    $ilsDetails = $rec->getExtraDetail('ils_details');
+                    $isRecord = is_a($rec, 'VuFind\\RecordDriver\\SolrDefault');
+                    $formats = $rec->tryMethod('getFormats');
+                    $format = $isRecord && $formats
+                        ? $recordHelper($rec)->getFormatClass(end($formats))
+                        : 'book';
+                    $author = $isRecord
+                        ? $rec->getPrimaryAuthorForSearch()
+                        : $ilsDetails['author'];
+                    $year = $isRecord ?
+                        ($rec->getPublicationDates()[0] ?? '')
+                        : $ilsDetails['year'];
 
-                    // TODO: maybe not needed?
-                    $summaries = array_filter($rec->tryMethod('getSummary'));
-                    if (!empty($summaries)) {
-                        $entry->setDescription(implode(' -- ', $summaries));
-
+                    $content = '';
+                    if ($isRecord) {
+                        $content .= $recordHelper($rec)->getFormatList();
+                        $content .=
+                            ' '. $recordHelper($rec)->getSourceIdElement()
+                            . '; ';
+                    }
+                    if (!empty($author)) {
+                        $content .= $escaper->escapeHtml($author);
+                    }
+                    if (!empty($year)) {
+                        $content .= '; ' . $escaper->escapeHtml($year);
                     }
 
-                    // TODO: tähän uusi sisältö, mahdollisesti htmlnä?
-                    $entry->setContent('lorem ipsum');                    
-                    
+                    if (!empty($content)) {
+                        $entry->setContent($content); 
+                    }                   
 
                     $imageUrl = $recordImage($recordHelper($rec))->getLargeImage()
                         . '&w=1024&h=1024&imgext=.jpeg';
@@ -210,7 +241,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                             'uri' => $serverUrl($imageUrl),
                             'type' => 'image/jpeg',
                             'length' => 0
-                         ]
+                        ]
                     );
         
                     $feed->addEntry($entry);
