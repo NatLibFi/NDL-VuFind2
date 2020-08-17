@@ -192,7 +192,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 $feed->setLink($serverUrl());
                 $feed->setDateModified(time());
                 $feed->setId(' ');
-                $feed->setDescription('Ils content');
+                $feed->setDescription(' ');
                 foreach ($records as $rec) {
                     $isRecord = is_a($rec, 'VuFind\\RecordDriver\\SolrDefault');
                     $entry = $feed->createEntry();
