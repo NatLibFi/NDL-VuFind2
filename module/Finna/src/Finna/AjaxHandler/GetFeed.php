@@ -31,11 +31,11 @@ namespace Finna\AjaxHandler;
 
 use Finna\Feed\Feed as FeedService;
 use Laminas\Config\Config;
+use Laminas\Escaper\Escaper;
 use Laminas\Feed\Writer\Feed;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Renderer\RendererInterface;
-use Laminas\Escaper\Escaper;
 use Vufind\ILS\Connection;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
@@ -71,18 +71,18 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
 
     /**
      * ILS connection
-     * 
+     *
      * @var Connection
      */
     protected $ils;
 
     /**
      * Record loader
-     * 
+     *
      * @var Loader
      */
     protected $recordLoader;
-    
+
     /**
      * View renderer
      *
@@ -142,17 +142,17 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         try {
             $serverHelper = $this->renderer->plugin('serverurl');
             $homeUrl = $serverHelper($this->url->fromRoute('home'));
-            
+
             if ($config = $this->feedService->getFeedConfig($id)) {
                 $config = $config['result'];
             }
 
-            if (null === ($ilsList = ($config['ilsList'] ?? null))) {
+            if (!isset($config['ilsList'])) {
                 // Normal feed
                 $feed = $this->feedService->readFeed($id, $homeUrl);
             } else {
                 // ILS list to be converted to a feed
-                $query = $ilsList ?? 'new';
+                $query = $config['ilsList'];
                 $amount = $config['amount'] ?? 20;
                 $type = $config['type'] ?? 'carousel';
                 $source = $config['source'] ?? 'Solr';
@@ -160,14 +160,14 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
 
                 $patronId = !empty($ilsId) ? $ilsId . '.123' : '';
                 $amount = $amount > 20 ? 20 : $amount;
-                
+
                 $result = $this->ils->checkFunction(
                     'getTitleList', ['id' => $patronId]
                 );
                 if (!$result) {
                     return $this->formatResponse('Missing configurations', 501);
                 }
-                
+
                 $records = [];
                 $data = $this->ils->getTitleList(
                     ['query' => $query, 'pageSize' => $amount, 'id' => $ilsId]
@@ -220,7 +220,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                     if ($isRecord) {
                         $content .= $recordHelper($rec)->getFormatList();
                         $content .=
-                            ' '. $recordHelper($rec)->getSourceIdElement()
+                            ' ' . $recordHelper($rec)->getSourceIdElement()
                             . '; ';
                     }
                     if (!empty($author)) {
@@ -231,8 +231,8 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                     }
 
                     if (!empty($content)) {
-                        $entry->setContent($content); 
-                    }                   
+                        $entry->setContent($content);
+                    }
 
                     $imageUrl = $recordImage($recordHelper($rec))->getLargeImage()
                         . '&w=1024&h=1024&imgext=.jpeg';
@@ -243,13 +243,11 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                             'length' => 0
                         ]
                     );
-        
+
                     $feed->addEntry($entry);
                 }
 
                 $feed = $feed->export('rss', false);
-
-                // TODO: check if feed could be passed to FeedService without export/import via string
                 $feed = \Laminas\Feed\Reader\Reader::importString($feed);
 
                 $config = $this->feedService->getFeedConfig($id);

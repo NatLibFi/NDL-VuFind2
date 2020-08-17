@@ -131,20 +131,19 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
             return false;
         }
 
-        
         if (empty($result->url) && !isset($result->ilsList)) {
             $this->logError("Missing feed URL (id $id)");
             return false;
         }
 
         $language = $this->translator->getLocale();
-        
+
         $url = $result->url;
         if (isset($url[$language])) {
             $url = trim($url[$language]);
         } elseif (isset($url['*'])) {
             $url = trim($url['*']);
-        } else if (!isset($result->ilsList)) {
+        } elseif (!isset($result->ilsList)) {
             $this->logError("Missing feed URL (id $id)");
             return false;
         }
