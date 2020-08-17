@@ -246,8 +246,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 $feed = $feed->export('rss', false);
                 $feed = \Laminas\Feed\Reader\Reader::importString($feed);
 
-                $config = $this->feedService->getFeedConfig($id);
-                $feed = $this->feedService->parseFeed($feed, $config['result']);
+                $feed = $this->feedService->parseFeed($feed, $config);
             }
         } catch (\Exception $e) {
             return $this->formatResponse($e->getMessage(), self::STATUS_HTTP_ERROR);
