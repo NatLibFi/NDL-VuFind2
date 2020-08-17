@@ -357,6 +357,14 @@ EOT;
         return $this->parseFeed($channel, $config);
     }
 
+    /**
+     * Function to parse feed with config
+     * 
+     * @param string $channel feed
+     * @param array  $config  of feed
+     * 
+     * @return array
+     */
     public function parseFeed($channel, $config)
     {
         $modal = false;

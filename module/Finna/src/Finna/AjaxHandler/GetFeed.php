@@ -216,22 +216,23 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                         ($rec->getPublicationDates()[0] ?? '')
                         : $ilsDetails['year'];
 
-                    $content = '';
+                    $content = [];
                     if ($isRecord) {
-                        $content .= $recordHelper($rec)->getFormatList();
-                        $content .=
-                            ' ' . $recordHelper($rec)->getSourceIdElement()
-                            . '; ';
+                        $content[] = trim(
+                            $recordHelper($rec)->getFormatList() . ' ' .
+                            $recordHelper($rec)->getSourceIdElement()
+                        );
                     }
                     if (!empty($author)) {
-                        $content .= $escaper->escapeHtml($author);
+                        $content[] = trim($escaper->escapeHtml($author));
                     }
                     if (!empty($year)) {
-                        $content .= '; ' . $escaper->escapeHtml($year);
+                        $content[] = trim($escaper->escapeHtml($year));
                     }
 
                     if (!empty($content)) {
-                        $entry->setContent($content);
+                        $contentString = implode('; ', $content);
+                        $entry->setContent($contentString);
                     }
 
                     $imageUrl = $recordImage($recordHelper($rec))->getLargeImage()
