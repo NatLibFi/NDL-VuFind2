@@ -139,7 +139,7 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase
         $list = 'NEW' === $listParams['id'] ? $this->userList->getNew($this->user)
             : $this->userList->getExisting($listParams['id']);
 
-        if (isset($listParams['tags'])) {
+        if ($this->listTagsEnabled && isset($listParams['tags'])) {
             $tags = array_map(
                 function ($tag) {
                     $tag = urldecode($tag);
