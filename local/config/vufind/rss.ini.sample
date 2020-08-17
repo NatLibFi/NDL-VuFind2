@@ -103,6 +103,10 @@
 ; content[image] = 0
 ; content[date] = 0
 
+; Feed from ils
+; ilsList = ['new', 'mostrequested', 'mostborrowed', 'lastreturned'] -- Ils list type, overrides 'url'
+; ilsId = [ILS driver] -- Mandtory if ils list is used
+
 
 [carousel]
 type = "carousel"
