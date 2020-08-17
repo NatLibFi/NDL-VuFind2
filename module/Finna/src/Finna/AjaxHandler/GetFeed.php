@@ -204,7 +204,6 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                         $entry->setLink($recordUrl->getUrl($rec));
                     }
                     $ilsDetails = $rec->getExtraDetail('ils_details');
-                    $formats = $rec->tryMethod('getFormats');
                     $author = $isRecord
                         ? $rec->getPrimaryAuthorForSearch()
                         : $ilsDetails['author'];
