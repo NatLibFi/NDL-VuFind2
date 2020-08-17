@@ -204,11 +204,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                         $entry->setLink($recordUrl->getUrl($rec));
                     }
                     $ilsDetails = $rec->getExtraDetail('ils_details');
-                    $isRecord = is_a($rec, 'VuFind\\RecordDriver\\SolrDefault');
                     $formats = $rec->tryMethod('getFormats');
-                    $format = $isRecord && $formats
-                        ? $recordHelper($rec)->getFormatClass(end($formats))
-                        : 'book';
                     $author = $isRecord
                         ? $rec->getPrimaryAuthorForSearch()
                         : $ilsDetails['author'];
