@@ -115,8 +115,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Constructor
      *
-     * @param \Zend\Config\Config                 $config           VuFind
-     * configuration
+     * @param \Laminas\Config\Config              $config           VuFind config
      * @param \VuFind\Record\Loader               $loader           Record loader
      * @param \Finna\View\Helper\Root\RecordImage $recordImage      Record image
      * helper
@@ -127,7 +126,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
      */
     public function __construct(
-        \Zend\Config\Config $config,
+        \Laminas\Config\Config $config,
         \VuFind\Record\Loader $loader,
         \Finna\View\Helper\Root\RecordImage $recordImage,
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
@@ -242,15 +241,22 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Render the link of the specified type.
      * Fallbacks from 'authority-page' to 'author' when needed.
      *
-     * @param string $type     Link type
-     * @param string $lookfor  String to search for at link
-     * @param array  $params   Optional array of parameters for the link template
-     * @param bool   $withInfo return an array with link HTML and returned link type.
+     * @param string $type              Link type
+     * @param string $lookfor           String to search for at link
+     * @param array  $params            Optional array of parameters for the
+     * link template
+     * @param bool   $withInfo          return an array with link HTML and
+     * returned linktype.
+     * @param bool   $searchTabsFilters Include search tabs hiddenFilters in
+     * the URL (needed when the link performs a search, but not when linking
+     * to authority page).
      *
      * @return string
      */
-    public function getLink($type, $lookfor, $params = [], $withInfo = false)
-    {
+    public function getLink(
+        $type, $lookfor, $params = [], $withInfo = false,
+        $searchTabsFilters = true
+    ) {
         if (is_array($lookfor)) {
             $lookfor = $lookfor['name'];
         }
@@ -288,8 +294,10 @@ class Record extends \VuFind\View\Helper\Root\Record
             'link-' . $type . '.phtml', $params
         );
 
-        $result .= $this->getView()->plugin('searchTabs')
-            ->getCurrentHiddenFilterParams($this->driver->getSourceIdentifier());
+        if ($searchTabsFilters) {
+            $result .= $this->getView()->plugin('searchTabs')
+                ->getCurrentHiddenFilterParams($this->driver->getSourceIdentifier());
+        }
 
         return $withInfo ? [$result, $type] : $result;
     }
@@ -338,8 +346,16 @@ class Record extends \VuFind\View\Helper\Root\Record
         $type, $lookfor, $data, $params = []
     ) {
         $id = $data['id'] ?? null;
+
+        // Discard search tabs hiddenFilters when jumping to Authority page
+        $preserveSearchTabsFilters
+            = $this->getAuthorityLinkType() !== AuthorityHelper::LINK_TYPE_PAGE;
+
         list($url, $urlType)
-            = $this->getLink($type, $lookfor, $params + ['id' => $id], true);
+            = $this->getLink(
+                $type, $lookfor, $params + ['id' => $id], true,
+                $preserveSearchTabsFilters
+            );
 
         if (!$this->isAuthorityEnabled()
             || !in_array($urlType, ['authority-search', 'authority-page'])
@@ -439,7 +455,9 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     protected function isAuthorityEnabled()
     {
-        return (bool)$this->config->Authority->enabled ?? false;
+        return
+            $this->config->Authority
+            && (bool)$this->config->Authority->enabled ?? false;
     }
 
     /**
@@ -451,7 +469,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     protected function getAuthorityLinkType($type = 'author')
     {
-        if (!$this->driver->isAuthorityEnabled()) {
+        if (!$this->driver->tryMethod('isAuthorityEnabled')) {
             return null;
         }
         return $this->authorityHelper->getAuthorityLinkType($type);
@@ -464,7 +482,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     protected function isAuthorityInlineInfoEnabled()
     {
-        return $this->driver->isAuthorityEnabled()
+        return $this->driver->tryMethod('isAuthorityEnabled')
             && ($this->config->Authority->authority_info ?? false);
     }
 
@@ -821,7 +839,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAuthorityBirthDeath()
     {
-        if (!$this->driver->isAuthorityRecord()) {
+        if (!$this->driver->tryMethod('isAuthorityRecord')) {
             return '';
         }
         $birth = $this->driver->getBirthDateAndPlace();
@@ -843,7 +861,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAuthorityBirthDeathWithPlace()
     {
-        if (!$this->driver->isAuthorityRecord()) {
+        if (!$this->driver->tryMethod('isAuthorityRecord')) {
             return '';
         }
         $birth = $this->driver->getBirthDateAndPlace();

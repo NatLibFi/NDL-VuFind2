@@ -5,7 +5,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -42,13 +42,6 @@ namespace FinnaSearch\Backend\Primo;
 class Connector extends \VuFindSearch\Backend\Primo\Connector
 {
     /**
-     * Whether highlighting is enabled
-     *
-     * @var bool
-     */
-    protected $highlighting;
-
-    /**
      * Hidden filters
      *
      * @var array
@@ -63,6 +56,24 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
     protected $cacheManager = null;
 
     /**
+     * Constructor
+     *
+     * Sets up the Primo API Client
+     *
+     * @param string     $url    Primo API URL (either a host name and port or a full
+     * path to the brief search including a query string or a trailing question mark)
+     * @param string     $inst   Institution code
+     * @param HttpClient $client HTTP client
+     */
+    public function __construct($url, $inst, $client)
+    {
+        parent::__construct($url, $inst, $client);
+        if ($qs = parse_url($url, PHP_URL_QUERY)) {
+            $this->host .= "{$qs}&";
+        }
+    }
+
+    /**
      * Set hidden filters
      *
      * @param array $filters Hidden filters
@@ -72,18 +83,6 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
     public function setHiddenFilters($filters)
     {
         $this->hiddenFilters = $filters;
-    }
-
-    /**
-     * Set highlighting on|off.
-     *
-     * @param boolean $enabled enabled
-     *
-     * @return void
-     */
-    public function setHighlighting($enabled)
-    {
-        $this->highlighting = $enabled;
     }
 
     /**
@@ -102,21 +101,14 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
      * Small wrapper for sendRequest, process to simplify error handling.
      *
      * @param string $qs     Query string
+     * @param array  $params Request parameters
      * @param string $method HTTP method
      *
      * @return object    The parsed primo data
      * @throws \Exception
      */
-    protected function call($qs, $method = 'GET')
+    protected function call($qs, $params = [], $method = 'GET')
     {
-        if ($this->highlighting) {
-            $fields = ['title','creator','description'];
-            $qs .= '&highlight=true';
-            foreach ($fields as $field) {
-                $qs .= "&displayField=$field";
-            }
-        }
-
         $cacheKey = md5(
             json_encode(
                 [
@@ -135,7 +127,7 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
             }
         }
 
-        $result = parent::call($qs, $method);
+        $result = parent::call($qs, $params, $method);
 
         if ($cache) {
             $cache->setItem($cacheKey, $result);
@@ -216,13 +208,14 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
     /**
      * Translate Primo's XML into array of arrays.
      *
-     * @param array $data The raw xml from Primo
+     * @param array $data   The raw xml from Primo
+     * @param array $params Request parameters
      *
      * @return array      The processed response from Primo
      */
-    protected function process($data)
+    protected function process($data, $params = [])
     {
-        $res = parent::process($data);
+        $res = parent::process($data, $params);
 
         // Load API content as XML objects
         $sxe = new \SimpleXmlElement($data);
@@ -268,80 +261,6 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
             // Prefix records id's
             $res['documents'][$i]['recordid']
                 = 'pci.' . $res['documents'][$i]['recordid'];
-
-            // Process highlighting
-            if ($this->highlighting) {
-                // VuFind strips Primo highlighting tags from the description,
-                // so we need to re-read the field (preserving highlighting tags).
-                $description = isset($doc->PrimoNMBib->record->display->description)
-                    ? (string)$doc->PrimoNMBib->record->display->description
-                    : (string)$doc->PrimoNMBib->record->search->description;
-
-                $description = trim(mb_substr($description, 0, 2500, 'UTF-8'));
-
-                // these may contain all kinds of metadata, and just stripping
-                //   tags mushes it all together confusingly.
-                $description = str_replace("P>", "p>", $description);
-
-                $d_arr = explode("<p>", $description);
-                foreach ($d_arr as &$value) {
-                    $value = trim(($value));
-                    if (trim(strip_tags($value)) === '') {
-                        // get rid of entries that would just have spaces
-                        unset($d_arr[$value]);
-                    }
-                }
-
-                // now all paragraphs are converted to linebreaks
-                $description = implode("<br>", $d_arr);
-                $res['documents'][$i]['description'] = $description;
-
-                $highlightFields = [
-                    'title' => 'title',
-                    'creator' => 'author',
-                    'description' => 'description'
-                ];
-
-                $start = '<span class="searchword">';
-                $end = '</span>';
-
-                $hilited = [];
-
-                foreach ($res['documents'][$i] as $fieldName => $fieldData) {
-                    $isArr = is_array($fieldData);
-                    $values = $isArr ? $fieldData : [$fieldData];
-                    if (isset($highlightFields[$fieldName])) {
-                        $valuesHilited = [];
-                        foreach ($values as $val) {
-                            if (stripos($val, $start) !== false
-                                && stripos($val, $end) !== false
-                            ) {
-                                // Replace Primo hilite-tags
-                                $hilitedVal = $val;
-                                $hilitedVal = str_replace(
-                                    $start, '{{{{START_HILITE}}}}', $hilitedVal
-                                );
-                                $hilitedVal = str_replace(
-                                    $end, '{{{{END_HILITE}}}}', $hilitedVal
-                                );
-                                $valuesHilited[] = $hilitedVal;
-                            }
-                        }
-                        if (!empty($valuesHilited)) {
-                            $hilited[$highlightFields[$fieldName]] = $valuesHilited;
-                        }
-                    }
-
-                    foreach ($values as &$val) {
-                        // Strip Primo hilite-tags from record fields
-                        $val = str_replace($start, '', $val);
-                        $val = str_replace($end, '', $val);
-                    }
-                    $res['documents'][$i][$fieldName]
-                        = $isArr ? $values : $values[0];
-                }
-                $res['documents'][$i]['highlightDetails'] = $hilited;
-            }
         }
 
         return $res;

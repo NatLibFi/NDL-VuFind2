@@ -63,6 +63,8 @@ class Options extends \VuFind\Search\Primo\Options
         if (isset($searchSettings->Autocomplete->enabled)) {
             $this->autocompleteEnabled = $searchSettings->Autocomplete->enabled;
         }
+
+        // Date range facet:
         $facetSettings = $configLoader->get($this->facetsIni);
         if (isset($facetSettings->SpecialFacets->dateRangeVis)) {
             $this->dateRangeVis = $facetSettings->SpecialFacets->dateRangeVis;

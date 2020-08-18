@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2018.
+ * Copyright (C) The National Library of Finland 2014-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -52,7 +52,7 @@ class Paytrail extends BaseHandler
     /**
      * Return payment response parameters.
      *
-     * @param Zend\Http\Request $request Request
+     * @param Laminas\Http\Request $request Request
      *
      * @return array
      */
@@ -246,7 +246,7 @@ class Paytrail extends BaseHandler
     /**
      * Process the response from payment service.
      *
-     * @param Zend\Http\Request $request Request
+     * @param Laminas\Http\Request $request Request
      *
      * @return string error message (not translated)
      *   or associative array with keys:
@@ -362,6 +362,11 @@ class Paytrail extends BaseHandler
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>$title</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('paytrail-form').submit();
+        });
+    </script>
 </head>
 <body>
     <noscript>
@@ -370,13 +375,9 @@ class Paytrail extends BaseHandler
     <form id="paytrail-form" action="$url" method="POST">
         $formFields
     </form>
-    <script>
-        document.getElementById('paytrail-form').submit();
-    </script>
 </body>
 </html>
 EOT;
-
         exit();
     }
 }

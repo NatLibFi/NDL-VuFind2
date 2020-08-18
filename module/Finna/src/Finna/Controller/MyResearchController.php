@@ -32,6 +32,10 @@
  */
 namespace Finna\Controller;
 
+use VuFind\Exception\Forbidden as ForbiddenException;
+use VuFind\Exception\ILS as ILSException;
+use VuFind\Exception\ListPermission as ListPermissionException;
+
 /**
  * Controller for the user account area.
  *
@@ -82,6 +86,22 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $result->requestedAction = $requestedAction;
 
         return $result;
+    }
+
+    /**
+     * Login Action
+     *
+     * @return mixed
+     */
+    public function loginAction()
+    {
+        $view = parent::loginAction();
+        if ($view instanceof \Laminas\View\Model\ViewModel) {
+            if ($defaultTarget = $this->params()->fromQuery('target')) {
+                $view->defaultTarget = $defaultTarget;
+            }
+        }
+        return $view;
     }
 
     /**
@@ -189,7 +209,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $bDate = isset($b['duedate'])
                         ? $date->convertFromDisplayDate('U', $b['duedate'])
                         : 0;
-                } catch (Exception $e) {
+                } catch (\Exception $e) {
                     return 0;
                 }
 
@@ -315,7 +335,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public function editlistAction()
     {
         $view = parent::editlistAction();
-        if ($view instanceof \Zend\Http\PhpEnvironment\Response
+        if ($view instanceof \Laminas\Http\PhpEnvironment\Response
             && !empty($url = $this->getFollowupUrl())
         ) {
             return $this->redirect()->toUrl($url);
@@ -454,7 +474,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         if ($this->formWasSubmitted('saveUserProfile')) {
-            $validator = new \Zend\Validator\EmailAddress();
+            $validator = new \Laminas\Validator\EmailAddress();
             $showSuccess = $showError = false;
             if ('' === $values->email || $validator->isValid($values->email)) {
                 $user->email = $values->email;
@@ -495,7 +515,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $view = parent::profileAction();
-        $profile = $view->profile;
         $patron = $this->catalogLogin();
 
         if (is_array($patron) && $this->formWasSubmitted('saveLibraryProfile')) {
@@ -504,7 +523,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     ->addMessage('profile_update');
             }
             $view = parent::profileAction();
-            $profile = $view->profile;
         }
 
         // Check if due date reminder settings should be displayed
@@ -1085,7 +1103,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      * @param boolean $checkFunction Use checkFunction() if true,
      * checkCapability() otherwise
      *
-     * @return mixed \Zend\View if the function is not supported, false otherwise
+     * @return mixed \Laminas\View if the function is not supported, false otherwise
      */
     protected function createViewIfUnsupported($function, $checkFunction = false)
     {
@@ -1181,7 +1199,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $success = true;
         if (isset($values->profile_email)) {
-            $validator = new \Zend\Validator\EmailAddress();
+            $validator = new \Laminas\Validator\EmailAddress();
             if ($validator->isValid($values->profile_email)
                 && $catalog->checkFunction('updateEmail', compact('patron'))
             ) {

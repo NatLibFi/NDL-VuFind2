@@ -20,7 +20,7 @@
 
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li>' . $this->searchMemory()->getLastSearchLink($this->transEsc('Search'), '', '</li> ') .
-    '<li class="active">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li> ';
+    '<li class="active" aria-current="page">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li> ';
 
   $this->layout()->title = $this->driver->getShortTitle();
 
@@ -205,5 +205,5 @@
 </div>
 <?=$this->record($this->driver)->renderTemplate('toolbar_mobile.phtml') ?>
 <div>
-<?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, '$(document).ready(recordDocReady);', 'SET') ?>
+<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, '$(document).ready(recordDocReady);', 'SET') ?>
 <!-- END of: finna - record/view.phtml -->

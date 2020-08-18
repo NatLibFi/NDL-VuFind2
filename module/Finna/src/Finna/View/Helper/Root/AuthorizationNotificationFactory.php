@@ -28,7 +28,7 @@
 namespace Finna\View\Helper\Root;
 
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Authorization notification helper factory.
@@ -62,7 +62,7 @@ class AuthorizationNotificationFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
         return new $requestedName(
-            $container->get('ZfcRbac\Service\AuthorizationService')
+            $container->get('LmcRbacMvc\Service\AuthorizationService')
         );
     }
 }

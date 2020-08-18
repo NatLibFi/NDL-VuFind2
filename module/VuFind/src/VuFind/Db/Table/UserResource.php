@@ -27,9 +27,9 @@
  */
 namespace VuFind\Db\Table;
 
+use Laminas\Db\Adapter\Adapter;
+use Laminas\Db\Sql\Expression;
 use VuFind\Db\Row\RowGateway;
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\Sql\Expression;
 
 /**
  * Table Definition for user_resource
@@ -47,7 +47,7 @@ class UserResource extends Gateway
      *
      * @param Adapter       $adapter Database adapter
      * @param PluginManager $tm      Table manager
-     * @param array         $cfg     Zend Framework configuration
+     * @param array         $cfg     Laminas configuration
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      * @param string        $table   Name of database table to interface with
      */
@@ -67,7 +67,7 @@ class UserResource extends Gateway
      * @param int    $userId     Optional user ID (to limit results to a particular
      * user).
      *
-     * @return \Zend\Db\ResultSet\AbstractResultSet
+     * @return \Laminas\Db\ResultSet\AbstractResultSet
      */
     public function getSavedData($resourceId, $source = DEFAULT_SEARCH_BACKEND,
         $listId = null, $userId = null
@@ -156,7 +156,7 @@ class UserResource extends Gateway
         // want to leave orphaned tags in the resource_tags table after we have
         // cleared out favorites in user_resource!
         $resourceTags = $this->getDbTable('ResourceTags');
-        $resourceTags->destroyLinks($resource_id, $user_id, $list_id);
+        $resourceTags->destroyResourceLinks($resource_id, $user_id, $list_id);
 
         // Now build the where clause to figure out which rows to remove:
         $callback = function ($select) use ($resource_id, $user_id, $list_id) {
@@ -168,7 +168,7 @@ class UserResource extends Gateway
                 $select->where->in('resource_id', $resource_id);
             }
             // null or true values of $list_id have different meanings in the
-            // context of the $resourceTags->destroyLinks() call above, since
+            // context of the $resourceTags->destroyResourceLinks() call above, since
             // some tags have a null $list_id value. In the case of user_resource
             // rows, however, every row has a non-null $list_id value, so the
             // two cases are equivalent and may be handled identically.

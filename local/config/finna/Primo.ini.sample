@@ -19,7 +19,8 @@ timeout = 30
 ; http://XYZ.hosted.exlibrisgroup.com:1701 where XYZ is the ID of the Primo
 ; instance (e.g. primoapac01). Use http://mlplus.hosted.exlibrisgroup.com for
 ; MetaLib Plus.
-; You may also enter the full URL including a path to the brief search if necessary.
+; You may also enter the full URL including a path to the brief search and
+; a query string if necessary.
 url = "https://ndl-pc-fe1.hosted.exlibrisgroup.com"
 
 ; This section controls the result limit options for search results. default_limit
@@ -41,9 +42,9 @@ default_side_recommend[] = SideFacets:Facets:CheckboxFacets:Primo
 ; This section is used to set general parameters for URL generation to make a call to the Primo API
 bulkSize = 20
 
-; When you filter a search using facets, VuFind will present a checkbox that can
-; be used to apply those filters to the next search you perform.  This setting
-; controls its default state: on (true) or off (false).
+; When you filter a search using facets, should VuFind retain your current filters
+; on the next search and provide a reset button to clear them (true), or should it
+; always perform new searches unfiltered (false)?
 retain_filters_by_default = false
 
 ; The filters listed below will be applied to all new searches by default. Omit

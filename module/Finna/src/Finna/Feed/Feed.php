@@ -28,11 +28,11 @@
  */
 namespace Finna\Feed;
 
+use Laminas\Config\Config;
+use Laminas\Feed\Reader\Reader;
+use Laminas\Mvc\Controller\Plugin\Url;
 use VuFind\Cache\Manager as CacheManager;
 use VuFindTheme\View\Helper\ImageLink;
-use Zend\Config\Config;
-use Zend\Feed\Reader\Reader;
-use Zend\Mvc\Controller\Plugin\Url;
 
 /**
  * Feed service
@@ -46,7 +46,7 @@ use Zend\Mvc\Controller\Plugin\Url;
  */
 class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
-    \Zend\Log\LoggerAwareInterface
+    \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -118,7 +118,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
      *
      * @return boolean|array
      */
-    protected function getFeedConfig($id)
+    public function getFeedConfig($id)
     {
         if (!isset($this->feedConfig[$id])) {
             $this->logError("Missing configuration (id $id)");
@@ -131,7 +131,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
             return false;
         }
 
-        if (empty($result->url)) {
+        if (empty($result->url) && !isset($result->ilsList)) {
             $this->logError("Missing feed URL (id $id)");
             return false;
         }
@@ -143,7 +143,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
             $url = trim($url[$language]);
         } elseif (isset($url['*'])) {
             $url = trim($url['*']);
-        } else {
+        } elseif (!isset($result->ilsList)) {
             $this->logError("Missing feed URL (id $id)");
             return false;
         }
@@ -204,7 +204,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
 
     /**
      * Return feed content and settings in an array with the keys:
-     *   - 'channel' Zend\Feed\Reader\Feed\Rss Feed
+     *   - 'channel' Laminas\Feed\Reader\Feed\Rss Feed
      *   - 'items'   array                     Feed item data
      *   - 'config'  VuFind\Config             Feed configuration
      *   - 'modal'   boolean                   Display feed content in a modal
@@ -235,7 +235,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
      */
     public function readFeedFromUrl($id, $url, $config, $viewUrl)
     {
-        $config = new \Zend\Config\Config($config);
+        $config = new \Laminas\Config\Config($config);
         return $this->processReadFeed($config, $viewUrl, $id);
     }
 
@@ -258,23 +258,6 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
 
         $cacheKey = (array)$feedConfig;
         $cacheKey['language'] = $this->translator->getLocale();
-
-        $modal = false;
-        $showFullContentOnSite = isset($config->linkTo)
-            && in_array($config->linkTo, ['modal', 'content-page']);
-
-        $modal = $config->linkTo == 'modal';
-        $contentPage = $config->linkTo == 'content-page';
-        $dateFormat = isset($config->dateFormat) ? $config->dateFormat : 'j.n.';
-        $contentDateFormat = isset($config->contentDateFormat)
-            ? $config->contentDateFormat : 'j.n.Y';
-        $fullDateFormat = isset($config->fullDateFormat)
-            ? $config->fullDateFormat : 'j.n.Y';
-
-        $itemsCnt = isset($config->items) ? $config->items : null;
-        $elements = isset($config->content) ? $config->content : [];
-        $allowXcal = $elements['xcal'] ?? true;
-        $timeRegex = '/^(.*?)([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/';
 
         $channel = null;
 
@@ -370,6 +353,36 @@ EOT;
         if (!$channel) {
             return false;
         }
+
+        return $this->parseFeed($channel, $config);
+    }
+
+    /**
+     * Function to parse feed with config
+     *
+     * @param string $channel feed
+     * @param array  $config  of feed
+     *
+     * @return array
+     */
+    public function parseFeed($channel, $config)
+    {
+        $modal = false;
+        $showFullContentOnSite = isset($config->linkTo)
+            && in_array($config->linkTo, ['modal', 'content-page']);
+
+        $modal = $config->linkTo == 'modal';
+        $contentPage = $config->linkTo == 'content-page';
+        $dateFormat = isset($config->dateFormat) ? $config->dateFormat : 'j.n.';
+        $contentDateFormat = isset($config->contentDateFormat)
+            ? $config->contentDateFormat : 'j.n.Y';
+        $fullDateFormat = isset($config->fullDateFormat)
+            ? $config->fullDateFormat : 'j.n.Y';
+
+        $itemsCnt = isset($config->items) ? $config->items : null;
+        $elements = isset($config->content) ? $config->content : [];
+        $allowXcal = $elements['xcal'] ?? true;
+        $timeRegex = '/^(.*?)([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/';
 
         $content = [
             'id' => 'getId',

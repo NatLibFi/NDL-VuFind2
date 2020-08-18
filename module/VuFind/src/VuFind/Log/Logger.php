@@ -27,7 +27,7 @@
  */
 namespace VuFind\Log;
 
-use Zend\Log\Logger as BaseLogger;
+use Laminas\Log\Logger as BaseLogger;
 
 /**
  * This class wraps the BaseLogger class to allow for log verbosity
@@ -116,8 +116,8 @@ class Logger extends BaseLogger
     /**
      * Log an exception triggered by the framework for administrative purposes.
      *
-     * @param \Exception              $error  Exception to log
-     * @param \Zend\Stdlib\Parameters $server Server metadata
+     * @param \Exception                 $error  Exception to log
+     * @param \Laminas\Stdlib\Parameters $server Server metadata
      *
      * @return void
      */
@@ -132,8 +132,9 @@ class Logger extends BaseLogger
             $prev = $prev->getPrevious();
         }
         $referer = $server->get('HTTP_REFERER', 'none');
+        $ip = $server->get('HTTP_X_FORWARDED_FOR') ?? $server->get('REMOTE_ADDR');
         $basicServer
-            = '(Server: IP = ' . $server->get('REMOTE_ADDR') . ', '
+            = '(Server: IP = ' . $ip . ', '
             . 'Referer = ' . $referer . ', '
             . 'User Agent = '
             . $server->get('HTTP_USER_AGENT') . ', '

@@ -27,7 +27,7 @@
  */
 namespace VuFind\Role\PermissionProvider;
 
-use ZfcRbac\Service\AuthorizationService;
+use LmcRbacMvc\Service\AuthorizationService;
 
 /**
  * LDAP permission provider for VuFind.
@@ -40,7 +40,7 @@ use ZfcRbac\Service\AuthorizationService;
  * @link     http://www.vufind.org  Main Page
  */
 class User implements PermissionProviderInterface,
-    \Zend\Log\LoggerAwareInterface
+    \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 

@@ -30,6 +30,7 @@
 namespace Finna\AjaxHandler;
 
 use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
  * Factory for CommentRecord AJAX handler.
@@ -41,7 +42,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class CommentRecordFactory implements \Zend\ServiceManager\Factory\FactoryInterface
+class CommentRecordFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -67,12 +68,12 @@ class CommentRecordFactory implements \Zend\ServiceManager\Factory\FactoryInterf
         }
         $tablePluginManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         $controllerPluginManager
-            = $container->get(\Zend\Mvc\Controller\PluginManager::class);
+            = $container->get(\Laminas\Mvc\Controller\PluginManager::class);
         $capabilities = $container->get(\VuFind\Config\AccountCapabilities::class);
         return new $requestedName(
             $tablePluginManager->get(\VuFind\Db\Table\Resource::class),
             $controllerPluginManager
-                ->get(\VuFind\Controller\Plugin\Recaptcha::class),
+                ->get(\VuFind\Controller\Plugin\Captcha::class),
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
             $capabilities->getCommentSetting() !== 'disabled',
             $tablePluginManager->get(\VuFind\Db\Table\Comments::class),

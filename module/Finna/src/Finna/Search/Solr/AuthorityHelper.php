@@ -67,6 +67,20 @@ class AuthorityHelper
     const AUTHOR_ID_ROLE_SEPARATOR = '###';
 
     /**
+     * Authority link type: authority page.
+     *
+     * @var string
+     */
+    const LINK_TYPE_PAGE = 'page';
+
+    /**
+     * Authority link type: search results filtered by authority id.
+     *
+     * @var string
+     */
+    const LINK_TYPE_SEARCH = 'search';
+
+    /**
      * Record loader
      *
      * @var \VuFind\Record\Loader
@@ -90,14 +104,14 @@ class AuthorityHelper
     /**
      * Authority config
      *
-     * @var \Zend\Config\Config
+     * @var \Laminas\Config\Config|null
      */
     protected $authorityConfig;
 
     /**
      * Authority search config
      *
-     * @var \Zend\Config\Config
+     * @var \Laminas\Config\Config
      */
     protected $authoritySearchConfig;
 
@@ -108,22 +122,22 @@ class AuthorityHelper
      * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
      * @param \VuFind\View\Helper\Root\Translate $translator            Translator
      * view helper
-     * @param \Zend\Config\Config                $authorityConfig       Authority
+     * @param \Laminas\Config\Config             $config                Config
      * config
-     * @param \Zend\Config\Config                $authoritySearchConfig Authority
+     * @param \Laminas\Config\Config             $authoritySearchConfig Authority
      * search config
      */
     public function __construct(
         \VuFind\Record\Loader $recordLoader,
         \VuFind\Search\SearchRunner $searchRunner,
         \VuFind\View\Helper\Root\Translate $translator,
-        \Zend\Config\Config $authorityConfig,
-        \Zend\Config\Config $authoritySearchConfig
+        \Laminas\Config\Config $config,
+        \Laminas\Config\Config $authoritySearchConfig
     ) {
         $this->recordLoader = $recordLoader;
         $this->searchRunner = $searchRunner;
         $this->translator = $translator;
-        $this->authorityConfig = $authorityConfig;
+        $this->authorityConfig = $config->Authority ?? null;
         $this->authoritySearchConfig = $authoritySearchConfig;
     }
 
@@ -265,7 +279,7 @@ class AuthorityHelper
      * @return \VuFind\Search\Results|int
      */
     public function getRecordsByAuthorityId(
-        $id, $field = AUTHOR2_ID_FACET, $onlyCount = false
+        $id, $field = AuthorityHelper::AUTHOR2_ID_FACET, $onlyCount = false
     ) {
         $query = $this->getRecordsByAuthorityQuery($id, $field);
         $results = $this->searchRunner->run(
@@ -315,9 +329,11 @@ class AuthorityHelper
         $setting = $setting[$type] ?? $setting['*'] ?? $setting;
         if ($setting === '1') {
             // Backward compatibility
-            $setting = 'search';
+            $setting = self::LINK_TYPE_SEARCH;
         }
-        return in_array($setting, ['page', 'search']) ? $setting : null;
+        return
+            in_array($setting, [self::LINK_TYPE_PAGE, self::LINK_TYPE_SEARCH])
+            ? $setting : null;
     }
 
     /**

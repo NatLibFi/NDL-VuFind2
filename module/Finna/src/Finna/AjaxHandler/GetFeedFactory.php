@@ -38,7 +38,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetFeedFactory implements \Zend\ServiceManager\Factory\FactoryInterface
+class GetFeedFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object
@@ -66,6 +66,8 @@ class GetFeedFactory implements \Zend\ServiceManager\Factory\FactoryInterface
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('rss'),
             $container->get('Finna\Feed\Feed'),
+            $container->get(\VuFind\Record\Loader::class),
+            $container->get(\VuFind\ILS\Connection::class),
             $container->get('ViewRenderer'),
             $container->get('ControllerPluginManager')->get('url')
         );

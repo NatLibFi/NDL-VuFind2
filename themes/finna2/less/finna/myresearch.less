@@ -233,6 +233,9 @@
       }
     }
     .truncate-field.truncate-done {
+      div:first-child {
+        padding-top: 5px;
+      }
       details {
         margin-left: 1px;
         margin-right: 1px;
@@ -310,7 +313,7 @@
     }
   }
 
-  .markdown.edit > .fa-pen {
+  .markdown.edit .fa-pen {
     display: none;
   }
 
@@ -364,6 +367,11 @@
     padding: 2em;
     padding-left: 2.5em;
     margin-bottom: 1em;
+  }
+
+  .profile-status i::before {
+    display: inline-block;
+    margin-top: 4px;
   }
 }
 
@@ -846,4 +854,8 @@
 
 .template-dir-myresearch.template-name-checkedout .pagination-container {
   padding-top: 15px;
+}
+
+.message-body {
+  margin: 5px;
 }

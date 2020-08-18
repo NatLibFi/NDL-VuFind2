@@ -28,8 +28,8 @@
  */
 namespace VuFind\Config;
 
+use Laminas\Config\Config;
 use VuFind\Auth\Manager as AuthManager;
-use Zend\Config\Config;
 
 /**
  * Class to determine which account capabilities are available, based on
@@ -134,6 +134,19 @@ class AccountCapabilities
         return isset($this->config->Social->tags)
             && $this->config->Social->tags === 'disabled'
             ? 'disabled' : 'enabled';
+    }
+
+    /**
+     * Get list tag setting.
+     *
+     * @return string
+     */
+    public function getListTagSetting()
+    {
+        if (!$this->isAccountAvailable()) {
+            return 'disabled';
+        }
+        return $this->config->Social->listTags ?? 'disabled';
     }
 
     /**

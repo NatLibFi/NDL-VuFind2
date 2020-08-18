@@ -38,7 +38,7 @@ use Interop\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class EditListFactory implements \Zend\ServiceManager\Factory\FactoryInterface
+class EditListFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object
@@ -67,7 +67,9 @@ class EditListFactory implements \Zend\ServiceManager\Factory\FactoryInterface
         return new $requestedName(
             $tablePluginManager->get(\VuFind\Db\Table\UserList::class),
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
-            $capabilities->getListSetting() !== 'disabled'
+            $container->get('ViewRenderer'),
+            $capabilities->getListSetting() !== 'disabled',
+            $capabilities->getListTagSetting() !== 'disabled'
         );
     }
 }

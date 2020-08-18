@@ -47,18 +47,18 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Get an array of all the formats associated with the record.
+     * Return corporate record type.
      *
-     * @return array
+     * @return string
      */
-    public function getFormats()
+    public function getCorporateType()
     {
         foreach ($this->getMarcRecord()->getFields('368') as $field) {
             if ($res = $field->getSubfield('a')) {
-                return [MetadataUtils::ucFirst($res->getData())];
+                return MetadataUtils::ucFirst($res->getData());
             }
         }
-        return $this->_getFormats();
+        return '';
     }
 
     /**
@@ -112,21 +112,6 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Return place of residence.
-     *
-     * @return string
-     */
-    public function getPlaceOfResidence()
-    {
-        foreach ($this->getMarcRecord()->getFields('370') as $field) {
-            if ($res = $field->getSubfield('e')) {
-                return $res->getData();
-            }
-        }
-        return '';
-    }
-
-    /**
      * Return birth date.
      *
      * @param boolean $force Return established date for corporations?
@@ -161,11 +146,11 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Return description
+     * Return historical information
      *
      * @return array
      */
-    public function getSummary()
+    public function getHistory()
     {
         $result = [];
         foreach ($this->getMarcRecord()->getFields('678') as $field) {
@@ -286,7 +271,6 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
                 $type = null;
                 if ($type = $data['2'] ?? $data['q']) {
                     $type = mb_strtolower(rtrim($type, ': '), 'UTF-8');
-                    $id = "$id ($type)";
                 }
                 $result[] = ['data' => $id, 'detail' => $type];
             }
@@ -308,9 +292,16 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
             return $date;
         }
         try {
-            return $this->dateConverter->convertToDisplayDate(
-                'Y-m-d', $date
-            );
+            if (preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date)) {
+                return $this->dateConverter->convertToDisplayDate('Y-m-d', $date);
+            } elseif (preg_match('/^(\d{4})$/', $date)) {
+                return $this->dateConverter->convertFromDisplayDate(
+                    'Y',
+                    $this->dateConverter->convertToDisplayDate('Y', $date)
+                );
+            } else {
+                return $date;
+            }
         } catch (\Exception $e) {
             return $date;
         }

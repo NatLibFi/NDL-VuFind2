@@ -36,7 +36,7 @@ namespace Finna\View\Helper\Root;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class CleanHtml extends \Zend\View\Helper\AbstractHelper
+class CleanHtml extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Purifier
@@ -106,6 +106,7 @@ class CleanHtml extends \Zend\View\Helper\AbstractHelper
             $def->addElement('summary', 'Block', 'Flow', 'Common');
             $def->addAttribute('div', 'data-rows', 'Number');
             $def->addAttribute('div', 'data-row-height', 'Number');
+            $def->addAttribute('div', 'data-label', 'Text');
             $this->purifier = new \HTMLPurifier($config);
         }
         return $this->purifier->purify($html);
