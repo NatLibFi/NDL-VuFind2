@@ -90,7 +90,7 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
      * @param \VuFind\Db\Table\Tags            $tagsTable Tags table
      * @param \Laminas\View\Model\ViewModel    $viewModel View model
      * @param bool                             $listTags  Whether list tags
-     * are enabled
+     *                                                    are enabled
      */
     public function __construct(
         \VuFind\Search\Favorites\Results $results,
