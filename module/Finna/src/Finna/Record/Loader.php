@@ -207,8 +207,7 @@ class Loader extends \VuFind\Record\Loader
         } elseif ($this->redirectedMissingIds) {
             foreach ($this->redirectedMissingIds as $pattern) {
                 if (preg_match($pattern, $id, $matches)) {
-                    // Museum record that has been moved to Collecte with a new id.
-                    // Try to find the new record by searching for the old id in
+                    // Try to find the new record by searching for the old ID in
                     // old_identifier_str field.
                     $newRecord = $this->loadRecordWithIdentifier(
                         $matches[2], 'old_id_str_mv', $matches[1]
