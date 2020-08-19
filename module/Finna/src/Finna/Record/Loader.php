@@ -210,7 +210,7 @@ class Loader extends \VuFind\Record\Loader
                     // Try to find the new record by searching for the old ID in
                     // old_identifier_str field.
                     $newRecord = $this->loadRecordWithIdentifier(
-                        $matches[2], 'old_id_str_mv', $matches[1]
+                        $matches[2], $matches[1], 'old_id_str_mv'
                     );
                     if ($newRecord) {
                         return $newRecord;
@@ -252,7 +252,7 @@ class Loader extends \VuFind\Record\Loader
      * @return \VuFind\RecordDriver\AbstractBase|bool Record or false if not found
      */
     protected function loadRecordWithIdentifier(
-        $identifier, $field = 'identifier', $dataSource = null
+        $identifier, $dataSource = null, $field = 'identifier'
     ) {
         $safeIdentifier = addcslashes($identifier, '"');
         $queryStr = $field . ':"' . $safeIdentifier . '"';
