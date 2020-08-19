@@ -53,7 +53,7 @@ class Loader extends \VuFind\Record\Loader
     protected $preferredLanguage;
 
     /**
-     * Missing records that should be redirected to new versions.
+     * Missing records that should be redirected to new records.
      *
      * @var array
      */
