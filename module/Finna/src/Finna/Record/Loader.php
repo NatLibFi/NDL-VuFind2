@@ -246,8 +246,8 @@ class Loader extends \VuFind\Record\Loader
      * Try to load a record using its identifier field
      *
      * @param string $identifier Identifier (e.g. SUK77:2)
-     * @param string $field      Index field to search from.
      * @param string $dataSource Optional data source filter
+     * @param string $field      Index field to search from.
      *
      * @return \VuFind\RecordDriver\AbstractBase|bool Record or false if not found
      */
