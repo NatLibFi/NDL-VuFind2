@@ -1339,6 +1339,12 @@ url_blacklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
 ; "same_source"            - display only versions from the same data source
 ;display_versions = true
 
+; Record IDs that should be redirected to the records new version.
+; Each entry is a regular expression that receives the record ID (<source>.<id>)
+; and should return these as separate elements, i.e. have capture groups for source and ID (without source).
+; The old ID has to be indexed to the new records 'old_id_str_mv_field' field.
+; redirect_missing_sources[] = "/^(lusto)\.(.+)/"
+
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
 ; This setting controls how many headings are displayed on each page of results:
