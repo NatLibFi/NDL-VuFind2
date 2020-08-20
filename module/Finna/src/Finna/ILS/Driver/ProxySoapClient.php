@@ -71,6 +71,8 @@ class ProxySoapClient extends \BeSimple\SoapClient\SoapClient
             unset($options['extra_options']);
         }
 
+        // disable WSDL caching as we handle WSDL caching for remote URLs ourself
+        $options['cache_wsdl'] = WSDL_CACHE_NONE;
         $wsdlFile = $this->loadWsdl($wsdl, $options);
         // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
         $this->soapKernel = new \BeSimple\SoapClient\SoapKernel();
@@ -81,8 +83,6 @@ class ProxySoapClient extends \BeSimple\SoapClient\SoapClient
         // disable obsolete trace option for native SoapClient as we need to do our
         // own tracing anyways
         $options['trace'] = false;
-        // disable WSDL caching as we handle WSDL caching for remote URLs ourself
-        $options['cache_wsdl'] = WSDL_CACHE_NONE;
 
         try {
             // Kludge to call grandparent's constructor
