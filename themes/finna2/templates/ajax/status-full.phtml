@@ -327,7 +327,7 @@ if (!$disableTitleHold
 finna.layout.initTruncate($('.holding-details'));
 VuFind.lightbox.bind($('.holding-details'));
 
-var item = $('.hiddenId[value="{$id}"]').closest('.record-container');
+var item = $('.hiddenId[value="{$this->escapeHtmlAttr($id)}"]').closest('.record-container');
 item.find('.holdings-container.collapsible > .header').click(function onClickCollapsibleHeader() {
   $(this).next('.holdings').toggleClass('collapsed');
   $(this).find('.fa.arrow:first.right')
