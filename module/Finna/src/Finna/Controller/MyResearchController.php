@@ -55,6 +55,43 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     use CatalogLoginTrait;
 
     /**
+     * Prepare and direct the home page where it needs to go
+     *
+     * @return mixed
+     */
+    public function homeAction()
+    {
+        // If this is a login request, save the route that should be shown
+        // in lightbox after the login.
+        if ($this->params()->fromPost('processLogin')
+            || $this->getSessionInitiator()
+            || $this->params()->fromPost('auth_method')
+            || $this->params()->fromQuery('auth_method')
+        ) {
+            if (!$this->getAuthManager()->isLoggedIn()) {
+                try {
+                    $activeAuth = $this->getAuthManager()->getActiveAuth();
+                    if (is_callable([$activeAuth, 'getPostLoginLightboxRoute'])) {
+                        $request = $this->getRequest();
+                        $activeAuth->preLoginCheck($request);
+                        if ($routeData = $activeAuth->getPostLoginLightboxRoute()) {
+                            $route = $routeData['route'] ?? null;
+                            $params = $routeData['params'] ?? null;
+                            $lightboxUrl = $this->url()->fromRoute($route, $params);
+                            $this->followup()->store(
+                                ['postLoginLightbox' => $lightboxUrl],
+                                $this->getFollowupUrl()
+                            );
+                        }
+                    }
+                } catch (AuthException $e) {
+                }
+            }
+        }
+        return parent::homeAction();
+    }
+
+    /**
      * Catalog Login Action
      *
      * @return mixed
