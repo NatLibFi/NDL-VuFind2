@@ -63,7 +63,7 @@ class LoaderFactory extends \VuFind\Record\LoaderFactory
         );
         $redirectSources
             = $container->get(\VuFind\Config\PluginManager::class)->get('config')
-                ->Record->redirect_missing_sources ?? null;
+            ->Record->redirect_missing_sources ?? null;
         if ($redirectSources) {
             $loader->setRedirectedMissingIds($redirectSources);
         }
