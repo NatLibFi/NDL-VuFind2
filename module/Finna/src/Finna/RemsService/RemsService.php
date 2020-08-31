@@ -27,9 +27,9 @@
  */
 namespace Finna\RemsService;
 
-use VuFind\Auth\Manager;
 use Laminas\Config\Config;
 use Laminas\Session\Container;
+use VuFind\Auth\Manager;
 
 /**
  * Resource Entitlement Management System (REMS) service
