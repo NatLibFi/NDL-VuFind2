@@ -215,18 +215,27 @@ class Suomifi extends Shibboleth
      *
      * @param string $string String.
      *
-     * @throws Exception
      * @return string Encrypted
      */
     protected function encrypt($string)
     {
         $config = $this->getConfig()->Shibboleth;
-        if (null === ($keyPath = $config->public_key ?? null)) {
+        $keyPath = $config->public_key ?? null;
+        if (null === $keyPath) {
             throw new \Exception('Public key path not configured');
         }
-        if (false === openssl_get_publickey(file_get_contents($keyPath))) {
+        if (false === ($fp = fopen($keyPath, 'r'))) {
+            throw new \Exception('Error opening public key');
+        }
+        if (false === ($key = fread($fp, 8192))) {
+            throw new \Exception('Error reading public key');
+        }
+        fclose($fp);
+
+        if (false === openssl_get_publickey($key)) {
             throw new \Exception('Error preparing public key');
         }
+
         if (!openssl_public_encrypt(
             $string, $encrypted, $key, OPENSSL_PKCS1_OAEP_PADDING
         )
