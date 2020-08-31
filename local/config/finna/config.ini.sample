@@ -307,6 +307,7 @@ schedule_searches = true
 ;method         = ILS
 ;method         = Database
 ;method         = Shibboleth
+;method         = Shibboleth_suomifi
 ;method         = SIP2
 ;method         = CAS
 method         = ChoiceAuth
@@ -571,7 +572,6 @@ email = SHIB_mail
 ; Shibboleth Suomi.fi is optional.
 ; This section is only needed if Suomi.fi is to be used as an authentication method.
 [Shibboleth_suomifi]
-
 ; Provider_id parameter to pass along to Shibboleth login.
 
 ; Production
@@ -592,11 +592,17 @@ required_attribute = Shib-Application-ID
 ; Required: the attribute Shibboleth uses to uniquely identify users.
 username              = SHIB_eppn
 
-; Should the username be hashed before saving to User profile
-hash_username = true
-
-; Secret key for hashing usernames
+; Secret key for hashing usernames before saving to user profile (required)
 hash_secret = ""
+
+; Is Resource Entitlement Management System (REMS) service enabled?
+; If enabled, RemsService::onLogoutPre is called before logging the user out.
+;use_rems = true
+
+; Should the encrypted username be stored in session? Required when using REMS.
+;store_username_to_session = true
+; Public key path. Required if store_username_to_session is true
+;public_key = ""
 
 ; Required: Shibboleth login URL.
 login = "https://www.finna.fi/Shibboleth.sso/Login"
@@ -606,6 +612,11 @@ logout = "https://www.finna.fi/Shibboleth.sso/Logout"
 
 ; Optional: Dynamic Shibboleth logout url attribute id (alternative to the static url above)
 logout_attribute       = SHIB_logouturl
+
+; Optional: route that is shown in lightbox after Suomifi login.
+;   This opens the REMS registration form.
+;post_login_lightbox_route = "feedback-form"
+;post_login_lightbox_route_params = "id:R2Register"
 
 ; Optional: URL to forward to after Shibboleth login (if omitted,
 ; defaultLoggedInModule from [Site] section will be used).
