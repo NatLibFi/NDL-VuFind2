@@ -215,6 +215,7 @@ class Suomifi extends Shibboleth
      *
      * @param string $string String.
      *
+     * @throws Exception
      * @return string Encrypted
      */
     protected function encrypt($string)
