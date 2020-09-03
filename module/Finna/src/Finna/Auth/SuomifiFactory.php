@@ -68,7 +68,7 @@ class SuomifiFactory extends \VuFind\Auth\ShibbolethFactory
         $config
             = $container->get(\VuFind\Config\PluginManager::class)->get('config');
         if ((bool)($config->{'Shibboleth_suomifi'}->use_rems ?? false)) {
-            $result->setRems($container->get(\Finna\RemsService\RemsService::class));
+            $result->setRems($container->get(\Finna\Service\RemsService::class));
         }
 
         return $result;

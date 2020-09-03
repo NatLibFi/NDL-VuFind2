@@ -43,7 +43,7 @@ class Suomifi extends Shibboleth
     /**
      * REMS service
      *
-     * @var \Finna\RemsService\RemsService
+     * @var \Finna\Service\RemsService
      */
     protected $remsService;
 
@@ -61,7 +61,7 @@ class Suomifi extends Shibboleth
     /**
      * Set REMS service
      *
-     * @param \Finna\RemsService\RemsService $rems REMS service
+     * @param \Finna\Service\RemsService $rems REMS service
      *
      * @return void
      */
