@@ -900,7 +900,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $urls[] = $url;
             }
         }
-        $urls = $this->checkForAudioUrls($urls);
+        $urls = $this->resolveUrlTypes($urls);
         return $urls;
     }
 

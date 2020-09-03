@@ -218,11 +218,11 @@ trait SolrAuthFinnaTrait
     /**
      * Return summary
      *
-     * @return array|null
+     * @return array
      */
     public function getSummary()
     {
-        return null;
+        return [];
     }
 
     /**

@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2016.
- * Copyright (C) The National Library of Finland 2017.
+ * Copyright (C) The National Library of Finland 2017-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -242,6 +242,25 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Archive Origination', 'getOrigination', 'data-origination.phtml',
+            [
+                'context' => ['class' => 'record-origination', 'group' => 'Context']
+            ]
+        );
+        $setTemplateLine(
+            'Archive', true, 'data-archive.phtml',
+            [
+                'context' => ['class' => 'recordHierarchyLinks',
+                              'group' => 'Context']
+            ]
+        );
+        $setTemplateLine(
+            'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
+            [
+                'context' => ['class' => 'recordSeries', 'group' => 'Context']
+            ]
+        );
+        $setTemplateLine(
             'Physical Description', 'getPhysicalDescriptions',
             'data-escapeHtml.phtml',
             [
@@ -358,64 +377,21 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordEvents', 'title' => ""]
             ]
         );
-
-        $setTemplateLine(
-            'Archive Origination', 'getOrigination', 'data-origination.phtml',
-            [
-                'context' => ['class' => 'record-origination']
-            ]
-        );
-        $setTemplateLine(
-            'Archive', true, 'data-archive.phtml',
-            [
-                'context' => ['class' => 'recordHierarchyLinks']
-            ]
-        );
-        $setTemplateLine(
-            'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
-            [
-                'context' => ['class' => 'recordSeries']
-            ]
-        );
         $setTemplateLine(
             'Unit ID', 'getUnitID', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordReferenceCode']
             ]
         );
-
-        $getUnitIds = function ($data, $options) use (&$pos) {
-            $result = [];
-            foreach ($data as $type => $value) {
-                $result[] = [
-                    'label' => 'Unit ID',
-                    'values' => [ $type => "$value ($type)"],
-                    'options' => [
-                        'pos' => $pos++,
-                        'renderType' => 'RecordDriverTemplate',
-                        'template' => 'data-escapeHtml.phtml',
-                        'context' => [
-                            'class' => 'class',
-                            'type' => $type,
-                            'schemaLabel' => null,
-                        ]
-                    ]
-                ];
-            }
-            return $result;
-        };
-
-        $setMultiTemplateLine(
-            'Unit IDs', 'getUnitIds', $getUnitIds
+        $setTemplateLine(
+            'Unit IDs', 'getUnitIds', 'data-lines-with-detail.phtml'
         );
-
         $setTemplateLine(
             'Authors', 'getNonPresenterAuthors', 'data-authors.phtml',
             [
                 'context' => ['class' => 'recordAuthors']
             ]
         );
-
         $setTemplateLine(
             'Publisher', 'getPublicationDetails', 'data-publicationDetails.phtml',
             [
@@ -700,7 +676,7 @@ class RecordDataFormatterFactory
             foreach ($data as $type => $values) {
                 $final[] = [
                     'label' => "Access Restrictions:$type",
-                    'values' => array_values($values),
+                    'values' => $values ? array_values($values) : null,
                     'options' => [
                         'pos' => $pos++,
                         'renderType' => 'RecordDriverTemplate',
@@ -757,6 +733,9 @@ class RecordDataFormatterFactory
             [
                 'context' => ['class' => 'recordDaterange']
             ]
+        );
+        $setTemplateLine(
+            'Date', 'getUnitDates', 'data-lines-with-detail.phtml'
         );
         $setTemplateLine(
             'Photo Info', 'getPhotoInfo', 'data-escapeHtml.phtml',
@@ -976,6 +955,7 @@ class RecordDataFormatterFactory
         $spec->setLine('Established', 'getEstablishedDate');
         $spec->setLine('Terminated', 'getTerminatedDate');
         $spec->setLine('Awards', 'getAwards');
+
         $spec->setLine('Occupation', 'getOccupations');
         $spec->setLine('Field of Activity', 'getFieldsOfActivity');
         $spec->setTemplateLine(
@@ -996,6 +976,7 @@ class RecordDataFormatterFactory
             'Related Authorities', 'getRelations', 'data-relations-author.phtml'
         );
         $spec->setLine('Additional Information', 'getAdditionalInformation');
+
         return $spec->getArray();
     }
 

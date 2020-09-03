@@ -52,6 +52,29 @@ trait SolrFinnaTrait
     protected $searchSettings = [];
 
     /**
+     * Return an array of image URLs associated with this record with keys:
+     * - urls        Image URLs
+     *   - small     Small image (mandatory)
+     *   - medium    Medium image (mandatory)
+     *   - large     Large image (optional)
+     * - description Description text
+     * - rights      Rights
+     *   - copyright   Copyright (e.g. 'CC BY 4.0') (optional)
+     *   - description Human readable description (array)
+     *   - link        Link to copyright info
+     *
+     * @param string $language   Language for copyright information
+     * @param bool   $includePdf Whether to include first PDF file when no image
+     * links are found
+     *
+     * @return array
+     */
+    public function getAllImages($language = 'fi', $includePdf = true)
+    {
+        return [];
+    }
+
+    /**
      * Return access restriction notes for the record.
      *
      * @return array
@@ -65,12 +88,14 @@ trait SolrFinnaTrait
     /**
      * Return type of access restriction for the record.
      *
+     * @param string $language Language
+     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType()
+    public function getAccessRestrictionsType($language)
     {
         return false;
     }
@@ -424,7 +449,7 @@ trait SolrFinnaTrait
         if (!isset($this->fields['online_urls_str_mv'])) {
             return [];
         }
-        return $raw ? $this->fields['online_urls_str_mv'] : $this->checkForAudioUrls(
+        return $raw ? $this->fields['online_urls_str_mv'] : $this->resolveUrlTypes(
             $this->mergeURLArray(
                 $this->fields['online_urls_str_mv'], true
             )
@@ -773,16 +798,30 @@ trait SolrFinnaTrait
     /**
      * Get related records (used by RecordDriverRelated - Related module)
      *
-     * Returns an associative array of record ids.
+     * Returns an associative array of group => records, where each item in
+     * records is either a record id or an array that has a 'wildcard' key
+     * with a Solr compatible pattern that is targeted to the 'id' field.
+     *
+     * Notes on wildcard queries:
+     *  - Only the first record from the wildcard result set is returned.
+     *  - The wildcard query includes a filter that limits the results to
+     *    the same datasource as the issuing record.
+     *
      * The array may contain the following keys:
      *   - parents
      *   - children
      *   - continued-from
      *   - other
      *
+     * Examples:
+     * - parents
+     *     - source1.1234
+     *     - ['wildcard' => '*1234']
+     *     - ['wildcard' => 'source*1234*']
+     *
      * @return array
      */
-    public function getRelatedItems()
+    public function getRelatedRecords()
     {
         return [];
     }
@@ -874,21 +913,37 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Checks if any of the URLs contains an audio file and updates
-     * the url array acoordingly
+     * Resolve URL types.
+     * Each URL is annotated with 'extension' field (file extension).
+     * In addition, image and video URLs are annotated with 'type' field.
      *
-     * @param array $urls URLs to be checked for audio files
+     * @param array $urls URLs
      *
-     * @return array URL array with added audio and codec tag where
-     * appropriate
+     * @return array URL array with annotated URLs
      */
-    protected function checkForAudioUrls($urls)
+    protected function resolveUrlTypes($urls)
     {
         $newUrls = [];
         foreach ($urls as $url) {
-            if (preg_match('/^http(s)?:\/\/.*\.(mp3|wav)$/', $url['url'], $match)) {
-                $url['embed'] = 'audio';
-                $url['codec'] = $match[2];
+            if (preg_match(
+                '/^http(s)?:\/\/.*\.([a-zA-Z0-9]{3,4}.*)$/',
+                $url['url'], $match
+            )
+            ) {
+                $extension = $match[2];
+                $type = null;
+                switch (strtolower($extension)) {
+                case 'wav':
+                case 'mp3':
+                    $type = 'audio';
+                    break;
+                case 'jpg':
+                case 'png':
+                    $type = 'image';
+                    break;
+                }
+                $url['extension'] = $extension;
+                $url['type'] = $type;
             }
             $newUrls[] = $url;
         }
