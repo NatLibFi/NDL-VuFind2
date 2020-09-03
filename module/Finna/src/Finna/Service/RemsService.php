@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\RemsService;
+namespace Finna\Service;
 
 use Laminas\Config\Config;
 use Laminas\Session\Container;
@@ -510,6 +510,22 @@ class RemsService implements
     }
 
     /**
+     * Prepare user id for saving to REMS.
+     *
+     * @param string $userId User id.
+     *
+     * @return string
+     */
+    public function prepareUserId($userId)
+    {
+        // Strip organisation-id (subdomain) from username
+        if (false !== strpos($userId, ':')) {
+            list($domain, $userId) = explode(':', $userId, 2);
+        }
+        return $userId;
+    }
+
+    /**
      * Get application.
      *
      * @param int  $id    Id
@@ -597,23 +613,7 @@ class RemsService implements
             throw new \Exception('REMS: user not logged');
         }
         $id = $user->username;
-        return self::prepareUserId($id);
-    }
-
-    /**
-     * Prepare user id for saving to REMS.
-     *
-     * @param string $userId User id.
-     *
-     * @return string
-     */
-    public static function prepareUserId($userId)
-    {
-        // Strip organisation-id (subdomain) from username
-        if (false !== strpos($userId, ':')) {
-            list($domain, $userId) = explode(':', $userId, 2);
-        }
-        return $userId;
+        return $this->prepareUserId($id);
     }
 
     /**
