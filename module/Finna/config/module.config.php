@@ -616,11 +616,21 @@ $config = [
             ],
             'search_backend' => [
                 'factories' => [
+                    'R2' => 'Finna\Search\Factory\R2BackendFactory',
+                    'R2Collection' => 'Finna\Search\Factory\R2BackendFactory',
                     'Primo' => 'Finna\Search\Factory\PrimoBackendFactory',
                     'Solr' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
                     'SolrAuth' => 'Finna\Search\Factory\SolrAuthBackendFactory',
                     'Blender' => 'Finna\Search\Factory\BlenderBackendFactory',
                 ],
+            ],
+            'search_facetcache' => [
+                'aliases' => [
+                    'R2' => 'Finna\Search\R2\FacetCache'
+                ],
+                'factories' => [
+                    'Finna\Search\R2\FacetCache' => 'VuFind\Search\Solr\FacetCacheFactory'
+                ]
             ],
             'search_options' => [
                 'factories' => [
@@ -628,6 +638,8 @@ $config = [
 
                     'Finna\Search\Combined\Options' => 'VuFind\Search\OptionsFactory',
                     'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\OptionsFactory',
+                    'Finna\Search\R2\Options' => 'VuFind\Search\Options\OptionsFactory',
+                    'Finna\Search\R2Collection\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Primo\Options' => 'VuFind\Search\OptionsFactory',
                     'Finna\Search\SolrAuth\Options' => 'VuFind\Search\OptionsFactory',
                 ],
@@ -641,6 +653,8 @@ $config = [
                     'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
                     'Finna\Search\MixedList\Options' => 'VuFind\Search\MixedList\Options',
                     'Blender' => 'Finna\Search\Blender\Options',
+                    'R2' => 'Finna\Search\R2\Options',
+                    'R2Collection' => 'Finna\Search\R2Collection\Options',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Options'
                 ]
             ],
@@ -652,6 +666,8 @@ $config = [
                     'Finna\Search\EDS\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\EmptySet\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Favorites\Params' => 'VuFind\Search\Params\ParamsFactory',
+                    'Finna\Search\R2\Params' => 'Finna\Search\Solr\ParamsFactory',
+                    'Finna\Search\R2Collection\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\MixedList\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
@@ -667,6 +683,8 @@ $config = [
                     'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
 
                     'Blender' => 'Finna\Search\Blender\Params',
+                    'R2' => 'Finna\Search\R2\Params',
+                    'R2Collection' => 'Finna\Search\R2Collection\Params',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Params'
                 ]
             ],
@@ -675,6 +693,8 @@ $config = [
                     'Finna\Search\Blender\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\Combined\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Favorites\Results' => 'Finna\Search\Favorites\ResultsFactory',
+                    'Finna\Search\R2\Results' => 'VuFind\Search\Solr\ResultsFactory',
+                    'Finna\Search\R2Collection\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\Primo\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Solr\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrAuth\Results' => 'VuFind\Search\Solr\ResultsFactory',
@@ -687,6 +707,8 @@ $config = [
                     'VuFind\Search\SolrAuth\Results' => 'Finna\Search\SolrAuth\Results',
 
                     'Blender' => 'Finna\Search\Blender\Results',
+                    'R2' => 'Finna\Search\R2\Results',
+                    'R2Collection' => '\Finna\Search\R2Collection\Results'
                 ]
             ],
             'content_covers' => [
