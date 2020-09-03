@@ -925,4 +925,15 @@ class Record extends \VuFind\View\Helper\Root\Record
             ['summary' => $summary, 'driver' => $this->driver]
         );
     }
+
+    /**
+     * Return driver class name.
+     *
+     * @return string|null
+     */
+    public function getDriverName()
+    {
+        $parts = explode('\\', get_class($this->driver));
+        return $parts ? strtolower(end($parts)) : null;
+    }
 }
