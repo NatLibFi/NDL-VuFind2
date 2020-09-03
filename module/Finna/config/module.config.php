@@ -484,10 +484,12 @@ $config = [
             ],
             'autocomplete' => [
                 'factories' => [
+                    'Finna\Autocomplete\R2' => 'Finna\Autocomplete\SolrFactory',
                     'Finna\Autocomplete\Solr' => 'Finna\Autocomplete\SolrFactory',
                 ],
                 'aliases' => [
                     'VuFind\Autocomplete\Solr' => 'Finna\Autocomplete\Solr',
+                    'r2' => 'Finna\Autocomplete\R2'
                 ]
             ],
             'db_row' => [
