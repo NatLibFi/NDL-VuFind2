@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) The National Library of Finland 2019-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -61,6 +61,14 @@ class LoaderFactory extends \VuFind\Record\LoaderFactory
         $loader->setPreferredLanguage(
             $container->get('VuFind\Translator')->getLocale()
         );
+        try {
+            $R2 = $container->get(\Finna\Service\R2Service::class);
+            if ($R2->isEnabled() && $R2->isAuthenticated()) {
+                // Request R2 record with restricted metadata
+                $loader->setR2Authenticated(true);
+            }
+        } catch (\Exception $e) {
+        }
         return $loader;
     }
 }

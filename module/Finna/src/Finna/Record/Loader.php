@@ -46,6 +46,14 @@ use VuFindSearch\ParamBag;
 class Loader extends \VuFind\Record\Loader
 {
     /**
+     * Backend specific default parameters that are passed to the backend
+     * when loading a record.
+     *
+     * @var array
+     */
+    protected $defaultParams = [];
+
+    /**
      * Preferred language for display strings from RecordDriver
      *
      * @var string
@@ -62,6 +70,20 @@ class Loader extends \VuFind\Record\Loader
     public function setPreferredLanguage($language)
     {
         $this->preferredLanguage = $language;
+    }
+
+    /**
+     * Set R2 authenticated mode.
+     *
+     * @param bool $mode Mode
+     *
+     * @return void
+     */
+    public function setR2Authenticated($mode)
+    {
+        if ($mode) {
+            $this->defaultParams['R2'] = ['R2Restricted' => true];
+        }
     }
 
     /**
@@ -92,6 +114,7 @@ class Loader extends \VuFind\Record\Loader
         }
         $missingException = false;
         try {
+            $params = $this->appendDefaultParams($params, $source);
             $result = parent::load($id, $source, $tolerateMissing, $params);
         } catch (RecordMissingException $e) {
             $missingException = $e;
@@ -127,6 +150,39 @@ class Loader extends \VuFind\Record\Loader
     }
 
     /**
+     * Given an array of associative arrays with id and source keys (or pipe-
+     * separated source|id strings), load all of the requested records in the
+     * requested order.
+     *
+     * @param array      $ids                       Array of associative arrays with
+     * id/source keys or strings in source|id format.  In associative array formats,
+     * there is also an optional "extra_fields" key which can be used to pass in data
+     * formatted as if it belongs to the Solr schema; this is used to create
+     * a mock driver object if the real data source is unavailable.
+     * @param bool       $tolerateBackendExceptions Whether to tolerate backend
+     * exceptions that may be caused by e.g. connection issues or changes in
+     * subcscriptions
+     * @param ParamBag[] $params                    Associative array of search
+     * backend parameters keyed with source key
+     *
+     * @throws \Exception
+     * @return array     Array of record drivers
+     */
+    public function loadBatch(
+        $ids, $tolerateBackendExceptions = false, $params = []
+    ) {
+        // loadBatch needs source specific parameters.
+        if (isset($this->defaultParams['R2'])) {
+            $params = array_merge($this->defaultParams['R2'], $params);
+        }
+        $sourceParams = ['R2' => new ParamBag()];
+        foreach ($params as $key => $val) {
+            $sourceParams['R2']->set($key, $val);
+        }
+        return parent::loadBatch($ids, $tolerateBackendExceptions, $sourceParams);
+    }
+
+    /**
      * Given an array of IDs and a record source, load a batch of records for
      * that source.
      *
@@ -154,8 +210,9 @@ class Loader extends \VuFind\Record\Loader
             return $result;
         }
 
+        $params = $this->appendDefaultParams($params, $source);
         $records = parent::loadBatchForSource(
-            $ids, $source, $tolerateBackendExceptions
+            $ids, $source, $tolerateBackendExceptions, $params
         );
 
         // Check the results for missing MetaLib IRD records and try to load them
@@ -228,5 +285,25 @@ class Loader extends \VuFind\Record\Loader
         $results = $this->searchService->search('Solr', $query, 0, 1, $params)
             ->getRecords();
         return !empty($results) ? $results[0] : false;
+    }
+
+    /**
+     * Append default search parameters.
+     *
+     * @param ParamBag $params    Parameters to be appended
+     * @param string   $backendId Backend id
+     *
+     * @return ParamBag
+     */
+    protected function appendDefaultParams(
+        ParamBag $params = null, $backendId = DEFAULT_SEARCH_BACKEND
+    ) {
+        if (isset($this->defaultParams[$backendId])) {
+            $params = $params ?? new ParamBag();
+            foreach ($this->defaultParams[$backendId] as $key => $val) {
+                $params->set($key, $val);
+            }
+        }
+        return $params;
     }
 }
