@@ -949,6 +949,32 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
+     * R2 search access rights.
+     *
+     * @return mixed
+     */
+    public function r2AccessRightsAction()
+    {
+        $user = $this->getUser();
+        if ($user == false) {
+            return $this->forceLogin();
+        }
+
+        $rems = $this->serviceLocator->get('Finna\Service\RemsService');
+        return $this->createViewModel(['rems' => $rems]);
+    }
+
+    /**
+     * R2 search terms of use.
+     *
+     * @return mixed
+     */
+    public function r2TermsOfUseAction()
+    {
+        return $this->createViewModel();
+    }
+
+    /**
      * Unsubscribe a scheduled alert for a saved search.
      *
      * @return mixed

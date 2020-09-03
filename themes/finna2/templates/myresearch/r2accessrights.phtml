@@ -1,0 +1,55 @@
+<!-- START of: finna - myresearch/r2accessrights.phtml -->
+<?php
+  // Set up page title:
+  $this->headTitle($this->translate('R2_accessrights_title'));
+
+  // Set up breadcrumbs:
+  $currPage = 'R2AccessRights';
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
+  $error = false;
+  try {
+    $hasAccess = $this->rems->hasUserAccess(true);
+    $usagePurpose = $this->rems->getUsagePurpose();
+    $blacklisted = $this->rems->isUserBlacklisted(true);
+  } catch (\Exception $e) {
+    $error = true;
+  }
+?>
+
+<!-- Leftside navigationbar -->
+<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'r2-accessrights']); ?>
+
+<div class="<?=$this->layoutClass('mainbody-myresearch')?>">
+  <div class="clearfix mylist-header hidden-print">
+    <div>
+      <?=$this->flashmessages()?>
+    </div>
+    <div class="useraccount-header">
+      <h2><?=$this->transEsc('R2_accessrights_title')?></h2>
+    </div>
+    <?php if ($error): ?>
+      <div class="alert alert-danger"><?=$this->transEsc('R2_rems_connect_error')?></div>
+    <?php else: ?>
+      <?php if ($hasAccess): ?>
+        <?php $usagePurpose = $this->rems->getUsagePurpose(); ?>
+        <table class="table useraccount-table">
+          <tbody>
+            <tr class="headers">
+              <th><?=$this->transEsc('R2_your_accessrights')?></th>
+              <th><?=$this->transEsc('R2_session_usage_purpose')?></th>
+            </tr>
+            <tr class="myresearch-row">
+              <td><?=$this->translate('R2_accessrights_info_html', ['%%url%%' => $this->url('content-page', ['page' => 'accessrights'])])?></td>
+              <td>
+                <p><?=$this->translate($usagePurpose)?></p>
+              </td>  
+            </tr>
+          </tbody>
+        </table>
+      <?php else: ?>
+        <?= $this->R2RestrictedRecordRegister(null, ['user' => $this->auth()->isLoggedIn(), 'ignoreCache' => true, 'note' => 'R2_accessrights_register', 'registerLabel' => 'R2_register_myresearch'])?>
+      <?php endif; ?>
+    <?php endif; ?>
+  </div>
+</div>
+<!-- END of: finna - myresearch/r2accessrights.phtml -->
