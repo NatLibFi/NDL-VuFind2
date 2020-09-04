@@ -138,9 +138,10 @@ class AuthenticationListener
             $this->connector->setUsername(null);
             // Attempt to retrieve restricted metadata from the backend
             // when the following holds:
-            // 1. The user is authenticated
+            // 1. The user is authorized
+            // (properly authenticated & registered to REMS)
             // 2. If the search context is retrieve or retrieveBatch,
-            //    restricted metadata was explicitly requested.
+            // and restricted metadata was requested.
             if (!in_array($context, ['retrieve', 'retrieveBatch'])
                 || in_array(true, $params->get('R2Restricted') ?? [])
             ) {
@@ -149,7 +150,7 @@ class AuthenticationListener
                     && $this->rems->isUserRegisteredDuringSession()
                 ) {
                     // Pass the username to connector in order to
-                    // get restricted metadata.
+                    // request restricted metadata.
                     $userId = $this->rems->prepareUserId(
                         $this->authManager->isLoggedIn()->username
                     );
