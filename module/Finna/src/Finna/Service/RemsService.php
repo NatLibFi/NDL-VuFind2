@@ -551,23 +551,10 @@ class RemsService implements
      */
     protected function getApplications($statuses = [])
     {
-        // TODO fetching applications by query doesn't seem to work.
-        // Fetch all and filter by status manually.
+        // Fetching applications by query doesn't work with REMS api.
+        // Therefore fetch all and filter by status manually.
 
         $params = [];
-        /*
-        if ($statuses) {
-            $params['query'] = implode(
-                ' or ',
-                array_map(
-                    function ($status) {
-                        return "application/state:application.state/{$status}";
-                    },
-                    $statuses
-                )
-            );
-        }
-        */
         try {
             $result = $this->sendRequest(
                 'my-applications',
