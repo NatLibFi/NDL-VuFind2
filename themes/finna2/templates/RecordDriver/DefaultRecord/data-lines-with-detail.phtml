@@ -1,0 +1,7 @@
+<?php foreach ($this->data as $line): ?>
+  <?php if (empty($line['data'])) {
+    continue;
+  }
+  ?>
+  <?=$line['data']?><?= !empty($line['detail']) ? ' (' . $line['detail'] . ')' : ''?><br/>
+<?php endforeach ?>

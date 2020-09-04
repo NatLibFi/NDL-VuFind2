@@ -7,7 +7,7 @@
   $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'medium', $this->recordLink()->getUrl($this->driver));
 if ($img):
     ob_start(); ?>
-    <?=$img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]]) ?>
+    <?=$img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]], $this->driver->getSourceIdentifier()) ?>
     <?php $thumbnail = ob_get_contents(); ?>
   <?php ob_end_clean(); ?>
 <?php endif;?>
@@ -43,14 +43,6 @@ if ($img):
         </div>
         <div class="dateyeartype">
           <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?> <?=$this->record($this->driver)->getSourceIdElement() ?></div>
-          <?php $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
-            <div class="truncate-field" data-rows="1">
-              <?php $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
-                <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ' ; ' : ''?>
-              <?php endforeach; ?>
-            </div>
-          <?php endif; ?>
-
           <div class="resultHierarchyLinks">
             <?php // The funky comparison below is due to Laminas translator not supporting empty values (see ExtendedIniReader) ?>
             <?php if (!$this->translationEmpty('Archive Repository')): ?><span class="small"><?=$this->transEsc('Archive Repository')?>:</span><?php endif; ?>
@@ -104,14 +96,16 @@ if ($img):
         <?php $recordHelper = $this->record($this->driver); ?>
         <?=$recordHelper->getOnlineUrls('results');?>
         <?=$recordHelper->getPreviews();?>
-
+        <?= $this->R2RestrictedRecordSearchResult($this->driver, 'info') ?>
         <?=$this->render('list/list-notes.phtml')?>
         <?php /* Hierarchy tree link */ ?>
+        <?php $hierarchySource = $this->driver->getSourceIdentifier() ?? 'Solr'; ?>
         <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
             <div class="hierarchyTreeLink hidden-print">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
-              <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID])?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->recordLink()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID])?>" data-lightbox-post="tab=hierarchytree">
+              <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchySource)?>" class="hiddenHierarchySource" />
+              <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID, 'source' => $hierarchySource])?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->recordLink()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID])?>" data-lightbox-post="tab=hierarchytree">
                 <i class="fa fa-sitemap"></i>
                 <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
               </a>

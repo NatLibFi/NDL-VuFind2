@@ -20,6 +20,7 @@ $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
       <?php if ($this->params->getView() === 'grid'): ?>
         <?=$this->render('list/list-notes.phtml')?>
       <?php endif ?>
+      <?= $this->R2RestrictedRecordSearchResult($this->driver) ?>
       <?php $img = $this->recordImage($this->record($this->driver))?>
       <?=$img->render('list grid', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 600, 'h' => 600]]) ?>
     </div>

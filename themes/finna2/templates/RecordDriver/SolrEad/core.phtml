@@ -6,11 +6,13 @@
     $audioUrls = [];
     $otherUrls = [];
     foreach ($urls as $url){
+      $type = $url['type'] ?? null;
       if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
         array_push($videoUrls, $url);
-      } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
+      } elseif ($type === 'audio') {
         array_push($audioUrls, $url);
-      } else {
+      } elseif ($type !== 'image'){
+        // Filter away image-urls since they are displayed via image-paginator
         array_push($otherUrls, $url);
       }
     }
@@ -35,7 +37,7 @@
       <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
     <?php endif; ?>
 
-    <?php if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+    <?php if ($this->resolver('record/record-organisation-menu.phtml') && in_array($this->driver->getSourceIdentifier(), ['Solr', 'R2'])): ?>
       <div class="organisation-menu">
           <?=$this->render('record/record-organisation-menu.phtml') ?>
       </div>
@@ -53,6 +55,7 @@
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <?= $this->R2RestrictedRecordRegister($this->driver, ['user' => $this->auth()->isLoggedIn()])?>
       <?php if ($serviceURLs = $this->driver->getServiceURLs()): ?>
         <div class="recordURLs">
           <?php foreach ($serviceURLs as $current): ?>
