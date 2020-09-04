@@ -192,19 +192,6 @@ trait R2ControllerTrait
     }
 
     /**
-     * Return session for REMS data.
-     *
-     * @return SesionContainer
-     */
-    public function getR2Session()
-    {
-        return new SessionContainer(
-            'R2Registration',
-            $this->serviceLocator->get('VuFind\SessionManager')
-        );
-    }
-
-    /**
      * Is the user authenticated to use R2?
      *
      * @return bool
