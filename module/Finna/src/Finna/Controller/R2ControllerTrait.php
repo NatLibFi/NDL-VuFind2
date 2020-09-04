@@ -66,7 +66,7 @@ trait R2ControllerTrait
             return $formId;
         }
 
-        $rems = $this->serviceLocator->get('Finna\RemsService\RemsService');
+        $rems = $this->serviceLocator->get('Finna\Service\RemsService');
         try {
             $regId
                 = \Finna\Form\Form::getR2RegisterFormId(!$rems->isUserRegistered());
@@ -115,7 +115,7 @@ trait R2ControllerTrait
         }
 
         // Check user permission from REMS and show registration if needed.
-        $rems = $this->serviceLocator->get('Finna\RemsService\RemsService');
+        $rems = $this->serviceLocator->get('Finna\Service\RemsService');
         try {
             if ($rems->isUserBlacklisted()) {
                 return $getRedirect();
@@ -151,7 +151,7 @@ trait R2ControllerTrait
                 return $view;
             }
 
-            $rems = $this->serviceLocator->get('Finna\RemsService\RemsService');
+            $rems = $this->serviceLocator->get('Finna\Service\RemsService');
 
             // Collect submitted params required by REMS form
             $formParams = [];
@@ -205,30 +205,13 @@ trait R2ControllerTrait
     }
 
     /**
-     * Get the record loader
-     *
-     * @param bool $restricted Include restricted metadata?
-     *
-     * @return \VuFind\Record\Loader
-     */
-    public function getRecordLoader($restricted = false)
-    {
-        // By default, this returns a record loader that returns drivers without
-        // restricted metadata.
-        $loader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
-        $loader->setDefaultParams(['R2Restricted' => $restricted]);
-        return $loader;
-    }
-
-    /**
      * Is the user authenticated to use R2?
      *
      * @return bool
      */
     protected function isAuthenticated()
     {
-        $auth
-            = $this->serviceLocator->get('LmcRbacMvc\Service\AuthorizationService');
-        return $auth->isGranted('access.R2Authenticated');
+        return $this->serviceLocator->get(\Finna\Service\R2Service::class)
+            ->isAuthenticated();
     }
 }
