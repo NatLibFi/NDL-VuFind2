@@ -190,16 +190,6 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Show organisation menu on record page?
-     *
-     * @return boolean
-     */
-    public function showOrganisationMenu()
-    {
-        return true;
-    }
-
-    /**
      * Does this record contain restricted metadata?
      *
      * @return bool
