@@ -57,7 +57,7 @@ class Loader extends \VuFind\Record\Loader
      *
      * @var array
      */
-    protected $redirectedMissingIds;
+    protected $recordRedirectionRules = [];
 
     /**
      * Set preferred language for display strings from RecordDriver.
@@ -72,15 +72,15 @@ class Loader extends \VuFind\Record\Loader
     }
 
     /**
-     * Set missing record ids that should be redirected to new records.
+     * Set record redirection rules (see config.ini::missing_record_redirect).
      *
-     * @param array $patterns Regular expressions that match old record ids.
+     * @param array $rules Rules.
      *
      * @return void
      */
-    public function setRedirectedMissingIds($patterns)
+    public function setRecordRedirectionRules($rules)
     {
-        $this->redirectedMissingIds = $patterns;
+        $this->recordRedirectionRules = $rules;
     }
 
     /**
@@ -204,17 +204,20 @@ class Loader extends \VuFind\Record\Loader
             if ($newRecord) {
                 return $newRecord;
             }
-        } elseif ($this->redirectedMissingIds) {
-            foreach ($this->redirectedMissingIds as $redirect) {
-                $data = array_map('trim', explode('###', $redirect, 3));
+        } elseif ($this->recordRedirectionRules) {
+            foreach ($this->recordRedirectionRules as $rule) {
+                $data = array_map('trim', explode('###', $rule, 3));
                 if (count($data) === 3) {
                     list($pattern, $otherIdPrefix, $newDatasource) = $data;
                     if (preg_match($pattern, $id, $matches)) {
                         // Try to find the new record by searching for the redirected
-                        // ID in in ctrlnum field (with the given prefix).
+                        // ID in in ctrlnum field (possibly with prefix).
+                        $otherId = $matches[1];
+                        if ($otherIdPrefix) {
+                            $otherId = "($otherIdPrefix)$otherId";
+                        }
                         $newRecord = $this->loadRecordWithIdentifier(
-                            "($otherIdPrefix){$matches[1]}",
-                            $newDatasource, 'ctrlnum'
+                            $otherId, $newDatasource, 'ctrlnum'
                         );
                         if ($newRecord) {
                             return $newRecord;
