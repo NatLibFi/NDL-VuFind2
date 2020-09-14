@@ -53,7 +53,7 @@ class Loader extends \VuFind\Record\Loader
     protected $preferredLanguage;
 
     /**
-     * Missing records that should be redirected to new records.
+     * Record redirection rules (see config.ini::missing_record_redirect).
      *
      * @var array
      */
@@ -72,7 +72,7 @@ class Loader extends \VuFind\Record\Loader
     }
 
     /**
-     * Set record redirection rules (see config.ini::missing_record_redirect).
+     * Set record redirection rules.
      *
      * @param array $rules Rules.
      *
