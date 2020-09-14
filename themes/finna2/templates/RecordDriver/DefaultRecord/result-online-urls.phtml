@@ -1,7 +1,7 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/result-online-urls.phtml -->
   <?php
     $openUrl = $this->openUrl($this->driver, 'results');
-    $openUrlActive = $openUrl->isActive() && $this->driver->supportsOpenUrl();
+    $openUrlActive = $openUrl->isActive();
 
     $images = $this->record($this->driver)->getAllRecordImageUrls();
     $urls = $this->driver->getURLs();
