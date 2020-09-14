@@ -213,7 +213,8 @@ class Loader extends \VuFind\Record\Loader
                         // Try to find the new record by searching for the redirected
                         // ID in in ctrlnum field (with the given prefix).
                         $newRecord = $this->loadRecordWithIdentifier(
-                            "($otherIdPrefix){$matches[1]}", $newDatasource, 'ctrlnum'
+                            "($otherIdPrefix){$matches[1]}",
+                            $newDatasource, 'ctrlnum'
                         );
                         if ($newRecord) {
                             return $newRecord;
