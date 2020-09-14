@@ -1340,10 +1340,11 @@ url_blacklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
 ;display_versions = true
 
 ; Record IDs that should be redirected to the records new version.
-; Each entry is a regular expression that receives the record ID (<source>.<id>)
-; and should return these as separate elements, i.e. have capture groups for source and ID (without source).
-; The old ID has to be indexed to the new records 'old_id_str_mv_field' field.
-; redirect_missing_sources[] = "/^(lusto)\.(.+)/"
+; Each entry consists of the following elements (delimited by ':'):
+; 1. Regular expression that receives the record ID (<source>.<id>) and should capture <id>.
+; 2. Prefix that is used in 'ctrlnum' index field of the new record: (<prefix>)<id>.
+; 3. Datasource of the new record.
+; redirect_missing_sources[] = "/^lusto\.(.+)/:knp:lusto-new"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]

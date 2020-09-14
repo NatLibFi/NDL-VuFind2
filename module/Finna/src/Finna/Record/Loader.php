@@ -205,15 +205,19 @@ class Loader extends \VuFind\Record\Loader
                 return $newRecord;
             }
         } elseif ($this->redirectedMissingIds) {
-            foreach ($this->redirectedMissingIds as $pattern) {
-                if (preg_match($pattern, $id, $matches)) {
-                    // Try to find the new record by searching for the old ID in
-                    // old_identifier_str field.
-                    $newRecord = $this->loadRecordWithIdentifier(
-                        $matches[2], $matches[1], 'old_id_str_mv'
-                    );
-                    if ($newRecord) {
-                        return $newRecord;
+            foreach ($this->redirectedMissingIds as $redirect) {
+                $data = array_map('trim', explode(':', $redirect, 3));
+                if (count($data) === 3) {
+                    list($pattern, $otherIdPrefix, $newDatasource) = $data;
+                    if (preg_match($pattern, $id, $matches)) {
+                        // Try to find the new record by searching for the redirected
+                        // ID in in ctrl field (with the given prefix).
+                        $newRecord = $this->loadRecordWithIdentifier(
+                            "($otherIdPrefix){$matches[1]}", $newDatasource, 'ctrlnum'
+                        );
+                        if ($newRecord) {
+                            return $newRecord;
+                        }
                     }
                 }
             }
