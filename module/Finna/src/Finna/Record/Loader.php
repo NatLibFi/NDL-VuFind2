@@ -206,7 +206,7 @@ class Loader extends \VuFind\Record\Loader
             }
         } elseif ($this->redirectedMissingIds) {
             foreach ($this->redirectedMissingIds as $redirect) {
-                $data = array_map('trim', explode(':', $redirect, 3));
+                $data = array_map('trim', explode('###', $redirect, 3));
                 if (count($data) === 3) {
                     list($pattern, $otherIdPrefix, $newDatasource) = $data;
                     if (preg_match($pattern, $id, $matches)) {
