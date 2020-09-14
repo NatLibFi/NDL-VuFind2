@@ -57,6 +57,20 @@ $config = [
                     ]
                 ],
             ],
+            'linked-events-content' => [
+                'type'    => 'Zend\Router\Http\Segment',
+                'options' => [
+                    'route'    => '/FeedContent/LinkedEvents[/:id]',
+                    'constraints' => [
+                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ],
+                    'defaults' => [
+                        'controller' => 'FeedContent',
+                        'action'     => 'LinkedEvents',
+                    ]
+                ],
+            ],
             'list-save' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
@@ -289,6 +303,7 @@ $config = [
             'Finna\Config\YamlReader' => 'VuFind\Config\YamlReaderFactory',
             'Finna\Cover\Loader' => 'VuFind\Cover\LoaderFactory',
             'Finna\Feed\Feed' => 'Finna\Feed\FeedFactory',
+            'Finna\Feed\LinkedEvents' => 'Finna\Feed\LinkedEventsFactory',
             'Finna\Form\Form' => 'Finna\Form\FormFactory',
             'Finna\ILS\Connection' => 'VuFind\ILS\ConnectionFactory',
             'Finna\LocationService\LocationService' => 'Finna\LocationService\LocationServiceFactory',
@@ -380,6 +395,8 @@ $config = [
                         'Finna\AjaxHandler\GetHoldingsDetailsFactory',
                     'Finna\AjaxHandler\GetImageInformation' =>
                         'Finna\AjaxHandler\GetImageInformationFactory',
+                    'Finna\AjaxHandler\GetLinkedEvents' =>
+                        'Finna\AjaxHandler\GetLinkedEventsFactory',
                     'Finna\AjaxHandler\GetItemStatuses' =>
                         'VuFind\AjaxHandler\GetItemStatusesFactory',
                     'Finna\AjaxHandler\GetOrganisationInfo' =>
@@ -392,6 +409,8 @@ $config = [
                         'Finna\AjaxHandler\GetRecordInfoByAuthorityFactory',
                     'Finna\AjaxHandler\GetRecordVersions' =>
                         'Finna\AjaxHandler\GetRecordVersionsFactory',
+                    'Finna\AjaxHandler\GetRequestGroupPickupLocations' =>
+                        'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\GetSearchTabsRecommendations' =>
                         'Finna\AjaxHandler\GetSearchTabsRecommendationsFactory',
                     'Finna\AjaxHandler\GetSideFacets' =>
@@ -427,6 +446,7 @@ $config = [
                     'getFeed' => 'Finna\AjaxHandler\GetFeed',
                     'getHoldingsDetails' => 'Finna\AjaxHandler\GetHoldingsDetails',
                     'getImageInformation' => 'Finna\AjaxHandler\GetImageInformation',
+                    'getLinkedEvents' => 'Finna\AjaxHandler\GetLinkedEvents',
                     'getOrganisationPageFeed' => 'Finna\AjaxHandler\GetOrganisationPageFeed',
                     'getMyLists' => 'Finna\AjaxHandler\GetUserLists',
                     'getOrganisationInfo' => 'Finna\AjaxHandler\GetOrganisationInfo',
@@ -446,6 +466,7 @@ $config = [
                     'VuFind\AjaxHandler\GetACSuggestions' => 'Finna\AjaxHandler\GetACSuggestions',
                     'VuFind\AjaxHandler\GetFacetData' => 'Finna\AjaxHandler\GetFacetData',
                     'VuFind\AjaxHandler\GetItemStatuses' => 'Finna\AjaxHandler\GetItemStatuses',
+                    'VuFind\AjaxHandler\GetRequestGroupPickupLocations' => 'Finna\AjaxHandler\GetRequestGroupPickupLocations',
                     'VuFind\AjaxHandler\GetSideFacets' => 'Finna\AjaxHandler\GetSideFacets',
                     'VuFind\AjaxHandler\SystemStatus' => 'Finna\AjaxHandler\SystemStatus',
                 ]
@@ -591,9 +612,11 @@ $config = [
             'resolver_driver' => [
                 'factories' => [
                     'Finna\Resolver\Driver\Sfx' => 'VuFind\Resolver\Driver\DriverWithHttpClientFactory',
+                    'Finna\Resolver\Driver\Alma' => 'VuFind\Resolver\Driver\DriverWithHttpClientFactory',
                 ],
                 'aliases' => [
                     'VuFind\Resolver\Driver\Sfx' => 'Finna\Resolver\Driver\Sfx',
+                    'VuFind\Resolver\Driver\Alma' => 'Finna\Resolver\Driver\Alma',
                 ]
             ],
             'search_backend' => [

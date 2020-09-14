@@ -103,8 +103,8 @@ summary = "863abiz:866az"
 supplements = "867az"
 ; Fields to include in indexes. Default is none.
 indexes = "868az"
-; Whether to display home branch instead of holding branch. Default is false.
-;use_home_branch = true
+; Whether to display home library instead of holding library. Default is false.
+;useHomeLibrary = true
 ; By default the holdings list is sorted alphabetically. This setting can be
 ; used to manually set the order of branches and locations by entering codes as a
 ; colon-separated list. Branch and location may be combined with a slash. By default
@@ -151,7 +151,7 @@ enabled = true
 ; The field to display as the phone number. Default is mobile.
 ; Set to empty string for "none".
 ;phoneNumberField = ""
-; The field to display as the SMS number. Default is smsalertnumber.
+; The field to display as the SMS number. Default is sms_number.
 ; Set to empty string for "none".
 ;smsNumberField = ""
 
@@ -160,5 +160,5 @@ enabled = true
 [updateSmsNumber]
 ;method = driver
 ; Link the SMS number to the following Koha fields. Default for Finna is
-; "smsalertnumber,phone".
-;fields = "smsalertnumber,phone"
+; "sms_number,phone".
+;fields = "sms_number,phone"
