@@ -790,7 +790,7 @@ class RemsService implements
     /**
      * Get REMS catalogue item id from configuration
      *
-     * @return string|null
+     * @return int|null
      */
     protected function getCatalogItemId()
     {
