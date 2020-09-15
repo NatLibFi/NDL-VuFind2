@@ -512,17 +512,19 @@ class RemsService implements
     }
 
     /**
-     * Prepare user id for saving to REMS.
-     *
-     * @param string $userId User id.
+     * Return REMS user id (eppn) of the current authenticated user.
      *
      * @return string
+     * @throws Exception
      */
-    public function prepareUserId($userId)
+    public function getUserId()
     {
+        if (!$this->userId) {
+            throw new \Exception('REMS: user not logged');
+        }
         // Strip configured prefix from username
-        $parts = explode(':', $userId, 2);
-        return $parts[1] ?? $userId;
+        $parts = explode(':', $this->userId, 2);
+        return $parts[1] ?? $this->userId;
     }
 
     /**
@@ -585,20 +587,6 @@ class RemsService implements
             },
             $result
         );
-    }
-
-    /**
-     * Return REMS user id (eppn) of the current authenticated user.
-     *
-     * @return string
-     * @throws Exception
-     */
-    protected function getUserId()
-    {
-        if (!$this->userId) {
-            throw new \Exception('REMS: user not logged');
-        }
-        return $this->prepareUserId($this->userId);
     }
 
     /**
