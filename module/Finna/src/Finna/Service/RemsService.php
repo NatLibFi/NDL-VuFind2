@@ -311,9 +311,9 @@ class RemsService implements
      */
     public function registerUser(
         string $email,
-        $firstname = null,
-        $lastname = null,
-        $formParams = []
+        string $firstname = '',
+        string $lastname = '',
+        array $formParams = []
     ) {
         if (empty($this->userIdentificationNumber)) {
             throw new \Exception('User national identification number not present');
