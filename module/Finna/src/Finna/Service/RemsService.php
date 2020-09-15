@@ -279,7 +279,7 @@ class RemsService implements
             return null;
         }
 
-        // Fetch entitlement application and its upsage purpose
+        // Fetch entitlement application and its usage purpose
         $applicationId = $entitlements[0]['application-id'];
         if ($application = $this->getApplication($applicationId, $throw)) {
             $status = $this->mapRemsStatus($application['application/state']);
