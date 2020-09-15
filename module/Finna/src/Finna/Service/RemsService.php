@@ -688,31 +688,23 @@ class RemsService implements
             $client->setRawBody($body['content']);
         }
 
-        $formatError = function ($exception, $response) use ($client, $params) {
-            $err = "REMS: request failed: " . $client->getRequest()->getUriString()
-            . ', params: ' . var_export($params, true);
-            if ($response !== null) {
-                $err .= ', statusCode: ' . $response->getStatusCode() . ': '
-                    . $response->getReasonPhrase()
-                    . ', response content: ' . $response->getBody();
-            }
-            if ($exception !== null) {
-                $err .= ', exception: ' . $exception->getMessage();
-            }
-            return $err;
-        };
-
         try {
             $response = $client->send();
         } catch (\Exception $e) {
-            $err = $formatError($e, null);
+            $err = 'REMS: request failed: '
+                . $client->getRequest()->getUriString()
+                . ', params: ' . var_export($params, true)
+                . ', exception: ' . $exception->getMessage();
             $this->error($err);
             return $handleException('REMS request error');
         }
 
-        $err = $formatError(null, $response);
-
         if (!$response->isSuccess() || $response->getStatusCode() !== 200) {
+            $err = 'REMS: request failed: '
+                . $client->getRequest()->getUriString()
+                . ', statusCode: ' . $response->getStatusCode() . ': '
+                . $response->getReasonPhrase()
+                . ', response content: ' . $response->getBody();
             $this->error($err);
             return $handleException('REMS request error');
         }
@@ -722,6 +714,11 @@ class RemsService implements
         if ($method === 'POST'
             && (!isset($response['success']) || !$response['success'])
         ) {
+            $err = 'REMS: POST request failed: '
+                . $client->getRequest()->getUriString()
+                . ', statusCode: ' . $response->getStatusCode() . ': '
+                . $response->getReasonPhrase()
+                . ', response content: ' . $response->getBody();
             $this->error($err);
             return $handleException('REMS request error');
         }
