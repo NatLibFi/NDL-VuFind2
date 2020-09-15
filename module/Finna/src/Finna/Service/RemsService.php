@@ -607,7 +607,8 @@ class RemsService implements
      * @param string      $url                 URL (relative)
      * @param array       $params              Request parameters
      * @param string      $method              GET|POST
-     * @param int         $apiUser             Rems API user type (see TYPE_ADMIN etc)
+     * @param int         $apiUser             Rems API user type
+     * (see TYPE_ADMIN etc)
      * @param null|string $body                Request body
      * @param boolean     $requireRegistration Require that
      * the user has been registered to REMS during the session?
