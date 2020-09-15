@@ -615,7 +615,7 @@ class RemsService implements
      * @param string      $url                 URL (relative)
      * @param array       $params              Request parameters
      * @param string      $method              GET|POST
-     * @param int         $userType            Rems user type (see TYPE_ADMIN etc)
+     * @param int         $apiUser             Rems API user type (see TYPE_ADMIN etc)
      * @param null|string $body                Request body
      * @param boolean     $requireRegistration Require that
      * the user has been registered to REMS during the session?
@@ -628,7 +628,7 @@ class RemsService implements
         $url,
         $params = [],
         $method = 'GET',
-        $userType = RemsService::TYPE_USER,
+        $apiUser = RemsService::TYPE_USER,
         $body = null,
         $requireRegistration = true,
         $throw = false
@@ -663,7 +663,7 @@ class RemsService implements
 
         $userId = null;
 
-        switch ($userType) {
+        switch ($apiUser) {
         case RemsService::TYPE_USER:
             $userId = $this->getUserId();
             break;
@@ -676,7 +676,7 @@ class RemsService implements
         }
 
         if ($userId === null) {
-            $err = "Invalid userType: $userType for url: $url";
+            $err = "Invalid apiUser: $apiUser for url: $url";
             $this->error($err);
             return $handleException($err);
         }
