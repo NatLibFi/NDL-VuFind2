@@ -35,7 +35,6 @@ use FinnaSearch\Backend\R2\Connector;
 use Laminas\EventManager\EventInterface;
 use Laminas\EventManager\SharedEventManagerInterface;
 
-use VuFind\Auth\Manager;
 use VuFindSearch\Backend\BackendInterface;
 
 /**
@@ -88,7 +87,6 @@ class AuthenticationListener
      * Constructor.
      *
      * @param BackendInterface $backend     Search backend
-     * @param Manager          $authManager Authentication manager
      * @param R2Service        $R2Service   R2 service
      * @param Connector        $connector   Backend connector
      * @param RemsService      $rems        REMS service
@@ -97,13 +95,11 @@ class AuthenticationListener
      */
     public function __construct(
         BackendInterface $backend,
-        Manager $authManager,
         R2Service $R2Service,
         Connector $connector,
         RemsService $rems
     ) {
         $this->backend = $backend;
-        $this->authManager = $authManager;
         $this->R2Service = $R2Service;
         $this->connector = $connector;
         $this->rems = $rems;
@@ -151,10 +147,9 @@ class AuthenticationListener
                 ) {
                     // Pass the username to connector in order to
                     // request restricted metadata.
-                    $userId = $this->rems->prepareUserId(
-                        $this->authManager->isLoggedIn()->username
+                    $this->connector->setUsername(
+                        urlencode($this->rems->getUserId())
                     );
-                    $this->connector->setUsername(urlencode($userId));
                 }
             }
         }

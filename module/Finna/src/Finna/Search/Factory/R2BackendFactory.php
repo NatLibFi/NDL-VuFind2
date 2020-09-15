@@ -61,13 +61,6 @@ class R2BackendFactory extends SolrDefaultBackendFactory
     protected $R2Service;
 
     /**
-     * Authentication manager
-     *
-     * @var \VuFind\Auth\Manager
-     */
-    protected $authManager;
-
-    /**
      * Rems Service
      *
      * @var \Finna\Service\RemsService
@@ -106,7 +99,6 @@ class R2BackendFactory extends SolrDefaultBackendFactory
         $this->R2Config = $sm->get('VuFind\Config\PluginManager')->get('R2');
         $this->R2Service = $sm->get(\Finna\Service\R2Service::class);
         $this->solrCore = $this->R2Config->Index->default_core;
-        $this->authManager = $sm->get(\VuFind\Auth\Manager::class);
         $this->R2Service
             = $sm->get(\Finna\Service\R2Service::class);
         $this->rems = $sm->get(\Finna\Service\RemsService::class);
@@ -168,7 +160,6 @@ class R2BackendFactory extends SolrDefaultBackendFactory
         $events = $this->serviceLocator->get('SharedEventManager');
         $authListener = new AuthenticationListener(
             $backend,
-            $this->authManager,
             $this->R2Service,
             $backend->getConnector(),
             $this->rems
