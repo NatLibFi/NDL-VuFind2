@@ -62,12 +62,14 @@ class RemsServiceFactory implements FactoryInterface
             throw new \Exception('Unexpected options passed to factory.');
         }
 
+        $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
+
         $sessionContainer = new \Laminas\Session\Container(
             'rems_permission',
-            $container->get(\Laminas\Session\SessionManager::class)
+            $sessionManager
         );
         $shibbolethSessionContainer = new \Laminas\Session\Container(
-            'Shibboleth', $container->get(\Laminas\Session\SessionManager::class)
+            'Shibboleth', $sessionManager
         );
         $auth = $container->get('LmcRbacMvc\Service\AuthorizationService');
 
