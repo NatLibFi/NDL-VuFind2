@@ -330,16 +330,11 @@ class RemsService implements
             throw new \Exception('User already has entitlements');
         }
 
-        $commonName = $firstname;
-        if ($lastname) {
-            $commonName = $commonName ? " $lastname" : $lastname;
-        }
-
         // 1. Create user
         $params = [
             'userid' => $this->getUserId(),
             'email' => $email,
-            'name' => $commonName
+            'name' => trim("$firstname $lastname")
         ];
 
         $this->sendRequest(
