@@ -521,10 +521,8 @@ class RemsService implements
     public function prepareUserId($userId)
     {
         // Strip configured prefix from username
-        if (false !== strpos($userId, ':')) {
-            list($domain, $userId) = explode(':', $userId, 2);
-        }
-        return $userId;
+        $parts = explode(':', $userId, 2);
+        return $parts[1] ?? $userId;
     }
 
     /**
