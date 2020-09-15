@@ -1,10 +1,10 @@
 <?php
 /**
- * FinnaSuggestions Recommendations Module factory.
+ * Factory for Util/ExpireFinnaCacheCommand.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2019.
+ * Copyright (C) Villanova University 2020.
  * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,26 +21,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Recommendations
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Console
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\Recommend;
+namespace FinnaConsole\Command\Util;
 
 use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * FinnaSuggestions Recommendations Module factory.
+ * Factory for Util/ExpireFinnaCacheCommand.
  *
  * @category VuFind
- * @package  Recommendations
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Console
+ * @author   Demian Katz <demian.katz@villanova.edu>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class FinnaSuggestionsFactory
-    implements \Laminas\ServiceManager\Factory\FactoryInterface
+class ExpireFinnaCacheCommandFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -55,17 +57,14 @@ class FinnaSuggestionsFactory
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
      * @throws ContainerException if any other error occurs
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options passed to factory.');
-        }
+        $tableManager = $container->get(\VuFind\Db\Table\PluginManager::class);
         return new $requestedName(
-            $container->get(\VuFindHttp\HttpService::class)->createClient()
+            $tableManager->get(\Finna\Db\Table\FinnaCache::class),
+            ...($options ?? [])
         );
     }
 }
