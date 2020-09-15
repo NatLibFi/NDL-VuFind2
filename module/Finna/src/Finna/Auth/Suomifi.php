@@ -93,7 +93,7 @@ class Suomifi extends Shibboleth
             $session = new \Laminas\Session\Container(
                 'Shibboleth', $this->sessionManager
             );
-            $session['username'] = $username;
+            $session['identity_number'] = $username;
         }
         return $result;
     }
