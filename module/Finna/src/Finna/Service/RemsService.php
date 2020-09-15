@@ -109,30 +109,30 @@ class RemsService implements
      *
      * @var string
      */
-    protected $userIdentificationNumber = null;
+    protected $userIdentityNumber = null;
 
     /**
      * Constructor.
      *
-     * @param Config         $config                   REMS configuration
-     * @param SessionManager $session                  Session container
-     * @param String|null    $userIdentificationNumber National identification
-     * number of current user
-     * @param string|null    $userId                   ID of current user
-     * @param bool           $authenticated            Is the user authenticated?
+     * @param Config         $config             REMS configuration
+     * @param SessionManager $session            Session container
+     * @param String|null    $userIdentityNumber National identification number
+     * of current user
+     * @param string|null    $userId             ID of current user
+     * @param bool           $authenticated      Is the user authenticated?
      */
     public function __construct(
         Config $config,
         Container $session = null,
-        // $userIdentificationNumber is null when the Suomifi authentication
+        // $userIdentityNumber is null when the Suomifi authentication
         // module is created (before login, when displaying the login page)
-        $userIdentificationNumber,
+        $userIdentityNumber,
         $userId,
         bool $authenticated
     ) {
         $this->config = $config;
         $this->session = $session;
-        $this->userIdentificationNumber = $userIdentificationNumber;
+        $this->userIdentityNumber = $userIdentityNumber;
         $this->userId = $userId;
         $this->authenticated = $authenticated;
     }
@@ -322,7 +322,7 @@ class RemsService implements
         string $lastname = '',
         array $formParams = []
     ) {
-        if (empty($this->userIdentificationNumber)) {
+        if (empty($this->userIdentityNumber)) {
             throw new \Exception('User national identification number not present');
         }
         if ($this->hasUserEntitlements()) {
@@ -372,7 +372,7 @@ class RemsService implements
                 ['field' => $fieldIds['license'],
                  'value' => $formParams['license'] ?? null],
                 ['field' => $fieldIds['user_id'],
-                 'value' => $this->userIdentificationNumber]
+                 'value' => $this->userIdentityNumber]
             ]
         ];
 
