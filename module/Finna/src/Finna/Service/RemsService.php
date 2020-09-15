@@ -70,7 +70,7 @@ class RemsService implements
     const TYPE_USER = 2;
 
     /**
-     * Configuration
+     * REMS configuration
      *
      * @var Config
      */
@@ -107,7 +107,7 @@ class RemsService implements
     /**
      * Constructor.
      *
-     * @param Config         $config        Configuration
+     * @param Config         $config        REMS configuration
      * @param SessionManager $session       Session container
      * @param String|null    $userId        National identification number of
      * current user
