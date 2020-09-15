@@ -91,6 +91,13 @@ class RemsService implements
     protected $auth;
 
     /**
+     * User id of the current user.
+     *
+     * @var string|null
+     */
+    protected $userId;
+
+    /**
      * Is the user authenticated?
      *
      * @var bool
@@ -107,27 +114,27 @@ class RemsService implements
     /**
      * Constructor.
      *
-     * @param Config         $config        REMS configuration
-     * @param SessionManager $session       Session container
-     * @param String|null    $userId        National identification number of
-     * current user
-     * @param Manager        $auth          Auth manager
-     * @param bool           $authenticated Is the user authenticated?
+     * @param Config         $config                   REMS configuration
+     * @param SessionManager $session                  Session container
+     * @param String|null    $userIdentificationNumber National identification
+     * number of current user
+     * @param string|null    $userId                   ID of current user
+     * @param bool           $authenticated            Is the user authenticated?
      */
     public function __construct(
         Config $config,
         Container $session = null,
-        // $userId is null when the Suomifi authentication module is created
-        // (before login, when displaying the login page)
+        // $userIdentificationNumber is null when the Suomifi authentication
+        // module is created (before login, when displaying the login page)
+        $userIdentificationNumber,
         $userId,
-        Manager $auth,
-        $authenticated
+        bool $authenticated
     ) {
         $this->config = $config;
         $this->session = $session;
-        $this->auth = $auth;
+        $this->userIdentificationNumber = $userIdentificationNumber;
+        $this->userId = $userId;
         $this->authenticated = $authenticated;
-        $this->userIdentificationNumber = $userId;
     }
 
     /**
@@ -596,11 +603,10 @@ class RemsService implements
      */
     protected function getUserId()
     {
-        if (!$user = $this->auth->isLoggedIn()) {
+        if (!$this->userId) {
             throw new \Exception('REMS: user not logged');
         }
-        $id = $user->username;
-        return $this->prepareUserId($id);
+        return $this->prepareUserId($this->userId);
     }
 
     /**
