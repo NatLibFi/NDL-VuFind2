@@ -554,11 +554,10 @@ class RemsService implements
         // Fetching applications by query doesn't work with REMS api.
         // Therefore fetch all and filter by status manually.
 
-        $params = [];
         try {
             $result = $this->sendRequest(
                 'my-applications',
-                $params, 'GET', RemsService::TYPE_USER, null, false
+                null, 'GET', RemsService::TYPE_USER, null, false
             );
         } catch (\Exception $e) {
             return [];
