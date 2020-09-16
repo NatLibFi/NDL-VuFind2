@@ -28,8 +28,8 @@
 namespace Finna\Service;
 
 use Laminas\Config\Config;
-use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\EventManager\EventInterface;
+use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\Session\Container;
 use VuFind\Auth\Manager;
 
