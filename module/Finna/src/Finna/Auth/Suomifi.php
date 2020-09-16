@@ -27,6 +27,9 @@
  */
 namespace Finna\Auth;
 
+use Finna\Service\RemsService;
+use Laminas\EventManager\EventManager;
+use Laminas\EventManager\EventManagerInterface;
 use VuFind\Exception\Auth as AuthException;
 
 /**
@@ -41,33 +44,33 @@ use VuFind\Exception\Auth as AuthException;
 class Suomifi extends Shibboleth
 {
     /**
-     * REMS service
+     * Logout event.
      *
-     * @var \Finna\Service\RemsService
+     * @var string
      */
-    protected $remsService;
+    const EVENT_LOGOUT = 'logout';
+
+    /**
+     * Event manager.
+     *
+     * @var EventManager
+     */
+    protected $events = null;
 
     /**
      * Constructor
      *
      * @param \Laminas\Session\ManagerInterface $sessionManager Session manager
+     * @param EventManager                      $events         Event manager
      */
     public function __construct(
-        \Laminas\Session\ManagerInterface $sessionManager
+        \Laminas\Session\ManagerInterface $sessionManager,
+        EventManager $events
     ) {
         $this->sessionManager = $sessionManager;
-    }
 
-    /**
-     * Set REMS service
-     *
-     * @param \Finna\Service\RemsService $rems REMS service
-     *
-     * @return void
-     */
-    public function setRems($rems)
-    {
-        $this->remsService = $rems;
+        $events->setIdentifiers(['Finna\Auth\Suomifi']);
+        $this->events = $events;
     }
 
     /**
@@ -108,9 +111,7 @@ class Suomifi extends Shibboleth
      */
     public function logout($url)
     {
-        if ($this->remsService) {
-            $this->remsService->onLogoutPre();
-        }
+        $this->events->trigger(self::EVENT_LOGOUT, 'Finna\Auth\Suomifi', []);
         return parent::logout($url);
     }
 
@@ -215,7 +216,6 @@ class Suomifi extends Shibboleth
      *
      * @param string $string String.
      *
-     * @throws Exception
      * @return string Encrypted
      */
     protected function encrypt($string)

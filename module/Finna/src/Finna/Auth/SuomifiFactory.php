@@ -27,6 +27,7 @@
  */
 namespace Finna\Auth;
 
+use Laminas\EventManager\EventManager;
 use Interop\Container\ContainerInterface;
 
 /**
@@ -62,15 +63,9 @@ class SuomifiFactory extends \VuFind\Auth\ShibbolethFactory
         }
 
         $result = new $requestedName(
-            $container->get(\Laminas\Session\SessionManager::class)
+            $container->get(\Laminas\Session\SessionManager::class),
+            new EventManager($container->get('SharedEventManager'))
         );
-
-        $config
-            = $container->get(\VuFind\Config\PluginManager::class)->get('config');
-        if ((bool)($config->{'Shibboleth_suomifi'}->use_rems ?? false)) {
-            $result->setRems($container->get(\Finna\Service\RemsService::class));
-        }
-
         return $result;
     }
 }

@@ -595,10 +595,6 @@ username              = SHIB_eppn
 ; Secret key for hashing usernames before saving to user profile (required)
 hash_secret = ""
 
-; Is Resource Entitlement Management System (REMS) service enabled?
-; If enabled, RemsService::onLogoutPre is called before logging the user out.
-;use_rems = true
-
 ; Should the encrypted username be stored in session? Required when using REMS.
 ;store_username_to_session = true
 ; Public key path. Required if store_username_to_session is true
