@@ -28,6 +28,8 @@
 namespace Finna\Service;
 
 use Laminas\Config\Config;
+use Laminas\EventManager\SharedEventManagerInterface;
+use Laminas\EventManager\EventInterface;
 use Laminas\Session\Container;
 use VuFind\Auth\Manager;
 
@@ -252,6 +254,21 @@ class RemsService implements
     }
 
     /**
+     * Attach listener to shared event manager.
+     *
+     * @param SharedEventManagerInterface $manager Shared event manager
+     *
+     * @return void
+     */
+    public function attach(SharedEventManagerInterface $manager)
+    {
+        $manager->attach(
+            'Finna\Auth\Suomifi', \Finna\Auth\Suomifi::EVENT_LOGOUT,
+            [$this, 'onLogout']
+        );
+    }
+
+    /**
      * Get user entitlements
      *
      * @return array
@@ -457,7 +474,7 @@ class RemsService implements
                 ];
                 $this->sendRequest(
                     'applications/close',
-                    null, 'POST', RemsService::TYPE_APPROVER,
+                    [], 'POST', RemsService::TYPE_APPROVER,
                     ['content' => json_encode($params)]
                 );
             }
@@ -555,11 +572,10 @@ class RemsService implements
     {
         // Fetching applications by query doesn't work with REMS api.
         // Therefore fetch all and filter by status manually.
-
         try {
             $result = $this->sendRequest(
                 'my-applications',
-                null, 'GET', RemsService::TYPE_USER, null, false
+                [], 'GET', RemsService::TYPE_USER, null, false
             );
         } catch (\Exception $e) {
             return [];
@@ -708,11 +724,13 @@ class RemsService implements
     }
 
     /**
-     * Callback after logout has been requested.
+     * Callback after Suomifi logout has been requested.
+     *
+     * @param EventInterface $event Event
      *
      * @return void
      */
-    public function onLogoutPre()
+    public function onLogout(EventInterface $event)
     {
         if ($this->isUserRegisteredDuringSession()) {
             $this->closeOpenApplications();
