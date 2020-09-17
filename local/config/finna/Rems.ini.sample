@@ -16,10 +16,10 @@ resourceItem =
 [RegistrationForm]
 
 ; REMS registration form field id's
-field[firstname] = 
-field[lastname] = 
-field[email] = 
-field[usage_purpose] = 
-field[age] = 
-field[license] = 
-field[user_id] = 
+field[firstname] = firstname
+field[lastname] = lastname
+field[email] = email
+field[usage_purpose] = purposeofuse
+field[age] = age
+field[license] = agreeterms
+field[user_id] = idnum
