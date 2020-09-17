@@ -458,7 +458,7 @@ class RemsService implements
                 $this->sendRequest(
                     'applications/close',
                     [], 'POST', RemsService::TYPE_APPROVER,
-                    ['content' => json_encode($params)]
+                    json_encode($params)
                 );
             }
         } catch (\Exception $e) {
@@ -661,11 +661,9 @@ class RemsService implements
             return $handleException($err);
         }
 
-        $contentType = $body['contentType'] ?? 'application/json';
-
-        $client = $this->getClient($userId, $url, $method, $params, $contentType);
-        if (isset($body['content'])) {
-            $client->setRawBody($body['content']);
+        $client = $this->getClient($userId, $url, $method, $params);
+        if (!empty($body)) {
+            $client->setRawBody($body);
         }
 
         try {
@@ -727,11 +725,10 @@ class RemsService implements
     /**
      * Return HTTP client
      *
-     * @param string $userId      User Id
-     * @param string $url         URL (relative)
-     * @param string $method      GET|POST
-     * @param array  $params      Parameters
-     * @param string $contentType Content-Type
+     * @param string $userId User Id
+     * @param string $url    URL (relative)
+     * @param string $method GET|POST
+     * @param array  $params Parameters
      *
      * @return string
      */
@@ -739,8 +736,7 @@ class RemsService implements
         $userId,
         $url,
         $method = 'GET',
-        $params = [],
-        $contentType = 'application/json'
+        $params = []
     ) {
         $url = $this->config->General->apiUrl . '/' . $url;
         if ($method === 'GET') {
@@ -763,7 +759,7 @@ class RemsService implements
         $headers->addHeaderLine('x-rems-user-id', $userId);
 
         $client->getRequest()->getHeaders()
-            ->addHeaderLine('Content-Type', $contentType);
+            ->addHeaderLine('Content-Type', 'application/json');
 
         $client->setMethod($method);
         return $client;
