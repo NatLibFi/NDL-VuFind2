@@ -684,26 +684,28 @@ class RemsService implements
                 . $client->getRequest()->getUriString()
                 . ', statusCode: ' . $response->getStatusCode() . ': '
                 . $response->getReasonPhrase()
+                . ', params: ' . var_export($params, true)
                 . ', response content: ' . $response->getBody();
             $this->error($err);
             return $handleException('REMS request error');
         }
 
-        $response = json_decode($response->getBody(), true);
-        // Verify 'success' field for POST requests
+        $result = json_decode($response->getBody(), true);
         if ($method === 'POST'
-            && (!isset($response['success']) || !$response['success'])
+            && (!isset($result['success']) || !$result['success'])
         ) {
             $err = 'REMS: POST request failed: '
                 . $client->getRequest()->getUriString()
                 . ', statusCode: ' . $response->getStatusCode() . ': '
                 . $response->getReasonPhrase()
-                . ', response content: ' . $response->getBody();
+                . ', request content: '
+                . var_export($client->getRequest()->getContent(), true)
+                . ', response content: ' . var_export($result, true);
             $this->error($err);
             return $handleException('REMS request error');
         }
 
-        return $response;
+        return $result;
     }
 
     /**
