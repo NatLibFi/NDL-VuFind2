@@ -164,33 +164,6 @@ class Suomifi extends Shibboleth
     }
 
     /**
-     * Get the route that is displayed in lightbox after the login has been
-     * successfully performed and the page reloaded. Returns an array with
-     * 'route' and 'params' keys.
-     *
-     * @return null|array
-     */
-    public function getPostLoginLightboxRoute()
-    {
-        if ($config = $this->getConfig()->Shibboleth ?? null) {
-            $route = $config->post_login_lightbox_route ?? false;
-            $routeParams = $config->post_login_lightbox_route_params ?? [];
-            if ($route) {
-                $params = [];
-                foreach (explode(',', $routeParams) as $param) {
-                    if (false === strpos($param, ':')) {
-                        continue;
-                    }
-                    list($key, $val) = explode(':', $param, 2);
-                    $params[$key] = $val;
-                }
-                return compact('route', 'params');
-            }
-        }
-        return null;
-    }
-
-    /**
      * Get a server parameter taking into account any environment variables
      * redirected by Apache mod_rewrite.
      *

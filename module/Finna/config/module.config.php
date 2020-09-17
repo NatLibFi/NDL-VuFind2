@@ -473,14 +473,12 @@ $config = [
             ],
             'auth' => [
                 'factories' => [
-                    'Finna\Auth\ChoiceAuth' => 'VuFind\Auth\ChoiceAuthFactory',
                     'Finna\Auth\ILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\MultiILS' => 'VuFind\Auth\ILSFactory',
                     'Finna\Auth\Shibboleth' => 'VuFind\Auth\ShibbolethFactory',
                     'Finna\Auth\Suomifi' => 'Finna\Auth\SuomifiFactory',
                 ],
                 'aliases' => [
-                    'VuFind\Auth\ChoiceAuth' => 'Finna\Auth\ChoiceAuth',
                     'VuFind\Auth\ILS' => 'Finna\Auth\ILS',
                     'VuFind\Auth\MultiILS' => 'Finna\Auth\MultiILS',
                     'VuFind\Auth\Shibboleth' => 'Finna\Auth\Shibboleth',

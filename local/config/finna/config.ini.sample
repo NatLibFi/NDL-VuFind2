@@ -609,11 +609,6 @@ logout = "https://www.finna.fi/Shibboleth.sso/Logout"
 ; Optional: Dynamic Shibboleth logout url attribute id (alternative to the static url above)
 logout_attribute       = SHIB_logouturl
 
-; Optional: route that is shown in lightbox after Suomifi login.
-;   This opens the REMS registration form.
-;post_login_lightbox_route = "feedback-form"
-;post_login_lightbox_route_params = "id:R2Register"
-
 ; Optional: URL to forward to after Shibboleth login (if omitted,
 ; defaultLoggedInModule from [Site] section will be used).
 ;target                = http://shib.myuniversity.edu/vufind/MyResearch/Home
