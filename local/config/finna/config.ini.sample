@@ -595,9 +595,9 @@ username              = SHIB_eppn
 ; Secret key for hashing usernames before saving to user profile (required)
 hash_secret = ""
 
-; Should the encrypted username be stored in session? Required when using REMS.
-;store_username_to_session = true
-; Public key path. Required if store_username_to_session is true
+; Should the encrypted user identity number be stored in session? Required when using REMS.
+;store_identity_number_to_session = true
+; Public key path. Required if store_identity_number_to_session is true
 ;public_key = ""
 
 ; Required: Shibboleth login URL.

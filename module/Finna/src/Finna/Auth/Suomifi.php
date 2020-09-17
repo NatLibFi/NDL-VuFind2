@@ -43,6 +43,13 @@ use VuFind\Exception\Auth as AuthException;
 class Suomifi extends Shibboleth
 {
     /**
+     * Login event.
+     *
+     * @var string
+     */
+    const EVENT_LOGIN = 'login';
+
+    /**
      * Logout event.
      *
      * @var string
@@ -54,7 +61,7 @@ class Suomifi extends Shibboleth
      *
      * @var EventManager
      */
-    protected $events = null;
+    protected $events;
 
     /**
      * Constructor
@@ -86,17 +93,20 @@ class Suomifi extends Shibboleth
         $result = parent::authenticate($request);
 
         $config = $this->getConfig()->Shibboleth;
-        if ($config->store_username_to_session ?? false) {
-            // Store encrypted username to session
-            $username = $this->encrypt(
-                // parent method does not hash the username
+        if ($config->store_identity_number_to_session ?? false) {
+            // Store encrypted user identity nunber to session
+            $encrypted = $this->encrypt(
+                // parent method does not hash Shibboleth variable
                 parent::getServerParam($request, $config->username)
             );
             $session = new \Laminas\Session\Container(
                 'Shibboleth', $this->sessionManager
             );
-            $session['identity_number'] = $username;
+            $session['identity_number'] = $encrypted;
         }
+        $this->events->trigger(
+            self::EVENT_LOGIN, 'Finna\Auth\Suomifi', ['user' => $result]
+        );
         return $result;
     }
 
@@ -198,7 +208,7 @@ class Suomifi extends Shibboleth
         $config = $this->getConfig()->Shibboleth;
         if ($param === $config->username
         ) {
-            $secret = $config->hash_secret ?? null;
+            $secret = $config->hash_secret ?? '';
             if (empty(trim($secret))) {
                 throw new AuthException('hash_secret not configured');
             }
