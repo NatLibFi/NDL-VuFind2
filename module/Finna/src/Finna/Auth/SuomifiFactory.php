@@ -27,8 +27,8 @@
  */
 namespace Finna\Auth;
 
-use Laminas\EventManager\EventManager;
 use Interop\Container\ContainerInterface;
+use Laminas\EventManager\EventManager;
 
 /**
  * Factory for Suomi.fi authentication module.
