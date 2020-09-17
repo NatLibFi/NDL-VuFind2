@@ -481,9 +481,7 @@ JS;
     <?php
       // Show postLoginRoute in lightbox
       if ($this->layout()->getTemplate() !== 'layout/lightbox') {
-        $session = new \Laminas\Session\Container('Followup');
-        if ($url = $session->postLoginLightbox ?? null) {
-          unset($session->postLoginLightbox);
+        if ($url = $this->followup()->retrieveAndClear('postLoginLightbox', null)) {
           $script = <<<EOT
             finna.layout.showPostLoginLightbox('{$url}');
 EOT;
