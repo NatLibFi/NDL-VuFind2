@@ -254,7 +254,7 @@ class Bootstrapper
     }
 
     /**
-     * Set up language handling.
+     * Set up Suomifi logout listener.
      *
      * @return void
      */
