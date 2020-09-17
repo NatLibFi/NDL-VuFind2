@@ -27,9 +27,8 @@
  */
 namespace Finna\Auth;
 
-use Finna\Service\RemsService;
+use Laminas\Crypt\PublicKey\Rsa;
 use Laminas\EventManager\EventManager;
-use Laminas\EventManager\EventManagerInterface;
 use VuFind\Exception\Auth as AuthException;
 
 /**
@@ -225,25 +224,22 @@ class Suomifi extends Shibboleth
         if (null === $keyPath) {
             throw new \Exception('Public key path not configured');
         }
-        if (false === ($fp = fopen($keyPath, 'r'))) {
-            throw new \Exception('Error opening public key');
-        }
-        if (false === ($key = fread($fp, 8192))) {
-            throw new \Exception('Error reading public key');
-        }
-        fclose($fp);
 
-        if (false === openssl_get_publickey($key)) {
-            throw new \Exception('Error preparing public key');
+        if (false === ($key  = file_get_contents($keyPath))) {
+            throw new \Exception("Error reading public key from $keyPath");
         }
 
-        if (!openssl_public_encrypt(
-            $string, $encrypted, $key, OPENSSL_PKCS1_OAEP_PADDING
-        )
-        ) {
-            throw new \Exception('Error encrypting string');
-        }
+        $rsa = Rsa::factory(
+            [
+                'public_key'    => $key,
+                'binary_output' => false
+            ]
+        );
+        $rsa->setOptions(
+            $rsa->getOptions()
+                ->setOpensslPadding(OPENSSL_PKCS1_OAEP_PADDING)
+        );
 
-        return base64_encode($encrypted);
+        return base64_encode($rsa->encrypt($string));
     }
 }
