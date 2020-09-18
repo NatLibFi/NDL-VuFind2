@@ -115,7 +115,7 @@ trait R2ControllerTrait
         // Check user permission from REMS and show registration if needed.
         $rems = $this->serviceLocator->get('Finna\Service\RemsService');
         try {
-            if ($rems->isUserBlacklisted()) {
+            if ($rems->isUserBlocklisted()) {
                 return $getRedirect();
             }
         } catch (\Exception $e) {
