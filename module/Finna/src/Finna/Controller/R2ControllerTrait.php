@@ -27,6 +27,9 @@
  */
 namespace Finna\Controller;
 
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container as SessionContainer;
+
 /**
  * R2 controller trait.
  *
@@ -38,6 +41,36 @@ namespace Finna\Controller;
  */
 trait R2ControllerTrait
 {
+    use \VuFind\Log\LoggerAwareTrait;
+
+    /**
+     * Constructor
+     *
+     * @param ServiceLocatorInterface $sm Service locator
+     */
+    public function __construct(ServiceLocatorInterface $sm)
+    {
+        $this->setLogger($sm->get('VuFind\Logger'));
+        parent::__construct($sm);
+    }
+
+    /**
+     * Handle onDispatch event
+     *
+     * @param \Laminas\Mvc\MvcEvent $e Event
+     *
+     * @return mixed
+     */
+    public function onDispatch(\Laminas\Mvc\MvcEvent $e)
+    {
+        $helper = $this->getViewRenderer()->plugin('R2');
+        if (!$helper->isAvailable()) {
+            throw new \Exception('R2 is disabled');
+        }
+
+        return parent::onDispatch($e);
+    }
+
     /**
      * Replace R2 new user registration form id with the id for returning
      * user registration form.
@@ -49,7 +82,7 @@ trait R2ControllerTrait
      */
     protected function replaceR2RegisterFormId($formId)
     {
-        if (! \Finna\Form\Form::isR2RegisterForm($formId, true)) {
+        if (!\Finna\Form\Form::isR2RegisterForm($formId, true)) {
             // Not a R2 registration form for new users
             return null;
         }
@@ -59,8 +92,7 @@ trait R2ControllerTrait
         //    (this method gets called again after the login).
         // 2. For logged users, check if the user has been registered to REMS
         //    and replace form id with the id for returning users.
-        if (!$user = $this->getUser()
-        ) {
+        if (!($user = $this->getUser())) {
             return $formId;
         }
 
@@ -135,8 +167,6 @@ trait R2ControllerTrait
 
         if ($this->formWasSubmitted('submit')) {
             // Handle submitted registration form
-            $user = $this->getUser();
-
             $form = $this->serviceLocator->get('VuFind\Form\Form');
             $form->setFormId($formId);
 
@@ -145,7 +175,7 @@ trait R2ControllerTrait
             $params = $this->params()->fromPost();
             $form->setData($params);
 
-            if (! $form->isValid()) {
+            if (!$form->isValid()) {
                 return $view;
             }
 
@@ -177,7 +207,7 @@ trait R2ControllerTrait
                 );
             } catch (\Exception $e) {
                 $this->flashMessenger()->addErrorMessage('R2_register_error');
-                $this->flashMessenger()->addErrorMessage($e->getMessage());
+                $this->logError('REMS registration error: ' . $e->getMessage());
             }
 
             return $getRedirect();

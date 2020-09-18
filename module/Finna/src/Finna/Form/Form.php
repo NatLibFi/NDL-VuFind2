@@ -523,7 +523,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Check if the given form is a R2 registratioin form.
+     * Check if the given form is a R2 registration form.
      *
      * @param string  $formId               Form id
      * @param boolean $checkOnlyNewUserForm Check only new user registration form?
