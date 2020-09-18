@@ -163,11 +163,9 @@ trait R2ControllerTrait
                 $formParams['license'] = '1';
             }
 
-            // Take firstname and lastname from profile if available
-            $firstname = !empty($user->firstname)
-                ? $user->firstname : $params['firstname'];
-            $lastname = !empty($user->lastname)
-                ? $user->lastname : $params['lastname'];
+            // Take firstname and lastname from profile
+            $firstname = $user->firstname;
+            $lastname = $user->lastname;
             $email = $params['email'];
 
             try {

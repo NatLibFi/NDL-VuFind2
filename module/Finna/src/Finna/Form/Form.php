@@ -651,19 +651,13 @@ class Form extends \VuFind\Form\Form
         }
 
         if (self::isR2RegisterForm($formId)) {
-            // Set name fields to readonly if defined in profile
-            $fields = ['firstname', 'lastname'];
-            foreach ($fields as $field) {
-                $val = $this->user->{$field};
-                if (empty(trim($val))) {
-                    continue;
-                }
+            // Set name fields to readonly. This will still post the fields
+            // (in contrast to disabled)
+            foreach (['firstname', 'lastname'] as $field) {
                 foreach ($elements as &$el) {
                     if ($el['name'] !== $field) {
                         continue;
                     }
-                    // Set field to readonly. This will still post the field
-                    // (in contrast to disabled)
                     $el['settings']['readonly'] = 'readonly';
                 }
             }
