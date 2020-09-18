@@ -84,13 +84,6 @@ class RemsService implements
     protected $session;
 
     /**
-     * Auth manager
-     *
-     * @var Manager
-     */
-    protected $auth;
-
-    /**
      * User id of the current user.
      *
      * @var string|null
