@@ -486,14 +486,13 @@ JS;
       <?=$this->finnaSurvey()->render()?>
     <?php endif; ?>
     <?php
-      // Show postLoginRoute in lightbox
-      if ($this->layout()->getTemplate() !== 'layout/lightbox') {
-        if ($url = $this->followup()->retrieveAndClear('postLoginLightbox', null)) {
-          $script = <<<EOT
-            finna.layout.showPostLoginLightbox('{$url}');
+      // Show post-login followup in lightbox
+      $url = $this->followup()->retrieveAndClear('postLoginLightbox', null);
+      if ($url && $this->layout()->getTemplate() !== 'layout/lightbox') {
+        $script = <<<EOT
+          finna.layout.showPostLoginLightbox('{$url}');
 EOT;
           echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
-        }
       }
     ?>
   </body>
