@@ -28,7 +28,6 @@
 namespace Finna\Controller;
 
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\Session\Container as SessionContainer;
 
 /**
  * R2 controller trait.
