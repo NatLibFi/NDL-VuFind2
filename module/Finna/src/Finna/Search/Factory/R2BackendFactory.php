@@ -72,7 +72,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
      *
      * @var string
      */
-    protected $connectorClass = '\FinnaSearch\Backend\R2\Connector';
+    protected $connectorClass = \FinnaSearch\Backend\R2\Connector::class;
 
     /**
      * Constructor
@@ -117,7 +117,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
         list($apiUser, $apiKey) = $this->R2Service->getCredentials();
         $connector->setApiAuthentication($apiUser, $apiKey);
         $connector->setRems($this->rems);
-        $connector->setHttpConfig($this->R2Config->Http->toArray());
+        $connector->setHttpOptions($this->R2Config->Http->toArray());
 
         return $connector;
     }
