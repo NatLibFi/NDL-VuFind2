@@ -61,10 +61,8 @@ class R2Service
      * @param Config               $config      Configuration
      * @param AuthorizationService $authService Authorization service
      */
-    public function __construct(
-        Config $config,
-        $authService
-    ) {
+    public function __construct(Config $config, AuthorizationService $authService)
+    {
         $this->config = $config;
         $this->authService = $authService;
     }
@@ -90,7 +88,7 @@ class R2Service
     }
 
     /**
-     * Return R2 index API credentials (array with API username and key).
+     * Return R2 index API credentials (keyed array with 'apiUser' and 'apiKey').
      *
      * @return array
      */
@@ -102,6 +100,6 @@ class R2Service
         if (null === ($apiKey = $this->config->R2->apiKey ?? null)) {
             throw new \Exception('R2 apiKey not defined');
         }
-        return [$apiUser, $apiKey];
+        return compact('apiUser', 'apiKey');
     }
 }
