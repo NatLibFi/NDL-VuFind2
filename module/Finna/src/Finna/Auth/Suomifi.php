@@ -94,7 +94,7 @@ class Suomifi extends Shibboleth
 
         $config = $this->getConfig()->Shibboleth;
         if ($config->store_identity_number_to_session ?? false) {
-            // Store encrypted user identity nunber to session
+            // Store encrypted user identity number to session
             $encrypted = $this->encrypt(
                 // parent method does not hash Shibboleth variable
                 parent::getServerParam($request, $config->username)
