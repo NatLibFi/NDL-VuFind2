@@ -68,9 +68,7 @@ class R2FeedbackController extends FeedbackController
     public function formAction()
     {
         $formId = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
-        $isR2Form = \Finna\Form\R2Form::isR2RegisterForm($formId);
-
-        if (!$isR2Form) {
+        if (!\Finna\Form\R2Form::isR2RegisterForm($formId)) {
             return;
         }
 
