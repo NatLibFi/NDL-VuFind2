@@ -80,17 +80,14 @@ class Loader extends \VuFind\Record\Loader
     }
 
     /**
-     * Set R2 authenticated mode.
-     *
-     * @param bool $mode Mode
+     * Set R2 authenticated mode. This will request the index
+     * to return restricted metadata.
      *
      * @return void
      */
-    public function setR2Authenticated($mode)
+    public function setR2Authenticated()
     {
-        if ($mode) {
-            $this->defaultParams['R2'] = ['R2Restricted' => true];
-        }
+        $this->defaultParams['R2'] = ['R2Restricted' => true];
     }
 
     /**

@@ -65,7 +65,7 @@ class LoaderFactory extends \VuFind\Record\LoaderFactory
             $R2 = $container->get(\Finna\Service\R2SupportService::class);
             if ($R2->isAuthenticated()) {
                 // Request R2 record with restricted metadata
-                $loader->setR2Authenticated(true);
+                $loader->setR2Authenticated();
             }
         } catch (\Exception $e) {
         }
