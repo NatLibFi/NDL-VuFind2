@@ -1,6 +1,6 @@
 <?php
 /**
- * Feedback Controller
+ * R2 Feedback Controller
  *
  * PHP version 7
  *
@@ -34,7 +34,7 @@ use Finna\Form\Form;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Feedback Controller
+ * R2 Feedback Controller
  *
  * @category VuFind
  * @package  Controller

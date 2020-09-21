@@ -1,6 +1,6 @@
 <?php
 /**
- * Configurable form.
+ * Configurable R2 form.
  *
  * PHP version 7
  *
@@ -28,7 +28,7 @@
 namespace Finna\Form;
 
 /**
- * Configurable form.
+ * Configurable R2 form.
  *
  * @category VuFind
  * @package  Form
