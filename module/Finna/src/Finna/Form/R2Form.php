@@ -94,10 +94,6 @@ class R2Form extends Form
      */
     public function getDisplayString($translationKey, $escape = null)
     {
-        if (!$this->isR2RegisterForm($this->formId)) {
-            return parent::getDisplayString($translationKey, $escape);
-        }
-
         // R2 registration form help texts
         switch ($translationKey) {
         case 'R2_register_form_help_pre_html':
