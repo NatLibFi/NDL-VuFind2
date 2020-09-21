@@ -78,13 +78,15 @@ class R2SupportService
     }
 
     /**
-     * Is the user authenticated to see restricted R2 metadata.
+     * Is R2 search is enabled and the user authenticated
+     * to see restricted R2 metadata?
      *
      * @return bool
      */
     public function isAuthenticated()
     {
-        return $this->authService->isGranted('access.R2Authenticated');
+        return $this->isEnabled()
+            && $this->authService->isGranted('access.R2Authenticated');
     }
 
     /**
