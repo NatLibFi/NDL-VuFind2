@@ -78,12 +78,12 @@ class R2FeedbackController extends FeedbackController
             if ($formId === \Finna\Form\R2Form::R2_REGISTER_FORM
                 && $this->getUser()
             ) {
-                // Replace R2 new user registration form id with the id for returning
-                // user registration form.
                 $rems
                     = $this->serviceLocator->get(\Finna\Service\RemsService::class);
                 try {
                     if ($rems->isUserRegistered()) {
+                        // Replace R2 new user registration form id with the id for
+                        // returning user registration form.
                         return $this->forwardTo(
                             'R2Feedback', 'Form',
                             ['id'
@@ -153,7 +153,6 @@ class R2FeedbackController extends FeedbackController
             $view->setTemplate('feedback/form');
             $params = $this->params()->fromPost();
             $form->setData($params);
-
 
             if (!$form->isValid()) {
                 return $view;
