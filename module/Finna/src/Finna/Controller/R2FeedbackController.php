@@ -94,7 +94,7 @@ class R2FeedbackController extends FeedbackController
                 }
             }
         }
-        
+
         $inLightbox
             = $this->getRequest()->getQuery('layout', 'no') === 'lightbox'
                || 'layout/lightbox' == $this->layout()->getTemplate();

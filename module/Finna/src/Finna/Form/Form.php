@@ -698,6 +698,6 @@ class Form extends \VuFind\Form\Form
     {
         $translationEmpty = $this->viewHelperManager->get('translationEmpty');
         return $translationEmpty->__invoke($translationKey)
-            ?  $this->translate($translationKey) : null;
+            ? $this->translate($translationKey) : null;
     }
 }
