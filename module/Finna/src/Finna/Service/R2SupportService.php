@@ -94,10 +94,10 @@ class R2SupportService
      */
     public function getCredentials()
     {
-        if (null === ($apiUser = $this->config->R2->apiUser ?? null)) {
+        if (empty($apiUser = $this->config->R2->apiUser ?? null)) {
             throw new \Exception('R2 apiUser not defined');
         }
-        if (null === ($apiKey = $this->config->R2->apiKey ?? null)) {
+        if (empty($apiKey = $this->config->R2->apiKey ?? null)) {
             throw new \Exception('R2 apiKey not defined');
         }
         return compact('apiUser', 'apiKey');
