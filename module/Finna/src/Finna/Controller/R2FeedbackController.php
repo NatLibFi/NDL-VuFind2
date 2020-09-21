@@ -119,7 +119,7 @@ class R2FeedbackController extends FeedbackController
         // Verify that user is authenticated to access restricted R2 data.
         $isAuthenticated
             = $this->serviceLocator->get(\Finna\Service\R2Service::class)
-                ->isAuthenticated();
+            ->isAuthenticated();
         if (!$isAuthenticated) {
             return $getRedirect();
         }
