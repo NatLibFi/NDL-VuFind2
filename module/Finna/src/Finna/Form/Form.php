@@ -39,20 +39,6 @@ namespace Finna\Form;
 class Form extends \VuFind\Form\Form
 {
     /**
-     * R2 registration form id
-     *
-     * @var string
-     */
-    const R2_REGISTER_FORM = 'R2Register';
-
-    /**
-     * R2 returning user registration form id
-     *
-     * @var string
-     */
-    const R2_REGISTER_RETURNING_USER_FORM = 'R2RegisterReturningUser';
-
-    /**
      * Email form handler
      *
      * @var string
@@ -141,16 +127,6 @@ class Form extends \VuFind\Form\Form
         $this->formSettings = $config;
         parent::setFormId($formId, $params);
         $this->setName($formId);
-    }
-
-    /**
-     * Get form id.
-     *
-     * @return string
-     */
-    public function getFormId()
-    {
-        return $this->formId;
     }
 
     /**
@@ -523,76 +499,6 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Check if the given form is a R2 registration form.
-     *
-     * @param string  $formId               Form id
-     * @param boolean $checkOnlyNewUserForm Check only new user registration form?
-     *
-     * @return bool
-     */
-    public static function isR2RegisterForm(
-        $formId, $checkOnlyNewUserForm = false
-    ) {
-        $forms = [self::R2_REGISTER_FORM];
-        if (!$checkOnlyNewUserForm) {
-            $forms[] = self::R2_REGISTER_RETURNING_USER_FORM;
-        }
-        return in_array($formId, $forms);
-    }
-
-    /**
-     * Get R2 registration form id.
-     *
-     * @param boolean $newUser Return form for new user (true)
-     *                         or returning user (false)?
-     *
-     * @return string
-     */
-    public static function getR2RegisterFormId($newUser = true)
-    {
-        return $newUser
-            ? self::R2_REGISTER_FORM
-            : self::R2_REGISTER_RETURNING_USER_FORM;
-    }
-
-    /**
-     * Get display string.
-     *
-     * @param string $translationKey Translation key
-     * @param bool   $escape         Whether to escape the output.
-     * Default behaviour is to escape when the translation key does
-     * not end with '_html'.
-     *
-     * @return string|null
-     */
-    public function getDisplayString($translationKey, $escape = null)
-    {
-        if (!$this->isR2RegisterForm($this->formId)) {
-            return parent::getDisplayString($translationKey, $escape);
-        }
-
-        // R2 registration form help texts
-        switch ($translationKey) {
-        case 'R2_register_form_help_pre_html':
-        case 'R2_register_form_help_returninguser_pre_html':
-            $url = $this->viewHelperManager->get('url')
-                ->__invoke('content-page', ['page' => 'tutkijasali']);
-            return $this->translate($translationKey, ['%%url%%' => $url]);
-
-        case 'R2_register_form_help_post_html':
-            $url = $this->viewHelperManager->get('url')
-                ->__invoke('content-page', ['page' => 'privacy']);
-            return $this->translate($translationKey, ['%%url%%' => $url]);
-
-        case 'R2_register_form_usage_help_html':
-            $help = $this->translate('R2_register_form_usage_help_tooltip_html');
-            return $this->translate($translationKey, ['%%title%%' => $help]);
-        }
-
-        return parent::getDisplayString($translationKey, $escape);
-    }
-
-    /**
      * Get form elements
      *
      * @param array $config Form configuration
@@ -650,18 +556,7 @@ class Form extends \VuFind\Form\Form
             }
         }
 
-        if (self::isR2RegisterForm($formId)) {
-            // Set name fields to readonly. This will still post the fields
-            // (in contrast to disabled)
-            foreach (['firstname', 'lastname'] as $field) {
-                foreach ($elements as &$el) {
-                    if ($el['name'] !== $field) {
-                        continue;
-                    }
-                    $el['settings']['readonly'] = 'readonly';
-                }
-            }
-        } elseif ($recipientField = $this->getRecipientField($config['fields'])) {
+        if ($recipientField = $this->getRecipientField($config['fields'])) {
             // Form recipient email address is taken from a select element value.
             // Change element option values to numeric indexes so that email
             // addresses are not exposed in the UI.
@@ -787,5 +682,22 @@ class Form extends \VuFind\Form\Form
         $data['fields'] = $viewConfig['fields'] ?? $config['fields'];
 
         return $data;
+    }
+
+    /**
+     * Get display string.
+     *
+     * @param string $translationKey Translation key
+     * @param bool   $escape         Whether to escape the output.
+     * Default behaviour is to escape when the translation key does
+     * not end with '_html'.
+     *
+     * @return string|null
+     */
+    public function getDisplayString($translationKey, $escape = null)
+    {
+        $translationEmpty = $this->viewHelperManager->get('translationEmpty');
+        return $translationEmpty->__invoke($translationKey)
+            ?  $this->translate($translationKey) : null;
     }
 }

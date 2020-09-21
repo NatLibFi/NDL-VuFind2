@@ -29,6 +29,8 @@ use VuFind\Form\Form;
  */
 class FeedbackController extends AbstractBase
 {
+    protected $formClass = \VuFind\Form\Form::class;
+
     /**
      * Display Feedback home form.
      *
@@ -54,7 +56,7 @@ class FeedbackController extends AbstractBase
 
         $user = $this->getUser();
 
-        $form = $this->serviceLocator->get(\VuFind\Form\Form::class);
+        $form = $this->serviceLocator->get($this->formClass);
         $params = [];
         if ($refererHeader = $this->getRequest()->getHeader('Referer')
         ) {

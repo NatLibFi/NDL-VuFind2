@@ -42,8 +42,6 @@ use Finna\Form\Form;
  */
 class FeedbackController extends \VuFind\Controller\FeedbackController
 {
-    use R2ControllerTrait;
-
     /**
      * True if form was submitted successfully.
      *
@@ -77,17 +75,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
      */
     public function formAction()
     {
-        if (null !== ($view = $this->processR2RegisterForm())) {
-            return $view;
-        }
-
         $view = parent::formAction();
-
-        $formId = $view->form->getFormId();
-        if (null !== ($regFormId = $this->replaceR2RegisterFormId($formId))) {
-            // Replace current R2 register form with the form for returning users
-            return $this->forwardTo('Feedback', 'Form', ['id' => $regFormId]);
-        }
 
         if ($this->params()->fromPost('forcingLogin', false)) {
             // Parent response is a forced login for a non-logged user. Return it.
@@ -135,28 +123,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         $post->set('message', $post->get('comments'));
 
         return $this->forwardTo('Feedback', 'Form');
-    }
-
-    /**
-     * Prefill form sender fields for logged in users.
-     *
-     * @param Form  $form Form
-     * @param array $user User
-     *
-     * @return Form
-     */
-    protected function prefillUserInfo($form, $user)
-    {
-        $form = parent::prefillUserInfo($form, $user);
-        if ($user) {
-            $form->populateValues(
-                [
-                 'firstname' => $user->firstname,
-                 'lastname' => $user->lastname
-                ]
-            );
-        }
-        return $form;
     }
 
     /**
