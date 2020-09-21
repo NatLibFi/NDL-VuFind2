@@ -1,6 +1,6 @@
 <?php
 /**
- * Restricted Solr search R2 service factory.
+ * Restricted Solr search R2 support service factory.
  *
  * PHP version 7
  *
@@ -31,7 +31,7 @@ use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Restricted Solr search R2 service factory.
+ * Restricted Solr search R2 support service factory.
  *
  * @category VuFind
  * @package  Service
@@ -39,7 +39,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class R2ServiceFactory implements FactoryInterface
+class R2SupportServiceFactory implements FactoryInterface
 {
     /**
      * Create an object

@@ -1,6 +1,6 @@
 <?php
 /**
- * Restricted Solr search R2 service.
+ * Restricted Solr search R2 support service.
  *
  * PHP version 7
  *
@@ -31,7 +31,7 @@ use Laminas\Config\Config;
 use LmcRbacMvc\Service\AuthorizationService;
 
 /**
- * Restricted Solr search R2 service.
+ * Restricted Solr search R2 support service.
  *
  * @category VuFind
  * @package  Content
@@ -39,7 +39,7 @@ use LmcRbacMvc\Service\AuthorizationService;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class R2Service
+class R2SupportService
 {
     /**
      * R2 configuration.
