@@ -86,10 +86,10 @@ class AuthenticationListener
     /**
      * Constructor.
      *
-     * @param BackendInterface $backend     Search backend
-     * @param R2SupporService  $R2          R2 support service
-     * @param Connector        $connector   Backend connector
-     * @param RemsService      $rems        REMS service
+     * @param BackendInterface $backend   Search backend
+     * @param R2SupporService  $r2        R2 support service
+     * @param Connector        $connector Backend connector
+     * @param RemsService      $rems      REMS service
      *
      * @return void
      */
