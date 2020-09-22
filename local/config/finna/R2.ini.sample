@@ -33,7 +33,7 @@ case_sensitive_ranges = true
 default_noresults_recommend[] = SwitchType
 default_noresults_recommend[] = SwitchQuery
 default_noresults_recommend[] = SpellingSuggestions
-default_side_recommend[] = SideFacetsDeferred:Results:CheckboxFacets:facets-R2
+default_side_recommend[] = SideFacetsDeferred:Results:CheckboxFacets:R2
 
 highlighting = true
 highlighting_fields = "author,author2,author_additional,author_fuller,container_title,contents,culture,description,dewey-full,edition,era,genre,geographic,institution,isbn,issn,language,lccn,material,measurements,publication_place_txt_mv,publisher,series,series2,title,title_alt,title_full,title_new,title_old,topic"
