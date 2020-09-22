@@ -28,7 +28,7 @@
  */
 namespace Finna\Search\R2;
 
-use Finna\Service\R2Service;
+use Finna\Service\R2SupportService;
 use Finna\Service\RemsService;
 use FinnaSearch\Backend\R2\Connector;
 
@@ -65,9 +65,9 @@ class AuthenticationListener
     /**
      * R2 service
      *
-     * @var R2Service;
+     * @var R2SupportService;
      */
-    protected $R2Service;
+    protected $R2SupportService;
 
     /**
      * Connector
@@ -87,7 +87,7 @@ class AuthenticationListener
      * Constructor.
      *
      * @param BackendInterface $backend     Search backend
-     * @param R2Service        $R2Service   R2 service
+     * @param R2SupporService  $R2          R2 support service
      * @param Connector        $connector   Backend connector
      * @param RemsService      $rems        REMS service
      *
@@ -95,12 +95,12 @@ class AuthenticationListener
      */
     public function __construct(
         BackendInterface $backend,
-        R2Service $R2Service,
+        R2SupportService $r2,
         Connector $connector,
         RemsService $rems
     ) {
         $this->backend = $backend;
-        $this->R2Service = $R2Service;
+        $this->R2SupportService = $r2;
         $this->connector = $connector;
         $this->rems = $rems;
     }
@@ -139,10 +139,10 @@ class AuthenticationListener
             // 2. If the search context is retrieve or retrieveBatch,
             // and restricted metadata was requested.
             if (!in_array($context, ['retrieve', 'retrieveBatch'])
-                || in_array(true, $params->get('R2Restricted') ?? [])
+                || ($params && in_array(true, $params->get('R2Restricted') ?? []))
             ) {
                 // Verify that the user is authorized.
-                if ($this->R2Service->isAuthenticated()
+                if ($this->R2SupportService->isAuthenticated()
                     && $this->rems->isUserRegisteredDuringSession()
                 ) {
                     // Pass the username to connector in order to
