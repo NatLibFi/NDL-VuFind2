@@ -28,8 +28,6 @@
 namespace Finna\Hierarchy\TreeDataSource;
 
 use Finna\Service\RemsService;
-use VuFind\Hierarchy\TreeDataFormatter\PluginManager as FormatterManager;
-use VuFindSearch\Backend\Solr\Connector;
 
 /**
  * Hierarchy Tree Data Source (Solr)
