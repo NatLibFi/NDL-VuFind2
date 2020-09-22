@@ -1,10 +1,10 @@
 <?php
 /**
- * Record loader factory.
+ * Followup view helper factory.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,25 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Record
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
- * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
- */
-namespace Finna\Record;
-
-use Interop\Container\ContainerInterface;
-
-/**
- * Record loader factory.
- *
- * @category VuFind
- * @package  Record
+ * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class LoaderFactory extends \VuFind\Record\LoaderFactory
+namespace Finna\View\Helper\Root;
+
+use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+
+/**
+ * Followup view helper factory.
+ *
+ * @category VuFind
+ * @package  View_Helpers
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
+class FollowupFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -57,17 +58,12 @@ class LoaderFactory extends \VuFind\Record\LoaderFactory
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
     ) {
-        $loader = parent::__invoke($container, $requestedName, $options);
-        $loader->setPreferredLanguage(
-            $container->get('VuFind\Translator')->getLocale()
-        );
-        $redirectSources
-            = $container->get(\VuFind\Config\PluginManager::class)->get('config')
-            ->Record->missing_record_redirect ?? null;
-        if ($redirectSources) {
-            $loader->setRecordRedirectionRules($redirectSources);
+        if (!empty($options)) {
+            throw new \Exception('Unexpected options sent to factory.');
         }
-
-        return $loader;
+        return new $requestedName(
+            $container->get(\Laminas\Mvc\Controller\PluginManager::class)
+                ->get(\VuFind\Controller\Plugin\Followup::class)
+        );
     }
 }
