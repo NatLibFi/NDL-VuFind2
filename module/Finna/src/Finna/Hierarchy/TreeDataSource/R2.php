@@ -27,6 +27,7 @@
  */
 namespace Finna\Hierarchy\TreeDataSource;
 
+use Finna\Service\RemsService;
 use VuFind\Hierarchy\TreeDataFormatter\PluginManager as FormatterManager;
 use VuFindSearch\Backend\Solr\Connector;
 
@@ -65,21 +66,43 @@ class R2 extends \VuFind\Hierarchy\TreeDataSource\Solr
     protected $cachePrefix = 'R2';
 
     /**
-     * Constructor.
+     * REMS service
      *
-     * @param Connector        $connector Solr connector
-     * @param FormatterManager $fm        Formatter manager
-     * @param string           $cacheDir  Directory to hold cache results (optional)
-     * @param array            $filters   Filters to apply to Solr tree queries
-     * @param int              $batchSize Number of records retrieved in a batch
+     * @var RemsService
      */
-    public function __construct(Connector $connector, FormatterManager $fm,
-        $cacheDir = null, $filters = [], $batchSize = 1000
-    ) {
-        parent::__construct($connector, $fm, $cacheDir, $filters, $batchSize);
+    protected $rems = null;
 
-        // Disable hierarchy cache since record data varies between
-        // users/access levels.
-        $this->cacheDir = null;
+    /**
+     * Set REMS service
+     *
+     * @param RemsService $rems REMS service
+     *
+     * @return void
+     */
+    public function setRems($rems)
+    {
+        $this->rems = $rems;
+    }
+
+    /**
+     * Get formatted data for the specified hierarchy ID.
+     *
+     * @param string $id            Hierarchy ID.
+     * @param string $format        Name of formatter service to use.
+     * @param array  $options       Additional options for JSON generation.
+     * (Currently one option is supported: 'refresh' may be set to true to
+     * bypass caching).
+     * @param string $cacheTemplate Template for cache filenames
+     *
+     * @return string
+     */
+    public function getFormattedData($id, $format, $options = [],
+        $cacheTemplate = 'tree_%s'
+    ) {
+        if ($this->rems && $this->rems->hasUserAccess()) {
+            $cacheTemplate = "restricted_$cacheTemplate";
+        }
+
+        return parent::getFormattedData($id, $format, $options, $cacheTemplate);
     }
 }
