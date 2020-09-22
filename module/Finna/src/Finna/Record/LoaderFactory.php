@@ -62,8 +62,9 @@ class LoaderFactory extends \VuFind\Record\LoaderFactory
             $container->get('VuFind\Translator')->getLocale()
         );
         try {
-            $R2 = $container->get(\Finna\Service\R2SupportService::class);
-            if ($R2->isAuthenticated()) {
+            $rems = $container->get(\Finna\Service\RemsService::class);
+            if ($rems->hasUserAccess()) {
+                // User is registered to REMS.
                 // Request R2 record with restricted metadata
                 $loader->setR2Authenticated();
             }
