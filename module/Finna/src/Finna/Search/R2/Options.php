@@ -1,6 +1,6 @@
 <?php
 /**
- * Solr aspect of the Search Multi-class (Options)
+ * R2 aspect of the Search Multi-class (Options)
  *
  * PHP version 7
  *
