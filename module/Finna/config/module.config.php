@@ -634,11 +634,11 @@ $config = [
                 ],
             ],
             'search_facetcache' => [
-                'aliases' => [
-                    'R2' => 'Finna\Search\R2\FacetCache'
-                ],
                 'factories' => [
                     'Finna\Search\R2\FacetCache' => 'VuFind\Search\Solr\FacetCacheFactory'
+                ],
+                'aliases' => [
+                    'R2' => 'Finna\Search\R2\FacetCache'
                 ]
             ],
             'search_options' => [
