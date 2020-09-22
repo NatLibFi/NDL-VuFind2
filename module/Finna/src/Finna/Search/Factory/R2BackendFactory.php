@@ -56,9 +56,9 @@ class R2BackendFactory extends SolrDefaultBackendFactory
     /**
      * R2 service
      *
-     * @var \Finna\Service\R2Service
+     * @var \Finna\Service\R2SupportService
      */
-    protected $R2Service;
+    protected $R2SupportService;
 
     /**
      * Rems Service
@@ -97,10 +97,8 @@ class R2BackendFactory extends SolrDefaultBackendFactory
     public function __invoke(ContainerInterface $sm, $name, array $options = null)
     {
         $this->R2Config = $sm->get('VuFind\Config\PluginManager')->get('R2');
-        $this->R2Service = $sm->get(\Finna\Service\R2Service::class);
+        $this->R2SupportService = $sm->get(\Finna\Service\R2SupportService::class);
         $this->solrCore = $this->R2Config->Index->default_core;
-        $this->R2Service
-            = $sm->get(\Finna\Service\R2Service::class);
         $this->rems = $sm->get(\Finna\Service\RemsService::class);
 
         return parent::__invoke($sm, $name, $options);
@@ -114,7 +112,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
     protected function createConnector()
     {
         $connector = parent::createConnector();
-        $credentials = $this->R2Service->getCredentials();
+        $credentials = $this->R2SupportService->getCredentials();
         $connector->setApiAuthentication(
             $credentials['apiUser'], $credentials['apiKey']
         );
@@ -138,7 +136,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
             ->get(\VuFind\RecordDriver\PluginManager::class);
 
         $callback = function ($data) use ($manager) {
-            $driver = $manager->get('R2Ead3');
+            $driver = $manager->get('r2' . $data['record_format']);
             $driver->setRawData($data);
             return $driver;
         };
@@ -162,7 +160,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
         $events = $this->serviceLocator->get('SharedEventManager');
         $authListener = new AuthenticationListener(
             $backend,
-            $this->R2Service,
+            $this->R2SupportService,
             $backend->getConnector(),
             $this->rems
         );
