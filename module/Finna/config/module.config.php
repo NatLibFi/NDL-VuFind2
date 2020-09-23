@@ -828,7 +828,7 @@ $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
     'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
-    'R2Feedback' => ['feedback-form' => 'Form/[:id]']
+    'R2Feedback' => ['r2feedback-form' => 'Form/[:id]']
 ];
 
 $staticRoutes = [
