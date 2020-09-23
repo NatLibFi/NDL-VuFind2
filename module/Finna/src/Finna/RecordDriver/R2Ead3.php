@@ -92,6 +92,20 @@ class R2Ead3 extends SolrEad3
     }
 
     /**
+     * Indicate whether export is disabled for a particular format.
+     *
+     * @param string $format Export format
+     *
+     * @return bool
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function exportDisabled($format)
+    {
+        return !in_array($format, ['BibTeX', 'EndNote', 'RefWorks', 'RIS']);
+    }
+
+    /**
      * Get access to the raw SimpleXMLElement object.
      *
      * @return \SimpleXMLElement
