@@ -62,7 +62,7 @@ class R2Factory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
 
-        $r2 = $container->get(\Finna\Service\R2Service::class);
+        $r2 = $container->get(\Finna\Service\R2SupportService::class);
         $rems = $container->get(\Finna\Service\RemsService::class);
         return new $requestedName($r2->isEnabled(), $r2->isAuthenticated(), $rems);
     }

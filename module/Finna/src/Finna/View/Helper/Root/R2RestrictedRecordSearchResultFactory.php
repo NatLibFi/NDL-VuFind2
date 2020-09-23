@@ -64,7 +64,7 @@ class R2RestrictedRecordSearchResultFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
 
-        $R2 = $container->get(\Finna\Service\R2Service::class);
+        $R2 = $container->get(\Finna\Service\R2SupportService::class);
         $rems = $container->get('Finna\Service\RemsService');
 
         return new $requestedName($R2->isEnabled(), $rems->hasUserAccess());
