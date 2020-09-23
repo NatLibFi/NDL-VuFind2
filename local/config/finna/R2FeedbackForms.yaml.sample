@@ -1,11 +1,10 @@
 ---
-# R2 registration forms.
+# REMS registration forms
 # See FeedbackForms.yaml for supported configuration options.
 #-----------------------------------------------------------------------------------
 
 forms:
 
-   # REMS registration form for new users
   R2Register:
     allowLocalOverride: false
     title: "R2_register_form_title"
@@ -13,14 +12,14 @@ forms:
     useCaptcha: false
     onlyForLoggedUsers: true
     response: Thank you for your feedback.
-    senderInfoRequired: false
+    senderInfoRequired: false 
     senderInfoHelp: feedback_info
     hideSenderInfo: true
     hideRecipientInfo: true
     help:
       pre: R2_register_form_help_pre_html
       post: R2_register_form_help_post_html
-
+  
     fields:
       - name: usage_purpose
         type: select
@@ -34,15 +33,15 @@ forms:
         label: R2_register_form_usage
         help:
           post: R2_register_form_usage_help_html
-
+          
         placeholder: Select
         required: true
       - name: firstname
         type: text
         required: true
         label: First Name
-        help: R2_register_form_userinfo
-
+        _help: R2_register_form_userinfo
+            
       - name: lastname
         type: text
         required: true
@@ -59,25 +58,25 @@ forms:
           - R2_register_form_license_accept
         required: true
       - name: age
-        type: checkbox
+        type: checkbox      
         options:
           - R2_register_form_age
         required: true
 
-  # REMS registration form for returning users
-  R2RegisterReturningUser:
+
+
+  R2RegisterReturningUser:       
     allowLocalOverride: false
     title: "R2_register_form_title"
     enabled: false
     useCaptcha: false
     onlyForLoggedUsers: true
     response: Thank you for your feedback.
-    senderInfoRequired: false
+    senderInfoRequired: false 
     senderInfoHelp: feedback_info
     hideSenderInfo: true
     hideRecipientInfo: true
     help:
-      pre: R2_register_form_help_returninguser_pre_html
       post: R2_register_form_help_post_html
 
     fields:
@@ -93,15 +92,13 @@ forms:
         label: R2_register_form_usage
         help:
           post: R2_register_form_usage_help_html
-
+          
         placeholder: Select
         required: true
       - name: firstname
         type: text
         required: true
         label: First Name
-        help: R2_register_form_userinfo
-
       - name: lastname
         type: text
         required: true
@@ -118,7 +115,9 @@ forms:
           - R2_register_form_license_accept
         required: true
       - name: age
-        type: checkbox
+        type: checkbox      
         options:
           - R2_register_form_age
         required: true
+
+

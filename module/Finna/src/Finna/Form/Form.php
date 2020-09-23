@@ -313,7 +313,8 @@ class Form extends \VuFind\Form\Form
 
         // Help text from configuration
         $pre = isset($this->formConfig['help']['pre'])
-            ? $this->getDisplayString($this->formConfig['help']['pre'], false)
+            && !$translationEmpty->__invoke($this->formConfig['help']['pre'])
+            ? $this->translate($this->formConfig['help']['pre'])
             : null;
 
         // 'feedback_instructions_html' translation
@@ -682,22 +683,5 @@ class Form extends \VuFind\Form\Form
         $data['fields'] = $viewConfig['fields'] ?? $config['fields'];
 
         return $data;
-    }
-
-    /**
-     * Get display string.
-     *
-     * @param string $translationKey Translation key
-     * @param bool   $escape         Whether to escape the output.
-     * Default behaviour is to escape when the translation key does
-     * not end with '_html'.
-     *
-     * @return string|null
-     */
-    public function getDisplayString($translationKey, $escape = null)
-    {
-        $translationEmpty = $this->viewHelperManager->get('translationEmpty');
-        return $translationEmpty->__invoke($translationKey)
-            ? $this->translate($translationKey) : null;
     }
 }

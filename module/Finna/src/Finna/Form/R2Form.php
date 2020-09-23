@@ -96,7 +96,7 @@ class R2Form extends Form
     {
         // R2 registration form help texts
         switch ($translationKey) {
-        case 'R2_register_form_help_pre_html':
+        case 'R2_register_form_usage_link_html':
         case 'R2_register_form_help_returninguser_pre_html':
             $url = $this->viewHelperManager->get('url')
                 ->__invoke('content-page', ['page' => 'tutkijasali']);
