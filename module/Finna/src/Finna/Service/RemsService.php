@@ -285,7 +285,7 @@ class RemsService implements
             $usagePurpose = null;
 
             $fieldIds = $this->config->RegistrationForm->field;
-            $fields = $application['application/form']['form/fields'];
+            $fields = $application['application/forms'][0]['form/fields'];
             foreach ($fields as $field) {
                 if ($field['field/id'] === $fieldIds['usage_purpose']) {
                     $usagePurpose = $field['field/value'];
@@ -349,21 +349,22 @@ class RemsService implements
         $applicationId = $response['application-id'];
 
         $fieldIds = $this->config->RegistrationForm->field;
+        $formId = (int)$this->config->RegistrationForm->id;
 
         // 3. Save draft
         $params =  [
             'application-id' => $applicationId,
             'field-values' =>  [
-                ['field' => $fieldIds['firstname'], 'value' => $firstname],
-                ['field' => $fieldIds['lastname'], 'value' => $lastname],
-                ['field' => $fieldIds['email'], 'value' => $email],
-                ['field' => $fieldIds['usage_purpose'],
+                ['form' => $formId, 'field' => $fieldIds['firstname'], 'value' => $firstname],
+                ['form' => $formId, 'field' => $fieldIds['lastname'], 'value' => $lastname],
+                ['form' => $formId, 'field' => $fieldIds['email'], 'value' => $email],
+                ['form' => $formId, 'field' => $fieldIds['usage_purpose'],
                  'value' => $formParams['usage_purpose']],
-                ['field' => $fieldIds['age'],
+                ['form' => $formId, 'field' => $fieldIds['age'],
                  'value' => $formParams['age'] ?? null],
-                ['field' => $fieldIds['license'],
+                ['form' => $formId, 'field' => $fieldIds['license'],
                  'value' => $formParams['license'] ?? null],
-                ['field' => $fieldIds['user_id'],
+                ['form' => $formId, 'field' => $fieldIds['user_id'],
                  'value' => $this->userIdentityNumber]
             ]
         ];
@@ -531,7 +532,7 @@ class RemsService implements
     protected function getApplication($id, $throw = false)
     {
         return $this->sendRequest(
-            "applications/$id", [], 'GET', RemsService::TYPE_USER,
+            "applications/$id/raw", [], 'GET', RemsService::TYPE_APPROVER,
             null, false, $throw
         );
     }

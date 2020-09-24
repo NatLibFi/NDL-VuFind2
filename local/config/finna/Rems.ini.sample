@@ -14,6 +14,7 @@ resourceItem =
 
 
 [RegistrationForm]
+id =
 
 ; REMS registration form field id's
 field[firstname] = firstname
