@@ -160,14 +160,13 @@ class R2FeedbackController extends FeedbackController
 
             // Collect submitted params required by REMS form
             $formParams = [];
-            $formParams['usage_purpose']
-                = (string)substr($params['usage_purpose'], -1);
+            $formParams['usage_purpose'] = $params['usage_purpose'];
             $formParams['usage_purpose_text'] = $params['usage_purpose'];
-            if ($age = $params['age'] ?? null) {
-                $formParams['age'] = '1';
+            if ($age = ($params['age'] ?? null)) {
+                $formParams['age'] = $age[0];
             }
-            if ($license = $params['license'] ?? null) {
-                $formParams['license'] = '1';
+            if ($license = ($params['license'] ?? null)) {
+                $formParams['license'] = $license[0];
             }
 
             // Take firstname and lastname from profile
