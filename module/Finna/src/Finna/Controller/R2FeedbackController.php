@@ -32,8 +32,6 @@ namespace Finna\Controller;
 use Finna\Form\Form;
 use Finna\Form\R2Form;
 
-use Laminas\ServiceManager\ServiceLocatorInterface;
-
 /**
  * R2 Feedback Controller
  *
