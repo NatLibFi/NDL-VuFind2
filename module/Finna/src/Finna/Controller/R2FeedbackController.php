@@ -30,6 +30,7 @@
 namespace Finna\Controller;
 
 use Finna\Form\Form;
+use Finna\Form\R2Form;
 
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
@@ -43,21 +44,16 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
  * @link     http://vufind.org   Main Site
  */
 class R2FeedbackController extends FeedbackController
+    implements \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
-    protected $formClass = \Finna\Form\R2Form::class;
-
     /**
-     * Constructor
+     * Feedback form class
      *
-     * @param ServiceLocatorInterface $sm Service locator
+     * @var string
      */
-    public function __construct(ServiceLocatorInterface $sm)
-    {
-        $this->setLogger($sm->get('VuFind\Logger'));
-        parent::__construct($sm);
-    }
+    protected $formClass = \Finna\Form\R2Form::class;
 
     /**
      * Handles rendering and submit of dynamic forms.
@@ -68,15 +64,19 @@ class R2FeedbackController extends FeedbackController
     public function formAction()
     {
         $formId = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
-        if (!\Finna\Form\R2Form::isR2RegisterForm($formId)) {
+        if (!R2Form::isR2RegisterForm($formId)) {
             return;
+        }
+
+        if (!($user = $this->getUser())) {
+            // Not logged, prompt login
+            return $this->forceLogin();
         }
 
         $submitted = $this->formWasSubmitted('submit');
 
         if (!$submitted) {
-            if ($formId === \Finna\Form\R2Form::R2_REGISTER_FORM
-                && $this->getUser()
+            if ($formId === R2Form::R2_REGISTER_FORM && $this->getUser()
             ) {
                 $rems
                     = $this->serviceLocator->get(\Finna\Service\RemsService::class);
@@ -86,8 +86,7 @@ class R2FeedbackController extends FeedbackController
                         // returning user registration form.
                         return $this->forwardTo(
                             'R2Feedback', 'Form',
-                            ['id'
-                             => \Finna\Form\R2Form::R2_REGISTER_RETURNING_USER_FORM]
+                            ['id' => R2Form::R2_REGISTER_RETURNING_USER_FORM]
                         );
                     }
                 } catch (\Exception $e) {
@@ -95,13 +94,9 @@ class R2FeedbackController extends FeedbackController
             }
         }
 
-        $inLightbox
-            = $this->getRequest()->getQuery('layout', 'no') === 'lightbox'
-               || 'layout/lightbox' == $this->layout()->getTemplate();
-
-        $getRedirect = function () use ($inLightbox) {
+        $getRedirect = function () {
             // Logged but not authorized (wrong login method etc), close form
-            if ($inLightbox) {
+            if ($this->inLightbox()) {
                 // Login completed inside lightbox: refresh page
                 $response = $this->getResponse();
                 $response->setStatusCode(205);
@@ -110,11 +105,6 @@ class R2FeedbackController extends FeedbackController
                 return $this->redirect()->toRoute('search-home');
             }
         };
-
-        if (!($user = $this->getUser())) {
-            // Not logged, prompt login
-            return $this->forceLogin();
-        }
 
         // Verify that user is authenticated to access restricted R2 data.
         $isAuthenticated
@@ -146,7 +136,7 @@ class R2FeedbackController extends FeedbackController
         }
 
         if ($submitted) {
-            $form = $this->serviceLocator->get(\Finna\Form\R2Form::class);
+            $form = $this->serviceLocator->get($this->formClass);
             $form->setFormId($formId);
 
             $view = $this->createViewModel(compact('form', 'formId', 'user'));
