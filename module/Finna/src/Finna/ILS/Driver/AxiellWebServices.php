@@ -213,7 +213,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @var array
      */
-    protected $messagingBlackLists = [
+    protected $messagingFilters = [
         'pickUpNotice' => [],
         'overdueNotice' => [],
         'dueDateAlert' => []
@@ -259,7 +259,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     protected $soapOptions = [
         'soap_version' => SOAP_1_1,
         'exceptions' => true,
-        'trace' => 1,
+        'trace' => false,
         'connection_timeout' => 60,
         'typemap' => [
             [
@@ -276,49 +276,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter object
      */
-    public function __construct(\VuFind\Date\Converter $dateConverter
-    ) {
+    public function __construct(\VuFind\Date\Converter $dateConverter)
+    {
         $this->dateFormat = $dateConverter;
-    }
-
-    /**
-     * Check if request is valid
-     *
-     * This is responsible for determining if an item is requestable
-     *
-     * @param string $id     The Bib ID
-     * @param array  $data   An Array of item data
-     * @param patron $patron An array of patron data
-     *
-     * @return bool True if request is valid, false if not
-     */
-    public function checkRequestIsValid($id, $data, $patron)
-    {
-        return true;
-    }
-
-    /**
-     * Get Patron Profile
-     *
-     * This is responsible for retrieving the profile for a specific patron.
-     *
-     * @param array $patron The patron array
-     *
-     * @throws ILSException
-     * @return array        Array of the patron's profile data on success.
-     */
-    public function getMyProfile($patron)
-    {
-        $username = $patron['cat_username'];
-        $cacheKey = $this->getPatronCacheKey($username);
-        $profile = $this->getCachedData($cacheKey);
-
-        if (null === $profile) {
-            $this->patronLogin($username, $patron['cat_password']);
-            $profile = $this->getCachedData($cacheKey);
-        }
-
-        return $profile;
     }
 
     /**
@@ -433,6 +393,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         if (isset($this->config['Debug']['verbose'])) {
             $this->verbose = $this->config['Debug']['verbose'];
+            $this->soapOptions['trace'] = true;
         }
 
         if (isset($this->config['Debug']['log'])) {
@@ -450,20 +411,68 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             : [];
         $this->holdingsBranchOrder = array_flip($this->holdingsBranchOrder);
 
-        $this->messagingBlackLists['pickUpNotice']
-            = isset($this->config['messagingBlackLists']['pickUpNotice'])
-            ? explode(':', $this->config['messagingBlackLists']['pickUpNotice'])
-            : [];
+        // Use new settings with fallbacks for old ones:
+        $this->messagingFilters['pickUpNotice']
+            = explode(
+                ':',
+                $this->config['messagingFilters']['pickUpNotice']
+                ?? $this->config['messagingBlackLists']['pickUpNotice']
+                ?? ''
+            );
+        $this->messagingFilters['overdueNotice']
+            = explode(
+                ':',
+                $this->config['messagingFilters']['overdueNotice']
+                ?? $this->config['messagingBlackLists']['overdueNotice']
+                ?? ''
+            );
+        $this->messagingFilters['dueDateAlert']
+            = explode(
+                ':',
+                $this->config['messagingFilters']['dueDateAlert']
+                ?? $this->config['messagingBlackLists']['dueDateAlert']
+                ?? ''
+            );
+    }
 
-        $this->messagingBlackLists['overdueNotice']
-            = isset($this->config['messagingBlackLists']['overdueNotice'])
-            ? explode(':', $this->config['messagingBlackLists']['overdueNotice'])
-            : [];
+    /**
+     * Check if request is valid
+     *
+     * This is responsible for determining if an item is requestable
+     *
+     * @param string $id     The Bib ID
+     * @param array  $data   An Array of item data
+     * @param patron $patron An array of patron data
+     *
+     * @return bool True if request is valid, false if not
+     */
+    public function checkRequestIsValid($id, $data, $patron)
+    {
+        return true;
+    }
 
-        $this->messagingBlackLists['dueDateAlert']
-            = isset($this->config['messagingBlackLists']['dueDateAlert'])
-            ? explode(':', $this->config['messagingBlackLists']['dueDateAlert'])
-            : [];
+    /**
+     * Get Patron Profile
+     *
+     * This is responsible for retrieving the profile for a specific patron.
+     *
+     * @param array $patron The patron array
+     *
+     * @throws ILSException
+     * @return array        Array of the patron's profile data on success.
+     */
+    public function getMyProfile($patron)
+    {
+        $username = $patron['cat_username'];
+        $cacheKey = $this->getPatronCacheKey($username);
+        $profile = $this->getCachedData($cacheKey);
+
+        if (null === $profile) {
+            $this->patronLogin($username, $patron['cat_password']);
+            $profile = $this->getCachedData($cacheKey);
+        }
+
+        return $profile;
     }
 
     /**
@@ -1407,7 +1416,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             foreach ($validMethods as $methodKey) {
                 if (in_array(
                     $this->mapOldStatusToCode($methodKey),
-                    $this->messagingBlackLists[$service]
+                    $this->messagingFilters[$service]
                 )
                 ) {
                     continue;
@@ -2107,6 +2116,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $username = $user['cat_username'];
         $password = $user['cat_password'];
 
+        $paymentConfig = $this->config['onlinePayment'] ?? [];
+        $blockedTypes = $paymentConfig['nonPayable'] ?? [];
+
         $function = 'GetDebts';
         $functionResult = 'debtsResponse';
         $conf = [
@@ -2147,14 +2159,31 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             } else {
                 $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             }
+            $description = $debt->debtType . ' - ' . $debt->debtNote;
+            $payable = true;
+            foreach ($blockedTypes as $blockedType) {
+                if (strncmp($blockedType, '/', 1) === 0
+                    && substr_compare($blockedType, '/', -1) === 0
+                ) {
+                    if (preg_match($blockedType, $description)) {
+                        $payable = false;
+                        break;
+                    }
+                } else {
+                    if ($blockedType === $description) {
+                        $payable = false;
+                        break;
+                    }
+                }
+            }
             $fine = [
                 'debt_id' => $debt->id,
                 'amount' => $amount,
                 'checkout' => '',
-                'fine' => $debt->debtType . ' - ' . $debt->debtNote,
+                'fine' => $description,
                 'balance' => $amount,
                 'createdate' => $debt->debtDate,
-                'payableOnline' => true,
+                'payableOnline' => $payable,
                 'organization' => $debt->organisation ?? ''
             ];
             if (!empty($debt->organisation)) {
