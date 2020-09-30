@@ -869,7 +869,7 @@ class SolrEad3 extends SolrEad
         return $roleMap[$role] ?? $fallback;
     }
 
-     /**
+    /**
      * Returns an array of 0 or more record label constants, or null if labels
      * are not enabled in configuration.
      *
