@@ -35,7 +35,6 @@ $config = [
             'Finna\View\Helper\Root\R2' => 'Finna\View\Helper\Root\R2Factory',
             'Finna\View\Helper\Root\R2RestrictedRecordRegister' => 'Finna\View\Helper\Root\R2RestrictedRecordRegisterFactory',
             'Finna\View\Helper\Root\R2RestrictedRecordRegistered' => 'Finna\View\Helper\Root\R2RestrictedRecordRegisteredFactory',
-            'Finna\View\Helper\Root\R2RestrictedRecordSearchResult' => 'Finna\View\Helper\Root\R2RestrictedRecordSearchResultFactory',
             'Finna\View\Helper\Root\OnlinePayment' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\OpenUrl' => 'Finna\View\Helper\Root\OpenUrlFactory',
             'Finna\View\Helper\Root\OrganisationDisplayName' => 'Laminas\ServiceManager\Factory\InvokableFactory',
