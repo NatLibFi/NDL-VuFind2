@@ -101,7 +101,6 @@ $config = [
             'R2' => 'Finna\View\Helper\Root\R2',
             'R2RestrictedRecordRegister' => 'Finna\View\Helper\Root\R2RestrictedRecordRegister',
             'R2RestrictedRecordRegistered' => 'Finna\View\Helper\Root\R2RestrictedRecordRegistered',
-            'R2RestrictedRecordSearchResult' => 'Finna\View\Helper\Root\R2RestrictedRecordSearchResult',
             'onlinePayment' => 'Finna\View\Helper\Root\OnlinePayment',
             'organisationInfo' => 'Finna\View\Helper\Root\OrganisationInfo',
             'organisationDisplayName' => 'Finna\View\Helper\Root\OrganisationDisplayName',
