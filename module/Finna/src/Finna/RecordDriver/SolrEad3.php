@@ -121,7 +121,7 @@ class SolrEad3 extends SolrEad
             }
             $url = (string)$attr->href;
             $desc = $attr->linktitle ?? $url;
-            if (!$this->urlBlacklisted($url, $desc)) {
+            if (!$this->urlBlocked($url, $desc)) {
                 $urls[] = [
                     'url' => $url,
                     'desc' => (string)$desc
@@ -567,7 +567,7 @@ class SolrEad3 extends SolrEad
     public function getExtendedAccessRestrictions()
     {
         $xml = $this->getXmlRecord();
-        if (!isset($xml->accessrestrict)) {
+        if (!isset($xml->accessrestrict->accessrestrict)) {
             return [];
         }
         $restrictions = [];
@@ -578,19 +578,24 @@ class SolrEad3 extends SolrEad
         foreach ($types as $type) {
             $restrictions[$type] = [];
         }
-        foreach ($xml->accessrestrict as $access) {
-            $attr = $access->attributes();
-            if (! isset($attr->encodinganalog)) {
-                $restrictions['general']
-                    = $this->getDisplayLabel($access, 'p', true);
-            } else {
-                $type = (string)$attr->encodinganalog;
-                if (in_array($type, $types)) {
-                    $label = $type === 'ahaa:KR7'
-                        ? $this->getDisplayLabel($access->p->name, 'part', true)
-                        : $this->getDisplayLabel($access, 'p', true);
-                    if ($label) {
-                        $restrictions[$type] = $label;
+        foreach ($xml->accessrestrict->accessrestrict as $accessNode) {
+            if (!isset($accessNode->accessrestrict)) {
+                continue;
+            }
+            foreach ($accessNode->accessrestrict as $access) {
+                $attr = $access->attributes();
+                if (! isset($attr->encodinganalog)) {
+                    $restrictions['general']
+                        = $this->getDisplayLabel($access, 'p', true);
+                } else {
+                    $type = (string)$attr->encodinganalog;
+                    if (in_array($type, $types)) {
+                        $label = $type === 'ahaa:KR7'
+                               ? $this->getDisplayLabel($access->p->name, 'part', true)
+                               : $this->getDisplayLabel($access, 'p', true);
+                        if ($label) {
+                            $restrictions[$type] = $label;
+                        }
                     }
                 }
             }
