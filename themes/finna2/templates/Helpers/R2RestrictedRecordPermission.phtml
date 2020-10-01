@@ -14,6 +14,7 @@
   </div>
 <?php elseif (!$this->user && $this->id): ?>
   <?php
+    // Register prompt on record page
     $setupJS['initModal'] = true;
     // Explicitly redirect Collection page login to Record controller
     $registerFormUrl = $this->url('r2record', ['id' => $this->id])
@@ -21,19 +22,9 @@
       . '&recordId=' . $this->escapeHtmlAttr($this->id)
       . ($this->collection ? '&collection=1' : '');
   ?>
-  <div class="r2-restricted-record-register alert alert-info">
-    <?php if ($this->note): ?>
-      <div><?= $this->translate($this->note) ?></div>
-    <?php endif ?>
-    <div class="register" role="alert">
-      <p class="register-btn"><a href="<?= $registerFormUrl ?>" data-lightbox data-lightbox-title="<?=$this->transEsc("R2_register_form_title")?>" class="btn btn-primary btn-r2-register"><i class="fa fa-research"></i> <?=$this->transEsc($this->registerLabel)?></a></p>
-      <?php if ($this->showInfoLink): ?>
-        <p><?=$this->translate('R2_register_read_more_html', ['%%url%%' => $this->url('content-page', ['page' => 'tutkijasali'])])?></p>
-      <?php endif ?>
-    </div>
-  </div>
+  <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'showInfoLink', 'note', 'registerLabel', 'instructions')) ?>
 <?php elseif ($this->blocklisted): ?>
-  <div class="alert-info authorization-notification alert alert-danger" role="alert"><?= $this->translate('R2_accessrights_blocklisted_html', ['%%name%%' => $this->name, '%%url%%' => $this->url('feedback-home'), '%%date_added%%' => $this->blocklistedDate]) ?></div>
+  <div class="authorization-notification alert alert-danger" role="alert"><?= $this->translate('R2_accessrights_blocklisted_html', ['%%name%%' => $this->name, '%%url%%' => $this->url('feedback-home'), '%%date_added%%' => $this->blocklistedDate]) ?></div>
 <?php elseif ($this->registered): ?>
   <div class="r2-restricted-record-register">
     <?php if ($this->note): ?>
@@ -48,23 +39,14 @@
   </div>
 <?php else: ?>
    <?php
+   // Register prompt outside record page.
    if ($this->sessionExpired) {
      $setupJS['initModal'] = true;
      $setupJS['openModal'] = true;
    }
    $linkUrl = $this->user ? $registerFormUrl : $this->url('myresearch-r2accessrights');
    ?>
-  <div class="r2-restricted-record-register alert alert-<?=$this->sessionExpired ? 'danger' : 'info'?>" role="alert">
-    <?php if ($this->note): ?>
-      <div><?= $this->translate($this->note) ?></div>
-    <?php endif ?>
-    <div class="register">
-      <div class="register-btn"><a href="<?= $linkUrl ?>" data-lightbox data-lightbox-title="<?=$this->transEsc('R2_register_form_title')?>" class="btn btn-primary btn-r2-register"><i class="fa fa-research"></i> <?=$this->transEsc($this->registerLabel)?></a></div>
-      <?php if ($this->showInfoLink): ?>
-        <p><?=$this->translate('R2_register_read_more_html', ['%%url%%' => $this->url('content-page', ['page' => 'tutkijasali'])])?></p>
-      <?php endif ?>
-    </div>
-  </div>
+   <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'showInfoLink', 'note', 'registerLabel', 'instructions')) ?>
 <?php endif; ?>
 
 <?php
