@@ -22,7 +22,7 @@
       . '&recordId=' . $this->escapeHtmlAttr($this->id)
       . ($this->collection ? '&collection=1' : '');
   ?>
-  <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'showInfoLink', 'note', 'registerLabel', 'instructions')) ?>
+  <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'note', 'registerLabel', 'instructions')) ?>
 <?php elseif ($this->blocklisted): ?>
   <div class="authorization-notification alert alert-danger" role="alert"><?= $this->translate('R2_accessrights_blocklisted_html', ['%%name%%' => $this->name, '%%url%%' => $this->url('feedback-home'), '%%date_added%%' => $this->blocklistedDate]) ?></div>
 <?php elseif ($this->registered): ?>
@@ -32,9 +32,7 @@
     <?php endif ?>
     <div class="register">
       <div class="register-btn"><a href="<?= $this->url('myresearch-r2accessrights') ?>" class="btn btn-primary btn-r2-register"><i class="fa fa-research"></i> <?=$this->transEsc($this->registerLabel)?></a></div>
-      <?php if ($this->showInfoLink): ?>
-        <p><?=$this->translate('R2_register_read_more_html', ['%%url%%' => $this->url('content-page', ['page' => 'tutkijasali'])])?></p>
-      <?php endif ?>
+      <p><?=$this->translate('R2_register_read_more_html', ['%%url%%' => $this->url('content-page', ['page' => 'tutkijasali'])])?></p>
     </div>
   </div>
 <?php else: ?>
@@ -46,7 +44,7 @@
    }
    $linkUrl = $this->user ? $registerFormUrl : $this->url('myresearch-r2accessrights');
    ?>
-   <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'showInfoLink', 'note', 'registerLabel', 'instructions')) ?>
+   <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'note', 'registerLabel', 'instructions')) ?>
 <?php endif; ?>
 
 <?php

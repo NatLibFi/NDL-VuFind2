@@ -106,7 +106,7 @@ class R2RestrictedRecordRegistered extends \Laminas\View\Helper\AbstractHelper
 
             $tplParams = [
                 'usagePurpose' => $this->rems->getUsagePurpose(),
-                'showInfoLink' => !($params['hideInfoLink'] ?? false)
+                'showInfo' => !($params['hideInfo'] ?? false)
             ];
 
             return $this->getView()->render(

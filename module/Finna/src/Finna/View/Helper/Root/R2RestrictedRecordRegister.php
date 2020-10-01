@@ -105,8 +105,8 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
             if ($driver ? $driver->isRestrictedMetadataIncluded() : false) {
                 return null;
             }
-            $blacklisted = $registered = $sessionExpired = false;
-            $blacklistedDate = null;
+            $blocklisted = $registered = $sessionExpired = false;
+            $blocklistedDate = null;
             try {
                 if ($this->rems->hasUserAccess(
                     $params['ignoreCache'] ?? false, true
@@ -118,12 +118,12 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
                     }
                     $registered = true;
                 } else {
-                    $blacklisted = $user ? $this->rems->isUserBlacklisted() : false;
-                    if ($blacklisted) {
+                    $blocklisted = $user ? $this->rems->isUserBlocklisted() : false;
+                    if ($blocklisted) {
                         $dateTime = $this->getView()->plugin('dateTime');
                         try {
-                            $blacklistedDate = $dateTime->convertToDisplayDate(
-                                'Y-m-d', $blacklisted
+                            $blocklistedDate = $dateTime->convertToDisplayDate(
+                                'Y-m-d', $blocklisted
                             );
                         } catch (\Exception $e) {
                         }
@@ -142,10 +142,6 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
             } elseif (!($params['hideNote'] ?? false)) {
                 if (isset($params['note'])) {
                     $note = $params['note'];
-                } elseif ($driver) {
-                    $note = 'R2_restricted_record_note_html';
-                } else {
-                    $note = 'R2_restricted_record_note_frontpage_html';
                 }
             }
 
@@ -162,16 +158,17 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
 
             $params = [
                 'note' => $note,
+                'instructions' => $params['instructions'] ?? null,
                 'registerLabel' => $params['registerLabel'] ?? 'R2_register',
-                'showInfoLink' => !($params['hideInfoLink'] ?? false),
+                'showInfo' => !($params['hideInfo'] ?? false),
                 'weakLogin' => $user && !$this->authenticated,
                 'user' => $user,
                 'name' => $name,
                 'id' => $driver ? $driver->getUniqueID() : null,
                 'collection' => $driver ? $driver->isCollection() : false,
                 'registered' => $registered,
-                'blacklisted' => $blacklisted,
-                'blacklistedDate' => $blacklistedDate,
+                'blocklisted' => $blocklisted,
+                'blocklistedDate' => $blocklistedDate,
                 'sessionExpired' => $sessionExpired,
                 'formId' => 'R2Register',
             ];
