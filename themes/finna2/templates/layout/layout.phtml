@@ -151,7 +151,6 @@
         // Deal with cart stuff:
         $cart = $this->cart();
         if ($cart->isActive()) {
-          $this->headScript()->appendFile("vendor/cookies.js");
           $this->headScript()->appendFile("cart.js");
           $domain = $cart->getCookieDomain();
           if (!empty($domain)) {
@@ -160,6 +159,10 @@
           $cookiePath = $cart->getCookiePath();
           if (!empty($cookiePath)) {
             $appendScripts[] = 'VuFind.cart.setCookiePath("' . $cookiePath . '");';
+          }
+          $cookieSameSite = $cart->getCookieSameSite();
+          if (null !== $cookieSameSite) {
+            $appendScripts[] = 'VuFind.cart.setCookieSameSite("' . $cookieSameSite . '");';
           }
           $this->jsTranslations()->addStrings(
             [
@@ -213,6 +216,15 @@
           $appendScripts[] = 'var keepAliveInterval = ' . $this->keepAlive() . ';';
           $this->headScript()->appendFile("keep_alive.js");
       }
+
+      // Finna common
+      $cookie = $this->cookie();
+      $cookieSettings = [
+        'path' => $cookie->getCookiePath(),
+        'domain' => $cookie->getCookieDomain(),
+        'SameSite' => $cookie->getCookieSameSite(),
+      ];
+      $appendScripts[] = 'finna.common.setCookieSettings(' . json_encode($cookieSettings) . ');';
 
       // If account ajax is active, load script and add language strings
       $account = $this->auth()->getManager();
@@ -360,7 +372,7 @@ JS;
     <section role="search" class="searchContent<?=$currentTabClass?>">
       <h1 class="sr-only"><?=$this->transEsc('Search')?></h1>
         <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
-            <a class="btn btn-primary btn-uppercase floating-feedback-btn hidden-xs" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
+            <a class="btn btn-primary btn-uppercase floating-feedback-btn" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
         <?php endif; ?>
       <?php if (!empty($this->layout()->infoMessage)): ?>
         <div class="alert alert-info street-info">
@@ -417,6 +429,13 @@ JS;
         <?php endif; ?>
       </div>
     </div>
+    <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && !$this->translationEmpty('search_bg_image_info_html')): ?>
+        <div aria-hidden="true" class="search-bg-image-info">
+          <div class="search-bg-image-info-content">
+            <?=$this->translate('search_bg_image_info_html')?>
+          </div>
+        </div>
+    <?php endif; ?>
       <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search' && $template = $this->content()->findTemplateForLng('search/home/browsebar')): ?>
         <?=$this->render($template)?>
       <?php endif; ?>
@@ -478,6 +497,16 @@ JS;
     <?php if ($finnaSurvey): ?>
       <?=$this->finnaSurvey()->render()?>
     <?php endif; ?>
+    <?php
+      // Show post-login followup in lightbox
+      $url = $this->followup()->retrieveAndClear('postLoginLightbox', null);
+      if ($url && $this->layout()->getTemplate() !== 'layout/lightbox') {
+        $script = <<<EOT
+          finna.layout.showPostLoginLightbox('{$url}');
+EOT;
+          echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+      }
+    ?>
   </body>
 </html>
 <!-- END of: finna - layout/layout.phtml -->

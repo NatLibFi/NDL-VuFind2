@@ -55,6 +55,11 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           && window.location.hash === ''
       ) {
         window.location.hash = data.consortium.finna.service_point;
+      } else if (window.location.hash === '' && data.list.length > 1) {
+        $('.office.map-ui.map').removeClass('hidden');
+        $('.map-control-buttons .show-map').addClass('toggled');
+        map.resize();
+        map.reset();
       }
     }
   }
@@ -282,6 +287,10 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         var address = holder.find('.address-contact');
         address.show().find('> p').html(data.address);
       }
+    }
+    if ('mailAddress' in data && !data.details.museum) {
+      var mailAddress = holder.find('.mail-address-contact');
+      mailAddress.show().find('> p').html(data.mailAddress);
     }
     if ('email' in data) {
       var email = data.email;

@@ -482,7 +482,7 @@ class SolrEad extends SolrDefault
                     $desc = (string)$p[0];
                 }
             }
-            if (!$this->urlBlacklisted($url, $desc)) {
+            if (!$this->urlBlocked($url, $desc)) {
                 $urls[] = [
                     'url' => $url,
                     'desc' => $desc
