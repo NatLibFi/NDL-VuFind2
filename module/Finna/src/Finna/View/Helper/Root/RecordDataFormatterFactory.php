@@ -549,6 +549,30 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Exteriors', 'getExteriors', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-exteriors']
+            ]
+        );
+        $setTemplateLine(
+            'Interiors', 'getInteriors', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-interiors']
+            ]
+        );
+        $setTemplateLine(
+            'Studios', 'getStudios', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-studios']
+            ]
+        );
+        $setTemplateLine(
+            'Location Notes', 'getLocationNotes', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-location-notes']
+            ]
+        );
+        $setTemplateLine(
             'Additional Information', 'getTitleStatement', 'data-addInfo.phtml',
             [
                 'context' => ['class' => 'recordTitleStatement']
