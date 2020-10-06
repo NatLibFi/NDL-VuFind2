@@ -71,7 +71,6 @@ finna.imagePaginator = (function imagePaginator() {
     _.leafletStartBounds = null;
     _.canvasElements = {};
     _.openImageIndex = 0;
-    _.noClick = false;
     _.imagePopup = $(imageElement).clone();
   }
 
