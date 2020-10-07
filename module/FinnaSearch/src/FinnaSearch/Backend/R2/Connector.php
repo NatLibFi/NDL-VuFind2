@@ -167,7 +167,7 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
     /**
      * Set event manager.
      *
-     * @param \Finna\Service\RemsService $rems REMS service
+     * @param EventManager $events Event manager
      *
      * @return void
      */
