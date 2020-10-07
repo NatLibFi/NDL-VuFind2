@@ -190,23 +190,6 @@ class RemsService implements
     }
 
     /**
-     * Is user session expired?
-     *
-     * @param bool $ignoreCache Ignore cache?
-     *
-     * @return bool
-     */
-    public function isSessionExpired($ignoreCache = false)
-    {
-        try {
-            return $this->getAccessPermission($ignoreCache)
-                === RemsService::STATUS_EXPIRED;
-        } catch (\Exception $e) {
-            return false;
-        }
-    }
-
-    /**
      * Return timestamp when REMS session expires if the expiration time
      * is within the configured threshold.
      *
