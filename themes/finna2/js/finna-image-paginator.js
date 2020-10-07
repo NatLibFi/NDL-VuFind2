@@ -145,7 +145,6 @@ finna.imagePaginator = (function imagePaginator() {
       _.root.find('.recordcovers').addClass('mini-paginator');
       _.root.find('.recordcovers-more').hide();
     }
-
     _.onDocumentLoad();
   };
 
