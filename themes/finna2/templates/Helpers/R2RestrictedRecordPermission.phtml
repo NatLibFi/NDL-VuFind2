@@ -38,10 +38,6 @@
 <?php else: ?>
    <?php
    // Register prompt outside record page.
-   if ($this->sessionExpired) {
-     $setupJS['initModal'] = true;
-     $setupJS['openModal'] = true;
-   }
    $linkUrl = $this->user ? $registerFormUrl : $this->url('myresearch-r2accessrights');
    ?>
    <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'note', 'registerLabel', 'instructions')) ?>

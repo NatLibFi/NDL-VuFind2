@@ -128,8 +128,6 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
                         } catch (\Exception $e) {
                         }
                     }
-                    $sessionExpired
-                        = $user ? $this->rems->isSessionExpired() : false;
                 }
             } catch (\Exception $e) {
                 $translator = $this->getView()->plugin('translate');
@@ -137,9 +135,7 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
                     . $translator->translate('R2_rems_connect_error') . '</div>';
             }
             $note = null;
-            if ($sessionExpired) {
-                $note = 'R2_accessrights_session_expired';
-            } elseif (!($params['hideNote'] ?? false)) {
+            if (!($params['hideNote'] ?? false)) {
                 if (isset($params['note'])) {
                     $note = $params['note'];
                 }
@@ -169,7 +165,6 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
                 'registered' => $registered,
                 'blocklisted' => $blocklisted,
                 'blocklistedDate' => $blocklistedDate,
-                'sessionExpired' => $sessionExpired,
                 'formId' => 'R2Register',
             ];
 
