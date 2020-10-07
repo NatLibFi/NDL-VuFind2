@@ -30,7 +30,9 @@ namespace Finna\Search\Factory;
 
 use Finna\Search\R2\AuthenticationListener;
 use Interop\Container\ContainerInterface;
+use Laminas\EventManager\EventManager;
 use VuFindSearch\Backend\Solr\Backend;
+
 use VuFindSearch\Backend\Solr\Connector;
 
 use VuFindSearch\Backend\Solr\Response\Json\RecordCollectionFactory;
@@ -68,6 +70,13 @@ class R2BackendFactory extends SolrDefaultBackendFactory
     protected $rems;
 
     /**
+     * Event manager.
+     *
+     * @var EventManager
+     */
+    protected $events;
+
+    /**
      * Solr connector class
      *
      * @var string
@@ -100,6 +109,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
         $this->R2SupportService = $sm->get(\Finna\Service\R2SupportService::class);
         $this->solrCore = $this->R2Config->Index->default_core;
         $this->rems = $sm->get(\Finna\Service\RemsService::class);
+        $this->events = new EventManager($sm->get('SharedEventManager'));
 
         return parent::__invoke($sm, $name, $options);
     }
@@ -117,6 +127,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
             $credentials['apiUser'], $credentials['apiKey']
         );
         $connector->setRems($this->rems);
+        $connector->setEventManager($this->events);
         $connector->setHttpOptions($this->R2Config->Http->toArray());
 
         return $connector;
