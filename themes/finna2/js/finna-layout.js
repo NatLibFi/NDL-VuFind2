@@ -201,43 +201,6 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-  function initRecordSwipe() {
-    if ($('#view-pager').length && isTouchDevice()) {
-      $('section.main').append("<div class='swipe-arrow-navigation arrow-navigation-left'><i class='fa fa-arrow-left'></i></div>");
-      $('section.main').append("<div class='swipe-arrow-navigation arrow-navigation-right'><i class='fa fa-arrow-right'></i></div>");
-      $('.swipe-arrow-navigation').hide();
-      $(".template-dir-record .record").swipe( {
-        allowPageScroll: "vertical",
-        swipeRight: function swipeRight(/*event, phase, direction, distance, duration*/) {
-          if ($('#view-pager .pager-previous-record a').length) {
-            var prevRecordUrl = $('#view-pager .pager-previous-record a').attr('href');
-            window.location.href = prevRecordUrl;
-          }
-        },
-        swipeLeft: function swipeLeft(/*event, direction, distance, duration*/) {
-          if ($('#view-pager .pager-next-record a').length) {
-            var nextRecordUrl = $('#view-pager .pager-next-record a').attr('href');
-            window.location.href = nextRecordUrl;
-          }
-        },
-        swipeStatus: function swipeStatus(event, phase, direction, distance/*, duration, fingers*/) {
-          if (phase === 'move' && direction === 'right' && distance > 75 && $('#view-pager .pager-previous-record a').length) {
-            $('.arrow-navigation-left').show('fast');
-          }
-          if (phase === 'move' && direction === 'left' && distance > 75 && $('#view-pager .pager-next-record a').length) {
-            $('.arrow-navigation-right').show('fast');
-          }
-          if (phase === 'cancel') {
-            $('.swipe-arrow-navigation').hide('fast');
-          }
-        },
-        // Default is 75px, set to 0 for demo so any distance triggers swipe
-        threshold: 125,
-        cancelThreshold: 20
-      });
-    }
-  }
-
   function initMobileNarrowSearch() {
     $('.mobile-navigation .sidebar-navigation, .sidebar h1').unbind('click').click(function onClickMobileNav(e) {
       if ($(e.target).attr('class') !== 'fa fa-info-big') {
@@ -395,6 +358,12 @@ finna.layout = (function finnaLayout() {
         $('[data-toggle="tooltip"]').tooltip('hide');
         currentOpenTooltips = [];
       }
+    });
+  }
+
+  function initModalToolTips() {
+    $('#modal').on('show.bs.modal', function onShowModal() {
+      initToolTips($(this));
     });
   }
 
@@ -601,6 +570,10 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  function showPostLoginLightbox(url) {
+    VuFind.lightbox.ajax({url: url});
+  }
+
   function getOrganisationPageLink(organisation, organisationName, link, callback) {
     var params = {
       url: VuFind.path + '/AJAX/JSON?method=getOrganisationInfo',
@@ -785,10 +758,10 @@ finna.layout = (function finnaLayout() {
   }
 
   function initCookieConsent() {
-    var state = $.cookie('cookieConsent');
+    var state = finna.common.getCookie('cookieConsent');
     if ('undefined' === typeof state || !state) {
       $('.cookie-consent-dismiss').click(function dismiss() {
-        $.cookie('cookieConsent', 1, {path: VuFind.path, expires: 365});
+        finna.common.setCookie('cookieConsent', 1, { expires: 365 });
         $('.cookie-consent').addClass('hidden');
       });
       $('.cookie-consent').removeClass('hidden');
@@ -867,10 +840,10 @@ finna.layout = (function finnaLayout() {
       initTruncate();
       initContentNavigation();
       initHelpTabs();
-      initRecordSwipe();
       initMobileNarrowSearch();
       initCheckboxClicks();
       initToolTips();
+      initModalToolTips();
       initResizeListener();
       initScrollLinks();
       initSearchboxFunctions();
@@ -891,7 +864,8 @@ finna.layout = (function finnaLayout() {
       initFiltersToggle();
       initFiltersCheckbox();
       initCookieConsent();
-    }
+    },
+    showPostLoginLightbox: showPostLoginLightbox
   };
 
   return my;

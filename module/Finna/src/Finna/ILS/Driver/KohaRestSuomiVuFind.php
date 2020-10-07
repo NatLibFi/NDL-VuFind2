@@ -545,6 +545,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                     $renewLimit = null;
                 }
             }
+            $onsite = !empty($entry['onsite_checkout']);
 
             $transaction = [
                 'id' => $biblionumber,
@@ -559,7 +560,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 'renew' => $renewals,
                 'renewLimit' => $renewLimit,
                 'renewable' => $renewable,
-                'message' => $message
+                'message' => $message,
+                'onsite' => $onsite,
             ];
 
             $transactions[] = $transaction;
@@ -2139,11 +2141,14 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getItem($id)
     {
-        static $cachedRecords = [];
-        if (!isset($cachedRecords[$id])) {
-            $cachedRecords[$id] = $this->makeRequest(['v1', 'items', $id]);
+        $cacheId = "items|$id";
+        $item = $this->getCachedData($cacheId);
+        if (null === $item) {
+            $result = $this->makeRequest(['v1', 'items', $id]);
+            $item = $result;
+            $this->putCachedData($cacheId, $item, 300);
         }
-        return $cachedRecords[$id];
+        return $item ?: null;
     }
 
     /**
