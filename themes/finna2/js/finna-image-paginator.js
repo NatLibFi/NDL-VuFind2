@@ -1001,8 +1001,8 @@ finna.imagePaginator = (function imagePaginator() {
       for (var i = 0; i < _.onDocumentLoadCallbacks.length; i++) {
         _.onDocumentLoadCallbacks[i]();
       }
+      _.onDocumentLoadCallbacks = [];
     });
-    _.onDocumentLoadCallbacks = [];
   };
 
   var my = {
