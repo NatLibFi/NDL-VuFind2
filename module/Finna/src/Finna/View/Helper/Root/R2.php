@@ -113,7 +113,7 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
      *
      * @return bool
      */
-    public function hasUserAccess($ignoreCache)
+    public function hasUserAccess($ignoreCache = true)
     {
         return $this->rems->hasUserAccess($ignoreCache);
     }
