@@ -549,13 +549,13 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Exteriors', 'getExteriors', 'data-forwardFields.phtml',
+            'Exterior Images', 'getExteriors', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'record-exteriors']
             ]
         );
         $setTemplateLine(
-            'Interiors', 'getInteriors', 'data-forwardFields.phtml',
+            'Interior Images', 'getInteriors', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'record-interiors']
             ]
@@ -567,7 +567,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Location Notes', 'getLocationNotes', 'data-forwardFields.phtml',
+            'Filming Location Notes', 'getLocationNotes', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'record-location-notes']
             ]
