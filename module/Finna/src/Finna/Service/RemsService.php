@@ -222,9 +222,11 @@ class RemsService implements
             return null;
         }
 
-        if ($registeredTime
-            = ($this->session->{RemsService::SESSION_USER_REGISTERED_TIME} ?: null)
-        ) {
+        $registeredTime
+            = ($this->session->{RemsService::SESSION_USER_REGISTERED_TIME}
+            ?? null);
+
+        if ($registeredTime) {
             $sessionAge = (time() - $registeredTime) / 60;
             if (($sessionAge + $sessionWarning) > $sessionMaxAge) {
                 $interval = date_interval_create_from_date_string(
@@ -407,9 +409,12 @@ class RemsService implements
         $params =  [
             'application-id' => $applicationId,
             'field-values' =>  [
-                ['form' => $formId, 'field' => $fieldIds['firstname'], 'value' => $firstname],
-                ['form' => $formId, 'field' => $fieldIds['lastname'], 'value' => $lastname],
-                ['form' => $formId, 'field' => $fieldIds['email'], 'value' => $email],
+                ['form' => $formId,
+                 'field' => $fieldIds['firstname'], 'value' => $firstname],
+                ['form' => $formId,
+                 'field' => $fieldIds['lastname'], 'value' => $lastname],
+                ['form' => $formId,
+                 'field' => $fieldIds['email'], 'value' => $email],
                 ['form' => $formId, 'field' => $fieldIds['usage_purpose'],
                  'value' => $formParams['usage_purpose']],
                 ['form' => $formId, 'field' => $fieldIds['age'],
