@@ -63,6 +63,11 @@ class RemsService implements
     const SESSION_BLOCKLISTED = 'blocklisted';
     const SESSION_USAGE_PURPOSE = 'usage-purpose';
 
+    const SESSION_DAILY_LIMIT_EXCEEDED = 'daily-limit-exceeded';
+    const SESSION_MONTHLY_LIMIT_EXCEEDED = 'monthly-limit-exceeded';
+
+    const SESSION_USER_REGISTERED_TIME = 'user-registered-time';
+
     // REMS API user types
     const TYPE_ADMIN = 0;
     const TYPE_APPROVER = 1;
@@ -199,6 +204,53 @@ class RemsService implements
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Return timestamp when REMS session expires if the expiration time
+     * is within the configured threshold.
+     *
+     * @return null|int
+     */
+    public function getSessionExpirationTime()
+    {
+        $general = $this->config->General;
+        if (!($sessionMaxAge = $general->sessionMaxAge ?? null)) {
+            return null;
+        }
+        if (!$sessionWarning = ($general->sessionExpirationWarning ?? null)) {
+            return null;
+        }
+
+        if ($registeredTime
+            = ($this->session->{RemsService::SESSION_USER_REGISTERED_TIME} ?: null)
+        ) {
+            $sessionAge = (time() - $registeredTime) / 60;
+            if (($sessionAge + $sessionWarning) > $sessionMaxAge) {
+                $interval = date_interval_create_from_date_string(
+                    "{$sessionMaxAge} minutes"
+                );
+                return (new \DateTime())
+                    ->setTimeStamp($registeredTime)->add($interval);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Is search limit exceeded?
+     *
+     * @param string $type daily|monthly
+     *
+     * @return bool
+     */
+    public function isSearchLimitExceeded($type = 'daily')
+    {
+        $res = $this->session->{
+            $type === 'daily'
+                ? self::SESSION_DAILY_LIMIT_EXCEEDED
+                : self::SESSION_MONTHLY_LIMIT_EXCEEDED};
+        return $res ?: false;
     }
 
     /**
@@ -355,12 +407,9 @@ class RemsService implements
         $params =  [
             'application-id' => $applicationId,
             'field-values' =>  [
-                ['form' => $formId,
-                 'field' => $fieldIds['firstname'], 'value' => $firstname],
-                ['form' => $formId,
-                 'field' => $fieldIds['lastname'], 'value' => $lastname],
-                ['form' => $formId,
-                 'field' => $fieldIds['email'], 'value' => $email],
+                ['form' => $formId, 'field' => $fieldIds['firstname'], 'value' => $firstname],
+                ['form' => $formId, 'field' => $fieldIds['lastname'], 'value' => $lastname],
+                ['form' => $formId, 'field' => $fieldIds['email'], 'value' => $email],
                 ['form' => $formId, 'field' => $fieldIds['usage_purpose'],
                  'value' => $formParams['usage_purpose']],
                 ['form' => $formId, 'field' => $fieldIds['age'],
@@ -387,6 +436,7 @@ class RemsService implements
         );
 
         $this->session->{RemsService::SESSION_IS_REMS_REGISTERED} = true;
+        $this->session->{RemsService::SESSION_USER_REGISTERED_TIME} = time();
         $this->session->{RemsService::SESSION_USAGE_PURPOSE}
             = $formParams['usage_purpose_text'];
 
@@ -484,7 +534,8 @@ class RemsService implements
         case 'manual-revoked':
             $status = self::STATUS_REVOKED;
             break;
-        case 'session-expired':
+        case 'session-expired-closed':
+            // REMS session closed due to user's inactivity
             $status = self::STATUS_EXPIRED;
             break;
         default:
@@ -505,6 +556,24 @@ class RemsService implements
     public function setBlocklistStatusFromConnector($status)
     {
         $this->session->{self::SESSION_BLOCKLISTED} = $status;
+    }
+
+    /**
+     * Set search limit exceeded status.
+     * This is called from R2 backend connector.
+     *
+     * @param string $type     daily|monthly
+     * @param bool   $exceeded Limit exceeded?
+     *
+     * @return void
+     */
+    public function setSearchLimitExceededFromConnector($type, $exceeded)
+    {
+        if ($type === 'daily') {
+            $this->session->{self::SESSION_DAILY_LIMIT_EXCEEDED} = $exceeded;
+        } elseif ($type === 'monthly') {
+            $this->session->{self::SESSION_MONTHLY_LIMIT_EXCEEDED} = $exceeded;
+        }
     }
 
     /**
@@ -716,6 +785,9 @@ class RemsService implements
         $this->session->{self::SESSION_BLOCKLISTED} = null;
         $this->session->{self::SESSION_USAGE_PURPOSE} = null;
         $this->session->{self::SESSION_IS_REMS_REGISTERED} = null;
+        $this->session->{self::SESSION_USER_REGISTERED_TIME} = null;
+        $this->session->{self::SESSION_DAILY_LIMIT_EXCEEDED} = null;
+        $this->session->{self::SESSION_MONTHLY_LIMIT_EXCEEDED} = null;
     }
 
     /**
