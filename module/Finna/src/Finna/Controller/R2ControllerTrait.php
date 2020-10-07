@@ -27,7 +27,8 @@
  */
 namespace Finna\Controller;
 
-use Laminas\Session\Container as SessionContainer;
+use Laminas\EventManager\EventInterface;
+use Laminas\EventManager\SharedEventManagerInterface;
 
 /**
  * R2 controller trait.
@@ -58,26 +59,43 @@ trait R2ControllerTrait
     }
 
     /**
-     * Return session for REMS data.
+     * Attach listener to shared event manager.
      *
-     * @return SesionContainer
+     * @param SharedEventManagerInterface $manager Shared event manager
+     *
+     * @return void
      */
-    public function getR2Session()
+    public function attachDefaultListeners()
     {
-        return new SessionContainer(
-            'R2Registration',
-            $this->serviceLocator->get('VuFind\SessionManager')
+        parent::attachDefaultListeners();
+
+        $events = $this->serviceLocator->get('SharedEventManager');
+        $events->attach(
+            \FinnaSearch\Backend\R2\Connector::class,
+            \FinnaSearch\Backend\R2\Connector::EVENT_REMS_SESSION_EXPIRED,
+            [$this, 'onRemsSessionExpired']
         );
     }
 
     /**
-     * Is the user authenticated to use R2?
+     * REMS session expired listener.
      *
-     * @return bool
+     * @param EventInterface $event Event
+     *
+     * @return EventInterface
      */
-    protected function isAuthenticated()
+    public function onRemsSessionExpired(EventInterface $event)
     {
-        return $this->serviceLocator->get(\Finna\Service\R2Service::class)
-            ->isAuthenticated();
+        $url = $this->serviceLocator->get(\VuFind\Auth\Manager::class)
+            ->logout($this->url()->fromRoute('myresearch-home'));
+
+        $session = $this->serviceLocator->get(\Laminas\Session\SessionManager::class);
+        // Logout closed the previous session. Start a new one:
+        $session->start();
+        // Use a new session id so that any single logout hook doesn't destroy it:
+        $session->regenerateId();
+        $this->flashMessenger()->addErrorMessage('R2_rems_session_expired');
+
+        return $this->redirect()->toUrl($url);
     }
 }
