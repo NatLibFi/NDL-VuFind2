@@ -327,19 +327,21 @@ class Bootstrapper
             $key = 'R2_session_expiring';
             unset($session->messages[$key]);
 
-            $expirationTime
-                = $sm->get(RemsService::class)->getSessionExpirationTime();
+            if ($sm->get(\Finna\Service\RemsService::class)->hasUserAccess()) {
+                $expirationTime
+                    = $sm->get(RemsService::class)->getSessionExpirationTime();
 
-            if ($expirationTime) {
-                // Add warning to session variable.
-                // The message is displayed by SystemMessages
-                $format = 'H:i';
-                $time =  $sm->get(\VuFind\Date\Converter::class)
-                    ->convertToDisplayTime(
-                        $format, date($format, $expirationTime->getTimeStamp())
-                    );
-                $messages[$key] = ['%%expire%%' => $time];
-                $session->messages = $messages;
+                if ($expirationTime) {
+                    // Add warning to session variable.
+                    // The message is displayed by SystemMessages
+                    $format = 'H:i';
+                    $time = $sm->get(\VuFind\Date\Converter::class)
+                        ->convertToDisplayTime(
+                            $format, date($format, $expirationTime->getTimeStamp())
+                        );
+                    $messages[$key] = ['%%expire%%' => $time];
+                    $session->messages = $messages;
+                }
             }
         };
 
