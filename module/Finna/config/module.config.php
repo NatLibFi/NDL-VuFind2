@@ -648,7 +648,6 @@ $config = [
                     'Finna\Search\Combined\Options' => 'VuFind\Search\OptionsFactory',
                     'Finna\Search\EDS\Options' => 'VuFind\Search\EDS\OptionsFactory',
                     'Finna\Search\R2\Options' => 'VuFind\Search\Options\OptionsFactory',
-                    'Finna\Search\R2Collection\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\Primo\Options' => 'VuFind\Search\OptionsFactory',
                     'Finna\Search\SolrAuth\Options' => 'VuFind\Search\OptionsFactory',
                 ],
@@ -663,7 +662,7 @@ $config = [
                     'Finna\Search\MixedList\Options' => 'VuFind\Search\MixedList\Options',
                     'Blender' => 'Finna\Search\Blender\Options',
                     'R2' => 'Finna\Search\R2\Options',
-                    'R2Collection' => 'Finna\Search\R2Collection\Options',
+                    'R2Collection' => 'VuFind\Search\SolrCollection\Options',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Options'
                 ]
             ],
@@ -675,13 +674,14 @@ $config = [
                     'Finna\Search\EDS\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\EmptySet\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Favorites\Params' => 'VuFind\Search\Params\ParamsFactory',
-                    'Finna\Search\R2\Params' => 'Finna\Search\Solr\ParamsFactory',
-                    'Finna\Search\R2Collection\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\MixedList\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
                 ],
                 'aliases' => [
+                    'Finna\Search\R2\Params' => 'Finna\Search\Solr\Params',
+                    'Finna\Search\R2Collection\Params' => 'VuFind\Search\SolrCollection\Params',
+
                     'VuFind\Search\Combined\Params' => 'Finna\Search\Combined\Params',
                     'VuFind\Search\EDS\Params' => 'Finna\Search\EDS\Params',
                     'VuFind\Search\EmptySet\Params' => 'Finna\Search\EmptySet\Params',
@@ -692,7 +692,7 @@ $config = [
                     'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
 
                     'Blender' => 'Finna\Search\Blender\Params',
-                    'R2' => 'Finna\Search\R2\Params',
+                    'R2' => 'Finna\Search\Solr\Params',
                     'R2Collection' => 'Finna\Search\R2Collection\Params',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Params'
                 ]
@@ -717,7 +717,7 @@ $config = [
 
                     'Blender' => 'Finna\Search\Blender\Results',
                     'R2' => 'Finna\Search\R2\Results',
-                    'R2Collection' => '\Finna\Search\R2Collection\Results'
+                    'R2Collection' => 'Finna\Search\R2Collection\Results'
                 ]
             ],
             'content_covers' => [
