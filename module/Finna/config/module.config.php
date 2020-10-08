@@ -657,6 +657,8 @@ $config = [
                     'VuFind\Search\Primo\Options' => 'Finna\Search\Primo\Options',
                     'VuFind\Search\SolrAuth\Options' => 'Finna\Search\SolrAuth\Options',
 
+                    'Finna\Search\R2Collection\Options' => 'VuFind\Search\SolrCollection\Options',
+
                     // Counterpart for EmptySet Params:
                     'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
                     'Finna\Search\MixedList\Options' => 'VuFind\Search\MixedList\Options',
@@ -674,14 +676,13 @@ $config = [
                     'Finna\Search\EDS\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\EmptySet\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Favorites\Params' => 'VuFind\Search\Params\ParamsFactory',
+                    'Finna\Search\R2\Params' => 'Finna\Search\Solr\ParamsFactory',
+                    'Finna\Search\R2Collection\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\MixedList\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
                 ],
                 'aliases' => [
-                    'Finna\Search\R2\Params' => 'Finna\Search\Solr\Params',
-                    'Finna\Search\R2Collection\Params' => 'VuFind\Search\SolrCollection\Params',
-
                     'VuFind\Search\Combined\Params' => 'Finna\Search\Combined\Params',
                     'VuFind\Search\EDS\Params' => 'Finna\Search\EDS\Params',
                     'VuFind\Search\EmptySet\Params' => 'Finna\Search\EmptySet\Params',
@@ -692,7 +693,7 @@ $config = [
                     'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
 
                     'Blender' => 'Finna\Search\Blender\Params',
-                    'R2' => 'Finna\Search\Solr\Params',
+                    'R2' => 'Finna\Search\R2\Params',
                     'R2Collection' => 'Finna\Search\R2Collection\Params',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Params'
                 ]
