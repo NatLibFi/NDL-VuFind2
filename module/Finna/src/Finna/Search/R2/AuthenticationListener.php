@@ -93,11 +93,8 @@ class AuthenticationListener
      *
      * @return void
      */
-    public function __construct(
-        BackendInterface $backend,
-        R2SupportService $r2,
-        Connector $connector,
-        RemsService $rems
+    public function __construct(BackendInterface $backend, R2SupportService $r2,
+        Connector $connector, RemsService $rems
     ) {
         $this->backend = $backend;
         $this->R2SupportService = $r2;
@@ -134,7 +131,7 @@ class AuthenticationListener
             $this->connector->setUsername(null);
             // Attempt to retrieve restricted metadata from the backend
             // when the following holds:
-            // 1. The search context is not retrieve or retrieveBatch,
+            // 1. If the search context is not retrieve or retrieveBatch,
             // or restricted metadata was requested.
             if (!in_array($context, ['retrieve', 'retrieveBatch'])
                 || ($params && in_array(true, $params->get('R2Restricted') ?? []))
