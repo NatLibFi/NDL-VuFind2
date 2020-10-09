@@ -52,6 +52,13 @@ trait SolrFinnaTrait
     protected $searchSettings = [];
 
     /**
+     * Runtime cache for method results to avoid duplicate processing
+     *
+     * @var array
+     */
+    protected $cache = [];
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - urls        Image URLs
      *   - small     Small image (mandatory)
@@ -535,6 +542,11 @@ trait SolrFinnaTrait
      */
     public function getThumbnail($size = 'small')
     {
+        $cacheKey = __FUNCTION__ . "/$size";
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
         $result = parent::getThumbnail($size);
 
         if (is_array($result) && !isset($result['isbn'])) {
@@ -544,6 +556,7 @@ trait SolrFinnaTrait
             }
         }
 
+        $this->cache[$cacheKey] = $result;
         return $result;
     }
 
@@ -565,6 +578,10 @@ trait SolrFinnaTrait
      */
     public function getFirstISBN()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
+
         // Get all the ISBNs and initialize the return value:
         $isbns = $this->getISBNs();
         $isbn13 = false;
@@ -582,6 +599,7 @@ trait SolrFinnaTrait
                 return $isbn;
             }
         }
+        $this->cache[__FUNCTION__] = $isbn13;
         return $isbn13;
     }
 
@@ -812,7 +830,7 @@ trait SolrFinnaTrait
      *
      * Returns an associative array of group => records, where each item in
      * records is either a record id or an array that has a 'wildcard' key
-     * with a Solr compatible pattern that is targeted to the 'id' field.
+     * with a Solr compatible pattern as it's value.
      *
      * Notes on wildcard queries:
      *  - Only the first record from the wildcard result set is returned.
@@ -820,13 +838,13 @@ trait SolrFinnaTrait
      *    the same datasource as the issuing record.
      *
      * The array may contain the following keys:
-     *   - parents
-     *   - children
      *   - continued-from
-     *   - other
+     *   - part-of
+     *   - contains
+     *   - see-also
      *
      * Examples:
-     * - parents
+     * - continued-from
      *     - source1.1234
      *     - ['wildcard' => '*1234']
      *     - ['wildcard' => 'source*1234*']
@@ -1077,6 +1095,17 @@ trait SolrFinnaTrait
             );
         }
         return $this->otherVersions;
+    }
+
+    /**
+     * Returns an array of 0 or more record label constants, or null if labels
+     * are not enabled in configuration.
+     *
+     * @return array|null
+     */
+    public function getRecordLabels()
+    {
+        return null;
     }
 
     /**
