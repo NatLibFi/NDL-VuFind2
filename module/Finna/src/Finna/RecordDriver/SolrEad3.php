@@ -92,7 +92,7 @@ class SolrEad3 extends SolrEad
     const RELATION_SEE_ALSO = 'see-also';
 
     // Relation type map
-    CONST RELATION_MAP = [
+    const RELATION_MAP = [
         'On jatkoa' => self::RELATION_CONTINUED_FROM,
         'Sisältyy' => self::RELATION_PART_OF,
         'Sisältää' => self::RELATION_CONTAINS,
