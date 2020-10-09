@@ -67,7 +67,6 @@ finna.imagePaginator = (function imagePaginator() {
     _.rightBtn = null;
     _.leftBrowseBtn = null;
     _.rightBrowseBtn = null;
-    _.imagePopup = null;
     _.leafletLoader = null;
     _.leafletStartBounds = null;
     _.canvasElements = {};
@@ -533,6 +532,7 @@ finna.imagePaginator = (function imagePaginator() {
       _.setDimensions();
       if (image.naturalWidth && image.naturalWidth === 10 && image.naturalHeight === 10) {
         _.trigger.addClass('no-image');
+        _.trigger.trigger('removeclick');
         $(image).attr('alt', translations.no_cover);
         if (_.isList) {
           if (_.images.length < 2) {
@@ -653,6 +653,9 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() {
     var _ = this;
     var src = VuFind.path + '/AJAX/JSON?method=getImageInformation&id=' + encodeURIComponent(_.settings.recordId) + '&index=' + _.openImageIndex;
+    if (typeof _.settings.recordSource != 'undefined') {
+      src += '&source=' + encodeURIComponent(_.settings.recordSource);
+    }
 
     if (typeof publicList !== 'undefined') {
       src += '&publicList=1';

@@ -138,6 +138,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      */
     public function getAllRecordLinks()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $result = parent::getAllRecordLinks();
         if ($result !== null) {
             foreach ($result as &$link) {
@@ -147,6 +150,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             }
         }
 
+        $this->cache[__FUNCTION__] = $result;
         return $result;
     }
 
@@ -170,7 +174,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      */
     public function getAllImages($language = 'fi', $includePdf = true)
     {
-        $getUrls = function ($pdf = false) use ($includePdf) {
+        $cacheKey = __FUNCTION__ . "/$language/" . ($includePdf ? '1' : '0');
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
+        $getUrls = function ($acceptPdf) {
             $result = [];
             foreach ($this->getMarcRecord()->getFields('856') as $url) {
                 $isImage = false;
@@ -181,7 +190,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         || 'image/jpeg' == $type;
                 }
                 $address = $url->getSubfield('u');
-                $isPdf = $includePdf && preg_match('/\.pdf$/i', $address);
+                $isPdf = $acceptPdf && preg_match('/\.pdf$/i', $address);
                 if ($isImage || $isPdf) {
                     if ($address && $this->urlAllowed($address->getData())) {
                         $address = $address->getData();
@@ -204,11 +213,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             return $result;
         };
 
-        $result = $getUrls();
+        $result = $getUrls(false);
         if ($includePdf && empty($result)) {
             // Attempt to find a PDF file to be converted to a coverimage
             $result = array_merge($result, $getUrls(true));
         }
+        $this->cache[$cacheKey] = $result;
         return $result;
     }
 
@@ -274,6 +284,72 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             }
         }
         return $result;
+    }
+
+    /**
+     * Return the first valid DOI found in the record (false if none).
+     *
+     * @return mixed
+     */
+    public function getCleanDOI()
+    {
+        if (!isset($this->cache[__FUNCTION__])) {
+            $this->cache[__FUNCTION__] = parent::getCleanDOI();
+        }
+        return $this->cache[__FUNCTION__];
+    }
+
+    /**
+     * Get just the first listed OCLC Number (or false if none available).
+     *
+     * @return mixed
+     */
+    public function getCleanOCLCNum()
+    {
+        if (!isset($this->cache[__FUNCTION__])) {
+            $this->cache[__FUNCTION__] = parent::getCleanOCLCNum();
+        }
+        return $this->cache[__FUNCTION__];
+    }
+
+    /**
+     * Get just the first listed UPC Number (or false if none available).
+     *
+     * @return mixed
+     */
+    public function getCleanUPC()
+    {
+        if (!isset($this->cache[__FUNCTION__])) {
+            $this->cache[__FUNCTION__] = parent::getCleanUPC();
+        }
+        return $this->cache[__FUNCTION__];
+    }
+
+    /**
+     * Get just the first listed national bibliography number (or false if none
+     * available).
+     *
+     * @return mixed
+     */
+    public function getCleanNBN()
+    {
+        if (!isset($this->cache[__FUNCTION__])) {
+            $this->cache[__FUNCTION__] = parent::getCleanNBN();
+        }
+        return $this->cache[__FUNCTION__];
+    }
+
+    /**
+     * Get just the base portion of the first listed ISMN (or false if no ISSMs).
+     *
+     * @return mixed
+     */
+    public function getCleanISMN()
+    {
+        if (!isset($this->cache[__FUNCTION__])) {
+            $this->cache[__FUNCTION__] = parent::getCleanISMN();
+        }
+        return $this->cache[__FUNCTION__];
     }
 
     /**
@@ -658,6 +734,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      */
     public function getISBNs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
+
         $fields = [
             '020' => ['a', 'q'],
             '773' => ['z'],
@@ -671,7 +751,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 )
             );
         }
-        return array_values(array_unique(array_filter($isbn)));
+
+        $result = array_values(array_unique(array_filter($isbn)));
+        $this->cache[__FUNCTION__] = $result;
+        return $result;
     }
 
     /**
@@ -681,6 +764,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      */
     public function getISSNs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
+
         $fields = [
             '022' => ['a']
             /* We don't want to display all ISSNs without further
@@ -704,7 +791,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 )
             );
         }
-        return array_values(array_unique(array_filter($issn)));
+        $result = array_values(array_unique(array_filter($issn)));
+        $this->cache[__FUNCTION__] = $result;
+        return $result;
     }
 
     /**
@@ -840,7 +929,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      */
     public function getPresenters()
     {
-        global $configArray;
         $result = ['presenters' => [], 'details' => []];
 
         foreach (['100', '110', '700', '710'] as $fieldCode) {
