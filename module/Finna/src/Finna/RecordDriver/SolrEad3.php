@@ -47,11 +47,60 @@ namespace Finna\RecordDriver;
  */
 class SolrEad3 extends SolrEad
 {
-    const TYPE_IMAGE_FULLRES = 'Bittikartta - Fullres - Jakelukappale';
-    const TYPE_IMAGE_MEDIUM = 'Bittikartta - Pikkukuva - Jakelukappale';
-    const TYPE_IMAGE_OCR = 'OCR-data - Alto - Jakelukappale';
+    // Image types
+    const IMAGE_MEDIUM = 'medium';
+    const IMAGE_FULLRES = 'fullres';
+    const IMAGE_OCR = 'ocr';
 
-    protected $imageUrlCache = [];
+    // Image type map
+    const IMAGE_MAP = [
+        'Bittikartta - Fullres - Jakelukappale' => self::IMAGE_FULLRES,
+        'Bittikartta - Pikkukuva - Jakelukappale' => self::IMAGE_MEDIUM,
+        'OCR-data - Alto - Jakelukappale' => self::IMAGE_OCR
+    ];
+
+    // Altformavail labels
+    const ALTFORM_LOCATION = 'location';
+    const ALTFORM_TYPE = 'type';
+    const ALTFORM_DIGITAL_TYPE = 'digitalType';
+    const ALTFORM_FORMAT = 'format';
+    const ALTFORM_ACCESS = 'access';
+    const ALTFORM_ONLINE = 'online';
+
+    // Altformavail label map
+    const ALTFORM_MAP = [
+        'Tietopalvelun tarjoamispaikka' => self::ALTFORM_LOCATION,
+        'Tekninen tyyppi' => self::ALTFORM_TYPE,
+        'Digitaalisen ilmentymän tyyppi' => self::ALTFORM_DIGITAL_TYPE,
+        'Tallennusalusta' => self::ALTFORM_FORMAT,
+        'Digitaalisen aineiston tiedostomuoto' => self::ALTFORM_FORMAT,
+        'Ilmentym&#xE4;n kuntoon perustuva k&#xE4;ytt&#xF6;rajoitus'
+            => self::ALTFORM_ACCESS,
+        'Internet - ei fyysistä toimipaikkaa' => self::ALTFORM_ONLINE
+    ];
+
+    // Accessrestrict types
+    const ACCESS_RESTRICT_TYPES = [
+        'general',
+        'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4', 'ahaa:KR3', 'ahaa:KR1'
+    ];
+
+    // Relation types
+    const RELATION_CONTINUED_FROM = 'continued-from';
+    const RELATION_PART_OF = 'part-of';
+    const RELATION_CONTAINS = 'contains';
+    const RELATION_SEE_ALSO = 'see-also';
+
+    // Relation type map
+    CONST RELATION_MAP = [
+        'On jatkoa' => self::RELATION_CONTINUED_FROM,
+        'Sisältyy' => self::RELATION_PART_OF,
+        'Sisältää' => self::RELATION_CONTAINS,
+        'Katso myös' => self::RELATION_SEE_ALSO
+    ];
+
+    // Linktitle attribute for a daoset->dao image
+    const DAO_LINK_TITLE_IMAGE = 'Kuva/Aukeama';
 
     /**
      * Get the institutions holding the record.
@@ -114,7 +163,7 @@ class SolrEad3 extends SolrEad
             $attr = $node->attributes();
             // Discard image urls
             if (isset($attr->linktitle)
-                && strpos((string)$attr->linktitle, 'Kuva/Aukeama') === 0
+                && strpos((string)$attr->linktitle, self::DAO_LINK_TITLE_IMAGE) === 0
                 || ! $attr->href
             ) {
                 continue;
@@ -243,7 +292,16 @@ class SolrEad3 extends SolrEad
             }
         }
 
-        $onlineType = 'Internet - ei fyysistä toimipaikkaa';
+        $onlineTypes = array_keys(
+            array_filter(
+                self::ALTFORM_MAP,
+                function ($label, $type) {
+                    return $type === self::ALTFORM_ONLINE;
+                }, ARRAY_FILTER_USE_BOTH
+            )
+        );
+
+        //$onlineType = 'Internet - ei fyysistä toimipaikkaa';
         $results = [];
         foreach ($xml->altformavail->altformavail as $altform) {
             $itemId = (string)$altform->attributes()->id;
@@ -253,28 +311,30 @@ class SolrEad3 extends SolrEad
             $result = ['id' => $itemId, 'online' => in_array($itemId, $onlineIds)];
             $owner = null;
             foreach ($altform->list->defitem ?? [] as $defitem) {
-                $type = $defitem->label;
+                $type = self::ALTFORM_MAP[(string)$defitem->label] ?? null;
+                if (!$type) {
+                    continue;
+                }
                 $val = (string)$defitem->item;
                 switch ($type) {
-                case 'Tietopalvelun tarjoamispaikka':
+                case self::ALTFORM_LOCATION:
                     $result['location'] = $val;
-                    if ($val === $onlineType) {
+                    if (in_array($val, $onlineTypes)) {
                         $result['online'] = true;
                     } else {
                         $result['service'] = true;
                     }
                     break;
-                case 'Tekninen tyyppi':
+                case self::ALTFORM_TYPE:
                     $result['type'] = $val;
                     break;
-                case 'Digitaalisen ilmentymän tyyppi':
+                case self::ALTFORM_DIGITAL_TYPE:
                     $result['digitalType'] = $val;
                     break;
-                case 'Tallennusalusta':
-                case 'Digitaalisen aineiston tiedostomuoto':
+                case self::ALTFORM_FORMAT:
                     $result['format'] = $val;
                     break;
-                case 'Ilmentym&#xE4;n kuntoon perustuva k&#xE4;ytt&#xF6;rajoitus':
+                case self::ALTFORM_ACCESS:
                     $result['accessRestriction'] = $val;
                     break;
                 }
@@ -310,12 +370,10 @@ class SolrEad3 extends SolrEad
             if (!$label || !$val) {
                 continue;
             }
-            $key = "Unit ID:$label";
-            $translated = $this->translate($key);
-            if ($translated !== $key) {
-                $label = $translated;
-            }
-            $ids[] = ['data' => $val, 'detail' => $label];
+            $ids[] = [
+                'data' => $val,
+                'detail' => $this->translate("Unit ID:$label", [], $label)
+            ];
         }
 
         return $ids;
@@ -434,14 +492,7 @@ class SolrEad3 extends SolrEad
     public function getAllImages(
         $language = 'fi', $includePdf = false
     ) {
-        $sizeMap = [
-             self::TYPE_IMAGE_MEDIUM => 'medium',
-             self::TYPE_IMAGE_FULLRES => 'large'
-        ];
-
-        $result = [];
-
-        $images = [];
+        $result = $images = [];
         $xml = $this->getXmlRecord();
         if (isset($xml->did->daoset)) {
             foreach ($xml->did->daoset as $daoset) {
@@ -449,11 +500,8 @@ class SolrEad3 extends SolrEad
                     continue;
                 }
                 $attr = $daoset->attributes();
-                $localtype = (string)($attr->localtype ?? self::TYPE_IMAGE_FULLRES);
-                if (!in_array($localtype, array_keys($sizeMap))) {
-                    continue;
-                }
-                $size = $sizeMap[$localtype];
+                $localtype = (string)($attr->localtype ?? null);
+                $size = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
                 if (!isset($images[$size])) {
                     $image[$size] = [];
                 }
@@ -467,7 +515,9 @@ class SolrEad3 extends SolrEad
                     $attr = $dao->attributes();
 
                     if (! isset($attr->linktitle)
-                        || strpos((string)$attr->linktitle, 'Kuva/Aukeama') !== 0
+                        || strpos(
+                            (string)$attr->linktitle, self::DAO_LINK_TITLE_IMAGE
+                        ) !== 0
                         || ! $attr->href
                     ) {
                         continue;
@@ -571,11 +621,7 @@ class SolrEad3 extends SolrEad
             return [];
         }
         $restrictions = [];
-        $types = [
-            'general',
-            'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4', 'ahaa:KR3', 'ahaa:KR1'
-        ];
-        foreach ($types as $type) {
+        foreach (self::ACCESS_RESTRICT_TYPES as $type) {
             $restrictions[$type] = [];
         }
         foreach ($xml->accessrestrict->accessrestrict as $accessNode) {
@@ -589,10 +635,11 @@ class SolrEad3 extends SolrEad
                         = $this->getDisplayLabel($access, 'p', true);
                 } else {
                     $type = (string)$attr->encodinganalog;
-                    if (in_array($type, $types)) {
+                    if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
                         $label = $type === 'ahaa:KR7'
-                               ? $this->getDisplayLabel($access->p->name, 'part', true)
-                               : $this->getDisplayLabel($access, 'p', true);
+                            ? $this->getDisplayLabel(
+                                $access->p->name, 'part', true
+                            ) : $this->getDisplayLabel($access, 'p');
                         if ($label) {
                             $restrictions[$type] = $label;
                         }
@@ -746,13 +793,13 @@ class SolrEad3 extends SolrEad
      *    the same datasource as the issuing record.
      *
      * The array may contain the following keys:
-     *   - parents
-     *   - children
      *   - continued-from
-     *   - other
+     *   - part-of
+     *   - contains
+     *   - see-also
      *
      * Examples:
-     * - parents
+     * - continued-from
      *     - source1.1234
      *     - ['wildcard' => '*1234']
      *     - ['wildcard' => 'source*1234*']
@@ -767,13 +814,6 @@ class SolrEad3 extends SolrEad
             return [];
         }
 
-        $relationMap = [
-            'On jatkoa' => 'continued-from',
-            'Sisältyy' => 'part-of',
-            'Sisältää' => 'contains',
-            'Katso myös' => 'see-also'
-        ];
-
         $relations = [];
         foreach ($record->relations->relation as $relation) {
             $attr = $relation->attributes();
@@ -787,18 +827,16 @@ class SolrEad3 extends SolrEad
             ) {
                 continue;
             }
-            $role = (string)$attr->arcrole;
-            if (!isset($relationMap[$role])) {
+            $role = self::RELATION_MAP[(string)$attr->arcrole] ?? null;
+            if (!$role) {
                 continue;
             }
-            $role = $relationMap[$role];
             if (!isset($relations[$role])) {
                 $relations[$role] = [];
             }
             // Use a wildcard to since the id is prefixed with hierarchy_parent_id
             $relations[$role][] = ['wildcard' => '*' . (string)$attr->href];
         }
-
         return $relations;
     }
 
