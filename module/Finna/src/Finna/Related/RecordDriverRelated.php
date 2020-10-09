@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2019-2020.
+ * Copyright (C) The National Library of Finland 2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -43,7 +43,14 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
      *
      * @var array
      */
-    protected $driver;
+    protected $results;
+
+    /**
+     * Search service
+     *
+     * @var \VuFind\Record\Loader
+     */
+    protected $recordLoader;
 
     /**
      * Constructor
@@ -52,6 +59,7 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
      */
     public function __construct(\VuFind\Record\Loader $recordLoader)
     {
+        $this->recordLoader = $recordLoader;
     }
 
     /**
@@ -64,36 +72,20 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
      */
     public function init($settings, $driver)
     {
-        $this->driver = $driver;
+        foreach ($driver->getRelatedItems() as $type => $ids) {
+            $this->results[$type] = $this->recordLoader->loadBatchForSource(
+                $ids, 'Solr', true
+            );
+        }
     }
 
     /**
-     * Check if the current record has related records.
+     * Get an array of result records.
      *
-     * @return bool
+     * @return array
      */
-    public function hasRelatedRecords()
+    public function getResults()
     {
-        return $this->driver->tryMethod('hasRelatedRecords', [], false);
-    }
-
-    /**
-     * Get the current record ID
-     *
-     * @return string
-     */
-    public function getRecordId()
-    {
-        return $this->driver->getUniqueID();
-    }
-
-    /**
-     * Get the current record source
-     *
-     * @return string
-     */
-    public function getRecordSource()
-    {
-        return $this->driver->getSourceIdentifier();
+        return $this->results;
     }
 }
