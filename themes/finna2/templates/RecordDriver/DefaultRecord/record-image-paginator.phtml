@@ -1,7 +1,7 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-image-paginator.phtml -->
 <?php
   $isList = ($type === 'list' || $type === 'list grid');
-  $enableImageZoom = (isset($enableImagePopupZoom) && $enableImagePopupZoom) && in_array($this->driver->tryMethod('getRecordType'), ['lido', 'forward', 'ead', 'qdc']);
+  $enableImageZoom = (isset($enableImagePopupZoom) && $enableImagePopupZoom) && in_array($this->driver->tryMethod('getRecordFormat'), ['lido', 'forward', 'ead', 'qdc']);
 ?>
 <?php if ($type === 'record' || !$this->userAgent()->isBot()): ?>
   <?php
@@ -29,7 +29,6 @@
   <?php if (!$this->userAgent()->isBot()): ?>
     <?php if (!empty($images[0]['urls']['medium']) || !empty($images[0]['urls']['large'])): ?>
       <div class="recordcover-container">
-        <?= $this->R2RestrictedRecordSearchResult($this->driver) ?>
         <button class="next-image left" type="button"><i class="fa fa-chevron-left"></i><span class="sr-only"><?= $this->transEsc('previous_image') ?></span></button>
         <?php if (!$this->disableModal): ?>
           <a class="image-popup-trigger" href="<?=$this->recordLink()->getUrl($this->driver) ?>#image">
@@ -71,7 +70,7 @@
     <?php
       $settings = [
         'recordId' => $this->driver->getUniqueId(),
-        'recordType' => $this->driver->tryMethod('getRecordType'),
+        'recordType' => $this->driver->tryMethod('getRecordFormat'),
         'recordSource' => $this->driver->tryMethod('getSourceIdentifier'),
         'imagesPerPage' => 8,
         'imagesOnMobile' => $numOfImages['mobile'] ?? 4,
