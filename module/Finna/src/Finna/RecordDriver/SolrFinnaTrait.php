@@ -948,8 +948,8 @@ trait SolrFinnaTrait
 
     /**
      * Resolve URL types.
-     * Each URL is annotated with 'extension' field (file extension).
-     * In addition, image and video URLs are annotated with 'type' field.
+     * Each URL is annotated with 'codec' field (taken from the file extension).
+     * In addition, image and audio URLs are annotated with 'type' field.
      *
      * @param array $urls URLs
      *
@@ -964,9 +964,9 @@ trait SolrFinnaTrait
                 $url['url'], $match
             )
             ) {
-                $extension = $match[2];
+                $codec = $match[2];
                 $type = null;
-                switch (strtolower($extension)) {
+                switch (strtolower($codec)) {
                 case 'wav':
                 case 'mp3':
                     $type = 'audio';
@@ -976,7 +976,7 @@ trait SolrFinnaTrait
                     $type = 'image';
                     break;
                 }
-                $url['extension'] = $extension;
+                $url['codec'] = $codec;
                 $url['type'] = $type;
             }
             $newUrls[] = $url;
