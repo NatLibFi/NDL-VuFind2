@@ -49,6 +49,7 @@ class SolrEad3 extends SolrEad
 {
     // Image types
     const IMAGE_MEDIUM = 'medium';
+    const IMAGE_LARGE = 'large';
     const IMAGE_FULLRES = 'fullres';
     const IMAGE_OCR = 'ocr';
 
@@ -502,6 +503,7 @@ class SolrEad3 extends SolrEad
                 $attr = $daoset->attributes();
                 $localtype = (string)($attr->localtype ?? null);
                 $size = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
+                $size = $size === self::IMAGE_FULLRES ? self::IMAGE_LARGE : $size;
                 if (!isset($images[$size])) {
                     $image[$size] = [];
                 }
@@ -893,7 +895,7 @@ class SolrEad3 extends SolrEad
                 }
                 $attr = $daoset->attributes();
                 $localtype = (string)$attr->localtype ?? null;
-                if ($localtype !== self::TYPE_IMAGE_OCR) {
+                if ($localtype !== self::IMAGE_OCR) {
                     continue;
                 }
                 if (isset($daoset->descriptivenote->p)) {
