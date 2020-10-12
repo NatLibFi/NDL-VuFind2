@@ -24,7 +24,7 @@ $this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
       </a>
       <div class="audio-player-wrapper hide">
         <audio id="audio-<?=$ind?>" class="vjs-default-skin hide" autoplay controls preload="auto">
-          <source data-src="<?=$url['url']?>" type="audio/<?= $url['extension'] ?>"/>
+          <source data-src="<?=$url['url']?>" type="audio/<?= $url['codec'] ?>"/>
         </audio>
       </div>
       <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Download recording') ?></a></div>
