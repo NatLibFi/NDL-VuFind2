@@ -965,19 +965,20 @@ trait SolrFinnaTrait
             )
             ) {
                 $codec = $match[2];
-                $type = null;
+                $type = $embed = null;
                 switch (strtolower($codec)) {
                 case 'wav':
                 case 'mp3':
-                    $type = 'audio';
+                    $type = $embed = 'audio';
                     break;
                 case 'jpg':
                 case 'png':
                     $type = 'image';
                     break;
                 }
-                $url['codec'] = $codec;
                 $url['type'] = $type;
+                $url['codec'] = $codec;
+                $url['embed'] = $embed;
             }
             $newUrls[] = $url;
         }
