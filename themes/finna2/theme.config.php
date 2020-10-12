@@ -1,5 +1,5 @@
 <?php
-return [
+$config = [
     'extends' => 'bootstrap3',
     'helpers' => [
         'factories' => [
@@ -21,6 +21,7 @@ return [
             'Finna\View\Helper\Root\FeedTabs' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\FileSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\FinnaSurvey' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
+            'Finna\View\Helper\Root\Followup' => 'Finna\View\Helper\Root\FollowupFactory',
             'Finna\View\Helper\Root\HtmlElement' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\HeadTitle' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
             'Finna\View\Helper\Root\Holdings' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
@@ -80,6 +81,7 @@ return [
             'feedTabs' => 'Finna\View\Helper\Root\FeedTabs',
             'fileSrc' => 'Finna\View\Helper\Root\FileSrc',
             'finnaSurvey' => 'Finna\View\Helper\Root\FinnaSurvey',
+            'followup' => 'Finna\View\Helper\Root\Followup',
             'headTitle' => 'Finna\View\Helper\Root\HeadTitle',
             'holdings' => 'Finna\View\Helper\Root\Holdings',
             // For back-compatibility
@@ -219,7 +221,6 @@ return [
         'vendor/bootstrap-rating.min.js',
         'vendor/bootstrap-slider.min.js',
         'vendor/classList.js',
-        'vendor/cookies.js',
         'vendor/html5shiv.js',
         'vendor/hunt.min.js',
         'vendor/jquery.colorhelpers.min.js',
@@ -229,11 +230,6 @@ return [
         'vendor/jquery.flot.min.js',
         'vendor/jquery.flot.selection.min.js',
         'vendor/jquery.inview.min.js',
-        // jquery-migrate is required for jquery ui autocomplete until jquery ui is
-        // updated to at least version 1.12. jquery ui site is broken preventing
-        // upgrade as of 2.7.2020.
-        'vendor/jquery-migrate-3.3.1.min.js',
-        'vendor/jquery.cookie-1.4.1.min.js',
         'vendor/jquery.unveil.min.js',
         'vendor/jquery-ui-custom.min.js',
         'vendor/jquery.ui.touch-punch.min.js',
@@ -241,11 +237,11 @@ return [
         'vendor/respond.js',
         'vendor/simplemde.min.js',
         'vendor/slick.min.js',
-        'vendor/jquery.touchSwipe.min.js',
         'vendor/gauge.min.js',
         'vendor/priority-nav.min.js',
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
+        'vendor/js.cookie.js',
         'finna-multiselect.js'
     ],
     'less' => [
@@ -253,3 +249,5 @@ return [
     ],
     'favicon' => 'favicon.ico',
 ];
+include 'components.config.php';
+return $config;

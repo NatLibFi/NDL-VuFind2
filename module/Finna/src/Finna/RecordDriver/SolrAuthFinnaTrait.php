@@ -43,9 +43,21 @@ trait SolrAuthFinnaTrait
     /**
      * Return record format.
      *
+     * @deprecated Use getRecordFormat()
+     *
      * @return string
      */
     public function getRecordType()
+    {
+        return $this->getRecordFormat();
+    }
+
+    /**
+     * Return record format.
+     *
+     * @return string
+     */
+    public function getRecordFormat()
     {
         return $this->fields['record_format'] ?? '';
     }
@@ -348,5 +360,27 @@ trait SolrAuthFinnaTrait
     public function isPerson()
     {
         return $this->fields['record_type'] === 'Personal Name';
+    }
+
+    /**
+     * Checks the current record if it's supported for generating OpenURLs.
+     *
+     * @return bool
+     */
+    public function supportsOpenUrl()
+    {
+        return false;
+    }
+
+    /**
+     * Get online URLs
+     *
+     * @param bool $raw Whether to return raw data
+     *
+     * @return array
+     */
+    public function getOnlineURLs($raw = false)
+    {
+        return [];
     }
 }

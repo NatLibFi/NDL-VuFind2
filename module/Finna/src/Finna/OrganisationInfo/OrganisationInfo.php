@@ -196,11 +196,6 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
      */
     public function query($parent, $params, $buildings = null)
     {
-        $id = null;
-        if (isset($params['id'])) {
-            $id = $params['id'];
-        }
-
         if (!$this->isAvailable()) {
             $this->logError("Organisation info disabled ($parent)");
             return false;
@@ -208,8 +203,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
 
         if (!isset($this->config->General->url)) {
             $this->logError(
-                "URL missing from organisation info configuration"
-                . "($parent)"
+                "URL missing from organisation info configuration ($parent)"
             );
             return false;
         }
@@ -502,7 +496,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         // Organisation list for a consortium with schedules for the current week
         $params = [
             'consortium' => $response['id'],
-            'with' => 'schedules,primaryContactInfo',
+            'with' => 'schedules,primaryContactInfo,mailAddress',
             'period.start' => $startDate,
             'period.end' => $endDate,
             'status' => '',
@@ -721,6 +715,18 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                 'email' => $item['primaryContactInfo']['email']['email'] ?? null,
                 'homepage' => $item['primaryContactInfo']['homepage']['url'] ?? null
             ];
+
+            if (!empty($item['mailAddress'])) {
+                $mailAddress = [
+                    'area' => $item['mailAddress']['area'],
+                    'boxNumber' => $item['mailAddress']['boxNumber'],
+                    'street' => $item['mailAddress']['street'],
+                    'zipcode' => $item['mailAddress']['zipcode']
+                ];
+            }
+            if (!empty($mailAddress)) {
+                $data['mailAddress'] = $mailAddress;
+            }
 
             if (!empty($item['address'])) {
                 $address = [

@@ -52,6 +52,13 @@ trait SolrFinnaTrait
     protected $searchSettings = [];
 
     /**
+     * Runtime cache for method results to avoid duplicate processing
+     *
+     * @var array
+     */
+    protected $cache = [];
+
+    /**
      * Return access restriction notes for the record.
      *
      * @return array
@@ -478,11 +485,23 @@ trait SolrFinnaTrait
     /**
      * Return record format.
      *
+     * @deprecated Use getRecordFormat()
+     *
      * @return string
      */
     public function getRecordType()
     {
-        return $this->fields['recordtype'] ?? '';
+        return $this->getRecordFormat();
+    }
+
+    /**
+     * Return record format.
+     *
+     * @return string
+     */
+    public function getRecordFormat()
+    {
+        return $this->fields['record_format'] ?? $this->fields['recordtype'] ?? '';
     }
 
     /**
@@ -498,6 +517,11 @@ trait SolrFinnaTrait
      */
     public function getThumbnail($size = 'small')
     {
+        $cacheKey = __FUNCTION__ . "/$size";
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
         $result = parent::getThumbnail($size);
 
         if (is_array($result) && !isset($result['isbn'])) {
@@ -507,6 +531,7 @@ trait SolrFinnaTrait
             }
         }
 
+        $this->cache[$cacheKey] = $result;
         return $result;
     }
 
@@ -528,6 +553,10 @@ trait SolrFinnaTrait
      */
     public function getFirstISBN()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
+
         // Get all the ISBNs and initialize the return value:
         $isbns = $this->getISBNs();
         $isbn13 = false;
@@ -545,6 +574,7 @@ trait SolrFinnaTrait
                 return $isbn;
             }
         }
+        $this->cache[__FUNCTION__] = $isbn13;
         return $isbn13;
     }
 
@@ -846,20 +876,24 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Check if a URL (typically from getURLs()) is blacklisted based on the URL
+     * Check if a URL (typically from getURLs()) is blocked based on the URL
      * itself and optionally its description.
      *
      * @param string $url  URL
      * @param string $desc Optional description of the URL
      *
-     * @return boolean Whether the URL is blacklisted
+     * @return bool Whether the URL is blocked
      */
-    protected function urlBlacklisted($url, $desc = '')
+    protected function urlBlocked($url, $desc = '')
     {
-        if (!isset($this->recordConfig->Record->url_blacklist)) {
+        // Keep old setting name for back-compatibility:
+        $blocklist = $this->recordConfig->Record->url_blocklist
+            ?? $this->recordConfig->Record->url_blacklist
+            ?? [];
+        if (empty($blocklist)) {
             return false;
         }
-        foreach ($this->recordConfig->Record->url_blacklist as $rule) {
+        foreach ($blocklist as $rule) {
             if (substr($rule, 0, 1) == '/' && substr($rule, -1, 1) == '/') {
                 if (preg_match($rule, $url)
                     || ($desc !== '' && preg_match($rule, $desc))
