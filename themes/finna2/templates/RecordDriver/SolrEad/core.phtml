@@ -9,7 +9,7 @@
       $type = $url['type'] ?? null;
       if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
         array_push($videoUrls, $url);
-      } elseif ($type === 'audio') {
+      } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
         array_push($audioUrls, $url);
       } elseif ($type !== 'image') {
         // Filter away image-urls since they are displayed via image-paginator
