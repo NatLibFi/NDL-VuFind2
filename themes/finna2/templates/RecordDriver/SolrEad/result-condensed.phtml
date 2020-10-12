@@ -30,20 +30,19 @@
       </h2>
       <div class="dateyeartype">
         <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
+        <?=$this->render('record/labels.phtml', ['labels' => $this->driver->getRecordLabels()]); ?>
         <div class="resultHierarchyLinks">
           <?php // The funky comparison below is due to Laminas translator not supporting empty values (see ExtendedIniReader) ?>
           <?php if (!$this->translationEmpty('Archive Repository')): ?><span class="small"><?=$this->transEsc('Archive Repository')?>:</span><?php endif; ?>
           <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
         </div>
       </div>
-      <?= $this->R2RestrictedRecordSearchResult($this->driver, 'info') ?>
     </div>
     <div class="condensed-col-link">
       <?=$this->record($this->driver)->getOnlineUrls('results')?>
       <?=$this->record($this->driver)->getPreviews()?>
     </div>
     <div class="condensed-col-hierarchy">
-    <?= $this->R2RestrictedRecordSearchResult($this->driver) ?>
     <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
         <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
           <div class="hierarchyTreeLink">
