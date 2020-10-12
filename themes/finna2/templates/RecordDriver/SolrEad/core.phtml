@@ -11,7 +11,7 @@
         array_push($videoUrls, $url);
       } elseif ($type === 'audio') {
         array_push($audioUrls, $url);
-      } elseif ($type !== 'image'){
+      } elseif ($type !== 'image') {
         // Filter away image-urls since they are displayed via image-paginator
         array_push($otherUrls, $url);
       }
