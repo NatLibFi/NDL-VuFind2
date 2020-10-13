@@ -836,7 +836,7 @@ class SolrEad3 extends SolrEad
             if (!isset($relations[$role])) {
                 $relations[$role] = [];
             }
-            // Use a wildcard to since the id is prefixed with hierarchy_parent_id
+            // Use a wildcard since the id is prefixed with hierarchy_parent_id
             $relations[$role][] = ['wildcard' => '*' . (string)$attr->href];
         }
         return $relations;
