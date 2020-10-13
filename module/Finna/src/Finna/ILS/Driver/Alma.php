@@ -440,7 +440,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             'group_code' => isset($xml->user_group)
                                 ? (string)$xml->user_group
                                 : null,
-            'account_type' => strtolower((string)$xml->account_type)
+            'account_type' => strtolower((string)$xml->account_type),
+            'language'   => isset($xml->preferred_language)
+                                ? (string)$xml->preferred_language
+                                : null,
         ];
         $contact = $xml->contact_info;
         if ($contact) {
@@ -632,7 +635,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             'address5' => 'line5',
             'zip' => 'postal_code',
             'city' => 'city',
-            'country' => 'country'
+            'country' => 'country',
         ];
         $phoneMapping = [
             'phone' => 'phone_number'
@@ -641,7 +644,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             'email' => 'email_address'
         ];
         $otherMapping = [
-            'self_service_pin' => 'pin_number'
+            'self_service_pin' => 'pin_number',
+            'language' => 'preferred_language',
         ];
         // We need to process address fields, phone number fields and email fields
         // as separate sets, so divide them now to gategories
@@ -851,7 +855,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $queryParams = '?override=' . implode(',', $overrideFields);
         }
         list($response, $code) = $this->makeRequest(
-            '/users/' . urlencode($patron['id']) . $queryParams,
+            '/users/' . rawurlencode($patron['id']) . $queryParams,
             [],
             [],
             'PUT',
@@ -915,7 +919,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             } catch (\Exception $exception) {
                 $errorMessage = 'Configuration "expiryDate" in Alma.ini (see ' .
                                 '[NewUser] section) has the wrong format!';
-                error_log('[ALMA]: ' . $errorMessage);
+                $this->logError('[ALMA]: ' . $errorMessage);
                 throw new \VuFind\Exception\Auth($errorMessage);
             }
         } else {
@@ -933,7 +937,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             } catch (\Exception $exception) {
                 $errorMessage = 'Configuration "purgeDate" in Alma.ini (see ' .
                                 '[NewUser] section) has the wrong format!';
-                error_log('[ALMA]: ' . $errorMessage);
+                $this->logError('[ALMA]: ' . $errorMessage);
                 throw new \VuFind\Exception\Auth($errorMessage);
             }
         }
@@ -998,20 +1002,41 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $note->addChild('note_text', $formParams['identitynumber']);
                 $note->addChild('user_viewable', 'false');
                 $note->addChild('popup_note', 'false');
+            } else {
+                // Assume it's a user identifier type in Alma
+                $userIdentifiers = $xml->addChild('user_identifiers');
+                $userIdentifier = $userIdentifiers->addChild('user_identifier');
+                $userIdentifier->addChild('id_type', $identityField);
+                $userIdentifier->addChild('value', $formParams['identitynumber']);
             }
         }
 
         $userXml = $xml->asXML();
 
         // Create user in Alma
-        $this->makeRequest(
+        list($result, $statusCode) = $this->makeRequest(
             '/users',
             [],
             [],
             'POST',
             $userXml,
-            ['Content-Type' => 'application/xml']
+            ['Content-Type' => 'application/xml'],
+            ['400'],
+            true
         );
+
+        if ($statusCode >= 200 && $statusCode < 300) {
+            return [
+                'success' => true
+            ];
+        }
+
+        $errorCode = (string)($result->errorList->error[0]->errorCode ?? '');
+        return [
+            'success' => false,
+            'status' => '401851' === $errorCode
+                ? 'new_ils_account_duplicate' : 'An error has occurred'
+        ];
 
         return true;
     }
@@ -1065,25 +1090,27 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             if (!empty($config['fields'])) {
                 foreach ($config['fields'] as &$field) {
                     $parts = explode(':', $field);
+                    $fieldLabel = $parts[0];
                     $fieldId = $parts[1] ?? '';
+                    $fieldRequired = ($parts[3] ?? '') === 'required';
                     if ('country' === $fieldId
                         || preg_match('/^addresses\[[0-9]\]\[country\]$/', $fieldId)
                     ) {
                         $field = [
                             'field' => $fieldId,
-                            'label' => $parts[0],
+                            'label' => $fieldLabel,
                             'type' => 'select',
                             'options' => $this->getCodeTableOptions(
                                 'CountryCodes', 'description'
                             ),
-                            'required' => ($parts[3] ?? '') === 'required',
+                            'required' => $fieldRequired,
                         ];
                     } elseif (preg_match('/^addresses\[[0-9]\]\[types\]$/', $fieldId)
                     ) {
                         // Add address types
                         $field = [
                             'field' => $fieldId,
-                            'label' => $parts[0],
+                            'label' => $fieldLabel,
                             'type' => 'multiselect',
                             'options' => [
                                 'home' => [
@@ -1099,8 +1126,31 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                                     'name' => 'address_type_alternative',
                                 ],
                             ],
-                            'required' => ($parts[3] ?? '') === 'required',
+                            'required' => $fieldRequired,
                         ];
+                    } elseif ('language' === $fieldId) {
+                        $field = [
+                            'field' => $fieldId,
+                            'label' => $fieldLabel,
+                            'type' => 'radio',
+                            'options' => [
+                                'fi' => ['name' => 'Suomi'],
+                                'sv' => ['name' => 'Svenska'],
+                                'en' => ['name' => 'English'],
+                            ],
+                            'required' => $fieldRequired,
+                        ];
+                        if ($options = ($parts[4] ?? '')) {
+                            $field['options'] = [];
+                            foreach (explode(';', $options) as $option) {
+                                $keyVal = explode('=', $option, 2);
+                                if (isset($keyVal[1])) {
+                                    $field['options'][$keyVal[0]] = [
+                                        'name' => $keyVal[1]
+                                    ];
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1120,7 +1170,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $requestOptions = $this->getCachedData($cacheKey);
                 if (null === $requestOptions) {
                     // Check if we require the part_issue (description) field
-                    $requestOptionsPath = '/bibs/' . urlencode($params['id'])
+                    $requestOptionsPath = '/bibs/' . rawurlencode($params['id'])
                         . '/request-options?user_id='
                         . urlencode($params['patron']['id']);
                     // Make the API request
@@ -1192,13 +1242,13 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $unavailableItems = [];
             if ('copy' === $level && $itemId) {
                 $item = $this->makeRequest(
-                    '/bibs/' . urlencode($bibId) . '/holdings/ALL/items/'
-                    . urlencode($itemId)
+                    '/bibs/' . rawurlencode($bibId) . '/holdings/ALL/items/'
+                    . rawurlencode($itemId)
                 );
                 $items = [$item];
             } else {
                 $items = $this->makeRequest(
-                    '/bibs/' . urlencode($bibId) . '/holdings/ALL/items'
+                    '/bibs/' . rawurlencode($bibId) . '/holdings/ALL/items'
                 );
                 $items = $items->item;
             }
@@ -1454,9 +1504,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             }
 
             // Call the request-options API for the logged-in user
-            $requestOptionsPath = '/bibs/' . urlencode($id)
-                . '/holdings/' . urlencode($data['holding_id']) . '/items/'
-                . urlencode($data['item_id']) . '/request-options?user_id='
+            $requestOptionsPath = '/bibs/' . rawurlencode($id)
+                . '/holdings/' . rawurlencode($data['holding_id']) . '/items/'
+                . rawurlencode($data['item_id']) . '/request-options?user_id='
                 . urlencode($patronId);
 
             // Make the API request
@@ -1467,7 +1517,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 return false;
             }
             // Call the request-options API for the logged-in user
-            $requestOptionsPath = '/bibs/' . urlencode($id)
+            $requestOptionsPath = '/bibs/' . rawurlencode($id)
                 . '/request-options?user_id=' . urlencode($patronId);
 
             // Make the API request
@@ -1557,7 +1607,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 // one will require a description. Take one, whichever, and add the
                 // part or issue description in the comment field.
                 $items = $this->makeRequest(
-                    '/bibs/' . urlencode($mmsId) . '/holdings/ALL/items?limit=1'
+                    '/bibs/' . rawurlencode($mmsId) . '/holdings/ALL/items?limit=1'
                 );
                 $item = $items->item;
                 if ($item->item_data->description) {
@@ -1571,7 +1621,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
             // Create HTTP client with Alma API URL for title level requests
             $client = $this->httpService->createClient(
-                $this->baseUrl . '/bibs/' . urlencode($mmsId)
+                $this->baseUrl . '/bibs/' . rawurlencode($mmsId)
                 . '/requests?apikey=' . urlencode($this->apiKey)
                 . '&user_id=' . urlencode($patronId)
                 . '&format=json'
@@ -1579,9 +1629,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         } else {
             // Create HTTP client with Alma API URL for item level requests
             $client = $this->httpService->createClient(
-                $this->baseUrl . '/bibs/' . urlencode($mmsId)
-                . '/holdings/' . urlencode($holId)
-                . '/items/' . urlencode($itmId)
+                $this->baseUrl . '/bibs/' . rawurlencode($mmsId)
+                . '/holdings/' . rawurlencode($holId)
+                . '/items/' . rawurlencode($itmId)
                 . '/requests?apikey=' . urlencode($this->apiKey)
                 . '&user_id=' . urlencode($patronId)
                 . '&format=json'
@@ -1700,7 +1750,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         // with it. Otherwise fetch only summary availability first.
         $itemLimit = $this->config['Holdings']['itemLimit'] ?? 100;
         $itemsResult = $this->makeRequest(
-            '/bibs/' . urlencode($id) . '/holdings/ALL/items',
+            '/bibs/' . rawurlencode($id) . '/holdings/ALL/items',
             [
                 'limit' => $itemLimit,
                 'expand' => 'due_date',
@@ -1739,7 +1789,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
                 if ($displayRequests) {
                     $bib = $this->makeRequest(
-                        '/bibs/' . urlencode($id) . '?expand=requests'
+                        '/bibs/' . rawurlencode($id) . '?expand=requests'
                     );
                     $summary['reservations'] = (int)$bib->requests ?? 0;
                 }
@@ -1762,7 +1812,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         if ($displayRequests) {
             $params['expand'] .= ',requests';
         }
-        if ($bib = $this->makeRequest('/bibs/' . urlencode($id), $params)) {
+        if ($bib = $this->makeRequest('/bibs/' . rawurlencode($id), $params)) {
             $requests = (int)$bib->requests ?? 0;
             $marc = new \File_MARCXML(
                 $bib->record->asXML(),
@@ -1968,7 +2018,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         // Summary holdings
         if ($holdingId) {
             $holding = $this->makeRequest(
-                '/bibs/' . urlencode($id) . '/holdings/' . urlencode($holdingId)
+                '/bibs/' . rawurlencode($id) . '/holdings/'
+                . rawurlencode($holdingId)
             );
 
             if ('true' === (string)$holding->suppress_from_publishing) {
@@ -2068,12 +2119,12 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             ];
 
             if ($holdingId) {
-                $itemsReq = '/bibs/' . urlencode($id) . '/holdings/'
-                    . urlencode($holdingId) . '/items';
+                $itemsReq = '/bibs/' . rawurlencode($id) . '/holdings/'
+                    . rawurlencode($holdingId) . '/items';
             } else {
                 $queryParams['current_library'] = $libraryCode;
                 $queryParams['current_location'] = $locationCode;
-                $itemsReq = '/bibs/' . urlencode($id) . '/holdings/ALL/items';
+                $itemsReq = '/bibs/' . rawurlencode($id) . '/holdings/ALL/items';
             }
 
             $itemsResult = $this->makeRequest($itemsReq, $queryParams);
@@ -2106,7 +2157,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         // For checking for suppressed holdings. This is a bit complicated,
         // but the holding information in items is missing this crucial bit.
         $almaHoldings = [];
-        $records = $this->makeRequest('/bibs/' . urlencode($id) . '/holdings');
+        $records = $this->makeRequest('/bibs/' . rawurlencode($id) . '/holdings');
         foreach ($records->holding ?? [] as $record) {
             $almaHoldings[(string)$record->holding_id] = $record;
         }
@@ -2357,7 +2408,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         if (null === $locations) {
             $xml = $this->makeRequest(
-                '/conf/libraries/' . urlencode($library) . '/locations'
+                '/conf/libraries/' . rawurlencode($library) . '/locations'
             );
             $locations = [];
             foreach ($xml as $entry) {
@@ -2529,7 +2580,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             return $cached;
         }
 
-        $table = $this->makeRequest('/conf/code-tables/' . urlencode($codeTable));
+        $table = $this->makeRequest('/conf/code-tables/' . rawurlencode($codeTable));
         $result = [];
         foreach ($table->rows->row as $row) {
             if ((string)$row->enabled === 'true') {

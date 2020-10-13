@@ -89,11 +89,11 @@ class Primo extends \VuFind\RecordDriver\Primo
             return [];
         }
 
-        // Whitelist:
-        $whitelist = array_map(
+        // Allowed formats:
+        $allowed = array_map(
             'trim', explode(',', $this->mainConfig->Record->citation_formats)
         );
-        return array_intersect($whitelist, $this->getSupportedCitationFormats());
+        return array_intersect($allowed, $this->getSupportedCitationFormats());
     }
 
     /**
@@ -370,9 +370,21 @@ class Primo extends \VuFind\RecordDriver\Primo
     /**
      * Return record format.
      *
+     * @deprecated Use getRecordFormat()
+     *
      * @return string
      */
     public function getRecordType()
+    {
+        return $this->getRecordFormat();
+    }
+
+    /**
+     * Return record format.
+     *
+     * @return string
+     */
+    public function getRecordFormat()
     {
         return $this->fields['format'];
     }
@@ -508,7 +520,7 @@ class Primo extends \VuFind\RecordDriver\Primo
             : '';
         if ($dates = $this->getPublicationDates()) {
             $params['rft.date'] = $params['rft_date']
-                = implode('', $this->getPublicationDates());
+                = implode('', $dates);
         }
         if (!isset($params['rft.title'])) {
             $params['rft.title'] = $this->getTitle();
