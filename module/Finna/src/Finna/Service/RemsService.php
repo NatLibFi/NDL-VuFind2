@@ -428,6 +428,9 @@ class RemsService implements
         $this->session->{RemsService::SESSION_USAGE_PURPOSE}
             = $formParams['usage_purpose_text'];
 
+        // Refresh permission session variables
+        $this->getAccessPermission(true);
+
         return true;
     }
 
