@@ -27,6 +27,8 @@
  */
 namespace Finna\Controller;
 
+use Finna\Service\RemsService;
+
 /**
  * Restricted Solr (R2) record Controller
  *
@@ -39,6 +41,7 @@ namespace Finna\Controller;
 class R2recordController extends RecordController
 {
     use \Finna\Controller\R2ControllerTrait;
+    use \Finna\Controller\R2RecordControllerTrait;
 
     /**
      * Type of record to display
