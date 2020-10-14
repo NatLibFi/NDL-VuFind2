@@ -105,18 +105,15 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
             if ($driver ? $driver->isRestrictedMetadataIncluded() : false) {
                 return null;
             }
-            $blocklisted = $registered = $sessionExpired = false;
+            $blocklisted = $registered = $sessionClosed = false;
             $blocklistedDate = null;
             try {
                 if ($this->rems->hasUserAccess(
                     $params['ignoreCache'] ?? false, true
                 )
                 ) {
-                    // Already registered, hide indicator unless requested otherwise
-                    if ($params['hideWhenRegistered'] ?? true) {
-                        return null;
-                    }
-                    $registered = true;
+                    // Already registered
+                    return null;
                 } else {
                     $blocklisted = $user ? $this->rems->isUserBlocklisted() : false;
                     if ($blocklisted) {
@@ -128,6 +125,11 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
                         } catch (\Exception $e) {
                         }
                     }
+                    $status = $this->rems->getAccessPermission();
+                    $sessionClosed = in_array(
+                        $status,
+                        [RemsService::STATUS_EXPIRED, RemsService::STATUS_REVOKED]
+                    );
                 }
             } catch (\Exception $e) {
                 $translator = $this->getView()->plugin('translate');
@@ -154,6 +156,7 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
 
             $params = [
                 'note' => $note,
+                'warning' => $sessionClosed ? 'R2_session_expired_title' : null,
                 'instructions' => $params['instructions'] ?? null,
                 'registerLabel' => $params['registerLabel'] ?? 'R2_register',
                 'showInfo' => !($params['hideInfo'] ?? false),
@@ -162,7 +165,6 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
                 'name' => $name,
                 'id' => $driver ? $driver->getUniqueID() : null,
                 'collection' => $driver ? $driver->isCollection() : false,
-                'registered' => $registered,
                 'blocklisted' => $blocklisted,
                 'blocklistedDate' => $blocklistedDate,
                 'formId' => 'R2Register',

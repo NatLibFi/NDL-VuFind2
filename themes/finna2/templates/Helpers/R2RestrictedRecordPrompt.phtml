@@ -3,6 +3,9 @@
     <div class="icon"><i class="fa fa-research fa-2x"></i></div>
   </div>
   <div class="r2-restricted-content">
+    <?php if ($this->warning): ?>
+      <div><?= $this->translate($this->warning) ?></div>
+    <?php endif ?>
     <?php if ($this->note): ?>
       <div><?= $this->translate($this->note) ?></div>
     <?php endif ?>
