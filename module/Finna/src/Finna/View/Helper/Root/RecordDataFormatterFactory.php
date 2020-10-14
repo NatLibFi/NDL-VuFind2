@@ -244,20 +244,19 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Archive Origination', 'getOrigination', 'data-origination.phtml',
             [
-                'context' => ['class' => 'record-origination', 'group' => 'Context']
+                'context' => ['class' => 'record-origination']
             ]
         );
         $setTemplateLine(
             'Archive', true, 'data-archive.phtml',
             [
-                'context' => ['class' => 'recordHierarchyLinks',
-                              'group' => 'Context']
+                'context' => ['class' => 'recordHierarchyLinks']
             ]
         );
         $setTemplateLine(
             'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
             [
-                'context' => ['class' => 'recordSeries', 'group' => 'Context']
+                'context' => ['class' => 'recordSeries']
             ]
         );
         $setTemplateLine(
