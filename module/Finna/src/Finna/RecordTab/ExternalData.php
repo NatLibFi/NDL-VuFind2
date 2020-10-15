@@ -75,6 +75,6 @@ class ExternalData extends \VuFind\RecordTab\AbstractBase
      */
     public function getDescription()
     {
-        return 'Holdings';
+        return 'external_data';
     }
 }
