@@ -393,7 +393,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $results = [];
         foreach ($this->getSimpleXML()->xpath(
-            'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/classification'
+            'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
+          . 'classification'
         ) as $node) {
             $term = $node->term;
             $label = null;
