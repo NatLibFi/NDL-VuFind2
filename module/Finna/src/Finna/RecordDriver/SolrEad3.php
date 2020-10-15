@@ -528,13 +528,18 @@ class SolrEad3 extends SolrEad
                         'description' => (string)$attr->linktitle,
                         'rights' => null,
                         'url' => (string)$attr->href,
-                        'descId' => $descId
+                        'descId' => $descId,
+                        'sort' => (string)$attr->label
                     ];
                 }
             }
 
             if (empty($images)) {
                 return [];
+            }
+
+            foreach ($images as $size => &$sizeImages) {
+                $this->sortImageUrls($sizeImages);
             }
 
             foreach ($images['large'] ?? $images['medium'] as $id => $img) {
@@ -912,10 +917,15 @@ class SolrEad3 extends SolrEad
                     }
                     $href = (string)$attr->href;
                     $desc = (string)$attr->linktitle;
-                    $items[] = ['label' => $desc, 'url' => $href];
+                    $sort = (string)$attr->label;
+                    $items[] = [
+                        'label' => linktitle, $desc, 'url' => $href, 'sort' => $sort
+                    ];
                 }
             }
         }
+
+        $this->sortImageUrls($items);
 
         $info = [];
         if ($descId) {
@@ -926,6 +936,32 @@ class SolrEad3 extends SolrEad
         }
 
         return !empty($items) ? compact('info', 'items') : [];
+    }
+
+    /**
+     * Sort an array of image URLs in place.
+     *
+     * @param array $urls   URLs
+     * @param string $field Field to use for sorting.
+     * The field value is casted to int before sorting.
+     *
+     * @return void
+     */
+    protected function sortImageUrls(&$urls, $field = 'sort')
+    {
+        usort(
+            $urls, function ($a, $b) use ($field) {
+                $f1 = (int)$a[$field];
+                $f2 = (int)$b[$field];
+                if ($f1 === $f2) {
+                    return 0;
+                } elseif ($f1 < $f2) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            }
+        );
     }
 
     /**
