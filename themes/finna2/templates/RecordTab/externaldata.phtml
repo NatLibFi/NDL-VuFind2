@@ -4,8 +4,8 @@ $fullResImages = $data['fullResImages'] ?? null;
 $OCRImages = $data['OCRImages'] ?? null;
 $physicalItems = $data['physicalItems'] ?? null;
 ?>
-<?php if (!$fullResImages && !$OCRImages && !$physicalItems): ?>
-  <?= $this->translate('external_data_not_available_html', ['%%url%%' => $this->recordLink()->getActionUrl($this->driver, 'Feedback')]) ?>
+<?php if (!$fullResImages && !$OCRImages): ?>
+  <?= $this->translate('external_data_not_digitized_html', ['%%url%%' => $this->recordLink()->getActionUrl($this->driver, 'Feedback')]) ?>
   <?php return; ?>
 <?php endif ?>
 
