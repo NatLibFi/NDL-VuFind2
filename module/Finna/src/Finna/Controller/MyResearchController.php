@@ -371,6 +371,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $this->url()->fromRoute('myresearch-favorites')
                 );
             }
+
+            foreach ($results->getResults() as $rec) {
+                if ('R2' === $rec->getSourceIdentifier()) {
+                    $this->flashMessenger()
+                         ->addMessage('R2_mylist_restricted', 'info');
+                    break;
+                }
+            }
         }
 
         if (!$user) {
