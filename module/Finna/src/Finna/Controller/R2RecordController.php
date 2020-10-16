@@ -27,8 +27,6 @@
  */
 namespace Finna\Controller;
 
-use Finna\Service\RemsService;
-
 /**
  * Restricted Solr (R2) record Controller
  *
