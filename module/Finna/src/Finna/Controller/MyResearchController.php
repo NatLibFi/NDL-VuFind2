@@ -375,7 +375,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             foreach ($results->getResults() as $rec) {
                 if ('R2' === $rec->getSourceIdentifier()) {
                     $this->flashMessenger()
-                         ->addMessage('R2_mylist_restricted', 'info');
+                        ->addMessage('R2_mylist_restricted', 'info');
                     break;
                 }
             }
