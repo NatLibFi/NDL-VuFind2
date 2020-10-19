@@ -124,13 +124,14 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $urlHelper = $this->getView()->plugin('url');
         $imageParams = $images[$index]['urls']['large']
             ?? $images[$index]['urls']['medium'];
-        $imageParams = array_merge($imageParams, $params);
-
+        $imageParams = array_merge(
+            $imageParams, $params,
+            ['source' => $this->record->getDriver()->getSourceIdentifier()]
+        );
         $url = $urlHelper(
             'cover-show', [], $canonical ? ['force_canonical' => true] : []
         ) . '?' . http_build_query($imageParams);
         $pdf = $images[$index]['pdf'] ?? false;
-
         return compact('url', 'pdf');
     }
 
@@ -180,7 +181,10 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $urlHelper = $this->getView()->plugin('url');
 
         $imageParams = $images[$index]['urls']['master'];
-        $imageParams = array_merge($imageParams, $params);
+        $imageParams = array_merge(
+            $imageParams, $params,
+            ['source' => $this->record->getDriver()->getSourceIdentifier()]
+        );
 
         $url = $urlHelper(
             'cover-show', [], $canonical ? ['force_canonical' => true] : []
@@ -214,12 +218,11 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      *                           are found
      * @param bool   $includePdf Whether to include first PDF file when no image
      *                           links are found
-     * @param string $source     Record source
      *
      * @return array
      */
     public function getAllImagesAsCoverLinks($language, $params = [],
-        $thumbnails = true, $includePdf = true, $source = DEFAULT_SEARCH_BACKEND
+        $thumbnails = true, $includePdf = true
     ) {
         $imageParams = [
             'small' => [],
@@ -247,7 +250,8 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
                         array_merge(
                             $params,
                             $imageParams[$imageType],
-                            ['source' => $source]
+                            ['source' =>
+                             $this->record->getDriver()->getSourceIdentifier()]
                         )
                     );
             }
@@ -262,7 +266,6 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      * @param array  $params      Optional array of image parameters as
      *                            an associative array of parameter =>
      *                            value pairs: - w  Width - h  Height
-     * @param string $source      Record source
      * @param array  $extraParams Optional extra parameters:
      *                            - boolean $disableModal
      *                            Whether to disable FinnaPopup modal
@@ -274,7 +277,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      * @return string
      */
     public function render(
-        $type = 'list', $params = null, $source = 'Solr', $extraParams = []
+        $type = 'list', $params = null, $extraParams = []
     ) {
         $disableModal = $extraParams['disableModal'] ?? false;
         $imageRightsLabel = $extraParams['imageRightsLabel'] ?? 'Image Rights';
@@ -282,7 +285,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
 
         $view = $this->getView();
         $images = $this->getAllImagesAsCoverLinks(
-            $view->layout()->userLang, $params, true, true, $source
+            $view->layout()->userLang, $params, true, true
         );
         if ($images && $view->layout()->templateDir === 'combined') {
             // Limit combined results to a single image
