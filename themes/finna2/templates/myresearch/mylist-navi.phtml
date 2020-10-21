@@ -12,13 +12,14 @@
      }
   }
 ?>
-  <h1 class="visible-xs visible-sm"><i class="fa fa-arrow-down pull-left"></i> <?=$this->transEsc('Your Lists')?></h1>
-  <ul id="favorites-collapse" class="dropdown-menu subtabs collapse in mylist-nav" role="presentation">
+  <!-- <ul id="favorites-collapse" class="dropdown-menu subtabs collapse in mylist-nav" role="presentation"> -->
+  <ul class="mylist-bar dropdown-menu subtabs collapse">
+    <li><h1 class="visible-xs visible-sm"><i class="fa fa-arrow-down pull-left"></i> <?=$this->transEsc('Your Lists')?></h1></li>
     <li role="menuitem" class="favorites-menulist-item">
       <a href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">
         <div class="favorite-list-holder">
           <div class="pull-left favorite-list-title"><?=$this->transEsc('All Favourites')?></div>
-          <div class="pull-right">(<?=$numOfResources; ?>)</div>
+          <div class="pull-right">(<?=$numOfResources;?>)</div>
         </div>
       </a>
     </li>
@@ -33,7 +34,7 @@
           <?php endif; ?>
           <div class="pull-right">(<?=$list->cnt?>)</div>
           <?php if ($active): ?>
-            <button class="pull-right remove-favorite-list  remove"><i  class="fa fa-button fa-times"></i></button>
+            <button class="pull-right remove-favorite-list remove"><i class="fa fa-button fa-times"></i></button>
           <?php endif; ?>
         </div>
       </a>

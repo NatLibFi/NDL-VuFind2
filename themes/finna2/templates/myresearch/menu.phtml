@@ -153,7 +153,7 @@
   </div>
 </div>
 
-<ul class="<?=$this->layoutClass('sidebar-myresearch')?> <?= $listOpen ? '' : 'move-list' ?> nav-tabs-personal list-group useraccount-nav nav-tabs" role="menu">
+<ul class="<?=$this->layoutClass('sidebar-myresearch')?> <?= $listOpen ? '' : 'move-list' ?> nav-tabs-personal list-group useraccount-nav nav-tabs finna-movement" role="menu">
   <li class="menu-header hidden-xs hidden-sm">
     <h1>
       <?= $this->transEsc('Your Account') ?>
@@ -186,12 +186,10 @@
           <?php endif; ?>
           <span class="caret"></span>
         </a>
-        <?php if ($hasPartial) : ?>
-          <div class="<?= $value['partial']['wrapperClass'] ?? 'ajax-wrapper'?>">
-            <?php if ($listItem['active']): ?>
-              <?= $this->partial($value['partial']['url'], $value['partial']['params']); ?>
-            <?php endif; ?>
-          </div>
+        <?php if ($hasPartial) : ?>          
+          <?php if ($listItem['active']): ?>
+            <?= $this->partial($value['partial']['url'], $value['partial']['params']); ?>
+          <?php endif; ?>
         <?php else: ?>
           <ul id="<?=$listItem['ulId']?>" role="presentation" class="dropdown-menu subtabs collapse <?= $listItem['active'] ? ' in' : ''?>">
             <?php foreach ($listItem['children'] as $childKey) : ?>

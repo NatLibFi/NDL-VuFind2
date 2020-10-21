@@ -684,7 +684,8 @@ finna.myList = (function finnaMyList() {
     })
       .done(function onGetMyListsDone(data) {
         toggleSpinner(spinner, false);
-        $('.mylist-bar').html(data.data);
+        $('.mylist-bar').replaceWith(data.data);
+        $('.mylist-bar').siblings('a').first().trigger('togglesubmenu');
         initEditComponents();
       })
       .fail(function onGetMyListsDone() {
