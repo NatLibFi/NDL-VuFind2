@@ -38,10 +38,6 @@ namespace Finna\RecordDriver;
  */
 class R2Ead3 extends SolrEad3
 {
-    use XmlReaderTrait {
-        getXmlRecord as _getXmlRecord;
-    }
-
     /**
      * Used for identifying search backends
      *
@@ -103,20 +99,6 @@ class R2Ead3 extends SolrEad3
     public function exportDisabled($format)
     {
         return !in_array($format, ['BibTeX', 'EndNote', 'RefWorks', 'RIS']);
-    }
-
-    /**
-     * Get access to the raw SimpleXMLElement object.
-     *
-     * @return \SimpleXMLElement
-     */
-    public function getXmlRecord()
-    {
-        try {
-            return $this->_getXmlRecord();
-        } catch (\Exception $e) {
-            return new \SimpleXmlElement('<xml><did></did></xml>');
-        }
     }
 
     /**
