@@ -65,7 +65,7 @@
          $this->layout()->searchTabs = $searchTabs;
       }
     }
-    $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'eds', 'summon']);
+    $mainPage = $action === 'home' && in_array($module, ['combined', 'primo', 'search', 'eds', 'summon', 'authority']);
 ?>
 <?php if ($this->searchType != 'advanced'): ?>
   <?php
@@ -97,8 +97,8 @@
        $placeholder = $this->translate('Find') . '...';
      }
   ?>
-<nav class="nav searchbox hidden-print">
-  <div class="<?=$mainPage ? 'searchbox-home' : '' ?> <?= $module == 'record' || $module == 'collection' ? 'searchbox-flex' : 'searchbox-columns' ?>">
+<div class="searchbox hidden-print">
+  <div class="<?=$mainPage ? 'searchbox-home' : '' ?> <?= $module == 'record' || $module == 'collection' ? 'searchbox-flex' : 'searchbox-columns' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
     <?php if ($module == 'record' || $module == 'collection'): ?>
       <div class="record-back hidden-print">
           <?php
@@ -215,14 +215,9 @@
           <i class="fa fa-question-circle-big"></i>
         </button>
       <?php endif; ?>
-      <?php if ($module === 'search' && $action === 'home' && !$this->translationEmpty('tooltip_image_html')): ?>
-        <button aria-hidden="true" aria-label="" class="tooltip-image" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_image_html')?>">
-          <i class="fa fa-info-circle"></i>
-        </button>
-      <?php endif; ?>
     </div>
     <?php if ($module != 'record' && $module != 'collection'): ?>
-      <?php if ($browse || $mainPage): ?>
+      <?php if ($browse || $mainPage || ($module === 'authority' && $action === 'search')): ?>
         <div class="search-links">
           <?php if ($advSearch): ?>
           <a href="<?=$this->url($advSearch)?>" class="btn btn-link btn-advanced"><i class="fa fa-search-adv"></i><?=$this->transEsc("Advanced Search")?></a>
@@ -293,6 +288,6 @@
       <?php endif; ?>
     <?php endif; ?>
   </div>
-</nav>
+</div>
 <?php endif; ?>
 <!-- END of: finna - search/searchbox.phtml -->
