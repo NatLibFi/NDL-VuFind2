@@ -44,12 +44,12 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     /**
      * Record view helper
      *
-     * @var Record
+     * @var Laminas\View\Helper\Record
      */
     protected $record;
 
     /**
-     * Assign record image URLs to the view and return the view helper.
+     * Assign record image URLs to the view and return header view helper.
      *
      * @param \Finna\View\Helper\Root\Record $record Record helper.
      *
