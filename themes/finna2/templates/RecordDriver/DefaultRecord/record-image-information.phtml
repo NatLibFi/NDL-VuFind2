@@ -6,7 +6,7 @@
   <div class="cover-wrapper">
     <?php /* Display thumbnail if appropriate: */ ?>
     <?php if ($img): ?>
-      <?=$img->render(
+      <?=$img->renderImage(
         'record', $localSizes,
         ['disableModal' => $this->disableModal ?? null, 'imageRightsLabel' => $this->imageRightsLabel ?? null, 'numOfImages' => $numOfImages ?? null]
       ) ?>
