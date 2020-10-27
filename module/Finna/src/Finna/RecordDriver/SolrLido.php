@@ -390,16 +390,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
             . 'classification'
         ) as $node) {
-          if (isset($node->term)) {
-              $term = $node->term;
-              $label = null;
-              $attributes = $term->attributes();
-              $label = isset($attributes->label) ? $attributes->label : '';
-              if ($label) {
-                  $results[] = compact((string)'term', (string)'label');
-              } else {
-                  $results[] = (string)$term;
-              }
+            if (isset($node->term)) {
+                $term = $node->term;
+                $label = null;
+                $attributes = $term->attributes();
+                $label = isset($attributes->label) ? $attributes->label : '';
+                if ($label) {
+                    $results[] = compact((string)'term', (string)'label');
+                } else {
+                    $results[] = (string)$term;
+                }
             }
         }
         return $results;
