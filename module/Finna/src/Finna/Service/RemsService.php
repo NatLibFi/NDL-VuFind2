@@ -620,6 +620,10 @@ class RemsService implements
             return [];
         }
 
+        if (empty($result)) {
+            return [];
+        }
+
         if ($statuses) {
             $statuses = array_map(
                 function ($status) {
