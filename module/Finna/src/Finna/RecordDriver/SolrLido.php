@@ -386,7 +386,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getOtherClassifications()
     {
         $results = [];
-        foreach ($this->getSimpleXML()->xpath(
+        foreach ($this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
             . 'classification'
         ) as $node) {
