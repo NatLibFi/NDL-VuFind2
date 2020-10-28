@@ -847,7 +847,7 @@ $staticRoutes = [
     'LocationService/Modal',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
     'MyResearch/SaveCustomOrder', 'MyResearch/PurgeHistoricLoans',
-    'OrganisationInfo/Home',
+    'MyResearch/FinnaProfile', 'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended'

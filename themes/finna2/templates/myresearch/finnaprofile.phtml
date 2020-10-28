@@ -1,0 +1,43 @@
+<?php
+  // Set up page title:
+  $this->headTitle($this->translate('My Profile'));
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Profile') . '</li>';
+?>
+<!-- Leftside navigationbar -->
+<?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'profilefinna']); ?>
+<div class="<?=$this->layoutClass('mainbody-myresearch')?>">
+  <div class="my-research-content">
+    <div class="useraccount-header">
+      <h2><?=$this->transEsc('finna_account_settings')?></h2>
+    </div>
+    <?=$this->flashmessages();?>
+    <div class="myresearch-profile-header">
+      <span id="profile-settings"><?= $this->transEsc("Settings") ?></span>
+    </div>
+    <div class="myresearch-profile-list library-profile">
+      <?= $this->partial('myresearch/profile-my-information.phtml', ['user' => $user, 'cards' => $cards, 'hideDueDateReminder' => $this->hideDueDateReminder, 'hideProfileEmailAddress' => $this->hideProfileEmailAddress]); ?>
+    </div>
+    <div class="myresearch-profile-header">
+      <span><?= $this->transEsc("my_profile_export_import") . ' / ' . $this->transEsc('delete_account_title') ?></span>
+    </div>
+    <div class="myresearch-profile-list library-profile">
+      <div class="my-profile-row">
+        <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-export') ?>" title="<?=$this->transEsc('export_favorites') ?>"><i class="fa fa-download" aria-hidden="true"></i> <?=$this->transEsc('export_favorites') ?></a>
+        <a class="btn btn-primary my-profile-btn" href="<?=$this->url('myresearch-import') ?>"  data-lightbox title="<?=$this->transEsc('import_favorites') ?>"><i class="fa fa-upload" aria-hidden="true"></i> <?=$this->transEsc('import_favorites') ?> </a>
+        <?php if ($this->accountDeletion): ?>
+          <div class="visible-xs separator"></div>
+          <a class="btn btn-danger my-profile-btn" href="<?=$this->url('myresearch-deleteaccount') ?>" data-lightbox><i class="fa fa-times"></i> <?=$this->transEsc('delete_account_title') ?></a>
+          <?php if (!$this->translationEmpty('your_account_delete_info')): ?>
+            <div class="my-profile-row">
+                <i class="fa fa-info-circle-hollow" aria-hidden="true"></i> <?=$this->transEsc('your_account_delete_info');?>
+            </div>
+          <?php endif;?>
+        <?php endif; ?>
+      </div>
+    </div>
+    <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && $this->patronLoginView && !empty($this->patronLoginView->getTemplate())): ?>
+      <?=$this->partial($this->patronLoginView);?>
+    <?php endif; ?>
+  </div>
+</div>

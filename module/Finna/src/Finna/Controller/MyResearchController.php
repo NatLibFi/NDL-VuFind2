@@ -459,13 +459,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      *
      * @return mixed
      */
-    public function profileAction()
+    public function finnaProfileAction()
     {
         $user = $this->getUser();
         if ($user == false) {
             return $this->forceLogin();
         }
-
+        $patron = $this->catalogLogin();
         $values = $this->getRequest()->getPost();
         if (isset($values->due_date_reminder)) {
             $user->setFinnaDueDateReminder($values->due_date_reminder);
@@ -514,19 +514,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
 
-        $view = parent::profileAction();
-        $patron = $this->catalogLogin();
-
-        if (is_array($patron) && $this->formWasSubmitted('saveLibraryProfile')) {
-            if ($this->processLibraryDataUpdate($patron, $values, $user)) {
-                $this->flashMessenger()->setNamespace('info')
-                    ->addMessage('profile_update');
-            }
-            $view = parent::profileAction();
-        }
-
         // Check if due date reminder settings should be displayed
         $config = $this->getConfig();
+        $view = $this->createViewModel(
+            [
+                'user' => $user,
+                'cards' => $user->getLibraryCards()
+            ]
+        );
+        $view->accountDeletion = !empty($config->Authentication->account_deletion);
         $view->hideDueDateReminder = $user->finna_due_date_reminder == 0
             && isset($config->Site->hideDueDateReminder)
             && $config->Site->hideDueDateReminder;
@@ -543,10 +539,36 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             = isset($config->Site->hideProfileEmailAddress)
             && $config->Site->hideProfileEmailAddress;
 
+        return $view;
+    }
+
+    /**
+     * Finna profile specific stuff
+     *
+     * @return mixed
+     */
+    public function profileAction()
+    {
+        $user = $this->getUser();
+        if ($user == false) {
+            return $this->forceLogin();
+        }
+
+        $view = parent::profileAction();
+        $patron = $this->catalogLogin();
+
+        if (is_array($patron) && $this->formWasSubmitted('saveLibraryProfile')) {
+            $values = $this->getRequest()->getPost();
+            if ($this->processLibraryDataUpdate($patron, $values, $user)) {
+                $this->flashMessenger()->setNamespace('info')
+                    ->addMessage('profile_update');
+            }
+            $view = parent::profileAction();
+        }
+
         if (is_array($patron)) {
             $view->blocks = $this->getAccountBlocks($patron);
         }
-
         return $view;
     }
 

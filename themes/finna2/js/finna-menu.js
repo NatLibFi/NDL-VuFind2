@@ -1,47 +1,6 @@
 /*global VuFind, finna*/
 finna.menu = (function finnaMenu() {
 
-  var listHolder = null;
-  var loading = false;
-
-  function toggleList() {
-    $('#favorites-collapse').toggleClass('in');
-    $('#open-list').toggleClass('collapsed');
-    $('.nav-tabs-personal').toggleClass('move-list');
-
-    if (!$('.nav-tabs-personal').hasClass('move-list')) {
-      window.scroll(0, 0);
-    }
-  }
-
-  function loadLists() {
-    $('#open-list .fa').toggleClass('hidden');
-
-    $.ajax({
-      type: 'POST',
-      dataType: 'json',
-      url: VuFind.path + '/AJAX/JSON?method=getMyLists',
-      data: {'active': null}
-    })
-      .done(function onGetMyListsDone(data) {
-        listHolder.html(data.data);
-        $('#open-list').toggleClass('collapsed');
-        $('#open-list .fa').toggleClass('hidden');
-        $('.add-new-list-holder').hide();
-        $('.nav-tabs-personal').toggleClass('move-list');
-
-        $('#open-list > .caret').unbind('click').click(function toggleFavourites(event) {
-          event.preventDefault();
-          toggleList();
-        });
-      })
-      .fail(function onGetMyListsDone() {
-        $('#open-list .fa').toggleClass('hidden');
-        $('.ajax-error').toggleClass('hidden');
-        loading = false;
-      });
-  }
-
   function initStatusObserver() {
     if (!window.MutationObserver) {
       // No browser support
@@ -93,38 +52,49 @@ finna.menu = (function finnaMenu() {
   }
 
   function initMenuLists() {
-    listHolder = $('.mylist-bar');
-    if (listHolder.length === 0) {
-      return;
-    }
-
-    if (listHolder.children().length === 0) {
-      $('#open-list').addClass('collapsed');
-
-      $('#open-list > .caret').unbind('click').click(function onCaretClick(event) {
-        event.preventDefault();
-
-        if (!$('.ajax-error').hasClass('hidden')) {
-          $('.ajax-error').addClass('hidden');
-        }
-
-        if (!loading) {
-          loadLists();
-          loading = true;
-        }
+    $('.menu-parent').each(function initMenuParents() {
+      var _ = $(this);
+      _.find('> .caret').on('click', function caretClick(e) {
+        e.preventDefault();
+        _.trigger('togglesubmenu');
       });
-    } else {
-      $('#open-list > .caret').unbind('click').click(function toggleFavourites(event) {
-        event.preventDefault();
-        toggleList();
+      _.on('togglesubmenu.finna', function onToggleSubmenu() {
+        toggleSubmenu(_, typeof _.siblings('.mylist-bar') !== 'undefined');
       });
-    }
 
-    $('#open-loans > .caret').unbind('click').click(function getLists(event) {
-      event.preventDefault();
-      $('#myLoans').toggleClass('in');
-      $('#open-loans').toggleClass('collapsed');
+      if (_.siblings('.mylist-bar').length !== 0) {
+        if (_.siblings('.mylist-bar').first().children().length === 0) {
+          _.one('beforetoggle.finna', function loadList() {
+            var link = $(this);
+            $.ajax({
+              type: 'GET',
+              dataType: 'json',
+              async: false,
+              url: VuFind.path + '/AJAX/JSON?method=getMyLists',
+              data: {'active': null}
+            }).done(function onGetMyListsDone(data) {
+              $('.mylist-bar').append(data.data);
+              link.closest('.finna-movement').trigger('reindex');
+            });
+          });
+        } else {
+          _.removeClass('collapsed').siblings('.mylist-bar').find('> ul').addClass('in');
+        }
+      }
     });
+  }
+
+  function toggleSubmenu($a, lock) {
+    $a.trigger('beforetoggle');
+    $a.toggleClass('collapsed');
+    $a.siblings('ul').first().toggleClass('in', !$a.hasClass('collapsed'));
+
+    if (lock) {
+      $('.nav-tabs-personal').toggleClass('move-list');
+      if (!$('.nav-tabs-personal').hasClass('move-list')) {
+        window.scroll(0, 0);
+      }
+    }
   }
 
   function init() {

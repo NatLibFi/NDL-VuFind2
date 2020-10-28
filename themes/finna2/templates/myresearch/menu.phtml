@@ -63,11 +63,16 @@
     }
 
     $nonLibraryItems = [
-      'profile' => [
+      'profilelibrary' => [
         'url' => 'myresearch-profile',
-        'translation' => 'Profile',
+        'translation' => 'Library Card Settings',
         'show' => !$ilsOffline && $this->ils()->checkCapability('getMyProfile'),
-        'statusKey' => 'profile',
+        'statusKey' => 'profile'
+      ],
+      'profilefinna' => [
+        'url' => 'myresearch-finnaprofile',
+        'translation' => 'finna_account_settings',
+        'show' => !$ilsOffline && $this->ils()->checkCapability('getMyProfile')
       ],
       'history' => [
         'url' => 'search-history',
@@ -93,8 +98,6 @@
         'active' => in_array($activeToLower, ['checkedout', 'historicloans', 'holds', 'storageretrievalrequests', 'illrequests']),
         'url' => 'myresearch-checkedout',
         'translation' => 'checked_out_menu_heading',
-        'dropdown' => true,
-        'ulId' => 'myLoans',
         'show' => !$ilsOffline && $showLibraryTabs,
         'children' => [
           'checkedout',
@@ -107,7 +110,17 @@
       ],
       'fines',
       'librarycards',
-      'profile',
+      'profile' => [
+        'active' => in_array($activeToLower, ['profilelibrary', 'profilefinna']),
+        'url' => !is_array($patron) && 'ils-none' !== $this->ils()->getOfflineMode() ? 'myresearch-finnaprofile' : 'myresearch-profile',
+        'translation' => 'Settings',
+        'statusKey' => 'profile-menu',
+        'show' => !$ilsOffline && $this->ils()->checkCapability('getMyProfile'),
+        'children' => [
+          'profilelibrary',
+          'profilefinna'
+        ]
+      ],
       'history',
       'open-list' => [
         'active' => $listOpen,
@@ -122,7 +135,6 @@
       ],
       'logout'
     ];
-
     $headerKey = substr($activeToLower, 0, 4) === 'list' ? 'favorites' : $activeToLower;
     $activeMobileTab = $menuListItems[$headerKey]['translation'] ?? 'Your Account';
 ?>
@@ -176,7 +188,7 @@
   ?>
     <?php if ($hasChildren || $hasPartial): ?>
       <li role="menuitem" class="dropdown <?= $listItem['active'] ? ' active' : ''?>">
-        <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" id="<?=$id?>" class="hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" >
+        <a href="<?=$this->escapeHtmlAttr($this->url($listItem['url']) . ($listItem['query'] ?? ''))?>" class="menu-parent hidden-xs hidden-sm list-group-item <?= !$listItem['active'] ? 'collapsed' : '' ?>" >
           <?=$this->transEsc($listItem['translation'])?>
           <?php if ($showSpinner) : ?>
             <i class="hidden fa fa-spinner fa-spin"></i><span class="ajax-error hidden"><small> <?=$this->translate('An error has occurred'); ?></small></span>
@@ -193,7 +205,7 @@
             <?php endif; ?>
           </div>
         <?php else: ?>
-          <ul id="<?=$listItem['ulId']?>" role="presentation" class="dropdown-menu subtabs collapse <?= $listItem['active'] ? ' in' : ''?>">
+          <ul role="presentation" class="dropdown-menu subtabs collapse <?= $listItem['active'] ? ' in' : ''?>">
             <?php foreach ($listItem['children'] as $childKey) : ?>
               <?php
                 $childItem = $menuListItems[$childKey] ?? ['show' => false];
