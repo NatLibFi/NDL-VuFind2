@@ -501,7 +501,7 @@ class RemsService implements
      *
      * @param bool $requireRegistration Require the user to be registered to REMS
      * during the session?
-     * 
+     *
      * @return void
      */
     public function closeOpenApplications($requireRegistration = true)
