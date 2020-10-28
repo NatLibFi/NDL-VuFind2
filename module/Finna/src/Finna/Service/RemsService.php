@@ -28,6 +28,7 @@
 namespace Finna\Service;
 
 use Laminas\Config\Config;
+use Laminas\EventManager\EventManager;
 use Laminas\Session\Container;
 
 /**
@@ -73,6 +74,9 @@ class RemsService implements
     const TYPE_APPROVER = 1;
     const TYPE_USER = 2;
 
+    // Events
+    const EVENT_USER_REGISTERED = 'event-user-registered';
+
     /**
      * REMS configuration
      *
@@ -109,6 +113,13 @@ class RemsService implements
     protected $userIdentityNumber = null;
 
     /**
+     * Event manager.
+     *
+     * @var EventManager
+     */
+    protected $events;
+
+    /**
      * Constructor.
      *
      * @param Config         $config             REMS configuration
@@ -117,6 +128,7 @@ class RemsService implements
      * of current user
      * @param string|null    $userId             ID of current user
      * @param bool           $authenticated      Is the user authenticated?
+     * @param EventManager   $events             Event manager
      */
     public function __construct(
         Config $config,
@@ -125,13 +137,17 @@ class RemsService implements
         // module is created (before login, when displaying the login page)
         $userIdentityNumber,
         $userId,
-        bool $authenticated
+        bool $authenticated,
+        EventManager $events
     ) {
         $this->config = $config;
         $this->session = $session;
         $this->userIdentityNumber = $userIdentityNumber;
         $this->userId = $userId;
         $this->authenticated = $authenticated;
+
+        $events->setIdentifiers([__CLASS__]);
+        $this->events = $events;
     }
 
     /**
@@ -431,6 +447,10 @@ class RemsService implements
         // Refresh permission session variables
         $this->getAccessPermission(true);
 
+        $this->events->trigger(
+            self::EVENT_USER_REGISTERED, __CLASS__, ['user' => $this->getUserId()]
+        );
+
         return true;
     }
 
@@ -479,9 +499,12 @@ class RemsService implements
     /**
      * Close all open applications.
      *
+     * @param bool $requireRegistration Require the user to be registered to REMS
+     * during the session?
+     * 
      * @return void
      */
-    public function closeOpenApplications()
+    public function closeOpenApplications($requireRegistration = true)
     {
         try {
             $applications = $this->getApplications(
@@ -495,7 +518,7 @@ class RemsService implements
                 $this->sendRequest(
                     'applications/close',
                     [], 'POST', RemsService::TYPE_APPROVER,
-                    json_encode($params)
+                    json_encode($params), $requireRegistration
                 );
             }
         } catch (\Exception $e) {
@@ -503,6 +526,23 @@ class RemsService implements
                 'Error closing open applications on logout: ' . $e->getMessage()
             );
         }
+    }
+
+    /**
+     * Close all open applications by user id.
+     * This is called after receiving Shibboleth logout notification.
+     *
+     * @param string $userId User ID
+     *
+     * @return void
+     */
+    public function closeOpenApplicationsForUser($userId)
+    {
+        $this->userId = $userId;
+        // Init $authenticated since it's checked in sendRequest.
+        $this->authenticated = true;
+        // Close applications without requiring the caller to be registered.
+        $this->closeOpenApplications(false);
     }
 
     /**
