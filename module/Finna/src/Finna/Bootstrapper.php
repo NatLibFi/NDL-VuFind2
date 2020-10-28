@@ -28,8 +28,6 @@
  */
 namespace Finna;
 
-use Finna\Service\RemsService;
-
 use Laminas\Console\Console;
 use Laminas\Mvc\MvcEvent;
 
@@ -262,14 +260,15 @@ class Bootstrapper
      */
     protected function initSuomifiLoginListener()
     {
-        if (!$this->isR2Enabled()) {
-            return;
-        }
         $sm = $this->event->getApplication()->getServiceManager();
         $callback = function ($event) use ($sm) {
+            $r2Config = $sm->get(\VuFind\Config\PluginManager::class)->get('R2');
+            if (!($r2Config->R2->enabled ?? false)) {
+                return;
+            }
             // Open REMS registration form after Suomifi login
             $lightboxUrl = $sm->get('ViewHelperManager')
-                ->get('url')->__invoke('r2feedback-form', ['id' => 'R2Register']);
+                ->get('url')->__invoke('feedback-form', ['id' => 'R2Register']);
 
             $followup = $sm->get(\Laminas\Mvc\Controller\PluginManager::class)
                 ->get(\VuFind\Controller\Plugin\Followup::class);
@@ -292,60 +291,19 @@ class Bootstrapper
      */
     protected function initSuomifiLogoutListener()
     {
-        if (!$this->isR2Enabled()) {
-            return;
-        }
         $sm = $this->event->getApplication()->getServiceManager();
         $callback = function ($event) use ($sm) {
-            // Close REMS appliations before Suomifi logout
-            $sm->get(RemsService::class)->onLogout();
+            $r2Config = $sm->get(\VuFind\Config\PluginManager::class)->get('R2');
+            if (!($r2Config->R2->enabled ?? false)) {
+                return;
+            }
+            $rems = $sm->get(\Finna\Service\RemsService::class);
+            $rems->onLogout();
         };
 
         $sm->get('SharedEventManager')->attach(
             'Finna\Auth\Suomifi', \Finna\Auth\Suomifi::EVENT_LOGOUT, $callback
         );
-    }
-
-    /**
-     * Set up REMS session expiration warning listener.
-     *
-     * @return void
-     */
-    protected function initRemsSessionExpirationWarningListener()
-    {
-        if (!$this->isR2Enabled()) {
-            return;
-        }
-        $sm = $this->event->getApplication()->getServiceManager();
-        $callback = function ($event) use ($sm) {
-            $session = new \Laminas\Session\Container(
-                \Finna\View\Helper\Root\SystemMessages::SESSION_NAME,
-                $sm->get(\Laminas\Session\SessionManager::class)
-            );
-            $messages = $session['messages'] ?? [];
-
-            $key = 'R2_session_expiring';
-            unset($session->messages[$key]);
-
-            if ($sm->get(\Finna\Service\RemsService::class)->hasUserAccess()) {
-                $expirationTime
-                    = $sm->get(RemsService::class)->getSessionExpirationTime();
-
-                if ($expirationTime) {
-                    // Add warning to session variable.
-                    // The message is displayed by SystemMessages
-                    $format = 'H:i';
-                    $time = $sm->get(\VuFind\Date\Converter::class)
-                        ->convertToDisplayTime(
-                            $format, date($format, $expirationTime->getTimeStamp())
-                        );
-                    $messages[$key] = ['%%expire%%' => $time];
-                    $session->messages = $messages;
-                }
-            }
-        };
-
-        $this->events->attach('dispatch', $callback, 9000);
     }
 
     /**
