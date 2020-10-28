@@ -270,11 +270,9 @@
         </div>
       <?php endif; ?>
     </div>
-    eeeeee
     <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && $this->patronLoginView && !empty($this->patronLoginView->getTemplate())): ?>
       <?=$this->partial($this->patronLoginView);?>
     <?php endif; ?>
-    eeeeee
   </div>
 </div>
 <?php if (isset($this->parent)): ?>
