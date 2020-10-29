@@ -1315,7 +1315,6 @@ url_blocklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
 ; Note that record drivers may have more stringent rules.
 allowed_url_schemes[] = 'http'
 allowed_url_schemes[] = 'https'
-allowed_url_schemes[] = 'ftp'
 allowed_url_schemes[] = 'tel'
 allowed_url_schemes[] = 'mailto'
 allowed_url_schemes[] = 'maps'
