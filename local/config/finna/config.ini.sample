@@ -1317,7 +1317,8 @@ allowed_url_schemes[] = 'http'
 allowed_url_schemes[] = 'https'
 allowed_url_schemes[] = 'ftp'
 allowed_url_schemes[] = 'tel'
-allowed_url_schemes[] = 'email'
+allowed_url_schemes[] = 'mailto'
+allowed_url_schemes[] = 'maps'
 
 ; Allow image links from BTJ (default is false)
 ;btj_links = true
