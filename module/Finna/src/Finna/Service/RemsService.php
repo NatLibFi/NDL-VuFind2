@@ -479,6 +479,8 @@ class RemsService implements
                 = 'R2_register_form_usage_'
                   . $entitlementApplication['usagePurpose'];
         } else {
+            $this->session->{self::SESSION_USER_REGISTERED_TIME} = null;
+            $this->session->{self::SESSION_IS_REMS_REGISTERED} = null;
             return null;
         }
 
@@ -571,6 +573,10 @@ class RemsService implements
             break;
         default:
             $status = self::STATUS_CLOSED;
+        }
+        if ($status !== self::STATUS_APPROVED) {
+            $this->session->{self::SESSION_USER_REGISTERED_TIME} = null;
+            $this->session->{self::SESSION_IS_REMS_REGISTERED} = null;
         }
         $this->session->{self::SESSION_ACCESS_STATUS} = $status;
     }
