@@ -318,10 +318,10 @@ class Bootstrapper
         }
         $sm = $this->event->getApplication()->getServiceManager();
         $callback = function ($event) use ($sm) {
-            $table = $sm->get(\VuFind\Db\Table\PluginManager::class)
-                ->get('ExternalSession');
             $params = $event->getParams();
             if ($remsUserId = ($params['user'] ?? null)) {
+                $table = $sm->get(\VuFind\Db\Table\PluginManager::class)
+                    ->get('ExternalSession');
                 $sessionId
                     = $sm->get(\Laminas\Session\SessionManager::class)->getId();
                 $table->addSessionMapping("{$sessionId}REMS", $remsUserId);
