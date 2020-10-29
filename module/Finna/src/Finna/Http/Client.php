@@ -61,7 +61,7 @@ class Client extends \Laminas\Http\Client
         if ($traceFile = ($this->config['tracefile'] ?? '')) {
             $backtrace = debug_backtrace(
                 DEBUG_BACKTRACE_PROVIDE_OBJECT | DEBUG_BACKTRACE_IGNORE_ARGS,
-                $this->config['tracefilestackdepth'] ?? 10
+                min($this->config['tracefilestackdepth'] ?? 10, 30)
             );
             $callers = [];
             foreach ($backtrace as $current) {
