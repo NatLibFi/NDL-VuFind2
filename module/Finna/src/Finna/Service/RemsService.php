@@ -209,7 +209,7 @@ class RemsService implements
      * Return timestamp when REMS session expires if the expiration time
      * is within the configured threshold.
      *
-     * @return null|int
+     * @return null|DateTime
      */
     public function getSessionExpirationTime()
     {
@@ -247,6 +247,9 @@ class RemsService implements
      */
     public function isSearchLimitExceeded($type = 'daily')
     {
+        if (!$this->validateSearchLimit($type)) {
+            return false;
+        }
         $res = $this->session->{
             $type === 'daily'
                 ? self::SESSION_DAILY_LIMIT_EXCEEDED
@@ -606,6 +609,12 @@ class RemsService implements
      */
     public function setSearchLimitExceededFromConnector($type, $exceeded)
     {
+        if (!$this->validateSearchLimit($type)) {
+            $this->error(
+                "Error setting search limit exceeded with type $type"
+            );
+            return;
+        }
         if ($type === 'daily') {
             $this->session->{self::SESSION_DAILY_LIMIT_EXCEEDED} = $exceeded;
         } elseif ($type === 'monthly') {
@@ -912,5 +921,17 @@ class RemsService implements
         ];
 
         return $statusMap[$remsStatus] ?? 'unknown';
+    }
+
+    /**
+     * Validate search limit type.
+     *
+     * @param string $limit Limit
+     *
+     * @return bol
+     */
+    protected function validateSearchLimit($limit)
+    {
+        return in_array($limit, ['daily', 'monthly']);
     }
 }
