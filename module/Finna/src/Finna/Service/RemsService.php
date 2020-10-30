@@ -548,6 +548,7 @@ class RemsService implements
         $this->authenticated = true;
         // Close applications without requiring the caller to be registered.
         $this->closeOpenApplications(false);
+        $this->userId = null;
     }
 
     /**
