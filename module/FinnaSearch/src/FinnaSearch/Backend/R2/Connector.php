@@ -124,7 +124,7 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
      *
      * @var EventManager
      */
-    protected $events;
+    protected $events = null;
 
     /**
      * Set API user and password for authentication to index.
@@ -280,7 +280,7 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
                 }
                 $this->rems->setBlocklistStatusFromConnector($blocklisted);
             }
-            if ($headers->get('x-user-session-expired-closed')) {
+            if ($this->events && $headers->get('x-user-session-expired-closed')) {
                 $this->events->trigger(self::EVENT_REMS_SESSION_EXPIRED);
             }
 
