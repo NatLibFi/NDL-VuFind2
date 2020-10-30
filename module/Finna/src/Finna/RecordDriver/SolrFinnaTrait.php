@@ -803,16 +803,30 @@ trait SolrFinnaTrait
     /**
      * Get related records (used by RecordDriverRelated - Related module)
      *
-     * Returns an associative array of record ids.
+     * Returns an associative array of group => records, where each item in
+     * records is either a record id or an array that has a 'wildcard' key
+     * with a Solr compatible pattern as it's value.
+     *
+     * Notes on wildcard queries:
+     *  - Only the first record from the wildcard result set is returned.
+     *  - The wildcard query includes a filter that limits the results to
+     *    the same datasource as the issuing record.
+     *
      * The array may contain the following keys:
-     *   - parents
-     *   - children
      *   - continued-from
-     *   - other
+     *   - part-of
+     *   - contains
+     *   - see-also
+     *
+     * Examples:
+     * - continued-from
+     *     - source1.1234
+     *     - ['wildcard' => '*1234']
+     *     - ['wildcard' => 'source*1234*']
      *
      * @return array
      */
-    public function getRelatedItems()
+    public function getRelatedRecords()
     {
         return [];
     }
@@ -886,6 +900,15 @@ trait SolrFinnaTrait
      */
     protected function urlBlocked($url, $desc = '')
     {
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+
+        $allowedSchemes = isset($this->recordConfig->Record->allowed_url_schemes)
+            ? $this->recordConfig->Record->allowed_url_schemes->toArray()
+            : ['http', 'https', 'tel', 'mailto', 'maps'];
+        if (!in_array($scheme, $allowedSchemes)) {
+            return true;
+        }
+
         // Keep old setting name for back-compatibility:
         $blocklist = $this->recordConfig->Record->url_blocklist
             ?? $this->recordConfig->Record->url_blacklist

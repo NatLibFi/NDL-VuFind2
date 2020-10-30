@@ -1,6 +1,6 @@
 <?php
 /**
- * RemsService factory.
+ * Factory for GetRecordDriverRelatedRecords AJAX handler.
  *
  * PHP version 7
  *
@@ -20,27 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Service
+ * @package  AJAX
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\Service;
+namespace Finna\AjaxHandler;
 
 use Interop\Container\ContainerInterface;
-use Laminas\EventManager\EventManager;
-use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * RemsService factory.
+ * Factory for GetRecordDriverRelatedRecords AJAX handler.
  *
  * @category VuFind
- * @package  Service
+ * @package  AJAX
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class RemsServiceFactory implements FactoryInterface
+class GetRecordDriverRelatedRecordsFactory
+    implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object
@@ -55,6 +54,8 @@ class RemsServiceFactory implements FactoryInterface
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
      * @throws ContainerException if any other error occurs
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
@@ -62,27 +63,11 @@ class RemsServiceFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-
-        $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
-
-        $sessionContainer = new \Laminas\Session\Container(
-            'rems_permission',
-            $sessionManager
+        $result = new $requestedName(
+            $container->get(\VuFind\Record\Loader::class),
+            $container->get(\VuFind\Search\SearchRunner::class),
+            $container->get('ViewRenderer')
         );
-        $shibbolethSessionContainer = new \Laminas\Session\Container(
-            'Shibboleth', $sessionManager
-        );
-        $auth = $container->get('LmcRbacMvc\Service\AuthorizationService');
-        $user = $container->get('VuFind\Auth\Manager')->isLoggedIn();
-
-        return new $requestedName(
-            $container->get(\VuFind\Config\PluginManager::class)
-                ->get('Rems'),
-            $sessionContainer,
-            $shibbolethSessionContainer['identity_number'] ?? null,
-            $user ? $user->username : null,
-            $auth->isGranted('access.R2Authenticated'),
-            new EventManager($container->get('SharedEventManager'))
-        );
+        return $result;
     }
 }

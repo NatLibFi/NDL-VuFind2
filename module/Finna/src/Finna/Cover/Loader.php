@@ -31,8 +31,6 @@
  */
 namespace Finna\Cover;
 
-use VuFindCode\ISBN;
-
 /**
  * Record image loader
  *
@@ -419,6 +417,7 @@ class Loader extends \VuFind\Cover\Loader
         // Figure out file paths -- $tempFile will be used to store the
         // image for analysis.  $finalFile will be used for long-term storage if
         // $cache is true or for temporary display purposes if $cache is false.
+        // $statusFile is used for blocking a non-responding server for a while.
         $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
         $finalFile = $cache ? $this->localFile : $tempFile . '.jpg';
 
@@ -436,15 +435,31 @@ class Loader extends \VuFind\Cover\Loader
             $url = "$convertPdfService?url=" . urlencode($url);
         }
 
-        // Attempt to pull down the image:
-        $client = $this->httpService->createClient(
-            $url, \Laminas\Http\Request::METHOD_GET, 20
-        );
-        $client->setStream($tempFile);
-        $result = $client->send();
+        $host = parse_url($url, PHP_URL_HOST);
+        if ($this->isHostBlocked($host)) {
+            return false;
+        }
 
-        if (!$result->isSuccess()) {
-            $this->debug("Failed to retrieve image from $url");
+        // Attempt to pull down the image:
+        try {
+            $client = $this->httpService->createClient(
+                $url,
+                \Laminas\Http\Request::METHOD_GET,
+                20
+            );
+            $client->setStream($tempFile);
+            $result = $client->send();
+
+            if (!$result->isSuccess()) {
+                $this->debug("Failed to retrieve image from $url");
+                return false;
+            }
+        } catch (\Exception $e) {
+            $this->logError(
+                "Exception trying to load '$url' (record: " . ($this->id ?: '-')
+                . '): ' . $e->getMessage()
+            );
+            $this->addHostFailure($host);
             return false;
         }
 
@@ -518,5 +533,73 @@ class Loader extends \VuFind\Cover\Loader
     {
         parent::storeSanitizedSettings($settings);
         $this->invalidIsbn = $settings['invisbn'] ?? '';
+    }
+
+    /**
+     * Check if a server has been temporarily blocked due to failures
+     *
+     * @param string $host Host name
+     *
+     * @return bool
+     */
+    protected function isHostBlocked($host)
+    {
+        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        if (!file_exists($statusFile)) {
+            return false;
+        }
+        $blockDuration = $this->config->Content->coverServerFailureBlockDuration
+            ?? 3600;
+        if (filemtime($statusFile) + $blockDuration < time()) {
+            unlink($statusFile);
+            $this->logWarning("Host $host has been unblocked");
+            return false;
+        }
+        $tries = file_get_contents($statusFile);
+        $blockThreshold = $this->config->Content->coverServerFailureBlockThreshold
+            ?? 10;
+        if ($tries >= $blockThreshold) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Record a failure for a server
+     *
+     * @param string $host Host name
+     *
+     * @return void
+     */
+    protected function addHostFailure($host)
+    {
+        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        $failures = 0;
+        $blockDuration = $this->config->Content->coverServerFailureBlockDuration
+            ?? 3600;
+        if (file_exists($statusFile)
+            && filemtime($statusFile) + $blockDuration >= time()
+        ) {
+            $failures = file_get_contents($statusFile);
+        }
+        ++$failures;
+        file_put_contents($statusFile, $failures, LOCK_EX);
+        $this->logWarning("Host $host has $failures recorded failures");
+    }
+
+    /**
+     * Record a success for a server
+     *
+     * @param string $host Host name
+     *
+     * @return void
+     */
+    protected function addHostSuccess($host)
+    {
+        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        if (file_exists($statusFile)) {
+            $this->logWarning("Host $host success, failure count cleared");
+            unlink($statusFile);
+        }
     }
 }
