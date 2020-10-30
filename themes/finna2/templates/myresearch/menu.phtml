@@ -63,13 +63,14 @@
       ];
     }
 
-    $r2 = $r2SearchEnabled ? [
-      'url' => 'myresearch-r2accessrights',
-      'translation' => 'R2_accessrights_menu_heading'
-    ] : null;
-
-    $nonLibraryItems = [
-      'r2-accessrights' => $r2,
+    $nonLibraryItems = [];
+    if ($r2SearchEnabled) {
+        $nonLibraryItems['r2-accessrights'] = [
+            'url' => 'myresearch-r2accessrights',
+            'translation' => 'R2_accessrights_menu_heading'
+        ];
+    }
+    $nonLibraryItems += [
       'profile' => [
         'url' => 'myresearch-profile',
         'translation' => 'Profile',
