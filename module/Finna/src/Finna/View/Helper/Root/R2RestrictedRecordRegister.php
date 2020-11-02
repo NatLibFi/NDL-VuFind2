@@ -99,10 +99,10 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
             return null;
         }
 
-        // Driver is null when the helper is called is called outside record page
-        if (!$driver || $driver->hasRestrictedMetadata()) {
+        // Driver is null when the helper is called outside record page
+        if (!$driver || $driver->tryMethod('hasRestrictedMetadata')) {
             $user = $params['user'] ?? null;
-            if ($driver ? $driver->isRestrictedMetadataIncluded() : false) {
+            if ($driver ? $driver->tryMethod('isRestrictedMetadataIncluded') : false) {
                 return null;
             }
             $blocklisted = $registered = $sessionClosed = false;
@@ -136,12 +136,6 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
                 return '<div class="alert alert-danger">'
                     . $translator->translate('R2_rems_connect_error') . '</div>';
             }
-            $note = null;
-            if (!($params['hideNote'] ?? false)) {
-                if (isset($params['note'])) {
-                    $note = $params['note'];
-                }
-            }
 
             $name = '';
             if (!empty($user->firstname)) {
@@ -155,10 +149,7 @@ class R2RestrictedRecordRegister extends \Laminas\View\Helper\AbstractHelper
             }
 
             $params = [
-                'note' => $note,
                 'warning' => $sessionClosed ? 'R2_session_expired_title' : null,
-                'instructions' => $params['instructions'] ?? null,
-                'registerLabel' => $params['registerLabel'] ?? 'R2_register',
                 'showInfo' => !($params['hideInfo'] ?? false),
                 'weakLogin' => $user && !$this->authenticated,
                 'user' => $user,

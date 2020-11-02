@@ -90,7 +90,7 @@ class R2RestrictedRecordRegistered extends \Laminas\View\Helper\AbstractHelper
         }
 
         // If driver is null, this is called from search results.
-        if (!$driver || $driver->hasRestrictedMetadata()) {
+        if (!$driver || $driver->trymethod('hasRestrictedMetadata')) {
             $user = $params['user'] ?? null;
             try {
                 if (!$user
