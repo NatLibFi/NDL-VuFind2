@@ -973,16 +973,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * R2 search terms of use.
-     *
-     * @return mixed
-     */
-    public function r2TermsOfUseAction()
-    {
-        return $this->createViewModel();
-    }
-
-    /**
      * Unsubscribe a scheduled alert for a saved search.
      *
      * @return mixed
