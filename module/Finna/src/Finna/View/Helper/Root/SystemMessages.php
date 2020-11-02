@@ -128,7 +128,7 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper
 
         // Add messages from session
         foreach (($this->session['messages'] ?? []) as $key => $replace) {
-            $messages[] = $this->translate('R2_session_expiring', $replace);
+            $messages[] = $this->translate($key, $replace);
         }
 
         return $messages;
