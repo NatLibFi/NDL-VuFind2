@@ -1,13 +1,4 @@
 <!-- START of: finna - Helpers/R2RestrictedRecordPermission.phtml -->
-<?php
-  $setupJS = [];
-  $registerFormUrl = $this->url('r2feedback-form', ['id' => 'R2Register']);
-  if ($this->id) {
-    $registerFormUrl
-      .= '?recordId=' . $this->escapeHtmlAttr($this->id)
-      . ($this->collection ? '&collection=1' : '');
-  }
-?>
 <?php if ($this->weakLogin): ?>
   <div class="r2-restricted-record-register alert alert-danger" role="alert">
     <p><strong><?= $this->translate('R2_register_weak_loginmethod') ?></strong></p>
@@ -16,7 +7,6 @@
   <?php
     // Register prompt on record page
     $script = '$(document).ready(function() { finna.R2.initModal(); });';
-    echo $this->headScript()->appendFile('finna-R2.js');
     $this->headScript()->appendScript($script);
     // Explicitly redirect Collection page login to Record controller
     $registerFormUrl = $this->url('r2record', ['id' => $this->id])
@@ -24,14 +14,14 @@
       . '&recordId=' . $this->escapeHtmlAttr($this->id)
       . ($this->collection ? '&collection=1' : '');
   ?>
-  <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'note', 'warning', 'registerLabel', 'instructions')) ?>
+  <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'warning')) ?>
 <?php elseif ($this->blocklisted): ?>
   <div class="authorization-notification alert alert-danger" role="alert"><?= $this->translate('R2_accessrights_blocklisted_html', ['%%name%%' => $this->name, '%%url%%' => $this->url('feedback-home'), '%%date_added%%' => $this->blocklistedDate]) ?></div>
 <?php else: ?>
    <?php
-   // Register prompt outside record page.
-   $linkUrl = $this->user ? $registerFormUrl : $this->url('myresearch-r2accessrights');
+     // Register prompt outside record page.
+     $registerFormUrl = $this->url('r2feedback-form', ['id' => 'R2Register']);
    ?>
-   <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'note', 'warning', 'registerLabel', 'instructions')) ?>
+   <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'warning')) ?>
 <?php endif; ?>
 <!-- END of: finna - Helpers/R2RestrictedRecordPermission.phtml -->
