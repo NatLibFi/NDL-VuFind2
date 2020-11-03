@@ -284,28 +284,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     public function render(
         $type = 'list', $params = null, $source = 'Solr', $extraParams = []
     ) {
-        $disableModal = $extraParams['disableModal'] ?? false;
-        $imageRightsLabel = $extraParams['imageRightsLabel'] ?? 'Image Rights';
-        $numOfImages = $extraParams['numOfImages'] ?? null;
-
-        $view = $this->getView();
-        $images = $this->getAllImagesAsCoverLinks(
-            $view->layout()->userLang, $params, true, true, $source
-        );
-        if ($images && $view->layout()->templateDir === 'combined') {
-            // Limit combined results to a single image
-            $images = [$images[0]];
-        }
-
-        $context = [
-            'type' => $type,
-            'images' => $images,
-            'disableModal' => $disableModal,
-            'imageRightsLabel' => $imageRightsLabel,
-            'numOfImages' => $numOfImages
-        ];
-
-        return $this->record->renderTemplate('record-image.phtml', $context);
+        return $this->renderImage($type, $params, $extraParams);
     }
 
     /**
@@ -328,9 +307,28 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     public function renderImage(
         $type = 'list', $params = null, $extraParams = []
     ) {
-        return $this->render(
-            $type, $params, $this->record->getDriver()->getSourceIdentifier(),
-            $extraParams
+        $disableModal = $extraParams['disableModal'] ?? false;
+        $imageRightsLabel = $extraParams['imageRightsLabel'] ?? 'Image Rights';
+        $numOfImages = $extraParams['numOfImages'] ?? null;
+
+        $view = $this->getView();
+        $images = $this->getAllImagesAsCoverLinks(
+            $view->layout()->userLang, $params, true, true,
+            $this->record->getDriver()->getSourceIdentifier()
         );
+        if ($images && $view->layout()->templateDir === 'combined') {
+            // Limit combined results to a single image
+            $images = [$images[0]];
+        }
+
+        $context = [
+            'type' => $type,
+            'images' => $images,
+            'disableModal' => $disableModal,
+            'imageRightsLabel' => $imageRightsLabel,
+            'numOfImages' => $numOfImages
+        ];
+
+        return $this->record->renderTemplate('record-image.phtml', $context);
     }
 }
