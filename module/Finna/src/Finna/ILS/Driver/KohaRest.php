@@ -342,12 +342,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ? $this->config['Profile']['smsNumberField']
             : 'sms_number';
 
-        return [
+        $profile = [
             'firstname' => $result['firstname'],
             'lastname' => $result['surname'],
-            'phone' => $phoneField && !empty($result[$phoneField])
-                ? $result[$phoneField] : '',
-            'smsnumber' => $smsField ? $result[$smsField] : '',
             'email' => $result['email'],
             'address1' => $result['address'],
             'address2' => $result['address2'],
@@ -364,8 +361,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'messagingServices' => $messagingSettings,
             'notes' => $result['opac_notes'],
             'messages' => $messages,
-            'full_data' => $result
+            'full_data' => $result,
         ];
+        if ($phoneField && !empty($result[$phoneField])) {
+            $profile['phone'] = $result[$phoneField];
+        }
+        if ($smsField && !empty($result[$smsField])) {
+            $profile['smsnumber'] = $result[$smsField];
+        }
+
+        return $profile;
     }
 
     /**
@@ -1113,8 +1118,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'libraryId' => $libraryId,
                 'locationId' => $locationId
             ];
-            if (!empty($item['itemnotes'])) {
-                $entry['item_notes'] = [$item['itemnotes']];
+            if (!empty($item['public_notes'])) {
+                $entry['item_notes'] = [$item['public_notes']];
             }
 
             if ($patron && $this->itemHoldAllowed($item)) {

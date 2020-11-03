@@ -497,7 +497,7 @@ class SolrEad extends SolrDefault
                 (string)$node->p,
                 $matches
             );
-            if ($match) {
+            if ($match && !$this->urlBlocked($matches[2], $matches[1])) {
                 $urls[] = [
                     'url' => $matches[2],
                     'desc' => $matches[1]

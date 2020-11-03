@@ -848,7 +848,8 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Check if the record has related records.
+     * Whether the record has related records declared in metadata.
+     * (used by RecordDriverRelated related module).
      *
      * @return bool
      */
