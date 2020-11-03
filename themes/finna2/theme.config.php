@@ -217,6 +217,7 @@ $config = [
         'finna-organisation-info-widget.js',
         'finna-organisation-map-leaflet.js',
         'finna-primo-adv-search.js',
+        'finna-R2.js',
         'finna-record.js',
         'finna-search-tabs-recommendations.js',
         'finna-street-search.js',
