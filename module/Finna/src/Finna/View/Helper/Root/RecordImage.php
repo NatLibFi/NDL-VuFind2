@@ -304,9 +304,8 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      *
      * @return string
      */
-    public function renderImage(
-        $type = 'list', $params = null, $extraParams = []
-    ) {
+    public function renderImage($type = 'list', $params = null, $extraParams = [])
+    {
         $disableModal = $extraParams['disableModal'] ?? false;
         $imageRightsLabel = $extraParams['imageRightsLabel'] ?? 'Image Rights';
         $numOfImages = $extraParams['numOfImages'] ?? null;
