@@ -345,12 +345,6 @@ class Paytrail extends BaseHandler
             ? [
                 'channelId',
                 'secret',
-                'contactEmail',
-                'contactFirstName',
-                'contactLastName',
-                'contactAddrStreet',
-                'contactZipCode',
-                'contactAddrCity',
                 'contactAddrCountry',
                 'organizationMerchantMappings'
             ] : [
