@@ -499,7 +499,10 @@ class Loader extends \VuFind\Cover\Loader
             if (isset($exif['Orientation'])) {
                 $orientation = $exif['Orientation'];
                 if ($orientation > 1 && $orientation < 9) {
-                    $imageGDResized = $this->rotateImage($imageGDResized, $exif);
+                    $imageGDResized = $this->rotateImage(
+                        $imageGDResized,
+                        $orientation
+                    );
                 }
             }
             if (!@imagejpeg($imageGDResized, $finalFile, $quality)) {
