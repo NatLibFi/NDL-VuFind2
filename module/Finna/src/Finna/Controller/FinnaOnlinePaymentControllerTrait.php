@@ -216,6 +216,7 @@ trait FinnaOnlinePaymentControllerTrait
         $payment = $request->getQuery()->get(
             $paymentParam, $request->getPost($paymentParam)
         );
+
         if ($pay && $session && $payableOnline
             && $payableOnline['payable'] && $payableOnline['amount']
         ) {
@@ -286,7 +287,6 @@ trait FinnaOnlinePaymentControllerTrait
             $this->storeFines($patron, $payableOnline['amount']);
             $session = $this->getOnlinePaymentSession();
             $view->transactionId = $session->sessionId;
-
             if (!empty($session->payment_fines_changed)) {
                 $view->paymentFinesChanged = true;
                 $this->flashMessenger()->addMessage(

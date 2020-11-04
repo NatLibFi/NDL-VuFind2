@@ -30,6 +30,7 @@
  */
 namespace Finna\OnlinePayment;
 
+use Finna\OnlinePayment\Paytrail\PaytrailChannel;
 use Finna\OnlinePayment\Paytrail\PaytrailE2;
 
 /**
@@ -118,6 +119,26 @@ class Paytrail extends BaseHandler
         $module->setOrderNumber($orderNumber);
         $module->setCurrency($currency);
 
+        $channelPayment = is_a(
+            $module,
+            'Finna\OnlinePayment\Paytrail\PaytrailChannel'
+        );
+        if ($channelPayment) {
+            // We need some contact information about user
+            $originData = $patron['full_data'];
+            $module->setContact(
+                [
+                'email' => $patron['email'],
+                'firstname' => $patron['firstname'],
+                'lastname' => $patron['lastname'],
+                'street' => $patron['address1'],
+                'city' => $patron['city'],
+                'country' => $this->config->contactAddrCountry,
+                'zip' => $this->config->contactZipCode
+                ]
+            );
+        }
+
         if (!empty($this->config->paymentDescription)) {
             $module->setMerchantDescription(
                 $this->config->paymentDescription . " - $patronId"
@@ -158,6 +179,7 @@ class Paytrail extends BaseHandler
             && !isset($this->config->transactionFeeProductCode)
             && !isset($this->config->productCodeMappings)
             && !isset($this->config->organizationProductCodeMappings)
+            && !isset($this->config->organizationMerchantMappings)
         ) {
             $module->setTotalAmount($amount + $transactionFee);
         } else {
@@ -166,7 +188,7 @@ class Paytrail extends BaseHandler
             $productCodeMappings = $this->getProductCodeMappings();
             $organizationProductCodeMappings
                 = $this->getOrganizationProductCodeMappings();
-
+            $organizationMerchantIds = $this->getOrganizationMerchantIds();
             foreach ($fines as $fine) {
                 $fineType = $fine['fine'] ?? '';
                 $fineOrg = $fine['organization'] ?? '';
@@ -200,6 +222,10 @@ class Paytrail extends BaseHandler
                         . substr($fine['title'], 0, 255 - 4 - strlen($fineDesc))
                     . ')';
                 }
+
+                $code = $channelPayment ?
+                    $organizationMerchantIds[$fineOrg] :
+                    $code;
                 $module->addProduct(
                     $fineDesc, $code, 1, $fine['balance'], 0, PaytrailE2::TYPE_NORMAL
                 );
@@ -312,25 +338,75 @@ class Paytrail extends BaseHandler
      */
     protected function initPaytrail()
     {
-        foreach (['merchantId', 'secret'] as $req) {
+        // Check if config has channel payment specific options set
+        $channelPayment = isset($this->config->channelId);
+
+        $required = $channelPayment
+            ? [
+                'channelId',
+                'secret',
+                'contactEmail',
+                'contactFirstName',
+                'contactLastName',
+                'contactAddrStreet',
+                'contactZipCode',
+                'contactAddrCity',
+                'contactAddrCountry',
+                'organizationMerchantMappings'
+            ] : [
+                'merchantId',
+                'secret'
+            ];
+
+        foreach ($required as $req) {
             if (!isset($this->config[$req])) {
                 $this->logger->err("Paytrail: missing parameter $req");
-                throw new \Exception('Missing parameter');
+                throw new \Exception('Missing parameter ' . $req);
             }
         }
 
-        $locale = $this->translator->getLocale();
-        $localeParts = explode('-', $locale);
+        list($locale) = explode('-', $this->translator->getLocale());
         $paytrailLocale = 'fi_FI';
-        if ('sv' === $localeParts[0]) {
+        if ('sv' === $locale) {
             $paytrailLocale = 'sv_SE';
-        } elseif ('en' === $localeParts[0]) {
+        } elseif ('en' === $locale) {
             $paytrailLocale = 'en_US';
         }
 
-        return new PaytrailE2(
-            $this->config->merchantId, $this->config->secret, $paytrailLocale
-        );
+        if ($channelPayment) {
+            return new PaytrailChannel(
+                $this->config->channelId,
+                $this->config->secret,
+                $paytrailLocale
+            );
+        } else {
+            return new PaytrailE2(
+                $this->config->merchantId ?? '',
+                $this->config->secret,
+                $paytrailLocale
+            );
+        }
+    }
+
+    /**
+     * Get mapped merchant ids as assoc
+     *
+     * @return array
+     */
+    protected function getOrganizationMerchantIds()
+    {
+        $organizations = $this->config->organizationMerchantMappings ?? '';
+        $mappings = [];
+        if (!empty($organizations)) {
+            foreach (explode(':', $organizations) as $item) {
+                $parts = explode('=', $item, 2);
+                if (count($parts) != 2) {
+                    continue;
+                }
+                $mappings[trim($parts[0])] = trim($parts[1]);
+            }
+        }
+        return $mappings;
     }
 
     /**

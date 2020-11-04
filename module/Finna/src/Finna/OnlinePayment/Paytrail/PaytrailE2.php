@@ -322,7 +322,7 @@ class PaytrailE2
             '/[^\pL-0-9- "\',()\[\]{}*\/+\-_,.:&!?@#$£=*;~]+/u', ' ', $name
         );
         $this->products[] = [
-            "ITEM_TITLE[$index]" => substr($name, 0, 255),
+            "ITEM_TITLE[$index]" => mb_substr($name, 0, 255),
             "ITEM_QUANTITY[$index]" => $quantity,
             "ITEM_UNIT_PRICE[$index]" => number_format($unitPrice / 100, 2, '.', ''),
             "ITEM_VAT_PERCENT[$index]" => $vatPercent,
