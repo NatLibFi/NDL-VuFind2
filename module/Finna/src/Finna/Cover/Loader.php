@@ -462,7 +462,7 @@ class Loader extends \VuFind\Cover\Loader
             $this->addHostFailure($host);
             return false;
         }
-
+        $exif = exif_read_data($tempFile);
         $image = file_get_contents($tempFile);
 
         // We no longer need the temp file:
@@ -496,6 +496,12 @@ class Loader extends \VuFind\Cover\Loader
                 $imageGDResized, $imageGD, 0, 0, 0, 0,
                 $newWidth, $newHeight, $width, $height
             );
+            if (isset($exif['Orientation'])) {
+                $orientation = $exif['Orientation'];
+                if ($orientation > 1 && $orientation < 9) {
+                    $imageGDResized = $this->rotateImage($imageGDResized, $exif);
+                }
+            }
             if (!@imagejpeg($imageGDResized, $finalFile, $quality)) {
                 return false;
             }
@@ -519,6 +525,47 @@ class Loader extends \VuFind\Cover\Loader
         }
 
         return true;
+    }
+
+    /**
+     * Method for rotating the given image with exif data
+     *
+     * @param resource $image       to rotate
+     * @param int      $orientation data of the original image
+     *
+     * @return resource
+     */
+    protected function rotateImage($image, $orientation)
+    {
+        $returnImage = $image;
+        switch ($orientation) {
+        case 2: // horizontal flip
+            $returnImage = imageflip($returnImage, 1);
+            break;
+        case 3: // 180 rotate left
+            $returnImage = imagerotate($returnImage, 180, 0);
+            break;
+        case 4: // vertical flip
+            $returnImage = imageflip($returnImage, 2);
+            break;
+        case 5: // vertical flip + 90 rotate right
+            $returnImage = imageflip($returnImage, 2);
+            $returnImage = imagerotate($returnImage, -90, 0);
+            break;
+        case 6: // 90 rotate right
+            $returnImage = imagerotate($returnImage, -90, 0);
+            break;
+        case 7: // horizontal flip + 90 rotate right
+            $returnImage = imageflip($returnImage, 1);
+            $returnImage = imagerotate($returnImage, -90, 0);
+            break;
+        case 8: // 90 rotate left
+            $returnImage = imagerotate($returnImage, 90, 0);
+            break;
+        default: // no rotation found
+            break;
+        }
+        return $returnImage;
     }
 
     /**
