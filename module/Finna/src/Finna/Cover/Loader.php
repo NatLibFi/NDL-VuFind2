@@ -45,6 +45,8 @@ namespace Finna\Cover;
  */
 class Loader extends \VuFind\Cover\Loader
 {
+    use \Finna\Content\UrlCheckTrait;
+
     /**
      * Image URL
      *
@@ -436,7 +438,9 @@ class Loader extends \VuFind\Cover\Loader
         }
 
         $host = parse_url($url, PHP_URL_HOST);
-        if ($this->isHostBlocked($host)) {
+        if ($this->isHostBlocked($host)
+            || (!$pdfFile && !$this->isUrlLoadable($url))
+        ) {
             return false;
         }
 
@@ -601,5 +605,15 @@ class Loader extends \VuFind\Cover\Loader
             $this->logWarning("Host $host success, failure count cleared");
             unlink($statusFile);
         }
+    }
+
+    /**
+     * Get the VuFind configuration.
+     *
+     * @return \Laminas\Config\Config
+     */
+    protected function getConfig()
+    {
+        return $this->config;
     }
 }

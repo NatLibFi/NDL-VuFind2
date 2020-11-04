@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2015-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,7 @@
 namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
+use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Cache\Manager as CacheManager;
@@ -46,10 +47,13 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetDescription extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface
+    implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface,
+    LoggerAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
+    use \VuFind\Log\LoggerAwareTrait;
+    use \Finna\Content\UrlCheckTrait;
 
     /**
      * Cache manager
@@ -135,9 +139,9 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
         } else {
             // Get URL
             $driver = $this->recordLoader->load($id, 'Solr');
-            $url = $driver->getDescriptionURL();
+            $url = $driver->tryMethod('getDescriptionURL');
             // Get, manipulate, save and display content if available
-            if ($url) {
+            if ($url && $this->isUrlLoadable($url)) {
                 $result = $this->httpService->get($url, [], 60);
                 if ($result->isSuccess() && ($content = $result->getBody())) {
                     $encoding = mb_detect_encoding(
@@ -170,7 +174,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
                 }
             }
             $language = $this->translator->getLocale();
-            if ($summary = $driver->getSummary($language)) {
+            if ($summary = $driver->tryMethod('getSummary', [$language])) {
                 $summary = implode("\n\n", $summary);
 
                 // Replace double hash with a <br>
@@ -183,5 +187,15 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
             }
         }
         return $this->formatResponse(['html' => '']);
+    }
+
+    /**
+     * Get the VuFind configuration.
+     *
+     * @return \Laminas\Config\Config
+     */
+    protected function getConfig()
+    {
+        return $this->config;
     }
 }
