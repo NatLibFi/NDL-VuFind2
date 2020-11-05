@@ -3,7 +3,7 @@
  * Trait for checking external content url validity
  *
  * Dependencies:
- * - VuFind configuration available via getConfig method
+ * - Main configuration available via getConfig method
  * - LoggerAwareTrait
  *
  * PHP version 7
@@ -29,7 +29,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/configuration:external_content Wiki
  */
-namespace Finna\Content;
+namespace Finna\RecordDriver;
 
 /**
  * Trait for checking external content url validity

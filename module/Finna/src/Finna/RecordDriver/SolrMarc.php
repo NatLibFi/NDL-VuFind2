@@ -43,7 +43,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 {
     use SolrFinnaTrait;
     use MarcReaderTrait;
-    use \Finna\Content\UrlCheckTrait;
+    use UrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**

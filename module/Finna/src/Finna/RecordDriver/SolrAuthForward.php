@@ -45,7 +45,7 @@ class SolrAuthForward extends SolrAuthDefault
         getDeathPlace as _getDeathPlace;
     }
     use XmlReaderTrait;
-    use \Finna\Content\UrlCheckTrait;
+    use UrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**

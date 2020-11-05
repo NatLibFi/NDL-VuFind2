@@ -53,7 +53,6 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
-    use \Finna\Content\UrlCheckTrait;
 
     /**
      * Cache manager
@@ -141,7 +140,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
             $driver = $this->recordLoader->load($id, 'Solr');
             $url = $driver->tryMethod('getDescriptionURL');
             // Get, manipulate, save and display content if available
-            if ($url && $this->isUrlLoadable($url, $id)) {
+            if ($url) {
                 $result = $this->httpService->get($url, [], 60);
                 if ($result->isSuccess() && ($content = $result->getBody())) {
                     $encoding = mb_detect_encoding(
@@ -187,15 +186,5 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
             }
         }
         return $this->formatResponse(['html' => '']);
-    }
-
-    /**
-     * Get the VuFind configuration.
-     *
-     * @return \Laminas\Config\Config
-     */
-    protected function getConfig()
-    {
-        return $this->config;
     }
 }

@@ -45,7 +45,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
 {
     use SolrFinnaTrait;
     use XmlReaderTrait;
-    use \Finna\Content\UrlCheckTrait;
+    use UrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**

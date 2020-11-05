@@ -45,7 +45,7 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
      */
     public function testEmptyConfig()
     {
-        $loader = $this->getMockBuilder(MockLoader::class)
+        $loader = $this->getMockBuilder(MockDriver::class)
             ->addMethods(['getConfig'])->getMock();
         $loader->expects($this->exactly(2))->method('getConfig')
             ->willReturn(new \Laminas\Config\Config([]));
@@ -90,7 +90,7 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
             'foo6.image' => '::3',
         ];
 
-        $loader = $this->getMockBuilder(MockLoader::class)
+        $loader = $this->getMockBuilder(MockDriver::class)
             ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
             ->addMethods(['getConfig'])
             ->getMock();
@@ -144,7 +144,7 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
             ]
         ];
 
-        $loader = $this->getMockBuilder(MockLoader::class)
+        $loader = $this->getMockBuilder(MockDriver::class)
             ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
             ->addMethods(['getConfig', 'logWarning'])
             ->getMock();
@@ -184,7 +184,7 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
             ]
         ];
 
-        $loader = $this->getMockBuilder(MockLoader::class)
+        $loader = $this->getMockBuilder(MockDriver::class)
             ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
             ->addMethods(['getConfig', 'logWarning'])
             ->getMock();
@@ -225,7 +225,7 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
             ]
         ];
 
-        $loader = $this->getMockBuilder(MockLoader::class)
+        $loader = $this->getMockBuilder(MockDriver::class)
             ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
             ->addMethods(['getConfig', 'logWarning'])
             ->getMock();
@@ -263,7 +263,7 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
             ]
         ];
 
-        $loader = $this->getMockBuilder(MockLoader::class)
+        $loader = $this->getMockBuilder(MockDriver::class)
             ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
             ->addMethods(['getConfig', 'logWarning'])
             ->getMock();
@@ -283,9 +283,9 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
     }
 }
 
-class MockLoader
+class MockDriver
 {
-    use \Finna\Content\UrlCheckTrait;
+    use \Finna\RecordDriver\UrlCheckTrait;
 
     public function check($url, $id = '')
     {

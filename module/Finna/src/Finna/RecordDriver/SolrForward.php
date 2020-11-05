@@ -45,7 +45,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     use SolrForwardTrait {
         SolrForwardTrait::getAllImages insteadof SolrFinnaTrait;
     }
-    use \Finna\Content\UrlCheckTrait;
+    use UrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
