@@ -187,9 +187,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 continue;
             }
             $address = $address->getData();
-            if (!$this->isUrlLoadable($address, $this->getUniqueID())) {
-                continue;
-            }
 
             $type = $url->getSubfield('q');
             $type = $type ? $type->getData() : '';
@@ -198,6 +195,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
 
             if (($image || $pdf) && $this->urlAllowed($address)
                 && !$this->urlBlocked($address)
+                && ($pdf || $this->isUrlLoadable($address, $this->getUniqueID()))
             ) {
                 $urls[$image ? 'images' : 'pdfs'][] = [
                     'urls' => [
