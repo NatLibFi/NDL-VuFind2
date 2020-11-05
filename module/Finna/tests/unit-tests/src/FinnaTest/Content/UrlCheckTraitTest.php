@@ -83,11 +83,11 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
         ];
         $ipv4map = [
             'foo4' => '192.168.0.1',
-            'foo4.images' => '192.168.0.2',
+            'foo4.image' => '192.168.0.2',
         ];
         $ipv6map = [
             'foo6' => '::2',
-            'foo6.images' => '::3',
+            'foo6.image' => '::3',
         ];
 
         $loader = $this->getMockBuilder(MockLoader::class)
@@ -113,8 +113,8 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
         $this->assertFalse($loader->check('http://1.172.0.1/img'));
         $this->assertFalse($loader->check('http://1.172.0.1/img'));
         $this->assertFalse($loader->check('http://imageserver2/img'));
-        $this->assertFalse($loader->check('http://foo4.images/img'));
-        $this->assertFalse($loader->check('http://foo6.images/img'));
+        $this->assertFalse($loader->check('http://foo4.image/img'));
+        $this->assertFalse($loader->check('http://foo6.image/img'));
 
         $this->assertTrue($loader->check('http://172.0.0.1/img'));
         $this->assertTrue($loader->check('http://imageserver/img'));
@@ -123,25 +123,172 @@ class UrlCheckTraitTest extends \VuFindTest\Unit\TestCase
         $this->assertTrue($loader->check('http://foo4/img'));
         $this->assertTrue($loader->check('http://foo6/img'));
     }
+
+    /**
+     * Test disallowed report only mode
+     *
+     * @return void
+     */
+    public function testDisallowedReportOnlyMode()
+    {
+        $config = [
+            'Record' => [
+                'disallowed_external_hosts' => [
+                    '127.0.0.1',
+                ],
+                'disallowed_external_hosts_mode' => 'report',
+                'allowed_external_hosts' => [
+                    '127.0.0.1',
+                    'imageserver',
+                ]
+            ]
+        ];
+
+        $loader = $this->getMockBuilder(MockLoader::class)
+            ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
+            ->addMethods(['getConfig', 'logWarning'])
+            ->getMock();
+        $loader->expects($this->any())->method('getConfig')
+            ->willReturn(new \Laminas\Config\Config($config));
+        $loader->expects($this->once())->method('logWarning')
+            ->with(
+                'URL check: http://127.0.0.1/img would be blocked (record foo.bar)'
+            )
+            ->willReturn('');
+        $loader->expects($this->any())->method('getIPv4Address')
+            ->willReturn('');
+        $loader->expects($this->any())->method('getIPv6Address')
+            ->willReturn('');
+
+        $this->assertTrue($loader->check('http://127.0.0.1/img', 'foo.bar'));
+        $this->assertFalse($loader->check('http://image/img', 'foo.bar'));
+        $this->assertTrue($loader->check('http://imageserver/img', 'foo.bar'));
+    }
+
+    /**
+     * Test allowed report only mode
+     *
+     * @return void
+     */
+    public function testAllowedReportOnlyMode()
+    {
+        $config = [
+            'Record' => [
+                'disallowed_external_hosts' => [
+                    '127.0.0.1',
+                ],
+                'allowed_external_hosts' => [
+                    'imageserver',
+                ],
+                'allowed_external_hosts_mode' => 'report',
+            ]
+        ];
+
+        $loader = $this->getMockBuilder(MockLoader::class)
+            ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
+            ->addMethods(['getConfig', 'logWarning'])
+            ->getMock();
+        $loader->expects($this->any())->method('getConfig')
+            ->willReturn(new \Laminas\Config\Config($config));
+        $loader->expects($this->once())->method('logWarning')
+            ->with(
+                'URL check: http://image/img would not be allowed (record foo.bar)'
+            )
+            ->willReturn('');
+        $loader->expects($this->any())->method('getIPv4Address')
+            ->willReturn('');
+        $loader->expects($this->any())->method('getIPv6Address')
+            ->willReturn('');
+
+        $this->assertFalse($loader->check('http://127.0.0.1/img', 'foo.bar'));
+        $this->assertTrue($loader->check('http://image/img', 'foo.bar'));
+        $this->assertTrue($loader->check('http://imageserver/img', 'foo.bar'));
+    }
+
+    /**
+     * Test disallowed enforcing report mode
+     *
+     * @return void
+     */
+    public function testDisallowedEnforcingReportMode()
+    {
+        $config = [
+            'Record' => [
+                'disallowed_external_hosts' => [
+                    '127.0.0.1',
+                ],
+                'disallowed_external_hosts_mode' => 'enforce-report',
+                'allowed_external_hosts' => [
+                    '127.0.0.1',
+                    'imageserver',
+                ]
+            ]
+        ];
+
+        $loader = $this->getMockBuilder(MockLoader::class)
+            ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
+            ->addMethods(['getConfig', 'logWarning'])
+            ->getMock();
+        $loader->expects($this->any())->method('getConfig')
+            ->willReturn(new \Laminas\Config\Config($config));
+        $loader->expects($this->once())->method('logWarning')
+            ->with('URL check: http://127.0.0.1/img blocked (record n/a)')
+            ->willReturn('');
+        $loader->expects($this->any())->method('getIPv4Address')
+            ->willReturn('');
+        $loader->expects($this->any())->method('getIPv6Address')
+            ->willReturn('');
+
+        $this->assertFalse($loader->check('http://127.0.0.1/img'));
+        $this->assertFalse($loader->check('http://image/img'));
+        $this->assertTrue($loader->check('http://imageserver/img'));
+    }
+
+    /**
+     * Test allowed enforcing report mode
+     *
+     * @return void
+     */
+    public function testAllowedEnforcingReportMode()
+    {
+        $config = [
+            'Record' => [
+                'disallowed_external_hosts' => [
+                    '127.0.0.1',
+                ],
+                'allowed_external_hosts' => [
+                    'imageserver',
+                ],
+                'allowed_external_hosts_mode' => 'enforce-report',
+            ]
+        ];
+
+        $loader = $this->getMockBuilder(MockLoader::class)
+            ->onlyMethods(['getIPv4Address', 'getIPv6Address'])
+            ->addMethods(['getConfig', 'logWarning'])
+            ->getMock();
+        $loader->expects($this->any())->method('getConfig')
+            ->willReturn(new \Laminas\Config\Config($config));
+        $loader->expects($this->once())->method('logWarning')
+            ->with('URL check: http://image/img not allowed (record n/a)')
+            ->willReturn('');
+        $loader->expects($this->any())->method('getIPv4Address')
+            ->willReturn('');
+        $loader->expects($this->any())->method('getIPv6Address')
+            ->willReturn('');
+
+        $this->assertFalse($loader->check('http://127.0.0.1/img'));
+        $this->assertFalse($loader->check('http://image/img'));
+        $this->assertTrue($loader->check('http://imageserver/img'));
+    }
 }
 
 class MockLoader
 {
     use \Finna\Content\UrlCheckTrait;
 
-    public function check($url)
+    public function check($url, $id = '')
     {
-        return $this->isUrlLoadable($url);
-    }
-
-    /**
-     * Mock logging method
-     *
-     * @param string $msg Log message
-     *
-     * @return void
-     */
-    protected function logWarning($msg)
-    {
+        return $this->isUrlLoadable($url, $id);
     }
 }

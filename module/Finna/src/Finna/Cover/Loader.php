@@ -52,14 +52,14 @@ class Loader extends \VuFind\Cover\Loader
      *
      * @var string
      */
-    protected $url;
+    protected $url = '';
 
     /**
      * Record id
      *
      * @var string
      */
-    protected $id;
+    protected $id = '';
 
     /**
      * Invalid ISBN
@@ -439,7 +439,7 @@ class Loader extends \VuFind\Cover\Loader
 
         $host = parse_url($url, PHP_URL_HOST);
         if ($this->isHostBlocked($host)
-            || (!$pdfFile && !$this->isUrlLoadable($url))
+            || (!$pdfFile && !$this->isUrlLoadable($url, $this->id))
         ) {
             return false;
         }

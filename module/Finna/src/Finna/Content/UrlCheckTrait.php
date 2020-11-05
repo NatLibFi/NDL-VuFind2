@@ -43,27 +43,41 @@ namespace Finna\Content;
 trait UrlCheckTrait
 {
     /**
+     * A simple runtime cache for results to avoid multiple lookups during the same
+     * script execution.
+     *
+     * @var array
+     */
+    protected $urlCheckResultCache = [];
+
+    /**
      * Check if the given URL is loadable according to configured rules
      *
      * @param string $url URL
+     * @param string $id  Record ID (for logging)
      *
      * @return bool
      */
-    protected function isUrlLoadable(string $url): bool
+    protected function isUrlLoadable(string $url, string $id): bool
     {
         // Easy checks first
         if (empty($url)) {
             return false;
         }
+
+        if (isset($this->urlCheckResultCache[$url])) {
+            return $this->urlCheckResultCache[$url];
+        }
+
         $scheme = parse_url($url, PHP_URL_SCHEME);
         if (!in_array($scheme, ['http', 'https'])) {
-            return false;
+            return $this->urlCheckResultCache[$url] = false;
         }
 
         $config = $this->getConfig();
 
         $allowedMode = $config->Record->allowed_external_hosts_mode ?? 'enforce';
-        if ('disabled' === $allowedMode) {
+        if ('disable' === $allowedMode) {
             $allowedList = [];
         } else {
             $allowedList = isset($config->Record->allowed_external_hosts)
@@ -71,7 +85,7 @@ trait UrlCheckTrait
         }
         $disallowedMode
             = $config->Record->disallowed_external_hosts_mode ?? 'enforce';
-        if ('disabled' === $disallowedMode) {
+        if ('disable' === $disallowedMode) {
             $disallowedList = [];
         } else {
             $disallowedList = isset($config->Record->disallowed_external_hosts)
@@ -80,74 +94,82 @@ trait UrlCheckTrait
 
         // Return if nothing to check
         if (!$allowedList && !$disallowedList) {
-            return true;
+            return $this->urlCheckResultCache[$url] = true;
         }
 
         $host = mb_strtolower(parse_url($url, PHP_URL_HOST), 'UTF-8');
-
-        $result = $this->checkHostAllowedByFilters(
-            $url, $host, $allowedList, $disallowedList, $allowedMode, $disallowedMode
-        );
-        if (!$result) {
-            return false;
+        if (!$id) {
+            $id = 'n/a';
         }
 
-        // Check IPv4 addresses
+        $result = $this->checkHostAllowedByFilters(
+            $id,
+            $url,
+            $host,
+            $disallowedList,
+            $disallowedMode,
+            $allowedList,
+            $allowedMode
+        );
+        if (!$result) {
+            return $this->urlCheckResultCache[$url] = false;
+        }
+
+        // Check IPv4 address against list of disallowed hosts
         $ipv4 = $this->getIPv4Address($host);
         if ($ipv4 && $ipv4 !== $host) {
             $result = $this->checkHostAllowedByFilters(
+                $id,
                 $url,
                 $ipv4,
-                $allowedList,
                 $disallowedList,
-                $allowedMode,
                 $disallowedMode
             );
             if (!$result) {
-                return false;
+                return $this->urlCheckResultCache[$url] = false;
             }
         }
-        // Check IPv6 addresses
+        // Check IPv6 address against list of disallowed hosts
         $ipv6 = $this->getIPv6Address($host);
         if ($ipv6 && $ipv6 !== $host) {
             $result = $this->checkHostAllowedByFilters(
+                $id,
                 $url,
                 $ipv6,
-                $allowedList,
                 $disallowedList,
-                $allowedMode,
                 $disallowedMode
             );
             if (!$result) {
-                return false;
+                return $this->urlCheckResultCache[$url] = false;
             }
         }
 
-        return true;
+        return $this->urlCheckResultCache[$url] = true;
     }
 
     /**
      * Check if the given host is allowed by the given filters
      *
+     * @param string $id             Record ID
      * @param string $url            Full URL
      * @param string $host           Host
-     * @param array  $allowedList    List of allowed hosts
      * @param array  $disallowedList List of disallowed hosts
-     * @param string $allowedMode    Allowed list handling mode
      * @param string $disallowedMode Disallowed list handling mode
+     * @param array  $allowedList    List of allowed hosts
+     * @param string $allowedMode    Allowed list handling mode
      *
      * @return bool
      */
-    protected function checkHostAllowedByFilters(string $url, string $host,
-        array $allowedList, array $disallowedList, string $allowedMode,
-        string $disallowedMode
+    protected function checkHostAllowedByFilters(string $id, string $url,
+        string $host, array $disallowedList, string $disallowedMode,
+        array $allowedList = [], string $allowedMode = 'disable'
     ): bool {
         // Check disallowed hosts first (probably a short list)
         if ($disallowedList && $this->checkHostFilterMatch($host, $disallowedList)) {
             if ('report' === $disallowedMode) {
-                $this->logWarning("$url would be blocked in " . get_class($this));
+                $this->logWarning("URL check: $url would be blocked (record $id)");
             } elseif ('enforce-report' === $disallowedMode) {
-                $this->logWarning("$url blocked in " . get_class($this));
+                $this->logWarning("URL check: $url blocked (record $id)");
             }
             if (in_array($disallowedMode, ['enforce', 'enforce-report'])) {
                 return false;
@@ -157,10 +179,11 @@ trait UrlCheckTrait
         // Check allowed list
         if ($allowedList && !$this->checkHostFilterMatch($host, $allowedList)) {
             if ('report' === $allowedMode) {
-                $this
-                    ->logWarning("$url would not be allowed in " . get_class($this));
+                $this->logWarning(
+                    "URL check: $url would not be allowed (record $id)"
+                );
             } elseif ('enforce-report' === $allowedMode) {
-                $this->logWarning("$url not allowed in " . get_class($this));
+                $this->logWarning("URL check: $url not allowed (record $id)");
             }
             if (in_array($allowedMode, ['enforce', 'enforce-report'])) {
                 return false;

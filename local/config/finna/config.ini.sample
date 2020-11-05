@@ -1323,6 +1323,7 @@ allowed_url_schemes[] = 'maps'
 ; content loaders (cover images, descriptions).  All hosts are converted to lowercase
 ; before comparison, and lookup is done with both the host name and IP address.
 ;allowed_external_hosts[] = 'good.host'
+;allowed_external_hosts[] = '/^(s1|s2)\.good\.host$/'
 
 ; Mode to use for processing the allowed_external_hosts lists. Valid options are:
 ; enforce - The list is used to filter hosts (default)
@@ -1335,7 +1336,7 @@ allowed_url_schemes[] = 'maps'
 ; content loaders (cover images, descriptions). All hosts are converted to lowercase
 ; before comparison, and lookup is done with both the host name and IP address.
 ;disallowed_external_hosts[] = 'bad.host'
-;disallowed_external_hosts[] = '*.bad.host'
+;disallowed_external_hosts[] = '/\.bad\.host$/'
 
 ; Mode to use for processing the disallowed_external_hosts lists. Valid options are:
 ; enforce - The list is used to filter hosts (default)

@@ -141,7 +141,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
             $driver = $this->recordLoader->load($id, 'Solr');
             $url = $driver->tryMethod('getDescriptionURL');
             // Get, manipulate, save and display content if available
-            if ($url && $this->isUrlLoadable($url)) {
+            if ($url && $this->isUrlLoadable($url, $id)) {
                 $result = $this->httpService->get($url, [], 60);
                 if ($result->isSuccess() && ($content = $result->getBody())) {
                     $encoding = mb_detect_encoding(
