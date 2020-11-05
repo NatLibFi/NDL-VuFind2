@@ -97,7 +97,6 @@ finna.menu = (function finnaMenu() {
 
   function init() {
     initMenuLists();
-    initStatusObserver();
     initAccountChecks();
   }
 
