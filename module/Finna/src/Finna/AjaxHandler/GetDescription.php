@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2019.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,7 +29,6 @@
 namespace Finna\AjaxHandler;
 
 use Laminas\Config\Config;
-use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Cache\Manager as CacheManager;
@@ -47,12 +46,10 @@ use VuFind\Session\Settings as SessionSettings;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class GetDescription extends \VuFind\AjaxHandler\AbstractBase
-    implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface,
-    LoggerAwareInterface
+    implements TranslatorAwareInterface, \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
-    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Cache manager
@@ -138,7 +135,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
         } else {
             // Get URL
             $driver = $this->recordLoader->load($id, 'Solr');
-            $url = $driver->tryMethod('getDescriptionURL');
+            $url = $driver->getDescriptionURL();
             // Get, manipulate, save and display content if available
             if ($url) {
                 $result = $this->httpService->get($url, [], 60);
@@ -173,7 +170,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
                 }
             }
             $language = $this->translator->getLocale();
-            if ($summary = $driver->tryMethod('getSummary', [$language])) {
+            if ($summary = $driver->getSummary($language)) {
                 $summary = implode("\n\n", $summary);
 
                 // Replace double hash with a <br>
