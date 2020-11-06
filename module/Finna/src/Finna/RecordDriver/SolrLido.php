@@ -393,7 +393,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $results = [];
         foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/relatedWorkSet'
+            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/
+                relatedWorkSet'
         ) as $node) {
             if (isset($node->relatedWork->displayObject)) {
                 $object = $node->relatedWork->displayObject;
@@ -405,7 +406,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $type = isset($node->relatedWorkRelType->term)
                     ? (string)$node->relatedWorkRelType->term : ''; 
                 if (($label)
-                    && (($type == 'kirjallisuus') || ($type == 'lähteet'))) {
+                    && (($type == 'kirjallisuus') || ($type == 'lähteet'))
+                ) {
                     $results[] = compact((string)'object', 'label');
                 } elseif (($type == 'kirjallisuus') || ($type == 'lähteet')) {
                     $results[] = compact((string)'object', 'type');
