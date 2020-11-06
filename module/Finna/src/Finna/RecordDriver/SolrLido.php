@@ -385,6 +385,37 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get an array of related publications for the record.
+     *
+     * @return array
+     */
+    public function getRelatedPublications()
+    {
+        $results = [];
+        foreach ($this->getXmlRecord()->xpath(
+            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/relatedWorkSet'
+        ) as $node) {
+            if (isset($node->relatedWork->displayObject)) {
+                $object = $node->relatedWork->displayObject;
+                $label  = null;
+                $type = null;
+                $attributes = $object->attributes();
+                $label = isset($attributes->label)
+                    ? (string)$attributes->label : '';
+                $type = isset($node->relatedWorkRelType->term)
+                    ? (string)$node->relatedWorkRelType->term : ''; 
+                if (($label)
+                    && (($type == 'kirjallisuus') || ($type == 'lähteet'))) {
+                    $results[] = compact((string)'object', 'label');
+                } elseif (($type == 'kirjallisuus') || ($type == 'lähteet')) {
+                    $results[] = compact((string)'object', 'type');
+                }
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get the collections of the current record.
      *
      * @return array

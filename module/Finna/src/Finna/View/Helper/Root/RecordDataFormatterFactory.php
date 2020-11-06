@@ -474,6 +474,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Publications', 'getRelatedPublications', 'data-keywords.phtml',
+            [
+                'context' => ['class' => 'recordRelatedPublications']
+            ]
+        );
+        $setTemplateLine(
             'Manufacturer', 'getManufacturer', 'data-transEsc.phtml',
             [
                 'context' => ['class' => 'recordManufacturer']
