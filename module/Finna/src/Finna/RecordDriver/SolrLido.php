@@ -404,7 +404,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $label = isset($attributes->label)
                     ? (string)$attributes->label : '';
                 $type = isset($node->relatedWorkRelType->term)
-                    ? (string)$node->relatedWorkRelType->term : ''; 
+                    ? (string)$node->relatedWorkRelType->term : '';
                 if (($label)
                     && (($type == 'kirjallisuus') || ($type == 'lähteet'))
                 ) {
