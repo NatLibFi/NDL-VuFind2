@@ -407,7 +407,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     ? (string)$node->relatedWorkRelType->term : ''; 
                 if (($label)
                     && (($type == 'kirjallisuus') || ($type == 'lähteet'))
-                ) {
+                    ) {
                     $results[] = compact((string)'object', 'label');
                 } elseif (($type == 'kirjallisuus') || ($type == 'lähteet')) {
                     $results[] = compact((string)'object', 'type');
