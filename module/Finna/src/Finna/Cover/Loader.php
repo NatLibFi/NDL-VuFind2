@@ -531,7 +531,7 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Method for rotating the given image with exif rotation data
+     * Method for rotating the given image with exif orientation data
      *
      * @param resource $image       Image to rotate
      * @param int      $orientation Orientation data of the original image
