@@ -531,44 +531,41 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Method for rotating the given image with exif data
+     * Method for rotating the given image with exif rotation data
      *
-     * @param resource $image       to rotate
-     * @param int      $orientation data of the original image
+     * @param resource $image       Image to rotate
+     * @param int      $orientation Orientation data of the original image
      *
      * @return resource
      */
     protected function rotateImage($image, $orientation)
     {
-        $returnImage = $image;
         switch ($orientation) {
         case 2: // horizontal flip
-            $returnImage = imageflip($returnImage, 1);
+            return imageflip($image, 1);
             break;
         case 3: // 180 rotate left
-            $returnImage = imagerotate($returnImage, 180, 0);
+            return imagerotate($image, 180, 0);
             break;
         case 4: // vertical flip
-            $returnImage = imageflip($returnImage, 2);
+            return imageflip($image, 2);
             break;
         case 5: // vertical flip + 90 rotate right
-            $returnImage = imageflip($returnImage, 2);
-            $returnImage = imagerotate($returnImage, -90, 0);
+            return imagerotate(imageflip($image, 2), -90, 0);
             break;
         case 6: // 90 rotate right
-            $returnImage = imagerotate($returnImage, -90, 0);
+            return imagerotate($image, -90, 0);
             break;
         case 7: // horizontal flip + 90 rotate right
-            $returnImage = imageflip($returnImage, 1);
-            $returnImage = imagerotate($returnImage, -90, 0);
+            return imagerotate(imageflip($image, 1), -90, 0);
             break;
         case 8: // 90 rotate left
-            $returnImage = imagerotate($returnImage, 90, 0);
+            return imagerotate($image, 90, 0);
             break;
         default: // no rotation found
+            return $image;
             break;
         }
-        return $returnImage;
     }
 
     /**
