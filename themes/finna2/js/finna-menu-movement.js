@@ -152,7 +152,7 @@ FinnaMovement.prototype.moveSubmenu = function moveSubmenu(dir) {
   var _ = this;
   var current = _.menuElements[_.offset];
   current.a.trigger('togglesubmenu');
-  current = _.menuElements[_.offset];
+
   if (current.children.length) {
     if (current.a.hasClass('collapsed')) {
       current.a.trigger('togglesubmenu');
