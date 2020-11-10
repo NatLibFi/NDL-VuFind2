@@ -430,12 +430,12 @@ class Loader extends \VuFind\Cover\Loader
             return false;
         }
 
+        $host = parse_url($url, PHP_URL_HOST);
         if ($pdfFile) {
             // Convert pdf to jpg
             $url = "$convertPdfService?url=" . urlencode($url);
         }
-
-        $host = parse_url($url, PHP_URL_HOST);
+        
         if ($this->isHostBlocked($host)) {
             return false;
         }
