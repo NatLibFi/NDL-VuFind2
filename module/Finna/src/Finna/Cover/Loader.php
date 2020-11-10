@@ -435,7 +435,7 @@ class Loader extends \VuFind\Cover\Loader
             // Convert pdf to jpg
             $url = "$convertPdfService?url=" . urlencode($url);
         }
-        
+
         if ($this->isHostBlocked($host)) {
             return false;
         }
