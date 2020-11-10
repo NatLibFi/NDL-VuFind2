@@ -1,8 +1,7 @@
-
 /* global finna */
 
 /**
- * Compatible with 2 levels of menusettings
+ * Supports menu structures like ul > li > a and ul > li > (a + ul) > li > a 
  * 
  * @param {jQuery} element 
  */
