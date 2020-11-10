@@ -1,10 +1,10 @@
 <?php
 /**
- * ContentBlock view helper
+ * "Format Unavailable" Exception
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2018.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,39 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Exceptions
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace VuFind\View\Helper\Root;
+namespace VuFind\Exception;
 
 /**
- * ContentBlock view helper
+ * "Format Unavailable" Exception
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Exceptions
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ContentBlock extends \Laminas\View\Helper\AbstractHelper
+class FormatUnavailable extends \Exception implements HttpStatusInterface
 {
-    use ClassBasedTemplateRendererTrait;
-
     /**
-     * Render the output of a ContentBlock plugin.
+     * Get HTTP status associated with this exception.
      *
-     * @param \VuFind\ContentBlock\ContentBlockInterface $block The ContentBlock
-     * object to render
-     *
-     * @return string
+     * @return int
      */
-    public function __invoke($block)
+    public function getHttpStatus()
     {
-        $template = 'ContentBlock/%s.phtml';
-        $className = get_class($block);
-        $context = $block->getContext();
-        return $this->renderClassTemplate($template, $className, $context);
+        return 415;
     }
 }
