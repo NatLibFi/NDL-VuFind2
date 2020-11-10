@@ -13,7 +13,7 @@
   }
 ?>
   <!-- <ul id="favorites-collapse" class="dropdown-menu subtabs collapse in mylist-nav" role="presentation"> -->
-  <ul class="mylist-bar dropdown-menu subtabs collapse">
+  <ul class="dropdown-menu subtabs collapse in">
     <li><h1 class="visible-xs visible-sm"><i class="fa fa-arrow-down pull-left"></i> <?=$this->transEsc('Your Lists')?></h1></li>
     <li role="menuitem" class="favorites-menulist-item">
       <a href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">

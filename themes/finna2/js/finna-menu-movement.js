@@ -1,18 +1,5 @@
 
 /* global finna */
-var verticalKeys = {
-  'up': 38,
-  'down': 40,
-  'left': 37,
-  'right': 39
-};
-
-var horizontalKeys = {
-  'up': 37,
-  'down': 39,
-  'left': 38,
-  'right': 40
-};
 
 /**
  * Compatible with 2 levels of menusettings
@@ -22,11 +9,17 @@ var horizontalKeys = {
 function FinnaMovement (element) {
   var _ = this;
   _.menuRootElement = $(element);
-  _.menuElements = []; // Objects with children included
-  _.setChildData(); // Put elements in an array so we can navigate them easily -1 / +1
-  _.keys = _.menuRootElement.hasClass('horizontal') ? horizontalKeys : verticalKeys;
+  _.menuElements = [];
+  _.isHorizontal = _.menuRootElement.hasClass('horizontal');
+  _.setChildData();
+  _.keys = {
+    up: 38,
+    down: 40,
+    left: 37,
+    right: 39
+  };
   _.offset = 0;
-  _.childOffset = -1; // Useful for handling child object states
+  _.childOffset = -1;
   _.setEvents();
 }
 
@@ -38,12 +31,12 @@ FinnaMovement.prototype.setEvents = function setEvents() {
   _.menuRootElement.on('reindex.finna', function reIndex() {
     _.setChildData();
   });
-  _.menuRootElement.on('focusout.finna', function setFocusOut(e) {
+  _.menuRootElement.on('focusout', function setFocusOut(e) {
     if (!$.contains(_.menuRootElement[0], e.relatedTarget)) {
       _.reset();
     }
   });
-  _.menuRootElement.on('keydown.finna', function detectKeyPress(e) {
+  _.menuRootElement.on('keydown', function detectKeyPress(e) {
     _.checkKey(e);
   });
 };
@@ -63,28 +56,34 @@ FinnaMovement.prototype.reset = function reset() {
 FinnaMovement.prototype.setChildData = function setChildData() {
   var _ = this;
   var i = 0;
-  var firstLevel = _.menuRootElement.find('> li');
   _.menuElements = [];
-  firstLevel.each(function getFirstLevel() {
-    var obj = {el: $(this), children: [], a: undefined};
-    if (obj.el.children('a').length === 0) {
-      return true;
-    }
-    obj.a = obj.el.children('a').first();
-    obj.a.attr('tabindex', (i++ === 0) ? '0' : '-1');
 
-    if (obj.el.find('> ul').length) {
-      var secondLevel = obj.el.find('ul').first().find('> li');
-      secondLevel.each(function getSecondLevel() {
-        var a = $(this).find('> a');
-        if (a.length) {
-          a.attr('tabindex', '-1');
-          obj.children.push(a);
+  function formLeveledChildren(el) {
+    var formedObjects = [];
+    if (el.find('> li').length) {
+      el.children('li').each(function cycleChildren() {
+        var obj = {el: $(this), children: [], a: undefined};
+        obj.a = obj.el.children('a').first();
+        if (!obj.a.length) {
+          return true;
+        }
+        obj.a.attr('tabindex', (i++ === 0) ? '0' : '-1');
+        var children;
+        if (obj.el.find('ul, div > ul').length) {
+          children = formLeveledChildren(obj.el.find('ul, div > ul').first());
+        }
+        if (typeof children !== 'undefined' && _.isHorizontal) {
+          obj.children = children;
+        }
+        formedObjects.push(obj);
+        if (typeof children !== 'undefined' && !_.isHorizontal) {
+          formedObjects = formedObjects.concat(children);
         }
       });
     }
-    _.menuElements.push(obj);
-  });
+    return formedObjects;
+  }
+  _.menuElements = formLeveledChildren(_.menuRootElement);
 };
 
 /**
@@ -95,16 +94,36 @@ FinnaMovement.prototype.checkKey = function checkKey(e) {
   var code = (e.keyCode ? e.keyCode : e.which);
   switch (code) {
   case _.keys.up:
-    _.moveMainmenu(-1);
+    if (_.isHorizontal) {
+      _.moveSubmenu(-1);
+    } else {
+      _.moveMainmenu(-1);
+    }
+    e.preventDefault();
     break;
   case _.keys.right:
-    _.moveSubmenu(1);
+    if (_.isHorizontal) {
+      _.moveMainmenu(1);
+    } else {
+      _.moveSubmenu(1);
+    }
+    e.preventDefault();
     break;
   case _.keys.down:
-    _.moveMainmenu(1);
+    if (_.isHorizontal) {
+      _.moveSubmenu(1);
+    } else {
+      _.moveMainmenu(1);
+    }
+    e.preventDefault();
     break;
   case _.keys.left:
-    _.moveSubmenu(-1);
+    if (_.isHorizontal) {
+      _.moveMainmenu(-1);
+    } else {
+      _.moveSubmenu(-1);
+    }
+    e.preventDefault();
     break;
   }
 };
@@ -118,7 +137,11 @@ FinnaMovement.prototype.moveMainmenu = function moveMainmenu(dir) {
   var _ = this;
   _.childOffset = -1;
   _.offset = _.calculateOffset(_.offset, _.menuElements, dir);
-  _.menuElements[_.offset].a.focus();
+  if (_.menuElements[_.offset].a.is(':hidden')) {
+    _.moveMainmenu(dir);
+  } else {
+    _.menuElements[_.offset].a.focus();
+  }
 };
 
 /**
@@ -129,16 +152,14 @@ FinnaMovement.prototype.moveMainmenu = function moveMainmenu(dir) {
 FinnaMovement.prototype.moveSubmenu = function moveSubmenu(dir) {
   var _ = this;
   var current = _.menuElements[_.offset];
-  if (current.a.data('preload') === true) {
-    current.a.trigger('togglesubmenu');
-    current = _.menuElements[_.offset];
-  }
+  current.a.trigger('togglesubmenu');
+  current = _.menuElements[_.offset];
   if (current.children.length) {
     if (current.a.hasClass('collapsed')) {
       current.a.trigger('togglesubmenu');
     }
     _.childOffset = _.calculateOffset(_.childOffset, current.children, dir);
-    current.children[_.childOffset].focus();
+    current.children[_.childOffset].a.focus();
   }
 };
 
@@ -167,7 +188,6 @@ finna.finnaMovement = (function finnaMovement() {
       $('.finna-movement').each(function initKeyboardMovement() {
         new FinnaMovement(this);
       });
-      
     }
   };
 

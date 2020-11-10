@@ -1,41 +1,5 @@
 /*global VuFind, finna*/
 finna.menu = (function finnaMenu() {
-
-  function initStatusObserver() {
-    if (!window.MutationObserver) {
-      // No browser support
-      return;
-    }
-
-    // Callback function to execute when mutations are observed
-    var callback = function observerCallback(mutationsList/*, observer*/) {
-      $.each(mutationsList, function checkMutation() {
-        if (this.type === 'childList' && this.addedNodes) {
-          $(this.addedNodes).each(function checkNode() {
-            if ($(this).hasClass('warn') || $(this).hasClass('overdue') || $(this).hasClass('fa-bell')) {
-              $('.loans-menu-status')
-                .attr("data-toggle", "tooltip")
-                .attr("data-placement", "bottom")
-                .attr("title", VuFind.translate("account_has_alerts"))
-                .tooltip()
-                .html('<i class="fa fa-exclamation-triangle" aria-hidden="true"></i>')
-                .removeClass('hidden');
-              return false;
-            }
-          });
-        }
-      });
-    };
-
-    var observer = new MutationObserver(callback);
-    $('.checkedout-status').each(function setupCheckedout() {
-      observer.observe(this, { childList: true, subtree: true });
-    });
-    $('.holds-status').each(function setupHolds() {
-      observer.observe(this, { childList: true, subtree: true });
-    });
-  }
-
   function initAccountChecks() {
     VuFind.account.register("profile", {
       selector: ".profile-status",
@@ -51,21 +15,34 @@ finna.menu = (function finnaMenu() {
     });
   }
 
+  function toggleSubmenu(a) {
+    a.trigger('beforetoggle');
+    a.toggleClass('collapsed');
+    a.parent().find('ul').first().toggleClass('in', !a.hasClass('collapsed'));
+    a.attr("aria-expanded", !a.hasClass("collapsed"));
+
+    if (a.hasClass('sticky-menu')) {
+      $('.nav-tabs-personal').toggleClass('move-list');
+      if (!$('.nav-tabs-personal').hasClass('move-list')) {
+        window.scroll(0, 0);
+      }
+    }
+  }
+
   function initMenuLists() {
-    $('#open-loans, #open-list').on('togglesubmenu.finna', function onToggleSubmenu() {
-      toggleSubmenu($(this), $(this).attr('id') === 'open-list');
+    $('.menu-parent').on('togglesubmenu.finna', function onToggleSubmenu() {
+      toggleSubmenu($(this));
     });
 
-    $('#open-loans > .caret, #open-list > .caret').on('click', function clickLink(e) {
+    $('.menu-parent > .caret').on('click', function clickLink(e) {
       e.preventDefault();
       $(this).parent().trigger('togglesubmenu');
     });
 
-    if ($('.mylist-bar').length === 0) {
+    if ($('.mylist-bar').children().length === 0) {
       $('#open-list').one('beforetoggle.finna', function loadList() {
         var link = $(this);
         link.data('preload', false);
-        var parent = link.parent();
         $.ajax({
           type: 'GET',
           dataType: 'json',
@@ -73,25 +50,13 @@ finna.menu = (function finnaMenu() {
           url: VuFind.path + '/AJAX/JSON?method=getMyLists',
           data: {'active': null}
         }).done(function onGetMyListsDone(data) {
-          parent.append(data.data);
+          $('.mylist-bar').append(data.data);
           link.closest('.finna-movement').trigger('reindex');
+          $('.add-new-list-holder').hide();
         });
-      }).data('preload', true);
+      });
     } else {
       $('#open-list').removeClass('collapsed').siblings('ul').first().addClass('in');
-    }
-  }
-
-  function toggleSubmenu($a, lockList) {
-    $a.trigger('beforetoggle');
-    $a.toggleClass('collapsed');
-    $a.siblings('ul').first().toggleClass('in', !$a.hasClass('collapsed'));
-
-    if (lockList) {
-      $('.nav-tabs-personal').toggleClass('move-list');
-      if (!$('.nav-tabs-personal').hasClass('move-list')) {
-        window.scroll(0, 0);
-      }
     }
   }
 
