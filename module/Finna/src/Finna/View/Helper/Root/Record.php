@@ -99,13 +99,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $cachedImages = [];
 
     /**
-     * Cached id of old record
-     *
-     * @var string
-     */
-    protected $cachedId = null;
-
-    /**
      * Tab Manager
      *
      * @var \VuFind\RecordTab\TabManager
@@ -346,16 +339,15 @@ class Record extends \VuFind\View\Helper\Root\Record
         $type, $lookfor, $data, $params = []
     ) {
         $id = $data['id'] ?? null;
+        $linkType = $this->getAuthorityLinkType();
 
         // Discard search tabs hiddenFilters when jumping to Authority page
-        $preserveSearchTabsFilters
-            = $this->getAuthorityLinkType() !== AuthorityHelper::LINK_TYPE_PAGE;
+        $preserveSearchTabsFilters = $linkType !== AuthorityHelper::LINK_TYPE_PAGE;
 
-        list($url, $urlType)
-            = $this->getLink(
-                $type, $lookfor, $params + ['id' => $id], true,
-                $preserveSearchTabsFilters
-            );
+        list($url, $urlType) = $this->getLink(
+            $type, $lookfor, $params + compact('id', 'linkType'), true,
+            $preserveSearchTabsFilters
+        );
 
         if (!$this->isAuthorityEnabled()
             || !in_array($urlType, ['authority-search', 'authority-page'])
@@ -603,11 +595,11 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $recordId = $this->driver->getUniqueID();
 
-        if ($this->cachedId === $recordId) {
-            return $this->cachedImages;
+        $cacheKey = "$recordId\t" . ($thumbnails ? '1' : '0')
+            . ($includePdf ? '1' : '0');
+        if (isset($this->cachedImages[$cacheKey])) {
+            return $this->cachedImages[$cacheKey];
         }
-
-        $this->cachedId = $recordId;
 
         $sizes = ['small', 'medium', 'large', 'master'];
         $images = $this->driver->tryMethod('getAllImages', [$language, $includePdf]);
@@ -662,7 +654,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
         }
-        return $this->cachedImages = $images;
+        return $this->cachedImages[$cacheKey] = $images;
     }
 
     /**
