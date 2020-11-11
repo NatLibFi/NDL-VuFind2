@@ -79,7 +79,7 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
      * @param RemsService $rems          RemsService
      */
     public function __construct(
-        bool $enabled, $user, bool $authenticated, RemsService $rems
+        bool $enabled, ?User $user, bool $authenticated, RemsService $rems
     ) {
         $this->enabled = $enabled;
         $this->user = $user;
@@ -94,7 +94,7 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
      */
     public function isAvailable()
     {
-        return (bool)$this->enabled;
+        return $this->enabled;
     }
 
     /**
@@ -154,11 +154,7 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
                     // Registration hint on search results page.
                     if ($params['show_register_hint'] ?? false) {
                         return
-                            '<div class="r2-restricted-hint alert alert-info"'
-                            . ' role="status">'
-                            . '<i class="fa fa-info3 fa-lg"></i> '
-                            . $this->getView()->transEsc('R2_register_hint')
-                            . '</div>';
+                            $this->getView()->render('Helpers/R2RegisterHint.phtml');
                     }
                     return null;
                 }
