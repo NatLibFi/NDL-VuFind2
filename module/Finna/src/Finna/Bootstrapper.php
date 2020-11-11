@@ -357,7 +357,7 @@ class Bootstrapper
 
             $expirationTime
                 = $sm->get(\Finna\Service\RemsService::class)
-                    ->getSessionExpirationTime();
+                ->getSessionExpirationTime();
             if ($expirationTime) {
                 // Add warning to session variable.
                 // The message is displayed by SystemMessages
