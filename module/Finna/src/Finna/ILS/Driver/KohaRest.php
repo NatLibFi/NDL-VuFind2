@@ -232,6 +232,26 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
+     * Get Patron Holds
+     *
+     * This is responsible for retrieving all holds by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's holds on success.
+     */
+    public function getMyHolds($patron)
+    {
+        $result = parent::getMyHolds($patron);
+        foreach ($result as &$hold) {
+            $hold['is_editable'] = !$hold['in_transit'] && !$hold['available'];
+        }
+        return $result;
+    }
+
+    /**
      * Get Patron Profile
      *
      * This is responsible for retrieving the profile for a specific patron.
@@ -276,53 +296,56 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ];
         }
 
-        foreach ($result['messaging_preferences'] as $type => $prefs) {
-            $typeName = isset($this->messagingPrefTypeMap[$type])
-                ? $this->messagingPrefTypeMap[$type] : $type;
-            $settings = [
-                'type' => $typeName
-            ];
-            if (isset($prefs['transport_types'])) {
-                $settings['settings']['transport_types'] = [
-                    'type' => 'multiselect'
+        $messagingSettings = [];
+        if ($this->config['Profile']['messagingSettings'] ?? true) {
+            foreach ($result['messaging_preferences'] as $type => $prefs) {
+                $typeName = isset($this->messagingPrefTypeMap[$type])
+                    ? $this->messagingPrefTypeMap[$type] : $type;
+                $settings = [
+                    'type' => $typeName
                 ];
-                foreach ($prefs['transport_types'] as $key => $active) {
-                    $settings['settings']['transport_types']['options'][$key] = [
-                        'active' => $active
+                if (isset($prefs['transport_types'])) {
+                    $settings['settings']['transport_types'] = [
+                        'type' => 'multiselect'
+                    ];
+                    foreach ($prefs['transport_types'] as $key => $active) {
+                        $settings['settings']['transport_types']['options'][$key] = [
+                            'active' => $active
+                        ];
+                    }
+                }
+                if (isset($prefs['digest'])) {
+                    $settings['settings']['digest'] = [
+                        'type' => 'boolean',
+                        'name' => '',
+                        'active' => $prefs['digest']['value'],
+                        'readonly' => !$prefs['digest']['configurable']
                     ];
                 }
-            }
-            if (isset($prefs['digest'])) {
-                $settings['settings']['digest'] = [
-                    'type' => 'boolean',
-                    'name' => '',
-                    'active' => $prefs['digest']['value'],
-                    'readonly' => !$prefs['digest']['configurable']
-                ];
-            }
-            if (isset($prefs['days_in_advance'])
-                && ($prefs['days_in_advance']['configurable']
-                || null !== $prefs['days_in_advance']['value'])
-            ) {
-                $options = [];
-                for ($i = 0; $i <= 30; $i++) {
-                    $options[$i] = [
-                        'name' => $this->translate(
-                            1 === $i ? 'messaging_settings_num_of_days'
-                            : 'messaging_settings_num_of_days_plural',
-                            ['%%days%%' => $i]
-                        ),
-                        'active' => $i == $prefs['days_in_advance']['value']
+                if (isset($prefs['days_in_advance'])
+                    && ($prefs['days_in_advance']['configurable']
+                    || null !== $prefs['days_in_advance']['value'])
+                ) {
+                    $options = [];
+                    for ($i = 0; $i <= 30; $i++) {
+                        $options[$i] = [
+                            'name' => $this->translate(
+                                1 === $i ? 'messaging_settings_num_of_days'
+                                : 'messaging_settings_num_of_days_plural',
+                                ['%%days%%' => $i]
+                            ),
+                            'active' => $i == $prefs['days_in_advance']['value']
+                        ];
+                    }
+                    $settings['settings']['days_in_advance'] = [
+                        'type' => 'select',
+                        'value' => $prefs['days_in_advance']['value'],
+                        'options' => $options,
+                        'readonly' => !$prefs['days_in_advance']['configurable']
                     ];
                 }
-                $settings['settings']['days_in_advance'] = [
-                    'type' => 'select',
-                    'value' => $prefs['days_in_advance']['value'],
-                    'options' => $options,
-                    'readonly' => !$prefs['days_in_advance']['configurable']
-                ];
+                $messagingSettings[$type] = $settings;
             }
-            $messagingSettings[$type] = $settings;
         }
 
         $messages = [];
@@ -1435,7 +1458,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $location = $this->getLibraryName($holdings['holding_library_id']);
         $callnumber = '';
-        if (!empty($holdings['ccode'])
+        if (!empty($holdings['collection_code'])
             && !empty($this->config['Holdings']['display_ccode'])
         ) {
             $callnumber = $this->translateCollection(
@@ -1526,6 +1549,44 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             'status' => '',
             'barcode' => null,
         ];
+    }
+
+    /**
+     * Return a call number for a Koha item
+     *
+     * @param array $item Item
+     *
+     * @return string
+     */
+    protected function getItemCallNumber($item)
+    {
+        $result = [];
+        if (!empty($item['collection_code'])
+            && !empty($this->config['Holdings']['display_ccode'])
+        ) {
+            $result[] = $this->translateCollection(
+                $item['collection_code'],
+                $item['collection_code_description'] ?? $item['collection_code']
+            );
+        }
+        if (!$this->groupHoldingsByLocation) {
+            $loc = $this->translateLocation(
+                $item['location'],
+                !empty($item['location_description'])
+                    ? $item['location_description'] : $item['location']
+            );
+            if ($loc) {
+                $result[] = $loc;
+            }
+        }
+        if ((!empty($item['callnumber'])
+            || !empty($item['callnumber_display']))
+            && !empty($this->config['Holdings']['display_full_call_number'])
+        ) {
+            $result[] = $item['callnumber'];
+        }
+        $str = implode(', ', $result);
+        return $str;
     }
 
     /**

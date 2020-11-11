@@ -39,10 +39,14 @@ namespace Finna\RecordDriver;
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrForward extends \VuFind\RecordDriver\SolrDefault
+    implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait, SolrForwardTrait {
+    use SolrFinnaTrait;
+    use SolrForwardTrait {
         SolrForwardTrait::getAllImages insteadof SolrFinnaTrait;
     }
+    use UrlCheckTrait;
+    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Non-presenter author relator codes.
@@ -995,11 +999,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected function getVideoUrls()
     {
         // Get video URLs, if any
-        $source = $this->getSource();
-        $source = $source[0] ?? '';
         if (empty($this->recordConfig->Record->video_sources)) {
             return [];
         }
+        $source = $this->getSource();
         $sourceConfigs = [];
         $sourcePriority = 0;
         foreach ($this->recordConfig->Record->video_sources as $current) {

@@ -630,8 +630,17 @@ trait SolrFinnaTrait
      */
     public function getSource()
     {
-        return isset($this->fields['source_str_mv'])
-            ? $this->fields['source_str_mv'] : false;
+        return $this->fields['source_str_mv'][0] ?? '';
+    }
+
+    /**
+     * Return record sources.
+     *
+     * @return string
+     */
+    public function getSources()
+    {
+        return $this->fields['source_str_mv'] ?? [];
     }
 
     /**
@@ -1136,5 +1145,15 @@ trait SolrFinnaTrait
                     . '"'
             );
         }
+    }
+
+    /**
+     * Get the VuFind configuration.
+     *
+     * @return \Laminas\Config\Config
+     */
+    protected function getConfig()
+    {
+        return $this->mainConfig;
     }
 }
