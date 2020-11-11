@@ -363,7 +363,7 @@ class Bootstrapper
                 // The message is displayed by SystemMessages
                 $format = 'H:i';
                 $time = $sm->get(\VuFind\Date\Converter::class)
-                    ->convertToDisplayTime(
+                    ->convertToDisplayDateAndTime(
                         $format, date($format, $expirationTime->getTimeStamp())
                     );
                 $messages[$key] = ['%%expire%%' => $time];
