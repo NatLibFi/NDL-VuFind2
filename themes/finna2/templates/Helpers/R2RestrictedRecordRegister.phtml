@@ -9,10 +9,11 @@
     $script = '$(document).ready(function() { finna.R2.initModal(); });';
     $this->headScript()->appendScript($script);
     // Explicitly redirect Collection page login to Record controller
-    $registerFormUrl = $this->url('r2record', ['id' => $this->id])
-      . '?login=true'
-      . '&recordId=' . $this->escapeHtmlAttr($this->id)
-      . ($this->collection ? '&collection=1' : '');
+    $queryParams = ['login' => 'true', 'recordId' => $this->id];
+    if ($this->collection) {
+      $queryParams['collection'] = '1';
+    }
+    $registerFormUrl = $this->url('r2record', ['id' => $this->id], ['query' => $queryParams]);
   ?>
   <?= $this->partial('Helpers/R2RestrictedRecordPrompt.phtml', compact('registerFormUrl', 'showInfo', 'warning', 'note', 'instructions')) ?>
 <?php elseif ($this->blocklisted): ?>
