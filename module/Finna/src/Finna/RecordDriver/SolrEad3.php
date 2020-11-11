@@ -515,7 +515,6 @@ class SolrEad3 extends SolrEad
                     // Loop daosets and collect URLs for different sizes
                     $urls = [];
                     $attr = $dao->attributes();
-
                     if (! isset($attr->linktitle)
                         || strpos(
                             (string)$attr->linktitle, self::DAO_LINK_TITLE_IMAGE
@@ -524,10 +523,14 @@ class SolrEad3 extends SolrEad
                     ) {
                         continue;
                     }
+                    $href = (string)$attr->href;
+                    if ($this->urlBlocked($href) || !$this->isUrlLoadable($href)) {
+                        continue;
+                    }
                     $images[$size][] = [
                         'description' => (string)$attr->linktitle,
                         'rights' => null,
-                        'url' => (string)$attr->href,
+                        'url' => $href,
                         'descId' => $descId,
                         'sort' => (string)$attr->label
                     ];
