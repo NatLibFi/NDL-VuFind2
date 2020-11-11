@@ -4,16 +4,7 @@
   $this->headTitle($this->translate('R2_accessrights_title'));
 
   // Set up breadcrumbs:
-  $currPage = 'R2AccessRights';
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
-  $error = false;
-  try {
-    $hasAccess = $this->rems->hasUserAccess(true);
-    $usagePurpose = $this->rems->getUsagePurpose();
-    $blocklisted = $this->rems->isUserBlocklisted(true);
-  } catch (\Exception $e) {
-    $error = true;
-  }
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('R2AccessRights') . '</li>';
 ?>
 
 <!-- Leftside navigationbar -->
@@ -27,11 +18,10 @@
     <div class="useraccount-header">
       <h2><?=$this->transEsc('R2_accessrights_title')?></h2>
     </div>
-    <?php if ($error): ?>
+    <?php if ($this->error): ?>
       <div class="alert alert-danger"><?=$this->transEsc('R2_rems_connect_error')?></div>
     <?php else: ?>
-      <?php if ($hasAccess): ?>
-        <?php $usagePurpose = $this->rems->getUsagePurpose(); ?>
+      <?php if ($this->hasAccess): ?>
         <table class="table useraccount-table">
           <tbody>
             <tr class="headers">
@@ -41,7 +31,7 @@
             <tr class="myresearch-row">
               <td><?=$this->translate('R2_accessrights_info_html')?></td>
               <td>
-                <p><?=$this->translate($usagePurpose)?></p>
+                <p><?=$this->translate($this->usagePurpose)?></p>
               </td>  
             </tr>
             <tr>
@@ -53,7 +43,8 @@
           </tbody>
         </table>
         <div class="alert alert-info r2-change-usage-purpose" role="status">
-          <div><i class="fa fa-info3 fa-lg"></i></div><div><?= $this->translate('R2_change_usage_purpose_html', ['%%url%%' => $this->url('myresearch-logout')])?></div>
+          <div><i class="fa fa-info3 fa-lg"></i></div>
+          <div><?= $this->translate('R2_change_usage_purpose_html', ['%%url%%' => $this->url('myresearch-logout')])?></div>
         </div>
       <?php else: ?>
         <?= $this->R2()->register(null, ['ignoreCache' => true, 'instructions' => 'R2_restricted_register_instructions_myresearch_html', 'hideInfo' => true, 'note' => 'R2_accessrights_register'])?>

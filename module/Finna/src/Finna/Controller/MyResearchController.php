@@ -974,7 +974,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $rems = $this->serviceLocator->get('Finna\Service\RemsService');
-        return $this->createViewModel(['rems' => $rems]);
+        $error = false;
+        $hasAccess = $usagePurpose = null;
+        try {
+            $hasAccess = $rems->hasUserAccess(true);
+            $usagePurpose = $rems->getUsagePurpose();
+        } catch (\Exception $e) {
+            $error = true;
+        }
+        return $this->createViewModel(compact('error', 'hasAccess', 'usagePurpose'));
     }
 
     /**
