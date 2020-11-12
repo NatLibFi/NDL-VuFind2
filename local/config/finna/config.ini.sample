@@ -688,8 +688,8 @@ lastname = SHIB_sn
 ;coverimages     = Syndetics:MySyndeticsId,Amazon:MyAccessKeyId,Booksite,LibraryThing:MyLibraryThingId,Google,OpenLibrary,Summon:MySerialsSolutionsClientKey,Contentcafe:MyContentCafeID,NatLibFi,BookyFi,BTJ:customerId
 coverimages     = NatLibFi,OpenLibrary
 
-; List of blacklisted formats to prevent from showing in LIDO records image section
-; lidoFileFormatBlackList = 'tif,tiff,3d-pdf,3d model,glb,obj,gltf'
+; List of blocked formats prevented from showing in LIDO records image section
+; lidoFileFormatBlockList = 'tif,tiff,3d-pdf,3d model,glb,obj,gltf'
 
 ; This setting controls the image to display when no book cover is available.
 ; The path is relative to the base of your theme directory.
@@ -701,6 +701,12 @@ noCoverAvailableImage = images/noCover2.gif
 
 ; Comma separated list of record formats whose PDF converted record images may be downloaded.
 pdfCoverImageDownload = "0/Map/"
+
+; Threshold of consecutive failures after which a server is blocked. Default is 10.
+coverServerFailureBlockThreshold = 10
+
+; Duration of failed server block in seconds. Default is 3600.
+coverServerFailureBlockDuration = 3600
 
 ; How long book summaries are cached locally in minutes. Default is one day
 summarycachetime = 1440
@@ -1300,10 +1306,44 @@ ead_external_link_template[narc] = "http://www.narc.fi:8080/VakkaWWW/Selaus.acti
 ead_document_order_link_template[narc] = "https://testavapaingest.narc.fi/astiaUi/palvelut/kdk_checkout.php?id={id}"
 ead_usage_permission_request_link_template[narc] = "https://testavapaingest.narc.fi/astiaUi/palvelut/kdk_askpermission.php?id={id}"
 
-; Blacklisting regexp's for record URLs
-url_blacklist[] = '/btj\.com\/btjcgi\/arvo\/get_add_info\.cgi\?type=(PRES|IMAGE)/'
-url_blacklist[] = '/data\.kirjavalitys\.fi\/data\/servlets\/ProductRequestServlet/'
-url_blacklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
+; Filtering regexp's for record URLs
+url_blocklist[] = '/btj\.com\/btjcgi\/arvo\/get_add_info\.cgi\?type=(PRES|IMAGE)/'
+url_blocklist[] = '/data\.kirjavalitys\.fi\/data\/servlets\/ProductRequestServlet/'
+url_blocklist[] = '/booky\.fi\/(image\.php\?|description\.php\?)/'
+
+; Allowed schemes in Solr record URLs.
+; Note that record drivers may have more stringent rules.
+allowed_url_schemes[] = 'http'
+allowed_url_schemes[] = 'https'
+allowed_url_schemes[] = 'tel'
+allowed_url_schemes[] = 'mailto'
+allowed_url_schemes[] = 'maps'
+
+; Exact matches or regular expressions (enclosed in //) for allowed hosts in external
+; content loaders (cover images, descriptions).  All hosts are converted to lowercase
+; before comparison, and lookup is done with both the host name and IP address.
+;allowed_external_hosts[] = 'good.host'
+;allowed_external_hosts[] = '/^(s1|s2)\.good\.host$/'
+
+; Mode to use for processing the allowed_external_hosts lists. Valid options are:
+; enforce - The list is used to filter hosts (default)
+; enforce-report - The list is used to filter hosts. Matching hosts are also logged.
+; report  - Non-matching hosts are reported but loading is not blocked
+; disable - List processing is disabled
+;allowed_external_hosts_mode = enforce
+
+; Exact matches or regular expressions (enclosed in //) for hosts blocked in external
+; content loaders (cover images, descriptions). All hosts are converted to lowercase
+; before comparison, and lookup is done with both the host name and IP address.
+;disallowed_external_hosts[] = 'bad.host'
+;disallowed_external_hosts[] = '/\.bad\.host$/'
+
+; Mode to use for processing the disallowed_external_hosts lists. Valid options are:
+; enforce - The list is used to filter hosts (default)
+; enforce-report - The list is used to filter hosts. Matching hosts are also logged.
+; report  - Matching hosts are reported but loading is not blocked
+; disable - List processing is disabled
+;disallowed_external_hosts_mode = enforce
 
 ; Allow image links from BTJ (default is false)
 ;btj_links = true
