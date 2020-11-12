@@ -13,12 +13,12 @@
     </div>
   <?php endif; ?>
   <div role="rowgroup" class="items">
-  <?php foreach ($data['items'] as $item): ?>
-    <div role="row" class="tbl-row">
-      <div role="cell">
-        <a target="_blank" href="<?=$this->escapeHtmlAttr($item['url'])?>" aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>"><i class="fa fa-external-link"></i> <?=$item['label']?></a>
+    <?php foreach ($data['items'] as $item): ?>
+      <div role="row" class="tbl-row">
+        <div role="cell">
+          <a target="_blank" href="<?=$this->escapeHtmlAttr($item['url'])?>" aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>"><i class="fa fa-external-link"></i> <?=$item['label']?></a>
+        </div>
       </div>
-    </div>
-  <?php endforeach; ?>
+    <?php endforeach; ?>
   </div>
 </div>
