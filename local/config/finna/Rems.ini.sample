@@ -4,7 +4,6 @@
 apiUrl = 
 apiKey = 
 apiAdminUser =
-apiApproverUser =
 
 ; REMS catalog item id
 catalogItem = 
