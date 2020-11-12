@@ -13,7 +13,7 @@
     ob_start(); ?>
     <div class="media-<?=$thumbnailAlignment ?>">
       <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', [
-        'img' => $img, 'disableModal' => true, 'source' => 'SolrAuth', 'imageRightsLabel' => 'Image Rights Authority',
+        'img' => $img, 'disableModal' => true, 'imageRightsLabel' => 'Image Rights Authority',
         'numOfImages' => ['mobile' => 4, 'normal' => 4]
       ]);?>
       <?php if ($this->resolver('record/record-organisation-menu.phtml')): ?>
@@ -25,11 +25,10 @@
     </div>
     <?php $thumbnail = ob_get_contents(); ?>
     <?php ob_end_clean(); ?>
-  <?php } ?>
+    <?php
+  }
+?>
 
-
-
-<?php $this->headScript()->appendFile("finna-record.js"); ?>
 <div class="media" vocab="http://schema.org/" resource="#record">
   <div class="visible-xs">
     <p class="format"><?=$this->transEsc($formats[0])?></p>

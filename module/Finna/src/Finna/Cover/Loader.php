@@ -31,8 +31,6 @@
  */
 namespace Finna\Cover;
 
-use VuFindCode\ISBN;
-
 /**
  * Record image loader
  *
@@ -66,7 +64,7 @@ class Loader extends \VuFind\Cover\Loader
      *
      * @var string
      */
-    protected $invalidIsbn;
+    protected $invalidIsbn = '';
 
     /**
      * Image index
@@ -257,7 +255,7 @@ class Loader extends \VuFind\Cover\Loader
 
         $identifiers = parent::getIdentifiers();
         if ($this->invalidIsbn) {
-            $identifiers['invalid_isbn'] = $this->invalidIsbn;
+            $identifiers['invisbn'] = $this->invalidIsbn;
         }
         return $identifiers;
     }
@@ -287,8 +285,8 @@ class Loader extends \VuFind\Cover\Loader
                 $keys['oclc'] = $ids['oclc'];
             } elseif (isset($ids['upc'])) {
                 $keys['upc'] = $ids['upc'];
-            } elseif (isset($ids['invalid_isbn'])) {
-                $keys['invalid_isbn'] = $ids['invalid_isbn'];
+            } elseif (isset($ids['invisbn'])) {
+                $keys['invisbn'] = $ids['invisbn'];
             }
         }
 
@@ -419,6 +417,7 @@ class Loader extends \VuFind\Cover\Loader
         // Figure out file paths -- $tempFile will be used to store the
         // image for analysis.  $finalFile will be used for long-term storage if
         // $cache is true or for temporary display purposes if $cache is false.
+        // $statusFile is used for blocking a non-responding server for a while.
         $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
         $finalFile = $cache ? $this->localFile : $tempFile . '.jpg';
 
@@ -436,18 +435,34 @@ class Loader extends \VuFind\Cover\Loader
             $url = "$convertPdfService?url=" . urlencode($url);
         }
 
-        // Attempt to pull down the image:
-        $client = $this->httpService->createClient(
-            $url, \Laminas\Http\Request::METHOD_GET, 20
-        );
-        $client->setStream($tempFile);
-        $result = $client->send();
-
-        if (!$result->isSuccess()) {
-            $this->debug("Failed to retrieve image from $url");
+        $host = parse_url($url, PHP_URL_HOST);
+        if ($this->isHostBlocked($host)) {
             return false;
         }
 
+        // Attempt to pull down the image:
+        try {
+            $client = $this->httpService->createClient(
+                $url,
+                \Laminas\Http\Request::METHOD_GET,
+                20
+            );
+            $client->setStream($tempFile);
+            $result = $client->send();
+
+            if (!$result->isSuccess()) {
+                $this->debug("Failed to retrieve image from $url");
+                return false;
+            }
+        } catch (\Exception $e) {
+            $this->logError(
+                "Exception trying to load '$url' (record: " . ($this->id ?: '-')
+                . '): ' . $e->getMessage()
+            );
+            $this->addHostFailure($host);
+            return false;
+        }
+        $exif = @exif_read_data($tempFile);
         $image = file_get_contents($tempFile);
 
         // We no longer need the temp file:
@@ -481,6 +496,15 @@ class Loader extends \VuFind\Cover\Loader
                 $imageGDResized, $imageGD, 0, 0, 0, 0,
                 $newWidth, $newHeight, $width, $height
             );
+            if (isset($exif['Orientation'])) {
+                $orientation = $exif['Orientation'];
+                if ($orientation > 1 && $orientation < 9) {
+                    $imageGDResized = $this->rotateImage(
+                        $imageGDResized,
+                        $orientation
+                    );
+                }
+            }
             if (!@imagejpeg($imageGDResized, $finalFile, $quality)) {
                 return false;
             }
@@ -507,6 +531,44 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
+     * Method for rotating the given image with exif orientation data
+     *
+     * @param resource $image       Image to rotate
+     * @param int      $orientation Orientation data of the original image
+     *
+     * @return resource
+     */
+    protected function rotateImage($image, $orientation)
+    {
+        switch ($orientation) {
+        case 2: // horizontal flip
+            return imageflip($image, 1);
+            break;
+        case 3: // 180 rotate left
+            return imagerotate($image, 180, 0);
+            break;
+        case 4: // vertical flip
+            return imageflip($image, 2);
+            break;
+        case 5: // vertical flip + 90 rotate right
+            return imagerotate(imageflip($image, 2), -90, 0);
+            break;
+        case 6: // 90 rotate right
+            return imagerotate($image, -90, 0);
+            break;
+        case 7: // horizontal flip + 90 rotate right
+            return imagerotate(imageflip($image, 1), -90, 0);
+            break;
+        case 8: // 90 rotate left
+            return imagerotate($image, 90, 0);
+            break;
+        default: // no rotation found
+            return $image;
+            break;
+        }
+    }
+
+    /**
      * Support method for loadImage() -- sanitize and store some key values.
      *
      * @param array $settings Settings from loadImage (with missing defaults
@@ -517,6 +579,74 @@ class Loader extends \VuFind\Cover\Loader
     protected function storeSanitizedSettings($settings)
     {
         parent::storeSanitizedSettings($settings);
-        $this->invalidIsbn = $settings['invalid_isbn'];
+        $this->invalidIsbn = $settings['invisbn'] ?? '';
+    }
+
+    /**
+     * Check if a server has been temporarily blocked due to failures
+     *
+     * @param string $host Host name
+     *
+     * @return bool
+     */
+    protected function isHostBlocked($host)
+    {
+        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        if (!file_exists($statusFile)) {
+            return false;
+        }
+        $blockDuration = $this->config->Content->coverServerFailureBlockDuration
+            ?? 3600;
+        if (filemtime($statusFile) + $blockDuration < time()) {
+            unlink($statusFile);
+            $this->logWarning("Host $host has been unblocked");
+            return false;
+        }
+        $tries = file_get_contents($statusFile);
+        $blockThreshold = $this->config->Content->coverServerFailureBlockThreshold
+            ?? 10;
+        if ($tries >= $blockThreshold) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Record a failure for a server
+     *
+     * @param string $host Host name
+     *
+     * @return void
+     */
+    protected function addHostFailure($host)
+    {
+        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        $failures = 0;
+        $blockDuration = $this->config->Content->coverServerFailureBlockDuration
+            ?? 3600;
+        if (file_exists($statusFile)
+            && filemtime($statusFile) + $blockDuration >= time()
+        ) {
+            $failures = file_get_contents($statusFile);
+        }
+        ++$failures;
+        file_put_contents($statusFile, $failures, LOCK_EX);
+        $this->logWarning("Host $host has $failures recorded failures");
+    }
+
+    /**
+     * Record a success for a server
+     *
+     * @param string $host Host name
+     *
+     * @return void
+     */
+    protected function addHostSuccess($host)
+    {
+        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        if (file_exists($statusFile)) {
+            $this->logWarning("Host $host success, failure count cleared");
+            unlink($statusFile);
+        }
     }
 }

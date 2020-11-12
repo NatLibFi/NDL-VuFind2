@@ -39,10 +39,14 @@ namespace Finna\RecordDriver;
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrForward extends \VuFind\RecordDriver\SolrDefault
+    implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait, SolrForwardTrait {
+    use SolrFinnaTrait;
+    use SolrForwardTrait {
         SolrForwardTrait::getAllImages insteadof SolrFinnaTrait;
     }
+    use UrlCheckTrait;
+    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Non-presenter author relator codes.
@@ -995,11 +999,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected function getVideoUrls()
     {
         // Get video URLs, if any
-        $source = $this->getSource();
-        $source = $source[0] ?? '';
         if (empty($this->recordConfig->Record->video_sources)) {
             return [];
         }
+        $source = $this->getSource();
         $sourceConfigs = [];
         $sourcePriority = 0;
         foreach ($this->recordConfig->Record->video_sources as $current) {
@@ -1104,7 +1107,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     }
                 );
 
-                if ($this->urlBlacklisted($url, $description)) {
+                if ($this->urlBlocked($url, $description)) {
                     continue;
                 }
 
@@ -1182,20 +1185,17 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $time = $place = $viewers = '';
                 $attributes = $event->ProductionEventType->attributes();
                 if (!empty($attributes->{'elokuva-elotelevisioesitys-esitysaika'})) {
-                    $time = (string)$attributes->{
-                        'elokuva-elotelevisioesitys-esitysaika'
-                    };
+                    $time = (string)$attributes
+                        ->{'elokuva-elotelevisioesitys-esitysaika'};
                 }
                 if (!empty($attributes->{'elokuva-elotelevisioesitys-paikka'})) {
-                    $place = (string)$attributes->{
-                        'elokuva-elotelevisioesitys-paikka'
-                    };
+                    $place = (string)$attributes
+                        ->{'elokuva-elotelevisioesitys-paikka'};
                 }
                 if (!empty($attributes->{'elokuva-elotelevisioesitys-katsojamaara'})
                 ) {
-                    $viewers = (string)$attributes->{
-                        'elokuva-elotelevisioesitys-katsojamaara'
-                    };
+                    $viewers = (string)$attributes
+                        ->{'elokuva-elotelevisioesitys-katsojamaara'};
                 }
                 if (empty($attributes->{'elokuva-elotelevisioesitys-esitysaika'})) {
                     continue;
@@ -1223,20 +1223,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
                 $atr = $event->ProductionEventType->attributes();
-                if (!empty($atr->{'elokuva-elofestivaaliosallistuminen-aihe'})) {
-                    $name = (string)$atr->{
-                        'elokuva-elofestivaaliosallistuminen-aihe'
-                    };
-                    if (!empty($event->Region->RegionName)) {
-                        $region = (string)$event->Region->RegionName;
-                    }
-                    if (!empty($event->DateText)) {
-                        $date = (string)$event->DateText;
-                    }
-                }
                 if (empty($atr->{'elokuva-elofestivaaliosallistuminen-aihe'})) {
                     continue;
                 }
+                $name = (string)$atr->{'elokuva-elofestivaaliosallistuminen-aihe'};
+                $region = !empty($event->Region->RegionName)
+                    ? ((string)$event->Region->RegionName) : '';
+                $date = !empty($event->DateText)
+                    ? ((string)$event->DateText) : '';
                 $results[] = [
                     'name' => $name,
                     'region' => $region,
@@ -1258,17 +1252,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
                 $atr = $event->ProductionEventType->attributes();
-                if (!empty($atr->{'elokuva-eloulkomaanmyynti-levittaja'})) {
-                    $name = (string)$atr->{
-                        'elokuva-eloulkomaanmyynti-levittaja'
-                    };
-                    if (!empty($event->Region->RegionName)) {
-                        $region = (string)$event->Region->RegionName;
-                    }
-                }
                 if (empty($atr->{'elokuva-eloulkomaanmyynti-levittaja'})) {
                     continue;
                 }
+                $name = (string)$atr->{
+                    'elokuva-eloulkomaanmyynti-levittaja'
+                };
+                $region = !empty($event->Region->RegionName)
+                    ? ((string)$event->Region->RegionName) : '';
                 $results[] = [
                     'name' => $name,
                     'region' => $region
@@ -1299,20 +1290,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
                 $atr = $event->ProductionEventType->attributes();
-                if (!empty($atr->{'elokuva-muuesitys-aihe'})) {
-                    $name = (string)$atr->{
-                        'elokuva-muuesitys-aihe'
-                    };
-                    if (!empty($event->Region->RegionName)) {
-                        $region = (string)$event->Region->RegionName;
-                    }
-                    if (!empty($event->DateText)) {
-                        $date = (string)$event->DateText;
-                    }
-                }
                 if (empty($atr->{'elokuva-muuesitys-aihe'})) {
                     continue;
                 }
+                $name = (string)$atr->{'elokuva-muuesitys-aihe'};
+                $region = !empty($event->Region->RegionName)
+                    ? ((string)$event->Region->RegionName) : '';
+                $date = !empty($event->DateText)
+                    ? ((string)$event->DateText) : '';
                 $results[] = [
                     'name' => $name,
                     'region' => $region,
@@ -1435,6 +1420,56 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
         }
         return $agerestriction ?? null;
+    }
+
+    /**
+     * Return exteriors
+     *
+     * @return string
+     */
+    public function getExteriors()
+    {
+        return $this->getProductionEventElement('elokuva_ulkokuvat');
+    }
+
+    /**
+     * Return interiors
+     *
+     * @return string
+     */
+    public function getInteriors()
+    {
+        return $this->getProductionEventElement('elokuva_sisakuvat');
+    }
+
+    /**
+     * Return studios
+     *
+     * @return string
+     */
+    public function getStudios()
+    {
+        return $this->getProductionEventElement('elokuva_studiot');
+    }
+
+    /**
+     * Return location notes
+     *
+     * @return string
+     */
+    public function getLocationNotes()
+    {
+        return $this->getProductionEventElement('elokuva_kuvauspaikkahuomautus');
+    }
+
+    /**
+     * Return filming date
+     *
+     * @return string
+     */
+    public function getFilmingDate()
+    {
+        return $this->getProductionEventAttribute('elokuva-kuvausaika');
     }
 
     /**

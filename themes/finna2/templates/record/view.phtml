@@ -12,6 +12,10 @@
   if ($this->syndeticsPlus()->isActive()) {
     echo $this->headScript()->appendFile($this->syndeticsPlus()->getScript());
   }
+  // Add any extra scripts the tabs require:
+  foreach ($this->tabsExtraScripts as $script) {
+    $this->headScript()->appendFile($script);
+  }
 
   // Add RDF header link if applicable:
   if ($this->export()->recordSupportsFormat($this->driver, 'RDF')) {
@@ -195,7 +199,7 @@
     <div class="clearfix hidden-lg hidden-md"></div>
   </div>
 
-  <div class="sidebar left large-image-sidebar <?= $largeImageLayout ? '' : 'visible-xs visible-sm'?>">
+  <div class="sidebar left large-image-sidebar hidden <?= $largeImageLayout ? '' : 'visible-xs visible-sm'?>">
     <?php if ($sidebar):?>
         <?=$sidebar ?>
     <?php endif; ?>

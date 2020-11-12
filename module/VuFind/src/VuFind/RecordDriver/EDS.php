@@ -445,9 +445,11 @@ class EDS extends DefaultRecord
      */
     public function getPrimaryAuthors()
     {
-        return $this->extractEbscoDataFromRecordInfo(
-            'BibRecord/BibRelationships/HasContributorRelationships/*/'
-            . 'PersonEntity/Name/NameFull'
+        return array_unique(
+            $this->extractEbscoDataFromRecordInfo(
+                'BibRecord/BibRelationships/HasContributorRelationships/*/'
+                . 'PersonEntity/Name/NameFull'
+            )
         );
     }
 
@@ -720,7 +722,7 @@ class EDS extends DefaultRecord
         $numbering = $this->extractEbscoDataFromRecordInfo(
             'BibRecord/BibRelationships/IsPartOfRelationships/*/BibEntity/Numbering'
         );
-        foreach ($numbering as $key => $data) {
+        foreach ($numbering as $data) {
             if (strtolower($data['Type'] ?? '') == $type
                 && !empty($data['Value'])
             ) {

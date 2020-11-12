@@ -107,7 +107,7 @@ class SolrEad3 extends SolrEad
         foreach ($record->did->xpath('//daoset/dao') as $node) {
             $url = (string)$node->attributes()->href;
             $desc = $node->attributes()->linktitle ?? $url;
-            if (!$this->urlBlacklisted($url, $desc)) {
+            if (!$this->urlBlocked($url, $desc)) {
                 $urls[] = [
                     'url' => $url,
                     'desc' => $desc
@@ -645,16 +645,30 @@ class SolrEad3 extends SolrEad
     /**
      * Get related records (used by RecordDriverRelated - Related module)
      *
-     * Returns an associative array of record ids.
+     * Returns an associative array of group => records, where each item in
+     * records is either a record id or an array that has a 'wildcard' key
+     * with a Solr compatible pattern as it's value.
+     *
+     * Notes on wildcard queries:
+     *  - Only the first record from the wildcard result set is returned.
+     *  - The wildcard query includes a filter that limits the results to
+     *    the same datasource as the issuing record.
+     *
      * The array may contain the following keys:
-     *   - parents
-     *   - children
      *   - continued-from
-     *   - other
+     *   - part-of
+     *   - contains
+     *   - see-also
+     *
+     * Examples:
+     * - continued-from
+     *     - source1.1234
+     *     - ['wildcard' => '*1234']
+     *     - ['wildcard' => 'source*1234*']
      *
      * @return array
      */
-    public function getRelatedItems()
+    public function getRelatedRecords()
     {
         $record = $this->getXmlRecord();
 
@@ -694,6 +708,17 @@ class SolrEad3 extends SolrEad
         }
 
         return $relations;
+    }
+
+    /**
+     * Whether the record has related records declared in metadata.
+     * (used by RecordDriverRelated related module).
+     *
+     * @return bool
+     */
+    public function hasRelatedRecords()
+    {
+        return !empty($this->getRelatedRecords());
     }
 
     /**

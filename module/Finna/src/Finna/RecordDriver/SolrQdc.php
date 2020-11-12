@@ -41,8 +41,12 @@ namespace Finna\RecordDriver;
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrQdc extends \VuFind\RecordDriver\SolrDefault
+    implements \Laminas\Log\LoggerAwareInterface
 {
     use SolrFinnaTrait;
+    use XmlReaderTrait;
+    use UrlCheckTrait;
+    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Constructor
@@ -62,13 +66,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Record metadata
-     *
-     * @var \SimpleXMLElement
-     */
-    protected $simpleXML;
-
-    /**
      * Return an associative array of abstracts associated with this record,
      * if available; false otherwise.
      *
@@ -80,7 +77,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $abstracts = [];
         $abstract = '';
         $lang = '';
-        foreach ($this->getSimpleXML()->xpath('/qualifieddc/abstract') as $node) {
+        foreach ($this->getXmlRecord()->xpath('/qualifieddc/abstract') as $node) {
             $abstract = (string)$node;
             $lang = (string)$node['lang'];
             if ($lang == 'en') {
@@ -113,7 +110,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $urls = [];
         $rights = [];
         $pdf = false;
-        foreach ($this->getSimpleXML()->file as $node) {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->file as $node) {
             $attributes = $node->attributes();
             $size = $attributes->bundle == 'THUMBNAIL' ? 'small' : 'large';
             $mimes = ['image/jpeg', 'image/png'];
@@ -125,7 +123,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $url = isset($attributes->href)
                 ? (string)$attributes->href : (string)$node;
 
-            if (!preg_match('/\.(jpg|png)$/i', $url)) {
+            if (!preg_match('/\.(jpg|png)$/i', $url)
+                || !$this->isUrlLoadable($url, $this->getUniqueID())
+            ) {
                 continue;
             }
             $urls[$size] = $url;
@@ -133,7 +133,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
 
         // Attempt to find a PDF file to be converted to a coverimage
         if ($includePdf && empty($urls)) {
-            foreach ($this->getSimpleXML()->file as $node) {
+            foreach ($xml->file as $node) {
                 $attributes = $node->attributes();
                 if ((string)$attributes->bundle !== 'ORIGINAL') {
                     continue;
@@ -156,7 +156,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             }
         }
 
-        $xml = $this->getSimpleXML();
         $rights['copyright'] = !empty($xml->rights) ? (string)$xml->rights : '';
         $rights['link'] = $this->getRightsLink(
             strtoupper($rights['copyright']), $language
@@ -200,7 +199,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     public function getEducationPrograms()
     {
         $result = [];
-        foreach ($this->getSimpleXML()->programme as $programme) {
+        foreach ($this->getXmlRecord()->programme as $programme) {
             $result[] = (string)$programme;
         }
         return $result;
@@ -213,7 +212,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getFilteredXML()
     {
-        $record = clone $this->getSimpleXML();
+        $record = clone $this->getXmlRecord();
         while ($record->abstract) {
             unset($record->abstract[0]);
         }
@@ -241,23 +240,10 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     public function getKeywords()
     {
         $result = [];
-        foreach ($this->getSimpleXML()->keyword as $keyword) {
+        foreach ($this->getXmlRecord()->keyword as $keyword) {
             $result[] = (string)$keyword;
         }
         return $result;
-    }
-
-    /**
-     * Get the original record as a SimpleXML object
-     *
-     * @return SimpleXMLElement The record as SimpleXML
-     */
-    protected function getSimpleXML()
-    {
-        if ($this->simpleXML === null) {
-            $this->simpleXML = new \SimpleXMLElement($this->fields['fullrecord']);
-        }
-        return $this->simpleXML;
     }
 
     /**
@@ -274,7 +260,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     public function setRawData($data)
     {
         parent::setRawData($data);
-        $this->simpleXML = null;
     }
 
     /**
@@ -295,10 +280,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     {
         $urls = [];
         foreach (parent::getURLs() as $url) {
-            $blacklisted = $this->urlBlacklisted(
-                $url['url'] ?? ''
-            );
-            if (!$blacklisted) {
+            if (!$this->urlBlocked($url['url'] ?? '')) {
                 $urls[] = $url;
             }
         }

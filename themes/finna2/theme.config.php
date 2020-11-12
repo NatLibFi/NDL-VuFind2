@@ -221,7 +221,6 @@ $config = [
         'vendor/bootstrap-rating.min.js',
         'vendor/bootstrap-slider.min.js',
         'vendor/classList.js',
-        'vendor/cookies.js',
         'vendor/html5shiv.js',
         'vendor/hunt.min.js',
         'vendor/jquery.colorhelpers.min.js',
@@ -231,11 +230,6 @@ $config = [
         'vendor/jquery.flot.min.js',
         'vendor/jquery.flot.selection.min.js',
         'vendor/jquery.inview.min.js',
-        // jquery-migrate is required for jquery ui autocomplete until jquery ui is
-        // updated to at least version 1.12. jquery ui site is broken preventing
-        // upgrade as of 2.7.2020.
-        'vendor/jquery-migrate-3.3.1.min.js',
-        'vendor/jquery.cookie-1.4.1.min.js',
         'vendor/jquery.unveil.min.js',
         'vendor/jquery-ui-custom.min.js',
         'vendor/jquery.ui.touch-punch.min.js',
@@ -243,11 +237,11 @@ $config = [
         'vendor/respond.js',
         'vendor/simplemde.min.js',
         'vendor/slick.min.js',
-        'vendor/jquery.touchSwipe.min.js',
         'vendor/gauge.min.js',
         'vendor/priority-nav.min.js',
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
+        'vendor/js.cookie.js',
         'finna-multiselect.js'
     ],
     'less' => [

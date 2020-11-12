@@ -549,6 +549,36 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Exterior Images', 'getExteriors', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-exteriors']
+            ]
+        );
+        $setTemplateLine(
+            'Interior Images', 'getInteriors', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-interiors']
+            ]
+        );
+        $setTemplateLine(
+            'Studios', 'getStudios', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-studios']
+            ]
+        );
+        $setTemplateLine(
+            'Filming Location Notes', 'getLocationNotes', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-location-notes']
+            ]
+        );
+        $setTemplateLine(
+            'Filming Date', 'getFilmingDate', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-filming-date']
+            ]
+        );
+        $setTemplateLine(
             'Additional Information', 'getTitleStatement', 'data-addInfo.phtml',
             [
                 'context' => ['class' => 'recordTitleStatement']
@@ -994,6 +1024,10 @@ class RecordDataFormatterFactory
         $spec->setTemplateLine('Sources', 'getSources', 'data-sources.phtml');
         $spec->setTemplateLine(
             'Related Authorities', 'getRelations', 'data-relations-author.phtml'
+        );
+        $spec->setTemplateLine(
+            'Associated Groups', 'getAssociatedGroups',
+            'data-lines-with-detail.phtml'
         );
         $spec->setLine('Additional Information', 'getAdditionalInformation');
         return $spec->getArray();

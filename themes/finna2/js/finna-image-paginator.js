@@ -67,12 +67,12 @@ finna.imagePaginator = (function imagePaginator() {
     _.rightBtn = null;
     _.leftBrowseBtn = null;
     _.rightBrowseBtn = null;
-    _.imagePopup = null;
     _.leafletLoader = null;
     _.leafletStartBounds = null;
     _.canvasElements = {};
     _.openImageIndex = 0;
     _.imagePopup = $(imageElement).clone();
+    _.onDocumentLoadCallbacks = [];
   }
 
   /**
@@ -135,12 +135,16 @@ finna.imagePaginator = (function imagePaginator() {
       _.setEvents();
       _.loadPage(0);
       _.setTrigger(_.imageHolder.find('a:first'));
+      _.addDocumentLoadCallback(function showLeftsidebar() {
+        $('.large-image-sidebar').removeClass('hidden');
+      });
     } else {
       _.setEvents();
       _.setListTrigger(_.getImageFromArray(0));
       _.root.find('.recordcovers').addClass('mini-paginator');
       _.root.find('.recordcovers-more').hide();
     }
+    _.onDocumentLoad();
   };
 
   /**
@@ -533,6 +537,7 @@ finna.imagePaginator = (function imagePaginator() {
       _.setDimensions();
       if (image.naturalWidth && image.naturalWidth === 10 && image.naturalHeight === 10) {
         _.trigger.addClass('no-image');
+        _.trigger.trigger('removeclick');
         $(image).attr('alt', translations.no_cover);
         if (_.isList) {
           if (_.images.length < 2) {
@@ -547,8 +552,10 @@ finna.imagePaginator = (function imagePaginator() {
           _.root.css('display', 'none');
           _.root.siblings('.image-details-container:not(:has(.image-rights))').hide();
           $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
-          $('.large-image-sidebar').addClass('visible-xs visible-sm');
           $('.record-main').addClass('mainbody left');
+          _.addDocumentLoadCallback(function hideSidebar() {
+            $('.large-image-sidebar').addClass('visible-xs visible-sm');
+          });
         }
       } else if (_.trigger.hasClass('no-image')) {
         _.trigger.removeClass('no-image');
@@ -653,6 +660,9 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() {
     var _ = this;
     var src = VuFind.path + '/AJAX/JSON?method=getImageInformation&id=' + encodeURIComponent(_.settings.recordId) + '&index=' + _.openImageIndex;
+    if (typeof _.settings.recordSource != 'undefined') {
+      src += '&source=' + encodeURIComponent(_.settings.recordSource);
+    }
 
     if (typeof publicList !== 'undefined') {
       src += '&publicList=1';
@@ -973,6 +983,29 @@ finna.imagePaginator = (function imagePaginator() {
   FinnaPaginator.prototype.findSmallImage = function findSmallImage(index) {
     var _ = this;
     return _.imageHolder.find('a[index="' + index + '"]');
+  };
+  
+  /**
+   * Function to add callbacks after document is fully loaded
+   * 
+   * @param callback function to add
+   */
+  FinnaPaginator.prototype.addDocumentLoadCallback = function addDocumentLoadCallback(callback) {
+    var _ = this;
+    _.onDocumentLoadCallbacks.push(callback);
+  };
+
+  /**
+   * Function to init on document loaded callbacks
+   */
+  FinnaPaginator.prototype.onDocumentLoad = function onDocumentLoad() {
+    var _ = this;
+    $(document).ready(function doDocumentLoadCallbacks() {
+      for (var i = 0; i < _.onDocumentLoadCallbacks.length; i++) {
+        _.onDocumentLoadCallbacks[i]();
+      }
+      _.onDocumentLoadCallbacks = [];
+    });
   };
 
   var my = {

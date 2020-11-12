@@ -1164,12 +1164,11 @@ EOT;
      */
     protected function extractBlockReasons($borrowBlocks)
     {
-        $whitelistConfig = isset($this->config['Patron']['ignoredBlockCodes'])
-            ? $this->config['Patron']['ignoredBlockCodes'] : '';
-        $whitelist = array_map('trim', explode(',', $whitelistConfig));
+        $ignoredConfig = $this->config['Patron']['ignoredBlockCodes'] ?? '';
+        $ignored = array_map('trim', explode(',', $ignoredConfig));
         $blockReason = [];
         foreach ($borrowBlocks as $borrowBlock) {
-            if (!in_array((string)$borrowBlock->blockCode, $whitelist)) {
+            if (!in_array((string)$borrowBlock->blockCode, $ignored)) {
                 $blockReason[] = (string)$borrowBlock->blockReason;
             }
         }
@@ -2383,7 +2382,7 @@ EOT;
 
         $replyCode = (string)$results->{'reply-code'};
         if ($replyCode != 0 && $replyCode != 8) {
-            throw new Exception('System error fetching call slips');
+            throw new \Exception('System error fetching call slips');
         }
         $requests = [];
         if (isset($results->callslips->institution)) {
