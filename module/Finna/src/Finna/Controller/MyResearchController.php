@@ -365,24 +365,27 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
             if ($list) {
                 $this->rememberCurrentSearchUrl();
+
+                $r2 = $this->serviceLocator->get(
+                    \Finna\Service\R2SupportService::class
+                );
+                if ($r2->isEnabled()) {
+                    $resources = $this->getTable('Resource')->getFavorites(
+                        $user->id, $list->id
+                    );
+                    foreach ($resources as $rec) {
+                        if ('R2' === $rec->source) {
+                            $this->flashMessenger()
+                                 ->addMessage('R2_mylist_restricted', 'info');
+                            break;
+                        }
+                    }
+                }
             } else {
                 $memory  = $this->serviceLocator->get(\VuFind\Search\Memory::class);
                 $memory->rememberSearch(
                     $this->url()->fromRoute('myresearch-favorites')
                 );
-            }
-            $r2 = $this->serviceLocator->get(\Finna\Service\R2SupportService::class);
-            if ($r2->isEnabled()) {
-                $resources = $this->getTable('Resource')->getFavorites(
-                    $user->id, $list->id
-                );
-                foreach ($resources as $rec) {
-                    if ('R2' === $rec->source) {
-                        $this->flashMessenger()
-                            ->addMessage('R2_mylist_restricted', 'info');
-                        break;
-                    }
-                }
             }
         }
 
