@@ -106,7 +106,7 @@ if ($img):
         <?=$recordHelper->getPreviews();?>
         <?=$this->render('list/list-notes.phtml')?>
         <?php /* Hierarchy tree link */ ?>
-        <?php $hierarchySource = $this->driver->getSourceIdentifier() ?? 'Solr'; ?>
+        <?php $hierarchySource = $this->driver->getSourceIdentifier() ?>
         <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
             <div class="hierarchyTreeLink hidden-print">
