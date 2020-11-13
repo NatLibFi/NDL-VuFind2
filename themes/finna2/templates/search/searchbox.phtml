@@ -4,7 +4,7 @@
     $module = $this->layout()->templateDir;
     $action = $this->layout()->templateName;
     if ($this->searchType !== 'advanced') {
-      $this->layout()->srmessage = '<a class="sr-only" href="#searchForm_lookfor">' . $this->transEsc('Skip to search') . '</a>';
+      $this->layout()->skiplink = '<a class="sr-only sr-only-focusable" href="#searchForm_lookfor">' . $this->transEsc('Skip to search') . '</a>';
     }
 
     // Set default value if necessary:
@@ -60,6 +60,7 @@
          || ($module === 'eds' && $action === 'search' && $this->searchType != 'advanced')
          || ($module === 'summon' && $action === 'search' && $this->searchType != 'advanced')
          || ($module == 'combined' && $action == 'results')
+         || ($module === 'l1' && $action === 'results')
       ) {
          $this->layout()->finnaMainTabs = $this->context($this)->renderInContext('search/searchTabs', ['searchTabs' => $searchTabs['tabs'], 'hiddenFilters' => $hiddenFilters]);
          $this->layout()->searchTabs = $searchTabs;
