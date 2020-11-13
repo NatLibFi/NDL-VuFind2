@@ -391,14 +391,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             . 'classification'
         ) as $node) {
             if (isset($node->term)) {
-                $term = $node->term;
-                $label = null;
-                $attributes = $term->attributes();
+                $term = (string)$node->term;
+                $attributes = $node->term->attributes();
                 $label = isset($attributes->label) ? $attributes->label : '';
                 if ($label) {
-                    $results[] = compact((string)'term', (string)'label');
+                    $results[] = compact('term', 'label');
                 } else {
-                    $results[] = (string)$term;
+                    $results[] = $term;
                 }
             }
         }
