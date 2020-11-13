@@ -5,10 +5,7 @@
       <div class="subjectLine" property="keywords">
         <?php if (is_array($keyword)): ?>
           <?php if (!empty($keyword['object'])): ?>
-            <?=$this->escapeHtml($keyword['object']) ?> <?php if (!empty($keyword['label'])): ?> (<?=$this->escapeHtml($keyword['label']) ?>)
-            <?php elseif (!empty($keyword['type'])): ?>
-              (<?=$this->escapeHtml($keyword['type']) ?>)
-            <?php endif; ?>
+            <?=$this->escapeHtml($keyword['object'])?><?php if (!empty($keyword['label'])): ?> (<?=$this->escapeHtml($keyword['label'])?>)<?php elseif (!empty($keyword['type'])): ?> (<?=$this->escapeHtml($keyword['type'])?>)<?php endif; ?>
           <?php else: ?>
             <a class="backlink" title="<?=$this->escapeHtmlAttr($keyword['term'])?>" href="<?=$this->record($this->driver)->getLink('keyword', $keyword['term'])?>"><?=$this->escapeHtml($keyword['term']) ?></a><?php if (!empty($keyword['label'])): ?> (<?=$this->escapeHtml($keyword['label']) ?>)<?php endif; ?>
           <?php endif; ?>
