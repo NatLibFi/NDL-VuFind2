@@ -1,7 +1,7 @@
 /* global finna */
 
 /**
- * Supports menu structures like ul > li > a and ul > li > (a + ul) > li > a 
+ * Creates an arrow key movement to given menu element, typically an ul.
  * 
  * @param {jQuery} element 
  */
@@ -59,18 +59,10 @@ FinnaMovement.prototype.reset = function reset() {
 FinnaMovement.prototype.setFocusTo = function setFocusTo() {
   var _ = this;
   if (_.offsetCache !== -1) {
-    _.offset = _.offsetCache;
+    _.offset = _.calculateOffset(_.offsetCache, _.menuElements, 0);
     _.offsetCache = -1;
   }
-
-  if (_.offset > _.menuElements.length - 1) {
-    _.offset = _.menuElements.length - 1;
-  }
-
-  if (_.offset < 0) {
-    return;
-  }
-
+  
   _.menuElements[_.offset].input.focus();
 };
 
