@@ -480,6 +480,13 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Classification',
+            'getOtherClassifications', 'data-keywords.phtml',
+            [
+                'context' => ['class' => 'recordClassifications']
+            ]
+        );
+        $setTemplateLine(
             'Manufacturer', 'getManufacturer', 'data-transEsc.phtml',
             [
                 'context' => ['class' => 'recordManufacturer']
@@ -576,6 +583,12 @@ class RecordDataFormatterFactory
             'Filming Location Notes', 'getLocationNotes', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'record-location-notes']
+            ]
+        );
+        $setTemplateLine(
+            'Filming Date', 'getFilmingDate', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-filming-date']
             ]
         );
         $setTemplateLine(

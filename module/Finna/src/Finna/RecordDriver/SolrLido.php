@@ -393,14 +393,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $results = [];
         foreach ($this->getXmlRecord()->xpath(
-            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/
-                relatedWorkSet'
+            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
+            . 'relatedWorkSet'
         ) as $node) {
             if (isset($node->relatedWork->displayObject)) {
-                $object = $node->relatedWork->displayObject;
-                $label  = null;
-                $type = null;
-                $attributes = $object->attributes();
+                $object = (string)$node->relatedWork->displayObject;
+                $attributes = $node->relatedWork->displayObject->attributes();
                 $label = isset($attributes->label)
                     ? (string)$attributes->label : '';
                 $type = isset($node->relatedWorkRelType->term)
@@ -408,9 +406,35 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (($label)
                     && (($type == 'kirjallisuus') || ($type == 'lähteet'))
                 ) {
-                    $results[] = compact((string)'object', 'label');
+                    $results[] = compact('object', 'label');
                 } elseif (($type == 'kirjallisuus') || ($type == 'lähteet')) {
-                    $results[] = compact((string)'object', 'type');
+                    $results[] = compact('object', 'type');
+                }
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of classifications for the record.
+     *
+     * @return array
+     */
+    public function getOtherClassifications()
+    {
+        $results = [];
+        foreach ($this->getXmlRecord()->xpath(
+            'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
+            . 'classification'
+        ) as $node) {
+            if (isset($node->term)) {
+                $term = (string)$node->term;
+                $attributes = $node->term->attributes();
+                $label = isset($attributes->label) ? $attributes->label : '';
+                if ($label) {
+                    $results[] = compact('term', 'label');
+                } else {
+                    $results[] = $term;
                 }
             }
         }
