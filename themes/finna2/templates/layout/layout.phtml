@@ -35,12 +35,6 @@
         ]
       );
 
-      // IE-specific stylesheet
-      $this->headLink()->appendStylesheet('ie9-and-lower.css', 'screen', 'lte IE 9');
-      $this->headLink()->appendStylesheet('ie8-and-lower.css', 'screen', 'lt IE 9');
-      $this->headScript()->appendFile('vendor/classList.js', 'text/javascript', ['conditional' => 'lte IE 9']);
-      $this->headScript()->appendFile('vendor/html5shiv.js', 'text/javascript', ['conditional' => 'lt IE 9']);
-      $this->headScript()->appendFile('vendor/respond.js', 'text/javascript', ['conditional' => 'lt IE 9']);
       $finnaSurvey = in_array($this->layout()->templateDir, ['search', 'record']) && $this->finnaSurvey()->isEnabled();
 
       if ($finnaSurvey) {
@@ -357,24 +351,24 @@ JS;
         </div>
       <?php endif; ?>
       <div class="container-fluid navbar">
-        <div>
-          <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
-            <span class="sr-only"><?=$this->layout()->srmessage ?></span>
-          <?php endif; ?>
-          <a class="sr-only" href="#content"><?=$this->transEsc('Skip to content') ?></a>
-          <?=$this->render('navibar.phtml')?>
-        </div>
+        <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
+          <span class="sr-only"><?=$this->layout()->srmessage ?></span>
+        <?php endif; ?>
+        <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
+          <?=$this->layout()->skiplink ?>
+        <?php endif; ?>
+        <a class="sr-only sr-only-focusable" href="#content"><?=$this->transEsc('Skip to content') // skip to content ?></a>
+        <?=$this->render('navibar.phtml')?>
       </div>
     </header>
-    <section aria-label="<?=$this->transEsc('Search functions')?>" class="searchContent<?=$currentTabClass?>">
-      <h1 class="sr-only"><?=$this->transEsc('Search')?></h1>
-        <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
-            <a class="btn btn-primary btn-uppercase floating-feedback-btn" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
-        <?php endif; ?>
+    <section role="search" class="searchContent<?=$currentTabClass?>">
+      <?php if ($this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search'): ?>
+        <a class="btn btn-primary btn-uppercase floating-feedback-btn" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
+      <?php endif; ?>
       <?php if (!empty($this->layout()->infoMessage)): ?>
         <div class="alert alert-info street-info">
           <div class="container">
-              <?=$this->layout()->infoMessage?>
+            <?=$this->layout()->infoMessage?>
           </div>
         </div>
       <?php endif; ?>
