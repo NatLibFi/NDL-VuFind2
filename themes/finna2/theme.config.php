@@ -232,7 +232,6 @@ $config = [
         'vendor/jquery-ui-custom.min.js',
         'vendor/jquery.ui.touch-punch.min.js',
         'vendor/jsTree/jstree.min.js',
-        'vendor/respond.js',
         'vendor/simplemde.min.js',
         'vendor/slick.min.js',
         'vendor/gauge.min.js',
