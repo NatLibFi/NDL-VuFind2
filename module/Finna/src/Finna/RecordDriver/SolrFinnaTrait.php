@@ -72,12 +72,14 @@ trait SolrFinnaTrait
     /**
      * Return type of access restriction for the record.
      *
+     * @param string $language Language
+     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType()
+    public function getAccessRestrictionsType($language)
     {
         return false;
     }
@@ -605,8 +607,17 @@ trait SolrFinnaTrait
      */
     public function getSource()
     {
-        return isset($this->fields['source_str_mv'])
-            ? $this->fields['source_str_mv'] : false;
+        return $this->fields['source_str_mv'][0] ?? '';
+    }
+
+    /**
+     * Return record sources.
+     *
+     * @return string
+     */
+    public function getSources()
+    {
+        return $this->fields['source_str_mv'] ?? [];
     }
 
     /**
@@ -1086,12 +1097,13 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get the VuFind configuration.
+     * Returns the locale used by translator
      *
-     * @return \Laminas\Config\Config
+     * @return string
      */
-    protected function getConfig()
+    protected function getLocale()
     {
-        return $this->mainConfig;
+        list($locale) = explode('-', $this->getTranslatorLocale());
+        return $locale;
     }
 }

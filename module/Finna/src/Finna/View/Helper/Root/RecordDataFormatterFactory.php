@@ -474,6 +474,13 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Classification',
+            'getOtherClassifications', 'data-keywords.phtml',
+            [
+                'context' => ['class' => 'recordClassifications']
+            ]
+        );
+        $setTemplateLine(
             'Manufacturer', 'getManufacturer', 'data-transEsc.phtml',
             [
                 'context' => ['class' => 'recordManufacturer']
@@ -573,6 +580,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Filming Date', 'getFilmingDate', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-filming-date']
+            ]
+        );
+        $setTemplateLine(
             'Additional Information', 'getTitleStatement', 'data-addInfo.phtml',
             [
                 'context' => ['class' => 'recordTitleStatement']
@@ -619,6 +632,59 @@ class RecordDataFormatterFactory
             'Education Programs', 'getEducationPrograms', 'data-education.phtml',
             [
                 'context' => ['class' => 'record-education-programs']
+            ]
+        );
+        $setTemplateLine(
+            'Educational Role', 'getEducationalAudiences',
+            'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-educational-audience']
+            ]
+        );
+        $setTemplateLine(
+            'Educational Use', 'getEducationalUse', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-educational-uses']
+            ]
+        );
+        $setTemplateLine(
+            'Educational Level', 'getEducationalLevels', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-educational-levels']
+            ]
+        );
+        $setTemplateLine(
+            'Educational Subject', 'getEducationalSubjects',
+            'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-educational-subjects']
+            ]
+        );
+        $setTemplateLine(
+            'Learning Resource Type', 'getEducationalMaterialType',
+            'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-educational-material-type']
+            ]
+        );
+        $setTemplateLine(
+            'Objective and Content', 'getEducationalAim', 'data-transEsc.phtml',
+            [
+                'context' => ['class' => 'record-educational-aim']
+            ]
+        );
+        $setTemplateLine(
+            'Accessibility Feature', 'getAccessibilityFeatures',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-accessibility-features']
+            ]
+        );
+        $setTemplateLine(
+            'Accessibility Hazard', 'getAccessibilityHazards',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-accessibility-hazard']
             ]
         );
         $setTemplateLine(
