@@ -162,7 +162,7 @@ class TurkuPaytrailE2 extends PaytrailE2
             $name = "$code $name";
         }
         $name = preg_replace(
-            '/[^\pL-0-9- "\',()\[\]{}*\/+\-_,.:&!?@#$£=*;~]+/u', ' ', $name
+            '/[^\pL0-9 "\',()\[\]{}*\/+\-_,.:&!?@#$£=*;~]+/u', ' ', $name
         );
         $this->products[] = [
             "title" => substr($name, 0, 255),
