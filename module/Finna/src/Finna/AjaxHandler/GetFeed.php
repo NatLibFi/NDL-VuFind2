@@ -304,8 +304,6 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             file_put_contents($cacheFile, $feed);
         }
         $feed = \Laminas\Feed\Reader\Reader::importString($feed);
-        $feed = $this->feedService->parseFeed($feed, $config);
-
-        return $feed;
+        return $this->feedService->parseFeed($feed, $config);
     }
 }
