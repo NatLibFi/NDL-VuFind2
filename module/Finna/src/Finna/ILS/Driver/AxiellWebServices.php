@@ -272,6 +272,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     ];
 
     /**
+     * Titlelist cache time mappings in minutes
+     *
+     * @var array
+     */
+    protected $titleListCacheSettings = [];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter object
@@ -433,6 +440,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 ?? $this->config['messagingBlackLists']['dueDateAlert']
                 ?? ''
             );
+        $this->titleListCacheSettings = $this->config['titleListCacheSettings'] ??
+            [
+                'new' => 15,
+                'lastreturned' => 15,
+                'mostborrowed' => 480,
+                'mostrequested' => 240
+            ];
     }
 
     /**
@@ -1674,6 +1688,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         $found = array_search($value, $this->titleListMapping);
         return $found ?: $value;
+    }
+
+    /**
+     * Returns the ilslist cache settings
+     *
+     * @return array
+     */
+    public function getTitleListCacheSettings(): array
+    {
+        return $this->titleListCacheSettings;
     }
 
     /**
