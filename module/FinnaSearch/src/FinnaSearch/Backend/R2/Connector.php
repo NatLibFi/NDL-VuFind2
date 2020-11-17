@@ -242,15 +242,6 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
             )
         );
 
-        if ($this->rems) {
-            $this->debug(
-                sprintf(
-                    '=> R2 access status: %s',
-                    $this->rems->getAccessPermission()
-                )
-            );
-        }
-
         $this->debug(
             sprintf('=> %s %s', $client->getMethod(), $client->getUri())
         );
@@ -293,6 +284,13 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
                     $type, (bool)$headers->get($header)
                 );
             }
+
+            $this->debug(
+                sprintf(
+                    '=> R2 access status: %s',
+                    $this->rems->getAccessPermission()
+                )
+            );
         }
 
         if (!$response->isSuccess()) {
