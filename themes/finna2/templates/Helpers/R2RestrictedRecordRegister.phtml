@@ -1,7 +1,7 @@
 <!-- START of: finna - Helpers/R2RestrictedRecordRegister.phtml -->
 <?php if ($this->weakLogin): ?>
   <div class="r2-restricted-record-register alert alert-danger" role="alert">
-    <p><strong><?= $this->translate('R2_register_weak_loginmethod') ?></strong></p>
+    <p><strong><?= $this->transEsc('R2_register_weak_loginmethod') ?></strong></p>
   </div>
 <?php elseif (!$this->user && $this->id): ?>
   <?php
