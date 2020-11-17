@@ -213,7 +213,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
 
         $cacheDir = $this->cacheManager->getCache('feed')->getOptions()
             ->getCacheDir();
-        $cacheFile = "$cacheDir/" . $ilsId . '-' . $query . '.rss';
+        $cacheFile = "$cacheDir/" . $ilsId . '-' . $query . '.xml';
         $settings = $this->ils->getTitleListCacheSettings(['id' => $ilsId]);
         $maxAge = $settings[$query] ?? 60;
 
