@@ -202,7 +202,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
     /**
      * Get the titlelist cache settings from ILS
      *
-     * @param array $params
+     * @param array $params Function check params
      *
      * @throws ILSEXception
      *
