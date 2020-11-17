@@ -36,6 +36,7 @@ use Laminas\Feed\Writer\Feed;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Renderer\RendererInterface;
+use VuFind\Cache\Manager as CacheManager;
 use Vufind\ILS\Connection;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
@@ -98,6 +99,13 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
     protected $url;
 
     /**
+     * Cache manager
+     *
+     * @var CacheManager
+     */
+    protected $cacheManager;
+
+    /**
      * Constructor
      *
      * @param SessionSettings   $ss           Session settings
@@ -107,10 +115,11 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
      * @param Connection        $ils          ILS connection
      * @param RendererInterface $renderer     View renderer
      * @param Url               $url          URL helper
+     * @param CacheManager      $cm           Cache manager
      */
     public function __construct(SessionSettings $ss, Config $config,
         FeedService $fs, Loader $recordLoader, Connection $ils,
-        RendererInterface $renderer, Url $url
+        RendererInterface $renderer, Url $url, CacheManager $cm
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;
@@ -119,6 +128,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         $this->ils = $ils;
         $this->renderer = $renderer;
         $this->url = $url;
+        $this->cacheManager = $cm;
     }
 
     /**
@@ -168,84 +178,98 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                     return $this->formatResponse('Missing configurations', 501);
                 }
 
-                $records = [];
-                $data = $this->ils->getTitleList(
-                    ['query' => $query, 'pageSize' => $amount, 'id' => $ilsId]
-                );
+                $cacheDir = $this->cacheManager->getCache('public')->getOptions()
+                    ->getCacheDir();
+                $cacheFile = "$cacheDir/" . $ilsId . '-' . $query . '.rss';
+                $maxAge =  $this->config->cachetime ?? 60;
 
-                foreach ($data['records'] ?? [] as $key => $obj) {
-                    $loadedRecord = $this->recordLoader->load(
-                        $ilsId . '.' . $obj['id'], $source, true
+                if (is_readable($cacheFile)
+                    && time() - filemtime($cacheFile) < $maxAge * 60
+                ) {
+                    // Load local cache if available
+                    $feed = file_get_contents($cacheFile);
+                } else {
+                    $records = [];
+                    $data = $this->ils->getTitleList(
+                        ['query' => $query, 'pageSize' => $amount, 'id' => $ilsId]
                     );
-                    $loadedRecord->setExtraDetail('ils_details', $obj);
-                    $records[] = $loadedRecord;
-                }
 
-                $serverUrl = $this->renderer->plugin('serverUrl');
-                $recordHelper = $this->renderer->plugin('record');
-                $recordImage = $this->renderer->plugin('recordImage');
-                $recordUrl = $this->renderer->plugin('recordLink');
-                $escaper = new Escaper('utf-8');
-
-                $feed = new Feed();
-                $feed->setTitle($query);
-                $feed->setLink($serverUrl());
-                $feed->setDateModified(time());
-                $feed->setId(' ');
-                $feed->setDescription(' ');
-                foreach ($records as $rec) {
-                    $isRecord = !$rec instanceof \VuFind\RecordDriver\Missing;
-                    $entry = $feed->createEntry();
-                    $entry->setTitle($rec->getTitle());
-                    $entry->setDateModified(time());
-                    $entry->setDateCreated(time());
-                    $entry->setId($rec->getUniqueID());
-                    if ($isRecord) {
-                        $entry->setLink($recordUrl->getUrl($rec));
+                    $ids = [];
+                    foreach ($data['records'] ?? [] as $record) {
+                        $ids[] = $ilsId . '.' . $record['id'];
                     }
-                    $ilsDetails = $rec->getExtraDetail('ils_details');
-                    $author = $isRecord
-                        ? $rec->getPrimaryAuthorForSearch()
-                        : $ilsDetails['author'];
-                    $year = $isRecord ?
-                        ($rec->getPublicationDates()[0] ?? '')
-                        : $ilsDetails['year'];
+                    $sourceRecords = $this->recordLoader
+                        ->loadBatchForSource($ids, $source, true);
+                    foreach ($sourceRecords ?? [] as $key => $obj) {
+                        $obj->setExtraDetail('ils_details', $data['records'][$key]);
+                    }
 
-                    $content = [];
-                    if ($isRecord) {
-                        $content[] = trim(
-                            $recordHelper($rec)->getFormatList() . ' ' .
-                            $recordHelper($rec)->getSourceIdElement()
+                    $serverUrl = $this->renderer->plugin('serverUrl');
+                    $recordHelper = $this->renderer->plugin('record');
+                    $recordImage = $this->renderer->plugin('recordImage');
+                    $recordUrl = $this->renderer->plugin('recordLink');
+                    $escaper = new Escaper('utf-8');
+
+                    $feed = new Feed();
+                    $feed->setTitle($query);
+                    $feed->setLink($serverUrl());
+                    $feed->setDateModified(time());
+                    $feed->setId(' ');
+                    $feed->setDescription(' ');
+                    foreach ($sourceRecords as $rec) {
+                        $isRecord = !$rec instanceof \VuFind\RecordDriver\Missing;
+                        $entry = $feed->createEntry();
+                        $entry->setTitle($rec->getTitle());
+                        $entry->setDateModified(time());
+                        $entry->setDateCreated(time());
+                        $entry->setId($rec->getUniqueID());
+                        if ($isRecord) {
+                            $entry->setLink($recordUrl->getUrl($rec));
+                        }
+                        $ilsDetails = $rec->getExtraDetail('ils_details');
+                        $author = $isRecord
+                            ? $rec->getPrimaryAuthorForSearch()
+                            : $ilsDetails['author'];
+                        $year = $isRecord ?
+                            ($rec->getPublicationDates()[0] ?? '')
+                            : $ilsDetails['year'];
+
+                        $content = [];
+                        if ($isRecord) {
+                            $content[] = trim(
+                                $recordHelper($rec)->getFormatList() . ' ' .
+                                $recordHelper($rec)->getSourceIdElement()
+                            );
+                        }
+                        if (!empty($author)) {
+                            $content[] = trim($escaper->escapeHtml($author));
+                        }
+                        if (!empty($year)) {
+                            $content[] = trim($escaper->escapeHtml($year));
+                        }
+
+                        if (!empty($content)) {
+                            $contentString = implode('; ', $content);
+                            $entry->setContent($contentString);
+                        }
+
+                        $imageUrl = $recordImage($recordHelper($rec))
+                            ->getLargeImage() . '&w=1024&h=1024&imgext=.jpeg';
+                        $entry->setEnclosure(
+                            [
+                                'uri' => $serverUrl($imageUrl),
+                                'type' => 'image/jpeg',
+                                'length' => 0
+                            ]
                         );
-                    }
-                    if (!empty($author)) {
-                        $content[] = trim($escaper->escapeHtml($author));
-                    }
-                    if (!empty($year)) {
-                        $content[] = trim($escaper->escapeHtml($year));
+
+                        $feed->addEntry($entry);
                     }
 
-                    if (!empty($content)) {
-                        $contentString = implode('; ', $content);
-                        $entry->setContent($contentString);
-                    }
-
-                    $imageUrl = $recordImage($recordHelper($rec))->getLargeImage()
-                        . '&w=1024&h=1024&imgext=.jpeg';
-                    $entry->setEnclosure(
-                        [
-                            'uri' => $serverUrl($imageUrl),
-                            'type' => 'image/jpeg',
-                            'length' => 0
-                        ]
-                    );
-
-                    $feed->addEntry($entry);
+                    $feed = $feed->export('rss', false);
+                    file_put_contents($cacheFile, $feed);
                 }
-
-                $feed = $feed->export('rss', false);
                 $feed = \Laminas\Feed\Reader\Reader::importString($feed);
-
                 $feed = $this->feedService->parseFeed($feed, $config);
             }
         } catch (\Exception $e) {
@@ -267,5 +291,18 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 $touchDevice
             )
         );
+    }
+
+    /**
+     * Method to ensure uniform cache keys for cached VuFind objects.
+     *
+     * @param string|null $suffix Optional suffix that will get appended to the
+     * object class name calling getCacheKey()
+     *
+     * @return string
+     */
+    protected function getCacheKey($suffix = null)
+    {
+        return 'RssItem-' . md5($suffix);
     }
 }
