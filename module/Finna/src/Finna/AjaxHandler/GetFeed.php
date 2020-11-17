@@ -234,9 +234,6 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             }
             $sourceRecords = $this->recordLoader
                 ->loadBatchForSource($ids, $source, true);
-            foreach ($sourceRecords ?? [] as $key => $obj) {
-                $obj->setExtraDetail('ils_details', $data['records'][$key]);
-            }
 
             $serverUrl = $this->renderer->plugin('serverUrl');
             $recordHelper = $this->renderer->plugin('record');
@@ -250,7 +247,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             $feed->setDateModified(time());
             $feed->setId(' ');
             $feed->setDescription(' ');
-            foreach ($sourceRecords as $rec) {
+            foreach ($sourceRecords as $key => $rec) {
                 $isRecord = !$rec instanceof \VuFind\RecordDriver\Missing;
                 $entry = $feed->createEntry();
                 $entry->setTitle($rec->getTitle());
@@ -260,7 +257,8 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 if ($isRecord) {
                     $entry->setLink($recordUrl->getUrl($rec));
                 }
-                $ilsDetails = $rec->getExtraDetail('ils_details');
+
+                $ilsDetails = $data['records'][$key];
                 $author = $isRecord
                     ? $rec->getPrimaryAuthorForSearch()
                     : $ilsDetails['author'];
@@ -296,10 +294,8 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                         'length' => 0
                     ]
                 );
-
                 $feed->addEntry($entry);
             }
-
             $feed = $feed->export('rss', false);
             file_put_contents($cacheFile, $feed);
         }
