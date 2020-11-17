@@ -440,7 +440,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 ?? $this->config['messagingBlackLists']['dueDateAlert']
                 ?? ''
             );
-        $this->titleListCacheSettings = $this->config['titleListCacheSettings'] ??
+        $this->titleListCacheSettings
+            = $this->config['titleListCacheSettings']['settings'] ??
             [
                 'new' => 15,
                 'lastreturned' => 15,
