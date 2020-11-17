@@ -292,17 +292,4 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             )
         );
     }
-
-    /**
-     * Method to ensure uniform cache keys for cached VuFind objects.
-     *
-     * @param string|null $suffix Optional suffix that will get appended to the
-     * object class name calling getCacheKey()
-     *
-     * @return string
-     */
-    protected function getCacheKey($suffix = null)
-    {
-        return 'RssItem-' . md5($suffix);
-    }
 }
