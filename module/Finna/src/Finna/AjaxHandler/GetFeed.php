@@ -106,6 +106,18 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
     protected $cacheManager;
 
     /**
+     * ILSList default caching mappings in minutes
+     * 
+     * @var array
+     */
+    protected $ilsListCacheMappings = [
+      'new' => 15,
+      'lastreturned' => 15,
+      'mostborrowed' => 480,
+      'mostrequested' => 240
+    ];
+
+    /**
      * Constructor
      *
      * @param SessionSettings   $ss           Session settings
@@ -181,7 +193,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 $cacheDir = $this->cacheManager->getCache('public')->getOptions()
                     ->getCacheDir();
                 $cacheFile = "$cacheDir/" . $ilsId . '-' . $query . '.rss';
-                $maxAge =  $this->config->cachetime ?? 60;
+                $maxAge = $this->ilsListCacheMappings[$query] ?? 60;
 
                 if (is_readable($cacheFile)
                     && time() - filemtime($cacheFile) < $maxAge * 60
