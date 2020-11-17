@@ -107,7 +107,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
 
     /**
      * ILSList default caching mappings in minutes
-     * 
+     *
      * @var array
      */
     protected $ilsListCacheMappings = [
