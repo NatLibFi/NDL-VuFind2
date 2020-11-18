@@ -188,4 +188,35 @@ trait SolrCommonFinnaTrait
         return isset($this->fields['local_ids_str_mv'])
             ? $this->fields['local_ids_str_mv'] : [];
     }
+
+    /**
+     * Does this record contain restricted metadata?
+     *
+     * @return bool
+     */
+    public function hasRestrictedMetadata()
+    {
+        return false;
+    }
+
+    /**
+     * Is restricted metadata included with the record, i.e. is the user
+     * authorized to access restricted metadata?
+     *
+     * @return bool
+     */
+    public function isRestrictedMetadataIncluded()
+    {
+        return false;
+    }
+
+    /**
+     * Get the VuFind configuration.
+     *
+     * @return \Laminas\Config\Config
+     */
+    protected function getConfig()
+    {
+        return $this->mainConfig;
+    }
 }
