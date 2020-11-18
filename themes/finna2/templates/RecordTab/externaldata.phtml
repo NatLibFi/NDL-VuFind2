@@ -19,20 +19,21 @@ $physicalItems = $data['physicalItems'] ?? null;
 
 
 <?php if ($physicalItems): ?>
-<div role="table" class="external-data physical-items" aria-label="<?= $this->transEsc('external_data_tab_physical_items')?>">
-  <div role="row" class="tbl-row headers">
-    <div role="cell" class="tbl-cell tbl-left"><span role="columnheader"><?= $this->transEsc('external_data_tab_physical_item')?></span></div>
-    <div role="cell" class="tbl-cell tbl-right"><span role="columnheader"><?= $this->transEsc('external_data_tab_physical_location')?></span></div>
-  </div>
-  <?php foreach ($physicalItems as $item): ?>
-  <div role="row" class="tbl-row">
-    <div class="tbl-cell tbl-left" role="cell"><?=$item['type']?></div>
-    <div class="tbl-cell tbl-right location" role="cell">
-      <span class="location-name"><?=$item['location']?></span>
-      <?php if (!empty($item['service'])): ?>
-      <span class="service alert alert-info"><?= $this->translate('external_data_tab_physical_service')?></span>
-      <?php endif; ?>
+  <div role="table" class="external-data physical-items" aria-label="<?= $this->transEsc('external_data_tab_physical_items')?>">
+    <div role="row" class="tbl-row headers">
+      <div role="cell" class="tbl-cell tbl-left"><span role="columnheader"><?= $this->transEsc('external_data_tab_physical_item')?></span></div>
+      <div role="cell" class="tbl-cell tbl-right"><span role="columnheader"><?= $this->transEsc('external_data_tab_physical_location')?></span></div>
     </div>
+    <?php foreach ($physicalItems as $item): ?>
+    <div role="row" class="tbl-row">
+      <div class="tbl-cell tbl-left" role="cell"><?=$item['type']?></div>
+      <div class="tbl-cell tbl-right location" role="cell">
+        <span class="location-name"><?=$item['location']?></span>
+        <?php if (!empty($item['service'])): ?>
+        <span class="service alert alert-info"><?= $this->translate('external_data_tab_physical_service')?></span>
+        <?php endif; ?>
+      </div>
+    </div>
+    <?php endforeach; ?>
   </div>
-  <?php endforeach; ?>
 <?php endif; ?>
