@@ -579,6 +579,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Archive Films', 'getArchiveFilms', 'data-forwardFields.phtml',
+            [
+                'context' => ['class' => 'record-archive-films']
+            ]
+        );
+        $setTemplateLine(
             'Additional Information', 'getTitleStatement', 'data-addInfo.phtml',
             [
                 'context' => ['class' => 'recordTitleStatement']
