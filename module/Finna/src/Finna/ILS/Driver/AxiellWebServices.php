@@ -1597,7 +1597,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if ($function === 'getTitleList') {
             if (isset($this->config['Catalog']['catalogueaurora_wsdl'])) {
                 $functionConfig = [
-                    'enabled' => true
+                    'enabled' => true,
+                    'cacheSettings' => $this->titleListCacheSettings
                 ];
             }
         }
@@ -1689,16 +1690,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     {
         $found = array_search($value, $this->titleListMapping);
         return $found ?: $value;
-    }
-
-    /**
-     * Returns the ilslist cache settings
-     *
-     * @return array
-     */
-    public function getTitleListCacheSettings(): array
-    {
-        return $this->titleListCacheSettings;
     }
 
     /**

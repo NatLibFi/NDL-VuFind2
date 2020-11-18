@@ -200,27 +200,6 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
     }
 
     /**
-     * Get the titlelist cache settings from ILS
-     *
-     * @param array $params Function check params
-     *
-     * @throws ILSEXception
-     *
-     * @return array
-     */
-    public function getTitleListCacheSettings(array $params): array
-    {
-        $source = $this->getSource($params['id']);
-        $driver = $this->getDriver($source);
-        if ($driver
-            && $this->methodSupported($driver, 'getTitleListCacheSettings', [])
-        ) {
-            return $driver->getTitleListCacheSettings();
-        }
-        throw new ILSException('No suitable backend driver found');
-    }
-
-    /**
      * Update patron's email address
      *
      * @param array  $patron Patron array

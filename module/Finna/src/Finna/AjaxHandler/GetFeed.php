@@ -204,18 +204,17 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         $patronId = !empty($ilsId) ? $ilsId . '.123' : '';
         $amount = $amount > 20 ? 20 : $amount;
 
-        $result = $this->ils->checkFunction(
+        $ilsConfig = $this->ils->checkFunction(
             'getTitleList', ['id' => $patronId]
         );
-        if (!$result) {
-            return $this->formatResponse('Missing configurations', 501);
+        if (!$ilsConfig) {
+            return $this->formatResponse('Missing configuration', 501);
         }
 
         $cacheDir = $this->cacheManager->getCache('feed')->getOptions()
             ->getCacheDir();
-        $cacheFile = "$cacheDir/" . $ilsId . '-' . $query . '.xml';
-        $settings = $this->ils->getTitleListCacheSettings(['id' => $ilsId]);
-        $maxAge = $settings[$query] ?? 60;
+        $cacheFile = "$cacheDir/" . urlencode($ilsId . '-' . $query) . '.xml';
+        $maxAge = $ilsConfig['cacheSettings'][$query] ?? 60;
 
         if (is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60
