@@ -557,7 +557,7 @@ class RemsService implements
      *
      * @return void
      */
-    public function setAccessStatusFromConnector($status)
+    public function setAccessStatusFromConnector(?string $status)
     {
         switch ($status) {
         case 'ok':

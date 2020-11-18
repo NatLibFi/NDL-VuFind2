@@ -260,10 +260,10 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
         if ($this->rems) {
             $headers = $response->getHeaders();
             if ($accessStatus = $headers->get('x-user-access-status')) {
-                $this->rems->setAccessStatusFromConnector(
-                    $accessStatus->getFieldValue()
-                );
+                $accessStatus = $accessStatus->getFieldValue();
             }
+            $this->rems->setAccessStatusFromConnector($accessStatus);
+
             if ($this->username) {
                 $blocklisted = null;
                 if ($blocklistedAt = $headers->get('x-user-blacklisted')) {
