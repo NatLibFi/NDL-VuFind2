@@ -25,15 +25,15 @@ $physicalItems = $data['physicalItems'] ?? null;
       <div role="cell" class="tbl-cell tbl-right"><span role="columnheader"><?= $this->transEsc('external_data_tab_physical_location')?></span></div>
     </div>
     <?php foreach ($physicalItems as $item): ?>
-    <div role="row" class="tbl-row">
-      <div class="tbl-cell tbl-left" role="cell"><?=$item['type']?></div>
-      <div class="tbl-cell tbl-right location" role="cell">
-        <span class="location-name"><?=$item['location']?></span>
-        <?php if (!empty($item['service'])): ?>
-        <span class="service alert alert-info"><?= $this->translate('external_data_tab_physical_service')?></span>
-        <?php endif; ?>
+      <div role="row" class="tbl-row">
+        <div class="tbl-cell tbl-left" role="cell"><?=$item['type']?></div>
+        <div class="tbl-cell tbl-right location" role="cell">
+          <span class="location-name"><?=$item['location']?></span>
+          <?php if (!empty($item['service'])): ?>
+            <span class="service alert alert-info"><?= $this->translate('external_data_tab_physical_service')?></span>
+          <?php endif; ?>
+        </div>
       </div>
-    </div>
     <?php endforeach; ?>
   </div>
 <?php endif; ?>
