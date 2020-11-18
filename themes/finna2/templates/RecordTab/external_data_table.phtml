@@ -1,4 +1,4 @@
-<div role="table" class="external-data <?= $this->escapeHtmlAttr($this->type) ?>" aria-label="<?= $this->escapeHtmlAttr($this->transEsc("external_data_tab_{$type}", [], $type))?>">
+<div role="table" class="external-data <?= $this->escapeHtmlAttr($this->type) ?>" aria-label="<?= $this->escapeHtmlAttr($this->translate("external_data_tab_{$type}", [], $type))?>">
   <div role="row" class="tbl-col headers"><span role="columnheader"><?= $this->transEsc("external_data_tab_{$type}", [], $type)?></span></div>
   <?php if ($info = $data['info'] ?? null): ?>
     <div role="row" class="tbl-row info">
