@@ -64,7 +64,11 @@ class SystemMessagesFactory implements FactoryInterface
         $config = $container->get(\VuFind\Config\PluginManager::class);
         return new $requestedName(
             $config->get('config'),
-            $config->get('system')
+            $config->get('system'),
+            new \Laminas\Session\Container(
+                SystemMessages::SESSION_NAME,
+                $container->get(\Laminas\Session\SessionManager::class)
+            )
         );
     }
 }

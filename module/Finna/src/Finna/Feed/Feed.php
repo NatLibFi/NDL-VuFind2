@@ -271,6 +271,7 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
             ? $this->mainConfig->Content->feedcachetime : 10;
 
         $httpClient = $this->httpService->createClient();
+        $httpClient->setOptions(['useragent' => 'VuFind']);
         $httpClient->setOptions(['timeout' => 30]);
         Reader::setHttpClient($httpClient);
 
@@ -490,9 +491,14 @@ EOT;
             if ($xcalContent && $allowXcal) {
                 $xpathItem = $xpath->query('//item')->item($cnt);
                 foreach ($xcalContent as $setting) {
-                    $xcal = $xpath
+                    $item = $xpath
                         ->query('.//*[local-name()="' . $setting . '"]', $xpathItem)
-                        ->item(0)->nodeValue;
+                        ->item(0);
+
+                    if (!is_object($item)) {
+                        continue;
+                    }
+                    $xcal = $item->nodeValue;
                     if (!empty($xcal)) {
                         if ($setting === 'featured') {
                             if (!empty($imgLink = $this->extractImage($xcal))) {
