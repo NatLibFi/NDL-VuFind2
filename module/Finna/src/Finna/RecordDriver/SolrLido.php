@@ -396,19 +396,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet'
         ) as $node) {
-            if (isset($node->relatedWork->displayObject)) {
-                $object = (string)$node->relatedWork->displayObject;
+            if (!empty($node->relatedWork->displayObject)) {
+                $title = (string)$node->relatedWork->displayObject;
                 $attributes = $node->relatedWork->displayObject->attributes();
-                $label = isset($attributes->label)
+                $label = !empty($attributes->label)
                     ? (string)$attributes->label : '';
-                $type = isset($node->relatedWorkRelType->term)
+                $term = !empty($node->relatedWorkRelType->term)
                     ? (string)$node->relatedWorkRelType->term : '';
                 if (($label)
-                    && (($type == 'kirjallisuus') || ($type == 'lähteet'))
+                    && (($term == 'kirjallisuus') || ($term == 'lähteet'))
                 ) {
-                    $results[] = compact('object', 'label');
-                } elseif (($type == 'kirjallisuus') || ($type == 'lähteet')) {
-                    $results[] = compact('object', 'type');
+                    $results[] = compact('title', 'label');
+                } elseif (($term == 'kirjallisuus') || ($term == 'lähteet')) {
+                    $label = $term;
+                    $results[] = compact('title', 'label');
                 }
             }
         }

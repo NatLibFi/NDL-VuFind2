@@ -474,9 +474,9 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Publications', 'getRelatedPublications', 'data-keywords.phtml',
+            'Publications', 'getRelatedPublications', 'data-relatedPublications.phtml',
             [
-                'context' => ['class' => 'recordRelatedPublications']
+                'context' => ['class' => 'record-related-publications']
             ]
         );
         $setTemplateLine(
