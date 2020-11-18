@@ -26,11 +26,11 @@ $physicalItems = $data['physicalItems'] ?? null;
     </div>
     <?php foreach ($physicalItems as $item): ?>
       <div role="row" class="tbl-row">
-        <div class="tbl-cell tbl-left" role="cell"><?=$item['type']?></div>
+        <div class="tbl-cell tbl-left" role="cell"><?=$this->escapeHtml($item['type'])?></div>
         <div class="tbl-cell tbl-right location" role="cell">
-          <span class="location-name"><?=$item['location']?></span>
+          <span class="location-name"><?=$this->escapeHtml($item['location'])?></span>
           <?php if (!empty($item['service'])): ?>
-            <span class="service alert alert-info"><?= $this->translate('external_data_tab_physical_service')?></span>
+            <span class="service alert alert-info"><?= $this->transEsc('external_data_tab_physical_service')?></span>
           <?php endif; ?>
         </div>
       </div>
