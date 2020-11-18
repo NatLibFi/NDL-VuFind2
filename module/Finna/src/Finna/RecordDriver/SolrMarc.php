@@ -23,6 +23,7 @@
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -35,6 +36,7 @@ namespace Finna\RecordDriver;
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -824,10 +826,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         continue;
                     }
 
-                    $role = $this->getSubfield($field, '4');
-                    if (empty($role)) {
-                        $role = $this->getSubfield($field, 'e');
+                    $roles = $this->getSubfields($field, '4');
+                    if (empty($roles)) {
+                        $roles = $this->getSubfields($field, 'e');
                     }
+                    $roles = array_map([$this, 'stripTrailingPunctuation'], $roles);
+                    $role = implode(', ', $roles);
                     $role = mb_strtolower($role, 'UTF-8');
                     if ($role
                         && isset($this->mainConfig->Record->presenter_roles)
@@ -1292,7 +1296,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 }
             }
         }
-        $retVal = $this->checkForAudioUrls($retVal);
+        $retVal = $this->resolveUrlTypes($retVal);
         return $retVal;
     }
 

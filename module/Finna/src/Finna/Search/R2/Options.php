@@ -1,10 +1,10 @@
 <?php
 /**
- * SolrEad3 locations tab.
+ * R2 aspect of the Search Multi-class (Options)
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018-2019.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,61 +20,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  RecordTabs
+ * @package  Search_Solr
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
+ * @link     https://vufind.org Main Page
  */
-namespace Finna\RecordTab;
+namespace Finna\Search\R2;
 
 /**
- * SolrEad3 locations tab.
+ * R2 Search Options
  *
  * @category VuFind
- * @package  RecordTabs
+ * @package  Search_Solr
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
+ * @link     https://vufind.org Main Page
  */
-class LocationsEad3 extends \VuFind\RecordTab\AbstractBase
+class Options extends \Finna\Search\Solr\Options
 {
-    /**
-     * Is this tab enabled?
-     *
-     * @var bool
-     */
-    protected $enabled;
-
     /**
      * Constructor
      *
-     * @param bool $enabled is this tab enabled?
+     * @param \VuFind\Config\PluginManager $configLoader Config loader
      */
-    public function __construct($enabled = true)
+    public function __construct(\VuFind\Config\PluginManager $configLoader)
     {
-        $this->enabled = $enabled;
+        $this->mainIni = $this->searchIni = $this->facetsIni = 'R2';
+        parent::__construct($configLoader);
     }
 
     /**
-     * Is this tab active?
-     *
-     * @return bool
-     */
-    public function isActive()
-    {
-        if (empty($this->driver->tryMethod('getLocations'))) {
-            $this->enabled = false;
-        }
-        return $this->enabled;
-    }
-
-    /**
-     * Get the on-screen description for this tab.
+     * Return the route name for the search results action.
      *
      * @return string
      */
-    public function getDescription()
+    public function getSearchAction()
     {
-        return 'Holdings';
+        return 'r2-search';
+    }
+
+    /**
+     * Return the route name of the action used for performing advanced searches.
+     * Returns false if the feature is not supported.
+     *
+     * @return string|bool
+     */
+    public function getAdvancedSearchAction()
+    {
+        return 'r2-advanced';
     }
 }
