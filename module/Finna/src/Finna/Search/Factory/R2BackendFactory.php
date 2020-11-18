@@ -53,14 +53,14 @@ class R2BackendFactory extends SolrDefaultBackendFactory
      *
      * @var \Laminas\Config\Config
      */
-    protected $R2Config;
+    protected $r2Config;
 
     /**
      * R2 service
      *
      * @var \Finna\Service\R2SupportService
      */
-    protected $R2SupportService;
+    protected $r2SupportService;
 
     /**
      * Rems Service
@@ -105,9 +105,9 @@ class R2BackendFactory extends SolrDefaultBackendFactory
      */
     public function __invoke(ContainerInterface $sm, $name, array $options = null)
     {
-        $this->R2Config = $sm->get('VuFind\Config\PluginManager')->get('R2');
-        $this->R2SupportService = $sm->get(\Finna\Service\R2SupportService::class);
-        $this->solrCore = $this->R2Config->Index->default_core;
+        $this->r2Config = $sm->get('VuFind\Config\PluginManager')->get('R2');
+        $this->r2SupportService = $sm->get(\Finna\Service\R2SupportService::class);
+        $this->solrCore = $this->r2Config->Index->default_core;
         $this->rems = $sm->get(\Finna\Service\RemsService::class);
         $this->events = new EventManager($sm->get('SharedEventManager'));
 
@@ -122,13 +122,13 @@ class R2BackendFactory extends SolrDefaultBackendFactory
     protected function createConnector()
     {
         $connector = parent::createConnector();
-        $credentials = $this->R2SupportService->getCredentials();
+        $credentials = $this->r2SupportService->getCredentials();
         $connector->setApiAuthentication(
             $credentials['apiUser'], $credentials['apiKey']
         );
         $connector->setRems($this->rems);
         $connector->setEventManager($this->events);
-        $connector->setHttpOptions($this->R2Config->Http->toArray());
+        $connector->setHttpOptions($this->r2Config->Http->toArray());
 
         return $connector;
     }
@@ -171,7 +171,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
         $events = $this->serviceLocator->get('SharedEventManager');
         $authListener = new AuthenticationListener(
             $backend,
-            $this->R2SupportService,
+            $this->r2SupportService,
             $backend->getConnector(),
             $this->rems
         );
@@ -187,7 +187,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
      */
     protected function getSolrUrl($config = null)
     {
-        $url = $this->R2Config->Index->url;
+        $url = $this->r2Config->Index->url;
         return "$url/" . $this->solrCore;
     }
 }
