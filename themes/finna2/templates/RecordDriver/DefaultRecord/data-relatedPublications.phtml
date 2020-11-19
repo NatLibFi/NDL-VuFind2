@@ -2,7 +2,7 @@
 <?php if (!empty($data)): ?>
   <div class="truncate-field">
     <?php foreach ($data as $publication): ?>
-      <div class="subjectLine" property="related-publications">
+      <div class=="related-publications">
         <?=$this->escapeHtml($publication['title'])?><?php if (!empty($publication['label'])): ?> (<?=$this->escapeHtml($publication['label'])?>)<?php endif; ?>
       </div>
     <?php endforeach; ?> 
