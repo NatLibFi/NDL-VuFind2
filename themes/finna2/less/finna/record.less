@@ -207,9 +207,6 @@ a.authority {
   .smaller-image-sidebar {
     display: none;
   }
-  .sidebar .organisation-menu {
-    display: none
-  }
   @media(max-width: @screen-md-max){
     .mainbody.record-tabs {
       width: 100%;
@@ -631,6 +628,10 @@ a.authority {
   & li.organisation-page-link {
     padding-top: 5px;
   }
+  & li.material-questions-feedback {
+    font-weight: bold;
+    padding-top: 10px
+  }
 }
 
 .nav-pills {
@@ -713,4 +714,47 @@ a.authority {
     width: 100%;
     min-height: 400px;
   }
+}
+
+// Learning material record
+.date-created.date-modified {
+  color: @gray-light;
+  font-size: 0.9em;
+  margin-top: 5px;
+  margin-bottom: 21px;
+}
+.learning-material {
+  margin-top: 12px;
+  h3 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    font-size: 1em;
+  }
+  .recordURLs {
+    margin-top: 0;
+    margin-bottom: 21px;
+    padding: 0;
+  }
+  .fa-download,
+  .fa-external-link,
+  .fa-info3 {
+    margin-right: 5px;
+  }
+}
+.alert-aoe {
+  background-color: @aoe-brand-primary;
+}
+.material-description {
+  margin-bottom: 21px;
+}
+
+// Copyright field value, also used in search result lists
+.rights-icons {
+  margin-right: 10px;
+  .iconlabel {
+    margin-right: 0;
+  }
+}
+.rights-text {
+  color: @brand-primary;
 }

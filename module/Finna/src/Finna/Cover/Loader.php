@@ -196,6 +196,7 @@ class Loader extends \VuFind\Cover\Loader
         $client = $this->httpService->createClient(
             $url, \Laminas\Http\Request::METHOD_GET, 300
         );
+        $client->setOptions(['useragent' => 'VuFind']);
         $client->setStream();
         $adapter = new \Laminas\Http\Client\Adapter\Curl();
         $client->setAdapter($adapter);
@@ -447,6 +448,7 @@ class Loader extends \VuFind\Cover\Loader
                 \Laminas\Http\Request::METHOD_GET,
                 20
             );
+            $client->setOptions(['useragent' => 'VuFind']);
             $client->setStream($tempFile);
             $result = $client->send();
 
@@ -462,7 +464,7 @@ class Loader extends \VuFind\Cover\Loader
             $this->addHostFailure($host);
             return false;
         }
-        $exif = exif_read_data($tempFile);
+        $exif = @exif_read_data($tempFile);
         $image = file_get_contents($tempFile);
 
         // We no longer need the temp file:

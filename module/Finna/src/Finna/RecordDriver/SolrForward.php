@@ -371,7 +371,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getDescription()
     {
-        list($locale) = explode('-', $this->getTranslatorLocale());
+        $locale = $this->getLocale();
 
         $result = $this->getDescriptionData('Content description', $locale);
         if (empty($result)) {
@@ -698,7 +698,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getSummary()
     {
-        list($locale) = explode('-', $this->getTranslatorLocale());
+        $locale = $this->getLocale();
 
         $result = $this->getDescriptionData('Synopsis', $locale);
         if (empty($result)) {
@@ -1460,6 +1460,26 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getLocationNotes()
     {
         return $this->getProductionEventElement('elokuva_kuvauspaikkahuomautus');
+    }
+
+    /**
+     * Return filming date
+     *
+     * @return string
+     */
+    public function getFilmingDate()
+    {
+        return $this->getProductionEventAttribute('elokuva-kuvausaika');
+    }
+
+    /**
+     * Return archive films
+     *
+     * @return string
+     */
+    public function getArchiveFilms()
+    {
+        return $this->getProductionEventAttribute('elokuva-arkistoaineisto');
     }
 
     /**
