@@ -370,15 +370,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     \Finna\Service\R2SupportService::class
                 );
                 if ($r2->isEnabled()) {
-                    $resources = $this->getTable('Resource')->getFavorites(
-                        $user->id, $list->id
-                    );
-                    foreach ($resources as $rec) {
-                        if ('R2' === $rec->source) {
-                            $this->flashMessenger()
-                                ->addMessage('R2_mylist_restricted', 'info');
-                            break;
-                        }
+                    $table = $this->getTable('Resource');
+                    if ($table->doesListIncludeRecordsFromSource(
+                        $user->id, $list->id, 'R2'
+                    )
+                    ) {
+                        $this->flashMessenger()
+                            ->addMessage('R2_mylist_restricted', 'info');
                     }
                 }
             } else {
