@@ -620,10 +620,11 @@ finna.myList = (function finnaMyList() {
       initEditableMarkdownField(editField, function onMarkdownEditDone(markdown) {
         var row = editField.closest('.myresearch-row');
         var id = row.find('.hiddenId').val();
+        var source = row.find('.hiddenSource').val();
         var listId = getActiveListId();
 
         updateListResource(
-          {'id': id, 'listId': listId, 'notes': markdown},
+          {'id': id, 'source': source, 'listId': listId, 'notes': markdown},
           editField.find('> div')
         );
       });
@@ -684,7 +685,8 @@ finna.myList = (function finnaMyList() {
     })
       .done(function onGetMyListsDone(data) {
         toggleSpinner(spinner, false);
-        $('.mylist-bar').html(data.data);
+        $('.mylist-bar').empty().html(data.data);
+        $('.mylist-bar').closest('.finna-movement').trigger('reindex');
         initEditComponents();
       })
       .fail(function onGetMyListsDone() {

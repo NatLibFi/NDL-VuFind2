@@ -196,6 +196,7 @@ class Loader extends \VuFind\Cover\Loader
         $client = $this->httpService->createClient(
             $url, \Laminas\Http\Request::METHOD_GET, 300
         );
+        $client->setOptions(['useragent' => 'VuFind']);
         $client->setStream();
         $adapter = new \Laminas\Http\Client\Adapter\Curl();
         $client->setAdapter($adapter);
@@ -447,6 +448,7 @@ class Loader extends \VuFind\Cover\Loader
                 \Laminas\Http\Request::METHOD_GET,
                 20
             );
+            $client->setOptions(['useragent' => 'VuFind']);
             $client->setStream($tempFile);
             $result = $client->send();
 
@@ -591,7 +593,7 @@ class Loader extends \VuFind\Cover\Loader
      */
     protected function isHostBlocked($host)
     {
-        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        $statusFile = $this->getStatusFilePath($host);
         if (!file_exists($statusFile)) {
             return false;
         }
@@ -606,6 +608,12 @@ class Loader extends \VuFind\Cover\Loader
         $blockThreshold = $this->config->Content->coverServerFailureBlockThreshold
             ?? 10;
         if ($tries >= $blockThreshold) {
+            $reCheckTime = $this->config->Content->coverServerFailureReCheckTime
+                ?? 60;
+            if (filemtime($statusFile) + $reCheckTime < time()) {
+                $this->logWarning("Host $host has been tentatively unblocked");
+                return false;
+            }
             return true;
         }
         return false;
@@ -620,7 +628,7 @@ class Loader extends \VuFind\Cover\Loader
      */
     protected function addHostFailure($host)
     {
-        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        $statusFile = $this->getStatusFilePath($host);
         $failures = 0;
         $blockDuration = $this->config->Content->coverServerFailureBlockDuration
             ?? 3600;
@@ -643,10 +651,30 @@ class Loader extends \VuFind\Cover\Loader
      */
     protected function addHostSuccess($host)
     {
-        $statusFile = $this->getCachePath('failure', $host ? $host : 'invalid-host');
+        $statusFile = $this->getStatusFilePath($host);
         if (file_exists($statusFile)) {
             $this->logWarning("Host $host success, failure count cleared");
             unlink($statusFile);
         }
+    }
+
+    /**
+     * Get status tracking file path for a host
+     *
+     * @param string $host Host name
+     *
+     * @return string
+     */
+    protected function getStatusFilePath($host)
+    {
+        $base = $this->baseDir;
+        if (!is_dir($base)) {
+            mkdir($base);
+        }
+        $base .= '/';
+        if (!is_dir($base)) {
+            mkdir($base);
+        }
+        return $base . '/' . urlencode($host) . '.status';
     }
 }

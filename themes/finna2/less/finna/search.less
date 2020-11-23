@@ -316,7 +316,6 @@ mark, .highlight {
   }
   @media (min-width: @screen-sm-min){
     display: flex;
-    flex-direction: row-reverse;
     align-items: center;
   }
 }
@@ -448,4 +447,32 @@ h2 {
   font-size: 0.8em;
   padding-left: 0.5em;
   padding-right: 0.5em;
+}
+
+.record-type-lrmi.list-view {
+  .targeted-information {
+    margin: 6px 0 0;
+  }
+}
+
+.lrmi-topic {
+  display: inline-block;
+  margin: 0 3px 6px 0;
+  padding: 3px 6px;
+  color: @gray;
+  background-color: #F4F4F4;
+}
+
+.list-view .material-rights {
+  display: flex;
+  flex-flow: column nowrap;
+  .rights-icons {
+    background-color: initial;
+  }
+}
+
+.learning-material-recommendation {
+  a {
+    text-decoration: underline;
+  }
 }
