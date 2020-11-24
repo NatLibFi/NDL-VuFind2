@@ -48,20 +48,6 @@ class R2SearchController extends SearchController
     protected $searchClassId = 'R2';
 
     /**
-     * Create a new ViewModel.
-     *
-     * @param array $params Parameters to pass to ViewModel constructor.
-     *
-     * @return ViewModel
-     */
-    protected function createViewModel($params = null)
-    {
-        $view = parent::createViewModel($params);
-        $view->searchClassId = $this->searchClassId;
-        return $view;
-    }
-
-    /**
      * Results action.
      *
      * @return mixed

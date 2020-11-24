@@ -47,18 +47,4 @@ class R2recordController extends RecordController
      * @var string
      */
     protected $searchClassId = 'R2';
-
-    /**
-     * Create a new ViewModel.
-     *
-     * @param array $params Parameters to pass to ViewModel constructor.
-     *
-     * @return \Laminas\View\Model\ViewModel
-     */
-    protected function createViewModel($params = null)
-    {
-        $view = parent::createViewModel($params);
-        $this->layout()->searchClassId = $view->searchClassId = $this->searchClassId;
-        return $view;
-    }
 }
