@@ -59,7 +59,7 @@ finna.menu = (function finnaMenu() {
       $('#open-list').removeClass('collapsed').siblings('ul').first().addClass('in');
     }
   }
-  
+
   function init() {
     initMenuLists();
     initAccountChecks();
