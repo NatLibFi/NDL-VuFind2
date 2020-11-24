@@ -58,20 +58,8 @@ finna.menu = (function finnaMenu() {
     } else {
       $('#open-list').removeClass('collapsed').siblings('ul').first().addClass('in');
     }
-
-    $('#open-loans > .caret').unbind('click').click(function getLists(event) {
-      event.preventDefault();
-      $('#myLoans').toggleClass('in');
-      $('#open-loans').toggleClass('collapsed');
-    });
-
-    $('#open-r2 > .caret').unbind('click').click(function toggleR2(event) {
-      event.preventDefault();
-      $('#r2').toggleClass('in');
-      $('#open-r2').toggleClass('collapsed');
-    });
   }
-
+  
   function init() {
     initMenuLists();
     initAccountChecks();
