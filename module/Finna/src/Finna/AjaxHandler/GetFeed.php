@@ -227,12 +227,14 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
                 ['query' => $query, 'pageSize' => $amount, 'id' => $ilsId]
             );
 
-            $ids = [];
-            $sourceRecords = [];
+            $requests = [];
             foreach ($data['records'] ?? [] as $record) {
-                $id = $ilsId . '.' . $record['id'];
-                $sourceRecords[] = $this->recordLoader->load($id, $source, true);
+                $requests[] = [
+                    'id' => $ilsId . '.' . $record['id'],
+                    'source' => $source
+                ];
             }
+            $sourceRecords = $this->recordLoader->loadBatch($requests, true);
 
             $serverUrl = $this->renderer->plugin('serverUrl');
             $recordHelper = $this->renderer->plugin('record');
