@@ -224,13 +224,13 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         } else {
             $records = [];
             $data = $this->ils->getTitleList(
-                ['query' => $query, 'pageSize' => $amount, 'id' => $ilsId]
+                ['query' => $query, 'pageSize' => $amount, 'id' => $patronId]
             );
 
             $requests = [];
             foreach ($data['records'] ?? [] as $record) {
                 $requests[] = [
-                    'id' => $ilsId . '.' . $record['id'],
+                    'id' => $record['id'],
                     'source' => $source
                 ];
             }
