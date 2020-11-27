@@ -197,7 +197,6 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         // ILS list to be converted to a feed
         $query = $config['ilsList'];
         $amount = $config['amount'] ?? 20;
-        $type = $config['type'] ?? 'carousel';
         $source = $config['source'] ?? 'Solr';
         $ilsId = $config['ilsId'];
 
@@ -222,7 +221,6 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             // Load local cache if available
             $feed = file_get_contents($cacheFile);
         } else {
-            $records = [];
             $data = $this->ils->getTitleList(
                 ['query' => $query, 'pageSize' => $amount, 'id' => $patronId]
             );
