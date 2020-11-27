@@ -228,11 +228,11 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
             );
 
             $ids = [];
+            $sourceRecords = [];
             foreach ($data['records'] ?? [] as $record) {
-                $ids[] = $ilsId . '.' . $record['id'];
+                $id = $ilsId . '.' . $record['id'];
+                $sourceRecords[] = $this->recordLoader->load($id, $source, true);
             }
-            $sourceRecords = $this->recordLoader
-                ->loadBatchForSource($ids, $source, true);
 
             $serverUrl = $this->renderer->plugin('serverUrl');
             $recordHelper = $this->renderer->plugin('record');
