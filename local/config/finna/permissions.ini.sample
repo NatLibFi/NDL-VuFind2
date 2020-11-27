@@ -159,7 +159,13 @@ permission = feature.Favorites
 
 ; Restricted Solr (R2) Search:
 ; precondition for filling REMS registration form.
-[access.R2Authenticated]
-require = ALL
-authenticationStrategy[] = Suomifi
-permission[] = access.R2Authenticated
+; [access.R2Authenticated]
+; require = ALL
+; authenticationStrategy[] = Suomifi
+; permission[] = access.R2Authenticated
+
+; Needed for Suomi.fi single-sign-on logout notification
+; [access.api.ShibbolethLogoutNotification]
+; role[] = loggedin
+; role[] = guest
+; permission[] = "access.api.ShibbolethLogoutNotification"
