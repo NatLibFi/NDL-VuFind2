@@ -150,15 +150,15 @@
                 </a>
               </li>
               <?php if ($this->R2()->isAvailable()): ?>
-              <?php $registered = $this->R2()->isRegistered(); ?>
-              <li>
-                <a role="menuitem" href="<?=$this->url('myresearch-r2accessrights')?>">
-                  <?=$this->transEsc($registered ? 'R2_accessrights_title' : 'R2_menu_heading_register')?>
-                  <?php if (!$registered): ?>
-                    <i class="fa fa-research pull-right" aria-hidden="true"></i>
-                  <?php endif; ?>
-                </a>
-              </li>
+                <?php $registered = $this->R2()->isRegistered(); ?>
+                <li>
+                  <a role="menuitem" href="<?=$this->url('myresearch-r2accessrights')?>">
+                    <?=$this->transEsc($registered ? 'R2_accessrights_title' : 'R2_menu_heading_register')?>
+                    <?php if (!$registered): ?>
+                      <i class="fa fa-research pull-right" aria-hidden="true"></i>
+                    <?php endif; ?>
+                  </a>
+                </li>
               <?php endif; ?>
               <li>
                 <a role="menuitem" href="<?=$this->url('search-history')?>?require_login">
