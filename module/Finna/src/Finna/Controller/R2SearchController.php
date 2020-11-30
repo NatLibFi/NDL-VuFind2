@@ -46,15 +46,4 @@ class R2SearchController extends SearchController
      * @var string
      */
     protected $searchClassId = 'R2';
-
-    /**
-     * Results action.
-     *
-     * @return mixed
-     */
-    public function searchAction()
-    {
-        $view = parent::resultsAction();
-        return $view;
-    }
 }

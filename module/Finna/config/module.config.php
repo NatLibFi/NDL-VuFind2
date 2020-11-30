@@ -918,7 +918,7 @@ $staticRoutes = [
     'MyResearch/SaveCustomOrder', 'MyResearch/PurgeHistoricLoans',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
-    'R2/Home', 'R2/Search', 'R2/Advanced',
+    'R2/Home', 'R2/Results', 'R2/Advanced',
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results'
