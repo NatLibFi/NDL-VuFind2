@@ -46,7 +46,7 @@ interface FinnaRecordLabelInterface
 
     const PEER_REVIEWED = 'peer_reviewed';
 
-    const R2_RESTRICTED_METADATA_AVAILABLE = 'r2_restricted_metadata_available';
+    const R2_RESTRICTED_METADATA_AVAILABLE = 'R2_restricted_metadata_available';
 
-    const R2_RESTRICTED_METADATA_INCLUDED = 'r2_restricted_metadata_included';
+    const R2_RESTRICTED_METADATA_INCLUDED = 'R2_restricted_metadata_included';
 }
