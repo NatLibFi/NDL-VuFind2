@@ -114,8 +114,6 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase
                 $this->translate('Missing parameter'),
                 self::STATUS_HTTP_BAD_REQUEST
             );
-        } else {
-            list($source) = explode('.', $listParams['id'], 2);
         }
 
         list($source, $id) = explode('.', $listParams['id'], 2);
