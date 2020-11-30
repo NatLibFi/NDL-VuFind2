@@ -226,13 +226,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
                 $url = (string)$linkResource;
-                if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
+                if (empty($url)) {
                     continue;
                 }
                 $attributes = $representation->attributes();
-                if (empty((string)$linkResource)) {
-                    continue;
-                }
                 if (!empty($this->undisplayableFileFormats)
                     && isset($linkResource->attributes()->formatResource)
                     && $attributes->type !== 'image_original'
@@ -246,6 +243,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     if ($formatDisallowed) {
                         continue;
                     }
+                }
+
+                if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
+                    continue;
                 }
 
                 $size = '';
@@ -379,6 +380,36 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         ) as $node) {
             if ((string)$node != $mainTitle) {
                 $results[] = (string)$node;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of related publications for the record.
+     *
+     * @return array
+     */
+    public function getRelatedPublications()
+    {
+        $results = [];
+        foreach ($this->getXmlRecord()->xpath(
+            'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
+            . 'relatedWorkSet'
+        ) as $node) {
+            if (!empty($node->relatedWork->displayObject)) {
+                $title = (string)$node->relatedWork->displayObject;
+                $attributes = $node->relatedWork->displayObject->attributes();
+                $label = !empty($attributes->label)
+                    ? (string)$attributes->label : '';
+                $term = !empty($node->relatedWorkRelType->term)
+                    ? (string)$node->relatedWorkRelType->term : '';
+                if (in_array($term, ['kirjallisuus', 'lähteet'])) {
+                    $results[] = [
+                      'title' => $title,
+                      'label' => $label ?: $term
+                    ];
+                }
             }
         }
         return $results;
