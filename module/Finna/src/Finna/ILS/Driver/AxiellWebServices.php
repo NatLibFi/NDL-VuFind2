@@ -362,7 +362,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 = $this->getWsdlPath($this->config['Catalog']['patronaurora_wsdl']);
         }
 
-        $this->defaultPickUpLocation 
+        $this->defaultPickUpLocation
             = $this->config['Holds']['defaultPickUpLocation'] ?? false;
 
         if ($this->defaultPickUpLocation == '0') {
