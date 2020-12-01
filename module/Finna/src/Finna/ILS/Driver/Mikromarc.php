@@ -105,7 +105,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      *
      * @var string
      */
-    protected $defaultRequestGroup = 'user-selected';
+    protected $defaultRequestGroup = 'normal';
 
     /**
      * Are request groups enabled
