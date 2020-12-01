@@ -163,9 +163,3 @@ permission = feature.Favorites
 ; require = ALL
 ; authenticationStrategy[] = Suomifi
 ; permission[] = access.R2Authenticated
-
-; Needed for Suomi.fi single-sign-on logout notification
-; [access.api.ShibbolethLogoutNotification]
-; role[] = loggedin
-; role[] = guest
-; permission[] = "access.api.ShibbolethLogoutNotification"
