@@ -144,9 +144,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             = isset($this->config['Holds']['defaultPickUpLocation'])
             ? $this->config['Holds']['defaultPickUpLocation']
             : '';
-        if ($this->defaultPickUpLocation === 'user-selected') {
-            $this->defaultPickUpLocation = false;
-        }
 
         $this->requestGroupsEnabled
             = isset($this->config['Holds']['extraHoldFields'])
