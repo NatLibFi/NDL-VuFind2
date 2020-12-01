@@ -258,7 +258,6 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
                 $name .= $this->user->lastname;
             }
 
-
             $brief = (bool)($params['brief'] ?? false);
             if ($this->user) {
                 $instructions
