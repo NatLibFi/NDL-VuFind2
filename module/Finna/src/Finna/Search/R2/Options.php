@@ -56,7 +56,7 @@ class Options extends \Finna\Search\Solr\Options
      */
     public function getSearchAction()
     {
-        return 'r2-search';
+        return 'r2-results';
     }
 
     /**

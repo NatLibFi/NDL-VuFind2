@@ -1,10 +1,10 @@
 <?php
 /**
- * Resolve path to a resource in theme 'files' directory.
+ * Restricted Solr (R2) Collection Controller
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,38 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     http://vufind.org   Main Site
  */
-namespace Finna\View\Helper\Root;
+namespace Finna\Controller;
 
 /**
- * Resolve path to a resource within theme 'files' directory.
+ * Restricted Solr (R2) Collection Controller
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     http://vufind.org   Main Site
  */
-class FileSrc extends ThemeSrc
+class R2collectionController extends CollectionController
 {
-    /**
-     * Check if resource is found in theme 'files' directory.
-     *
-     * @param string $path           Path (starting from 'files' directory)
-     * @param bool   $returnAbsolute Whether to return absolute file system path
-     *
-     * @return string
-     */
-    public function __invoke($path, $returnAbsolute = false)
-    {
-        if ($url = $this->fileFromCurrentTheme('files/' . $path, $returnAbsolute)) {
-            return $url;
-        }
+    use \Finna\Controller\R2ControllerTrait;
+    use \Finna\Controller\R2RecordControllerTrait;
 
-        return '';
-    }
+    /**
+     * Type of record to display
+     *
+     * @var string
+     */
+    protected $searchClassId = 'R2';
 }

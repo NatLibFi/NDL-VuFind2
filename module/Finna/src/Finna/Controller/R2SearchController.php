@@ -1,10 +1,10 @@
 <?php
 /**
- * Resolve path to a resource in theme 'files' directory.
+ * R2 Search Controller
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,38 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace Finna\Controller;
 
 /**
- * Resolve path to a resource within theme 'files' directory.
+ * R2 Search Controller
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development:plugins:controllers Wiki
  */
-class FileSrc extends ThemeSrc
+class R2SearchController extends SearchController
 {
-    /**
-     * Check if resource is found in theme 'files' directory.
-     *
-     * @param string $path           Path (starting from 'files' directory)
-     * @param bool   $returnAbsolute Whether to return absolute file system path
-     *
-     * @return string
-     */
-    public function __invoke($path, $returnAbsolute = false)
-    {
-        if ($url = $this->fileFromCurrentTheme('files/' . $path, $returnAbsolute)) {
-            return $url;
-        }
+    use \Finna\Controller\R2ControllerTrait;
 
-        return '';
-    }
+    /**
+     * Search class family to use.
+     *
+     * @var string
+     */
+    protected $searchClassId = 'R2';
 }

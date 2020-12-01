@@ -1,10 +1,10 @@
 <?php
 /**
- * Resolve path to a resource in theme 'files' directory.
+ * R2 Collection list tab
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,38 +20,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  RecordTabs
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace Finna\RecordTab;
 
 /**
- * Resolve path to a resource within theme 'files' directory.
+ * R2 Collection list tab
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  RecordTabs
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
-class FileSrc extends ThemeSrc
+class R2CollectionList extends \VuFind\RecordTab\CollectionList
 {
-    /**
-     * Check if resource is found in theme 'files' directory.
-     *
-     * @param string $path           Path (starting from 'files' directory)
-     * @param bool   $returnAbsolute Whether to return absolute file system path
-     *
-     * @return string
-     */
-    public function __invoke($path, $returnAbsolute = false)
-    {
-        if ($url = $this->fileFromCurrentTheme('files/' . $path, $returnAbsolute)) {
-            return $url;
-        }
-
-        return '';
-    }
+    protected $searchClassId = 'R2Collection';
 }
