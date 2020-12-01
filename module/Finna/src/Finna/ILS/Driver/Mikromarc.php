@@ -101,6 +101,13 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
+     * Default request group
+     *
+     * @var string|bool
+     */
+    protected $defaultRequestGroup = 'user-selected';
+
+    /**
      * Are request groups enabled
      *
      * @var boolean
@@ -147,6 +154,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'requestGroup',
             explode(':', $this->config['Holds']['extraHoldFields'])
         );
+        $this->defaultRequestGroup
+            = isset($this->config['Holds']['defaultRequestGroup'])
+            ? $this->config['Holds']['defaultRequestGroup'] : '';
     }
 
     /**
@@ -1538,6 +1548,26 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'name' => 'mikromarc_regional'
             ]
         ];
+    }
+
+    /**
+     * Get Default Request Group
+     *
+     * Returns the default request group
+     *
+     * @param array $patron      Patron information returned by the patronLogin
+     * method.
+     * @param array $holdDetails Optional array, only passed in when getting a list
+     * in the context of placing a hold; contains most of the same values passed to
+     * placeHold, minus the patron data.
+     * May be used to limit the request group options or may be ignored.
+     *
+     * @return string       The default request group for the patron.
+     */
+    public function getDefaultRequestGroup(
+        array $patron = [], array $holdDetails = null
+    ): string {
+        return $this->defaultRequestGroup;
     }
 
     /**
