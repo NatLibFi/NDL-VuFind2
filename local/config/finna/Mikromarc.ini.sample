@@ -11,7 +11,7 @@ password =
 HMACKeys = item_id:holdtype:level
 
 ; extraHoldFields - A colon-separated list used to display extra visible fields in the
-; place holds form. Supported values are "requiredByDate" and "pickUpLocation"
+; place holds form. Supported values are "requiredByDate", "pickUpLocation", "requestGroup"
 extraHoldFields = pickUpLocation
 
 ; By default the pick up location list is sorted alphabetically. This setting can be
