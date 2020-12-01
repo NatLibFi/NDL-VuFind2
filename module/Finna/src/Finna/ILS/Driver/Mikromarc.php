@@ -1524,6 +1524,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 
     /**
      * Get request groups
+     *
      * @param integer $bibId       BIB ID
      * @param array   $patronId    Patron information returned by the patronLogin
      * method.
