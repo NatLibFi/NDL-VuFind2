@@ -267,7 +267,7 @@ class Bootstrapper
         $callback = function ($event) use ($sm) {
             // Open REMS registration form after Suomifi login
             $lightboxUrl = $sm->get('ViewHelperManager')
-                ->get('url')->__invoke('feedback-form', ['id' => 'R2Register']);
+                ->get('url')->__invoke('r2feedback-form', ['id' => 'R2Register']);
 
             $followup = $sm->get(\Laminas\Mvc\Controller\PluginManager::class)
                 ->get(\VuFind\Controller\Plugin\Followup::class);
