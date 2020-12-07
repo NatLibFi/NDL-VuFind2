@@ -20,10 +20,12 @@
                             <?php foreach ($img as $key => $info): ?>
                                 <?php
                                     $data = $info['data'];
-                                    $imageSize = !empty($data['size']['value']) ? $this->fileSize($data['size']['value']) : '';
+                                    $imageSize = !empty($data['size']['value']) ? $this->fileSize(preg_replace("/[^0-9]/", "", $data['size']['value'])) : '';
                                     $dimensions = '';
                                     if (!empty($data['width']) && !empty($data['height'])) {
-                                        $dimensions = "({$data['width']['value']} x {$data['height']['value']} px)";
+                                        $cleanWidth = preg_replace("/[^0-9]/", "", $data['width']['value']);
+                                        $cleanHeight = preg_replace("/[^0-9]/", "", $data['height']['value']);
+                                        $dimensions = "($cleanWidth x $cleanHeight px)";
                                     }
                                     $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;
                                 ?>
