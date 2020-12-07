@@ -237,7 +237,9 @@ a.authority {
     color: @gray-light;
   }
   .dropdown-menu.download {
-    left: -4%;
+    @media(max-width:@screen-xs) {
+      left: -4%;
+    }
     border-radius: 5px;
     padding: 2px 6px;
     > li {
