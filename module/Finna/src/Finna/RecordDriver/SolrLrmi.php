@@ -59,12 +59,13 @@ class SolrLrmi extends SolrQdc
 
     /**
      * File formats that can be used as preview images when converted to PDF.
+     * The formats are prioritized according to their position in the array.
      *
      * @var array
      */
     protected $previewableConvertedFileFormats = [
-        'pdf', 'pptx', 'ppt', 'docx', 'html',
-        'odt', 'rtf', 'txt', 'odp', 'png', 'jpg', 'doc'
+        'pptx', 'ppt', 'odp', 'docx', 'doc',
+        'odt', 'rtf', 'txt', 'png', 'jpg', 'html'
     ];
 
     /**
@@ -353,6 +354,7 @@ class SolrLrmi extends SolrQdc
 
             // ... if not found, try materials that have been converted to PDF
             if (!$pdfUrl) {
+                $currentPriority = null;
                 foreach ($materials as $material) {
                     if (!empty($material['pdfUrl'])
                         && in_array(
@@ -360,8 +362,20 @@ class SolrLrmi extends SolrQdc
                             $this->previewableConvertedFileFormats
                         )
                     ) {
-                        $pdfUrl = $material['pdfUrl'];
-                        break;
+                        $priority = array_search(
+                            $material['format'],
+                            $this->previewableConvertedFileFormats
+                        );
+                        if ($priority === false) {
+                            continue;
+                        }
+                        if (!$currentPriority || $priority < $currentPriority) {
+                            $pdfUrl = $material['pdfUrl'];
+                            $currentPriority = $priority;
+                        }
+                        if ($priority === 0) {
+                            break;
+                        }
                     }
                 }
             }
