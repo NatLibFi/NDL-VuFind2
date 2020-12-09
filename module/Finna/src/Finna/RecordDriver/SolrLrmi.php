@@ -350,9 +350,13 @@ class SolrLrmi extends SolrQdc
                 if (isset($prioritized[$format])) {
                     $priority = $prioritized[$format];
                     if (!$currentPriority || $priority < $currentPriority) {
-                        $pdfUrl = $format === 'pdf'
-                            ? $material['url'] : $material['pdfUrl'];
-                        $currentPriority = $priority;
+                        $url = $format === 'pdf'
+                            ? ($material['url'] ?? null)
+                            : ($material['pdfUrl'] ?? null);
+                        if ($url) {
+                            $pdfUrl = $url;
+                            $currentPriority = $priority;
+                        }
                     }
                     if ($priority === 0) {
                         break;
