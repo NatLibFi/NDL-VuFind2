@@ -64,7 +64,7 @@ class SolrLrmi extends SolrQdc
      * @var array
      */
     protected $previewableConvertedFileFormats = [
-        'pptx', 'ppt', 'odp', 'docx', 'doc',
+        'pdf', 'pptx', 'ppt', 'odp', 'docx', 'doc',
         'odt', 'rtf', 'txt', 'png', 'jpg', 'html'
     ];
 
@@ -341,41 +341,21 @@ class SolrLrmi extends SolrQdc
         }
 
         // Attempt to find a PDF file to be converted to a coverimage.
-        // Prefer original PDF file over a version converted from it.
         $pdfUrl = null;
         if ($includePdf && empty($result) && $materials = $this->getMaterials()) {
-            // First, attempt to find a material that is originally in PDF format
+            $currentPriority = null;
+            $prioritized = array_flip($this->previewableConvertedFileFormats);
             foreach ($materials as $material) {
-                if ($material['format'] === 'pdf') {
-                    $pdfUrl = $material['url'];
-                    break;
-                }
-            }
-
-            // ... if not found, try materials that have been converted to PDF
-            if (!$pdfUrl) {
-                $currentPriority = null;
-                foreach ($materials as $material) {
-                    if (!empty($material['pdfUrl'])
-                        && in_array(
-                            $material['format'],
-                            $this->previewableConvertedFileFormats
-                        )
-                    ) {
-                        $priority = array_search(
-                            $material['format'],
-                            $this->previewableConvertedFileFormats
-                        );
-                        if ($priority === false) {
-                            continue;
-                        }
-                        if (!$currentPriority || $priority < $currentPriority) {
-                            $pdfUrl = $material['pdfUrl'];
-                            $currentPriority = $priority;
-                        }
-                        if ($priority === 0) {
-                            break;
-                        }
+                $format = $material['format'];
+                if (isset($prioritized[$format])) {
+                    $priority = $prioritized[$format];
+                    if (!$currentPriority || $priority < $currentPriority) {
+                        $pdfUrl = $format === 'pdf'
+                            ? $material['url'] : $material['pdfUrl'];
+                        $currentPriority = $priority;
+                    }
+                    if ($priority === 0) {
+                        break;
                     }
                 }
             }
