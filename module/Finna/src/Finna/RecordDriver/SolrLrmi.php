@@ -382,6 +382,7 @@ class SolrLrmi extends SolrQdc
     /**
      * Return array of materials with keys:
      * -url: download link for allowed file types, otherwise empty
+     * -pdfUrl: PDF version of material
      * -title: material title
      * -format: material format
      * -filesize: material file size in bytes
