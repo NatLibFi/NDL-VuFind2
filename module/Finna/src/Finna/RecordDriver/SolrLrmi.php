@@ -339,45 +339,41 @@ class SolrLrmi extends SolrQdc
             }
         }
 
-        // Attempt to find a PDF file to be converted to a coverimage
+        // Attempt to find a PDF file to be converted to a coverimage.
+        // Prefer original PDF file over a version converted from it.
+        $pdfUrl = null;
         if ($includePdf && empty($result) && $materials = $this->getMaterials()) {
-            // First, find PDF-materials
-            $pdfs = array_filter(
-                $materials,
-                function ($material) {
-                    return $material['format'] === 'pdf';
+            // First, attempt to find a material that is originally in PDF format
+            foreach ($materials as $material) {
+                if ($material['format'] === 'pdf') {
+                    $pdfUrl = $material['url'];
+                    break;
                 }
-            );
+            }
 
             // ... if not found, try materials that have been converted to PDF
-            if (empty($pdfs)) {
-                $pdfs = array_filter(
-                    $materials,
-                    function ($material) {
-                        return !empty($material['pdfUrl'])
-                            && in_array(
-                                $material['format'],
-                                $this->previewableConvertedFileFormats
-                            );
+            if (!$pdfUrl) {
+                foreach ($materials as $material) {
+                    if (!empty($material['pdfUrl'])
+                        && in_array(
+                            $material['format'],
+                            $this->previewableConvertedFileFormats
+                        )
+                    ) {
+                        $pdfUrl = $material['pdfUrl'];
+                        break;
                     }
-                );
+                }
             }
-            $pdfs = array_values($pdfs);
+        }
 
-            if (!empty($pdfs)) {
-                $pdf = $pdfs[0];
-                // Prefer original PDF-files over converted ones
-                $url = $pdf['format'] === 'pdf' ? $pdf['url'] : $pdf['pdfUrl'];
-                $result[] = [
-                    'urls' => [
-                        'small' => $url,
-                        'medium' => $url,
-                        'large' => $url
-                    ],
-                    'description' => '',
-                    'rights' => []
-                ];
-            }
+        if ($pdfUrl) {
+            $result[] = [
+                'urls' => [
+                    'small' => $pdfUrl, 'medium' => $pdfUrl, 'large' => $pdfUrl
+                ],
+                'description' => '', 'rights' => []
+            ];
         }
 
         return $result;
