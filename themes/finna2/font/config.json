@@ -2640,7 +2640,7 @@
     },
     {
       "uid": "ee41e50e3f8ba8df9a4db4cbb64748a5",
-      "css": "rs-inc-solo-dark",
+      "css": "rs-inc",
       "code": 59580,
       "src": "custom_icons",
       "selected": true,
@@ -2649,12 +2649,12 @@
         "width": 1000
       },
       "search": [
-        "rs-inc-solo-dark"
+        "rs-inc"
       ]
     },
     {
       "uid": "86cf0bd78cfec2be3b652bad6a36e386",
-      "css": "rs-noc-solo-dark",
+      "css": "rs-noc",
       "code": 59581,
       "src": "custom_icons",
       "selected": true,
@@ -2663,12 +2663,12 @@
         "width": 1000
       },
       "search": [
-        "rs-noc-solo-dark"
+        "rs-noc"
       ]
     },
     {
       "uid": "bd66c1f820c51b03ce2cf6a84bb7c8a5",
-      "css": "rs-other-solo-dark",
+      "css": "rs-other",
       "code": 59582,
       "src": "custom_icons",
       "selected": true,
@@ -2677,7 +2677,7 @@
         "width": 1000
       },
       "search": [
-        "rs-other-solo-dark"
+        "rs-other"
       ]
     }
   ]
