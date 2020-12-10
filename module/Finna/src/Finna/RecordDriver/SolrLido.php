@@ -133,13 +133,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAccessRestrictionsType($language)
     {
-        $rights = $this->getXmlRecord()->xpath(
+        $rightsNodes = $this->getXmlRecord()->xpath(
             'lido/administrativeMetadata/resourceWrap/resourceSet/rightsResource/'
             . 'rightsType'
         );
-        if ($rights) {
-            $rights = $rights[0];
 
+        foreach ($rightsNodes as $rights) {
             if ($conceptID = $rights->xpath('conceptID')) {
                 $conceptID = $conceptID[0];
                 $attributes = $conceptID->attributes();
