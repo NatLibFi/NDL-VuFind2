@@ -1119,14 +1119,17 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $results['rightsHolder'] = (isset(
                     $right->rightsHolder->legalBodyName->appellationValue
                 )) ? (string)$right->rightsHolder->legalBodyName->appellationValue
-                      : '';
+                    : '';
             }
-            $results['resourceDescripion'] = (isset($node->resourceDescription))
-                ? (string)$node->resourceDescription : '';            
-            $results['resourceType'] = (isset($node->resourceType->term))
-                ? (string)$node->resourceType->term : '';
-            $results['resourceRelType'] = (isset($node->resourceRelType->term))
-                ? (string)$node->resourceRelType->term : '';
+            $results['resourceDescripion']
+                = (isset($node->resourceDescription))
+                    ? (string)$node->resourceDescription : '';            
+            $results['resourceType']
+                = (isset($node->resourceType->term))
+                    ? (string)$node->resourceType->term : '';
+            $results['resourceRelType']
+                = (isset($node->resourceRelType->term))
+                    ? (string)$node->resourceRelType->term : '';
             $results['resourceDateTaken']
                 = (isset($node->resourceDateTaken->displayDate))
                     ? (string)$node->resourceDateTaken->displayDate : '';
