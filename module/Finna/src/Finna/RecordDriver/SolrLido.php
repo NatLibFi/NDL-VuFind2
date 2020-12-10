@@ -1127,11 +1127,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 ? (string)$node->resourceType->term : '';
             $results['resourceRelType'] = (isset($node->resourceRelType->term))
                 ? (string)$node->resourceRelType->term : '';
-            $results['resourceDateTaken'] = 
-                (isset($node->resourceDateTaken->displayDate))
+            $results['resourceDateTaken']
+                = (isset($node->resourceDateTaken->displayDate))
                     ? (string)$node->resourceDateTaken->displayDate : '';
-            $results['resourcePerspective'] =
-                (isset($node->resourcePerspective->term))
+            $results['resourcePerspective']
+                = (isset($node->resourcePerspective->term))
                     ? (string)$node->resourcePerspective->term : '';
         }
         return $results;
