@@ -1103,6 +1103,39 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get image resources
+     *
+     * @return array
+     */
+    public function getImageResources()
+    {
+        $results = [];
+        foreach ($this->getXmlRecord()->xpath(
+            'lido/administrativeMetadata/resourceWrap/resourceSet'
+        ) as $node) {
+            $results['resourceID'] = (isset($node->resourceID))
+                ? (string)$node->resourceID : '';
+            foreach ($node->rightsResource as $right) {
+                $results['rightsHolder'] = (isset(
+                    $right->rightsHolder->legalBodyName->appellationValue
+                )) ? (string)$right->rightsHolder->legalBodyName->appellationValue
+                      : '';
+            }
+            $results['resourceDescripion'] = (isset($node->resourceDescription))
+                ? (string)$node->resourceDescription : '';            
+            $results['resourceType'] = (isset($node->resourceType->term))
+                ? (string)$node->resourceType->term : '';
+            $results['resourceRelType'] = (isset($node->resourceRelType->term))
+                ? (string)$node->resourceRelType->term : '';
+            $results['resourceDateTaken'] = (isset($node->resourceDateTaken->displayDate))
+                ? (string)$node->resourceDateTaken->displayDate : '';
+            $results['resourcePerspective'] = (isset($node->resourcePerspective->term))
+                ? (string)$node->resourcePerspective->term : '';
+        }
+        return $results;
+    }
+
+    /**
      * Get the displaysubject and description info to summary
      *
      * @return array $results with summary from displaySubject or description field

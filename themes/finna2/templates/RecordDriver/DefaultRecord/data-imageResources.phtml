@@ -1,0 +1,8 @@
+<?php //Don't add START and END comments ?>
+<?php if (!empty($data)): ?>
+  <?php foreach ($data as $key => $resource): ?>
+    <div class="image-resources">
+      <?php if (!empty($resource)): ?><?=$this->transEsc('image_' . $key)?>:  <?=$this->escapeHtml($resource)?><?php endif; ?>
+    </div>
+  <?php endforeach; ?> 
+<?php endif; ?>

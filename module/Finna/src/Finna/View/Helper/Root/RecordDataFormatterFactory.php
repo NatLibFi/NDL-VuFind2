@@ -772,6 +772,12 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'extendedAccess']
             ]
         );
+        $setTemplateLine(
+            'Image Resources', 'getImageResources', 'data-imageResources.phtml',
+            [
+                'context' => ['class' => 'image-resources']
+            ]
+        );
 
         $getAccessRestrictions = function ($data, $options) use (&$pos) {
             $final = [];
