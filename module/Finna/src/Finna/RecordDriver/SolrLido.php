@@ -1123,7 +1123,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
             $results['resourceDescripion']
                 = (isset($node->resourceDescription))
-                    ? (string)$node->resourceDescription : '';            
+                    ? (string)$node->resourceDescription : '';
             $results['resourceType']
                 = (isset($node->resourceType->term))
                     ? (string)$node->resourceType->term : '';
