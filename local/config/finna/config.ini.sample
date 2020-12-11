@@ -1636,6 +1636,10 @@ fi['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=fi"
 sv['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=en"
 en-gb['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=en"
 
+fi['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=fi"
+sv['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
+en-gb['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
+
 ; Finna survey
 [FinnaSurvey]
 enabled = false
