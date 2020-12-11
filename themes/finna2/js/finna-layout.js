@@ -105,16 +105,12 @@ finna.layout = (function finnaLayout() {
       if (self.height() > (truncation[index] + rowHeight[index] + 1)) {
         var topLink = self.height() > (rowHeight[index] * 30);
         self.css('height', truncation[index] - 1 + 'px');
-        var moreLabel = self.data('label') || VuFind.translate('show_more');
-        var lessLabel = self.data('label') || VuFind.translate('show_less');
-
-        var moreLink = $('<button type="button" class="more-link">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
-        var lessLink = $('<button type="button" class="less-link">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
+        var moreLink = $('<button type="button" class="more-link">' + (self.data('label') || VuFind.translate('show_more')) + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
+        var lessLink = $('<button type="button" class="less-link">' + (self.data('label') || VuFind.translate('show_less')) + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
         
         var linkClass = self.data('button-class') || '';
         if (linkClass) {
-          moreLink.addClass(linkClass);
-          lessLink.addClass(linkClass);
+          moreLink.add(lessLink).addClass(linkClass);
         }
         lessLink.on('click', function showLess() {
           self.siblings('.less-link').hide();
