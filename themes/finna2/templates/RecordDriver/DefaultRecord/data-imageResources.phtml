@@ -2,7 +2,9 @@
 <?php if (!empty($data)): ?>
   <?php foreach ($data as $key => $resource): ?>
     <div class="image-resources">
-      <?php if (!empty($resource)): ?><?=$this->transEsc('image_' . $key)?>:  <?=$this->escapeHtml($resource)?><?php endif; ?>
+      <?php if (!empty($resource)): ?>
+        <?=$this->transEsc('image_' . $key)?>: <?php if ($key == "rightsHolder"): ?><?php if (!empty($resource['link'])): ?><a href="<?=$this->escapeHtml($resource['link'])?>" target="_blank"><?php endif; ?><?=$this->escapeHtml($resource['name'])?><?php if (!empty($resource['link'])): ?></a><?php endif; ?><?php else: ?><?=$this->escapeHtml($resource)?><?php endif; ?>
+      <?php endif; ?>
     </div>
   <?php endforeach; ?> 
 <?php endif; ?>

@@ -1116,10 +1116,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $results['resourceID'] = (isset($node->resourceID))
                 ? (string)$node->resourceID : '';
             foreach ($node->rightsResource as $right) {
-                $results['rightsHolder'] = (isset(
+                $results['rightsHolder']['name'] = (isset(
                     $right->rightsHolder->legalBodyName->appellationValue
                 )) ? (string)$right->rightsHolder->legalBodyName->appellationValue
                     : '';
+                $results['rightsHolder']['link']
+                    = (isset($right->rightsHolder->legalBodyWeblink))
+                        ? (string)$right->rightsHolder->legalBodyWeblink : '';
                 $results['creditLine'] = (isset($right->creditLine))
                     ? (string)$right->creditLine : '';
             }
