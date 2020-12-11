@@ -1120,16 +1120,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $right->rightsHolder->legalBodyName->appellationValue
                 )) ? (string)$right->rightsHolder->legalBodyName->appellationValue
                     : '';
+                $results['creditLine'] = (isset($right->creditLine))
+                    ? (string)$right->creditLine : '';
             }
-            $results['resourceDescripion']
-                = (isset($node->resourceDescription))
-                    ? (string)$node->resourceDescription : '';
             $results['resourceType']
                 = (isset($node->resourceType->term))
                     ? (string)$node->resourceType->term : '';
             $results['resourceRelType']
                 = (isset($node->resourceRelType->term))
                     ? (string)$node->resourceRelType->term : '';
+            $results['resourceDescription']
+                = (isset($node->resourceDescription))
+                    ? (string)$node->resourceDescription : '';
             $results['resourceDateTaken']
                 = (isset($node->resourceDateTaken->displayDate))
                     ? (string)$node->resourceDateTaken->displayDate : '';
