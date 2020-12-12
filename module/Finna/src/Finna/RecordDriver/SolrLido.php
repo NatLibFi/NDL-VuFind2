@@ -1113,33 +1113,33 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         foreach ($this->getXmlRecord()->xpath(
             'lido/administrativeMetadata/resourceWrap/resourceSet'
         ) as $node) {
-            $results['resourceID'] = (isset($node->resourceID))
+            $results['resourceID'] = isset($node->resourceID)
                 ? (string)$node->resourceID : '';
             foreach ($node->rightsResource as $right) {
-                $results['rightsHolder']['name'] = (isset(
+                $results['rightsHolder']['name'] = isset(
                     $right->rightsHolder->legalBodyName->appellationValue
-                )) ? (string)$right->rightsHolder->legalBodyName->appellationValue
+                ) ? (string)$right->rightsHolder->legalBodyName->appellationValue
                     : '';
                 $results['rightsHolder']['link']
-                    = (isset($right->rightsHolder->legalBodyWeblink))
+                    = isset($right->rightsHolder->legalBodyWeblink)
                         ? (string)$right->rightsHolder->legalBodyWeblink : '';
-                $results['creditLine'] = (isset($right->creditLine))
+                $results['creditLine'] = isset($right->creditLine)
                     ? (string)$right->creditLine : '';
             }
             $results['resourceType']
-                = (isset($node->resourceType->term))
+                = isset($node->resourceType->term)
                     ? (string)$node->resourceType->term : '';
             $results['resourceRelType']
-                = (isset($node->resourceRelType->term))
+                = isset($node->resourceRelType->term)
                     ? (string)$node->resourceRelType->term : '';
             $results['resourceDescription']
-                = (isset($node->resourceDescription))
+                = isset($node->resourceDescription)
                     ? (string)$node->resourceDescription : '';
             $results['resourceDateTaken']
-                = (isset($node->resourceDateTaken->displayDate))
+                = isset($node->resourceDateTaken->displayDate)
                     ? (string)$node->resourceDateTaken->displayDate : '';
             $results['resourcePerspective']
-                = (isset($node->resourcePerspective->term))
+                = isset($node->resourcePerspective->term)
                     ? (string)$node->resourcePerspective->term : '';
         }
         return $results;
