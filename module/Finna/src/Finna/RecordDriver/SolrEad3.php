@@ -366,14 +366,15 @@ class SolrEad3 extends SolrEad
             $val = (string)$id;
             if (!$val) {
                 $val = (string)$id->attributes()->identifier;
-                $label = 'unique';
             }
-            if (!$label || !$val) {
+            if (!$val) {
                 continue;
             }
+
             $ids[] = [
                 'data' => $val,
-                'detail' => $this->translate("Unit ID:$label", [], $label)
+                'detail'
+                    => $this->translate("Unit ID:$label", [], $label ?? 'unique')
             ];
         }
 
@@ -625,6 +626,18 @@ class SolrEad3 extends SolrEad
     public function getExtendedAccessRestrictions()
     {
         $xml = $this->getXmlRecord();
+        if (isset($xml->accessrestrict)
+            && !isset($xml->accessrestrict->accessrestrict)
+        ) {
+            $result = [];
+            foreach ($xml->accessrestrict as $accessNode) {
+                if ($label = $this->getDisplayLabel($accessNode, 'p', true)) {
+                    $result[] = $label[0];
+                }
+            }
+            return ['general' => $result];
+        }
+
         if (!isset($xml->accessrestrict->accessrestrict)) {
             return [];
         }
@@ -1047,18 +1060,18 @@ class SolrEad3 extends SolrEad
             return null;
         }
         $defaultLanguage = 'fin';
-        $language = $this->preferredLanguage
+        $languages = $this->preferredLanguage
             ? $this->mapLanguageCode($this->preferredLanguage)
-            : null;
+            : [];
 
-        $getTermLanguage = function ($node) use ($language, $defaultLanguage) {
+        $getTermLanguage = function ($node) use ($languages, $defaultLanguage) {
             if (!isset($node->attributes()->lang)) {
                 return null;
             }
             $lang = (string)$node->attributes()->lang;
             return [
                'default' => $defaultLanguage === $lang,
-               'preferred' => $language === $lang
+               'preferred' => in_array($lang, $languages)
             ];
         };
 
@@ -1104,12 +1117,12 @@ class SolrEad3 extends SolrEad
      *
      * @param string $languageCode Language code
      *
-     * @return string
+     * @return string[]
      */
     protected function mapLanguageCode($languageCode)
     {
-        $langMap = ['fi' => 'fin', 'sv' => 'swe', 'en-gb' => 'eng'];
-        return $langMap[$languageCode] ?? $languageCode;
+        $langMap = ['fi' => ['fi','fin'], 'sv' => ['sv','swe'], 'en-gb' => ['en','eng']];
+        return $langMap[$languageCode] ?? [$languageCode];
     }
 
     /**
