@@ -198,7 +198,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             if (isset($resourceSet->rightsResource)) {
                 foreach ($resourceSet->rightsResource as $rightsResource) {
                     if (!empty($rightsResource->rightsType->conceptID)) {
-                        $conceptID = $resourceSet->rightsResource->rightsType
+                        $conceptID = $rightsResource->rightsType
                             ->conceptID;
                         $type = strtolower((string)$conceptID->attributes()->type);
                         if ($type == 'copyright') {
