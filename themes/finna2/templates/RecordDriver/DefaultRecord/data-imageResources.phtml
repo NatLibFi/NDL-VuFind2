@@ -1,10 +1,19 @@
 <?php //Don't add START and END comments ?>
 <?php if (!empty($data)): ?>
-  <?php foreach ($data as $key => $resource): ?>
-    <div class="image-resources">
-      <?php if (!empty($resource)): ?>
-        <?=$this->transEsc('image_' . $key)?>: <?php if ($key == "rightsHolder"): ?><?php if (!empty($resource['link'])): ?><a href="<?=$this->escapeHtml($resource['link'])?>" target="_blank"><?php endif; ?><?=$this->escapeHtml($resource['name'])?><?php if (!empty($resource['link'])): ?></a><?php endif; ?><?php else: ?><?=$this->escapeHtml($resource)?><?php endif; ?>
-      <?php endif; ?>
-    </div>
+  <?php foreach ($data as $resources): ?>
+    <?php foreach ($resources as $key => $resource): ?>
+      <div class="image-resources">
+        <?=$this->transEsc('image_' . $key)?>:
+        <?php if ($key == "rightsHolder"): ?>
+          <?php if (!empty($resource['link'])): ?>
+            <a href="<?=$this->escapeHtmlAttr($resource['link'])?>" target="_blank"><?=$this->escapeHtml($resource['name'])?></a>
+          <?php else: ?>
+            <?=$this->escapeHtml($resource['name'])?>
+          <?php endif; ?>
+        <?php else: ?>
+          <?=$this->escapeHtml($resource)?>
+        <?php endif; ?>
+      </div>
+    <?php endforeach; ?> 
   <?php endforeach; ?> 
 <?php endif; ?>

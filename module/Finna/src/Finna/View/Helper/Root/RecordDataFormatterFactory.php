@@ -773,7 +773,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Image Resources', 'getImageResources', 'data-imageResources.phtml',
+            'Image Information', 'getImageResources', 'data-imageResources.phtml',
             [
                 'context' => ['class' => 'image-resources']
             ]
