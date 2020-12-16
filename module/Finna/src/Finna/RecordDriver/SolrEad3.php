@@ -1121,7 +1121,8 @@ class SolrEad3 extends SolrEad
      */
     protected function mapLanguageCode($languageCode)
     {
-        $langMap = ['fi' => ['fi','fin'], 'sv' => ['sv','swe'], 'en-gb' => ['en','eng']];
+        $langMap
+            = ['fi' => ['fi','fin'], 'sv' => ['sv','swe'], 'en-gb' => ['en','eng']];
         return $langMap[$languageCode] ?? [$languageCode];
     }
 
