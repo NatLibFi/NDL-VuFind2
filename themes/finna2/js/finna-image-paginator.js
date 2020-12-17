@@ -61,7 +61,6 @@ finna.imagePaginator = (function imagePaginator() {
     // Needed references
     _.imageHolder = null;
     _.imageDetail = _.root.find('.recordcover-image-detail .image-description');
-    _.imageCreditLine = _.root.find('.image-credit-line');
     _.moreBtn = null;
     _.lessBtn = null;
     _.pagerInfo = null;
