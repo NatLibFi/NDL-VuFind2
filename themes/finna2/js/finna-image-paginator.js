@@ -494,7 +494,7 @@ finna.imagePaginator = (function imagePaginator() {
         _.creditLine.text(credits);
         _.creditLine.removeClass('hidden');
       } else {
-        _.creditLine.Class('hidden');
+        _.creditLine.addClass('hidden');
       }
     }
   };
