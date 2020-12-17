@@ -1006,8 +1006,8 @@ class SolrEad3 extends SolrEad
         $topics = [];
         if (isset($record->controlaccess->subject)) {
             foreach ($record->controlaccess->subject as $subject) {
-                if (!isset($subject->attributes()->relator)
-                    || (string)$subject->attributes()->relator !== 'aihe'
+                if (isset($subject->attributes()->relator)
+                    && (string)$subject->attributes()->relator !== 'aihe'
                 ) {
                     continue;
                 }
