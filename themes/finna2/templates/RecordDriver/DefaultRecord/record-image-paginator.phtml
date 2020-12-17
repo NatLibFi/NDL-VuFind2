@@ -14,6 +14,13 @@
       $originalImageData = $recordImage->getMasterImageWithInfo($ind);
       $originalImage = $originalImageData['url'] ?? false;
       $desc = isset($img['description']) && !empty($img['description']) ? $img['description'] : $this->transEsc('Cover Image');
+      $creditLine = $img['rights']['creditLine'] ?? '';
+      if ($creditLine && !empty($img['rights']['copyright'])) {
+        if (substr($creditLine, -1) !== '.') {
+          $creditLine .= '.';
+        }
+        $creditLine .= ' ' . $img['rights']['copyright'];
+      }
       $obj = [
         'small' => $img['urls']['small'],
         'medium' => $img['urls']['medium'],
@@ -21,7 +28,7 @@
         'index' => $ind++,
         'alt' => $desc,
         'description' => $img['description'],
-        'creditLine' => $img['rights']['creditLine'] ?? '',
+        'creditLine' => $creditLine,
         'title' => $this->transEsc('Image') . ' ' . $ind
       ];
       $paginatedLinks[] = $obj;
