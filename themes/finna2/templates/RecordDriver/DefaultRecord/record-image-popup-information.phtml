@@ -148,7 +148,7 @@
       <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
           <?php if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs)) { continue; } ?>
-          <div class="record-online-link"><a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i><?php if (count($onlineURLs) == 1 || count($mergedData['urls']) == 1): ?> <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?><?php endif; ?></a>
+          <div class="record-online-link"><a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?php if (count($onlineURLs) == 1 || count($mergedData['urls']) == 1): ?> <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?><?php endif; ?></a>
           <?php if ($url['source']): ?>
             <span class="online-source"><?=is_array($url['source']) ? '(' . $this->transEsc('Multiple Organisations') . ')' : '';?></span>
           <?php endif; ?>
@@ -156,7 +156,7 @@
         <?php endforeach; ?>
       <?php endif; ?>
     <?php endif; ?>
-    <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i><span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
+    <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
     <?php if ($this->record($this->driver)->allowRecordImageDownload()): ?>
       <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => ['urls' => ['large' => $largeImage]], 'hiRes' => $highResolution ?? false]) ?>
     <?php endif ?>
