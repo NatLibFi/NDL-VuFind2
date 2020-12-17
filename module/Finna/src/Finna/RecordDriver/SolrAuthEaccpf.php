@@ -157,7 +157,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
     /**
      * Format date
      *
-     * @param string $date   Date
+     * @param string $date Date
      *
      * @return string
      */
