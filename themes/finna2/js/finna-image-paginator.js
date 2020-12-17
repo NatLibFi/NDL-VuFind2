@@ -491,9 +491,9 @@ finna.imagePaginator = (function imagePaginator() {
     if (null !== _.creditLine) {
       if (credits) {
         _.creditLine.text(credits);
-        _.creditLine.show();
+        _.creditLine.removeClass('hidden');
       } else {
-        _.creditLine.hide();
+        _.creditLine.addClass('hidden');
       }
     }
   };

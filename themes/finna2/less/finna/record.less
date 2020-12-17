@@ -164,10 +164,10 @@ a.authority {
   table {
     margin-left: 20px;
   }
-  .more-link.collapsed .hide-image-information {
+  .toggle-image-information.collapsed .hide-image-information {
     display: none;
   }
-  .more-link:not(.collapsed) .show-image-information {
+  .toggle-image-information:not(.collapsed) .show-image-information {
     display: none;
   }
 }
@@ -268,6 +268,10 @@ a.authority {
   }
 }
 
+.image-credit-container {
+  display: inline-block;
+  position: relative;
+}
 .image-credit-line {
   position: absolute;
   right: 0;
@@ -486,19 +490,25 @@ a.authority {
   font-size: 1.05em;
   margin-bottom: 10px;
 }
-.show-details-button, .hide-details-button {
+.show-details-button, .hide-details-button, .toggle-image-information {
   margin-top: 5px;
   margin-bottom: 5px;
   cursor: pointer;
   padding-left: 0;
   background: @body-bg;
   color: @link-color;
-  width: 100%;
   text-transform: uppercase;
-  font-size: .9em;
   &:hover, &:focus {
     color: @link-color;
   }
+}
+.show-details-button, .hide-details-button {
+  width: 100%;
+  font-size: .9em;
+}
+.toggle-image-information {
+  border: 0;
+  font-weight: 600;
 }
 
 .show-details
