@@ -160,6 +160,18 @@ a.authority {
   margin-bottom: 20px;
 }
 
+.image-details {
+  table {
+    margin-left: 20px;
+  }
+  .more-link.collapsed .hide-image-information {
+    display: none;
+  }
+  .more-link:not(.collapsed) .show-image-information {
+    display: none;
+  }
+}
+
 .authoritybox,
 .large-image-layout.record {
   .media-left,
@@ -180,7 +192,7 @@ a.authority {
         .paginator-info {
           position: absolute;
           right: 10px;
-          bottom: 0px;
+          top: 0px;
           color: black;
           .image-index {
             background-color: #d6d6d6;
@@ -254,6 +266,16 @@ a.authority {
       }
     }
   }
+}
+
+.image-credit-line {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: white;
+  background-color: black;
+  padding: 2px 4px 2px 4px;
+  font-size: 0.9em;
 }
 
 .recordcover-image-detail {
@@ -791,7 +813,7 @@ a.authority {
   @media (min-width: @screen-sm-min) {
     max-width: 300px;
   }
-}  
+}
 
 // Record feedback
 .feedback-record {
