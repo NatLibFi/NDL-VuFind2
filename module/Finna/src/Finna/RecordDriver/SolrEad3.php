@@ -632,6 +632,9 @@ class SolrEad3 extends SolrEad
             $result = [];
             foreach ($xml->accessrestrict as $accessNode) {
                 if ($label = $this->getDisplayLabel($accessNode, 'p', true)) {
+                    if (empty($label[0])) {
+                        continue;
+                    }
                     $result[] = $label[0];
                 }
             }
