@@ -160,6 +160,18 @@ a.authority {
   margin-bottom: 20px;
 }
 
+.image-details {
+  table {
+    margin-left: 20px;
+  }
+  .toggle-image-information.collapsed .hide-image-information {
+    display: none;
+  }
+  .toggle-image-information:not(.collapsed) .show-image-information {
+    display: none;
+  }
+}
+
 .authoritybox,
 .large-image-layout.record {
   .media-left,
@@ -180,8 +192,9 @@ a.authority {
         .paginator-info {
           position: absolute;
           right: 10px;
-          bottom: 0px;
+          top: 0px;
           color: black;
+          z-index: 1;
           .image-index {
             background-color: #d6d6d6;
             background-color: #efefefcc;
@@ -224,7 +237,10 @@ a.authority {
   position: relative;
   .fa.fa-download {
     margin-right: 4px;
-    color: @brand-primary;
+    color: @action-link-color;
+    &:hover, &:focus {
+      color: @action-link-color;
+    }
   }
   .dropdown {
     position: initial;
@@ -254,6 +270,20 @@ a.authority {
       }
     }
   }
+}
+
+.image-credit-container {
+  display: inline-block;
+  position: relative;
+}
+.image-credit-line {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  color: white;
+  background-color: black;
+  padding: 2px 4px 2px 4px;
+  font-size: 0.9em;
 }
 
 .recordcover-image-detail {
@@ -464,18 +494,28 @@ a.authority {
   font-size: 1.05em;
   margin-bottom: 10px;
 }
-.show-details-button, .hide-details-button {
+.show-details-button, .hide-details-button, .toggle-image-information {
   margin-top: 5px;
   margin-bottom: 5px;
   cursor: pointer;
   padding-left: 0;
   background: @body-bg;
-  color: @link-color;
-  width: 100%;
   text-transform: uppercase;
+}
+.show-details-button, .hide-details-button {
+  width: 100%;
   font-size: .9em;
+  color: @link-color;
   &:hover, &:focus {
     color: @link-color;
+  }
+}
+.toggle-image-information {
+  border: 0;
+  font-weight: 600;
+  color: @action-link-color;
+  &:hover, &:focus {
+    color: @action-link-color;
   }
 }
 
@@ -573,7 +613,7 @@ a.authority {
     color: @action-link-color;
     &:hover {
       text-decoration: none;
-      color: @link-color;
+      color: @action-link-color;
     }
   }
   .image-dimensions {
@@ -791,7 +831,7 @@ a.authority {
   @media (min-width: @screen-sm-min) {
     max-width: 300px;
   }
-}  
+}
 
 // Record feedback
 .feedback-record {
