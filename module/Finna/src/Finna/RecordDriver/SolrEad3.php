@@ -102,9 +102,6 @@ class SolrEad3 extends SolrEad
         'Katso myös' => self::RELATION_SEE_ALSO
     ];
 
-    // Linktitle attribute for a daoset->dao image
-    const DAO_LINK_TITLE_IMAGE = 'Kuva/Aukeama';
-
     /**
      * Get the institutions holding the record.
      *
@@ -165,9 +162,7 @@ class SolrEad3 extends SolrEad
         foreach ($record->did->xpath('//daoset/dao') as $node) {
             $attr = $node->attributes();
             // Discard image urls
-            if (isset($attr->linktitle)
-                && strpos((string)$attr->linktitle, self::DAO_LINK_TITLE_IMAGE) === 0
-                || ! $attr->href
+            if (isset($attr->linktitle) || !$attr->href
             ) {
                 continue;
             }
