@@ -57,7 +57,9 @@ class SolrEad3 extends SolrEad
     const IMAGE_MAP = [
         'Bittikartta - Fullres - Jakelukappale' => self::IMAGE_FULLRES,
         'Bittikartta - Pikkukuva - Jakelukappale' => self::IMAGE_MEDIUM,
-        'OCR-data - Alto - Jakelukappale' => self::IMAGE_OCR
+        'OCR-data - Alto - Jakelukappale' => self::IMAGE_OCR,
+        'fullsize' => self::IMAGE_FULLRES,
+        'thumbnail' => self::IMAGE_MEDIUM
     ];
 
     // Altformavail labels
@@ -502,29 +504,33 @@ class SolrEad3 extends SolrEad
                     continue;
                 }
                 $attr = $daoset->attributes();
+                // localtype could be defined for daoset or for dao-element (below)
                 $localtype = (string)($attr->localtype ?? null);
-                $size = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
-                $size = $size === self::IMAGE_FULLRES ? self::IMAGE_LARGE : $size;
-                if (!isset($images[$size])) {
-                    $image[$size] = [];
-                }
+                $size = null;
 
                 $descId = isset($daoset->descriptivenote->p)
                     ? (string)$daoset->descriptivenote->p : null;
 
                 foreach ($daoset->dao as $dao) {
                     $attr = $dao->attributes();
-                    if (! isset($attr->linktitle)
-                        || strpos(
-                            (string)$attr->linktitle, self::DAO_LINK_TITLE_IMAGE
-                        ) !== 0
-                        || ! $attr->href
-                    ) {
+                    if (!isset($attr->linktitle) || !$attr->href) {
                         continue;
                     }
                     $href = (string)$attr->href;
                     if (!$this->isUrlLoadable($href, $this->getUniqueID())) {
                         continue;
+                    }
+                    if (isset($attr->localtype)) {
+                        $localtype = (string)$attr->localtype;
+                    }
+                    if (!$localtype || !isset(self::IMAGE_MAP[$localtype])) {
+                        continue;
+                    }
+                    $size = self::IMAGE_MAP[$localtype];
+                    $size = $size === self::IMAGE_FULLRES
+                        ? self::IMAGE_LARGE : $size;
+                    if (!isset($images[$size])) {
+                        $image[$size] = [];
                     }
                     $images[$size][] = [
                         'description' => (string)$attr->linktitle,
