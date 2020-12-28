@@ -772,7 +772,8 @@ class SolrEad3 extends SolrEad
         $headings = [];
         $headings = $this->getTopics();
 
-        foreach (['geographic', 'genre', 'era'] as $field) {
+         // geographic names are returned in getRelatedPlacesExtended
+        foreach (['genre', 'era'] as $field) {
             if (isset($this->fields[$field])) {
                 $headings = array_merge($headings, $this->fields[$field]);
             }
@@ -788,6 +789,43 @@ class SolrEad3 extends SolrEad
                 : [$i];
         };
         return array_map($callback, array_unique($headings));
+    }
+
+    /**
+     * Get related places.
+     *
+     * @return array
+     */
+    public function getRelatedPlacesExtended()
+    {
+        $record = $this->getXmlRecord();
+        if (!isset($record->controlaccess->geogname)) {
+            return [];
+        }
+
+        $languageResult = $languageResultDetail = $result = $resultDetail = [];
+        $languages = $this->preferredLanguage
+            ? $this->mapLanguageCode($this->preferredLanguage)
+            : [];
+
+        foreach ($record->controlaccess->geogname as $name) {
+            $attr = $name->attributes();
+            $relator = (string)$attr->relator;
+            if (isset($name->part)) {
+                $part = (string)$name->part;
+                $data = ['data' => $part, 'detail' => $relator];
+                if ($attr->lang && in_array((string)$attr->lang, $languages)
+                    && !in_array($part, $languageResult)
+                ) {
+                    $languageResultDetail[] = $data;
+                    $languageResult[] = $part;
+                } else if (!in_array($part, $result)) {
+                    $resultDetail[] = $data;
+                    $result[] = $part;
+                }
+            }
+        }
+        return $languageResultDetail ?: $resultDetail;
     }
 
     /**
