@@ -232,7 +232,6 @@ class SolrEad3 extends SolrEad
                         break;
                     }
                 }
-
             }
         }
         if ($name) {
@@ -772,7 +771,7 @@ class SolrEad3 extends SolrEad
         $headings = [];
         $headings = $this->getTopics();
 
-         // geographic names are returned in getRelatedPlacesExtended
+        // geographic names are returned in getRelatedPlacesExtended
         foreach (['genre', 'era'] as $field) {
             if (isset($this->fields[$field])) {
                 $headings = array_merge($headings, $this->fields[$field]);
@@ -819,7 +818,7 @@ class SolrEad3 extends SolrEad
                 ) {
                     $languageResultDetail[] = $data;
                     $languageResult[] = $part;
-                } else if (!in_array($part, $result)) {
+                } elseif (!in_array($part, $result)) {
                     $resultDetail[] = $data;
                     $result[] = $part;
                 }
@@ -966,7 +965,6 @@ class SolrEad3 extends SolrEad
         }
         return parent::getHierarchyParentID();
     }
-
 
     /**
      * Get the parent title(s) associated with this item (empty if none).
