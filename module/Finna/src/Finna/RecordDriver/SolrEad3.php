@@ -925,6 +925,67 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get the hierarchy parents associated with this item (empty if none).
+     * The parents are listed starting from the root of the hierarchy,
+     * i.e. the closest parent is at the end of the result array.
+     *
+     * @return array Array with id and title
+     */
+    protected function getHierarchyParents()
+    {
+        $xml = $this->getXmlRecord();
+        if (!isset($xml->{'add-data'}->parent)) {
+            return [];
+        }
+        $result = [];
+        foreach ($xml->{'add-data'}->parent as $parent) {
+            $attr = $parent->attributes();
+            if (!in_array((string)$attr->level, ['series','subseries'])) {
+                continue;
+            }
+            $result[]
+                = ['id' => "{$this->getDatasource()}.{$attr->id}",
+                   'title' => $attr->title];
+        }
+        return array_reverse($result);
+    }
+
+    /**
+     * Get the hierarchy_parent_id(s) associated with this item (empty if none).
+     *
+     * @return array
+     */
+    public function getHierarchyParentID()
+    {
+        if ($parents = $this->getHierarchyParents()) {
+            return array_map(
+                function ($parent) {
+                    return $parent['id'];
+                }, $parents
+            );
+        }
+        return parent::getHierarchyParentID();
+    }
+
+
+    /**
+     * Get the parent title(s) associated with this item (empty if none).
+     *
+     * @return array
+     */
+    public function getHierarchyParentTitle()
+    {
+        if ($parents = $this->getHierarchyParents()) {
+            return array_map(
+                function ($parent) {
+                    return $parent['title'];
+                }, $parents
+            );
+        }
+        return parent::getHierarchyParentTitle();
+    }
+
+    /**
      * Get fullresolution images.
      *
      * @return array
