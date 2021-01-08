@@ -945,9 +945,10 @@ class SolrEad3 extends SolrEad
             if (!in_array((string)$attr->level, ['series','subseries'])) {
                 continue;
             }
-            $result[]
-                = ['id' => "{$this->getDatasource()}.{$attr->id}",
-                   'title' => $attr->title];
+            $result[] = [
+                'id' => "{$this->getDatasource()}.{$attr->id}",
+                'title' => $attr->title
+            ];
         }
         return array_reverse($result);
     }
