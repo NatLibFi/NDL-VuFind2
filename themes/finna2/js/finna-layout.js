@@ -381,6 +381,10 @@ finna.layout = (function finnaLayout() {
           holder.addClass('opened');
           VuFind.itemStatuses.check(holder);
           finna.itemStatus.initDedupRecordSelection(holder);
+          setTimeout(function onTriggerUnveil () {
+            holder.find('.recordcover').trigger('unveil');
+          }, 150);
+
         }
       }
     });
