@@ -202,7 +202,6 @@ class SolrEad3 extends SolrEad
     public function getOriginationExtended()
     {
         $record = $this->getXmlRecord();
-        $name = $id = null;
 
         if (isset($record->relations->relation)) {
             foreach ($record->relations->relation as $relation) {
@@ -217,25 +216,23 @@ class SolrEad3 extends SolrEad
                 ) {
                     continue;
                 }
-                $name = $this->getDisplayLabel($relation, 'relationentry');
-                $id = (string)$attr->href;
-            }
-        }
-        if (!$name || !$name[0]) {
-            if (isset($record->did->origination->name)) {
-                foreach ($record->did->origination->name as $name) {
-                    $attr = $name->attributes();
-                    if (self::RELATOR_ARCHIVE_ORIGINATION === (string)$attr->relator
-                    ) {
-                        $name = $this->getDisplayLabel($name);
-                        $id = (string)$attr->identifier;
-                        break;
-                    }
+                if ($name = $this->getDisplayLabel($relation, 'relationentry')) {
+                    $id = (string)$attr->href;
+                    return ['name' => $name[0], 'id' => $id];
                 }
             }
         }
-        if ($name) {
-            return ['name' => $name[0], 'id' => $id];
+        if (isset($record->did->origination->name)) {
+            foreach ($record->did->origination->name as $name) {
+                $attr = $name->attributes();
+                if (self::RELATOR_ARCHIVE_ORIGINATION === (string)$attr->relator
+                ) {
+                    if ($name = $this->getDisplayLabel($name)) {
+                        $id = (string)$attr->identifier;
+                        return ['name' => $name[0], 'id' => $id];
+                    }
+                }
+            }
         }
         return null;
     }
