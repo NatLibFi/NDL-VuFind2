@@ -305,10 +305,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                 if (!$size) {
                     if ($urls) {
-                        // We already have URL's, store them in the results first.
-                        // This shouldn't happen unless there are multiple images
-                        // without type in the same set.
-                        $result[] = [
+                        // We already have URL's, store them in the final results
+                        // first. This shouldn't happen unless there are multiple
+                        // images without type in the same set.
+                        $results[] = [
                             'urls' => $urls,
                             'description' => '',
                             'rights' => $rights
@@ -510,13 +510,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             . 'classification'
         ) as $node) {
             if (isset($node->term)) {
-                $term = (string)$node->term;
-                $attributes = $node->term->attributes();
-                $label = isset($attributes->label) ? $attributes->label : '';
-                if ($label) {
-                    $results[] = compact('term', 'label');
-                } else {
-                    $results[] = $term;
+                $term = trim((string)$node->term);
+                if ('' !== $term) {
+                    $attributes = $node->term->attributes();
+                    $label = isset($attributes->label) ? $attributes->label : '';
+                    if ($label) {
+                        $results[] = compact('term', 'label');
+                    } else {
+                        $results[] = $term;
+                    }
                 }
             }
         }
@@ -734,12 +736,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         foreach ($this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectClassificationWrap'
         ) as $node) {
+            if (!isset($node->objectWorkTypeWrap->objectWorkType->term)) {
+                continue;
+            }
             $term = (string)$node->objectWorkTypeWrap->objectWorkType->term;
-            if ($term == 'rakennetun ympäristön kohde') {
-                foreach ($node->classificationWrap->classification
+            if ($term === 'rakennetun ympäristön kohde') {
+                foreach ($node->classificationWrap->classification ?? []
                     as $classificationNode
                 ) {
-                    $type = null;
                     $attributes = $classificationNode->attributes();
                     $type = isset($attributes->type) ? $attributes->type : '';
                     if ($type) {
@@ -749,17 +753,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         $results[] = (string)$classificationNode->term;
                     }
                 }
-            } elseif ($term == 'arkeologinen kohde') {
-                foreach ($node->classificationWrap->classification->term
+            } elseif ($term === 'arkeologinen kohde') {
+                foreach ($node->classificationWrap->classification ?? []
                     as $classificationNode
                 ) {
-                    $label = null;
-                    $attributes = $classificationNode->attributes();
-                    $label = isset($attributes->label) ? $attributes->label : '';
-                    if ($label) {
-                        $results[] = (string)$classificationNode . " ($label)";
-                    } else {
-                        $results[] = (string)$classificationNode;
+                    foreach ($classificationNode->term as $term) {
+                        $attributes = $term->attributes();
+                        $label = isset($attributes->label) ? $attributes->label : '';
+                        if ($label) {
+                            $results[] = (string)$term . " ($label)";
+                        } else {
+                            $results[] = (string)$term;
+                        }
                     }
                 }
             }
@@ -1145,20 +1150,24 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $languages[] = substr($language, 0, 2);
             }
         }
-        $result = null;
         foreach ($languages as $lng) {
             foreach ($element as $item) {
                 $attrs = $item->attributes();
                 if (!empty($attrs->lang) && (string)$attrs->lang == $lng) {
-                    $result = (string)$item;
-                    break 2;
+                    if ('' !== trim((string)$item)) {
+                        return $item;
+                    }
                 }
             }
         }
-        if (null === $result) {
-            $result = $element;
+        // Return first non-empty item if available
+        foreach ($element as $item) {
+            if ('' !== trim((string)$item)) {
+                return $item;
+            }
         }
-        return $result;
+
+        return $element;
     }
 
     /**

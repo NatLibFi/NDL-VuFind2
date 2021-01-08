@@ -510,7 +510,12 @@ class SolrEad3 extends SolrEad
                 $attr = $daoset->attributes();
                 // localtype could be defined for daoset or for dao-element (below)
                 $localtype = (string)($attr->localtype ?? null);
-                $size = null;
+                $localtype = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
+                $size = $localtype === self::IMAGE_FULLRES
+                      ? self::IMAGE_LARGE : $localtype;
+                if (!isset($images[$size])) {
+                    $image[$size] = [];
+                }
 
                 $descId = isset($daoset->descriptivenote->p)
                     ? (string)$daoset->descriptivenote->p : null;
@@ -541,7 +546,8 @@ class SolrEad3 extends SolrEad
                         'rights' => null,
                         'url' => $href,
                         'descId' => $descId,
-                        'sort' => (string)$attr->label
+                        'sort' => (string)$attr->label,
+                        'type' => $localtype
                     ];
                 }
             }
@@ -993,6 +999,9 @@ class SolrEad3 extends SolrEad
         $images = $this->getAllImages();
         $items = [];
         foreach ($images as $img) {
+            if (!isset($img['type']) || $img['type'] !== self::IMAGE_FULLRES) {
+                continue;
+            }
             $items[]
                 = ['label' => $img['description'], 'url' => $img['urls']['large']];
         }
