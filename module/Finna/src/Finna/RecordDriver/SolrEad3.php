@@ -946,8 +946,8 @@ class SolrEad3 extends SolrEad
                 continue;
             }
             $result[] = [
-                'id' => "{$this->getDatasource()}.{$attr->id}",
-                'title' => $attr->title
+                'id' => $this->getDatasource() . '.' . (string)$attr->id,
+                'title' => (string)$attr->title
             ];
         }
         return array_reverse($result);
