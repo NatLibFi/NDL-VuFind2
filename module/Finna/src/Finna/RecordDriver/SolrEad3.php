@@ -362,9 +362,12 @@ class SolrEad3 extends SolrEad
         $ids = [];
         $manyIds = count($xml->did->unitid) > 1;
         foreach ($xml->did->unitid as $id) {
-            $label = (string)$id->attributes()->label;
-            if (!$label && $manyIds) {
-                $label = 'unique';
+            $label = $fallbackDisplayLabel = (string)$id->attributes()->label;
+            $displayLabel = null;
+            if ($label) {
+                $displayLabel = "Unit ID:$label";
+            } else if ($manyIds) {
+                $displayLabel = 'Unit ID:unique';
             }
             $val = (string)$id;
             if (!$val) {
@@ -376,7 +379,8 @@ class SolrEad3 extends SolrEad
 
             $ids[] = [
                 'data' => $val,
-                'detail' => $this->translate("Unit ID:$label", [], $label)
+                'detail'
+                    => $this->translate($displayLabel, [], $fallbackDisplayLabel)
             ];
         }
 
