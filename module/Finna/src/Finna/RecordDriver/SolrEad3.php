@@ -366,7 +366,7 @@ class SolrEad3 extends SolrEad
             $displayLabel = null;
             if ($label) {
                 $displayLabel = "Unit ID:$label";
-            } else if ($manyIds) {
+            } elseif ($manyIds) {
                 $displayLabel = 'Unit ID:unique';
             }
             $val = (string)$id;
