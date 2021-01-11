@@ -203,34 +203,30 @@ class SolrEad3 extends SolrEad
     {
         $record = $this->getXmlRecord();
 
-        if (isset($record->relations->relation)) {
-            foreach ($record->relations->relation as $relation) {
-                $attr = $relation->attributes();
-                foreach (['relationtype', 'href', 'arcrole'] as $key) {
-                    if (!isset($attr->{$key})) {
-                        continue;
-                    }
-                }
-                if ((string)$attr->relationtype !== 'cpfrelation'
-                    || (string)$attr->arcrole !== self::RELATOR_ARCHIVE_ORIGINATION
-                ) {
+        foreach ($record->relations->relation ?? [] as $relation) {
+            $attr = $relation->attributes();
+            foreach (['relationtype', 'href', 'arcrole'] as $key) {
+                if (!isset($attr->{$key})) {
                     continue;
                 }
-                if ($name = $this->getDisplayLabel($relation, 'relationentry')) {
-                    $id = (string)$attr->href;
-                    return ['name' => $name[0], 'id' => $id];
-                }
+            }
+            if ((string)$attr->relationtype !== 'cpfrelation'
+                || (string)$attr->arcrole !== self::RELATOR_ARCHIVE_ORIGINATION
+            ) {
+                continue;
+            }
+            if ($name = $this->getDisplayLabel($relation, 'relationentry')) {
+                $id = (string)$attr->href;
+                return ['name' => $name[0], 'id' => $id];
             }
         }
-        if (isset($record->did->origination->name)) {
-            foreach ($record->did->origination->name as $name) {
-                $attr = $name->attributes();
-                if (self::RELATOR_ARCHIVE_ORIGINATION === (string)$attr->relator
-                ) {
-                    if ($name = $this->getDisplayLabel($name)) {
-                        $id = (string)$attr->identifier;
-                        return ['name' => $name[0], 'id' => $id];
-                    }
+        foreach ($record->did->origination->name ?? [] as $name) {
+            $attr = $name->attributes();
+            if (self::RELATOR_ARCHIVE_ORIGINATION === (string)$attr->relator
+            ) {
+                if ($name = $this->getDisplayLabel($name)) {
+                    $id = (string)$attr->identifier;
+                    return ['name' => $name[0], 'id' => $id];
                 }
             }
         }
