@@ -56,9 +56,10 @@
           </div>
         </div>
         <?php if ($this->usertags()->getListMode() === 'enabled'): ?>
+          <?php $listTags = $list->getListTags(); ?>
           <div class="list-tags">
             <div class="tags view-tags">
-              <?= $this->partial('mylist-tags.phtml', ['tags' => $list->getListTags(), 'editable' => false])?>
+              <?= $this->partial('mylist-tags.phtml', ['tags' => $listTags, 'editable' => false])?>
             </div>
 
             <div class="edit-tags">
@@ -76,7 +77,6 @@
                       <div><i class="fa fa-spin fa-spinner hide"></i></div>
                     </div>
                     <div class="tags editable">
-                      <?php $listTags = $list->getListTags() ?>
                       <p><?=$this->transEsc('list-tags-count', ['%%count%%' => count($listTags)])?></p>
                       <div class="tag-list">
                         <?= $this->partial('mylist-tags.phtml', ['tags' => $listTags, 'editable' => true])?>
