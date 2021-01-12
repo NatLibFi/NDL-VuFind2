@@ -63,7 +63,7 @@
             </div>
 
             <div class="edit-tags">
-              <div class="toggle" title="<?=$this->transEsc('edit-list-tags')?>">
+              <div class="toggle" title="<?=$this->escapeHtmlAttr($this->translate('edit-list-tags'))?>">
                 <span><?=$this->transEsc('edit-list-tags')?> </span><i class="fa fa-tag"></i>
               </div>
               <div class="ui">
@@ -72,7 +72,7 @@
                   <fieldset>
                     <legend></legend>
                     <div class="add-new">
-                      <input type="text" class="new-tag" name="new-tag" value="" aria-required="true" required aria-label="<?= $this->escapeHtmlAttr($this->translate('list-tags-info'))?>" placeholder="<?= $this->transEsc('list-tags-info')?>"/>
+                      <input type="text" class="new-tag" name="new-tag" value="" aria-required="true" required aria-label="<?= $this->escapeHtmlAttr($this->translate('list-tags-info'))?>" placeholder="<?= $this->escapeHtmlAttr($this->translate('list-tags-info'))?>"/>
                       <button type="submit" class="btn btn-primary "><?=$this->transEsc('Save')?></button>
                       <div><i class="fa fa-spin fa-spinner hide"></i></div>
                     </div>
