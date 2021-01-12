@@ -77,7 +77,6 @@
                       <div><i class="fa fa-spin fa-spinner hide"></i></div>
                     </div>
                     <div class="tags editable">
-                      <p><?=$this->transEsc('list-tags-count', ['%%count%%' => count($listTags)])?></p>
                       <div class="tag-list">
                         <?= $this->partial('mylist-tags.phtml', ['tags' => $listTags, 'editable' => true])?>
                       </div>
