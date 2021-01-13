@@ -19,7 +19,7 @@
         <?php if (!empty($event['culture'])): ?><?=$this->escapeHtml($event['culture'])?><br/><?php endif; ?>
         <?php if (!empty($event['actors'])): ?>
           <?php foreach ($event['actors'] as $actor): ?>
-            <?=$this->escapeHtml($actor['name'])?><?php if (!empty($actor['role'])): ?>, <?=$this->escapeHtml($actor['role'])?><?php endif; ?>
+            <?=$this->escapeHtml($actor['name'])?><?php if (!empty($actor['role'])): ?>, <?=$this->escapeHtml($actor['role'])?><?php endif; ?><?php if (!empty($actor['birth'])): ?>, <?=$this->escapeHtml($actor['birth'])?><?php if (!empty($actor['death'])): ?> - <?=$this->escapeHtml($actor['death'])?><?php else: ?>--<?php endif; ?><?php endif; ?>
           <?php endforeach; ?>
           <br/>
         <?php endif; ?>

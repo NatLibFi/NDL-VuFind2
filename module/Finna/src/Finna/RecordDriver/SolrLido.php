@@ -691,9 +691,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     if ($appellationValue !== '') {
                         $role = isset($actor->actorInRole->roleActor->term)
                             ? $actor->actorInRole->roleActor->term : '';
+                        $earliestDate = isset(
+                            $actor->actorInRole->actor->vitalDatesActor->earliestDate
+                                ) ? $actor->actorInRole->actor->vitalDatesActor
+                                    ->earliestDate : '';
+                        $latestDate = isset(
+                            $actor->actorInRole->actor->vitalDatesActor->earliestDate
+                                ) ? $actor->actorInRole->actor->vitalDatesActor
+                                    ->latestDate : '';
                         $actors[] = [
                             'name' => $appellationValue,
-                            'role' => $role
+                            'role' => $role,
+                            'birth' => $earliestDate,
+                            'death' => $latestDate
                         ];
                     }
                 }
