@@ -693,12 +693,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                             ? $actor->actorInRole->roleActor->term : '';
                         $earliestDate = isset(
                             $actor->actorInRole->actor->vitalDatesActor->earliestDate
-                                ) ? $actor->actorInRole->actor->vitalDatesActor
-                                    ->earliestDate : '';
+                        ) ? $actor->actorInRole->actor->vitalDatesActor
+                            ->earliestDate : '';
                         $latestDate = isset(
                             $actor->actorInRole->actor->vitalDatesActor->earliestDate
-                                ) ? $actor->actorInRole->actor->vitalDatesActor
-                                    ->latestDate : '';
+                        ) ? $actor->actorInRole->actor->vitalDatesActor
+                            ->latestDate : '';
                         $actors[] = [
                             'name' => $appellationValue,
                             'role' => $role,
