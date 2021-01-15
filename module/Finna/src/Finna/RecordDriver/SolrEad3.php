@@ -676,10 +676,18 @@ class SolrEad3 extends SolrEad
                 } else {
                     $type = (string)$attr->encodinganalog;
                     if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
-                        $label = $type === 'ahaa:KR7'
-                            ? $this->getDisplayLabel(
+                        switch ($type) {
+                        case 'ahaa:KR7':
+                            $label = $this->getDisplayLabel(
                                 $access->p->name, 'part', true
-                            ) : $this->getDisplayLabel($access, 'p');
+                            );
+                            break;
+                        case 'ahaa:KR9':
+                            $label = [(string)($access->p->date ?? '')];
+                            break;
+                        default:
+                            $label = $this->getDisplayLabel($access, 'p');
+                        }
                         if ($label) {
                             $restrictions[$type] = $label;
                         }
