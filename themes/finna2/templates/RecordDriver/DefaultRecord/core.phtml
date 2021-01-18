@@ -132,17 +132,30 @@
             </div>
           <?php endforeach; ?>
         <?php endif; ?>
-        <!-- adjust this -->
-        <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-          <?php
-            $finalUrls = !empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs;
-            $finalUrls = array_filter($finalUrls, function ($url) use ($renderedURLs) {
+        <?php if (!empty($onlineURLs)): ?>
+          <?php 
+            $filteredOnlineURLs = array_filter($onlineURLs, function ($url) use ($renderedURLs) {
               return !in_array($url['url'], $renderedURLs);
             });
-            $count = count($finalUrls);
+          ?>
+          <?php foreach ($filteredOnlineURLs as $url): ?>
+            <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+              <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
+              <?php if ($url['source']): ?>
+                <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+        <?php if (!empty($mergedData['urls'])): ?>
+          <?php
+            $filteredMergedUrls = array_filter($mergedData['urls'], function ($url) use ($renderedURLs) {
+              return !in_array($url['url'], $renderedURLs);
+            });
+            $count = count($filteredMergedUrls);
           ?>
           <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEsc('links_from_other_organisations', ['%%count%%' => $count])?>">
-            <?php foreach ($finalUrls as $url): ?>
+            <?php foreach ($filteredMergedUrls as $url): ?>
               <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($this->translate('external_online_link'))?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
                 <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
                 <?php if ($url['source']): ?>
