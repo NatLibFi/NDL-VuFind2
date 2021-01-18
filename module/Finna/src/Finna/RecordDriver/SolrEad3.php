@@ -502,8 +502,9 @@ class SolrEad3 extends SolrEad
                 }
                 $attr = $daoset->attributes();
                 $localtype = (string)($attr->localtype ?? null);
-                $size = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
-                $size = $size === self::IMAGE_FULLRES ? self::IMAGE_LARGE : $size;
+                $localtype = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
+                $size = $localtype === self::IMAGE_FULLRES
+                      ? self::IMAGE_LARGE : $localtype;
                 if (!isset($images[$size])) {
                     $image[$size] = [];
                 }
@@ -512,8 +513,6 @@ class SolrEad3 extends SolrEad
                     ? (string)$daoset->descriptivenote->p : null;
 
                 foreach ($daoset->dao as $dao) {
-                    // Loop daosets and collect URLs for different sizes
-                    $urls = [];
                     $attr = $dao->attributes();
                     if (! isset($attr->linktitle)
                         || strpos(
@@ -532,7 +531,8 @@ class SolrEad3 extends SolrEad
                         'rights' => null,
                         'url' => $href,
                         'descId' => $descId,
-                        'sort' => (string)$attr->label
+                        'sort' => (string)$attr->label,
+                        'type' => $localtype
                     ];
                 }
             }
@@ -871,6 +871,9 @@ class SolrEad3 extends SolrEad
         $images = $this->getAllImages();
         $items = [];
         foreach ($images as $img) {
+            if (!isset($img['type']) || $img['type'] !== self::IMAGE_FULLRES) {
+                continue;
+            }
             $items[]
                 = ['label' => $img['description'], 'url' => $img['urls']['large']];
         }
@@ -1154,23 +1157,5 @@ class SolrEad3 extends SolrEad
         ];
 
         return $roleMap[$role] ?? $fallback;
-    }
-
-    /**
-     * Returns an array of 0 or more record label constants, or null if labels
-     * are not enabled in configuration.
-     *
-     * @return array|null
-     */
-    public function getRecordLabels()
-    {
-        if (!$this->getRecordLabelsEnabled()) {
-            return null;
-        }
-        $labels = [];
-        if ($this->hasRestrictedMetadata()) {
-            $labels[] = FinnaRecordLabelInterface::R2_RESTRICTED_METADATA_AVAILABLE;
-        }
-        return $labels;
     }
 }

@@ -87,7 +87,7 @@
               </td>
               <?php endif; ?>
               <td class="text-left hidden-xs">
-                <div class="cover-image">
+                <div aria-hidden="true" class="cover-image">
                   <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
                     <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
                   <?php else: ?>
@@ -202,4 +202,6 @@
     </div>
   </div>
 </div>
+
+<?=$this->render('myresearch/notify-account-status.phtml', ['method' => 'storageRetrievalRequests', 'accountStatus' => $this->accountStatus]); ?>
 <!-- END of: finna - myresearch/storageretrievalrequests.phtml -->

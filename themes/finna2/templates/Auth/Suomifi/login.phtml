@@ -4,7 +4,7 @@
 <div>
   <div class="login-col shibboleth-login suomifi-login">
     <a href="<?=$this->escapeHtmlAttr($sessionInitiator)?>" data-lightbox-ignore>
-      <img src="<?=$this->imageLink('login_suomifi.png') ?>" alt="<?=$this->escapeHtmlAttr($this->translate("Suomi.fi Login")) ?>">
+      <img src="<?=$this->imageLink('login_suomifi.png') ?>" alt="<?=$this->transEscAttr("Suomi.fi Login") ?>">
       <span class="sr-only"><?=$this->transEsc('Suomi.fi Login')?></span>
     </a>
   </div>
@@ -12,11 +12,8 @@
     <i class="fa fa-info3" aria-hidden="true"></i>
     <div class="login-description">
       <p class="login-info">
-       <?=$this->translate('login_desc_connect_card_html') ?>
+        <?=$this->translate('login_desc_suomifi_html')?>
       </p>
-    </div>
-    <div class="login-description shibboleth suomifi">
-      <?=$this->translate('login_desc_suomifi_html')?>
     </div>
   </div>
 </div>

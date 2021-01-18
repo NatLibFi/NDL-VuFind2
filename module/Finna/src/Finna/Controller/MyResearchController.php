@@ -52,7 +52,6 @@ use VuFind\Exception\ListPermission as ListPermissionException;
 class MyResearchController extends \VuFind\Controller\MyResearchController
 {
     use FinnaOnlinePaymentControllerTrait;
-    use CatalogLoginTrait;
 
     /**
      * Catalog Login Action
@@ -221,6 +220,20 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $sortList = $pageOptions['sortList'];
         }
 
+        // If the results are not paged in the ILS, collect up to date stats for ajax
+        // account notifications:
+        if ((!$pageOptions['ilsPaging'] || !$paginator)
+            && !empty($this->getConfig()->Authentication->enableAjax)
+        ) {
+            $accountStatus = [
+                'ok' => 0,
+                'warn' => 0,
+                'overdue' => 0
+            ];
+        } else {
+            $accountStatus = null;
+        }
+
         $transactions = $hiddenTransactions = [];
         foreach ($result['records'] as $i => $current) {
             // Add renewal details if appropriate:
@@ -232,6 +245,20 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             ) {
                 // Enable renewal form if necessary:
                 $renewForm = true;
+            }
+
+            if (null !== $accountStatus) {
+                switch ($current['dueStatus'] ?? '') {
+                case 'due':
+                    $accountStatus['warn']++;
+                    break;
+                case 'overdue':
+                    $accountStatus['overdue']++;
+                    break;
+                default:
+                    $accountStatus['ok']++;
+                    break;
+                }
             }
 
             // Build record driver (only for the current visible page):
@@ -274,8 +301,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $ilsPaging = $pageOptions['ilsPaging'];
         $view = $this->createViewModel(
             compact(
-                'transactions', 'renewForm', 'renewResult', 'paginator', 'params',
-                'hiddenTransactions', 'displayItemBarcode', 'sortList', 'ilsPaging'
+                'transactions', 'renewForm', 'renewResult', 'paginator', 'ilsPaging',
+                'hiddenTransactions', 'displayItemBarcode', 'sortList', 'params',
+                'accountStatus'
             )
         );
 
@@ -365,6 +393,20 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
             if ($list) {
                 $this->rememberCurrentSearchUrl();
+
+                $r2 = $this->serviceLocator->get(
+                    \Finna\Service\R2SupportService::class
+                );
+                if ($r2->isEnabled()) {
+                    $table = $this->getTable('Resource');
+                    if ($table->doesListIncludeRecordsFromSource(
+                        $user->id, $list->id, 'R2'
+                    )
+                    ) {
+                        $this->flashMessenger()
+                            ->addMessage('R2_mylist_restricted', 'info');
+                    }
+                }
             } else {
                 $memory  = $this->serviceLocator->get(\VuFind\Search\Memory::class);
                 $memory->rememberSearch(
@@ -949,6 +991,30 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
+     * R2 search access rights.
+     *
+     * @return mixed
+     */
+    public function r2AccessRightsAction()
+    {
+        $user = $this->getUser();
+        if ($user == false) {
+            return $this->forceLogin();
+        }
+
+        $rems = $this->serviceLocator->get('Finna\Service\RemsService');
+        $error = false;
+        $hasAccess = $usagePurpose = null;
+        try {
+            $hasAccess = $rems->hasUserAccess(true);
+            $usagePurpose = $rems->getUsagePurpose();
+        } catch (\Exception $e) {
+            $error = true;
+        }
+        return $this->createViewModel(compact('error', 'hasAccess', 'usagePurpose'));
+    }
+
+    /**
      * Unsubscribe a scheduled alert for a saved search.
      *
      * @return mixed
@@ -1284,7 +1350,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $user = $this->getUser();
         $email = $profile['email'] ?? '';
         $userId = $user->id;
-        $homeLibrary = $user->home_library ?? '';
         $formId = $subject;
 
         $userData = [

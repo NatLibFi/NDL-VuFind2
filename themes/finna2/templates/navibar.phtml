@@ -1,8 +1,8 @@
 <!-- START of: finna - navibar.phtml -->
 <?php $account = $this->auth()->getManager(); ?>
-<div role="navigation" class="finna-navbar">
+<div role="navigation" aria-label="<?=$this->transEsc('Main Navigation')?>" class="finna-navbar">
   <div class="navbar-header">
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->escapeHtmlAttr($this->translate('Main Navigation')) ?>" aria-expanded="false">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->transEscAttr('Main Navigation') ?>" aria-expanded="false">
       <i class="fa fa-bars" aria-hidden="true"></i>
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
@@ -79,19 +79,21 @@
           <?=$this->render($template)?>
         <?php endif; ?>
       </ul>
-      <ul role="menubar" class="nav navbar-nav lang" aria-label="<?=$this->escapeHtmlAttr($this->translate('select_language'))?>">
-        <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
-          <?php $i = 1;?>
-          <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
-            <?php if ($this->layout()->userLang != $langCode): ?>
-              <li class="lang">
-                <a role="menuitem" class="preserve-anchor" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
-              </li>
-              <?php $i++; ?>
-            <?php endif ?>
-          <?php endforeach; ?>
-        <?php endif; ?>
-      </ul>
+      <div role="navigation" aria-label="<?=$this->transEscAttr('select_language')?>">
+        <ul class="nav navbar-nav lang">
+          <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+            <?php $i = 1;?>
+            <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+              <?php if ($this->layout()->userLang != $langCode): ?>
+                <li class="lang">
+                  <a class="preserve-anchor" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+                </li>
+                <?php $i++; ?>
+              <?php endif ?>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </ul>
+      </div>
     <?php //hide login if unavailable ?>
     <?php if (is_object($account) && $account->loginEnabled()): ?>
       <?php $user = $account->isLoggedIn(); ?>
@@ -149,6 +151,17 @@
                   <span class="profile-status status hidden"><i class="fa fa-spin fa-spinner" aria-hidden="true"></i></span>
                 </a>
               </li>
+              <?php if ($this->R2()->isAvailable()): ?>
+                <?php $registered = $this->R2()->isRegistered(); ?>
+                <li>
+                  <a role="menuitem" href="<?=$this->url('myresearch-r2accessrights')?>">
+                    <?=$this->transEsc($registered ? 'R2_accessrights_title' : 'R2_menu_heading_register')?>
+                    <?php if (!$registered): ?>
+                      <i class="fa fa-research pull-right" aria-hidden="true"></i>
+                    <?php endif; ?>
+                  </a>
+                </li>
+              <?php endif; ?>
               <li>
                 <a role="menuitem" href="<?=$this->url('search-history')?>?require_login">
                   <?=$this->transEsc('history_saved_searches')?>

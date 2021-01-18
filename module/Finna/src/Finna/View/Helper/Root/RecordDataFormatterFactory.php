@@ -164,15 +164,9 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Actors', 'getAllPresenters', 'data-actors.phtml',
+            'Actors', 'getPresenters', 'data-actors.phtml',
             [
                 'context' => ['class' => 'recordPresenters']
-            ]
-        );
-        $setTemplateLine(
-            'Assistants', 'getAssistants', 'data-assistants.phtml',
-            [
-                'context' => ['class' => 'record-assistants']
             ]
         );
         $setTemplateLine(
@@ -449,10 +443,19 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Classification',
+            'Publications',
+            'getRelatedPublications', 'data-relatedPublications.phtml',
+            [
+                'context' => ['class' => 'record-related-publications']
+            ]
+        );
+        $setTemplateLine(
+            'Other Classifications',
             'getOtherClassifications', 'data-keywords.phtml',
             [
-                'context' => ['class' => 'recordClassifications']
+                'context' => [
+                    'class' => 'recordClassifications', 'title' => 'Classification'
+                ]
             ]
         );
         $setTemplateLine(
@@ -555,7 +558,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Filming Date', 'getFilmingDate', 'data-escapeHtml.phtml',
+            'Filming Date', 'getFilmingDate', 'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'record-filming-date']
             ]
@@ -831,12 +834,6 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Date', 'getUnitDates', 'data-lines-with-detail.phtml'
-        );
-        $setTemplateLine(
-            'Photo Info', 'getPhotoInfo', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'record-photoinfo']
-            ]
         );
         $setTemplateLine(
             'Source of Acquisition', 'getAcquisitionSource', 'data-escapeHtml.phtml',

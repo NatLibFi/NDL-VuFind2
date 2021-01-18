@@ -1,11 +1,10 @@
 <?php
-
 /**
- * Work expressions feature interface definition.
+ * Restricted Solr (R2) record Controller
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,34 +20,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Search
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Controller
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org
+ * @link     http://vufind.org   Main Site
  */
-namespace FinnaSearch\Feature;
-
-use VuFindSearch\ParamBag;
+namespace Finna\Controller;
 
 /**
- * Work expressions feature interface definition.
+ * Restricted Solr (R2) record Controller
  *
  * @category VuFind
- * @package  Search
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Controller
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org
+ * @link     http://vufind.org   Main Site
  */
-interface WorkExpressionsInterface
+class R2recordController extends RecordController
 {
+    use \Finna\Controller\R2ControllerTrait;
+    use \Finna\Controller\R2RecordControllerTrait;
+
     /**
-     * Return work expressions.
+     * Type of record to display
      *
-     * @param string   $id            Id of record to compare with
-     * @param array    $workKeys      Work identification keys
-     * @param ParamBag $defaultParams Search backend parameters
-     *
-     * @return RecordCollectionInterface
+     * @var string
      */
-    public function workExpressions($id, $workKeys, ParamBag $defaultParams = null);
+    protected $searchClassId = 'R2';
 }

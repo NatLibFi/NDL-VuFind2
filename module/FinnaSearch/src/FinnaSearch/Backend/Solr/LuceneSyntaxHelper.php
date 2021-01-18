@@ -5,7 +5,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2017.
+ * Copyright (C) The National Library of Finland 2015-2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -206,6 +206,48 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     public function extractSearchTerms($query)
     {
         $result = parent::extractsearchTerms($query);
-        return str_word_count($result) <= $this->maxSpellcheckWords ? $result : '';
+        $result = $this->normalizeWildcards($result);
+        return str_word_count($result) <= $this->maxSpellcheckWords
+            ? $result : '';
+    }
+
+    /**
+     * Normalize wildcards in a query.
+     *
+     * @param string $input String to normalize
+     *
+     * @return string
+     */
+    protected function normalizeWildcards($input)
+    {
+        $result = parent::normalizeWildcards($input);
+
+        // Remove wildcards from beginning and end of string and when not part of a
+        // range ([* TO *]) or an any value field (field:*)
+        $result = preg_replace_callback(
+            '/(^|[:\(]|[^\w\[\*]+?)([\*\?]+)($|[^\]\*])/u',
+            function ($matches) {
+                if (':' === $matches[1] && '*' === $matches[2]
+                    && ('' === $matches[3] || strncmp(' ', $matches[3], 1) === 0)
+                ) {
+                    return ':*' . $matches[3];
+                }
+                return $matches[1] . $matches[3];
+            },
+            $result
+        );
+
+        /* TODO: will we need this?
+        // Remove wildcards when preceded by only one or two characters
+        $words = preg_split('/\s+/', $result);
+        $fixed = [];
+        foreach ($words as $word) {
+            $word = preg_replace('/^(\w{1,2})[\*\?]+/u', '$1', $word);
+            $fixed[] = $word;
+        }
+        $result = implode(' ', $fixed);
+        */
+
+        return $result;
     }
 }
