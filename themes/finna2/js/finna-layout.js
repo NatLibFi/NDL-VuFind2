@@ -384,7 +384,6 @@ finna.layout = (function finnaLayout() {
           setTimeout(function onTriggerUnveil () {
             holder.find('.recordcover').trigger('unveil');
           }, 150);
-
         }
       }
     });
