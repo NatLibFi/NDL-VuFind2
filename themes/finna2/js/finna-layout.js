@@ -375,15 +375,14 @@ finna.layout = (function finnaLayout() {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         holder = $(this).parent().parent();
         holder.toggleClass('open');
+        var isOpen = holder.hasClass('open');
 
-        var onSlideComplete = function onSlideComplete () {
-          if (holder.hasClass('open') && holder.hasClass('opened')) {
-            holder.find('.recordcover').trigger('unveil');
-          }
-        };
+        var onSlideComplete = isOpen ? function onSlideComplete () {
+          holder.find('.recordcover').trigger('unveil');
+        } : null;
+
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear', onSlideComplete);
 
-        var isOpen = holder.hasClass('open');
         var icon = $(this).find('.condensed-body > i');
         var iconClass = isOpen ? 'fa-arrow-down' : 'fa-arrow-right';
         icon.removeClass('fa-arrow-right fa-arrow-left').addClass(iconClass);
