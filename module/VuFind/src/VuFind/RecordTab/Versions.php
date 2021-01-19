@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
-namespace Finna\RecordTab;
+namespace VuFind\RecordTab;
 
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -47,18 +47,29 @@ class Versions extends \VuFind\RecordTab\AbstractBase
     /**
      * Main configuration
      *
-     * @var \Laminas\Config\Config
+     * @var \Zend\Config\Config
      */
     protected $config;
 
     /**
+     * Search options plugin manager
+     *
+     * @var \VuFind\Search\Options\PluginManager;
+     */
+    protected $searchOptionsManager;
+
+    /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $config Configuration
+     * @param \Zend\Config\Config                  $config Configuration
+     * @param \VuFind\Search\Options\PluginManager $som    Search options plugin
+     * manager
      */
-    public function __construct(\Laminas\Config\Config $config)
-    {
+    public function __construct(\Laminas\Config\Config $config,
+        \VuFind\Search\Options\PluginManager $som
+    ) {
         $this->config = $config;
+        $this->searchOptionsManager = $som;
     }
 
     /**
@@ -68,11 +79,10 @@ class Versions extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
-        if (!empty($this->config->Record->display_versions)) {
-            return $this->getRecordDriver()
-                ->tryMethod('getOtherVersionCount', [], 0) > 0;
-        }
-        return false;
+        $options = $this->searchOptionsManager
+            ->get($this->getRecordDriver()->getSourceIdentifier());
+        return $options->getVersionsAction()
+            && $this->getRecordDriver()->tryMethod('getOtherVersionCount') > 0;
     }
 
     /**
@@ -82,7 +92,7 @@ class Versions extends \VuFind\RecordTab\AbstractBase
      */
     public function getDescription()
     {
-        $count = $this->getRecordDriver()->tryMethod('getOtherVersionCount', [], 0);
+        $count = $this->getRecordDriver()->tryMethod('getOtherVersionCount');
         return $this->translate('other_versions_title', ['%%count%%' => $count]);
     }
 }

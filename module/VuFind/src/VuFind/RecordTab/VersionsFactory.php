@@ -1,9 +1,10 @@
 <?php
 /**
- * Factory for Versions tab.
+ * Factory for building the Versions tab.
  *
  * PHP version 7
  *
+ * Copyright (C) Villanova University 2019.
  * Copyright (C) The National Library of Finland 2020.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,20 +22,21 @@
  *
  * @category VuFind
  * @package  RecordTabs
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\RecordTab;
+namespace VuFind\RecordTab;
 
 use Interop\Container\ContainerInterface;
-use VuFind\Config\PluginManager as ConfigManager;
 
 /**
- * Factory for Versions tab.
+ * Factory for building the Versions tab.
  *
  * @category VuFind
  * @package  RecordTabs
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
@@ -63,7 +65,9 @@ class VersionsFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $config = $container->get(ConfigManager::class)->get('config');
-        return new $requestedName($config);
+        return new $requestedName(
+            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
+            $container->get(\VuFind\Search\Options\PluginManager::class)
+        );
     }
 }

@@ -1,8 +1,8 @@
 <!-- START of: finna - navibar.phtml -->
 <?php $account = $this->auth()->getManager(); ?>
-<div role="navigation" aria-label="<?=$this->transEsc('Main Navigation')?>" class="finna-navbar">
+<div role="navigation" aria-label="<?=$this->transEscAttr('Main Menu')?>" class="finna-navbar">
   <div class="navbar-header">
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->escapeHtmlAttr($this->translate('Main Navigation')) ?>" aria-expanded="false">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->transEscAttr('Mobile Menu') ?>" aria-expanded="false">
       <i class="fa fa-bars" aria-hidden="true"></i>
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
@@ -79,19 +79,21 @@
           <?=$this->render($template)?>
         <?php endif; ?>
       </ul>
-      <ul role="menubar" class="nav navbar-nav lang" aria-label="<?=$this->escapeHtmlAttr($this->translate('select_language'))?>">
-        <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
-          <?php $i = 1;?>
-          <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
-            <?php if ($this->layout()->userLang != $langCode): ?>
-              <li class="lang">
-                <a role="menuitem" class="preserve-anchor" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
-              </li>
-              <?php $i++; ?>
-            <?php endif ?>
-          <?php endforeach; ?>
-        <?php endif; ?>
-      </ul>
+      <div role="navigation" aria-label="<?=$this->transEscAttr('select_language')?>">
+        <ul class="nav navbar-nav lang">
+          <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+            <?php $i = 1;?>
+            <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+              <?php if ($this->layout()->userLang != $langCode): ?>
+                <li class="lang">
+                  <a class="preserve-anchor" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->navibar()->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+                </li>
+                <?php $i++; ?>
+              <?php endif ?>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </ul>
+      </div>
     <?php //hide login if unavailable ?>
     <?php if (is_object($account) && $account->loginEnabled()): ?>
       <?php $user = $account->isLoggedIn(); ?>
