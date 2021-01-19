@@ -376,7 +376,7 @@ finna.layout = (function finnaLayout() {
         holder = $(this).parent().parent();
         holder.toggleClass('open');
 
-        var onSlideComplete = function () {
+        var onSlideComplete = function onSlideComplete () {
           if (holder.hasClass('open') && holder.hasClass('opened')) {
             holder.find('.recordcover').trigger('unveil');
           }
