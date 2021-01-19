@@ -26,7 +26,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org
  */
-namespace FinnaSearch\Feature;
+namespace VuFindSearch\Feature;
 
 use VuFindSearch\ParamBag;
 

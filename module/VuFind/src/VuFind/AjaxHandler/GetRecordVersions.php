@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\AjaxHandler;
+namespace VuFind\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Record\Loader;
@@ -93,8 +93,9 @@ class GetRecordVersions extends \VuFind\AjaxHandler\AbstractBase
     {
         $this->disableSessionWrites(); // avoid session write timing bug
 
-        $id = $params->fromPost('id', $params->fromQuery('id'));
-        $driver = $this->recordLoader->load($id);
+        $id = $params->fromPost('id') ?: $params->fromQuery('id');
+        $source = $params->fromPost('source') ?: $params->fromQuery('source');
+        $driver = $this->recordLoader->load($id, $source);
         $tabs = $this->tabManager->getTabsForRecord($driver);
         $full = true;
 
