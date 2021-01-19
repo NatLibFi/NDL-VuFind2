@@ -377,7 +377,7 @@ finna.layout = (function finnaLayout() {
         holder.toggleClass('open');
         var isOpen = holder.hasClass('open');
 
-        var onSlideComplete = isOpen ? function onSlideComplete () {
+        var onSlideComplete = !holder.hasClass('opened') ? function onSlideComplete () {
           holder.find('.recordcover').trigger('unveil');
         } : null;
 
