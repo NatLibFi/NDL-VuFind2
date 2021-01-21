@@ -1026,7 +1026,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
         foreach (['geographic', 'genre', 'era'] as $field) {
             if (isset($this->fields[$field])) {
-                //$headings = array_merge($headings, (array)$this->fields[$field]);
+                $headings = array_merge($headings, (array)$this->fields[$field]);
             }
         }
 
