@@ -1030,8 +1030,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
 
-        $headings = $this->splitAndTrim($headings);
-
         // The default index schema doesn't currently store subject headings in a
         // broken-down format, so we'll just send each value as a single chunk.
         // Other record drivers (i.e. SolrMarc) can offer this data in a more
@@ -1331,30 +1329,5 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected function getPreferredLanguageCodes()
     {
         return self::LANGUAGE_CODES[$this->preferredLanguage ?? 'fi'];
-    }
-
-    /**
-     * Split and trim a list of terms.
-     *
-     * @param array  $terms     Terms
-     * @param string $separator Separator to split the terms by.
-     *
-     * @return array
-     */
-    protected function splitAndTrim(array $terms, $separator = ',') : array
-    {
-        $result = [];
-        foreach ($terms as $term) {
-            $result = array_merge(
-                array_map(
-                    function ($t) {
-                        return trim($t);
-                    },
-                    explode($separator, $term)
-                ),
-                $result
-            );
-        }
-        return $result;
     }
 }
