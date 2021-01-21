@@ -38,6 +38,13 @@ if ($img):
             ?>
             </a>
           </h2>
+          <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
+            <div class="result-uniform-titles">
+              <?php foreach ($uniformTitles as $uniformTitle): ?>
+                <?=$this->escapeHtml($uniformTitle) ?><br/>
+              <?php endforeach; ?>
+            </div>
+          <?php endif; ?>
           <span class="sr-only"> <?=$this->transEsc('To the record')?></span>
         </div>
 
