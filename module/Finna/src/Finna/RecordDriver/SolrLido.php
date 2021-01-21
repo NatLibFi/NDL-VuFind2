@@ -469,10 +469,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/'
             . "appellationValue"
         ) as $node) {
-            $label = $node->attributes()->label ?? null;
+            $attr = $node->attributes();
+            $label = $attr->label ?? null;
             if (!$label
                 || !in_array((string)$label, ['teosnimi','nimi','title','titel'])
             ) {
+                continue;
+            }
+            $lang = $attr->lang;
+            if ($lang && in_array((string)$lang, self::LANGUAGE_CODES['fi'])) {
                 continue;
             }
             $title = trim((string)$node);
