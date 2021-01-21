@@ -476,8 +476,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             ) {
                 continue;
             }
-            $lang = $attr->lang;
-            if ($lang && in_array((string)$lang, self::LANGUAGE_CODES['fi'])) {
+            if (in_array((string)$attr->lang, self::LANGUAGE_CODES['fi'])) {
                 continue;
             }
             $title = trim((string)$node);
@@ -545,11 +544,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $term = trim((string)$node->term);
                 if ('' !== $term) {
                     $attributes = $node->term->attributes();
-                    $label = isset($attributes->label) ? (string)$attributes->label : '';
+                    $label = isset($attributes->label)
+                        ? (string)$attributes->label : '';
                     $data = $label ? compact('term', 'label') : $term;
                     $allResults[] = $data;
                     if (in_array(
-                        $node->attributes()->lang ?? null,
+                        (string)$node->attributes()->lang,
                         $preferredLanguages
                     )
                     ) {
@@ -1016,8 +1016,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             if ($term = trim((string)$node)) {
                 $attr = $node->attributes();
                 $allResults[] = $term;
-                $lang = $attr->lang ?? null;
-                if ($lang && in_array((string)$lang, $preferredLanguages)) {
+                if (in_array((string)$attr->lang, $preferredLanguages)) {
                     $preferredLangResults[] = $term;
                 }
             }
@@ -1285,8 +1284,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
             . '/objectDescriptionSet[@type="description"]/descriptiveNoteValue'
         ) as $node) {
-            $lang = (string)($node->attributes()->lang ?? null);
-            if ($lang && in_array($lang, $preferredLanguages)) {
+            if (in_array((string)$node->attributes()->lang, $preferredLanguages)) {
                 if ($term = trim((string)$node)) {
                     $results[] = $term;
                 }
