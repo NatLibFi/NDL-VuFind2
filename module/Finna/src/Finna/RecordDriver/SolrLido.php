@@ -1328,6 +1328,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected function getPreferredLanguageCodes()
     {
-        return self::LANGUAGE_CODES[$this->preferredLanguage ?? 'fi'];
+        return self::LANGUAGE_CODES[$this->preferredLanguage]
+            ?? self::LANGUAGE_CODES['fi'];
     }
 }
