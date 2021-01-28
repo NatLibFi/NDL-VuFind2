@@ -479,7 +479,22 @@ class SolrEad3 extends SolrEad
             = !empty($fullResImages) || !empty($OCRImages)
             || !empty($this->getAllImages());
 
-        return compact('fullResImages', 'OCRImages', 'physicalItems', 'digitized');
+        $result = ['items' => []];
+        if (!empty($fullResImages)) {
+            $result['items']['fullResImages'] = $fullResImages;
+        }
+        if (!empty($OCRImages)) {
+            $result['items']['OCRImages'] = $OCRImages;
+        }
+        if (!empty($physicalItems)) {
+            $result['items']['physicalItems'] = $physicalItems;
+        }
+        if (empty($result['items'])) {
+            unset($result['items']);
+        }
+        $result['digitized'] = $digitized;
+
+        return $result;
     }
 
     /**
