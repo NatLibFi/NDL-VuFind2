@@ -472,11 +472,14 @@ class SolrEad3 extends SolrEad
      */
     public function getExternalData()
     {
-        return [
-            'fullResImages' => $this->getFullResImages(),
-            'OCRImages' => $this->getOCRImages(),
-            'physicalItems' => $this->getPhysicalItems()
-        ];
+        $fullResImages = $this->getFullResImages();
+        $OCRImages = $this->getOCRImages();
+        $physicalItems = $this->getPhysicalItems();
+        $digitized
+            = !empty($fullResImages) || !empty($OCRImages)
+            || !empty($this->getAllImages());
+
+        return compact('fullResImages', 'OCRImages', 'physicalItems', 'digitized');
     }
 
     /**
