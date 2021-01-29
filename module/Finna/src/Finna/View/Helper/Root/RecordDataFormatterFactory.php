@@ -164,15 +164,9 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Actors', 'getAllPresenters', 'data-actors.phtml',
+            'Actors', 'getPresenters', 'data-actors.phtml',
             [
                 'context' => ['class' => 'recordPresenters']
-            ]
-        );
-        $setTemplateLine(
-            'Assistants', 'getAssistants', 'data-assistants.phtml',
-            [
-                'context' => ['class' => 'record-assistants']
             ]
         );
         $setTemplateLine(
@@ -456,10 +450,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Classification',
+            'Other Classifications',
             'getOtherClassifications', 'data-keywords.phtml',
             [
-                'context' => ['class' => 'recordClassifications']
+                'context' => [
+                    'class' => 'recordClassifications', 'title' => 'Classification'
+                ]
             ]
         );
         $setTemplateLine(
@@ -837,7 +833,10 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Date', 'getUnitDates', 'data-lines-with-detail.phtml'
+            'Dates', 'getUnitDates', 'data-lines-with-detail.phtml',
+            [
+                'context' => ['title' => 'Date']
+            ]
         );
         $setTemplateLine(
             'Source of Acquisition', 'getAcquisitionSource', 'data-escapeHtml.phtml',
@@ -914,6 +913,13 @@ class RecordDataFormatterFactory
             'Place of Origin', 'getAssociatedPlace', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'record-associated-place']
+            ]
+        );
+        $setTemplateLine(
+            'Related Places', 'getRelatedPlacesExtended',
+            'data-lines-with-detail.phtml',
+            [
+                'context' => ['class' => 'record-related-place']
             ]
         );
         $setTemplateLine(

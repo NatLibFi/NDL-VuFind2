@@ -305,10 +305,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                 if (!$size) {
                     if ($urls) {
-                        // We already have URL's, store them in the results first.
-                        // This shouldn't happen unless there are multiple images
-                        // without type in the same set.
-                        $result[] = [
+                        // We already have URL's, store them in the final results
+                        // first. This shouldn't happen unless there are multiple
+                        // images without type in the same set.
+                        $results[] = [
                             'urls' => $urls,
                             'description' => '',
                             'rights' => $rights
@@ -510,13 +510,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             . 'classification'
         ) as $node) {
             if (isset($node->term)) {
-                $term = (string)$node->term;
-                $attributes = $node->term->attributes();
-                $label = isset($attributes->label) ? $attributes->label : '';
-                if ($label) {
-                    $results[] = compact('term', 'label');
-                } else {
-                    $results[] = $term;
+                $term = trim((string)$node->term);
+                if ('' !== $term) {
+                    $attributes = $node->term->attributes();
+                    $label = isset($attributes->label) ? $attributes->label : '';
+                    if ($label) {
+                        $results[] = compact('term', 'label');
+                    } else {
+                        $results[] = $term;
+                    }
                 }
             }
         }
@@ -681,17 +683,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $actors = [];
             if (isset($node->eventActor)) {
                 foreach ($node->eventActor as $actor) {
-                    $appellationValue = isset(
+                    $appellationValue = trim(
                         $actor->actorInRole->actor->nameActorSet->appellationValue
-                    ) ? trim(
-                        $actor->actorInRole->actor->nameActorSet->appellationValue
-                    ) : '';
+                    ) ?? '';
                     if ($appellationValue !== '') {
-                        $role = isset($actor->actorInRole->roleActor->term)
-                            ? $actor->actorInRole->roleActor->term : '';
+                        $role = (string)($actor->actorInRole->roleActor->term ?? '');
+                        $earliestDate = (string)($actor->actorInRole->actor
+                            ->vitalDatesActor->earliestDate ?? '');
+                        $latestDate = (string)($actor->actorInRole->actor
+                            ->vitalDatesActor->latestDate ?? '');
                         $actors[] = [
                             'name' => $appellationValue,
-                            'role' => $role
+                            'role' => $role,
+                            'birth' => $earliestDate,
+                            'death' => $latestDate
                         ];
                     }
                 }
