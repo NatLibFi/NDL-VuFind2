@@ -286,7 +286,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get relations.
      *
      * @return array
      */
