@@ -297,7 +297,7 @@ class SolrEad3 extends SolrEad
         if (!isset($xml->relations->relation)) {
             return $result;
         }
-        foreach ($xml->controlaccess->names as $node) {
+        foreach ($xml->controlaccess->name as $node) {
             $attr = $node->attributes();
             $relator = (string)$attr->relator;
             if (self::RELATOR_ARCHIVE_ORIGINATION === $relator) {
