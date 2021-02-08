@@ -467,6 +467,26 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $mainTitle = $this->getTitle();
         foreach ($this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/'
+            . "appellationValue[@label='teosnimi']"
+        ) as $node) {
+            if ((string)$node != $mainTitle) {
+                $results[] = (string)$node;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of other language titles for the record.
+     *
+     * @return array
+     */
+    public function getOtherLanguageTitles()
+    {
+        $results = [];
+        $mainTitle = $this->getTitle();
+        foreach ($this->getXmlRecord()->xpath(
+            'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/'
             . "appellationValue"
         ) as $node) {
             $attr = $node->attributes();
@@ -485,16 +505,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
         return $results;
-    }
-
-    /**
-     * Get uniform titles.
-     *
-     * @return array
-     */
-    public function getUniformTitles()
-    {
-        return $this->getAlternativeTitles();
     }
 
     /**

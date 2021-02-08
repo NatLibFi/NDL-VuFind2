@@ -14,9 +14,12 @@
 ?>
 <div id="popup-content-collapse" class="content">
   <h3 id="popup-image-title" class="title"><?=$this->escapeHtml($this->driver->getTitle())?></h3>
-  <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
-    <div class="result-uniform-titles">
-      <?=implode(' &ndash; ', array_map($this->escapeHtml, $uniformTitles)) ?>
+  <?php if ($otherTitles = array_merge(
+    $this->driver->tryMethod('getUniformTitles') ?? [],
+    $this->driver->tryMethod('getOtherLanguageTitles') ?? []
+  )): ?>
+    <div class="result-other-titles">
+      <?=implode(' &ndash; ', array_map($this->escapeHtml, $otherTitles)) ?>
     </div>
   <?php endif; ?>
   <div class="author-and-dates">

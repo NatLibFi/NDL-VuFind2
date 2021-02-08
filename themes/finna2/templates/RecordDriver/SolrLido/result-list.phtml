@@ -38,10 +38,10 @@ if ($img):
             ?>
             </a>
           </h2>
-          <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
-            <div class="result-uniform-titles">
-              <?php foreach ($uniformTitles as $uniformTitle): ?>
-                <?=$this->escapeHtml($uniformTitle) ?><br/>
+          <?php if ($otherTitles = $this->driver->tryMethod('getOtherLanguageTitles')): ?>
+            <div class="result-other-language-titles">
+              <?php foreach ($otherTitles as $otherTitle): ?>
+                <?=$this->escapeHtml($otherTitle) ?><br/>
               <?php endforeach; ?>
             </div>
           <?php endif; ?>

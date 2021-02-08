@@ -28,9 +28,9 @@
         ?>
         </a>
       </h2>
-      <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
-        <div class="result-uniform-titles">
-          <?=implode(' &ndash; ', array_map($this->escapeHtml, $uniformTitles)) ?>
+      <?php if ($otherTitles = $this->driver->tryMethod('getOtherLanguageTitles')): ?>
+        <div class="result-other-language-titles">
+          <?=implode(' &ndash; ', array_map($this->escapeHtml, $otherTitles)) ?>
         </div>
       <?php endif; ?>
       <div class="dateyeartype">
