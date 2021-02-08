@@ -242,11 +242,62 @@ class SolrEad3 extends SolrEad
     {
         $result = [];
         $xml = $this->getXmlRecord();
-        if (!isset($xml->relations->relation)) {
+
+        $names = [];
+        if (isset($xml->controlaccess->persname)) {
+            foreach ($xml->controlaccess->persname as $name) {
+                $names[] = $name;
+            }
+        }
+        if (isset($xml->controlaccess->corpname)) {
+            foreach ($xml->controlaccess->corpname as $name) {
+                $names[] = $name;
+            }
+        }
+
+        // Attempt to find names in preferred language
+        foreach ($names as $node) {
+            $name = $this->getDisplayLabel($node, 'part', true);
+            if (empty($name) || !$name[0]) {
+                continue;
+            }
+            $result[] = ['name' => $name[0]];
+        }
+        if (!empty($result)) {
             return $result;
         }
 
-        foreach ($xml->controlaccess->name as $node) {
+        // Not found, search again without language filters
+        foreach ($names as $node) {
+            $name = $this->getDisplayLabel($node);
+            if (empty($name) || !$name[0]) {
+                continue;
+            }
+            $result[] = $name[0];
+        }
+        $result = array_map(
+            function ($name) {
+                return ['name' => $name];
+            },
+            array_unique($result)
+        );
+        
+        return $result;
+    }
+
+    /**
+     * Get all authors apart from presenters
+     *
+     * @return array
+     */
+    public function getRelations()
+    {
+        $result = [];
+        $xml = $this->getXmlRecord();
+        if (!isset($xml->relations->relation)) {
+            return $result;
+        }
+        foreach ($xml->controlaccess->names as $node) {
             $attr = $node->attributes();
             $relator = (string)$attr->relator;
             if (self::RELATOR_ARCHIVE_ORIGINATION === $relator) {
@@ -412,7 +463,7 @@ class SolrEad3 extends SolrEad
                 if (isset($el->attributes()->encodinganalog)) {
                     continue;
                 }
-                if (! isset($el->head) || (string)$el->head !== 'Tietosisältö') {
+                if (isset($el->head) && (string)$el->head !== 'Tietosisältö') {
                     continue;
                 }
                 if ($desc = $this->getDisplayLabel($el, 'p', true)) {
@@ -632,6 +683,39 @@ class SolrEad3 extends SolrEad
         }
         $label = $this->getDisplayLabel($xml->bibliography, 'p', true);
         return $label ? $label[0] : null;
+    }
+
+    /**
+     * Get access restriction notes for the record.
+     *
+     * @return string[] Notes
+     */
+    public function getAccessRestrictions()
+    {
+        $xml = $this->getXmlRecord();
+        $result = [];
+        if (isset($xml->userestrict)) {
+            foreach ($xml->userestrict as $node) {
+                if ($label = $this->getDisplayLabel($node, 'p', true)) {
+                    if (empty($label[0])) {
+                        continue;
+                    }
+                    $result[] = $label[0];
+                }
+            }
+            if (empty($result)) {
+                foreach ($xml->userestrict as $node) {
+                    if ($label = $this->getDisplayLabel($node, 'p')) {
+                        if (empty($label[0])) {
+                            continue;
+                        }
+                        $result[] = $label[0];
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**

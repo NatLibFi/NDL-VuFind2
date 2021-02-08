@@ -330,11 +330,12 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     {
         $include = [
             'Accessibility Feature', 'Accessibility Hazard',
-            'Access Restrictions Extended', 'Additional Information',
+            'Access Restrictions', 'Access Restrictions Extended',
+            'Additional Information',
             'Age Limit', 'Archive', 'Archive Films',
             'Archive Origination', 'Archive Relations',
             'Archive Series', 'Aspect Ratio', 'Audience',
-            'Author Notes', 'Available Online', 'Awards',
+            'Authors', 'Author Notes', 'Available Online', 'Awards',
             'Bibliography', 'Broadcasting Dates', 'child_records',
             'Classification', 'Collection', 'Color',
             'Content Description', 'Copyright Notes', 'Date',
