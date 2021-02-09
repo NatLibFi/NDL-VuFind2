@@ -5,6 +5,7 @@
   $formats = $this->driver->getFormats();
   $format = end($formats);
   $url = $this->recordLink()->getUrl($this->driver);
+  $fields = $this->driver->getRawData();
 
   // NOTE: use $info['baseUrl'] instead of serverUrl view helper when this template is
   // rendered by scheduled alerts console action.
@@ -20,6 +21,21 @@
 <?php endif; ?>
 <?php if (!empty($format)): ?>
 <?= PHP_EOL . $this->translate($format) ?>
+<?php endif; ?>
+<?php if ($identifier = ($fields['identifier'] ?? null)): ?>
+  <?= PHP_EOL . $this->translate('Identifier') . ': ' . implode(', ', $identifier) ?>
+<?php endif; ?>
+<?php
+$parentTitle = $fields['hierarchy_parent_title'] ?? null;
+if ($topTitle = ($fields['hierarchy_top_title'] ?? null)) {
+  if ($parentTitle) {
+    $parentTitle .= ', ';
+  }
+  $parentTitle .= $topTitle;
+}
+?>
+<?php if ($parentTitle && $parentTitle !== $title): ?>
+  <?= PHP_EOL . $this->translate('component_part_is_part_of') . ': ' . implode(', ', $parentTitle) ?>
 <?php endif; ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>
