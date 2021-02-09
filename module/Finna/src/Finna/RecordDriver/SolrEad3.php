@@ -932,22 +932,31 @@ class SolrEad3 extends SolrEad
      */
     public function getUnitDates()
     {
-        $unitdate = parent::getUnitDate();
-
         $record = $this->getXmlRecord();
-        if (!isset($record->did->unittitle)) {
-            return $unitdate;
-        }
         $result = [];
-        foreach ($record->did->unitdate as $date) {
-            $attr = $date->attributes();
-            if ($desc = $attr->normal ?? null) {
-                $desc = $attr->label ?? null;
+
+        if (isset($record->did->unitdate)) {
+            foreach ($record->did->unitdate as $date) {
+                $attr = $date->attributes();
+                if ($desc = $attr->normal ?? null) {
+                    $desc = $attr->label ?? null;
+                }
+                $date = (string)$date;
+                $result[] = ['data' => (string)$date, 'detail' => (string)$desc];
             }
-            $date = (string)$date;
-            $result[] = ['data' => (string)$date, 'detail' => (string)$desc];
+            if ($result) {
+                return $result;
+            }
         }
-        return $result;
+
+        if (isset($record->did->unitdatestructured->datesingle)) {
+            $attr = $record->did->unitdatestructured->datesingle->attributes();
+            if ($attr->standarddate) {
+                return [['data' => (string)$attr->standarddate]];
+            }
+        }
+
+        return [];
     }
 
     /**
