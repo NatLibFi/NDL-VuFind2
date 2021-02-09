@@ -956,7 +956,7 @@ class SolrEad3 extends SolrEad
             }
         }
 
-        return [];
+        return $this->getUnitDate();
     }
 
     /**
