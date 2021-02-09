@@ -281,7 +281,7 @@ class SolrEad3 extends SolrEad
             },
             array_unique($result)
         );
-        
+
         return $result;
     }
 
