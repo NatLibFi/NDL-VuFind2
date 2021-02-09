@@ -506,7 +506,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Available Online', 'Awards', 'Bibliography',
             'Broadcasting Dates', 'child_records', 'Classification',
             'Collection', 'Color', 'Content Description',
-            'Copyright Notes', 'Date', 'Description FWD',
+            'Copyright Notes', 'Date', 'Dates', 'Description FWD',
             'Dissertation Note', 'Distribution', 'DOI',
             'Edition', 'Educational Level', 'Educational Role',
             'Educational Subject', 'Educational Use', 'Education Programs',
