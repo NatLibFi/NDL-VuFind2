@@ -229,13 +229,6 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Other Language Titles', 'getOtherLanguageTitles',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordOtherLanguageTitles']
-            ]
-        );
-        $setTemplateLine(
             'Format', 'getFormats', 'format-list.phtml',
             [
                 'context' => ['class' => 'recordFormat']
