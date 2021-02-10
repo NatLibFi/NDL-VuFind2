@@ -228,6 +228,7 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordAltTitles']
             ]
         );
+
         $setTemplateLine(
             'Format', 'getFormats', 'format-list.phtml',
             [
