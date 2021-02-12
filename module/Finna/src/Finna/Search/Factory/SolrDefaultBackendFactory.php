@@ -6,7 +6,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2013.
- * Copyright (C) The National Library of Finland 2013-2019.
+ * Copyright (C) The National Library of Finland 2013-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -54,12 +54,21 @@ use VuFindSearch\Backend\Solr\Response\Json\RecordCollectionFactory;
 class SolrDefaultBackendFactory
     extends \VuFind\Search\Factory\SolrDefaultBackendFactory
 {
+    use SolrCachingConnectorFactoryTrait;
+
     /**
      * Callback for creating a record driver.
      *
      * @var string
      */
     protected $createRecordMethod = 'getSolrRecord';
+
+    /**
+     * Solr connector class
+     *
+     * @var string
+     */
+    protected $connectorClass = \FinnaSearch\Backend\Solr\Connector::class;
 
     /**
      * Create the SOLR backend.
