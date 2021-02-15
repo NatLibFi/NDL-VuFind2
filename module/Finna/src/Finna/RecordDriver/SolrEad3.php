@@ -760,13 +760,14 @@ class SolrEad3 extends SolrEad
                 } else {
                     $type = (string)$attr->encodinganalog;
                     if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
+                        $type = str_replace(':', '_', $type);
                         switch ($type) {
-                        case 'ahaa:KR7':
+                        case 'ahaa_KR7':
                             $label = $this->getDisplayLabel(
                                 $access->p->name, 'part', true
                             );
                             break;
-                        case 'ahaa:KR9':
+                        case 'ahaa_KR9':
                             $label = [(string)($access->p->date ?? '')];
                             break;
                         default:
