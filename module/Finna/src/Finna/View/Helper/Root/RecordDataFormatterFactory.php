@@ -772,8 +772,10 @@ class RecordDataFormatterFactory
         $getAccessRestrictions = function ($data, $options) use (&$pos) {
             $final = [];
             foreach ($data as $type => $values) {
+                $label = $type === 'general'
+                    ? 'Access Conditions' : "Access Restrictions:$type";
                 $final[] = [
-                    'label' => "Access Restrictions:$type",
+                    'label' => $label,
                     'values' => $values ? array_values($values) : null,
                     'options' => [
                         'pos' => $pos++,
@@ -781,7 +783,7 @@ class RecordDataFormatterFactory
                         'template' => 'data-escapeHtml.phtml',
                         'context' => [
                             'class' => 'extendedAccess',
-                            'type' => "Access Restrictions::$type",
+                            'type' => $label,
                             'schemaLabel' => null,
                         ],
                     ],
