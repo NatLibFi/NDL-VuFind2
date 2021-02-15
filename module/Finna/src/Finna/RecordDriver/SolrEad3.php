@@ -950,9 +950,14 @@ class SolrEad3 extends SolrEad
         }
 
         if (isset($record->did->unitdatestructured->datesingle)) {
-            $attr = $record->did->unitdatestructured->datesingle->attributes();
-            if ($attr->standarddate) {
-                return [['data' => (string)$attr->standarddate]];
+            foreach ($record->did->unitdatestructured->datesingle as $date) {
+                $attr = $date->attributes();
+                if ($attr->standarddate) {
+                    $result[] = ['data' => (string)$attr->standarddate];
+                }
+            }
+            if ($result) {
+                return array_unique($result);
             }
         }
 
