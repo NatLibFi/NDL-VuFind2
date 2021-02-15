@@ -22,7 +22,7 @@
 <?php if (!empty($format)): ?>
 <?= PHP_EOL . $this->translate($format) ?>
 <?php endif; ?>
-<?php if ($identifier = ($fields['identifier'] ?? null)): ?>
+<?php if ($identifier = ($this->driver->getIdentifier())): ?>
   <?= PHP_EOL . $this->translate('Identifier') . ': ' . implode(', ', $identifier) ?>
 <?php endif; ?>
 <?php
