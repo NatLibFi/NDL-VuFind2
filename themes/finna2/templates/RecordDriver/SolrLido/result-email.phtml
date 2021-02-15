@@ -5,7 +5,6 @@
   $formats = $this->driver->getFormats();
   $format = end($formats);
   $url = $this->recordLink()->getUrl($this->driver);
-  $fields = $this->driver->getRawData();
 
   // NOTE: use $info['baseUrl'] instead of serverUrl view helper when this template is
   // rendered by scheduled alerts console action.
@@ -26,8 +25,8 @@
   <?= PHP_EOL . $this->translate('Identifier') . ': ' . implode(', ', $identifier) ?>
 <?php endif; ?>
 <?php
-$parentTitle = $fields['hierarchy_parent_title'] ?? null;
-if ($topTitle = ($fields['hierarchy_top_title'] ?? null)) {
+$parentTitle = $this->driver->getHierarchyParentTitle();
+if ($topTitle = $this->driver->getHierarchyTopTitle()) {
   if ($parentTitle) {
     $parentTitle .= ', ';
   }
