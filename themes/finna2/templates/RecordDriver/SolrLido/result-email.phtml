@@ -25,16 +25,16 @@
   <?= PHP_EOL . $this->translate('Identifier') . ': ' . implode(', ', $identifier) ?>
 <?php endif; ?>
 <?php
-$parentTitle = $this->driver->getHierarchyParentTitle();
-if ($topTitle = $this->driver->getHierarchyTopTitle()) {
-  if ($parentTitle) {
-    $parentTitle .= ', ';
+$parentTitles = $this->driver->getHierarchyParentTitle();
+$topTitles = $this->driver->getHierarchyTopTitle();
+foreach ($parentTitles as $i => $parentTitle) {
+  if ($topTitle = ($topTitles[$i] ?? '')) {
+    $parentTitle = "{$parentTitle}, {$topTitle}";
   }
-  $parentTitle .= $topTitle;
+  if ($parentTitle !== $title) {
+    echo PHP_EOL . $this->translate('component_part_is_part_of') . ': ' . $parentTitle;
+  }
 }
 ?>
-<?php if ($parentTitle && $parentTitle !== $title): ?>
-  <?= PHP_EOL . $this->translate('component_part_is_part_of') . ': ' . implode(', ', $parentTitle) ?>
-<?php endif; ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>
