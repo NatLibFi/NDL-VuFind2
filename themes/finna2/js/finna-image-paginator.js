@@ -561,7 +561,7 @@ finna.imagePaginator = (function imagePaginator() {
           });
         }
       } else if (_.trigger.hasClass('no-image')) {
-          _.trigger.removeClass('no-image');
+        _.trigger.removeClass('no-image');
       }
     }
 
