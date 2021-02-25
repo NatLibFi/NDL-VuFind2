@@ -560,8 +560,8 @@ finna.imagePaginator = (function imagePaginator() {
             $('.large-image-sidebar').addClass('visible-xs visible-sm');
           });
         }
-      } else {
-        if (_.trigger.hasClass('no-image')) {
+      } else if {
+        (_.trigger.hasClass('no-image')) {
           _.trigger.removeClass('no-image');
         }
       }
