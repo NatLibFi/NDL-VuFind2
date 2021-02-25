@@ -32,61 +32,60 @@
             <th><?=$this->transEsc('Username')?></th>
             <th class="library-card-actions"><?=$this->transEsc('Actions')?></th>
           </tr>
-          <?php foreach ($this->libraryCards as $record): ?>
-            <?php $username = $record['cat_username']; ?>
-            <?php $target = ''; ?>
-            <?php if ($this->multipleTargets): ?>
-              <?php if (strstr($username, '.')): ?>
-                <?php list($target, $username) = explode('.', $username, 2); ?>
-              <?php endif; ?>
-            <?php endif; ?>
+          <?php
+            $displayCards = [];
+            foreach ($this->libraryCards as $record) {
+              $username = $record['cat_username'];
+              $target = '';
+              if ($this->multipleTargets) {
+                if (strstr($username, '.')) {
+                  list($target, $username) = explode('.', $username, 2);
+                }
+              }
+              $display = '<td data-label="' . $this->transEsc('Library Card Name') . '">';
+              $libraryCardName = $record['card_name'] == "$target.$username" ? $this->escapeHtml($username) : $this->escapeHtml($record['card_name']);
+              if ($libraryCardName) {
+                $display .= '<span>' . $libraryCardName . '</span>';
+              } else {
+                $display .= '<span>' . transEsc("Library Card name missing") . '<a class="btn-link" href="' . $this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) . '" title="' . $this->transEsc('Edit Library Card') . '"> ' . $this->transEsc("Add name") . '</a></span>';
+              }
+              $display .= '</td>';
+              if ($this->multipleTargets) {
+                $displayLibraryName = $target ? $this->transEsc("source_$target", null, $target) : '&nbsp;';
+                $display .= '<td data-label="' . $this->transEsc('login_target') . '"><span>' . $displayLibraryName . '</span></td>';
+              }
+              $display .= '<td data-label="' . $this->transEsc('Username') .'">';
+              $barcode = $record['barcode'] ?? $username;
+              if ($barcode !== $username) {
+                $display .= '<p>' . $this->escapeHtml($username) . '</p>';
+              }
+              $display .= '<a href="' . $this->url('barcode-show') .'?code=' . $this->escapeHtmlAttr($barcode) . '" title="' . $this->transEscAttr('show_barcode_title') . '">';
+              if (strcasecmp($record['cat_username'], $user->cat_username) === 0 && ($barcodeImg = $this->barcode()->createPng($barcode, 2, 60))) {
+                $display .= '<div class="librarycard-barcode"><img src="data:image/png;base64,' . $barcodeImg . '" alt=""></div>';
+              }
+              $display .= '<span>' . $this->escapeHtml($barcode) . '</span></a></td>';
+              $display .= '<td data-label="' . $this->transEsc('Actions') . '" class="library-card-actions"><div>';
+              if ($this->ils()->checkFunction('changePassword', (array)$record)) {
+                $display .= '<a class="btn-link" href="' . $this->url('newLibraryCardPassword') . '?id=' . $this->escapeHtmlAttr($record['id']) . '" data-lightbox title="' . $this->transEsc('Change Password') . '"><i class="fa fa-lock bigger gray"></i> ' . $this->transEsc('Change Password') . '</a>';
+              }
+              $display .= '<a class="btn-link" href="' . $this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) . '" title="' . $this->transEsc('Edit Library Card') . '"><i class="fa fa-pen gray" aria-hidden="true"></i> ' . $this->transEsc('Update Card Details'). '</a>';
+              $display .= '<div class="dropdown"><a class="btn-link dropdown-toggle" data-toggle="dropdown" href="' . $this->url('librarycards-deletecard') . '?cardID=' . urlencode($record['id']) . '">';
+              $display .= '<i class="fa fa-unlink gray" aria-hidden="true"></i> ' . $this->transEsc('Disconnect Library Card') . '</a>';
+              $display .= '<ul class="dropdown-menu useraccount-cancel">';
+              $display .= '<li class="disabled"><a>' . $this->transEsc('Disconnect Library Card') . '?</a></li>';
+              $display .= '<li><a href="' . $this->url('librarycards-deletecard') . '?cardID=' . urlencode($record['id']) . '&amp;confirm=1" data-clear-account-cache>' . $this->transEsc('confirm_dialog_yes') . '</a></li>';
+              $display .= '<li><a href="#">' . $this->transEsc('confirm_dialog_no') . '</a></li>';
+              $display .= '</ul></div></div></td>';
+              if ($user->cat_username === $record['cat_username']) {
+                array_unshift($displayCards, $display);
+              } else {
+                $displayCards[] = $display;
+              }
+            }
+          ?>
+          <?php foreach ($displayCards as $card): ?>
             <tr>
-              <td data-label="<?=$this->transEsc('Library Card Name')?>">
-                <?php $libraryCardName = $record['card_name'] == "$target.$username" ? $this->escapeHtml($username) : $this->escapeHtml($record['card_name']) ?>
-                <?php if ($libraryCardName): ?>
-                  <span><?=$libraryCardName?></span>
-                <?php else: ?>
-                  <span>
-                    <?=$this->transEsc("Library Card name missing")?>
-                    <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"> <?=$this->transEsc("Add name")?></a>
-                  </span>
-                <?php endif; ?>
-              </td>
-              <?php if ($this->multipleTargets): ?>
-                <td data-label="<?=$this->transEsc('login_target')?>"><span><?=$target ? $this->transEsc("source_$target", null, $target) : '&nbsp;' ?></span></td>
-              <?php endif; ?>
-              <td data-label="<?=$this->transEsc('Username')?>">
-                <?php $barcode = $record['barcode'] ?? $username;?>
-                <?php if ($barcode !== $username): ?>
-                  <p><?=$this->escapeHtml($username)?></p>
-                <?php endif; ?>
-                <a href="<?=$this->url('barcode-show') ?>?code=<?=$this->escapeHtmlAttr($barcode) ?>" title="<?=$this->transEscAttr('show_barcode_title')?>">
-                  <?php if (strcasecmp($record['cat_username'], $user->cat_username) === 0 && ($barcodeImg = $this->barcode()->createPng($barcode, 2, 60))): ?>
-                    <div class="librarycard-barcode">
-                      <img src="data:image/png;base64,<?=$barcodeImg?>" alt="">
-                    </div>
-                  <?php endif; ?>
-                  <span><?=$this->escapeHtml($barcode)?></span>
-                </a>
-              </td>
-              <td data-label="<?=$this->transEsc('Actions')?>" class="library-card-actions">
-                <div>
-                  <?php if ($this->ils()->checkFunction('changePassword', (array)$record)): ?>
-                    <a class="btn-link" href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($record['id']) ?>" data-lightbox title="<?=$this->transEsc('Change Password')?>"><i class="fa fa-lock bigger gray"></i> <?=$this->transEsc('Change Password')?></a>
-                  <?php endif; ?>
-                  <a class="btn-link" href="<?=$this->url('editLibraryCard') . $this->escapeHtmlAttr($record['id']) ?>" title="<?=$this->transEsc('Edit Library Card')?>"><i class="fa fa-pen gray" aria-hidden="true"></i> <?=$this->transEsc('Update Card Details')?></a>
-                  <div class="dropdown">
-                    <a class="btn-link dropdown-toggle" data-toggle="dropdown" href="<?=$this->url('librarycards-deletecard') ?>?cardID=<?=urlencode($record['id'])?>">
-                      <i class="fa fa-unlink gray" aria-hidden="true"></i> <?=$this->transEsc('Disconnect Library Card')?>
-                    </a>
-                    <ul class="dropdown-menu useraccount-cancel">
-                      <li class="disabled"><a><?=$this->transEsc('Disconnect Library Card')?>?</a></li>
-                      <li><a href="<?=$this->url('librarycards-deletecard') ?>?cardID=<?=urlencode($record['id'])?>&amp;confirm=1" data-clear-account-cache><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                      <li><a href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                    </ul>
-                  </div>
-                </div>
-              </td>
+              <?=$card?>
             </tr>
           <?php endforeach; ?>
         </table>
