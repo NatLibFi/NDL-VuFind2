@@ -6,8 +6,9 @@
     foreach ($data as $index => $inscriptions) {
       foreach ($inscriptions as $item) {
         if ($i++ > 0) {
-          echo "<br>";
+          echo "</span>";
         }
+        echo "<span>";
         if (!empty($item['type'])) {
           echo $this->transEsc('inscription_type_' . $item['type'], null, $item['type']) . ': ';
         }
