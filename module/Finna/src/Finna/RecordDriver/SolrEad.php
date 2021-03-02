@@ -80,11 +80,9 @@ class SolrEad extends SolrDefault
         $origination = $this->getOrigination();
         $record = $this->getXmlRecord();
         if ($origination == 'Kotimaisten kielten keskus') {
-            return isset($record->userestrict->p)
-                ? $record->userestrict->p : [];
+            return $record->userestrict->p ?? [];
         } else {
-            return isset($record->accessrestrict->p)
-                ? $record->accessrestrict->p : [];
+            return $record->accessrestrict->p ?? [];
         }
     }
 
@@ -222,8 +220,8 @@ class SolrEad extends SolrDefault
     {
         $record = $this->getXmlRecord();
         $findingAids = [];
-        if (isset($this->record->otherfindaid->p)) {
-            foreach ($this->record->otherfindaid->p as $p) {
+        if (isset($record->otherfindaid->p)) {
+            foreach ($record->otherfindaid->p as $p) {
                 $findingAids[] = (string)$p;
             }
         }

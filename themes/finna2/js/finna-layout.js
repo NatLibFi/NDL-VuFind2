@@ -77,12 +77,6 @@ finna.layout = (function finnaLayout() {
   function initTruncate(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    function notifyTruncateChange(field) {
-      field.find('.truncate-change span').each(function setupTruncateChange(ind, e) {
-        $(e).trigger('truncate-change');
-      });
-    }
-
     var truncation = [];
     var rowHeight = [];
     holder.find('.truncate-field').not('.truncate-done').each(function handleTruncate(index) {
@@ -104,51 +98,46 @@ finna.layout = (function finnaLayout() {
         rowHeight[index] = parseFloat(self.css('line-height').replace('px', ''));
       }
 
-      var rowCount = 3;
-      if (self.data('rows')) {
-        rowCount = self.data('rows');
-      }
+      var rowCount = self.data('rows') || 3;
       // get the line-height of first element to determine each text line height
       truncation[index] = rowHeight[index] * rowCount;
       // truncate only if there's more than one line to hide
       if (self.height() > (truncation[index] + rowHeight[index] + 1)) {
-        var newHeight = truncation[index] - 1;
-        self.css('height', newHeight + 'px');
-        var moreLabel = self.data('label') ? self.data('label') : VuFind.translate('show_more');
-        var lessLabel = self.data('label') ? self.data('label') : VuFind.translate('show_less');
-        self.before('<button type="button" class="less-link-top">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
-        self.after('<button type="button" class="more-link">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button><button type="button" class="less-link">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
-        $('.less-link-top').hide();
-        $('.less-link').hide();
+        var topLink = self.height() > (rowHeight[index] * 30);
+        self.css('height', truncation[index] - 1 + 'px');
+        var moreLabel = self.data('label') || VuFind.translate('show_more');
+        var lessLabel = self.data('label') || VuFind.translate('show_less');
 
-        self.nextAll('.more-link').first().click(function onClickMoreLink(/*event*/) {
-          $(this).hide();
-          $(this).next('.less-link').show();
-          $(this).prev('.truncate-field').css('height', 'auto');
-          if (self.height() > (rowHeight[index] * 30)) {
-            $(this).siblings('.less-link-top').show();
+        var moreLink = $('<button type="button" class="more-link">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
+        var lessLink = $('<button type="button" class="less-link">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
+        
+        var linkClass = self.data('button-class') || '';
+        if (linkClass) {
+          moreLink.addClass(linkClass);
+          lessLink.addClass(linkClass);
+        }
+        lessLink.on('click', function showLess() {
+          self.siblings('.less-link').hide();
+          self.siblings('.more-link').show();
+          self.css('height', truncation[index] - 1 + 'px');   
+        });
+        moreLink.on('click', function showMore() {
+          self.siblings('.more-link').hide();
+          self.siblings('.less-link').show();
+          self.css('height', 'auto');
+        });
+        lessLink.hide();
+
+        if (self.data('button-placement') === 'top') {
+          self.before([moreLink, lessLink]);
+        } else {
+          if (topLink) {
+            self.before(lessLink.clone(true));
           }
-          notifyTruncateChange(self);
-        });
-
-        self.prevAll('.less-link-top').first().click(function onClickLessLink(/*event*/) {
-          $(this).hide();
-          $(this).siblings('.less-link').hide();
-          $(this).siblings('.more-link').show();
-          $(this).nextAll('.truncate-field').first().css('height', truncation[index] - 1 + 'px');
-          notifyTruncateChange(self);
-        });
-        self.nextAll('.less-link').first().click(function onClickLessLink(/*event*/) {
-          $(this).hide();
-          $(this).siblings('.less-link-top').hide();
-          $(this).prev('.more-link').show();
-          $(this).prevAll('.truncate-field').first().css('height', truncation[index] - 1 + 'px');
-          notifyTruncateChange(self);
-        });
+          self.after([moreLink, lessLink]);
+        }
         self.addClass('truncated');
       }
-      notifyTruncateChange(self);
-      self.trigger('truncate-done', [self]);
     });
   }
 
@@ -156,29 +145,13 @@ finna.layout = (function finnaLayout() {
     if ($('.content-navigation-menu')[0]) {
       $('.content-section').each(function initContentSection(index) {
         var link = '#' + $(this).attr('id');
-        $('.content-navigation-menu').append('<h2 class="nav-' + index + '"> <a href="' + link + '">' + $('h2', this).text() + '</a></h2>');
-        $('.content-navigation-menu h2.nav-' + index).click(function onMenuClick() {
-          $('body, html').animate({
-            scrollTop: $(link).offset().top - 5
-          }, 350);
-        });
-      });
-
-      var menuPosition = $('.content-navigation-menu').offset().top;
-      // fixed menu & prevent footer overlap
-      $(window).scroll(function onScroll() {
-        if ($(window).scrollTop() > menuPosition) {
-          $('.content-navigation-menu').addClass('attached');
-          if ($(window).scrollTop() + $('.content-navigation-menu').outerHeight(true) > $('footer').offset().top) {
-            $('.content-navigation-menu').css({'bottom': $('footer').height() + 20 + 'px', 'top': 'auto'});
-          }
-          else {
-            $('.content-navigation-menu').css({'bottom': 'auto'});
-          }
-        }
-        else {
-          $('.content-navigation-menu').removeClass('attached');
-        }
+        var $p = $('<p>')
+          .addClass('nav-' + index)
+          .appendTo($('.content-navigation-menu'));
+        $('<a>')
+          .attr('href', link)
+          .text($('h2', this).first().text())
+          .appendTo($p);
       });
     }
   }
@@ -373,15 +346,26 @@ finna.layout = (function finnaLayout() {
 
     holder.find('.condensed-collapse-toggle').off('click').click(function onClickCollapseToggle(event) {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
-        $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear');
-        $('.fa-arrow-right', this).toggleClass('fa-arrow-down');
         holder = $(this).parent().parent();
         holder.toggleClass('open');
+
+        var onSlideComplete = null;
         if (holder.hasClass('open') && !holder.hasClass('opened')) {
           holder.addClass('opened');
           VuFind.itemStatuses.check(holder);
           finna.itemStatus.initDedupRecordSelection(holder);
+          onSlideComplete = function handleSlideComplete() {
+            holder.find('.recordcover').trigger('unveil');
+          };
         }
+
+        $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear', onSlideComplete);
+
+        var icon = $(this).find('.condensed-body > i');
+        if (icon.length === 0) {
+          icon = $(this).find('.condensed-col-title > i');
+        }
+        icon.toggleClass('fa-arrow-right').toggleClass('fa-arrow-down');
       }
     });
   }
@@ -438,20 +422,8 @@ finna.layout = (function finnaLayout() {
     holder.find('select.jumpMenuUrl').unbind('change').change(function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
   }
 
-  function initSecondaryLoginField(labels, idPrefix) {
-    var searchPrefix = idPrefix ? '#' + idPrefix : '#';
-    $(searchPrefix + 'target').change(function onChangeLoginTarget() {
-      var target = $(searchPrefix + 'target').val();
-      var field = $(searchPrefix + 'secondary_username');
-      if ((typeof labels[target] === 'undefined') || labels[target] === '') {
-        field.val('');
-        field.closest('.form-group').hide();
-      } else {
-        var group = field.closest('.form-group');
-        group.find('label').text(labels[target] + ':');
-        group.show();
-      }
-    }).change();
+  function initSecondaryLoginField() {
+    // This function exists for back-compatibility only
   }
 
   function initILSPasswordRecoveryLink(links, idPrefix) {
@@ -817,6 +789,22 @@ finna.layout = (function finnaLayout() {
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
   }
 
+  function setImagePaginatorTranslations() {
+    $.fn.setPaginatorTranslations({
+      image: VuFind.translate('Image'),
+      close: VuFind.translate('close'),
+      next: VuFind.translate('Next Record'),
+      previous: VuFind.translate('Previous Record'),
+      no_cover: VuFind.translate('No Cover Image')
+    });
+  }
+
+  function initImagePaginators() {
+    $('.image-popup-trigger.init').each(function initImages() {
+      $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
+    });
+  }
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -833,6 +821,7 @@ finna.layout = (function finnaLayout() {
     initLoginTabs: initLoginTabs,
     loadScripts: loadScripts,
     initToolTips: initToolTips,
+    initImagePaginators: initImagePaginators,
     init: function init() {
       initScrollRecord();
       initJumpMenus();
@@ -865,6 +854,8 @@ finna.layout = (function finnaLayout() {
       initFiltersToggle();
       initFiltersCheckbox();
       initCookieConsent();
+      setImagePaginatorTranslations();
+      initImagePaginators();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };

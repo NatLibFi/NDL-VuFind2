@@ -45,12 +45,13 @@ finna.userListEmbed = (function userListEmbed() {
               finna.myList.init();
               finna.layout.initCondensedList(resultsContainer);
               finna.layout.initTruncate();
+              finna.layout.initImagePaginators();
               finna.openUrl.initLinks(resultsContainer);
               finna.videoPopup.initIframeEmbed(resultsContainer);
               finna.videoPopup.initVideoPopup(resultsContainer);
               VuFind.itemStatuses.check(resultsContainer);
               finna.itemStatus.initDedupRecordSelection(resultsContainer);
-              finna.record.initRecordVersions(resultsContainer);
+              VuFind.recordVersions.init(resultsContainer);
               VuFind.lightbox.bind(resultsContainer);
               VuFind.cart.init(resultsContainer);
               $.fn.finnaPopup.reIndex();

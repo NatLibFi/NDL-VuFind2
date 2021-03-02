@@ -11,18 +11,18 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       && 'currentWeek' in response.openTimes
       && response.openTimes.currentWeek
     ) {
-      prevBtn.fadeTo(200, 0).addClass('disabled');
+      prevBtn.fadeTo(200, 0).addClass('disabled').attr('disabled', true);
     } else {
-      prevBtn.fadeTo(200, 1).removeClass('disabled');
+      prevBtn.fadeTo(200, 1).removeClass('disabled').removeAttr('disabled');
     }
   }
 
   function updateNextBtn(response) {
     var nextBtn = holder.find('.week-navi.next-week');
     if (response.openTimes.museum === true) {
-      nextBtn.fadeTo(200, 0).addClass('disabled');
+      nextBtn.fadeTo(200, 0).addClass('disabled').attr('disabled', true);
     } else {
-      nextBtn.fadeTo(200, 1).removeClass('disabled');
+      nextBtn.fadeTo(200, 1).removeClass('disabled').removeAttr('disabled');
     }
   }
 
@@ -45,9 +45,9 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     $('.time-staff').empty();
 
     holder.find('.week-navi-holder .week-navi').each(function handleWeekNavi() {
-      var classes = $(this).data('classes');
+      var classes = $(this).data('icon-classes');
       if (classes) {
-        $(this).attr('class', classes);
+        $(this).children('i').first().attr('class', classes);
       }
     });
 
@@ -221,9 +221,11 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       var dir = parseInt($(this).data('dir'));
 
       holder.find('.week-text .num').text(holder.data('week-num') + dir);
-      $(this).attr('data-classes', $(this).attr('class'));
-      $(this).removeClass('fa-arrow-right fa-arrow-left');
-      $(this).addClass('fa-spinner fa-spin');
+
+      var icon = $(this).children('i').first();
+      $(this).data('icon-classes', icon.attr('class'));
+      icon.removeClass('fa-arrow-right fa-arrow-left');
+      icon.addClass('fa-spinner fa-spin');
 
       service.getSchedules(
         holder.data('target'), parent, id, holder.data('period-start'), dir, false, false,
@@ -361,11 +363,10 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
 
   function menuClicked(disable) {
     var toggle = holder.find('.organisation .dropdown-toggle');
-    var input = toggle.find('input');
-    var id = input.val();
-    var name = holder.find('.organisation ul.dropdown-menu li input[value="' + id + '"]').parent('li').text();
+    var id = toggle.data('id');
+    var name = holder.find('.organisation ul.dropdown-menu li[data-id="' + id + '"]').text();
 
-    toggle.find('span').text(name);
+    toggle.find('span:not(.sr-only)').text(name);
     showDetails(id, name, false);
 
     if (disable) {
@@ -379,13 +380,13 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     var id = data.id;
     var found = false;
     var menu = holder.find('.organisation ul.dropdown-menu');
-    var menuInput = holder.find('.organisation .dropdown-toggle input');
+    var menuToggle = holder.find('.organisation .dropdown-toggle');
 
     $.each(list, function handleOrganisationList(ind, obj) {
       if (String(id) === String(obj.id)) {
         found = true;
       }
-      $('<li role="menuitem" tabindex="0"><input type="hidden" value="' + obj.id + '"></input>' + obj.name + '</li>')
+      $('<li role="menuitem" tabindex="0" data-id="' + obj.id + '">' + obj.name + '</li>')
         .on('keydown', function onOrganisationKeydown(e) {
           keyHandler(e, $(this));
         }).appendTo(menu);
@@ -395,13 +396,13 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
     if (!found) {
       id = finna.common.getField(data.consortium.finna, 'service_point');
       if (!id) {
-        id = menu.find('li input').eq(0).val();
+        id = menu.find('li').eq(0).data('id');
       }
     }
-    menuInput.val(id);
+    menuToggle.data('id', id);
     var menuItem = holder.find('.organisation ul.dropdown-menu li');
     menuItem.on('click', function onClickMenuItem() {
-      menuInput.val($(this).find('input').val());
+      menuToggle.data('id', $(this).data('id'));
       menuClicked(false);
     });
 

@@ -49,6 +49,34 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
     use \VuFind\ILS\Driver\CacheTrait;
 
     /**
+     * Initialize the driver.
+     *
+     * Validate configuration and perform all resource-intensive tasks needed to
+     * make the driver active.
+     *
+     * @throws ILSException
+     * @return void
+     */
+    public function init()
+    {
+        parent::init();
+
+        if (null === $this->defaultDriver
+            || !isset($this->drivers[$this->defaultDriver])
+        ) {
+            // Try default login driver
+            $driver = $this->getDefaultLoginDriver();
+            if ($driver && isset($this->drivers[$driver])) {
+                $this->defaultDriver = $driver;
+            } elseif ($this->drivers) {
+                // Use first available driver
+                $drivers = array_keys($this->drivers);
+                $this->defaultDriver = reset($drivers);
+            }
+        }
+    }
+
+    /**
      * Change Password
      *
      * Attempts to change patron password (PIN code)
@@ -394,14 +422,13 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
      *
      * This is responsible for authenticating a patron against the catalog.
      *
-     * @param string      $username  The patron user id or barcode
-     * @param string      $password  The patron password
-     * @param string|null $secondary Optional secondary login field
+     * @param string $username The patron user id or barcode
+     * @param string $password The patron password
      *
      * @return mixed           Associative array of patron info on successful login,
      * null on unsuccessful login.
      */
-    public function patronLogin($username, $password, $secondary = null)
+    public function patronLogin($username, $password)
     {
         $cacheKey = "patron|$username|$password";
         $item = $this->getCachedData($cacheKey);
@@ -415,9 +442,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
         }
         $driver = $this->getDriver($source);
         if ($driver) {
-            $patron = $driver->patronLogin(
-                $this->getLocalId($username), $password, $secondary
-            );
+            $patron = $driver->patronLogin($this->getLocalId($username), $password);
             $patron = $this->addIdPrefixes($patron, $source);
             if (is_array($patron)) {
                 $patron['source'] = $source;

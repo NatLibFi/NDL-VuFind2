@@ -27,10 +27,10 @@
  */
 namespace Finna\AjaxHandler;
 
+use Laminas\Mvc\Controller\Plugin\Params;
+use Laminas\View\Renderer\RendererInterface;
 use VuFind\Record\Loader;
 use VuFind\Search\SearchRunner;
-use Zend\Mvc\Controller\Plugin\Params;
-use Zend\View\Renderer\RendererInterface;
 
 /**
  * Get "RecordDriverRelatedRecords" AJAX handler

@@ -145,9 +145,8 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             $allLanguages = isset($this->config->General->languages)
                 ? $this->config->General->languages->toArray() : [];
 
-            $language = isset($this->config->General->language)
-                ? $this->config->General->language
-                : $this->translator->getLocale();
+            $language = $this->config->General->language
+                ?? $this->translator->getLocale();
 
             $this->language = $this->validateLanguage($language, $allLanguages);
         }
@@ -504,6 +503,11 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
         ];
 
         if (!empty($buildings)) {
+            foreach ($buildings as $building) {
+                if ('' !== $building && !ctype_digit((string)$building)) {
+                    throw new \Exception('Invalid building: ' . $building);
+                }
+            }
             if (($buildings = implode(',', $buildings)) != '') {
                 $params['id'] = $buildings;
             }
@@ -622,8 +626,7 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
             ->getOptions()->getCacheDir();
 
         $localFile = "$cacheDir/" . md5($url) . '.json';
-        $maxAge = isset($this->config->General->cachetime)
-            ? $this->config->General->cachetime : 10;
+        $maxAge = $this->config->General->cachetime ?? 10;
 
         $response = false;
         if ($maxAge) {

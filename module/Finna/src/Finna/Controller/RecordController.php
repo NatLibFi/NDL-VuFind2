@@ -41,7 +41,6 @@ use VuFindSearch\ParamBag;
 class RecordController extends \VuFind\Controller\RecordController
 {
     use FinnaRecordControllerTrait;
-    use CatalogLoginTrait;
 
     /**
      * Create record feedback form and send feedback to correct recipient.
@@ -208,9 +207,9 @@ class RecordController extends \VuFind\Controller\RecordController
     {
         // Special case -- handle lightbox login request if login has already been
         // done
-        if ($this->params()->fromQuery('layout', 'false') == 'lightbox'
+        if ($this->inLightbox()
             && $this->params()->fromQuery('catalogLogin', 'false') == 'true'
-            && is_array($patron = $this->catalogLogin())
+            && is_array($this->catalogLogin())
         ) {
             $response = $this->getResponse();
             $response->setStatusCode(205);
@@ -308,6 +307,22 @@ class RecordController extends \VuFind\Controller\RecordController
         $gatheredDetails = $this->holds()->validateRequest($checkHolds['HMACKeys']);
         if (!$gatheredDetails) {
             return $this->redirectToRecord();
+        }
+
+        // Call checkFunction once more now that we have the gathered details since
+        // details may affect the fields to display:
+        if ($gatheredDetails) {
+            $checkHolds = $catalog->checkFunction(
+                'Holds',
+                [
+                    'id' => $driver->getUniqueID(),
+                    'patron' => $patron,
+                    'details' => $gatheredDetails,
+                ]
+            );
+            if (!$checkHolds) {
+                return $this->redirectToRecord();
+            }
         }
 
         // Block invalid requests:

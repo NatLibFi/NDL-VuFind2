@@ -57,7 +57,9 @@ class SolrEad3 extends SolrEad
     const IMAGE_MAP = [
         'Bittikartta - Fullres - Jakelukappale' => self::IMAGE_FULLRES,
         'Bittikartta - Pikkukuva - Jakelukappale' => self::IMAGE_MEDIUM,
-        'OCR-data - Alto - Jakelukappale' => self::IMAGE_OCR
+        'OCR-data - Alto - Jakelukappale' => self::IMAGE_OCR,
+        'fullsize' => self::IMAGE_FULLRES,
+        'thumbnail' => self::IMAGE_MEDIUM
     ];
 
     // Altformavail labels
@@ -100,8 +102,8 @@ class SolrEad3 extends SolrEad
         'Katso myös' => self::RELATION_SEE_ALSO
     ];
 
-    // Linktitle attribute for a daoset->dao image
-    const DAO_LINK_TITLE_IMAGE = 'Kuva/Aukeama';
+    // Relator attribute for archive origination
+    const RELATOR_ARCHIVE_ORIGINATION = 'Arkistonmuodostaja';
 
     /**
      * Get the institutions holding the record.
@@ -163,9 +165,7 @@ class SolrEad3 extends SolrEad
         foreach ($record->did->xpath('//daoset/dao') as $node) {
             $attr = $node->attributes();
             // Discard image urls
-            if (isset($attr->linktitle)
-                && strpos((string)$attr->linktitle, self::DAO_LINK_TITLE_IMAGE) === 0
-                || ! $attr->href
+            if (isset($attr->linktitle) || !$attr->href
             ) {
                 continue;
             }
@@ -202,11 +202,8 @@ class SolrEad3 extends SolrEad
     public function getOriginationExtended()
     {
         $record = $this->getXmlRecord();
-        if (!isset($record->relations->relation)) {
-            return null;
-        }
 
-        foreach ($record->relations->relation as $relation) {
+        foreach ($record->relations->relation ?? [] as $relation) {
             $attr = $relation->attributes();
             foreach (['relationtype', 'href', 'arcrole'] as $key) {
                 if (!isset($attr->{$key})) {
@@ -214,23 +211,25 @@ class SolrEad3 extends SolrEad
                 }
             }
             if ((string)$attr->relationtype !== 'cpfrelation'
-                || (string)$attr->arcrole !== 'Arkistonmuodostaja'
+                || (string)$attr->arcrole !== self::RELATOR_ARCHIVE_ORIGINATION
             ) {
                 continue;
             }
-
-            $name = $this->getDisplayLabel($relation, 'relationentry');
-            if (!$name || !$name[0]) {
-                $name = $this->getOrigination();
+            if ($name = $this->getDisplayLabel($relation, 'relationentry')) {
+                $id = (string)$attr->href;
+                return ['name' => $name[0], 'id' => $id];
             }
-
-            return [
-                'name' => $name[0],
-                'id' => (string)$attr->href,
-                'type' => 'author-id'
-            ];
         }
-
+        foreach ($record->did->origination->name ?? [] as $name) {
+            $attr = $name->attributes();
+            if (self::RELATOR_ARCHIVE_ORIGINATION === (string)$attr->relator
+            ) {
+                if ($name = $this->getDisplayLabel($name)) {
+                    $id = (string)$attr->identifier;
+                    return ['name' => $name[0], 'id' => $id];
+                }
+            }
+        }
         return null;
     }
 
@@ -243,14 +242,65 @@ class SolrEad3 extends SolrEad
     {
         $result = [];
         $xml = $this->getXmlRecord();
-        if (!isset($xml->relations->relation)) {
+
+        $names = [];
+        if (isset($xml->controlaccess->persname)) {
+            foreach ($xml->controlaccess->persname as $name) {
+                $names[] = $name;
+            }
+        }
+        if (isset($xml->controlaccess->corpname)) {
+            foreach ($xml->controlaccess->corpname as $name) {
+                $names[] = $name;
+            }
+        }
+
+        // Attempt to find names in preferred language
+        foreach ($names as $node) {
+            $name = $this->getDisplayLabel($node, 'part', true);
+            if (empty($name) || !$name[0]) {
+                continue;
+            }
+            $result[] = ['name' => $name[0]];
+        }
+        if (!empty($result)) {
             return $result;
         }
 
+        // Not found, search again without language filters
+        foreach ($names as $node) {
+            $name = $this->getDisplayLabel($node);
+            if (empty($name) || !$name[0]) {
+                continue;
+            }
+            $result[] = $name[0];
+        }
+        $result = array_map(
+            function ($name) {
+                return ['name' => $name];
+            },
+            array_unique($result)
+        );
+
+        return $result;
+    }
+
+    /**
+     * Get relations.
+     *
+     * @return array
+     */
+    public function getRelations()
+    {
+        $result = [];
+        $xml = $this->getXmlRecord();
+        if (!isset($xml->relations->relation)) {
+            return $result;
+        }
         foreach ($xml->controlaccess->name as $node) {
             $attr = $node->attributes();
             $relator = (string)$attr->relator;
-            if ($relator === 'Arkistonmuodostaja') {
+            if (self::RELATOR_ARCHIVE_ORIGINATION === $relator) {
                 continue;
             }
             $role = $this->translateRole((string)$attr->localtype, $relator);
@@ -361,19 +411,27 @@ class SolrEad3 extends SolrEad
         }
 
         $ids = [];
+        $manyIds = count($xml->did->unitid) > 1;
         foreach ($xml->did->unitid as $id) {
-            $label = (string)$id->attributes()->label;
+            $label = $fallbackDisplayLabel = (string)$id->attributes()->label;
+            $displayLabel = null;
+            if ($label) {
+                $displayLabel = "Unit ID:$label";
+            } elseif ($manyIds) {
+                $displayLabel = 'Unit ID:unique';
+            }
             $val = (string)$id;
             if (!$val) {
                 $val = (string)$id->attributes()->identifier;
-                $label = 'unique';
             }
-            if (!$label || !$val) {
+            if (!$val) {
                 continue;
             }
+
             $ids[] = [
                 'data' => $val,
-                'detail' => $this->translate("Unit ID:$label", [], $label)
+                'detail'
+                    => $this->translate($displayLabel, [], $fallbackDisplayLabel)
             ];
         }
 
@@ -405,7 +463,7 @@ class SolrEad3 extends SolrEad
                 if (isset($el->attributes()->encodinganalog)) {
                     continue;
                 }
-                if (! isset($el->head) || (string)$el->head !== 'Tietosisältö') {
+                if (isset($el->head) && (string)$el->head !== 'Tietosisältö') {
                     continue;
                 }
                 if ($desc = $this->getDisplayLabel($el, 'p', true)) {
@@ -501,9 +559,11 @@ class SolrEad3 extends SolrEad
                     continue;
                 }
                 $attr = $daoset->attributes();
+                // localtype could be defined for daoset or for dao-element (below)
                 $localtype = (string)($attr->localtype ?? null);
-                $size = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
-                $size = $size === self::IMAGE_FULLRES ? self::IMAGE_LARGE : $size;
+                $localtype = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
+                $size = $localtype === self::IMAGE_FULLRES
+                      ? self::IMAGE_LARGE : $localtype;
                 if (!isset($images[$size])) {
                     $image[$size] = [];
                 }
@@ -513,24 +573,32 @@ class SolrEad3 extends SolrEad
 
                 foreach ($daoset->dao as $dao) {
                     $attr = $dao->attributes();
-                    if (! isset($attr->linktitle)
-                        || strpos(
-                            (string)$attr->linktitle, self::DAO_LINK_TITLE_IMAGE
-                        ) !== 0
-                        || ! $attr->href
-                    ) {
+                    if (!isset($attr->linktitle) || !$attr->href) {
                         continue;
                     }
                     $href = (string)$attr->href;
                     if (!$this->isUrlLoadable($href, $this->getUniqueID())) {
                         continue;
                     }
+                    if (isset($attr->localtype)) {
+                        $localtype = (string)$attr->localtype;
+                    }
+                    if (!$localtype || !isset(self::IMAGE_MAP[$localtype])) {
+                        continue;
+                    }
+                    $size = self::IMAGE_MAP[$localtype];
+                    $size = $size === self::IMAGE_FULLRES
+                        ? self::IMAGE_LARGE : $size;
+                    if (!isset($images[$size])) {
+                        $image[$size] = [];
+                    }
                     $images[$size][] = [
                         'description' => (string)$attr->linktitle,
                         'rights' => null,
                         'url' => $href,
                         'descId' => $descId,
-                        'sort' => (string)$attr->label
+                        'sort' => (string)$attr->label,
+                        'type' => $localtype
                     ];
                 }
             }
@@ -618,6 +686,39 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get access restriction notes for the record.
+     *
+     * @return string[] Notes
+     */
+    public function getAccessRestrictions()
+    {
+        $xml = $this->getXmlRecord();
+        $result = [];
+        if (isset($xml->userestrict)) {
+            foreach ($xml->userestrict as $node) {
+                if ($label = $this->getDisplayLabel($node, 'p', true)) {
+                    if (empty($label[0])) {
+                        continue;
+                    }
+                    $result[] = $label[0];
+                }
+            }
+            if (empty($result)) {
+                foreach ($xml->userestrict as $node) {
+                    if ($label = $this->getDisplayLabel($node, 'p')) {
+                        if (empty($label[0])) {
+                            continue;
+                        }
+                        $result[] = $label[0];
+                    }
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Get extended access restriction notes for the record.
      *
      * @return string[]
@@ -625,6 +726,21 @@ class SolrEad3 extends SolrEad
     public function getExtendedAccessRestrictions()
     {
         $xml = $this->getXmlRecord();
+        if (isset($xml->accessrestrict)
+            && !isset($xml->accessrestrict->accessrestrict)
+        ) {
+            $result = [];
+            foreach ($xml->accessrestrict as $accessNode) {
+                if ($label = $this->getDisplayLabel($accessNode, 'p', true)) {
+                    if (empty($label[0])) {
+                        continue;
+                    }
+                    $result[] = $label[0];
+                }
+            }
+            return ['general' => $result];
+        }
+
         if (!isset($xml->accessrestrict->accessrestrict)) {
             return [];
         }
@@ -644,10 +760,19 @@ class SolrEad3 extends SolrEad
                 } else {
                     $type = (string)$attr->encodinganalog;
                     if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
-                        $label = $type === 'ahaa:KR7'
-                            ? $this->getDisplayLabel(
+                        $type = str_replace(':', '_', $type);
+                        switch ($type) {
+                        case 'ahaa_KR7':
+                            $label = $this->getDisplayLabel(
                                 $access->p->name, 'part', true
-                            ) : $this->getDisplayLabel($access, 'p');
+                            );
+                            break;
+                        case 'ahaa_KR9':
+                            $label = [(string)($access->p->date ?? '')];
+                            break;
+                        default:
+                            $label = $this->getDisplayLabel($access, 'p');
+                        }
                         if ($label) {
                             $restrictions[$type] = $label;
                         }
@@ -745,7 +870,8 @@ class SolrEad3 extends SolrEad
         $headings = [];
         $headings = $this->getTopics();
 
-        foreach (['geographic', 'genre', 'era'] as $field) {
+        // geographic names are returned in getRelatedPlacesExtended
+        foreach (['genre', 'era'] as $field) {
             if (isset($this->fields[$field])) {
                 $headings = array_merge($headings, $this->fields[$field]);
             }
@@ -764,28 +890,79 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get related places.
+     *
+     * @return array
+     */
+    public function getRelatedPlacesExtended()
+    {
+        $record = $this->getXmlRecord();
+        if (!isset($record->controlaccess->geogname)) {
+            return [];
+        }
+
+        $languageResult = $languageResultDetail = $result = $resultDetail = [];
+        $languages = $this->preferredLanguage
+            ? $this->mapLanguageCode($this->preferredLanguage)
+            : [];
+
+        foreach ($record->controlaccess->geogname as $name) {
+            $attr = $name->attributes();
+            $relator = (string)$attr->relator;
+            if (isset($name->part)) {
+                $part = (string)$name->part;
+                $data = ['data' => $part, 'detail' => $relator];
+                if ($attr->lang && in_array((string)$attr->lang, $languages)
+                    && !in_array($part, $languageResult)
+                ) {
+                    $languageResultDetail[] = $data;
+                    $languageResult[] = $part;
+                } elseif (!in_array($part, $result)) {
+                    $resultDetail[] = $data;
+                    $result[] = $part;
+                }
+            }
+        }
+        return $languageResultDetail ?: $resultDetail;
+    }
+
+    /**
      * Get the unitdate field.
      *
      * @return array
      */
     public function getUnitDates()
     {
-        $unitdate = parent::getUnitDate();
-
         $record = $this->getXmlRecord();
-        if (!isset($record->did->unittitle)) {
-            return $unitdate;
-        }
         $result = [];
-        foreach ($record->did->unitdate as $date) {
-            $attr = $date->attributes();
-            if ($desc = $attr->normal ?? null) {
-                $desc = $attr->label ?? null;
+
+        if (isset($record->did->unitdate)) {
+            foreach ($record->did->unitdate as $date) {
+                $attr = $date->attributes();
+                if ($desc = $attr->normal ?? null) {
+                    $desc = $attr->label ?? null;
+                }
+                $date = (string)$date;
+                $result[] = ['data' => (string)$date, 'detail' => (string)$desc];
             }
-            $date = (string)$date;
-            $result[] = ['data' => (string)$date, 'detail' => (string)$desc];
+            if ($result) {
+                return $result;
+            }
         }
-        return $result;
+
+        if (isset($record->did->unitdatestructured->datesingle)) {
+            foreach ($record->did->unitdatestructured->datesingle as $date) {
+                $attr = $date->attributes();
+                if ($attr->standarddate) {
+                    $result[] = ['data' => (string)$attr->standarddate];
+                }
+            }
+            if ($result) {
+                return array_unique($result);
+            }
+        }
+
+        return $this->getUnitDate();
     }
 
     /**
@@ -860,6 +1037,67 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get the hierarchy parents associated with this item (empty if none).
+     * The parents are listed starting from the root of the hierarchy,
+     * i.e. the closest parent is at the end of the result array.
+     *
+     * @return array Array with id and title
+     */
+    protected function getHierarchyParents()
+    {
+        $xml = $this->getXmlRecord();
+        if (!isset($xml->{'add-data'}->parent)) {
+            return [];
+        }
+        $result = [];
+        foreach ($xml->{'add-data'}->parent as $parent) {
+            $attr = $parent->attributes();
+            if (!in_array((string)$attr->level, ['series','subseries'])) {
+                continue;
+            }
+            $result[] = [
+                'id' => $this->getDatasource() . '.' . (string)$attr->id,
+                'title' => (string)$attr->title
+            ];
+        }
+        return array_reverse($result);
+    }
+
+    /**
+     * Get the hierarchy_parent_id(s) associated with this item (empty if none).
+     *
+     * @return array
+     */
+    public function getHierarchyParentID()
+    {
+        if ($parents = $this->getHierarchyParents()) {
+            return array_map(
+                function ($parent) {
+                    return $parent['id'];
+                }, $parents
+            );
+        }
+        return parent::getHierarchyParentID();
+    }
+
+    /**
+     * Get the parent title(s) associated with this item (empty if none).
+     *
+     * @return array
+     */
+    public function getHierarchyParentTitle()
+    {
+        if ($parents = $this->getHierarchyParents()) {
+            return array_map(
+                function ($parent) {
+                    return $parent['title'];
+                }, $parents
+            );
+        }
+        return parent::getHierarchyParentTitle();
+    }
+
+    /**
      * Get fullresolution images.
      *
      * @return array
@@ -869,6 +1107,9 @@ class SolrEad3 extends SolrEad
         $images = $this->getAllImages();
         $items = [];
         foreach ($images as $img) {
+            if (!isset($img['type']) || $img['type'] !== self::IMAGE_FULLRES) {
+                continue;
+            }
             $items[]
                 = ['label' => $img['description'], 'url' => $img['urls']['large']];
         }
@@ -993,8 +1234,8 @@ class SolrEad3 extends SolrEad
         $topics = [];
         if (isset($record->controlaccess->subject)) {
             foreach ($record->controlaccess->subject as $subject) {
-                if (!isset($subject->attributes()->relator)
-                    || (string)$subject->attributes()->relator !== 'aihe'
+                if (isset($subject->attributes()->relator)
+                    && (string)$subject->attributes()->relator !== 'aihe'
                 ) {
                     continue;
                 }
@@ -1047,18 +1288,18 @@ class SolrEad3 extends SolrEad
             return null;
         }
         $defaultLanguage = 'fin';
-        $language = $this->preferredLanguage
+        $languages = $this->preferredLanguage
             ? $this->mapLanguageCode($this->preferredLanguage)
-            : null;
+            : [];
 
-        $getTermLanguage = function ($node) use ($language, $defaultLanguage) {
+        $getTermLanguage = function ($node) use ($languages, $defaultLanguage) {
             if (!isset($node->attributes()->lang)) {
                 return null;
             }
             $lang = (string)$node->attributes()->lang;
             return [
                'default' => $defaultLanguage === $lang,
-               'preferred' => $language === $lang
+               'preferred' => in_array($lang, $languages)
             ];
         };
 
@@ -1104,12 +1345,13 @@ class SolrEad3 extends SolrEad
      *
      * @param string $languageCode Language code
      *
-     * @return string
+     * @return string[]
      */
     protected function mapLanguageCode($languageCode)
     {
-        $langMap = ['fi' => 'fin', 'sv' => 'swe', 'en-gb' => 'eng'];
-        return $langMap[$languageCode] ?? $languageCode;
+        $langMap
+            = ['fi' => ['fi','fin'], 'sv' => ['sv','swe'], 'en-gb' => ['en','eng']];
+        return $langMap[$languageCode] ?? [$languageCode];
     }
 
     /**

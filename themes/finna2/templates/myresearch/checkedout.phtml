@@ -124,7 +124,7 @@
             </td>
             <?php endif; ?>
             <td class="text-center hidden-xs">
-              <div class="cover-image">
+              <div aria-hidden="true" class="cover-image">
                 <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
                   <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
                 <?php else: ?>
@@ -214,6 +214,11 @@
                   <br />
                 <?php endif; ?>
 
+                <?php if (!empty($ilsDetails['materialType'])): ?>
+                  <strong><?=$this->transEsc('Material Type')?>:</strong> <?=$this->transEsc($ilsDetails['materialType'])?>
+                  <br />
+                <?php endif; ?>
+
                 <?php if (isset($ilsDetails['renew'])): ?>
                   <?php if (isset($ilsDetails['renewLimit']) && $ilsDetails['renewLimit'] >= $ilsDetails['renew']): ?>
                       <strong><?=$this->transEsc('renewals_remaining', ['%%count%%' => $ilsDetails['renewLimit'] - $ilsDetails['renew']]);?></strong>
@@ -293,4 +298,6 @@
     </div>
   </div>
 </div>
+
+<?=$this->render('myresearch/notify-account-status.phtml', ['method' => 'checkedOut', 'accountStatus' => $this->accountStatus]); ?>
 <!-- END of: finna - myresearch/checkedout.phtml -->

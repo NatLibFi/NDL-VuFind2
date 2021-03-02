@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2019.
+ * Copyright (C) The National Library of Finland 2017-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -69,7 +69,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Institution settings for the order of organisations
      *
-     * @var string
+     * @var array
      */
     protected $holdingsOrganisationOrder;
 
@@ -86,8 +86,24 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @var array
      */
     protected $feeTypeMappings = [
-        'Overdue charge' => 'Overdue',
-        'Extra service' => 'Extra service'
+        -1 => 'Accrued Fine',
+        1 => 'Hold Fee',
+        2 => 'Other', // Ilmoitusmaksu
+        3 => 'Other', // Laina
+        4 => 'Other', // Uusinta
+        5 => 'Accrued Fine',
+        6 => 'Overdue',
+        7 => 'Other', // Kehotus,
+        8 => 'Lost Item Processing',
+        9 => 'Hold Fee', // Seutuvaraus
+        11 => 'Lost Item Replacement',
+        12 => 'Other', // Maksu
+        13 => 'Other', // Poistettu summa
+        14 => 'Other', // Sekalaista
+        15 => 'Other', // Nidekohtainen ilmoitus
+        16 => 'Other', // Kaukolaina
+        17 => 'Other', // Kopiotilaus (kaukolaina)
+        18 => 'Hold Expired',
     ];
 
     /**
@@ -141,9 +157,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             : [];
 
         $this->defaultPickUpLocation
-            = isset($this->config['Holds']['defaultPickUpLocation'])
-            ? $this->config['Holds']['defaultPickUpLocation']
-            : '';
+            = $this->config['Holds']['defaultPickUpLocation']
+            ?? '';
 
         $this->requestGroupsEnabled
             = isset($this->config['Holds']['extraHoldFields'])
@@ -152,8 +167,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             explode(':', $this->config['Holds']['extraHoldFields'])
         );
         $this->defaultRequestGroup
-            = isset($this->config['Holds']['defaultRequestGroup'])
-            ? $this->config['Holds']['defaultRequestGroup'] : '';
+            = $this->config['Holds']['defaultRequestGroup'] ?? '';
     }
 
     /**
@@ -169,6 +183,13 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getConfig($function, $params = null)
     {
+        if ('onlinePayment' === $function) {
+            $config = $this->config['OnlinePayment'] ?? [];
+            if (!empty($config) && !isset($config['exactBalanceRequired'])) {
+                $config['exactBalanceRequired'] = false;
+            }
+            return $config;
+        }
         if ('getMyTransactionHistory' === $function) {
             if (empty($this->config['getMyTransactionHistory']['enabled'])) {
                 return false;
@@ -185,9 +206,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             ];
         }
         $functionConfig = $this->config[$function] ?? false;
-        if ($functionConfig && 'onlinePayment' === $function) {
-            $functionConfig['exactBalanceRequired'] = true;
-        }
         if ($functionConfig && 'Holds' === $function) {
             if (isset($functionConfig['titleHoldBibLevels'])
                 && !is_array($functionConfig['titleHoldBibLevels'])
@@ -361,7 +379,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getMyFines($patron)
     {
-
         // All fines, ciAccountEntryStatus = 2
         $allFines = $this->makeRequest(
             ['BorrowerDebts', $patron['cat_username'], '2', '0']
@@ -374,47 +391,56 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $allFines = array_filter(
             $allFines,
             function ($fine) {
-                return $fine['State'] === 'Unpaid';
+                return in_array($fine['State'], ['Estimated', 'Unpaid']);
             }
         );
 
-        // Payable fines, ciAccountEntryStatus = 1
-        $payableFines = $this->makeRequest(
-            ['BorrowerDebts', $patron['cat_username'], '1', '0']
-        );
-        $payableIds = array_map(
-            function ($fine) {
-                return $fine['Id'];
-            }, $payableFines
-        );
+        $payableIds = [];
+        if ($this->supportsOnlinePayment()) {
+            // Payable fines, ciAccountEntryStatus = 1
+            $payableFines = $this->makeRequest(
+                ['BorrowerDebts', $patron['cat_username'], '1', '0']
+            );
+            $payableIds = array_map(
+                function ($fine) {
+                    return $fine['Id'];
+                }, $payableFines
+            );
+        }
+        $paymentConfig = $this->getConfig('onlinePayment');
+        $blockedTypes = $paymentConfig['nonPayable'] ?? [];
 
         $fines = [];
         foreach ($allFines as $entry) {
-            $createDate = !empty($entry['DeptDate'])
+            $createDate = !empty($entry['DebtDate'])
                 ? $this->dateConverter->convertToDisplayDate(
-                    'U', strtotime($entry['DeptDate'])
+                    'U', strtotime($entry['DebtDate'])
                 )
                 : '';
-            $type = $entry['Notes'];
-            if (isset($this->feeTypeMappings[$type])) {
-                $type = $this->feeTypeMappings[$type];
-            }
-            $amount = $entry['Remainder'] * 100;
+            $typeCode = $entry['AccountCodeId'] ?? null;
+            $type = $this->feeTypeMappings[$typeCode] ?? $entry['AccountCodeName']
+                ?? '';
             $fineId = $entry['Id'] ?? null;
+            $payable = $fineId && in_array($fineId, $payableIds)
+                && !in_array($typeCode, $blockedTypes);
             $fine = [
-                'amount' => $amount,
-                'balance' => $amount,
+                'amount' => $entry['Amount'] * 100,
+                'balance' => $entry['Remainder'] * 100,
                 'fine' => $type,
                 'createdate' => $createDate,
                 'checkout' => '',
-                'id' => $entry['MarcRecordId'] ?? null,
                 'item_id' => $entry['ItemId'],
                 // Append payment information
-                'payableOnline' => $fineId && in_array($fineId, $payableIds),
+                'payableOnline' => $payable,
                 'fineId' => $fineId
             ];
+            $recordId = $entry['MarcRecordId'] ?? null;
+            if ($recordId) {
+                $fine['id'] = $recordId;
+            }
+
             if (!empty($entry['MarcRecordTitle'])) {
-                $fine['title'] = $entry['Id'] . ': ' . $entry['MarcRecordTitle'];
+                $fine['title'] = $entry['MarcRecordTitle'];
             }
             $fines[] = $fine;
         }
@@ -444,8 +470,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             ) : '';
 
         $name = explode(',', $result['Name'], 2);
-        $messagingConf = isset($this->config['messaging'])
-            ? $this->config['messaging'] : null;
+        $messagingConf = $this->config['messaging'] ?? null;
 
         $messagingSettings = [];
 
@@ -789,7 +814,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 
         // Make sure pickup location is valid
         if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError('hold_invalid_pickup');
+            return $this->holdError(0, 'hold_invalid_pickup');
         }
         $request = [
             'BorrowerId' =>  $patron['id'],
@@ -915,8 +940,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         // Do we need to sort pickup locations? If the setting is false, don't
         // bother doing any more work. If it's not set at all, default to
         // alphabetical order.
-        $orderSetting = isset($this->config['Holds']['pickUpLocationOrder'])
-            ? $this->config['Holds']['pickUpLocationOrder'] : 'default';
+        $orderSetting = $this->config['Holds']['pickUpLocationOrder'] ?? 'default';
         if (count($locations) > 1 && !empty($orderSetting)) {
             $locationOrder = $orderSetting === 'default'
                 ? [] : array_flip(explode(':', $orderSetting));
@@ -1135,18 +1159,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Returns a list of parameters that are required for registering
-     * online payments to the ILS. The parameters are configured in
-     * OnlinePayment > registrationParams.
-     *
-     * @return array
-     */
-    public function getOnlinePaymentRegistrationParams()
-    {
-        return [];
-    }
-
-    /**
      * Support method for getMyFines that augments the fines with
      * extra information. The driver may also append the information
      * in getMyFines implement markOnlinePayableFines as a stub.
@@ -1165,62 +1177,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     public function markOnlinePayableFines($fines)
     {
         return $fines;
-    }
-
-    /**
-     * Registers an online payment to the ILS.
-     *
-     * @param array  $patron   Patron
-     * @param int    $amount   Total amount paid
-     * @param string $currency Currency
-     * @param array  $params   Registration configuration parameters
-     *
-     * @return boolean  true on success, false on failed registration
-     */
-    public function registerOnlinePayment($patron, $amount, $currency, $params)
-    {
-        $fines = $this->getMyFines($patron);
-        $payableFines = array_filter(
-            $fines, function ($fine) {
-                return $fine['payableOnline'];
-            }
-        );
-        $total = array_reduce(
-            $payableFines, function ($carry, $fine) {
-                $carry += $fine['amount'];
-                return $carry;
-            }
-        );
-
-        if ($total != $amount) {
-            return 'fines_updated';
-        }
-
-        $success = true;
-        $errorIds = [];
-        foreach ($payableFines as $fine) {
-            $fineId = $fine['fineId'];
-            $request = ['Amount' => $fine['amount'] / 100.0];
-
-            list($code, $result) = $this->makeRequest(
-                ['BorrowerDebts', $patron['cat_username'], $fineId],
-                json_encode($request),
-                'POST', true
-            );
-            if ($code !== 200) {
-                $errorIds[] = $fineId;
-                $this->error(
-                    "Registration error for fine $fineId "
-                    . "(HTTP status $code): $result"
-                );
-                return false;
-            }
-        }
-
-        if (!empty($errorIds)) {
-            return 'Registration failed for fines: ' . implode(',', $errorIds);
-        }
-        return true;
     }
 
     /**
@@ -1260,7 +1216,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $pickUpLocation = $holdDetails['pickupLocationId'];
 
         if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError('hold_invalid_pickup');
+            return $this->holdError(0, 'hold_invalid_pickup');
         }
 
         $request = [
@@ -1357,39 +1313,44 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getOnlinePayableAmount($patron, $fines)
     {
-        if (!empty($fines)) {
-            $nonPayableReason = false;
-            $amount = 0;
-            $allowPayment = true;
-            foreach ($fines as $fine) {
-                if (!$fine['payableOnline']) {
-                    $nonPayableReason
-                        = 'online_payment_fines_contain_nonpayable_fees';
-                } else {
-                    $amount += $fine['balance'];
-                }
-                if ($allowPayment && !empty($fine['blockPayment'])) {
-                    $allowPayment = false;
-                }
-            }
-            $config = $this->getConfig('onlinePayment');
-            if (!$nonPayableReason
-                && isset($config['minimumFee']) && $amount < $config['minimumFee']
-            ) {
-                $nonPayableReason = 'online_payment_minimum_fee';
-            }
-            $res = ['payable' => $allowPayment, 'amount' => $amount];
-            if ($nonPayableReason) {
-                $res['reason'] = $nonPayableReason;
-            }
-
-            return $res;
+        if (empty($fines)) {
+            return [
+                'payable' => false,
+                'amount' => 0,
+                'reason' => 'online_payment_minimum_fee'
+            ];
         }
-        return [
-            'payable' => false,
-            'amount' => 0,
-            'reason' => 'online_payment_minimum_fee'
+
+        $nonPayableReason = false;
+        $amount = 0;
+        $allowPayment = true;
+        foreach ($fines as $fine) {
+            if (!$fine['payableOnline']) {
+                $nonPayableReason
+                    = 'online_payment_fines_contain_nonpayable_fees';
+            } else {
+                $amount += $fine['balance'];
+            }
+            if ($allowPayment && !empty($fine['blockPayment'])) {
+                $allowPayment = false;
+            }
+        }
+        $config = $this->getConfig('onlinePayment');
+        if (!$nonPayableReason && !empty($config['minimumFee'])
+            && $amount < $config['minimumFee']
+        ) {
+            $nonPayableReason = 'online_payment_minimum_fee';
+        }
+
+        $res = [
+            'payable' => $allowPayment,
+            'amount' => $amount
         ];
+        if (!$allowPayment && $nonPayableReason) {
+            $res['reason'] = $nonPayableReason;
+        }
+
+        return $res;
     }
 
     /**
@@ -1403,60 +1364,63 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @param int    $transactionNumber Internal transaction number
      *
      * @throws ILSException
-     * @return boolean success
+     * @return bool success
      */
     public function markFeesAsPaid($patron, $amount, $transactionId,
         $transactionNumber
     ) {
-        if (!$this->validateOnlinePaymentConfig(true)) {
-            throw new ILSException(
-                'Online payment disabled or configuration missing.'
-            );
-        }
-
-        $paymentConfig = $this->getOnlinePaymentConfig();
-        $params
-            = $paymentConfig['registrationParams'] ?? []
-        ;
-        $currency = $paymentConfig['currency'];
         $userId = $patron['id'];
-        $patronId = $patron['cat_username'];
-        $errFun = function ($userId, $patronId, $error) {
-            $this->error(
-                "Online payment error (user: $userId, driver: "
-                . $this->dbName . ", patron: $patronId): "
-                . $error
-            );
-            throw new ILSException($error);
-        };
 
-        $result = $this->registerOnlinePayment(
-            $patron, $amount, $currency, $params
+        $paymentConfig = $this->getConfig('onlinePayment');
+        $fines = $this->getMyFines($patron);
+        $payableFines = array_filter(
+            $fines, function ($fine) {
+                return $fine['payableOnline'];
+            }
         );
-        if ($result === true) {
-            $cacheId = "blocks_$patronId";
-            $this->session->cache[$cacheId] = null;
-            return true;
-        } elseif ($result !== false) {
-            $errFun($userId, $patronId, $result);
-        }
-        return false;
-    }
+        $total = array_reduce(
+            $payableFines, function ($carry, $fine) {
+                $carry += $fine['balance'];
+                return $carry;
+            }
+        );
 
-    /**
-     * Get online payment configuration
-     *
-     * @param boolean $throwException Throw an ILSException if the
-     * configuration is not valid.
-     *
-     * @return array config data
-     */
-    protected function getOnlinePaymentConfig($throwException = false)
-    {
-        if (empty($this->config['OnlinePayment'])) {
-            return false;
+        if ($total < $amount
+            || (!empty($paymentConfig['exactBalanceRequired']) && $total != $amount)
+        ) {
+            return 'fines_updated';
         }
-        return $this->config['OnlinePayment'];
+
+        $amountLeft = $amount;
+        foreach ($payableFines as $fine) {
+            if ($amountLeft == 0) {
+                break;
+            }
+            $fineId = $fine['fineId'];
+            $payAmount = min($fine['balance'], $amountLeft);
+            $amountLeft -= $payAmount;
+            // We can only relay the internal transaction number since Mikromarc
+            // only seems to accept a number.
+            $request = [
+                'Amount' => $payAmount / 100.0,
+                'DibsTransactionId' => $transactionNumber,
+                'DibsPaymentDate' => date(DATE_RFC3339_EXTENDED)
+            ];
+
+            list($code, $result) = $this->makeRequest(
+                ['BorrowerDebts', $patron['cat_username'], $fineId],
+                json_encode($request),
+                'POST', true
+            );
+            if ($code !== 200) {
+                $error = "Registration error for fine $fineId, user"
+                    . " $userId (HTTP status $code): $result";
+                $this->error($error);
+                throw new ILSException($error);
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -1466,57 +1430,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function supportsOnlinePayment()
     {
-        $config = $this->getOnlinePaymentConfig();
-        if (!$config || empty($config['enabled'])) {
-            return false;
-        }
-        return $this->validateOnlinePaymentConfig();
-    }
-
-    /**
-     * Helper method for validating online payment configuration.
-     *
-     * @param boolean $throwException Throw an ILSException if the
-     * configuration is not valid.
-     *
-     * @return bool
-     */
-    protected function validateOnlinePaymentConfig($throwException = false)
-    {
-        $checkRequired = function ($config, $params, $throwException) {
-            foreach ($params as $req) {
-                if (!isset($params[$req]) && !empty($params[$req])) {
-                    $err = "Missing online payment parameter $req";
-                    $this->error($err);
-                    if ($throwException) {
-                        throw new ILSException($err);
-                    }
-                    return false;
-                }
-
-                if (empty($config[$req])) {
-                    return false;
-                }
-            }
-            return true;
-        };
-        if (!$config = $this->getOnlinePaymentConfig()) {
-            return false;
-        }
-        if (!$checkRequired($config, ['currency', 'enabled'], $throwException)) {
-            return false;
-        }
-        $registrationParams = $this->getOnlinePaymentRegistrationParams();
-        if (empty($registrationParams)) {
-            return true;
-        }
-
-        if (empty($config['registrationParams'])) {
-            return false;
-        }
-        return $checkRequired(
-            $config['registrationParams'], $registrationParams, $throwException
-        );
+        $config = $this->getConfig('onlinePayment');
+        return $config['enabled'] ?? false;
     }
 
     /**
@@ -1921,8 +1836,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         }
 
         // Set timeout value
-        $timeout = isset($this->config['Catalog']['http_timeout'])
-            ? $this->config['Catalog']['http_timeout'] : 30;
+        $timeout = $this->config['Catalog']['http_timeout'] ?? 30;
         $client->setOptions(
             ['timeout' => $timeout, 'useragent' => 'VuFind', 'keepalive' => true]
         );
@@ -2065,14 +1979,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $startTime = microtime(true);
         $client->setMethod($method);
 
-        if (false == $params) {
-            $params = [];
-        }
-
         $page = 0;
         $data = [];
-        $fetch = true;
-        while ($fetch) {
+        do {
             $client->setUri($apiUrl);
             $response = $client->send();
             $result = $response->getBody();
@@ -2104,34 +2013,41 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 throw new ILSException('Problem with Mikromarc REST API.');
             }
 
-            // More results available?
-            if ($next = !empty($decodedResult['@odata.nextLink'])
-                && !strpos(
-                    $decodedResult['@odata.nextLink'], 'LibraryUnits?$skip=100'
-                )
-            ) {
-                $client->setParameterPost([]);
-                $client->setParameterGet([]);
-                $apiUrl = $decodedResult['@odata.nextLink'];
-            }
-
-            if (isset($decodedResult['value'])) {
-                $decodedResult = $decodedResult['value'];
-            }
-
-            if ($page == 0) {
-                $data = $decodedResult;
+            $resultData = $decodedResult['value'] ?? $decodedResult;
+            if ($page === 0) {
+                $data = $resultData;
             } else {
-                $data = array_merge($data, $decodedResult);
+                $data = array_merge($data, $resultData);
             }
 
-            if (!$next) {
-                $fetch = false;
+            // More results available?
+            $nextLink = $decodedResult['@odata.nextLink'] ?? '';
+            if (!$nextLink) {
+                break;
             }
+
+            // At least with LibraryUnits, Mikromarc may repeat the same link over
+            // and over again. Try to fix.
+            if ($apiUrl === $nextLink) {
+                if (is_array($data)) {
+                    $nextLink = preg_replace(
+                        '/\$skip=(\d+)/',
+                        '$skip=' . count($data),
+                        $nextLink
+                    );
+                }
+                if ($apiUrl === $nextLink) {
+                    $this->logError('Could not rewrite $skip parameter');
+                    break;
+                }
+            }
+
+            $client->setParameterPost([]);
+            $apiUrl = $nextLink;
             $page++;
-        }
-        return $returnCode ? [$response->getStatusCode(), $data]
-            : $data;
+        } while ($page < 100); // safety valve
+
+        return $returnCode ? [$response->getStatusCode(), $data] : $data;
     }
 
     /**

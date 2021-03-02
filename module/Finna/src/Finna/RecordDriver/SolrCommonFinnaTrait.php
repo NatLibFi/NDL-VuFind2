@@ -185,8 +185,7 @@ trait SolrCommonFinnaTrait
      */
     public function getLocalIds()
     {
-        return isset($this->fields['local_ids_str_mv'])
-            ? $this->fields['local_ids_str_mv'] : [];
+        return $this->fields['local_ids_str_mv'] ?? [];
     }
 
     /**
@@ -218,5 +217,16 @@ trait SolrCommonFinnaTrait
     protected function getConfig()
     {
         return $this->mainConfig;
+    }
+
+    /**
+     * Returns the locale used by translator
+     *
+     * @return string
+     */
+    protected function getLocale()
+    {
+        list($locale) = explode('-', $this->getTranslatorLocale());
+        return $locale;
     }
 }

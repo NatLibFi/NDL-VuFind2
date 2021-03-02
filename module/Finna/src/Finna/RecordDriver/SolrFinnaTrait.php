@@ -28,6 +28,8 @@
  */
 namespace Finna\RecordDriver;
 
+use VuFind\RecordDriver\Feature\VersionAwareInterface;
+
 /**
  * Additional functionality for Finna Solr records.
  *
@@ -247,8 +249,7 @@ trait SolrFinnaTrait
      */
     public function getFullTitle()
     {
-        return isset($this->fields['title_full']) ?
-            $this->fields['title_full'] : '';
+        return $this->fields['title_full'] ?? '';
     }
 
     /**
@@ -258,8 +259,7 @@ trait SolrFinnaTrait
      */
     public function getGenres()
     {
-        return isset($this->fields['genre'])
-            ? $this->fields['genre'] : [];
+        return $this->fields['genre'] ?? [];
     }
 
     /**
@@ -269,8 +269,17 @@ trait SolrFinnaTrait
      */
     public function getGeoLocations()
     {
-        return isset($this->fields['location_geo'])
-            ? $this->fields['location_geo'] : [];
+        return $this->fields['location_geo'] ?? [];
+    }
+
+    /**
+     * Get related places.
+     *
+     * @return array
+     */
+    public function getRelatedPlacesExtended()
+    {
+        return [];
     }
 
     /**
@@ -280,8 +289,7 @@ trait SolrFinnaTrait
      */
     public function getHierarchyParentID()
     {
-        return isset($this->fields['hierarchy_parent_id'])
-            ? $this->fields['hierarchy_parent_id'] : [];
+        return $this->fields['hierarchy_parent_id'] ?? [];
     }
 
     /**
@@ -291,8 +299,7 @@ trait SolrFinnaTrait
      */
     public function getHierarchyParentTitle()
     {
-        return isset($this->fields['hierarchy_parent_title'])
-            ? $this->fields['hierarchy_parent_title'] : [];
+        return $this->fields['hierarchy_parent_title'] ?? [];
     }
 
     /**
@@ -493,8 +500,7 @@ trait SolrFinnaTrait
      */
     public function getOriginalLanguages()
     {
-        return isset($this->fields['original_lng_str_mv'])
-            ? $this->fields['original_lng_str_mv'] : [];
+        return $this->fields['original_lng_str_mv'] ?? [];
     }
 
     /**
@@ -567,8 +573,7 @@ trait SolrFinnaTrait
      */
     public function getUsageRights()
     {
-        return isset($this->fields['usage_rights_str_mv'])
-            ? $this->fields['usage_rights_str_mv'] : [];
+        return $this->fields['usage_rights_str_mv'] ?? [];
     }
 
     /**
@@ -650,8 +655,7 @@ trait SolrFinnaTrait
      */
     public function getYear()
     {
-        return isset($this->fields['main_date_str'])
-            ? $this->fields['main_date_str'] : false;
+        return $this->fields['main_date_str'] ?? false;
     }
 
     /**
@@ -661,8 +665,7 @@ trait SolrFinnaTrait
      */
     public function getFirstIndexed()
     {
-        return isset($this->fields['first_indexed'])
-            ? $this->fields['first_indexed'] : '';
+        return $this->fields['first_indexed'] ?? '';
     }
 
     /**
@@ -866,16 +869,6 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get work identification keys
-     *
-     * @return array
-     */
-    public function getWorkKeys()
-    {
-        return $this->fields['work_keys_str_mv'] ?? [];
-    }
-
-    /**
      * A helper function that merges an array of JSON-encoded URLs
      *
      * @param array $urlArray Array of JSON-encoded URL attributes
@@ -1057,6 +1050,9 @@ trait SolrFinnaTrait
     /**
      * Return count of other versions available
      *
+     * Finna: Like VersionAwareTrait's getOtherVersionCount, but adds the call to
+     * addVersionsFilters.
+     *
      * @return int
      */
     public function getOtherVersionCount()
@@ -1065,14 +1061,19 @@ trait SolrFinnaTrait
             return false;
         }
 
-        if (!($workKeys = $this->getWorkKeys())) {
-            return false;
-        }
-
         if (!isset($this->otherVersionsCount)) {
+            if (!($workKeys = $this->tryMethod('getWorkKeys'))) {
+                if (!($this instanceof VersionAwareInterface)) {
+                    throw new \Exception(
+                        'VersionAwareTrait requires VersionAwareInterface'
+                    );
+                }
+                return false;
+            }
+
             $params = new \VuFindSearch\ParamBag();
             $params->add('rows', 0);
-            $this->addFilters($params);
+            $this->addVersionsFilters($params);
             $results = $this->searchService->workExpressions(
                 $this->getSourceIdentifier(),
                 $this->getUniqueID(),
@@ -1087,12 +1088,16 @@ trait SolrFinnaTrait
     /**
      * Retrieve versions as a search result
      *
+     * Finna: Like VersionAwareTrait's getVersions, but adds the call to
+     * addVersionsFilters.
+     *
      * @param bool $includeSelf Whether to include this record
      * @param int  $count       Maximum number of records to display
+     * @param int  $offset      Start position (0-based)
      *
      * @return \VuFindSearch\Response\RecordCollectionInterface
      */
-    public function getVersions($includeSelf = false, $count = 20)
+    public function getVersions($includeSelf = false, $count = 20, $offset = 0)
     {
         if (null === $this->searchService) {
             return false;
@@ -1104,8 +1109,9 @@ trait SolrFinnaTrait
 
         if (!isset($this->otherVersions)) {
             $params = new \VuFindSearch\ParamBag();
-            $params->add('rows', min($count, 100));
-            $this->addFilters($params);
+            $params->add('rows', $count);
+            $params->add('start', $offset);
+            $this->addVersionsFilters($params);
             $this->otherVersions = $this->searchService->workExpressions(
                 $this->getSourceIdentifier(),
                 $includeSelf ? '' : $this->getUniqueID(),
@@ -1128,15 +1134,17 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Add filters to params
+     * Add versions search filters to params
      *
      * @param \VuFindSearch\ParamBag $paramBag Params
      *
      * @return void
      */
-    protected function addFilters(\VuFindSearch\ParamBag $paramBag)
+    protected function addVersionsFilters(\VuFindSearch\ParamBag $paramBag)
     {
-        $filterConf = $this->mainConfig->Record->display_versions ?? "all";
+        // Back-compatibility with the setting in config.ini:
+        $filterConf = $this->searchSettings['General']['versions_filter']
+            ?? $this->mainConfig->Record->display_versions ?? 'all';
         if ('same_source' === $filterConf) {
             // Add source filter
             $paramBag->add(
@@ -1145,16 +1153,5 @@ trait SolrFinnaTrait
                     . '"'
             );
         }
-    }
-
-    /**
-     * Returns the locale used by translator
-     *
-     * @return string
-     */
-    protected function getLocale()
-    {
-        list($locale) = explode('-', $this->getTranslatorLocale());
-        return $locale;
     }
 }

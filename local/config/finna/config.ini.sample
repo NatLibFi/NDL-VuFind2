@@ -443,6 +443,19 @@ timeout = 30
 ;search_filters[] = "(.[,\s]){30,}"
 ;search_filters[] = "[^\s,.\-]{100,}"
 
+; This section provides options for caching search requests. Supported for Solr only.
+[IndexCache]
+; Supported adapters: Filesystem, Memcached. Others may also work.
+adapter = Memcached
+; Memcached servers (optional, uses localhost:11211 by default)
+;servers[] = "localhost:1234"
+; Other options. See https://docs.laminas.dev/laminas-cache/storage/adapter/ for
+; documentation on options for different adapters.
+; ttl, Time to Live, i.e. caching time in seconds. 300 seconds by default.
+;options['ttl'] = 300
+; Cache directory for Filesystem cache:
+;options[cache_dir] = "/private/tmp/cache"
+
 ; Enable/Disable searching reserves using the "reserves" Solr core.  When enabling
 ; this feature, you also need to uncomment the relevant line in solr/solr.xml and
 ; restart Solr to enable the reserves core, and you need to run the
@@ -1378,19 +1391,12 @@ allowed_url_schemes[] = 'maps'
 ; Whether to embed video in the record page.
 ;embedVideo = true
 
-; Whether the "versions" link and record tab are enabled. Default is false.
-; Other valid values are:
-; true or "all"            - display all versions across active data sources
-; "same_source"            - display only versions from the same data source
-;display_versions = true
-
 ; Record redirection rules for record IDs that should be redirected to the records new version.
 ; Each entry consists of the following elements (delimited by '###'):
-; 1. Regular expression that receives the record ID (<source>.<id>) and should capture <id>.
-; 2. Optional prefix that is used in 'ctrlnum' index field of the new record: (<prefix>)<id>.
-;    Leave empty if the prefix is not indexed.
+; 1. Regular expression that receives the record ID (<source>.<id>) and should capture the required <id>.
+; 2. Replacement pattern for creating a 'ctrlnum' index field of the new record, typically (<prefix>)<id>.
 ; 3. Datasource of the new record.
-; missing_record_redirect[] = "/^lusto\.(.+)/###knp###lusto-new"
+; missing_record_redirect[] = "/^lusto\.(.+)/###(knp)$1###lusto-new"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
@@ -1631,6 +1637,14 @@ en-gb['CC BY-NC-ND 4.0'] = "http://creativecommons.org/licenses/by-nc-nd/4.0/dee
 fi['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 sv['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
 en-gb['FREE ACCESS - NO-REUSE'] = "http://www.europeana.eu/portal/rights/rr-f.html"
+
+fi['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=fi"
+sv['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=en"
+en-gb['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=en"
+
+fi['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=fi"
+sv['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
+en-gb['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
 
 ; Finna survey
 [FinnaSurvey]

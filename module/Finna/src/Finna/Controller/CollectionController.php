@@ -40,8 +40,6 @@ namespace Finna\Controller;
  */
 class CollectionController extends \VuFind\Controller\CollectionController
 {
-    use CatalogLoginTrait;
-
     /**
      * Display a particular tab.
      *
@@ -53,7 +51,7 @@ class CollectionController extends \VuFind\Controller\CollectionController
     protected function showTab($tab, $ajax = false)
     {
         // Call for login modal
-        if ($this->params()->fromQuery('layout', 'false') == 'lightbox'
+        if ($this->inLightbox()
             && $this->params()->fromQuery('catalogLogin', 'false') == 'true'
         ) {
             return $this->catalogLogin();

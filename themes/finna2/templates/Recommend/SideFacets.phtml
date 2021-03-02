@@ -37,7 +37,7 @@
     </fieldset>
   <?php endif; ?>
 <?php endif; ?>
-<?php $extraFilters = isset($this->extraSideFacetFilters) ? $this->extraSideFacetFilters : []; ?>
+<?php $extraFilters = $this->extraSideFacetFilters ?? []; ?>
 <?php $collapsedFacets = $this->recommend->getCollapsedFacets(); ?>
 <?php $hierarchicalFacetSortOptions = $this->recommend->getHierarchicalFacetSortOptions(); ?>
 <?php $hierarchicalFacets = $this->recommend->getHierarchicalFacets(); ?>
@@ -49,9 +49,11 @@
   if (null === $module || in_array($module, ['search', 'primo'])) {
     $options = $results->getOptions();
     if (is_callable([$options, 'getDateRangeSearchField'])) {
-        $daterangeFacetField = $options->getDateRangeSearchField();
+      $daterangeFacetField = $options->getDateRangeSearchField();
     }
-    $dateRangeFilter = $params->getDateRangeFilter();
+    if (is_callable([$params, 'getDateRangeFilter'])) {
+      $dateRangeFilter = $params->getDateRangeFilter();
+    }
   }
 ?>
 <?=$this->context($this)->renderInContext('Recommend/SideFacets/filter-list.phtml', [
@@ -69,7 +71,7 @@ if ($this->fromStreetSearch) {
   }
 }
 ?>
-<?=isset($this->sideFacetExtraControls) ? $this->sideFacetExtraControls : '' ?>
+<?=$this->sideFacetExtraControls ?? '' ?>
 <?php $sideFacetSet = $this->recommend->getFacetSet(); ?>
 <?php if (!empty($sideFacetSet) && $results->getResultTotal() > 0): ?>
   <?php foreach ($sideFacetSet as $title => $cluster): ?>

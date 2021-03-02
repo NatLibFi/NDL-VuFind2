@@ -164,15 +164,9 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Actors', 'getAllPresenters', 'data-actors.phtml',
+            'Actors', 'getPresenters', 'data-actors.phtml',
             [
                 'context' => ['class' => 'recordPresenters']
-            ]
-        );
-        $setTemplateLine(
-            'Assistants', 'getAssistants', 'data-assistants.phtml',
-            [
-                'context' => ['class' => 'record-assistants']
             ]
         );
         $setTemplateLine(
@@ -456,10 +450,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Classification',
+            'Other Classifications',
             'getOtherClassifications', 'data-keywords.phtml',
             [
-                'context' => ['class' => 'recordClassifications']
+                'context' => [
+                    'class' => 'recordClassifications', 'title' => 'Classification'
+                ]
             ]
         );
         $setTemplateLine(
@@ -777,7 +773,7 @@ class RecordDataFormatterFactory
             $final = [];
             foreach ($data as $type => $values) {
                 $final[] = [
-                    'label' => "Access Restrictions:$type",
+                    'label' => "access_restrictions_$type",
                     'values' => $values ? array_values($values) : null,
                     'options' => [
                         'pos' => $pos++,
@@ -785,11 +781,11 @@ class RecordDataFormatterFactory
                         'template' => 'data-escapeHtml.phtml',
                         'context' => [
                             'class' => 'extendedAccess',
-                            'type' => "Access Restrictions::$type",
+                            'type' => "access_restrictions_$type",
                             'schemaLabel' => null,
                         ],
                     ],
-                 ];
+                ];
             }
             return $final;
         };
@@ -837,12 +833,9 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Date', 'getUnitDates', 'data-lines-with-detail.phtml'
-        );
-        $setTemplateLine(
-            'Photo Info', 'getPhotoInfo', 'data-escapeHtml.phtml',
+            'Dates', 'getUnitDates', 'data-lines-with-detail.phtml',
             [
-                'context' => ['class' => 'record-photoinfo']
+                'context' => ['title' => 'Date']
             ]
         );
         $setTemplateLine(
@@ -920,6 +913,13 @@ class RecordDataFormatterFactory
             'Place of Origin', 'getAssociatedPlace', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'record-associated-place']
+            ]
+        );
+        $setTemplateLine(
+            'Related Places', 'getRelatedPlacesExtended',
+            'data-lines-with-detail.phtml',
+            [
+                'context' => ['class' => 'record-related-place']
             ]
         );
         $setTemplateLine(
@@ -1005,7 +1005,7 @@ class RecordDataFormatterFactory
         };
 
         $setMultiTemplateLine(
-            'Archive Relations', 'getNonPresenterAuthors', $getRelations
+            'Archive Relations', 'getRelations', $getRelations
         );
 
         return $lines;

@@ -29,6 +29,7 @@
 namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
+use VuFind\I18n\TranslatableString;
 
 /**
  * VuFind Driver for Koha, using REST API
@@ -104,9 +105,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             = 'patron_status_restricted_with_reason';
 
         $this->groupHoldingsByLocation
-            = isset($this->config['Holdings']['group_by_location'])
-            ? $this->config['Holdings']['group_by_location']
-            : '';
+            = $this->config['Holdings']['group_by_location']
+            ?? '';
 
         if (isset($this->config['Holdings']['holdings_branch_order'])) {
             $values = explode(
@@ -299,8 +299,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $messagingSettings = [];
         if ($this->config['Profile']['messagingSettings'] ?? true) {
             foreach ($result['messaging_preferences'] as $type => $prefs) {
-                $typeName = isset($this->messagingPrefTypeMap[$type])
-                    ? $this->messagingPrefTypeMap[$type] : $type;
+                $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
                 $settings = [
                     'type' => $typeName
                 ];
@@ -357,13 +356,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ];
         }
 
-        $phoneField = isset($this->config['Profile']['phoneNumberField'])
-            ? $this->config['Profile']['phoneNumberField']
-            : 'mobile';
+        $phoneField = $this->config['Profile']['phoneNumberField']
+            ?? 'mobile';
 
-        $smsField = isset($this->config['Profile']['smsNumberField'])
-            ? $this->config['Profile']['smsNumberField']
-            : 'sms_number';
+        $smsField = $this->config['Profile']['smsNumberField']
+            ?? 'sms_number';
 
         $profile = [
             'firstname' => $result['firstname'],
@@ -514,8 +511,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $request = [];
         $addressFields = [];
-        $fieldConfig = isset($this->config['updateAddress']['fields'])
-            ? $this->config['updateAddress']['fields'] : [];
+        $fieldConfig = $this->config['updateAddress']['fields'] ?? [];
         foreach ($fieldConfig as $field) {
             $parts = explode(':', $field);
             if (isset($parts[1])) {
@@ -975,8 +971,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         // Do we need to sort pickup locations? If the setting is false, don't
         // bother doing any more work. If it's not set at all, default to
         // alphabetical order.
-        $orderSetting = isset($this->config['Holds']['pickUpLocationOrder'])
-            ? $this->config['Holds']['pickUpLocationOrder'] : 'default';
+        $orderSetting = $this->config['Holds']['pickUpLocationOrder'] ?? 'default';
         if (count($locations) > 1 && !empty($orderSetting)) {
             $locationOrder = $orderSetting === 'default'
                 ? [] : array_flip(explode(':', $orderSetting));
@@ -1637,9 +1632,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         // Get Notes
         $data = $this->getMARCData(
             $marc,
-            isset($this->config['Holdings']['notes'])
-            ? $this->config['Holdings']['notes']
-            : '852z'
+            $this->config['Holdings']['notes']
+            ?? '852z'
         );
         if ($data) {
             $marcDetails['notes'] = $data;
@@ -1648,9 +1642,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         // Get Summary (may be multiple lines)
         $data = $this->getMARCData(
             $marc,
-            isset($this->config['Holdings']['summary'])
-            ? $this->config['Holdings']['summary']
-            : '866a'
+            $this->config['Holdings']['summary']
+            ?? '866a'
         );
         if ($data) {
             $marcDetails['summary'] = $data;
@@ -1854,5 +1847,137 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             break;
         }
         return $this->translate($this->patronStatusMappings[$reason] ?? '', $params);
+    }
+
+    /**
+     * Get Patron Transactions
+     *
+     * This is responsible for retrieving all transactions (i.e. checked-out items
+     * or checked-in items) by a specific patron.
+     *
+     * Finna: adds materialType
+     *
+     * @param array $patron    The patron array from patronLogin
+     * @param array $params    Parameters
+     * @param bool  $checkedIn Whether to list checked-in items
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    protected function getTransactions($patron, $params, $checkedIn)
+    {
+        $pageSize = $params['limit'] ?? 50;
+        $sort = $params['sort'] ?? '+due_date';
+        if ('+title' === $sort) {
+            $sort = '+title|+subtitle';
+        } elseif ('-title' === $sort) {
+            $sort = '-title|-subtitle';
+        }
+        $queryParams = [
+            '_order_by' => $sort,
+            '_page' => $params['page'] ?? 1,
+            '_per_page' => $pageSize
+        ];
+        if ($checkedIn) {
+            $queryParams['checked_in'] = '1';
+            $arrayKey = 'transactions';
+        } else {
+            $arrayKey = 'records';
+        }
+        $result = $this->makeRequest(
+            [
+                'path' => [
+                    'v1', 'contrib', 'kohasuomi', 'patrons', $patron['id'],
+                    'checkouts'
+                ],
+                'query' => $queryParams
+            ]
+        );
+
+        if (200 !== $result['code']) {
+            throw new ILSException('Problem with Koha REST API.');
+        }
+
+        if (empty($result['data'])) {
+            return [
+                'count' => 0,
+                $arrayKey => []
+            ];
+        }
+        $transactions = [];
+        foreach ($result['data'] as $entry) {
+            $dueStatus = false;
+            $now = time();
+            $dueTimeStamp = strtotime($entry['due_date']);
+            if (is_numeric($dueTimeStamp)) {
+                if ($now > $dueTimeStamp) {
+                    $dueStatus = 'overdue';
+                } elseif ($now > $dueTimeStamp - (1 * 24 * 60 * 60)) {
+                    $dueStatus = 'due';
+                }
+            }
+
+            $renewable = $entry['renewable'];
+            $renewals = $entry['renewals'];
+            $renewLimit = $entry['max_renewals'];
+            $message = '';
+            if (!$renewable && !$checkedIn) {
+                $message = $this->mapRenewalBlockReason(
+                    $entry['renewability_blocks']
+                );
+                $permanent = in_array(
+                    $entry['renewability_blocks'], $this->permanentRenewalBlocks
+                );
+                if ($permanent) {
+                    $renewals = null;
+                    $renewLimit = null;
+                }
+            }
+
+            $materialType = '';
+            if (!empty($this->config['Loans']['displayItemType'])) {
+                $materialType = ($entry['item_itype'] ?? null)
+                    ?: ($entry['biblio_itype'] ?? null) ?: '';
+                if ($materialType) {
+                    $prefix = 'material_type_';
+                    if (!empty($this->config['Catalog']['id'])) {
+                        $prefix .= $this->config['Catalog']['id'] . '_';
+                    }
+                    $materialType = new TranslatableString(
+                        $prefix . $materialType,
+                        $materialType
+                    );
+                }
+            }
+
+            $transaction = [
+                'id' => $entry['biblio_id'],
+                'checkout_id' => $entry['checkout_id'],
+                'item_id' => $entry['item_id'],
+                'barcode' => $entry['external_id'] ?? null,
+                'title' => $this->getBiblioTitle($entry),
+                'volume' => $entry['serial_issue_number'] ?? '',
+                'publication_year' => $entry['copyright_date']
+                    ?? $entry['publication_year'] ?? '',
+                'borrowingLocation' => $this->getLibraryName($entry['library_id']),
+                'checkoutDate' => $this->convertDate($entry['checkout_date']),
+                'duedate' => $this->convertDate($entry['due_date'], true),
+                'returnDate' => $this->convertDate($entry['checkin_date']),
+                'dueStatus' => $dueStatus,
+                'renew' => $renewals,
+                'renewLimit' => $renewLimit,
+                'renewable' => $renewable,
+                'message' => $message,
+                'materialType' => $materialType,
+            ];
+
+            $transactions[] = $transaction;
+        }
+
+        return [
+            'count' => $result['headers']['X-Total-Count'] ?? count($transactions),
+            $arrayKey => $transactions
+        ];
     }
 }

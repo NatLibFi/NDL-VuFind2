@@ -55,9 +55,11 @@ default_top_recommend[] = TopFacets:ResultsTop
 ;default_top_recommend[] = LearningMaterial
 default_side_recommend[] = SideFacetsDeferred:Results:CheckboxFacets
 default_noresults_recommend[] = SwitchType
-default_noresults_recommend[] = SwitchQuery
+default_noresults_recommend[] = SwitchQuery:Solr:wildcard
 default_noresults_recommend[] = SpellingSuggestions
 ;default_noresults_recommend[] = "FinnaSuggestionsDeferred:api.finna.fi/api/v1/search?lookfor=%%lookfor%%:finna.fi/Search/Results?lookfor=%%lookfor%%&lng=%%lng%%"
+;default_results_top_recommend[] = Feedback
+;default_results_top_recommend[] = OntologyDeferred
 
 ; Set this to true in order to highlight keywords from the search query when they
 ; appear in fields displayed in search results.
@@ -85,6 +87,14 @@ hide_component_parts = true
 
 ; Maximum result to display
 result_limit = 100000
+
+; Whether the "versions" (FRBR) link and record tab are enabled. Default is true.
+;display_versions = true
+
+; Whether to filter the "versions" (FRBR). Only valid option at the moment is
+; 'same_source', which means that other versions are only displayed from the same
+; data source. By default all versions are displayed.
+;versions_filter = 'same_source'
 
 [Cache]
 ; This controls whether the parsed searchspecs.yaml file will be stored to
@@ -132,6 +142,7 @@ publisher           = adv_search_publisher
 PublicationPlace    = adv_search_publication_place
 year                = adv_search_year
 Holdings            = adv_search_callnumber
+;Identifier          = adv_search_identifier
 
 ; This section defines the sort options available on standard search results.
 ; Values on the left of the equal sign are either the reserved term "relevance"
@@ -167,6 +178,7 @@ last_indexed desc,id asc = sort_last_indexed
 ; using the default_sort setting in the [General] section above.
 [DefaultSortingByType]
 CallNumber = callnumber
+WorkKeys = "main_date_str desc"
 
 ; These settings control which fields are available to sort on in the collections
 ; module.
@@ -331,6 +343,14 @@ author = sort_author
 ;       and no filters. URLs are configured without protocol, for example:
 ;       api.finna.fi/Search/Results?querystring
 ;
+; Available modules recommended for use in the "results top" area:
+;
+; OntologyDeferred:[ini section]:[ini name]
+;       Provides ontology based recommendations as configured in the specified
+;       section of the specified ini file; if [ini name] is left out, it
+;       defaults to "searches" and if [ini section] is left out, it defaults to
+;       "OntologyModuleRecommendations".
+;
 ; You can build your own recommendations modules if you wish.  See the developer's
 ; guide here:
 ;
@@ -345,6 +365,8 @@ author = sort_author
 ;Author[]           = WorldCatIdentities
 ;Subject[]          = WorldCatTerms
 ;Author[]            = WikipediaDeferred:Author
+; Do not show top recommendations for the Versions (WorkKeys) search by default
+WorkKeys[]          = false
 
 [NoResultsRecommendations]
 
@@ -650,3 +672,17 @@ lang[] = "eng"
 ;count = 5
 ; Maximum number of records displayed when clicking the show more link. Default is 30.
 showMoreCount = 30
+
+; This section defines settings for the Ontology Recommendations Module.
+[OntologyModuleRecommendations]
+; Maximum number of API calls to make per search. Leave unset for an unlimited number of API calls.
+;maxApiCalls = 10
+; Maximum number of recommendations to show per search. Leave unset for an unlimited number of recommendations.
+;maxRecommendations = 2
+; Maximum total number for determining if the result set is small. Leave unset to consider all result sets small.
+;maxSmallResultTotal = 40
+; Minimum total number for determining if the result set is large. Leave unset to consider all result sets large.
+;minLargeResultTotal = 400
+; Maximum number of times ontology recommendations can be shown per browser session. Leave unset for an unlimited
+; number of ontology recommendations shown.
+;maxTimesShownPerSession =

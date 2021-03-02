@@ -106,22 +106,16 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $manager->setAuthMethod('ILS');
         }
         if (!empty($view->targets)) {
-            $labels = [];
-
-            foreach ($view->targets as $target) {
-                $labels[$target]
-                    = $manager->getSecondaryLoginFieldLabel($target);
-            }
-            $view->secondaryLoginFieldLabels = $labels;
+            // This is set for back-compatibility:
+            $view->secondaryLoginFieldLabels = [];
         } else {
-            $view->secondaryLoginFieldLabel
-                = $manager->getSecondaryLoginFieldLabel();
+            // This is set for back-compatibility:
+            $view->secondaryLoginFieldLabel = false;
         }
         $manager->setAuthMethod($originalMethod);
 
-        $view->secondaryUsername = $this->params()->fromPost(
-            'secondary_username', ''
-        );
+        // This is set for back-compatibility:
+        $view->secondaryUsername = '';
 
         return $view;
     }
@@ -545,9 +539,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         // Check if hash is expired
         $hashtime = $this->getHashAge($hash);
         $config = $this->getConfig();
-        $hashLifetime = isset($config->Authentication->recover_hash_lifetime)
-            ? $config->Authentication->recover_hash_lifetime
-            : 1209600; // Two weeks
+        $hashLifetime = $config->Authentication->recover_hash_lifetime
+            ?? 1209600; // Two weeks
         if (time() - $hashtime > $hashLifetime) {
             error_log(
                 "Recovery hash expired: $hash, time: $hashtime,"
@@ -656,15 +649,11 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $username = "$target.$username";
         }
 
-        // Check for a secondary username
-        $secondaryUsername = trim($this->params()->fromPost('secondary_username'));
-
         // Connect to the ILS and check that the credentials are correct:
         $loginMethod = $this->getILSLoginMethod($target);
         $catalog = $this->getILS();
         try {
-            $patron
-                = $catalog->patronLogin($username, $password, $secondaryUsername);
+            $patron = $catalog->patronLogin($username, $password);
         } catch (\VuFind\Exception\ILS $e) {
             $this->flashMessenger()->addErrorMessage('ils_connection_failed');
             return false;

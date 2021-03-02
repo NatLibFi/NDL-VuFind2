@@ -150,8 +150,9 @@ class Paytrail extends BaseHandler
         }
         $module->setLastName(empty($lastname) ? 'ei tietoa' : $lastname);
 
-        if ($user->email) {
-            $module->setEmail($user->email);
+        $email = trim($user->email);
+        if ($email) {
+            $module->setEmail($email);
         }
 
         if (!isset($this->config->productCode)
@@ -205,8 +206,7 @@ class Paytrail extends BaseHandler
                 );
             }
             if ($transactionFee) {
-                $code = isset($this->config->transactionFeeProductCode)
-                    ? $this->config->transactionFeeProductCode : $productCode;
+                $code = $this->config->transactionFeeProductCode ?? $productCode;
                 $module->addProduct(
                     'Palvelumaksu / Serviceavgift / Transaction fee', $code, 1,
                     $transactionFee, 0, PaytrailE2::TYPE_HANDLING
