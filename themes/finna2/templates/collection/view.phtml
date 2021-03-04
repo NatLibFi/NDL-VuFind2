@@ -1,19 +1,33 @@
 <!-- START of: finna - collection/view.phtml -->
 <?php
+  // Set up standard record scripts:
+  $this->headScript()->appendFile("record.js");
+  $this->headScript()->appendFile("check_save_statuses.js");
   // Activate Syndetics Plus if necessary:
   if ($this->syndeticsPlus()->isActive()) {
     $this->headScript()->appendFile($this->syndeticsPlus()->getScript());
   }
-  // Set up breadcrumbs:
-  $lastSearch = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
+  // Add any extra scripts the tabs require:
+  foreach ($this->tabsExtraScripts as $script) {
+    $this->headScript()->appendFile($script);
+  }
 
   // Add RDF header link if applicable:
   if ($this->export()->recordSupportsFormat($this->driver, 'RDF')) {
-      $this->headLink()->appendAlternate($this->recordLink()->getActionUrl($this->driver, 'RDF'), 'application/rdf+xml', 'RDF Representation');
+    $this->headLink()->appendAlternate($this->recordLink()->getActionUrl($this->driver, 'RDF'), 'application/rdf+xml', 'RDF Representation');
   }
 
   // Set flag for special cases relating to full-width hierarchy tree tab:
   $tree = (strtolower($this->activeTab) == 'hierarchytree');
+
+  // Set up breadcrumbs:
+  $lastSearch = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
+  if (!empty($lastSearch)) {
+      $this->layout()->breadcrumbs = '<li>' . $lastSearch . '</li> ';
+  } else {
+      $this->layout()->breadcrumbs = '';
+  }
+  $this->layout()->breadcrumbs .= '<li class="active" aria-current="page">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li>';
 
   // Set page title.
   $dataSource = $this->driver->tryMethod('getDataSource');
@@ -43,16 +57,12 @@
       }
   }
 
-  if (!empty($lastSearch)) {
-    $this->layout()->breadcrumbs = '<li>' . $lastSearch . '</li> ';
-  }
-  $this->layout()->breadcrumbs .= '<li class="active" aria-current="page">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li>';
 ?>
 <?php if (!empty($lastSearch)) : ?>
 </div>
 <div class="container">
 <?php endif; ?>
-<div class="record record-row">
+<div class="record record-row source<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
   <?= $this->R2()->registeredInfo($this->driver) ?>
   <div>
     <?=$this->record($this->driver)->getToolbar()?>
@@ -115,21 +125,21 @@
             <?php
               $desc = $obj->getDescription();
               $tabName = preg_replace("/\W/", "-", strtolower($tab));
-              $tab_classes = [ 'record-tab', $tabName ];
+              $tabClasses = [ 'record-tab', $tabName ];
               if (0 === strcasecmp($this->activeTab, $tab)) {
                 if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
-                    $tab_classes[] = 'active';
+                    $tabClasses[] = 'active';
                 }
-                $tab_classes[] = 'initiallyActive';
+                $tabClasses[] = 'initiallyActive';
                 $activeTabObj = $obj;
               }
-              if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }
-              if (!$obj->supportsAjax()) { $tab_classes[] = 'noajax'; }
-              if (strtolower($tab) == 'details') { $tab_classes[] = 'hidden-xs tab-right'; }
+              if (!$obj->isVisible()) { $tabClasses[] = 'hidden'; }
+              if (!$obj->supportsAjax()) { $tabClasses[] = 'noajax'; }
+              if (strtolower($tab) == 'details') { $tabClasses[] = 'hidden-xs tab-right'; }
             ?>
-            <li class="<?=implode(' ', $tab_classes)?>" data-tab="<?=$tabName?>">
+            <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
             <a class="<?=strtolower($tab) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
-              href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
+              href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav" data-lightbox-ignore<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
               data-background<?php endif ?>>
               <?php if (strtolower($tab) == 'details'): ?><i class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>
               <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>

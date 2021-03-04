@@ -1945,7 +1945,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     ) {
         // Set up the request
         $conf = $this->config['Catalog'];
-        $apiUrl = $this->config['Catalog']['host'];
+        $apiUrl = $conf['host'];
         $apiUrl .= '/' . urlencode($conf['base']);
         $apiUrl .= '/' . urlencode($conf['unit']);
 
@@ -2025,6 +2025,12 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             if (!$nextLink) {
                 break;
             }
+            // Fix http => https
+            if (strncmp($apiUrl, 'https:', 6) === 0
+                && strncmp($nextLink, 'http:', 5) === 0
+            ) {
+                $nextLink = 'https:' . substr($nextLink, 5);
+            }
 
             // At least with LibraryUnits, Mikromarc may repeat the same link over
             // and over again. Try to fix.
@@ -2042,6 +2048,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 }
             }
 
+            $client->setParameterGet([]);
             $client->setParameterPost([]);
             $apiUrl = $nextLink;
             $page++;

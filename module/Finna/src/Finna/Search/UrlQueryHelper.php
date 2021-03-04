@@ -85,7 +85,7 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         $prefix = ($operator == 'NOT') ? '-' : ($operator == 'OR' ? '~' : '');
         if (isset($paramArray['filter']) && is_array($paramArray['filter'])) {
             foreach ($paramArray['filter'] as $current) {
-                list($currentField, $currentValue) = $this->parseFilter($current);
+                list($currentField) = $this->parseFilter($current);
                 if ($currentField !== $prefix . $field) {
                     $newFilter[] = $current;
                 }

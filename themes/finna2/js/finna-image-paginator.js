@@ -120,9 +120,10 @@ FinnaPaginator.prototype.init = function init() {
     _.moreBtn = _.root.find('.show-more-images');
     _.lessBtn = _.root.find('.show-less-images');
     toggleButtons(_.moreBtn, _.lessBtn);
+    _.readQuery();
     _.setEvents();
-    _.loadPage(0);
-    _.setTrigger(_.track.find('a:first'));
+    _.loadPage(0, _.openImageIndex);
+    _.setTrigger(_.track.find('a[index=' + _.openImageIndex + ']'));
     _.addDocumentLoadCallback(function showLeftsidebar() {
       $('.large-image-sidebar').removeClass('hidden');
     });
@@ -210,10 +211,42 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
     });
     _.setButtons();
   }
-  _.imagePopup.on('click', function setTriggerEvents(e){
+  _.imagePopup.off('click').on('click', function setTriggerEvents(e){
     e.preventDefault();
     _.setTrigger($(this));
+    if (!_.settings.isList) {
+      _.alterQuery();
+    }
   });
+};
+
+/**
+ * Set desired image index to query
+ */
+FinnaPaginator.prototype.alterQuery = function alterQuery() {
+  var _ = this;
+  var urlParams = new URLSearchParams(window.location.search);
+  urlParams.set('imgid', +_.openImageIndex + 1);
+  var newRelativePathQuery = window.location.pathname + '?' + urlParams.toString() + window.location.hash;
+  history.replaceState(undefined, undefined, newRelativePathQuery);
+};
+
+/**
+ * Get desired image index from query
+ */
+FinnaPaginator.prototype.readQuery = function readQuery() {
+  var _ = this;
+  var queryString = window.location.search;
+  var urlParams = new URLSearchParams(queryString);
+  if (urlParams.has('imgid')) {
+    var imgid = +urlParams.get('imgid');
+    if (!isNaN(imgid)) {
+      imgid -= 1;
+      if (imgid > 0 && imgid < _.images.length) {
+        _.openImageIndex = imgid;
+      }
+    }
+  }
 };
 
 /**
@@ -414,6 +447,9 @@ FinnaPaginator.prototype.setPopupImageState = function setPopupImageState(type) 
     _.imagePopup.off('click').on('click', function onImageClick(e){
       e.preventDefault();
       _.onLeafletImageClick($(this));
+      if (!_.settings.isList) {
+        _.alterQuery();
+      }
     });
     _.leafletLoader = _.canvasElements.leaflet.find('.leaflet-image-loading');
   
@@ -560,7 +596,11 @@ FinnaPaginator.prototype.loadPage = function loadPage(direction, openImageIndex,
   }
 
   if (typeof openImageIndex !== 'undefined' && openImageIndex !== null) {
-    _.offSet = +openImageIndex;
+    var desiredImage = +openImageIndex;
+    if (desiredImage > _.images.length || desiredImage < 0) {
+      desiredImage = 0;
+    }
+    _.offSet = desiredImage;
   }
 
   _.offSet += _.settings.imagesPerPage * direction;
@@ -905,6 +945,9 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
       _.imagePopup.off('click').on('click', function setTriggerEvents(e){
         e.preventDefault();
         _.setTrigger($(this));
+        if (!_.settings.isList) {
+          _.alterQuery();
+        }
       });
       _.canvasElements = {};
       _.setMaxImages();

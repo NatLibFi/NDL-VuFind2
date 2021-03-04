@@ -36,6 +36,7 @@ use Laminas\View\Resolver\TemplatePathStack;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VuFind\Mailer\Mailer;
 
 /**
  * Console service for sending due date reminders.
@@ -50,6 +51,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DueDateReminders extends AbstractUtilCommand
 {
+    use EmailWithRetryTrait;
+
     /**
      * The name of the command (the part after "public/index.php")
      *
@@ -126,20 +129,6 @@ class DueDateReminders extends AbstractUtilCommand
     protected $viewRenderer;
 
     /**
-     * Mailer factory callable
-     *
-     * @var callable
-     */
-    protected $mailerFactory;
-
-    /**
-     * Mailer
-     *
-     * @var \VuFind\Mailer\Mailer
-     */
-    protected $mailer = null;
-
-    /**
      * Translator
      *
      * We don't use the interface and trait since the trait only defines an interface
@@ -197,7 +186,7 @@ class DueDateReminders extends AbstractUtilCommand
      * @param PhpRenderer                     $renderer             View renderer
      * @param \VuFind\Record\Loader           $recordLoader         Record loader
      * @param \VuFind\Crypt\HMAC              $hmac                 HMAC
-     * @param callable                        $mailerFactory        Mailer factory
+     * @param Mailer                          $mailer               Mailer
      * @param Translator                      $translator           Translator
      */
     public function __construct(
@@ -209,7 +198,7 @@ class DueDateReminders extends AbstractUtilCommand
         PhpRenderer $renderer,
         \VuFind\Record\Loader $recordLoader,
         \VuFind\Crypt\HMAC $hmac,
-        callable $mailerFactory,
+        Mailer $mailer,
         Translator $translator
     ) {
         $this->userTable = $userTable;
@@ -228,7 +217,7 @@ class DueDateReminders extends AbstractUtilCommand
         $this->urlHelper = $renderer->plugin('url');
         $this->recordLoader = $recordLoader;
         $this->hmac = $hmac;
-        $this->mailerFactory = $mailerFactory;
+        $this->mailer = $mailer;
         $this->translator = $translator;
         parent::__construct();
     }
@@ -300,10 +289,12 @@ class DueDateReminders extends AbstractUtilCommand
             while ($e = $e->getPrevious()) {
                 $this->err("  Previous exception: " . $e->getMessage());
             }
-            exit(1);
+            return 1;
         }
 
-        return true;
+        $this->mailer->resetConnection();
+
+        return 0;
     }
 
     /**
@@ -337,11 +328,6 @@ class DueDateReminders extends AbstractUtilCommand
             // boolean..
             if (isset($ddrConfig['enabled']) && $ddrConfig['enabled'] !== true) {
                 // Due date reminders disabled for the source
-                $this->warn(
-                    "Due date reminders disabled for source, user {$user->username}"
-                    . " (id {$user->id}), card {$card->cat_username}"
-                    . " (id {$card->id})"
-                );
                 continue;
             }
 
@@ -569,25 +555,7 @@ class DueDateReminders extends AbstractUtilCommand
         $to = $user->email;
         $from = $this->currentSiteConfig['Site']['email'];
         try {
-            try {
-                if (null === $this->mailer) {
-                    $this->mailer = ($this->mailerFactory)();
-                }
-                $this->mailer->send($to, $from, $subject, $message);
-            } catch (\Exception $e) {
-                $this->warn(
-                    "First SMTP send attempt to user {$user->username}"
-                        . " (id {$user->id}, email '$to') failed, resetting",
-                    ''
-                );
-                try {
-                    $this->mailer->resetConnection();
-                } catch (\Exception $e) {
-                    // Failed to reset connection, create a new mailer
-                    $this->mailer = ($this->mailerFactory)();
-                }
-                $this->mailer->send($to, $from, $subject, $message);
-            }
+            $this->sendEmailWithRetry($to, $from, $subject, $message);
         } catch (\Exception $e) {
             $this->err(
                 "Failed to send due date reminders to user {$user->username}"
