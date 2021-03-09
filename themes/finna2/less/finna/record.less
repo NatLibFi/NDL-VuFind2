@@ -568,7 +568,11 @@ a.authority {
     }
   }
 }
-
+.recordInscriptions {
+  .truncate-field > div {
+    margin-bottom: 5px;
+  }
+}
 .record-other-screenings-region,
 .record-broadcasting-info-place {
   flex-grow: 2;
@@ -616,7 +620,9 @@ a.authority {
 }
 
 .recordcover-holder.paginate {
-  display: none;
+  button {
+    display: none;
+  }
 }
 
 @media(max-width: @screen-sm-max) {

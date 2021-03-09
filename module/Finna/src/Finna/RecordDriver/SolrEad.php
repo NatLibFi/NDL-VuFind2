@@ -511,6 +511,26 @@ class SolrEad extends SolrDefault
     }
 
     /**
+     * Get the value of whether or not this is a collection level record
+     *
+     * NOTE: \VuFind\Hierarchy\TreeDataFormatter\AbstractBase::isCollection()
+     * duplicates some of this logic.
+     *
+     * @return bool
+     */
+    public function isCollection()
+    {
+        $result = parent::isCollection();
+        if ($result) {
+            $record = $this->getXmlRecord();
+            if ('item' === (string)$record['level']) {
+                return false;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Check if record is digitized.
      *
      * @return boolean True if the record is digitized

@@ -1345,10 +1345,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $items = [$item];
             } else {
                 $items = [];
-                // NOTE: According to documentation offset is 0-based, but in reality
-                // it seems to be 1-based.
-                $offset = 1;
-                $limit = 10;
+                $offset = 0;
+                $limit = 100;
                 do {
                     $itemsResult = $this->makeRequest(
                         '/bibs/' . rawurlencode($bibId) . '/holdings/ALL/items',
@@ -2241,10 +2239,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 $this->config['Holdings']['itemLimit'] ?? 100
             );
             $page = ($params['page'] ?? 1) - 1;
-            // NOTE: According to documentation offset is 0-based, but in reality it
-            // seems to be 1-based.
             $queryParams = [
-                'offset' => $page * $itemLimit + 1,
+                'offset' => $page * $itemLimit,
                 'limit' => $itemLimit,
                 'current_location' => $locationCode,
                 'order_by' => 'description,enum_a,enum_b',

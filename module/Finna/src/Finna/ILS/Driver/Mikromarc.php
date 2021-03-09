@@ -86,6 +86,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @var array
      */
     protected $feeTypeMappings = [
+        -1 => 'Accrued Fine',
         1 => 'Hold Fee',
         2 => 'Other', // Ilmoitusmaksu
         3 => 'Other', // Laina
@@ -390,7 +391,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $allFines = array_filter(
             $allFines,
             function ($fine) {
-                return $fine['State'] === 'Unpaid';
+                return in_array($fine['State'], ['Estimated', 'Unpaid']);
             }
         );
 
@@ -439,7 +440,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             }
 
             if (!empty($entry['MarcRecordTitle'])) {
-                $fine['title'] = $entry['Id'] . ': ' . $entry['MarcRecordTitle'];
+                $fine['title'] = $entry['MarcRecordTitle'];
             }
             $fines[] = $fine;
         }
@@ -1398,9 +1399,11 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $fineId = $fine['fineId'];
             $payAmount = min($fine['balance'], $amountLeft);
             $amountLeft -= $payAmount;
+            // We can only relay the internal transaction number since Mikromarc
+            // only seems to accept a number.
             $request = [
                 'Amount' => $payAmount / 100.0,
-                'DibsTransactionId' => $transactionId,
+                'DibsTransactionId' => $transactionNumber,
                 'DibsPaymentDate' => date(DATE_RFC3339_EXTENDED)
             ];
 
@@ -1942,7 +1945,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     ) {
         // Set up the request
         $conf = $this->config['Catalog'];
-        $apiUrl = $this->config['Catalog']['host'];
+        $apiUrl = $conf['host'];
         $apiUrl .= '/' . urlencode($conf['base']);
         $apiUrl .= '/' . urlencode($conf['unit']);
 
@@ -2022,6 +2025,12 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             if (!$nextLink) {
                 break;
             }
+            // Fix http => https
+            if (strncmp($apiUrl, 'https:', 6) === 0
+                && strncmp($nextLink, 'http:', 5) === 0
+            ) {
+                $nextLink = 'https:' . substr($nextLink, 5);
+            }
 
             // At least with LibraryUnits, Mikromarc may repeat the same link over
             // and over again. Try to fix.
@@ -2039,6 +2048,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 }
             }
 
+            $client->setParameterGet([]);
             $client->setParameterPost([]);
             $apiUrl = $nextLink;
             $page++;
