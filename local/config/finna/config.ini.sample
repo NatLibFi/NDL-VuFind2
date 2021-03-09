@@ -1629,6 +1629,22 @@ fi['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=fi"
 sv['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=en"
 en-gb['INC'] = "https://rightsstatements.org/page/InC/1.0/?language=en"
 
+fi['INC-EDU'] = "https://rightsstatements.org/page/InC-EDU/1.0/?language=fi"
+sv['INC-EDU'] = "https://rightsstatements.org/page/InC-EDU/1.0/?language=en"
+en-gb['INC-EDU'] = "https://rightsstatements.org/page/InC-EDU/1.0/?language=en"
+
+fi['INC-EU-OW'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=fi"
+sv['INC-EU-OW'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=en"
+en-gb['INC-EU-OW'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=en"
+
+fi['NOC-NC'] = "https://rightsstatements.org/page/NoC-NC/1.0/?language=fi"
+sv['NOC-NC'] = "https://rightsstatements.org/page/NoC-NC/1.0/?language=en"
+en-gb['NOC-NC'] = "https://rightsstatements.org/page/NoC-NC/1.0/?language=en"
+
+fi['NOC-OKLR'] = "https://rightsstatements.org/page/NoC-OKLR/1.0/?language=fi"
+sv['NOC-OKLR'] = "https://rightsstatements.org/page/NoC-OKLR/1.0/?language=en"
+en-gb['NOC-OKLR'] = "https://rightsstatements.org/page/NoC-OKLR/1.0/?language=en"
+
 fi['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=fi"
 sv['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
 en-gb['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
