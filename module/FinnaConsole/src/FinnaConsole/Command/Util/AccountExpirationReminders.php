@@ -631,13 +631,33 @@ class AccountExpirationReminders extends AbstractUtilCommand
         if (!$firstName) {
             $firstName = $userName;
         }
+
+        $savedSearchCnt = count($this->searchTable->getSavedSearches($user->id));
+        $publicListCnt = $privateListCnt = 0;
+
+        $userLists = $user->getLists();
+        if (!empty($userLists)) {
+            $publicListCnt = count(
+                array_filter(
+                    $userLists,
+                    function ($list) {
+                        return $list['public'];
+                    }
+                )
+            );
+            $privateListCnt = count($userLists)-$publicListCnt;
+        }
+
         $params = [
             'loginMethod' => strtolower($user->auth_method),
             'username' => $userName,
             'firstname' => $firstName,
             'expirationDate' =>  $expirationDatetime->format('d.m.Y'),
             'serviceName' => $serviceName,
-            'serviceAddress' => $serviceAddress
+            'serviceAddress' => $serviceAddress,
+            'publicListCnt' => $publicListCnt,
+            'privateListCnt' => $privateListCnt,
+            'savedSearchCnt' => $savedSearchCnt,
         ];
 
         $subject = $this->translate(
