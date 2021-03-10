@@ -1,22 +1,28 @@
 <!-- START of: finna - list/list-notes.phtml -->
-<?php if (in_array($this->layout()->templateDir, ['content', 'list', 'search']) && $this->layout()->templateName !== 'results' && is_callable([$this->results, 'getListObject'])):
-  $list = $this->results->getListObject();
-  $notes = $this->driver->getListNotes($list->id); if (!empty($notes)): ?>
-  <?php
-    $note = implode('', $notes);
-    $note = $this->markdown()->toHtml($note);
-    $grid = $this->params->getView() === 'grid'; ?>
-    <?= $grid ? '<button class="note-button" aria-hidden="true" data-original-title="' . $this->transEsc('Note') . '" data-placement="left" data-toggle="tooltip" title="' . $this->transEsc('Note') . '"><i class="fa fa-file-text-o"></i></button>' : '' ?>
-    <div class="<?= $grid ? 'note-overlay note-hide' : '' ?>">
-      <div class="notes">
-        <p class="note-heading">
-          <span class="heading"><i class="fa fa-file-text-o" aria-hidden="true"></i> <?=$this->transEsc('Note')?>:</span>
-        </p>
-        <div class="note-rows">
-          <?php echo $note; ?>
-        </div>
-      </div>
+<?php
+  if (!in_array($this->layout()->templateDir, ['content', 'list', 'search']) || $this->layout()->templateName === 'results' || !is_callable([$this->results, 'getListObject'])) {
+    return;
+  }
+  $notes = $this->driver->getListNotes($this->results->getListObject()->id);
+  if (empty($notes)) {
+    return;
+  }
+?>
+<?php
+  $note = implode('', $notes);
+  $note = $this->markdown()->toHtml($note);
+  $grid = $this->params->getView() === 'grid';
+  $noteDesc = $this->transEsc('Note');
+?>
+<div class="<?= $grid ? 'note-overlay note-hide' : '' ?>">
+  <div class="notes">
+    <br/>
+    <div class="note-rows">
+      <?=$note;?>
     </div>
-  <?php endif; ?>
+  </div>
+</div>
+<?php if ($grid): ?>
+  <button class="note-button" aria-hidden="true" title="<?=$noteDesc?>"><i class="fa fa-file-text-o"></i><?=$noteDesc?><span class="caret"></span></button>
 <?php endif; ?>
 <!-- END of: finna - list/list-notes.phtml -->
