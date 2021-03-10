@@ -1649,6 +1649,10 @@ fi['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=fi"
 sv['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
 en-gb['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
 
+fi['PDM'] = "https://creativecommons.org/publicdomain/mark/1.0/deed.fi"
+sv['PDM'] = "https://creativecommons.org/publicdomain/mark/1.0/deed.sv"
+en-gb['PDM'] = "https://creativecommons.org/publicdomain/mark/1.0/deed.en"
+
 ; Finna survey
 [FinnaSurvey]
 enabled = false
