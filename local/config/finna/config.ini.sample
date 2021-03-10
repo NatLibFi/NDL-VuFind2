@@ -1633,9 +1633,9 @@ fi['INC-EDU'] = "https://rightsstatements.org/page/InC-EDU/1.0/?language=fi"
 sv['INC-EDU'] = "https://rightsstatements.org/page/InC-EDU/1.0/?language=en"
 en-gb['INC-EDU'] = "https://rightsstatements.org/page/InC-EDU/1.0/?language=en"
 
-fi['INC-EU-OW'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=fi"
-sv['INC-EU-OW'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=en"
-en-gb['INC-EU-OW'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=en"
+fi['INC-OW-EU'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=fi"
+sv['INC-OW-EU'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=en"
+en-gb['INC-OW-EU'] = "https://rightsstatements.org/page/InC-OW-EU/1.0/?language=en"
 
 fi['NOC-NC'] = "https://rightsstatements.org/page/NoC-NC/1.0/?language=fi"
 sv['NOC-NC'] = "https://rightsstatements.org/page/NoC-NC/1.0/?language=en"
