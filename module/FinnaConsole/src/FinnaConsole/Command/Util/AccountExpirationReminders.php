@@ -645,7 +645,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
                     }
                 )
             );
-            $privateListCnt = count($userLists)-$publicListCnt;
+            $privateListCnt = count($userLists) - $publicListCnt;
         }
 
         $params = [
