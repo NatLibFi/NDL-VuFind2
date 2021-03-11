@@ -53,6 +53,13 @@ class Loader extends \VuFind\Cover\Loader
     protected $url;
 
     /**
+     * Image parameters
+     *
+     * @var array
+     */
+    protected $imageParams = [];
+
+    /**
      * Record id
      *
      * @var string
@@ -235,10 +242,10 @@ class Loader extends \VuFind\Cover\Loader
         $this->index = $index;
 
         $params = $driver->getRecordImage($size, $index);
-
         if (isset($params['url'])) {
             $this->id = $driver->getUniqueID();
             $this->url = $params['url'];
+            $this->imageParams = $params;
             return parent::fetchFromAPI();
         }
     }
@@ -422,7 +429,9 @@ class Loader extends \VuFind\Cover\Loader
         $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
         $finalFile = $cache ? $this->localFile : $tempFile . '.jpg';
 
-        $pdfFile = preg_match('/\.pdf$/i', $url);
+        $pdfFile
+            = preg_match('/\.pdf$/i', $url) ?? ($this->imageParams['pdf'] ?? false);
+
         $convertPdfService
             = $this->config->Content->convertPdfToCoverImageService
             ?? false;

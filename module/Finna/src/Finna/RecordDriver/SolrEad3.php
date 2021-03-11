@@ -598,7 +598,8 @@ class SolrEad3 extends SolrEad
                         'url' => $href,
                         'descId' => $descId,
                         'sort' => (string)$attr->label,
-                        'type' => $localtype
+                        'type' => $localtype,
+                        'pdf' => (string)$attr->linkrole === 'application/pdf'
                     ];
                 }
             }
