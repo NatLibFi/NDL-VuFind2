@@ -731,7 +731,7 @@ class SolrEad3 extends SolrEad
         ) {
             $result = [];
 
-            foreach ([true,false] as $obeyPreferredLanguage) {
+            foreach ([true, false] as $obeyPreferredLanguage) {
                 foreach ($xml->accessrestrict as $accessNode) {
                     if ($label = $this->getDisplayLabel(
                         $accessNode, 'p', $obeyPreferredLanguage
@@ -1242,7 +1242,7 @@ class SolrEad3 extends SolrEad
 
         $topics = [];
         if (isset($record->controlaccess->subject)) {
-            foreach ([true,false] as $obeyPreferredLanguage) {
+            foreach ([true, false] as $obeyPreferredLanguage) {
                 foreach ($record->controlaccess->subject as $subject) {
                     if (isset($subject->attributes()->relator)
                         && (string)$subject->attributes()->relator !== 'aihe'
