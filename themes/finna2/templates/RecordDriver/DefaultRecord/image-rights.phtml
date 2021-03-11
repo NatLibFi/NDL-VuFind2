@@ -14,7 +14,7 @@
             $label = $this->transEsc($copyright);
             if ($copyright === 'Luvanvarainen käyttö / ei tiedossa') {
               $label = $this->transEsc('usage_F');
-            } else if (!$this->translationEmpty("rightsstatement_$copyright")) {
+            } elseif (!$this->translationEmpty("rightsstatement_$copyright")) {
               $label = $this->transEsc("rightsstatement_$copyright");
             }
           ?>
