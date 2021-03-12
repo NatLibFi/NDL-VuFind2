@@ -619,10 +619,7 @@ class SolrEad3 extends SolrEad
                     ? $images['medium'][$id] : null;
 
                 $data = $img;
-                $data['urls'] = [
-                    'large' => false, 'medium' => false, 'small' => false
-                ];
-                $data['pdf'] = [
+                $data['urls'] = $data['pdf'] = [
                     'large' => false, 'medium' => false, 'small' => false
                 ];
 
