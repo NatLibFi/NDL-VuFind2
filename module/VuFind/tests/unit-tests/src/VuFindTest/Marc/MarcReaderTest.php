@@ -36,9 +36,9 @@ namespace VuFindTest\Marc;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
-class MarcReaderTest extends \VuFindTest\Unit\TestCase
+class MarcReaderTest extends \PHPUnit\Framework\TestCase
 {
-    use \VuFindTest\Unit\FixtureTrait;
+    use \VuFindTest\Feature\FixtureTrait;
 
     /**
      * Test MarcReader methods
@@ -55,7 +55,9 @@ class MarcReaderTest extends \VuFindTest\Unit\TestCase
         $reader = new \VuFind\Marc\MarcReader($reader->toFormat('MARCXML'));
         $reader = new \VuFind\Marc\MarcReader($reader->toFormat('ISO2709'));
 
-        $this->assertRegExp('/^\d{5}cam a22\d{5}4i 4500$/', $reader->getLeader());
+        $this->assertMatchesRegularExpression(
+            '/^\d{5}cam a22\d{5}4i 4500$/', $reader->getLeader()
+        );
         $this->assertEquals(
             '021122s2020    en            000 0 eng d', $reader->getField('008')
         );

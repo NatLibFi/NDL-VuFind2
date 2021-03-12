@@ -352,7 +352,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                         . $t->transaction_id . " failed for user {$user->username}"
                         . " (id {$user->id}), card {$card->cat_username}"
                         . " (id {$card->id})",
-                    'Registration of a transaction failed'
+                    ''
                 );
                 $this->err('      ' . $e->getMessage());
                 $this->logException($e);

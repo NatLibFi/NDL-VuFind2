@@ -150,7 +150,7 @@ finna.layout = (function finnaLayout() {
           .appendTo($('.content-navigation-menu'));
         $('<a>')
           .attr('href', link)
-          .text($('h2', this).text())
+          .text($('h2', this).first().text())
           .appendTo($p);
       });
     }
@@ -300,13 +300,6 @@ finna.layout = (function finnaLayout() {
 
   function initToolTips(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-    // show hover tooltips on grid image notes
-    if (window.matchMedia("(min-width: 768px)").matches) {
-      holder.find('.grid-image .note-button').tooltip();
-      holder.find('.grid-image .note-button').click(function clickHideTooltip() {
-        $("[data-toggle='tooltip']").tooltip('hide');
-      });
-    }
     // other tooltips
     holder.find('[data-toggle="tooltip"]')
       .on('show.bs.tooltip', function onShowTooltip() {
@@ -794,6 +787,21 @@ finna.layout = (function finnaLayout() {
       $(this).finnaModel();
     });
   }
+  function setImagePaginatorTranslations() {
+    $.fn.setPaginatorTranslations({
+      image: VuFind.translate('Image'),
+      close: VuFind.translate('close'),
+      next: VuFind.translate('Next Record'),
+      previous: VuFind.translate('Previous Record'),
+      no_cover: VuFind.translate('No Cover Image')
+    });
+  }
+
+  function initImagePaginators() {
+    $('.image-popup-trigger.init').each(function initImages() {
+      $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
+    });
+  }
 
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
@@ -811,6 +819,7 @@ finna.layout = (function finnaLayout() {
     initLoginTabs: initLoginTabs,
     loadScripts: loadScripts,
     initToolTips: initToolTips,
+    initImagePaginators: initImagePaginators,
     init: function init() {
       initScrollRecord();
       initJumpMenus();
@@ -844,6 +853,8 @@ finna.layout = (function finnaLayout() {
       initFiltersCheckbox();
       initCookieConsent();
       initModelViewers();
+      setImagePaginatorTranslations();
+      initImagePaginators();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };

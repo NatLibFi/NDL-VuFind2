@@ -14,6 +14,14 @@
 ?>
 <div id="popup-content-collapse" class="content">
   <h3 id="popup-image-title" class="title"><?=$this->escapeHtml($this->driver->getTitle())?></h3>
+  <?php if ($otherTitles = array_merge(
+    $this->driver->tryMethod('getUniformTitles') ?? [],
+    $this->driver->tryMethod('getAlternativeTitles') ?? []
+  )): ?>
+    <div class="result-other-titles">
+      <?=implode(' &ndash; ', array_map($this->escapeHtml, $otherTitles)) ?>
+    </div>
+  <?php endif; ?>
   <div class="author-and-dates">
     <?php if ($recordType != 'lido'): ?>
       <p>
@@ -159,9 +167,7 @@
       <?php endif; ?>
     <?php endif; ?>
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
-    <?php if ($this->record($this->driver)->allowRecordImageDownload()): ?>
-      <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => ['urls' => ['large' => $largeImage]], 'hiRes' => $highResolution ?? false]) ?>
-    <?php endif ?>
+    <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => ['urls' => ['large' => $largeImage]], 'hiRes' => $highResolution ?? false]) ?>
     <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $allImages[$this->index] ?? []]); ?>
   </div>
   <?php if ($this->driver->getSourceIdentifier() !== 'SolrAuth'): ?>

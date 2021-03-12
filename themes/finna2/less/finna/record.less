@@ -288,24 +288,6 @@ a.authority {
   }
 }
 
-.image-credit-container {
-  display: inline-block;
-  position: relative;
-}
-.image-credit-line {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  color: white;
-  background-color: black;
-  padding: 2px 4px 2px 4px;
-  font-size: 0.9em;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
 .recordcover-image-detail {
   .image-description {
     text-align: left;
@@ -602,7 +584,11 @@ a.authority {
     }
   }
 }
-
+.recordInscriptions {
+  .truncate-field > div {
+    margin-bottom: 5px;
+  }
+}
 .record-other-screenings-region,
 .record-broadcasting-info-place {
   flex-grow: 2;
@@ -650,7 +636,9 @@ a.authority {
 }
 
 .recordcover-holder.paginate {
-  display: none;
+  button {
+    display: none;
+  }
 }
 
 @media(max-width: @screen-sm-max) {

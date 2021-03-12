@@ -39,9 +39,9 @@ namespace VuFindTest\RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
-class SolrMarcTest extends \VuFindTest\Unit\TestCase
+class SolrMarcTest extends \PHPUnit\Framework\TestCase
 {
-    use \VuFindTest\Unit\FixtureTrait;
+    use \VuFindTest\Feature\FixtureTrait;
 
     /**
      * Test a record that used to be known to cause problems because of the way
@@ -233,7 +233,7 @@ class SolrMarcTest extends \VuFindTest\Unit\TestCase
         $this->assertEquals(['Classified.'], $obj->getAccessRestrictions());
         $this->assertEquals(['VuFind Golden Award, 2020'], $obj->getAwards());
         $this->assertEquals(['Bibliography: p. 122'], $obj->getBibliographyNotes());
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/<collection.*?>.*<record>.*<\/record>.*<\/collection>/s',
             $obj->getFilteredXML()
         );

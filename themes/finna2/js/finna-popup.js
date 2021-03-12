@@ -26,8 +26,6 @@ function FinnaPopup(trigger, params, id) {
   _.classes = typeof params.classes === 'undefined' ? '' : params.classes;
   _.modalBase = typeof params.modal !== 'undefined' ? $(params.modal) : $('<div class="finna-popup default-modal"/>');
   _.translations = typeof params.translations !== 'undefined' ? params.translations : {close: 'close'};
-  _.unveil = typeof params.unveil !== 'undefined' ? params.unveil : false;
-  _.embed = typeof params.embed !== 'undefined' ? params.embed : false;
   _.patterns = {
     youtube: {
       index: 'youtube.com',
@@ -50,6 +48,11 @@ function FinnaPopup(trigger, params, id) {
   _.parent = params.parent;
 }
 
+/**
+ * Adjusts a given src to match an embed link in popular services
+ * 
+ * @param {string} src
+ */
 FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
   var _ = this;
   var embedSrc = src;
@@ -64,6 +67,11 @@ FinnaPopup.prototype.adjustEmbedLink = function adjustEmbedLink(src) {
   return embedSrc;
 };
 
+/**
+ * Adds a trigger element to popups internal array, so it can be properly found
+ * 
+ * @param {HTMLElement} trigger
+ */
 FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
   var _ = this;
   _.triggers.push(trigger);
@@ -71,12 +79,24 @@ FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
   _.onPopupInit(trigger);
 };
 
+/**
+ * If popup needs to do something before it opens
+ */
 FinnaPopup.prototype.beforeOpen = function beforeOpen(){};
 
+/**
+ * If popup needs to do something custom when its being opened
+ */
 FinnaPopup.prototype.customOpen = function customOpen(){};
 
+/**
+ * If popup needs to do something custom when its being closed
+ */
 FinnaPopup.prototype.customClose = function customClose(){};
 
+/**
+ * Reindex the triggers to proper objects, so they are in correct order
+ */
 FinnaPopup.prototype.reIndex = function reIndex() {
   var _ = this;
   _.triggers = [];
@@ -87,11 +107,19 @@ FinnaPopup.prototype.reIndex = function reIndex() {
   });
 };
 
+/**
+ * Returns the current open trigger
+ */
 FinnaPopup.prototype.currentTrigger = function currentTrigger() {
   var _ = this;
   return $(_.triggers[_.openIndex]);
 };
 
+/**
+ * Close a trigger and open the next one found from the internal array
+ * 
+ * @param {int} direction
+ */
 FinnaPopup.prototype.getTrigger = function getTrigger(direction) {
   var _ = this;
   if (typeof _.triggers[_.openIndex + direction] !== 'undefined') {
@@ -101,6 +129,9 @@ FinnaPopup.prototype.getTrigger = function getTrigger(direction) {
   _.checkButtons();
 };
 
+/**
+ * Checks if the buttons needs to be hidden if there is no other popups in the internal array
+ */
 FinnaPopup.prototype.checkButtons = function checkButtons() {
   var _ = this;
   if (typeof _.previousPopup === 'undefined' && typeof _.nextPopup === 'undefined') {
@@ -111,11 +142,13 @@ FinnaPopup.prototype.checkButtons = function checkButtons() {
   _.nextPopup.toggle(_.openIndex < _.triggers.length - 1 && _.triggers.length > 1);
 };
 
-// Function where we are going to check if we are opening the correct popup
+/**
+ * Main function to open a popup and properly display it
+ */
 FinnaPopup.prototype.show = function show() {
   var _ = this;
   var hasParent = typeof _.parent !== 'undefined';
-  if (!_.embed && !hasParent) {
+  if (!hasParent) {
     $(document).on('focusin.finna', function setFocusTrap(e) {
       _.focusTrap(e);
     });
@@ -189,11 +222,17 @@ FinnaPopup.prototype.show = function show() {
   _.checkButtons();
 };
 
+/**
+ * Get translation for internal key
+ */
 FinnaPopup.prototype.getTranslation = function getTranslation(key) {
   var _ = this;
   return typeof _.translations[key] === 'undefined' ? key : _.translations[key];
 };
 
+/**
+ * Function to bind keyup events to modal
+ */
 FinnaPopup.prototype.setKeyBinds = function setKeyBinds() {
   var _ = this;
   $(document).off('keyup.finna').on('keyup.finna', function checkKey(e) {
@@ -210,12 +249,25 @@ FinnaPopup.prototype.setKeyBinds = function setKeyBinds() {
     }
   });
 };
+
+/**
+ * Remove keyup events
+ */
 FinnaPopup.prototype.clearKeyBinds = function clearKeyBinds() {
   $(document).off('keyup.finna');
 };
 
+/**
+ * Function to do after the trigger has been added to the internal array
+ */
 FinnaPopup.prototype.onPopupInit = function onPopupInit(/*trigger*/) { };
 
+/**
+ * Handles the flow of opening modals
+ * 
+ * @param {function} open
+ * @param {function} close
+ */
 FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
   var _ = this;
   _.beforeOpen();
@@ -232,13 +284,21 @@ FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
   _.customOpen();
 };
 
+/**
+ * Toggles the document body scroll state
+ * 
+ * @param {boolean} value
+ */
 FinnaPopup.prototype.toggleScroll = function toggleScroll(value) {
   $(document.body).css('overflow', value ? 'auto' : 'hidden');
 };
 
+/**
+ * Function that handles the flow when a popup closes
+ */
 FinnaPopup.prototype.onPopupClose = function onPopupClose() {
   var _ = this;
-  if (!_.embed && typeof _.parent === 'undefined') {
+  if (typeof _.parent === 'undefined') {
     _.toggleScroll(true);
     $(document).off('focusin.finna');
   }
@@ -260,6 +320,11 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
   _.clearKeyBinds();
 };
 
+/**
+ * Way to keep users tab inside modal elements
+ * 
+ * @param {object} e
+ */
 FinnaPopup.prototype.focusTrap = function focusTrap(e) {
   var _ = this;
   if (!$.contains(_.content[0], e.target)) {
