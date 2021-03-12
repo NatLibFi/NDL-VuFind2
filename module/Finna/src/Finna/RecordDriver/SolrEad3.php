@@ -613,15 +613,44 @@ class SolrEad3 extends SolrEad
             }
 
             foreach ($images['large'] ?? $images['medium'] as $id => $img) {
-                $large = $images['large'][$id] ?? null;
-                $medium = $images['medium'][$id] ?? null;
+                $large = isset($images['large'][$id]['url'])
+                    ? $images['large'][$id] : null;
+                $medium = isset($images['medium'][$id]['url'])
+                    ? $images['medium'][$id] : null;
 
                 $data = $img;
                 $data['urls'] = [
-                    'small' => $medium['url'] ?? $large['url'] ?? null,
-                    'medium' => $medium['url'] ?? $large['url'] ?? null,
-                    'large' => $large['url'] ?? $medium['url'] ?? null,
+                    'large' => false, 'medium' => false, 'small' => false
                 ];
+                $data['pdf'] = [
+                    'large' => false, 'medium' => false, 'small' => false
+                ];
+
+                if ($medium) {
+                    $url = $medium['url'];
+                    $pdf = $medium['pdf'];
+                    $data['urls'] = [
+                        'large' => $url,
+                        'medium' => $url,
+                        'small' => $url
+                    ];
+                    $data['pdf'] = [
+                        'large' => $pdf,
+                        'medium' => $pdf,
+                        'small' => $pdf
+                    ];
+                }
+                if ($large) {
+                    $url = $large['url'];
+                    $pdf = $large['pdf'];
+                    $data['urls']['large'] = $url;
+                    $data['pdf']['large'] = $pdf;
+
+                    if (!$medium) {
+                        $data['urls']['medium'] = $data['urls']['small'] = $url;
+                        $data['pdf']['medium'] = $data['pdf']['small'] = $pdf;
+                    }
+                }
 
                 $result[] = $data;
             }

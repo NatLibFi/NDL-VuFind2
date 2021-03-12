@@ -158,7 +158,7 @@ trait SolrCommonFinnaTrait
                     $params['fullres'] = 1;
                 }
                 $params['id'] = $this->getUniqueId();
-                $params['pdf'] = $images[$index]['pdf'] ?? false;
+                $params['pdf'] = $images[$index]['pdf'][$size] ?? false;
                 return $params;
             }
         }
