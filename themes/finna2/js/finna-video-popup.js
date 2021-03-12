@@ -99,7 +99,7 @@ finna.videoPopup = (function finnaVideoPopup() {
     player.load();
 
     $('body')
-      .unbind('click.videoQuality')
+      .off('click.videoQuality')
       .on('click.videoQuality', '.quality-selection li', function onClickQuality() {
         if ($container.find($(this)).length === 0) {
           return;

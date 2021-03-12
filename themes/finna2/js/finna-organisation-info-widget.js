@@ -207,7 +207,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
   }
 
   function attachWeekNaviListener() {
-    holder.find('.week-navi').unbind('click').on('click', function onClickWeekNavi() {
+    holder.find('.week-navi').off('click').on('click', function onClickWeekNavi() {
       if ($(this).hasClass('disabled')) {
         return;
       }

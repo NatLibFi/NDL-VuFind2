@@ -11,7 +11,7 @@ finna.layout = (function finnaLayout() {
           w: $(window).width(),
           h: $(window).height()
         };
-        $(window).trigger('customresize.finna', [data]);
+        $(window).trigger('throttled-resize.finna', [data]);
       }, 100);
     });
   }
@@ -350,8 +350,8 @@ finna.layout = (function finnaLayout() {
 
   function initJumpMenus(_holder) {
     var holder = typeof _holder === 'undefined' ? $('body') : _holder;
-    holder.find('select.jumpMenu').unbind('change').on('change', function onChangeJumpMenu() { $(this).closest('form').submit(); });
-    holder.find('select.jumpMenuUrl').unbind('change').on('change', function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
+    holder.find('select.jumpMenu').off('change').on('change', function onChangeJumpMenu() { $(this).closest('form').submit(); });
+    holder.find('select.jumpMenuUrl').off('change').on('change', function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
   }
 
   function initSecondaryLoginField() {
@@ -630,7 +630,7 @@ finna.layout = (function finnaLayout() {
       $('.finna-filters .filters-toggle .toggle-text').html(VuFind.translate('show_filters'));
     }
 
-    win.on('customresize.finna', function checkFiltersEnabled(e, data) {
+    win.on('throttled-resize.finna', function checkFiltersEnabled(e, data) {
       var filters = $('.finna-filters .filters');
       if (data.w > 991 && filters.hasClass('hidden')) {
         filters.removeClass('hidden');

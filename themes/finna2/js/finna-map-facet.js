@@ -77,7 +77,7 @@ finna.MapFacet = (function finnaStreetMap() {
     });
 
 
-    mapCanvas.closest('form').submit(function mapFormSubmit(e) {
+    mapCanvas.closest('form').on('submit', function mapFormSubmit(e) {
       $('input[name="filter[]"]').each(function removeLastSearchLocationFilter() {
         if (this.value.includes("!geofilt sfield=location_geo")){
           this.remove();
