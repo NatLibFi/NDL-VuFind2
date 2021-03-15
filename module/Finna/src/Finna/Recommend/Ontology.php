@@ -379,8 +379,12 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
                 && $this->canMakeApiCalls(2);
 
             // Make the Finto API call(s).
+            $fintoTerm = $term . '*';
+            while (false !== strpos($fintoTerm, '**')) {
+                $fintoTerm = str_replace('**', '*', $fintoTerm);
+            }
             $fintoResults = $this->finto->extendedSearch(
-                $term . '*', $language, [], $narrower
+                $fintoTerm, $language, [], $narrower
             );
             $this->apiCallTotal += 1;
 
