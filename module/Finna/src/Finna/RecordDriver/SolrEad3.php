@@ -159,24 +159,38 @@ class SolrEad3 extends SolrEad
      */
     public function getURLs()
     {
-        $urls = [];
+        $urls = $localeUrls = [];
         $url = '';
         $record = $this->getXmlRecord();
+        $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
         foreach ($record->did->xpath('//daoset/dao') as $node) {
             $attr = $node->attributes();
-            // Discard image urls
-            if (isset($attr->linktitle) || !$attr->href
+            // Discard image urls (that are displayed on ExternalData record tab)
+            if ((isset($attr->linktitle)
+                && (string)$attr->linkrole === 'image/jpeg')
+                || !$attr->href
             ) {
                 continue;
             }
+            $lang = (string)$attr->lang;
+            $preferredLang = $lang && in_array($lang, $preferredLangCodes);
+
             $url = (string)$attr->href;
-            $desc = $attr->linktitle ?? $url;
+            $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
+
             if (!$this->urlBlocked($url, $desc)) {
-                $urls[] = [
+                $urlData = [
                     'url' => $url,
                     'desc' => (string)$desc
                 ];
+                $urls[] = $urlData;
+                if ($preferredLang) {
+                    $localeUrls[] = $urlData;
+                }
             }
+        }
+        if ($localeUrls) {
+            $urls = $localeUrls;
         }
         return $this->resolveUrlTypes($urls);
     }
