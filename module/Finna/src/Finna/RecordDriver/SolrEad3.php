@@ -730,12 +730,21 @@ class SolrEad3 extends SolrEad
             && !isset($xml->accessrestrict->accessrestrict)
         ) {
             $result = [];
-            foreach ($xml->accessrestrict as $accessNode) {
-                if ($label = $this->getDisplayLabel($accessNode, 'p', true)) {
-                    if (empty($label[0])) {
-                        continue;
+
+            foreach ([true, false] as $obeyPreferredLanguage) {
+                foreach ($xml->accessrestrict as $accessNode) {
+                    if ($label = $this->getDisplayLabel(
+                        $accessNode, 'p', $obeyPreferredLanguage
+                    )
+                    ) {
+                        if (empty($label[0])) {
+                            continue;
+                        }
+                        $result[] = $label[0];
                     }
-                    $result[] = $label[0];
+                }
+                if (!empty($result)) {
+                    break;
                 }
             }
             return ['general' => $result];
@@ -1233,14 +1242,22 @@ class SolrEad3 extends SolrEad
 
         $topics = [];
         if (isset($record->controlaccess->subject)) {
-            foreach ($record->controlaccess->subject as $subject) {
-                if (isset($subject->attributes()->relator)
-                    && (string)$subject->attributes()->relator !== 'aihe'
-                ) {
-                    continue;
+            foreach ([true, false] as $obeyPreferredLanguage) {
+                foreach ($record->controlaccess->subject as $subject) {
+                    if (isset($subject->attributes()->relator)
+                        && (string)$subject->attributes()->relator !== 'aihe'
+                    ) {
+                        continue;
+                    }
+                    if ($topic = $this->getDisplayLabel(
+                        $subject, 'part', $obeyPreferredLanguage
+                    )
+                    ) {
+                        $topics[] = $topic[0];
+                    }
                 }
-                if ($topic = $this->getDisplayLabel($subject, 'part', true, false)) {
-                    $topics[] = $topic[0];
+                if (!empty($topics)) {
+                    return $topics;
                 }
             }
         }

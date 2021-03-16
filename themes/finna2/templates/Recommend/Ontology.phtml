@@ -47,5 +47,7 @@
 EOT;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
   ?>
+  <?= $this->piwik(['customVars' => ['RecommendationShown' => 'OntologyRecommendation']]) ?>
+  <?= $this->googleanalytics($this->serverUrl(true)) ?>
   <!-- END of: finna - Recommend/Ontology.phtml -->
 <?php endif; ?>

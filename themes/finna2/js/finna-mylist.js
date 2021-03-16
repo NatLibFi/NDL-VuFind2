@@ -639,30 +639,13 @@ finna.myList = (function finnaMyList() {
       }
     });
 
-    function adjustNoteOverlaySize(noteOverlay) {
-      var container = noteOverlay.closest('.grid-body');
-      var coverContainer = container.find('.grid-image');
-      var imageWidth = coverContainer.width();
-      var imageHeight = Math.min(container.find('.grid-title').position().top, container.find('.record-image-container').height());
-      noteOverlay.height(imageHeight);
-      noteOverlay.width(imageWidth);
-    }
-
     // hide/show notes on images
-    $('.notes').not(':data(inited)').each(function initNotes() {
-      $(this).data('inited', '1');
-      var noteButton = $(this).closest('.grid-body').find('.note-button');
-      var noteOverlay = $(this).closest('.grid-body').find('.note-overlay');
-      noteButton.click(function onClick() {
-        adjustNoteOverlaySize(noteOverlay);
-        if (!noteOverlay.hasClass('note-show')) {
-          noteButton.addClass('note-show');
-          noteOverlay.addClass('note-show');
-        } else {
-          noteButton.removeClass('note-show');
-          noteOverlay.removeClass('note-show');
-        }
-      });
+    $('.note-button:not(.inited)').each(function initNotes() {
+      var btn = $(this);
+      var noteOverlay = btn.siblings('.note-overlay').first();
+      btn.off('click').on('click', function onClick() {
+        btn.add(noteOverlay).toggleClass('note-show', !btn.hasClass('note-show'));
+      }).addClass('inited');
     });
 
     // Prompt before leaving page if Ajax load is in progress

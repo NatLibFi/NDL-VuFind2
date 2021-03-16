@@ -221,6 +221,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $image = 'image/jpeg' === $type || strcasecmp('image', $type) === 0;
             $pdf = 'application/pdf' === $type || preg_match('/\.pdf$/i', $address);
 
+            if (!$image && !$pdf) {
+                // Overdrive records only have a subfield 3, check for that
+                $part = $this->getSubfield($url, '3');
+                // Only take large image. Thumbnail is too small.
+                $image = strcasecmp($part, 'Image') === 0;
+            }
+
             if (($image || $pdf) && $this->urlAllowed($address)
                 && ($pdf || $this->isUrlLoadable($address, $this->getUniqueID()))
             ) {

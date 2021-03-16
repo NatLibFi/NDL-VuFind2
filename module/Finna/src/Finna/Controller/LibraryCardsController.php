@@ -66,6 +66,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                         if (!empty($profile['barcode'])) {
                             $card['barcode'] = $profile['barcode'];
                         }
+                        array_unshift($cards, $card);
+                        continue;
                     }
                     $cards[] = $card;
                 }
