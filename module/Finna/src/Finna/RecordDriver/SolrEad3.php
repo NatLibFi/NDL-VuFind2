@@ -627,6 +627,7 @@ class SolrEad3 extends SolrEad
                     'medium' => ($medium['url'] && $medium['pdf'])
                         || (!$medium['url'] && $large['url'] && $large['pdf']),
                     'large' => ($large['url'] && $large['pdf'])
+                        || (!$large['url'] && $medium['url'] && $medium['pdf'])
                 ];
                 $data['pdf']['small'] = $data['pdf']['medium'];
 
