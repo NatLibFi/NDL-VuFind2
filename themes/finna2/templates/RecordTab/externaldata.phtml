@@ -3,7 +3,7 @@ $data = $this->driver->getExternalData();
 $digitized = $data['digitized'];
 $items = $data['items'] ?? [];
 $fullResImages = $items['fullResImages'] ?? null;
-$OCRImages = $items['OCRImages'] ?? null;
+$ocrImages = $items['OCRImages'] ?? null;
 $physicalItems = $items['physicalItems'] ?? null;
 ?>
 <?php if (!$digitized): ?>
@@ -14,8 +14,8 @@ $physicalItems = $items['physicalItems'] ?? null;
   <?= $this->partial('RecordTab/external_data_table.phtml', ['type' => 'fullres_images', 'data' => $fullResImages]); ?>
 <?php endif; ?>
 
-<?php if ($OCRImages): ?>
-  <?= $this->partial('RecordTab/external_data_table.phtml', ['type' => 'ocr', 'data' => $OCRImages]); ?>
+<?php if ($ocrImages): ?>
+  <?= $this->partial('RecordTab/external_data_table.phtml', ['type' => 'ocr', 'data' => $ocrImages]); ?>
 <?php endif; ?>
 
 
