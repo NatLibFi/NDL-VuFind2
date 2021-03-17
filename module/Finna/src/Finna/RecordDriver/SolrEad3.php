@@ -473,18 +473,18 @@ class SolrEad3 extends SolrEad
     public function getExternalData()
     {
         $fullResImages = $this->getFullResImages();
-        $OCRImages = $this->getOCRImages();
+        $ocrImages = $this->getOCRImages();
         $physicalItems = $this->getPhysicalItems();
         $digitized
-            = !empty($fullResImages) || !empty($OCRImages)
+            = !empty($fullResImages) || !empty($ocrImages)
             || !empty($this->getAllImages());
 
         $result = ['items' => []];
         if (!empty($fullResImages)) {
             $result['items']['fullResImages'] = $fullResImages;
         }
-        if (!empty($OCRImages)) {
-            $result['items']['OCRImages'] = $OCRImages;
+        if (!empty($ocrImages)) {
+            $result['items']['OCRImages'] = $ocrImages;
         }
         if (!empty($physicalItems)) {
             $result['items']['physicalItems'] = $physicalItems;
