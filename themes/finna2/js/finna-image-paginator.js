@@ -8,6 +8,7 @@ var defaults = {
   enableImageZoom: false,
   recordType: 'default-type',
   triggerClick: 'modal', // [modal, open, none]
+  triggerState: 'images', // [images, model]
   leaflet: {
     offsetPercentage: 4
   }
@@ -40,6 +41,7 @@ function FinnaPaginator(element, images, settings) {
   _.trigger.attr('data-images', '');
   _.trigger.attr('data-settings', '');
   _.track = _.covers.find('.finna-element-track');
+  _.hasModels = settings.hasModels || false;
 
   // Popup object to keep track of required settings
   _.popup = {
@@ -150,6 +152,7 @@ FinnaPaginator.prototype.setReferences = function setReferences() {
   _.rightBtn = _.covers.find('.right-button');
   _.leftBrowseBtn = _.root.find('.next-image.left');
   _.rightBrowseBtn = _.root.find('.next-image.right');
+  _.coverContainer = _.root.find('.recordcover-container');
   _.pagerInfo = _.settings.isList ? _.covers.find('.paginator-info') : _.trigger.find('.paginator-info');
   if (_.images.length < 2) {
     _.covers.hide();
@@ -202,6 +205,16 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
       toggleButtons(_.moreBtn, _.lessBtn);
       _.loadPage(0, null, _.settings.imagesPerRow);
     });
+
+    if (_.hasModels) {
+      _.coverContainer.on('viewer-show', function hideSelf() {
+        _.coverContainer.hide();
+      });
+      _.coverContainer.on('image-show', function hideSelf() {
+        _.coverContainer.show();
+        $.fn.finnaPopup.closeOpen('modelViewer');
+      });
+    }
   } else {
     _.leftBtn.off('click').click(function setImage(){
       _.onListButton(-1);
@@ -904,6 +917,9 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
  */
 FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   var _ = this;
+  if (_.hasModels) {
+    _.coverContainer.trigger('image-show');
+  }
   _.changeTriggerImage(imagePopup);
   _.openImageIndex = imagePopup.attr('index');
   _.setBrowseButtons(_.settings.isList);

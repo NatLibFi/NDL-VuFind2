@@ -308,6 +308,9 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
   }
 
   _.modalHolder = undefined;
+  if (_.parent) {
+    _.content.empty();
+  }
   _.content = undefined;
   _.nextPopup = undefined;
   _.previousPopup = undefined;

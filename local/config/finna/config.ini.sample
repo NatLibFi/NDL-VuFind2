@@ -1669,3 +1669,8 @@ url = "https://my.surveypal.com/Finnasurvey"
 showLabels[*] = false
 showLabels[Primo] = true
 
+[Models]
+; Id of element where to insert the viewer, if uncommented, will open in popup
+;inline-id = inline-viewer
+; If developer is uncommented and true, will display additional data on the viewer
+;debug = true

@@ -17,6 +17,11 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
 {
     use \VuFindHttp\HttpServiceAwareTrait;
 
+    /**
+     * Session settings
+     * 
+     * @var Settings
+     */
     protected $sessionSettings;
 
     /**
@@ -33,24 +38,36 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
      */
     protected $config;
 
-    //Recordloader
+    /**
+     * Loader
+     * 
+     * @var Loader
+     */
     protected $loader;
 
-    protected $urlHelper;
-
+    /**
+     * Router
+     * 
+     * @var \Laminas\Router\Http\TreeRouteStack
+     */
     protected $router;
 
+    /**
+     * Domain url
+     * 
+     * @var string
+     */
     protected $domainUrl;
     /**
      * Constructor
      */
     public function __construct(
-        SessionSettings $ss, CacheManager $cm,
-        Config $config, Loader $loader, \Laminas\Router\Http\TreeRouteStack $router,
+        SessionSettings $ss, CacheManager $cm, Config $config, Loader $loader,
+        \Laminas\Router\Http\TreeRouteStack $router,
         string $domainUrl
     ) {
-        $this->sessionSettings = $ss;
         $this->cacheManager = $cm;
+        $this->sessionSettings = $ss;
         $this->config = $config;
         $this->recordLoader = $loader;
         $this->router = $router;
@@ -80,9 +97,9 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
             ->getCacheDir();
         $fileName = urlencode($id) . '-' . $index . '.' . $format;
         $localFile = "$cacheDir/$fileName";
-
+        $maxAge = $this->config->Content->modelCacheTime ?? 604800;
         // Check if the model has been cached
-        if (!file_exists($localFile)) {
+        if (!file_exists($localFile) && filemtime($localFile) < $maxAge * 60) {
             $driver = $this->recordLoader->load($id, 'Solr');
             $models = $driver->getModels();
             if (!isset($models[$index][$format])) {
@@ -106,9 +123,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
             }
         }
         $route = stripslashes($this->router->getBaseUrl());
-        // We need to alter the url to point towards the cache file, now its just an absolute path
-        // Url for public cache is located in domainurl/cache so lets point there, but
-        // For this demo we are going to 
+        // Point url to public cache so viewer can download it properly
         $url = "{$this->domainUrl}{$route}/cache/$fileName";
 
         return $this->formatResponse(['url' => $url]);

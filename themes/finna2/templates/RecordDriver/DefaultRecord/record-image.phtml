@@ -4,7 +4,7 @@
   $enableImagePopupZoom = $this->record($this->driver)->getImagePopupZoom();
 ?>
 <div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>">
-  <div id="model-parent"></div>
+  <div id="inline-viewer"></div>
   <div class="recordcover-holder paginate" aria-hidden="true" data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
   <?= $this->record($this->driver)->renderTemplate(
     'record-image-paginator.phtml',
@@ -21,6 +21,9 @@
         <?= $this->record($this->driver)->renderTemplate('image-download.phtml', ['index' => $ind, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false]) ?>
         <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => $ind, 'image' => $image]); ?>
         <?= $this->record($this->driver)->renderTemplate('image-rights.phtml', ['imageRightsLabel' => $imageRightsLabel, 'rights' => $rights, 'truncateLicense' => $ind === 0]); ?>
+        <?php if (!empty($image['models'])): ?>
+          <?= $this->record($this->driver)->renderTemplate('record-models.phtml', ['models' => $image['models'], 'index' => $ind]); ?>
+        <?php endif; ?>
       </div>
       <?php $ind++; ?>
     <?php endforeach; ?>

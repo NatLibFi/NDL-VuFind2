@@ -8,8 +8,11 @@ function ModelViewer(trigger, options, scripts)
   _.trigger = $(trigger);
   _.cubeSettings = options.cubemap;
   _.parentId = options.parentCanvas;
-  if (options.inLineId) {
-    _.inLineId = options.inLineId;
+  if (options.inlineId) {
+    _.inlineId = options.inlineId;
+  }
+  if (options.developer) {
+    _.debug = options.developer;
   }
   _.modelUrl = _.trigger.data('modelurl');
   _.loadInfo = _.trigger.data('modelload');
@@ -19,13 +22,14 @@ function ModelViewer(trigger, options, scripts)
   _.trigger.finnaPopup({
     id: 'modelViewer',
     cycle: false,
-    parent: _.inLineId ? _.inLineId : undefined,
+    parent: _.inlineId || undefined,
     classes: 'model-viewer',
     translations: options.translations,
     modal: modal,
     beforeOpen: function onBeforeOpen() {
       var popup = this;
       $.fn.finnaPopup.closeOpen(popup.id);
+      $('.recordcover-container').trigger('viewer-show');
     },
     onPopupOpen: function onPopupOpen() {
       var popup = this;
@@ -86,11 +90,7 @@ ModelViewer.prototype.setEvents = function setEvents()
   });
 
   $(document).off(fullscreenEvents).on(fullscreenEvents, function onScreenChange() {
-    if (_.root.hasClass('fullscreen')) {
-      _.root.removeClass('fullscreen');
-    } else {
-      _.root.addClass('fullscreen');
-    }
+    _.root.toggleClass('fullscreen', !_.root.hasClass('fullscreen'));
     _.updateScale();
   });
 
@@ -153,7 +153,7 @@ ModelViewer.prototype.getParentSize = function getParentSize()
   var _ = this;
   _.size = {
     x: _.root.width(),
-    y: _.inLineId && !_.root.hasClass('fullscreen') ? _.root.width() : _.root.height()
+    y: _.inlineId && !_.root.hasClass('fullscreen') ? _.root.width() : _.root.height()
   };
 };
 
@@ -209,10 +209,9 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
     var loader = new THREE.GLTFLoader();
     if (typeof dracoLoader === 'undefined') {
       dracoLoader = new THREE.DRACOLoader();
-      dracoLoader.setDecoderPath(VuFind.path + '/themes/finna2/js/vendor/draco/' );
-      loader.setDRACOLoader( dracoLoader );
+      dracoLoader.setDecoderPath(VuFind.path + '/themes/finna2/js/vendor/draco/');
     }
-    
+    loader.setDRACOLoader( dracoLoader );
     loader.load(
       _.modelPath,
       function onLoad ( obj ) {
@@ -226,10 +225,8 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
       function onLoading( xhr ) {
         _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(2) + '%');
       },
-      function onError(error) {
-        console.log(error);
+      function onError(/*error*/) {
         _.viewerStateInfo.html('Error');
-        // Still needs to have an error handling set properly
       }
     );
   } else {
@@ -250,8 +247,10 @@ ModelViewer.prototype.adjustScene = function adjustScene(scene)
 
   _.scene = scene;
   _.scene.background = _.envMap;
-  var axesHelper = new THREE.AxesHelper( 5 );
-  _.scene.add( axesHelper );
+  if (_.debug) {
+    var axesHelper = new THREE.AxesHelper( 5 );
+    _.scene.add( axesHelper );
+  }
   _.createLights();
 };
 
@@ -351,9 +350,10 @@ ModelViewer.prototype.initMesh = function initMesh()
         }
         _.cameraPosition = result;
         _.camera.position.set(0, 0, _.cameraPosition);
-        var box = new THREE.BoxHelper( obj, 0xffff00 );
-        _.scene.add( box );
-        //obj.rotateX(Math.PI / 2);
+        if (_.debug) {
+          var box = new THREE.BoxHelper( obj, 0xffff00 );
+          _.scene.add( box );
+        }
       }
     });
     _.loaded = true;

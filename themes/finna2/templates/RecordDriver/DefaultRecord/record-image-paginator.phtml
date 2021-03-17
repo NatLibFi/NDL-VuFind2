@@ -7,6 +7,7 @@
   <?php
     $ind = 0;
     $paginatedLinks = [];
+    $hasModels = false;
     $recordImage = $this->recordImage($this->record($this->driver));
   ?>
   <?php foreach ($images as $img): ?>
@@ -22,6 +23,9 @@
         'description' => $img['description'],
         'title' => $this->transEsc('Image') . ' ' . $ind
       ];
+      if (!empty($img['models'])) {
+        $hasModels = true;
+      }
       $paginatedLinks[] = $obj;
     ?>
   <?php endforeach; ?>
@@ -38,6 +42,7 @@
         'recordCovers' => 'recordcovers',
         'displayIcon' => $displayIcon,
         'triggerClick' => $this->imageClick ?? 'modal',
+        'hasModels' => $hasModels
       ];
     ?>
   <?php endif; ?>
@@ -55,7 +60,7 @@
       </div>
     <?php endif; ?>
   <?php else: ?>
-    <a href="<?=$this->escapeHtmlAttr($img['urls']['large'] ?? $img['urls']['medium']) ?>"><?=($ind + 1) ?></a>
+    <a href="<?=$this->escapeHtmlAttr($img['urls']['large'] ?? $img['urls']['medium']) ?>"><?=($ind + 1)?></a>
   <?php endif; ?>
   <div class="recordcover-image-detail">
     <p class="image-description">

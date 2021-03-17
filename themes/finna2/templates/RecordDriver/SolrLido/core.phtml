@@ -38,10 +38,6 @@
       <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
     <?php endif; ?>
 
-    <?php if (!empty($models)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-models.phtml', ['models' => $models]);?>
-    <?php endif; ?>
-
     <?php if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
       <div class="organisation-menu">
         <?=$this->render('record/record-organisation-menu.phtml') ?>
