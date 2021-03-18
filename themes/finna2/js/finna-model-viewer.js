@@ -1,4 +1,4 @@
-/* global finna, THREE, VuFind, DRACOLoader*/
+/* global finna, THREE, VuFind*/
 
 // Use 1 dracoloader in all of the loaders, so we don't create multiple instances
 var dracoLoader;
@@ -18,11 +18,13 @@ function ModelViewer(trigger, options, scripts)
   _.loadInfo = _.trigger.data('modelload');
   _.loaded = false;
   var modal = $('#model-modal').find('.model-wrapper').first().clone();
-
+  _.isFileInput = _.trigger.is('input');
+  
   _.trigger.finnaPopup({
     id: 'modelViewer',
     cycle: false,
     parent: _.inlineId || undefined,
+    overrideEvents: _.isFileInput ? 'change' : undefined,
     classes: 'model-viewer',
     translations: options.translations,
     modal: modal,
@@ -51,7 +53,12 @@ function ModelViewer(trigger, options, scripts)
           _.informationsArea.toggle(false);
         }
         _.createRenderer();
-        _.getModelPath();
+        if (!_.isFileInput) {
+          _.getModelPath();
+        } else {
+          _.modelPath = URL.createObjectURL(_.trigger[0].files[0]);
+          _.initViewer();
+        }
       });
     },
     onPopupClose: function onPopupClose() {
@@ -137,15 +144,6 @@ ModelViewer.prototype.initViewer = function initViewer()
   _.loadCubeMap();
   _.loadGLTF();
   _.setEvents();
-};
-
-ModelViewer.prototype.startModelViewer = function startModelViewer()
-{
-  var _ = this;
-  _.modelPath = _.button;
-  _.canvasImage.remove();
-  _.initViewer();
-  _.optionsArea.toggle(true);
 };
 
 ModelViewer.prototype.getParentSize = function getParentSize()

@@ -783,7 +783,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function initModelViewers() {
-    $('.model-trigger').each(function initModelViewer() {
+    $('.model-trigger, #model-file').each(function initModelViewer() {
       $(this).finnaModel();
     });
   }

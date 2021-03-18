@@ -270,6 +270,7 @@ FinnaPopup.prototype.onPopupInit = function onPopupInit(/*trigger*/) { };
  */
 FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
   var _ = this;
+  console.log('before open should be called');
   _.beforeOpen();
   _.show();
 
@@ -353,6 +354,9 @@ FinnaPopup.prototype.focusTrap = function focusTrap(e) {
     }
     _.data('popup-id', id);
     var events = (typeof params.noClick === 'undefined' || !params.noClick) ? 'click openmodal.finna' : 'openmodal.finna';
+    if (params.overrideEvents) {
+      events = params.overrideEvents;
+    }
     _.off(events).on(events, function showModal(e) {
       e.preventDefault();
       // We need to tell which triggers is being used
@@ -381,7 +385,7 @@ FinnaPopup.prototype.focusTrap = function focusTrap(e) {
   };
   $.fn.finnaPopup.closeOpen = function closeOpen(id) {
     if (id) {
-      if (typeof $.fn.finnaPopup.popups[id] !== 'undefined') {
+      if ($.fn.finnaPopup.popups && typeof $.fn.finnaPopup.popups[id] !== 'undefined') {
         if ($.fn.finnaPopup.popups[id].isOpen) {
           $.fn.finnaPopup.popups[id].onPopupClose();
         }

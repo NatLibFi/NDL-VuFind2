@@ -21,9 +21,7 @@
         <?= $this->record($this->driver)->renderTemplate('image-download.phtml', ['index' => $ind, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false]) ?>
         <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => $ind, 'image' => $image]); ?>
         <?= $this->record($this->driver)->renderTemplate('image-rights.phtml', ['imageRightsLabel' => $imageRightsLabel, 'rights' => $rights, 'truncateLicense' => $ind === 0]); ?>
-        <?php if (!empty($image['models'])): ?>
-          <?= $this->record($this->driver)->renderTemplate('record-models.phtml', ['models' => $image['models'], 'index' => $ind]); ?>
-        <?php endif; ?>
+        <?= $this->record($this->driver)->renderTemplate('record-models.phtml', ['models' => $image['models'] ?? [], 'index' => $ind]); ?>
       </div>
       <?php $ind++; ?>
     <?php endforeach; ?>

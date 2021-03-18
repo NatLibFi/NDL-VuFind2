@@ -545,7 +545,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         if (!empty($this->recordConfig->Models->inlineId)) {
             $settings['inlineId'] = $this->recordConfig->Models->inlineId;
         }
-        if (!empty($this->recordConfig->Models->developer)) {
+        if (!empty($this->recordConfig->Models->debug)) {
             $settings['debug'] = $this->recordConfig->Models->debug;
         }
         return $settings;
