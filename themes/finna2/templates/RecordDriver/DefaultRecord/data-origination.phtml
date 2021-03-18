@@ -1,2 +1,2 @@
 <?php $originationExt = $this->driver->tryMethod('getOriginationExtended'); //Don't add START and END comments ?>
-<?=$this->record($this->driver)->getAuthorityLinkElement('author', $originationExt ? $originationExt['name'] : $data, $originationExt ?? null, ['showInlineInfo' => true, 'authorityType' => $author['type'] ?? null])?>
+<?=$this->record($this->driver)->getAuthorityLinkElement('author', $originationExt ? $originationExt['name'] : $data, $originationExt ?? ['name' => $data], ['showInlineInfo' => true, 'authorityType' => $author['type'] ?? null])?>

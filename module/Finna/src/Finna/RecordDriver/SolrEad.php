@@ -314,8 +314,14 @@ class SolrEad extends SolrDefault
     public function getOrigination()
     {
         $record = $this->getXmlRecord();
-        return isset($record->did->origination)
-            ? (string)$record->did->origination->corpname : '';
+        if (isset($record->did->origination->corpname)) {
+            return (string)$record->did->origination->corpname;
+        } elseif (isset($record->did->origination->persname)) {
+            return (string)$record->did->origination->persname;
+        } elseif (isset($record->did->origination)) {
+            return (string)$record->did->origination;
+        }
+        return '';
     }
 
     /**
