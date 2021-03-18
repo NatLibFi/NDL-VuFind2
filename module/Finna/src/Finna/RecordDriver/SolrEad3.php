@@ -77,6 +77,7 @@ class SolrEad3 extends SolrEad
     const ALTFORM_FORMAT = 'format';
     const ALTFORM_ACCESS = 'access';
     const ALTFORM_ONLINE = 'online';
+    const ALTFORM_CONDITION = 'condition';
 
     // Altformavail label map
     const ALTFORM_MAP = [
@@ -87,7 +88,8 @@ class SolrEad3 extends SolrEad
         'Digitaalisen aineiston tiedostomuoto' => self::ALTFORM_FORMAT,
         'Ilmentym&#xE4;n kuntoon perustuva k&#xE4;ytt&#xF6;rajoitus'
             => self::ALTFORM_ACCESS,
-        'Internet - ei fyysistä toimipaikkaa' => self::ALTFORM_ONLINE
+        'Internet - ei fyysistä toimipaikkaa' => self::ALTFORM_ONLINE,
+        'Lisätietoa kunnosta' => self::ALTFORM_CONDITION,
     ];
 
     // Accessrestrict types
@@ -412,6 +414,9 @@ class SolrEad3 extends SolrEad
                     break;
                 case self::ALTFORM_ACCESS:
                     $result['accessRestriction'] = $val;
+                    break;
+                case self::ALTFORM_CONDITION:
+                    $result['info'] = "{$defitem->label}: $val";
                     break;
                 }
             }
