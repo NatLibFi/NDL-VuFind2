@@ -5,7 +5,7 @@
     <?php
         $settings = $this->driver->getModelSettings();
         $settings['cubemap'] = [
-            'path' => $this->imageSrc()->getImagesDirectoryPath(),
+            'path' => $this->imageSrc()->getImagesDirectoryPath() . '/cubemap/',
             'images' => [
                 'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'
             ]

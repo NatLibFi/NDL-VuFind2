@@ -170,9 +170,6 @@ $config = [
         'finna-flex-fallback.css::lt IE 10' // flex polyfill
     ],
     'js' => [
-        'vendor/three.min.js',
-        'vendor/GLTFLoader.js',
-        'vendor/OrbitControls.js',
         'vendor/event-stub.js:lt IE 9',
         'common.js',
         'account_ajax.js',
