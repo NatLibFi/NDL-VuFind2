@@ -416,9 +416,11 @@ class SolrEad3 extends SolrEad
                     $result['accessRestriction'] = $val;
                     break;
                 case self::ALTFORM_CONDITION:
-                    if ($label = (string)$defitem->label) {
-                        $result['info'] = "$label: $val";
+                    if ($info = (string)$defitem->label) {
+                        $info .= ': ';
                     }
+                    $info .= $val;
+                    $result['info'] = $info;
                     break;
                 }
             }
