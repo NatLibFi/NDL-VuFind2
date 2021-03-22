@@ -29,7 +29,7 @@ $physicalItems = $items['physicalItems'] ?? null;
       <div role="row" class="tbl-row">
         <div class="tbl-cell tbl-left" role="cell">
           <?=$this->escapeHtml($item['format'])?>
-          <?php if (isset($item['info'])): ?>
+          <?php if (!empty($item['info'])): ?>
             <span class="info">(<?=$this->escapeHtml($item['info']) ?>)</span>
           <?php endif ?>
         </div>
