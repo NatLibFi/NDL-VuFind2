@@ -24,7 +24,7 @@ finna.common = (function finnaCommon() {
       var qrLink = $(this);
       var isActive = qrLink.hasClass('active');
       qrLink.html(isActive ? "<i class='fa fa-qr-code' aria-hidden='true'></i>" : VuFind.translate('qrcode_hide'));
-      qrLink.toggleClass('active', !qrLink.hasClass('active'));
+      qrLink.toggleClass('active', !isActive);
       qrLink.parent().toggleClass('qr-box', !isActive);
 
       var qrholder = qrLink.next('.qrcode');
