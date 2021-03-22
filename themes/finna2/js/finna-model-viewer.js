@@ -11,8 +11,8 @@ function ModelViewer(trigger, options, scripts)
   if (options.inlineId) {
     _.inlineId = options.inlineId;
   }
-  if (options.developer) {
-    _.debug = options.developer;
+  if (options.debug) {
+    _.debug = options.debug;
   }
   _.modelUrl = _.trigger.data('modelurl');
   _.loadInfo = _.trigger.data('modelload');
