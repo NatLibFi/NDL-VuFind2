@@ -17,28 +17,6 @@ finna.common = (function finnaCommon() {
     return null;
   }
 
-  function initSearchInputListener() {
-    var searchInput = $('.searchForm_lookfor:visible');
-    if (searchInput.length === 0) {
-      return;
-    }
-    $(window).on('keypress', function onSearchInputKeypress(e) {
-      var ev = $(e.target);
-      if (ev && (!ev.is('input, textarea, select, div.CodeMirror-code'))
-            && !ev.hasClass('dropdown-toggle') // Bootstrap dropdown
-            && !$('#modal').is(':visible')
-            && (e.which >= 48) // Start from normal input keys
-            && !(e.metaKey || e.ctrlKey || e.altKey)
-      ) {
-        var letter = String.fromCharCode(e.which);
-        searchInput.val(searchInput.val() + letter).focus();
-        // Scroll to the search form
-        $('html, body').animate({scrollTop: searchInput.offset().top - 20}, 150);
-        e.preventDefault();
-      }
-    });
-  }
-
   function initQrCodeLink(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
     // handle finna QR code links
@@ -92,7 +70,6 @@ finna.common = (function finnaCommon() {
     getField: getField,
     initQrCodeLink: initQrCodeLink,
     init: function init() {
-      initSearchInputListener();
       initQrCodeLink();
     },
     getCookie: getCookie,

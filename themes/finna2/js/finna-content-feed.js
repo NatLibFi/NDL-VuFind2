@@ -25,7 +25,7 @@ finna.contentFeed = (function finnaContentFeed() {
       .done(function onContentGetDone(response) {
         if (response.data) {
           var data = response.data;
-          if (data.item && data.item.html) {
+          if (typeof data.item !== 'undefined' && typeof data.item.html !== 'undefined') {
             var item = data.item;
             contentHolder.html(item.html);
             var title = item.title;
