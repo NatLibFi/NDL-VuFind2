@@ -46,11 +46,15 @@
 <?php
   $thumbnail = ob_get_contents();
   ob_end_clean();
-  $summary = $this->driver->getSummary(); $summary = $summary[0] ?? false;
+  $summaries = $this->driver->getSummary();
+  var_dump($summaries);
+  $summary = !empty($summaries);
   ob_start();
 ?>
 <div class="truncate-field wide recordSummary">
-  <p class="summary"><?=preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($summary)); /* Allow <br> tag */ ?></p>
+  <?php foreach ($summaries as $s): ?>
+    <p class="summary"><?=preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($s)); /* Allow <br> tag */ ?></p>
+  <?php endforeach; ?>
 </div>
 <?php
   $summaryContent = ob_get_contents();
