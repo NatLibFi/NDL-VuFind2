@@ -213,6 +213,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $urls = [];
         foreach ($this->getMarcReader()->getFields('856') as $url) {
             $address = $this->getSubfield($url, 'u');
+            var_dump($address);
             if (!$address) {
                 continue;
             }
@@ -1941,22 +1942,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         foreach ($this->getMarcReader()->getFields('024') as $field) {
             $subfields = [];
             switch ($field['i1']) {
-            case 0:
+            case '0':
                 $subfields[] = 'ISRC';
                 break;
-            case 1:
+            case '1':
                 $subfields[] = 'UPC';
                 break;
-            case 2:
+            case '2':
                 $subfields[] = 'ISMN';
                 break;
-            case 3:
+            case '3':
                 $subfields[] = 'EAN';
                 break;
-            case 4:
+            case '4':
                 $subfields[] = 'SICI';
                 break;
-            case 7:
+            case '7':
                 if ($sub2 = $this->getSubfield($field, '2')) {
                     $subfields[] = $this->stripTrailingPunctuation($sub2);
                 }
