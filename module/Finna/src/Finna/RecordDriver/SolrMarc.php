@@ -213,7 +213,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $urls = [];
         foreach ($this->getMarcReader()->getFields('856') as $url) {
             $address = $this->getSubfield($url, 'u');
-            var_dump($address);
             if (!$address) {
                 continue;
             }
