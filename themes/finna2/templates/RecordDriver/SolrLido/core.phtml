@@ -47,7 +47,6 @@
   $thumbnail = ob_get_contents();
   ob_end_clean();
   $summaries = $this->driver->getSummary();
-  var_dump($summaries);
   $summary = !empty($summaries);
   ob_start();
 ?>
