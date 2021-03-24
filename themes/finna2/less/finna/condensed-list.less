@@ -4,7 +4,6 @@
     padding-left: 2em;
     padding-bottom: 6px;
     margin-bottom: 2px;
-//    border-bottom: 1px solid @gray-lighter;
     transition: background .1s linear;
     background: rgba(100,100,100,0.04);
     &.open {
@@ -30,6 +29,7 @@
     }
     .condensed-collapse-toggle {
         display: flex;
+        flex-flow: wrap;
         & h2.title {
             font-size: 1.25em;
             font-weight: 400;
@@ -96,13 +96,14 @@
     }
     .condensed-collapse-data {
         display: none;
+        padding: 10px 0;
         & .resultClassification {
             margin-bottom: 10px;
         }
         & .holding-details {
             margin-top: 0;
         }
-        margin-top: 15px;
+        margin-top: 0px;
         & .summary {
             line-height: 1.4em;
         }
@@ -117,8 +118,10 @@
                 min-width: 100px;
             }
         }
-        .media-body {
-            width: 10000px;
+        @media (min-width: @screen-sm-min) {
+            .media-body {
+                width: 10000px;
+            }
         }
         .result-database {
             @media (min-width: @screen-sm-min) {
