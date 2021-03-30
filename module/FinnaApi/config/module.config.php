@@ -7,14 +7,17 @@ $config = [
             'FinnaApi\Controller\AdminApiController' => 'FinnaApi\Controller\Factory::getAdminApiController',
             'FinnaApi\Controller\ApiController' => 'FinnaApi\Controller\Factory::getApiController',
             'FinnaApi\Controller\AuthApiController' => 'FinnaApi\Controller\Factory::getAuthApiController',
+            'FinnaApi\Controller\ListApiController' => 'FinnaApi\Controller\ListApiControllerFactory',
             'FinnaApi\Controller\SearchApiController' => 'FinnaApi\Controller\Factory::getSearchApiController',
         ],
         'aliases' => [
             'AdminApi' => 'FinnaApi\Controller\AdminApiController',
             'AuthApi' => 'FinnaApi\Controller\AuthApiController',
+            'ListApi' => 'FinnaApi\Controller\ListApiController',
 
             'adminapi' => 'AdminApi',
             'authapi' => 'AuthApi',
+            'listapi' => 'ListApi',
 
             // Overrides:
             'VuFindApi\Controller\ApiController' => 'FinnaApi\Controller\ApiController',
@@ -52,6 +55,17 @@ $config = [
                     'route'    => '/api/v1/auth/[:action]',
                     'defaults' => [
                         'controller' => 'AuthApi'
+                    ]
+                ]
+            ],
+            'listApiV1' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'verb' => 'get,post,options',
+                'options' => [
+                    'route'    => '/api/v1/list',
+                    'defaults' => [
+                        'controller' => 'ListApi',
+                        'action'     => 'list',
                     ]
                 ]
             ],
