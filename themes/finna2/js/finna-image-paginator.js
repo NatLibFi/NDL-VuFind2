@@ -680,6 +680,7 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     dataType: 'html'
   }).done( function setImageData(response) {
     _.popup.collapseArea.html(JSON.parse(response).data.html);
+    _.popup.summary = _.popup.collapseArea.find('.summary');
     _.setDimensions();
     if (_.settings.recordType === 'marc') {
       _.loadBookDescription();
@@ -870,7 +871,6 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
   _.popup.rightBtn = _.popup.covers.find('.right-button');
   _.popup.leftBrowseBtn = popup.find('.next-image.left');
   _.popup.rightBrowseBtn = popup.find('.next-image.right');
-  _.popup.summary = popup.find('.imagepopup-holder .summary');
   _.popup.covers.removeClass('mini-paginator');
   _.popup.collapseArea = popup.find('.collapse-content-holder');
   _.canvasElements = {
