@@ -118,8 +118,8 @@ class Loader extends \VuFind\Record\Loader
         if ($source == 'Solr'
             && ($missingException || $result instanceof \VuFind\RecordDriver\Missing)
         ) {
-            if ($record = $this->handleMissingSolrRecord($id)) {
-                return $record;
+            if ($result = $this->handleMissingSolrRecord($id)) {
+                $missingException = false;
             }
         }
         if ($missingException) {
