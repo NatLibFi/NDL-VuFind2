@@ -1383,6 +1383,7 @@ allowed_url_schemes[] = 'maps'
 ; 1. Regular expression that receives the record ID (<source>.<id>) and should capture the required <id>.
 ; 2. Replacement pattern for creating a 'ctrlnum' index field of the new record, typically (<prefix>)<id>.
 ; 3. Datasource of the new record.
+; 4. (optional) Solr field that contains the identifier in the new record (default is ctrlnum).
 ; missing_record_redirect[] = "/^lusto\.(.+)/###(knp)$1###lusto-new"
 
 ; The following two sections control the Alphabetic Browse module.
