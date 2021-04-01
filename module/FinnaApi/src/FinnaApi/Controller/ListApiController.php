@@ -133,6 +133,7 @@ class ListApiController extends ListController implements ApiInterface
             $response = [
                 'list' => [
                     'id' => $listObj->id,
+                    'title' => $listObj->title,
                     'description' => $listObj->description
                     // TODO: Add all list data to response
                 ]
