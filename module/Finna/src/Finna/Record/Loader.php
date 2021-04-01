@@ -218,6 +218,7 @@ class Loader extends \VuFind\Record\Loader
                             $otherId, $newDatasource, $field
                         );
                         if ($newRecord) {
+                            $newRecord->setExtraDetail('redirectedFromId', $id);
                             return $newRecord;
                         }
                     }
