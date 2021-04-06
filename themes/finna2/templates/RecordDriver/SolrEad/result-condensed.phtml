@@ -89,10 +89,15 @@
             <?php endif; ?>
           <?php endif; ?>
           <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-            <span class="archive-label"><?=$this->transEsc('Archive Series')?>:</span>
-            <?php $parentIds = $this->driver->getHierarchyParentId(); $parentTitles = $this->driver->getHierarchyParentTitle(); ?>
-            <?php foreach ($parentIds as $index => $parentId): ?>
-              <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+            <?php foreach ([['Archive Series', null], ['Archive File', ['file']]] as [$label, $level]): ?>
+              <?php $parentIds = $this->driver->getHierarchyParentId($level); $parentTitles = $this->driver->getHierarchyParentTitle($level); ?>
+              <?php if ($parentIds): ?>
+                <span class="archive-label"><?=$this->transEsc($label)?>:</span>
+                <?php foreach ($parentIds as $index => $parentId): ?>
+                  <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+                <?php endforeach; ?>
+                <br/>
+              <?php endif ?>
             <?php endforeach; ?>
             <br/>
           <?php endif; ?>

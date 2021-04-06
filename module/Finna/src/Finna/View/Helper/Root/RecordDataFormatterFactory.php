@@ -252,6 +252,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Archive File', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
+            [
+                'context' => ['class' => 'recordFile', 'level' => ['file']]
+            ]
+        );
+        $setTemplateLine(
             'Physical Description', 'getPhysicalDescriptions',
             'data-escapeHtml.phtml',
             [
