@@ -374,8 +374,13 @@ finna.record = (function finnaRecord() {
 
   function handleRedirect(oldId, newId) {
     if (window.history.replaceState) {
-      var href = window.location.href.replace('/' + oldId, '/' + newId);
-      window.history.replaceState({}, document.title, href);
+      var pathParts = window.location.pathname.split('/');
+      pathParts.forEach(function handlePathPart(part, i) {
+        if (decodeURIComponent(part) === oldId) {
+          pathParts[i] = encodeURIComponent(newId);
+        }
+      });
+      window.history.replaceState(null, document.title, pathParts.join('/') + window.location.search + window.location.hash);
     }
   }
 
