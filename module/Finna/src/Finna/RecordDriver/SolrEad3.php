@@ -1110,21 +1110,18 @@ class SolrEad3 extends SolrEad
      * The parents are listed starting from the root of the hierarchy,
      * i.e. the closest parent is at the end of the result array.
      *
-     * @param string[] $level Optional list of level types to return
-     * (defaults to series and subseries)
+     * @param bool $archiveFiles Whether to return series or archive files
      *
      * @return array Array with id and title
      */
-    protected function getHierarchyParents($level)
+    protected function getHierarchyParents($archiveFiles = false)
     {
         $xml = $this->getXmlRecord();
         if (!isset($xml->{'add-data'}->parent)) {
             return [];
         }
         $result = [];
-        if (empty($level)) {
-            $level = self::SERIES_LEVELS;
-        }
+        $level = $archiveFiles ? ['file'] : ['series','subseries'];
         foreach ($xml->{'add-data'}->parent as $parent) {
             $attr = $parent->attributes();
             if (!in_array((string)$attr->level, $level)) {
@@ -1141,39 +1138,39 @@ class SolrEad3 extends SolrEad
     /**
      * Get the hierarchy_parent_id(s) associated with this item (empty if none).
      *
-     * @param string[] $level Optional list of level types to return
+     * @param bool $archiveFiles Whether to return series or archive files
      *
      * @return array
      */
-    public function getHierarchyParentID($level = [])
+    public function getHierarchyParentID($archiveFiles = false)
     {
-        if ($parents = $this->getHierarchyParents($level)) {
+        if ($parents = $this->getHierarchyParents($archiveFiles)) {
             return array_map(
                 function ($parent) {
                     return $parent['id'];
                 }, $parents
             );
         }
-        return parent::getHierarchyParentID($level);
+        return parent::getHierarchyParentID($archiveFiles);
     }
 
     /**
      * Get the parent title(s) associated with this item (empty if none).
      *
-     * @param string[] $level Optional list of level types to return
+     * @param bool $archiveFiles Whether to return series or archive files
      *
      * @return array
      */
-    public function getHierarchyParentTitle($level = [])
+    public function getHierarchyParentTitle($archiveFiles = false)
     {
-        if ($parents = $this->getHierarchyParents($level)) {
+        if ($parents = $this->getHierarchyParents($archiveFiles)) {
             return array_map(
                 function ($parent) {
                     return $parent['title'];
                 }, $parents
             );
         }
-        return parent::getHierarchyParentTitle($level);
+        return parent::getHierarchyParentTitle($archiveFiles);
     }
 
     /**

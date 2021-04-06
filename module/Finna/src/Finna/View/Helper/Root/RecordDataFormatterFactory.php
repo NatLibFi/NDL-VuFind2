@@ -254,7 +254,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Archive File', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
             [
-                'context' => ['class' => 'recordFile', 'level' => ['file']]
+                'context' => ['class' => 'recordFile', 'archiveFiles' => true]
             ]
         );
         $setTemplateLine(

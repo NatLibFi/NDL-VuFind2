@@ -74,8 +74,8 @@ if ($img):
               <?php endif; ?>
             <?php endif; ?>
             <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-              <?php foreach ([['Archive Series', null], ['Archive File', ['file']]] as [$label, $level]): ?>
-                <?php $parentIds = $this->driver->getHierarchyParentId($level); $parentTitles = $this->driver->getHierarchyParentTitle($level); ?>
+              <?php foreach ([['Archive Series', false], ['Archive File', true]] as [$label, $archiveFiles]): ?>
+                <?php $parentIds = $this->driver->getHierarchyParentId($archiveFiles); $parentTitles = $this->driver->getHierarchyParentTitle($archiveFiles); ?>
                 <?php if ($parentIds): ?>
                   <br/><span class="archive-label"><?=$this->transEsc($label)?>:</span>
                   <?php foreach ($parentIds as $index => $parentId): ?>

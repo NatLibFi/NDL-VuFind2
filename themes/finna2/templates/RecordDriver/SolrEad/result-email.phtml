@@ -25,8 +25,8 @@
 <?= PHP_EOL . $this->transEsc('Archive')?>: <?php foreach($topIds as $index => $parentId): ?><?=isset($topTitles[$index]) ? $this->truncate($topTitles[$index], 180) : ''?><?php endforeach; ?>
 <?php endif; ?>
 <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-  <?php foreach ([['Archive Series', null], ['Archive File', ['file']]] as [$label, $level]): ?>
-    <?php $parentIds = $this->driver->getHierarchyParentId($level); $parentTitles = $this->driver->getHierarchyParentTitle($level); ?>
+  <?php foreach ([['Archive Series', false], ['Archive File', true]] as [$label, $archiveFiles]): ?>
+    <?php $parentIds = $this->driver->getHierarchyParentId($archiveFiles); $parentTitles = $this->driver->getHierarchyParentTitle($archiveFiles); ?>
     <?php if ($parentIds): ?>
       <?= PHP_EOL . $this->transEsc($label)?>: <?php foreach ($parentIds as $index => $parentId): ?><?= isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?><?=($index < count($parentIds) - 1 ? ', ' : '')?><?php endforeach; ?>
     <?php endif; ?>

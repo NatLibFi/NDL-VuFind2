@@ -1,8 +1,8 @@
 <?php //Don't add START and END comments ?>
-<? $level = $this->level ?? ['series','subseries'] ?>
+<? $archiveFiles = $this->archiveFiles ?? false ?>
 <?php if ($data == true && !$fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats())): ?>
     <?php $parentSource = $this->driver->getSourceIdentifier(); ?>
-    <?php $parentIds = $this->driver->getHierarchyParentId($level); $parentTitles = $this->driver->getHierarchyParentTitle($level); ?>
+    <?php $parentIds = $this->driver->getHierarchyParentId($archiveFiles); $parentTitles = $this->driver->getHierarchyParentTitle($archiveFiles); ?>
     <?php foreach ($parentIds as $index => $parentId): ?>
       <?php
         try {

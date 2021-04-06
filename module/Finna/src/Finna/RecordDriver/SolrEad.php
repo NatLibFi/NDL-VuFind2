@@ -53,13 +53,9 @@ class SolrEad extends SolrDefault
     use UrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
-    // add-data > parent elements with these level-attributes are archive series
-    // (used to filter out parents that are archive items)
-    const SERIES_LEVELS = ['series', 'subseries'];
-
     /**
      * Constructor
-     *
+      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
      * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
@@ -571,31 +567,31 @@ class SolrEad extends SolrDefault
     /**
      * Get the hierarchy_parent_id(s) associated with this item (empty if none).
      *
-     * @param string[] $level Optional list of level types to return
+     * @param bool $archiveFiles Whether to return series or archive files
      *
      * @return array
      */
-    public function getHierarchyParentID($level = [])
+    public function getHierarchyParentID($archiveFiles = false)
     {
-        if ($level && !empty(array_diff($level, self::SERIES_LEVELS))) {
+        if ($archiveFiles) {
             return [];
         }
-        return $this->fields['hierarchy_parent_id'] ?? [];
+        return parent::getHierarchyParentID();
     }
 
     /**
      * Get the parent title(s) associated with this item (empty if none).
      *
-     * @param string[] $level Optional list of level types to return
+     * @param bool $archiveFiles Whether to return series or archive files
      *
      * @return array
      */
-    public function getHierarchyParentTitle($level = [])
+    public function getHierarchyParentTitle($archiveFiles = false)
     {
-        if ($level && !empty(array_diff($level, self::SERIES_LEVELS))) {
+        if ($archiveFiles) {
             return [];
         }
-        return $this->fields['hierarchy_parent_title'] ?? [];
+        return parent::getHierarchyParentID();
     }
 
     /**
