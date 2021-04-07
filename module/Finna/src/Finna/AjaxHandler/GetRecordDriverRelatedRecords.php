@@ -118,7 +118,7 @@ class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
                             // Ignore missing record
                         }
                     } elseif ($identifier = ($id['id'] ?? null)) {
-                        $field = $id['field'] ?? 'identifer';
+                        $field = $id['field'] ?? 'identifier';
                         // Search by id in the specified Solr field
                         $results = $this->searchRunner->run(
                             ['lookfor' =>
