@@ -852,13 +852,11 @@ trait SolrFinnaTrait
      * Get related records (used by RecordDriverRelated - Related module)
      *
      * Returns an associative array of group => records, where each item in
-     * records is either a record id or an array that has a 'wildcard' key
-     * with a Solr compatible pattern as it's value.
-     *
-     * Notes on wildcard queries:
-     *  - Only the first record from the wildcard result set is returned.
-     *  - The wildcard query includes a filter that limits the results to
-     *    the same datasource as the issuing record.
+     * records is either a record id or an array with keys:
+     * - id: record identifier to search
+     * - field (optinal): Solr field to search in, defaults to 'identifier'.
+     *                    In addition, the query includes a filter that limits the
+     *                    results to the same datasource as the issuing record.
      *
      * The array may contain the following keys:
      *   - continued-from
@@ -869,8 +867,8 @@ trait SolrFinnaTrait
      * Examples:
      * - continued-from
      *     - source1.1234
-     *     - ['wildcard' => '*1234']
-     *     - ['wildcard' => 'source*1234*']
+     *     - ['id' => '1234']
+     *     - ['id' => '1234', 'field' => 'foo']
      *
      * @return array
      */
