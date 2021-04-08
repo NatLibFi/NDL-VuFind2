@@ -78,7 +78,7 @@
   </div>
   <?php if (isset($listNotes) && $listNotes): ?>
     <div class="list-notes">
-      <strong><?=$this->transEsc('Description') ?>:</strong>
+      <strong><?=$this->transEsc('Note')?>:</strong>
       <ul>
       <?php foreach ($listNotes as $note): ?>
         <li><?=$this->markdown()->toHtml($note) ?></li>

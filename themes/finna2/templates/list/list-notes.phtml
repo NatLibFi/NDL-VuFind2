@@ -16,7 +16,7 @@
   $noteDesc = $this->transEsc('Note');
 ?>
 <?php if ($view === 'condensed'): ?>
-  <button class="note-button" aria-hidden="true" title="<?=$noteDesc?>"><i class="fa fa-file-text-o"></i><?=$noteDesc?><span class="caret"></span></button>
+  <button class="note-button condensed" aria-hidden="true" title="<?=$noteDesc?>"><i class="fa fa-file-text-o"></i><?=$noteDesc?><span class="caret"></span></button>
 <?php endif; ?>
 <div class="<?= in_array($view, ['grid', 'condensed']) ? "note-overlay-$view note-hide" : '' ?>">
   <div class="notes">
