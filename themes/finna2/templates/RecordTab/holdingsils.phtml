@@ -165,7 +165,7 @@
   );?>
 <?php endif; ?>
 
-<div class="table record-holdings-table" role="treegrid" tabindex="0">
+<div class="table record-holdings-table" role="table" aria-label="<?=$this->escapeHtmlAttr($this->translate('Holdings'));?>" tabindex="0">
   <div class="headers" role="row">
     <?php $mergedData = $this->driver->tryMethod('getMergedRecordData'); ?>
     <?php $recordSourceId = $this->driver->getSourceIdentifier(); ?>
