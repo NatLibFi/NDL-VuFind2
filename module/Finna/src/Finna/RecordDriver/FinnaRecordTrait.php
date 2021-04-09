@@ -232,7 +232,7 @@ trait FinnaRecordTrait
      */
     public function getAuthorityId($id, $type = '*')
     {
-        if (!$this->datasourceSettings) {
+        if (!$this->datasourceSettings || !is_callable([$this, 'getDatasource'])) {
             return $id;
         }
 

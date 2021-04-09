@@ -159,7 +159,7 @@ trait FinnaParams
     public function hasHiddenFilter($filter)
     {
         // Extract field and value from URL string:
-        list($field, $value) = $this->parseFilter($filter);
+        [$field, $value] = $this->parseFilter($filter);
 
         if (isset($this->hiddenFilters[$field])
             && in_array($value, $this->hiddenFilters[$field])

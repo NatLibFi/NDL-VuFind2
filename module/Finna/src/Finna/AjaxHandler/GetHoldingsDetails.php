@@ -114,7 +114,7 @@ class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
             );
         }
 
-        $params = compact('page', 'detailsGroupKey', 'details');
+        $params = compact('page', 'detailsGroupKey');
         $result = $this->holdLogic->getHoldings($recordId, null, $params);
         $holding = $result['details'];
         $textFieldNames = $this->ils->getHoldingsTextFieldNames();

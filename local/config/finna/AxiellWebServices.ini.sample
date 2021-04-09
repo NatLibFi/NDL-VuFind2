@@ -131,6 +131,9 @@ method = driver
 ; Only 'driver' is currently supported.
 [updateEmail]
 ;method = driver
+; Whether to convert + in email address to %2B to work around AWS problem that
+; converts a plus sign to a space. Enabled by default.
+;encodeEmailPlusSign = true
 
 ; Uncomment the following lines to enable updating of phone number.
 ; Choose a method on how to update the phone number.

@@ -1463,8 +1463,6 @@ class SolrEad3 extends SolrEad
             'http://www.rdaregistry.info/Elements/e/#P20052' => 'rpy',
             'http://rdaregistry.info/Elements/w/P10304' => 'rpy',
 
-            'http://rdaregistry.info/Elements/w/P10061' => 'rda:per',
-            'http://rdaregistry.info/Elements/w/P10061' => 'rda:host',
             'http://rdaregistry.info/Elements/w/P10061' => 'rda:writer',
             'http://rdaregistry.info/Elements/a/P50045' => 'rda:collector',
             'http://www.rdaregistry.info/Elements/i/#P40019' => 'rda:former-owner'

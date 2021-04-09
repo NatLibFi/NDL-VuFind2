@@ -85,7 +85,7 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         $prefix = ($operator == 'NOT') ? '-' : ($operator == 'OR' ? '~' : '');
         if (isset($paramArray['filter']) && is_array($paramArray['filter'])) {
             foreach ($paramArray['filter'] as $current) {
-                list($currentField) = $this->parseFilter($current);
+                [$currentField] = $this->parseFilter($current);
                 if ($currentField !== $prefix . $field) {
                     $newFilter[] = $current;
                 }
@@ -114,7 +114,7 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         }
         $searches = [];
         foreach ($params['search'] as $search) {
-            list($searchClass, $searchId) = explode(':', $search);
+            [$searchClass, $searchId] = explode(':', $search);
             if ($searchClass != $class) {
                 $searches[] = $search;
             }
@@ -143,7 +143,7 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         }
 
         foreach ($searches as $search) {
-            list($searchClass, $searchId) = explode(':', $search);
+            [$searchClass, $searchId] = explode(':', $search);
             if ($searchClass !== $class) {
                 $res[] = "$searchClass:$searchId";
             }
@@ -179,7 +179,7 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
     public function setAuthorIdWithRole($idWithRole)
     {
         $separator = AuthorityHelper::AUTHOR_ID_ROLE_SEPARATOR;
-        list($id, $role) = explode($separator, $idWithRole);
+        [$id, $role] = explode($separator, $idWithRole);
 
         $params = $this->urlParams;
         $filters = $params['filter'] ?? [];

@@ -44,6 +44,13 @@ use VuFind\Config\Locator;
 class SearchSpecsReader extends \VuFind\Config\SearchSpecsReader
 {
     /**
+     * Cache for loaded searchspecs
+     *
+     * @var array
+     */
+    protected $searchSpecs = [];
+
+    /**
      * Return search specs
      *
      * @param string  $filename        Config file name

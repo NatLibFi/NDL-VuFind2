@@ -189,7 +189,7 @@ class AuthorityHelper
             $facetList = $facetSet[$field]['list'] ?? [];
             $authIds[$field] = [];
             foreach ($facetList as $facet) {
-                list($id, $role) = $this->extractRole($facet['displayText']);
+                [$id, $role] = $this->extractRole($facet['displayText']);
                 $authIds[$field][] = $id;
             }
         }
@@ -199,10 +199,10 @@ class AuthorityHelper
             $records
                 = $this->recordLoader->loadBatchForSource($ids, 'SolrAuth', true);
             foreach ($facetList as &$facet) {
-                list($id, $role) = $this->extractRole($facet['displayText']);
+                [$id, $role] = $this->extractRole($facet['displayText']);
                 foreach ($records as $record) {
                     if ($record->getUniqueId() === $id) {
-                        list($displayText, $role)
+                        [$displayText, $role]
                             = $this->formatDisplayText($record, $role);
                         $facet['displayText'] = $displayText;
                         $facet['role'] = $role;
@@ -242,9 +242,9 @@ class AuthorityHelper
     {
         $id = $value;
         $role = null;
-        list($id, $role) = $this->extractRole($value);
+        [$id, $role] = $this->extractRole($value);
         $record = $this->recordLoader->load($id, 'SolrAuth', true);
-        list($displayText, $role) = $this->formatDisplayText($record, $role);
+        [$displayText, $role] = $this->formatDisplayText($record, $role);
         return $extendedInfo
             ? ['id' => $id, 'displayText' => $displayText, 'role' => $role]
             : $displayText;
@@ -263,7 +263,7 @@ class AuthorityHelper
         $role = null;
         $separator = self::AUTHOR_ID_ROLE_SEPARATOR;
         if (strpos($value, $separator) !== false) {
-            list($id, $role) = explode($separator, $value, 2);
+            [$id, $role] = explode($separator, $value, 2);
         }
         return [$id, $role];
     }

@@ -164,7 +164,7 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
                     if (isset($params['search'])) {
                         $filtered = [];
                         foreach ($params['search'] as $search) {
-                            list($searchClass, $searchId) = explode(':', $search);
+                            [$searchClass, $searchId] = explode(':', $search);
                             if ($searchClass !== $targetClass) {
                                 $filtered[] = $search;
                             }

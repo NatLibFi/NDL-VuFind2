@@ -198,6 +198,13 @@ class AccountExpirationReminders extends AbstractUtilCommand
     protected $reportOnly;
 
     /**
+     * Currently active view path
+     *
+     * @var string
+     */
+    protected $currentViewPath = '';
+
+    /**
      * Constructor
      *
      * @param \VuFind\Db\Table\User              $userTable   User table
@@ -458,7 +465,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
     protected function sendAccountExpirationReminder($user, $expirationDays)
     {
         if (false !== strpos($user->username, ':')) {
-            list($userInstitution, $userName) = explode(':', $user->username, 2);
+            [$userInstitution, $userName] = explode(':', $user->username, 2);
         } else {
             $userInstitution = 'national';
             $userName = $user->username;
@@ -569,7 +576,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
         }
 
         if (strcasecmp($user->auth_method, 'multiils') === 0) {
-            list($target) = explode('.', $userName);
+            [$target] = explode('.', $userName);
             if (empty($this->currentMultiBackendConfig['Drivers'][$target])) {
                 $this->msg(
                     "User {$user->username} (id {$user->id}) institution"

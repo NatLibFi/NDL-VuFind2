@@ -239,7 +239,6 @@ $config = [
             'Finna\Controller\R2CollectionController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\R2SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\RecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
-            'Finna\Controller\CollectionController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
@@ -780,8 +779,6 @@ $config = [
                     'Finna\RecordDriver\R2Ead3Missing' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
                     'Finna\RecordDriver\SolrDefault' =>
-                        'Finna\RecordDriver\SolrDefaultFactory',
-                    'Finna\RecordDriver\SolrMarc' =>
                         'Finna\RecordDriver\SolrDefaultFactory',
                     'Finna\RecordDriver\SolrAuthEaccpf' =>
                         'Finna\RecordDriver\SolrDefaultFactory',

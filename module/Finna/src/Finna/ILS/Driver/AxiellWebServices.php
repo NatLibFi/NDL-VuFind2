@@ -691,7 +691,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $pickUpLocation = $holdDetails['pickUpLocation'];
-        list($organisation, $branch) = explode('.', $pickUpLocation, 2);
+        [$organisation, $branch] = explode('.', $pickUpLocation, 2);
 
         $function = 'addReservation';
         $functionResult = 'addReservationResult';
@@ -839,7 +839,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $requestId = $holdDetails['requestId'];
-        list($organisation, $branch) = explode('.', $pickupLocationId, 2);
+        [$organisation, $branch] = explode('.', $pickupLocationId, 2);
 
         $function = 'changeReservation';
         $functionResult = 'changeReservationResult';
@@ -2647,6 +2647,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $functionResult = '';
         $functionParam = '';
 
+        // Workaround for AWS issue where a bare plus sign gets converted to a space
+        if (!isset($this->config['updateEmail']['encodeEmailPlusSign'])
+            || $this->config['updateEmail']['encodeEmailPlusSign']
+        ) {
+            $email = str_replace('+', '%2B', $email);
+        }
         $conf = [
             'arenaMember'  => $this->arenaMember,
             'language'     => 'en',
@@ -2709,6 +2715,20 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function updateAddress($patron, $details)
     {
+        if (isset($details['email'])) {
+            $result = $this->updateEmail($patron, $details['email']);
+            if (!$result['success']) {
+                return $result;
+            }
+        }
+
+        if (isset($details['phone'])) {
+            $result = $this->updatePhone($patron, $details['phone']);
+            if (!$result['success']) {
+                return $result;
+            }
+        }
+
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
 
@@ -3110,7 +3130,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function getDefaultRequiredByDate()
     {
-        list($d, $m, $y) = isset($this->config['Holds']['defaultRequiredDate'])
+        [$d, $m, $y] = isset($this->config['Holds']['defaultRequiredDate'])
              ? explode(':', $this->config['Holds']['defaultRequiredDate'])
              : [0, 1, 0];
         return mktime(
