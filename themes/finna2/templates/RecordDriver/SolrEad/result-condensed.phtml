@@ -89,8 +89,8 @@
             <?php endif; ?>
           <?php endif; ?>
           <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-            <?php foreach ([['Archive Series', false], ['Archive File', true]] as [$label, $archiveFiles]): ?>
-              <?php $parentIds = $this->driver->getHierarchyParentId($archiveFiles); $parentTitles = $this->driver->getHierarchyParentTitle($archiveFiles); ?>
+            <?php foreach ([['Archive Series', []], ['Archive File', ['file']]] as [$label, $levels]): ?>
+              <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
               <?php if ($parentIds): ?>
                 <span class="archive-label"><?=$this->transEsc($label)?>:</span>
                 <?php foreach ($parentIds as $index => $parentId): ?>

@@ -296,9 +296,11 @@ trait SolrFinnaTrait
     /**
      * Get the hierarchy_parent_id(s) associated with this item (empty if none).
      *
+     * @param string[] $levels Optional list of level types to return
+     *
      * @return array
      */
-    public function getHierarchyParentID()
+    public function getHierarchyParentID(array $levels = []) : array
     {
         return $this->fields['hierarchy_parent_id'] ?? [];
     }
@@ -306,9 +308,11 @@ trait SolrFinnaTrait
     /**
      * Get the parent title(s) associated with this item (empty if none).
      *
+     * @param string[] $levels Optional list of level types to return
+     *
      * @return array
      */
-    public function getHierarchyParentTitle()
+    public function getHierarchyParentTitle(array $levels = []) : array
     {
         return $this->fields['hierarchy_parent_title'] ?? [];
     }
