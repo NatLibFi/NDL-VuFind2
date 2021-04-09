@@ -98,6 +98,9 @@ class SolrEad3 extends SolrEad
         'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4', 'ahaa:KR3', 'ahaa:KR1'
     ];
 
+    // relation@encodinganalog-attribute of relations used by getRelatedRecords
+    const RELATION_RECORD = 'ahaa:AI30';
+
     // Relation types
     const RELATION_CONTINUED_FROM = 'continued-from';
     const RELATION_PART_OF = 'part-of';
@@ -1074,7 +1077,7 @@ class SolrEad3 extends SolrEad
                     continue 2;
                 }
             }
-            if ((string)$attr->encodinganalog !== 'ahaa:AI30') {
+            if ((string)$attr->encodinganalog !== self::RELATION_RECORD) {
                 continue;
             }
             $role = self::RELATION_MAP[(string)$attr->arcrole] ?? null;
