@@ -54,8 +54,10 @@ class SolrEad extends SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     // add-data > parent elements with these level-attributes are archive series
-    // (used to filter out parents that are archive items)
     const SERIES_LEVELS = ['series', 'subseries'];
+
+    // add-data > parent elements with these level-attributes are archive files
+    const FILE_LEVELS = ['file'];
 
     /**
      * Constructor

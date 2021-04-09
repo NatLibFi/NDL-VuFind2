@@ -1115,16 +1115,13 @@ class SolrEad3 extends SolrEad
      *
      * @return array Array with id and title
      */
-    protected function getHierarchyParents(array $levels = []) : array
+    protected function getHierarchyParents(array $levels = self::SERIES_LEVELS) : array
     {
         $xml = $this->getXmlRecord();
         if (!isset($xml->{'add-data'}->parent)) {
             return [];
         }
         $result = [];
-        if (!$levels) {
-            $levels = self::SERIES_LEVELS;
-        }
         foreach ($xml->{'add-data'}->parent as $parent) {
             $attr = $parent->attributes();
             if (!in_array((string)$attr->level, $levels)) {
@@ -1142,10 +1139,11 @@ class SolrEad3 extends SolrEad
      * Get the hierarchy_parent_id(s) associated with this item (empty if none).
      *
      * @param string[] $levels Optional list of level types to return
+     * (defaults to series and subseries)
      *
      * @return array
      */
-    public function getHierarchyParentID(array $levels = []) : array
+    public function getHierarchyParentID(array $levels = self::SERIES_LEVELS) : array
     {
         if ($parents = $this->getHierarchyParents($levels)) {
             return array_map(
@@ -1159,12 +1157,13 @@ class SolrEad3 extends SolrEad
 
     /**
      * Get the parent title(s) associated with this item (empty if none).
+     * (defaults to series and subseries)
      *
      * @param string[] $levels Optional list of level types to return
      *
      * @return array
      */
-    public function getHierarchyParentTitle(array $levels = []) : array
+    public function getHierarchyParentTitle(array $levels = self::SERIES_LEVELS) : array
     {
         if ($parents = $this->getHierarchyParents($levels)) {
             return array_map(

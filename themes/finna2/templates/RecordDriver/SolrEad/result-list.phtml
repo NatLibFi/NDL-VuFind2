@@ -74,7 +74,11 @@ if ($img):
               <?php endif; ?>
             <?php endif; ?>
             <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-              <?php foreach ([['Archive Series', []], ['Archive File', ['file']]] as [$label, $levels]): ?>
+              <?php foreach ([
+                ['Archive Series', \Finna\RecordDriver\SolrEad::SERIES_LEVELS],
+                ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS]] as [$label, $levels]
+              ):
+              ?>
                 <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
                 <?php if ($parentIds): ?>
                   <br/><span class="archive-label"><?=$this->transEsc($label)?>:</span>
