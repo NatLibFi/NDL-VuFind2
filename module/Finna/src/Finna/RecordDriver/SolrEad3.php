@@ -1117,8 +1117,7 @@ class SolrEad3 extends SolrEad
      */
     protected function getHierarchyParents(
         array $levels = self::SERIES_LEVELS
-    ) : array
-    {
+    ) : array {
         $xml = $this->getXmlRecord();
         if (!isset($xml->{'add-data'}->parent)) {
             return [];
