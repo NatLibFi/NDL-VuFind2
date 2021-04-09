@@ -691,7 +691,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $pickUpLocation = $holdDetails['pickUpLocation'];
-        list($organisation, $branch) = explode('.', $pickUpLocation, 2);
+        [$organisation, $branch] = explode('.', $pickUpLocation, 2);
 
         $function = 'addReservation';
         $functionResult = 'addReservationResult';
@@ -839,7 +839,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $requestId = $holdDetails['requestId'];
-        list($organisation, $branch) = explode('.', $pickupLocationId, 2);
+        [$organisation, $branch] = explode('.', $pickupLocationId, 2);
 
         $function = 'changeReservation';
         $functionResult = 'changeReservationResult';
@@ -3110,7 +3110,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function getDefaultRequiredByDate()
     {
-        list($d, $m, $y) = isset($this->config['Holds']['defaultRequiredDate'])
+        [$d, $m, $y] = isset($this->config['Holds']['defaultRequiredDate'])
              ? explode(':', $this->config['Holds']['defaultRequiredDate'])
              : [0, 1, 0];
         return mktime(

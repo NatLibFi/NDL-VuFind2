@@ -149,7 +149,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             $sources = array_flip($recordSources);
             $localIds = $dedupRecordData['local_ids_str_mv'];
             foreach ($localIds as $id) {
-                list($idSource) = explode('.', $id, 2);
+                [$idSource] = explode('.', $id, 2);
                 if (isset($sources[$idSource])) {
                     $localRecordData['local_ids_str_mv'][] = $id;
                 }
@@ -232,7 +232,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         $authManager = $this->serviceLocator->get(\VuFind\Auth\Manager::class);
         if ($user = $authManager->isLoggedIn()) {
             if ($user->cat_username) {
-                list($preferred) = explode('.', $user->cat_username, 2);
+                [$preferred] = explode('.', $user->cat_username, 2);
                 // array_search may return 0, but that's fine since it means the
                 // source already has highest priority
                 if ($preferred && $key = array_search($preferred, $recordSources)) {

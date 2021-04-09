@@ -227,7 +227,7 @@ trait SolrCommonFinnaTrait
      */
     protected function getLocale()
     {
-        list($locale) = explode('-', $this->getTranslatorLocale());
+        [$locale] = explode('-', $this->getTranslatorLocale());
         return $locale;
     }
 }

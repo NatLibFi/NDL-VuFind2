@@ -37,7 +37,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Cache\Manager as CacheManager;
-use Vufind\ILS\Connection;
+use VuFind\ILS\Connection;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
 

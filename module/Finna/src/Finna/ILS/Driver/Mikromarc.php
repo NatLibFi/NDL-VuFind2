@@ -312,7 +312,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
               'Pin' => $password
             ]
         );
-        list($code, $patronId) = $this->makeRequest(
+        [$code, $patronId] = $this->makeRequest(
             ['odata', 'Borrowers', 'Default.Authenticate'],
             $request, 'POST', true
         );
@@ -494,7 +494,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $type = 'checkoutNotice';
             $options = [];
             foreach ($messagingConf['checkoutNotice'] as $option) {
-                list($key, $label) = explode(':', $option);
+                [$key, $label] = explode(':', $option);
                 $options[$key] = [
                    'name' => $this->translate("messaging_settings_option_$label"),
                    'value' => $key,
@@ -518,7 +518,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $map = ['Email' => 'LettersByEmail', 'SMS' => 'LettersBySMS'];
             $options = [];
             foreach ($messagingConf['notifications'] as $option) {
-                list($key, $label) = explode(':', $option);
+                [$key, $label] = explode(':', $option);
                 $options[$key] = [
                    'name' => $this->translate("messaging_settings_option_$label"),
                    'value' => $key,
@@ -650,7 +650,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $finalResult = ['details' => []];
         foreach ($renewDetails['details'] as $details) {
             $checkedOutId = $details;
-            list($code, $result) = $this->makeRequest(
+            [$code, $result] = $this->makeRequest(
                 ['odata', "BorrowerLoans($checkedOutId)", 'Default.RenewLoan'],
                 false, 'POST', true
             );
@@ -839,7 +839,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'DeliverAtUnitId' => $pickUpLocation,
             'Scope' => $scope
         ];
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['odata', 'BorrowerReservations', 'Default.Create'],
             json_encode($request),
             'POST',
@@ -896,7 +896,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $count = 0;
         $response = [];
         foreach ($details as $detail) {
-            list($resultCode, $result) = $this->makeRequest(
+            [$resultCode, $result] = $this->makeRequest(
                 ['odata', 'BorrowerReservations(' . $detail . ')'],
                 false, 'DELETE', true
             );
@@ -1207,7 +1207,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function updatePatronInfo($patron, $info)
     {
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['odata',
              'Borrowers(' . $patron['id'] . ')'],
             json_encode($info),
@@ -1240,7 +1240,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'PickupUnitId' => $pickUpLocation
         ];
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['odata', 'BorrowerReservations(' . $requestId . ')',
              'Default.ChangePickupUnit'],
             json_encode($request),
@@ -1275,7 +1275,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'OldPin' => $details['oldPassword']
         ];
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['odata',
              'Borrowers(' . $details['patron']['id'] . ')',
              'Default.ChangePinCode'],
@@ -1424,7 +1424,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'DibsPaymentDate' => date(DATE_RFC3339_EXTENDED)
             ];
 
-            list($code, $result) = $this->makeRequest(
+            [$code, $result] = $this->makeRequest(
                 ['BorrowerDebts', $patron['cat_username'], $fineId],
                 json_encode($request),
                 'POST', true
@@ -2176,7 +2176,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             "ResPausedFrom" => $pausedFrom,
             "ResPausedTo" => $pausedTo
         ];
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['odata','BorrowerReservations(' . $holdDetails['requestId'] . ')'],
             json_encode($requestBody),
             'PATCH',

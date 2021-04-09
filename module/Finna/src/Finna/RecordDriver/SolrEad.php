@@ -591,8 +591,8 @@ class SolrEad extends SolrDefault
     protected function replaceURLPlaceholders($url)
     {
         $originationId = $this->getOriginationId();
-        list($id) = $this->getIdentifier();
-        list(, $nonPrefixedOriginationId) = explode('-', $originationId, 2);
+        [$id] = $this->getIdentifier();
+        [, $nonPrefixedOriginationId] = explode('-', $originationId, 2);
         $url = str_replace(
             [
                 '{id}',

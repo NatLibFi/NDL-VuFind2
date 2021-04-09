@@ -248,8 +248,7 @@ class VoyagerRestful extends Voyager implements \VuFindHttp\HttpServiceAwareInte
         $this->ws_dbKey = $this->config['WebServices']['dbKey'];
         $this->ws_patronHomeUbId = $this->config['WebServices']['patronHomeUbId'];
         $this->ws_pickUpLocations
-            = (isset($this->config['pickUpLocations']))
-            ? $this->config['pickUpLocations'] : false;
+            = $this->config['pickUpLocations'] ?? false;
         $this->defaultPickUpLocation
             = $this->config['Holds']['defaultPickUpLocation'] ?? '';
         if ($this->defaultPickUpLocation === 'user-selected') {
@@ -1255,7 +1254,7 @@ EOT;
             $itemIdentifiers = '';
 
             foreach ($renewDetails['details'] as $renewID) {
-                list($dbKey, $loanId) = explode('|', $renewID);
+                [$dbKey, $loanId] = explode('|', $renewID);
                 if (!$dbKey) {
                     $dbKey = $this->ws_dbKey;
                 }
@@ -2051,7 +2050,7 @@ EOT;
         $response = [];
 
         foreach ($details as $cancelDetails) {
-            list($itemId, $cancelCode) = explode('|', $cancelDetails);
+            [$itemId, $cancelCode] = explode('|', $cancelDetails);
 
             // Create Rest API Cancel Key
             $cancelID = $this->ws_dbKey . '|' . $cancelCode;
@@ -2551,7 +2550,7 @@ EOT;
         $response = [];
 
         foreach ($details as $cancelDetails) {
-            list($dbKey, $itemId, $cancelCode) = explode('|', $cancelDetails);
+            [$dbKey, $itemId, $cancelCode] = explode('|', $cancelDetails);
 
             // Create Rest API Cancel Key
             $cancelID = ($dbKey ? $dbKey : $this->ws_dbKey) . '|' . $cancelCode;
@@ -2642,14 +2641,14 @@ EOT;
             $this->putCachedData($cacheId, false);
             return false;
         }
-        list($source, $patronId) = explode('.', $patron['id'], 2);
+        [$source, $patronId] = explode('.', $patron['id'], 2);
         if (!isset($this->config['ILLRequestSources'][$source])) {
             $this->debug("getUBRequestDetails: source '$source' unknown");
             $this->putCachedData($cacheId, false);
             return false;
         }
 
-        list(, $catUsername) = explode('.', $patron['cat_username'], 2);
+        [, $catUsername] = explode('.', $patron['cat_username'], 2);
         $patronId = $this->encodeXML($patronId);
         $patronHomeUbId = $this->encodeXML(
             $this->config['ILLRequestSources'][$source]
@@ -2906,12 +2905,12 @@ EOT;
             return false;
         }
 
-        list($source, $patronId) = explode('.', $patron['id'], 2);
+        [$source, $patronId] = explode('.', $patron['id'], 2);
         if (!isset($this->config['ILLRequestSources'][$source])) {
             return $this->holdError('ill_request_unknown_patron_source');
         }
 
-        list(, $catUsername) = explode('.', $patron['cat_username'], 2);
+        [, $catUsername] = explode('.', $patron['cat_username'], 2);
         $patronId = $this->encodeXML($patronId);
         $patronHomeUbId = $this->encodeXML(
             $this->config['ILLRequestSources'][$source]
@@ -2979,12 +2978,12 @@ EOT;
     public function placeILLRequest($details)
     {
         $patron = $details['patron'];
-        list($source, $patronId) = explode('.', $patron['id'], 2);
+        [$source, $patronId] = explode('.', $patron['id'], 2);
         if (!isset($this->config['ILLRequestSources'][$source])) {
             return $this->holdError('ill_request_error_unknown_patron_source');
         }
 
-        list(, $catUsername) = explode('.', $patron['cat_username'], 2);
+        [, $catUsername] = explode('.', $patron['cat_username'], 2);
         $patronId = htmlspecialchars($patronId, ENT_COMPAT, 'UTF-8');
         $patronHomeUbId = $this->encodeXML(
             $this->config['ILLRequestSources'][$source]
@@ -3146,7 +3145,7 @@ EOT;
         $response = [];
 
         foreach ($details as $cancelDetails) {
-            list($dbKey, $itemId, $type, $cancelCode) = explode('|', $cancelDetails);
+            [$dbKey, $itemId, $type, $cancelCode] = explode('|', $cancelDetails);
 
             // Create Rest API Cancel Key
             $cancelID = ($dbKey ? $dbKey : $this->ws_dbKey) . '|' . $cancelCode;

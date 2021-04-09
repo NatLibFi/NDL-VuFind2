@@ -369,7 +369,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             }
         }
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'patrons', $this->sessionCache->patronId],
             false,
             'GET',
@@ -514,7 +514,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         }
         $transactions = [];
         foreach ($result['records'] as $entry) {
-            list($biblionumber, $title, $volume)
+            [$biblionumber, $title, $volume]
                 = $this->getCheckoutInformation($entry);
 
             $dueStatus = false;
@@ -601,8 +601,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $finalResult = ['details' => []];
 
         foreach ($renewDetails['details'] as $details) {
-            list($checkoutId, $itemId) = explode('|', $details);
-            list($code, $result) = $this->makeRequest(
+            [$checkoutId, $itemId] = explode('|', $details);
+            [$code, $result] = $this->makeRequest(
                 ['v1', 'checkouts', $checkoutId], false, 'PUT', $patron, true
             );
             if ($code == 403) {
@@ -670,7 +670,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         ];
 
         foreach ($transactions['records'] as $entry) {
-            list($biblionumber, $title, $volume)
+            [$biblionumber, $title, $volume]
                 = $this->getCheckoutInformation($entry);
 
             $dueStatus = false;
@@ -815,8 +815,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $response = [];
 
         foreach ($details as $detail) {
-            list($holdId, $itemId) = explode('|', $detail, 2);
-            list($resultCode) = $this->makeRequest(
+            [$holdId, $itemId] = explode('|', $detail, 2);
+            [$resultCode] = $this->makeRequest(
                 ['v1', 'holds', $holdId], [], 'DELETE', $patron, true
             );
 
@@ -1109,7 +1109,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             $request['itemnumber'] = (int)$itemId;
         }
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'holds'],
             json_encode($request),
             'POST',
@@ -1210,7 +1210,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $response = [];
 
         foreach ($details as $id) {
-            list($resultCode) = $this->makeRequest(
+            [$resultCode] = $this->makeRequest(
                 ['v1', 'articlerequests', $id], [], 'DELETE', $patron, true
             );
 
@@ -1321,7 +1321,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $request['issue'] = $details['issue'] ?? '';
         $request['date'] = $details['year'] ?? '';
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'articlerequests'],
             json_encode($request),
             'POST',
@@ -1425,7 +1425,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             'current_password' => $details['oldPassword']
         ];
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'patrons', $patron['id'], 'password'],
             json_encode($request),
             'PATCH',
@@ -1773,7 +1773,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getItemStatusesForBiblio($id, $patron = null)
     {
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'availability', 'biblio', 'search'],
             ['biblionumber' => $id],
             'GET',

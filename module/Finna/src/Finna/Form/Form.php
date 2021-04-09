@@ -423,7 +423,7 @@ class Form extends \VuFind\Form\Form
             }
         }
 
-        list($params, $tpl) = parent::formatEmailMessage($requestParams);
+        [$params, $tpl] = parent::formatEmailMessage($requestParams);
 
         $params = array_filter(
             $params,

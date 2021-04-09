@@ -78,7 +78,9 @@ trait UrlCheckTrait
         }
 
         $scheme = parse_url($url, PHP_URL_SCHEME);
-        if (!in_array($scheme, ['http', 'https'])) {
+        if (!in_array($scheme, ['http', 'https'])
+            || !is_callable([$this, 'getConfig'])
+        ) {
             return self::$urlCheckResultCache[$url] = false;
         }
 
@@ -176,10 +178,14 @@ trait UrlCheckTrait
     ): bool {
         // Check disallowed hosts first (probably a short list)
         if ($disallowedList && $this->checkHostFilterMatch($host, $disallowedList)) {
-            if ('report' === $disallowedMode) {
-                $this->logWarning("URL check: $url would be blocked (record $id)");
-            } elseif ('enforce-report' === $disallowedMode) {
-                $this->logWarning("URL check: $url blocked (record $id)");
+            if (is_callable([$this, 'logWarning'])) {
+                if ('report' === $disallowedMode) {
+                    $this->logWarning(
+                        "URL check: $url would be blocked (record $id)"
+                    );
+                } elseif ('enforce-report' === $disallowedMode) {
+                    $this->logWarning("URL check: $url blocked (record $id)");
+                }
             }
             if (in_array($disallowedMode, ['enforce', 'enforce-report'])) {
                 return false;
@@ -188,12 +194,14 @@ trait UrlCheckTrait
 
         // Check allowed list
         if ($allowedList && !$this->checkHostFilterMatch($host, $allowedList)) {
-            if ('report' === $allowedMode) {
-                $this->logWarning(
-                    "URL check: $url would not be allowed (record $id)"
-                );
-            } elseif ('enforce-report' === $allowedMode) {
-                $this->logWarning("URL check: $url not allowed (record $id)");
+            if (is_callable([$this, 'logWarning'])) {
+                if ('report' === $allowedMode) {
+                    $this->logWarning(
+                        "URL check: $url would not be allowed (record $id)"
+                    );
+                } elseif ('enforce-report' === $allowedMode) {
+                    $this->logWarning("URL check: $url not allowed (record $id)");
+                }
             }
             if (in_array($allowedMode, ['enforce', 'enforce-report'])) {
                 return false;

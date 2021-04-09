@@ -577,7 +577,7 @@ EOT;
                             $styleAttr = $el->getAttribute('style');
                             $properties = explode(';', $styleAttr);
                             foreach ($properties as $prop) {
-                                list($field, $val) = explode(':', $prop);
+                                [$field, $val] = explode(':', $prop);
                                 if (stristr($field, 'width') === false
                                     && stristr($field, 'height') === false
                                     && stristr($field, 'margin') === false

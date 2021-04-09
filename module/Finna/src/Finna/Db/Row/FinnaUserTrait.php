@@ -80,7 +80,7 @@ trait FinnaUserTrait
         if ($this->email) {
             return $this->email;
         }
-        list(, $username) = explode(':', $this->username);
+        [, $username] = explode(':', $this->username);
         return $username;
     }
 

@@ -230,7 +230,7 @@ trait FinnaOnlinePaymentControllerTrait
             }
             $finesUrl = $this->getServerUrl('myresearch-fines');
             $ajaxUrl = $this->getServerUrl('home') . 'AJAX';
-            list($driver, ) = explode('.', $patron['cat_username'], 2);
+            [$driver, ] = explode('.', $patron['cat_username'], 2);
 
             $user = $this->getUser();
             if (!$user) {

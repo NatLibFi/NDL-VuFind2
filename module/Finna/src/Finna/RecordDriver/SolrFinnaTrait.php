@@ -211,9 +211,9 @@ trait SolrFinnaTrait
     {
         if (isset($this->fields['center_coords'])) {
             if (strstr($this->fields['center_coords'], ',') !== false) {
-                list($lat, $lon) = explode(',', $this->fields['center_coords'], 2);
+                [$lat, $lon] = explode(',', $this->fields['center_coords'], 2);
             } else {
-                list($lon, $lat) = explode(' ', $this->fields['center_coords'], 2);
+                [$lon, $lat] = explode(' ', $this->fields['center_coords'], 2);
             }
             return ['lon' => $lon, 'lat' => $lat];
         }
@@ -391,11 +391,6 @@ trait SolrFinnaTrait
             ];
         }
 
-        // Check for cached data
-        if (isset($this->cachedMergeRecordData)) {
-            return $this->cachedMergeRecordData;
-        }
-
         // Check if this is a merged record
         if (empty($this->fields['merged_child_boolean'])) {
             return [];
@@ -404,6 +399,11 @@ trait SolrFinnaTrait
         // Find the dedup record
         if (null === $this->searchService) {
             return [];
+        }
+
+        // Check for cached data
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
         }
 
         if (!empty($this->fields['dedup_id_str_mv'])) {
@@ -423,7 +423,7 @@ trait SolrFinnaTrait
             )->getRecords();
         }
         if (!isset($records[0])) {
-            $this->cachedMergeRecordData = [];
+            $this->cache[__FUNCTION__] = [];
             return [];
         }
         $dedupRecord = $records[0];
@@ -438,7 +438,7 @@ trait SolrFinnaTrait
                 true
             );
         }
-        $this->cachedMergeRecordData = $results;
+        $this->cache[__FUNCTION__] = $results;
         return $results;
     }
 
@@ -709,11 +709,11 @@ trait SolrFinnaTrait
     public function supportsAjaxStatus()
     {
         if (parent::supportsAjaxStatus()) {
-            if ($this->ils) {
+            if (!empty($this->ils)) {
                 $driver = $this->ils->getDriver(false);
                 if ($driver instanceof \VuFind\ILS\Driver\MultiBackend) {
                     $driverConfig = $this->ils->getDriverConfig();
-                    list($source) = explode('.', $this->getUniqueID());
+                    [$source] = explode('.', $this->getUniqueID());
                     return isset($driverConfig['Drivers'][$source]);
                 }
             }
@@ -803,7 +803,7 @@ trait SolrFinnaTrait
         $sourceFilter = !empty($this->searchSettings['Records']['sources'])
             ? explode(',', $this->searchSettings['Records']['sources']) : [];
         foreach ($ids as $id) {
-            list($source) = explode('.', $id);
+            [$source] = explode('.', $id);
             if ($sourceFilter && !in_array($source, $sourceFilter)) {
                 continue;
             }
@@ -1036,7 +1036,7 @@ trait SolrFinnaTrait
     public function getRealTimeTitleHold()
     {
         $biblioLevel = strtolower($this->tryMethod('getBibliographicLevel'));
-        if ($this->hasILS()) {
+        if (is_callable([$this, 'hasILS']) && $this->hasILS() && isset($this->ils)) {
             if ($this->ils->getTitleHoldsMode() === 'disabled') {
                 return false;
             }
@@ -1049,7 +1049,7 @@ trait SolrFinnaTrait
                     'monograph', 'monographpart',
                     'serialpart', 'collectionpart'
                 ];
-            if (in_array($biblioLevel, $bibLevels)) {
+            if (in_array($biblioLevel, $bibLevels) && isset($this->titleHoldLogic)) {
                 return $this->titleHoldLogic->getHold($this->getUniqueID());
             }
         }

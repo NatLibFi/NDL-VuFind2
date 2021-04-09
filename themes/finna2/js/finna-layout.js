@@ -574,7 +574,7 @@ finna.layout = (function finnaLayout() {
     var loadCount = Object.keys(needed).length;
     if (loadCount) {
       // Load scripts and initialize player when all are loaded
-      var scriptLoaded = function scriptLoaded() {
+      var scriptLoaded = function onScriptLoaded() {
         if (--loadCount === 0) {
           if (typeof callback === 'function') {
             callback();

@@ -37,7 +37,7 @@
             <?php $target = ''; ?>
             <?php if ($this->multipleTargets): ?>
               <?php if (strstr($username, '.')): ?>
-                <?php list($target, $username) = explode('.', $username, 2); ?>
+                <?php [$target, $username] = explode('.', $username, 2); ?>
               <?php endif; ?>
             <?php endif; ?>
             <tr>

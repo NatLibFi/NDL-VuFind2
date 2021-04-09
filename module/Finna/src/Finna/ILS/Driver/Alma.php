@@ -908,7 +908,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         if ($overrideFields) {
             $queryParams = '?override=' . implode(',', $overrideFields);
         }
-        list($response, $code) = $this->makeRequest(
+        [$response, $code] = $this->makeRequest(
             '/users/' . rawurlencode($patron['id']) . $queryParams,
             [],
             [],
@@ -1068,7 +1068,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $userXml = $xml->asXML();
 
         // Create user in Alma
-        list($result, $statusCode) = $this->makeRequest(
+        [$result, $statusCode] = $this->makeRequest(
             '/users',
             [],
             [],
@@ -1129,7 +1129,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 if ('external' === $profile['account_type']) {
                     $fields = [];
                     foreach ($config['fields'] as &$field) {
-                        list($label, $fieldId) = explode(':', $field);
+                        [$label, $fieldId] = explode(':', $field);
                         if (in_array($fieldId, ['self_service_pin'])) {
                             $fields[] = $field;
                         }
@@ -2149,7 +2149,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     protected function getHoldingsDetails($id, $groupKey, $patron = null,
         $params = []
     ) {
-        list($holdingId, $libraryCode, $locationCode) = explode('||', $groupKey);
+        [$holdingId, $libraryCode, $locationCode] = explode('||', $groupKey);
 
         // Summary holdings
         if ($holdingId) {
