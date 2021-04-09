@@ -56,6 +56,27 @@ class ProxyCurl extends Curl
     protected $response = null;
 
     /**
+     * Last error code
+     *
+     * @var int
+     */
+    protected $lastErrorCode = 0;
+
+    /**
+     * Last error message
+     *
+     * @var string
+     */
+    protected $lastErrorMessage = '';
+
+    /**
+     * Last request headers
+     *
+     * @var string
+     */
+    protected $requestHeaders = '';
+
+    /**
      * Options
      *
      * @var array

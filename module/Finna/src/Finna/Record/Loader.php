@@ -208,7 +208,7 @@ class Loader extends \VuFind\Record\Loader
             foreach ($this->recordRedirectionRules as $rule) {
                 $data = array_map('trim', explode('###', $rule, 4));
                 if (count($data) >= 3) {
-                    list($pattern, $replacement, $newDatasource) = $data;
+                    [$pattern, $replacement, $newDatasource] = $data;
                     $field = $data[3] ?? 'ctrlnum';
                     $otherId = preg_replace($pattern, $replacement, $id, -1, $count);
                     if ($count && $otherId) {

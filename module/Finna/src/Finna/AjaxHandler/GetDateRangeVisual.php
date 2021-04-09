@@ -98,7 +98,7 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
             return $this->formatResponse([], self::STATUS_HTTP_ERROR);
         }
 
-        list($filterField, $facet)
+        [$filterField, $facet]
             = explode(':', $config->SpecialFacets->dateRangeVis);
 
         $results = $this->resultsManager->get($backend);

@@ -150,7 +150,7 @@ class Params extends \Finna\Search\Solr\Params
             }
             $newFilters = [];
             foreach ((array)$filters as $filter) {
-                list($field, $value) = $this->parseFilter($filter);
+                [$field, $value] = $this->parseFilter($filter);
                 if ('blender_backend' === $field) {
                     continue;
                 }
@@ -274,10 +274,10 @@ class Params extends \Finna\Search\Solr\Params
 
         // Mark other backend filters disabled if one is enabled
         foreach ($facets as $details) {
-            list($field) = $this->parseFilter($details['filter']);
+            [$field] = $this->parseFilter($details['filter']);
             if ('blender_backend' === $field && $details['selected']) {
                 foreach ($facets as $key => $current) {
-                    list($field) = $this->parseFilter($current['filter']);
+                    [$field] = $this->parseFilter($current['filter']);
                     if ('blender_backend' === $field && !$current['selected']) {
                         $facets[$key]['disabled'] = true;
                     }

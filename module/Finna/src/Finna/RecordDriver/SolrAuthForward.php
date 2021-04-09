@@ -114,6 +114,8 @@ class SolrAuthForward extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
+        // Apparently phpstan doesn't understand 'as' in use clause
+        // @phpstan-ignore-next-line
         return $this->_getBirthPlace();
     }
 
@@ -144,6 +146,8 @@ class SolrAuthForward extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
+        // Apparently phpstan doesn't understand 'as' in use clause
+        // @phpstan-ignore-next-line
         return $this->_getDeathPlace();
     }
 

@@ -1112,14 +1112,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $this->forceLogin();
         }
 
+        $listID = $this->params()->fromPost('list_id');
         if ($this->formWasSubmitted('opcode')
             && $this->params()->fromPost('opcode') == 'save_order'
         ) {
-            $listID = $this->params()->fromPost('list_id');
-            $this->session->url = empty($listID)
-                ? $this->url()->fromRoute('myresearch-favorites')
-                : $this->url()->fromRoute('userList', ['id' => $listID]);
-
             $orderedList = $this->params()->fromPost('orderedList');
             $table = $this->getTable('UserResource');
             if (empty($listID) || empty($orderedList)
@@ -1540,7 +1536,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     protected function saveChangeRequestFeedback($patron, $profile, $data,
         $fields, $subject
     ) {
-        list($library, $username) = explode('.', $patron['cat_username']);
+        [$library, $username] = explode('.', $patron['cat_username']);
         $catalog = $this->getILS();
         $config = $catalog->getConfig('Feedback', $patron);
 

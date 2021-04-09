@@ -9,7 +9,7 @@
     if ($textFieldName == 'purchase_history') {
         $found = false;
         // Account for grouping with item location etc. also
-        list($hId) = explode('|', $holdingId, 2);
+        [$hId] = explode('|', $holdingId, 2);
         foreach ($textFields as $current) {
             if ($current['holdings_id'] == $hId) {
                 $found[] = $current['issue'];

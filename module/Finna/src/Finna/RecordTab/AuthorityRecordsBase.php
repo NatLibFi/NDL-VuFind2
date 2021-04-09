@@ -39,7 +39,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
-class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
+abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
@@ -97,7 +97,8 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     {
         $count = $this->getNumOfRecords();
         return $this->translate(
-            'authority_records_' . $this->label . '_count', ['%%count%%' => $count]
+            'authority_records_' . $this->getLabel() . '_count',
+            ['%%count%%' => $count]
         );
     }
 
@@ -165,12 +166,16 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     }
 
     /**
-     * Return index fields that is used when listing records.
+     * Get record tab label
      *
      * @return string
      */
-    protected function getRelation()
-    {
-        return $this->relation;
-    }
+    abstract protected function getLabel();
+
+    /**
+     * Return index field used when listing records
+     *
+     * @return string
+     */
+    abstract protected function getRelation();
 }

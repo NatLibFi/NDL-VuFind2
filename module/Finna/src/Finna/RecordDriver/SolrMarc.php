@@ -1632,7 +1632,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $linkedFieldNum = $parts[1];
         foreach ($marc->getFields($linkedFieldCode) as $linkedField) {
             $sub6 = $marc->getSubfield($linkedField, '6');
-            list($target) = explode('/', $sub6, 2);
+            [$target] = explode('/', $sub6, 2);
             $targetParts = explode('-', $target);
             if (count($targetParts) !== 2) {
                 continue;

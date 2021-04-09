@@ -134,7 +134,7 @@ class Paytrail extends BaseHandler
             // last name.
             if (strpos($lastname, ',') > 0) {
                 // Lastname, Firstname
-                list($lastname, $firstname) = explode(',', $lastname, 2);
+                [$lastname, $firstname] = explode(',', $lastname, 2);
             } else {
                 // First Middle Last
                 if (preg_match('/^(.*) (.*?)$/', $lastname, $matches)) {
@@ -262,7 +262,7 @@ class Paytrail extends BaseHandler
         $orderNum = $params['transaction'];
         $timestamp = $params['TIMESTAMP'];
 
-        list($success, $data) = $this->getStartedTransaction($orderNum);
+        [$success, $data] = $this->getStartedTransaction($orderNum);
         if (!$success) {
             return $data;
         }
@@ -350,7 +350,7 @@ class Paytrail extends BaseHandler
                 . '" value="' . htmlentities($value) . '">';
         }
         $locale = $this->translator->getLocale();
-        list($lang) = explode('-', $locale);
+        [$lang] = explode('-', $locale);
         $title = $this->translator->translate('online_payment_go_to_pay');
         $title = str_replace('%%amount%%', '', $title);
         $jsRequired = $this->translator->translate('Please enable JavaScript.');

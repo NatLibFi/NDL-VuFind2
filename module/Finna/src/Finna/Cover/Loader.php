@@ -163,10 +163,9 @@ class Loader extends \VuFind\Cover\Loader
         if (!$this->fetchFromAPI()
             && !$this->fetchFromContentType()
         ) {
-            if (isset($this->config->Content->makeDynamicCovers)
-                && $this->config->Content->makeDynamicCovers
-            ) {
-                $this->image = $this->getCoverGenerator()->generate(
+            if ($this->generator) {
+                $this->generator->setOptions($this->getCoverGeneratorSettings());
+                $this->image = $this->generator->generate(
                     $settings['title'], $settings['author'], $settings['callnumber']
                 );
                 $this->contentType = 'image/png';
@@ -274,7 +273,7 @@ class Loader extends \VuFind\Cover\Loader
      * @param array  $ids     IDs returned by getIdentifiers() method
      * @param string $apiName Name of the API
      *
-     * @return void
+     * @return string
      */
     protected function determineLocalFile($ids, $apiName = 'default')
     {
@@ -489,7 +488,7 @@ class Loader extends \VuFind\Cover\Loader
             return false;
         }
 
-        list($width, $height, $type) = @getimagesizefromstring($image);
+        [$width, $height, $type] = @getimagesizefromstring($image);
 
         $reqWidth = $this->width ?: $width;
         $reqHeight = $this->height ?: $height;

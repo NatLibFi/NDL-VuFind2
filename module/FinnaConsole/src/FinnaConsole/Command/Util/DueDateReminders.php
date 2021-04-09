@@ -457,7 +457,7 @@ class DueDateReminders extends AbstractUtilCommand
             return false;
         }
 
-        list($userInstitution, ) = explode(':', $user['username'], 2);
+        [$userInstitution, ] = explode(':', $user['username'], 2);
 
         if (!$this->currentInstitution
             || $userInstitution != $this->currentInstitution

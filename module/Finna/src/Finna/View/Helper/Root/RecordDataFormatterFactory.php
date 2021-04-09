@@ -75,9 +75,9 @@ class RecordDataFormatterFactory
 
         foreach ($this->getDefaultCoreFields() as $key => $data) {
             if ($data[0] === true) {
-                list($multiLine, $dataMethod, $callback) = $data;
+                [$multiLine, $dataMethod, $callback] = $data;
             } else {
-                list($multiLine, $dataMethod, $template, $options) = $data;
+                [$multiLine, $dataMethod, $template, $options] = $data;
             }
             if ($multiLine) {
                 $spec->setMultiLine($key, $dataMethod, $callback);

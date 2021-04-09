@@ -27,6 +27,8 @@
  */
 namespace Finna\OnlinePayment;
 
+use Laminas\Stdlib\Parameters;
+
 /**
  * OnlinePayment module trait.
  *
@@ -101,7 +103,7 @@ trait OnlinePaymentModuleTrait
                 "Error posting request: " . $e->getMessage()
                 . ", url: $url, body: $body, headers: " . var_export($headers, true)
             );
-            $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
+            $this->logger->logException($e, new Parameters());
             return false;
         }
 

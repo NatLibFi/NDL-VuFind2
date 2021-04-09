@@ -344,7 +344,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         // Discard search tabs hiddenFilters when jumping to Authority page
         $preserveSearchTabsFilters = $linkType !== AuthorityHelper::LINK_TYPE_PAGE;
 
-        list($url, $urlType) = $this->getLink(
+        [$url, $urlType] = $this->getLink(
             $type, $lookfor, $params + compact('id', 'linkType'), true,
             $preserveSearchTabsFilters
         );

@@ -840,7 +840,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected function getAgentsWithActivityAttribute($attribute, $includeAttrs = [])
     {
         if (strpos($attribute, '=') > 0) {
-            list($attribute, $requiredValue) = explode('=', $attribute, 2);
+            [$attribute, $requiredValue] = explode('=', $attribute, 2);
         }
         $result = [];
         $xml = $this->getRecordXML();
