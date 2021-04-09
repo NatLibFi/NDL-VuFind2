@@ -27,8 +27,8 @@
 <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
   <?php foreach ([
     ['Archive Series', \Finna\RecordDriver\SolrEad::SERIES_LEVELS],
-    ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS]] as [$label, $levels]
-  ):
+    ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS]
+  ] as [$label, $levels]):
   ?>
     <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
     <?php if ($parentIds): ?>
