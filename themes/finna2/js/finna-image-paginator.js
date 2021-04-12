@@ -1,4 +1,4 @@
-/* global finna, VuFind, L */
+/* global finna, VuFind, L, listId */
 var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print"></a>';
 
 var defaults = {
@@ -672,7 +672,6 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
 
   // Listid is defined at list.phtml line 18
   if (typeof listId !== 'undefined') {
-    // eslint-disable-next-line no-undef
     src += '&listId=' + listId;
   }
   _.popup.collapseArea.html('<div class="large-spinner"><i class="fa fa-spinner fa-spin"/></div>');
