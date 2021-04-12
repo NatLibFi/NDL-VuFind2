@@ -669,9 +669,10 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
   if (typeof publicList !== 'undefined') {
     src += '&publicList=1';
   }
-  var listId = $('input[name="listID"]').val();
 
+  // Listid is defined at list.phtml line 18
   if (typeof listId !== 'undefined') {
+    // eslint-disable-next-line no-undef
     src += '&listId=' + listId;
   }
   _.popup.collapseArea.html('<div class="large-spinner"><i class="fa fa-spinner fa-spin"/></div>');
