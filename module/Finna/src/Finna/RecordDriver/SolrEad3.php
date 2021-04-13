@@ -1167,6 +1167,45 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get place of storage.
+     *
+     * @return string|null
+     */
+    public function getPlaceOfStorage() : ?string
+    {
+        $xml = $this->getXmlRecord();
+
+        $firstLoc = null;
+        $defaultLoc = null;
+        foreach ($xml->did->physloc ?? [] as $loc) {
+            if (!$firstLoc) {
+                $firstLoc = (string)$loc;
+            }
+            if ($lang = $this->detectNodeLanguage($loc)) {
+                if ($lang['preferred']) {
+                    return (string)$loc;
+                }
+                if ($lang['default']) {
+                    $defaultLoc = (string)$loc;
+                }
+            }
+        }
+        return $defaultLoc ?? $firstLoc;
+    }
+
+    /**
+     * Get filing unit.
+     *
+     * @return string|null
+     */
+    public function getFilingUnit() : ?string
+    {
+        $xml = $this->getXmlRecord();
+        return isset($xml->did->container)
+            ? (string)$xml->did->container : null;
+    }
+
+    /**
      * Get fullresolution images.
      *
      * @return array
@@ -1364,26 +1403,10 @@ class SolrEad3 extends SolrEad
         if (! isset($node->$childNodeName)) {
             return null;
         }
-        $defaultLanguage = 'fin';
-        $languages = $this->preferredLanguage
-            ? $this->mapLanguageCode($this->preferredLanguage)
-            : [];
-
-        $getTermLanguage = function ($node) use ($languages, $defaultLanguage) {
-            if (!isset($node->attributes()->lang)) {
-                return null;
-            }
-            $lang = (string)$node->attributes()->lang;
-            return [
-               'default' => $defaultLanguage === $lang,
-               'preferred' => in_array($lang, $languages)
-            ];
-        };
-
         $allResults = [];
         $defaultLanguageResults = [];
         $languageResults = [];
-        $lang = $getTermLanguage($node);
+        $lang = $this->detectNodeLanguage($node);
         $resolveLangFromChildNode = $lang === null;
         foreach ($node->{$childNodeName} as $child) {
             $name = trim((string)$child);
@@ -1391,7 +1414,7 @@ class SolrEad3 extends SolrEad
 
             if ($resolveLangFromChildNode) {
                 foreach ($child->attributes() as $key => $val) {
-                    $lang = $getTermLanguage($child);
+                    $lang = $this->detectNodeLanguage($child);
                     if ($lang) {
                         break;
                     }
@@ -1415,6 +1438,37 @@ class SolrEad3 extends SolrEad
         }
 
         return $allResults;
+    }
+
+    /**
+     * Helper for detecting the language of a XML node.
+     * Compares the language attribute of the node to users' preferred language.
+     * Returns an array with keys 'default' and 'preferred'.
+     *
+     * @param \SimpleXMLElement $node              XML node
+     * @param string            $languageAttribute Name of the language attribute
+     * @param string            $defaultLanguage   Default language
+     *
+     * @return array
+     */
+    protected function detectNodeLanguage(
+        \SimpleXMLElement $node,
+        string $languageAttribute = 'lang',
+        string $defaultLanguage = 'fin'
+    ) : ?array {
+        $languages = $this->preferredLanguage
+            ? $this->mapLanguageCode($this->preferredLanguage)
+            : [];
+
+        if (!isset($node->attributes()->{$languageAttribute})) {
+            return null;
+        }
+
+        $lang = (string)$node->attributes()->lang;
+        return [
+            'default' => $defaultLanguage === $lang,
+            'preferred' => in_array($lang, $languages)
+        ];
     }
 
     /**

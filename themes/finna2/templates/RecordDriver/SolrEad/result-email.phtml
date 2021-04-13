@@ -36,5 +36,11 @@
 <?php if ($identifier = ($this->driver->getIdentifier())): ?>
   <?= PHP_EOL . $this->translate('Identifier') . ': ' . implode(', ', $identifier) ?>
 <?php endif; ?>
+<?php if ($place = ($this->driver->tryMethod('getPlaceOfStorage'))): ?>
+  <?= PHP_EOL . $this->translate('Place of Storage') . ': ' . $place ?>
+<?php endif; ?>
+<?php if ($unit = ($this->driver->tryMethod('getFilingUnit'))): ?>
+  <?= PHP_EOL . $this->translate('Filing Unit') . ': ' . $unit ?>
+<?php endif; ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>
