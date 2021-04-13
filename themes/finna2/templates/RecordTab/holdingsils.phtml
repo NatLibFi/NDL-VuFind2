@@ -99,7 +99,7 @@
       <div class="pull-right">
         <a href="?login=true&amp;catalogLogin=true&amp;target=<?=$this->escapeHtmlAttr($recordSource ?? '')?>" class="btn btn-primary login-link" data-lightbox><?=$this->transEsc("title_hold_login")?></a>
       </div>
-      <div class="clearfix" aria-hidden="true"></div>
+      <div class="clearfix"></div>
     <?php elseif (!$user->cat_username): ?>
       <div class="alert alert-info">
         <?=$this->translate("hold_profile_html", ['%%url%%' => $this->recordLink()->getTabUrl($this->driver, 'Holdings', ['catalogLogin' => 'true'])])?>
@@ -165,7 +165,7 @@
   );?>
 <?php endif; ?>
 
-<div class="table record-holdings-table" role="table" aria-label="<?=$this->escapeHtmlAttr($this->translate('Holdings'));?>" tabindex="0">
+<div class="table record-holdings-table" role="table" aria-label="<?=$this->transEscAttr('Holdings');?>" tabindex="0">
   <div class="headers" role="row">
     <?php $mergedData = $this->driver->tryMethod('getMergedRecordData'); ?>
     <?php $recordSourceId = $this->driver->getSourceIdentifier(); ?>
@@ -307,7 +307,7 @@
           </div>
         </div>
       </summary>
-      <div class="clearfix" aria-hidden="true"></div>
+      <div class="clearfix"></div>
       <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
         <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
           <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...
@@ -332,7 +332,7 @@
           </div>
         </div>
       <?php endif; ?>
-      <div class="clearfix" aria-hidden="true"></div>
+      <div class="clearfix"></div>
     </details>
   </div>
 <?php endforeach; ?>

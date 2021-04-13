@@ -337,10 +337,11 @@
         color: @record-holdings-title-color;
         vertical-align: middle;
         .dedup-information {
-            flex: 1;
+            flex: 100%;
         }
         .reservations-container {
-            flex: .8;
+            flex: initial;
+            width: 75%;
             @media (max-width: @screen-xs-max) {
                 text-align: right;
             }
@@ -380,12 +381,8 @@
 }
 .record-holdings-table:not(.electronic-holdings) {
     .holdings-container-heading {
-//        transform: translateY(-2.12em);
         display: inline-flex;
         width: calc(~"100%" - unit(20, px));
-        @media (max-width: @screen-xs-max) {
-//            transform: translateY(-1.65em);
-        }
     }
 }
 .callnumAndLocation {
