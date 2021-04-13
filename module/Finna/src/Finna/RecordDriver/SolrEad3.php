@@ -1454,15 +1454,15 @@ class SolrEad3 extends SolrEad
         string $languageAttribute = 'lang',
         string $defaultLanguage = 'fin'
     ) : ?array {
-        $languages = $this->preferredLanguage
-            ? $this->mapLanguageCode($this->preferredLanguage)
-            : [];
-
         if (!isset($node->attributes()->{$languageAttribute})) {
             return null;
         }
 
-        $lang = (string)$node->attributes()->lang;
+        $languages = $this->preferredLanguage
+            ? $this->mapLanguageCode($this->preferredLanguage)
+            : [];
+
+        $lang = (string)$node->attributes()->{$languageAttribute};
         return [
             'default' => $defaultLanguage === $lang,
             'preferred' => in_array($lang, $languages)
