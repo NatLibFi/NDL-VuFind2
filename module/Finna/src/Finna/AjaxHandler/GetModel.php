@@ -105,9 +105,8 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
             if (!isset($models[$index][$format])) {
                 return $this->formatResponse(json_encode(['json' => ['status' => self::STATUS_HTTP_BAD_REQUEST]]));
             }
-            $model = $models[$index][$format];
+            $url = $models[$index][$format]['preview'];
 
-            $url = $model['url'];
             if (empty($url)) {
                 return $this->formatResponse(['json' => ['status' => '404']]);
             }

@@ -296,9 +296,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $format = strtolower($format);
                     $formatDisallowed = in_array(
                         $format, $this->undisplayableFileFormats
-                    ) && !in_array($format, $this->displayableModelFormats);
+                    );
 
                     if ($formatDisallowed) {
+                        // We need to see if results are with 3d objects so we should discard already found urls,
+                        // reason is that currently the museum systems do not produce preview image of
+                        // the model, but the file.
+                        if (in_array($format, ['gltf', 'glb'])) {
+                            $urls = [];
+                        }
                         continue;
                     }
                 }
@@ -328,20 +334,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 case 'image_original':
                     $size = 'original';
                     break;
-                case 'preview_3D': // 3D model related checks
-                case '3D malli':
-                case '3D_malli':
-                    $model['url'] = (string)$representation->linkResource;
-                    $model['type'] = 'preview_3d';
-                    break;
-                case 'provided_3D':
-                    $model['url'] = (string)$representation->linkResource;
-                    $model['type'] = 'provided_3d';
-                    break;
                 }
 
-                //Assign the url only, if the size has been set and it should have been set
-                if ($size) {
+                if (!$size) {
+                    if ($urls) {
+                        // We already have URL's, store them in the final results
+                        // first. This shouldn't happen unless there are multiple
+                        // images without type in the same set.
+                        $results[] = [
+                            'urls' => $urls,
+                            'description' => '',
+                            'rights' => $rights
+                        ];
+                    }
+                    $urls['small'] = $urls['medium'] = $urls['large'] = $url;
+                } else {
                     $urls[$size] = $url;
                 }
 
@@ -359,13 +366,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $format = (string)$linkResource->attributes()->formatResource;
 
                     $highResolution[$size][$format ?: 'jpg'] = $currentHiRes;
-                }
-
-                if (!empty($model)) {
-                    $format = trim(
-                        (string)$linkResource->attributes()->formatResource
-                    );
-                    $models[strtolower($format)] = $model;
                 }
             }
             // If current set has no images to show, continue to next one
@@ -385,8 +385,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'urls' => $urls,
                 'description' => '',
                 'rights' => $rights,
-                'highResolution' => $highResolution,
-                'models' => $models
+                'highResolution' => $highResolution
             ];
 
             if (!empty($resourceSet->resourceID)) {
@@ -506,26 +505,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $format = $linkResource->attributes()->formatResource ?? '';
                 $format = strtolower(trim((string)$format));
                 switch ($type) {
-                case 'image_large':
                 case 'thumb':
                 case '3d_thumb':
-                    if (!isset($model['preview'])) {
-                        $model['preview'] = (string)$representation->linkResource;
+                    if (!isset($model['thumb'])) {
+                        $model['thumb'] = $url;
                     }
                     break;
                 case 'preview_3d':
-                case '3d malli':
-                case '3d_malli':
-                    $model['url'] = (string)$representation->linkResource;
-                    $model['type'] = 'preview_3d';
+                    $model['preview'] = $url;
                     break;
                 case 'provided_3d':
-                    $model['url'] = (string)$representation->linkResource;
-                    $model['type'] = 'provided_3d';
+                    $model['provided'] = $url;
                     break;
                 }
 
-                if (!empty($model['url']) && $type !== '3d_thumb') {
+                if (!empty($model['preview']) || !empty($model['provided']) && $type !== '3d_thumb') {
                     $models[$i][$format] = $model;
                 }
             }

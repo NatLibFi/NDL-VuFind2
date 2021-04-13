@@ -2,7 +2,7 @@
 
 // Use 1 dracoloader in all of the loaders, so we don't create multiple instances
 var dracoLoader;
-function ModelViewer(trigger, options, scripts)
+function ModelViewer(trigger, options, scripts, extras)
 {
   var _ = this;
   _.trigger = $(trigger);
@@ -14,12 +14,10 @@ function ModelViewer(trigger, options, scripts)
   if (options.debug) {
     _.debug = options.debug;
   }
-  _.modelUrl = _.trigger.data('modelurl');
-  _.loadInfo = _.trigger.data('modelload');
+  _.loadInfo = options.modelload;
   _.loaded = false;
   var modal = $('#model-modal').find('.model-wrapper').first().clone();
   _.isFileInput = _.trigger.is('input');
-  
   _.trigger.finnaPopup({
     id: 'modelViewer',
     cycle: false,
@@ -31,7 +29,9 @@ function ModelViewer(trigger, options, scripts)
     beforeOpen: function onBeforeOpen() {
       var popup = this;
       $.fn.finnaPopup.closeOpen(popup.id);
-      $('.recordcover-container').trigger('viewer-show');
+      if (_.inlineId) {
+        _.trigger.trigger('viewer-show');
+      }
     },
     onPopupOpen: function onPopupOpen() {
       var popup = this;
@@ -191,7 +191,9 @@ ModelViewer.prototype.getModelPath = function getModelPath()
     }
   )
     .done(function onGetModelDone(response) {
+      console.log('yooo');
       _.modelPath = response.data.url;
+      console.log(response.data);
       _.initViewer();
     })
     .fail(function onGetModelFailed(response) {
@@ -210,6 +212,7 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
       dracoLoader.setDecoderPath(VuFind.path + '/themes/finna2/js/vendor/draco/');
     }
     loader.setDRACOLoader( dracoLoader );
+    console.log(_.modelPath);
     loader.load(
       _.modelPath,
       function onLoad ( obj ) {
@@ -315,7 +318,7 @@ ModelViewer.prototype.initMesh = function initMesh()
         // Apply environmental map to the material, so lights look nicer
         meshMaterial.envMap = _.envMap;
         meshMaterial.depthWrite = !meshMaterial.transparent;
-        meshMaterial.bumpScale = 1;
+        meshMaterial.bumpScale = 0;
   
         // Apply encodings so glb looks better and update it if needed
         if (meshMaterial.map) meshMaterial.map.encoding = _.encoding;
@@ -373,10 +376,8 @@ ModelViewer.prototype.createLights = function createLights()
   // Ambient light basically just is there all the time
   var ambientLight = new THREE.AmbientLight( 0xFFFFFF, 0.3 ); // soft white light
   _.scene.add(ambientLight);
-  var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.6 );
+  var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 2.6 );
   _.scene.add( light );
-  var directionalLight = new THREE.DirectionalLight( 0xffffff, 2.5 );
-  _.scene.add( directionalLight );
 };
 
 ModelViewer.prototype.loadCubeMap = function loadCubeMap()
@@ -389,7 +390,7 @@ ModelViewer.prototype.loadCubeMap = function loadCubeMap()
 };
 
 (function modelModule($) {
-  $.fn.finnaModel = function finnaModel() {
-    new ModelViewer($(this), $(this).data('settings'), $(this).data('scripts'));    
+  $.fn.finnaModel = function finnaModel(settings, scripts) {
+    new ModelViewer($(this), settings, scripts);
   };
 })(jQuery);

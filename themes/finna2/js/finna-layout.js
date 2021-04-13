@@ -634,6 +634,7 @@ finna.layout = (function finnaLayout() {
         }
       }
     }
+    console.log(scripts);
     var loadCount = Object.keys(needed).length;
     if (loadCount) {
       // Load scripts and initialize player when all are loaded
@@ -782,11 +783,6 @@ finna.layout = (function finnaLayout() {
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
   }
 
-  function initModelViewers() {
-    $('.model-trigger, #model-file').each(function initModelViewer() {
-      $(this).finnaModel();
-    });
-  }
   function setImagePaginatorTranslations() {
     $.fn.setPaginatorTranslations({
       image: VuFind.translate('Image'),
@@ -852,7 +848,6 @@ finna.layout = (function finnaLayout() {
       initFiltersToggle();
       initFiltersCheckbox();
       initCookieConsent();
-      initModelViewers();
       setImagePaginatorTranslations();
       initImagePaginators();
     },

@@ -2,6 +2,9 @@
 <?php
   $isList = ($type === 'list' || $type === 'list grid');
   $enableImageZoom = (isset($enableImagePopupZoom) && $enableImagePopupZoom) && in_array($this->driver->tryMethod('getRecordFormat'), ['lido', 'forward', 'ead', 'qdc']);
+  if (!$isList) {
+    $models = $this->driver->tryMethod('getModels');
+  }
 ?>
 <?php if ($type === 'record' || !$this->userAgent()->isBot()): ?>
   <?php
@@ -15,6 +18,7 @@
       $originalImageData = $recordImage->getMasterImageWithInfo($ind);
       $originalImage = $originalImageData['url'] ?? false;
       $obj = [
+        'type' => 'image',
         'small' => $img['urls']['small'],
         'medium' => $img['urls']['medium'],
         'largest' => $enableImageZoom && $originalImage !== false ? $originalImage : $img['urls']['large'] ?? $img['urls']['medium'],
@@ -23,11 +27,47 @@
         'description' => $img['description'],
         'title' => $this->transEsc('Image') . ' ' . $ind
       ];
-      if (!empty($img['models'])) {
-        $hasModels = true;
-      }
       $paginatedLinks[] = $obj;
     ?>
+  <?php endforeach; ?>
+  <?php if ($models) {
+    $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
+    $settings = $this->driver->getModelSettings();
+    $settings['cubemap'] = [
+        'path' => $this->imageSrc()->getImagesDirectoryPath() . '/cubemap/',
+        'images' => [
+            'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'
+        ]
+    ];
+  } ?>
+  <?php foreach ($models as $model): ?>
+    <?php foreach ($model as $format => $data): ?>
+    <?php
+      var_dump($format);
+      $settings['modelload'] = [
+        'id' => $this->driver->getUniqueId(),
+        'index' => $ind++,
+        'format' => $format
+      ];
+      $model = [
+        'small' => $data['image'] ?? 'none',
+        'medium' => $data['image'] ?? 'none',
+        'largest' => $data['image'] ?? 'none',
+        'index' => $ind,
+        'alt' => '3D model alt',
+        'description' => '3D Model preview image',
+        'title' => $this->transEsc('Image') . ' ' . $ind,
+        'type' => 'model',
+        'modelsettings' => json_encode($settings ?? []),
+        'scripts' => $modelScripts,
+        'preview' => $data['preview'] ?? '',
+        'provided' => $data['original'] ?? '',
+        'format' => $format
+      ];
+
+      $paginatedLinks[] = $model;
+    ?>
+    <?php endforeach; ?>
   <?php endforeach; ?>
   <?php if (count($paginatedLinks) > 0): ?>
     <?php
