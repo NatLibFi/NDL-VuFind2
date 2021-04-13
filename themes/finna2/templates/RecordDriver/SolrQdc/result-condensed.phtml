@@ -98,6 +98,9 @@
       <? endif; ?>
       ***/ ?>
     </div>
+    <div class="condensed-notes">
+      <?=$this->render('list/list-notes.phtml')?>
+    </div>
   </div>
   <div class="clearfix"></div>
   <div class="media condensed-collapse-data">
@@ -211,7 +214,6 @@
           <strong><?=$this->transEsc("Saved in")?>:</strong>
         </div>
         <?php endif; ?>
-        <?=$this->render('list/list-notes.phtml')?>
       </div>
     </div>
     <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>

@@ -98,6 +98,9 @@ class SolrEad3 extends SolrEad
         'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4', 'ahaa:KR3', 'ahaa:KR1'
     ];
 
+    // relation@encodinganalog-attribute of relations used by getRelatedRecords
+    const RELATION_RECORD = 'ahaa:AI30';
+
     // Relation types
     const RELATION_CONTINUED_FROM = 'continued-from';
     const RELATION_PART_OF = 'part-of';
@@ -1038,13 +1041,11 @@ class SolrEad3 extends SolrEad
      * Get related records (used by RecordDriverRelated - Related module)
      *
      * Returns an associative array of group => records, where each item in
-     * records is either a record id or an array that has a 'wildcard' key
-     * with a Solr compatible pattern as it's value.
-     *
-     * Notes on wildcard queries:
-     *  - Only the first record from the wildcard result set is returned.
-     *  - The wildcard query includes a filter that limits the results to
-     *    the same datasource as the issuing record.
+     * records is either a record id or an array with keys:
+     * - id: record identifier to search
+     * - field (optional): Solr field to search in, defaults to 'identifier'.
+     *                     In addition, the query includes a filter that limits the
+     *                     results to the same datasource as the issuing record.
      *
      * The array may contain the following keys:
      *   - continued-from
@@ -1055,8 +1056,8 @@ class SolrEad3 extends SolrEad
      * Examples:
      * - continued-from
      *     - source1.1234
-     *     - ['wildcard' => '*1234']
-     *     - ['wildcard' => 'source*1234*']
+     *     - ['id' => '1234']
+     *     - ['id' => '1234', 'field' => 'foo']
      *
      * @return array
      */
@@ -1071,14 +1072,12 @@ class SolrEad3 extends SolrEad
         $relations = [];
         foreach ($record->relations->relation as $relation) {
             $attr = $relation->attributes();
-            foreach (['encodinganalog', 'relationtype', 'href', 'arcrole'] as $key) {
+            foreach (['encodinganalog', 'href', 'arcrole'] as $key) {
                 if (!isset($attr->{$key})) {
                     continue 2;
                 }
             }
-            if ((string)$attr->encodinganalog !== 'ahaa:AI30'
-                || (string)$attr->relationtype !== 'resourcerelation'
-            ) {
+            if ((string)$attr->encodinganalog !== self::RELATION_RECORD) {
                 continue;
             }
             $role = self::RELATION_MAP[(string)$attr->arcrole] ?? null;
@@ -1088,8 +1087,9 @@ class SolrEad3 extends SolrEad
             if (!isset($relations[$role])) {
                 $relations[$role] = [];
             }
-            // Use a wildcard since the id is prefixed with hierarchy_parent_id
-            $relations[$role][] = ['wildcard' => '*' . (string)$attr->href];
+            // Search by id in identifier-field
+            $relations[$role][]
+                = ['id' => (string)$attr->href, 'field' => 'identifier'];
         }
         return $relations;
     }
@@ -1110,10 +1110,14 @@ class SolrEad3 extends SolrEad
      * The parents are listed starting from the root of the hierarchy,
      * i.e. the closest parent is at the end of the result array.
      *
+     * @param string[] $levels Optional list of level types to return
+     * (defaults to series and subseries)
+     *
      * @return array Array with id and title
      */
-    protected function getHierarchyParents()
-    {
+    protected function getHierarchyParents(
+        array $levels = self::SERIES_LEVELS
+    ) : array {
         $xml = $this->getXmlRecord();
         if (!isset($xml->{'add-data'}->parent)) {
             return [];
@@ -1121,7 +1125,7 @@ class SolrEad3 extends SolrEad
         $result = [];
         foreach ($xml->{'add-data'}->parent as $parent) {
             $attr = $parent->attributes();
-            if (!in_array((string)$attr->level, ['series','subseries'])) {
+            if (!in_array((string)$attr->level, $levels)) {
                 continue;
             }
             $result[] = [
@@ -1135,35 +1139,79 @@ class SolrEad3 extends SolrEad
     /**
      * Get the hierarchy_parent_id(s) associated with this item (empty if none).
      *
+     * @param string[] $levels Optional list of level types to return
+     * (defaults to series and subseries)
+     *
      * @return array
      */
-    public function getHierarchyParentID()
+    public function getHierarchyParentID(array $levels = self::SERIES_LEVELS) : array
     {
-        if ($parents = $this->getHierarchyParents()) {
+        if ($parents = $this->getHierarchyParents($levels)) {
             return array_map(
                 function ($parent) {
                     return $parent['id'];
                 }, $parents
             );
         }
-        return parent::getHierarchyParentID();
+        return parent::getHierarchyParentID($levels);
     }
 
     /**
      * Get the parent title(s) associated with this item (empty if none).
+     * (defaults to series and subseries)
+     *
+     * @param string[] $levels Optional list of level types to return
      *
      * @return array
      */
-    public function getHierarchyParentTitle()
-    {
-        if ($parents = $this->getHierarchyParents()) {
+    public function getHierarchyParentTitle(
+        array $levels = self::SERIES_LEVELS
+    ) : array {
+        if ($parents = $this->getHierarchyParents($levels)) {
             return array_map(
                 function ($parent) {
                     return $parent['title'];
                 }, $parents
             );
         }
-        return parent::getHierarchyParentTitle();
+        return parent::getHierarchyParentTitle($levels);
+    }
+
+    /**
+     * Get place of storage.
+     *
+     * @return string|null
+     */
+    public function getPlaceOfStorage() : ?string
+    {
+        $xml = $this->getXmlRecord();
+        $firstLoc = $defaultLoc = null;
+        foreach ($xml->did->physloc ?? [] as $loc) {
+            if (!$firstLoc) {
+                $firstLoc = (string)$loc;
+            }
+            if ($lang = $this->detectNodeLanguage($loc)) {
+                if ($lang['preferred']) {
+                    return (string)$loc;
+                }
+                if ($lang['default']) {
+                    $defaultLoc = (string)$loc;
+                }
+            }
+        }
+        return $defaultLoc ?? $firstLoc;
+    }
+
+    /**
+     * Get filing unit.
+     *
+     * @return string|null
+     */
+    public function getFilingUnit() : ?string
+    {
+        $xml = $this->getXmlRecord();
+        return isset($xml->did->container)
+            ? (string)$xml->did->container : null;
     }
 
     /**
@@ -1364,26 +1412,10 @@ class SolrEad3 extends SolrEad
         if (! isset($node->$childNodeName)) {
             return null;
         }
-        $defaultLanguage = 'fin';
-        $languages = $this->preferredLanguage
-            ? $this->mapLanguageCode($this->preferredLanguage)
-            : [];
-
-        $getTermLanguage = function ($node) use ($languages, $defaultLanguage) {
-            if (!isset($node->attributes()->lang)) {
-                return null;
-            }
-            $lang = (string)$node->attributes()->lang;
-            return [
-               'default' => $defaultLanguage === $lang,
-               'preferred' => in_array($lang, $languages)
-            ];
-        };
-
         $allResults = [];
         $defaultLanguageResults = [];
         $languageResults = [];
-        $lang = $getTermLanguage($node);
+        $lang = $this->detectNodeLanguage($node);
         $resolveLangFromChildNode = $lang === null;
         foreach ($node->{$childNodeName} as $child) {
             $name = trim((string)$child);
@@ -1391,7 +1423,7 @@ class SolrEad3 extends SolrEad
 
             if ($resolveLangFromChildNode) {
                 foreach ($child->attributes() as $key => $val) {
-                    $lang = $getTermLanguage($child);
+                    $lang = $this->detectNodeLanguage($child);
                     if ($lang) {
                         break;
                     }
@@ -1415,6 +1447,37 @@ class SolrEad3 extends SolrEad
         }
 
         return $allResults;
+    }
+
+    /**
+     * Helper for detecting the language of a XML node.
+     * Compares the language attribute of the node to users' preferred language.
+     * Returns an array with keys 'default' and 'preferred'.
+     *
+     * @param \SimpleXMLElement $node              XML node
+     * @param string            $languageAttribute Name of the language attribute
+     * @param string            $defaultLanguage   Default language
+     *
+     * @return array
+     */
+    protected function detectNodeLanguage(
+        \SimpleXMLElement $node,
+        string $languageAttribute = 'lang',
+        string $defaultLanguage = 'fin'
+    ) : ?array {
+        if (!isset($node->attributes()->{$languageAttribute})) {
+            return null;
+        }
+
+        $languages = $this->preferredLanguage
+            ? $this->mapLanguageCode($this->preferredLanguage)
+            : [];
+
+        $lang = (string)$node->attributes()->{$languageAttribute};
+        return [
+            'default' => $defaultLanguage === $lang,
+            'preferred' => in_array($lang, $languages)
+        ];
     }
 
     /**

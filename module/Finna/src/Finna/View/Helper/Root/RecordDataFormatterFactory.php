@@ -248,7 +248,19 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
             [
-                'context' => ['class' => 'recordSeries']
+                'context' => [
+                    'class' => 'recordSeries',
+                    'levels' => \Finna\RecordDriver\SolrEad::SERIES_LEVELS
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Archive File', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
+            [
+                'context' => [
+                    'class' => 'recordFile',
+                    'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS
+                ]
             ]
         );
         $setTemplateLine(

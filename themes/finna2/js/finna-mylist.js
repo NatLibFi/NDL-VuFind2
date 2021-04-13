@@ -642,8 +642,9 @@ finna.myList = (function finnaMyList() {
     // hide/show notes on images
     $('.note-button:not(.inited)').each(function initNotes() {
       var btn = $(this);
-      var noteOverlay = btn.siblings('.note-overlay').first();
-      btn.off('click').on('click', function onClick() {
+      var noteOverlay = btn.siblings('.note-overlay-grid, .note-overlay-condensed').first();
+      btn.off('click').on('click', function onClick(e) {
+        e.stopPropagation();
         btn.add(noteOverlay).toggleClass('note-show', !btn.hasClass('note-show'));
       }).addClass('inited');
     });

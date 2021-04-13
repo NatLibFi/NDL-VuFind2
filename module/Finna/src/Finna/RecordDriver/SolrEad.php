@@ -53,6 +53,12 @@ class SolrEad extends SolrDefault
     use UrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
+    // add-data > parent elements with these level-attributes are archive series
+    public const SERIES_LEVELS = ['series', 'subseries'];
+
+    // add-data > parent elements with these level-attributes are archive files
+    public const FILE_LEVELS = ['file'];
+
     /**
      * Constructor
      *
@@ -562,6 +568,36 @@ class SolrEad extends SolrDefault
             && $this->fields['hierarchy_parent_id'][0]
                 != $this->fields['hierarchy_top_id'][0]
             && $this->fields['hierarchy_top_id'] != $this->fields['id'];
+    }
+
+    /**
+     * Get the hierarchy_parent_id(s) associated with this item (empty if none).
+     *
+     * @param string[] $levels Optional list of level types to return
+     *
+     * @return array
+     */
+    public function getHierarchyParentID(array $levels = []) : array
+    {
+        if ($levels && !empty(array_diff($levels, self::SERIES_LEVELS))) {
+            return [];
+        }
+        return $this->fields['hierarchy_parent_id'] ?? [];
+    }
+
+    /**
+     * Get the parent title(s) associated with this item (empty if none).
+     *
+     * @param string[] $levels Optional list of level types to return
+     *
+     * @return array
+     */
+    public function getHierarchyParentTitle(array $levels = []) : array
+    {
+        if ($levels && !empty(array_diff($levels, self::SERIES_LEVELS))) {
+            return [];
+        }
+        return $this->fields['hierarchy_parent_title'] ?? [];
     }
 
     /**

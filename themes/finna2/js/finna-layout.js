@@ -731,6 +731,26 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  // Used in custom themes
+  function initHelpTabs() {
+    if ($('.help-tabs')[0]) {
+      $('.help-tab').each(function initHelpTab() {
+        if ($(this).hasClass('active')) {
+          $(this).focus();
+        }
+        var url = $(this).data('url');
+        $(this).keydown(function onTabEnter(event) {
+          if (event.which === 13) {
+            window.location.href = url;
+          }
+        });
+        $(this).click(function onTabClick() {
+          window.location.href = url;
+        });
+      });
+    }
+  }
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -779,6 +799,7 @@ finna.layout = (function finnaLayout() {
       initCookieConsent();
       setImagePaginatorTranslations();
       initImagePaginators();
+      initHelpTabs();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };
