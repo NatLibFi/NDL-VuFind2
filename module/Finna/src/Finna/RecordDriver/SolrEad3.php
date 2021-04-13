@@ -1174,9 +1174,7 @@ class SolrEad3 extends SolrEad
     public function getPlaceOfStorage() : ?string
     {
         $xml = $this->getXmlRecord();
-
-        $firstLoc = null;
-        $defaultLoc = null;
+        $firstLoc = $defaultLoc = null;
         foreach ($xml->did->physloc ?? [] as $loc) {
             if (!$firstLoc) {
                 $firstLoc = (string)$loc;
