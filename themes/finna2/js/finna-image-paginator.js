@@ -278,7 +278,7 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
   _.openImageIndex = image.attr('index');
 
   var img = new Image();
-  img.src = image.data('largest');
+  img.src = image.data('master') || image.data('large');
   $(img).attr('alt', image.data('alt'));
   img.onload = function onLoad() {
     if (typeof _.canvasElements.noZoom === 'undefined') {
@@ -328,7 +328,7 @@ FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(imag
   _.leafletHolder.setMaxBounds(null);
   _.leafletHolder.setMinZoom(1);
   var img = new Image();
-  img.src = image.data('largest');
+  img.src = image.data('master') || image.data('large');
   _.timeOut = setTimeout(function onLoadStart() {
     _.leafletLoader.addClass('loading');
   }, 100);
@@ -792,9 +792,10 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
   }
   holder.attr({
     'index': image.index,
-    'data-largest': image.largest,
+    'data-large': image.large,
+    'data-master': image.master,
     'data-description': image.description,
-    'href': (!_.settings.isList && _.settings.enableImageZoom) ? image.largest : image.medium,
+    'href': (!_.settings.isList && _.settings.enableImageZoom) ? image.large : image.medium,
     'data-alt': image.alt
   });
 
