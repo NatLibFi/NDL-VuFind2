@@ -278,7 +278,7 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
   _.openImageIndex = image.attr('index');
 
   var img = new Image();
-  img.src = image.data('master') || image.data('large');
+  img.src = image.data('large');
   $(img).attr('alt', image.data('alt'));
   img.onload = function onLoad() {
     if (typeof _.canvasElements.noZoom === 'undefined') {
