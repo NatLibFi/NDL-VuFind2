@@ -158,6 +158,19 @@ table .iconlabel {
         display: none;
     }
 }
+.image-popup-trigger {
+    .model-trigger {
+        display: none;
+    }
+    &.model-no-image {
+        .model-trigger {
+            display: block;
+        }
+        img {
+            display: none;
+        }
+    }
+}
 #description_text .fa-spinner {
     position: absolute;
     right: 15px;
@@ -606,6 +619,11 @@ table .iconlabel {
 }
 .iconlabel.other-records:before {
     content: "\e00d";
+}
+
+.finna-3d::before {
+    font-family: finnaicons;
+    content:"\e8c0";
 }
 
 /** toolbar icons **/

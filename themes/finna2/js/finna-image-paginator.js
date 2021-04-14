@@ -35,7 +35,6 @@ function FinnaPaginator(element, images, settings) {
   _.trigger.removeClass('init');
   _.root = _.trigger.closest('.recordcover-holder');
   _.images = images;
-  console.log(images);
   _.settings = $.extend({}, defaults, settings);
   _.covers = _.root.find('.' + _.settings.recordCovers);
   _.offSet = 0;
@@ -213,13 +212,15 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
       _.coverContainer.show();
       $.fn.finnaPopup.closeOpen('modelViewer');
     });
+  } else {
+    _.leftBtn.off('click').click(function setImage(){
+      _.onListButton(-1);
+    });
+    _.rightBtn.off('click').click(function setImage(){
+      _.onListButton(1);
+    });
   }
-  _.leftBtn.off('click').click(function setImage(){
-    _.onListButton(-1);
-  });
-  _.rightBtn.off('click').click(function setImage(){
-    _.onListButton(1);
-  });
+
   _.setButtons();
   _.imagePopup.off('click').on('click', function setTriggerEvents(e){
     e.preventDefault();
@@ -418,6 +419,7 @@ FinnaPaginator.prototype.onBrowseButton = function onBrowseButton(direction) {
   var _ = this;
   var index = +direction + (+_.openImageIndex);
   var found = _.findSmallImage(index);
+  console.log(found);
   if (found.length) {
     found.click();
   } else {
@@ -584,9 +586,11 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
   }
   _.imageDetail.html(imagePopup.data('description'));
   img.off('load').on('load', function handleImage() {
+    
     setImageProperties(this);
   });
-  img.unveil(100);
+  img.unveil(200);
+  console.log("Wut");
 };
 
 /**
@@ -791,22 +795,26 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
   var _ = this;
   var holder = $(_.imagePopup).clone(true);
   if (_.images.length > 1) {
-    var img = new Image();
-    holder.append(img, $('<i class="fa fa-spinner fa-spin"/>'));
-    img.src = image.small;
-    img.alt = image.alt;
-    img.title = image.title;
-    img.onload = function onLoad() {
-      $(this).siblings('i').remove();
-    };
+    if (image.small) {
+      var img = new Image();
+      img.src = image.small;
+      img.alt = image.alt;
+      img.title = image.title;
+      holder.append(img, $('<i class="fa fa-spinner fa-spin"/>'));
+      img.onload = function onLoad() {
+        $(this).siblings('i').remove();
+      };
+    } else {
+      var icon = $('<i class="finna-3d"/>');
+      holder.append(icon);
+    }
   }
   holder.attr({
     'index': image.index,
     'data-largest': image.largest,
     'data-description': image.description,
     'data-type': image.type,
-    'href': (!_.settings.isList && _.settings.enableImageZoom) ? image.largest : image.medium,
-    'data-alt': image.alt
+    'href': (!_.settings.isList && _.settings.enableImageZoom) ? image.largest : image.medium
   });
 
   if (image.type === 'model') {
@@ -923,7 +931,14 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
 FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   var _ = this;
   _.trigger.trigger('image-show');
-  _.changeTriggerImage(imagePopup);
+
+  if (imagePopup.attr('href')) {
+    _.trigger.removeClass('show-icon');
+    _.changeTriggerImage(imagePopup);
+  } else {
+    _.trigger.find('img').removeAttr('src');
+    _.trigger.addClass('show-icon');
+  }
   _.openImageIndex = imagePopup.attr('index');
   _.setBrowseButtons(_.settings.isList);
   _.setPagerInfo();
@@ -939,10 +954,12 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   } else if (_.settings.triggerClick === 'open') {
     return;
   }
-
-  if (imagePopup.data('type') === 'model') {
+  var imageType = imagePopup.data('type');
+  if (imageType === 'model') {
+    _.trigger.addClass('model-trigger');
     _.trigger.finnaModel(imagePopup.data('modelsettings'), imagePopup.data('scripts'));
   } else {
+    _.trigger.removeClass('model-trigger');
     _.trigger.finnaPopup({
       modal: modal,
       id: 'paginator',

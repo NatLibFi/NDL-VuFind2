@@ -2,7 +2,7 @@
 
 // Use 1 dracoloader in all of the loaders, so we don't create multiple instances
 var dracoLoader;
-function ModelViewer(trigger, options, scripts, extras)
+function ModelViewer(trigger, options, scripts)
 {
   var _ = this;
   _.trigger = $(trigger);
@@ -191,13 +191,10 @@ ModelViewer.prototype.getModelPath = function getModelPath()
     }
   )
     .done(function onGetModelDone(response) {
-      console.log('yooo');
       _.modelPath = response.data.url;
-      console.log(response.data);
       _.initViewer();
     })
-    .fail(function onGetModelFailed(response) {
-      console.log(response);
+    .fail(function onGetModelFailed(/*response*/) {
     });
 };
 

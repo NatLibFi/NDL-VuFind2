@@ -344,9 +344,6 @@ FinnaPopup.prototype.focusTrap = function focusTrap(e) {
     }
     var id = typeof params.id === 'undefined' ? 'default' : params.id;
 
-    if (typeof _.data('popup-' + id + '-index') !== 'undefined') {
-      return; //Already found in the list, so lets not double init this
-    }
     if (typeof $.fn.finnaPopup.popups[id] === 'undefined') {
       $.fn.finnaPopup.popups[id] = new FinnaPopup($(this), params, params.id);
     } else {
