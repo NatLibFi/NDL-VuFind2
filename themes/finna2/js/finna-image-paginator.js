@@ -795,7 +795,7 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
     'data-large': image.large,
     'data-master': image.master,
     'data-description': image.description,
-    'href': (!_.settings.isList && _.settings.enableImageZoom) ? image.large : image.medium,
+    'href': (!_.settings.isList) ? image.large : image.medium,
     'data-alt': image.alt
   });
 
