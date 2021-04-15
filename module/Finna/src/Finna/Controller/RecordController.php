@@ -146,7 +146,6 @@ class RecordController extends \VuFind\Controller\RecordController
     protected function loadRecord(ParamBag $params = null, bool $force = false)
     {
         $id = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
-
         // 0 = preview record
         if ($id != '0') {
             return parent::loadRecord($params, $force);
