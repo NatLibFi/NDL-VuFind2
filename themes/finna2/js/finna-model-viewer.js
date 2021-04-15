@@ -6,7 +6,7 @@ function ModelViewer(trigger, options, scripts)
 {
   var _ = this;
   _.trigger = $(trigger);
-  _.cubeSettings = options.cubemap;
+  _.texturePath = options.texturePath;
   _.parentId = options.parentCanvas;
   if (options.inlineId) {
     _.inlineId = options.inlineId;
@@ -141,7 +141,7 @@ ModelViewer.prototype.updateScale = function updateScale()
 ModelViewer.prototype.initViewer = function initViewer()
 {
   var _ = this;
-  _.loadCubeMap();
+  _.loadBackground();
   _.loadGLTF();
   _.setEvents();
 };
@@ -244,7 +244,7 @@ ModelViewer.prototype.adjustScene = function adjustScene(scene)
   }
 
   _.scene = scene;
-  _.scene.background = _.envMap;
+  _.scene.background = _.background;
   if (_.debug) {
     var axesHelper = new THREE.AxesHelper( 5 );
     _.scene.add( axesHelper );
@@ -312,8 +312,7 @@ ModelViewer.prototype.initMesh = function initMesh()
         _.meshes++;
         meshMaterial = obj.material;
   
-        // Apply environmental map to the material, so lights look nicer
-        meshMaterial.envMap = _.envMap;
+        // Bumpscale and depthwrite settings
         meshMaterial.depthWrite = !meshMaterial.transparent;
         meshMaterial.bumpScale = 0;
   
@@ -360,10 +359,9 @@ ModelViewer.prototype.initMesh = function initMesh()
   }
 
   _.informationsArea.toggle(true);
-  _.setInformation('Vertices', _.vertices);
-  _.setInformation('Triangles', _.triangles);
-  _.setInformation('Meshes', _.meshes);
-  _.setInformation('Format', 'gLTF 2.0');
+  _.setInformation(VuFind.translate('Vertices'), _.vertices);
+  _.setInformation(VuFind.translate('Triangles'), _.triangles);
+  _.setInformation(VuFind.translate('Meshes'), _.meshes);
 };
 
 ModelViewer.prototype.createLights = function createLights()
@@ -377,13 +375,19 @@ ModelViewer.prototype.createLights = function createLights()
   _.scene.add( light );
 };
 
-ModelViewer.prototype.loadCubeMap = function loadCubeMap()
+ModelViewer.prototype.loadBackground = function loadBackground()
 {
   var _ = this;
-
-  _.envMap = new THREE.CubeTextureLoader()
-    .setPath(_.cubeSettings.path)
-    .load(_.cubeSettings.images);
+  var tempLoader = new THREE.TextureLoader();
+  tempLoader.load(
+    _.texturePath + 'bg.jpg',
+    function onSuccess(texture) {
+      _.background = texture;
+    },
+    function onFailure(/*error*/) {
+      // Leave empty for debugging purposes
+    }
+  );
 };
 
 (function modelModule($) {

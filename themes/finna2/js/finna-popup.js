@@ -270,7 +270,6 @@ FinnaPopup.prototype.onPopupInit = function onPopupInit(/*trigger*/) { };
  */
 FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
   var _ = this;
-  console.log('before open should be called');
   _.beforeOpen();
   _.show();
 

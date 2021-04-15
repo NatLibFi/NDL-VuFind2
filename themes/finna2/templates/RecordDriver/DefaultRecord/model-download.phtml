@@ -1,0 +1,21 @@
+<!-- START of Finna - RecordDriver/DefaultRecord/model-download.phtml -->
+<div class="image-link">
+    <?php if (!empty($model)): ?>
+        <i aria-hidden="true" class="fa fa-download"></i>
+        <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <?=$this->transEsc('Download the file') ?> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu download" aira-labelledby="downloadMenu-<?=$index?>">
+                <?php if (!$this->userAgent()->isBot()): ?>
+                    <?php foreach ($model as $format => $data): ?>
+                        <?php foreach ($data as $type => $url): ?>
+                            <li><a href="<?=$this->escapeHtmlAttr($url)?>" rel="nofollow"> <?=$this->transEsc("model_type_{$type}", null , $type)?> <span><?=$this->transEsc("model_format_{$format}")?></span></a></li> 
+                        <?php endforeach; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+</div>
+<!-- END of Finna - RecordDriver/DefaultRecord/model-download.phtml -->

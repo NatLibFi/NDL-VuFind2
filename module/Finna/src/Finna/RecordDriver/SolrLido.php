@@ -299,9 +299,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     );
 
                     if ($formatDisallowed) {
-                        // We need to see if results are with 3d objects so we should discard already found urls,
-                        // reason is that currently the museum systems do not produce preview image of
-                        // the model, but the file.
+                        // 3D models are fetched in a different function so discard this from the results
                         if (in_array($format, ['gltf', 'glb'])) {
                             $urls = [];
                         }
@@ -505,7 +503,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $format = $linkResource->attributes()->formatResource ?? '';
                 $format = strtolower(trim((string)$format));
                 switch ($type) {
-                case 'thumb':
+                case 'image_thumb':
                 case '3d_thumb':
                     if (!isset($model['thumb'])) {
                         $model['thumb'] = $url;

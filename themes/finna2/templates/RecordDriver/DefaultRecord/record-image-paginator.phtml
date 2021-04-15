@@ -2,15 +2,11 @@
 <?php
   $isList = ($type === 'list' || $type === 'list grid');
   $enableImageZoom = (isset($enableImagePopupZoom) && $enableImagePopupZoom) && in_array($this->driver->tryMethod('getRecordFormat'), ['lido', 'forward', 'ead', 'qdc']);
-  if (!$isList) {
-    $models = $this->driver->tryMethod('getModels');
-  }
 ?>
 <?php if ($type === 'record' || !$this->userAgent()->isBot()): ?>
   <?php
     $ind = 0;
     $paginatedLinks = [];
-    $hasModels = false;
     $recordImage = $this->recordImage($this->record($this->driver));
   ?>
   <?php foreach ($images as $img): ?>
@@ -33,27 +29,22 @@
   <?php if (!empty($models)) {
     $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
     $settings = $this->driver->getModelSettings();
-    $settings['cubemap'] = [
-        'path' => $this->imageSrc()->getImagesDirectoryPath() . '/cubemap/',
-        'images' => [
-            'px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'
-        ]
-    ];
-    foreach ($models as $model):
+    $settings['texturePath'] = $this->imageSrc()->getImagesDirectoryPath() . '/texture/';
+    foreach ($models as $index => $model):
       foreach ($model as $format => $data):
         $settings['modelload'] = [
           'id' => $this->driver->getUniqueId(),
-          'index' => $ind,
+          'index' => $index,
           'format' => $format
         ];
         $model = [
           'small' => $data['image'] ?? null,
           'medium' => $data['image'] ?? null,
           'largest' => $data['image'] ?? null,
-          'index' => $ind++,
+          'index' => $ind,
           'alt' => '3D model alt',
           'description' => '3D Model preview image',
-          'title' => $this->transEsc('Image') . ' ' . $ind,
+          'title' => $this->transEsc('Image') . ' ' . $ind++,
           'type' => 'model',
           'modelsettings' => json_encode($settings ?? []),
           'scripts' => $modelScripts,
@@ -78,8 +69,7 @@
         'isList' => $type === 'list' || $type === 'list grid',
         'recordCovers' => 'recordcovers',
         'displayIcon' => $displayIcon,
-        'triggerClick' => $this->imageClick ?? 'modal',
-        'hasModels' => $hasModels
+        'triggerClick' => $this->imageClick ?? 'modal'
       ];
     ?>
   <?php endif; ?>
@@ -91,7 +81,7 @@
           <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
           <?php if (!$isList): ?>
             <div class="iconlabel finna-3d"></div>
-            <div class="show-3d">Näytä 3D</div>
+            <div class="show-3d btn btn-primary">Näytä 3D</div>
           <?php endif; ?>
           <div class="paginator-info"><span class="image-index"></span></div>
           <img src="<?=$this->imageSrc()->getDataPixel()?>" data-src="<?=$this->url('cover-unavailable')?>" class="recordcover<?= ($images[0]['pdf'] ?? false) ? ' pdf-cover' : ''?>" alt="<?=$this->transEsc('No Cover Image')?>"/>
