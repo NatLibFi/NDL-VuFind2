@@ -42,6 +42,9 @@ class RecordController extends \VuFind\Controller\RecordController
 {
     use FinnaRecordControllerTrait;
 
+    /**
+     * @var AbstractRecordDriver
+     */
     protected $driverCache;
 
     /**
