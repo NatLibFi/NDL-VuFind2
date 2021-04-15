@@ -43,11 +43,6 @@ class RecordController extends \VuFind\Controller\RecordController
     use FinnaRecordControllerTrait;
 
     /**
-     * @var AbstractRecordDriver
-     */
-    protected $driverCache;
-
-    /**
      * Create record feedback form and send feedback to correct recipient.
      *
      * @return \Laminas\View\Model\ViewModel
@@ -152,12 +147,9 @@ class RecordController extends \VuFind\Controller\RecordController
     {
         $id = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
 
-        if ($this->driverCache && $id === $this->driverCache->getUniqueID()) {
-            return $this->driverCache;
-        }
         // 0 = preview record
         if ($id != '0') {
-            return $this->driverCache = parent::loadRecord($params, $force);
+            return parent::loadRecord($params, $force);
         }
         $data = $this->params()->fromPost(
             'data', $this->params()->fromQuery('data', '')
