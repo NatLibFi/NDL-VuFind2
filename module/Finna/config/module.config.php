@@ -245,6 +245,7 @@ $config = [
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
             'Finna\Controller\L1Controller' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\L1recordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\FileController' => 'Finna\Controller\FileControllerFactory'
         ],
         'aliases' => [
             'AuthorityRecord' => 'Finna\Controller\AuthorityRecordController',
@@ -275,6 +276,8 @@ $config = [
             'l1' => 'Finna\Controller\L1Controller',
             'L1Record' => 'Finna\Controller\L1recordController',
             'l1record' => 'Finna\Controller\L1recordController',
+            'File' => 'Finna\Controller\FileController',
+            'file' => 'Finna\Controller\FileController',
 
             // Overrides:
             'VuFind\Controller\AuthorityController' => 'Finna\Controller\AuthorityController',
@@ -944,7 +947,8 @@ $staticRoutes = [
     'R2/Home', 'R2/Results', 'R2/Advanced',
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended',
-    'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results'
+    'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
+    'File/DownloadModel'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

@@ -72,7 +72,8 @@ class GetModelFactory
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\Laminas\Router\Http\TreeRouteStack::class),
             $domainUrl = $container->get('ViewRenderer')
-                ->plugin('serverurl')->__invoke('/')
+                ->plugin('serverurl')->__invoke('/'),
+            $container->get(\Finna\File\Loader::class),
         );
         return $result;
     }

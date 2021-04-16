@@ -223,7 +223,8 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
       function onLoading( xhr ) {
         _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(2) + '%');
       },
-      function onError(/*error*/) {
+      function onError(error) {
+        console.log(error);
         _.viewerStateInfo.html('Error');
       }
     );
