@@ -160,7 +160,7 @@ class RecordController extends \VuFind\Controller\RecordController
             'source', $this->params()->fromQuery('source', '')
         );
         if (!$data) {
-            // Support marc parameter for backwards-compability
+            // Support marc parameter for backwards-compatibility
             $format = 'marc';
             if (!$source) {
                 $source = '_marc_preview';
