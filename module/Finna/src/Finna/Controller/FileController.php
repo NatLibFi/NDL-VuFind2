@@ -91,15 +91,6 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
                 if (!$res) {
                     $response->setStatusCode(500);
                 }
-            }
-            
-            $highResolution = $images[$index]['highResolution'] ?? [];
-            if (isset($highResolution[$size][$format]['url'])) {
-                $url = $highResolution[$size][$format]['url'];
-                $res = $this->loader->loadExternalImage(
-                    $url, $format, "{$id}_{$index}_{$size}.{$format}"
-                );
-                
             } else {
                 $response->setStatusCode(404);
             }
