@@ -30,7 +30,7 @@ namespace Finna\Controller;
 use Interop\Container\ContainerInterface;
 
 /**
- * List controller factory.
+ * File controller factory.
  *
  * @category VuFind
  * @package  Controller

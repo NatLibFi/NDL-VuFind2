@@ -146,7 +146,6 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
                 return $this->formatResponse(['json' => ['status' => '404']]);
             }
 
-            // Load the file from a server
             $contentType = '';
             switch ($format) {
             case 'gltf':
@@ -157,7 +156,6 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
                 break;
             }
             // Use fileloader for proxies
-
             $file = $this->fileLoader->getFile($url, $contentType, $fileName, $localFile);
             if (!$file) {
                 return $this->formatResponse(['json' => ['status' => '500']]);
@@ -165,7 +163,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
 
         }
         $route = stripslashes($this->router->getBaseUrl());
-        // Point url to public cache so viewer can download it properly
+        // Point url to public cache so viewer has access to it
         $url = "{$this->domainUrl}{$route}/cache/{$fileName}";
         return $this->formatResponse(['url' => $url]);
     }
