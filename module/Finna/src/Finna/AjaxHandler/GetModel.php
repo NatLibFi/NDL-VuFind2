@@ -133,7 +133,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         $localFile = "$cacheDir/$fileName";
         $maxAge = $this->config->Content->modelCacheTime ?? 604800;
         // Check if the model has been cached
-        if (!file_exists($localFile) && filemtime($localFile) < $maxAge * 60) {
+        if (!is_readable($localFile) || filemtime($localFile) < $maxAge * 60) {
             $driver = $this->recordLoader->load($id, 'Solr');
             $models = $driver->getModels();
             if (!isset($models[$index][$format])) {
