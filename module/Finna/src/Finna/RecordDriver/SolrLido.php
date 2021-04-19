@@ -68,7 +68,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Array of allowed model formats
-     * 
+     *
      * @var array
      */
     protected $displayableModelFormats = ['gltf', 'glb'];
@@ -82,7 +82,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Models cache
-     * 
+     *
      * @var array
      */
     protected $modelsCache;
@@ -480,9 +480,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Save required information about 3d-models from lido
-     * 
+     *
      * @param object $representation to parse
-     * 
+     *
      */
     public function getModels(): array
     {
@@ -522,13 +522,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
             }
             $i++;
-        };
+        }
         return $this->modelsCache = $models;
     }
 
     /**
      * Return settings from config
-     * 
+     *
      * @return array settings
      */
     public function getModelSettings(): array

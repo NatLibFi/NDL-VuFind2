@@ -20,25 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
+ * @package  File
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 namespace Finna\File;
 
-class Loader extends LoaderFactory
+/**
+ * File loader
+ *
+ * @category VuFind
+ * @package  File
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org Main Site
+ */
+class Loader implements \Laminas\Log\LoggerAwareInterface
 {
-    public function __construct($config, \VuFindHttp\HttpService $httpService)
-    {
-        $this->config = $config;
-        $this->httpService = $httpService;
-    }
-
     public function getFileStreamed(
-        string $url,
-        string $contentType,
-        string $filename
+        string $url, string $contentType, string $filename
     ): bool {
         header("Content-Type: $contentType");
         header("Content-disposition: attachment; filename=\"{$filename}\"");
@@ -70,10 +71,7 @@ class Loader extends LoaderFactory
     }
 
     public function getFile(
-        string $url,
-        string $contentType,
-        string $filename,
-        string $path
+        string $url, string $contentType, string $filename, string $path
     ): bool {
         header("Content-Type: $contentType");
         header("Content-disposition: attachment; filename=\"{$filename}\"");

@@ -27,16 +27,13 @@
  */
 namespace Finna\AjaxHandler;
 
-use VuFind\Cache\Manager as CacheManager;
-use VuFind\I18n\Translator\TranslatorAwareInterface;
-use VuFind\Record\Loader;
-use VuFind\Session\Settings as SessionSettings;
 use Finna\File\Loader as FileLoader;
 use Laminas\Config\Config;
-use Laminas\Mvc\Controller\Plugin\Params;
-use Laminas\View\Renderer\RendererInterface;
 use Laminas\Http\Request;
-use Laminas\View\Helper\ServerUrl;
+use Laminas\Mvc\Controller\Plugin\Params;
+use VuFind\Cache\Manager as CacheManager;
+use VuFind\Record\Loader;
+use VuFind\Session\Settings as SessionSettings;
 
 class GetModel extends \VuFind\AjaxHandler\AbstractBase
     implements \VuFindHttp\HttpServiceAwareInterface
@@ -45,7 +42,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
 
     /**
      * Session settings
-     * 
+     *
      * @var Settings
      */
     protected $sessionSettings;
@@ -66,31 +63,32 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
 
     /**
      * Loader
-     * 
+     *
      * @var Loader
      */
     protected $loader;
 
     /**
      * File loader
-     * 
+     *
      * @var Loader
      */
     protected $fileLoader;
 
     /**
      * Router
-     * 
+     *
      * @var \Laminas\Router\Http\TreeRouteStack
      */
     protected $router;
 
     /**
      * Domain url
-     * 
+     *
      * @var string
      */
     protected $domainUrl;
+
     /**
      * Constructor
      */
@@ -160,7 +158,6 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
             if (!$file) {
                 return $this->formatResponse(['json' => ['status' => '500']]);
             }
-
         }
         $route = stripslashes($this->router->getBaseUrl());
         // Point url to public cache so viewer has access to it

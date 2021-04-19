@@ -43,7 +43,7 @@ class ThemeSrc extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Theme information service
-     * 
+     *
      * @var \VufindTheme\ThemeInfo
      */
     protected $themeInfo;
@@ -84,7 +84,7 @@ class ThemeSrc extends \Laminas\View\Helper\AbstractHelper
 
     /**
      * Returns filepath from given theme if found
-     * 
+     *
      * @param string $relPath        File relative path
      * @param string $theme          Theme to search
      * @param bool   $returnAbsolute Whether to return absolute file system path

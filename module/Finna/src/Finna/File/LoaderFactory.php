@@ -1,5 +1,4 @@
 <?php
-
 namespace Finna\File;
 
 use Interop\Container\ContainerInterface;

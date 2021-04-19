@@ -84,9 +84,9 @@ class ImageSrc extends ThemeSrc
 
     /**
      * Returns the folder where images are located from given theme
-     * 
+     *
      * @param string $theme to look for
-     * 
+     *
      * @return string
      */
     public function getImagesDirectoryPath($theme = 'finna2')
