@@ -1670,7 +1670,7 @@ showLabels[*] = false
 showLabels[Primo] = true
 
 [Models]
-; Id of element where to insert the viewer, if uncommented, will open in popup
-;inline-id = inline-viewer
+; Id of element where to insert the viewer, if commented, will open in popup
+;inlineId = inline-viewer
 ; If developer is uncommented and true, will display additional data on the viewer
 ;debug = true
