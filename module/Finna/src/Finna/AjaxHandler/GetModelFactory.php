@@ -70,7 +70,6 @@ class GetModelFactory
             $container->get(\VuFind\Cache\Manager::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('config'),
             $container->get(\VuFind\Record\Loader::class),
-            $container->get(\Laminas\Router\Http\TreeRouteStack::class),
             $domainUrl = $container->get('ViewRenderer')
                 ->plugin('serverurl')->__invoke('/'),
             $container->get(\Finna\File\Loader::class),

@@ -76,13 +76,6 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
     protected $fileLoader;
 
     /**
-     * Router
-     *
-     * @var \Laminas\Router\Http\TreeRouteStack
-     */
-    protected $router;
-
-    /**
      * Domain url
      *
      * @var string
@@ -94,14 +87,12 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
      */
     public function __construct(
         SessionSettings $ss, CacheManager $cm, Config $config, Loader $loader,
-        \Laminas\Router\Http\TreeRouteStack $router,
         string $domainUrl, FileLoader $fileLoader
     ) {
         $this->cacheManager = $cm;
         $this->sessionSettings = $ss;
         $this->config = $config;
         $this->recordLoader = $loader;
-        $this->router = $router;
         $this->domainUrl = $domainUrl;
         $this->fileLoader = $fileLoader;
     }
@@ -156,7 +147,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
             // Use fileloader for proxies
             $file = $this->fileLoader->getFile($url, $contentType, $fileName, $localFile);
             if (!$file) {
-                return $this->formatResponse(['json' => ['status' => '500']]);
+                return $this->formatResponse(['json' => ['status' => self:STATUS_HTTP_ERROR]]);
             }
         }
         $route = stripslashes($this->router->getBaseUrl());
