@@ -278,7 +278,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
             $urls = [];
             $highResolution = [];
-            $models = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
                 $url = trim((string)$linkResource);
@@ -300,7 +299,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                     if ($formatDisallowed) {
                         // 3D models are fetched in a different function so discard this from the results
-                        if (in_array($format, ['gltf', 'glb'])) {
+                        if (in_array($format, $this->displayableModelFormats)) {
                             $urls = [];
                         }
                         continue;
@@ -312,7 +311,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
 
                 $size = '';
-                $model = [];
                 switch ($attributes->type) {
                 case 'image_thumb':
                 case 'thumb':

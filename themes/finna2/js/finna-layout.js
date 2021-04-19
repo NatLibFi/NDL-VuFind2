@@ -634,7 +634,6 @@ finna.layout = (function finnaLayout() {
         }
       }
     }
-    console.log(scripts);
     var loadCount = Object.keys(needed).length;
     if (loadCount) {
       // Load scripts and initialize player when all are loaded
