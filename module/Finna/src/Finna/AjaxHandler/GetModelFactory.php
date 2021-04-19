@@ -73,6 +73,7 @@ class GetModelFactory
             $domainUrl = $container->get('ViewRenderer')
                 ->plugin('serverurl')->__invoke('/'),
             $container->get(\Finna\File\Loader::class),
+            $container->get(\Laminas\Router\Http\TreeRouteStack::class)
         );
         return $result;
     }

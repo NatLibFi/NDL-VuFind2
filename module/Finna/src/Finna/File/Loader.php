@@ -36,8 +36,18 @@ namespace Finna\File;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
-class Loader implements \Laminas\Log\LoggerAwareInterface
+class Loader
 {
+
+    /**
+     * Download big file
+     * 
+     * @param string $url         url to download
+     * @param string $contentType header content type
+     * @param string $filename    file name to attach
+     * 
+     * @return bool
+     */
     public function getFileStreamed(
         string $url, string $contentType, string $filename
     ): bool {
@@ -70,6 +80,16 @@ class Loader implements \Laminas\Log\LoggerAwareInterface
         return true;
     }
 
+    /**
+     * Download big file
+     * 
+     * @param string $url         url to download
+     * @param string $contentType header content type
+     * @param string $filename    file name to attach
+     * @param string $path        path to save file
+     * 
+     * @return bool
+     */
     public function getFile(
         string $url, string $contentType, string $filename, string $path
     ): bool {
