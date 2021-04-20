@@ -1111,9 +1111,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $tmp['afterUrl'] = trim((string)$work->object->objectID);
                 }
                 $data[] = $tmp;
-                $data[] = $tmp;
-                $data[] = $tmp;
-                $data[] = $tmp;
             }
         }
 
