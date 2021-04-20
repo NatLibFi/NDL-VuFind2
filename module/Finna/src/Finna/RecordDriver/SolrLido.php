@@ -1082,7 +1082,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getWebResource()
+    public function getWebResource(): array
     {
         $relatedWorks = $this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
