@@ -1090,16 +1090,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         );
 
         $data = [];
-        // Save only the first link
+
         foreach ($relatedWorks as $work) {
             if (!empty($work->object->objectWebResource)) {
                 $tmp = [];
                 $url = trim((string)$work->object->objectWebResource);
-                if (!$this->urlBlocked($url)) {
-                    $tmp['url'] = $url;
-                } else {
+                if ($this->urlBlocked($url)) {
                     continue;
                 }
+                $tmp['url'] = $url;
                 if (!empty($work->displayObject)) {
                     $tmp['value'] = trim((string)$work->displayObject);
                     $objectAttrs = $work->displayObject->attributes();
