@@ -905,7 +905,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Available Online', 'getWebResource', 'data-url.phtml',
+            'Available Online', 'getWebResource', 'data-detailed-urls.phtml',
             [
                 'context' => [
                     'class' => 'record-available-online',
