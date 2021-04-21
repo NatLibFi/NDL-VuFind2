@@ -1090,7 +1090,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         );
 
         $data = [];
-
         foreach ($relatedWorks as $work) {
             if (!empty($work->object->objectWebResource)) {
                 $tmp = [];
@@ -1112,7 +1111,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $data[] = $tmp;
             }
         }
-
         return $data;
     }
 
