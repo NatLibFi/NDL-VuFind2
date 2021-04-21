@@ -336,13 +336,13 @@ ModelViewer.prototype.initMesh = function initMesh()
         obj.position.set(newCenterVector.x, newCenterVector.y, newCenterVector.z);
   
         //Calculate the distance for camera, so the object is properly adjusted in scene
-        var objectHeight = (newBox.max.y - newBox.min.y) * 1.05;
-        var objectWidth = (newBox.max.x - newBox.min.x) * 1.05;
+        var objectHeight = (newBox.max.y - newBox.min.y) * 1.01;
+        var objectWidth = (newBox.max.x - newBox.min.x) * 1.01;
         var result = 0;
         if (objectHeight >= objectWidth) {
-          result = objectHeight / getTanDeg(25);
+          result = objectHeight / getTanDeg(35);
         } else {
-          result = objectWidth / getTanDeg(25);
+          result = objectWidth / getTanDeg(35);
         }
         _.cameraPosition = result;
         _.camera.position.set(0, 0, _.cameraPosition);

@@ -151,7 +151,7 @@ FinnaPaginator.prototype.setReferences = function setReferences() {
   _.rightBtn = _.covers.find('.right-button');
   _.leftBrowseBtn = _.root.find('.next-image.left');
   _.rightBrowseBtn = _.root.find('.next-image.right');
-  _.coverContainer = _.trigger.closest('.recordcover-container');
+  _.triggerImage = _.trigger.find('img');
   _.pagerInfo = _.settings.isList ? _.covers.find('.paginator-info') : _.trigger.find('.paginator-info');
   if (_.images.length < 2) {
     _.covers.hide();
@@ -206,10 +206,17 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
     });
 
     _.trigger.on('viewer-show', function hideSelf() {
-      _.coverContainer.hide();
+      _.triggerImage.css('display', 'none');
+      _.triggerImage.siblings('div.iconlabel').css('display', 'none');
+      _.trigger.trigger('removeclick.finna');
+      _.trigger.on('click', function preventStuff(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
     });
     _.trigger.on('image-show', function hideSelf() {
-      _.coverContainer.show();
+      _.triggerImage.css('display', '');
+      _.triggerImage.siblings('div.iconlabel').css('display', '');
       $.fn.finnaPopup.closeOpen('modelViewer');
     });
   } else {

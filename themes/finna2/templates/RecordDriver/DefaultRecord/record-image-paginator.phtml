@@ -85,6 +85,9 @@
           <?php endif; ?>
           <div class="paginator-info"><span class="image-index"></span></div>
           <img src="<?=$this->imageSrc()->getDataPixel()?>" data-src="<?=$this->url('cover-unavailable')?>" class="recordcover<?= ($images[0]['pdf'] ?? false) ? ' pdf-cover' : ''?>" alt="<?=$this->transEsc('No Cover Image')?>"/>
+          <?php if (!$isList): ?>
+            <div id="inline-viewer"></div>
+          <?php endif; ?>
         </a>
         <span class="hidden-trigger" hidden></span>
         <button class="next-image right" type="button"><i class="fa fa-chevron-right"></i><span class="sr-only"><?= $this->transEsc('next_image') ?></span></button>

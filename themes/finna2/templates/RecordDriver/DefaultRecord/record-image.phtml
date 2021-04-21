@@ -8,7 +8,6 @@
   }
 ?>
 <div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>">
-  <div id="inline-viewer"></div>
   <div class="recordcover-holder paginate" aria-hidden="true" data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
   <?= $this->record($this->driver)->renderTemplate(
     'record-image-paginator.phtml',
