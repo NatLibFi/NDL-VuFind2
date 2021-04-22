@@ -1462,10 +1462,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     || !empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})
                 ) {
                     $result = [];
-                    $office = $reason = $length = $subject = $notification = '';
-                    $format = $part = $tax = $type  = $date = $inspector = $age = '';
-                    $number = $time = $additional = '';
-
                     foreach ($this->inspectionAttributes as $key => $value) {
                         if (!empty($atr->{$value})) {
                             $result[$key] = (string)$atr->{$value};
