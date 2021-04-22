@@ -156,6 +156,18 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Descriptions
+     *
+     * @var array
+     */
+    protected $roleDescriptions = [
+        'elokuva-elotekija-selitys',
+        'elokuva-elonayttelija-selitys',
+        'elokuva-elokreditoimatonnayttelija-selitys',
+        'elokuva-elokreditoimatontekija-selitys'
+    ];
+
+    /**
      * Record metadata
      *
      * @var array
@@ -998,8 +1010,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
 
             $description = '';
-            if (!empty($nameAttrs->{'elokuva-elotekija-selitys'})) {
-                $description = (string)$nameAttrs->{'elokuva-elotekija-selitys'};
+            foreach ($this->roleDescriptions as $desc) {
+                if (!empty($nameAttrs->{$desc})) {
+                    $description = (string)$nameAttrs->{$desc};
+                    break;
+                }
             }
 
             $name = (string)$agent->AgentName;
