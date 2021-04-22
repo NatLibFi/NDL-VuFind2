@@ -156,6 +156,16 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Uncredited name attributes
+     *
+     * @var array
+     */
+    protected $uncreditedNameAttributes = [
+        'elokuva-elokreditoimatontekija-nimi',
+        'elokuva-elokreditoimatonnayttelija-nimi'
+    ];
+
+    /**
      * Record metadata
      *
      * @var array
@@ -510,18 +520,22 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterSecondaryAuthors()
     {
         $authors = $this->getNonPresenterAuthors(false);
-        $uncredited = $credited = [];
+        $uncredited = [];
+        $credited = [];
+        $uncreditedEnsembles = [];
+
         foreach ($authors as $author) {
             if ($author['uncredited']) {
-                $uncredited[] = $author;
+                if ($author['type'] === 'elonet_kokoonpano') {
+                    $uncreditedEnsembles[] = $author;
+                } else {
+                    $uncredited[] = $author;
+                }
             } else {
                 $credited[] = $author;
             }
         }
-        if (!empty($credited) || !empty($uncredited)) {
-            return ['credited' => $credited, 'uncredited' => $uncredited];
-        }
-        return [];
+        return compact('credited', 'uncredited', 'uncreditedEnsembles');
     }
 
     /**
@@ -536,7 +550,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $filters = [
             'a99' => [
-                'types' => ['elonet_kokoonpano'],
                 'tags' => ['avustajat']
             ],
             'oth' => [
@@ -628,7 +641,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $filters = [
             'a99' => [
-                'types' => ['elonet_kokoonpano'],
                 'tags' => ['avustajat']
             ],
             'oth' => [
@@ -1003,10 +1015,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
 
             $name = (string)$agent->AgentName;
-            if (empty($name)
-                && !empty($nameAttrs->{'elokuva-elokreditoimatontekija-nimi'})
-            ) {
-                $name = (string)$nameAttrs->{'elokuva-elokreditoimatontekija-nimi'};
+            if (empty($name)) {
+                foreach ($this->uncreditedNameAttributes as $value) {
+                    if (!empty($nameAttrs->{$value})) {
+                        $name = (string)$nameAttrs->{$value};
+                        break;
+                    }
+                }
             }
 
             ++$idx;

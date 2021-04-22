@@ -30,9 +30,9 @@
             <?=($index > 0 ? '<br/> ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null, 'showInlineInfo' => true, 'displayRole' => 'roleName'])?>
         <?php endforeach; ?>
     <?php endif; ?>
-    <?php if (!empty($data['performerEnsemble']['presenters'])): ?>
+    <?php if (!empty($data['performingEnsemble']['presenters'])): ?>
       <div class="subheading"><?=$this->translate("Performing Ensembles")?></div>
-        <?php foreach($data['performerEnsemble']['presenters'] as $index => $author): ?>
+        <?php foreach($data['performingEnsemble']['presenters'] as $index => $author): ?>
             <?=($index > 0 ? '<br/> ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null, 'showInlineInfo' => true, 'displayRole' => 'roleName'])?>
         <?php endforeach; ?>
     <?php endif; ?>
