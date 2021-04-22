@@ -155,6 +155,23 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'elokuva-elokreditoimatonesiintyja-maare'
     ];
 
+    protected $inspectionAttributes = [
+        'number' => 'elokuva-tarkastus-tarkastusnro',
+        'type' => 'elokuva-tarkastus-tarkastamolaji',
+        'length' => 'elokuva-tarkastus-pituus',
+        'tax' => 'elokuva-tarkastus-veroluokka',
+        'age' => 'elokuva-tarkastus-ikaraja',
+        'format' => 'elokuva-tarkastus-formaatti',
+        'part' => 'elokuva-tarkastus-osalkm',
+        'office' => 'elokuva-tarkastus-tarkastuttaja',
+        'time' => 'elokuva-tarkastus-kesto',
+        'subject' => 'elokuva-tarkastus-tarkastusaihe',
+        'reason' => 'elokuva-tarkastus-perustelut',
+        'additional' => 'elokuva-tarkastus-muuttiedot',
+        'notification' => 'elokuva-tarkastus-tarkastusilmoitus',
+        'inspector' => 'elokuva-tarkastus-tarkastuselin'
+    ];
+
     /**
      * Record metadata
      *
@@ -1439,77 +1456,22 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     || !empty($atr->{'elokuva-tarkastus-tarkastuselin'})
                     || !empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})
                 ) {
+                    $result = [];
                     $office = $reason = $length = $subject = $notification = '';
                     $format = $part = $tax = $type  = $date = $inspector = $age = '';
                     $number = $time = $additional = '';
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusnro'})) {
-                        $number = (string)$atr->{'elokuva-tarkastus-tarkastusnro'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastamolaji'})) {
-                        $type = (string)$atr->{'elokuva-tarkastus-tarkastamolaji'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-pituus'})) {
-                        $length = (string)$atr->{'elokuva-tarkastus-pituus'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-veroluokka'})) {
-                        $tax = (string)$atr->{'elokuva-tarkastus-veroluokka'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-ikaraja'})) {
-                        $age = (string)$atr->{'elokuva-tarkastus-ikaraja'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-formaatti'})) {
-                        $format = (string)$atr->{'elokuva-tarkastus-formaatti'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-osalkm'})) {
-                        $part = (string)$atr->{'elokuva-tarkastus-osalkm'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastuttaja'})) {
-                        $office = (string)$atr->{'elokuva-tarkastus-tarkastuttaja'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-kesto'})) {
-                        $time = (string)$atr->{'elokuva-tarkastus-kesto'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusaihe'})) {
-                        $subject = (string)$atr->{'elokuva-tarkastus-tarkastusaihe'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusaihe'})) {
-                        $reason = (string)$atr->{'elokuva-tarkastus-perustelut'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-muuttiedot'})) {
-                        $additional = (string)$atr->{'elokuva-tarkastus-muuttiedot'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})) {
-                        $notification = (string)$atr->{
-                            'elokuva-tarkastus-tarkastusilmoitus'
-                        };
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
-                        $inspector = (string)$atr->{
-                            'elokuva-tarkastus-tarkastuselin'
-                        };
+
+                    foreach ($this->inspectionAttributes as $key => $value) {
+                        if (!empty($atr->{$value})) {
+                            $result[$key] = (string)$atr->{$value};
+                        }
                     }
                     if (!empty($event->DateText)
                         && strpos($event->DateText, '0000') == false
                     ) {
-                        $date = (string)$event->DateText;
+                        $result['date'] = (string)$event->DateText;
                     }
-                    $results[] = [
-                        'inspector' => $inspector,
-                        'number' => $number,
-                        'format' => $format,
-                        'length' => $length,
-                        'taxclass' => $tax,
-                        'agerestriction' => $age,
-                        'inspectiontype' => $type,
-                        'part' => $part,
-                        'office' => $office,
-                        'additional' => $additional,
-                        'runningtime' => $time,
-                        'subject' => $subject,
-                        'date' => $date,
-                        'reason' => $reason,
-                        'notification' => $notification
-                    ];
+                    $results[] = $result;
                 }
             }
         }
