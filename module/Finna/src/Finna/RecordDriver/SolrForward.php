@@ -157,7 +157,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Inspection attributes
-     * 
+     *
      * @var array
      */
     protected $inspectionAttributes = [
