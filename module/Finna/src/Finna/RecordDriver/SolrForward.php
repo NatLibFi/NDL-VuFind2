@@ -155,6 +155,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'elokuva-elokreditoimatonesiintyja-maare'
     ];
 
+    /**
+     * Inspection attributes
+     * 
+     * @var array
+     */
     protected $inspectionAttributes = [
         'number' => 'elokuva-tarkastus-tarkastusnro',
         'type' => 'elokuva-tarkastus-tarkastamolaji',
