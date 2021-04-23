@@ -1140,18 +1140,19 @@ class SolrEad3 extends SolrEad
                 }
             }
             if ((string)$attr->relationtype !== 'resourcerelation'
-                || !isset($relation->relationentry)
                 // This relation is shown via RecordDriverRelated-recommend module
                 // (see getRelatedRecords)
                 || (string)$attr->encodinganalog === self::RELATION_RECORD
             ) {
                 continue;
             }
-            $href = (string)$attr->href;
-            $label = (string)$relation->relationentry;
+            $value = $href = (string)$attr->href;
+            if ($title = (string)$relation->relationentry) {
+                $value = $title;
+            }
             $relations[] = [
                 'title' => 'Related Materials',
-                'value' => $label ?: $href,
+                'value' => $value,
                 'link' => [
                     'value' => $href,
                     'type' => 'identifier',
