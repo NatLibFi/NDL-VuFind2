@@ -156,6 +156,16 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Roles to not display
+     *
+     * @var array
+     */
+    protected $filteredRoles = [
+        'prf',
+        'oth'
+    ];
+
+    /**
      * Record metadata
      *
      * @var array
@@ -668,7 +678,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             ]
         ];
 
-        foreach ($presenters as $presenter) {
+        foreach ($presenters as &$presenter) {
             $role = $presenter['role'] ?? '';
 
             switch ($presenter['type']) {
@@ -681,19 +691,21 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     } else {
                         $result['credited']['presenters'][] = $presenter;
                     }
-                } elseif ($role === 'prf') {
+                } elseif (empty($role)) {
                     if (!empty($presenter['uncredited'])
                         && $presenter['uncredited']
                     ) {
+                        $presenter['role'] = '';
                         $result['uncreditedPerformer']['presenters'][]
                             = $presenter;
                     } else {
+                        $presenter['role'] = '';
                         $result['performer']['presenters'][] = $presenter;
                     }
                 }
                 break;
             case 'elonet_kokoonpano':
-                if ($role === 'oth') {
+                if (empty($role)) {
                     $result['performingEnsemble']['presenters'][] = $presenter;
                 } else {
                     $result['actingEnsemble']['presenters'][] = $presenter;
@@ -701,7 +713,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
                 break;
             default:
-                if ($role === 'oth') {
+                if (empty($role)) {
                     $result['other']['presenters'][] = $presenter;
                 } elseif ($role === 'avustajat') {
                     $result['assistant']['presenters'][] = $presenter;
@@ -1009,6 +1021,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $name = (string)$nameAttrs->{'elokuva-elokreditoimatontekija-nimi'};
             }
 
+            // Remove not wanted roles here
+            foreach ($this->filteredRoles as $filter) {
+                if ($role === $filter) {
+                    $role = '';
+                    break;
+                }
+            }
             ++$idx;
             $result[] = [
                 'name' => $name,
