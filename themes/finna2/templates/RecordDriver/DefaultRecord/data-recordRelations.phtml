@@ -1,0 +1,9 @@
+<?php //Don't add START and END comments ?>
+<?php if (!empty($data)): ?>
+  <div class="truncate-field">
+    <?php foreach ($data as $link): ?>
+      <a href="<?=$this->recordLink()->related($link['link'], true, $this->driver->getSourceIdentifier());?>"><?=$this->escapeHtml($link['value'] ?: $this->translate($title));?></a>
+      <br />
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>
