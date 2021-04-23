@@ -678,7 +678,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             ]
         ];
 
-        foreach ($presenters as &$presenter) {
+        foreach ($presenters as $presenter) {
             $role = $presenter['role'] ?? '';
 
             switch ($presenter['type']) {
@@ -695,11 +695,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     if (!empty($presenter['uncredited'])
                         && $presenter['uncredited']
                     ) {
-                        $presenter['role'] = '';
                         $result['uncreditedPerformer']['presenters'][]
                             = $presenter;
                     } else {
-                        $presenter['role'] = '';
                         $result['performer']['presenters'][] = $presenter;
                     }
                 }
