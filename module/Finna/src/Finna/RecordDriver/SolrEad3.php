@@ -1106,6 +1106,63 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get all record links related to the current record. Each link is returned as
+     * array.
+     * NB: to use this method you must override it.
+     * Format:
+     * <code>
+     * array(
+     *        array(
+     *               'title' => label_for_title
+     *               'value' => link_name
+     *               'link'  => link_URI
+     *        ),
+     *        ...
+     * )
+     * </code>
+     *
+     * @return null|array
+     */
+    public function getAllRecordLinks()
+    {
+        $record = $this->getXmlRecord();
+
+        if (!isset($record->relations->relation)) {
+            return null;
+        }
+
+        $relations = [];
+        foreach ($record->relations->relation as $relation) {
+            $attr = $relation->attributes();
+            foreach (['encodinganalog', 'relationtype', 'href'] as $key) {
+                if (!isset($attr->{$key})) {
+                    continue 2;
+                }
+            }
+            if ((string)$attr->relationtype !== 'resourcerelation'
+                || !isset($relation->relationentry)
+                // This relation is shown via RecordDriverRelated-recommend module
+                // (see getRelatedRecords)
+                || (string)$attr->encodinganalog === self::RELATION_RECORD
+            ) {
+                continue;
+            }
+            $href = (string)$attr->href;
+            $label = (string)$relation->relationentry;
+            $relations[] = [
+                'title' => 'Related Materials',
+                'value' => $label ?: $href,
+                'link' => [
+                    'value' => $href,
+                    'type' => 'identifier',
+                    'filter' => ['datasource_str_mv' => $this->getDatasource()]
+                ]
+            ];
+        }
+        return $relations;
+    }
+
+    /**
      * Get the hierarchy parents associated with this item (empty if none).
      * The parents are listed starting from the root of the hierarchy,
      * i.e. the closest parent is at the end of the result array.
