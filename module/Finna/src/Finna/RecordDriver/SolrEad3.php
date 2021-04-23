@@ -1140,7 +1140,6 @@ class SolrEad3 extends SolrEad
                 $value = $title;
             }
             $relations[] = [
-                'title' => 'Related Materials',
                 'value' => $value,
                 'link' => [
                     'value' => $href,
