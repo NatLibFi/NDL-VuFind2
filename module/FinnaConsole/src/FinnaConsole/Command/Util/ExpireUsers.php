@@ -155,10 +155,10 @@ class ExpireUsers extends AbstractUtilCommand
             while ($e = $e->getPrevious()) {
                 $this->err("  Previous exception: " . $e->getMessage());
             }
-            exit(1);
+            return 1;
         }
 
-        return true;
+        return 0;
     }
 
     /**

@@ -1879,22 +1879,26 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             );
         }
 
-        $displayRequests = !isset($this->config['Holdings']['displayTotalHoldCount'])
-            || $this->config['Holdings']['displayTotalHoldCount'];
+        $inventoryTypes = $this->getInventoryTypes();
+        if (in_array('p_avail', $inventoryTypes)) {
+            $displayRequests
+                = !isset($this->config['Holdings']['displayTotalHoldCount'])
+                || $this->config['Holdings']['displayTotalHoldCount'];
 
-        // Two cases: if there aren't too many items, fetch everything and be done
-        // with it. Otherwise fetch only summary availability first.
-        $itemLimit = $this->config['Holdings']['itemLimit'] ?? 100;
-        $itemsResult = $this->makeRequest(
-            '/bibs/' . rawurlencode($id) . '/holdings/ALL/items',
-            [
-                'limit' => $itemLimit,
-                'expand' => 'due_date',
-            ]
-        );
-        if ($itemsResult) {
-            $totalItems = (int)$itemsResult->attributes()->total_record_count;
-            if ($totalItems <= $itemLimit) {
+            // Two cases: if there aren't too many items, fetch everything and be
+            // done with it. Otherwise fetch only summary availability first.
+            $itemLimit = $this->config['Holdings']['itemLimit'] ?? 100;
+            $itemsResult = $this->makeRequest(
+                '/bibs/' . rawurlencode($id) . '/holdings/ALL/items',
+                [
+                    'limit' => $itemLimit,
+                    'expand' => 'due_date',
+                ]
+            );
+
+            $totalItems = $itemsResult
+                ? (int)$itemsResult->attributes()->total_record_count : 0;
+            if ($itemsResult && $totalItems <= $itemLimit) {
                 $items = $this->getHoldingsItems(
                     $itemsResult,
                     $id,
@@ -1903,7 +1907,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     true
                 );
 
-                $result = [
+                $results = [
                     'holdings' => $items['items'],
                     'total' => $items['total'],
                 ];
@@ -1929,181 +1933,148 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     );
                     $summary['reservations'] = (int)$bib->requests ?? 0;
                 }
-                $result['holdings'][] = $summary;
+                $results['holdings'][] = $summary;
+            } else {
+                $total = 0;
+                $totalAvailable = 0;
+                $requests = 0;
+                $locations = [];
+                $holdings = [];
 
-                return $result;
-            }
-        }
-
-        $total = 0;
-        $totalAvailable = 0;
-        $requests = 0;
-        $locations = [];
-        $holdings = [];
-
-        // Summary holdings
-        $params = [
-            'expand' => implode(',', $this->getInventoryTypes())
-        ];
-        if ($displayRequests) {
-            $params['expand'] .= ',requests';
-        }
-        if ($bib = $this->makeRequest('/bibs/' . rawurlencode($id), $params)) {
-            $requests = (int)$bib->requests ?? 0;
-            $marc = new \File_MARCXML(
-                $bib->record->asXML(),
-                \File_MARCXML::SOURCE_STRING
-            );
-            $sort = 0;
-            $tmpl = [
-                'id' => (string)$bib->mms_id,
-                'source' => 'Solr',
-                'callnumber' => '',
-                'reserve' => 'N',
-            ];
-            if ($record = $marc->next()) {
-                // Physical
-                $physicalItems = $record->getFields('AVA');
-                foreach ($physicalItems as $field) {
-                    // Filter out suggestions for other records
-                    $mmsId = $this->getMarcSubfield($field, '0');
-                    if ($mmsId !== (string)$bib->mms_id) {
-                        continue;
-                    }
-                    $status = $this->getMarcSubfield($field, 'e');
-                    $libraryCode = $this->getMarcSubfield($field, 'b');
-                    $locationCode = $this->getMarcSubfield($field, 'j');
-                    $location = $this->getMarcSubfield($field, 'c');
-                    $items = $this->getMarcSubfield($field, 'f') ?: 0;
-                    $unavailable = $this->getMarcSubfield($field, 'g') ?: 0;
-                    $available = $items - $unavailable;
-                    $holdingId = $this->getMarcSubfield($field, '8');
-                    $total += $items;
-                    $totalAvailable += $available;
-                    $locations[$locationCode] = 1;
-                    switch ($status) {
-                    case 'available':
-                        $status = 'Available';
-                        break;
-                    case 'unavailable':
-                        $status = 'Not Available';
-                        break;
-                    case 'check_holdings':
-                        $status = '';
-                        break;
-                    }
-
-                    $holdings[] = [
-                        'id' => $holdingId,
-                        'source' => 'Solr',
-                        'availability' => $available,
-                        'status' => $status,
-                        'location' => $this->getTranslatableStringForCode(
-                            $locationCode,
-                            $location
-                        ),
-                        'location_code' => $locationCode,
-                        'reserve' => 'N',   // TODO: support reserve status
-                        'callnumber' => $this->getMarcSubfield($field, 'd'),
-                        'duedate' => null,
-                        'returnDate' => false, // TODO: support recent returns
-                        'barcode' => '',
-                        'holding_id' => $holdingId,
-                        'detailsGroupKey'
-                            => "$holdingId||$libraryCode||$locationCode",
-                        'sort' => $sort++
-                    ];
+                // Summary holdings
+                $params = [
+                    'expand' => 'p_avail'
+                ];
+                if ($displayRequests) {
+                    $params['expand'] .= ',requests';
                 }
-                // Electronic
-                $electronicItems = $record->getFields('AVE');
-                foreach ($electronicItems as $field) {
-                    $avail = $this->getMarcSubfield($field, 'e');
-                    $item = $tmpl;
-                    $item['availability'] = strtolower($avail) === 'available';
-                    // Use the following subfields for location:
-                    // m (Collection name)
-                    // i (Available for library)
-                    // d (Available for library)
-                    // b (Available for library)
-                    $location = [
-                        $this->getMarcSubfield($field, 'm') ?: 'Get full text'
+                $bib = $this->makeRequest('/bibs/' . rawurlencode($id), $params);
+                if ($bib) {
+                    $requests = (int)$bib->requests ?? 0;
+                    $marc = new \File_MARCXML(
+                        $bib->record->asXML(),
+                        \File_MARCXML::SOURCE_STRING
+                    );
+                    $sort = 0;
+                    $tmpl = [
+                        'id' => (string)$bib->mms_id,
+                        'source' => 'Solr',
+                        'callnumber' => '',
+                        'reserve' => 'N',
                     ];
-                    foreach (['i', 'd', 'b'] as $code) {
-                        if ($content = $this->getMarcSubfield($field, $code)) {
-                            $location[] = $content;
+                    if ($record = $marc->next()) {
+                        // Physical
+                        $physicalItems = $record->getFields('AVA');
+                        foreach ($physicalItems as $field) {
+                            // Filter out suggestions for other records
+                            $mmsId = $this->getMarcSubfield($field, '0');
+                            if ($mmsId !== (string)$bib->mms_id) {
+                                continue;
+                            }
+                            $status = $this->getMarcSubfield($field, 'e');
+                            $libraryCode = $this->getMarcSubfield($field, 'b');
+                            $locationCode = $this->getMarcSubfield($field, 'j');
+                            $location = $this->getMarcSubfield($field, 'c');
+                            $items = $this->getMarcSubfield($field, 'f') ?: 0;
+                            $unavailable = $this->getMarcSubfield($field, 'g') ?: 0;
+                            $available = $items - $unavailable;
+                            $holdingId = $this->getMarcSubfield($field, '8');
+                            $total += $items;
+                            $totalAvailable += $available;
+                            $locations[$locationCode] = 1;
+                            switch ($status) {
+                            case 'available':
+                                $status = 'Available';
+                                break;
+                            case 'unavailable':
+                                $status = 'Not Available';
+                                break;
+                            case 'check_holdings':
+                                $status = '';
+                                break;
+                            }
+
+                            $holdings[] = [
+                                'id' => $holdingId,
+                                'source' => 'Solr',
+                                'availability' => $available,
+                                'status' => $status,
+                                'location' => $this->getTranslatableStringForCode(
+                                    $locationCode,
+                                    $location
+                                ),
+                                'location_code' => $locationCode,
+                                'reserve' => 'N',   // TODO: support reserve status
+                                'callnumber' => $this->getMarcSubfield($field, 'd'),
+                                'duedate' => null,
+                                'returnDate' => false, // TODO: support recent return
+                                'barcode' => '',
+                                'holding_id' => $holdingId,
+                                'detailsGroupKey'
+                                    => "$holdingId||$libraryCode||$locationCode",
+                                'sort' => $sort++
+                            ];
                         }
                     }
-                    $item['location'] = implode(' - ', $location);
-                    $item['callnumber'] = $this->getMarcSubfield($field, 't');
-                    $url = $this->getMarcSubfield($field, 'u');
-                    if (preg_match('/^https?:\/\//', $url)) {
-                        $item['locationhref'] = $url;
-                    }
-                    $item['status'] = $this->getMarcSubfield($field, 's')
-                        ?: null;
-                    if ($note = $this->getMarcSubfield($field, 'n')) {
-                        $item['item_notes'] = [$note];
-                    }
-                    $item['sort'] = $sort++;
-                    $holdings[] = $item;
-                }
-                // Digital
-                $deliveryUrl
-                    = $this->config['Holdings']['digitalDeliveryUrl'] ?? '';
-                $digitalItems = $record->getFields('AVD');
-                if ($digitalItems && !$deliveryUrl) {
-                    $this->logWarning(
-                        'Digital items exist for ' . (string)$bib->mms_id
-                        . ', but digitalDeliveryUrl not set -- unable to'
-                        . ' generate links'
-                    );
-                }
-                foreach ($digitalItems as $field) {
-                    $item = $tmpl;
-                    unset($item['callnumber']);
-                    $item['availability'] = true;
-                    $item['location'] = $this->getMarcSubfield($field, 'e');
-                    // Using subfield 'd' ('Repository Name') as callnumber
-                    $item['callnumber'] = $this->getMarcSubfield($field, 'd');
-                    if ($deliveryUrl) {
-                        $item['locationhref'] = str_replace(
-                            '%%id%%',
-                            $this->getMarcSubfield($field, 'b'),
-                            $deliveryUrl
-                        );
-                    }
-                    $item['sort'] = $sort++;
-                    $holdings[] = $item;
-                }
-            }
-            usort($holdings, [$this, 'statusSortFunction']);
+                    usort($holdings, [$this, 'statusSortFunction']);
 
-            // Return locations to strings and add flags to skip items list
-            foreach ($holdings as &$item) {
-                $item['location'] = $this->translate($item['location']);
-                $item['skipItemsList'] = true;
+                    // Return locations to strings and add flags to skip items list
+                    foreach ($holdings as &$item) {
+                        $item['location'] = $this->translate($item['location']);
+                        $item['skipItemsList'] = true;
+                    }
+                    unset($item);
+                }
+
+                // Add summary
+                $summary = [
+                    'available' => $totalAvailable,
+                    'total' => $total,
+                    'locations' => count($locations),
+                    'availability' => null,
+                    'callnumber' => null,
+                    'location' => '__HOLDINGSSUMMARYLOCATION__'
+                ];
+                if ($displayRequests) {
+                    $summary['reservations'] = $requests;
+                }
+                $holdings[] = $summary;
+
+                // The AVA field might be borked...
+                $total = max($total, count($holdings));
+
+                $results = compact('holdings', 'total');
             }
-            unset($item);
+        } else {
+            $results = [
+                'holdings' => [],
+                'total' => 0
+            ];
         }
 
-        // The AVA field might be borked...
-        $total = max($total, count($holdings));
-
-        // Add summary
-        $summary = [
-           'available' => $totalAvailable,
-           'total' => $total,
-           'locations' => count($locations),
-           'availability' => null,
-           'callnumber' => null,
-           'location' => '__HOLDINGSSUMMARYLOCATION__'
-        ];
-        if ($displayRequests) {
-            $summary['reservations'] = $requests;
+        // Fetch also digital and/or electronic inventory if configured
+        if (in_array('d_avail', $inventoryTypes)
+            || in_array('e_avail', $inventoryTypes)
+        ) {
+            // No need for physical items
+            $key = array_search('p_avail', $inventoryTypes);
+            if (false !== $key) {
+                unset($inventoryTypes[$key]);
+            }
+            $statuses = $this->getStatusesForInventoryTypes(
+                (array)$id,
+                $inventoryTypes
+            );
+            $electronic = [];
+            foreach ($statuses as $record) {
+                foreach ($record as $status) {
+                    $electronic[] = $status;
+                }
+            }
+            $results['electronic_holdings'] = $electronic;
         }
-        $holdings[] = $summary;
 
-        return compact('total', 'holdings');
+        return $results;
     }
 
     /**
@@ -2750,6 +2721,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                         }
                         $item['status'] = $this->getMarcSubfield($field, 's')
                             ?: null;
+                        if ($item['status']) {
+                            $item['availabilityInfo']['coverage']
+                                = $item['status'];
+                        }
                         if ($note = $this->getMarcSubfield($field, 'n')) {
                             $item['item_notes'] = [$note];
                         }

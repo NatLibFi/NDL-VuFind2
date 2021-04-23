@@ -135,7 +135,7 @@ class VerifyResourceMetadata extends AbstractUtilCommand
         $resources = $this->resourceTable->select($callback);
         if (!$resources) {
             $this->msg('No resources found');
-            return true;
+            return 0;
         }
 
         $count = 0;
@@ -178,6 +178,6 @@ class VerifyResourceMetadata extends AbstractUtilCommand
             "Resource metadata verification completed with $count resources"
             . " processed, $fixed fixed"
         );
-        return true;
+        return 0;
     }
 }

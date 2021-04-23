@@ -1,9 +1,10 @@
+<?php $titleHtml = $this->transEsc('service_' . ($link['service_type'] ?? '') . '_' . ($link['title'] ?? ''), [], $this->transEscWithPrefix('service_', $link['title'] ?? '')); ?>
 <?php if (!empty($link['href'])): ?>
   <a href="<?=$this->escapeHtmlAttr($link['href'])?>" title="<?=$this->transEsc($link['service_type'] ?? '')?>"<?=!empty($link['access']) ? ' class="access-' . $link['access'] . '"':''?> target="_blank">
-    <i class="fa fa-external-link" aria-hidden="true"></i> <?=$this->escapeHtml($link['title'] ?? '')?>
+    <i class="fa fa-external-link" aria-hidden="true"></i> <?=$titleHtml?>
   </a>
 <?php else: ?>
-  <?=$this->escapeHtml($link['title'] ?? '')?>
+  <?=$titleHtml?>
 <?php endif; ?>
 <?=$this->context($this)->renderInContext('ajax/resolverLinksCoverage.phtml', ['link' => $link]); ?>
 <?php if (!empty($link['notes'])): ?>
