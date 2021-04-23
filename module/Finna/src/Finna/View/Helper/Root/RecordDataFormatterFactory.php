@@ -599,7 +599,8 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Related Materials', 'getOtherRelatedRecords', 'data-recordRelations.phtml',
+            'Related Materials', 'getOtherRelatedRecords',
+            'data-recordRelations.phtml',
             [
                 'context' => ['class' => 'relatedMaterials']
             ]
