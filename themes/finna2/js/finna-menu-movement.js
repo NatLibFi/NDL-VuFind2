@@ -54,7 +54,7 @@ FinnaMovement.prototype.setChildData = function setChildData() {
   var i = 0;
   _.menuElements = [];
 
-  var FOCUSABLE_ELEMENTS = ['a[href]', 'area[href]', 'input[type=radio]:checked', 'input:not([disabled]):not([type="hidden"]):not([aria-hidden]):not([type=radio])', 'select:not([disabled]):not([aria-hidden])', 'textarea:not([disabled]):not([aria-hidden])', 'button:not([disabled]):not([aria-hidden])', 'iframe', 'object', 'embed', '[contenteditable]', '[tabindex]:not([tabindex^="-"])'];
+  var FOCUSABLE_ELEMENTS = ['a[href]', 'area[href]', 'input[type=radio]:checked', 'input:not([disabled]):not([type="hidden"]):not([aria-hidden]):not([type=radio])', 'select:not([disabled]):not([aria-hidden])', 'textarea:not([disabled]):not([aria-hidden])', 'button:not([disabled]):not([aria-hidden]):not(.tooltip-myaccount)', 'iframe', 'object', 'embed', '[contenteditable]', '[tabindex]:not([tabindex^="-"])'];
 
   var nodes = _.menuRootElement[0].querySelectorAll(FOCUSABLE_ELEMENTS);
   var children = [].slice.apply(nodes);
