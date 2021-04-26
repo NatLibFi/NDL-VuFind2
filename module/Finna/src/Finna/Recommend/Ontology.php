@@ -462,7 +462,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     protected function skipFromFintoSearch(string $term): bool
     {
         return empty($term)
-            || 0 === strpos($term, 'topic_uri_str_mv:')
+            || 0 === strpos($term, 'topic_id_str_mv:')
             || in_array($term, ['AND', 'OR', 'NOT']);
     }
 
@@ -486,7 +486,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         }
 
         // Do not add the result if the URI already exists in the original search.
-        $recommendedUri = 'topic_uri_str_mv:' . $fintoResult['uri'];
+        $recommendedUri = 'topic_id_str_mv:' . $fintoResult['uri'];
         if ($key = array_search($recommendedUri, $this->lookforTerms)) {
             return;
         }
@@ -502,7 +502,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         }
         // Remove possible URI of original term.
         if ($termUri) {
-            $termUri = 'topic_uri_str_mv:' . $termUri;
+            $termUri = 'topic_id_str_mv:' . $termUri;
             if ($key = array_search($termUri, $recommendedLookforTerms)) {
                 unset($recommendedLookforTerms[$key]);
             }
