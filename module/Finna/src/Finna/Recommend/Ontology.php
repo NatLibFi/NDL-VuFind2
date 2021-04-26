@@ -520,7 +520,11 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // Set up all link parameters.
         $params = $this->request->toArray();
         $params['lookfor'] = $recommendedLookfor;
-        unset($params['mod'], $params['searchId'], $params['resultTotal']);
+        foreach (['mod', 'searchId', 'resultTotal'] as $key) {
+            if (isset($params[$key])) {
+                unset($params[$key]);
+            }
+        }
         $href = $this->urlHelper->__invoke(
             'search-results', [], ['query' => $params]
         );
