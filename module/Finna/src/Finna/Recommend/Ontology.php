@@ -498,7 +498,9 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         $recommendedLookforTerms = $this->lookforTerms;
         // Replace original term with recommended term, if different.
         if ($term !== $fintoResult['prefLabel']) {
-            while (false !== ($key = array_search($term, $recommendedLookforTerms))) {
+            while (
+                false !== ($key = array_search($term, $recommendedLookforTerms))
+            ) {
                 $recommendedLookforTerms[$key] = $fintoResult['prefLabel'];
             }
         }
