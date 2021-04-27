@@ -729,6 +729,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                     isset($entry['Scope']) ?
                     "mikromarc_" . $this->getRequestGroupKey($entry['Scope'])
                     : '',
+                'last_pickup_date' => $this->dateConverter->convertToDisplayDate(
+                    'U', strtotime($entry['ResHeldUntil'])
+                )
             ];
             if (!empty($entry['MarcRecordTitle'])) {
                 $hold['title'] = $entry['MarcRecordTitle'];
