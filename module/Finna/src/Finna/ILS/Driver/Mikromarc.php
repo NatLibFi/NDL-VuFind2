@@ -733,8 +733,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             if (!empty($entry['ResHeldUntil'])) {
                 $hold['last_pickup_date']
                     = $this->dateConverter->convertToDisplayDate(
-                    'U', strtotime($entry['ResHeldUntil'])
-                );
+                        'U', strtotime($entry['ResHeldUntil'])
+                    );
             }
             if (!empty($entry['MarcRecordTitle'])) {
                 $hold['title'] = $entry['MarcRecordTitle'];
