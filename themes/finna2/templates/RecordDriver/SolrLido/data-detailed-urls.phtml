@@ -3,14 +3,14 @@
 <?php foreach ($data as $url): ?>
     <?php
         $displayValue = $url['value'] ?? $url['url'];
-        if (!empty($url['label'])) {
-            $displayValue .= " ({$url['label']})";
+        if (!empty($url['desc'])) {
+            $displayValue .= " ({$url['desc']})";
         }
     ?>
     <div class="detailed-url">
         <a href="<?=$this->escapeHtmlAttr($url['url'])?>" target="_blank"><?=$this->escapeHtml($displayValue)?></a>
-        <?php if (!empty($url['afterUrl'])): ?>
-            <div><?=$this->escapeHtml($url['afterUrl'])?></div>
+        <?php if (!empty($url['info'])): ?>
+            <div><?=$this->escapeHtml($url['info'])?></div>
         <?php endif; ?>
     </div>
 <?php endforeach; ?>
