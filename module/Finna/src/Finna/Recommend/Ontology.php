@@ -496,9 +496,11 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // Create the recommendation search link.
         // Create a copy of the original search terms.
         $recommendedLookforTerms = $this->lookforTerms;
-        // Replace original term with recommended term.
-        while (false !== ($key = array_search($term, $recommendedLookforTerms))) {
-            $recommendedLookforTerms[$key] = $fintoResult['prefLabel'];
+        // Replace original term with recommended term, if different.
+        if ($term !== $fintoResult['prefLabel']) {
+            while (false !== ($key = array_search($term, $recommendedLookforTerms))) {
+                $recommendedLookforTerms[$key] = $fintoResult['prefLabel'];
+            }
         }
         // Remove possible URI of original term.
         if ($termUri) {
