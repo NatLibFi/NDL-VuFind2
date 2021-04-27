@@ -1078,15 +1078,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get the web resource link from the record or false.
-     *
-     * @return mixed
-     */
-    public function getWebResource() {
-        return $this->getWebResources()[0]['url'] ?? false;
-    }
-
-    /**
      * Get the web resource links from the record.
      *
      * @return array
