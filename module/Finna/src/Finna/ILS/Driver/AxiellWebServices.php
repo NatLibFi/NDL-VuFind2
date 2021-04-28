@@ -1575,7 +1575,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
             if ('onlinePayment' === $function) {
-                $functionConfig['exactBalanceRequired'] = true;
+                if (!isset($functionConfig['exactBalanceRequired'])) {
+                    $functionConfig['exactBalanceRequired'] = true;
+                }
+                $functionConfig['creditUnsupported'] = true;
             }
         } else {
             $functionConfig = false;

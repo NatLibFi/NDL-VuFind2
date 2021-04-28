@@ -221,7 +221,8 @@ trait FinnaOnlinePaymentControllerTrait
             && $payableOnline['payable'] && $payableOnline['amount']
         ) {
             // Payment started, check that fee list has not been updated
-            if (($paymentConfig['exactBalanceRequired'] ?? true)
+            if ((($paymentConfig['exactBalanceRequired'] ?? true)
+                || !empty($paymentConfig['creditUnsupported']))
                 && $this->checkIfFinesUpdated($patron, $payableOnline['amount'])
             ) {
                 // Fines updated, redirect and show updated list.

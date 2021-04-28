@@ -197,6 +197,9 @@ currency = 'EUR'
 ; expression enclosed in slashes (e.g. '/^Lasku - Lasku\b/')
 nonPayable[] = '/^Lasku - Lasku\b/'
 nonPayable[] = '/^Muu maksu/'
+; Whether the paid amount must match the payable amount. Default is true. If false,
+; payments of less than the full amount are accepted.
+;exactBalanceRequired = false
 
 ; valid value is 'driver'.
 [updateTransactionHistoryState]
