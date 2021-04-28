@@ -1674,11 +1674,11 @@ showLabels[Primo] = true
 ;popup = false
 ; How long should the models be cached, defaults at 1 week
 modelCacheTime = 604800
-; Ambient light intensity, defaults at 2
-ambientIntensity = 2
-; Hemisphere light intensity, defaults at 1
-hemisphereIntensity = 1
-; Angle to adjust padding between border of viewer and model, defaults at 35
+; Ambient light intensity
+ambientIntensity = 1
+; Hemisphere light intensity
+hemisphereIntensity = 0.3
+; Angle to adjust padding between border of viewer and model
 viewerPaddingAngle = 35
 ; If developer is uncommented and true, will display additional data on the viewer
 ;debug = true
