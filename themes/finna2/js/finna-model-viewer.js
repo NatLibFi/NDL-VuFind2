@@ -302,7 +302,8 @@ ModelViewer.prototype.initMesh = function initMesh()
 {
   var _ = this;
   var meshMaterial;
-
+  var distanceAdjustment;
+  var newBox = new THREE.Box3();
   if (!_.loaded) {
     _.vertices = 0;
     _.triangles = 0;
@@ -328,31 +329,39 @@ ModelViewer.prototype.initMesh = function initMesh()
           _.vertices += +geo.attributes.position.count;
           _.triangles += +geo.index.count / 3;
         }
-        var newBox = new THREE.Box3().setFromObject(obj);
-  
-        //Calculate new center position if the bounding box is not centered
-        var newCenterVector = new THREE.Vector3();
-        newBox.getCenter(newCenterVector);
-        newCenterVector.negate();
-        obj.position.set(newCenterVector.x, newCenterVector.y, newCenterVector.z);
+        newBox.expandByObject(obj);
   
         //Calculate the distance for camera, so the object is properly adjusted in scene
-        var objectHeight = (newBox.max.y - newBox.min.y) * 1.01;
-        var objectWidth = (newBox.max.x - newBox.min.x) * 1.01;
-        var result = 0;
-        if (objectHeight >= objectWidth) {
-          result = objectHeight / getTanDeg(_.viewerPaddingAngle);
-        } else {
-          result = objectWidth / getTanDeg(_.viewerPaddingAngle);
-        }
-        _.cameraPosition = result;
-        _.camera.position.set(0, 0, _.cameraPosition);
+        
         if (_.debug) {
           var box = new THREE.BoxHelper( obj, 0xffff00 );
           _.scene.add( box );
         }
       }
     });
+    // Next part gets the center vector, so we can move it properly towards 0
+    var newCenterVector = new THREE.Vector3();
+    newBox.getCenter(newCenterVector);
+    newCenterVector.negate();
+    _.scene.traverse(function centerObjects(obj) {
+      if (obj.type === 'Mesh') {
+        obj.position.x += newCenterVector.x;
+        obj.position.y += newCenterVector.y;
+        obj.position.z += newCenterVector.z;
+      }
+    });
+
+    // Set camera and position to center from the newly created object
+    var objectHeight = (newBox.max.y - newBox.min.y) * 1.01;
+    var objectWidth = (newBox.max.x - newBox.min.x) * 1.01;
+    var result = 0;
+    if (objectHeight >= objectWidth) {
+      result = objectHeight / getTanDeg(_.viewerPaddingAngle);
+    } else {
+      result = objectWidth / getTanDeg(_.viewerPaddingAngle);
+    }
+    _.cameraPosition = result;
+    _.camera.position.set(0, 0, _.cameraPosition);
     _.loaded = true;
   } else {
     _.camera.position.set(0, 0, _.cameraPosition);
