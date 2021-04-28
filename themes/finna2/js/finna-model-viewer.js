@@ -10,9 +10,9 @@ function ModelViewer(trigger, options, scripts)
   if (typeof options.popup === 'undefined' || options.popup === false) {
     _.inlineId = 'inline-viewer';
   }
-  _.debug = options.debug || false;
-  _.ambientIntensity = +options.ambientIntensity || 2;
-  _.hemisphereIntensity = +options.hemisphereIntensity || 1;
+  _.debug = options.debug || false;
+  _.ambientIntensity = +options.ambientIntensity || 1;
+  _.hemisphereIntensity = +options.hemisphereIntensity || 0.3;
   _.viewerPaddingAngle = +options.viewerPaddingAngle || 30;
 
   _.loadInfo = options.modelload;
