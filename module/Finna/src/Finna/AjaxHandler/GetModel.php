@@ -32,9 +32,18 @@ use Laminas\Config\Config;
 use Laminas\Http\Request;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Cache\Manager as CacheManager;
-use VuFind\Record\Loader;
+use VuFind\Record\Loader as RecordLoader;
 use VuFind\Session\Settings as SessionSettings;
 
+/**
+ * GetModel AJAX handler
+ *
+ * @category VuFind
+ * @package  AJAX
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
+ * @link     https://vufind.org/wiki/development Wiki
+ */
 class GetModel extends \VuFind\AjaxHandler\AbstractBase
     implements \VuFindHttp\HttpServiceAwareInterface
 {
@@ -64,9 +73,9 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Loader
      *
-     * @var Loader
+     * @var RecordLoader
      */
-    protected $loader;
+    protected $recordLoader;
 
     /**
      * File loader
@@ -92,16 +101,16 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Constructor
      * 
-     * @param SessionSettings $ss Session sett
+     * @param SessionSettings $ss Session settings
      */
     public function __construct(
-        SessionSettings $ss, CacheManager $cm, Config $config, Loader $loader,
+        SessionSettings $ss, CacheManager $cm, Config $config, RecordLoader $recordLoader,
         string $domainUrl, FileLoader $fileLoader, \Laminas\Router\Http\TreeRouteStack $router
     ) {
         $this->cacheManager = $cm;
         $this->sessionSettings = $ss;
         $this->config = $config;
-        $this->recordLoader = $loader;
+        $this->recordLoader = $recordLoader;
         $this->domainUrl = $domainUrl;
         $this->fileLoader = $fileLoader;
         $this->router = $router;
@@ -121,7 +130,6 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         $id = $params->fromPost('id', $params->fromQuery('id'));
         $index = $params->fromPost('index', $params->fromQuery('index'));
         $format = $params->fromPost('format', $params->fromQuery('format'));
-        $download = $params->fromPost('download', $params->fromQuery('download'));
 
         if (!$id || !$index || !$format) {
             return json_encode(['status' => self::STATUS_HTTP_BAD_REQUEST]);
@@ -131,7 +139,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
             ->getCacheDir();
         $fileName = urlencode($id) . '-' . $index . '.' . $format;
         $localFile = "$cacheDir/$fileName";
-        $maxAge = $this->config->Content->modelCacheTime ?? 604800;
+        $maxAge = $this->config->Models->modelCacheTime ?? 604800;
         // Check if the model has been cached
         if (!is_readable($localFile) || filemtime($localFile) < $maxAge * 60) {
             $driver = $this->recordLoader->load($id, 'Solr');

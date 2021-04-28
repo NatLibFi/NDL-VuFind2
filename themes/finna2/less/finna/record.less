@@ -220,11 +220,11 @@ a.authority {
             transform: translate(-50%,-50%);
             bottom: 20%;
             left: 50%;
+            z-index: 2;
           }
           &.show-icon {
-            .finna-3d {
+            >.finna-3d {
               display: block;
-              height: 600px;
               background-color: #e6e6e6;
               &::before {
                 color: #969696;
@@ -233,6 +233,11 @@ a.authority {
                 font-size: 130px;
                 margin-left: 0;
                 margin-top: 0;
+              }
+              &::after {
+                content: '';
+                display: block;
+                padding-bottom: 100%;
               }
             }
             img {
@@ -885,14 +890,6 @@ a.authority {
   margin-top: 1em;
 }
 
-a.model-trigger {
-  display: flex;
-  align-items: center;
-  .model-preview {
-    
-  }
-}
-
 .model-details {
   .model-download {
     i {
@@ -906,7 +903,7 @@ a.model-trigger {
   min-height: 250px;
   .viewer-options {
     position: absolute;
-    top: 0;
+    top: 20px;
     right: 0;
     margin-top: 4px;
     margin-right: 4px;
@@ -922,7 +919,7 @@ a.model-trigger {
       border: none;
       padding: 2px;
       background-color: white;
-      color: black;
+      color: #1f1f1f;
       font-size: 20px;
     }
     .viewer-statistics {
@@ -932,6 +929,9 @@ a.model-trigger {
         th {
           background-color: #1f1f1f;
           color: white;
+        }
+        td {
+          color: #1f1f1f;
         }
       }
       .viewer-btn {

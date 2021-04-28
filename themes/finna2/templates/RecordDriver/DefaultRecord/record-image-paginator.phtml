@@ -81,7 +81,7 @@
           <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
           <?php if (!$isList): ?>
             <div class="iconlabel finna-3d"></div>
-            <div class="show-3d btn btn-primary">Näytä 3D</div>
+            <div class="show-3d btn btn-primary"><?=$this->transEsc('Display 3D');?></div>
           <?php endif; ?>
           <div class="paginator-info"><span class="image-index"></span></div>
           <img src="<?=$this->imageSrc()->getDataPixel()?>" data-src="<?=$this->url('cover-unavailable')?>" class="recordcover<?= ($images[0]['pdf'] ?? false) ? ' pdf-cover' : ''?>" alt="<?=$this->transEsc('No Cover Image')?>"/>

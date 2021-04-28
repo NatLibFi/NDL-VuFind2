@@ -7,13 +7,14 @@ function ModelViewer(trigger, options, scripts)
   var _ = this;
   _.trigger = $(trigger);
   _.texturePath = options.texturePath;
-  _.parentId = options.parentCanvas;
-  if (options.inlineId) {
-    _.inlineId = options.inlineId;
+  if (typeof options.popup === 'undefined' || options.popup === false) {
+    _.inlineId = 'inline-viewer';
   }
-  if (options.debug) {
-    _.debug = options.debug;
-  }
+  _.debug = options.debug || false;
+  _.ambientIntensity = +options.ambientIntensity || 2;
+  _.hemisphereIntensity = +options.hemisphereIntensity || 1;
+  _.viewerPaddingAngle = +options.viewerPaddingAngle || 30;
+
   _.loadInfo = options.modelload;
   _.loaded = false;
   var modal = $('#model-modal').find('.model-wrapper').first().clone();
@@ -38,7 +39,7 @@ function ModelViewer(trigger, options, scripts)
       finna.layout.loadScripts(scripts, function onScriptsLoaded() {
         if (!_.root) {
           // Lets create required html elements
-          _.canvasParent = popup.content.find('.' + _.parentId);
+          _.canvasParent = popup.content.find('.model-canvas-wrapper');
           _.informations = {};
           _.root = popup.content.find('.model-viewer');
           _.controlsArea = _.root.find('.viewer-controls');
@@ -340,9 +341,9 @@ ModelViewer.prototype.initMesh = function initMesh()
         var objectWidth = (newBox.max.x - newBox.min.x) * 1.01;
         var result = 0;
         if (objectHeight >= objectWidth) {
-          result = objectHeight / getTanDeg(35);
+          result = objectHeight / getTanDeg(_.viewerPaddingAngle);
         } else {
-          result = objectWidth / getTanDeg(35);
+          result = objectWidth / getTanDeg(_.viewerPaddingAngle);
         }
         _.cameraPosition = result;
         _.camera.position.set(0, 0, _.cameraPosition);
@@ -366,11 +367,11 @@ ModelViewer.prototype.initMesh = function initMesh()
 ModelViewer.prototype.createLights = function createLights()
 {
   var _ = this;
-
+  
   // Ambient light basically just is there all the time
-  var ambientLight = new THREE.AmbientLight( 0xFFFFFF, 0.3 ); // soft white light
+  var ambientLight = new THREE.AmbientLight( 0xFFFFFF, _.ambientIntensity ); // soft white light
   _.scene.add(ambientLight);
-  var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 2.6 );
+  var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, _.hemisphereIntensity );
   _.scene.add( light );
 };
 

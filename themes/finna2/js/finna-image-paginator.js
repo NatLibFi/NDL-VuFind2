@@ -211,7 +211,6 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
       _.trigger.trigger('removeclick.finna');
       _.trigger.on('click', function preventStuff(e) {
         e.preventDefault();
-        e.stopPropagation();
       });
     });
     _.trigger.on('image-show', function hideSelf() {

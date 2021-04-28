@@ -73,19 +73,26 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected $displayableModelFormats = ['gltf', 'glb'];
 
+
+    /**
+     * Recognized model viewer settings
+     * 
+     * @var array
+     */
+    protected $modelViewerSettings = [
+        'popup',
+        'ambientIntensity',
+        'hemisphereIntensity',
+        'viewerPaddingAngle',
+        'debug'
+    ];
+    
     /**
      * Images cache
      *
      * @var array
      */
     protected $cachedImages;
-
-    /**
-     * Models cache
-     *
-     * @var array
-     */
-    protected $modelsCache;
 
     /**
      * Constructor
@@ -484,9 +491,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModels(): array
     {
-        if (null !== $this->modelsCache) {
-            return $this->modelsCache;
-        }
         $models = [];
         $i = 0;
         foreach ($this->getXmlRecord()->xpath(
@@ -521,7 +525,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
             $i++;
         }
-        return $this->modelsCache = $models;
+        return $models;
     }
 
     /**
@@ -531,12 +535,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModelSettings(): array
     {
-        $settings = ['parentCanvas' => 'model-canvas-wrapper'];
-        if (!empty($this->recordConfig->Models->inlineId)) {
-            $settings['inlineId'] = $this->recordConfig->Models->inlineId;
-        }
-        if (!empty($this->recordConfig->Models->debug)) {
-            $settings['debug'] = $this->recordConfig->Models->debug;
+        $settings = [];
+        $iniData = $this->recordConfig->Models ?? [];
+        foreach ($this->modelViewerSettings as $setting) {
+            if (!empty($iniData->$setting)) {
+                $settings[$setting] = $iniData->$setting;
+            }
         }
         return $settings;
     }
