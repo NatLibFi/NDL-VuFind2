@@ -1,0 +1,12 @@
+<?php
+  $__attributes = $this->htmlAttributes($attributes ?? []);
+  if (isset($label)) {
+    $__attributes['data-label'] = $label;
+  }
+  if (isset($rows)) {
+    $__attributes['data-rows'] = $rows;
+  }
+?>
+<div<?= $__attributes->add('class', ['finna-truncate', 'truncate-field']) ?>>
+  <?= $content ?? '' ?>
+</div>
