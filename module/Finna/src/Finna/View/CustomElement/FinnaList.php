@@ -49,6 +49,16 @@ class FinnaList extends AbstractBase
     }
 
     /**
+     * FinnaList constructor.
+     *
+     * @param ?array $options Options
+     */
+    public function __construct(?array $options = [])
+    {
+        parent::__construct($options, true);
+    }
+
+    /**
      * Get default values for view model variables.
      *
      * @return array
