@@ -115,17 +115,17 @@ abstract class AbstractBase implements CustomElementInterface
         $variables = $this->getDefaultVariableValues();
 
         // Try to set variable values from attributes, if defined by subclass.
-        foreach ($this->getVariableAttributes() as $name) {
-            if (array_key_exists($name, $attributes)) {
-                $variables[$name] = $attributes[$name];
+        foreach ($this->getVariableAttributes() as $attributeName => $variableName) {
+            if (array_key_exists($attributeName, $attributes)) {
+                $variables[$variableName] = $attributes[$attributeName];
             }
         }
 
         // Try to set variable values from options, if defined by subclass.
-        // Option values overwrite attribute values for variables.
-        foreach ($this->getVariableOptions() as $name) {
-            if (array_key_exists($name, $options)) {
-                $variables[$name] = $options[$name];
+        // Option values overwrite attribute values when setting variables.
+        foreach ($this->getVariableOptions() as $optionName => $variableName) {
+            if (array_key_exists($optionName, $options)) {
+                $variables[$variableName] = $options[$optionName];
             }
         }
 
@@ -157,7 +157,8 @@ abstract class AbstractBase implements CustomElementInterface
     /**
      * Get names of attributes to set as view model variables.
      *
-     * @return array
+     * @return array Keyed array with attribute names as keys and variable names as
+     *               values
      */
     protected function getVariableAttributes(): array
     {
@@ -167,7 +168,8 @@ abstract class AbstractBase implements CustomElementInterface
     /**
      * Get names of options to set as view model variables.
      *
-     * @return array
+     * @return array Keyed array with option names as keys and variable names as
+     *               values
      */
     protected function getVariableOptions(): array
     {
