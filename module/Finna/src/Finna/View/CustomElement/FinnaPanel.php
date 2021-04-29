@@ -59,6 +59,11 @@ class FinnaPanel extends AbstractBase
 
         $collapsible = $this->attributes['collapsible'] ?? true;
 
+        if ($collapsible) {
+            $collapseId = $this->attributes['collapse-id'] ?? uniqid('collapse-');
+            $this->viewModel->setVariable('collapseId', $collapseId);
+        }
+
         $heading = $this->dom->find('finna-panel-heading');
         if ($heading = $heading[0] ?? false) {
             $this->viewModel->setVariable(
@@ -73,17 +78,12 @@ class FinnaPanel extends AbstractBase
             $this->viewModel->setVariable('headingLevel', $headingLevel);
             $headingTag = $headingAttributes['htag'] ?? true;
             $this->viewModel->setVariable('headingTag', $headingTag);
+            $heading->getParent()->removeChild($heading->id());
         }
 
-        $content = $this->dom->find('finna-panel-content');
-        if ($content = $content[0] ?? false) {
-            $this->viewModel->setVariable('content', $content->innerHTML());
-            $contentAttributes = $content->getAttributes();
-            if ($collapsible) {
-                $collapseId = $contentAttributes['id'] ?? uniqid('collapse-');
-                $this->viewModel->setVariable('collapseId', $collapseId);
-            }
-        }
+        $this->viewModel->setVariable(
+            'content', $this->dom->firstChild()->innerHTML()
+        );
 
         $this->viewModel->setTemplate(
             'components/molecules/containers/finna-panel/finna-panel'
