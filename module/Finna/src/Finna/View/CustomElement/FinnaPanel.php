@@ -103,10 +103,11 @@ class FinnaPanel extends AbstractBase
     /**
      * Get names of attributes to set as view model variables.
      *
-     * @return array
+     * @return array Keyed array with attribute names as keys and variable names as
+     *               values
      */
     protected function getVariableAttributes(): array
     {
-        return ['collapsed'];
+        return ['collapsed' => 'collapsed'];
     }
 }

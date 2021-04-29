@@ -56,23 +56,35 @@ class FinnaList extends AbstractBase
     protected function getDefaultVariableValues(): array
     {
         return [
-            'view' => 'grid',
-            'description' => true,
-            'title' => true,
-            'date' => false,
-            'allowCopy' => true,
-            'limit' => '6',
-            'showAllLink' => true,
+            'view'         => 'grid',
+            'description'  => true,
+            'title'        => true,
+            'date'         => false,
+            'allowCopy'    => true,
+            'limit'        => '6',
+            'showAllLink'  => true,
+            'headingLevel' => 2
         ];
     }
 
     /**
      * Get names of attributes to set as view model variables.
      *
-     * @return array
+     * @return array Keyed array with attribute names as keys and variable names as
+     *               values
      */
     protected function getVariableAttributes(): array
     {
-        return array_merge(['id'], array_keys($this->getDefaultVariableValues()));
+        return [
+            'id'            => 'id',
+            'view'          => 'view',
+            'description'   => 'description',
+            'title'         => 'title',
+            'date'          => 'date',
+            'allow-copy'    => 'allowCopy',
+            'limit'         => 'limit',
+            'show-all-link' => 'showAllLink',
+            'heading-level' => 'headingLevel'
+        ];
     }
 }
