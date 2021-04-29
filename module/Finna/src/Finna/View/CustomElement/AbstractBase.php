@@ -30,6 +30,7 @@ namespace Finna\View\CustomElement;
 use Laminas\View\Model\ModelInterface;
 use Laminas\View\Model\ViewModel;
 use PHPHtmlParser\Dom;
+use PHPHtmlParser\Options;
 
 /**
  * Abstract base custom element
@@ -93,7 +94,10 @@ abstract class AbstractBase implements CustomElementInterface
 
         // If outer HTML is set, set up the DOM object and process attributes.
         if (isset($options['outerHTML'])) {
-            $dom = (new Dom())->loadStr($options['outerHTML']);
+            $dom = (new Dom())->loadStr(
+                $options['outerHTML'],
+                (new Options())->setCleanupInput(false)
+            );
             if ($dom->countChildren() === 1
                 && $dom->firstChild()->getTag()->name() === $this->getName()
             ) {
