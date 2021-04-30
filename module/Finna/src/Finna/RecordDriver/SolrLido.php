@@ -1098,14 +1098,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
                 $tmp['url'] = $url;
                 if (!empty($work->displayObject)) {
-                    $tmp['value'] = trim((string)$work->displayObject);
-                    $objectAttrs = $work->displayObject->attributes();
-                    if (!empty($objectAttrs->label)) {
-                        $tmp['desc'] = trim((string)$objectAttrs->label);
-                    }
+                    $tmp['desc'] = trim((string)$work->displayObject);
                 }
                 if (!empty($work->object->objectID)) {
                     $tmp['info'] = trim((string)$work->object->objectID);
+                    $objectAttrs = $work->object->objectID->attributes();
+                    if (!empty($objectAttrs->label)) {
+                        $tmp['label'] = trim((string)$objectAttrs->label);
+                    }
                 }
                 $data[] = $tmp;
             }
