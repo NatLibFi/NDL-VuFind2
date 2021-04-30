@@ -1048,13 +1048,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 }
             }
 
-            // Remove not wanted roles here
-            foreach ($this->filteredRoles as $filter) {
-                if ($role === $filter) {
-                    $role = '';
-                    break;
-                }
+            // Remove unwanted roles here
+            if (in_array($role, $this->filteredRoles)) {
+                $role = '';
             }
+
             ++$idx;
             $result[] = [
                 'name' => $name,
