@@ -2,8 +2,9 @@
   // Set page title.
   $this->headTitle($this->translate('loan_history_save'));
 ?>
-<h2><?=$this->translate("loan_history_save") ?></h2>
+<h2><?=$this->transEsc('loan_history_save') ?></h2>
 <?=$this->flashmessages()?>
+<p><?=$this->transEsc('loan_history_save_info_html') ?></p>
 <form class="form-record-save" method="post" action="<?=$this->url('myresearch-savehistoricloans')?>" name="saveLoans" data-lightbox-onclose="checkSaveStatusesCallback">
   <input type="hidden" name="submit" value="1" />
 

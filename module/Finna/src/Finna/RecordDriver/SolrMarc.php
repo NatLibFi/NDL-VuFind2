@@ -1169,17 +1169,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     {
         $record = $this->getMarcReader();
         $id = $record->getField('001');
-        $field090 = $record->getField('090');
-        $objectId = $field090 ? $this->getSubfield($field090, 'a') : '';
-        if ($objectId) {
-            if (strncmp($objectId, '(Alma)', 6) === 0) {
-                $objectId = substr($objectId, 6);
-            } else {
-                $objectId = '';
+        foreach ($record->getFields('090') as $field090) {
+            $objectId = $this->getSubfield($field090, 'a');
+            if ($objectId) {
+                if (strncmp($objectId, '(Alma)', 6) === 0) {
+                    $objectId = substr($objectId, 6);
+                } else {
+                    $objectId = '';
+                }
             }
-        }
-        if ($id === $objectId) {
-            return $objectId;
+            if ($id === $objectId) {
+                return $objectId;
+            }
         }
         return '';
     }

@@ -244,7 +244,7 @@ class ImportComments extends AbstractUtilCommand
             true
         );
 
-        return true;
+        return 0;
     }
 
     /**
