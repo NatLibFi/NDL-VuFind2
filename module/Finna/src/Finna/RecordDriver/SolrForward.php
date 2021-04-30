@@ -156,7 +156,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-
+     *
      * Roles to not display
      *
      * @var array
@@ -166,6 +166,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'oth'
     ];
 
+    /**
      * Uncredited name attributes
      *
      * @var array
@@ -175,6 +176,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'elokuva-elokreditoimatonnayttelija-nimi'
     ];
 
+    /**
      * Descriptions
      *
      * @var array
