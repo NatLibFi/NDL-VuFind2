@@ -156,7 +156,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     *
      * Roles to not display
      *
      * @var array
