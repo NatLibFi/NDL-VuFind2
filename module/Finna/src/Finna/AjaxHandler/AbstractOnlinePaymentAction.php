@@ -224,6 +224,10 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
             ) {
                 // Payable sum updated. Skip registration and inform user
                 // that payment processing has been delayed.
+                $this->logError(
+                    "Transaction $transactionId: payable sum updated. Paid amount: "
+                    . $res['amount'] . ', payable: ' . print_r($finesAmount, true)
+                );
                 if (!$this->transactionTable->setTransactionFinesUpdated($tId)) {
                     $this->logError(
                         "Error updating transaction $transactionId"

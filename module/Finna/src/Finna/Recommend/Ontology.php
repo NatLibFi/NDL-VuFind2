@@ -462,7 +462,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     protected function skipFromFintoSearch(string $term): bool
     {
         return empty($term)
-            || 0 === strpos($term, 'topic_uri_str_mv:')
+            || 0 === strpos($term, 'topic_id_str_mv:')
             || in_array($term, ['AND', 'OR', 'NOT']);
     }
 
@@ -486,7 +486,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         }
 
         // Do not add the result if the URI already exists in the original search.
-        $recommendedUri = 'topic_uri_str_mv:' . $fintoResult['uri'];
+        $recommendedUri = 'topic_id_str_mv:' . $fintoResult['uri'];
         if ($key = array_search($recommendedUri, $this->lookforTerms)) {
             return;
         }
@@ -496,13 +496,17 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // Create the recommendation search link.
         // Create a copy of the original search terms.
         $recommendedLookforTerms = $this->lookforTerms;
-        // Replace original term with recommended term.
-        while (false !== ($key = array_search($term, $recommendedLookforTerms))) {
-            $recommendedLookforTerms[$key] = $fintoResult['prefLabel'];
+        // Replace original term with recommended term, if different.
+        if ($term !== $fintoResult['prefLabel']) {
+            while (
+                false !== ($key = array_search($term, $recommendedLookforTerms))
+            ) {
+                $recommendedLookforTerms[$key] = $fintoResult['prefLabel'];
+            }
         }
         // Remove possible URI of original term.
         if ($termUri) {
-            $termUri = 'topic_uri_str_mv:' . $termUri;
+            $termUri = 'topic_id_str_mv:' . $termUri;
             if ($key = array_search($termUri, $recommendedLookforTerms)) {
                 unset($recommendedLookforTerms[$key]);
             }
@@ -520,7 +524,11 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // Set up all link parameters.
         $params = $this->request->toArray();
         $params['lookfor'] = $recommendedLookfor;
-        unset($params['mod'], $params['searchId'], $params['resultTotal']);
+        foreach (['mod', 'searchId', 'resultTotal'] as $key) {
+            if (isset($params[$key])) {
+                unset($params[$key]);
+            }
+        }
         $href = $this->urlHelper->__invoke(
             'search-results', [], ['query' => $params]
         );

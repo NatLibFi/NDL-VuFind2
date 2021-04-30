@@ -1,5 +1,5 @@
 <?php if ($id && $showInlineInfo): ?>
-<div class="authority ajax-content" data-authority="<?=$this->escapeHtmlAttr($this->id)?>" data-source="<?=$this->escapeHtmlAttr($this->recordSource)?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>">
+  <div class="authority ajax-content" data-authority="<?=$this->escapeHtmlAttr($this->id)?>" data-source="<?=$this->escapeHtmlAttr($this->recordSource)?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>">
 <?php endif ?>
   <?php
     $linkClasses = $this->classes;
@@ -18,10 +18,12 @@
   ?>
   <a<?=$titleAttr?> href="<?=$this->escapeHtmlAttr($this->url)?>"<?=$linkClassesAttr?>><?php if ($isAuthorityLink): ?><i class="fa <?=$authorityIcon?>"></i><span class="sr-only"><?=$srLabel?></span> <?php endif; ?>
     <span class="authority-label"><?=$this->escapeHtml($this->label)?></span>
-  </a><?= $additionalDataEl?><?php if ($this->showInlineInfo): ?> <a href="#" class="show-info"><?=$this->translate('authority_show_info')?></a>
-  <div class="authority-info">
-    <div class="content"><i class="fa fa-spin fa-spinner"></i></div>
-    <div class="content-btn-holder"><a href="#" class="hide-info btn btn-primary"><?=$this->translate('authority_hide_info')?></a></div>
+  </a><?= $additionalDataEl?><?php if (!empty($this->description)): ?> <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span><?php endif; ?>
+  <?php if ($this->showInlineInfo): ?>
+    <a href="#" class="show-info"><?=$this->translate('authority_show_info')?></a>
+    <div class="authority-info">
+      <div class="content"><i class="fa fa-spin fa-spinner"></i></div>
+      <div class="content-btn-holder"><a href="#" class="hide-info btn btn-primary"><?=$this->translate('authority_hide_info')?></a></div>
+    </div>
   </div>
-</div>
 <?php endif; ?>

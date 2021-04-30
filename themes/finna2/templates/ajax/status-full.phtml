@@ -201,7 +201,7 @@ foreach ($this->statusItems as $item):
             <?php endif; ?>
           </span>
         <?php endif; ?>
-        <span class="info text-right"><?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, 'results')?></span>
+        <span class="info text-right"><?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results')?></span>
       </div>
     <div class="holdings<?=$collapseBranches ? ' collapsible collapsed' : ''?>">
   <?php endif; ?>
@@ -238,21 +238,27 @@ foreach ($this->statusItems as $item):
       </div>
       <div class="group-branches">
           <span class="branchInfo">
-          <?php if ($item['availability'] && !empty($item['availabilityInfo']['available'])): ?>
-            <?= sprintf('%s: %d', $this->transEsc('Available items'), $item['availabilityInfo']['available']); ?>
-          <?php elseif (!empty($item['duedate']) && !$item['availability']): ?>
-            <?= str_replace('%%date%%', $item['duedate'], $this->transEsc('closest_due_date')); ?>
-          <?php elseif ($item['availabilityInfo']['ordered'] > 0): ?>
-            <?= sprintf('%s: %d', $this->transEsc('status_Ordered'), $item['availabilityInfo']['ordered']); ?>
-          <?php else: ?>
-            <?= $this->transEsc('status_' . $item['availabilityInfo']['displayText']); ?></span>
-          <?php endif; ?>
+            <?php if ($item['availability'] && !empty($item['availabilityInfo']['available'])): ?>
+              <?= sprintf('%s: %d', $this->transEsc('Available items'), $item['availabilityInfo']['available']); ?>
+            <?php elseif (!empty($item['duedate']) && !$item['availability']): ?>
+              <?= str_replace('%%date%%', $item['duedate'], $this->transEsc('closest_due_date')); ?>
+            <?php elseif ($item['availabilityInfo']['ordered'] > 0): ?>
+              <?= sprintf('%s: %d', $this->transEsc('status_Ordered'), $item['availabilityInfo']['ordered']); ?>
+            <?php else: ?>
+              <?= $this->transEsc('status_' . $item['availabilityInfo']['displayText'], [], $item['availabilityInfo']['displayText']); ?>
+            <?php endif; ?>
+          </span>
         <?php else: ?>
+          <?php if ($item['availability'] && !empty($item['availabilityInfo']['coverage'])): ?>
+            <span class="status-availability-coverage">
+              <?= $this->transEsc('status_' . $item['availabilityInfo']['coverage'], [], $item['availabilityInfo']['coverage']); ?>
+            </span>
+          <?php endif; ?>
           <div class="groupCallnumber">
             <?php if (!empty($item['callnumbers'])): ?>
               (<?=$this->transEsc($item['callnumbers'])?>)
             <?php elseif (!empty($item['callnumber'])): ?>
-              <?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, 'results')?>
+              <?=$this->callnumber()->callnumber($source, $driver->getFullTitle(), $item['callnumber'], $item['collection'] ?? null, $item['location'] ?? null, $this->layout()->userLang, ($item['locationhref'] ?? false) ? 'results-online' : 'results')?>
             <?php endif; ?>
           </div>
         <?php endif; ?>

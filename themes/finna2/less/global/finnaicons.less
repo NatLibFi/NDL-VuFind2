@@ -609,29 +609,72 @@ table .iconlabel {
 }
 
 /** toolbar icons **/
-.nav-pills .fa {
-    font-family: finnaicons;
-    font-size: 14px;
-    padding: 0px;
-    padding-right: 1px;
-    border-radius: 50%;
-    display: inline;
-}
-.nav-pills .btn-bookbag-toggle .fa {
-    font-family: FontAwesome;
-}
 .nav-pills {
-    & > li.share-buttons, li.whatsapp {
-        float: right;
-        & .fa {
+    i {
+        padding: 0 1px 0 0;
+        display: inline;
+    }
+
+    li.share-buttons, li.whatsapp {
+        i {
             display: block;
             padding: 6px;
             font-size: 12px;
+            border-radius: 50%;
+        }
+    }
+
+    li.share-buttons, li.whatsapp {
+        float: right;
+    }
+
+    .fa.fa-phone {
+        background: #64d448;
+        border: 2px solid #64d448;
+        color: #fff;
+    }
+
+    /* Styling of share buttons */
+    .share-buttons-toolbox {
+        font-size: 0px;
+        padding: 0px;
+        margin-bottom: 10px;
+        a {
+            padding: 0;
+        }
+        i {
+            color: #fff;
+            margin-left: 5px;
+
+            &.fa-facebook {
+                background: #3a5795;
+                border: 2px solid #3a5795;
+                color: #fff;
+            }
+            &.fa-pinterest {
+                background: #cb2027;
+                border: 2px solid #cb2027;
+                color: #fff;
+            }
+            &.fa-twitter {
+                background: #00aced;
+                border: 2px solid #00aced;
+                color: #fff;
+            }
+            &.fa-google-plus {
+                background: #d34836;
+                border: 2px solid #d34836;
+                color: #fff;
+            }
         }
     }
 }
-.nav-pills > li > a:first-child {
-    margin-left: 0;
+
+@media(max-width: @screen-sm-max) {
+    .nav-pills .fa {
+        font-size: 16px;
+        margin-left: 0px;
+    }
 }
 
 /** CC icons **/
@@ -646,52 +689,6 @@ table .iconlabel {
   &:before {
     padding-right: 0;
   }
-}
-
-@media(max-width: @screen-sm-max) {
-    .nav-pills .fa {
-        font-size: 16px;
-        margin-left: 0px;
-    }
-}
-.nav-pills .fa.fa-phone {
-    background: #64d448;
-    border: 2px solid #64d448;
-    color: #fff;
-}
-/* Styling of share buttons */
-.nav-pills .share-buttons-toolbox {
-    font-size: 0px;
-    margin-bottom: 10px;
-    a {
-        padding: 0;
-    }
-    i {
-        color: #fff;
-        font-size: 15px;
-        margin-left: 5px;
-
-        &.fa-facebook {
-            background: #3a5795;
-            border: 2px solid #3a5795;
-            color: #fff;
-        }
-        &.fa-pinterest {
-            background: #cb2027;
-            border: 2px solid #cb2027;
-            color: #fff;
-        }
-        &.fa-twitter {
-            background: #00aced;
-            border: 2px solid #00aced;
-            color: #fff;
-        }
-        &.fa-google-plus {
-            background: #d34836;
-            border: 2px solid #d34836;
-            color: #fff;
-        }
-    }
 }
 
 /* Image gallery popup icons */
