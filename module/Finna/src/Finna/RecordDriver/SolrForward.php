@@ -178,6 +178,38 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Roles to not display
+     *
+     * @var array
+     */
+    protected $filteredRoles = [
+        'prf',
+        'oth'
+    ];
+
+    /**
+     * Uncredited name attributes
+     *
+     * @var array
+     */
+    protected $uncreditedNameAttributes = [
+        'elokuva-elokreditoimatontekija-nimi',
+        'elokuva-elokreditoimatonnayttelija-nimi'
+    ];
+
+    /**
+     * Descriptions
+     *
+     * @var array
+     */
+    protected $roleDescriptions = [
+        'elokuva-elotekija-selitys',
+        'elokuva-elonayttelija-selitys',
+        'elokuva-elokreditoimatonnayttelija-selitys',
+        'elokuva-elokreditoimatontekija-selitys'
+    ];
+
+    /**
      * Record metadata
      *
      * @var array
@@ -532,18 +564,22 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterSecondaryAuthors()
     {
         $authors = $this->getNonPresenterAuthors(false);
-        $uncredited = $credited = [];
+        $uncredited = [];
+        $credited = [];
+        $uncreditedEnsembles = [];
+
         foreach ($authors as $author) {
             if ($author['uncredited']) {
-                $uncredited[] = $author;
+                if ($author['type'] === 'elonet_kokoonpano') {
+                    $uncreditedEnsembles[] = $author;
+                } else {
+                    $uncredited[] = $author;
+                }
             } else {
                 $credited[] = $author;
             }
         }
-        if (!empty($credited) || !empty($uncredited)) {
-            return ['credited' => $credited, 'uncredited' => $uncredited];
-        }
-        return [];
+        return compact('credited', 'uncredited', 'uncreditedEnsembles');
     }
 
     /**
@@ -558,7 +594,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $filters = [
             'a99' => [
-                'types' => ['elonet_kokoonpano'],
                 'tags' => ['avustajat']
             ],
             'oth' => [
@@ -650,7 +685,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $filters = [
             'a99' => [
-                'types' => ['elonet_kokoonpano'],
                 'tags' => ['avustajat']
             ],
             'oth' => [
@@ -703,7 +737,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     } else {
                         $result['credited']['presenters'][] = $presenter;
                     }
-                } elseif ($role === 'prf') {
+                } elseif (empty($role)) {
                     if (!empty($presenter['uncredited'])
                         && $presenter['uncredited']
                     ) {
@@ -715,7 +749,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 }
                 break;
             case 'elonet_kokoonpano':
-                if ($role === 'oth') {
+                if (empty($role)) {
                     $result['performingEnsemble']['presenters'][] = $presenter;
                 } else {
                     $result['actingEnsemble']['presenters'][] = $presenter;
@@ -723,7 +757,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
                 break;
             default:
-                if ($role === 'oth') {
+                if (empty($role)) {
                     $result['other']['presenters'][] = $presenter;
                 } elseif ($role === 'avustajat') {
                     $result['assistant']['presenters'][] = $presenter;
@@ -1020,15 +1054,26 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
 
             $description = '';
-            if (!empty($nameAttrs->{'elokuva-elotekija-selitys'})) {
-                $description = (string)$nameAttrs->{'elokuva-elotekija-selitys'};
+            foreach ($this->roleDescriptions as $desc) {
+                if (!empty($nameAttrs->{$desc})) {
+                    $description = (string)$nameAttrs->{$desc};
+                    break;
+                }
             }
 
             $name = (string)$agent->AgentName;
-            if (empty($name)
-                && !empty($nameAttrs->{'elokuva-elokreditoimatontekija-nimi'})
-            ) {
-                $name = (string)$nameAttrs->{'elokuva-elokreditoimatontekija-nimi'};
+            if (empty($name)) {
+                foreach ($this->uncreditedNameAttributes as $value) {
+                    if (!empty($nameAttrs->{$value})) {
+                        $name = (string)$nameAttrs->{$value};
+                        break;
+                    }
+                }
+            }
+
+            // Remove unwanted roles here
+            if (in_array($role, $this->filteredRoles)) {
+                $role = '';
             }
 
             ++$idx;
