@@ -228,7 +228,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'elokuva-elonayttelija-selitys',
         'elokuva-elokreditoimatonnayttelija-selitys',
         'elokuva-elokreditoimatontekija-selitys'
-
     ];
 
     /**
