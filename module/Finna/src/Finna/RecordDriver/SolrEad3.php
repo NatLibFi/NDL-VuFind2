@@ -106,13 +106,15 @@ class SolrEad3 extends SolrEad
     const RELATION_PART_OF = 'part-of';
     const RELATION_CONTAINS = 'contains';
     const RELATION_SEE_ALSO = 'see-also';
+    const RELATION_SEPARATED = 'separated';
 
     // Relation type map
     const RELATION_MAP = [
         'On jatkoa' => self::RELATION_CONTINUED_FROM,
         'Sisältyy' => self::RELATION_PART_OF,
         'Sisältää' => self::RELATION_CONTAINS,
-        'Katso myös' => self::RELATION_SEE_ALSO
+        'Katso myös' => self::RELATION_SEE_ALSO,
+        'Erotettu aineisto' => self::RELATION_SEPARATED
     ];
 
     // Relator attribute for archive origination

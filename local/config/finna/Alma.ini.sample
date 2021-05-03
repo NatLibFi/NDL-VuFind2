@@ -98,6 +98,10 @@ titleHoldBibLevels = "monograph:monographpart:serial:serialpart:collectionpart:i
 ; Uncomment this to enable canceling of available requests.
 ;allowCancelingAvailableRequests = true
 
+; By default a request can be placed if Alma doesn't report any blocks.
+; Uncomment this setting to require that the patron has an active barcode.
+;requireLibraryCard = true
+
 ; The "NewUser" section defines some default values that are used when creating an account
 ; in Alma via its API. This is only relevant if you use the authentication method "AlmaDatabase"
 ; in the "Authentication" section of the "config.ini" file.

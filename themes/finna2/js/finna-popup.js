@@ -20,6 +20,7 @@ function FinnaPopup(trigger, params, id) {
   _.nextPopup = undefined;
   _.previousPopup = undefined;
   _.closeButton = undefined;
+  _.beforeOpenFocus = undefined;
   _.classes = typeof params.classes === 'undefined' ? '' : params.classes;
   _.modalBase = typeof params.modal !== 'undefined' ? $(params.modal) : $('<div class="finna-popup default-modal"/>');
   _.translations = typeof params.translations !== 'undefined' ? params.translations : {close: 'close'};
@@ -262,6 +263,7 @@ FinnaPopup.prototype.onPopupInit = function onPopupInit(/*trigger*/) { };
  */
 FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
   var _ = this;
+  _.beforeOpenFocus = $(':focus')[0];
   _.show();
 
   if (typeof open !== 'undefined') {
@@ -309,6 +311,11 @@ FinnaPopup.prototype.onPopupClose = function onPopupClose() {
   _.isOpen = false;
 
   _.clearKeyBinds();
+
+  if (typeof _.beforeOpenFocus !== 'undefined') {
+    _.beforeOpenFocus.focus();
+    _.beforeOpenFocus = undefined;
+  }
 };
 
 /**

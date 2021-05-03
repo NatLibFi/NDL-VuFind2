@@ -588,6 +588,40 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
+     * Check for request blocks.
+     *
+     * @param array $patron The patron array with username and password
+     *
+     * @return array|boolean    An array of block messages or false if there are no
+     *                          blocks
+     * @author Michael Birkner
+     */
+    public function getRequestBlocks($patron)
+    {
+        $cacheId = 'alma|user|' . $patron['id'] . '|requestblocks';
+        $cachedBlocks = $this->getCachedData($cacheId);
+        if ($cachedBlocks !== null) {
+            return $cachedBlocks;
+        }
+        $blocks = [];
+        if (!empty($this->config['Holds']['requireLibraryCard'])) {
+            $profile = $this->getMyProfile($patron);
+            if (empty($profile['barcode'])) {
+                $blocks[] = 'hold_error_no_library_card';
+            }
+        }
+        $blocks = array_merge(
+            $blocks,
+            $this->getAccountBlocks($patron) ?: []
+        );
+        if (!$blocks) {
+            $blocks = false;
+        }
+        $this->putCachedData($cacheId, $blocks);
+        return $blocks;
+    }
+
+    /**
      * Check for account blocks in Alma and cache them.
      *
      * @param array $patron The patron array with username and password
@@ -1630,6 +1664,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     public function checkRequestIsValid($id, $data, $patron)
     {
+        if ($this->getRequestBlocks($patron)) {
+            return false;
+        }
         $patronId = $patron['id'];
         $level = $data['level'] ?? 'copy';
         if ('copy' === $level) {

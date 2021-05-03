@@ -728,8 +728,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'requestGroup' => $this->requestGroupsEnabled &&
                     isset($entry['Scope']) ?
                     "mikromarc_" . $this->getRequestGroupKey($entry['Scope'])
-                    : '',
+                    : ''
             ];
+            if (!empty($entry['ResHeldUntil'])) {
+                $hold['last_pickup_date']
+                    = $this->dateConverter->convertToDisplayDate(
+                        'U', strtotime($entry['ResHeldUntil'])
+                    );
+            }
             if (!empty($entry['MarcRecordTitle'])) {
                 $hold['title'] = $entry['MarcRecordTitle'];
             }

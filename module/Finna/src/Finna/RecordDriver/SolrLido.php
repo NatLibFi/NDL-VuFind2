@@ -1078,22 +1078,39 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get the web resource link from the record.
+     * Get the web resource links from the record.
      *
-     * @return mixed
+     * @return array
      */
-    public function getWebResource()
+    public function getWebResources(): array
     {
-        $nodes = $this->getXmlRecord()->xpath(
+        $relatedWorks = $this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
-            . 'relatedWorkSet/relatedWork/object/objectWebResource'
+            . 'relatedWorkSet/relatedWork'
         );
-        if ($url = trim($nodes[0] ?? '')) {
-            if (!$this->urlBlocked($url)) {
-                return $url;
+        $data = [];
+        foreach ($relatedWorks as $work) {
+            if (!empty($work->object->objectWebResource)) {
+                $tmp = [];
+                $url = trim((string)$work->object->objectWebResource);
+                if ($this->urlBlocked($url)) {
+                    continue;
+                }
+                $tmp['url'] = $url;
+                if (!empty($work->displayObject)) {
+                    $tmp['desc'] = trim((string)$work->displayObject);
+                }
+                if (!empty($work->object->objectID)) {
+                    $tmp['info'] = trim((string)$work->object->objectID);
+                    $objectAttrs = $work->object->objectID->attributes();
+                    if (!empty($objectAttrs->label)) {
+                        $tmp['label'] = trim((string)$objectAttrs->label);
+                    }
+                }
+                $data[] = $tmp;
             }
         }
-        return false;
+        return $data;
     }
 
     /**
