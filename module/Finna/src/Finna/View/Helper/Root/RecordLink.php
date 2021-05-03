@@ -124,7 +124,6 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
             $result = $baseUrl
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=Identifier&jumpto=1';
-
         } else {
             $result = parent::related($link, false, $source);
         }
