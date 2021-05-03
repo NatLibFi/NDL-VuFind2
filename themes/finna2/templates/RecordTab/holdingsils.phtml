@@ -165,11 +165,11 @@
   );?>
 <?php endif; ?>
 
-<div class="table record-holdings-table" role="table" aria-label="<?=$this->transEscAttr('Holdings');?>" tabindex="0">
-  <div class="headers" role="row">
+<div class="table record-holdings-table">
+  <div class="headers">
     <?php $mergedData = $this->driver->tryMethod('getMergedRecordData'); ?>
     <?php $recordSourceId = $this->driver->getSourceIdentifier(); ?>
-    <div class="dedup-information" role="columnheader" id="dedup-information">
+    <div class="dedup-information">
       <span class="holdings-title"><?=$this->transEsc("source_$recordSource", null, $recordSource) ?></span>
       <?php if ($mergedData && count($mergedData['records']) > 1): ?>
         <select class="dedup-select form-control jumpMenuUrl hidden-print" role="listbox" aria-haspopup="true" title="<?=$this->transEsc('select_dedup_organisation');?>">
@@ -181,9 +181,9 @@
           <?php endforeach; ?>
         </select>
       <?php endif; ?>
-    </div>
+      </div>
     <?php if (!empty($holdings['holdings'])): ?>
-      <div class="reservations-container" role="columnheader" id="reservations-container">
+      <div class="reservations-container">
         <?php if ($showSummary): ?>
           <?php if (!empty($reservationsTotal)): ?>
             <span class="reservations"><?=$this->translate('status_requests_html', ['%%count%%' => $reservationsTotal]);?></span>
@@ -193,7 +193,7 @@
           <?php endif; ?>
         <?php endif; ?>
       </div>
-      <div class="total-container hidden-xs text-right" role="columnheader" id="total-container">
+      <div class="total-container hidden-xs text-right">
         <?=$this->transEsc("shelf_location"); ?>
       </div>
     <?php endif; ?>
@@ -270,70 +270,67 @@
         $dialogTitle .= " - $titleLocation";
     }
   ?>
-  <div class="holdings-group" role="rowgroup">
-    <details<?=$holdingsDetails === "expanded" ? " open" : "";?>>
-      <summary>
-        <?php if ($holdingsGroup == 1 && $holdingsConfig): ?>
-          <?php if (!empty($holdingsConfig['extra_texts'])): ?>
-            <div class="holdings-container-heading">
-              <div>
-                <?php foreach ($holdingsConfig['extra_texts'] as $extraText): ?>
-                  <div class="holdings-extra-text"><?=$this->translate($extraText, ['%%recordId%%' => $this->driver->getUniqueId()])?></div>
-                <?php endforeach; ?>
-              </div>
-            </div>
-          <?php endif; ?>
+  <div class="holdings-group">
+    <?php if ($holdingsGroup == 1 && $holdingsConfig): ?>
+      <?php if (!empty($holdingsConfig['extra_texts'])): ?>
+        <div class="holdings-container-heading">
+          <div>
+            <?php foreach ($holdingsConfig['extra_texts'] as $extraText): ?>
+              <div class="holdings-extra-text"><?=$this->translate($extraText, ['%%recordId%%' => $this->driver->getUniqueId()])?></div>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+    <?php endif; ?>
+    <div class="holdings-container-heading">
+      <div class="location">
+        <i class="fa fa-arrow-<?=$holdingsDetails == 'collapsed' ? 'right' : 'down'?>" aria-hidden="true"></i>
+        <?php $locationText = $this->transEscWithPrefix('location_', $holding['location']); ?>
+        <?php if ($holding['locationhref'] ?? false): ?>
+          <a href="<?=$holding['locationhref']?>" target="_blank"><?=$locationText?></a>
+        <?php else: ?>
+          <?=$locationText?>
         <?php endif; ?>
-        <div class="holdings-container-heading" role="row" aria-level="1">
-          <div class="location" role="gridcell" aria-labelledby="dedup-information">
-            <?php $locationText = $this->transEscWithPrefix('location_', $holding['location']); ?>
-            <?php if ($holding['locationhref'] ?? false): ?>
-              <a href="<?=$holding['locationhref']?>" target="_blank"><?=$locationText?></a>
-            <?php else: ?>
-              <?=$locationText?>
-            <?php endif; ?>
-            <?php if ($this->holdings()->showDetailsAfterLocationGroup()): ?>
-              <div class="details"><?=$this->partial('RecordTab/holdings-details.phtml', ['holdingId' => $holdingId, 'holding' => $holding, 'heading' => true]);?></div>
-            <?php endif; ?>
-          </div>
-          <div class="holdings-details" role="gridcell" aria-labelledby="reservations-container"><?=$holdingSummary ?></div>
-          <div class="location-link text-right" role="gridcell" aria-labelledby="total-container">
-            <?php foreach ($callnumbers as $data): ?>
-              <?=$this->callnumber()->callnumber($recordSource, $this->driver->getFullTitle(), $data['callNo'], $data['collection'], $data['location'], $this->layout()->userLang)?>
-            <?php endforeach; ?>
-            <?php if ($holdsAllowed && isset($holdLinksLocation[$holding['location']])): ?>
-              <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->recordLink()->getRequestUrl($holdLinksLocation[$holding['location']])?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc("request_place_text")?></a>
-            <?php endif; ?>
-          </div>
+        <?php if ($this->holdings()->showDetailsAfterLocationGroup()): ?>
+          <div class="details"><?=$this->partial('RecordTab/holdings-details.phtml', ['holdingId' => $holdingId, 'holding' => $holding, 'heading' => true]);?></div>
+        <?php endif; ?>
+      </div>
+      <div class="holdings-details"><?=$holdingSummary ?></div>
+      <div class="location-link text-right">
+        <?php foreach ($callnumbers as $data): ?>
+          <?=$this->callnumber()->callnumber($recordSource, $this->driver->getFullTitle(), $data['callNo'], $data['collection'], $data['location'], $this->layout()->userLang)?>
+        <?php endforeach; ?>
+        <?php if ($holdsAllowed && isset($holdLinksLocation[$holding['location']])): ?>
+          <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->recordLink()->getRequestUrl($holdLinksLocation[$holding['location']])?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc("request_place_text")?></a>
+        <?php endif; ?>
+      </div>
+    </div>
+    <div class="clearfix"></div>
+    <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
+      <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...
+      </div>
+    <?php endif; ?>
+    <?php if (!$this->holdings()->showDetailsAfterLocationGroup()): ?>
+      <?=$this->partial('RecordTab/holdings-details.phtml', ['holdingId' => $holdingId, 'holding' => $holding, 'mode' => $holdingsDetails]);?>
+    <?php endif; ?>
+    <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
+      <div class="holdings-items-ajax <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden"></div>
+    <?php endif; ?>
+    <?php if (empty($holding['items'][0]['skipItemsList'])): ?>
+      <?=$this->render('RecordTab/holdings-items.phtml', ['holding' => $holding, 'driver' => $driver, 'mode' => $holdingsDetails, 'holdsAllowed' => $holdsAllowed])?>
+    <?php endif; ?>
+    <?php if (!empty($holding['purchase_history'])): ?>
+      <div class="ils-purchase-history">
+        <div class="title"><?=$this->transEsc("Most Recent Received Issues")?>:</div>
+        <div class="history">
+          <?php foreach ($holding['purchase_history'] as $current): ?>
+            <?=$this->escapeHtml($current['issue'])?><br/>
+          <?php endforeach; ?>
         </div>
-      </summary>
-      <div class="clearfix"></div>
-      <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
-        <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
-          <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...
-        </div>
-      <?php endif; ?>
-      <?php if (!$this->holdings()->showDetailsAfterLocationGroup()): ?>
-        <?=$this->partial('RecordTab/holdings-details.phtml', ['holdingId' => $holdingId, 'holding' => $holding, 'mode' => $holdingsDetails]);?>
-      <?php endif; ?>
-      <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
-        <div class="holdings-items-ajax <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden"></div>
-      <?php endif; ?>
-      <?php if (empty($holding['items'][0]['skipItemsList'])): ?>
-        <?=$this->render('RecordTab/holdings-items.phtml', ['holding' => $holding, 'driver' => $driver, 'mode' => $holdingsDetails, 'holdsAllowed' => $holdsAllowed])?>
-      <?php endif; ?>
-      <?php if (!empty($holding['purchase_history'])): ?>
-        <div class="ils-purchase-history">
-          <div class="title"><?=$this->transEsc("Most Recent Received Issues")?>:</div>
-          <div class="history">
-            <?php foreach ($holding['purchase_history'] as $current): ?>
-              <?=$this->escapeHtml($current['issue'])?><br/>
-            <?php endforeach; ?>
-          </div>
-        </div>
-      <?php endif; ?>
-      <div class="clearfix"></div>
-    </details>
+      </div>
+    <?php endif; ?>
+    <div class="clearfix"></div>
   </div>
 <?php endforeach; ?>
 <?php if (empty($holdings['holdings'])): ?>

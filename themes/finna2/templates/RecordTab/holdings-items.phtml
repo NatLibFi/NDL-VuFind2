@@ -27,7 +27,7 @@
       $blockILLRequest = !$checkILLRequest && isset($row['addILLRequestLink']) && $row['addILLRequestLink'] === 'block';
       $currentDepartment = '';
     ?>
-    <div vocab="http://schema.org/" typeof="Offer" class="copy-details">
+    <div vocab="http://schema.org/" typeof="Offer" class="copy-details <?=$this->mode?>">
       <?php if (isset($row['branch']) || isset($row['department'])): ?>
         <?php
           $parts = [];
@@ -138,7 +138,7 @@
     </div>
   <?php endforeach; ?>
   <?php if (null !== $this->moreLinkPage): ?>
-    <div class="copy-details" data-key="<?=$this->escapeHtmlAttr($this->moreLinkKey)?>" data-page="<?=$this->escapeHtmlAttr($this->moreLinkPage)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+    <div class="copy-details <?=$this->mode?>" data-key="<?=$this->escapeHtmlAttr($this->moreLinkKey)?>" data-page="<?=$this->escapeHtmlAttr($this->moreLinkPage)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
       <button class="more-link load-more-items-ajax" type="button">
         <?=$this->transEsc('show_more')?> <i class="fa fa-arrow-down"></i>
       </button>

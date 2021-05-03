@@ -153,11 +153,11 @@
 </div>
 
 <ul class="<?=$this->layoutClass('sidebar-myresearch')?> <?= $listOpen ? '' : 'move-list' ?> nav-tabs-personal list-group useraccount-nav nav-tabs finna-movement" role="menu">
-  <li class="menu-header hidden-xs hidden-sm">
+  <li role="menuitem" class="menu-header hidden-xs hidden-sm">
     <h1>
       <?= $this->transEsc('Your Account') ?>
       <?php if (!$this->translationEmpty('tooltip_myaccount_html')): ?>
-        <span class="tooltip-myaccount" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?= $this->transEsc("tooltip_myaccount_html") ?>"><i class="fa fa-info-big"></i></span>
+        <button class="tooltip-myaccount" data-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?= $this->transEsc("tooltip_myaccount_html") ?>"><i class="fa fa-info-big"></i><span class="sr-only"><?=$this->transEsc('My account tips');?></span></button>
       <?php endif; ?>
     </h1>
   </li>

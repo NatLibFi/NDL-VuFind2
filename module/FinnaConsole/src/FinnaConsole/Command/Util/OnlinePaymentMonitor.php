@@ -232,7 +232,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
 
         $this->msg('OnlinePayment monitor completed');
 
-        return true;
+        return 0;
     }
 
     /**
