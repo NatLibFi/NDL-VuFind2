@@ -1261,11 +1261,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
                     // Check for warnings
                     if (!empty($attributes->{'video-rating'})) {
-                        $tmpWarnings = explode(', ', (string)$attributes->{'video-rating'});
+                        $tmpWarnings
+                            = explode(', ', (string)$attributes->{'video-rating'});
                         // Translate to english, for universal usage
                         foreach ($tmpWarnings as $warning) {
                             if (!in_array($warning, $this->filteredWarnings)) {
-                                $warnings[] = $this->videoWarnings[$warning] ?? $warning;
+                                $warnings[]
+                                    = $this->videoWarnings[$warning] ?? $warning;
                             }
                         }
                     }
