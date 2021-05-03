@@ -6,6 +6,16 @@
   height: 100%;
 }
 
+.video-popup, .finna-iframe {
+  .video-warning {
+    position: absolute;
+    bottom: 5%;
+    background: white;
+    padding: 2px;
+    left: 10px;
+  }
+}
+
 #video-player:focus, video:focus {
   outline: none;
 }
@@ -39,11 +49,12 @@
   .video-warnings {
     background-color: @body-bg;
     padding: 4px 0;
-    .video-warning-icon > img {
-      width: 32px;
-      height: 32px;
-    }
   }
+}
+
+.video-warning-icon > img {
+  width: 32px;
+  height: 32px;
 }
 
 .video-accordion {

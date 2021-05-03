@@ -156,18 +156,28 @@ finna.videoPopup = (function finnaVideoPopup() {
           }
         },
         onPopupOpen: function onPopupOpen() {
+          var index = _.data('index');
+          var warnings = $('.video-warning[data-index="' + index + '"]');
           if (this.parent) {
             $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
-            var index = _.data('index');
             $('.video-warning').addClass('hidden');
-            var found = $('.video-warning[data-index="' + index + '"]');
-            if (found[0]) {
-              found.removeClass('hidden');
-              found.find('img').unveil();
+
+            if (warnings[0]) {
+              warnings.removeClass('hidden');
+              warnings.find('img').unveil();
             }   
           } else {
             this.content.css('height', '100%');
+            if (warnings[0]) {
+              var clone = warnings.clone();
+              clone.appendTo(this.modalHolder);
+              clone.removeClass('hidden');
+              clone.find('img').unveil();
+              setTimeout(function startFade() {
+                clone.fadeOut(2000);
+              }, 3000);
+            }
           }
           finna.layout.loadScripts(scripts, function onScriptsLoaded() {
             finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
@@ -213,18 +223,27 @@ finna.videoPopup = (function finnaVideoPopup() {
           }
         },
         onPopupOpen: function onPopupOpen() {
+          var index = _.data('index');
+          var warnings = $('.video-warning[data-index="' + index + '"]');
           if (this.parent) {
             $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
-            var index = _.data('index');
             $('.video-warning').addClass('hidden');
-            var found = $('.video-warning[data-index="' + index + '"]');
-            if (found[0]) {
-              found.removeClass('hidden');
-              found.find('img').unveil();
+            if (warnings[0]) {
+              warnings.removeClass('hidden');
+              warnings.find('img').unveil();
             }      
           } else {
             this.content.css('height', '100%');
+            if (warnings[0]) {
+              var clone = warnings.clone();
+              clone.removeClass('hidden');
+              clone.appendTo(this.modalHolder);              
+              clone.find('img').unveil();
+              setTimeout(function startFade() {
+                clone.fadeOut(2000);
+              }, 3000);
+            }
           }
           // If using Chrome + VoiceOver, Chrome crashes if vimeo player video settings button has aria-haspopup=true
           $('.vp-prefs .js-prefs').attr('aria-haspopup', false);
