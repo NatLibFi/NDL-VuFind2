@@ -121,19 +121,19 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
             $urlHelper = $this->getView()->plugin('url');
             $baseUrl = $urlHelper($this->getSearchActionForSource($source));
 
-            $url = $baseUrl
+            $result = $baseUrl
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=Identifier&jumpto=1';
 
-            $escapeHelper = $this->getView()->plugin('escapeHtml');
-            $result = $escape ? $escapeHelper($url) : $url;
         } else {
-            $result = parent::related($link, $escape, $source);
+            $result = parent::related($link, false, $source);
         }
 
         $driver = $this->getView()->plugin('record')->getDriver();
         $result .= $this->getView()->plugin('searchTabs')
-            ->getCurrentHiddenFilterParams($driver->getSourceIdentifier());
+            ->getCurrentHiddenFilterParams(
+                $driver->getSourceIdentifier(), false, '&'
+            );
 
         if ($filters = ($link['filter'] ?? [])) {
             $result .= '&' . implode(
@@ -146,6 +146,12 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
                 )
             );
         }
+
+        if ($escape) {
+            $escapeHelper = $this->getView()->plugin('escapeHtml');
+            $result = $escapeHelper($result);
+        }
+
         return $result;
     }
 
