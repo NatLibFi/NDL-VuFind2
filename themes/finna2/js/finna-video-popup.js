@@ -122,17 +122,13 @@ finna.videoPopup = (function finnaVideoPopup() {
 
   function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : $(_container);
-    var inline = container.find('[data-inline]');
+    var inline = container.find('[data-inline], [data-inline-iframe]');
     var parent;
     var embed = inline.length > 0;
     if (inline.length) {
       parent = 'inline-video';
       $('.inline-video-container').insertAfter($('.search-form-container'));
       $('.inline-video-container').removeClass('hidden');
-
-      if (inline.length < 2) {
-        inline.addClass('hidden');
-      }
     }
 
     var translations = {
@@ -142,26 +138,34 @@ finna.videoPopup = (function finnaVideoPopup() {
     };
 
     container.find('[data-embed-video]').each(function initVideo() {
-      var videoSources = $(this).data('videoSources');
-      var scripts = $(this).data('scripts');
-      var posterUrl = $(this).data('posterUrl');
-      $(this).finnaPopup({
+      var _ = $(this);
+      var videoSources = _.data('videoSources');
+      var scripts = _.data('scripts');
+      var posterUrl = _.data('posterUrl');
+      _.finnaPopup({
         id: 'recordvideo',
         modal: '<video class="video-js vjs-big-play-centered video-popup" controls></video>',
         classes: 'video-popup',
         parent: parent,
-        cycle: !embed,
         embed: embed,
+        cycle: inline.length === 0,
         translations: translations,
         onPopupInit: function onPopupInit(t) {
-          if (this.embed) {
+          if (this.parent) {
             t.removeClass('active-video');
           }
         },
         onPopupOpen: function onPopupOpen() {
-          if (this.embed) {
+          if (this.parent) {
             $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
+            var index = _.data('index');
+            $('.video-warning').addClass('hidden');
+            var found = $('.video-warning[data-index="' + index + '"]');
+            if (found[0]) {
+              found.removeClass('hidden');
+              found.find('img').unveil();
+            }   
           } else {
             this.content.css('height', '100%');
           }
@@ -175,17 +179,14 @@ finna.videoPopup = (function finnaVideoPopup() {
 
   function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
-    var inline = container.find('[data-inline-iframe]');
+    var inline = container.find('[data-inline], [data-inline-iframe]');
     var parent;
     var embed = inline.length > 0;
+
     if (inline.length) {
       parent = 'inline-video';
       $('.inline-video-container').insertAfter($('.search-form-container'));
       $('.inline-video-container').removeClass('hidden');
-
-      if (inline.length < 2) {
-        inline.addClass('hidden');
-      }
     }
     var translations = {
       close: VuFind.translate('close'),
@@ -194,26 +195,34 @@ finna.videoPopup = (function finnaVideoPopup() {
     };
 
     container.find('[data-embed-iframe]').each(function setIframes() {
-      var source = $(this).is('a') ? $(this).attr('href') : $(this).data('link');
-      $(this).finnaPopup({
+      var _ = $(this);
+      var source = _.is('a') ? _.attr('href') : _.data('link');
+      _.finnaPopup({
         id: 'recordiframe',
-        cycle: !embed,
+        cycle: inline.length === 0,
         classes: 'finna-iframe',
         modal: '<div style="height:100%">' +
           '<iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>' +
           '</div>',
         parent: parent,
-        translations: translations,
         embed: embed,
+        translations: translations,
         onPopupInit: function onPopupInit(t) {
-          if (this.embed) {
+          if (this.parent) {
             t.removeClass('active-video');
           }
         },
         onPopupOpen: function onPopupOpen() {
-          if (this.embed) {
+          if (this.parent) {
             $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
+            var index = _.data('index');
+            $('.video-warning').addClass('hidden');
+            var found = $('.video-warning[data-index="' + index + '"]');
+            if (found[0]) {
+              found.removeClass('hidden');
+              found.find('img').unveil();
+            }      
           } else {
             this.content.css('height', '100%');
           }

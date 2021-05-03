@@ -156,6 +156,27 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Video warnings
+     *
+     * @var array
+     */
+    protected $videoWarnings = [
+        'väkivalta' => 'violence',
+        'seksi' => 'sex',
+        'päihde' => 'drugs',
+        'ahdistus' => 'anxiety'
+    ];
+
+    /**
+     * Unwanted video warnings
+     *
+     * @var array
+     */
+    protected $filteredWarnings = [
+        'K'
+    ];
+
+    /**
      * Record metadata
      *
      * @var array
@@ -1153,6 +1174,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $poster = '';
                 $videoType = 'elokuva';
                 $description = '';
+                $warnings = [];
                 if (isset($title->PartDesignation->Value)) {
                     $attributes = $title->PartDesignation->Value->attributes();
                     if (!empty($attributes['video-tyyppi'])) {
@@ -1168,6 +1190,17 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         $poster = str_replace(
                             '{filename}', $posterFilename, $posterSource
                         );
+                    }
+
+                    // Check for warnings
+                    if (!empty($attributes->{'video-rating'})) {
+                        $tmpWarnings = explode(', ', (string)$attributes->{'video-rating'});
+                        // Translate to english, for universal usage
+                        foreach ($tmpWarnings as $warning) {
+                            if (!in_array($warning, $this->filteredWarnings)) {
+                                $warnings[] = $this->videoWarnings[$warning] ?? $warning;
+                            }
+                        }
                     }
                 }
 
@@ -1192,7 +1225,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'text' => $description ?: $videoType,
                         'desc' => $description ?: $videoType,
                         'source' => $source,
-                        'embed' => 'iframe'
+                        'embed' => 'iframe',
+                        'warnings' => $warnings
                     ];
                 }
 
@@ -1235,7 +1269,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     'text' => $description ? $description : $videoType,
                     'desc' => $description ? $description : $videoType,
                     'source' => $source,
-                    'embed' => 'video'
+                    'embed' => 'video',
+                    'warnings' => $warnings
                 ];
             }
         }
