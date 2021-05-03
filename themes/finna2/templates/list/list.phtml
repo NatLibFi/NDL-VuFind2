@@ -15,7 +15,7 @@ $this->hideCartControls = true;
 
 $this->headScript()->appendFile("check_item_statuses.js");
 $this->headScript()->appendFile("finna-item-status.js");
-$this->headScript()->prependScript("var listId = {$list->id}; var publicList = 1");
+$this->headScript()->prependScript("var listId = {$list->id}; var publicList = 1;");
 ?>
 <?=$this->flashmessages() ?>
 <div class="clearfix hidden-print">

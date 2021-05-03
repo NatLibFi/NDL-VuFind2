@@ -31,7 +31,7 @@
     $this->headScript()->appendFile('finna-recommendation-memory.js');
     $script = <<<EOT
     $('.ontology-recommendation a').each(function() {
-      $(this).click(function() {
+      $(this).on('click', function() {
         var key = $(this).parents('#ontology-recommendations').data('search-id') + '-' + $(this).data('index');
         var rec = $(this).text();
         var orig = $(this).parents('#ontology-recommendations').data('lookfor');
@@ -47,5 +47,7 @@
 EOT;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
   ?>
+  <?= $this->piwik(['customVars' => ['RecommendationShown' => 'OntologyRecommendation']]) ?>
+  <?= $this->googleanalytics($this->serverUrl(true)) ?>
   <!-- END of: finna - Recommend/Ontology.phtml -->
 <?php endif; ?>

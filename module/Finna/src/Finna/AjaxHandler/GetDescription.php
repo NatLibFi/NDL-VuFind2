@@ -153,7 +153,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
                     );
 
                     $content = preg_replace('/.*<.B>(.*)/', '\1', $content);
-                    $content = strip_tags($content, '<br>');
+                    $content = strip_tags($content, '<br><p>');
 
                     // Trim leading and trailing whitespace
                     $content = trim($content);

@@ -73,6 +73,6 @@ class Mailer  extends \VuFind\Mailer\Mailer
                 'message' => $msg
             ]
         );
-        return $this->send($to, $from, $subject, $body, $cc);
+        $this->send($to, $from, $subject, $body, $cc);
     }
 }

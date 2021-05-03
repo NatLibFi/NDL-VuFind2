@@ -32,10 +32,17 @@
         <?php if (isset($item['link'])): ?>
           <a <?= $this->htmlElement()->getAttributes($linkElement)?>>
         <?php endif; ?>
-          <?php if (isset($item['title'])): ?>
-            <div class="carousel-slide-header">
-              <p><?= $this->truncate($item['title'], 70); ?></p>
-            </div>
+          <?php if (isset($item['title']) || isset($item['dateFull'])): ?>
+          <div class="carousel-slide-header">
+            <p>
+              <?php if (isset($item['title'])): ?>
+                <?=$this->truncate($item['title'], 70);?>
+              <?php endif; ?>
+              <?php if (isset($item['dateFull'])): ?>
+                <span class="carousel-header-date carousel-date"><?=$this->transEsc('Published')?> <?=$item['dateFull']?></span>
+              <?php endif; ?>
+            </p>
+          </div>
           <?php endif; ?>
           <?php if (isset($item['text']) || $clickableLink): ?>
             <div class="sr-only">
@@ -48,6 +55,9 @@
           <div class="carousel-text" aria-hidden="true">
             <?php if (isset($item['title'])): ?>
               <p class="carousel-hover-title"><?= $this->truncate($item['title'], 70); ?></p>
+            <?php endif; ?>
+            <?php if (isset($item['dateFull'])): ?>
+              <span class="carousel-date carousel-hover-date"><?=$this->transEsc('Published')?> <?=$item['dateFull']?></span>
             <?php endif; ?>
             <div class="text">
               <?php if (isset($item['xcal']['startDate'])): ?>

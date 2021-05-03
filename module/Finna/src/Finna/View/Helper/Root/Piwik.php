@@ -267,6 +267,10 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik
         if (!empty($this->addedCustomVars)) {
             $customVars = array_merge($customVars, $this->addedCustomVars);
         }
+        if (!empty($this->params['customVars'])) {
+            $customVars = array_merge($customVars, $this->params['customVars']);
+        }
+
         return parent::getCustomVarsCode($customVars);
     }
 

@@ -72,7 +72,7 @@ class Folio extends AbstractAPI implements
     /**
      * Factory function for constructing the SessionContainer.
      *
-     * @var Callable
+     * @var callable
      */
     protected $sessionFactory;
 
@@ -82,6 +82,13 @@ class Folio extends AbstractAPI implements
      * @var \Laminas\Session\Container
      */
     protected $sessionCache;
+
+    /**
+     * Date converter
+     *
+     * @var \VuFind\Date\Converter
+     */
+    protected $dateConverter;
 
     /**
      * Constructor
@@ -506,20 +513,14 @@ class Folio extends AbstractAPI implements
             'query' => '(instanceId=="' . $instance->id
                 . '" NOT discoverySuppress==true)'
         ];
-        $holdingResponse = $this->makeRequest(
-            'GET',
-            '/holdings-storage/holdings',
-            $query
-        );
-        $holdingBody = json_decode($holdingResponse->getBody());
         $items = [];
-        foreach ($holdingBody->holdingsRecords as $holding) {
+        foreach ($this->getPagedResults(
+            'holdingsRecords', '/holdings-storage/holdings', $query
+        ) as $holding) {
             $query = [
                 'query' => '(holdingsRecordId=="' . $holding->id
                     . '" NOT discoverySuppress==true)'
             ];
-            $itemResponse = $this->makeRequest('GET', '/item-storage/items', $query);
-            $itemBody = json_decode($itemResponse->getBody());
             $notesFormatter = function ($note) {
                 return !($note->staffOnly ?? false)
                     && !empty($note->note) ? $note->note : '';
@@ -547,7 +548,9 @@ class Folio extends AbstractAPI implements
                 $textFormatter,
                 $holding->holdingsStatementsForIndexes ?? []
             );
-            foreach ($itemBody->items as $item) {
+            foreach ($this->getPagedResults(
+                'items', '/item-storage/items', $query
+            ) as $item) {
                 $itemNotes = array_filter(
                     array_map($notesFormatter, $item->notes ?? [])
                 );
@@ -713,6 +716,7 @@ class Folio extends AbstractAPI implements
      */
     public function patronLogin($username, $password)
     {
+        $profile = null;
         $doOkapiLogin = $this->config['User']['okapi_login'] ?? false;
         $usernameField = $this->config['User']['username_field'] ?? 'username';
 
@@ -1032,8 +1036,8 @@ class Folio extends AbstractAPI implements
     {
         $default_request = $this->config['Holds']['default_request'] ?? 'Hold';
         try {
-            $requiredBy = date_create_from_format(
-                'm-d-Y',
+            $requiredBy = $this->dateConverter->convertFromDisplayDate(
+                'Y-m-d',
                 $holdDetails['requiredBy']
             );
         } catch (Exception $e) {
@@ -1046,7 +1050,7 @@ class Folio extends AbstractAPI implements
             'requesterId' => $holdDetails['patron']['id'],
             'requestDate' => date('c'),
             'fulfilmentPreference' => 'Hold Shelf',
-            'requestExpirationDate' => date_format($requiredBy, 'Y-m-d'),
+            'requestExpirationDate' => $requiredBy,
             'pickupServicePointId' => $holdDetails['pickUpLocation']
         ];
         $response = $this->makeRequest(
@@ -1475,7 +1479,7 @@ class Folio extends AbstractAPI implements
      * in more recent code, it receives one of the KEYS from getFunds(). See getFunds
      * for additional notes.
      */
-    public function getNewItems($page = 1, $limit, $daysOld = 30, $fundID = null)
+    public function getNewItems($page, $limit, $daysOld, $fundID = null)
     {
         return [];
     }

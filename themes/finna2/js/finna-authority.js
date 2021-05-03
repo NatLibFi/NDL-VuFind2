@@ -25,7 +25,7 @@ finna.authority = (function finnaAuthority() {
 
   function initAuthorityRecommendTabs()
   {
-    $('div.authority-recommend .nav-tabs li').not('.toggle').click(function onTabClick() {
+    $('div.authority-recommend .nav-tabs li').not('.toggle').on('click', function onTabClick() {
       var self = $(this);
       var id = self.data('id');
       var parent = self.closest('.authority-recommend');
@@ -64,7 +64,7 @@ finna.authority = (function finnaAuthority() {
           toggleAuthorityInfoCollapse(false);
         });
     });
-    $('div.authority-recommend .nav-tabs li.toggle').click(function onToggle() {
+    $('div.authority-recommend .nav-tabs li.toggle').on('click', function onToggle() {
       toggleAuthorityInfoCollapse();
     });
   }
@@ -73,7 +73,7 @@ finna.authority = (function finnaAuthority() {
   {
     $('div.authority').each(function initAuthority() {
       var $authority = $(this);
-      $authority.find('a.show-info').click(function onClickShowInfo() {
+      $authority.find('a.show-info').on('click', function onClickShowInfo() {
         var $authorityInfo = $authority.find('.authority-info .content');
         if (!$authority.hasClass('loaded')) {
           $authority.addClass('loaded');
@@ -97,7 +97,7 @@ finna.authority = (function finnaAuthority() {
         return false;
       });
 
-      $authority.find('a.hide-info').click(function onClickHideInfo() {
+      $authority.find('a.hide-info').on('click', function onClickHideInfo() {
         $authority.removeClass('open');
         return false;
       });

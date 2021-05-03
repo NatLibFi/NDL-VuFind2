@@ -18,8 +18,9 @@
         <?php endif; ?>
         <?php if (!empty($event['culture'])): ?><?=$this->escapeHtml($event['culture'])?><br/><?php endif; ?>
         <?php if (!empty($event['actors'])): ?>
-          <?php foreach ($event['actors'] as $actor): ?>
-            <?php
+          <?php
+            $displayActors = [];
+            foreach ($event['actors'] as $actor) {
               $str = $actor['name'];
               if (!empty($actor['role'])) {
                   $str .= ', ' . $actor['role'];
@@ -29,10 +30,11 @@
                   $sep = !empty($actor['birth']) && !empty($actor['death']) ? ' - ' : '--';
                   $str .= ($actor['birth'] ?? '') . $sep . ($actor['death'] ?? '');
               }
-            ?>
-            <?=$this->escapeHtml($str)?>
-          <?php endforeach; ?>
-          <br/>
+              $displayActors[] = $this->escapeHtml($str);
+            }
+          ?>
+          <?=implode(' ; ', $displayActors); ?>
+          <br>
         <?php endif; ?>
         <?php if (!empty($event['description'])): ?><?=$this->escapeHtml($event['description'])?><br/><?php endif; ?>
       <?php endforeach; ?>

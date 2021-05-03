@@ -331,7 +331,7 @@
           hide();
         }
       });
-      input.click(function onInputClick() {
+      input.on('click', function onInputClick() {
         search(input, element);
       });
       input.focus(function onInputFocus() {

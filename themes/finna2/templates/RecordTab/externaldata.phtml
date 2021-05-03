@@ -1,10 +1,12 @@
 <?php
 $data = $this->driver->getExternalData();
-$fullResImages = $data['fullResImages'] ?? null;
-$OCRImages = $data['OCRImages'] ?? null;
-$physicalItems = $data['physicalItems'] ?? null;
+$digitized = $data['digitized'];
+$items = $data['items'] ?? [];
+$fullResImages = $items['fullResImages'] ?? null;
+$ocrImages = $items['OCRImages'] ?? null;
+$physicalItems = $items['physicalItems'] ?? null;
 ?>
-<?php if (!$fullResImages && !$OCRImages): ?>
+<?php if (!$digitized): ?>
   <p><?= $this->translate('external_data_not_digitized_html', ['%%url%%' => $this->recordLink()->getActionUrl($this->driver, 'Feedback')]) ?></p>
 <?php endif ?>
 
@@ -12,8 +14,8 @@ $physicalItems = $data['physicalItems'] ?? null;
   <?= $this->partial('RecordTab/external_data_table.phtml', ['type' => 'fullres_images', 'data' => $fullResImages]); ?>
 <?php endif; ?>
 
-<?php if ($OCRImages): ?>
-  <?= $this->partial('RecordTab/external_data_table.phtml', ['type' => 'ocr', 'data' => $OCRImages]); ?>
+<?php if ($ocrImages): ?>
+  <?= $this->partial('RecordTab/external_data_table.phtml', ['type' => 'ocr', 'data' => $ocrImages]); ?>
 <?php endif; ?>
 
 
@@ -25,7 +27,12 @@ $physicalItems = $data['physicalItems'] ?? null;
     </div>
     <?php foreach ($physicalItems as $item): ?>
       <div role="row" class="tbl-row">
-        <div class="tbl-cell tbl-left" role="cell"><?=$this->escapeHtml($item['type'])?></div>
+        <div class="tbl-cell tbl-left" role="cell">
+          <?=$this->escapeHtml($item['format'])?>
+          <?php if (!empty($item['info'])): ?>
+            <span class="info">(<?=$this->escapeHtml($item['info']) ?>)</span>
+          <?php endif ?>
+        </div>
         <div class="tbl-cell tbl-right location" role="cell">
           <span class="location-name"><?=$this->escapeHtml($item['location'])?></span>
           <?php if (!empty($item['service'])): ?>

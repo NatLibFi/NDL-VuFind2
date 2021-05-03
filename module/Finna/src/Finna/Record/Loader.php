@@ -118,8 +118,10 @@ class Loader extends \VuFind\Record\Loader
         if ($source == 'Solr'
             && ($missingException || $result instanceof \VuFind\RecordDriver\Missing)
         ) {
-            if ($record = $this->handleMissingSolrRecord($id)) {
-                return $record;
+            // Check for a redirected record without overwriting $result
+            if ($redirectedRecord = $this->handleMissingSolrRecord($id)) {
+                $missingException = false;
+                $result = $redirectedRecord;
             }
         }
         if ($missingException) {
@@ -206,17 +208,19 @@ class Loader extends \VuFind\Record\Loader
             }
         } elseif ($this->recordRedirectionRules) {
             foreach ($this->recordRedirectionRules as $rule) {
-                $data = array_map('trim', explode('###', $rule, 3));
-                if (count($data) === 3) {
-                    list($pattern, $replacement, $newDatasource) = $data;
+                $data = array_map('trim', explode('###', $rule, 4));
+                if (count($data) >= 3) {
+                    [$pattern, $replacement, $newDatasource] = $data;
+                    $field = $data[3] ?? 'ctrlnum';
                     $otherId = preg_replace($pattern, $replacement, $id, -1, $count);
                     if ($count && $otherId) {
                         // Try to find the new record by searching for the redirected
                         // ID in in ctrlnum field (possibly with prefix).
                         $newRecord = $this->loadRecordWithIdentifier(
-                            $otherId, $newDatasource, 'ctrlnum'
+                            $otherId, $newDatasource, $field
                         );
                         if ($newRecord) {
+                            $newRecord->setExtraDetail('redirectedFromId', $id);
                             return $newRecord;
                         }
                     }

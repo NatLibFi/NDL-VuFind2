@@ -1,4 +1,4 @@
-/* global finna, VuFind, L */
+/* global finna, VuFind, L, listId */
 var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print"></a>';
 
 var defaults = {
@@ -120,9 +120,10 @@ FinnaPaginator.prototype.init = function init() {
     _.moreBtn = _.root.find('.show-more-images');
     _.lessBtn = _.root.find('.show-less-images');
     toggleButtons(_.moreBtn, _.lessBtn);
+    _.readQuery();
     _.setEvents();
-    _.loadPage(0);
-    _.setTrigger(_.track.find('a:first'));
+    _.loadPage(0, _.openImageIndex);
+    _.setTrigger(_.track.find('a[index=' + _.openImageIndex + ']'));
     _.addDocumentLoadCallback(function showLeftsidebar() {
       $('.large-image-sidebar').removeClass('hidden');
     });
@@ -157,10 +158,10 @@ FinnaPaginator.prototype.setReferences = function setReferences() {
   if (_.images.length <= _.settings.imagesPerRow) {
     $('.recordcovers-more').hide();
   }
-  _.leftBrowseBtn.off('click').click(function browseLeft() {
+  _.leftBrowseBtn.off('click').on('click', function browseLeft() {
     _.onBrowseButton(-1);
   });
-  _.rightBrowseBtn.off('click').click(function browseRight() {
+  _.rightBrowseBtn.off('click').on('click', function browseRight() {
     _.onBrowseButton(1);
   });
 };
@@ -187,33 +188,65 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
   var _ = this;
 
   if (!_.settings.isList) {
-    _.leftBtn.click(function loadImages() {
+    _.leftBtn.on('click', function loadImages() {
       _.loadPage(-1);
     });
-    _.rightBtn.click(function loadImages() {
+    _.rightBtn.on('click', function loadImages() {
       _.loadPage(1);
     });
-    _.moreBtn.click(function setImages() {
+    _.moreBtn.on('click', function setImages() {
       toggleButtons(_.lessBtn, _.moreBtn);
       _.loadPage(0, null, _.settings.imagesPerRow * _.settings.maxRows);
     });
-    _.lessBtn.click(function setImages() {
+    _.lessBtn.on('click', function setImages() {
       toggleButtons(_.moreBtn, _.lessBtn);
       _.loadPage(0, null, _.settings.imagesPerRow);
     });
   } else {
-    _.leftBtn.off('click').click(function setImage(){
+    _.leftBtn.off('click').on('click', function setImage(){
       _.onListButton(-1);
     });
-    _.rightBtn.off('click').click(function setImage(){
+    _.rightBtn.off('click').on('click', function setImage(){
       _.onListButton(1);
     });
     _.setButtons();
   }
-  _.imagePopup.on('click', function setTriggerEvents(e){
+  _.imagePopup.off('click').on('click', function setTriggerEvents(e){
     e.preventDefault();
     _.setTrigger($(this));
+    if (!_.settings.isList) {
+      _.alterQuery();
+    }
   });
+};
+
+/**
+ * Set desired image index to query
+ */
+FinnaPaginator.prototype.alterQuery = function alterQuery() {
+  var _ = this;
+  var urlParams = new URLSearchParams(window.location.search);
+  urlParams.set('imgid', +_.openImageIndex + 1);
+  var newRelativePathQuery = window.location.pathname + '?' + urlParams.toString() + window.location.hash;
+  history.replaceState(undefined, undefined, newRelativePathQuery);
+};
+
+/**
+ * Get desired image index from query
+ */
+FinnaPaginator.prototype.readQuery = function readQuery() {
+  var _ = this;
+  var queryString = window.location.search;
+  var urlParams = new URLSearchParams(queryString);
+  if (urlParams.has('imgid')) {
+    var imgid = +urlParams.get('imgid');
+    if (!isNaN(imgid)) {
+      imgid -= 1;
+      if (imgid > 0 && imgid < _.images.length) {
+        _.openImageIndex = imgid;
+      }
+    }
+  }
 };
 
 /**
@@ -245,7 +278,7 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
   _.openImageIndex = image.attr('index');
 
   var img = new Image();
-  img.src = image.data('largest');
+  img.src = image.data('large');
   $(img).attr('alt', image.data('alt'));
   img.onload = function onLoad() {
     if (typeof _.canvasElements.noZoom === 'undefined') {
@@ -295,7 +328,7 @@ FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(imag
   _.leafletHolder.setMaxBounds(null);
   _.leafletHolder.setMinZoom(1);
   var img = new Image();
-  img.src = image.data('largest');
+  img.src = image.data('master') || image.data('large');
   _.timeOut = setTimeout(function onLoadStart() {
     _.leafletLoader.addClass('loading');
   }, 100);
@@ -414,6 +447,9 @@ FinnaPaginator.prototype.setPopupImageState = function setPopupImageState(type) 
     _.imagePopup.off('click').on('click', function onImageClick(e){
       e.preventDefault();
       _.onLeafletImageClick($(this));
+      if (!_.settings.isList) {
+        _.alterQuery();
+      }
     });
     _.leafletLoader = _.canvasElements.leaflet.find('.leaflet-image-loading');
   
@@ -526,7 +562,7 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
   }
 
   if (!_.settings.isList) {
-    $('.image-details-container').hide();
+    $('.image-details-container').addClass('hidden');
     var details = $('.image-details-container[data-img-index="' + imagePopup.attr('index') + '"]');
     details.removeClass('hidden');
     var license = details.find('.truncate-field, .copyright');
@@ -560,7 +596,11 @@ FinnaPaginator.prototype.loadPage = function loadPage(direction, openImageIndex,
   }
 
   if (typeof openImageIndex !== 'undefined' && openImageIndex !== null) {
-    _.offSet = +openImageIndex;
+    var desiredImage = +openImageIndex;
+    if (desiredImage > _.images.length || desiredImage < 0) {
+      desiredImage = 0;
+    }
+    _.offSet = desiredImage;
   }
 
   _.offSet += _.settings.imagesPerPage * direction;
@@ -629,8 +669,8 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
   if (typeof publicList !== 'undefined') {
     src += '&publicList=1';
   }
-  var listId = $('input[name="listID"]').val();
 
+  // Listid is defined at list.phtml line 18
   if (typeof listId !== 'undefined') {
     src += '&listId=' + listId;
   }
@@ -640,6 +680,7 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     dataType: 'html'
   }).done( function setImageData(response) {
     _.popup.collapseArea.html(JSON.parse(response).data.html);
+    _.popup.summary = _.popup.collapseArea.find('.summary');
     _.setDimensions();
     if (_.settings.recordType === 'marc') {
       _.loadBookDescription();
@@ -698,7 +739,7 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     });
 
     if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
-      $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').click(function onClickActionLink(/*e*/) {
+      $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').on('click', function onClickActionLink(/*e*/) {
         $.fn.finnaPopup.closeOpen();
       });
     }
@@ -752,9 +793,10 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
   }
   holder.attr({
     'index': image.index,
-    'data-largest': image.largest,
+    'data-large': image.large,
+    'data-master': image.master,
     'data-description': image.description,
-    'href': (!_.settings.isList && _.settings.enableImageZoom) ? image.largest : image.medium,
+    'href': (!_.settings.isList) ? image.large : image.medium,
     'data-alt': image.alt
   });
 
@@ -830,7 +872,6 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
   _.popup.rightBtn = _.popup.covers.find('.right-button');
   _.popup.leftBrowseBtn = popup.find('.next-image.left');
   _.popup.rightBrowseBtn = popup.find('.next-image.right');
-  _.popup.summary = popup.find('.imagepopup-holder .summary');
   _.popup.covers.removeClass('mini-paginator');
   _.popup.collapseArea = popup.find('.collapse-content-holder');
   _.canvasElements = {
@@ -905,6 +946,9 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
       _.imagePopup.off('click').on('click', function setTriggerEvents(e){
         e.preventDefault();
         _.setTrigger($(this));
+        if (!_.settings.isList) {
+          _.alterQuery();
+        }
       });
       _.canvasElements = {};
       _.setMaxImages();

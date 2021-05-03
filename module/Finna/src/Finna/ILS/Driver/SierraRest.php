@@ -27,6 +27,8 @@
  */
 namespace Finna\ILS\Driver;
 
+use VuFind\Exception\ILS as ILSException;
+
 /**
  * III Sierra REST API driver
  *

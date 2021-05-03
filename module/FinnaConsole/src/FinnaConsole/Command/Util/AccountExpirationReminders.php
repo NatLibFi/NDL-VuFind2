@@ -39,6 +39,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use VuFind\Mailer\Mailer;
 
 /**
  * Console service for reminding users x days before account expiration
@@ -54,6 +55,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class AccountExpirationReminders extends AbstractUtilCommand
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
+    use EmailWithRetryTrait;
 
     /**
      * The name of the command (the part after "public/index.php")
@@ -196,16 +198,23 @@ class AccountExpirationReminders extends AbstractUtilCommand
     protected $reportOnly;
 
     /**
+     * Currently active view path
+     *
+     * @var string
+     */
+    protected $currentViewPath = '';
+
+    /**
      * Constructor
      *
-     * @param \VuFind\Db\Table\User              $userTable     User table
-     * @param \VuFind\Db\Table\Search            $searchTable   User table
-     * @param \VuFind\Db\Table\Resource          $resTable      User table
-     * @param \Laminas\View\Renderer\PhpRenderer $renderer      View renderer
-     * @param \Laminas\Config\Config             $dsConfig      Data source config
-     * @param callable                           $mailerFactory Mailer factory
-     * @param Translator                         $translator    Translator
-     * @param \VuFind\Config\PluginManager       $configMgr     Config manager
+     * @param \VuFind\Db\Table\User              $userTable   User table
+     * @param \VuFind\Db\Table\Search            $searchTable User table
+     * @param \VuFind\Db\Table\Resource          $resTable    User table
+     * @param \Laminas\View\Renderer\PhpRenderer $renderer    View renderer
+     * @param \Laminas\Config\Config             $dsConfig    Data source config
+     * @param Mailer                             $mailer      Mailer
+     * @param Translator                         $translator  Translator
+     * @param \VuFind\Config\PluginManager       $configMgr   Config manager
      */
     public function __construct(
         \Finna\Db\Table\User $userTable,
@@ -213,7 +222,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
         \Finna\Db\Table\Resource $resTable,
         \Laminas\View\Renderer\PhpRenderer $renderer,
         \Laminas\Config\Config $dsConfig,
-        callable $mailerFactory,
+        Mailer $mailer,
         Translator $translator,
         \VuFind\Config\PluginManager $configMgr
     ) {
@@ -222,7 +231,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
         $this->resourceTable = $resTable;
         $this->renderer = $renderer;
         $this->datasourceConfig = $dsConfig;
-        $this->mailerFactory = $mailerFactory;
+        $this->mailer = $mailer;
         $this->translator = $translator;
         $this->configManager = $configMgr;
         $this->urlHelper = $renderer->plugin('url');
@@ -345,6 +354,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
             return 1;
         }
 
+        $this->mailer->resetConnection();
+
         return 0;
     }
 
@@ -454,7 +465,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
     protected function sendAccountExpirationReminder($user, $expirationDays)
     {
         if (false !== strpos($user->username, ':')) {
-            list($userInstitution, $userName) = explode(':', $user->username, 2);
+            [$userInstitution, $userName] = explode(':', $user->username, 2);
         } else {
             $userInstitution = 'national';
             $userName = $user->username;
@@ -565,7 +576,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
         }
 
         if (strcasecmp($user->auth_method, 'multiils') === 0) {
-            list($target) = explode('.', $userName);
+            [$target] = explode('.', $userName);
             if (empty($this->currentMultiBackendConfig['Drivers'][$target])) {
                 $this->msg(
                     "User {$user->username} (id {$user->id}) institution"
@@ -627,13 +638,33 @@ class AccountExpirationReminders extends AbstractUtilCommand
         if (!$firstName) {
             $firstName = $userName;
         }
+
+        $savedSearchCnt = count($this->searchTable->getSavedSearches($user->id));
+        $publicListCnt = $privateListCnt = 0;
+
+        $userLists = $user->getLists();
+        if (!empty($userLists)) {
+            $publicListCnt = count(
+                array_filter(
+                    $userLists,
+                    function ($list) {
+                        return $list['public'];
+                    }
+                )
+            );
+            $privateListCnt = count($userLists) - $publicListCnt;
+        }
+
         $params = [
             'loginMethod' => strtolower($user->auth_method),
             'username' => $userName,
             'firstname' => $firstName,
             'expirationDate' =>  $expirationDatetime->format('d.m.Y'),
             'serviceName' => $serviceName,
-            'serviceAddress' => $serviceAddress
+            'serviceAddress' => $serviceAddress,
+            'publicListCnt' => $publicListCnt,
+            'privateListCnt' => $privateListCnt,
+            'savedSearchCnt' => $savedSearchCnt,
         ];
 
         $subject = $this->translate(
@@ -665,25 +696,7 @@ $message
 
 EOT;
             } else {
-                try {
-                    if (null === $this->mailer) {
-                        $this->mailer = ($this->mailerFactory)();
-                    }
-                    $this->mailer->send($to, $from, $subject, $message);
-                } catch (\Exception $e) {
-                    $this->warn(
-                        "First SMTP send attempt to user {$user->username}"
-                            . " (id {$user->id}, email '$to') failed, resetting",
-                        ''
-                    );
-                    try {
-                        $this->mailer->resetConnection();
-                    } catch (\Exception $e) {
-                        // Failed to reset connection, create a new mailer
-                        $this->mailer = ($this->mailerFactory)();
-                    }
-                    $this->mailer->send($to, $from, $subject, $message);
-                }
+                $this->sendEmailWithRetry($to, $from, $subject, $message);
                 $user->finna_last_expiration_reminder = date('Y-m-d H:i:s');
                 $user->save();
             }

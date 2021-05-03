@@ -297,30 +297,30 @@ class SolrExtensionsListener
         echo 'Query parser: ' . $debugInfo['QParser'] . "\n\n";
         echo 'Alt query string: ' . $debugInfo['altquerystring'] . "\n\n";
         echo "Boost functions:\n";
-        if ($debugInfo['boostfuncs']) {
+        if (!empty($debugInfo['boostfuncs'])) {
             echo '  ' . implode("\n  ", $debugInfo['boostfuncs']);
         }
         echo "\n\n";
         echo "Filter queries:\n";
-        if ($debugInfo['filter_queries']) {
+        if (!empty($debugInfo['filter_queries'])) {
             echo '  ' . implode("\n  ", $debugInfo['filter_queries']);
         }
         echo "\n\n";
         echo "Parsed filter queries:\n";
-        if ($debugInfo['parsed_filter_queries']) {
+        if (!empty($debugInfo['parsed_filter_queries'])) {
             echo '  ' . implode("\n  ", $debugInfo['parsed_filter_queries']);
         }
         echo "\n\n";
         echo "Timing:\n";
         echo "  Total: " . $debugInfo['timing']['time'] . "\n";
         echo "  Prepare:\n";
-        foreach ($debugInfo['timing']['prepare'] as $key => $value) {
+        foreach ($debugInfo['timing']['prepare'] ?? [] as $key => $value) {
             echo "    $key: ";
             echo is_array($value) ? $value['time'] : $value;
             echo "\n";
         }
         echo "  Process:\n";
-        foreach ($debugInfo['timing']['process'] as $key => $value) {
+        foreach ($debugInfo['timing']['process'] ?? [] as $key => $value) {
             echo "    $key: ";
             echo is_array($value) ? $value['time'] : $value;
             echo "\n";

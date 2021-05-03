@@ -29,6 +29,7 @@
 namespace Finna\Controller;
 
 use Laminas\Console\Console;
+use Laminas\Stdlib\Parameters;
 
 /**
  * Online payment controller trait.
@@ -230,7 +231,7 @@ trait FinnaOnlinePaymentControllerTrait
             }
             $finesUrl = $this->getServerUrl('myresearch-fines');
             $ajaxUrl = $this->getServerUrl('home') . 'AJAX';
-            list($driver, ) = explode('.', $patron['cat_username'], 2);
+            [$driver, ] = explode('.', $patron['cat_username'], 2);
 
             $user = $this->getUser();
             if (!$user) {
@@ -357,7 +358,7 @@ trait FinnaOnlinePaymentControllerTrait
         $this->setLogger($this->serviceLocator->get(\VuFind\Log\Logger::class));
         if (!Console::isConsole()) {
             if (is_callable([$this->logger, 'logException'])) {
-                $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
+                $this->logger->logException($e, new Parameters());
             }
         } else {
             $this->logException($e);

@@ -82,6 +82,7 @@ trait FinnaRecordTrait
         if ($mmsId = $this->tryMethod('getAlmaMmsId')) {
             $params['rft.mms_id'] = $mmsId;
         }
+        $params['rft.au'] = $this->getOpenUrlAuthor();
 
         return $params;
     }
@@ -103,6 +104,7 @@ trait FinnaRecordTrait
         if ($mmsId = $this->tryMethod('getAlmaMmsId')) {
             $params['rft.mms_id'] = $mmsId;
         }
+        $params['rft.au'] = $this->getOpenUrlAuthor();
 
         return $params;
     }
@@ -121,6 +123,8 @@ trait FinnaRecordTrait
         if ($mmsId = $this->tryMethod('getAlmaMmsId')) {
             $params['rft.mms_id'] = $mmsId;
         }
+        $params['rft.au'] = $this->getOpenUrlAuthor();
+
         return $params;
     }
 
@@ -138,7 +142,72 @@ trait FinnaRecordTrait
         if ($mmsId = $this->tryMethod('getAlmaMmsId')) {
             $params['rft.mms_id'] = $mmsId;
         }
+        $params['rft.au'] = $this->getOpenUrlAuthor();
+
         return $params;
+    }
+
+    /**
+     * Get OpenURL parameters for an unknown format.
+     *
+     * @param string $format Name of format
+     *
+     * @return array
+     */
+    protected function getUnknownFormatOpenUrlParams($format = 'UnknownFormat')
+    {
+        $params = $this->getDefaultOpenUrlParams();
+        $resolver = strtolower($this->mainConfig->OpenURL->resolver ?? '');
+        // Alma does not support rft_val_fmt 'info:ofi/fmt:kev:mtx:dc', so
+        // use the 'info:ofi/fmt:kev:mtx:book' format instead
+        if ('alma' === $resolver) {
+            $params['rft_val_fmt'] = 'info:ofi/fmt:kev:mtx:book';
+            // Don't set genre. It seems to cause Alma to ignore date and author.
+            // $params['rft.genre'] = 'unknown';
+            $params['rft.au'] = $this->getOpenUrlAuthor();
+        } else {
+            $params['rft_val_fmt'] = 'info:ofi/fmt:kev:mtx:dc';
+            $params['rft.creator'] = $this->getOpenUrlAuthor();
+            $params['rft.format'] = $format;
+            $langs = $this->getLanguages();
+            if (count($langs) > 0) {
+                $params['rft.language'] = $langs[0];
+            }
+        }
+        $publishers = $this->getPublishers();
+        if (count($publishers) > 0) {
+            $params['rft.pub'] = $publishers[0];
+        }
+        if ($mmsId = $this->tryMethod('getAlmaMmsId')) {
+            $params['rft.mms_id'] = $mmsId;
+        }
+
+        return $params;
+    }
+
+    /**
+     * Get an author for OpenURL
+     *
+     * @return string
+     */
+    protected function getOpenUrlAuthor()
+    {
+        $authors = $this->tryMethod('getNonPresenterAuthors');
+        if (!empty($authors[0]['name'])) {
+            return $authors[0]['name'];
+        }
+        $authors = $this->tryMethod('getPresenters');
+        if (!empty($authors['presenters'][0]['name'])) {
+            return $authors['presenters'][0]['name'];
+        }
+        if ($author = $this->getPrimaryAuthor()) {
+            return trim($author, ' .');
+        }
+        if ($authors = $this->getSecondaryAuthors()) {
+            return trim($authors[0], ' .');
+        }
+
+        return '';
     }
 
     /**
@@ -232,7 +301,7 @@ trait FinnaRecordTrait
      */
     public function getAuthorityId($id, $type = '*')
     {
-        if (!$this->datasourceSettings) {
+        if (!$this->datasourceSettings || !is_callable([$this, 'getDatasource'])) {
             return $id;
         }
 

@@ -77,7 +77,7 @@ finna.MapFacet = (function finnaStreetMap() {
     });
 
 
-    mapCanvas.closest('form').submit(function mapFormSubmit(e) {
+    mapCanvas.closest('form').on('submit', function mapFormSubmit(e) {
       $('input[name="filter[]"]').each(function removeLastSearchLocationFilter() {
         if (this.value.includes("!geofilt sfield=location_geo")){
           this.remove();
@@ -120,7 +120,7 @@ finna.MapFacet = (function finnaStreetMap() {
 
   function initMapFacet(_options){
     progressContainer = $('.location-search-info');
-    $(".user-location-filter").click(function onLocationFilterClick(e){
+    $(".user-location-filter").on('click', function onLocationFilterClick(e){
       e.preventDefault();
       progressContainer.find('.fa-spinner').removeClass('hidden');
       progressContainer.find('.info').empty();
@@ -128,7 +128,7 @@ finna.MapFacet = (function finnaStreetMap() {
       navigator.geolocation.getCurrentPosition(locationSearch, geoLocationError, { timeout: 30000, maximumAge: 10000 });
     });
 
-    $('.close-info').click(function onCloseInfoClick(){
+    $('.close-info').on('click', function onCloseInfoClick(){
       progressContainer.addClass('hidden');
     });
 

@@ -181,6 +181,17 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Get text that can be displayed to represent this record in
+     * breadcrumbs.
+     *
+     * @return string Breadcrumb text to represent this record.
+     */
+    public function getBreadcrumb()
+    {
+        return $this->getTitle();
+    }
+
+    /**
      * Return building from index.
      *
      * @return array
@@ -200,9 +211,9 @@ trait SolrFinnaTrait
     {
         if (isset($this->fields['center_coords'])) {
             if (strstr($this->fields['center_coords'], ',') !== false) {
-                list($lat, $lon) = explode(',', $this->fields['center_coords'], 2);
+                [$lat, $lon] = explode(',', $this->fields['center_coords'], 2);
             } else {
-                list($lon, $lat) = explode(' ', $this->fields['center_coords'], 2);
+                [$lon, $lat] = explode(' ', $this->fields['center_coords'], 2);
             }
             return ['lon' => $lon, 'lat' => $lat];
         }
@@ -285,9 +296,11 @@ trait SolrFinnaTrait
     /**
      * Get the hierarchy_parent_id(s) associated with this item (empty if none).
      *
+     * @param string[] $levels Optional list of level types to return
+     *
      * @return array
      */
-    public function getHierarchyParentID()
+    public function getHierarchyParentID(array $levels = []) : array
     {
         return $this->fields['hierarchy_parent_id'] ?? [];
     }
@@ -295,9 +308,11 @@ trait SolrFinnaTrait
     /**
      * Get the parent title(s) associated with this item (empty if none).
      *
+     * @param string[] $levels Optional list of level types to return
+     *
      * @return array
      */
-    public function getHierarchyParentTitle()
+    public function getHierarchyParentTitle(array $levels = []) : array
     {
         return $this->fields['hierarchy_parent_title'] ?? [];
     }
@@ -380,11 +395,6 @@ trait SolrFinnaTrait
             ];
         }
 
-        // Check for cached data
-        if (isset($this->cachedMergeRecordData)) {
-            return $this->cachedMergeRecordData;
-        }
-
         // Check if this is a merged record
         if (empty($this->fields['merged_child_boolean'])) {
             return [];
@@ -393,6 +403,11 @@ trait SolrFinnaTrait
         // Find the dedup record
         if (null === $this->searchService) {
             return [];
+        }
+
+        // Check for cached data
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
         }
 
         if (!empty($this->fields['dedup_id_str_mv'])) {
@@ -412,7 +427,7 @@ trait SolrFinnaTrait
             )->getRecords();
         }
         if (!isset($records[0])) {
-            $this->cachedMergeRecordData = [];
+            $this->cache[__FUNCTION__] = [];
             return [];
         }
         $dedupRecord = $records[0];
@@ -427,7 +442,7 @@ trait SolrFinnaTrait
                 true
             );
         }
-        $this->cachedMergeRecordData = $results;
+        $this->cache[__FUNCTION__] = $results;
         return $results;
     }
 
@@ -698,11 +713,11 @@ trait SolrFinnaTrait
     public function supportsAjaxStatus()
     {
         if (parent::supportsAjaxStatus()) {
-            if ($this->ils) {
+            if (!empty($this->ils)) {
                 $driver = $this->ils->getDriver(false);
                 if ($driver instanceof \VuFind\ILS\Driver\MultiBackend) {
                     $driverConfig = $this->ils->getDriverConfig();
-                    list($source) = explode('.', $this->getUniqueID());
+                    [$source] = explode('.', $this->getUniqueID());
                     return isset($driverConfig['Drivers'][$source]);
                 }
             }
@@ -792,7 +807,7 @@ trait SolrFinnaTrait
         $sourceFilter = !empty($this->searchSettings['Records']['sources'])
             ? explode(',', $this->searchSettings['Records']['sources']) : [];
         foreach ($ids as $id) {
-            list($source) = explode('.', $id);
+            [$source] = explode('.', $id);
             if ($sourceFilter && !in_array($source, $sourceFilter)) {
                 continue;
             }
@@ -841,13 +856,11 @@ trait SolrFinnaTrait
      * Get related records (used by RecordDriverRelated - Related module)
      *
      * Returns an associative array of group => records, where each item in
-     * records is either a record id or an array that has a 'wildcard' key
-     * with a Solr compatible pattern as it's value.
-     *
-     * Notes on wildcard queries:
-     *  - Only the first record from the wildcard result set is returned.
-     *  - The wildcard query includes a filter that limits the results to
-     *    the same datasource as the issuing record.
+     * records is either a record id or an array with keys:
+     * - id: record identifier to search
+     * - field (optional): Solr field to search in, defaults to 'identifier'.
+     *                     In addition, the query includes a filter that limits the
+     *                     results to the same datasource as the issuing record.
      *
      * The array may contain the following keys:
      *   - continued-from
@@ -858,8 +871,8 @@ trait SolrFinnaTrait
      * Examples:
      * - continued-from
      *     - source1.1234
-     *     - ['wildcard' => '*1234']
-     *     - ['wildcard' => 'source*1234*']
+     *     - ['id' => '1234']
+     *     - ['id' => '1234', 'field' => 'foo']
      *
      * @return array
      */
@@ -1027,7 +1040,7 @@ trait SolrFinnaTrait
     public function getRealTimeTitleHold()
     {
         $biblioLevel = strtolower($this->tryMethod('getBibliographicLevel'));
-        if ($this->hasILS()) {
+        if (is_callable([$this, 'hasILS']) && $this->hasILS() && isset($this->ils)) {
             if ($this->ils->getTitleHoldsMode() === 'disabled') {
                 return false;
             }
@@ -1040,7 +1053,7 @@ trait SolrFinnaTrait
                     'monograph', 'monographpart',
                     'serialpart', 'collectionpart'
                 ];
-            if (in_array($biblioLevel, $bibLevels)) {
+            if (in_array($biblioLevel, $bibLevels) && isset($this->titleHoldLogic)) {
                 return $this->titleHoldLogic->getHold($this->getUniqueID());
             }
         }

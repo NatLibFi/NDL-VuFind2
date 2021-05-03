@@ -738,11 +738,12 @@ class OrganisationInfo implements \VuFind\I18n\Translator\TranslatorAwareInterfa
                     'zipcode' => $item['address']['zipcode'],
                 ];
 
-                if (!empty($item['address']['area'])) {
-                    $address['city']
-                        = "{$item['address']['area']} ({$item['address']['city']})";
+                $city = $item['address']['city'];
+                $area = $item['address']['area'] ?? '';
+                if ($area && $area !== $city) {
+                    $address['city'] = "$area ($city)";
                 } else {
-                    $address['city'] = $item['address']['city'];
+                    $address['city'] = $city;
                 }
             }
 

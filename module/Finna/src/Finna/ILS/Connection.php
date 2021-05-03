@@ -83,8 +83,8 @@ class Connection extends \VuFind\ILS\Connection
         // the sources beforehand.
         if ('getConfig' === $method && 'Holds' === ($params[0] ?? '')) {
             // Check source of record id vs. patron id
-            list($recordSource) = explode('.', $params[1]['id'] ?? '');
-            list($patronSource) = explode('.', $params[1]['patron']['id'] ?? '');
+            [$recordSource] = explode('.', $params[1]['id'] ?? '');
+            [$patronSource] = explode('.', $params[1]['patron']['id'] ?? '');
             if ($patronSource && $patronSource !== $recordSource) {
                 return false;
             }

@@ -79,6 +79,10 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
             'callnumber' => $callnumber, 'location' => $location, 'title' => $title,
             'page' => $page, 'source' => $source
         ];
+        // Set results-online to just results for qrCode config below
+        if ('results-online' === $page) {
+            $page = 'results';
+        }
         $config = $this->locationService->getConfig(
             $source, $title, $callnumber, $collection, $location, $language
         );

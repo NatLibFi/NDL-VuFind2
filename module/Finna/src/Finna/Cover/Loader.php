@@ -53,6 +53,13 @@ class Loader extends \VuFind\Cover\Loader
     protected $url;
 
     /**
+     * Image parameters
+     *
+     * @var array
+     */
+    protected $imageParams = [];
+
+    /**
      * Record id
      *
      * @var string
@@ -156,10 +163,9 @@ class Loader extends \VuFind\Cover\Loader
         if (!$this->fetchFromAPI()
             && !$this->fetchFromContentType()
         ) {
-            if (isset($this->config->Content->makeDynamicCovers)
-                && $this->config->Content->makeDynamicCovers
-            ) {
-                $this->image = $this->getCoverGenerator()->generate(
+            if ($this->generator) {
+                $this->generator->setOptions($this->getCoverGeneratorSettings());
+                $this->image = $this->generator->generate(
                     $settings['title'], $settings['author'], $settings['callnumber']
                 );
                 $this->contentType = 'image/png';
@@ -235,10 +241,10 @@ class Loader extends \VuFind\Cover\Loader
         $this->index = $index;
 
         $params = $driver->getRecordImage($size, $index);
-
         if (isset($params['url'])) {
             $this->id = $driver->getUniqueID();
             $this->url = $params['url'];
+            $this->imageParams = $params;
             return parent::fetchFromAPI();
         }
     }
@@ -267,7 +273,7 @@ class Loader extends \VuFind\Cover\Loader
      * @param array  $ids     IDs returned by getIdentifiers() method
      * @param string $apiName Name of the API
      *
-     * @return void
+     * @return string
      */
     protected function determineLocalFile($ids, $apiName = 'default')
     {
@@ -422,7 +428,9 @@ class Loader extends \VuFind\Cover\Loader
         $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
         $finalFile = $cache ? $this->localFile : $tempFile . '.jpg';
 
-        $pdfFile = preg_match('/\.pdf$/i', $url);
+        $pdfFile
+            = ($this->imageParams['pdf'] ?? false) || preg_match('/\.pdf$/i', $url);
+
         $convertPdfService
             = $this->config->Content->convertPdfToCoverImageService
             ?? false;
@@ -480,7 +488,7 @@ class Loader extends \VuFind\Cover\Loader
             return false;
         }
 
-        list($width, $height, $type) = @getimagesizefromstring($image);
+        [$width, $height, $type] = @getimagesizefromstring($image);
 
         $reqWidth = $this->width ?: $width;
         $reqHeight = $this->height ?: $height;

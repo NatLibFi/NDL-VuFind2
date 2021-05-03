@@ -1,6 +1,7 @@
 <!-- START of: finna - myresearch/profile-my-information.phtml -->
 <?php if ($user): ?>
   <form name="my_profile_form" class="inline" method="post">
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
     <?php if (!$this->hideProfileEmailAddress): ?>
       <div class="my-profile-row">
         <div class="my-profile-col">

@@ -141,7 +141,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     map.draw(organisationList, defaultId);
 
     // Expand map
-    holder.find('.expand-map').click(function onClickExpandMap() {
+    holder.find('.expand-map').on('click', function onClickExpandMap() {
       mapHolder.toggleClass('expand', true);
       map.resize();
       $(this).hide();
@@ -162,8 +162,12 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         var term = request.term.toLowerCase();
         var result = [];
         $.each(organisationList, function handleOrganisation(id, obj) {
-          if (obj.name.toLowerCase().indexOf(term) !== -1) {
-            result.push({value: id, label: obj.name});
+          var label = obj.name;
+          if (obj.address && obj.address.city) {
+            label += ', ' + obj.address.city;
+          }
+          if (label.toLowerCase().indexOf(term) !== -1) {
+            result.push({value: id, label: label});
           }
         });
         result = result.sort(function sortCallback(a, b) {
@@ -521,7 +525,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     consortiumInfo = finna.common.getField(options, 'consortiumInfo') === 1;
     var buildings = finna.common.getField(options, 'buildings');
     var mapTileUrl = '//map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
-    var attribution = 
+    var attribution =
       '<i class="fa fa-map-marker marker open"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_open') + '</span>' +
       '<i class="fa fa-map-marker marker closed"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_closed') + '</span>' +
       '<i class="fa fa-map-marker marker no-schedule"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_no_schedule') + '</span>' +
@@ -557,7 +561,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       tooltip.css({'margin-left': -(tooltip.outerWidth()) / 2 + 20}).show();
     });
 
-    holder.find('.map-control-buttons .show-map').click(function onClickShowMap() {
+    holder.find('.map-control-buttons .show-map').on('click', function onClickShowMap() {
       mapHolder = $('.office.map-ui.map');
       if (mapHolder.hasClass('hidden')) {
         mapHolder.removeClass('hidden');
@@ -580,7 +584,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       return false;
     });
 
-    holder.find('.map-control-buttons .show-service-point').click(function onClickShowServicePoint() {
+    holder.find('.map-control-buttons .show-service-point').on('click', function onClickShowServicePoint() {
       var id = getOrganisationFromURL();
       if (id in organisationList) {
         var data = organisationList[id];
@@ -592,7 +596,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       return false;
     });
 
-    holder.find('.map-control-buttons .show-all').click(function onClickShowAll() {
+    holder.find('.map-control-buttons .show-all').on('click', function onClickShowAll() {
       mapHolder = $('.office.map-ui.map');
       if (mapHolder.hasClass('hidden')) {
         mapHolder.removeClass('hidden');

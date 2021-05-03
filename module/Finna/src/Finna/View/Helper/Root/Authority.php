@@ -39,11 +39,18 @@ namespace Finna\View\Helper\Root;
 class Authority extends \Laminas\View\Helper\AbstractHelper
 {
     /**
+     * Authority configuration
+     *
+     * @var \Laminas\Config\Config
+     */
+    protected $config;
+
+    /**
      * Constructor
      *
-     * @param \VuFind\Config\PluginManager $config Primo configuration
+     * @param \Laminas\Config\Config $config Authority configuration
      */
-    public function __construct($config)
+    public function __construct(\Laminas\Config\Config $config)
     {
         $this->config = $config;
     }

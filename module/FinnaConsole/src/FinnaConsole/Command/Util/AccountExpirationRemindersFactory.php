@@ -71,22 +71,13 @@ class AccountExpirationRemindersFactory implements FactoryInterface
         $theme = new \VuFindTheme\Initializer($mainConfig->Site, $container);
         $theme->init();
 
-        if (is_callable([$container, 'setShared'])) {
-            $container->setShared(\VuFind\Mailer\Mailer::class, false);
-        } else {
-            throw new \Exception('Cannot make Mailer non-shared');
-        }
-        $mailerFactory = function () use ($container) {
-            return $container->get(\VuFind\Mailer\Mailer::class);
-        };
-
         return new $requestedName(
             $tableManager->get('User'),
             $tableManager->get('Search'),
             $tableManager->get('Resource'),
             $container->get('ViewRenderer'),
             $configManager->get('datasources'),
-            $mailerFactory,
+            $container->get(\VuFind\Mailer\Mailer::class),
             $container->get(\Laminas\Mvc\I18n\Translator::class),
             $configManager,
             ...($options ?? [])

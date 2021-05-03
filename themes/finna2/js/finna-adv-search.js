@@ -7,7 +7,7 @@ finna.advSearch = (function advSearch() {
     var field = container.find('input[name="daterange[]"]').eq(0).val();
     var fromField = container.find('#' + field + 'from');
     var toField = container.find('#' + field + 'to');
-    form.submit(function formSubmit(event) {
+    form.on('submit', function formSubmit(event) {
       if (typeof form[0].checkValidity == 'function') {
         // This is for Safari, which doesn't validate forms on submit
         if (!form[0].checkValidity()) {
@@ -65,7 +65,7 @@ finna.advSearch = (function advSearch() {
     var mapData = finna.map.initMap(mapCanvas, true, _options);
     var drawnItems = mapData.drawnItems;
 
-    mapCanvas.closest('form').submit(function mapFormSubmit() {
+    mapCanvas.closest('form').on('submit', function mapFormSubmit() {
       var filters = '';
       drawnItems.eachLayer(function mapLayerToSearchFilter(layer) {
         var latlng = layer.getLatLng();

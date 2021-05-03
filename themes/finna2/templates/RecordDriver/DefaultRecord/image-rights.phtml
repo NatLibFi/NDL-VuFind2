@@ -9,10 +9,16 @@
       <strong><?=$this->transEsc($imageRightsLabel ?? 'Image Rights') ?></strong><br>
       <span class="cc-rights">
         <?php if (!empty($rights['copyright'])): ?>
-          <?php $copyright = $this->transEsc($rights['copyright']) ?>
-          <?php if (!empty($copyright)): ?>
-            <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?><?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><?php if ($copyright === "Luvanvarainen käyttö / ei tiedossa"): ?><?= $this->transEsc('usage_F') ?><?php else: ?><?=$copyright ?><?php endif; ?><?php if ($hasLink): ?></a><?php endif; ?>
-          <?php endif; ?>
+          <?php
+            $copyright = $rights['copyright'];
+            $label = $this->transEsc($copyright);
+            if ($copyright === 'Luvanvarainen käyttö / ei tiedossa') {
+              $label = $this->transEsc('usage_F');
+            } elseif (!$this->translationEmpty("rightsstatement_$copyright")) {
+              $label = $this->transEsc("rightsstatement_$copyright");
+            }
+          ?>
+          <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?><?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><?= $label ?><?php if ($hasLink): ?></a><?php endif; ?>
         <?php else: ?>
           <?php foreach ($descriptions as $item): ?>
             <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $item])?> <?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><?= $item ?><?php if ($hasLink): ?></a><?php endif; ?>

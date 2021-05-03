@@ -48,7 +48,7 @@ class OpenUrl extends \VuFind\View\Helper\Root\OpenUrl
         if (null !== $this->config && isset($this->config->url)) {
             // Trim off any parameters (for legacy compatibility -- default config
             // used to include extraneous parameters):
-            list($base) = explode('?', $this->config->url);
+            [$base] = explode('?', $this->config->url);
         } else {
             $base = false;
         }

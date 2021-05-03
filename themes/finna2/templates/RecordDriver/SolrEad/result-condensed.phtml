@@ -43,7 +43,7 @@
       <?=$this->record($this->driver)->getPreviews()?>
     </div>
     <div class="condensed-col-hierarchy">
-    <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+      <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
         <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
           <div class="hierarchyTreeLink">
             <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
@@ -55,6 +55,9 @@
           </div>
         <?php endforeach; ?>
       <?php endif; ?>
+    </div>
+    <div class="condensed-notes">
+      <?=$this->render('list/list-notes.phtml')?>
     </div>
   </div>
   <div class="clearfix"></div>
@@ -89,10 +92,19 @@
             <?php endif; ?>
           <?php endif; ?>
           <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-            <span class="archive-label"><?=$this->transEsc('Archive Series')?>:</span>
-            <?php $parentIds = $this->driver->getHierarchyParentId(); $parentTitles = $this->driver->getHierarchyParentTitle(); ?>
-            <?php foreach ($parentIds as $index => $parentId): ?>
-              <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+            <?php foreach ([
+              ['Archive Series', \Finna\RecordDriver\SolrEad::SERIES_LEVELS],
+              ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS]
+            ] as [$label, $levels]):
+            ?>
+              <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
+              <?php if ($parentIds): ?>
+                <span class="archive-label"><?=$this->transEsc($label)?>:</span>
+                <?php foreach ($parentIds as $index => $parentId): ?>
+                  <a href="<?=$this->recordLink()->getUrl("$parentSource|$parentId")?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+                <?php endforeach; ?>
+                <br/>
+              <?php endif ?>
             <?php endforeach; ?>
             <br/>
           <?php endif; ?>
@@ -157,7 +169,6 @@
             <strong><?=$this->transEsc("Saved in")?>:</strong>
           </div>
         <?php endif; ?>
-        <?=$this->render('list/list-notes.phtml')?>
       </div>
     </div>
     <?php if ($thumbnail && $thumbnailAlignment === 'right'): ?>

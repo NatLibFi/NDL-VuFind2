@@ -356,7 +356,8 @@ class Transaction extends \VuFind\Db\Table\Gateway
             return false;
         }
         $t->reported = date("Y-m-d H:i:s", time());
-        return $t->save();
+        $t->save();
+        return true;
     }
 
     /**
@@ -392,7 +393,8 @@ class Transaction extends \VuFind\Db\Table\Gateway
         if ($statusMsg) {
             $t->status = $statusMsg;
         }
-        return $t->save();
+        $t->save();
+        return true;
     }
 
     /**

@@ -58,7 +58,7 @@ class IpRange extends \VuFind\Role\PermissionProvider\IpRange
         $ranges = [];
 
         foreach ($options as $range) {
-            list($ip) = explode('#', $range, 2);
+            [$ip] = explode('#', $range, 2);
             $ranges = array_merge($ranges, array_map('trim', explode(',', $ip)));
         }
 

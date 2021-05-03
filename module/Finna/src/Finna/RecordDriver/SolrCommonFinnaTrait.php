@@ -158,6 +158,7 @@ trait SolrCommonFinnaTrait
                     $params['fullres'] = 1;
                 }
                 $params['id'] = $this->getUniqueId();
+                $params['pdf'] = $images[$index]['pdf'][$size] ?? false;
                 return $params;
             }
         }
@@ -226,7 +227,7 @@ trait SolrCommonFinnaTrait
      */
     protected function getLocale()
     {
-        list($locale) = explode('-', $this->getTranslatorLocale());
+        [$locale] = explode('-', $this->getTranslatorLocale());
         return $locale;
     }
 }

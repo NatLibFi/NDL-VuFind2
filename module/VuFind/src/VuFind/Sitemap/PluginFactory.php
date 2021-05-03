@@ -1,10 +1,10 @@
 <?php
 /**
- * SIP2 Class
+ * Sitemap generator plugin factory
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,40 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Db_Table
- * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Sitemap
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\ILS;
+namespace VuFind\Sitemap;
 
 /**
- * SIP2 Class
+ * Sitemap generator plugin factory
  *
  * @category VuFind
- * @package  Db_Table
- * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Sitemap
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class SIP2 extends \sip2
+class PluginFactory extends \VuFind\ServiceManager\AbstractPluginFactory
 {
     /**
-     * Extend parent method by omitting CRC check if error detectiong is disabled.
-     *
-     * @param string $message Message
-     *
-     * @return bool
+     * Constructor
      */
-    // @codingStandardsIgnoreStart
-    public function _check_crc($message)
+    public function __construct()
     {
-        // @codingStandardsIgnoreEnd
-        if (!$this->error_detection) {
-            return true;
-        }
-        return parent::_check_crc($message);
+        $this->defaultNamespace = 'VuFind\Sitemap\Plugin';
     }
 }

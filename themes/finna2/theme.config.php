@@ -171,7 +171,6 @@ $config = [
     ],
     'js' => [
         'vendor/event-stub.js:lt IE 9',
-        'common.js',
         'account_ajax.js',
         'advanced_search.js',
         'cart.js',
@@ -181,7 +180,6 @@ $config = [
         'combined-search.js',
         'embedded_record.js',
         'facets.js',
-        'lightbox.js',
         'keep_alive.js',
         'openurl.js',
         'record.js',

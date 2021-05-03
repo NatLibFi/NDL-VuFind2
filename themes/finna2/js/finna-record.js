@@ -32,7 +32,7 @@ finna.record = (function finnaRecord() {
   }
 
   function initHideDetails() {
-    $('.show-details-button').click(function onClickShowDetailsButton() {
+    $('.show-details-button').on('click', function onClickShowDetailsButton() {
       $('.record-information .record-details-more').removeClass('hidden');
       $(this).addClass('hidden');
       $('.hide-details-button').removeClass('hidden');
@@ -129,7 +129,7 @@ finna.record = (function finnaRecord() {
           checkRequestsAreValid($group.find('.expandedCheckStorageRetrievalRequest').removeClass('expandedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest');
           checkRequestsAreValid($group.find('.expandedCheckILLRequest').removeClass('expandedCheckILLRequest'), 'ILLRequest');
           VuFind.lightbox.bind($itemsContainer);
-          $group.find('.load-more-items-ajax').click(function loadMore() {
+          $group.find('.load-more-items-ajax').on('click', function loadMore() {
             var $elem = $(this);
             $elem.addClass('hidden');
             $elem.siblings('.load-more-indicator-ajax').removeClass('hidden');
@@ -150,7 +150,7 @@ finna.record = (function finnaRecord() {
   }
 
   function initHoldingsControls() {
-    $('.holdings-container-heading').click(function onClickHeading(e) {
+    $('.holdings-container-heading').on('click', function onClickHeading(e) {
       if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')) {
         return;
       }
@@ -210,7 +210,7 @@ finna.record = (function finnaRecord() {
   }
 
   function setupLocationsEad3Tab() {
-    $('.holdings-container-heading').click(function onClickHeading() {
+    $('.holdings-container-heading').on('click', function onClickHeading() {
       $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
       if ($('.location .fa', this).hasClass('fa-arrow-down')) {
         $('.location .fa', this).removeClass('fa-arrow-down');
@@ -234,7 +234,7 @@ finna.record = (function finnaRecord() {
 
   function initAudioAccordion() {
     $('.audio-accordion .audio-item-wrapper').first().addClass('active');
-    $('.audio-accordion .audio-title-wrapper').click(function audioAccordionClicker() {
+    $('.audio-accordion .audio-title-wrapper').on('click', function audioAccordionClicker() {
       $('.audio-accordion .audio-item-wrapper.active').removeClass('active');
       $(this).parent().addClass('active');
     });
@@ -277,12 +277,12 @@ finna.record = (function finnaRecord() {
   }
 
   function initRecordAccordion() {
-    $('.record-accordions .accordion-toggle').click(function accordionClicked(e) {
+    $('.record-accordions .accordion-toggle').on('click', function accordionClicked(e) {
       return _toggleAccordion($(e.target).closest('.accordion'));
     });
     if ($('.mobile-toolbar').length > 0 && $('.accordion-holdings').length > 0) {
       $('.mobile-toolbar .library-link li').removeClass('hidden');
-      $('.mobile-toolbar .library-link li').click(function onLinkClick(e) {
+      $('.mobile-toolbar .library-link li').on('click', function onLinkClick(e) {
         e.stopPropagation();
         $('html, body').animate({scrollTop: $('#tabnav').offset().top - accordionTitleHeight}, 150);
         _toggleAccordion($('.accordion-holdings'));
@@ -372,6 +372,18 @@ finna.record = (function finnaRecord() {
     VuFind.recordVersions.init(_holder);
   }
 
+  function handleRedirect(oldId, newId) {
+    if (window.history.replaceState) {
+      var pathParts = window.location.pathname.split('/');
+      pathParts.forEach(function handlePathPart(part, i) {
+        if (decodeURIComponent(part) === oldId) {
+          pathParts[i] = encodeURIComponent(newId);
+        }
+      });
+      window.history.replaceState(null, document.title, pathParts.join('/') + window.location.search + window.location.hash);
+    }
+  }
+
   function init() {
     initHideDetails();
     initDescription();
@@ -390,7 +402,8 @@ finna.record = (function finnaRecord() {
     init: init,
     setupHoldingsTab: setupHoldingsTab,
     setupLocationsEad3Tab: setupLocationsEad3Tab,
-    initRecordVersions: initRecordVersions
+    initRecordVersions: initRecordVersions,
+    handleRedirect: handleRedirect
   };
 
   return my;

@@ -26,12 +26,13 @@
   $this->layout()->breadcrumbs = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'), '<li>', '</li> ') .
     '<li class="active" aria-current="page">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li> ';
 
-  $this->layout()->title = $this->driver->getShortTitle();
-
   $this->headMeta()->appendName('format-detection', 'telephone=no');
 
   // Set page title.
-  $headText = $this->driver->getBreadcrumb();
+  $title = $this->driver->getTitle();
+  $this->layout()->title = $title;
+
+  $headText = $title;
   $organisationName = $this->organisationDisplayName($this->driver);
   if (!empty($organisationName)) {
      $headText .= " | $organisationName";
@@ -75,6 +76,14 @@
   );
   $noImage = empty($images[0]['urls']['medium']) && empty($images[0]['urls']['large']);
   $largeImageLayout = !$noImage && in_array($this->driver->tryMethod('getRecordFormat'), ['lido', 'forward', 'ead', 'ead3', 'forwardAuthority']);
+
+  if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
+    echo $this->inlineScript(
+      \Laminas\View\Helper\HeadScript::SCRIPT,
+      'finna.record.handleRedirect(' . json_encode($oldRecordId) . ', ' . json_encode($this->driver->getUniqueID()) . ');',
+      'SET'
+    );
+  }
 ?>
 </div>
 <div class="container">
@@ -143,7 +152,7 @@
             ?>
             <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
               <a class="<?=strtolower($tab) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
-                href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav">
+                href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav" data-lightbox-ignore>
                 <?php if (strtolower($tab) == 'details'): ?><i class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>
                 <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
               </a>

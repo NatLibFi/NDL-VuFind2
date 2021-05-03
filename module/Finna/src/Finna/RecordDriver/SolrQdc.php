@@ -235,6 +235,29 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get an array of all ISBNs associated with the record (may be empty).
+     *
+     * @return array
+     */
+    public function getISBNs()
+    {
+        $result = [];
+        $xml = $this->getXmlRecord();
+        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
+            foreach ($field as $identifier) {
+                $trimmed = str_replace('-', '', trim($identifier));
+                if ((string)$identifier['type'] === 'isbn'
+                    || preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)
+                ) {
+                    $result[] = $identifier;
+                }
+            }
+        }
+
+        return array_values(array_unique($result));
+    }
+
+    /**
      * Return keywords
      *
      * @return array

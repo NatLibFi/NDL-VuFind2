@@ -665,6 +665,9 @@ lang[] = "eng"
 ;params = "qf=title,title_short,callnumber-label,topic,language,author,publishDate mintf=1 mindf=1";
 ; This setting can be used to limit the maximum number of suggestions. Default is 5.
 ;count = 5
+; If the MoreLikeThis handler is used, this setting can be used to exclude other
+; versions of the record from similar records. Default is false.
+;excludeOtherVersions = true
 
 ; This section defines settings used to fetch different expressions (versions)
 [WorkExpressions]
@@ -675,6 +678,8 @@ showMoreCount = 30
 
 ; This section defines settings for the Ontology Recommendations Module.
 [OntologyModuleRecommendations]
+; Maximum number of search terms for recommendation processing. Leave unset for an unlimited number of search terms.
+;maxSearchTerms = 2
 ; Maximum number of API calls to make per search. Leave unset for an unlimited number of API calls.
 ;maxApiCalls = 10
 ; Maximum number of recommendations to show per search. Leave unset for an unlimited number of recommendations.
@@ -686,3 +691,19 @@ showMoreCount = 30
 ; Maximum number of times ontology recommendations can be shown per browser session. Leave unset for an unlimited
 ; number of ontology recommendations shown.
 ;maxTimesShownPerSession =
+
+; This section provides settings for optional caching of search requests. This
+; affects the primary Solr backend only; for caching of other backends, see the
+; appropriate backend-specific configuration files (Search2.ini, website.ini, etc.).
+[SearchCache]
+; Supported adapters: Memcached, Filesystem. Others may also work, but have not been
+; tested.
+;adapter = Memcached
+; Servers for Memcached:
+;options[servers] = "localhost:11211"
+; Cache directory for Filesystem cache:
+;options[cache_dir] = "/tmp/search-cache"
+; Other options. See https://docs.laminas.dev/laminas-cache/storage/adapter/ for
+; documentation on options for different adapters.
+; ttl, Time to Live, i.e. cache entry life time in seconds. 300 seconds by default.
+;options[ttl] = 300

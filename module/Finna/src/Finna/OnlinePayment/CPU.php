@@ -99,7 +99,7 @@ class CPU extends BaseHandler
             // last name.
             if (strpos($lastname, ',') > 0) {
                 // Lastname, Firstname
-                list($lastname, $firstname) = explode(',', $lastname, 2);
+                [$lastname, $firstname] = explode(',', $lastname, 2);
             } else {
                 // First Middle Last
                 if (preg_match('/^(.*) (.*?)$/', $lastname, $matches)) {
@@ -116,7 +116,7 @@ class CPU extends BaseHandler
         $payment->LastName = empty($lastname) ? 'ei tietoa' : $lastname;
 
         $locale = $this->translator->getLocale();
-        list($lang) = explode('-', $locale);
+        [$lang] = explode('-', $locale);
         if (!empty($this->config->supportedLanguages)) {
             $languageMappings = [];
             foreach (explode(':', $this->config->supportedLanguages) as $item) {
@@ -362,7 +362,7 @@ class CPU extends BaseHandler
             return 'online_payment_failed';
         }
 
-        list($success, $data) = $this->getStartedTransaction($orderNum);
+        [$success, $data] = $this->getStartedTransaction($orderNum);
         if (!$success) {
             return $data;
         }

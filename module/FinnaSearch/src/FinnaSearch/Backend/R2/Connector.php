@@ -43,7 +43,7 @@ use VuFindSearch\ParamBag;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org
  */
-class Connector extends \FinnaSearch\Backend\Solr\Connector
+class Connector extends \VuFindSearch\Backend\Solr\Connector
 {
     /**
      * R2 daily request limit exceeded.
@@ -202,7 +202,7 @@ class Connector extends \FinnaSearch\Backend\Solr\Connector
             // Replace 'id' field with R2 unique identifier field
             $result = [];
             foreach ($sort as $s) {
-                list($field, $order) = explode(' ', $s);
+                [$field, $order] = explode(' ', $s);
                 $result[] = sprintf('%s %s', $this->R2uniqueKey, $order);
             }
             $params->set('sort', $result);

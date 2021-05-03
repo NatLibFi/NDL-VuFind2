@@ -190,6 +190,8 @@ Subject:
     - geographic^50
     - genre^50
     - era
+    - topic_add_txt_mv
+    - geographic_add_txt_mv
   DismaxHandler: edismax
   ExactSettings:
     DismaxFields:
@@ -197,6 +199,8 @@ Subject:
       - geographic^50
       - genre^50
       - era
+      - topic_add_txt_mv
+      - geographic_add_txt_mv
 
 # This field definition is a compromise that supports both journal-level and
 # article-level data.  The disadvantage is that hits in article titles will
@@ -240,6 +244,10 @@ TitleStart:
   DismaxFields:
     - title_txtP_l^1000
 
+TitleExact:
+  DismaxFields:
+    - title_txtP_lr^1000
+
 Series:
   DismaxFields:
     - series^100
@@ -276,6 +284,8 @@ AllFields:
     - ismn_isn_mv
     - collection_txt_mv
     - classification_txt_mv
+    - topic_add_txt_mv
+    - geographic_add_txt_mv
   DismaxHandler: edismax
   ExactSettings:
     DismaxFields:
@@ -289,6 +299,8 @@ AllFields:
       - ismn_isn_mv
       - collection_txt_mv
       - classification_txt_mv
+      - topic_add_txt_mv
+      - geographic_add_txt_mv
 
 # These are advanced searches that never use Dismax:
 id:
@@ -324,7 +336,7 @@ DeweyBrowse:
 
 LccBrowse:
   QueryFields:
-    callnumber-a:
+    callnumber-raw:
       - [onephrase, ~]
 
 CallNumber:
@@ -350,10 +362,10 @@ CallNumber:
       - [preg_replace, '/\*+$/', '']
       - [append, "*"]
   QueryFields:
-    callnumber:
+    callnumber-search:
       - [callnumber_exact, 1000]
       - [callnumber_fuzzy, ~]
-    dewey-full:
+    dewey-search:
       - [callnumber_exact, 1000]
       - [callnumber_fuzzy, ~]
 
@@ -397,6 +409,8 @@ topic:
   QueryFields:
     topic:
       - [and, 50]
+    topic_add_txt_mv:
+      - [and, ~]
     topic_facet:
       - [and, ~]
 
@@ -404,6 +418,8 @@ geographic:
   QueryFields:
     geographic:
       - [and, 50]
+    geographic_add_txt_mv:
+      - [and, ~]
     geographic_facet:
       - [and, ~]
 
@@ -457,9 +473,8 @@ WorkKeys:
       - [or, ~]
 
 description:
-  QueryFields:
-    description:
-      - [or, ~]
+  DismaxFields:
+    - description
 
 Identifier:
   DismaxFields:

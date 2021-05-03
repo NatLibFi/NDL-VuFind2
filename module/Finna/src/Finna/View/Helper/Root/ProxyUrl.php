@@ -28,7 +28,7 @@
 namespace Finna\View\Helper\Root;
 
 use Laminas\Config\Config;
-use VuFind\Net\ipAddressUtils;
+use VuFind\Net\IpAddressUtils;
 
 /**
  * Proxy URL view helper
@@ -44,7 +44,7 @@ class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
     /**
      * IP address utils
      *
-     * @var ipAddressUtils
+     * @var IpAddressUtils
      */
     protected $ipAddressUtils;
 
@@ -67,10 +67,10 @@ class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
      *
      * @param \Laminas\Config\Config $config      VuFind configuration
      * @param \Laminas\Config\Config $permissions Permissions configuration
-     * @param ipAddressUtils         $ipUtils     IP address utils
+     * @param IpAddressUtils         $ipUtils     IP address utils
      */
     public function __construct(Config $config, Config $permissions,
-        ipAddressUtils $ipUtils
+        IpAddressUtils $ipUtils
     ) {
         parent::__construct($config);
 
@@ -195,7 +195,7 @@ class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
             }
             $ranges = [];
             foreach ($permission['ipRange']->toArray() as $range) {
-                list($ip) = explode('#', $range, 2);
+                [$ip] = explode('#', $range, 2);
                 $ranges = array_merge($ranges, array_map('trim', explode(',', $ip)));
             }
 

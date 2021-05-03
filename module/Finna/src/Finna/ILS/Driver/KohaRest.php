@@ -802,11 +802,18 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ]
         );
 
-        if (200 === $result['code'] && !empty($result['data'][0])) {
-            return [
-                'success' => true,
-                'token' => $result['data'][0]['patron_id']
-            ];
+        if (200 === $result['code']) {
+            if (!empty($result['data'][0])) {
+                return [
+                    'success' => true,
+                    'token' => $result['data'][0]['patron_id']
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => 'Patron not found'
+                ];
+            }
         }
 
         if (404 !== $result['code']) {
@@ -1217,7 +1224,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                             if (!$issue['received']) {
                                 continue;
                             }
-                            list($year) = explode('-', $issue['publisheddate']);
+                            [$year] = explode('-', $issue['publisheddate']);
                             if ($year > $latestReceived) {
                                 $latestReceived = $year;
                             }
@@ -1227,7 +1234,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                         if (!$issue['received']) {
                             continue;
                         }
-                        list($year) = explode('-', $issue['publisheddate']);
+                        [$year] = explode('-', $issue['publisheddate']);
                         if ($yearFilter) {
                             // Limit to current and last year
                             if ($year && $year != $currentYear

@@ -48,7 +48,7 @@ finna.changeHolds = (function finnaChangeHolds() {
     }
 
     var changeHolds = $('.changeHolds');
-    changeHolds.click(function onClickChangeHolds() {
+    changeHolds.on('click', function onClickChangeHolds() {
       var hold = $(this);
       $('.hold-change-success').remove();
       $('.hold-change-error').remove();
@@ -99,7 +99,6 @@ finna.changeHolds = (function finnaChangeHolds() {
 
     function changeHoldStatus(container, requestId, recordId, itemId, frozen) {
       var spinnerChange = container.find('.status-change-load-indicator');
-
       $('.hold-change-success').remove();
       $('.hold-change-error').remove();
       spinnerChange.removeClass('hidden');
@@ -120,13 +119,8 @@ finna.changeHolds = (function finnaChangeHolds() {
         .done(function onChangeRequestStatusDone(response) {
           spinnerChange.addClass('hidden');
           if (response.data.success) {
-            if (frozen) {
-              container.find('.hold-status-active').addClass('hidden');
-              container.find('.hold-status-frozen').removeClass('hidden');
-            } else {
-              container.find('.hold-status-active').removeClass('hidden');
-              container.find('.hold-status-frozen').addClass('hidden');
-            }
+            container.find('.hold-status-active').toggleClass('hidden', frozen);
+            container.find('.hold-status-frozen').toggleClass('hidden', !frozen);
           } else {
             container.append(errorOccured);
           }
@@ -137,7 +131,7 @@ finna.changeHolds = (function finnaChangeHolds() {
         });
     }
 
-    $('.hold-status-freeze').click(function onClickHoldFreeze() {
+    $('.hold-status-freeze').on('click', function onClickHoldFreeze() {
       var container = $(this).closest('.change-hold-status');
       var requestId = container.data('requestId');
       var recordId = container.data('recordId');
@@ -146,7 +140,7 @@ finna.changeHolds = (function finnaChangeHolds() {
       return false;
     });
 
-    $('.hold-status-release').click(function onClickHoldRelease() {
+    $('.hold-status-release').on('click', function onClickHoldRelease() {
       var container = $(this).closest('.change-hold-status');
       var requestId = container.data('requestId');
       var recordId = container.data('recordId');

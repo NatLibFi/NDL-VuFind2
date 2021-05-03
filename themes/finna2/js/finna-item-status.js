@@ -3,7 +3,7 @@ finna.itemStatus = (function finnaItemStatus() {
   function initDedupRecordSelection(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    holder.find('.dedup-select').change(function onChangeDedupSelection() {
+    holder.find('.dedup-select').on('change', function onChangeDedupSelection() {
       var id = $(this).val();
       var source = $(this).find('option:selected').data('source');
       finna.common.setCookie('preferredRecordSource', source);

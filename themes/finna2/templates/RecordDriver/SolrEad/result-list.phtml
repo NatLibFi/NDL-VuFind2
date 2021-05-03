@@ -74,17 +74,25 @@ if ($img):
               <?php endif; ?>
             <?php endif; ?>
             <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-              <br/><span class="archive-label"><?=$this->transEsc('Archive Series')?>:</span>
-              <?php $parentIds = $this->driver->getHierarchyParentId(); $parentTitles = $this->driver->getHierarchyParentTitle(); ?>
-              <?php foreach ($parentIds as $index => $parentId): ?>
-                <?php
-                  try {
-                    $parentUrl = $this->recordLink()->getUrl("$parentSource|$parentId");
-                  } catch (\Exception $e) {
-                    $parentUrl = '';
-                  }
-                ?>
-                <a href="<?=$this->escapeHtmlAttr($parentUrl)?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+              <?php foreach ([
+                ['Archive Series', \Finna\RecordDriver\SolrEad::SERIES_LEVELS],
+                ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS]
+              ] as [$label, $levels]):
+              ?>
+                <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
+                <?php if ($parentIds): ?>
+                  <br/><span class="archive-label"><?=$this->transEsc($label)?>:</span>
+                  <?php foreach ($parentIds as $index => $parentId): ?>
+                    <?php
+                      try {
+                        $parentUrl = $this->recordLink()->getUrl("$parentSource|$parentId");
+                      } catch (\Exception $e) {
+                        $parentUrl = '';
+                      }
+                    ?>
+                    <a href="<?=$this->escapeHtmlAttr($parentUrl)?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+                  <?php endforeach; ?>
+                <?php endif ?>
               <?php endforeach; ?>
             <?php endif; ?>
           </div>
