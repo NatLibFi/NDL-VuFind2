@@ -1112,14 +1112,14 @@ class SolrEad3 extends SolrEad
      *
      * Returns the data in the same format as getOtherLinks.
      *
-     * @return null|array
+     * @return array
      */
     public function getOtherRelatedRecords()
     {
         $record = $this->getXmlRecord();
 
         if (!isset($record->relations->relation)) {
-            return null;
+            return [];
         }
 
         $relations = [];
