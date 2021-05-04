@@ -8,7 +8,7 @@
   &:nth-child(odd) {
     background: @table-bg-accent;
   }
-  h3 {
+  .record-title {
     margin: 0;
     font-weight: 400;
     font-size: 1.2em;
@@ -38,6 +38,9 @@
         margin-left: 0;
       }
     }
+  }
+  #label-title-column span {
+    float: right;    
   }
 }
 
@@ -70,8 +73,7 @@
 
 .myresearch-table {
   width: 100%;
-  margin: 15px 0px;
-
+  margin: 0;
   th,td {
     vertical-align: top;
     padding: 5px;
@@ -122,20 +124,25 @@
     }
   }
   @media(min-width: @screen-xs-min) {
-    .sort-col,
     .renew-button-col {
-      width: 50%;
+      width: 70%;
       float: left;
+      text-align: left;
       .sort-button {
         margin-bottom: 0px;
       }
     }
-    .sort-col{ text-align: right; }
-    .renew-button-col { text-align: left; }
+    .sort-col {
+      width: 30%;
+      float: right;
+      text-align: right;
+    }
   }
   @media(max-width: @screen-xxs-max) {
     .renew-button-col {
       margin-bottom: 10px;
+      width: 100%;
+      float: left;
       input {
         min-width: 170px;
       }
@@ -482,6 +489,9 @@
       &:first-child {
         vertical-align: top;
         padding-top: 10px;
+      }
+      &:nth-child(2) {
+        width: 100%;
       }
     }
   }

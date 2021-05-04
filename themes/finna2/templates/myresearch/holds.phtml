@@ -39,39 +39,46 @@
         <?php endif; ?>
         <?php if (!empty($this->recordList)): ?>
           <?php if ($this->cancelForm): ?>
-          <form name="cancelForm" class="inline" method="post" id="cancelHold" data-clear-account-cache="holds">
-            <table class="myresearch-table" role="presentation">
-              <tr class="toolbar">
-                <th>
-                  <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
-                  <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
-                </th>
-                <th colspan="2">
-                  <div class="btn-group">
-                    <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEsc("hold_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
-                    <ul class="dropdown-menu useraccount-cancel">
-                      <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_selected_text") ?></a></li>
-                      <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                      <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                    </ul>
-                  </div>
-                  <div class="btn-group">
-                    <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEsc("hold_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
-                    <ul class="dropdown-menu useraccount-cancel">
-                      <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_all_text") ?></a></li>
-                      <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                      <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                    </ul>
-                  </div>
-                </th>
-              </tr>
-            <?php else: ?>
+            <form name="cancelForm" class="inline" method="post" id="cancelHold" data-clear-account-cache="holds">
+              <table class="myresearch-table" role="presentation">
+                <tr class="toolbar">
+                  <th>
+                    <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
+                    <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
+                  </th>
+                  <th colspan="2">
+                    <div class="btn-group">
+                      <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEsc("hold_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
+                      <ul class="dropdown-menu useraccount-cancel">
+                        <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_selected_text") ?></a></li>
+                        <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
+                        <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                      </ul>
+                    </div>
+                    <div class="btn-group">
+                      <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEsc("hold_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
+                      <ul class="dropdown-menu useraccount-cancel">
+                        <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_all_text") ?></a></li>
+                        <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
+                        <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                      </ul>
+                    </div>
+                  </th>
+                </tr>
+              </table>
+          <?php else: ?>
             <table class="myresearch-table" role="presentation">
               <tr class="toolbar">
                 <th colspan="4" class="myresearch-notification"><?=$this->transEsc('cannot cancel any reservations')?></th>
               </tr>
-            <?php endif; ?>
-
+            </table>
+          <?php endif; ?>
+          <table class="myresearch-table" aria-label="<?=$this->transEsc('Your Holds and Recalls');?>" tabindex="0">
+            <tr class="myresearch-row">
+              <th id="label-select-column"><?=$this->transEsc('Select');?></th>
+              <th class="hidden-xs" aria-hidden="true"></th>
+              <th id="label-title-column" aria-colindex="2"><?=$this->transEsc('Item');?><span aria-hidden="true" class="hidden-xs"><?=$this->transEsc('Hold');?></span></th>
+            </tr>
             <?php $iteration = 0; ?>
             <?php foreach ($this->recordList as $resource): ?>
               <?php $iteration++; ?>
@@ -92,8 +99,8 @@
                   <span class="no-checkbox"><?=$this->transEsc('cannot cancel');?></span>
                 <?php endif; ?>
                 </td>
-                <td class="text-left hidden-xs">
-                  <div aria-hidden="true" class="cover-image">
+                <td class="text-left hidden-xs" aria-hidden="true">
+                  <div class="cover-image">
                     <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
                       <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
                     <?php else: ?>
@@ -102,7 +109,7 @@
                   </div>
                 </td>
                 <td>
-                  <div class="half-table-column text-left">
+                  <div class="half-table-column text-left" aria-labelledby="label-title-column" aria-colindex="2">
                     <?php
                       // If this is a non-missing Solr record, we should display a link:
                       if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
@@ -113,14 +120,14 @@
                           $title = $resource->getTitle();
                           $title = empty($title) ? $this->transEsc('Title not available') : $this->escapeHtml($title);
                         }
-                        echo '<h3><a href="' . $this->recordLink()->getUrl($resource)
-                          . '" class="record-title">' . $title . '</a></h3>';
+                        echo '<a href="' . $this->recordLink()->getUrl($resource)
+                          . '" class="record-title">' . $title . '</a>';
                       } elseif (isset($ilsDetails['title']) && !empty($ilsDetails['title'])){
                         // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...
-                        echo '<h3 class="record-title">' . $this->escapeHtml($ilsDetails['title']) . '</h3>';
+                        echo '<span class="record-title">' . $this->escapeHtml($ilsDetails['title']) . '</h3>';
                       } else {
                         // Last resort -- indicate that no title could be found.
-                        echo '<h3 class="record-title">' . $this->transEsc('Title not available') . '</h3>';
+                        echo '<span class="record-title">' . $this->transEsc('Title not available') . '</span>';
                       }
                     ?>
                     <div class="record-core-metadata">
