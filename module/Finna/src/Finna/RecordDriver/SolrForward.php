@@ -156,6 +156,60 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Inspection attributes
+     *
+     * @var array
+     */
+    protected $inspectionAttributes = [
+        'number' => 'elokuva-tarkastus-tarkastusnro',
+        'type' => 'elokuva-tarkastus-tarkastamolaji',
+        'length' => 'elokuva-tarkastus-pituus',
+        'tax' => 'elokuva-tarkastus-veroluokka',
+        'age' => 'elokuva-tarkastus-ikaraja',
+        'format' => 'elokuva-tarkastus-formaatti',
+        'part' => 'elokuva-tarkastus-osalkm',
+        'office' => 'elokuva-tarkastus-tarkastuttaja',
+        'time' => 'elokuva-tarkastus-kesto',
+        'subject' => 'elokuva-tarkastus-tarkastusaihe',
+        'reason' => 'elokuva-tarkastus-perustelut',
+        'additional' => 'elokuva-tarkastus-muuttiedot',
+        'notification' => 'elokuva-tarkastus-tarkastusilmoitus',
+        'inspector' => 'elokuva-tarkastus-tarkastuselin'
+    ];
+
+    /**
+     * Roles to not display
+     *
+     * @var array
+     */
+    protected $filteredRoles = [
+        'prf',
+        'oth'
+    ];
+
+    /**
+     * Uncredited name attributes
+     *
+     * @var array
+     */
+    protected $uncreditedNameAttributes = [
+        'elokuva-elokreditoimatontekija-nimi',
+        'elokuva-elokreditoimatonnayttelija-nimi'
+    ];
+
+    /**
+     * Descriptions
+     *
+     * @var array
+     */
+    protected $roleDescriptions = [
+        'elokuva-elotekija-selitys',
+        'elokuva-elonayttelija-selitys',
+        'elokuva-elokreditoimatonnayttelija-selitys',
+        'elokuva-elokreditoimatontekija-selitys'
+    ];
+
+    /**
      * Record metadata
      *
      * @var array
@@ -510,18 +564,22 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterSecondaryAuthors()
     {
         $authors = $this->getNonPresenterAuthors(false);
-        $uncredited = $credited = [];
+        $uncredited = [];
+        $credited = [];
+        $uncreditedEnsembles = [];
+
         foreach ($authors as $author) {
             if ($author['uncredited']) {
-                $uncredited[] = $author;
+                if ($author['type'] === 'elonet_kokoonpano') {
+                    $uncreditedEnsembles[] = $author;
+                } else {
+                    $uncredited[] = $author;
+                }
             } else {
                 $credited[] = $author;
             }
         }
-        if (!empty($credited) || !empty($uncredited)) {
-            return ['credited' => $credited, 'uncredited' => $uncredited];
-        }
-        return [];
+        return compact('credited', 'uncredited', 'uncreditedEnsembles');
     }
 
     /**
@@ -536,7 +594,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $filters = [
             'a99' => [
-                'types' => ['elonet_kokoonpano'],
                 'tags' => ['avustajat']
             ],
             'oth' => [
@@ -628,7 +685,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $filters = [
             'a99' => [
-                'types' => ['elonet_kokoonpano'],
                 'tags' => ['avustajat']
             ],
             'oth' => [
@@ -681,7 +737,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     } else {
                         $result['credited']['presenters'][] = $presenter;
                     }
-                } elseif ($role === 'prf') {
+                } elseif (empty($role)) {
                     if (!empty($presenter['uncredited'])
                         && $presenter['uncredited']
                     ) {
@@ -693,7 +749,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 }
                 break;
             case 'elonet_kokoonpano':
-                if ($role === 'oth') {
+                if (empty($role)) {
                     $result['performingEnsemble']['presenters'][] = $presenter;
                 } else {
                     $result['actingEnsemble']['presenters'][] = $presenter;
@@ -701,7 +757,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
                 break;
             default:
-                if ($role === 'oth') {
+                if (empty($role)) {
                     $result['other']['presenters'][] = $presenter;
                 } elseif ($role === 'avustajat') {
                     $result['assistant']['presenters'][] = $presenter;
@@ -998,15 +1054,26 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
 
             $description = '';
-            if (!empty($nameAttrs->{'elokuva-elotekija-selitys'})) {
-                $description = (string)$nameAttrs->{'elokuva-elotekija-selitys'};
+            foreach ($this->roleDescriptions as $desc) {
+                if (!empty($nameAttrs->{$desc})) {
+                    $description = (string)$nameAttrs->{$desc};
+                    break;
+                }
             }
 
             $name = (string)$agent->AgentName;
-            if (empty($name)
-                && !empty($nameAttrs->{'elokuva-elokreditoimatontekija-nimi'})
-            ) {
-                $name = (string)$nameAttrs->{'elokuva-elokreditoimatontekija-nimi'};
+            if (empty($name)) {
+                foreach ($this->uncreditedNameAttributes as $value) {
+                    if (!empty($nameAttrs->{$value})) {
+                        $name = (string)$nameAttrs->{$value};
+                        break;
+                    }
+                }
+            }
+
+            // Remove unwanted roles here
+            if (in_array($role, $this->filteredRoles)) {
+                $role = '';
             }
 
             ++$idx;
@@ -1439,77 +1506,18 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     || !empty($atr->{'elokuva-tarkastus-tarkastuselin'})
                     || !empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})
                 ) {
-                    $office = $reason = $length = $subject = $notification = '';
-                    $format = $part = $tax = $type  = $date = $inspector = $age = '';
-                    $number = $time = $additional = '';
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusnro'})) {
-                        $number = (string)$atr->{'elokuva-tarkastus-tarkastusnro'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastamolaji'})) {
-                        $type = (string)$atr->{'elokuva-tarkastus-tarkastamolaji'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-pituus'})) {
-                        $length = (string)$atr->{'elokuva-tarkastus-pituus'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-veroluokka'})) {
-                        $tax = (string)$atr->{'elokuva-tarkastus-veroluokka'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-ikaraja'})) {
-                        $age = (string)$atr->{'elokuva-tarkastus-ikaraja'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-formaatti'})) {
-                        $format = (string)$atr->{'elokuva-tarkastus-formaatti'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-osalkm'})) {
-                        $part = (string)$atr->{'elokuva-tarkastus-osalkm'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastuttaja'})) {
-                        $office = (string)$atr->{'elokuva-tarkastus-tarkastuttaja'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-kesto'})) {
-                        $time = (string)$atr->{'elokuva-tarkastus-kesto'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusaihe'})) {
-                        $subject = (string)$atr->{'elokuva-tarkastus-tarkastusaihe'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusaihe'})) {
-                        $reason = (string)$atr->{'elokuva-tarkastus-perustelut'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-muuttiedot'})) {
-                        $additional = (string)$atr->{'elokuva-tarkastus-muuttiedot'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})) {
-                        $notification = (string)$atr->{
-                            'elokuva-tarkastus-tarkastusilmoitus'
-                        };
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
-                        $inspector = (string)$atr->{
-                            'elokuva-tarkastus-tarkastuselin'
-                        };
+                    $result = [];
+                    foreach ($this->inspectionAttributes as $key => $value) {
+                        if (!empty($atr->{$value})) {
+                            $result[$key] = (string)$atr->{$value};
+                        }
                     }
                     if (!empty($event->DateText)
                         && strpos($event->DateText, '0000') == false
                     ) {
-                        $date = (string)$event->DateText;
+                        $result['date'] = (string)$event->DateText;
                     }
-                    $results[] = [
-                        'inspector' => $inspector,
-                        'number' => $number,
-                        'format' => $format,
-                        'length' => $length,
-                        'taxclass' => $tax,
-                        'agerestriction' => $age,
-                        'inspectiontype' => $type,
-                        'part' => $part,
-                        'office' => $office,
-                        'additional' => $additional,
-                        'runningtime' => $time,
-                        'subject' => $subject,
-                        'date' => $date,
-                        'reason' => $reason,
-                        'notification' => $notification
-                    ];
+                    $results[] = $result;
                 }
             }
         }

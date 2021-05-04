@@ -28,6 +28,7 @@
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
+use Laminas\Stdlib\Parameters;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Db\Row\User;
 use VuFind\Db\Table\UserList;
@@ -155,7 +156,7 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase
         }
 
         $finalId = $list->updateFromRequest(
-            $this->user, new \Laminas\Stdlib\Parameters($listParams)
+            $this->user, new Parameters($listParams)
         );
 
         $listParams['id'] = $finalId;

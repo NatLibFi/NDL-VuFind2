@@ -376,6 +376,11 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             $patron,
             true
         );
+        if ($code != 200) {
+            $this->error(
+                "patronLogin $username failed ($code): " . print_r($result, true)
+            );
+        }
 
         if ($code == 401 || $code == 403) {
             return null;
@@ -1733,21 +1738,22 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             $response = $client->setMethod('POST')->send();
         } catch (\Exception $e) {
             $this->error(
-                "POST request for '$apiUrl' failed: " . $e->getMessage()
+                "POST request for '$apiUrl' failed for patron "
+                . $patron['cat_username'] . ': ' . $e->getMessage()
             );
             throw new ILSException('Problem with Koha REST API.');
         }
         if (!$response->isSuccess()) {
-            if (in_array((int)$response->getStatusCode(), [401, 403])) {
-                return false;
-            }
             $this->error(
                 "POST request for '" . $client->getRequest()->getUriString()
-                . "' did not succeed: "
+                . "' (patron " . $patron['cat_username'] . ') did not succeed: '
                 . $response->getStatusCode() . ': '
                 . $response->getReasonPhrase()
                 . ', response content: ' . $response->getBody()
             );
+            if (in_array((int)$response->getStatusCode(), [401, 403])) {
+                return false;
+            }
             throw new ILSException('Problem with Koha authentication.');
         }
 

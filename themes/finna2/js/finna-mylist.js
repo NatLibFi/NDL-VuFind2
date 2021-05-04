@@ -590,7 +590,7 @@ finna.myList = (function finnaMyList() {
           ev.preventDefault();
         });
 
-        repositionPrompt();
+        repositionPrompt({}, {w: $(window).width(), h: $(window).height()});
         initRepositionListener();
         prompt.show();
         prompt.find('.confirm a').focus();

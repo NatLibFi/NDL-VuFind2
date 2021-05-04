@@ -398,7 +398,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 return $this->createViewModel();
             }
 
-            $listId = $this->params()->fromPost('list');
+            $listId = (int)$this->params()->fromPost('list');
             $favorites = $this->serviceLocator
                 ->get(\VuFind\Favorites\FavoritesService::class);
 
@@ -440,7 +440,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $savedData = $userResource->getSavedData(
                         $current['id'],
                         $current['source'] ?? DEFAULT_SEARCH_BACKEND,
-                        $post['list'] ?? '',
+                        $listId ?? null,
                         $user->id
                     )->current();
                     if (!empty($savedData['notes'])) {

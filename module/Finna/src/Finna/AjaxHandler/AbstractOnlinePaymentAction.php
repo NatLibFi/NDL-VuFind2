@@ -208,7 +208,9 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
 
         $tId = $res['transactionId'];
         $paymentConfig = $this->ils->getConfig('onlinePayment', $patron);
-        if ($paymentConfig['exactBalanceRequired'] ?? true) {
+        if (($paymentConfig['exactBalanceRequired'] ?? true)
+            || !empty($paymentConfig['creditUnsupported'])
+        ) {
             try {
                 $fines = $this->ils->getMyFines($patron);
                 $finesAmount = $this->ils->getOnlinePayableAmount($patron, $fines);
@@ -218,12 +220,20 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
             }
 
             // Check that payable sum has not been updated
+            $exact = $paymentConfig['exactBalanceRequired'] ?? true;
+            $noCredit = ($paymentConfig['exactBalanceRequired'] ?? true)
+                || !empty($paymentConfig['creditUnsupported']);
             if ($finesAmount['payable']
                 && !empty($finesAmount['amount']) && !empty($res['amount'])
-                && $finesAmount['amount'] != $res['amount']
+                && (($exact && $res['amount'] != $finesAmount['amount'])
+                || ($noCredit && $res['amount'] > $finesAmount['amount']))
             ) {
                 // Payable sum updated. Skip registration and inform user
                 // that payment processing has been delayed.
+                $this->logError(
+                    "Transaction $transactionId: payable sum updated. Paid amount: "
+                    . $res['amount'] . ', payable: ' . print_r($finesAmount, true)
+                );
                 if (!$this->transactionTable->setTransactionFinesUpdated($tId)) {
                     $this->logError(
                         "Error updating transaction $transactionId"

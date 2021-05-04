@@ -414,6 +414,10 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
 
+        if (!empty($params['description'])) {
+            $elementParams['description'] = $params['description'];
+        }
+
         return $this->renderTemplate('authority-link-element.phtml', $elementParams);
     }
 

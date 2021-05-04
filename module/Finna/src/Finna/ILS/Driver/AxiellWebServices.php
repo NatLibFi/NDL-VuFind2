@@ -560,11 +560,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $locationsList[] = [
                     'locationID' => $locationID,
                     'locationDisplay' => $organisation->branches->branch->name
+                        ?? $locationID
                 ];
             } else {
                 foreach ($organisation->branches->branch as $branch) {
-                    $locationID
-                        = $organisationID . '.' . $branch->id;
+                    $locationID = $organisationID . '.' . $branch->id;
                     if (in_array($locationID, $this->excludePickUpLocations)) {
                         continue;
                     }
@@ -1575,7 +1575,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
             if ('onlinePayment' === $function) {
-                $functionConfig['exactBalanceRequired'] = true;
+                if (!isset($functionConfig['exactBalanceRequired'])) {
+                    $functionConfig['exactBalanceRequired'] = true;
+                }
+                $functionConfig['creditUnsupported'] = true;
             }
         } else {
             $functionConfig = false;
