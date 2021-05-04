@@ -1108,13 +1108,21 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get related records (displayed among record fields).
+     * Get all record links related to the current record. Each link is returned as
+     * array.
+     * Format:
+     * array(
+     *        array(
+     *               'title' => label_for_title
+     *               'value' => link_name
+     *               'link'  => link_URI
+     *        ),
+     *        ...
+     * )
      *
-     * Returns the data in the same format as getOtherLinks.
-     *
-     * @return array
+     * @return null|array
      */
-    public function getOtherRelatedRecords()
+    public function getAllRecordLinks()
     {
         $record = $this->getXmlRecord();
 
