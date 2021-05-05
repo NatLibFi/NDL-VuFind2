@@ -67,7 +67,7 @@ class FinnaTruncate extends AbstractBase
      * @return array Keyed array with attribute names as keys and variable names as
      *               values
      */
-    protected function getVariableAttributes(): array
+    protected function getAttributeToVariableMap(): array
     {
         return ['rows' => 'rows'];
     }
