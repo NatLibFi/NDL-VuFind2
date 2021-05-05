@@ -45,7 +45,7 @@ interface CustomElementInterface
      *
      * @return string
      */
-    public static function getName(): string;
+    public function getName(): string;
 
     /**
      * Get the view model for server-side rendering the element.

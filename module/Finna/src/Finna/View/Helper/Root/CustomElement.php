@@ -84,6 +84,8 @@ class CustomElement extends AbstractHelper implements CustomElementRendererInter
     public function render(string $name, ?array $options = null): ?string
     {
         try {
+            $options = $options ?? [];
+            $options['element'] = $name;
             $element = $this->pluginManager->get($name, $options);
         } catch (ServiceNotFoundException $e) {
             return null;
