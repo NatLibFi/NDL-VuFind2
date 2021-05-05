@@ -891,9 +891,9 @@ $config = [
                     'Finna\View\CustomElement\FinnaTruncate' => 'Finna\View\CustomElement\AbstractBaseFactory',
                 ],
                 'aliases' => [
-                    \Finna\View\CustomElement\FinnaList::getName() => 'Finna\View\CustomElement\FinnaList',
-                    \Finna\View\CustomElement\FinnaPanel::getName() => 'Finna\View\CustomElement\FinnaPanel',
-                    \Finna\View\CustomElement\FinnaTruncate::getName() => 'Finna\View\CustomElement\FinnaTruncate',
+                    'finna-list' => 'Finna\View\CustomElement\FinnaList',
+                    'finna-panel' => 'Finna\View\CustomElement\FinnaPanel',
+                    'finna-truncate' => 'Finna\View\CustomElement\FinnaTruncate',
                 ]
             ]
         ],

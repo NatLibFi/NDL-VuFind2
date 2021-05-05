@@ -39,16 +39,6 @@ namespace Finna\View\CustomElement;
 class FinnaList extends AbstractBase
 {
     /**
-     * Get the name of the element.
-     *
-     * @return string
-     */
-    public static function getName(): string
-    {
-        return 'finna-list';
-    }
-
-    /**
      * FinnaList constructor.
      *
      * @param ?array $options Options
