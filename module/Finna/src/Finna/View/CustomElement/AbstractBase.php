@@ -131,10 +131,12 @@ abstract class AbstractBase implements CustomElementInterface
         }
 
         // Get default variable values.
-        $variables = $this->getDefaultVariableValues();
+        $variables = $this->getDefaultVariables();
 
         // Try to set variable values from attributes, if defined by subclass.
-        foreach ($this->getVariableAttributes() as $attributeName => $variableName) {
+        foreach ($this->getAttributeToVariableMap()
+            as $attributeName => $variableName
+        ) {
             if (array_key_exists($attributeName, $attributes)) {
                 $variables[$variableName] = $attributes[$attributeName];
             }
@@ -142,7 +144,7 @@ abstract class AbstractBase implements CustomElementInterface
 
         // Try to set variable values from options, if defined by subclass.
         // Option values overwrite attribute values when setting variables.
-        foreach ($this->getVariableOptions() as $optionName => $variableName) {
+        foreach ($this->getOptionToVariableMap() as $optionName => $variableName) {
             if (array_key_exists($optionName, $options)) {
                 $variables[$variableName] = $options[$optionName];
             }
@@ -178,7 +180,7 @@ abstract class AbstractBase implements CustomElementInterface
      *
      * @return array
      */
-    protected function getDefaultVariableValues(): array
+    protected function getDefaultVariables(): array
     {
         return [];
     }
@@ -189,7 +191,7 @@ abstract class AbstractBase implements CustomElementInterface
      * @return array Keyed array with attribute names as keys and variable names as
      *               values
      */
-    protected function getVariableAttributes(): array
+    protected function getAttributeToVariableMap(): array
     {
         return [];
     }
@@ -200,9 +202,9 @@ abstract class AbstractBase implements CustomElementInterface
      * @return array Keyed array with option names as keys and variable names as
      *               values
      */
-    protected function getVariableOptions(): array
+    protected function getOptionToVariableMap(): array
     {
-        return $this->getVariableAttributes();
+        return $this->getAttributeToVariableMap();
     }
 
     /**
