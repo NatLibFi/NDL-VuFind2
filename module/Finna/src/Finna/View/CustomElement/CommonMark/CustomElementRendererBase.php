@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom element renderer trait
+ * Custom element renderer base class
  *
  * PHP version 7
  *
@@ -30,7 +30,7 @@ namespace Finna\View\CustomElement\CommonMark;
 use Finna\View\CustomElement\CustomElementRendererInterface;
 
 /**
- * Custom element renderer trait
+ * Custom element renderer base class
  *
  * @category VuFind
  * @package  CustomElements
@@ -38,7 +38,7 @@ use Finna\View\CustomElement\CustomElementRendererInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
-trait CustomElementRendererTrait
+class CustomElementRendererBase
 {
     /**
      * Names of elements to render

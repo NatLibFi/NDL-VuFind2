@@ -39,10 +39,9 @@ use League\CommonMark\Extension\ExtensionInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
-class CustomElementExtension implements ExtensionInterface
+class CustomElementExtension extends CustomElementRendererBase
+    implements ExtensionInterface
 {
-    use CustomElementRendererTrait;
-
     /**
      * ExtensionInterface method.
      *
