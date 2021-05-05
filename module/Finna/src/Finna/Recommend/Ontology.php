@@ -578,9 +578,9 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         foreach ($this->recommendations as $type => $terms) {
             foreach ($terms as $term => $searches) {
                 if (count($searches) > $this->maxResultChecks - $resultChecksDone) {
+                    // Not possible to check all searches for this recommendation
+                    // so remove all search links.
                     foreach (array_keys($searches) as $i) {
-                        // Not possible to check all searches for this recommendation
-                        // so remove all search links.
                         unset($this->recommendations[$type][$term][$i]['href']);
                     }
                     continue;
