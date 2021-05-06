@@ -103,7 +103,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'A06' => 'cmp',
         'A50' => 'aud',
         'A99' => 'oth',
-        'B13' => 'Sound Editor',
+        'B13' => 'Sound editor',
         'D01' => 'fmp',
         'D02' => 'drt',
         'E01' => 'act',
