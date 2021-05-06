@@ -47,15 +47,12 @@ abstract class AbstractBase implements CustomElementInterface
      * Options
      *
      * The base class supports the following options:
-     *
      * - attributes
      *     Array of attributes for the custom element. These will overwrite
      *     attributes parsed from outerHTML.
-     *
      * - element
      *     The name of the element. This is a required option and an exception will
      *     be thrown if it is missing.
-     *
      * - outerHTML
      *     Outer HTML of the element. This will be parsed to a DOM object and
      *     attributes.
