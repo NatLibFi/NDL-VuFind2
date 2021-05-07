@@ -98,7 +98,9 @@ class SolrAuthEacCpf extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
-        return $this->formatDate($this->fields['birth_date'] ?? '');
+        return $this->formatDate(
+            $this->getExistDate('http://rdaregistry.info/Elements/a/P50120') ?? ''
+        );
     }
 
     /**
@@ -113,7 +115,35 @@ class SolrAuthEacCpf extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
-        return $this->formatDate($this->fields['death_date'] ?? '');
+        return $this->formatDate(
+            $this->getExistDate('http://rdaregistry.info/Elements/a/P50121') ?? ''
+        );
+    }
+
+    /**
+     * Return exist date
+     *
+     * @param string $localType localType attribute
+     *
+     * @return null|string
+     */
+    protected function getExistDate(string $localType) : ?string
+    {
+        $record = $this->getXmlRecord();
+        if (!isset($record->cpfDescription->description->existDates->dateSet->date)
+        ) {
+            return null;
+        }
+        foreach ($record->cpfDescription->description->existDates->dateSet->date
+            as $date
+        ) {
+            $attrs = $date->attributes();
+            $type = (string)$attrs->localType;
+            if ($localType === $type) {
+                return (string)$attrs->standardDate;
+            }
+        }
+        return null;
     }
 
     /**
@@ -174,12 +204,10 @@ class SolrAuthEacCpf extends SolrAuthDefault
                     'Y',
                     $this->dateConverter->convertToDisplayDate('Y', $date)
                 );
-            } else {
-                return $date;
             }
         } catch (\Exception $e) {
-            return $date;
         }
+        return $this->translate(ucfirst($date), [], $date);
     }
 
     /**
