@@ -159,8 +159,10 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
 
         $rights['copyright'] = !empty($xml->rights) ? (string)$xml->rights : '';
+        $rights['mappedCopyright']
+            = $this->getMappedRights(strtoupper($rights['copyright']));
         $rights['link'] = $this->getRightsLink(
-            strtoupper($rights['copyright']), $language
+            $rights['mappedCopyright'], $language
         );
 
         if ($urls) {

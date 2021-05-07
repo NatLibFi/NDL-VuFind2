@@ -96,6 +96,19 @@ trait SolrCommonFinnaTrait
     }
 
     /**
+     * Returns the mapped copyright if the copyright has been mapped to another
+     * copyright in configuration, otherwise returns the original copyright.
+     *
+     * @param string $copyright Copyright
+     *
+     * @return string
+     */
+    public function getMappedRights($copyright)
+    {
+        return $this->mainConfig['RightsMap'][$copyright] ?? $copyright;
+    }
+
+    /**
      * Return URL to copyright information.
      *
      * @param string $copyright Copyright

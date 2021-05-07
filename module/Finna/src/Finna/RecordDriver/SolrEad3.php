@@ -885,7 +885,9 @@ class SolrEad3 extends SolrEad
         $copyright = $restrictions[0];
         $data = [];
         $data['copyright'] = $copyright;
-        if ($link = $this->getRightsLink(strtoupper($copyright), $language)) {
+        $data['mappedCopyright']
+            = $this->getMappedRights(strtoupper($copyright));
+        if ($link = $this->getRightsLink($data['mappedCopyright'], $language)) {
             $data['link'] = $link;
         }
         return $data;
