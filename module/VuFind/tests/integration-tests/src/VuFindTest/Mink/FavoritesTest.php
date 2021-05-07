@@ -155,7 +155,7 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
         $this->snooze();
         $this->assertEquals(
             'Test List',
-            $this->findCss($page, '#save_list option[selected]')->getHtml()
+            trim($this->findCss($page, '#save_list option[selected]')->getHtml())
         );
         $this->findCssAndSetValue($page, '#add_mytags', 'test1 test2 "test 3"');
         $this->clickCss($page, '.modal-body .btn.btn-primary');
@@ -208,7 +208,7 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
         $this->snooze();
         $this->assertEquals(
             'Future List',
-            $this->findCss($page, '#save_list option[selected]')->getHtml()
+            trim($this->findCss($page, '#save_list option[selected]')->getHtml())
         );
         // - One for now
         $this->clickCss($page, '#make-list');
@@ -218,7 +218,7 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
         $this->snooze();
         $this->assertEquals(
             'Login Test List',
-            $this->findCss($page, '#save_list option[selected]')->getHtml()
+            trim($this->findCss($page, '#save_list option[selected]')->getHtml())
         );
         $this->clickCss($page, '.modal-body .btn.btn-primary');
         $this->snooze();
@@ -299,7 +299,7 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
         $this->clickCss($page, '.modal-body .btn.btn-primary');
         $this->assertEquals(
             'Test List',
-            $this->findCss($page, '#save_list option[selected]')->getHtml()
+            trim($this->findCss($page, '#save_list option[selected]')->getHtml())
         );
         $this->findCssAndSetValue($page, '#add_mytags', 'test1 test2 "test 3"');
         $this->clickCss($page, '.modal-body .btn.btn-primary');
@@ -353,7 +353,7 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
         $this->snooze();
         $this->assertEquals(
             'Future List',
-            $this->findCss($page, '#save_list option[selected]')->getHtml()
+            trim($this->findCss($page, '#save_list option[selected]')->getHtml())
         );
         // - One for now
         $this->clickCss($page, '#make-list');
@@ -363,7 +363,7 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
         $this->snooze();
         $this->assertEquals(
             'Login Test List',
-            $this->findCss($page, '#save_list option[selected]')->getHtml()
+            trim($this->findCss($page, '#save_list option[selected]')->getHtml())
         );
         $this->clickCss($page, '.modal-body .btn.btn-primary');
         $this->snooze();
@@ -405,6 +405,8 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
     /**
      * Test that lists can be tagged when the optional setting is activated.
      *
+     * @depends testAddSearchItemToFavoritesNewAccount
+     *
      * @return void
      */
     public function testTaggedList()
@@ -435,7 +437,7 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
         $this->clickCss($page, '.modal-body .btn.btn-primary');
         $this->assertEquals(
             'Tagged List',
-            $this->findCss($page, '#save_list option[selected]')->getHtml()
+            trim($this->findCss($page, '#save_list option[selected]')->getHtml())
         );
         $this->clickCss($page, '.modal-body .btn.btn-primary');
         $this->snooze();
@@ -453,15 +455,8 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
      *
      * @return \Behat\Mink\Element\DocumentElement
      */
-    protected function setupBulkTest()
+    protected function gotoUserAccount()
     {
-        $this->changeConfigs(
-            ['config' =>
-                [
-                    'Mail' => ['testOnly' => 1],
-                ],
-            ]
-        );
         // Go home
         $session = $this->getMinkSession();
         $path = '/Search/Home';
@@ -476,6 +471,23 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
         $path = '/MyResearch/Home';
         $session->visit($this->getVuFindUrl() . $path);
         return $page;
+    }
+
+    /**
+     * Adjust configs for bulk testing, then go to user account.
+     *
+     * @return \Behat\Mink\Element\DocumentElement
+     */
+    protected function setupBulkTest()
+    {
+        $this->changeConfigs(
+            ['config' =>
+                [
+                    'Mail' => ['testOnly' => 1],
+                ],
+            ]
+        );
+        return $this->gotoUserAccount();
     }
 
     /**
@@ -506,7 +518,8 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
      */
     protected function selectAllItemsInList(Element $page)
     {
-        $selectAll = $this->findCss($page, '[name=bulkActionForm] .checkbox-select-all');
+        $selectAll = $this
+            ->findCss($page, '[name=bulkActionForm] .checkbox-select-all');
         $selectAll->check();
     }
 
@@ -611,6 +624,7 @@ final class FavoritesTest extends \VuFindTest\Integration\MinkTestCase
      * Test that it is possible to email a public list.
      *
      * @depends testAddRecordToFavoritesNewAccount
+     * @depends testAddSearchItemToFavoritesNewAccount
      *
      * @return void
      */

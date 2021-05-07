@@ -1314,7 +1314,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getPickupLocations($patron, $holdDetails)
+    public function getPickupLocations($patron, $holdDetails = null)
     {
         // This may get called multiple times. Cache results during execution since
         // this is quite expensive.

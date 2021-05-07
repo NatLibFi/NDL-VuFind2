@@ -55,6 +55,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     protected $nonPresenterAuthorRelators = [
         'a00', 'a01', 'a03', 'a06', 'a50', 'a99',
+        'b13',
         'd01', 'd02', 'd99',
         'e02', 'e03', 'e04', 'e05', 'e06', 'e08',
         'f01', 'f02', 'f99',
@@ -102,6 +103,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'A06' => 'cmp',
         'A50' => 'aud',
         'A99' => 'oth',
+        'B13' => 'Sound editor',
         'D01' => 'fmp',
         'D02' => 'drt',
         'E01' => 'act',

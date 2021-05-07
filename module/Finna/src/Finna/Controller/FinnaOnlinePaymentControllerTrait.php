@@ -28,7 +28,6 @@
  */
 namespace Finna\Controller;
 
-use Laminas\Console\Console;
 use Laminas\Stdlib\Parameters;
 
 /**
@@ -357,7 +356,7 @@ trait FinnaOnlinePaymentControllerTrait
     protected function handleException($e)
     {
         $this->setLogger($this->serviceLocator->get(\VuFind\Log\Logger::class));
-        if (!Console::isConsole()) {
+        if (PHP_SAPI !== 'cli') {
             if (is_callable([$this->logger, 'logException'])) {
                 $this->logger->logException($e, new Parameters());
             }

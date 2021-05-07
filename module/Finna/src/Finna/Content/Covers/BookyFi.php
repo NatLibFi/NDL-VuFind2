@@ -67,16 +67,4 @@ class BookyFi extends \VuFind\Content\AbstractCover
         }
         return false;
     }
-
-    /**
-     * Does this plugin support the provided ID array?
-     *
-     * @param array $ids IDs that will later be sent to load() -- see below.
-     *
-     * @return bool
-     */
-    public function supports($ids)
-    {
-        return isset($ids['isbn']);
-    }
 }

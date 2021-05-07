@@ -1222,9 +1222,40 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get the full titles of the record in alternative scripts.
+     *
+     * @return array
+     */
+    public function getTitlesAltScript(): array
+    {
+        if (!($titles = parent::getTitlesAltScript())) {
+            $titles = $this->getMarcReader()
+                ->getLinkedFieldsSubfields('880', '240', ['a', 'b']);
+        }
+        return $this->stripTrailingPunctuation($titles);
+    }
+
+    /**
+     * Get the full titles of the record including section and part information in
+     * alternative scripts.
+     *
+     * @return array
+     */
+    public function getFullTitlesAltScript(): array
+    {
+        if (!($titles = parent::getFullTitlesAltScript())) {
+            $titles = $this->getMarcReader()
+                ->getLinkedFieldsSubfields('880', '240', ['a', 'b', 'n', 'p']);
+        }
+        return $this->stripTrailingPunctuation($titles);
+    }
+
+    /**
      * Get the short (pre-subtitle) title of the record in alternative script.
      *
      * @return string
+     *
+     * @deprecated Use getTitlesAltScript instead
      */
     public function getShortTitleAltScript()
     {
@@ -1238,6 +1269,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      * Get the subtitle of the record in alternative script.
      *
      * @return string
+     *
+     * @deprecated Use getTitlesAltScript instead
      */
     public function getSubtitleAltScript()
     {
@@ -1625,21 +1658,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         if (!$link) {
             return '';
         }
-        $parts = explode('-', $link);
-        if (count($parts) != 2) {
-            return '';
-        }
-        $linkedFieldCode = $parts[0];
-        $linkedFieldNum = $parts[1];
-        foreach ($marc->getFields($linkedFieldCode) as $linkedField) {
+        $linkage = $marc->parseLinkageField($link);
+        foreach ($marc->getFields($linkage['field']) as $linkedField) {
             $sub6 = $marc->getSubfield($linkedField, '6');
-            [$target] = explode('/', $sub6, 2);
-            $targetParts = explode('-', $target);
-            if (count($targetParts) !== 2) {
-                continue;
-            }
-            if ($targetParts[0] == $field['tag']
-                && $targetParts[1] === $linkedFieldNum
+            $targetLinkage = $marc->parseLinkageField($sub6);
+            if ($targetLinkage['field'] == $field['tag']
+                && $targetLinkage['occurrence'] === $linkage['occurrence']
             ) {
                 $data = $this->getSubfieldArray($linkedField, $subfields);
                 return implode(' ', $data);
