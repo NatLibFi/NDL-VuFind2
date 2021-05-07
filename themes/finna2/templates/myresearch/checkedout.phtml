@@ -50,7 +50,7 @@
             <form name="renewals" method="post" id="renewals" data-clear-account-cache="checkedOut" data-disable-on-submit>
               <table class="myresearch-table">
                 <tr class="toolbar">
-                  <th class="text-left checkbox-col">
+                  <td class="text-left checkbox-col">
                     <div class="checkboxFilter mylist-select-all">
                       <div class="checkbox">
                         <label>
@@ -60,8 +60,8 @@
                         </label>
                       </div>
                     </div>
-                  </th>
-                  <th colspan="2">
+                  </td>
+                  <td>
                     <div class="renew-button-col">
                       <input type="submit" class="btn btn-primary renew-button" id="renewSelected" name="renewSelected" value="<?=$this->transEsc("renew_selected")?>" />
                       <?php if ($renewAll): ?>
@@ -69,19 +69,18 @@
                       <?php endif; ?>
                     </div>
                     <div class="sort-col">
-                      <span class="sr-only"><?=$this->transEsc('Sort')?></span>
                       <?php if ($this->sortList): ?>
                         <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $this->sortList]); ?>
                       <?php endif; ?>
                     </div>
-                  </th>
+                  </td>
                 </tr>
               </table>
           <?php else: ?>
             <div class="myresearch-table" aria-label="<?=$this->transEsc('Checked Out');?>">
               <div class="toolbar">
                 <div class="myresearch-notification"><?=$this->transEsc('cannot renew any checked out items')?></div>
-                <div class="text-right" colspan="2">
+                <div class="text-right">
                   <?php if ($this->sortList): ?>
                     <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $this->sortList]); ?>
                   <?php endif; ?>
@@ -104,15 +103,15 @@
             <?php endif; ?>
           <?php endforeach; ?>
           <table class="myresearch-table" aria-label="<?=$this->transEsc('Checked Out');?>" tabindex="0">
-            <tr class="myresearch-row">
+            <tr class="sr-only myresearch-row" aria-hidden="true">
               <th id="label-select-column"><?=$this->transEsc('Select');?></th>
-              <th class="hidden-xs" aria-hidden="true"></th>
-              <th id="label-title-column" aria-colindex="2"><?=$this->transEsc('Item');?><span aria-hidden="true" class="hidden-xs"><?=$this->transEsc('Renewals and Due Date')?></span></th>
+              <th class="hidden-xs"></th>
+              <th id="label-title-column"><?=$this->transEsc('Loan Details');?></th>
             </tr>
             <?php $i = 0; foreach ($this->transactions as $resource): ?>
               <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
               <tr id="record<?=$this->escapeHtmlAttr($resource->getUniqueId())?>" class="myresearch-row<?=!empty($ilsDetails['onsite']) ? ' onsite-checkout' : ''?>">
-                <td class="text-left checkbox-col">
+                <td class="text-left checkbox-col" headers="label-select-column" aria-labelledby="label-select-column">
                   <?php if ($this->renewForm): ?>
                     <?php if (isset($ilsDetails['renewable']) && $ilsDetails['renewable'] && isset($ilsDetails['renew_details'])): ?>
                       <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $ilsDetails['renew_details']); ?>
@@ -134,13 +133,13 @@
                 <td class="text-center hidden-xs" aria-hidden="true">
                   <div class="cover-image">
                     <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-                      <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
+                      <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>"/>
                     <?php else: ?>
-                      <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
+                      <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>"/>
                     <?php endif; ?>
                   </div>
                 </td>
-                <td class="checkedout-status-information" aria-labelledby="label-title-column" aria-colindex="2">
+                <td class="checkedout-status-information" headers="label-title-column" aria-labelledby="label-title-column">
                   <div class="title-column text-left">
                     <?php
                       // If this is a non-missing Solr record, we should display a link:
@@ -273,11 +272,11 @@
                         </div>
                       </div>
                     </td>
-                    <td colspan="2">
+                    <td>
                       <div class="renew-button-col">
-                        <input type="submit" class="btn btn-primary renew-button" name="renewSelected" value="<?=$this->transEsc("renew_selected")?>" />
+                        <input type="submit" class="btn btn-primary renew-button" name="renewSelected" value="<?=$this->transEscAttr("renew_selected")?>" />
                         <?php if ($renewAll): ?>
-                          <input type="submit" class="btn btn-primary renew-button" name="renewAll" value="<?=$this->transEsc('renew_all')?>" />
+                          <input type="submit" class="btn btn-primary renew-button" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" />
                         <?php endif; ?>
                       </div>
                       <div class="sort-col">

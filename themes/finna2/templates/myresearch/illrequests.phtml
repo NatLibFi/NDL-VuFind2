@@ -68,11 +68,11 @@
             </div>
           <?php endif; ?>
           <table class="myresearch-table" aria-label="<?=$this->transEsc('Interlibrary Loan Requests');?>" tabindex="0">
-            <tr class="myresearch-row">
+            <tr class="sr-only myresearch-row" aria-hidden="true">
               <th id="label-select-column"><?=$this->transEsc('Select');?></th>
-              <th class="hidden-xs" aria-hidden="true"></th>
-              <th id="label-title-column" aria-colindex="2"><?=$this->transEsc('Item');?></th>
-              <th id="label-core-metadata" class="text-right" aria-colindex="3"><?=$this->transEsc("Request") ?></span>
+              <th class="hidden-xs"></th>
+              <th id="label-title-column"><?=$this->transEsc('Request Details');?></th>
+              <th id="label-core-metadata" class="text-right"></th>
             </tr>
             <?php $iteration = 0; ?>
             <?php foreach ($this->recordList as $resource): ?>
@@ -102,7 +102,7 @@
                     <?php endif; ?>
                   </div>
                 </td>
-                <td aria-colindex="2">
+                <td headers="label-title-column" aria-labelledby="label-title-column">
                 <?php
                   // If this is a non-missing Solr record, we should display a link:
                   if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
@@ -138,7 +138,7 @@
                   <?php endif; ?>
                 </div>
               </td>
-              <td class="text-right" aria-colindex="3">
+              <td class="text-right" headers="label-core-metadata" aria-labelledby="label-core-metadata">
                 <?php /* Depending on the ILS driver, the "location" value may be a string or an ID; figure out the best
                   value to display... */ ?>
                 <?php $pickupDisplay = ''; ?>

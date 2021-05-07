@@ -55,20 +55,20 @@
             <?=$this->paginator ? $this->paginationControl($this->paginator, 'Sliding', 'Helpers/pagination-simple.phtml', ['params' => $this->params]) : ''?>
           </div>
         </div>
-        <table class="myresearch-table" aria-label="<?=$this->transEsc('Loan History')?>" tabindex="0">
+        <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Loan History')?>" tabindex="0">
         <?php $i = 0; foreach ($this->transactions as $resource): ?>
           <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
           <tr class="myresearch-row">
             <td class="text-left hidden-xs" aria-hidden="true">
               <div class="cover-image">
                 <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-                  <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
+                  <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>"/>
                 <?php else: ?>
-                  <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
+                  <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>"/>
                 <?php endif; ?>
               </div>
             </td>
-            <td aria-colindex="1">
+            <td>
               <?php
                 // If this is a non-missing Solr record, we should display a link:
                 if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
@@ -109,7 +109,7 @@
                 <?php endif; ?>
               </div>
             </td>
-            <td class="checkedout-status-information" aria-colindex="2">
+            <td class="checkedout-status-information">
               <?php if (!empty($ilsDetails['institution_name']) && (empty($ilsDetails['borrowingLocation']) || $ilsDetails['institution_name'] != $ilsDetails['borrowingLocation'])): ?>
                 <strong><?=$this->transEscWithPrefix('location_', $ilsDetails['institution_name'])?></strong>
                 <br />
