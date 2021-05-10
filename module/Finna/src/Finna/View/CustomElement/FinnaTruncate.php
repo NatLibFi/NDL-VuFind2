@@ -41,11 +41,12 @@ class FinnaTruncate extends AbstractBase
     /**
      * FinnaTruncate constructor.
      *
-     * @param ?array $options Options
+     * @param string $name    Element name
+     * @param array  $options Options
      */
-    public function __construct(?array $options = [])
+    public function __construct(string $name, array $options = [])
     {
-        parent::__construct($options);
+        parent::__construct($name, $options);
 
         $labelElement = $this->dom->find('finna-truncate-label');
         if ($labelElement = $labelElement[0] ?? false) {
