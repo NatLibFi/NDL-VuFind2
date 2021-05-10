@@ -41,7 +41,9 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthEacCpf extends SolrAuthDefault
 {
-    use SolrAuthFinnaTrait;
+    use SolrAuthFinnaTrait {
+        getOccupations as _getOccupations;
+    }
     use XmlReaderTrait;
 
     /**
@@ -169,7 +171,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
                 }
             }
         }
-        return $result ?: $this->fields['occupation'] ?? [];
+        return $result ?: $this->_getOccupations();
     }
 
 
