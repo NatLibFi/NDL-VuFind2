@@ -162,9 +162,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     protected $videoWarnings = [
         'väkivalta' => 'violence',
-        'seksi' => 'sex',
-        'päihde' => 'drugs',
-        'ahdistus' => 'anxiety'
+        'seksi' => 'sexual_content',
+        'päihde' => 'drug_use',
+        'ahdistus' => 'anxiety',
+        'S' => 'for_all_ages_fi',
+        'T' => 'for_all_ages_sv'
     ];
 
     /**
