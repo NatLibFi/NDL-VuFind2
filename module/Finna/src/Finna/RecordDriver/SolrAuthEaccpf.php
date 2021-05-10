@@ -173,7 +173,6 @@ class SolrAuthEacCpf extends SolrAuthDefault
         return $result ?: $this->_getOccupations();
     }
 
-
     /**
      * Set preferred language for display strings.
      *
