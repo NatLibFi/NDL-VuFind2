@@ -144,6 +144,36 @@ class SolrAuthEacCpf extends SolrAuthDefault
     }
 
     /**
+     * Return occupations.
+     *
+     * @return array
+     */
+    public function getOccupations()
+    {
+        $result = [];
+        $record = $this->getXmlRecord();
+        if (isset($record->cpfDescription->description->occupations)) {
+            $result = [];
+            $languages = $this->mapLanguageCode($this->getLocale());
+            foreach ($record->cpfDescription->description->occupations->occupation
+                as $occupation
+            ) {
+                if (!isset($occupation->term)) {
+                    continue;
+                }
+                $term = $occupation->term;
+                $attr = $term->attributes();
+                if ($attr->lang && in_array((string)$attr->lang, $languages)
+                ) {
+                    $result[] = (string)$term;
+                }
+            }
+        }
+        return $result ?: $this->fields['occupation'] ?? [];
+    }
+
+
+    /**
      * Set preferred language for display strings.
      *
      * @param string $language Language
