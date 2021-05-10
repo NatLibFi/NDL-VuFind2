@@ -169,7 +169,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Age restrictions
-     * 
+     *
      * @var array
      */
     protected $ageRestrictions = [
