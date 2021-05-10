@@ -25,7 +25,10 @@
               $warningImageUrls[$warning] = $this->imageSrc()->getSourceAddress($warning);
             } ?>
             <?php if (!empty($warningImageUrls[$warning])): ?>
-              <span class="video-warning-icon"><img title="<?=$this->transEsc($warning)?>" data-src="<?=$warningImageUrls[$warning]?>"/></span>
+              <?php
+                $translation = in_array($warning, ['age_restriction_for_all_ages_sv', 'age_restriction_for_all_ages_fi']) ? 'age_restriction_for_all_ages' : $warning;
+              ?>
+              <span class="video-warning-icon"><img title="<?=$this->transEsc($translation)?>" data-src="<?=$warningImageUrls[$warning]?>"/></span>
             <?php endif; ?>
           <?php endforeach; ?>
         <?php endif; ?>
