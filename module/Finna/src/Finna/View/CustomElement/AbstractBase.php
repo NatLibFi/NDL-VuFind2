@@ -44,22 +44,11 @@ use PHPHtmlParser\Options;
 abstract class AbstractBase implements CustomElementInterface
 {
     /**
-     * Options
+     * Regex for matching valid element names
      *
-     * The base class supports the following options:
-     * - attributes
-     *     Array of attributes for the custom element. These will overwrite
-     *     attributes parsed from outerHTML.
-     * - element
-     *     The name of the element. This is a required option and an exception will
-     *     be thrown if it is missing.
-     * - outerHTML
-     *     Outer HTML of the element. This will be parsed to a DOM object and
-     *     attributes.
-     *
-     * @var array
+     * @var string
      */
-    protected $options;
+    protected $validNameRegex = '/[A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+/';
 
     /**
      * Element name
@@ -67,6 +56,21 @@ abstract class AbstractBase implements CustomElementInterface
      * @var string
      */
     protected $name;
+
+    /**
+     * Options
+     *
+     * The base class supports the following options:
+     * - attributes
+     *     Array of attributes for the custom element. These will overwrite
+     *     attributes parsed from outerHTML.
+     * - outerHTML
+     *     Outer HTML of the element. This will be parsed to a DOM object and
+     *     attributes.
+     *
+     * @var array
+     */
+    protected $options;
 
     /**
      * Attributes
@@ -92,15 +96,17 @@ abstract class AbstractBase implements CustomElementInterface
     /**
      * AbstractBase constructor.
      *
-     * @param array $options       Options
-     * @param bool  $convertToBool Convert string true/false values to booleans.
+     * @param string $name          Element name
+     * @param array  $options       Options
+     * @param bool   $convertToBool Convert string true/false values to booleans
      */
-    public function __construct(array $options, bool $convertToBool = false)
-    {
-        if (!isset($options['element'])) {
-            throw new \Exception('Element option missing.');
+    public function __construct(string $name, array $options = [],
+        bool $convertToBool = false
+    ) {
+        if (!\preg_match($this->validNameRegex, $name)) {
+            throw new \Exception('Element name is not valid');
         }
-        $this->name = $options['element'];
+        $this->name = $name;
 
         $attributes = $options['attributes'] ?? [];
 

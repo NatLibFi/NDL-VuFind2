@@ -42,9 +42,9 @@ interface CustomElementRendererInterface
      * Server-side render a custom element.
      *
      * @param string $name    The name of the custom element to render
-     * @param ?array $options Options to use when creating the element instance
+     * @param array  $options Options to use when creating the element instance
      *
      * @return ?string Rendered element, or null if element does not exist
      */
-    public function render(string $name, ?array $options = null): ?string;
+    public function render(string $name, array $options = []): ?string;
 }

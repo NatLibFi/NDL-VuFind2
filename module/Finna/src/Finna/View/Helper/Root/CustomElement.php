@@ -64,11 +64,11 @@ class CustomElement extends AbstractHelper implements CustomElementRendererInter
      * Server-side render a custom element.
      *
      * @param string $name    The name of the custom element to render
-     * @param ?array $options Options to use when creating the element instance
+     * @param array  $options Options to use when creating the element instance
      *
      * @return ?string Rendered element, or null if element does not exist
      */
-    public function __invoke(string $name, ?array $options = null): ?string
+    public function __invoke(string $name, array $options = []): ?string
     {
         return $this->render($name, $options);
     }
@@ -77,15 +77,14 @@ class CustomElement extends AbstractHelper implements CustomElementRendererInter
      * Server-side render a custom element.
      *
      * @param string $name    The name of the custom element to render
-     * @param ?array $options Options to use when creating the element instance
+     * @param array  $options Options to use when creating the element instance
      *
      * @return ?string Rendered element, or null if element does not exist
      */
-    public function render(string $name, ?array $options = null): ?string
+    public function render(string $name, array $options = []): ?string
     {
         try {
-            $options = $options ?? [];
-            $options['element'] = $name;
+            $options['__element'] = $name;
             $element = $this->pluginManager->get($name, $options);
         } catch (ServiceNotFoundException $e) {
             return null;
