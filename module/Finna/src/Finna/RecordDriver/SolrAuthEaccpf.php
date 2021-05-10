@@ -154,7 +154,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
     {
         $result = [];
         $record = $this->getXmlRecord();
-        if (isset($record->cpfDescription->description->occupations)) {
+        if (isset($record->cpfDescription->description->occupations->occupation)) {
             $languages = $this->mapLanguageCode($this->getLocale());
             foreach ($record->cpfDescription->description->occupations->occupation
                 as $occupation
