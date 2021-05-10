@@ -70,7 +70,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
             foreach ($name->part ?? [] as $part) {
                 $localType = (string)$part->attributes()->localType;
                 if ($localType === 'http://rdaregistry.info/Elements/a/P50103') {
-                    $titles[] = ['data' => $part[0]];
+                    $titles[] = ['data' => (string)$part];
                 }
             }
         }
