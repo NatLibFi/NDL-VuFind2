@@ -156,17 +156,29 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Video warnings
+     * Content descriptors
      *
      * @var array
      */
-    protected $videoWarnings = [
-        'väkivalta' => 'violence',
-        'seksi' => 'sexual_content',
-        'päihde' => 'drug_use',
-        'ahdistus' => 'anxiety',
-        'S' => 'for_all_ages_fi',
-        'T' => 'for_all_ages_sv'
+    protected $contentDescriptors = [
+        'väkivalta' => 'content_descriptor_violence',
+        'seksi' => 'content_descriptor_sexual_content',
+        'päihde' => 'content_descriptor_drug_use',
+        'ahdistus' => 'content_descriptor_anxiety'
+    ];
+
+    /**
+     * Age restrictions
+     * 
+     * @var array
+     */
+    protected $ageRestrictions = [
+        'S' => 'age_restriction_for_all_ages_fi',
+        'T' => 'age_restriction_for_all_ages_sv',
+        '7' => 'age_restriction_7',
+        '12' => 'age_restriction_12',
+        '16' => 'age_restriction_16',
+        '18' => 'age_restriction_18'
     ];
 
     /**
@@ -1269,7 +1281,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         foreach ($tmpWarnings as $warning) {
                             if (!in_array($warning, $this->filteredWarnings)) {
                                 $warnings[]
-                                    = $this->videoWarnings[$warning] ?? $warning;
+                                    = $this->contentDescriptors[$warning]
+                                    ?? $this->ageRestrictions[$warning]
+                                    ?? $warning;
                             }
                         }
                     }
