@@ -94,8 +94,7 @@ class SolrLrmi extends SolrQdc
         $rights = [];
         if (!empty($xml->rights)) {
             $rights['copyright'] = $this->getMappedRights((string)$xml->rights);
-            $link = $this->getRightsLink($rights['copyright'], $language);
-            if ($link) {
+            if ($link = $this->getRightsLink($rights['copyright'], $language)) {
                 $rights['link'] = $link;
             }
             return $rights;
