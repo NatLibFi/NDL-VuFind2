@@ -10,7 +10,7 @@
       <span class="cc-rights">
         <?php if (!empty($rights['copyright'])): ?>
           <?php
-            $copyright = $rights['mappedCopyright'] ?? $rights['copyright'];
+            $copyright = $rights['copyright'];
             $label = $this->transEsc($copyright);
             if ($copyright === 'Luvanvarainen käyttö / ei tiedossa') {
               $label = $this->transEsc('usage_F');

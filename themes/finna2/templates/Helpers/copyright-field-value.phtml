@@ -1,9 +1,8 @@
 <!-- START of: finna - Helpers/copyright-field-value.phtml -->
 <?php if (isset($data['copyright'])): ?>
   <span class="rights-icons">
-    <?php $copyright = $data['mappedCopyright'] ?? $data['copyright']; ?>
-    <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?>
-    <span class="rights-text"><?= $this->escapeHtml($copyright); ?></span>
+    <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $data['copyright']]);?>
+    <span class="rights-text"><?= $this->escapeHtml($data['copyright']); ?></span>
   </span>
   <?php if (isset($data['link'])): ?>
     <span class="rights-link">

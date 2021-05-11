@@ -882,12 +882,10 @@ class SolrEad3 extends SolrEad
         if (! $restrictions = $this->getAccessRestrictions()) {
             return false;
         }
-        $copyright = $restrictions[0];
+        $copyright = $this->getMappedRights($restrictions[0]);
         $data = [];
         $data['copyright'] = $copyright;
-        $data['mappedCopyright']
-            = $this->getMappedRights(strtoupper($copyright));
-        if ($link = $this->getRightsLink($data['mappedCopyright'], $language)) {
+        if ($link = $this->getRightsLink(strtoupper($copyright), $language)) {
             $data['link'] = $link;
         }
         return $data;

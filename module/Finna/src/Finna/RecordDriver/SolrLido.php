@@ -158,13 +158,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                     $copyright = trim((string)$conceptID);
                     if ($copyright) {
+                        $copyright = $this->getMappedRights($copyright);
                         $data['copyright'] = $copyright;
-                        $data['mappedCopyright']
-                            = $this->getMappedRights(strtoupper($copyright));
-                        $link = $this->getRightsLink(
-                            $data['mappedCopyright'], $language
-                        );
-                        if ($link) {
+
+                        $copyright = strtoupper($copyright);
+                        if ($link = $this->getRightsLink($copyright, $language)) {
                             $data['link'] = $link;
                         }
                         return $data;
@@ -221,15 +219,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $conceptID = $rightsResource->rightsType->conceptID;
                     $type = strtolower((string)$conceptID->attributes()->type);
                     if ($type === 'copyright' && trim((string)$conceptID)) {
-                        $rights['copyright'] = (string)$conceptID;
-                        $rights['mappedCopyright']
-                            = $this->getMappedRights(
-                                strtoupper($rights['copyright'])
-                            );
-                        $link
-                            = $this->getRightsLink(
-                                $rights['mappedCopyright'], $language
-                            );
+                        $rights['copyright']
+                            = $this->getMappedRights((string)$conceptID);
+                        $link = $this->getRightsLink(
+                            strtoupper($rights['copyright']), $language
+                        );
                         if ($link) {
                             $rights['link'] = $link;
                         }

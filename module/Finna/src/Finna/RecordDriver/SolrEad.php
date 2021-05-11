@@ -109,12 +109,10 @@ class SolrEad extends SolrDefault
             return false;
         }
         if (isset($record->accessrestrict->p)) {
-            $copyright = (string)$record->accessrestrict->p;
+            $copyright = $this->getMappedRights((string)$record->accessrestrict->p);
             $data = [];
             $data['copyright'] = $copyright;
-            $data['mappedCopyright']
-                = $this->getMappedRights(strtoupper($copyright));
-            if ($link = $this->getRightsLink($data['mappedCopyright'], $language)) {
+            if ($link = $this->getRightsLink(strtoupper($copyright), $language)) {
                 $data['link'] = $link;
             }
             return $data;
