@@ -103,7 +103,7 @@ abstract class AbstractBase implements CustomElementInterface
     public function __construct(string $name, array $options = [],
         bool $convertToBool = false
     ) {
-        if (!\preg_match($this->validNameRegex, $name)) {
+        if (!preg_match($this->validNameRegex, $name)) {
             throw new \Exception('Element name is not valid');
         }
         $this->name = $name;
