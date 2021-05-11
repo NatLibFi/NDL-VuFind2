@@ -55,7 +55,7 @@ class FinnaPanel extends AbstractBase
             $this->viewModel->setVariable('collapseId', $collapseId);
         }
 
-        $heading = $this->dom->find('finna-panel-heading');
+        $heading = $this->dom->find($this->name . '-heading');
         if ($heading = $heading[0] ?? false) {
             $this->viewModel->setVariable(
                 'heading', strip_tags($heading->innerHTML())

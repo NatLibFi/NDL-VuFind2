@@ -47,6 +47,8 @@ class FinnaList extends AbstractBase
     public function __construct(string $name, array $options = [])
     {
         parent::__construct($name, $options, true);
+
+        $this->viewModel->setTemplate('CustomElement/finna-list');
     }
 
     /**

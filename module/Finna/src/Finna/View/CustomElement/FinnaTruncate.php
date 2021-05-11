@@ -48,7 +48,7 @@ class FinnaTruncate extends AbstractBase
     {
         parent::__construct($name, $options);
 
-        $labelElement = $this->dom->find('finna-truncate-label');
+        $labelElement = $this->dom->find($this->name . '-label');
         if ($labelElement = $labelElement[0] ?? false) {
             $label = trim(strip_tags($labelElement->innerHtml()));
             if (!empty($label)) {
@@ -60,6 +60,8 @@ class FinnaTruncate extends AbstractBase
         $this->viewModel->setVariable(
             'content', $this->dom->firstChild()->innerHTML()
         );
+
+        $this->viewModel->setTemplate('CustomElement/finna-truncate');
     }
 
     /**
