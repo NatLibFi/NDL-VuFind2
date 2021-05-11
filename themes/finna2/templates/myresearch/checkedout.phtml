@@ -160,11 +160,11 @@
                     <br/>
                   <?php endif; ?>
                   <?php
-                    $listAuthor = $resource->getPrimaryAuthorForSearch();
-                    $display = $resource->getPrimaryAuthor();
-                    if (!empty($listAuthor)):
+                    $authors = $resource->getNonPresenterAuthors();
+                    if (!empty($authors[0])):
+                      $author = $authors[0];
                   ?>
-                    <a href="<?=$this->record($resource)->getLink('author', $listAuthor)?>"><?=$this->escapeHtml($display ?: $listAuthor)?></a><br/>
+                    <?=$this->record($resource)->getAuthorityLinkElement('author', $author['name'], $author, ['role' => true, 'authorityType' => $author['type'] ?? null])?>
                   <?php endif; ?>
 
                   <?php if (!empty($ilsDetails['volume'])): ?>
