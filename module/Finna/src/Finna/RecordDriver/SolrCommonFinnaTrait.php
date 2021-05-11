@@ -105,7 +105,8 @@ trait SolrCommonFinnaTrait
      */
     public function getMappedRights($copyright)
     {
-        return $this->mainConfig['RightsMap'][strtoupper($copyright)] ?? $copyright;
+        return $this->mainConfig['RightsMap'][mb_strtoupper($copyright, 'UTF-8')]
+            ?? $copyright;
     }
 
     /**
