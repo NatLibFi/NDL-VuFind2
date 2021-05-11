@@ -51,15 +51,27 @@ class SolrAuthEacCpf extends SolrAuthDefault
      */
     public function getTitle()
     {
+        $firstTitle = null;
         $record = $this->getXmlRecord();
-        if (isset($record->cpfDescription->identity->nameEntry->part)) {
-            foreach ($record->cpfDescription->identity->nameEntry->part as $part) {
+        if (isset($record->cpfDescription->identity->nameEntry)) {
+            $languages = $this->mapLanguageCode($this->getLocale());
+            $name = $record->cpfDescription->identity->nameEntry;
+            if (!isset($name->part)) {
+                return '';
+            }
+            $lang = (string)$name->attributes()->lang;
+            foreach ($name->part as $part) {
                 if ($title = (string)$part) {
-                    return $title;
+                    if (!$firstTitle) {
+                        $firstTitle = $title;
+                    }
+                    if ($lang && in_array($lang, $languages)) {
+                        return $title;
+                    }
                 }
             }
         }
-        return '';
+        return $firstTitle ?? '';
     }
 
     /**
