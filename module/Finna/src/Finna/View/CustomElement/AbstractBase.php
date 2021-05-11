@@ -48,7 +48,7 @@ abstract class AbstractBase implements CustomElementInterface
      *
      * @var string
      */
-    protected $validNameRegex = '/[A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+/';
+    protected $validNameRegex = '/([A-Za-z][A-Za-z0-9]*)-[A-Za-z0-9-]+/';
 
     /**
      * Element name
@@ -56,6 +56,13 @@ abstract class AbstractBase implements CustomElementInterface
      * @var string
      */
     protected $name;
+
+    /**
+     * Element name prefix
+     *
+     * @var string
+     */
+    protected $prefix;
 
     /**
      * Options
@@ -103,10 +110,12 @@ abstract class AbstractBase implements CustomElementInterface
     public function __construct(string $name, array $options = [],
         bool $convertToBool = false
     ) {
-        if (!preg_match($this->validNameRegex, $name)) {
+        $matches = [];
+        if (!preg_match($this->validNameRegex, $name, $matches)) {
             throw new \Exception('Element name is not valid');
         }
         $this->name = $name;
+        $this->prefix = $matches[1];
 
         $attributes = $options['attributes'] ?? [];
 
