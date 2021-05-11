@@ -99,7 +99,7 @@
                   if (!empty($authors[0])):
                     $author = $authors[0];
                 ?>
-                  <?=$this->record($resource)->getAuthorityLinkElement('author', $author['name'], $author, ['role' => true, 'authorityType' => $author['type'] ?? null])?>
+                  <?=$this->record($resource)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
                 <?php endif; ?>
 
                 <?php if (!empty($ilsDetails['volume'])): ?>
