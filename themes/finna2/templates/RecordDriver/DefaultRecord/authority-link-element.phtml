@@ -18,7 +18,7 @@
   ?>
   <a<?=$titleAttr?> href="<?=$this->escapeHtmlAttr($this->url)?>"<?=$linkClassesAttr?>><?php if ($isAuthorityLink): ?><i class="fa <?=$authorityIcon?>"></i><span class="sr-only"><?=$srLabel?></span> <?php endif; ?>
     <span class="authority-label"><?=$this->escapeHtml($this->label)?></span>
-  </a><?= $additionalDataEl?><?php if (!empty($this->description)): ?> <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span><?php endif; ?>
+  </a><?= $additionalDataEl?><?php if (!empty($this->description)): ?> <span class="author-description"><?="({$this->escapeHtml($this->description)})"?></span><?php endif; ?>
   <?php if ($this->showInlineInfo): ?>
     <a href="#" class="show-info"><?=$this->translate('authority_show_info')?></a>
     <div class="authority-info">
