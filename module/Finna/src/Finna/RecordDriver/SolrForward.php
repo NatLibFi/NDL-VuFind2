@@ -173,8 +173,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $ageRestrictions = [
-        'S' => 'age_rating_for_all_ages_fi',
-        'T' => 'age_rating_for_all_ages_sv',
+        'S' => 'age_rating_for_all_ages',
+        'T' => 'age_rating_for_all_ages',
         '7' => 'age_rating_7',
         '12' => 'age_rating_12',
         '16' => 'age_rating_16',
