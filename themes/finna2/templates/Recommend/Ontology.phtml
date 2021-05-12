@@ -11,8 +11,11 @@
             <?= $this->transEsc('ontology_recommendation_' . $type, ['%%term%%' => $term, '%%results_count%%' => count($termRecs)]) ?>
           <?php if (1 === count($termRecs)): ?>
               <?php $index += 1; ?>
-              '<?php if (isset($termRecs[0]['href'])): ?><a href="<?= $termRecs[0]['href'] ?>" data-index="<?= $index ?>"><?php
-                endif;?><?= $this->escapeHtml($termRecs[0]['label']) ?><?php if (isset($termRecs[0]['href'])): ?></a><?php endif;?>'
+              <?php if (isset($termRecs[0]['href'])): ?>
+                '<a href="<?= $this->escapeHtmlAttr($termRecs[0]['href']) ?>" data-index="<?= $index ?>"><?= $this->escapeHtml($termRecs[0]['label']) ?></a>'
+              <?php else: ?>
+                '<?= $this->escapeHtml($termRecs[0]['label']) ?>'
+              <?php endif; ?>
             </p>
           <?php else: ?>
             </p>
@@ -22,9 +25,11 @@
                   $index += 1;
                   $resultTotal = isset($termRec['resultTotal']) ? '&nbsp;(' . $termRec['resultTotal'] . ')' : '';
                 ?>
-                <li><?php if (isset($termRec['href'])): ?><a href="<?= $termRec['href'] ?>" data-index="<?= $index ?>"><?php
-                  endif; ?><?= $this->escapeHtml($termRec['label']) ?><?php if (isset($termRec['href'])): ?></a><?php
-                  endif; ?><?= $resultTotal ?></li>
+                <?php if (isset($termRec['href'])): ?>
+                  <li><a href="<?= $this->escapeHtmlAttr($termRec['href']) ?>" data-index="<?= $index ?>"><?= $this->escapeHtml($termRec['label']) ?></a><?= $resultTotal ?></li>
+                <?php else: ?>
+                  <li><?= $this->escapeHtml($termRec['label']) ?><?= $resultTotal ?></li>
+                <?php endif; ?>
               <?php endforeach; ?>
             </ul>
           <?php endif; ?>
