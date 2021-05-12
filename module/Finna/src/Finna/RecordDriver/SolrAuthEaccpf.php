@@ -154,19 +154,24 @@ class SolrAuthEacCpf extends SolrAuthDefault
     {
         $result = [];
         $record = $this->getXmlRecord();
-        if (isset($record->cpfDescription->description->occupations->occupation)) {
+        if (isset($record->cpfDescription->description->occupations)) {
             $languages = $this->mapLanguageCode($this->getLocale());
-            foreach ($record->cpfDescription->description->occupations->occupation
-                as $occupation
+            foreach ($record->cpfDescription->description->occupations
+                as $occupations
             ) {
-                if (!isset($occupation->term)) {
+                if (!isset($occupations->occupation)) {
                     continue;
                 }
-                $term = $occupation->term;
-                $attr = $term->attributes();
-                if ($attr->lang && in_array((string)$attr->lang, $languages)
-                ) {
-                    $result[] = (string)$term;
+                foreach ($occupations->occupation as $occupation) {
+                    if (!isset($occupation->term)) {
+                        continue;
+                    }
+                    $term = $occupation->term;
+                    $attr = $term->attributes();
+                    if ($attr->lang && in_array((string)$attr->lang, $languages)
+                    ) {
+                        $result[] = (string)$term;
+                    }
                 }
             }
         }
