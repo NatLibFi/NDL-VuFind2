@@ -27,6 +27,7 @@
  */
 namespace Finna\View\CustomElement;
 
+use Exception;
 use Laminas\View\Model\ModelInterface;
 use Laminas\View\Model\ViewModel;
 use PHPHtmlParser\Dom;
@@ -48,7 +49,7 @@ abstract class AbstractBase implements CustomElementInterface
      *
      * @var string
      */
-    protected $validNameRegex = '/([A-Za-z][A-Za-z0-9]*)-[A-Za-z0-9-]+/';
+    protected $validNameRegex = '/^([A-Za-z][A-Za-z0-9]*)-[A-Za-z0-9-]+$/';
 
     /**
      * Element name
@@ -106,13 +107,15 @@ abstract class AbstractBase implements CustomElementInterface
      * @param string $name          Element name
      * @param array  $options       Options
      * @param bool   $convertToBool Convert string true/false values to booleans
+     *
+     * @throws Exception If element name or outerHTML is not valid
      */
     public function __construct(string $name, array $options = [],
         bool $convertToBool = false
     ) {
         $matches = [];
         if (!preg_match($this->validNameRegex, $name, $matches)) {
-            throw new \Exception('Element name is not valid');
+            throw new Exception('Element name is not valid');
         }
         $this->name = $name;
         $this->prefix = $matches[1];
@@ -125,16 +128,17 @@ abstract class AbstractBase implements CustomElementInterface
                 $options['outerHTML'],
                 (new Options())->setCleanupInput(false)
             );
-            if ($dom->countChildren() === 1
-                && $dom->firstChild()->getTag()->name() === $this->getName()
+            if ($dom->countChildren() !== 1
+                || $dom->firstChild()->getTag()->name() !== $this->getName()
             ) {
-                $this->dom = $dom;
-
-                // Attributes set in options overwrite attributes set in HTML.
-                $attributes = array_merge(
-                    $dom->firstChild()->getAttributes(), $attributes
-                );
+                throw new Exception('Element outerHTML is not valid');
             }
+            $this->dom = $dom;
+
+            // Attributes set in options overwrite attributes set in HTML.
+            $attributes = array_merge(
+                $dom->firstChild()->getAttributes(), $attributes
+            );
         }
 
         if ($convertToBool) {
