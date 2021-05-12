@@ -282,8 +282,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     if (!empty($attributes['finna-kayttooikeus'])) {
                         $type = (string)$attributes['finna-kayttooikeus'];
                         $result = ['copyright' => $type];
-                        $link = $this->getRightsLink(strtoupper($type), $language);
-                        if ($link) {
+                        if ($link = $this->getRightsLink($type, $language)) {
                             $result['link'] = $link;
                         }
                         return $result;

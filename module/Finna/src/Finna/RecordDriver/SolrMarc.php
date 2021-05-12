@@ -1520,7 +1520,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             if (!$heading = $subject['heading'][0] ?? null) {
                 continue;
             }
-            $authId = $authType = null;
+            $authType = null;
 
             // Check if we can find an authority id with a matching heading
             foreach ($subjectIdFields as $type => $codes) {
@@ -1530,14 +1530,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         if (!$subfield || trim($subfield) !== $heading) {
                             continue;
                         }
-                        if ($authId = $this->getSubfield($field, '0')) {
+                        if (isset($subject['id'])) {
                             $authType = $type;
                             break 3;
                         }
                     }
                 }
             }
-            $subject['id'] = $authId;
             $subject['authType'] = $authType;
         }
         return $result;
