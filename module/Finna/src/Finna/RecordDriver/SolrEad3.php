@@ -946,6 +946,16 @@ class SolrEad3 extends SolrEad
             }
         }
 
+        if ($geogNames = $this->getRelatedPlacesExtended(['aihe'], [])) {
+            $headings = array_merge(
+                $headings, array_map(
+                    function ($term) {
+                        return $term['data'];
+                    }, $geogNames
+                )
+            );
+        }
+
         // The default index schema doesn't currently store subject headings in a
         // broken-down format, so we'll just send each value as a single chunk.
         // Other record drivers (i.e. SolrMarc) can offer this data in a more
@@ -955,15 +965,18 @@ class SolrEad3 extends SolrEad
                 ? ['heading' => [$i], 'type' => '', 'source' => '']
                 : [$i];
         };
-        return array_map($callback, array_unique($headings));
+        return array_map($callback, ($headings));
     }
 
     /**
      * Get related places.
      *
+     * @param array $include Relator attributes to include
+     * @param array $exclude Relator attributes to exclude
+     *
      * @return array
      */
-    public function getRelatedPlacesExtended()
+    public function getRelatedPlacesExtended($include = [], $exclude = ['aihe'])
     {
         $record = $this->getXmlRecord();
         if (!isset($record->controlaccess->geogname)) {
@@ -978,6 +991,12 @@ class SolrEad3 extends SolrEad
         foreach ($record->controlaccess->geogname as $name) {
             $attr = $name->attributes();
             $relator = (string)$attr->relator;
+            if (!empty($include) && !in_array($relator, $include)) {
+                continue;
+            }
+            if (!empty($exclude) && in_array($relator, $exclude)) {
+                continue;
+            }
             if (isset($name->part)) {
                 $part = (string)$name->part;
                 $data = ['data' => $part, 'detail' => $relator];
