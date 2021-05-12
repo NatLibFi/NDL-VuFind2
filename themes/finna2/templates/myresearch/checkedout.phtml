@@ -166,15 +166,16 @@
                         <?=$this->record($resource)->getFormatList() ?>
                         <br/>
                       <?php endif; ?>
-                      <?php $listAuthor = $resource->getPrimaryAuthor(); if (!empty($listAuthor)): ?>
-                        <a href="<?=$this->record($resource)->getLink('author', $listAuthor)?>"><?=$this->escapeHtml($listAuthor)?></a><br/>
-                      <?php endif; ?>
-
+                      <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
                       <?php if (!empty($ilsDetails['volume'])): ?>
                         <strong><?=$this->transEsc('Issue')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
                         <br />
                       <?php endif; ?>
-
+                      <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
+                      <?php if (!empty($ilsDetails['volume'])): ?>
+                        <strong><?=$this->transEsc('Issue')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
+                        <br />
+                      <?php endif; ?>
                       <?php if (!empty($ilsDetails['publication_year'])): ?>
                         <strong><?=$this->transEsc('Year of Publication')?>:</strong> <?=$this->escapeHtml($ilsDetails['publication_year'])?>
                         <br />

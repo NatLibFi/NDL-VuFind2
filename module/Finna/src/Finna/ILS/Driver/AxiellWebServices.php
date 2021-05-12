@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -260,7 +260,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         'soap_version' => SOAP_1_1,
         'exceptions' => true,
         'trace' => false,
-        'connection_timeout' => 60,
+        'timeout' => 60,
+        'connection_timeout' => 15,
         'typemap' => [
             [
                 'type_ns' => 'http://www.w3.org/2001/XMLSchema',
@@ -443,6 +444,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'mostborrowed' => 480,
                 'mostrequested' => 240
             ];
+
+        if (!empty($this->config['Catalog']['connection_timeout'])) {
+            $this->soapOptions['connection_timeout']
+                = $this->config['Catalog']['connection_timeout'];
+        }
+        if (!empty($this->config['Catalog']['timeout'])) {
+            $this->soapOptions['timeout']
+                = $this->config['Catalog']['timeout'];
+        }
     }
 
     /**

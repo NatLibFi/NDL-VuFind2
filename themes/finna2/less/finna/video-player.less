@@ -6,6 +6,20 @@
   height: 100%;
 }
 
+.video-warning {
+  text-align: center;
+}
+
+.video-popup, .finna-iframe {
+  .video-warning {
+    position: absolute;
+    bottom: 5%;
+    background: transparent;
+    padding: 2px;
+    left: 10px;
+  }
+}
+
 #video-player:focus, video:focus {
   outline: none;
 }
@@ -36,6 +50,14 @@
   .video-link-container {
     width: 200px;
   }
+  .video-warnings {
+    padding: 4px 0;
+  }
+}
+
+.video-warning-icon > img {
+  width: 32px;
+  height: 32px;
 }
 
 .video-accordion {

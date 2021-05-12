@@ -157,7 +157,7 @@
             <?php if ($primaryAuthors): ?>
               <span class="recordAuthors">
                   <?php foreach ($primaryAuthors as $index => $author): ?>
-                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null, 'showInlineInfo' => true])?>
+                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null, 'showInlineInfo' => false])?>
                 <?php endforeach; ?>
               </span>
             <?php endif; ?>

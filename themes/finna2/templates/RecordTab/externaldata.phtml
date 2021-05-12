@@ -28,13 +28,15 @@ $physicalItems = $items['physicalItems'] ?? null;
     <?php foreach ($physicalItems as $item): ?>
       <div role="row" class="tbl-row">
         <div class="tbl-cell tbl-left" role="cell">
-          <?=$this->escapeHtml($item['format'])?>
+          <?=$this->escapeHtml($item['format'] ?? $item['type'] ?? '')?>
           <?php if (!empty($item['info'])): ?>
             <span class="info">(<?=$this->escapeHtml($item['info']) ?>)</span>
           <?php endif ?>
         </div>
         <div class="tbl-cell tbl-right location" role="cell">
-          <span class="location-name"><?=$this->escapeHtml($item['location'])?></span>
+          <?php if (!empty($item['location'])): ?>
+            <span class="location-name"><?=$this->escapeHtml($item['location'])?></span>
+          <?php endif; ?>
           <?php if (!empty($item['service'])): ?>
             <span class="service alert alert-info"><?= $this->transEsc('external_data_tab_physical_service')?></span>
           <?php endif; ?>

@@ -9,6 +9,9 @@ function FinnaPopup(trigger, params, id) {
   _.isOpen = false;
   _.openIndex = 0;
   _.id = id;
+
+  // If given parent element, we create a new element inside that rather than opening a new popup
+  _.parent = params.parent;
   if (typeof params.onPopupInit !== 'undefined') {
     _.onPopupInit = params.onPopupInit;
   }
@@ -41,9 +44,6 @@ function FinnaPopup(trigger, params, id) {
       src: '//player.vimeo.com/video/%id%?autoplay=1'
     }
   };
-
-  // If given parent element, we create a new element inside that rather than opening a new popup
-  _.parent = params.parent;
 }
 
 /**

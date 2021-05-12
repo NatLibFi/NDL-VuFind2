@@ -691,6 +691,14 @@ showMoreCount = 30
 ; Maximum number of times ontology recommendations can be shown per browser session. Leave unset for an unlimited
 ; number of ontology recommendations shown.
 ;maxTimesShownPerSession =
+; Maximum number of recommended searches to check for result set totals.
+; This is the total maximum for all search terms. Leave unset for no checks.
+; If checks are done and a recommendation would have more recommended searches
+; than set here, the recommendation will not contain any recommended search
+; links at all.
+; Note that this setting can have a serious effect on performance, and that
+; there may be a hard-coded maximum number overriding this setting.
+;maxResultChecks = 3
 
 ; This section provides settings for optional caching of search requests. This
 ; affects the primary Solr backend only; for caching of other backends, see the

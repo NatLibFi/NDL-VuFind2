@@ -1,12 +1,17 @@
-<!-- START of: finna - ajax/authority.phtml -->
+<?php //Don't add START and END comments ?>
 <?php
   $formatter = $this->recordDataFormatter();
   $coreFields = $formatter->getData($driver, $formatter->getDefaults('authority'));
 ?>
 
-<?php $description = $driver->tryMethod('getDescription'); ?>
-<?php if (!empty($description)): ?>
-<div class="description"><?=$this->cleanHtml($description)?></div>
+<?php $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
+<div class="truncate-field description">
+  <p class="summary">
+    <?php foreach ($summ as $field): ?>
+      <?=$this->cleanHtml($field)?><br/>
+    <?php endforeach; ?>
+  </p>
+</div>
 <?php endif; ?>
 
 <?php if (!empty($coreFields)): ?>
@@ -16,4 +21,3 @@
   <?php endforeach; ?>
 </table>
 <?php endif; ?>
-<!-- END of: finna - ajax/authority.phtml -->

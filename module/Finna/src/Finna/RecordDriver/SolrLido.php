@@ -158,9 +158,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                     $copyright = trim((string)$conceptID);
                     if ($copyright) {
+                        $copyright = $this->getMappedRights($copyright);
                         $data['copyright'] = $copyright;
 
-                        $copyright = strtoupper($copyright);
                         if ($link = $this->getRightsLink($copyright, $language)) {
                             $data['link'] = $link;
                         }
@@ -218,10 +218,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $conceptID = $rightsResource->rightsType->conceptID;
                     $type = strtolower((string)$conceptID->attributes()->type);
                     if ($type === 'copyright' && trim((string)$conceptID)) {
-                        $rights['copyright'] = (string)$conceptID;
-                        $link = $this->getRightsLink(
-                            strtoupper($rights['copyright']), $language
-                        );
+                        $rights['copyright']
+                            = $this->getMappedRights((string)$conceptID);
+                        $link
+                            = $this->getRightsLink($rights['copyright'], $language);
                         if ($link) {
                             $rights['link'] = $link;
                         }
