@@ -4,7 +4,7 @@
   if (!empty($authors[0])):
     $author = $authors[0];
 ?>
-  <?=$this->record($record)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
+  <?=$this->record($record)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?><br/>
 <?php elseif (false === $authors):?>
   <?php
     // Fallback for missing records
