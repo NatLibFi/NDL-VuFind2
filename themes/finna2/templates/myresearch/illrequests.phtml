@@ -67,7 +67,7 @@
               <?=$this->transEsc('cannot cancel any interlibrary loan requests')?>
             </div>
           <?php endif; ?>
-          <table class="myresearch-table" aria-label="<?=$this->transEsc('Interlibrary Loan Requests');?>" tabindex="0">
+          <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Interlibrary Loan Requests');?>" tabindex="0">
             <tr class="sr-only myresearch-row" aria-hidden="true">
               <th id="label-select-column"><?=$this->transEsc('Select');?></th>
               <th class="hidden-xs"></th>
@@ -96,9 +96,9 @@
                 <td class="text-left hidden-xs" aria-hidden="true">
                   <div class="cover-image">
                     <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-                      <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
+                      <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>"/>
                     <?php else: ?>
-                      <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
+                      <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>"/>
                     <?php endif; ?>
                   </div>
                 </td>
