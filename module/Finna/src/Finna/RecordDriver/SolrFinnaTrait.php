@@ -195,11 +195,12 @@ trait SolrFinnaTrait
      * Return building from index.
      *
      * @return array
+     *
+     * @deprecated Use getBuildings
      */
     public function getBuilding()
     {
-        return isset($this->fields['building']) ? (array)$this->fields['building']
-            : [];
+        return $this->getBuildings();
     }
 
     /**

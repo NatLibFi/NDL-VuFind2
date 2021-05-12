@@ -94,8 +94,12 @@
                   <?=$this->record($resource)->getFormatList() ?>
                   <br/>
                 <?php endif; ?>
-                <?php $listAuthor = $resource->getPrimaryAuthor(); if (!empty($listAuthor)): ?>
-                  <a href="<?=$this->record($resource)->getLink('author', $listAuthor)?>"><?=$this->escapeHtml($listAuthor)?></a><br/>
+                <?php
+                  $authors = $resource->getNonPresenterAuthors();
+                  if (!empty($authors[0])):
+                    $author = $authors[0];
+                ?>
+                  <?=$this->record($resource)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
                 <?php endif; ?>
 
                 <?php if (!empty($ilsDetails['volume'])): ?>

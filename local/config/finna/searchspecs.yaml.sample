@@ -241,12 +241,14 @@ Title:
       - title_full_unstemmed^450
 
 TitleStart:
-  DismaxFields:
-    - title_txtP_l^1000
+  QueryFields:
+    title_txtP_l:
+      - [onephrase, ~]
 
 TitleExact:
-  DismaxFields:
-    - title_txtP_lr^1000
+  QueryFields:
+    title_txtP_lr:
+      - [onephrase, ~]
 
 Series:
   DismaxFields:

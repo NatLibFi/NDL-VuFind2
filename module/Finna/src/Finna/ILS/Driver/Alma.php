@@ -588,6 +588,40 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
+     * Check for request blocks.
+     *
+     * @param array $patron The patron array with username and password
+     *
+     * @return array|boolean    An array of block messages or false if there are no
+     *                          blocks
+     * @author Michael Birkner
+     */
+    public function getRequestBlocks($patron)
+    {
+        $cacheId = 'alma|user|' . $patron['id'] . '|requestblocks';
+        $cachedBlocks = $this->getCachedData($cacheId);
+        if ($cachedBlocks !== null) {
+            return $cachedBlocks;
+        }
+        $blocks = [];
+        if (!empty($this->config['Holds']['requireLibraryCard'])) {
+            $profile = $this->getMyProfile($patron);
+            if (empty($profile['barcode'])) {
+                $blocks[] = 'hold_error_no_library_card';
+            }
+        }
+        $blocks = array_merge(
+            $blocks,
+            $this->getAccountBlocks($patron) ?: []
+        );
+        if (!$blocks) {
+            $blocks = false;
+        }
+        $this->putCachedData($cacheId, $blocks);
+        return $blocks;
+    }
+
+    /**
      * Check for account blocks in Alma and cache them.
      *
      * @param array $patron The patron array with username and password
@@ -1280,7 +1314,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getPickupLocations($patron, $holdDetails)
+    public function getPickupLocations($patron, $holdDetails = null)
     {
         // This may get called multiple times. Cache results during execution since
         // this is quite expensive.
@@ -1527,6 +1561,33 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $this->debug("Filtered pickup locations:\n" . $libs2str($libraries));
         }
 
+        // Do we need to sort pickup locations? If the setting is false, don't
+        // bother doing any more work. If it's not set at all, default to
+        // alphabetical order.
+        $orderSetting = $this->config['Holds']['pickUpLocationOrder'] ?? 'default';
+        if (count($libraries) > 1 && !empty($orderSetting)) {
+            $locationOrder = $orderSetting === 'default'
+                ? [] : array_flip(explode(':', $orderSetting));
+            $sortFunction = function ($a, $b) use ($locationOrder) {
+                $aLoc = (string)$a['locationID'];
+                $bLoc = (string)$b['locationID'];
+                if (isset($locationOrder[$aLoc])) {
+                    if (isset($locationOrder[$bLoc])) {
+                        return $locationOrder[$aLoc] - $locationOrder[$bLoc];
+                    }
+                    return -1;
+                }
+                if (isset($locationOrder[$bLoc])) {
+                    return 1;
+                }
+                return strcasecmp(
+                    (string)$a['locationDisplay'],
+                    (string)$b['locationDisplay']
+                );
+            };
+            usort($libraries, $sortFunction);
+        }
+
         $cachedPickups[$cacheKey] = $libraries;
 
         return $libraries;
@@ -1630,6 +1691,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     public function checkRequestIsValid($id, $data, $patron)
     {
+        if ($this->getRequestBlocks($patron)) {
+            return false;
+        }
         $patronId = $patron['id'];
         $level = $data['level'] ?? 'copy';
         if ('copy' === $level) {

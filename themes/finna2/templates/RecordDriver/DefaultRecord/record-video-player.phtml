@@ -9,11 +9,39 @@
   $inlineVideo = $this->config()->inlineVideoEnabled();
 ?>
 <?php if ($inlineVideo): ?>
-<div class="inline-video-container hidden">
-  <div class="inline-video" id="inline-video"></div>
+  <div class="inline-video-container hidden">
+    <div class="inline-video" id="inline-video"></div>
 <?php endif; ?>
+<div class="video-warnings">
+  <?php
+    $warningImageUrls = [];
+  ?>
+  <div class="container">
+    <?php foreach ($videoUrls as $index => $url): ?>
+      <div class="video-warning hidden" data-index="<?=$index?>">
+        <?php if (!empty($url['warnings'])): ?>
+          <?php $lang = $this->layout()->userLang; ?>
+          <?php foreach ($url['warnings'] as $warning): ?>
+            <?php if (!isset($warningImageUrls[$warning])) {
+              $extra = '';
+              if ($warning === 'age_rating_for_all_ages') {
+                $extra = $lang === 'sv' ? '_sv' : '_fi';
+              }
+              // Lets see if swedish version of image is needed
+              $warningImageUrls[$warning] = $this->imageSrc()->getSourceAddress($warning . $extra);
+            } ?>
+            <?php if (!empty($warningImageUrls[$warning])): ?>
+              <span class="video-warning-icon"><img title="<?=$this->transEscAttr($translation)?>" data-src="<?=$this->this->escapeHtmlAttr($warningImageUrls[$warning])?>"/></span>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </div>
+    <?php endforeach; ?>
+  </div>
+</div>
 <div class="video-buttons">
   <div class="video-accordion <?= $inlineVideo ? 'container' : ''?>">
+    <?php $i = 0; ?>
     <?php foreach ($videoUrls as $url): ?>
       <?php
       $embeddedVideo = $this->recordLink()->getEmbeddedVideo($url['url']);
@@ -52,6 +80,8 @@
         }
         $currentVideo['data-embed-video'] = '';
       }
+
+      $currentVideo['data-index'] = $i++;
       ?>
       <button <?=$this->htmlElement()->getAttributes($currentVideo, 'video-base');?>
         aria-label="<?= $this->transEsc('Link to video') . ' ' . $description ?>" aria-haspopup="<?= $inlineVideo ? 'false' : 'true'?>"

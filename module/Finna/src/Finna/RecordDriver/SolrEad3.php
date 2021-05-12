@@ -106,17 +106,25 @@ class SolrEad3 extends SolrEad
     const RELATION_PART_OF = 'part-of';
     const RELATION_CONTAINS = 'contains';
     const RELATION_SEE_ALSO = 'see-also';
+    const RELATION_SEPARATED = 'separated';
 
     // Relation type map
     const RELATION_MAP = [
         'On jatkoa' => self::RELATION_CONTINUED_FROM,
         'Sisältyy' => self::RELATION_PART_OF,
         'Sisältää' => self::RELATION_CONTAINS,
-        'Katso myös' => self::RELATION_SEE_ALSO
+        'Katso myös' => self::RELATION_SEE_ALSO,
+        'Erotettu aineisto' => self::RELATION_SEPARATED
     ];
 
     // Relator attribute for archive origination
     const RELATOR_ARCHIVE_ORIGINATION = 'Arkistonmuodostaja';
+
+    // unitid is shown when label-attribute is missing or is one of:
+    const UNIT_IDS = [
+        'Tekninen', 'Analoginen', 'Vanha analoginen', 'Vanha tekninen',
+        'Diaarinumero', 'Asiaryhmän numero'
+    ];
 
     /**
      * Get the institutions holding the record.
@@ -138,22 +146,17 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Return building from index.
+     * Return buildings from index.
      *
      * @return array
      */
-    public function getBuilding()
+    public function getBuildings()
     {
-        $result = parent::getBuilding();
-
-        if (! $this->preferredLanguage) {
-            return $result;
-        }
-        if ($name = $this->getRepositoryName()) {
+        if ($this->preferredLanguage && $name = $this->getRepositoryName()) {
             return [$name];
         }
 
-        return $result;
+        return parent::getBuildings();
     }
 
     /**
@@ -451,6 +454,9 @@ class SolrEad3 extends SolrEad
         $manyIds = count($xml->did->unitid) > 1;
         foreach ($xml->did->unitid as $id) {
             $label = $fallbackDisplayLabel = (string)$id->attributes()->label;
+            if ($label && !in_array($label, self::UNIT_IDS)) {
+                continue;
+            }
             $displayLabel = null;
             if ($label) {
                 $displayLabel = "Unit ID:$label";
@@ -880,10 +886,10 @@ class SolrEad3 extends SolrEad
         if (! $restrictions = $this->getAccessRestrictions()) {
             return false;
         }
-        $copyright = $restrictions[0];
+        $copyright = $this->getMappedRights($restrictions[0]);
         $data = [];
         $data['copyright'] = $copyright;
-        if ($link = $this->getRightsLink(strtoupper($copyright), $language)) {
+        if ($link = $this->getRightsLink($copyright, $language)) {
             $data['link'] = $link;
         }
         return $data;
@@ -1106,6 +1112,60 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get all record links related to the current record. Each link is returned as
+     * array.
+     * Format:
+     * array(
+     *        array(
+     *               'title' => label_for_title
+     *               'value' => link_name
+     *               'link'  => link_URI
+     *        ),
+     *        ...
+     * )
+     *
+     * @return null|array
+     */
+    public function getAllRecordLinks()
+    {
+        $record = $this->getXmlRecord();
+
+        if (!isset($record->relations->relation)) {
+            return [];
+        }
+
+        $relations = [];
+        foreach ($record->relations->relation as $relation) {
+            $attr = $relation->attributes();
+            foreach (['encodinganalog', 'relationtype', 'href'] as $key) {
+                if (!isset($attr->{$key})) {
+                    continue 2;
+                }
+            }
+            if ((string)$attr->relationtype !== 'resourcerelation'
+                // This relation is shown via RecordDriverRelated-recommend module
+                // (see getRelatedRecords)
+                || (string)$attr->encodinganalog === self::RELATION_RECORD
+            ) {
+                continue;
+            }
+            $value = $href = (string)$attr->href;
+            if ($title = (string)$relation->relationentry) {
+                $value = $title;
+            }
+            $relations[] = [
+                'value' => $value,
+                'link' => [
+                    'value' => $href,
+                    'type' => 'identifier',
+                    'filter' => ['datasource_str_mv' => $this->getDatasource()]
+                ]
+            ];
+        }
+        return $relations;
+    }
+
+    /**
      * Get the hierarchy parents associated with this item (empty if none).
      * The parents are listed starting from the root of the hierarchy,
      * i.e. the closest parent is at the end of the result array.
@@ -1279,7 +1339,7 @@ class SolrEad3 extends SolrEad
                     $desc = (string)$attr->linktitle;
                     $sort = (string)$attr->label;
                     $items[] = [
-                        'label' => linktitle, $desc, 'url' => $href, 'sort' => $sort
+                        'label' => $desc, 'url' => $href, 'sort' => $sort
                     ];
                 }
             }
@@ -1394,10 +1454,10 @@ class SolrEad3 extends SolrEad
     /**
      * Helper function for returning a specific language version of a display label.
      *
-     * @param SimpleXMLElement $node                  XML node
-     * @param string           $childNodeName         Name of the child node that
+     * @param \SimpleXMLElement $node                  XML node
+     * @param string            $childNodeName         Name of the child node that
      * contains the display label.
-     * @param bool             $obeyPreferredLanguage If true, returns the
+     * @param bool              $obeyPreferredLanguage If true, returns the
      * translation that corresponds with the current locale.
      * If false, the default language version 'fin' is returned. If not found,
      * the first display label is retured.

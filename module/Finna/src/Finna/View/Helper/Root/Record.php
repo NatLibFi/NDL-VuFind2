@@ -414,6 +414,10 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
 
+        if (!empty($params['description'])) {
+            $elementParams['description'] = $params['description'];
+        }
+
         return $this->renderTemplate('authority-link-element.phtml', $elementParams);
     }
 
@@ -445,7 +449,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'author' => $data
         ];
 
-        return $this->renderTemplate('author-link-element.phtml', $params);
+        return trim($this->renderTemplate('author-link-element.phtml', $params));
     }
 
     /**

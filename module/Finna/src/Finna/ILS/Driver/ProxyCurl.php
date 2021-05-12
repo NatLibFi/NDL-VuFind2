@@ -137,12 +137,15 @@ class ProxyCurl extends Curl
     ) {
         $client = $this->httpService->createClient($location);
 
+        $clientOptions = [];
         if (isset($this->options['connection_timeout'])) {
-            $client->setOptions(
-                [
-                    'connect_timeout' => $this->options['connection_timeout']
-                ]
-            );
+            $clientOptions['connect_timeout'] = $this->options['connection_timeout'];
+        }
+        if (isset($this->options['timeout'])) {
+            $clientOptions['timeout'] = $this->options['timeout'];
+        }
+        if ($clientOptions) {
+            $client->setOptions($clientOptions);
         }
         $authType = $this->options['auth_type'] ?? Curl::AUTH_TYPE_NONE;
         if (isset($this->options['login']) && Curl::AUTH_TYPE_NONE !== $authType) {

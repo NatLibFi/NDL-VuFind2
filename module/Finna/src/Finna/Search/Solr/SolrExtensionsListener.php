@@ -295,7 +295,9 @@ class SolrExtensionsListener
         echo 'Query string: ' . $debugInfo['querystring'] . "\n\n";
         echo 'Parsed query: ' . $debugInfo['parsedquery'] . "\n\n";
         echo 'Query parser: ' . $debugInfo['QParser'] . "\n\n";
-        echo 'Alt query string: ' . $debugInfo['altquerystring'] . "\n\n";
+        if (!empty($debugInfo['altquerystring'])) {
+            echo 'Alt query string: ' . $debugInfo['altquerystring'] . "\n\n";
+        }
         echo "Boost functions:\n";
         if (!empty($debugInfo['boostfuncs'])) {
             echo '  ' . implode("\n  ", $debugInfo['boostfuncs']);

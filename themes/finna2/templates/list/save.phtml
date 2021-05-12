@@ -13,7 +13,7 @@
     <?php if ($this->lists): ?>
       <?php foreach ($this->lists as $list): ?>
         <option value="<?=$list['id'] ?>"<?php if ($list['id'] == $this->userlist()->lastUsed()): ?> selected="selected"<?php endif; ?>>
-          <?=$this->escapeHtml($list['title'])?><?php if ($list['public']):?> (<?=mb_strtolower($this->transEsc('Public'), 'utf-8')?>)<?php endif; ?>
+          <?=$this->escapeHtml($list['title'])?><?php if ($list['public']):?> (<?=mb_strtolower($this->transEsc('public_list_indicator'), 'utf-8')?>)<?php endif; ?>
         </option>
       <?php endforeach; ?>
     <?php else: ?>
