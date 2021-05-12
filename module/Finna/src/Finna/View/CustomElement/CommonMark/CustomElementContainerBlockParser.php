@@ -65,6 +65,9 @@ class CustomElementContainerBlockParser implements BlockParserInterface
      */
     public function __construct(array $elements)
     {
+        foreach ($elements as $i => $name) {
+            $elements[$i] = mb_strtolower($name, 'UTF-8');
+        }
         $this->elements = $elements;
     }
 
@@ -91,12 +94,13 @@ class CustomElementContainerBlockParser implements BlockParserInterface
         $cursor->advanceToNextNonSpaceOrTab();
         $match = $cursor->match($this->openRegex);
         if (null !== $match) {
-            // Do another match to get the tag name.
+            // Do another match to get the element name.
             $matches = [];
             preg_match($this->openRegex, $match, $matches);
 
+            $name = mb_strtolower($matches[1], 'UTF-8');
             $block = new CustomElementContainerBlock(
-                $matches[1], $match, in_array($matches[1], $this->elements)
+                $name, $match, in_array($name, $this->elements)
             );
             $context->addBlock($block);
 
