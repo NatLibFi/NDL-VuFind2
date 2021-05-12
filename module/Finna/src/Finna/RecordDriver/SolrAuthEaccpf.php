@@ -51,7 +51,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
      */
     public function getTitle()
     {
-        $firstTitle = null;
+        $firstTitle = '';
         $record = $this->getXmlRecord();
         if (isset($record->cpfDescription->identity->nameEntry)) {
             $languages = $this->mapLanguageCode($this->getLocale());
@@ -71,7 +71,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
                 }
             }
         }
-        return $firstTitle ?? '';
+        return $firstTitle;
     }
 
     /**
