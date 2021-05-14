@@ -91,7 +91,6 @@ class ThemeSrc extends \Laminas\View\Helper\AbstractHelper
                 }
             }
         }
-
         return null;
     }
 }
