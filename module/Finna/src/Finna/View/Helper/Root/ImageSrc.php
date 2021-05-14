@@ -73,9 +73,10 @@ class ImageSrc extends ThemeSrc
             'images/' . $source
         ];
         foreach ($variations as $file) {
-            if ($url = $this->fileFromCurrentTheme(
+            $url = $this->fileFromCurrentTheme(
                 $file, false, $allowParentThemes
-            )) {
+            );
+            if (!empty($url)) {
                 $filepath = $this->fileFromCurrentTheme(
                     $file, true, $allowParentThemes
                 );
