@@ -67,20 +67,31 @@ class ThemeSrc extends \Laminas\View\Helper\AbstractHelper
     ) {
         $currentTheme = $this->themeInfo->getTheme();
         $basePath = $this->themeInfo->getBaseDir();
-        $results = $this->themeInfo->findInThemes($relPath);
-        foreach ($results as $result) {
-            if (!empty($result['theme'])) {
-                if (!$allowParentThemes && $result['theme'] !== $currentTheme) {
-                    continue;
-                }
+
+        if (!$allowParentThemes) {
+            $file = $basePath . '/' . $currentTheme . '/' . $relPath;
+            if (file_exists($file)) {
                 if ($returnAbsolute) {
-                    return $result['file'];
+                    return $file;
                 }
                 $urlHelper = $this->getView()->plugin('url');
                 return $urlHelper('home') . 'themes/' .
-                    $result['theme'] . '/' . $result['relativeFile'];
+                    $currentTheme . '/' . $relPath;
+            }
+        } else {
+            $results = $this->themeInfo->findInThemes($relPath);
+            foreach ($results as $result) {
+                if (!empty($result)) {
+                    if ($returnAbsolute) {
+                        return $result['file'];
+                    }
+                    $urlHelper = $this->getView()->plugin('url');
+                    return $urlHelper('home') . 'themes/' .
+                        $result['theme'] . '/' . $result['relativeFile'];
+                }
             }
         }
+
         return null;
     }
 }

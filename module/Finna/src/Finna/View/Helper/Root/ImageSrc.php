@@ -73,8 +73,12 @@ class ImageSrc extends ThemeSrc
             'images/' . $source
         ];
         foreach ($variations as $file) {
-            if ($url = $this->fileFromCurrentTheme($file, false, $allowParentThemes)) {
-                $filepath = $this->fileFromCurrentTheme($file, true, $allowParentThemes);
+            if ($url = $this->fileFromCurrentTheme(
+                $file, false, $allowParentThemes
+            )) {
+                $filepath = $this->fileFromCurrentTheme(
+                    $file, true, $allowParentThemes
+                );
                 $mtime = filemtime($filepath);
                 return $url . '?_=' . $mtime;
             }
