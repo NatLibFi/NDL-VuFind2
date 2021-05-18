@@ -73,8 +73,8 @@
       <div class="result-body">
         <?php if ($originations = $this->driver->tryMethod('getOriginations', [], $this->driver->getOrigination())): $originations = (array)$originations; ?>
             <span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
-            <?php $originationCount = count($originations); foreach ($originations as $i => $origination): ?>
-            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a><?=$i + 1 < $originationCount ? ' ; ' : ''?>
+            <?php foreach ($originations as $i => $origination): ?>
+              <?=$i > 0 ? ' ; ' : ''?><a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a>
             <?php endforeach; ?>
             <br/>
           <?php endif; ?>
