@@ -274,10 +274,14 @@ class SolrEad3 extends SolrEad
                         $data = ['id' => $id, 'name' => $value];
                         if ($localType !== self::RELATOR_TIME_INTERVAL) {
                             if ($nextEl = $names[$i+1] ?? null) {
-                                if ((string)$nextEl->attributes()->localtype === self::RELATOR_TIME_INTERVAL) {
-                                    // Pick relation time interval from next part-element
+                                $localType
+                                    = (string)$nextEl->attributes()->localtype;
+                                if ($localType === self::RELATOR_TIME_INTERVAL) {
+                                    // Pick relation time interval from
+                                    // next part-element
                                     $date = (string)$nextEl;
-                                    if ($date !== self::RELATOR_UNKNOWN_TIME_INTERVAL) {
+                                    if ($date !==self::RELATOR_UNKNOWN_TIME_INTERVAL
+                                    ) {
                                         $data['date'] = $date;
                                     }
                                     $i++;
