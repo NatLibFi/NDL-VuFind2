@@ -225,7 +225,7 @@ class SolrEad3 extends SolrEad
     public function getOrigination() : ?string
     {
         $originations = $this->getOriginations();
-        return $originations[0] ?? null;;
+        return $originations[0] ?? null;
     }
 
     /**
@@ -266,21 +266,21 @@ class SolrEad3 extends SolrEad
                     $id = (string)$attr->identifier;
                     $currentName = null;
                     $names = $name->part ?? [];
-                    for ($i=0; $i<count($names); $i++) {
+                    for ($i=0; $i < count($names); $i++) {
                         $name = $names[$i];
                         $attr = $name->attributes();
                         $value = (string)$name;
                         $localType = (string)$attr->localtype;
                         $data = ['id' => $id, 'name' => $value];
                         if ($localType !== self::RELATOR_TIME_INTERVAL) {
-                            if ($nextEl = $names[$i+1] ?? null) {
+                            if ($nextEl = $names[$i + 1] ?? null) {
                                 $localType
                                     = (string)$nextEl->attributes()->localtype;
                                 if ($localType === self::RELATOR_TIME_INTERVAL) {
                                     // Pick relation time interval from
                                     // next part-element
                                     $date = (string)$nextEl;
-                                    if ($date !==self::RELATOR_UNKNOWN_TIME_INTERVAL
+                                    if ($date !== self::RELATOR_UNKNOWN_TIME_INTERVAL
                                     ) {
                                         $data['date'] = $date;
                                     }
