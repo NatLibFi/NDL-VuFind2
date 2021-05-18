@@ -220,38 +220,35 @@ class SolrEad3 extends SolrEad
     /**
      * Get origination
      *
-     * @return string|null
+     * @return string
      */
-    public function getOrigination() : ?string
+    public function getOrigination() : string
     {
         $originations = $this->getOriginations();
-        return $originations[0] ?? null;
+        return $originations[0] ?? '';
     }
 
     /**
      * Get all originations
      *
-     * @return array|null
+     * @return array
      */
-    public function getOriginations() : ?array
+    public function getOriginations() : array
     {
-        if ($originations = $this->getOriginationExtended()) {
-            return array_map(
-                function ($origination) {
-                    return $origination['name'];
-                },
-                $originations
-            );
-        }
-        return null;
+        return array_map(
+            function ($origination) {
+                return $origination['name'];
+            },
+            $this->getOriginationExtended()
+        );
     }
 
     /**
      * Get extended origination info
      *
-     * @return array|null
+     * @return array
      */
-    public function getOriginationExtended() : ?array
+    public function getOriginationExtended() : array
     {
         $record = $this->getXmlRecord();
 
@@ -329,7 +326,7 @@ class SolrEad3 extends SolrEad
             }
         }
 
-        return array_values($localeResults ?: $results) ?: null;
+        return array_values($localeResults ?: $results);
     }
 
     /**
