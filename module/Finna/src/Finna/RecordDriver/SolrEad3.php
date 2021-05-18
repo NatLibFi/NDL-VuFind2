@@ -254,7 +254,7 @@ class SolrEad3 extends SolrEad
 
         $localeResults = $results = [];
 
-        foreach ($record->did->origination as $origination) {
+        foreach ($record->did->origination ?? [] as $origination) {
             $originationLocaleResults = $originationResults = [];
             foreach ($origination->name ?? [] as $name) {
                 $attr = $name->attributes();
