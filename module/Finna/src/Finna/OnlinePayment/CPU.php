@@ -161,8 +161,9 @@ class CPU extends BaseHandler
             }
             if (!empty($fine['title'])) {
                 $fineDesc .= ' ('
-                    . substr($fine['title'], 0, 100 - 4 - strlen($fineDesc))
-                    . ')';
+                    . mb_substr(
+                        $fine['title'], 0, 100 - 4 - strlen($fineDesc), 'UTF-8'
+                    ) . ')';
             }
             if ($fineDesc) {
                 // Get rid of characters that cannot be converted to ISO-8859-1 since
@@ -184,7 +185,7 @@ class CPU extends BaseHandler
                 $code = $organizationProductCodeMappings[$fineOrg]
                     . ($productCodeMappings[$fineType] ?? '');
             }
-            $code = substr($code, 0, 25);
+            $code = mb_substr($code, 0, 25, 'UTF-8');
             $product = new \Cpu_Client_Product(
                 $code, 1, $fine['balance'], $fineDesc ?: null
             );

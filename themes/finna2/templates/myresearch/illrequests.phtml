@@ -113,14 +113,7 @@
                 }
               ?>
               <div class="record-core-metadata">
-                <?php
-                  $authors = $resource->getNonPresenterAuthors();
-                  if (!empty($authors[0])):
-                    $author = $authors[0];
-                ?>
-                  <?=$this->record($resource)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
-                <?php endif; ?>
-
+                <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
                 <?php $formats = $resource->getFormats(); if (count($formats) > 0): ?>
                   <?=$this->record($resource)->getFormatList() ?>
                   <br/>

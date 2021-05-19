@@ -183,7 +183,7 @@
         <div class="recordAuthors" property="author">
           <div class="truncate-field">
             <?php foreach($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null, 'showInlineInfo' => true])?>
+              <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null, 'showInlineInfo' => false])?>
             <?php endforeach; ?>
             <?php $altScriptFound = false; ?>
             <?php foreach($results as $index => $author): ?>

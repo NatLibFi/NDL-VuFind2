@@ -158,6 +158,41 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Content descriptors
+     *
+     * @var array
+     */
+    protected $contentDescriptors = [
+        'väkivalta' => 'content_descriptor_violence',
+        'seksi' => 'content_descriptor_sexual_content',
+        'päihde' => 'content_descriptor_drug_use',
+        'ahdistus' => 'content_descriptor_anxiety'
+    ];
+
+    /**
+     * Age restrictions
+     *
+     * @var array
+     */
+    protected $ageRestrictions = [
+        'S' => 'age_rating_for_all_ages',
+        'T' => 'age_rating_for_all_ages',
+        '7' => 'age_rating_7',
+        '12' => 'age_rating_12',
+        '16' => 'age_rating_16',
+        '18' => 'age_rating_18'
+    ];
+
+    /**
+     * Unwanted video warnings
+     *
+     * @var array
+     */
+    protected $filteredWarnings = [
+        'K'
+    ];
+
+    /**
      * Inspection attributes
      *
      * @var array
@@ -1221,6 +1256,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $poster = '';
                 $videoType = 'elokuva';
                 $description = '';
+                $warnings = [];
                 if (isset($title->PartDesignation->Value)) {
                     $attributes = $title->PartDesignation->Value->attributes();
                     if (!empty($attributes['video-tyyppi'])) {
@@ -1236,6 +1272,21 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         $poster = str_replace(
                             '{filename}', $posterFilename, $posterSource
                         );
+                    }
+
+                    // Check for warnings
+                    if (!empty($attributes->{'video-rating'})) {
+                        $tmpWarnings
+                            = explode(', ', (string)$attributes->{'video-rating'});
+                        // Translate to english, for universal usage
+                        foreach ($tmpWarnings as $warning) {
+                            if (!in_array($warning, $this->filteredWarnings)) {
+                                $warnings[]
+                                    = $this->contentDescriptors[$warning]
+                                    ?? $this->ageRestrictions[$warning]
+                                    ?? $warning;
+                            }
+                        }
                     }
                 }
 
@@ -1260,7 +1311,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'text' => $description ?: $videoType,
                         'desc' => $description ?: $videoType,
                         'source' => $source,
-                        'embed' => 'iframe'
+                        'embed' => 'iframe',
+                        'warnings' => $warnings
                     ];
                 }
 
@@ -1303,7 +1355,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     'text' => $description ? $description : $videoType,
                     'desc' => $description ? $description : $videoType,
                     'source' => $source,
-                    'embed' => 'video'
+                    'embed' => 'video',
+                    'warnings' => $warnings
                 ];
             }
         }

@@ -11,19 +11,21 @@
     $titleAttr = $this->title ? (' title="' . $this->escapeHtmlAttr($this->title) . '"') : '';
     $additionalDataEl = !empty($this->additionalData) ? "<span class=\"authority-additional-data\">{$this->additionalData}</span>" : '';
     $srLabel = $authorityIcon = '';
-    if ($isAuthorityLink = $this->authorityLink && $this->authorityType) {
-      $srLabel = $this->transEscAttr($this->authorityType);
-      $authorityIcon = 'fa-authority-' . $this->escapeHtmlAttr($this->record($this->record)->getFormatClass($this->authorityType));
-    }
+    $isAuthorityLink = $this->authorityLink && $this->authorityType;
+    $srLabel = $this->transEscAttr($this->authorityType);
+    $authorityIcon = 'fa-authority-' . $this->escapeHtmlAttr($this->record($this->record)->getFormatClass($this->authorityType));
   ?>
-  <a<?=$titleAttr?> href="<?=$this->escapeHtmlAttr($this->url)?>"<?=$linkClassesAttr?>><?php if ($isAuthorityLink): ?><i class="fa <?=$authorityIcon?>"></i><span class="sr-only"><?=$srLabel?></span> <?php endif; ?>
+  <a<?=$titleAttr?> href="<?=$this->escapedUrl?>"<?=$linkClassesAttr?>><?php if ($isAuthorityLink && !$this->showInlineInfo): ?><i class="fa <?=$authorityIcon?>"></i><span class="sr-only"><?=$srLabel?></span> <?php endif; ?>
     <span class="authority-label"><?=$this->escapeHtml($this->label)?></span>
   </a><?= $additionalDataEl?><?php if (!empty($this->description)): ?> <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span><?php endif; ?>
   <?php if ($this->showInlineInfo): ?>
-    <a href="#" class="show-info"><?=$this->translate('authority_show_info')?></a>
+    <a href="#" class="show-info"><i class="fa <?=$authorityIcon?>"> </i><?=$this->translate('authority_show_info')?> <i class="fa fa-handle-open handle"></i></a>
     <div class="authority-info">
-      <div class="content"><i class="fa fa-spin fa-spinner"></i></div>
-      <div class="content-btn-holder"><a href="#" class="hide-info btn btn-primary"><?=$this->translate('authority_hide_info')?></a></div>
+      <div class="content">
+        <i class="fa fa-spin fa-spinner"></i>
+        <div class="no-info hide alert alert-info"><?=$this->translate('authority_no_info') ?></div>
+      </div>
+      <a href="#" class="hide-info"><i class="fa <?=$authorityIcon?>"> </i> <?=$this->translate('authority_hide_info')?> <i class="fa fa-handle-close handle"></i></a>
     </div>
   </div>
 <?php endif; ?>

@@ -94,14 +94,7 @@
                   <?=$this->record($resource)->getFormatList() ?>
                   <br/>
                 <?php endif; ?>
-                <?php
-                  $authors = $resource->getNonPresenterAuthors();
-                  if (!empty($authors[0])):
-                    $author = $authors[0];
-                ?>
-                  <?=$this->record($resource)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
-                <?php endif; ?>
-
+                <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
                 <?php if (!empty($ilsDetails['volume'])): ?>
                   <strong><?=$this->transEsc('Issue')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
                   <br />

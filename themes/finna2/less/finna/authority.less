@@ -73,36 +73,33 @@ a.authority-link {
   + br {
     display: none;
   }
-  .btn, .show-info {
-    font-size: 0.9em;
-    line-height: 0.1em;
-  }
-  .show-info {
-    text-transform: uppercase;
-  }
   .authority-info {
     display: none;
-  }
-   .authority-info {
-    border-top: 1px solid gray;
-    border-bottom: 1px solid gray;
     margin: 10px 0;
-    padding: 10px 0 10px 0px;
-    table {
-      margin-bottom: 0;
-      margin-top: 1em;
+    table.record-details {
+      th {
+        min-width: 40%;
+      }
+      td {
+        max-width: 60%;
+      }
     }
-    .content-btn-holder {
-      text-align: right;
+  }
+  .authority-info {
+    table {
+      margin: 10px 0;
     }
   }
    &.open {
-    .show-info {
-      display: none;
-    }
     .authority-info {
       display: block;
     }
+   }
+  .no-info {
+    display: inline-block;
+  }
+  .show-info {
+    display: inline-block;
   }
   .role {
     color: @gray;

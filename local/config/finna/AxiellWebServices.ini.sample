@@ -16,6 +16,12 @@ patron_wsdl = arena_2.7.1_patron.wsdl
 ;patronaurora_wsdl = XXXXXXXXXXX
 ;catalogueaurora_wsdl = XXXXXXXXXXX
 
+; Request timeout in seconds. Default is 60.
+;timeout = 60
+
+; Connection timeout in seconds. Default is 15.
+;connection_timeout = 15
+
 [Loans]
 ; The renewal limit in order to display the remaining amount of renewals
 renewalLimit = 3

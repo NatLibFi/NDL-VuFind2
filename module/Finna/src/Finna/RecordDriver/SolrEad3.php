@@ -120,6 +120,12 @@ class SolrEad3 extends SolrEad
     // Relator attribute for archive origination
     const RELATOR_ARCHIVE_ORIGINATION = 'Arkistonmuodostaja';
 
+    // unitid is shown when label-attribute is missing or is one of:
+    const UNIT_IDS = [
+        'Tekninen', 'Analoginen', 'Vanha analoginen', 'Vanha tekninen',
+        'Diaarinumero', 'Asiaryhmän numero'
+    ];
+
     /**
      * Get the institutions holding the record.
      *
@@ -448,6 +454,9 @@ class SolrEad3 extends SolrEad
         $manyIds = count($xml->did->unitid) > 1;
         foreach ($xml->did->unitid as $id) {
             $label = $fallbackDisplayLabel = (string)$id->attributes()->label;
+            if ($label && !in_array($label, self::UNIT_IDS)) {
+                continue;
+            }
             $displayLabel = null;
             if ($label) {
                 $displayLabel = "Unit ID:$label";
@@ -1464,10 +1473,10 @@ class SolrEad3 extends SolrEad
     /**
      * Helper function for returning a specific language version of a display label.
      *
-     * @param SimpleXMLElement $node                  XML node
-     * @param string           $childNodeName         Name of the child node that
+     * @param \SimpleXMLElement $node                  XML node
+     * @param string            $childNodeName         Name of the child node that
      * contains the display label.
-     * @param bool             $obeyPreferredLanguage If true, returns the
+     * @param bool              $obeyPreferredLanguage If true, returns the
      * translation that corresponds with the current locale.
      * If false, the default language version 'fin' is returned. If not found,
      * the first display label is retured.
@@ -1499,10 +1508,10 @@ class SolrEad3 extends SolrEad
                     }
                 }
             }
-            if ($lang['default']) {
+            if ($lang['default'] ?? false) {
                 $defaultLanguageResults[] = $name;
             }
-            if ($lang['preferred']) {
+            if ($lang['preferred'] ?? false) {
                 $languageResults[] = $name;
             }
         }
