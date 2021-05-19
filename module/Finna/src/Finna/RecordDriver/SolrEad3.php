@@ -950,20 +950,19 @@ class SolrEad3 extends SolrEad
 
         // geographic names are returned in getRelatedPlacesExtended
         foreach (['genre', 'era'] as $field) {
-            if (isset($this->fields[$field])) {
-                $headings = array_merge($headings, $this->fields[$field]);
-            }
-        }
-
-        if ($geogNames = $this->getRelatedPlacesExtended(['aihe'], [])) {
             $headings = array_merge(
-                $headings, array_map(
+                $headings,
+                array_map(
                     function ($term) {
-                        return $term['data'];
-                    }, $geogNames
+                        return ['data' => $term];
+                    },
+                    $this->fields[$field] ?? []
                 )
             );
         }
+        $headings = array_merge(
+            $headings, $this->getRelatedPlacesExtended(['aihe'], [])
+        );
 
         // The default index schema doesn't currently store subject headings in a
         // broken-down format, so we'll just send each value as a single chunk.
@@ -971,10 +970,24 @@ class SolrEad3 extends SolrEad
         // granular format.
         $callback = function ($i) use ($extended) {
             return $extended
-                ? ['heading' => [$i], 'type' => '', 'source' => '']
-                : [$i];
+                ? [
+                    'heading' => [$i['data']],
+                    'detail' => $i['detail'] ?? '',
+                    'type' => '', 'source' => ''
+                ] : [$i['data']];
         };
         return array_map($callback, ($headings));
+    }
+
+    /**
+     * Get all subject headings associated with this record with extended data.
+     * (see getAllSubjectHeadings).
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadingsExtended()
+    {
+        return $this->getAllSubjectHeadings(true);
     }
 
     /**
@@ -1421,9 +1434,9 @@ class SolrEad3 extends SolrEad
     /**
      * Get topics.
      *
-     * @return string[]
+     * @return array
      */
-    protected function getTopics()
+    protected function getTopics() : array
     {
         $record = $this->getXmlRecord();
 
@@ -1431,16 +1444,14 @@ class SolrEad3 extends SolrEad
         if (isset($record->controlaccess->subject)) {
             foreach ([true, false] as $obeyPreferredLanguage) {
                 foreach ($record->controlaccess->subject as $subject) {
-                    if (isset($subject->attributes()->relator)
-                        && (string)$subject->attributes()->relator !== 'aihe'
-                    ) {
-                        continue;
-                    }
                     if ($topic = $this->getDisplayLabel(
                         $subject, 'part', $obeyPreferredLanguage
                     )
                     ) {
-                        $topics[] = $topic[0];
+                        $topics[] = [
+                            'data' => $topic[0],
+                            'detail' => (string)$subject->attributes()->relator
+                        ];
                     }
                 }
                 if (!empty($topics)) {
