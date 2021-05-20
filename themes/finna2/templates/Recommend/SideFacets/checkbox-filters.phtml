@@ -20,7 +20,7 @@
 <?php endforeach; ?>
 <?php
   $script = <<<JS
-$('input.checkbox-filter').click(function() {
+$('input.checkbox-filter').on('click', function() {
   document.location.href = $(this).data('location');
 });
 JS;

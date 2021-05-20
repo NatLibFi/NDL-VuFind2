@@ -53,6 +53,12 @@ class SolrEad extends SolrDefault
     use UrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
+    // add-data > parent elements with these level-attributes are archive series
+    public const SERIES_LEVELS = ['series', 'subseries'];
+
+    // add-data > parent elements with these level-attributes are archive files
+    public const FILE_LEVELS = ['file'];
+
     /**
      * Constructor
      *
@@ -103,10 +109,10 @@ class SolrEad extends SolrDefault
             return false;
         }
         if (isset($record->accessrestrict->p)) {
-            $copyright = (string)$record->accessrestrict->p;
+            $copyright = $this->getMappedRights((string)$record->accessrestrict->p);
             $data = [];
             $data['copyright'] = $copyright;
-            if ($link = $this->getRightsLink(strtoupper($copyright), $language)) {
+            if ($link = $this->getRightsLink($copyright, $language)) {
                 $data['link'] = $link;
             }
             return $data;
@@ -314,8 +320,14 @@ class SolrEad extends SolrDefault
     public function getOrigination()
     {
         $record = $this->getXmlRecord();
-        return isset($record->did->origination)
-            ? (string)$record->did->origination->corpname : '';
+        if (isset($record->did->origination->corpname)) {
+            return (string)$record->did->origination->corpname;
+        } elseif (isset($record->did->origination->persname)) {
+            return (string)$record->did->origination->persname;
+        } elseif (isset($record->did->origination)) {
+            return (string)$record->did->origination;
+        }
+        return '';
     }
 
     /**
@@ -559,6 +571,36 @@ class SolrEad extends SolrDefault
     }
 
     /**
+     * Get the hierarchy_parent_id(s) associated with this item (empty if none).
+     *
+     * @param string[] $levels Optional list of level types to return
+     *
+     * @return array
+     */
+    public function getHierarchyParentID(array $levels = []) : array
+    {
+        if ($levels && !empty(array_diff($levels, self::SERIES_LEVELS))) {
+            return [];
+        }
+        return $this->fields['hierarchy_parent_id'] ?? [];
+    }
+
+    /**
+     * Get the parent title(s) associated with this item (empty if none).
+     *
+     * @param string[] $levels Optional list of level types to return
+     *
+     * @return array
+     */
+    public function getHierarchyParentTitle(array $levels = []) : array
+    {
+        if ($levels && !empty(array_diff($levels, self::SERIES_LEVELS))) {
+            return [];
+        }
+        return $this->fields['hierarchy_parent_title'] ?? [];
+    }
+
+    /**
      * Set raw data to initialize the object.
      *
      * @param mixed $data Raw data representing the record; Record Model
@@ -585,8 +627,8 @@ class SolrEad extends SolrDefault
     protected function replaceURLPlaceholders($url)
     {
         $originationId = $this->getOriginationId();
-        list($id) = $this->getIdentifier();
-        list(, $nonPrefixedOriginationId) = explode('-', $originationId, 2);
+        [$id] = $this->getIdentifier();
+        [, $nonPrefixedOriginationId] = explode('-', $originationId, 2);
         $url = str_replace(
             [
                 '{id}',

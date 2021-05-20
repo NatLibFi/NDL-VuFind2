@@ -86,7 +86,7 @@ finna.myList = (function finnaMyList() {
   ];
 
   function initDetailsElements() {
-    $('.favorite-list-details').click(function onDetailsClick() {
+    $('.favorite-list-details').on('click', function onDetailsClick() {
       if ($(this).attr('open') === 'open') {
         $(this).attr('open', false);
       } else {
@@ -349,16 +349,16 @@ finna.myList = (function finnaMyList() {
   }
 
   initListTagComponent = function _initListTagComponent() {
-    $('.list-tags form').unbind('submit').submit(function onSubmitAddListTagForm(/*event*/) {
+    $('.list-tags form').off('submit').on('submit', function onSubmitAddListTagForm(/*event*/) {
       updateList({}, listTagsChanged, 'add-tag');
       return false;
     });
-    $('.list-tags .edit-tags .tags .tag .delete-tag').unbind('click').on('click', function onDeleteTag(/*event*/) {
+    $('.list-tags .edit-tags .tags .tag .delete-tag').off('click').on('click', function onDeleteTag(/*event*/) {
       $('.list-tags form fieldset').attr('disabled', 'disabled');
       $(this).closest('.tag').remove();
       updateList({}, listTagsChanged, 'delete-tag');
     });
-    $('.list-tags .toggle').unbind('click').on('click', function onToggleTags(/*event*/) {
+    $('.list-tags .toggle').off('click').on('click', function onToggleTags(/*event*/) {
       $('.list-tags').toggleClass('editable');
     });
   };
@@ -421,7 +421,7 @@ finna.myList = (function finnaMyList() {
   }
 
   function initEditableMarkdownField(element, callback) {
-    element.find('[data-markdown], .js-edit').unbind('click').click(function onClickEditable(e) {
+    element.find('[data-markdown], .js-edit').off('click').on('click', function onClickEditable(e) {
       if (save) {
         // Do not open the editor when save is in progress.
         return;
@@ -517,7 +517,7 @@ finna.myList = (function finnaMyList() {
       });
       $('.CodeMirror-code').focus();
       // Prevent clicks within the editor area from bubbling up and closing the editor.
-      element.closest('.markdown').unbind('click').click(function onClickEditor() {
+      element.closest('.markdown').off('click').on('click', function onClickEditor() {
         return false;
       });
     });
@@ -539,7 +539,7 @@ finna.myList = (function finnaMyList() {
     finna.layout.initMobileNarrowSearch();
 
     // Checkbox select all
-    $('.mylist-controls-bar .checkbox-select-all').unbind('change').change(function onChangeSelectAll() {
+    $('.mylist-controls-bar .checkbox-select-all').off('change').change(function onChangeSelectAll() {
       $('.myresearch-row .checkbox-select-item').prop('checked', $(this).is(':checked'));
     });
 
@@ -554,20 +554,20 @@ finna.myList = (function finnaMyList() {
       initListTagComponent();
 
       // list visibility
-      $(".list-visibility input[type='radio']").unbind('change').change(function onChangeVisibility() {
+      $(".list-visibility input[type='radio']").off('change').change(function onChangeVisibility() {
         updateList({}, refreshLists, 'visibility');
       });
 
       // delete list
       var active = $('.mylist-bar').find('a.active');
-      active.find('.remove').unbind('click').click(function onClickRemove(e) {
+      active.find('.remove').off('click').on('click', function onClickRemove(e) {
         var target = $(this);
         var form = $('.delete-list');
         var prompt = form.find('.dropdown-menu');
 
-        function repositionPrompt() {
+        function repositionPrompt(ev, data) {
           var pos = target.offset();
-          var left = $(window).width() / 2 - prompt.width() / 2;
+          var left = data.w / 2 - prompt.width() / 2;
 
           prompt.css({
             'left': left,
@@ -576,21 +576,21 @@ finna.myList = (function finnaMyList() {
         }
 
         function initRepositionListener() {
-          $(window).resize(repositionPrompt);
+          $(window).on('throttled-resize.finna', repositionPrompt);
         }
 
-        prompt.find('.confirm').unbind('click').click(function onClickConfirm(ev) {
+        prompt.find('.confirm').off('click').on('click', function onClickConfirm(ev) {
           form.submit();
           ev.preventDefault();
         });
-        prompt.find('.cancel').unbind('click').click(function onClickCancel(ev) {
-          $(window).off('resize', repositionPrompt);
+        prompt.find('.cancel').off('click').on('click', function onClickCancel(ev) {
+          $(window).off('throttled-resize.finna', repositionPrompt);
           prompt.hide();
           $('.remove-favorite-list').focus();
           ev.preventDefault();
         });
 
-        repositionPrompt();
+        repositionPrompt({}, {w: $(window).width(), h: $(window).height()});
         initRepositionListener();
         prompt.show();
         prompt.find('.confirm a').focus();
@@ -632,7 +632,7 @@ finna.myList = (function finnaMyList() {
     });
 
     // add resource to list
-    $('.mylist-functions #add-to-list').unbind('change').change(function onChangeAddToList(/*e*/) {
+    $('.mylist-functions #add-to-list').off('change').change(function onChangeAddToList(/*e*/) {
       var val = $(this).val();
       if (val !== '') {
         addResourcesToList(val);
@@ -642,8 +642,9 @@ finna.myList = (function finnaMyList() {
     // hide/show notes on images
     $('.note-button:not(.inited)').each(function initNotes() {
       var btn = $(this);
-      var noteOverlay = btn.siblings('.note-overlay').first();
-      btn.off('click').on('click', function onClick() {
+      var noteOverlay = btn.siblings('.note-overlay-grid, .note-overlay-condensed').first();
+      btn.off('click').on('click', function onClick(e) {
+        e.stopPropagation();
         btn.add(noteOverlay).toggleClass('note-show', !btn.hasClass('note-show'));
       }).addClass('inited');
     });
@@ -684,7 +685,7 @@ finna.myList = (function finnaMyList() {
 
     $('#sortable').sortable({cursor: 'move', opacity: 0.7});
 
-    $('#sort_form').submit(function onSubmitSortForm(/*event*/) {
+    $('#sort_form').on('submit', function onSubmitSortForm(/*event*/) {
       var listOfItems = $('#sortable').sortable('toArray');
       $('#sort_form input[name="orderedList"]').val(JSON.stringify(listOfItems));
       return true;

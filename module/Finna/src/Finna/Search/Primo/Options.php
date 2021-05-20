@@ -78,7 +78,7 @@ class Options extends \VuFind\Search\Primo\Options
      */
     public function getDateRangeSearchField()
     {
-        list($field) = explode(':', $this->dateRangeVis);
+        [$field] = explode(':', $this->dateRangeVis);
         return $field;
     }
 

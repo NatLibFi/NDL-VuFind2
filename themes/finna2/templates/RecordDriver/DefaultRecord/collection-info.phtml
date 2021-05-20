@@ -9,7 +9,7 @@
   <?=$this->record($this->driver)->getPreviews()?>
 
   <div class="record-information">
-    <h2 class="collection-title"><?=$this->escapeHtml($this->driver->getShortTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></h2>
+    <h2 class="collection-title"><?=$this->escapeHtml($this->driver->getTitle())?></h2>
     <?php $summary = $this->driver->getSummary(); $summary = $summary[0] ?? false; ?>
     <?php if ($summary): ?>
       <p><?=$this->escapeHtml($summary)?></p>

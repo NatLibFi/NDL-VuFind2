@@ -61,7 +61,7 @@ finna.feedTabs = (function finnaFeedTab() {
     container.tab('show');
 
     // Init feed tabs
-    container.find('li.nav-item').click(function feedTabClick() {
+    container.find('li.nav-item').on('click', function feedTabClick() {
       var tabId = $(this).data('tab');
       var li = $(this).closest('li');
       if (li.hasClass('active') && !li.hasClass('initial-active')) {
@@ -82,7 +82,7 @@ finna.feedTabs = (function finnaFeedTab() {
     });
 
     // Init accordions (mobile)
-    container.find('.feed-accordions .accordion').click(function accordionClicked(/*e*/) {
+    container.find('.feed-accordions .accordion').on('click', function accordionClicked(/*e*/) {
       var accordion = $(this);
       var tabId = accordion.data('tab');
 

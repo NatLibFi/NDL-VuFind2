@@ -33,6 +33,7 @@ use VuFind\Cookie\CookieManager;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\Recommend\RecommendInterface;
+use VuFind\Search\SearchRunner;
 use VuFind\View\Helper\Root\Url;
 
 /**
@@ -86,8 +87,17 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     protected $configLoader;
 
     /**
+     * Search runner
+     *
+     * @var SearchRunner
+     */
+    protected $searchRunner;
+
+    /**
      * Maximum number of search terms for recommendation processing. Setting to
      * null indicates an unlimited number of search terms.
+     *
+     * @var int|null
      */
     protected $maxSearchTerms = null;
 
@@ -131,6 +141,17 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
      * @var int|null
      */
     protected $maxTimesShownPerSession = null;
+
+    /**
+     * Maximum number of recommended searches to check for result set totals. This is
+     * the total maximum for all search terms. Setting to null indicates that no
+     * checks should be done. If checks are done and a recommendation would have more
+     * recommended searches than set here, the recommendation will not contain any
+     * recommended search links at all.
+     *
+     * @var int|null
+     */
+    protected $maxResultChecks = null;
 
     /**
      * Parameter object representing user request.
@@ -196,15 +217,17 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
      * @param CookieManager $cookieManager Cookie manager
      * @param Url           $urlHelper     Url helper
      * @param PluginManager $configLoader  Configuration loader
+     * @param SearchRunner  $searchRunner  Search runner
      */
     public function __construct(
         Finto $finto, CookieManager $cookieManager, Url $urlHelper,
-        PluginManager $configLoader
+        PluginManager $configLoader, SearchRunner $searchRunner
     ) {
         $this->finto = $finto;
         $this->cookieManager = $cookieManager;
         $this->urlHelper = $urlHelper;
         $this->configLoader = $configLoader;
+        $this->searchRunner = $searchRunner;
     }
 
     /**
@@ -235,10 +258,12 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         $this->maxSmallResultTotal = $config->get('maxSmallResultTotal');
         $this->minLargeResultTotal = $config->get('minLargeResultTotal');
         $this->maxTimesShownPerSession = $config->get('maxTimesShownPerSession');
+        $this->maxResultChecks = $config->get('maxResultChecks');
     }
 
     /**
-     * Called at the end of the Search Params objects' initFromRequest() method.
+     * Called before the Search Results object performs its main search
+     * (specifically, in response to \VuFind\Search\SearchRunner::EVENT_CONFIGURED).
      * This method is responsible for setting search parameters needed by the
      * recommendation module and for reading any existing search parameters that may
      * be needed.
@@ -379,8 +404,13 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
                 && $this->canMakeApiCalls(2);
 
             // Make the Finto API call(s).
-            $fintoResults
-                = $this->finto->extendedSearch($term, $language, [], $narrower);
+            $fintoTerm = $term . '*';
+            while (false !== strpos($fintoTerm, '**')) {
+                $fintoTerm = str_replace('**', '*', $fintoTerm);
+            }
+            $fintoResults = $this->finto->extendedSearch(
+                $fintoTerm, $language, [], $narrower
+            );
             $this->apiCallTotal += 1;
 
             // Continue to next term if no results or "other" results.
@@ -411,6 +441,9 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
                 }
             }
         }
+
+        // Do result set total checks for recommended searches if so configured.
+        $this->doResultChecks();
 
         if ($this->recommendationTotal > 0) {
             // There are recommendations, so set a new cookie value.
@@ -456,7 +489,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     protected function skipFromFintoSearch(string $term): bool
     {
         return empty($term)
-            || 0 === strpos($term, 'topic_uri_str_mv:')
+            || 0 === strpos($term, 'topic_id_str_mv:')
             || in_array($term, ['AND', 'OR', 'NOT']);
     }
 
@@ -480,7 +513,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         }
 
         // Do not add the result if the URI already exists in the original search.
-        $recommendedUri = 'topic_uri_str_mv:' . $fintoResult['uri'];
+        $recommendedUri = 'topic_id_str_mv:("' . $fintoResult['uri'] . '")';
         if ($key = array_search($recommendedUri, $this->lookforTerms)) {
             return;
         }
@@ -490,13 +523,17 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // Create the recommendation search link.
         // Create a copy of the original search terms.
         $recommendedLookforTerms = $this->lookforTerms;
-        // Replace original term with recommended term.
-        while (false !== ($key = array_search($term, $recommendedLookforTerms))) {
-            $recommendedLookforTerms[$key] = $fintoResult['prefLabel'];
+        // Replace original term with recommended term, if different.
+        if ($term !== $fintoResult['prefLabel']) {
+            while (
+                false !== ($key = array_search($term, $recommendedLookforTerms))
+            ) {
+                $recommendedLookforTerms[$key] = $fintoResult['prefLabel'];
+            }
         }
         // Remove possible URI of original term.
         if ($termUri) {
-            $termUri = 'topic_uri_str_mv:' . $termUri;
+            $termUri = 'topic_id_str_mv:("' . $termUri . '")';
             if ($key = array_search($termUri, $recommendedLookforTerms)) {
                 unset($recommendedLookforTerms[$key]);
             }
@@ -514,7 +551,11 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // Set up all link parameters.
         $params = $this->request->toArray();
         $params['lookfor'] = $recommendedLookfor;
-        unset($params['mod'], $params['searchId'], $params['resultTotal']);
+        foreach (['mod', 'searchId', 'resultTotal'] as $key) {
+            if (isset($params[$key])) {
+                unset($params[$key]);
+            }
+        }
         $href = $this->urlHelper->__invoke(
             'search-results', [], ['query' => $params]
         );
@@ -529,7 +570,59 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         }
         $this->recommendations[$resultType][$term][] = [
             'label' => $fintoResult['prefLabel'],
-            'href' => $href
+            'href' => $href,
+            'params' => $params
         ];
+    }
+
+    /**
+     * Do search result checks for all recommendations and remove recommended
+     * search links that do not meet configured criteria.
+     *
+     * @return void
+     */
+    protected function doResultChecks(): void
+    {
+        if (null === $this->maxResultChecks) {
+            // No checks needed.
+            return;
+        }
+
+        $resultChecksDone = 0;
+        foreach ($this->recommendations as $type => $terms) {
+            foreach ($terms as $term => $searches) {
+                if (count($searches) > $this->maxResultChecks - $resultChecksDone) {
+                    // Not possible to check all searches for this recommendation
+                    // so remove all search links.
+                    foreach (array_keys($searches) as $i) {
+                        unset($this->recommendations[$type][$term][$i]['href']);
+                    }
+                    continue;
+                }
+                $grandTotal = 0;
+                foreach ($searches as $i => $search) {
+                    $results = $this->searchRunner->run($search['params']);
+                    $resultTotal = $results->getResultTotal();
+                    if (0 === $resultTotal) {
+                        // No results for this search so remove the link.
+                        unset($this->recommendations[$type][$term][$i]['href']);
+                    }
+                    $this->recommendations[$type][$term][$i]['resultTotal']
+                        = $resultTotal;
+                    $grandTotal += $resultTotal;
+                    $resultChecksDone += 1;
+                }
+                if (0 === $grandTotal) {
+                    // None of the recommended searches have any results so remove
+                    // the recommendation.
+                    unset($this->recommendations[$type][$term]);
+                    $this->recommendationTotal -= 1;
+                }
+            }
+            if (0 === count($this->recommendations[$type])) {
+                // All recommendations of this type have been removed.
+                unset($this->recommendations[$type]);
+            }
+        }
     }
 }

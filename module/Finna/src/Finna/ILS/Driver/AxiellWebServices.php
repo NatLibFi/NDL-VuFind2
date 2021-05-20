@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -260,7 +260,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         'soap_version' => SOAP_1_1,
         'exceptions' => true,
         'trace' => false,
-        'connection_timeout' => 60,
+        'timeout' => 60,
+        'connection_timeout' => 15,
         'typemap' => [
             [
                 'type_ns' => 'http://www.w3.org/2001/XMLSchema',
@@ -443,6 +444,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'mostborrowed' => 480,
                 'mostrequested' => 240
             ];
+
+        if (!empty($this->config['Catalog']['connection_timeout'])) {
+            $this->soapOptions['connection_timeout']
+                = $this->config['Catalog']['connection_timeout'];
+        }
+        if (!empty($this->config['Catalog']['timeout'])) {
+            $this->soapOptions['timeout']
+                = $this->config['Catalog']['timeout'];
+        }
     }
 
     /**
@@ -560,11 +570,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $locationsList[] = [
                     'locationID' => $locationID,
                     'locationDisplay' => $organisation->branches->branch->name
+                        ?? $locationID
                 ];
             } else {
                 foreach ($organisation->branches->branch as $branch) {
-                    $locationID
-                        = $organisationID . '.' . $branch->id;
+                    $locationID = $organisationID . '.' . $branch->id;
                     if (in_array($locationID, $this->excludePickUpLocations)) {
                         continue;
                     }
@@ -691,7 +701,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $pickUpLocation = $holdDetails['pickUpLocation'];
-        list($organisation, $branch) = explode('.', $pickUpLocation, 2);
+        [$organisation, $branch] = explode('.', $pickUpLocation, 2);
 
         $function = 'addReservation';
         $functionResult = 'addReservationResult';
@@ -839,7 +849,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $requestId = $holdDetails['requestId'];
-        list($organisation, $branch) = explode('.', $pickupLocationId, 2);
+        [$organisation, $branch] = explode('.', $pickupLocationId, 2);
 
         $function = 'changeReservation';
         $functionResult = 'changeReservationResult';
@@ -1575,7 +1585,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
             if ('onlinePayment' === $function) {
-                $functionConfig['exactBalanceRequired'] = true;
+                if (!isset($functionConfig['exactBalanceRequired'])) {
+                    $functionConfig['exactBalanceRequired'] = true;
+                }
+                $functionConfig['creditUnsupported'] = true;
             }
         } else {
             $functionConfig = false;
@@ -1719,12 +1732,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             return [];
         }
 
+        // Create a timestamp for calculating the due / overdue status
+        $now = time();
+
         $transList = [];
         if (!isset($result->$functionResult->loans->loan)) {
             return $transList;
         }
-        $loans =  $this->objectToArray($result->$functionResult->loans->loan);
-
+        $loans = $this->objectToArray($result->$functionResult->loans->loan);
         foreach ($loans as $loan) {
             $title = $loan->catalogueRecord->title;
             if (!empty($loan->note)) {
@@ -1750,11 +1765,21 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 );
             }
 
+            $dueDate = strtotime($loan->loanDueDate . ' 23:59:59');
+            if ($now > $dueDate) {
+                $dueStatus = 'overdue';
+            } elseif (($dueDate - $now) < 86400) {
+                $dueStatus = 'due';
+            } else {
+                $dueStatus = false;
+            }
+
             $trans = [
                 'id' => $loan->catalogueRecord->id,
                 'item_id' => $loan->id,
                 'title' => $title,
                 'duedate' => $loan->loanDueDate,
+                'dueStatus' => $dueStatus,
                 'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
                 'message' => $message,
                 'renewalCount' => $renewals,
@@ -2635,6 +2660,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $functionResult = '';
         $functionParam = '';
 
+        // Workaround for AWS issue where a bare plus sign gets converted to a space
+        if (!isset($this->config['updateEmail']['encodeEmailPlusSign'])
+            || $this->config['updateEmail']['encodeEmailPlusSign']
+        ) {
+            $email = str_replace('+', '%2B', $email);
+        }
         $conf = [
             'arenaMember'  => $this->arenaMember,
             'language'     => 'en',
@@ -2697,6 +2728,20 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function updateAddress($patron, $details)
     {
+        if (isset($details['email'])) {
+            $result = $this->updateEmail($patron, $details['email']);
+            if (!$result['success']) {
+                return $result;
+            }
+        }
+
+        if (isset($details['phone'])) {
+            $result = $this->updatePhone($patron, $details['phone']);
+            if (!$result['success']) {
+                return $result;
+            }
+        }
+
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
 
@@ -3098,7 +3143,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function getDefaultRequiredByDate()
     {
-        list($d, $m, $y) = isset($this->config['Holds']['defaultRequiredDate'])
+        [$d, $m, $y] = isset($this->config['Holds']['defaultRequiredDate'])
              ? explode(':', $this->config['Holds']['defaultRequiredDate'])
              : [0, 1, 0];
         return mktime(

@@ -398,7 +398,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 return $this->createViewModel();
             }
 
-            $listId = $this->params()->fromPost('list');
+            $listId = (int)$this->params()->fromPost('list');
             $favorites = $this->serviceLocator
                 ->get(\VuFind\Favorites\FavoritesService::class);
 
@@ -440,7 +440,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $savedData = $userResource->getSavedData(
                         $current['id'],
                         $current['source'] ?? DEFAULT_SEARCH_BACKEND,
-                        $post['list'] ?? '',
+                        $listId ?? null,
                         $user->id
                     )->current();
                     if (!empty($savedData['notes'])) {
@@ -713,11 +713,26 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         if ($this->formWasSubmitted('saveUserProfile')) {
-            $validator = new \Laminas\Validator\EmailAddress();
+            // Do CSRF check
+            $csrf = $this->serviceLocator->get(\VuFind\Validator\Csrf::class);
+            if (!$csrf->isValid($this->getRequest()->getPost()->get('csrf'))) {
+                throw new \VuFind\Exception\BadRequest(
+                    'error_inconsistent_parameters'
+                );
+            }
             $showSuccess = $showError = false;
+
+            // Update email
+            $validator = new \Laminas\Validator\EmailAddress();
             if ('' === $values->email || $validator->isValid($values->email)) {
-                $user->email = $values->email;
-                $user->save();
+                $this->getAuthManager()->updateEmail($user, $values->email);
+                // If we have a pending change, we need to send a verification email:
+                if (!empty($user->pending_email)) {
+                    $this->sendVerificationEmail($user, true);
+                } else {
+                    $this->flashMessenger()
+                        ->addMessage('new_email_success', 'success');
+                }
                 $showSuccess = true;
             } else {
                 $showError = true;
@@ -1097,14 +1112,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $this->forceLogin();
         }
 
+        $listID = $this->params()->fromPost('list_id');
         if ($this->formWasSubmitted('opcode')
             && $this->params()->fromPost('opcode') == 'save_order'
         ) {
-            $listID = $this->params()->fromPost('list_id');
-            $this->session->url = empty($listID)
-                ? $this->url()->fromRoute('myresearch-favorites')
-                : $this->url()->fromRoute('userList', ['id' => $listID]);
-
             $orderedList = $this->params()->fromPost('orderedList');
             $table = $this->getTable('UserResource');
             if (empty($listID) || empty($orderedList)
@@ -1525,7 +1536,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     protected function saveChangeRequestFeedback($patron, $profile, $data,
         $fields, $subject
     ) {
-        list($library, $username) = explode('.', $patron['cat_username']);
+        [$library, $username] = explode('.', $patron['cat_username']);
         $catalog = $this->getILS();
         $config = $catalog->getConfig('Feedback', $patron);
 

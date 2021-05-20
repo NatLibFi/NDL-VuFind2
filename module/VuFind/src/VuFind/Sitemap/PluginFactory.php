@@ -1,10 +1,10 @@
 <?php
 /**
- * Factory for autocomplete plugins.
+ * Sitemap generator plugin factory
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,41 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Autocomplete
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Sitemap
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\Autocomplete;
-
-use Laminas\ServiceManager\ServiceManager;
+namespace VuFind\Sitemap;
 
 /**
- * Factory for autocomplete plugins.
+ * Sitemap generator plugin factory
  *
  * @category VuFind
- * @package  Autocomplete
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Sitemap
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
- *
- * @codeCoverageIgnore
  */
-class Factory extends \VuFind\Autocomplete\Factory
+class PluginFactory extends \VuFind\ServiceManager\AbstractPluginFactory
 {
     /**
-     * Construct the Solr plugin.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return Solr
+     * Constructor
      */
-    public static function getSolr(ServiceManager $sm)
+    public function __construct()
     {
-        return new Solr(
-            $sm->get(\VuFind\Search\Results\PluginManager::class),
-            $sm->get(\VuFind\Config\PluginManager::class)->get('facets'),
-            $sm->get(\VuFind\Config\PluginManager::class)->get('searches')
-        );
+        $this->defaultNamespace = 'VuFind\Sitemap\Plugin';
     }
 }

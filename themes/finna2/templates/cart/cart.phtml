@@ -70,13 +70,13 @@
     $('#dropdown_value').attr('name', name).val(1);
     $(link).closest('form').submit();
   }
-  $("#cart-confirm-delete").click(function($e) {
+  $("#cart-confirm-delete").on('click', function($e) {
       submitFormWithButton(this, 'delete');
   });
-  $("#cart-confirm-empty").click(function($e) {
+  $("#cart-confirm-empty").on('click', function($e) {
       submitFormWithButton(this, 'empty');
   });
-  $("#cart-refuse-empty").click(function($e) {
+  $("#cart-refuse-empty").on('click', function($e) {
       $('.fa.fa-spinner').remove();
   });
 JS;

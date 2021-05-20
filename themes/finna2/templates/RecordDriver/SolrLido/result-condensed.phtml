@@ -54,6 +54,9 @@
     <div class="condensed-links">
       <?=$this->record($this->driver)->getOnlineUrls('results')?>
     </div>
+    <div class="condensed-notes">
+      <?=$this->render('list/list-notes.phtml')?>
+    </div>
   </div>
   <div class="clearfix"></div>
   <div class="media condensed-collapse-data">
@@ -128,7 +131,6 @@
     <?php endif; ?>
     <div class="clearfix visible-xs"></div>
     <?=$this->record($this->driver)->getPreviews()?>
-    <?=$this->render('list/list-notes.phtml')?>
   </div>
 </div>
 <!-- END of: finna - RecordDriver/SolrLido/result-condensed.phtml -->

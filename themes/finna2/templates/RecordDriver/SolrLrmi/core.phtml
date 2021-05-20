@@ -18,12 +18,12 @@
   <?php $thumbnail = ob_get_contents(); ?>
 <?php ob_end_clean(); ?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-    <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+    <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
     <?php if (!empty($formats)): ?>
       <span class="recordFormat"><?=$this->record($this->driver)->getFormatList()?></span>
     <?php endif; ?>

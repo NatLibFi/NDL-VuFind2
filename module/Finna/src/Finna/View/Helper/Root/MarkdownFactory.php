@@ -48,7 +48,7 @@ class MarkdownFactory implements FactoryInterface
      * Create an object
      *
      * @param ContainerInterface $container     Service Manager
-     * @param type               $requestedName Service being created
+     * @param string             $requestedName Service being created
      * @param null|array         $options       Extra options (optional)
      *
      * @return object
@@ -61,8 +61,6 @@ class MarkdownFactory implements FactoryInterface
     public function __invoke(
         ContainerInterface $container, $requestedName, array $options = null
     ) {
-        $markdownService = $container
-            ->get(\League\CommonMark\MarkdownConverterInterface::class);
         $environment = Environment::createCommonMarkEnvironment();
         $environment->addBlockRenderer(
             'League\CommonMark\Block\Element\HtmlBlock',

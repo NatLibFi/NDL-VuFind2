@@ -73,13 +73,11 @@ class RecordDataFormatterFactory
     {
         $spec = new SpecBuilder();
 
-        $fields = $this->getDefaultCoreFields();
-
         foreach ($this->getDefaultCoreFields() as $key => $data) {
             if ($data[0] === true) {
-                list($multiLine, $dataMethod, $callback) = $data;
+                [$multiLine, $dataMethod, $callback] = $data;
             } else {
-                list($multiLine, $dataMethod, $template, $options) = $data;
+                [$multiLine, $dataMethod, $template, $options] = $data;
             }
             if ($multiLine) {
                 $spec->setMultiLine($key, $dataMethod, $callback);
@@ -250,7 +248,19 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
             [
-                'context' => ['class' => 'recordSeries']
+                'context' => [
+                    'class' => 'recordSeries',
+                    'levels' => \Finna\RecordDriver\SolrEad::SERIES_LEVELS
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Archive File', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
+            [
+                'context' => [
+                    'class' => 'recordFile',
+                    'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS
+                ]
             ]
         );
         $setTemplateLine(
@@ -589,6 +599,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Related Materials', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
+            [
+                'context' => ['class' => 'relatedMaterials']
+            ]
+        );
+        $setTemplateLine(
             'Online Access', true, 'data-onlineAccess.phtml',
             [
                 'context' => ['class' => 'webResource']
@@ -895,7 +911,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Available Online', 'getWebResource', 'data-url.phtml',
+            'Available Online', 'getWebResources', 'data-detailed-urls.phtml',
             [
                 'context' => [
                     'class' => 'record-available-online',

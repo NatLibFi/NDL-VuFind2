@@ -1,10 +1,10 @@
 <?php
 /**
- * SIP2 Class
+ * Custom element interface
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,40 +20,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Db_Table
- * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  CustomElements
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
-namespace Finna\ILS;
+namespace Finna\View\CustomElement;
+
+use Laminas\View\Model\ModelInterface;
 
 /**
- * SIP2 Class
+ * Custom element interface
  *
  * @category VuFind
- * @package  Db_Table
- * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  CustomElements
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
-class SIP2 extends \sip2
+interface CustomElementInterface
 {
     /**
-     * Extend parent method by omitting CRC check if error detectiong is disabled.
+     * Get the name of the element.
      *
-     * @param string $message Message
-     *
-     * @return bool
+     * @return string
      */
-    // @codingStandardsIgnoreStart
-    public function _check_crc($message)
-    {
-        // @codingStandardsIgnoreEnd
-        if (!$this->error_detection) {
-            return true;
-        }
-        return parent::_check_crc($message);
-    }
+    public function getName(): string;
+
+    /**
+     * Get the view model for server-side rendering the element.
+     *
+     * @return ModelInterface
+     */
+    public function getViewModel(): ModelInterface;
 }

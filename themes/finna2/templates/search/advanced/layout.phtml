@@ -249,7 +249,7 @@
 </form>
 <?php
 $script = <<<JS
-$('#groupPlaceHolder button').click(function(e) {
+$('#groupPlaceHolder button').on('click', function(e) {
   addGroup();
   return false;
 });

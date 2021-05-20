@@ -151,7 +151,7 @@ $(document).ready(function hierarchyTreeReady() {
       $('#modal .back-to-up').addClass('hidden');
     }
   });
-  $('.back-to-up').click(function onClickBackToUp() {
+  $('.back-to-up').on('click', function onClickBackToUp() {
     $('#hierarchyTree, #modal').animate({scrollTop: 0 }, 200);
   });
 
@@ -178,7 +178,7 @@ $(document).ready(function hierarchyTreeReady() {
         getRecord(recordID);
       }
 
-      $('.template-dir-record .back-to-up').click(function onClickBackToUp() {
+      $('.template-dir-record .back-to-up').on('click', function onClickBackToUp() {
         $('html, body').animate({scrollTop: $('#hierarchyTreeHolder').offset().top - 70}, 200);
       });
 

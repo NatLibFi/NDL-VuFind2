@@ -129,7 +129,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     }
     if (data.next !== '') {
       container.find($('.linked-events-next')).removeClass('hidden');
-      container.find($('.linked-events-next')).off('click').click(function onNextClick() {
+      container.find($('.linked-events-next')).off('click').on('click', function onNextClick() {
         var params = {};
         params.url = data.next;
         getEvents(params, handleMultipleEvents, true, container);
@@ -191,7 +191,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
   }
 
   function initAccordions(container) {
-    container.find($('.event-accordions .accordion')).click(function accordionClicked(/*e*/) {
+    container.find($('.event-accordions .accordion')).on('click', function accordionClicked(/*e*/) {
       var accordion = $(this);
       var tabParams = {};
       tabParams.query = accordion.data('params');
@@ -213,7 +213,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
     var initialParams = {};
     initialParams.query = initial.data('params');
     getEvents(initialParams, handleMultipleEvents, false, container);
-    container.find($('li.nav-item.event-tab')).click(function eventTabClick() {
+    container.find($('li.nav-item.event-tab')).on('click', function eventTabClick() {
       if ($(this).hasClass('active')) {
         return false;
       }
@@ -232,7 +232,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
 
     var toggleSearchTools = container.find($('.events-searchtools-toggle'));
     if (toggleSearchTools[0]) {
-      toggleSearchTools.click(function onToggleSeachTools() {
+      toggleSearchTools.on('click', function onToggleSeachTools() {
         if (container.find($('.events-searchtools-toggle')).hasClass('open')) {
           container.find($('.events-searchtools-container')).removeClass('open');
           container.find($('.events-searchtools-toggle')).removeClass('open');

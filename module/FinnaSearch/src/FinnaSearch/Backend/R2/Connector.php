@@ -202,7 +202,7 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
             // Replace 'id' field with R2 unique identifier field
             $result = [];
             foreach ($sort as $s) {
-                list($field, $order) = explode(' ', $s);
+                [$field, $order] = explode(' ', $s);
                 $result[] = sprintf('%s %s', $this->R2uniqueKey, $order);
             }
             $params->set('sort', $result);

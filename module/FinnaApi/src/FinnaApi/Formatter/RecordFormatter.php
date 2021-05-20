@@ -232,7 +232,9 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
 
         // description in MARC and QDC records may contain non-CC0 text, so leave
         // it out
-        if ($record instanceof SolrMarc or $record instanceof SolrQdc) {
+        if ($record instanceof \VuFind\RecordDriver\SolrMarc
+            || $record instanceof \Finna\RecordDriver\SolrQdc
+        ) {
             unset($rawData['description']);
         }
 

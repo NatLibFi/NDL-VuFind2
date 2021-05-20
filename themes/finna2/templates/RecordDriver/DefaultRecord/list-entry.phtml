@@ -51,11 +51,11 @@
             <span class="sr-only"> <?=$this->transEsc('To the record')?></span></a>
           <?php endif; ?>
         </div>
-        <?php if ($titleAltScript = $this->driver->tryMethod('getShortTitleAltScript')): ?>
+        <?php foreach ($this->driver->tryMethod('getFullTitlesAltScript', [], []) as $altTitle): ?>
           <div class="title-alt-script">
-            <?=$this->escapeHtml($titleAltScript)?><?php if ($subtitleAltScript = $this->driver->tryMethod('getSubtitleAltScript')): ?>&nbsp;: <?=$this->escapeHtml($subtitleAltScript)?><?php endif; ?>
+            <?=$this->escapeHtml($altTitle)?>
           </div>
-        <?php endif; ?>
+        <?php endforeach; ?>
 
         <div class="record-core-metadata">
           <?=$this->record($this->driver)->getFormatList() ?><br/>

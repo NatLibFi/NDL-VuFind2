@@ -18,7 +18,7 @@
         </span>
       <?php endif; ?>
     </div>
-    <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getShortTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></h1>
+    <h1 property="name" class="record-title"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
 
     <?=$this->render('record/labels.phtml', ['driver' => $this->driver]); ?>
 

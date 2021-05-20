@@ -50,7 +50,7 @@ class Params extends \VuFind\Search\Primo\Params
         $list = [];
         foreach ($this->checkboxFacets as $facets) {
             foreach ($facets as $current) {
-                list($field, $value) = $this->parseFilter($current['filter']);
+                [$field, $value] = $this->parseFilter($current['filter']);
                 if (!isset($list[$field])) {
                     $list[$field] = [];
                 }

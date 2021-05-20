@@ -48,6 +48,9 @@
   <?php if ($this->permission()->allowDisplay('access.finna.StaffUiLink') && ($staffLink = $this->recordLink()->getStaffUiUrl($this->driver))): ?>
     <li role="none"><a class="staff-ui-link" href="<?=$this->escapeHtmlAttr($staffLink) ?>" title="<?=$this->transEsc('Staff UI')?>" rel="nofollow" target="_blank"><i class="fa fa-user" aria-hidden="true"></i><span class="hidden-xs"> <?=$this->transEsc('Staff UI')?></span></a></li>
   <?php endif; ?>
+  <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-toolbar-tools')): ?>
+    <?=$this->render($template)?>
+  <?php endif; ?>
   <?php if (!empty($shareUrl)): ?>
     <?=$this->partial('record/share-buttons.phtml', ['shareUrl' => $shareUrl, 'title' => $this->driver->tryMethod('getTitle', [], '')]);?>
   <?php endif; ?>

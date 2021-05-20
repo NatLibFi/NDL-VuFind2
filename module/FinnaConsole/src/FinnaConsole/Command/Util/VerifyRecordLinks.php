@@ -211,7 +211,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
             . ' links fixed'
         );
 
-        return true;
+        return 0;
     }
 
     /**

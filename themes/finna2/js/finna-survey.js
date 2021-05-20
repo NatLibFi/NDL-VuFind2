@@ -9,7 +9,7 @@ finna.finnaSurvey = (function finnaSurvey() {
     }
 
     var holder = $('#finna-survey');
-    holder.find('a').click(function onClickHolder(/*e*/) {
+    holder.find('a').on('click', function onClickHolder(/*e*/) {
       holder.fadeOut(100);
       finna.common.setCookie(_cookieName, '1');
 

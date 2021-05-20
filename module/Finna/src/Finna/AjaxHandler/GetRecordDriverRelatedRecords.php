@@ -117,13 +117,12 @@ class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
                         } catch (\Exception $e) {
                             // Ignore missing record
                         }
-                    } elseif ($id = ($id['wildcard'] ?? null)) {
-                        // Wildcard id. Needed when the indexed record id's
-                        // differ from the ones used in metadata.
-                        // For example indexed archive record id's are prefixed
-                        // with archive top-level id's.
+                    } elseif ($identifier = ($id['id'] ?? null)) {
+                        $field = $id['field'] ?? 'identifier';
+                        // Search by id in the specified Solr field
                         $results = $this->searchRunner->run(
-                            ['lookfor' => 'id:' . addcslashes($id, '"')],
+                            ['lookfor' =>
+                                "{$field}:" . addcslashes($identifier, '"')],
                             $source,
                             function ($runner, $params, $searchId) use ($driver) {
                                 $params->setLimit(1);

@@ -116,7 +116,7 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase
             );
         }
 
-        list($source, $id) = explode('.', $listParams['id'], 2);
+        [$source, $id] = explode('.', $listParams['id'], 2);
         if (!empty($listParams['source'])) {
             $source = $listParams['source'];
         } else {

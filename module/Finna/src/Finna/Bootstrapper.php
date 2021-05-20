@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,7 +28,6 @@
  */
 namespace Finna;
 
-use Laminas\Console\Console;
 use Laminas\Mvc\MvcEvent;
 
 /**
@@ -43,8 +42,6 @@ use Laminas\Mvc\MvcEvent;
  */
 class Bootstrapper
 {
-    use \VuFind\I18n\Translator\LanguageInitializerTrait;
-
     /**
      * Main VuFind configuration
      *
@@ -102,6 +99,9 @@ class Bootstrapper
      */
     protected function initBotCheck()
     {
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
         $callback = function ($event) {
             // Check User-Agent
             $headers = $event->getRequest()->getHeaders();
@@ -142,56 +142,7 @@ class Bootstrapper
         };
 
         // Attach with a high priority
-        if (PHP_SAPI !== 'cli') {
-            $this->events->attach('dispatch', $callback, 11000);
-        }
-    }
-
-    /**
-     * Set up language handling.
-     *
-     * @return void
-     */
-    protected function initCliOrApiLanguage()
-    {
-        $config = &$this->config;
-        $sm = $this->event->getApplication()->getServiceManager();
-
-        $callback = function ($event) use ($config, $sm) {
-            // Special initialization only for CLI and API routes
-            if (PHP_SAPI !== 'cli' && !$this->isApiRoute($event)) {
-                return;
-            }
-            $request = $event->getRequest();
-            if (PHP_SAPI === 'cli') {
-                $language = $config->Site->language;
-            } elseif (($language = $request->getPost()->get('mylang', false))
-                || ($language = $request->getQuery()->get('lng', false))
-            ) {
-                // Make sure language code is valid, reset to default if bad:
-                if (!in_array($language, array_keys($config->Languages->toArray()))
-                ) {
-                    $language = $config->Site->language;
-                }
-            } else {
-                $language = $config->Site->language;
-            }
-
-            try {
-                $translator = $sm->get(\Laminas\Mvc\I18n\Translator::class);
-                $translator->setLocale($language);
-                $this->addLanguageToTranslator($translator, $language);
-            } catch (\Laminas\Mvc\I18n\Exception\BadMethodCallException $e) {
-                if (!extension_loaded('intl')) {
-                    throw new \Exception(
-                        'Translation broken due to missing PHP intl extension.'
-                        . ' Please disable translation or install the extension.'
-                    );
-                }
-            }
-        };
-        $this->events->attach('dispatch.error', $callback, 9000);
-        $this->events->attach('dispatch', $callback, 9000);
+        $this->events->attach('dispatch', $callback, 11000);
     }
 
     /**
@@ -222,7 +173,7 @@ class Bootstrapper
      */
     protected function initBaseUrl()
     {
-        if (Console::isConsole()) {
+        if (PHP_SAPI === 'cli') {
             return;
         }
         $callback = function ($event) {

@@ -45,7 +45,7 @@
     <p class="sub-label hidden"><?=$this->translate($currentSearch['sublabel'])?></p>
     <?php
       $script = <<<JS
-        $('.show-list-details').click(function () {
+        $('.show-list-details').on('click', function () {
           $(this).next().toggleClass('hidden');
           $('i', this).toggleClass('fa-arrow-up');
         });

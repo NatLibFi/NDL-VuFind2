@@ -77,11 +77,11 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
         if (!empty($filters)) {
             foreach ($facets as $key => &$facet) {
                 $value = $facet['value'];
-                list($level) = explode('/', $value);
+                [$level] = explode('/', $value);
                 $match = false;
                 $levelSpecified = false;
                 foreach ($filters as $filterItem) {
-                    list($filterLevel) = explode('/', $filterItem);
+                    [$filterLevel] = explode('/', $filterItem);
                     if ($level == $filterLevel) {
                         $levelSpecified = true;
                     }
@@ -143,7 +143,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
         ) . '/';
 
         // Extract value part from filter and compare with ancestor level part
-        list(, $filterValue) = explode('/', substr($filter, 1, -1), 2);
+        [, $filterValue] = explode('/', substr($filter, 1, -1), 2);
         return $part == $filterValue;
     }
 
@@ -166,8 +166,8 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
         }
 
         // Compare item value and filter value for the length of the item value
-        list(, $itemValue) = explode('/', $item['value'], 2);
-        list(, $filterValue) = explode('/', substr($filter, 1, -1), 2);
+        [, $itemValue] = explode('/', $item['value'], 2);
+        [, $filterValue] = explode('/', substr($filter, 1, -1), 2);
         return strncmp($filterValue, $itemValue, strlen($itemValue)) == 0;
     }
 
@@ -227,7 +227,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
         }
         $newFilters = [];
         foreach ($params['filter'] as $filter) {
-            list($filterField, $filterValue) = explode(':', $filter, 2);
+            [$filterField, $filterValue] = explode(':', $filter, 2);
             if ($filterField == $facet || $filterField == "~$facet") {
                 if ((!$children && $this->isAncestor($item, $filterValue))
                     || ($children && $this->isChild($item, $filterValue))

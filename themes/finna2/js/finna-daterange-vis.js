@@ -100,7 +100,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     var plotInited = false;
 
     // Bind events
-    vis.unbind('plotclick').bind('plotclick', function onPlotClick(event, pos/*, item*/) {
+    vis.off('plotclick').on('plotclick', function onPlotClick(event, pos/*, item*/) {
       if (!visRangeSelected) {
         var year = Math.floor(pos.x);
         graph.setSelection({ x1: year, x2: year + 1});
@@ -113,7 +113,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       visRangeSelected = false;
     });
 
-    vis.unbind('plotselecting plotselected').bind('plotselecting plotselected', function onPlotSelect(event, ranges) {
+    vis.off('plotselecting plotselected').on('plotselecting plotselected', function onPlotSelect(event, ranges) {
       if (!plotInited || ranges === null) {
         return;
       }
@@ -333,7 +333,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
     typeElements.change(params, updateFieldLimits);
     updateFieldLimits({data: params});
 
-    form.submit(function formSubmit(e) {
+    form.on('submit', function formSubmit(e) {
       e.preventDefault();
 
       if (typeof form[0].checkValidity == 'function') {
@@ -477,7 +477,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
   }
 
   function initResizeListener() {
-    $(window).on('resize.screen.finna', function onResizeScreen(/*e, data*/) {
+    $(window).on('throttled-resize.finna', function onResizeScreen() {
       plotData();
     });
   }

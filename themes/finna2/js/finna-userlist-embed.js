@@ -8,7 +8,7 @@ finna.userListEmbed = (function userListEmbed() {
 
         var showMore = embed.find('.show-more');
         var spinner = embed.find('.fa-spinner');
-        embed.find('.btn.load-more').click(function initLoadMore() {
+        embed.find('.btn.load-more').on('click', function initLoadMore() {
           spinner.removeClass('hide').show();
 
           var btn = $(this);

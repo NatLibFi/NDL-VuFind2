@@ -60,11 +60,12 @@ class ImageSrc extends ThemeSrc
      * Return image source address. First check if svg image is found and
      * if not, check for png image.
      *
-     * @param string $source Image filename without extension
+     * @param string $source            Image filename without extension
+     * @param bool   $allowParentThemes If file can be searched from parent themes
      *
      * @return string
      */
-    public function getSourceAddress($source)
+    public function getSourceAddress($source, $allowParentThemes = false)
     {
         $variations = [
             'images/' . $source . '.svg',
@@ -72,8 +73,13 @@ class ImageSrc extends ThemeSrc
             'images/' . $source
         ];
         foreach ($variations as $file) {
-            if ($url = $this->fileFromCurrentTheme($file)) {
-                $filepath = $this->fileFromCurrentTheme($file, true);
+            $url = $this->fileFromCurrentTheme(
+                $file, false, $allowParentThemes
+            );
+            if (!empty($url)) {
+                $filepath = $this->fileFromCurrentTheme(
+                    $file, true, $allowParentThemes
+                );
                 $mtime = filemtime($filepath);
                 return $url . '?_=' . $mtime;
             }

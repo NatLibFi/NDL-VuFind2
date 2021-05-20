@@ -17,68 +17,30 @@ finna.common = (function finnaCommon() {
     return null;
   }
 
-  function initSearchInputListener() {
-    var searchInput = $('.searchForm_lookfor:visible');
-    if (searchInput.length === 0) {
-      return;
-    }
-    $(window).keypress(function onSearchInputKeypress(e) {
-      if (e && (!$(e.target).is('input, textarea, select, div.CodeMirror-code'))
-            && !$(e.target).hasClass('dropdown-toggle') // Bootstrap dropdown
-            && !$('#modal').is(':visible')
-            && (e.which >= 48) // Start from normal input keys
-            && !(e.metaKey || e.ctrlKey || e.altKey)
-      ) {
-        var letter = String.fromCharCode(e.which);
-
-        // IE 8-9
-        if (typeof document.createElement('input').placeholder == 'undefined') {
-          if (searchInput.val() === searchInput.attr('placeholder')) {
-            searchInput.val('');
-            searchInput.removeClass('placeholder');
-          }
-        }
-
-        // Move cursor to the end of the input
-        var tmpVal = searchInput.val();
-        searchInput.val(' ').focus().val(tmpVal + letter);
-
-        // Scroll to the search form
-        $('html, body').animate({scrollTop: searchInput.offset().top - 20}, 150);
-
-        e.preventDefault();
-      }
-    });
-  }
-
   function initQrCodeLink(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
     // handle finna QR code links
-    holder.find('a.finnaQrcodeLink').click(function qrcodeToggle() {
-      if ($(this).hasClass("active")) {
-        $(this).html("<i class='fa fa-qr-code' aria-hidden='true'></i>").removeClass("active");
-        $(this).parent().removeClass('qr-box');
-      } else {
-        $(this).html(VuFind.translate('qrcode_hide')).addClass("active");
-        $(this).parent().addClass('qr-box');
-      }
+    holder.find('a.finnaQrcodeLink').on('click', function qrcodeToggle() {
+      var qrLink = $(this);
+      var isActive = qrLink.hasClass('active');
+      qrLink.html(isActive ? "<i class='fa fa-qr-code' aria-hidden='true'></i>" : VuFind.translate('qrcode_hide'));
+      qrLink.toggleClass('active', !isActive);
+      qrLink.parent().toggleClass('qr-box', !isActive);
 
-      var qrholder = $(this).next('.qrcode');
+      var qrholder = qrLink.next('.qrcode');
       if (qrholder.find('img').length === 0) {
         // We need to insert the QRCode image
-        var template = qrholder.find('.qrCodeImgTag').html();
-        qrholder.html(template);
+        qrholder.html(qrholder.find('.qrCodeImgTag').html());
       }
       qrholder.toggleClass('hidden');
       return false;
     });
 
-    $('a.finnaQrcodeLinkRecord').click(function qrcodeToggleRecord() {
+    $('a.finnaQrcodeLinkRecord').on('click', function qrcodeToggleRecord() {
       var qrholder = $(this).parent().find('li');
       if (qrholder.find('img').length === 0) {
         // We need to insert the QRCode image
-        var template = qrholder.find('.qrCodeImgTag').html();
-        qrholder.html(template);
+        qrholder.html(qrholder.find('.qrCodeImgTag').html());
       }
       return true;
     });
@@ -108,7 +70,6 @@ finna.common = (function finnaCommon() {
     getField: getField,
     initQrCodeLink: initQrCodeLink,
     init: function init() {
-      initSearchInputListener();
       initQrCodeLink();
     },
     getCookie: getCookie,

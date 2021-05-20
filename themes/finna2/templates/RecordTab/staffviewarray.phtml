@@ -1,32 +1,46 @@
 <!-- START of: finna - RecordTab/staffviewarray.phtml -->
 <?php $rawFieldData = $this->driver->getRawData(); ?>
 <?php if (!empty($rawFieldData['fullrecord']) && strncmp($rawFieldData['fullrecord'], '<', 1) == 0): ?>
-<pre id="record-data">
-<?php
-  $dom = new DOMDocument('1.0');
-  $dom->preserveWhiteSpace = false;
-  $dom->formatOutput = true;
-  if ($dom->loadXML($rawFieldData['fullrecord'])) {
-    echo $this->escapeHtml($dom->saveXML());
-    $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'vendor/highlight.pack.js');
-    echo $this->inlineScript();
-    $script = <<<JS
-$(document).ready(function() {
-  $('#record-data').each(function(i, block) {
-    hljs.highlightBlock(block);
+  <?php
+    $recordClass = get_class($this->driver);
+    if ($p = strrpos($recordClass, '\\')) {
+      $recordClass = substr($recordClass, $p + 1);
+    }
+    if ('Primo' === $recordClass) {
+      $format = 'Primo';
+    } elseif ('Eds' === $recordClass) {
+      $format = 'EDS';
+    } else {
+        $format = mb_strtoupper($this->driver->tryMethod('getRecordFormat'), 'UTF-8');
+    }
+  ?>
+  <h2><?=$this->transEsc('Metadata')?> (<?=$this->escapeHtml($format)?>)</h2>
+  <pre id="record-data">
+  <?php
+    $dom = new DOMDocument('1.0');
+    $dom->preserveWhiteSpace = false;
+    $dom->formatOutput = true;
+    if ($dom->loadXML($rawFieldData['fullrecord'])) {
+      echo $this->escapeHtml($dom->saveXML());
+      $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'vendor/highlight.pack.js');
+      echo $this->inlineScript();
+      $script = <<<JS
+  $(document).ready(function() {
+    $('#record-data').each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
   });
-});
 JS;
-    echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
-  } else {
-    echo $this->escapeHtml($rawFieldData['fullrecord']);
-  }
-?>
+      echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+    } else {
+      echo $this->escapeHtml($rawFieldData['fullrecord']);
+    }
+  ?>
 </pre>
-<hr>
+<h2><?=$this->transEsc('staff_view_finna_index')?></h2>
 <?php endif; ?>
 <table class="citation table table-striped">
-  <?php foreach ($rawFieldData as $field => $values): ?>
+  <?php $rawData = $this->driver->getRawData(); ksort($rawData); foreach ($rawData as $field => $values): ?>
     <tr>
       <th><?=$this->escapeHtml($field)?></th>
       <td>
