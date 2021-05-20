@@ -17,6 +17,10 @@ function getCacheID(loadInfo) {
   return loadInfo.id + '-' + loadInfo.index + '-' + loadInfo.format;
 }
 
+function getTanDeg(deg) {
+  var rad = deg * Math.PI / 180;
+  return Math.tan(rad);
+}
 
 function ModelViewer(trigger, options, scripts)
 {
@@ -324,11 +328,6 @@ ModelViewer.prototype.createControls = function createControls()
   _.controls.screenSpacePanning = true;
   _.controls.update();
 };
-
-function getTanDeg(deg) {
-  var rad = deg * Math.PI / 180;
-  return Math.tan(rad);
-}
 
 ModelViewer.prototype.initMesh = function initMesh()
 {
