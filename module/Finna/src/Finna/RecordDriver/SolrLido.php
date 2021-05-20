@@ -303,10 +303,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $formatDisallowed = in_array(
                         $format, $this->undisplayableFileFormats
                     );
-
+                    
                     if ($formatDisallowed) {
                         // 3D models are fetched in a different function so discard this from the results
-                        if (in_array($format, $this->displayableModelFormats)) {
+                        $datasource = $this->getDataSource();
+                        if (empty($this->mainConfig->Models->previewImages[$datasource]) &&
+                            in_array($format, $this->displayableModelFormats)) {
                             $urls = [];
                         }
                         continue;
@@ -542,6 +544,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $settings[$setting] = $iniData->$setting;
             }
         }
+        $modelImages = 'model_preview_images';
+        $datasource = $this->getDataSource();
+        $settings['previewImages'] =
+            !empty($this->mainConfig->Models->previewImages[$datasource]);
         return $settings;
     }
 

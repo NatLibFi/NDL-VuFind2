@@ -37,23 +37,36 @@
           'index' => $index,
           'format' => $format
         ];
-        $model = [
-          'small' => $data['image'] ?? null,
-          'medium' => $data['image'] ?? null,
-          'largest' => $data['image'] ?? null,
-          'index' => $ind,
-          'alt' => '3D model alt',
-          'description' => '3D Model preview image',
-          'title' => $this->transEsc('Image') . ' ' . $ind++,
-          'type' => 'model',
-          'modelsettings' => json_encode($settings ?? []),
-          'scripts' => $modelScripts,
-          'preview' => $data['preview'] ?? '',
-          'provided' => $data['original'] ?? '',
-          'format' => $format
-        ];
-
-        $paginatedLinks[] = $model;
+        
+        if (!empty($settings['previewImages'])
+          && !empty($paginatedLinks[$index])) {
+          $tmp = [
+            'type' => 'model',
+            'modelsettings' => json_encode($settings ?? []),
+            'scripts' => $modelScripts,
+            'preview' => $data['preview'] ?? '',
+            'provided' => $data['original'] ?? '',
+            'format' => $format
+          ];
+          $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $tmp);
+        } else {
+          $tmp = [
+            'small' => $data['image'] ?? null,
+            'medium' => $data['image'] ?? null,
+            'largest' => $data['image'] ?? null,
+            'index' => $ind,
+            'alt' => '3D model alt',
+            'description' => '3D Model preview image',
+            'title' => $this->transEsc('Image') . ' ' . $ind++,
+            'type' => 'model',
+            'modelsettings' => json_encode($settings ?? []),
+            'scripts' => $modelScripts,
+            'preview' => $data['preview'] ?? '',
+            'provided' => $data['original'] ?? '',
+            'format' => $format
+          ];
+          $paginatedLinks[] = $tmp;
+        }
       endforeach;
     endforeach;
   } ?>

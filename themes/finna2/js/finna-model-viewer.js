@@ -2,6 +2,22 @@
 
 // Use 1 dracoloader in all of the loaders, so we don't create multiple instances
 var dracoLoader;
+
+// Cache for holdings already loaded scenes, prevent multiple loads
+var sceneCache = {};
+
+function fullscreenSupported() {
+  return (document.exitFullscreen || document.webkitExitFullscreen ||
+    document.mozCancelFullScreen || document.webkitCancelFullScreen ||
+    document.msExitFullscreen);
+}
+
+
+function getCacheID(loadInfo) {
+  return loadInfo.id + '-' + loadInfo.index + '-' + loadInfo.format;
+}
+
+
 function ModelViewer(trigger, options, scripts)
 {
   var _ = this;
@@ -13,12 +29,17 @@ function ModelViewer(trigger, options, scripts)
   _.debug = options.debug || false;
   _.ambientIntensity = +options.ambientIntensity || 1;
   _.hemisphereIntensity = +options.hemisphereIntensity || 0.3;
-  _.viewerPaddingAngle = +options.viewerPaddingAngle || 30;
+  _.viewerPaddingAngle = +options.viewerPaddingAngle || 35;
 
   _.loadInfo = options.modelload;
   _.loaded = false;
-  var modal = $('#model-modal').find('.model-wrapper').first().clone();
   _.isFileInput = _.trigger.is('input');
+  _.createTrigger(options, scripts);
+}
+
+ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
+  var _ = this;
+  var modal = $('#model-modal').find('.model-wrapper').first().clone();
   _.trigger.finnaPopup({
     id: 'modelViewer',
     cycle: false,
@@ -58,7 +79,6 @@ function ModelViewer(trigger, options, scripts)
           _.getModelPath();
         } else {
           _.modelPath = URL.createObjectURL(_.trigger[0].files[0]);
-          _.initViewer();
         }
       });
     },
@@ -78,7 +98,7 @@ function ModelViewer(trigger, options, scripts)
       _.informationsArea = null;
     }
   });
-}
+};
 
 ModelViewer.prototype.setInformation = function setInformation(header, info)
 {
@@ -123,6 +143,8 @@ ModelViewer.prototype.setEvents = function setEvents()
         elem.webkitRequestFullscreen();
       } else if (elem.msRequestFullscreen) { /* IE/Edge */
         elem.msRequestFullscreen();
+      } else if (elem.webkitEnterFullscreen) {
+        elem.webkitEnterFullscreen(); // Iphone?!
       }
     }
   });
@@ -136,15 +158,6 @@ ModelViewer.prototype.updateScale = function updateScale()
   _.camera.aspect = _.size.x / _.size.y;
   _.camera.updateProjectionMatrix();
   _.renderer.setSize(_.size.x, _.size.y);
-};
-
-// Create a new viewer every time
-ModelViewer.prototype.initViewer = function initViewer()
-{
-  var _ = this;
-  _.loadBackground();
-  _.loadGLTF();
-  _.setEvents();
 };
 
 ModelViewer.prototype.getParentSize = function getParentSize()
@@ -173,10 +186,22 @@ ModelViewer.prototype.createRenderer = function createRenderer()
   _.renderer.outputEncoding = _.encoding;
   
   _.renderer.shadowMap.enabled = true;
-  _.renderer.setClearColor(0xffffff);
+  _.renderer.setClearColor(0x000000);
   _.renderer.setPixelRatio(window.devicePixelRatio);
   _.renderer.setSize(_.size.x, _.size.y);
   _.canvasParent.append(_.renderer.domElement);
+
+  if (!_.loaded) {
+    // Create an empty scene, so the loading texture is not empty
+    var tmpScene = new THREE.Scene();
+    _.scene = tmpScene;
+    // Create camera now.
+    _.camera = new THREE.PerspectiveCamera( 50, _.size.x / _.size.y, 0.1, 1000 );
+    var cameraPosition = new THREE.Vector3(0, 0, 0);
+    _.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+  }
+  _.animationLoop();
+  _.loadBackground();
 };
 
 ModelViewer.prototype.getModelPath = function getModelPath()
@@ -193,7 +218,6 @@ ModelViewer.prototype.getModelPath = function getModelPath()
   )
     .done(function onGetModelDone(response) {
       _.modelPath = response.data.url;
-      _.initViewer();
     })
     .fail(function onGetModelFailed(/*response*/) {
     });
@@ -214,14 +238,16 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
       _.modelPath,
       function onLoad ( obj ) {
         _.adjustScene(obj.scene);
-        _.center = new THREE.Vector3();
-        _.cameraPosition = new THREE.Vector3(0, 0, 0);
         _.setupScene();
         _.viewerStateInfo.hide();
         _.optionsArea.toggle(true);
+        if (!fullscreenSupported()) {
+          _.optionsArea.find('.model-fullscreen').hide();
+        }
+        _.displayInformation();
       },
       function onLoading( xhr ) {
-        _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(2) + '%');
+        _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(0) + '%');
       },
       function onError(/*error*/) {
         _.viewerStateInfo.html('Error');
@@ -229,10 +255,21 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
     );
   } else {
     _.createControls();
-    _.animationLoop();
     _.viewerStateInfo.hide();
     _.optionsArea.toggle(true);
+    if (!fullscreenSupported()) {
+      _.optionsArea.find('.model-fullscreen').hide();
+    }
+    _.displayInformation();
   }
+};
+
+ModelViewer.prototype.displayInformation = function displayInformation() {
+  var _ = this;
+  _.informationsArea.toggle(true);
+  _.setInformation(VuFind.translate('Vertices'), _.vertices);
+  _.setInformation(VuFind.translate('Triangles'), _.triangles);
+  _.setInformation(VuFind.translate('Meshes'), _.meshes);
 };
 
 ModelViewer.prototype.adjustScene = function adjustScene(scene)
@@ -279,16 +316,11 @@ ModelViewer.prototype.animationLoop = function animationLoop()
 ModelViewer.prototype.createControls = function createControls()
 {
   var _ = this;
-  if (!_.loaded) {
-    _.camera = new THREE.PerspectiveCamera( 50, _.size.x / _.size.y, 0.1, 1000 );
-    _.camera.position.set(_.cameraPosition.x, _.cameraPosition.y, _.cameraPosition.z);
-  }
-
   // Basic controls for scene, imagine being a satellite at the sky
   _.controls = new THREE.OrbitControls(_.camera, _.renderer.domElement);
 
   // Should be THREE.Vector3(0,0,0)
-  _.controls.target = _.center;
+  _.controls.target = new THREE.Vector3();
   _.controls.screenSpacePanning = true;
   _.controls.update();
 };
@@ -302,7 +334,6 @@ ModelViewer.prototype.initMesh = function initMesh()
 {
   var _ = this;
   var meshMaterial;
-  var distanceAdjustment;
   var newBox = new THREE.Box3();
   if (!_.loaded) {
     _.vertices = 0;
@@ -366,11 +397,6 @@ ModelViewer.prototype.initMesh = function initMesh()
   } else {
     _.camera.position.set(0, 0, _.cameraPosition);
   }
-
-  _.informationsArea.toggle(true);
-  _.setInformation(VuFind.translate('Vertices'), _.vertices);
-  _.setInformation(VuFind.translate('Triangles'), _.triangles);
-  _.setInformation(VuFind.translate('Meshes'), _.meshes);
 };
 
 ModelViewer.prototype.createLights = function createLights()
@@ -378,9 +404,9 @@ ModelViewer.prototype.createLights = function createLights()
   var _ = this;
   
   // Ambient light basically just is there all the time
-  var ambientLight = new THREE.AmbientLight( 0xFFFFFF, _.ambientIntensity ); // soft white light
+  var ambientLight = new THREE.AmbientLight(0xFFFFFF, _.ambientIntensity); // soft white light
   _.scene.add(ambientLight);
-  var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, _.hemisphereIntensity );
+  var light = new THREE.HemisphereLight(0xffffbb, 0x080820, _.hemisphereIntensity);
   _.scene.add( light );
 };
 
@@ -392,6 +418,9 @@ ModelViewer.prototype.loadBackground = function loadBackground()
     _.texturePath + 'bg.jpg',
     function onSuccess(texture) {
       _.background = texture;
+      _.scene.background = _.background;
+      _.loadGLTF();
+      _.setEvents();
     },
     function onFailure(/*error*/) {
       // Leave empty for debugging purposes
@@ -401,6 +430,12 @@ ModelViewer.prototype.loadBackground = function loadBackground()
 
 (function modelModule($) {
   $.fn.finnaModel = function finnaModel(settings, scripts) {
-    new ModelViewer($(this), settings, scripts);
+    // Check if model viewer is already created
+    var cacheId = getCacheID(settings.modelload);
+    if (typeof sceneCache[cacheId] === 'undefined') {
+      sceneCache[cacheId] = new ModelViewer($(this), settings, scripts);
+    } else {
+      sceneCache[cacheId].createTrigger(settings, scripts);
+    }
   };
 })(jQuery);
