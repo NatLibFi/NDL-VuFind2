@@ -976,7 +976,7 @@ class SolrEad3 extends SolrEad
                     'type' => '', 'source' => ''
                 ] : [$i['data']];
         };
-        return array_map($callback, ($headings));
+        return array_map($callback, $headings);
     }
 
     /**
