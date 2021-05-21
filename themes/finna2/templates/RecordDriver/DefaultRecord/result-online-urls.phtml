@@ -8,16 +8,6 @@
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
     $mergedData = $this->driver->tryMethod('getMergedRecordData');
 
-    if (!empty($images)
-      && !$this->record($this->driver)->containsNonImageURL($urls, $images)
-      && !$this->record($this->driver)->containsNonImageURL($onlineURLs, $images)
-      && !$this->record($this->driver)->containsPdfUrl($onlineURLs)
-      && (empty($mergedData['urls']) || !$this->record($this->driver)->containsNonImageURL($mergedData['urls'], $images))
-      && !$openUrlActive
-    ) {
-       // Some onlineurls might be links to pdf files, but otherwise they are imageurls
-       return;
-    }
     $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 
     $urlBase = [
@@ -27,8 +17,9 @@
     $this->htmlElement()->addAttributeTemplate('url-base', $urlBase);
   ?>
 
-  <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-    <div class="available-online-links">
+  <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
+  <div class="available-online-links">
+    <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
       <strong class="available-online-header <?=(!empty($onlineURLs) || !empty($mergedData['urls']) || !empty($urls)) ? '' : 'hidden'; ?>"><?=$this->transEsc('Available Online') ?>:</strong>
       <div class="truncate-field">
         <?php $renderedURLs = []; ?>
@@ -99,6 +90,6 @@
       <?php if ($openUrlActive): ?>
         <?=$openUrl->renderTemplate()?>
       <?php endif; ?>
-    </div>
-  <?php endif; ?>
+    <?php endif; ?>
+  </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/result-online-urls.phtml -->
