@@ -1008,6 +1008,17 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get all subject headings associated with this record with extended data.
+     * (see getAllSubjectHeadings).
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadingsExtended()
+    {
+        return $this->getAllSubjectHeadings(true);
+    }
+
+    /**
      * Get all subject headings associated with this record.  Each heading is
      * returned as an array of chunks, increasing from least specific to most
      * specific.
@@ -1027,9 +1038,15 @@ class SolrEad3 extends SolrEad
 
         // geographic names are returned in getRelatedPlacesExtended
         foreach (['genre', 'era'] as $field) {
-            if (isset($this->fields[$field])) {
-                $headings = array_merge($headings, $this->fields[$field]);
-            }
+            $headings = array_merge(
+                $headings,
+                array_map(
+                    function ($term) {
+                        return ['data' => $term];
+                    },
+                    $this->fields[$field] ?? []
+                )
+            );
         }
 
         // The default index schema doesn't currently store subject headings in a
@@ -1037,11 +1054,25 @@ class SolrEad3 extends SolrEad
         // Other record drivers (i.e. SolrMarc) can offer this data in a more
         // granular format.
         $callback = function ($i) use ($extended) {
-            return $extended
-                ? ['heading' => [$i], 'type' => '', 'source' => '']
-                : [$i];
+            if ($extended) {
+                $data = [
+                    'heading' => [$i['data']],
+                    'type' => 'topic',
+                    'source' => $i['source'] ?? ''
+                ];
+                if ($id = $i['id'] ?? '') {
+                    $data['id'] = $id;
+                    // Categorize non-URI ID's as Personal Names, since the
+                    // actual authority format can not be determined from metadata.
+                    $data['authType'] = preg_match('/^https?:/', $id)
+                        ? null : 'Personal Name';
+                }
+            } else {
+                return [$i['data']];
+            }
+            return $data;
         };
-        return array_map($callback, array_unique($headings));
+        return array_map($callback, $headings);
     }
 
     /**
@@ -1479,9 +1510,9 @@ class SolrEad3 extends SolrEad
     /**
      * Get topics.
      *
-     * @return string[]
+     * @return array
      */
-    protected function getTopics()
+    protected function getTopics() : array
     {
         $record = $this->getXmlRecord();
 
@@ -1489,6 +1520,7 @@ class SolrEad3 extends SolrEad
         if (isset($record->controlaccess->subject)) {
             foreach ([true, false] as $obeyPreferredLanguage) {
                 foreach ($record->controlaccess->subject as $subject) {
+                    $attr = $subject->attributes();
                     if (isset($subject->attributes()->relator)
                         && (string)$subject->attributes()->relator !== 'aihe'
                     ) {
@@ -1498,7 +1530,14 @@ class SolrEad3 extends SolrEad
                         $subject, 'part', $obeyPreferredLanguage
                     )
                     ) {
-                        $topics[] = $topic[0];
+                        if (!$topic[0]) {
+                            continue;
+                        }
+                        $topics[] = [
+                            'data' => $topic[0],
+                            'id' => (string)$attr->identifier,
+                            'source' => (string)$attr->source
+                        ];
                     }
                 }
                 if (!empty($topics)) {

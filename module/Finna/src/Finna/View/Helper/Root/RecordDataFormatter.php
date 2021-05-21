@@ -366,8 +366,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Materials', 'Related Places', 'Scale', 'Secondary Authors',
             'Sound', 'Source of Acquisition', 'Standard Codes',
             'Studios', 'Subject Actor', 'Subject Date',
-            'Subject Detail', 'Subject Place', 'Subjects',
-            'subjects_extended', 'System Format', 'Terms of Use',
+            'Subject Detail', 'Subject Place', 'subjects_extended',
+            'System Format', 'Terms of Use',
             'Time Period', 'Time Period of Creation', 'Trade Availability Note',
             'Uncontrolled Title', 'Uniform Title', 'Unit IDs'
         ];
