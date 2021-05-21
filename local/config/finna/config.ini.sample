@@ -1716,3 +1716,5 @@ hemisphereIntensity = 0.3
 viewerPaddingAngle = 35
 ; If developer is uncommented and true, will display additional data on the viewer
 ;debug = true
+; Array of institutions which have proper preview images to show
+;previewImages['museovirasto_testi'] = true
