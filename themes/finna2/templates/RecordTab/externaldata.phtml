@@ -32,6 +32,9 @@ $physicalItems = $items['physicalItems'] ?? null;
           <?php if (!empty($item['info'])): ?>
             <span class="info">(<?=$this->escapeHtml($item['info']) ?>)</span>
           <?php endif ?>
+          <?php if (!empty($item['accessRestriction'])): ?>
+            <p class="restriction small">(<?=$this->escapeHtml($item['accessRestriction']) ?>)</p>
+          <?php endif ?>
         </div>
         <div class="tbl-cell tbl-right location" role="cell">
           <?php if (!empty($item['location'])): ?>

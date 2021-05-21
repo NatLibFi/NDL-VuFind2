@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2020.
+ * Copyright (C) The National Library of Finland 2014-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -172,6 +172,16 @@ $config = [
                     ]
                 ],
             ],
+            'robots-txt' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/robots.txt',
+                    'defaults' => [
+                        'controller' => 'Robots',
+                        'action'     => 'get',
+                    ]
+                ],
+            ],
             'solrrecord-feedback' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
@@ -224,9 +234,11 @@ $config = [
             'Finna\Controller\ErrorController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ExternalAuthController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\R2FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\FeedContentController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\LibraryCardsController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\L1Controller' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\L1recordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
             'Finna\Controller\LocationServiceController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\MetaLibController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\MetalibRecordController' => 'VuFind\Controller\AbstractBaseFactory',
@@ -235,10 +247,12 @@ $config = [
             'Finna\Controller\PCIController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimoController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimoRecordController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\R2FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\R2RecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\R2CollectionController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\R2SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\RecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
@@ -254,6 +268,12 @@ $config = [
             'comments' => 'Finna\Controller\CommentsController',
             'FeedContent' => 'Finna\Controller\FeedContentController',
             'feedcontent' => 'Finna\Controller\FeedContentController',
+            'L1' => 'Finna\Controller\L1Controller',
+            'l1' => 'Finna\Controller\L1Controller',
+            'L1Record' => 'Finna\Controller\L1recordController',
+            'l1record' => 'Finna\Controller\L1recordController',
+            'ListPage' => 'Finna\Controller\ListController',
+            'listpage' => 'Finna\Controller\ListController',
             'LocationService' => 'Finna\Controller\LocationServiceController',
             'locationservice' => 'Finna\Controller\LocationServiceController',
             'MetaLib' => 'Finna\Controller\MetaLibController',
@@ -262,13 +282,11 @@ $config = [
             'metalibrecord' => 'Finna\Controller\MetaLibrecordController',
             'OrganisationInfo' => 'Finna\Controller\OrganisationInfoController',
             'organisationinfo' => 'Finna\Controller\OrganisationInfoController',
+            'R2' => 'Finna\Controller\R2SearchController',
             'r2collection' => 'Finna\Controller\R2CollectionController',
             'R2Collection' => 'Finna\Controller\R2CollectionController',
             'r2record' => 'Finna\Controller\R2RecordController',
             'R2Record' => 'Finna\Controller\R2RecordController',
-            'R2' => 'Finna\Controller\R2SearchController',
-            'ListPage' => 'Finna\Controller\ListController',
-            'listpage' => 'Finna\Controller\ListController',
             'r2feedback' => 'Finna\Controller\R2FeedbackController',
             'R2Feedback' => 'Finna\Controller\R2FeedbackController',
             'L1' => 'Finna\Controller\L1Controller',
@@ -277,6 +295,7 @@ $config = [
             'l1record' => 'Finna\Controller\L1recordController',
             'File' => 'Finna\Controller\FileController',
             'file' => 'Finna\Controller\FileController',
+            'Robots' => 'Finna\Controller\RobotsController',
 
             // Overrides:
             'VuFind\Controller\AuthorityController' => 'Finna\Controller\AuthorityController',
@@ -431,6 +450,8 @@ $config = [
                         'Finna\AjaxHandler\GetOrganisationPageFeedFactory',
                     'Finna\AjaxHandler\GetPiwikPopularSearches' =>
                         'Finna\AjaxHandler\GetPiwikPopularSearchesFactory',
+                    'Finna\AjaxHandler\GetRecordData' =>
+                        'Finna\AjaxHandler\GetRecordDataFactory',
                     'Finna\AjaxHandler\GetRecordDriverRelatedRecords' =>
                         'Finna\AjaxHandler\GetRecordDriverRelatedRecordsFactory',
                     'Finna\AjaxHandler\GetRecordInfoByAuthority' =>
@@ -478,6 +499,7 @@ $config = [
                     'getMyLists' => 'Finna\AjaxHandler\GetUserLists',
                     'getOrganisationInfo' => 'Finna\AjaxHandler\GetOrganisationInfo',
                     'getPiwikPopularSearches' => 'Finna\AjaxHandler\GetPiwikPopularSearches',
+                    'getRecordData' => 'Finna\AjaxHandler\GetRecordData',
                     'getRecordDriverRelatedRecords' => 'Finna\AjaxHandler\GetRecordDriverRelatedRecords',
                     'getRecordInfoByAuthority' => 'Finna\AjaxHandler\GetRecordInfoByAuthority',
                     'getSearchTabsRecommendations' => 'Finna\AjaxHandler\GetSearchTabsRecommendations',
