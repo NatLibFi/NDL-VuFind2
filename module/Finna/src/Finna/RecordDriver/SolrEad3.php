@@ -1232,10 +1232,11 @@ class SolrEad3 extends SolrEad
             }
             $relations[] = [
                 'value' => $value,
+                'detail' => isset($attr->arcrole) ? (string)$attr->arcrole : null,
                 'link' => [
                     'value' => $href,
                     'type' => 'identifier',
-                    'filter' => ['datasource_str_mv' => $this->getDatasource()]
+                    'filter' => ['datasource_str_mv' => $this->getDatasource()],
                 ]
             ];
         }
