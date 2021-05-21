@@ -305,12 +305,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     );
                     
                     if ($formatDisallowed) {
-                        // 3D models are fetched in a different function so discard this from the results
-                        $datasource = $this->getDataSource();
-                        if (empty($this->mainConfig->Models->previewImages[$datasource]) &&
-                            in_array($format, $this->displayableModelFormats)) {
-                            $urls = [];
-                        }
                         continue;
                     }
                 }
@@ -488,6 +482,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @param object $representation to parse
      *
+     * @return array
      */
     public function getModels(): array
     {
@@ -497,30 +492,22 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             '/lidoWrap/lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
         ) as $resourceSet) {
-            $model = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
                 $url = trim((string)$linkResource);
+                if (empty($url)) {
+                    continue;
+                }
                 $type = strtolower((string)$representation->attributes()->type ?? '');
                 $format = $linkResource->attributes()->formatResource ?? '';
                 $format = strtolower(trim((string)$format));
                 switch ($type) {
-                case 'image_thumb':
-                case '3d_thumb':
-                    if (!isset($model['thumb'])) {
-                        $model['thumb'] = $url;
-                    }
-                    break;
                 case 'preview_3d':
-                    $model['preview'] = $url;
+                    $models[$i][$format]['preview'] = $url;
                     break;
                 case 'provided_3d':
-                    $model['provided'] = $url;
+                    $models[$i][$format]['provided'] = $url;
                     break;
-                }
-
-                if (!empty($model['preview']) || !empty($model['provided']) && $type !== '3d_thumb') {
-                    $models[$i][$format] = $model;
                 }
             }
             $i++;
@@ -544,9 +531,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         }
         $modelImages = 'model_preview_images';
         $datasource = $this->getDataSource();
-        $settings['previewImages'] =
-            !empty($this->mainConfig->Models->previewImages[$datasource]);
+        $settings['previewImages'] = $this->allowModelPreviewImages();
         return $settings;
+    }
+
+    /**
+     * Can model preview images be shown
+     * 
+     * @return bool
+     */
+    public function allowModelPreviewImages(): bool
+    {
+        $datasource = $this->getDataSource();
+        return !empty($this->mainConfig->Models->previewImages[$datasource]);
     }
 
     /**

@@ -73,16 +73,25 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.fullscreen = _.controlsArea.find('.model-fullscreen');
           _.viewerStateInfo = _.root.find('.viewer-state-wrapper');
           _.viewerStateInfo.html('0%');
-          _.viewerStateInfo.show();
+          _.viewerStateInfo.hide();
           _.informationsArea = _.root.find('.statistics-table');
           _.root.find('.model-stats').attr('id', 'model-stats');
           _.informationsArea.toggle(false);
         }
-        _.createRenderer();
+        var helpModal = $('<div class="finna-popup help-modal"/>')
+          .html(VuFind.translate(finna.layout.isTouchDevice() ? 'model_help_mobile_html' : 'model_help_pc_html'));
+        _.root.find('.model-help-btn').finnaPopup({
+          id: 'modelhelper',
+          cycle: false,
+          translations: options.translations,
+          classes: 'help-wrapper',
+          modal: helpModal
+        });
         if (!_.isFileInput) {
           _.getModelPath();
         } else {
           _.modelPath = URL.createObjectURL(_.trigger[0].files[0]);
+          _.createRenderer();
         }
       });
     },
@@ -197,14 +206,14 @@ ModelViewer.prototype.createRenderer = function createRenderer()
 
   if (!_.loaded) {
     // Create an empty scene, so the loading texture is not empty
-    var tmpScene = new THREE.Scene();
-    _.scene = tmpScene;
+    _.scene = new THREE.Scene();
     // Create camera now.
     _.camera = new THREE.PerspectiveCamera( 50, _.size.x / _.size.y, 0.1, 1000 );
-    var cameraPosition = new THREE.Vector3(0, 0, 0);
-    _.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+    _.cameraPosition = new THREE.Vector3(0, 0, 0);
+    _.camera.position.set(_.cameraPosition.x, _.cameraPosition.y, _.cameraPosition.z);
   }
   _.animationLoop();
+  _.viewerStateInfo.show();
   _.loadBackground();
 };
 
@@ -222,6 +231,7 @@ ModelViewer.prototype.getModelPath = function getModelPath()
   )
     .done(function onGetModelDone(response) {
       _.modelPath = response.data.url;
+      _.createRenderer();
     })
     .fail(function onGetModelFailed(/*response*/) {
     });
@@ -251,10 +261,14 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
         _.displayInformation();
       },
       function onLoading( xhr ) {
-        _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(0) + '%');
+        if (_.viewerStateInfo) {
+          _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(0) + '%');
+        }
       },
       function onError(/*error*/) {
-        _.viewerStateInfo.html('Error');
+        if (_.viewerStateInfo) {
+          _.viewerStateInfo.html('Error');
+        }
       }
     );
   } else {
@@ -418,13 +432,13 @@ ModelViewer.prototype.loadBackground = function loadBackground()
     function onSuccess(texture) {
       _.background = texture;
       _.scene.background = _.background;
-      _.loadGLTF();
-      _.setEvents();
     },
     function onFailure(/*error*/) {
       // Leave empty for debugging purposes
     }
   );
+  _.loadGLTF();
+  _.setEvents();
 };
 
 (function modelModule($) {

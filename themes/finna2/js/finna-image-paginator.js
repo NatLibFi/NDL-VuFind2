@@ -821,7 +821,7 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
       if (_.popup.track) {
         return undefined;
       }
-      var icon = $('<i class="finna-3d"/>');
+      var icon = $('<i class="fa-finna-3d"/>');
       holder.append(icon);
     }
   }

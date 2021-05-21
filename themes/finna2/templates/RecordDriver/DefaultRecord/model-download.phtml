@@ -1,7 +1,6 @@
 <!-- START of Finna - RecordDriver/DefaultRecord/model-download.phtml -->
-<div class="image-link">
-    <?php if (!empty($model)): ?>
-        <i aria-hidden="true" class="fa fa-download"></i>
+<div class="model-link">
+    <?php if (count($model) > 1 || count(end($model)) > 1): ?>
         <div class="dropdown">
             <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <?=$this->transEsc('Download the file') ?> <span class="caret"></span>
@@ -15,6 +14,18 @@
                     <?php endforeach; ?>
                 <?php endif; ?>
             </ul>
+        </div>
+    <?php else: ?>
+        <div class="download-link">
+            <?php
+                $elem = end($model);
+                $type = key($elem);
+                $format = key($model);
+            ?>
+            <a href="<?=$this->url('file-downloadmodel', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $index, 'format' => $format, 'type' => $type]])?>" rel="nofollow">
+                <i aria-hidden="true" class="fa fa-download"></i>
+                <?=$this->transEsc('Download the file')?></span>
+            </a>
         </div>
     <?php endif; ?>
 </div>

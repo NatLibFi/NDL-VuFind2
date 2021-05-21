@@ -227,7 +227,7 @@ a.authority {
             z-index: 2;
           }
           &.show-icon {
-            >.finna-3d {
+            >.fa-finna-3d {
               display: block;
               background-color: #e6e6e6;
               &::before {
@@ -252,6 +252,8 @@ a.authority {
       }
       .open-link {
         margin-top: 10px;
+      }
+      .open-link, .model-link {
         i, b {
           color: tint(@action-link-color, 22%);
           margin-right: 0;
@@ -286,6 +288,16 @@ a.authority {
     .mainbody.record-tabs {
       width: 100%;
     }
+  }
+}
+
+.model-link {
+  .download-link {
+    text-align: left;
+    color: #007c90;
+    font-size: 1em;
+    font-weight: 600;
+    text-transform: uppercase;
   }
 }
 
@@ -335,6 +347,13 @@ a.authority {
   .image-description {
     text-align: left;
     color: @gray-light;
+  }
+}
+.finna-popup.help-wrapper {
+  .finna-popup.help-modal {
+    background: white;
+    padding: 4px;
+    max-width: 400px;
   }
 }
 
@@ -403,7 +422,7 @@ a.authority {
             max-width: 64px;
             flex: 1 1 64px;
             cursor: pointer;
-            i.finna-3d {
+            i.fa-finna-3d {
               color: #121212;
               font-size: 24px;
               font-style: initial;
@@ -921,9 +940,20 @@ a.authority {
       -webkit-appearance: none;
       border: none;
       padding: 2px;
-      background-color: white;
-      color: #1f1f1f;
+      background-color: #1f1f1f;
+      color: white;
       font-size: 20px;
+      &.collapsed {
+        background-color: white;
+        color: #1f1f1f;
+      }
+    }
+    .model-help {
+      background: white;
+      text-align: left;
+      padding: 2px;
+      color: black;
+      width: 500px;
     }
     .viewer-statistics {
       table {

@@ -144,9 +144,10 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         if (!is_readable($localFile) || filemtime($localFile) < $maxAge * 60) {
             $driver = $this->recordLoader->load($id, 'Solr');
             $models = $driver->getModels();
-            if (!isset($models[$index][$format])) {
+            if (!isset($models[$index][$format]['preview'])) {
                 return $this->formatResponse(json_encode(['json' => ['status' => self::STATUS_HTTP_BAD_REQUEST]]));
             }
+            // Always force preview model to be fetched
             $url = $models[$index][$format]['preview'];
 
             if (empty($url)) {
