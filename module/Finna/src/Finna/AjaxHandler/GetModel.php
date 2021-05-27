@@ -30,9 +30,9 @@ namespace Finna\AjaxHandler;
 use Finna\File\Loader as FileLoader;
 use Laminas\Http\Request;
 use Laminas\Mvc\Controller\Plugin\Params;
+use Laminas\Router\Http\TreeRouteStack;
 use VuFind\Record\Loader as RecordLoader;
 use VuFind\Session\Settings as SessionSettings;
-use Laminas\Router\Http\TreeRouteStack;
 
 /**
  * GetModel AJAX handler
