@@ -84,8 +84,8 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         string $url, string $fileName,
         string $configSection, string $cacheFolder
     ): array {
-        $cacheDir = $this->cacheManager->getCache($cacheFolder ?? 'public')->getOptions()
-            ->getCacheDir();
+        $cacheDir = $this->cacheManager->getCache($cacheFolder ?? 'public')
+            ->getOptions()->getCacheDir();
         $path = "$cacheDir/$fileName";
         $maxAge = $this->config->$configSection->cacheTime ?? 43200;
         $result = true;

@@ -72,8 +72,8 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.optionsArea.toggle(false);
           _.fullscreen = _.controlsArea.find('.model-fullscreen');
           _.viewerStateInfo = _.root.find('.viewer-state-wrapper');
-          _.viewerStateInfo.html('0%');
           _.viewerStateInfo.hide();
+          _.viewerStateInfo.html('0%');
           _.informationsArea = _.root.find('.statistics-table');
           _.root.find('.model-stats').attr('id', 'model-stats');
           _.informationsArea.toggle(false);
@@ -211,7 +211,9 @@ ModelViewer.prototype.createRenderer = function createRenderer()
     _.camera.position.set(_.cameraPosition.x, _.cameraPosition.y, _.cameraPosition.z);
   }
   _.animationLoop();
-  _.viewerStateInfo.show();
+  if (!_.loaded) {
+    _.viewerStateInfo.show();
+  }
 };
 
 ModelViewer.prototype.getModelPath = function getModelPath()
@@ -270,7 +272,6 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
     );
   } else {
     _.createControls();
-    _.viewerStateInfo.hide();
     _.optionsArea.toggle(true);
     if (!fullscreenSupported()) {
       _.optionsArea.find('.model-fullscreen').hide();
@@ -426,6 +427,7 @@ ModelViewer.prototype.loadBackground = function loadBackground()
   var tempLoader = new THREE.TextureLoader();
   if (_.loaded) {
     _.createRenderer();
+    _.viewerStateInfo().hide();
     return;
   }
   tempLoader.load(
