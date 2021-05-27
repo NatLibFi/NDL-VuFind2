@@ -80,13 +80,17 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
      *
      * @return array
      */
-    public function getFile(string $url, string $fileName, string $configSection, string $cacheFolder): array
-    {
+    public function getFile(
+        string $url, string $fileName,
+        string $configSection, string $cacheFolder
+    ): array {
         $cacheDir = $this->cacheManager->getCache($cacheFolder ?? 'public')->getOptions()
             ->getCacheDir();
-        $localFile = "$cacheDir/$fileName";
+        $path = "$cacheDir/$fileName";
         $maxAge = $this->config->$configSection->cacheTime ?? 43200;
-        if (!file_exists($localFile) || filemtime($localFile) < $maxAge * 60) {
+        $result = true;
+        $error = '';
+        if (!file_exists($path) || filemtime($path) < $maxAge * 60) {
             $client = $this->httpService->createClient(
                 $url, \Laminas\Http\Request::METHOD_GET, 300
             );
@@ -97,16 +101,20 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
             $result = $client->send();
 
             if (!$result->isSuccess()) {
-                $this->debug("Failed to retrieve file from $url");
-                return false;
+                $error = "Failed to retrieve file from $url";
+                $this->debug($error);
+                $result = false;
+            } else {
+                if ($fp = fopen($path, "w")) {
+                    $result = stream_copy_to_stream($result->getStream(), $fp);
+                } else {
+                    $result = false;
+                    $error = "Failed to open $path with write rights";
+                    $this->debug($error);
+                }
             }
-            $fp = fopen($localFile, "w");
-            stream_copy_to_stream($result->getStream(), $fp);
         }
 
-        return [
-            'result' => true,
-            'path' => $localFile
-        ];
+        return compact('result', 'path', 'error');
     }
 }

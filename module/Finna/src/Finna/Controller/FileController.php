@@ -82,10 +82,8 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
      * @param SessionSettings $ss           session settings
      */
     public function __construct(
-        RecordLoader $recordLoader,
-        FileLoader $fileLoader,
-        CacheManager $cm,
-        SessionSettings $ss
+        RecordLoader $recordLoader, FileLoader $fileLoader,
+        CacheManager $cm, SessionSettings $ss
     ) {
         $this->recordLoader = $recordLoader;
         $this->fileLoader = $fileLoader;
