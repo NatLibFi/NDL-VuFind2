@@ -150,9 +150,6 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
             } else {
                 $response->setStatusCode(404);
             }
-            if (!$res) {
-                $response->setStatusCode(500);
-            }
         } else {
             $response->setStatusCode(400);
         }

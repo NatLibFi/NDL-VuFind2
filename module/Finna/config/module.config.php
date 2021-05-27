@@ -255,9 +255,6 @@ $config = [
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
-            'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
-            'Finna\Controller\L1Controller' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\L1recordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\FileController' => 'Finna\Controller\FileControllerFactory'
         ],
         'aliases' => [
