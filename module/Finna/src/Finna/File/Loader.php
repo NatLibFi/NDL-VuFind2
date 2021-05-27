@@ -48,6 +48,12 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
 
     protected $cacheManager;
 
+    /**
+     * Constructor
+     * 
+     * @param CacheManager $cm     CacheManager
+     * @param Config       $config Config
+     */
     public function __construct(CacheManager $cm, Config $config)
     {
         $this->cacheManager = $cm;
@@ -55,7 +61,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
-     * Download a file
+     * Download a file to cache
      *
      * @param string $url           Url to download
      * @param string $fileName      Name of the file to save

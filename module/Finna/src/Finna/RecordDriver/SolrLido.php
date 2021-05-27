@@ -479,8 +479,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get 3D models
      *
-     * @param object $representation to parse
-     *
      * @return array
      */
     public function getModels(): array

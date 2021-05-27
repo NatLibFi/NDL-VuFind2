@@ -32,6 +32,7 @@ use Laminas\Http\Request;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Record\Loader as RecordLoader;
 use VuFind\Session\Settings as SessionSettings;
+use Laminas\Router\Http\TreeRouteStack;
 
 /**
  * GetModel AJAX handler
@@ -85,11 +86,15 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Constructor
      *
-     * @param SessionSettings $ss Session settings
+     * @param SessionSettings $ss           Session settings
+     * @param RecordLoader    $recordLoader Recordloader
+     * @param string          $domainUrl    Domain url as string
+     * @param FileLoader      $fileLoader   Fileloader
+     * @param Router          $router       Router
      */
     public function __construct(
         SessionSettings $ss, RecordLoader $recordLoader,
-        string $domainUrl, FileLoader $fileLoader, \Laminas\Router\Http\TreeRouteStack $router
+        string $domainUrl, FileLoader $fileLoader, TreeRouteStack $router
     ) {
         $this->sessionSettings = $ss;
         $this->recordLoader = $recordLoader;

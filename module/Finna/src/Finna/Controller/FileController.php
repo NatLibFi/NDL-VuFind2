@@ -137,7 +137,9 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
                     }
                     // Set headers for downloadable file
                     header("Content-Type: $contentType");
-                    header("Content-disposition: attachment; filename=\"{$filename}\"");
+                    header(
+                        "Content-disposition: attachment; filename=\"{$filename}\""
+                    );
                     //No cache
                     header('Expires: 0');
                     header('Cache-Control: must-revalidate');
