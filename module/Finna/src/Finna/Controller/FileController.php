@@ -114,26 +114,44 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
             );
             $filename = urlencode($id) . '-' . $index . '.' . $format;
             $models = $driver->tryMethod('getModels');
-            $url = $models[$index][$format][$type] ?? false;
+            $url = $models[$index][$format]['preview'] ?? false;
             if (!empty($url)) {
-                $contentType = '';
-                switch ($format) {
-                case 'gltf':
-                    $contentType = 'model/gltf+json';
-                    break;
-                case 'glb':
-                    $contentType = 'model/gltf+binary';
-                    break;
-                default:
-                    $contentType = 'application/octet-stream';
-                    break;
-                }
-                $res = $this->fileLoader->getFileStreamed($url, $contentType, $filename);
-                if (!$res) {
+                $fileName = urlencode($id) . '-' . $index . '.' . $format;
+                $file = $this->fileLoader->getFile(
+                    $url, $fileName, 'Models', 'public'
+                );
+                if (!$file['result']) {
                     $response->setStatusCode(500);
+                } else {
+                    $contentType = '';
+                    switch ($format) {
+                    case 'gltf':
+                        $contentType = 'model/gltf+json';
+                        break;
+                    case 'glb':
+                        $contentType = 'model/gltf+binary';
+                        break;
+                    default:
+                        $contentType = 'application/octet-stream';
+                        break;
+                    }
+                    // Set headers for downloadable file
+                    header("Content-Type: $contentType");
+                    header("Content-disposition: attachment; filename=\"{$filename}\"");
+                    //No cache
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($file['path']));
+                    ob_clean();
+                    flush();
+                    readfile($file['path']);
                 }
             } else {
                 $response->setStatusCode(404);
+            }
+            if (!$res) {
+                $response->setStatusCode(500);
             }
         } else {
             $response->setStatusCode(400);

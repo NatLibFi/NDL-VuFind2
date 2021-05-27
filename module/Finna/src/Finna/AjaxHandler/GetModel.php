@@ -28,10 +28,8 @@
 namespace Finna\AjaxHandler;
 
 use Finna\File\Loader as FileLoader;
-use Laminas\Config\Config;
 use Laminas\Http\Request;
 use Laminas\Mvc\Controller\Plugin\Params;
-use VuFind\Cache\Manager as CacheManager;
 use VuFind\Record\Loader as RecordLoader;
 use VuFind\Session\Settings as SessionSettings;
 
@@ -55,20 +53,6 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
      * @var Settings
      */
     protected $sessionSettings;
-
-    /**
-     * Cache manager
-     *
-     * @var CacheManager
-     */
-    protected $cacheManager;
-
-    /**
-     * Config
-     *
-     * @var Config
-     */
-    protected $config;
 
     /**
      * Loader
@@ -104,12 +88,10 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
      * @param SessionSettings $ss Session settings
      */
     public function __construct(
-        SessionSettings $ss, CacheManager $cm, Config $config, RecordLoader $recordLoader,
+        SessionSettings $ss, RecordLoader $recordLoader,
         string $domainUrl, FileLoader $fileLoader, \Laminas\Router\Http\TreeRouteStack $router
     ) {
-        $this->cacheManager = $cm;
         $this->sessionSettings = $ss;
-        $this->config = $config;
         $this->recordLoader = $recordLoader;
         $this->domainUrl = $domainUrl;
         $this->fileLoader = $fileLoader;
@@ -135,43 +117,19 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
             return json_encode(['status' => self::STATUS_HTTP_BAD_REQUEST]);
         }
         $format = strtolower($format);
-        $cacheDir = $this->cacheManager->getCache('public')->getOptions()
-            ->getCacheDir();
         $fileName = urlencode($id) . '-' . $index . '.' . $format;
-        $localFile = "$cacheDir/$fileName";
-        $maxAge = $this->config->Models->modelCacheTime ?? 604800;
-        // Check if the model has been cached
-        if (!is_readable($localFile) || filemtime($localFile) < $maxAge * 60) {
-            $driver = $this->recordLoader->load($id, 'Solr');
-            $models = $driver->getModels();
-            if (!isset($models[$index][$format]['preview'])) {
-                return $this->formatResponse(json_encode(['json' => ['status' => self::STATUS_HTTP_BAD_REQUEST]]));
-            }
-            // Always force preview model to be fetched
-            $url = $models[$index][$format]['preview'];
-
-            if (empty($url)) {
-                return $this->formatResponse(['json' => ['status' => '404']]);
-            }
-
-            $contentType = '';
-            switch ($format) {
-            case 'gltf':
-                $contentType = 'model/gltf+json';
-                break;
-            case 'glb':
-                $contentType = 'application/octet-stream';
-                break;
-            }
-            // Use fileloader for proxies
-            $file = $this->fileLoader->getFile($url, $contentType, $fileName, $localFile);
-            if (!$file) {
-                return $this->formatResponse(['json' => ['status' => self::STATUS_HTTP_ERROR]]);
-            }
+        $driver = $this->recordLoader->load($id, 'Solr');
+        $models = $driver->tryMethod('getModels');
+        if (empty($models[$index][$format]['preview'])) {
+            return $this->formatResponse(['json' => ['status' => '404']]);
         }
+        // Always force preview model to be fetched
+        $url = $models[$index][$format]['preview'];
+        // Use fileloader for proxies
+        $file = $this->fileLoader->getFile($url, $fileName, 'Models', 'public');
         $route = stripslashes($this->router->getBaseUrl());
         // Point url to public cache so viewer has access to it
         $url = "{$this->domainUrl}{$route}/cache/{$fileName}";
-        return $this->formatResponse(['url' => $url]);
+        return $this->formatResponse(compact('url'));
     }
 }

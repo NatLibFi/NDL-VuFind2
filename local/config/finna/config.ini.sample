@@ -1707,7 +1707,7 @@ showLabels[Primo] = true
 ; If uncommented and set to true, will open in a popup
 ;popup = false
 ; How long should the models be cached, defaults at 1 week
-modelCacheTime = 604800
+cacheTime = 604800
 ; Ambient light intensity
 ambientIntensity = 1
 ; Hemisphere light intensity

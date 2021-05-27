@@ -67,8 +67,6 @@ class GetModelFactory
         }
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\Cache\Manager::class),
-            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
             $container->get(\VuFind\Record\Loader::class),
             $domainUrl = $container->get('ViewRenderer')
                 ->plugin('serverurl')->__invoke('/'),

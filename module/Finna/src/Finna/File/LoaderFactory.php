@@ -64,7 +64,10 @@ class LoaderFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $loader = new $requestedName();
+        $loader = new $requestedName(
+            $container->get(\VuFind\Cache\Manager::class),
+            $container->get(\VuFind\Config\PluginManager::class)->get('config')
+        );
         return $loader;
     }
 }

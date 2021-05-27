@@ -478,7 +478,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Save required information about 3d-models from lido
+     * Get 3D models
      *
      * @param object $representation to parse
      *
@@ -498,7 +498,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (empty($url)) {
                     continue;
                 }
-                $type = strtolower((string)$representation->attributes()->type ?? '');
+                $type = strtolower(
+                    (string)$representation->attributes()->type ?? ''
+                );
                 $format = $linkResource->attributes()->formatResource ?? '';
                 $format = strtolower(trim((string)$format));
                 switch ($type) {

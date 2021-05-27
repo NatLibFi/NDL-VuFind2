@@ -91,7 +91,7 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.getModelPath();
         } else {
           _.modelPath = URL.createObjectURL(_.trigger[0].files[0]);
-          _.createRenderer();
+          _.loadBackground();
         }
       });
     },
@@ -205,8 +205,6 @@ ModelViewer.prototype.createRenderer = function createRenderer()
   _.canvasParent.append(_.renderer.domElement);
 
   if (!_.loaded) {
-    // Create an empty scene, so the loading texture is not empty
-    _.scene = new THREE.Scene();
     // Create camera now.
     _.camera = new THREE.PerspectiveCamera( 50, _.size.x / _.size.y, 0.1, 1000 );
     _.cameraPosition = new THREE.Vector3(0, 0, 0);
@@ -214,7 +212,6 @@ ModelViewer.prototype.createRenderer = function createRenderer()
   }
   _.animationLoop();
   _.viewerStateInfo.show();
-  _.loadBackground();
 };
 
 ModelViewer.prototype.getModelPath = function getModelPath()
@@ -231,7 +228,7 @@ ModelViewer.prototype.getModelPath = function getModelPath()
   )
     .done(function onGetModelDone(response) {
       _.modelPath = response.data.url;
-      _.createRenderer();
+      _.loadBackground();
     })
     .fail(function onGetModelFailed(/*response*/) {
     });
@@ -427,18 +424,32 @@ ModelViewer.prototype.loadBackground = function loadBackground()
 {
   var _ = this;
   var tempLoader = new THREE.TextureLoader();
+  if (_.loaded) {
+    _.createRenderer();
+    return;
+  }
   tempLoader.load(
     _.texturePath + 'bg.jpg',
     function onSuccess(texture) {
       _.background = texture;
+      _.onBackgroundLoaded();
+      _.scene = new THREE.Scene();
       _.scene.background = _.background;
+      _.createRenderer();
+      _.loadGLTF();
+      _.setEvents();
     },
     function onFailure(/*error*/) {
       // Leave empty for debugging purposes
     }
   );
-  _.loadGLTF();
-  _.setEvents();
+};
+
+ModelViewer.prototype.onBackgroundLoaded = function onBackgroundLoaded() {
+  var _ = this;
+  
+  // Create an empty scene, so the loading texture is not empty
+  
 };
 
 (function modelModule($) {

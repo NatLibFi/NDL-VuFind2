@@ -47,7 +47,6 @@ function FinnaPopup(trigger, params, id) {
       src: '//player.vimeo.com/video/%id%?autoplay=1'
     }
   };
-  console.log(_);
 }
 
 /**

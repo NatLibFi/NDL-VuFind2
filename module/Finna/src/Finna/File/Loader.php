@@ -27,6 +27,9 @@
  */
 namespace Finna\File;
 
+use VuFind\Cache\Manager as CacheManager;
+use Laminas\Config\Config;
+
 /**
  * File loader
  *
@@ -41,78 +44,51 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
-    /**
-     * Download big file
-     * 
-     * @param string $url         url to download
-     * @param string $contentType header content type
-     * @param string $filename    file name to attach
-     * 
-     * @return bool
-     */
-    public function getFileStreamed(
-        string $url, string $contentType, string $filename
-    ): bool {
-        header("Content-Type: $contentType");
-        header("Content-disposition: attachment; filename=\"{$filename}\"");
-        $client = $this->httpService->createClient(
-            $url, \Laminas\Http\Request::METHOD_GET, 300
-        );
-        $client->setOptions(['useragent' => 'VuFind']);
-        $client->setStream();
-        $adapter = new \Laminas\Http\Client\Adapter\Curl();
-        $client->setAdapter($adapter);
-        $adapter->setOptions(
-            [
-                'curloptions' => [
-                    CURLOPT_WRITEFUNCTION => function ($ch, $str) {
-                        echo $str;
-                        return strlen($str);
-                    }
-                ]
-            ]
-        );
-        $result = $client->send();
+    protected $config;
 
-        if (!$result->isSuccess()) {
-            $this->debug("Failed to retrieve file from $url");
-            return false;
-        }
+    protected $cacheManager;
 
-        return true;
+    public function __construct(CacheManager $cm, Config $config) {
+        $this->cacheManager = $cm;
+        $this->config = $config;
     }
 
     /**
-     * Download big file
+     * Download a file
      * 
-     * @param string $url         url to download
-     * @param string $contentType header content type
-     * @param string $filename    file name to attach
-     * @param string $path        path to save file
+     * @param string $url           Url to download
+     * @param string $fileName      Name of the file to save
+     * @param string $configSection Section of the configFile to get cacheTime from
+     * @param string $cacheFolder   What cache folder to use
      * 
-     * @return bool
+     * @return array 
      */
-    public function getFile(
-        string $url, string $contentType, string $filename, string $path
-    ): bool {
-        header("Content-Type: $contentType");
-        header("Content-disposition: attachment; filename=\"{$filename}\"");
-        $client = $this->httpService->createClient(
-            $url, \Laminas\Http\Request::METHOD_GET, 300
-        );
-        $client->setOptions(['useragent' => 'VuFind']);
-        $client->setStream();
-        $adapter = new \Laminas\Http\Client\Adapter\Curl();
-        $client->setAdapter($adapter);
-        $result = $client->send();
-
-        if (!$result->isSuccess()) {
-            $this->debug("Failed to retrieve file from $url");
-            return false;
+    public function getFile(string $url, string $fileName, string $configSection, string $cacheFolder): array {
+        $cacheDir = $this->cacheManager->getCache($cacheFolder ?? 'public')->getOptions()
+            ->getCacheDir();
+        $localFile = "$cacheDir/$fileName";
+        $maxAge = $this->config->$configSection->cacheTime ?? 43200;
+        if (!file_exists($localFile) || filemtime($localFile) < $maxAge * 60) {
+            $client = $this->httpService->createClient(
+                $url, \Laminas\Http\Request::METHOD_GET, 300
+            );
+            $client->setOptions(['useragent' => 'VuFind']);
+            $client->setStream();
+            $adapter = new \Laminas\Http\Client\Adapter\Curl();
+            $client->setAdapter($adapter);
+            $result = $client->send();
+    
+            if (!$result->isSuccess()) {
+                $this->debug("Failed to retrieve file from $url");
+                return false;
+            }
+            $fp = fopen($localFile, "w");
+            stream_copy_to_stream($result->getStream(), $fp);
         }
-        $fp = fopen($path, "w");
-        stream_copy_to_stream($result->getStream(), $fp);
 
-        return true;
+        return [
+            'result' => true,
+            'path' => $localFile
+        ];
     }
 }
