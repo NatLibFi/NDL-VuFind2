@@ -44,14 +44,24 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
+    /**
+     * Config
+     * 
+     * @var Config
+     */
     protected $config;
 
+    /**
+     * Cache Manager
+     * 
+     * @var CacheManager
+     */
     protected $cacheManager;
 
     /**
      * Constructor
      * 
-     * @param CacheManager $cm     CacheManager
+     * @param CacheManager $cm     Cache Manager
      * @param Config       $config Config
      */
     public function __construct(CacheManager $cm, Config $config)
