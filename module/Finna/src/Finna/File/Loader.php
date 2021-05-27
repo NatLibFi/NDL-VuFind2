@@ -27,8 +27,8 @@
  */
 namespace Finna\File;
 
-use VuFind\Cache\Manager as CacheManager;
 use Laminas\Config\Config;
+use VuFind\Cache\Manager as CacheManager;
 
 /**
  * File loader
@@ -48,22 +48,24 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
 
     protected $cacheManager;
 
-    public function __construct(CacheManager $cm, Config $config) {
+    public function __construct(CacheManager $cm, Config $config)
+    {
         $this->cacheManager = $cm;
         $this->config = $config;
     }
 
     /**
      * Download a file
-     * 
+     *
      * @param string $url           Url to download
      * @param string $fileName      Name of the file to save
      * @param string $configSection Section of the configFile to get cacheTime from
      * @param string $cacheFolder   What cache folder to use
-     * 
-     * @return array 
+     *
+     * @return array
      */
-    public function getFile(string $url, string $fileName, string $configSection, string $cacheFolder): array {
+    public function getFile(string $url, string $fileName, string $configSection, string $cacheFolder): array
+    {
         $cacheDir = $this->cacheManager->getCache($cacheFolder ?? 'public')->getOptions()
             ->getCacheDir();
         $localFile = "$cacheDir/$fileName";
@@ -77,7 +79,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
             $adapter = new \Laminas\Http\Client\Adapter\Curl();
             $client->setAdapter($adapter);
             $result = $client->send();
-    
+
             if (!$result->isSuccess()) {
                 $this->debug("Failed to retrieve file from $url");
                 return false;

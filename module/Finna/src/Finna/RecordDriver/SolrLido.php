@@ -73,10 +73,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected $displayableModelFormats = ['gltf', 'glb'];
 
-
     /**
      * Recognized model viewer settings
-     * 
+     *
      * @var array
      */
     protected $modelViewerSettings = [
@@ -86,7 +85,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'viewerPaddingAngle',
         'debug'
     ];
-    
+
     /**
      * Images cache
      *
@@ -303,7 +302,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $formatDisallowed = in_array(
                         $format, $this->undisplayableFileFormats
                     );
-                    
+
                     if ($formatDisallowed) {
                         continue;
                     }
@@ -539,7 +538,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Can model preview images be shown
-     * 
+     *
      * @return bool
      */
     public function allowModelPreviewImages(): bool

@@ -75,7 +75,7 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
 
     /**
      * Constructor
-     * 
+     *
      * @param RecordLoader    $recordLoader record loader
      * @param FileLoader      $fileLoader   file loader
      * @param CacheManager    $cm           cache manager
@@ -95,7 +95,7 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
 
     /**
      * Download 3d model
-     * 
+     *
      * @return \Laminas\Http\Response
      */
     public function downloadModelAction()

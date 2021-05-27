@@ -84,7 +84,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
 
     /**
      * Constructor
-     * 
+     *
      * @param SessionSettings $ss Session settings
      */
     public function __construct(
