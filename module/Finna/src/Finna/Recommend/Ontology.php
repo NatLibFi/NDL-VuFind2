@@ -189,6 +189,13 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     protected $lookforTerms = null;
 
     /**
+     * Have the original search terms been combined in the case of a two word search.
+     *
+     * @var bool
+     */
+    protected $combinedTerms = false;
+
+    /**
      * Recommendation URIs array, used to check for existing identical
      * recommendations.
      *
@@ -353,18 +360,14 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         // Set up search terms array with quoted words as one search term.
         $this->lookforTerms = str_getcsv($this->lookfor, ' ');
 
-        // Special case for two-word searches, which will be processed as one
-        // search term.
-        if (2 === count($this->lookforTerms)
-            && false === strpos(trim($this->lookforTerms[0]), ' ')
-            && false === strpos(trim($this->lookforTerms[1]), ' ')
-        ) {
-            $this->lookforTerms = [implode(' ', $this->lookforTerms)];
-        }
+        // Further processing of tokenized terms.
+        $this->lookforTerms = $this->processSearchTerms($this->lookforTerms);
 
-        // Do nothing if the amount of search terms is more than the maximum.
-        if (null !== $this->maxSearchTerms
-            && count($this->lookforTerms) > $this->maxSearchTerms
+        // Do nothing if the amount of processed search terms is zero or more than
+        // the maximum.
+        if (0 === count($this->lookforTerms)
+            || (null !== $this->maxSearchTerms
+            && count($this->lookforTerms) > $this->maxSearchTerms)
         ) {
             return null;
         }
@@ -392,10 +395,6 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
             // Determine if the term can or should be searched for.
             if (!($this->canMakeApiCalls() && $this->canAddRecommendation())) {
                 break;
-            }
-            $term = trim($term);
-            if ($this->skipFromFintoSearch($term)) {
-                continue;
             }
 
             // Determine if narrower concepts should be looked for if applicable.
@@ -454,6 +453,48 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     }
 
     /**
+     * Additional normalization, selection and other processing of search terms.
+     *
+     * @param array $terms Search terms
+     *
+     * @return array Processed search terms
+     */
+    protected function processSearchTerms(array $terms): array
+    {
+        $processed = [];
+
+        foreach ($terms as $term) {
+            $term = trim($term);
+
+            // Skip if not actually a search term.
+            if (empty($term)
+                || preg_match('/^https?:/', $term)
+                || preg_match('/^topic_id_str_mv:/', $term)
+                || in_array($term, ['AND', 'OR', 'NOT'])
+            ) {
+                continue;
+            }
+
+            // Strip possible outermost matching quotes.
+            $term = preg_replace('/^"(.*)"$/', '$1', $term);
+
+            $processed[] = $term;
+        }
+
+        // Special case for two-word searches, which will be processed as one
+        // search term.
+        if (2 === count($processed)
+            && false === strpos($processed[0], ' ')
+            && false === strpos($processed[1], ' ')
+        ) {
+            $processed = [implode(' ', $processed)];
+            $this->combinedTerms = true;
+        }
+
+        return $processed;
+    }
+
+    /**
      * Can more API calls be made.
      *
      * @param int $count Number of API calls needed, defaults to 1.
@@ -480,20 +521,6 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     }
 
     /**
-     * Should the search term be skipped from Finto search.
-     *
-     * @param string $term Search term
-     *
-     * @return bool
-     */
-    protected function skipFromFintoSearch(string $term): bool
-    {
-        return empty($term)
-            || 0 === strpos($term, 'topic_id_str_mv:')
-            || in_array($term, ['AND', 'OR', 'NOT']);
-    }
-
-    /**
      * Adds an ontology result to the recommendations array.
      *
      * @param string      $term        The term searched for
@@ -506,51 +533,31 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     protected function addOntologyResult(
         string $term, array $fintoResult, string $resultType, ?string $termUri = null
     ): void {
+        // Do not add the result if the URI already exists in the original search.
+        if (false !== strpos($this->lookfor, $fintoResult['uri'])) {
+            return;
+        }
+
         // Do not add the result if the URI is the same as in an already added
         // recommendation.
         if (in_array($fintoResult['uri'], $this->recommendationUris)) {
             return;
         }
 
-        // Do not add the result if the URI already exists in the original search.
-        $recommendedUri = 'topic_id_str_mv:("' . $fintoResult['uri'] . '")';
-        if ($key = array_search($recommendedUri, $this->lookforTerms)) {
+        // Replace original search term with the recommended term in the lookfor.
+        $recommendationLookfor = $this->replaceWithRecommendedTerm(
+            $this->lookfor, $fintoResult['prefLabel'], $fintoResult['uri'],
+            $term, $termUri
+        );
+
+        // Abort if the replacement failed for some reason.
+        if ($recommendationLookfor === $this->lookfor) {
             return;
         }
 
-        $this->recommendationUris[] = $fintoResult['uri'];
-
-        // Create the recommendation search link.
-        // Create a copy of the original search terms.
-        $recommendedLookforTerms = $this->lookforTerms;
-        // Replace original term with recommended term, if different.
-        if ($term !== $fintoResult['prefLabel']) {
-            while (
-                false !== ($key = array_search($term, $recommendedLookforTerms))
-            ) {
-                $recommendedLookforTerms[$key] = $fintoResult['prefLabel'];
-            }
-        }
-        // Remove possible URI of original term.
-        if ($termUri) {
-            $termUri = 'topic_id_str_mv:("' . $termUri . '")';
-            if ($key = array_search($termUri, $recommendedLookforTerms)) {
-                unset($recommendedLookforTerms[$key]);
-            }
-        }
-        // Add the URI of the recommended term.
-        $recommendedLookforTerms[] = $recommendedUri;
-        // Create lookfor string.
-        foreach ($recommendedLookforTerms as $i => $recommendedLookforTerm) {
-            if (preg_match('/\s/', $recommendedLookforTerm)) {
-                $recommendedLookforTerms[$i] = '"' . $recommendedLookforTerm . '"';
-            }
-        }
-        $recommendedLookfor = implode(' ', $recommendedLookforTerms);
-
-        // Set up all link parameters.
+        // Set up other recommendation link parameters and build the link.
         $params = $this->request->toArray();
-        $params['lookfor'] = $recommendedLookfor;
+        $params['lookfor'] = $recommendationLookfor;
         foreach (['mod', 'searchId', 'resultTotal'] as $key) {
             if (isset($params[$key])) {
                 unset($params[$key]);
@@ -561,6 +568,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         );
 
         // Add result and increase counter if the result is for a new term.
+        $this->recommendationUris[] = $fintoResult['uri'];
         if (!isset($this->recommendations[$resultType])) {
             $this->recommendations[$resultType] = [];
         }
@@ -573,6 +581,58 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
             'href' => $href,
             'params' => $params
         ];
+    }
+
+    /**
+     * Replaces a term in the query string.
+     *
+     * @param string      $lookfor  Query string used in replacement
+     * @param string      $repTerm  Replacement term
+     * @param string      $repUri   Replacement URI
+     * @param string      $origTerm Original term
+     * @param string|null $origUri  Original URI (optional)
+     *
+     * @return string
+     */
+    protected function replaceWithRecommendedTerm(string $lookfor,
+        string $repTerm, string $repUri, string $origTerm, ?string $origUri = null
+    ): string {
+        // Add quotes to multi-word terms if appropriate.
+        $repTerm = (false !== strpos($repTerm, ' ')) ? "\"$repTerm\"" : $repTerm;
+        if (!$this->combinedTerms && (false !== strpos($origTerm, ' '))) {
+            $origTerm = "\"$origTerm\"";
+        }
+
+        $replace = $this->getInQueryStringFormat($repTerm, $repUri);
+
+        // If we have an original URI, attempt to replace an existing recommendation.
+        if ($origUri) {
+            $count = 0;
+            $lookfor = str_replace(
+                $this->getInQueryStringFormat($origTerm, $origUri), $replace,
+                $lookfor, $count
+            );
+            if ($count > 0) {
+                return $lookfor;
+            }
+        }
+
+        // If an existing recommendation was not replaced, replace the original
+        // search term only.
+        return str_replace($origTerm, $replace, $lookfor);
+    }
+
+    /**
+     * Returns a formatted query string containing both the provided term and URI.
+     *
+     * @param string $term Term
+     * @param string $uri  URI
+     *
+     * @return string
+     */
+    protected function getInQueryStringFormat(string $term, string $uri): string
+    {
+        return sprintf('(%s OR topic_id_str_mv:("%s")^100000)', $term, $uri);
     }
 
     /**
