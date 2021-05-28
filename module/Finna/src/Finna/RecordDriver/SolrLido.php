@@ -502,7 +502,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $format = strtolower(trim((string)$format));
                 switch ($type) {
                 case 'preview_3d':
-                    $models[$i][$format]['preview'] = $url;
+                    if (in_array($format, $this->displayableModelFormats)) {
+                        $models[$i][$format]['preview'] = $url;
+                    }
                     break;
                 case 'provided_3d':
                     $models[$i][$format]['provided'] = $url;

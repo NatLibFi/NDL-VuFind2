@@ -76,17 +76,13 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.viewerStateInfo.html('0%');
           _.informationsArea = _.root.find('.statistics-table');
           _.root.find('.model-stats').attr('id', 'model-stats');
+          _.root.find('.model-help').attr('id', 'model-help');
           _.informationsArea.toggle(false);
+          _.trigger.addClass('open');
         }
-        var helpModal = $('<div class="finna-popup help-modal"/>')
-          .html(VuFind.translate(finna.layout.isTouchDevice() ? 'model_help_mobile_html' : 'model_help_pc_html'));
-        _.root.find('.model-help-btn').finnaPopup({
-          id: 'modelhelper',
-          cycle: false,
-          translations: options.translations,
-          classes: 'help-wrapper',
-          modal: helpModal
-        });
+        _.root.find('.model-help').html(
+          VuFind.translate(finna.layout.isTouchDevice() ? 'model_help_mobile_html' : 'model_help_pc_html')
+        );
         if (!_.isFileInput) {
           _.getModelPath();
         } else {
@@ -100,6 +96,7 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
         window.clearTimeout(_.loop);
         _.loop = null;
       }
+      _.trigger.removeClass('open');
       _.root = null;
       _.renderer = null;
       _.canvasParent = null;
@@ -270,13 +267,6 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
         }
       }
     );
-  } else {
-    _.createControls();
-    _.optionsArea.toggle(true);
-    if (!fullscreenSupported()) {
-      _.optionsArea.find('.model-fullscreen').hide();
-    }
-    _.displayInformation();
   }
 };
 
@@ -427,7 +417,14 @@ ModelViewer.prototype.loadBackground = function loadBackground()
   var tempLoader = new THREE.TextureLoader();
   if (_.loaded) {
     _.createRenderer();
-    _.viewerStateInfo().hide();
+    _.viewerStateInfo.hide();
+    _.createControls();
+    _.optionsArea.toggle(true);
+    if (!fullscreenSupported()) {
+      _.optionsArea.find('.model-fullscreen').hide();
+    }
+    _.displayInformation();
+    _.setEvents();
     return;
   }
   tempLoader.load(

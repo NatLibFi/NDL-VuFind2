@@ -121,7 +121,7 @@
 
 .next-image {
   position: absolute;
-  z-index: 500;
+  z-index: 100;
   appearance: none;
   -webkit-appearance: none;
   border: none;
@@ -223,6 +223,9 @@ a.authority {
             left: 50%;
             z-index: 2;
           }
+          &.open .show-3d {
+            display: none;
+          }
           &.show-icon {
             .show-3d {
               bottom: 20%;
@@ -261,9 +264,6 @@ a.authority {
         }
       }
     }
-    .model-viewer-container {
-      max-width: 700px;
-    }
     .viewer-tabs-wrapper {
       .viewer-tab-button {
         appearance: none;
@@ -288,6 +288,14 @@ a.authority {
     .mainbody.record-tabs {
       width: 100%;
     }
+  }
+}
+
+#inline-viewer {
+  position: initial;
+  z-index: 3;
+  >.model-viewer {
+    position: initial;
   }
 }
 
@@ -931,6 +939,7 @@ a.authority {
     margin: 4px;
     width: 40%;
     max-width: 400px;
+    z-index: 101;
     .viewer-controls {
       margin-bottom: 4px;
       text-align: left;
@@ -953,9 +962,12 @@ a.authority {
       text-align: left;
       padding: 2px;
       color: black;
-      width: 500px;
+      min-width: 300px;
     }
     .viewer-statistics {
+      .model-stats {
+        margin-bottom: 4px;
+      }
       table {
         background-color: white;
         margin-bottom: 0;
