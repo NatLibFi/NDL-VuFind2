@@ -275,7 +275,6 @@ ModelViewer.prototype.displayInformation = function displayInformation() {
   _.informationsArea.toggle(true);
   _.setInformation(VuFind.translate('Vertices'), _.vertices);
   _.setInformation(VuFind.translate('Triangles'), _.triangles);
-  _.setInformation(VuFind.translate('Meshes'), _.meshes);
 };
 
 ModelViewer.prototype.adjustScene = function adjustScene(scene)
