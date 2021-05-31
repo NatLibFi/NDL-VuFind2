@@ -1062,10 +1062,10 @@ class SolrEad3 extends SolrEad
                 ];
                 if ($id = $i['id'] ?? '') {
                     $data['id'] = $id;
-                    // Categorize non-URI ID's as Personal Names, since the
+                    // Categorize non-URI ID's as Unknown Names, since the
                     // actual authority format can not be determined from metadata.
                     $data['authType'] = preg_match('/^https?:/', $id)
-                        ? null : 'Personal Name';
+                        ? null : 'Unknown Name';
                 }
             } else {
                 return [$i['data']];
