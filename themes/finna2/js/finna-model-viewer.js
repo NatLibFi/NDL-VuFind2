@@ -6,22 +6,41 @@ var dracoLoader;
 // Cache for holdings already loaded scenes, prevent multiple loads
 var sceneCache = {};
 
+/**
+ * Check if fullscreen is supported
+ */
 function fullscreenSupported() {
   return (document.exitFullscreen || document.webkitExitFullscreen ||
     document.mozCancelFullScreen || document.webkitCancelFullScreen ||
     document.msExitFullscreen);
 }
 
-
+/**
+ * Create a id for caching loaded scenes
+ * 
+ * @param {Object} loadInfo 
+ */
 function getCacheID(loadInfo) {
   return loadInfo.id + '-' + loadInfo.index + '-' + loadInfo.format;
 }
 
+/**
+ * Get tangent
+ * 
+ * @param {Integer} deg 
+ */
 function getTanDeg(deg) {
   var rad = deg * Math.PI / 180;
   return Math.tan(rad);
 }
 
+/**
+ * Constructor
+ * 
+ * @param {HtmlElement} trigger 
+ * @param {Object} options 
+ * @param {Object} scripts 
+ */
 function ModelViewer(trigger, options, scripts)
 {
   var _ = this;
@@ -41,6 +60,12 @@ function ModelViewer(trigger, options, scripts)
   _.createTrigger(options, scripts);
 }
 
+/**
+ * Create a trigger for model viewer
+ * 
+ * @param {Object} options
+ * @param {Object} scripts
+ */
 ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
   var _ = this;
   var modal = $('#model-modal').find('.model-wrapper').first().clone();
@@ -110,12 +135,21 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
   });
 };
 
+/**
+ * Append information to table
+ * 
+ * @param {String} header
+ * @param {String} info
+ */
 ModelViewer.prototype.setInformation = function setInformation(header, info)
 {
   var _ = this;
   _.informationsArea.append('<tr><td class="model-header">' + header + '</td><td class="model-value">' + info + '</td></tr>');
 };
 
+/**
+ * Set events for viewer
+ */
 ModelViewer.prototype.setEvents = function setEvents()
 {
   var _ = this;
@@ -160,6 +194,9 @@ ModelViewer.prototype.setEvents = function setEvents()
   });
 };
 
+/**
+ * Update renderer size to match parent size
+ */
 ModelViewer.prototype.updateScale = function updateScale()
 {
   var _ = this;
@@ -170,6 +207,9 @@ ModelViewer.prototype.updateScale = function updateScale()
   _.renderer.setSize(_.size.x, _.size.y);
 };
 
+/**
+ * Update internal value for parent size
+ */
 ModelViewer.prototype.getParentSize = function getParentSize()
 {
   var _ = this;
@@ -179,6 +219,9 @@ ModelViewer.prototype.getParentSize = function getParentSize()
   };
 };
 
+/**
+ * Create a renderer for viewer
+ */
 ModelViewer.prototype.createRenderer = function createRenderer()
 {
   var _ = this;
@@ -213,6 +256,9 @@ ModelViewer.prototype.createRenderer = function createRenderer()
   }
 };
 
+/**
+ * Get model location for viewer
+ */
 ModelViewer.prototype.getModelPath = function getModelPath()
 {
   var _ = this;
@@ -233,6 +279,9 @@ ModelViewer.prototype.getModelPath = function getModelPath()
     });
 };
 
+/**
+ * Load a gltf file for viewer
+ */
 ModelViewer.prototype.loadGLTF = function loadGLTF()
 {
   var _ = this;
@@ -270,6 +319,9 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
   }
 };
 
+/**
+ * Show needed information
+ */
 ModelViewer.prototype.displayInformation = function displayInformation() {
   var _ = this;
   _.informationsArea.toggle(true);
@@ -277,6 +329,11 @@ ModelViewer.prototype.displayInformation = function displayInformation() {
   _.setInformation(VuFind.translate('Triangles'), _.triangles);
 };
 
+/**
+ * Adjust scene
+ * 
+ * @param {Object} scene
+ */
 ModelViewer.prototype.adjustScene = function adjustScene(scene)
 {
   var _ = this;
@@ -294,15 +351,20 @@ ModelViewer.prototype.adjustScene = function adjustScene(scene)
   _.createLights();
 };
 
+/**
+ * Create basic functionalities
+ */
 ModelViewer.prototype.setupScene = function setupScene()
 {
   var _ = this;
 
   _.createControls();
   _.initMesh();
-  _.animationLoop();
 };
 
+/**
+ * Create the animation loop for the viewer
+ */
 ModelViewer.prototype.animationLoop = function animationLoop()
 {
   var _ = this;
@@ -318,6 +380,9 @@ ModelViewer.prototype.animationLoop = function animationLoop()
   window.setTimeout(_.loop, 1000 / 30);
 };
 
+/**
+ * Create controls for the viewer
+ */
 ModelViewer.prototype.createControls = function createControls()
 {
   var _ = this;
@@ -330,6 +395,9 @@ ModelViewer.prototype.createControls = function createControls()
   _.controls.update();
 };
 
+/**
+ * Adjust mesh so it looks better in the viewer
+ */
 ModelViewer.prototype.initMesh = function initMesh()
 {
   var _ = this;
@@ -362,8 +430,6 @@ ModelViewer.prototype.initMesh = function initMesh()
         }
         newBox.expandByObject(obj);
   
-        //Calculate the distance for camera, so the object is properly adjusted in scene
-        
         if (_.debug) {
           var box = new THREE.BoxHelper( obj, 0xffff00 );
           _.scene.add( box );
@@ -399,6 +465,9 @@ ModelViewer.prototype.initMesh = function initMesh()
   }
 };
 
+/**
+ * Create lights for the viewer
+ */
 ModelViewer.prototype.createLights = function createLights()
 {
   var _ = this;
@@ -410,6 +479,9 @@ ModelViewer.prototype.createLights = function createLights()
   _.scene.add( light );
 };
 
+/**
+ * Load the background image for the viewer
+ */
 ModelViewer.prototype.loadBackground = function loadBackground()
 {
   var _ = this;
@@ -430,7 +502,6 @@ ModelViewer.prototype.loadBackground = function loadBackground()
     _.texturePath,
     function onSuccess(texture) {
       _.background = texture;
-      _.onBackgroundLoaded();
       _.scene = new THREE.Scene();
       _.scene.background = _.background;
       _.createRenderer();
@@ -441,13 +512,6 @@ ModelViewer.prototype.loadBackground = function loadBackground()
       // Leave empty for debugging purposes
     }
   );
-};
-
-ModelViewer.prototype.onBackgroundLoaded = function onBackgroundLoaded() {
-  var _ = this;
-  
-  // Create an empty scene, so the loading texture is not empty
-  
 };
 
 (function modelModule($) {
