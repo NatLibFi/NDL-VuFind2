@@ -297,7 +297,8 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
       _.modelPath,
       function onLoad ( obj ) {
         _.adjustScene(obj.scene);
-        _.setupScene();
+        _.createControls();
+        _.initMesh();
         _.viewerStateInfo.hide();
         _.optionsArea.toggle(true);
         if (!fullscreenSupported()) {
@@ -349,17 +350,6 @@ ModelViewer.prototype.adjustScene = function adjustScene(scene)
     _.scene.add( axesHelper );
   }
   _.createLights();
-};
-
-/**
- * Create basic functionalities
- */
-ModelViewer.prototype.setupScene = function setupScene()
-{
-  var _ = this;
-
-  _.createControls();
-  _.initMesh();
 };
 
 /**
