@@ -427,7 +427,7 @@ ModelViewer.prototype.loadBackground = function loadBackground()
     return;
   }
   tempLoader.load(
-    _.texturePath + 'bg.jpg',
+    _.texturePath,
     function onSuccess(texture) {
       _.background = texture;
       _.onBackgroundLoaded();

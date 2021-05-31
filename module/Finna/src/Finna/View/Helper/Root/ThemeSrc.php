@@ -98,28 +98,4 @@ class ThemeSrc extends \Laminas\View\Helper\AbstractHelper
         }
         return null;
     }
-
-    /**
-     * Returns filepath from given theme if found
-     *
-     * @param string $relPath        File relative path
-     * @param string $theme          Theme to search
-     * @param bool   $returnAbsolute Whether to return absolute file system path
-     *
-     * @return mixed
-     */
-    protected function fileFromTheme($relPath, $theme, $returnAbsolute = false)
-    {
-        $basePath = $this->themeInfo->getBaseDir();
-
-        $file = $basePath . '/' . $theme . '/' . $relPath;
-        if (file_exists($file)) {
-            if ($returnAbsolute) {
-                return $file;
-            }
-            $urlHelper = $this->getView()->plugin('url');
-            return $urlHelper('home') . 'themes/' . $theme . '/' . $relPath;
-        }
-        return null;
-    }
 }

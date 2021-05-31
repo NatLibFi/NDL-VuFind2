@@ -89,18 +89,6 @@ class ImageSrc extends ThemeSrc
     }
 
     /**
-     * Returns the folder where images are located from given theme
-     *
-     * @param string $theme to look for
-     *
-     * @return string
-     */
-    public function getImagesDirectoryPath($theme = 'finna2')
-    {
-        return $this->fileFromTheme('images', $theme, false) . '/';
-    }
-
-    /**
      * Returns data string to generate a pixel placeholder used for lazyloading
      *
      * @return string

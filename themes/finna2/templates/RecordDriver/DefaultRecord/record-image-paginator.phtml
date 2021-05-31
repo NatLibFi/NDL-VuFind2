@@ -30,7 +30,7 @@
   <?php if (!empty($models)) {
     $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
     $settings = $this->driver->getModelSettings();
-    $settings['texturePath'] = $this->imageSrc()->getImagesDirectoryPath() . '/texture/';
+    $settings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);
     foreach ($models as $index => $model):
       foreach ($model as $format => $data):
         $settings['modelload'] = [
