@@ -76,10 +76,10 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
     /**
      * Constructor
      *
-     * @param RecordLoader    $recordLoader record loader
-     * @param FileLoader      $fileLoader   file loader
-     * @param CacheManager    $cm           cache manager
-     * @param SessionSettings $ss           session settings
+     * @param RecordLoader    $recordLoader Record loader
+     * @param FileLoader      $fileLoader   File loader
+     * @param CacheManager    $cm           Cache manager
+     * @param SessionSettings $ss           Session settings
      */
     public function __construct(
         RecordLoader $recordLoader, FileLoader $fileLoader,
@@ -103,10 +103,9 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
         $id = $params->fromQuery('id');
         $index = $params->fromQuery('index');
         $format = $params->fromQuery('format', '');
-        $type = $params->fromQuery('type');
         $response = $this->getResponse();
 
-        if ($id && $index && $type) {
+        if ($id && $index) {
             $driver = $this->recordLoader->load(
                 $id, $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
             );

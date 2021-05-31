@@ -119,7 +119,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         $format = $params->fromPost('format', $params->fromQuery('format'));
 
         if (!$id || !$index || !$format) {
-            return json_encode(['status' => self::STATUS_HTTP_BAD_REQUEST]);
+            return $this->formatResponse(['json' => ['status' => self::STATUS_HTTP_BAD_REQUEST]]);
         }
         $format = strtolower($format);
         $fileName = urlencode($id) . '-' . $index . '.' . $format;
@@ -132,9 +132,13 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         $url = $models[$index][$format]['preview'];
         // Use fileloader for proxies
         $file = $this->fileLoader->getFile($url, $fileName, 'Models', 'public');
-        $route = stripslashes($this->router->getBaseUrl());
-        // Point url to public cache so viewer has access to it
-        $url = "{$this->domainUrl}{$route}/cache/{$fileName}";
-        return $this->formatResponse(compact('url'));
+        if ($file['result']) {
+            $route = stripslashes($this->router->getBaseUrl());
+            // Point url to public cache so viewer has access to it
+            $url = "{$this->domainUrl}{$route}/cache/{$fileName}";
+            return $this->formatResponse(compact('url'));
+        } else {
+            return $this->formatResponse(['json' => ['status' => self::STATUS_HTTP_ERROR]]);
+        }
     }
 }
