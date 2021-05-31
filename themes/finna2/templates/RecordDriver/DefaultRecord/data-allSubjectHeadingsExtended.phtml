@@ -23,7 +23,7 @@
       <?php else: ?>
         <a class="backlink" title="<?=$this->escapeHtmlAttr($subject)?>" href="<?=$this->record($this->driver)->getLink('subject', $subject)?>">
           <?=trim($this->escapeHtml($subfield))?>
-        </a><?= $detail ? " ({$this->escapeHtml($detail)})" : '' ?>
+        </a><?php if ($detail): ?>(<?=$this->escapeHtml($detail)?>)<?php endif; ?>
       <?php endif ?>
     <?php endforeach; ?>
   </div>
