@@ -119,7 +119,9 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         $format = $params->fromPost('format', $params->fromQuery('format'));
 
         if (!$id || !$index || !$format) {
-            return $this->formatResponse(['json' => ['status' => self::STATUS_HTTP_BAD_REQUEST]]);
+            return $this->formatResponse(
+                ['json' => ['status' => self::STATUS_HTTP_BAD_REQUEST]]
+            );
         }
         $format = strtolower($format);
         $fileName = urlencode($id) . '-' . $index . '.' . $format;
@@ -138,7 +140,9 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
             $url = "{$this->domainUrl}{$route}/cache/{$fileName}";
             return $this->formatResponse(compact('url'));
         } else {
-            return $this->formatResponse(['json' => ['status' => self::STATUS_HTTP_ERROR]]);
+            return $this->formatResponse(
+                ['json' => ['status' => self::STATUS_HTTP_ERROR]]
+            );
         }
     }
 }
