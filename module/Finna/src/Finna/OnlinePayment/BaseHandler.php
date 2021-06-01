@@ -30,7 +30,6 @@
  */
 namespace Finna\OnlinePayment;
 
-use Finna\Db\Row\Transaction;
 use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\Log\LoggerAwareInterface;
 
@@ -142,7 +141,10 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
         );
 
         if (!$t) {
-            $this->logger->err($this->getName() . ': error creating transaction');
+            $this->logError(
+                'error creating transaction',
+                compact('userId', 'patronId', 'fines')
+            );
             return false;
         }
 
@@ -152,8 +154,9 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
             $fine['fine'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['fine'] ?? '');
             $fine['title'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['title'] ?? '');
             if (!$feeTable->addFee($t->id, $fine, $t->user_id, $t->currency)) {
-                $this->logger->err(
-                    $this->getName() . ': error adding fee to transaction.'
+                $this->logError(
+                    'error adding fee to transaction',
+                    compact('userId', 'patronId', 'fines', 'fine')
                 );
                 return false;
             }
@@ -182,8 +185,8 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
         }
 
         if (($t = $table->getTransaction($id)) === false) {
-            $this->logger->err(
-                "Error retrieving started transaction $id: transaction not found"
+            $this->logError(
+                "error retrieving started transaction $id: transaction not found"
             );
             return [false, 'transaction_found'];
         }
@@ -219,9 +222,7 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
         }
         $table = $this->getTable('transaction');
         if (!$table->setTransactionPaid($orderNum, $timestamp)) {
-            $this->logger->err(
-                $this->getName() . ": error updating transaction $orderNum to paid"
-            );
+            $this->logError("error updating transaction $orderNum to paid");
         }
     }
 
@@ -236,10 +237,7 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
     {
         $table = $this->getTable('transaction');
         if (!$table->setTransactionCancelled($orderNum)) {
-            $this->logger->err(
-                $this->getName()
-                . ": error updating transaction $orderNum to cancelled"
-            );
+            $this->logError("error updating transaction $orderNum to cancelled");
         }
     }
 
@@ -255,10 +253,7 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
     {
         $table = $this->getTable('transaction');
         if (!$table->setTransactionRegistrationFailed($orderNum, $msg)) {
-            $this->logger->err(
-                $this->getName()
-                . ": error updating transaction $orderNum to failed"
-            );
+            $this->logError("error updating transaction $orderNum to failed");
         }
     }
 
@@ -301,5 +296,64 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
             }
         }
         return $mappings;
+    }
+
+    /**
+     * Log an error
+     *
+     * @param string $msg  Error message
+     * @param array  $data Additional data to log
+     *
+     * @return void
+     */
+    protected function logPaymentError($msg, $data = [])
+    {
+        $msg = "Online payment: $msg";
+        if ($data) {
+            $msg .= ". Additional data:\n" . $this->dumpData($data);
+        }
+        $this->logError($msg);
+    }
+
+    /**
+     * Dump a data array with mixed content
+     *
+     * @param array  $data   Data array
+     * @param string $indent Indentation string
+     *
+     * @return string
+     */
+    protected function dumpData($data, $indent = '')
+    {
+        if (strlen($indent) > 6) {
+            return '';
+        }
+
+        $results = [];
+
+        foreach ($data as $key => $value) {
+            if (is_object($value)) {
+                if (method_exists($value, 'toArray')) {
+                    $value = $value->toArray();
+                } elseif ($value instanceof \Cpu_Client_Payment
+                    || $value instanceof \Finna\OnlinePayment\Paytrail\PaytrailE2
+                    || $value instanceof \Finna\OnlinePayment\TurkuPayment
+                ) {
+                    $value = var_export($value, true);
+                } else {
+                    $key = "$key: " . get_class($value);
+                    $value = get_object_vars($value);
+                }
+            }
+            if (is_array($value)) {
+                $results[] = "$key: {\n"
+                    . $this->dumpData($value, $indent . '  ')
+                    . "\n$indent}";
+            } else {
+                $results[] = "$key: " . var_export($value, true);
+            }
+        }
+
+        return $indent . implode(",\n$indent", $results);
     }
 }

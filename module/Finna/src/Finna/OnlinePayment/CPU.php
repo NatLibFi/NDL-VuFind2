@@ -138,7 +138,10 @@ class CPU extends BaseHandler
         $payment->NotificationAddress = $notifyUrl;
 
         if (!isset($this->config->productCode)) {
-            $this->handleCPUError('missing productCode configuration option');
+            $this->logPaymentError(
+                'missing productCode configuration option',
+                compact('user', 'patron', 'fines')
+            );
             return '';
         }
         $productCode = $this->config->productCode;
@@ -201,33 +204,48 @@ class CPU extends BaseHandler
         }
 
         if (!($module = $this->initCpu())) {
-            $this->handleCPUError('error initializing CPU online payment');
+            $this->logPaymentError(
+                'error initializing CPU online payment',
+                compact('user', 'patron', 'fines')
+            );
             return '';
         }
 
         try {
             $response = $module->sendPayment($payment);
         } catch (\Exception $e) {
-            $this->handleCPUError('exception sending payment: ' . $e->getMessage());
+            $this->logPaymentError(
+                'exception sending payment: ' . $e->getMessage(),
+                compact('user', 'patron', 'fines', 'payment')
+            );
             return '';
         }
         if (isset($response['error']) || !$response) {
-            $errorMessage = $response['error'] ?? 'Sendpayment returned false';
-            $this->handleCPUError('error sending payment: ' . $errorMessage);
+            $errorMessage = $response['error'] ?? 'sendPayment returned false';
+            $this->logPaymentError(
+                'error sending payment: ' . $errorMessage,
+                compact('user', 'patron', 'fines', 'payment')
+            );
             return '';
         }
 
         $response = json_decode($response);
 
         if (empty($response->Id) || empty($response->Status)) {
-            $this->handleCPUError('error starting payment, no response');
+            $this->logPaymentError(
+                'error starting payment, no response',
+                compact('user', 'patron', 'fines', 'payment')
+            );
             return '';
         }
 
         $status = intval($response->Status);
         if (in_array($status, [self::STATUS_ERROR, self::STATUS_INVALID_REQUEST])) {
             // System error or Request failed.
-            $this->handleCPUError('error starting transaction', $response);
+            $this->logPaymentError(
+                'error starting transaction',
+                compact('response', 'user', 'patron', 'fines', 'payment')
+            );
             return '';
         }
 
@@ -236,34 +254,36 @@ class CPU extends BaseHandler
             $response->Reference, $response->PaymentAddress
         ];
         if (!$this->verifyHash($params, $response->Hash)) {
-            $this->handleCPUError(
-                'error starting transaction, invalid checksum', $response
+            $this->logPaymentError(
+                'error starting transaction, invalid checksum',
+                compact('response', 'user', 'patron', 'fines', 'payment')
             );
             return '';
         }
 
         if ($status === self::STATUS_SUCCESS) {
             // Already processed
-            $this->handleCPUError(
+            $this->logPaymentError(
                 'error starting transaction, transaction already processed',
-                $response
+                compact('response', 'user', 'patron', 'fines', 'payment')
             );
             return '';
         }
 
         if ($status === self::STATUS_ID_EXISTS) {
             // Order exists
-            $this->handleCPUError(
+            $this->logPaymentError(
                 'error starting transaction, order exists',
-                $response
+                compact('response', 'user', 'patron', 'fines', 'payment')
             );
             return '';
         }
 
         if ($status === self::STATUS_CANCELLED) {
             // Cancelled
-            $this->handleCPUError(
-                'error starting transaction, order cancelled', $response
+            $this->logPaymentError(
+                'error starting transaction, order cancelled',
+                compact('response', 'user', 'patron', 'fines', 'payment')
             );
             return '';
         }
@@ -317,9 +337,9 @@ class CPU extends BaseHandler
                 continue;
             }
 
-            $this->handleCPUError(
+            $this->logPaymentError(
                 "missing parameter $name in payment response",
-                ['params' => $params, 'payload' => $payload]
+                compact('request', 'params', 'payload')
             );
 
             return false;
@@ -357,8 +377,9 @@ class CPU extends BaseHandler
 
         if (!$this->verifyHash([$id, $status, $reference], $hash)) {
             $this->setTransactionFailed($orderNum, 'invalid checksum');
-            $this->handleCPUError(
-                'error processing response: invalid checksum', $params
+            $this->logPaymentError(
+                'error processing response: invalid checksum',
+                compact('request', 'params')
             );
             return 'online_payment_failed';
         }
@@ -392,7 +413,7 @@ class CPU extends BaseHandler
     {
         foreach (['merchantId', 'secret', 'url'] as $req) {
             if (!isset($this->config[$req])) {
-                $this->logger->err("CPU: missing parameter $req");
+                $this->logger->err("missing parameter $req");
                 return false;
             }
         }
@@ -419,20 +440,5 @@ class CPU extends BaseHandler
     {
         $params[] = $this->config['secret'];
         return hash('sha256', implode('&', $params)) === $hash;
-    }
-
-    /**
-     * Handle error.
-     *
-     * @param string $msg      Error message.
-     * @param Object $response Response.
-     *
-     * @return void
-     */
-    protected function handleCPUError($msg, $response = '')
-    {
-        $this->logger->err(
-            "CPU error: $msg (response: " . var_export($response, true) . ')'
-        );
     }
 }

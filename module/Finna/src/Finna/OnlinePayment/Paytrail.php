@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2020.
+ * Copyright (C) The National Library of Finland 2014-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -68,9 +68,9 @@ class Paytrail extends BaseHandler
 
         foreach ($required as $name) {
             if (!isset($params[$name])) {
-                $this->logger->err(
-                    "Paytrail: missing parameter $name in payment response: "
-                    . var_export($params, true)
+                $this->logPaymentError(
+                    "missing parameter $name in payment response",
+                    compact('params')
                 );
                 return false;
             }
@@ -218,9 +218,10 @@ class Paytrail extends BaseHandler
         try {
             $formData = $module->createPaymentFormData();
         } catch (\Exception $e) {
-            $err = 'Paytrail: error creating payment form data: '
-                . $e->getMessage();
-            $this->logger->err($err);
+            $this->logPaymentError(
+                'error creating payment form data: ' . $e->getMessage(),
+                compact('user', 'patron', 'fines', 'module')
+            );
             return false;
         }
 
@@ -283,10 +284,10 @@ class Paytrail extends BaseHandler
                 $params['RETURN_AUTHCODE']
             );
             if (!$success) {
-                $this->logger->err(
-                    'Paytrail: error processing response: invalid checksum'
+                $this->logPaymentError(
+                    'error processing response: invalid checksum',
+                    compact('request', 'params')
                 );
-                $this->logger->err("   " . var_export($params, true));
                 $this->setTransactionFailed($orderNum, 'invalid checksum');
                 return 'online_payment_failed';
             }
@@ -315,7 +316,7 @@ class Paytrail extends BaseHandler
     {
         foreach (['merchantId', 'secret'] as $req) {
             if (!isset($this->config[$req])) {
-                $this->logger->err("Paytrail: missing parameter $req");
+                $this->logPaymentError("missing parameter $req");
                 throw new \Exception('Missing parameter');
             }
         }
