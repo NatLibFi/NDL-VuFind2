@@ -94,10 +94,10 @@ class SolrEad3 extends SolrEad
         'Lisätietoa kunnosta' => self::ALTFORM_CONDITION,
     ];
 
-    // Accessrestrict types
+    // Accessrestrict types and their order in the UI
     const ACCESS_RESTRICT_TYPES = [
-        'general',
-        'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4', 'ahaa:KR3', 'ahaa:KR1'
+        'ahaa:AI24','general', 'ahaa:KR1', 'ahaa:KR2', 'ahaa:KR3',
+        'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4'
     ];
 
     // relation@encodinganalog-attribute of relations used by getRelatedRecords
@@ -875,6 +875,7 @@ class SolrEad3 extends SolrEad
         if (isset($xml->accessrestrict)
             && !isset($xml->accessrestrict->accessrestrict)
         ) {
+            // Case 1: no nested accessrestrict elements
             $result = [];
 
             foreach ([true, false] as $obeyPreferredLanguage) {
@@ -893,59 +894,88 @@ class SolrEad3 extends SolrEad
                     break;
                 }
             }
-            return ['general' => $result];
+            return $result;
         }
 
-        if (!isset($xml->accessrestrict->accessrestrict)) {
-            return [];
-        }
+        // Case 2: nested accessrestrict elements grouped under subheadings
         $restrictions = [];
         foreach (self::ACCESS_RESTRICT_TYPES as $type) {
             $restrictions[$type] = [];
         }
-        foreach ($xml->accessrestrict->accessrestrict as $accessNode) {
-            if (!isset($accessNode->accessrestrict)) {
-                continue;
-            }
-            foreach ($accessNode->accessrestrict as $access) {
-                $attr = $access->attributes();
-                if (! isset($attr->encodinganalog)) {
-                    $restrictions['general']
-                        = $this->getDisplayLabel($access, 'p', true);
-                } else {
-                    $type = (string)$attr->encodinganalog;
-                    if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
-                        $type = str_replace(':', '_', $type);
-                        switch ($type) {
-                        case 'ahaa_KR7':
-                            $label = $this->getDisplayLabel(
-                                $access->p->name, 'part', true
-                            );
-                            break;
-                        case 'ahaa_KR9':
-                            $label = [(string)($access->p->date ?? '')];
-                            break;
-                        default:
-                            $label = $this->getDisplayLabel($access, 'p');
-                        }
-                        if ($label) {
-                            $restrictions[$type] = $label;
-                        }
+
+        $processNode = function ($access) use (&$restrictions) {
+            $attr = $access->attributes();
+            if (! isset($attr->encodinganalog)) {
+                $restriction['general'] = array_merge(
+                    $restrictions['general'],
+                    $this->getDisplayLabel($access, 'p', true)
+                );
+            } else {
+                $type = (string)$attr->encodinganalog;
+                if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
+                    switch ($type) {
+                    case 'ahaa:KR7':
+                        $label = $this->getDisplayLabel(
+                            $access->p->name, 'part', true
+                        );
+                        break;
+                    case 'ahaa:KR9':
+                        $label = [(string)($access->p->date ?? '')];
+                        break;
+                    default:
+                        $label = $this->getDisplayLabel($access, 'p');
                     }
+                    if ($label) {
+                        // These are displayed under the same heading
+                        if (in_array($type, ['ahaa:KR2', 'ahaa:KR3'])) {
+                            $type = 'ahaa:KR1';
+                        }
+                        $restrictions[$type]
+                            = array_merge($restrictions[$type], $label);
+                    }
+                }
+            }
+        };
+
+        foreach ($xml->accessrestrict ?? [] as $accessNode) {
+            $processNode($accessNode);
+            foreach ($accessNode->accessrestrict ?? [] as $accessNode) {
+                $processNode($accessNode);
+                foreach ($accessNode->accessrestrict ?? [] as $accessNode) {
+                    $processNode($accessNode);
                 }
             }
         }
 
-        // Sort and discard empty
         $result = [];
-        foreach ($restrictions as $type => $values) {
-            if (empty($values)) {
-                unset($restrictions[$type]);
+
+        // Sort
+        $order = self::ACCESS_RESTRICT_TYPES;
+        $sortFn = function ($a, $b) use ($order) {
+            $pos1 = array_search($a, $order);
+            $pos2 = array_search($b, $order);
+            if ($pos1 && $pos2 === false) {
+                return -1;
+            } elseif ($pos1 === false && $pos2) {
+                return 1;
+            } elseif ($pos1 === false && $pos2 === false) {
+                return 0;
             }
-            $result[$type] = $values;
+            return $pos1 - $pos2;
+        };
+        uksort($restrictions, $sortFn);
+
+        // Rename keys to match translations and filter duplicates
+        $renamedKeys = [];
+        foreach ($restrictions as $key => $val) {
+            if (empty($val)) {
+                continue;
+            }
+            $key = str_replace(':', '_', $key);
+            $renamedKeys[$key] = array_unique($val);
         }
 
-        return $result;
+        return $renamedKeys;
     }
 
     /**

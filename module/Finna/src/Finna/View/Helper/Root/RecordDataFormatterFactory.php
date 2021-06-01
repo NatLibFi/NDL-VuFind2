@@ -787,10 +787,16 @@ class RecordDataFormatterFactory
 
         $getAccessRestrictions = function ($data, $options) use (&$pos) {
             $final = [];
+            // Check whether the first restriction element is an array. If so,
+            // restrictions are grouped under subheadings.
+            $useSubHeadings = is_array(array_values($data)[0]);
             foreach ($data as $type => $values) {
+                $values = $useSubHeadings && $values
+                  ? array_values($values) : $values;
+                $label = $useSubHeadings ? "access_restrictions_$type" : null;
                 $final[] = [
-                    'label' => "access_restrictions_$type",
-                    'values' => $values ? array_values($values) : null,
+                    'label' => $label,
+                    'values' => $values,
                     'options' => [
                         'pos' => $pos++,
                         'renderType' => 'RecordDriverTemplate',
