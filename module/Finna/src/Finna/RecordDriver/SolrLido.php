@@ -310,6 +310,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                     continue;
                 }
+
                 $size = '';
                 switch ($attributes->type) {
                 case 'image_thumb':
@@ -368,7 +369,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             if (empty($urls)) {
                 continue;
             }
-
             if (!isset($urls['small'])) {
                 $urls['small'] = $urls['medium']
                     ?? $urls['large'];
