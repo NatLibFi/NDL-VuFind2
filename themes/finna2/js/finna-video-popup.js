@@ -122,17 +122,13 @@ finna.videoPopup = (function finnaVideoPopup() {
 
   function initVideoPopup(_container) {
     var container = typeof _container === 'undefined' ? $('body') : $(_container);
-    var inline = container.find('[data-inline]');
+    var inline = container.find('[data-inline], [data-inline-iframe]');
     var parent;
     var embed = inline.length > 0;
     if (inline.length) {
       parent = 'inline-video';
       $('.inline-video-container').insertAfter($('.search-form-container'));
       $('.inline-video-container').removeClass('hidden');
-
-      if (inline.length < 2) {
-        inline.addClass('hidden');
-      }
     }
 
     var translations = {
@@ -142,28 +138,46 @@ finna.videoPopup = (function finnaVideoPopup() {
     };
 
     container.find('[data-embed-video]').each(function initVideo() {
-      var videoSources = $(this).data('videoSources');
-      var scripts = $(this).data('scripts');
-      var posterUrl = $(this).data('posterUrl');
-      $(this).finnaPopup({
+      var _ = $(this);
+      var videoSources = _.data('videoSources');
+      var scripts = _.data('scripts');
+      var posterUrl = _.data('posterUrl');
+      _.finnaPopup({
         id: 'recordvideo',
         modal: '<video class="video-js vjs-big-play-centered video-popup" controls></video>',
         classes: 'video-popup',
         parent: parent,
-        cycle: !embed,
         embed: embed,
+        cycle: inline.length === 0,
         translations: translations,
         onPopupInit: function onPopupInit(t) {
-          if (this.embed) {
+          if (this.parent) {
             t.removeClass('active-video');
           }
         },
         onPopupOpen: function onPopupOpen() {
-          if (this.embed) {
+          var index = _.data('index');
+          var warnings = $('.video-warning[data-index="' + index + '"]');
+          if (this.parent) {
             $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
+            $('.video-warning').addClass('hidden');
+
+            if (warnings[0]) {
+              warnings.removeClass('hidden');
+              warnings.find('img').unveil();
+            }   
           } else {
             this.content.css('height', '100%');
+            if (warnings[0]) {
+              var clone = warnings.clone();
+              clone.appendTo(this.modalHolder);
+              clone.removeClass('hidden');
+              clone.find('img').unveil();
+              setTimeout(function startFade() {
+                clone.fadeOut(2000);
+              }, 3000);
+            }
           }
           finna.layout.loadScripts(scripts, function onScriptsLoaded() {
             finna.videoPopup.initVideoJs('.video-popup', videoSources, posterUrl);
@@ -175,17 +189,14 @@ finna.videoPopup = (function finnaVideoPopup() {
 
   function initIframeEmbed(_container) {
     var container = typeof _container === 'undefined' ? $('body') : _container;
-    var inline = container.find('[data-inline-iframe]');
+    var inline = container.find('[data-inline], [data-inline-iframe]');
     var parent;
     var embed = inline.length > 0;
+
     if (inline.length) {
       parent = 'inline-video';
       $('.inline-video-container').insertAfter($('.search-form-container'));
       $('.inline-video-container').removeClass('hidden');
-
-      if (inline.length < 2) {
-        inline.addClass('hidden');
-      }
     }
     var translations = {
       close: VuFind.translate('close'),
@@ -194,28 +205,45 @@ finna.videoPopup = (function finnaVideoPopup() {
     };
 
     container.find('[data-embed-iframe]').each(function setIframes() {
-      var source = $(this).is('a') ? $(this).attr('href') : $(this).data('link');
-      $(this).finnaPopup({
+      var _ = $(this);
+      var source = _.is('a') ? _.attr('href') : _.data('link');
+      _.finnaPopup({
         id: 'recordiframe',
-        cycle: !embed,
+        cycle: inline.length === 0,
         classes: 'finna-iframe',
         modal: '<div style="height:100%">' +
           '<iframe class="player finna-popup-iframe" frameborder="0" allowfullscreen></iframe>' +
           '</div>',
         parent: parent,
-        translations: translations,
         embed: embed,
+        translations: translations,
         onPopupInit: function onPopupInit(t) {
-          if (this.embed) {
+          if (this.parent) {
             t.removeClass('active-video');
           }
         },
         onPopupOpen: function onPopupOpen() {
-          if (this.embed) {
+          var index = _.data('index');
+          var warnings = $('.video-warning[data-index="' + index + '"]');
+          if (this.parent) {
             $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
+            $('.video-warning').addClass('hidden');
+            if (warnings[0]) {
+              warnings.removeClass('hidden');
+              warnings.find('img').unveil();
+            }      
           } else {
             this.content.css('height', '100%');
+            if (warnings[0]) {
+              var clone = warnings.clone();
+              clone.removeClass('hidden');
+              clone.appendTo(this.modalHolder);              
+              clone.find('img').unveil();
+              setTimeout(function startFade() {
+                clone.fadeOut(2000);
+              }, 3000);
+            }
           }
           // If using Chrome + VoiceOver, Chrome crashes if vimeo player video settings button has aria-haspopup=true
           $('.vp-prefs .js-prefs').attr('aria-haspopup', false);

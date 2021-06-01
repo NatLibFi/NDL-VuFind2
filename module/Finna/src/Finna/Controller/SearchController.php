@@ -30,6 +30,7 @@ namespace Finna\Controller;
 
 use Finna\Search\Solr\Options;
 use VuFindCode\ISBN;
+use VuFindSearch\Backend\Exception\BackendException;
 
 /**
  * Redirects the user to the appropriate default VuFind action.
@@ -557,9 +558,13 @@ class SearchController extends \VuFind\Controller\SearchController
             $query['hiddenFilters'] = $hiddenFilters;
         }
 
-        $results = $runner->run($query);
-        if ($results->getResultTotal() > 0 || $returnEmptyResults) {
-            return $results;
+        try {
+            $results = $runner->run($query);
+            if ($results->getResultTotal() > 0 || $returnEmptyResults) {
+                return $results;
+            }
+        } catch (BackendException $e) {
+            // Pass through
         }
         return false;
     }

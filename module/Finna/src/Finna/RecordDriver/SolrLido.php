@@ -158,9 +158,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                     $copyright = trim((string)$conceptID);
                     if ($copyright) {
+                        $copyright = $this->getMappedRights($copyright);
                         $data['copyright'] = $copyright;
 
-                        $copyright = strtoupper($copyright);
                         if ($link = $this->getRightsLink($copyright, $language)) {
                             $data['link'] = $link;
                         }
@@ -218,10 +218,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $conceptID = $rightsResource->rightsType->conceptID;
                     $type = strtolower((string)$conceptID->attributes()->type);
                     if ($type === 'copyright' && trim((string)$conceptID)) {
-                        $rights['copyright'] = (string)$conceptID;
-                        $link = $this->getRightsLink(
-                            strtoupper($rights['copyright']), $language
-                        );
+                        $rights['copyright']
+                            = $this->getMappedRights((string)$conceptID);
+                        $link
+                            = $this->getRightsLink($rights['copyright'], $language);
                         if ($link) {
                             $rights['link'] = $link;
                         }
@@ -1078,22 +1078,39 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get the web resource link from the record.
+     * Get the web resource links from the record.
      *
-     * @return mixed
+     * @return array
      */
-    public function getWebResource()
+    public function getWebResources(): array
     {
-        $nodes = $this->getXmlRecord()->xpath(
+        $relatedWorks = $this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
-            . 'relatedWorkSet/relatedWork/object/objectWebResource'
+            . 'relatedWorkSet/relatedWork'
         );
-        if ($url = trim($nodes[0] ?? '')) {
-            if (!$this->urlBlocked($url)) {
-                return $url;
+        $data = [];
+        foreach ($relatedWorks as $work) {
+            if (!empty($work->object->objectWebResource)) {
+                $tmp = [];
+                $url = trim((string)$work->object->objectWebResource);
+                if ($this->urlBlocked($url)) {
+                    continue;
+                }
+                $tmp['url'] = $url;
+                if (!empty($work->displayObject)) {
+                    $tmp['desc'] = trim((string)$work->displayObject);
+                }
+                if (!empty($work->object->objectID)) {
+                    $tmp['info'] = trim((string)$work->object->objectID);
+                    $objectAttrs = $work->object->objectID->attributes();
+                    if (!empty($objectAttrs->label)) {
+                        $tmp['label'] = trim((string)$objectAttrs->label);
+                    }
+                }
+                $data[] = $tmp;
             }
         }
-        return false;
+        return $data;
     }
 
     /**

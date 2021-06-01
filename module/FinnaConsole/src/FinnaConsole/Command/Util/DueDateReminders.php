@@ -262,22 +262,33 @@ class DueDateReminders extends AbstractUtilCommand
             $this->msg('Processing ' . count($users) . ' users');
 
             foreach ($users as $user) {
-                $results = $this->getReminders($user);
-                $errors = $results['errors'];
-                $remindLoans = $results['remindLoans'];
-                $remindCnt = count($remindLoans);
-                $errorCnt = count($errors);
-                if ($remindCnt || $errorCnt) {
-                    $this->msg(
-                        "$remindCnt reminders and $errorCnt errors to send for user"
-                        . " {$user->username} (id {$user->id})"
+                try {
+                    $results = $this->getReminders($user);
+                    $errors = $results['errors'];
+                    $remindLoans = $results['remindLoans'];
+                    $remindCnt = count($remindLoans);
+                    $errorCnt = count($errors);
+                    if ($remindCnt || $errorCnt) {
+                        $this->msg(
+                            "$remindCnt reminders and $errorCnt errors to send for"
+                            . " user {$user->username} (id {$user->id})"
+                        );
+                        $this->sendReminder($user, $remindLoans, $errors);
+                    } else {
+                        $this->msg(
+                            "No loans to remind for user {$user->username}"
+                            . " (id {$user->id})"
+                        );
+                    }
+                } catch (\Exception $e) {
+                    $this->err(
+                        "Exception while processing user {$user->id}: "
+                            . $e->getMessage(),
+                        'Exception occurred while processing a user'
                     );
-                    $this->sendReminder($user, $remindLoans, $errors);
-                } else {
-                    $this->msg(
-                        "No loans to remind for user {$user->username}"
-                        . " (id {$user->id})"
-                    );
+                    while ($e = $e->getPrevious()) {
+                        $this->err("  Previous exception: " . $e->getMessage());
+                    }
                 }
             }
             $this->msg('Completed processing users');

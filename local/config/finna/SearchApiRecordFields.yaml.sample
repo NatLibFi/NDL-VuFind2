@@ -50,7 +50,7 @@ bibliographyNotes:
   items:
     type: string
 buildings:
-  vufind.method: getBuilding
+  vufind.method: getBuildings
   vufind.default: true
   description: Locations (hierarchical)
   type: array

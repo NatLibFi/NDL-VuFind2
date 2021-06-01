@@ -15,8 +15,8 @@
   </h2>
   <div class="record-organisation-box">
      <ul class="<?=(!in_array($recordType, ['ead', 'lido', 'qdc', 'forward'])) ? 'list-group organisations' : 'record-type organisations'?>">
-        <?php if ($currentSource == "narc" && $recordType == 'ead'): ?>
-           <?php $building = $this->driver->tryMethod('getBuilding'); ?>
+        <?php if ($currentSource === 'narc' && $recordType === 'ead' && $building = $this->driver->tryMethod('getBuildings')): ?>
+           <?php ?>
           <li class="record-organisation"><span class="organisation-name"><?=$this->transEsc($building[0])?></span>
         <?php else: ?>
           <li class="record-organisation"><span class="organisation-name"><?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?></span>

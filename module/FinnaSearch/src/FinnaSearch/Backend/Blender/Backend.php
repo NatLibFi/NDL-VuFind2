@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) The National Library of Finland 2019-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -460,12 +460,15 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
         }
 
         $event->setParam('backend', $this->primaryBackend->getIdentifier());
+        $event->setTarget($this->primaryBackend);
         $this->events->triggerEvent($event);
 
         $event->setParam('backend', $this->secondaryBackend->getIdentifier());
+        $event->setTarget($this->secondaryBackend);
         $this->events->triggerEvent($event);
 
         $event->setParam('backend', $backend);
+        $event->setTarget($this);
         return $event;
     }
 

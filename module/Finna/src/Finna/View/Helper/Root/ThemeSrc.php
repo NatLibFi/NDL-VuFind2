@@ -56,23 +56,40 @@ class ThemeSrc extends \Laminas\View\Helper\AbstractHelper
     /**
      * Check if file is found in the current theme.
      *
-     * @param string $relPath        File relative path
-     * @param bool   $returnAbsolute Whether to return absolute file system path
+     * @param string $relPath           File relative path
+     * @param bool   $returnAbsolute    Whether to return absolute file system path
+     * @param bool   $allowParentThemes If file can be searched from parent themes
      *
      * @return mixed
      */
-    protected function fileFromCurrentTheme($relPath, $returnAbsolute = false)
-    {
+    protected function fileFromCurrentTheme(
+        $relPath, $returnAbsolute = false, $allowParentThemes = false
+    ) {
         $currentTheme = $this->themeInfo->getTheme();
         $basePath = $this->themeInfo->getBaseDir();
 
-        $file = $basePath . '/' . $currentTheme . '/' . $relPath;
-        if (file_exists($file)) {
-            if ($returnAbsolute) {
-                return $file;
+        if (!$allowParentThemes) {
+            $file = $basePath . '/' . $currentTheme . '/' . $relPath;
+            if (file_exists($file)) {
+                if ($returnAbsolute) {
+                    return $file;
+                }
+                $urlHelper = $this->getView()->plugin('url');
+                return $urlHelper('home') . 'themes/' .
+                    $currentTheme . '/' . $relPath;
             }
-            $urlHelper = $this->getView()->plugin('url');
-            return $urlHelper('home') . 'themes/' . $currentTheme . '/' . $relPath;
+        } else {
+            $results = $this->themeInfo->findInThemes($relPath);
+            foreach ($results as $result) {
+                if (!empty($result)) {
+                    if ($returnAbsolute) {
+                        return $result['file'];
+                    }
+                    $urlHelper = $this->getView()->plugin('url');
+                    return $urlHelper('home') . 'themes/' .
+                        $result['theme'] . '/' . $result['relativeFile'];
+                }
+            }
         }
         return null;
     }

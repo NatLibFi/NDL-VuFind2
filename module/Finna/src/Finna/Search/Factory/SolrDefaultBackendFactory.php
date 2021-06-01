@@ -130,13 +130,15 @@ class SolrDefaultBackendFactory
      */
     protected function createQueryBuilder()
     {
-        $specs   = $this->loadSpecs();
         $config = $this->config->get('config');
+        $search = $this->config->get($this->searchConfig);
+
+        $specs   = $this->loadSpecs();
         $defaultDismax = $config->Index->default_dismax_handler ?? 'dismax';
-        $builder = new QueryBuilder($specs, $defaultDismax);
+        $maxSpellcheckWords = $search->General->max_spellcheck_words ?? 5;
+        $builder = new QueryBuilder($specs, $defaultDismax, $maxSpellcheckWords);
 
         // Configure builder:
-        $search = $this->config->get($this->searchConfig);
         $caseSensitiveBooleans
             = $search->General->case_sensitive_bools ?? true;
         $caseSensitiveRanges
@@ -145,13 +147,11 @@ class SolrDefaultBackendFactory
             = $search->General->unicode_normalization_form ?? 'NFKC';
         $searchFilters
             = $config->Index->search_filters ?? [];
-        $maxSpellcheckWords = $search->General->max_spellcheck_words ?? 5;
         $helper = new LuceneSyntaxHelper(
             $caseSensitiveBooleans,
             $caseSensitiveRanges,
             $unicodeNormalizationForm,
-            $searchFilters,
-            $maxSpellcheckWords
+            $searchFilters
         );
         $builder->setLuceneHelper($helper);
 
