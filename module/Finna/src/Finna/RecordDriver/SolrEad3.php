@@ -1352,6 +1352,26 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get appraisal information.
+     *
+     * @return string[]
+     */
+    public function getAppraisal() : array
+    {
+        $xml = $this->getXmlRecord();
+        $result = $localeResult = [];
+        $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
+        foreach ($xml->appraisal->p ?? [] as $p) {
+            $value = (string)$p;
+            $result[] = $value;
+            if (in_array((string)$p->attributes()->lang, $preferredLangCodes)) {
+                $localeResult[] = $value;
+            }
+        }
+        return $localeResult ?: $result;
+    }
+
+    /**
      * Get fullresolution images.
      *
      * @return array

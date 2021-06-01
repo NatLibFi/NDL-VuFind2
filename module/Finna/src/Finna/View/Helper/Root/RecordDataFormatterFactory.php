@@ -1024,6 +1024,13 @@ class RecordDataFormatterFactory
             'Archive Relations', 'getRelations', $getRelations
         );
 
+        $setTemplateLine(
+            'Appraisal', 'getAppraisal', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordAppraisal']
+            ]
+        );
+
         return $lines;
     }
 
