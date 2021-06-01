@@ -145,9 +145,18 @@
         $blocks = [];
         if (!empty($holdings['blocks'])) {
           $blocks = $holdings['blocks'];
-          $blocks[] = $this->translate('hold_error_blocked');
+          // Check if we have hold-specific blocks. Add the general hold_error_blocked only if no other hold blocks to avoid repetition.
+          $holdBlocks = false;
+          foreach ($blocks as $block) {
+            if (mb_substr((string)$block, 0, 11, 'UTF-8') === 'hold_error_') {
+              $holdBlocks = true;
+            }
+          }
+          if (!$holdBlocks) {
+              $blocks[] = 'hold_error_blocked';
+          }
         } elseif (!$illRequestLink && !$holdLinks) {
-          $blocks[] = $this->translate('title_cant_place_hold');
+          $blocks[] = 'title_cant_place_hold';
         }
         if ($blocks):
       ?>

@@ -57,11 +57,6 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     protected $searchFilters;
 
     /**
-     * Maximum number of words in search query for spellcheck to be used
-     */
-    protected $maxSpellcheckWords;
-
-    /**
      * Constructor.
      *
      * @param bool|string $csBools                  Case sensitive Booleans setting
@@ -69,17 +64,14 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
      * @param string      $unicodeNormalizationForm UNICODE normalization form
      * @param array       $searchFilters            Regexp filters defined invalid
      * searches
-     * @param int         $maxSpellcheckWords       Max number of words in query for
-     * spellcheck to be used
      */
     public function __construct(
         $csBools = true, $csRanges = true, $unicodeNormalizationForm = 'NFKC',
-        $searchFilters = [], $maxSpellcheckWords = 5
+        $searchFilters = []
     ) {
         parent::__construct($csBools, $csRanges);
         $this->unicodeNormalizationForm = $unicodeNormalizationForm;
         $this->searchFilters = $searchFilters;
-        $this->maxSpellcheckWords = $maxSpellcheckWords;
     }
 
     /**
@@ -206,9 +198,7 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     public function extractSearchTerms($query)
     {
         $result = parent::extractsearchTerms($query);
-        $result = $this->normalizeWildcards($result);
-        return str_word_count($result) <= $this->maxSpellcheckWords
-            ? $result : '';
+        return $this->normalizeWildcards($result);
     }
 
     /**

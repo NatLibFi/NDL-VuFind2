@@ -146,27 +146,6 @@ class Bootstrapper
     }
 
     /**
-     * Set up theme handling.
-     *
-     * @return void
-     */
-    protected function initTheme()
-    {
-        // Attach remaining theme configuration to the dispatch event at high
-        // priority (TODO: use priority constant once defined by framework):
-        $config = $this->config->Site;
-        $callback = function ($event) use ($config) {
-            if ($this->isApiRoute($event)) {
-                return;
-            }
-            $theme = new \VuFindTheme\Initializer($config, $event);
-            $theme->init();
-        };
-        $this->events->attach('dispatch.error', $callback, 9000);
-        $this->events->attach('dispatch', $callback, 9000);
-    }
-
-    /**
      * Initialize the base url for the application from an environment variable
      *
      * @return void
@@ -189,20 +168,6 @@ class Bootstrapper
             }
         };
         $this->events->attach('route', $callback, 9000);
-    }
-
-    /**
-     * Check if we're processing an API route
-     *
-     * @param MvcEvent $event Event being handled
-     *
-     * @return boolean
-     */
-    protected function isApiRoute($event)
-    {
-        $routeMatch = $event->getRouteMatch();
-        $routeName = $routeMatch !== null ? $routeMatch->getMatchedRouteName() : '';
-        return substr($routeName, -3) === 'Api';
     }
 
     /**

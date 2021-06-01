@@ -71,9 +71,11 @@
     <?php endif; ?>
     <div class="media-body">
       <div class="result-body">
-        <?php if ($origination = $this->driver->getOrigination()): ?>
+        <?php if ($originations = $this->driver->tryMethod('getOriginations', [], $this->driver->getOrigination())): $originations = (array)$originations; ?>
             <span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
-            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a>
+            <?php foreach ($originations as $i => $origination): ?>
+              <?=$i > 0 ? ' ; ' : ''?><a href="<?=$this->escapeHtmlAttr($this->url('search-results', [], ['query' => ['lookfor' => $origination, 'type' => 'Author']]))?>"><?=$this->escapeHtml($origination)?></a>
+            <?php endforeach; ?>
             <br/>
           <?php endif; ?>
           <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>

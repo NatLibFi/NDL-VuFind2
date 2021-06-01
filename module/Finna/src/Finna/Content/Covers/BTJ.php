@@ -55,7 +55,7 @@ class BTJ extends \VuFind\Content\AbstractCover
     public function __construct(\VuFind\Record\Loader $recordLoader)
     {
         $this->recordLoader = $recordLoader;
-        $this->supportsIsbn = false;
+        $this->supportsRecordid = true;
         $this->cacheAllowed = false;
     }
 
@@ -109,18 +109,6 @@ class BTJ extends \VuFind\Content\AbstractCover
         } catch (\Exception $e) {
             return false;
         }
-    }
-
-    /**
-     * Does this plugin support the provided ID array?
-     *
-     * @param array $ids IDs that will later be sent to load() -- see below.
-     *
-     * @return bool
-     */
-    public function supports($ids)
-    {
-        return isset($ids['recordid']);
     }
 
     /**

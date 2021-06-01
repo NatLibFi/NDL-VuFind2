@@ -1492,14 +1492,14 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getPickupLocations($patron, $holdDetails)
+    public function getPickupLocations($patron, $holdDetails = null)
     {
         $xml = $this->makeRequest('/conf/libraries');
         $libraries = [];
         foreach ($xml as $library) {
             $libraries[] = [
-                'locationID' => $library->code,
-                'locationDisplay' => $library->name
+                'locationID' => (string)$library->code,
+                'locationDisplay' => (string)$library->name
             ];
         }
         return $libraries;

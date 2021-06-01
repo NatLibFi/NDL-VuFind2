@@ -1593,6 +1593,7 @@ custom_variables = 1
 url = http://finna-be-1.csc.fi/preview
 
 ; Links to copyright information used for image rights.
+; Note: keys must be in ALL CAPS.
 [ImageRights]
 fi['CC0'] = "http://creativecommons.org/about/cc0"
 sv['CC0'] = "http://creativecommons.org/about/cc0"
@@ -1653,6 +1654,18 @@ en-gb['CNE'] = "https://rightsstatements.org/page/CNE/1.0/?language=en"
 fi['PDM'] = "https://creativecommons.org/publicdomain/mark/1.0/deed.fi"
 sv['PDM'] = "https://creativecommons.org/publicdomain/mark/1.0/deed.sv"
 en-gb['PDM'] = "https://creativecommons.org/publicdomain/mark/1.0/deed.en"
+
+; Mappings from rights codes used in records to codes used in the ImageRights section.
+; Note: keys must be in ALL CAPS.
+[RightsMap]
+CCBY4.0 = CC BY 4.0
+CCBYSA4.0 = CC BY-SA 4.0
+CCBYND4.0 = CC BY-ND 4.0
+CCBYNCND4.0 = CC BY-NC-ND 4.0
+CCBYNCSA4.0 = CC BY-NC-SA 4.0
+CCBYNC4.0 = CC BY-NC-SA 4.0
+PUBLIC DOMAIN = PDM
+PUBLIC DOMAIN 1.0 = PDM
 
 ; Finna survey
 [FinnaSurvey]

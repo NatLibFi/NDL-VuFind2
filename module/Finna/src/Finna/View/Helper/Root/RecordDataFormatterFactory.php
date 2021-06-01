@@ -599,6 +599,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Related Materials', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
+            [
+                'context' => ['class' => 'relatedMaterials']
+            ]
+        );
+        $setTemplateLine(
             'Online Access', true, 'data-onlineAccess.phtml',
             [
                 'context' => ['class' => 'webResource']
@@ -905,7 +911,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Available Online', 'getWebResource', 'data-url.phtml',
+            'Available Online', 'getWebResources', 'data-detailed-urls.phtml',
             [
                 'context' => [
                     'class' => 'record-available-online',

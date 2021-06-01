@@ -161,8 +161,9 @@ class CPU extends BaseHandler
             }
             if (!empty($fine['title'])) {
                 $fineDesc .= ' ('
-                    . substr($fine['title'], 0, 100 - 4 - strlen($fineDesc))
-                    . ')';
+                    . mb_substr(
+                        $fine['title'], 0, 100 - 4 - strlen($fineDesc), 'UTF-8'
+                    ) . ')';
             }
             if ($fineDesc) {
                 // Get rid of characters that cannot be converted to ISO-8859-1 since
@@ -172,10 +173,13 @@ class CPU extends BaseHandler
                     'UTF-8',
                     iconv('UTF-8', 'ISO-8859-1//IGNORE', $fineDesc)
                 );
-                // Remove ' since that causes the string to be truncated
+                // Remove ' since it causes the string to be truncated
                 $fineDesc = str_replace("'", ' ', $fineDesc);
-                // Make sure that description length does not exceed CPU
-                // max limit of 100 characters.
+                // Sanitize before limiting the length, otherwise the sanitization
+                // process may blow the string through the limit
+                $fineDesc = \Cpu_Client::sanitize($fineDesc);
+                // Make sure that description length does not exceed CPU max limit of
+                // 100 characters.
                 $fineDesc = mb_substr($fineDesc, 0, 100, 'UTF-8');
             }
 
@@ -184,7 +188,7 @@ class CPU extends BaseHandler
                 $code = $organizationProductCodeMappings[$fineOrg]
                     . ($productCodeMappings[$fineType] ?? '');
             }
-            $code = substr($code, 0, 25);
+            $code = mb_substr($code, 0, 25, 'UTF-8');
             $product = new \Cpu_Client_Product(
                 $code, 1, $fine['balance'], $fineDesc ?: null
             );

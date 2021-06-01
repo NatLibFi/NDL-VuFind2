@@ -11,14 +11,25 @@
             <?= $this->transEsc('ontology_recommendation_' . $type, ['%%term%%' => $term, '%%results_count%%' => count($termRecs)]) ?>
           <?php if (1 === count($termRecs)): ?>
               <?php $index += 1; ?>
-              '<a href="<?= $termRecs[0]['href'] ?>" data-index="<?= $index ?>"><?= $this->escapeHtml($termRecs[0]['label']) ?></a>'
+              <?php if (isset($termRecs[0]['href'])): ?>
+                '<a href="<?= $this->escapeHtmlAttr($termRecs[0]['href']) ?>" data-index="<?= $index ?>"><?= $this->escapeHtml($termRecs[0]['label']) ?></a>'
+              <?php else: ?>
+                '<?= $this->escapeHtml($termRecs[0]['label']) ?>'
+              <?php endif; ?>
             </p>
           <?php else: ?>
             </p>
             <ul<?php if (count($termRecs) > 5):?> class="truncate-field" data-rows="1"<?php endif;?>>
               <?php foreach ($termRecs as $termRec): ?>
-                <?php $index += 1; ?>
-                <li><a href="<?= $termRec['href'] ?>" data-index="<?= $index ?>"><?= $this->escapeHtml($termRec['label']) ?></a></li>
+                <?php
+                  $index += 1;
+                  $resultTotal = isset($termRec['resultTotal']) ? '&nbsp;(' . $termRec['resultTotal'] . ')' : '';
+                ?>
+                <?php if (isset($termRec['href'])): ?>
+                  <li><a href="<?= $this->escapeHtmlAttr($termRec['href']) ?>" data-index="<?= $index ?>"><?= $this->escapeHtml($termRec['label']) ?></a><?= $resultTotal ?></li>
+                <?php else: ?>
+                  <li><?= $this->escapeHtml($termRec['label']) ?><?= $resultTotal ?></li>
+                <?php endif; ?>
               <?php endforeach; ?>
             </ul>
           <?php endif; ?>

@@ -69,20 +69,6 @@ class SolrLrmi extends SolrQdc
     ];
 
     /**
-     * Usage rights map
-     *
-     * @var array
-     */
-    protected $usageRightsMap = [
-        'CCBY4.0' => 'CC BY 4.0',
-        'CCBYSA4.0' => 'CC BY-SA 4.0',
-        'CCBYND4.0' => 'CC BY-ND 4.0',
-        'CCBYNCND4.0' => 'CC BY-NC-ND 4.0',
-        'CCBYNCSA4.0' => 'CC BY-NC-SA 4.0',
-        'CCBYNC4.0' => 'CC BY-NC-SA 4.0'
-    ];
-
-    /**
      * Returns a list of downloadable file formats.
      *
      * @return array
@@ -107,10 +93,10 @@ class SolrLrmi extends SolrQdc
         $xml = $this->getXmlRecord();
         $rights = [];
         if (!empty($xml->rights)) {
-            $copyrights = (string)$xml->rights;
-            $rights['copyrights']
-                = $this->usageRightsMap[$copyrights] ?? $copyrights;
-            $rights['link'] = $this->getRightsLink($rights['copyrights'], $language);
+            $rights['copyright'] = $this->getMappedRights((string)$xml->rights);
+            if ($link = $this->getRightsLink($rights['copyright'], $language)) {
+                $rights['link'] = $link;
+            }
             return $rights;
         }
         return false;

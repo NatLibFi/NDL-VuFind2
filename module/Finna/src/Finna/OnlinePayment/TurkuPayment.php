@@ -100,13 +100,11 @@ class TurkuPayment extends Paytrail
 
         foreach ($fines as $fine) {
             $fineType = $fine['fine'] ?? '';
-            $fineOrg = $fine['organization'] ?? '';
-            $code = substr($fineType, 0, 16);
+            $code = mb_substr($fineType, 0, 16, 'UTF-8');
 
             $fineDesc = '';
             if (!empty($fineType)) {
-                $fineDesc
-                    = $this->translator->translate("fine_status_$fineType");
+                $fineDesc = $this->translator->translate("fine_status_$fineType");
                 if ("fine_status_$fineType" === $fineDesc) {
                     $fineDesc = $this->translator->translate("status_$fineType");
                     if ("status_$fineType" === $fineDesc) {
@@ -130,7 +128,7 @@ class TurkuPayment extends Paytrail
         }
 
         try {
-            $requestBody = $module->generateBody();
+            $module->generateBody();
         } catch (\Exception $e) {
             $err = 'TurkuPayment: error creating payment request body: '
                 . $e->getMessage();

@@ -1,20 +1,32 @@
 <?php //Don't add START and END comments ?>
 <?php if (!empty($data)): ?>
   <?php
-    $allLinks = [];
-    foreach ($data as $link) {
-      $allLinks[$link['title']][] = $link;
+    $allLinks = $data;
+    if ($useLinkTitles = isset($data[0]['title'])) {
+      $allLinks = [];
+      foreach ($data as $link) {
+        $allLinks[$link['title']][] = $link;
+      }
     }
   ?>
-  <?php foreach ($allLinks as $title => $links): ?>
-    <tr class="recordLinks">
-      <th><?=$this->transEsc($title);?></th>
-      <td>
-        <?php foreach ($links as $link): ?>
-          <a href="<?=$this->recordLink()->related($link['link'], true, $this->driver->getSourceIdentifier());?>"><?=$this->escapeHtml($link['value'] ?: $this->translate($title));?></a>
-          <br />
-        <?php endforeach; ?>
-      </td>
-    </tr>
-  <?php endforeach; ?>
+  <?php if ($useLinkTitles):?>
+    <?php foreach ($allLinks as $title => $links): ?>
+      <tr class="recordLinks">
+        <th><?=$this->transEsc($title);?></th>
+        <td>
+          <?php foreach ($links as $link): ?>
+            <a href="<?=$this->recordLink()->related($link['link'], true, $this->driver->getSourceIdentifier());?>"><?=$this->escapeHtml($link['value'] ?: $this->translate($title));?></a>
+            <br />
+          <?php endforeach; ?>
+        </td>
+      </tr>
+    <?php endforeach; ?>
+  <?php else:?>
+    <div class="truncate-field">
+      <?php foreach ($allLinks as $link): ?>
+        <a href="<?=$this->recordLink()->related($link['link'], true, $this->driver->getSourceIdentifier());?>"><?=$this->escapeHtml($link['value'])?></a>
+        <br />
+      <?php endforeach; ?>
+    </div>
+  <?php endif?>
 <?php endif; ?>

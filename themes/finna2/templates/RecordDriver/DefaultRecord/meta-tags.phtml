@@ -18,7 +18,7 @@
 
   // Fetch correct image link and metadata here for Facebook, Pinterest and Twitter
   $this->doctype(Laminas\View\Helper\Doctype::XHTML1_RDFA); // See: https://docs.laminas.dev/laminas-view/helpers/head-meta/
-  $this->headMeta()->setProperty('og:title', $this->driver->getShortTitle());
+  $this->headMeta()->setProperty('og:title', $this->driver->getTitle());
   if ($summary) {
     $this->headMeta()->setProperty('og:description', mb_strimwidth($this->stripTags($summary[0]), 0, 156, '...', 'utf-8')); // max 156
   }
@@ -38,7 +38,7 @@
   }
   $this->headMeta()->appendName('twitter:card', 'summary');
   $this->headMeta()->appendName('twitter:site', '@finnafi');
-  $this->headMeta()->appendName('twitter:title', $this->driver->getShortTitle());
+  $this->headMeta()->appendName('twitter:title', $this->driver->getTitle());
   if ($summary) {
     $this->headMeta()->appendName('twitter:description', mb_strimwidth($this->stripTags($summary[0]), 0, 200, '...', 'utf-8')); // max 200
   }
