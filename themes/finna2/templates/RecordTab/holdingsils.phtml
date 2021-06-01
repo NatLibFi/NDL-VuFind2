@@ -190,7 +190,7 @@
           <?php endforeach; ?>
         </select>
       <?php endif; ?>
-      </div>
+    </div>
     <?php if (!empty($holdings['holdings'])): ?>
       <div class="reservations-container">
         <?php if ($showSummary): ?>
@@ -207,6 +207,15 @@
       </div>
     <?php endif; ?>
   </div>
+
+<?php if ($containerLinksHtml = trim($this->record($this->driver)->renderTemplate('container-links.phtml'))): ?>
+  <div class="holdings-group">
+    <div class="copy-details">
+      <?=$containerLinksHtml?>
+    </div>
+  </div>
+<?php endif; ?>
+
 <?php $holdingsGroup = 0; ?>
 <?php foreach ($holdings['holdings'] as $holdingId => $holding): ?>
   <?php
