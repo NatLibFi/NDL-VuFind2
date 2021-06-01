@@ -302,7 +302,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $formatDisallowed = in_array(
                         $format, $this->undisplayableFileFormats
                     );
-
                     if ($formatDisallowed) {
                         continue;
                     }
@@ -311,7 +310,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                     continue;
                 }
-
                 $size = '';
                 switch ($attributes->type) {
                 case 'image_thumb':
@@ -379,6 +377,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $urls['medium'] = $urls['small']
                     ?? $urls['large'];
             }
+
             $result = [
                 'urls' => $urls,
                 'description' => '',
@@ -517,7 +516,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return settings from config
+     * Return model settings from config
      *
      * @return array settings
      */

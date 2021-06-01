@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -92,7 +92,7 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
     }
 
     /**
-     * Download 3d model
+     * Download 3D model
      *
      * @return \Laminas\Http\Response
      */
@@ -117,7 +117,7 @@ class FileController extends \Laminas\Mvc\Controller\AbstractActionController
                 $file = $this->fileLoader->getFile(
                     $url, $fileName, 'Models', 'public'
                 );
-                if (!$file['result']) {
+                if (!empty($file['result'])) {
                     $response->setStatusCode(500);
                 } else {
                     $contentType = '';
