@@ -29,8 +29,6 @@ namespace Finna\OnlinePayment;
 
 use Finna\OnlinePayment\TurkuPayment\TurkuPaytrailE2;
 
-use Laminas\Http\Request;
-
 /**
  * Turku online payment handler module.
  *
@@ -66,7 +64,7 @@ class TurkuPayment extends Paytrail
         $required = ['merchantId', 'secret', 'sapCode', 'oId', 'applicationName'];
         foreach ($required as $req) {
             if (!isset($this->config[$req])) {
-                $this->logger->err("TurkuPayment: missing parameter $req");
+                $this->logPaymentError("missing parameter $req");
                 throw new \Exception('Missing parameter');
             }
         }
@@ -100,13 +98,11 @@ class TurkuPayment extends Paytrail
 
         foreach ($fines as $fine) {
             $fineType = $fine['fine'] ?? '';
-            $fineOrg = $fine['organization'] ?? '';
-            $code = substr($fineType, 0, 16);
+            $code = mb_substr($fineType, 0, 16, 'UTF-8');
 
             $fineDesc = '';
             if (!empty($fineType)) {
-                $fineDesc
-                    = $this->translator->translate("fine_status_$fineType");
+                $fineDesc = $this->translator->translate("fine_status_$fineType");
                 if ("fine_status_$fineType" === $fineDesc) {
                     $fineDesc = $this->translator->translate("status_$fineType");
                     if ("status_$fineType" === $fineDesc) {
@@ -130,11 +126,12 @@ class TurkuPayment extends Paytrail
         }
 
         try {
-            $requestBody = $module->generateBody();
+            $module->generateBody();
         } catch (\Exception $e) {
-            $err = 'TurkuPayment: error creating payment request body: '
-                . $e->getMessage();
-            $this->logger->err($err);
+            $this->logPaymentError(
+                'error creating payment request body: ' . $e->getMessage(),
+                compact('user', 'patron', 'fines', 'module')
+            );
             return false;
         }
 
@@ -217,10 +214,10 @@ class TurkuPayment extends Paytrail
                 $params['RETURN_AUTHCODE']
             );
             if (!$success) {
-                $this->logger->err(
-                    'TurkuPayment: error processing response: invalid checksum'
+                $this->logPaymentError(
+                    'error processing response: invalid checksum',
+                    compact('params', 'module')
                 );
-                $this->logger->err("   " . var_export($params, true));
                 $this->setTransactionFailed($orderNum, 'invalid checksum');
                 return 'online_payment_failed';
             }

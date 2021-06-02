@@ -198,6 +198,33 @@ class SolrAuthEacCpf extends SolrAuthDefault
     }
 
     /**
+     * Return relations to other authority records.
+     *
+     * @return array
+     */
+    public function getRelations()
+    {
+        $record = $this->getXmlRecord();
+        $result = [];
+        foreach ($record->cpfDescription->relations->cpfRelation ?? []
+            as $relation
+        ) {
+            $attr = $relation->attributes();
+            $id = (string)$attr->href;
+            $name = (string)$relation->relationEntry;
+            if ($id && $name) {
+                $result[] = [
+                    'id' => $id,
+                    'name' => $name,
+                    'role' => (string)$attr->title,
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Return occupations.
      *
      * @return array

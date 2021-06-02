@@ -81,6 +81,14 @@ class AuthorityHelper
     const LINK_TYPE_SEARCH = 'search';
 
     /**
+     * Authority link type: search results filtered by topic_id_tr_mv (either
+     * an internal authority index id or external URI (YSO etc)).
+     *
+     * @var string
+     */
+    const LINK_TYPE_SEARCH_SUBJECT = 'search-subject';
+
+    /**
      * Record loader
      *
      * @var \VuFind\Record\Loader
@@ -332,7 +340,12 @@ class AuthorityHelper
             $setting = self::LINK_TYPE_SEARCH;
         }
         return
-            in_array($setting, [self::LINK_TYPE_PAGE, self::LINK_TYPE_SEARCH])
+            in_array(
+                $setting, [
+                    self::LINK_TYPE_PAGE, self::LINK_TYPE_SEARCH,
+                    self::LINK_TYPE_SEARCH_SUBJECT
+                ]
+            )
             ? $setting : null;
     }
 

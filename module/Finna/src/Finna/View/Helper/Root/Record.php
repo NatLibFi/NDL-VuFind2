@@ -259,13 +259,18 @@ class Record extends \VuFind\View\Helper\Root\Record
         $filter = null;
 
         $linkType = $params['linkType'] ?? $this->getAuthorityLinkType($type);
+        $authId = null;
+        if (isset($params['id'])) {
+            // Add namespace to id
+            $authId = $params['id'] = $this->driver->getAuthorityId(
+                $params['id'], $type
+            );
+        }
+
         // Attempt to switch Author search link to Authority link.
         if (null !== $linkType
             && in_array($type, ['author', 'author-id', 'subject'])
-            && isset($params['id'])
-            && $authId = $this->driver->getAuthorityId(
-                $params['id'], $type
-            )
+            && $authId
         ) {
             $type = "authority-$linkType";
             $filter = $linkType === 'search'
@@ -339,7 +344,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $type, $lookfor, $data, $params = []
     ) {
         $id = $data['id'] ?? null;
-        $linkType = $this->getAuthorityLinkType();
+        $linkType = $this->getAuthorityLinkType($type);
 
         // Discard search tabs hiddenFilters when jumping to Authority page
         $preserveSearchTabsFilters = $linkType !== AuthorityHelper::LINK_TYPE_PAGE;
@@ -354,7 +359,10 @@ class Record extends \VuFind\View\Helper\Root\Record
 
         if (!$this->isAuthorityEnabled()
             || (!$showInlineInfo
-            && !in_array($urlType, ['authority-search', 'authority-page']))
+            && !in_array(
+                $urlType,
+                ['authority-search', 'authority-page', 'authority-search-subject']
+            ))
         ) {
             $author = [
                'name' => $data['name'] ?? null,
@@ -426,6 +434,18 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Is authority functionality enabled?
+     *
+     * @return bool
+     */
+    public function isAuthorityEnabled()
+    {
+        return
+            $this->config->Authority
+            && (bool)$this->config->Authority->enabled ?? false;
+    }
+
+    /**
      * Is authority links enabled?
      * Utility function for rendering an author search link element.
      *
@@ -452,18 +472,6 @@ class Record extends \VuFind\View\Helper\Root\Record
         ];
 
         return trim($this->renderTemplate('author-link-element.phtml', $params));
-    }
-
-    /**
-     * Is authority functionality enabled?
-     *
-     * @return bool
-     */
-    protected function isAuthorityEnabled()
-    {
-        return
-            $this->config->Authority
-            && (bool)$this->config->Authority->enabled ?? false;
     }
 
     /**

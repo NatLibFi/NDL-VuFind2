@@ -28,10 +28,10 @@
                 $extra = $lang === 'sv' ? '_sv' : '_fi';
               }
               // Lets see if swedish version of image is needed
-              $warningImageUrls[$warning] = $this->imageSrc()->getSourceAddress($warning . $extra);
+              $warningImageUrls[$warning] = $this->imageSrc()->getSourceAddress($warning . $extra, true);
             } ?>
             <?php if (!empty($warningImageUrls[$warning])): ?>
-              <span class="video-warning-icon"><img title="<?=$this->transEscAttr($translation)?>" data-src="<?=$this->this->escapeHtmlAttr($warningImageUrls[$warning])?>"/></span>
+              <span class="video-warning-icon"><img title="<?=$this->transEscAttr($warning)?>" data-src="<?=$this->escapeHtmlAttr($warningImageUrls[$warning])?>"/></span>
             <?php endif; ?>
           <?php endforeach; ?>
         <?php endif; ?>

@@ -421,11 +421,13 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $type = $this->feeTypeMappings[$typeCode] ?? $entry['AccountCodeName']
                 ?? '';
             $fineId = $entry['Id'] ?? null;
+            $balance = $entry['Remainder'] * 100;
             $payable = $fineId && in_array($fineId, $payableIds)
-                && !in_array($typeCode, $blockedTypes);
+                && !in_array($typeCode, $blockedTypes)
+                && $balance >= 1;
             $fine = [
                 'amount' => $entry['Amount'] * 100,
-                'balance' => $entry['Remainder'] * 100,
+                'balance' => $balance,
                 'fine' => $type,
                 'createdate' => $createDate,
                 'checkout' => '',

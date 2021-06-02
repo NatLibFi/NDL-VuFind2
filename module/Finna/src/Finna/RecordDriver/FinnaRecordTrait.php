@@ -301,6 +301,11 @@ trait FinnaRecordTrait
      */
     public function getAuthorityId($id, $type = '*')
     {
+        if (preg_match('/^https?:/', $id)) {
+            // Never prefix http(s) url's
+            return $id;
+        }
+
         if (!$this->datasourceSettings || !is_callable([$this, 'getDatasource'])) {
             return $id;
         }

@@ -233,10 +233,6 @@ class SolrExtensionsListener
                             $boosts[] = $bq;
                         }
                         $params->set('bq', $boosts);
-
-                        // Set also default query type since bq only works with
-                        // DisMax and eDisMax.
-                        $params->set('defType', 'edismax');
                     }
                 }
             }
