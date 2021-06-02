@@ -199,14 +199,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     protected $inspectionAttributes = [
         'number' => 'elokuva-tarkastus-tarkastusnro',
-        'type' => 'elokuva-tarkastus-tarkastamolaji',
+        'inspectiontype' => 'elokuva-tarkastus-tarkastamolaji',
         'length' => 'elokuva-tarkastus-pituus',
-        'tax' => 'elokuva-tarkastus-veroluokka',
-        'age' => 'elokuva-tarkastus-ikaraja',
+        'taxclass' => 'elokuva-tarkastus-veroluokka',
+        'agerestriction' => 'elokuva-tarkastus-ikaraja',
         'format' => 'elokuva-tarkastus-formaatti',
         'part' => 'elokuva-tarkastus-osalkm',
         'office' => 'elokuva-tarkastus-tarkastuttaja',
-        'time' => 'elokuva-tarkastus-kesto',
+        'runningtime' => 'elokuva-tarkastus-kesto',
         'subject' => 'elokuva-tarkastus-tarkastusaihe',
         'reason' => 'elokuva-tarkastus-perustelut',
         'additional' => 'elokuva-tarkastus-muuttiedot',

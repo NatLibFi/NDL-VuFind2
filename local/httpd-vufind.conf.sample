@@ -44,6 +44,9 @@ Alias /vufind2 /path-to/NDL-VuFind2/public
   Header unset Set-Cookie env=VUFIND_API_CALL
   Header unset Set-Cookie env=REDIRECT_VUFIND_API_CALL
 
+  # Redirect requests to robots.txt even though the file exists
+  RewriteRule robots.txt$ index.php [L]
+
   RewriteCond %{REQUEST_FILENAME} -s [OR]
   RewriteCond %{REQUEST_FILENAME} -l [OR]
   RewriteCond %{REQUEST_FILENAME} -d
