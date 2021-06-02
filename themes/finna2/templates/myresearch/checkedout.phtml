@@ -171,11 +171,6 @@
                         <strong><?=$this->transEsc('Issue')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
                         <br />
                       <?php endif; ?>
-                      <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
-                      <?php if (!empty($ilsDetails['volume'])): ?>
-                        <strong><?=$this->transEsc('Issue')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
-                        <br />
-                      <?php endif; ?>
                       <?php if (!empty($ilsDetails['publication_year'])): ?>
                         <strong><?=$this->transEsc('Year of Publication')?>:</strong> <?=$this->escapeHtml($ilsDetails['publication_year'])?>
                         <br />
@@ -275,9 +270,9 @@
                     </td>
                     <td>
                       <div class="renew-button-col">
-                        <input type="submit" class="btn btn-primary renew-button" name="renewSelected" value="<?=$this->escapeHtmlAttr("renew_selected")?>" />
+                        <input type="submit" class="btn btn-primary renew-button" name="renewSelected" value="<?=$this->transEscAttr("renew_selected")?>" />
                         <?php if ($renewAll): ?>
-                          <input type="submit" class="btn btn-primary renew-button" name="renewAll" value="<?=$this->escapeHtmlAttr('renew_all')?>" />
+                          <input type="submit" class="btn btn-primary renew-button" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" />
                         <?php endif; ?>
                       </div>
                       <div class="sort-col">
