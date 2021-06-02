@@ -256,6 +256,20 @@ class SolrEad3 extends SolrEad
 
         $localeResults = $results = [];
 
+        // For filtering out duplicate names
+        $searchNamesFn = function ($origination, $names) {
+            foreach ($names as $name) {
+                $detail1 = $origination['detail'] ?? null;
+                $detail2 = $name['detail'] ?? null;
+                if ($origination['name'] === $name['name']
+                    && ((!$detail1 || !$detail2) || ($detail1 === $detail2))
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
         foreach ($record->did->origination ?? [] as $origination) {
             $originationLocaleResults = $originationResults = [];
             foreach ($origination->name ?? [] as $name) {
@@ -270,7 +284,9 @@ class SolrEad3 extends SolrEad
                         $attr = $name->attributes();
                         $value = (string)$name;
                         $localType = (string)$attr->localtype;
-                        $data = ['id' => $id, 'name' => $value];
+                        $data = [
+                            'id' => $id, 'name' => $value, 'detail' => $localType
+                        ];
                         if ($localType !== self::RELATOR_TIME_INTERVAL) {
                             if ($nextEl = $names[$i + 1] ?? null) {
                                 $localType
@@ -288,11 +304,15 @@ class SolrEad3 extends SolrEad
                             }
                         }
                         $lang = $this->detectNodeLanguage($name);
-                        if ($lang['preferred']) {
-                            $originationLocaleResults[$value] = $data;
+                        if ($lang['preferred']
+                            && !$searchNamesFn($data, $originationLocaleResults)
+                        ) {
+                            $originationLocaleResults[] = $data;
                         }
-                        if ($lang['default']) {
-                            $originationResults[$value] = $data;
+                        if ($lang['default']
+                            && !$searchNamesFn($data, $originationResults)
+                        ) {
+                            $originationResults[] = $data;
                         }
                     }
                 }
@@ -303,6 +323,7 @@ class SolrEad3 extends SolrEad
             $results = array_merge($results, $originationResults);
         }
 
+        // // Loop relations and filter out names already added from did->origination
         foreach ($record->relations->relation ?? [] as $relation) {
             $attr = $relation->attributes();
             foreach (['relationtype', 'href', 'arcrole'] as $key) {
@@ -317,18 +338,20 @@ class SolrEad3 extends SolrEad
             }
             $id = (string)$attr->href;
             if ($name = $this->getDisplayLabel($relation, 'relationentry', true)) {
-                if (!isset($localeResults[$name[0]])) {
-                    $localeResults[$name[0]] = ['id' => $id, 'name' => $name[0]];
+                $name = $name[0];
+                if (!$searchNamesFn(compact('name'), $localeResults)) {
+                    $localeResults[] = compact('id', 'name');
                 }
             }
             if ($name = $this->getDisplayLabel($relation, 'relationentry')) {
-                if (!isset($allResults[$name[0]])) {
-                    $allResults[$name[0]] = ['id' => $id, 'name' => $name[0]];
+                $name = $name[0];
+                if (!$searchNamesFn(compact('name'), $results)) {
+                    $results[] = compact('id', 'name');
                 }
             }
         }
 
-        return array_values($localeResults ?: $results);
+        return $localeResults ?: $results;
     }
 
     /**
