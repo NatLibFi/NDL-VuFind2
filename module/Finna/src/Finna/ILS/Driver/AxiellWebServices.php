@@ -1872,7 +1872,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'title' => $obj->title,
                 'checkoutdate' => $this->formatDate($record->checkOutDate),
                 'returndate' => isset($record->checkInDate)
-                    ? $this->formatDate($record->checkInDate) : ''
+                    ? $this->formatDate($record->checkInDate) : '',
+                'publication_year' => $obj->publicationYear ?? '',
+                'volume' => $obj->volume ?? ''
             ];
             $transList[] = $trans;
         }
