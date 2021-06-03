@@ -48,7 +48,7 @@ class FinnaTruncate extends AbstractBase
     {
         parent::__construct($name, $options);
 
-        $labelElement = $this->dom->find($this->name . '-label');
+        $labelElement = $this->dom->find('*[slot="label"]');
         if ($labelElement = $labelElement[0] ?? false) {
             $label = trim(strip_tags($labelElement->innerHtml()));
             if (!empty($label)) {
@@ -70,7 +70,7 @@ class FinnaTruncate extends AbstractBase
      * @return array Keyed array with attribute names as keys and variable names as
      *               values
      */
-    protected function getAttributeToVariableMap(): array
+    protected static function getAttributeToVariableMap(): array
     {
         return ['rows' => 'rows'];
     }

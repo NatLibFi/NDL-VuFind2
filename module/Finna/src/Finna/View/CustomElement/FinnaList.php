@@ -59,6 +59,7 @@ class FinnaList extends AbstractBase
     protected function getDefaultVariables(): array
     {
         return [
+            'id'           => null,
             'view'         => 'grid',
             'description'  => true,
             'title'        => true,
@@ -76,7 +77,7 @@ class FinnaList extends AbstractBase
      * @return array Keyed array with attribute names as keys and variable names as
      *               values
      */
-    protected function getAttributeToVariableMap(): array
+    protected static function getAttributeToVariableMap(): array
     {
         return [
             'id'            => 'id',

@@ -55,20 +55,15 @@ class FinnaPanel extends AbstractBase
             $this->viewModel->setVariable('collapseId', $collapseId);
         }
 
-        $heading = $this->dom->find($this->name . '-heading');
+        $heading = $this->dom->find('*[slot="heading"]');
         if ($heading = $heading[0] ?? false) {
             $this->viewModel->setVariable(
                 'heading', strip_tags($heading->innerHTML())
             );
-            $headingAttributes = $this->convertToBool($heading->getAttributes());
             if ($collapsible) {
-                $headingId = $headingAttributes['id'] ?? uniqid('heading-');
+                $headingId = $attributes['heading-id'] ?? uniqid('heading-');
                 $this->viewModel->setVariable('headingId', $headingId);
             }
-            $headingLevel = $headingAttributes['level'] ?? 2;
-            $this->viewModel->setVariable('headingLevel', $headingLevel);
-            $headingTag = $headingAttributes['htag'] ?? true;
-            $this->viewModel->setVariable('headingTag', $headingTag);
             $heading->getParent()->removeChild($heading->id());
         }
 
@@ -82,13 +77,30 @@ class FinnaPanel extends AbstractBase
     }
 
     /**
+     * Get the names of attributes supported by the element.
+     *
+     * @return array
+     */
+    public static function getAttributes(): array
+    {
+        return array_merge(
+            ['collapsible', 'collapse-id', 'heading-id'],
+            array_keys(static::getAttributeToVariableMap())
+        );
+    }
+
+    /**
      * Get default values for view model variables.
      *
      * @return array
      */
     protected function getDefaultVariables(): array
     {
-        return ['attributes' => ['class' => 'finna-panel-default']];
+        return [
+            'attributes' => ['class' => 'finna-panel-default'],
+            'headingLevel' => 2,
+            'headingTag' => true
+        ];
     }
 
     /**
@@ -97,8 +109,12 @@ class FinnaPanel extends AbstractBase
      * @return array Keyed array with attribute names as keys and variable names as
      *               values
      */
-    protected function getAttributeToVariableMap(): array
+    protected static function getAttributeToVariableMap(): array
     {
-        return ['collapsed' => 'collapsed'];
+        return [
+            'collapsed' => 'collapsed',
+            'heading-level' => 'headingLevel',
+            'heading-tag' => 'headingTag'
+        ];
     }
 }
