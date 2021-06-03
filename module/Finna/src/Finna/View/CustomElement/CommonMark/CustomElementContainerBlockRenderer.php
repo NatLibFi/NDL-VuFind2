@@ -27,6 +27,7 @@
  */
 namespace Finna\View\CustomElement\CommonMark;
 
+use Exception;
 use League\CommonMark\Block\Element\AbstractBlock;
 use League\CommonMark\Block\Renderer\BlockRendererInterface;
 use League\CommonMark\ElementRendererInterface;
@@ -69,9 +70,14 @@ class CustomElementContainerBlockRenderer extends CustomElementRendererBase
             . $htmlRenderer->renderBlocks($children);
 
         if ($block->shouldSsr()) {
-            $stringContent = $this->customElementRenderer->render(
-                $block->getName(), ['outerHTML' => $stringContent]
-            );
+            try {
+                $stringContent = $this->customElementRenderer->render(
+                    $block->getName(), ['outerHTML' => $stringContent]
+                );
+            } catch (Exception $e) {
+                // If server-side rendering fails for some reason, just return the
+                // element as is.
+            }
         }
 
         return $stringContent;
