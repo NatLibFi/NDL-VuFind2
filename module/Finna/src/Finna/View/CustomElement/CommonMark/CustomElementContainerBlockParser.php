@@ -55,7 +55,7 @@ class CustomElementContainerBlockParser implements BlockParserInterface
      *
      * @var string
      */
-    protected $openRegex = '/<([A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+)'
+    protected $openRegex = '/^<([A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+)'
         . RegexHelper::PARTIAL_ATTRIBUTE . '*\s*>/';
 
     /**
