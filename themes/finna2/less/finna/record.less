@@ -262,19 +262,6 @@ a.authority {
         }
       }
     }
-    .viewer-tabs-wrapper {
-      .viewer-tab-button {
-        appearance: none;
-        border: none;
-        background-color: white;
-        &.active {
-          border-top: 2px solid @brand-primary;
-          border-left: 1px solid lightgray;
-          border-right: 1px solid lightgray;
-          border-bottom: none;
-        }
-      }
-    }
   }
   .smaller-image-sidebar {
     display: none;
@@ -568,7 +555,7 @@ a.authority {
   font-size: 1.05em;
   margin-bottom: 10px;
 }
-.show-details-button, .hide-details-button, .toggle-image-information, .toggle-model-information {
+.show-details-button, .hide-details-button {
   margin-top: 5px;
   margin-bottom: 5px;
   cursor: pointer;
@@ -584,8 +571,7 @@ a.authority {
     color: @link-color;
   }
 }
-.toggle-image-information,
-.toggle-model-information {
+.toggle-image-information {
   border: 0;
   font-weight: 600;
   color: @action-link-color;
@@ -1003,36 +989,9 @@ a.authority {
       background-color: @brand-primary;
     }
   }
-  .model-information {
-    .model-header {
-      color: white;
-      display: flex;
-      background-color: @brand-primary;
-      p {
-        font-size: 18px;
-        margin: 4px;
-      }
-    }
-    th {
-      padding-left: 4px;
-    }
-  }
   &.fullscreen {
     position: absolute;
     left: 0;
     z-index: 10000;
-    .model-information {
-      max-width: 500px;
-      background-color: white;
-      position: absolute;
-      bottom: 0;
-      margin: 4px;
-      table {
-        margin-bottom: 0;
-      }
-      th, td {
-        width: 50%;
-      }
-    }
   }
 }

@@ -3,7 +3,7 @@
     <?php if (count($model) > 1 || count(end($model)) > 1): ?>
         <div class="dropdown">
             <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <?=$this->transEsc('Download the file') ?> <span class="caret"></span>
+                <?=$this->transEsc('Download the file')?> <span class="caret"></span>
             </button>
             <ul class="dropdown-menu download" aira-labelledby="downloadMenu-<?=$index?>">
                 <?php if (!$this->userAgent()->isBot()): ?>
