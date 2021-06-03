@@ -189,7 +189,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     protected $lookforTerms = null;
 
     /**
-     * Have the original search terms been combined in the case of a two word search.
+     * Have the original search terms been combined in the case of a two-word search.
      *
      * @var bool
      */
@@ -598,7 +598,9 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         string $repTerm, string $repUri, string $origTerm, ?string $origUri = null
     ): string {
         // Add quotes to multi-word terms if appropriate.
-        $repTerm = (false !== strpos($repTerm, ' ')) ? "\"$repTerm\"" : $repTerm;
+        if (false !== strpos($repTerm, ' ')) {
+            $repTerm = '"' . addcslashes($repTerm, '"') . '"';
+        }
         if (!$this->combinedTerms && (false !== strpos($origTerm, ' '))) {
             $origTerm = "\"$origTerm\"";
         }
