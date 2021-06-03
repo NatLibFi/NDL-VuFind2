@@ -48,6 +48,13 @@ interface CustomElementInterface
     public function getName(): string;
 
     /**
+     * Get the names of attributes supported by the element.
+     *
+     * @return array
+     */
+    public static function getAttributes(): array;
+
+    /**
      * Get the view model for server-side rendering the element.
      *
      * @return ModelInterface

@@ -182,6 +182,16 @@ abstract class AbstractBase implements CustomElementInterface
     }
 
     /**
+     * Get the names of attributes supported by the element.
+     *
+     * @return array
+     */
+    public static function getAttributes(): array
+    {
+        return array_keys(static::getAttributeToVariableMap());
+    }
+
+    /**
      * Get the view model for server-side rendering the element.
      *
      * @return ModelInterface
@@ -207,7 +217,7 @@ abstract class AbstractBase implements CustomElementInterface
      * @return array Keyed array with attribute names as keys and variable names as
      *               values
      */
-    protected function getAttributeToVariableMap(): array
+    protected static function getAttributeToVariableMap(): array
     {
         return [];
     }
@@ -218,9 +228,9 @@ abstract class AbstractBase implements CustomElementInterface
      * @return array Keyed array with option names as keys and variable names as
      *               values
      */
-    protected function getOptionToVariableMap(): array
+    protected static function getOptionToVariableMap(): array
     {
-        return $this->getAttributeToVariableMap();
+        return static::getAttributeToVariableMap();
     }
 
     /**
