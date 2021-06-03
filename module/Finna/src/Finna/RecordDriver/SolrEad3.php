@@ -274,46 +274,41 @@ class SolrEad3 extends SolrEad
             $originationLocaleResults = $originationResults = [];
             foreach ($origination->name ?? [] as $name) {
                 $attr = $name->attributes();
-                if (self::RELATOR_ARCHIVE_ORIGINATION === (string)$attr->relator
-                ) {
-                    $id = (string)$attr->identifier;
-                    $currentName = null;
-                    $names = $name->part ?? [];
-                    for ($i=0; $i < count($names); $i++) {
-                        $name = $names[$i];
-                        $attr = $name->attributes();
-                        $value = (string)$name;
-                        $localType = (string)$attr->localtype;
-                        $data = [
-                            'id' => $id, 'name' => $value, 'detail' => $localType
-                        ];
-                        if ($localType !== self::RELATOR_TIME_INTERVAL) {
-                            if ($nextEl = $names[$i + 1] ?? null) {
-                                $localType
-                                    = (string)$nextEl->attributes()->localtype;
-                                if ($localType === self::RELATOR_TIME_INTERVAL) {
-                                    // Pick relation time interval from
-                                    // next part-element
-                                    $date = (string)$nextEl;
-                                    if ($date !== self::RELATOR_UNKNOWN_TIME_INTERVAL
-                                    ) {
-                                        $data['date'] = $date;
-                                    }
-                                    $i++;
+                $id = (string)$attr->identifier;
+                $currentName = null;
+                $names = $name->part ?? [];
+                for ($i=0; $i < count($names); $i++) {
+                    $name = $names[$i];
+                    $attr = $name->attributes();
+                    $value = (string)$name;
+                    $localType = (string)$attr->localtype;
+                    $data = [
+                        'id' => $id, 'name' => $value, 'detail' => $localType
+                    ];
+                    if ($localType !== self::RELATOR_TIME_INTERVAL) {
+                        if ($nextEl = $names[$i + 1] ?? null) {
+                            $localType
+                                = (string)$nextEl->attributes()->localtype;
+                            if ($localType === self::RELATOR_TIME_INTERVAL) {
+                                // Pick relation time interval from
+                                // next part-element
+                                $date = (string)$nextEl;
+                                if ($date !== self::RELATOR_UNKNOWN_TIME_INTERVAL
+                                ) {
+                                    $data['date'] = $date;
                                 }
+                                $i++;
                             }
                         }
-                        $lang = $this->detectNodeLanguage($name);
-                        if ($lang['preferred']
-                            && !$searchNamesFn($data, $originationLocaleResults)
-                        ) {
-                            $originationLocaleResults[] = $data;
-                        }
-                        if ($lang['default']
-                            && !$searchNamesFn($data, $originationResults)
-                        ) {
-                            $originationResults[] = $data;
-                        }
+                    }
+                    $lang = $this->detectNodeLanguage($name);
+                    if ($lang['preferred']
+                        && !$searchNamesFn($data, $originationLocaleResults)
+                    ) {
+                        $originationLocaleResults[] = $data;
+                    }
+                    if (!$searchNamesFn($data, $originationResults)) {
+                        $originationResults[] = $data;
                     }
                 }
             }
