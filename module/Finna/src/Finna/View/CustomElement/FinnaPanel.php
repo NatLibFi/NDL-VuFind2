@@ -64,7 +64,7 @@ class FinnaPanel extends AbstractBase
                 $headingId = $attributes['heading-id'] ?? uniqid('heading-');
                 $this->viewModel->setVariable('headingId', $headingId);
             }
-            $heading->getParent()->removeChild($heading->id());
+            $this->removeSlotElement($heading);
         }
 
         $this->viewModel->setVariable(

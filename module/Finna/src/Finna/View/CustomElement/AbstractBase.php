@@ -31,6 +31,7 @@ use Exception;
 use Laminas\View\Model\ModelInterface;
 use Laminas\View\Model\ViewModel;
 use PHPHtmlParser\Dom;
+use PHPHtmlParser\Dom\Node\HtmlNode;
 use PHPHtmlParser\Options;
 
 /**
@@ -252,5 +253,34 @@ abstract class AbstractBase implements CustomElementInterface
             }
         }
         return $values;
+    }
+
+    /**
+     * Remove a slot element from the DOM, with additional cleanup of possible
+     * unneeded elements added by Markdown processing.
+     *
+     * @param $slotElement HtmlNode Element with a slot attribute
+     *
+     * @return void
+     */
+    protected function removeSlotElement($slotElement): void
+    {
+        // Remove br elements immediately following the slot element.
+        $slotElementParent = $slotElement->getParent();
+        while ($slotElement->hasNextSibling()) {
+            $sibling = $slotElement->nextSibling();
+            if ($sibling->getTag()->name() !== 'br') {
+                break;
+            }
+            $slotElementParent->removeChild($sibling->id());
+        }
+        // Remove the slot element.
+        $slotElementParent->removeChild($slotElement->id());
+        // If the parent is an empty p element, remove the parent also.
+        if (!$slotElementParent->hasChildren()
+            && $slotElementParent->getTag()->name() === 'p'
+        ) {
+            $slotElementParent->getParent()->removeChild($slotElementParent->id());
+        }
     }
 }

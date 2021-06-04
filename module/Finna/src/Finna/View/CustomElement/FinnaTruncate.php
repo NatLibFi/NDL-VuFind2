@@ -54,7 +54,7 @@ class FinnaTruncate extends AbstractBase
             if (!empty($label)) {
                 $this->viewModel->setVariable('label', $label);
             }
-            $labelElement->getParent()->removeChild($labelElement->id());
+            $this->removeSlotElement($labelElement);
         }
 
         $this->viewModel->setVariable(
