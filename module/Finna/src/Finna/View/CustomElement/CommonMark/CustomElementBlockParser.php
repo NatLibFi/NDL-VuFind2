@@ -1,6 +1,6 @@
 <?php
 /**
- * Custom element close block parser
+ * Custom element block parser
  *
  * PHP version 7
  *
@@ -30,9 +30,10 @@ namespace Finna\View\CustomElement\CommonMark;
 use League\CommonMark\Block\Parser\BlockParserInterface;
 use League\CommonMark\ContextInterface;
 use League\CommonMark\Cursor;
+use League\CommonMark\Util\RegexHelper;
 
 /**
- * Custom element close block parser
+ * Custom element block parser
  *
  * @category VuFind
  * @package  CustomElements
@@ -40,14 +41,42 @@ use League\CommonMark\Cursor;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
-class CustomElementCloseBlockParser implements BlockParserInterface
+class CustomElementBlockParser implements BlockParserInterface
 {
+    /**
+     * Names of elements that can be server-side rendered
+     *
+     * @var array
+     */
+    protected $ssrElements;
+
+    /**
+     * Regex for matching custom element opening tags
+     *
+     * @var string
+     */
+    protected $openRegex = '/^<([A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+)'
+        . RegexHelper::PARTIAL_ATTRIBUTE . '*\s*>/';
+
     /**
      * Regex for matching closing tags
      *
      * @var string
      */
-    protected $closeRegex = '/.*<\/([A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+)*\s*>/';
+    protected $closeRegex = '/<\/([A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+)*\s*>/';
+
+    /**
+     * CustomElementBlockParser constructor.
+     *
+     * @param array $ssrElements Names of elements that can be server-side rendered
+     */
+    public function __construct(array $ssrElements)
+    {
+        foreach ($ssrElements as $i => $name) {
+            $ssrElements[$i] = mb_strtolower($name, 'UTF-8');
+        }
+        $this->ssrElements = $ssrElements;
+    }
 
     /**
      * BlockParserInterface method.
@@ -59,6 +88,65 @@ class CustomElementCloseBlockParser implements BlockParserInterface
      */
     public function parse(ContextInterface $context, Cursor $cursor): bool
     {
+        do {
+            $openingTagFound = $this->parseOpeningTag($context, $cursor);
+            $closingTagFound = $this->parseClosingTag($context, $cursor);
+        } while ($openingTagFound || $closingTagFound);
+
+        return false;
+    }
+
+    /**
+     * Parse opening tags.
+     *
+     * @param ContextInterface $context Context
+     * @param Cursor           $cursor  Cursor
+     *
+     * @return bool
+     */
+    protected function parseOpeningTag(ContextInterface $context, Cursor $cursor
+    ): bool {
+        if ($cursor->isIndented()) {
+            return false;
+        }
+
+        if ($cursor->getNextNonSpaceCharacter() !== '<') {
+            return false;
+        }
+
+        $savedState = $cursor->saveState();
+
+        $cursor->advanceToNextNonSpaceOrTab();
+        $match = $cursor->match($this->openRegex);
+        if (null !== $match) {
+            // Do another match to get the element name.
+            $matches = [];
+            preg_match($this->openRegex, $match, $matches);
+
+            $name = mb_strtolower($matches[1], 'UTF-8');
+            $block = new CustomElementContainerBlock(
+                $name, $match, in_array($name, $this->ssrElements)
+            );
+            $context->addBlock($block);
+
+            return true;
+        }
+
+        $cursor->restoreState($savedState);
+
+        return false;
+    }
+
+    /**
+     * Parse closing tags.
+     *
+     * @param ContextInterface $context Context
+     * @param Cursor           $cursor  Cursor
+     *
+     * @return bool
+     */
+    protected function parseClosingTag(ContextInterface $context, Cursor $cursor
+    ): bool {
         if ($cursor->isIndented()) {
             return false;
         }

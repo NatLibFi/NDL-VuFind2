@@ -29,6 +29,7 @@ namespace Finna\View\CustomElement\CommonMark;
 
 use League\CommonMark\Block\Element\AbstractBlock;
 use League\CommonMark\Block\Element\AbstractStringContainerBlock;
+use League\CommonMark\Block\Element\Paragraph;
 use League\CommonMark\ContextInterface;
 use League\CommonMark\Cursor;
 
@@ -117,5 +118,12 @@ class CustomElementCloseBlock extends AbstractStringContainerBlock
      */
     public function handleRemainingContents(ContextInterface $context, Cursor $cursor
     ) {
+        if (!$cursor->isAtEnd()) {
+            // Create paragraph container for line
+            $p = new Paragraph();
+            $context->addBlock($p);
+            $cursor->advanceToNextNonSpaceOrTab();
+            $p->addLine($cursor->getRemainder());
+        }
     }
 }
