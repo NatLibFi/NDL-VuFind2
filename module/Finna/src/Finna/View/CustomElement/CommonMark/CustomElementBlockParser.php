@@ -59,7 +59,7 @@ class CustomElementBlockParser implements BlockParserInterface
         . RegexHelper::PARTIAL_ATTRIBUTE . '*\s*>/';
 
     /**
-     * Regex for matching closing tags
+     * Regex for matching custom element closing tags
      *
      * @var string
      */
