@@ -274,8 +274,10 @@ abstract class AbstractBase implements CustomElementInterface
             }
             $slotElementParent->removeChild($sibling->id());
         }
+
         // Remove the slot element.
         $slotElementParent->removeChild($slotElement->id());
+
         // If the parent is an empty p element, remove the parent also.
         if (!$slotElementParent->hasChildren()
             && $slotElementParent->getTag()->name() === 'p'
