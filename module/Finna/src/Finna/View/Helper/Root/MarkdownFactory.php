@@ -78,6 +78,7 @@ class MarkdownFactory implements FactoryInterface
         $cConfig = $container->get('config');
         $elements = array_keys(
             $cConfig['vufind']['plugin_managers']['view_customelement']['aliases']
+            ?? []
         );
         $environment->addExtension(
             new CustomElementExtension(

@@ -105,7 +105,7 @@ class CustomElementCloseBlock extends AbstractStringContainerBlock
     {
         parent::finalize($context, $endLineNumber);
 
-        $this->finalStringContents = \implode("\n", $this->strings->toArray());
+        $this->finalStringContents = implode("\n", $this->strings->toArray());
     }
 
     /**
