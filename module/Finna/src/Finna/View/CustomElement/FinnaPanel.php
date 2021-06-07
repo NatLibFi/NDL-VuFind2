@@ -97,9 +97,9 @@ class FinnaPanel extends AbstractBase
     protected function getDefaultVariables(): array
     {
         return [
-            'attributes' => ['class' => 'finna-panel-default'],
+            'attributes'   => ['class' => 'finna-panel-default'],
             'headingLevel' => 2,
-            'headingTag' => true
+            'headingTag'   => true
         ];
     }
 
@@ -112,9 +112,9 @@ class FinnaPanel extends AbstractBase
     protected static function getAttributeToVariableMap(): array
     {
         return [
-            'collapsed' => 'collapsed',
+            'collapsed'     => 'collapsed',
             'heading-level' => 'headingLevel',
-            'heading-tag' => 'headingTag'
+            'heading-tag'   => 'headingTag'
         ];
     }
 }
