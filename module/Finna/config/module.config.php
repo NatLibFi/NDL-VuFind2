@@ -255,7 +255,6 @@ $config = [
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
-            'Finna\Controller\FileController' => 'Finna\Controller\FileControllerFactory'
         ],
         'aliases' => [
             'AuthorityRecord' => 'Finna\Controller\AuthorityRecordController',
@@ -286,8 +285,6 @@ $config = [
             'R2Record' => 'Finna\Controller\R2RecordController',
             'r2feedback' => 'Finna\Controller\R2FeedbackController',
             'R2Feedback' => 'Finna\Controller\R2FeedbackController',
-            'File' => 'Finna\Controller\FileController',
-            'file' => 'Finna\Controller\FileController',
             'Robots' => 'Finna\Controller\RobotsController',
 
             // Overrides:
@@ -961,7 +958,7 @@ $staticRoutes = [
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
-    'File/DownloadModel'
+    'Record/DownloadModel'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

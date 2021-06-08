@@ -90,7 +90,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         $maxAge = $this->config->$configSection->cacheTime ?? 43200;
         $result = true;
         $error = '';
-        if (!file_exists($path) || filemtime($path) < $maxAge * 60) {
+        if (!file_exists($path) || time() - filemtime($path) > $maxAge * 60) {
             $client = $this->httpService->createClient(
                 $url, \Laminas\Http\Request::METHOD_GET, 300
             );
@@ -107,9 +107,10 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
             } else {
                 if ($fp = fopen($path, "w")) {
                     $result = stream_copy_to_stream($result->getStream(), $fp);
+                    fclose($fp);
                 } else {
                     $result = false;
-                    $error = "Failed to open $path with write rights";
+                    $error = "Failed to open $path with for writing";
                     $this->debug($error);
                 }
             }

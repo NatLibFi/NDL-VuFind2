@@ -739,4 +739,66 @@ class RecordController extends \VuFind\Controller\RecordController
         }
         return $result;
     }
+
+    /**
+     * Download 3D model
+     *
+     * @return \Laminas\Http\Response
+     */
+    public function downloadModelAction()
+    {
+        $params = $this->params();
+        $index = $params->fromQuery('index');
+        $format = $params->fromQuery('format');
+        $response = $this->getResponse();
+        if ($format && $index) {
+            $driver = $this->loadRecord();
+            $id = $driver->getUniqueID();
+            $models = $driver->tryMethod('getModels');
+            $url = $models[$index][$format]['preview'] ?? false;
+            if (!empty($url)) {
+                $fileName = urlencode($id) . '-' . $index . '.' . $format;
+                $fileLoader = $this->serviceLocator->get(\Finna\File\Loader::class);
+                $file = $fileLoader->getFile(
+                    $url, $fileName, 'Models', 'public'
+                );
+                if (empty($file['result'])) {
+                    $response->setStatusCode(500);
+                } else {
+                    $contentType = '';
+                    switch ($format) {
+                    case 'gltf':
+                        $contentType = 'model/gltf+json';
+                        break;
+                    case 'glb':
+                        $contentType = 'model/gltf+binary';
+                        break;
+                    default:
+                        $contentType = 'application/octet-stream';
+                        break;
+                    }
+                    // Set headers for downloadable file
+                    header("Content-Type: $contentType");
+                    header(
+                        "Content-disposition: attachment; filename=\"{$fileName}\""
+                    );
+                    // No cache, models can be huge
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($file['path']));
+                    if (ob_get_level()) {
+                        ob_end_clean();
+                    }
+                    readfile($file['path']);
+                }
+            } else {
+                $response->setStatusCode(404);
+            }
+        } else {
+            $response->setStatusCode(400);
+        }
+
+        return $response;
+    }
 }

@@ -36,7 +36,8 @@
         $settings['modelload'] = [
           'id' => $this->driver->getUniqueId(),
           'index' => $index,
-          'format' => $format
+          'format' => $format,
+          'source' => $this->driver->getSourceIdentifier()
         ];
 
         $tmp = [

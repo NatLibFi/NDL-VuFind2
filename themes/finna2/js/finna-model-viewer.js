@@ -105,11 +105,15 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.informationsArea.toggle(false);
           _.trigger.addClass('open');
         }
-        _.root.find('.model-help').html(
-          VuFind.translate(finna.layout.isTouchDevice() ? 'model_help_mobile_html' : 'model_help_pc_html')
-        );
+        
+        var helpCollapse = _.root.find('.model-help');
+        if (finna.layout.isTouchDevice()) {
+          helpCollapse.find('.model-pc-help').remove();
+        } else {
+          helpCollapse.find('.model-mobile-help').remove();
+        }
         if (!_.isFileInput) {
-          _.getModelPath();
+          _.loadBackground();
         } else {
           _.modelPath = URL.createObjectURL(_.trigger[0].files[0]);
           _.loadBackground();
@@ -246,7 +250,7 @@ ModelViewer.prototype.createRenderer = function createRenderer()
 
   if (!_.loaded) {
     // Create camera now.
-    _.camera = new THREE.PerspectiveCamera( 50, _.size.x / _.size.y, 0.1, 1000 );
+    _.camera = new THREE.PerspectiveCamera(50, _.size.x / _.size.y, 0.1, 1000);
     _.cameraPosition = new THREE.Vector3(0, 0, 0);
     _.camera.position.set(_.cameraPosition.x, _.cameraPosition.y, _.cameraPosition.z);
   }
@@ -262,18 +266,21 @@ ModelViewer.prototype.createRenderer = function createRenderer()
 ModelViewer.prototype.getModelPath = function getModelPath()
 {
   var _ = this;
+  _.viewerStateInfo.html(VuFind.translate('model_loading_file'));
   $.getJSON(
     VuFind.path + '/AJAX/JSON',
     {
       method: 'getModel',
       id: _.loadInfo.id,
       index: _.loadInfo.index,
-      format: _.loadInfo.format
+      format: _.loadInfo.format,
+      source: _.loadInfo.source
     }
   )
     .done(function onGetModelDone(response) {
       _.modelPath = response.data.url;
-      _.loadBackground();
+      _.loadGLTF();
+      _.setEvents();
     })
     .fail(function onGetModelFailed(/*response*/) {
     });
@@ -495,8 +502,7 @@ ModelViewer.prototype.loadBackground = function loadBackground()
       _.scene = new THREE.Scene();
       _.scene.background = _.background;
       _.createRenderer();
-      _.loadGLTF();
-      _.setEvents();
+      _.getModelPath();
     },
     function onFailure(/*error*/) {
       // Leave empty for debugging purposes

@@ -67,7 +67,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $undisplayableFileFormats = [];
 
     /**
-     * Array of allowed model formats
+     * Array of web friendly model formats
      *
      * @var array
      */
@@ -484,10 +484,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $models = [];
         $i = 0;
-        foreach ($this->getXmlRecord()->xpath(
-            '/lidoWrap/lido/administrativeMetadata/'
-            . 'resourceWrap/resourceSet'
-        ) as $resourceSet) {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->lido->administrativeMetadata->resourceWrap->resourceSet
+        as $resourceSet) {
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
                 $url = trim((string)$linkResource);
@@ -498,7 +497,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     (string)$representation->attributes()->type ?? ''
                 );
                 $format = $linkResource->attributes()->formatResource ?? '';
-                $format = strtolower(trim((string)$format));
+                $format = strtolower(trim($format));
                 switch ($type) {
                 case 'preview_3d':
                     if (in_array($format, $this->displayableModelFormats)) {

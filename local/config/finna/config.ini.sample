@@ -1703,6 +1703,7 @@ url = "https://my.surveypal.com/Finnasurvey"
 showLabels[*] = false
 showLabels[Primo] = true
 
+; 3D model settings
 [Models]
 ; If uncommented and set to true, will open in a popup
 ;popup = false
@@ -1714,7 +1715,7 @@ ambientIntensity = 1
 hemisphereIntensity = 0.3
 ; Angle to adjust padding between border of viewer and model
 viewerPaddingAngle = 35
-; If developer is uncommented and true, will display additional data on the viewer
+; If debug is uncommented and true, will display additional data on the viewer
 ;debug = true
 ; Array of institutions which have proper preview images to show
 ;previewImages['museovirasto_testi'] = true

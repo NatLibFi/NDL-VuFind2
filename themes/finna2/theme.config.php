@@ -169,7 +169,7 @@ $config = [
         'vendor/video-js.min.css',
         'finna.css',
         'vendor/priority-nav-core.css',
-        'finna-flex-fallback.css::lt IE 10' // flex polyfill
+        'finna-flex-fallback.css::lt IE 10', // flex polyfill
     ],
     'js' => [
         'vendor/event-stub.js:lt IE 9',

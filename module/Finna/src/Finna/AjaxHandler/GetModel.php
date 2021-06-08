@@ -33,6 +33,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Router\Http\TreeRouteStack;
 use VuFind\Record\Loader as RecordLoader;
 use VuFind\Session\Settings as SessionSettings;
+use VuFind\View\Helper\Root\Url;
 
 /**
  * GetModel AJAX handler
@@ -72,9 +73,9 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Domain url
      *
-     * @var string
+     * @var Url
      */
-    protected $domainUrl;
+    protected $urlHelper;
 
     /**
      * Router
@@ -88,17 +89,17 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
      *
      * @param SessionSettings $ss           Session settings
      * @param RecordLoader    $recordLoader Recordloader
-     * @param string          $domainUrl    Domain url as string
+     * @param Url             $urlHelper    Url helper
      * @param FileLoader      $fileLoader   Fileloader
      * @param Router          $router       Router
      */
     public function __construct(
         SessionSettings $ss, RecordLoader $recordLoader,
-        string $domainUrl, FileLoader $fileLoader, TreeRouteStack $router
+        Url $urlHelper, FileLoader $fileLoader, TreeRouteStack $router
     ) {
         $this->sessionSettings = $ss;
         $this->recordLoader = $recordLoader;
-        $this->domainUrl = $domainUrl;
+        $this->urlHelper = $urlHelper;
         $this->fileLoader = $fileLoader;
         $this->router = $router;
     }
@@ -117,6 +118,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         $id = $params->fromPost('id', $params->fromQuery('id'));
         $index = $params->fromPost('index', $params->fromQuery('index'));
         $format = $params->fromPost('format', $params->fromQuery('format'));
+        $source = $params->fromPost('source', $params->fromQuery('source'));
 
         if (!$id || !$index || !$format) {
             return $this->formatResponse(
@@ -125,7 +127,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         }
         $format = strtolower($format);
         $fileName = urlencode($id) . '-' . $index . '.' . $format;
-        $driver = $this->recordLoader->load($id, 'Solr');
+        $driver = $this->recordLoader->load($id, $source ?? DEFAULT_SEARCH_BACKEND);
         $models = $driver->tryMethod('getModels');
         if (empty($models[$index][$format]['preview'])) {
             return $this->formatResponse(['json' => ['status' => '404']]);
@@ -134,10 +136,10 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         $url = $models[$index][$format]['preview'];
         // Use fileloader for proxies
         $file = $this->fileLoader->getFile($url, $fileName, 'Models', 'public');
-        if ($file['result']) {
+        if (!empty($file['result'])) {
             $route = stripslashes($this->router->getBaseUrl());
             // Point url to public cache so viewer has access to it
-            $url = "{$this->domainUrl}{$route}/cache/{$fileName}";
+            $url = $this->urlHelper->__invoke('home') . 'cache/' . $fileName;
             return $this->formatResponse(compact('url'));
         } else {
             return $this->formatResponse(

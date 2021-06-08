@@ -817,7 +817,7 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
       img.onload = function onLoad() {
         $(this).siblings('i').remove();
       };
-    } else {
+    } else if (image.type === 'model') {
       if (_.popup.track) {
         return undefined;
       }
