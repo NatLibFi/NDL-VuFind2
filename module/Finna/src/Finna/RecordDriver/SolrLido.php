@@ -113,7 +113,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 ',',
                 $mainConfig['Content']['lidoFileFormatBlockList']
                     ?? $mainConfig['Content']['lidoFileFormatBlackList']
-                    ?? ''
+                    ?? ['tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb','obj']
             );
     }
 
