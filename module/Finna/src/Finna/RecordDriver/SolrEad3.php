@@ -952,7 +952,7 @@ class SolrEad3 extends SolrEad
         // Sort
         $order = array_flip(self::ACCESS_RESTRICT_TYPES);
         $orderCnt = count($order);
-        $sortFn = function ($a, $b) use ($order) {
+        $sortFn = function ($a, $b) use ($order, $orderCnt) {
             $pos1 = $order[$a] ?? $orderCnt;
             $pos2 = $order[$b] ?? $orderCnt;
             return $pos1 - $pos2;
