@@ -950,17 +950,11 @@ class SolrEad3 extends SolrEad
         $result = [];
 
         // Sort
-        $order = self::ACCESS_RESTRICT_TYPES;
+        $order = array_flip(self::ACCESS_RESTRICT_TYPES);
+        $orderCnt = count($order);
         $sortFn = function ($a, $b) use ($order) {
-            $pos1 = array_search($a, $order);
-            $pos2 = array_search($b, $order);
-            if ($pos1 && $pos2 === false) {
-                return -1;
-            } elseif ($pos1 === false && $pos2) {
-                return 1;
-            } elseif ($pos1 === false && $pos2 === false) {
-                return 0;
-            }
+            $pos1 = $order[$a] ?? $orderCnt;
+            $pos2 = $order[$b] ?? $orderCnt;
             return $pos1 - $pos2;
         };
         uksort($restrictions, $sortFn);
