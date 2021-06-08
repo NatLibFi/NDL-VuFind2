@@ -109,11 +109,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
+
+        // Keep old setting name for back-compatibility:
         $formatBlockList = $mainConfig['Content']['lidoFileFormatBlockList']
             ?? $mainConfig['Content']['lidoFileFormatBlackList']
             ?? '';
 
-        // Keep old setting name for back-compatibility:
         if (!empty($formatBlockList)) {
             $this->undisplayableFileFormats = explode(',', $formatBlockList);
         }
