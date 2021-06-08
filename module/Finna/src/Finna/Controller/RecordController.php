@@ -782,9 +782,6 @@ class RecordController extends \VuFind\Controller\RecordController
                     header(
                         "Content-disposition: attachment; filename=\"{$fileName}\""
                     );
-                    // No cache, models can be huge
-                    header('Expires: 0');
-                    header('Cache-Control: must-revalidate');
                     header('Pragma: public');
                     header('Content-Length: ' . filesize($file['path']));
                     if (ob_get_level()) {
