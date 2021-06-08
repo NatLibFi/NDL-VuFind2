@@ -64,7 +64,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @var array
      */
-    protected $undisplayableFileFormats = [];
+    protected $undisplayableFileFormats = [
+        'tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb','obj'
+    ];
 
     /**
      * Array of web friendly model formats
@@ -107,14 +109,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
+        $formatBlockList = $mainConfig['Content']['lidoFileFormatBlockList']
+            ?? $mainConfig['Content']['lidoFileFormatBlackList']
+            ?? '';
+
         // Keep old setting name for back-compatibility:
-        $this->undisplayableFileFormats
-            = explode(
-                ',',
-                $mainConfig['Content']['lidoFileFormatBlockList']
-                    ?? $mainConfig['Content']['lidoFileFormatBlackList']
-                    ?? ['tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb','obj']
-            );
+        if (!empty($formatBlockList)) {
+            $this->undisplayableFileFormats = explode(',', $formatBlockList);
+        }
     }
 
     /**
