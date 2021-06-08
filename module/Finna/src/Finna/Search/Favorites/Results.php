@@ -131,13 +131,13 @@ class Results extends \VuFind\Search\Favorites\Results
     public function getListObject()
     {
         $filters = $this->getParams()->getRawFilters();
-        $listId = $filters['lists'][0] ?? null;
+        $listId = intval($filters['lists'][0]) ?? null;
 
         // Load a list when
         //   a. if we haven't previously tried to load a list ($this->list = false)
         //   b. the requested list is not the same as previously loaded list
         if ($this->list === false
-            || ($listId && ($this->list['id'] ?? null) != $listId)
+            || ($listId && ($this->list['id'] ?? null) !== $listId)
         ) {
             // Check the filters for a list ID, and load the corresponding object
             // if one is found:
