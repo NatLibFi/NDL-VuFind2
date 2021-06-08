@@ -28,6 +28,18 @@
     ?>
   <?php endforeach; ?>
   <?php if (!empty($models)) {
+    $this->inlineScript(
+      \Laminas\View\Helper\HeadScript::SCRIPT,
+      "VuFind.addTranslations({\n"
+      . "    'Vertices': '" . $this->transEsc('Vertices') . "',\n"
+      . "    'Triangles': '" . $this->transEsc('Triangles') . "',\n"
+      . "    'model_help_pc_html': '" . $this->translate('model_help_pc_html') . "',\n"
+      . "    'model_help_mobile_html': '" . $this->translate('model_help_mobile_html') . "',\n"
+      . "    'model_loading_file': '" . $this->transEsc('model_loading_file') . "'}\n"
+      . ");\n",
+      'SET'
+    );
+    echo $this->inlineScript();
     $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
     $settings = $this->driver->getModelSettings();
     $settings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);

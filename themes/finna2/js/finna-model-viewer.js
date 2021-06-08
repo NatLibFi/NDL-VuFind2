@@ -106,12 +106,9 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.trigger.addClass('open');
         }
         
-        var helpCollapse = _.root.find('.model-help');
-        if (finna.layout.isTouchDevice()) {
-          helpCollapse.find('.model-pc-help').remove();
-        } else {
-          helpCollapse.find('.model-mobile-help').remove();
-        }
+        _.root.find('.model-help').html(
+          VuFind.translate(finna.layout.isTouchDevice() ? 'model_help_mobile_html' : 'model_help_pc_html')
+        );
         if (!_.isFileInput) {
           _.loadBackground();
         } else {
