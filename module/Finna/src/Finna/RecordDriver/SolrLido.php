@@ -1294,7 +1294,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get identifiers by type
      *
-     * @param array $xpathRules  XPath rules as associative array
+     * @param array $selectors   Selectors as associative array
      *                           selector -> types
      *                           - selector string [is, not]
      *                           - types    array  ['isbn', 'issn', ...]
@@ -1302,7 +1302,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    protected function getIdentifiersByType(array $xpathRules, bool $includeType
+    protected function getIdentifiersByType(array $selectors, bool $includeType
     ): array {
         $results = [];
         $xml = $this->getXmlRecord();
@@ -1313,7 +1313,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $attributes = $node->attributes();
             $type = $attributes->type ?? '';
             $skip = false;
-            foreach ($xpathRules as $selector => $rules) {
+            foreach ($selectors as $selector => $rules) {
                 if ($selector === 'is') {
                     if ($skip = !in_array($type, $rules)) {
                         continue;
