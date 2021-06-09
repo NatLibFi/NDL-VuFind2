@@ -1295,9 +1295,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * Get identifiers by type
      *
      * @param array $xpathRules  XPath rules as associative array
-     *                            selector -> types
-     *                            - selector string [is, not]
-     *                            - types    array  ['isbn', 'issn', ...]
+     *                           selector -> types
+     *                           - selector string [is, not]
+     *                           - types    array  ['isbn', 'issn', ...]
      * @param bool  $includeType Whether to include identifier type in parenthesis
      *
      * @return array
