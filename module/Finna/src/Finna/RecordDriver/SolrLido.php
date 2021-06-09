@@ -148,7 +148,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
-
         return $restrictions;
     }
 
@@ -1391,7 +1390,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $title = str_replace([',', ';'], ' ', $this->getTitle());
         $xml = $this->getXmlRecord();
         foreach ($xml->lido->descriptiveMetadata->objectRelationWrap
-            ->subjectWrap->subjectSet ?? [] as $node) {
+            ->subjectWrap->subjectSet ?? [] as $node
+        ) {
             $subject = $node->displaySubject;
             $checkTitle = str_replace([',', ';'], ' ', (string)$subject) != $title;
             foreach ($subject as $attributes) {
