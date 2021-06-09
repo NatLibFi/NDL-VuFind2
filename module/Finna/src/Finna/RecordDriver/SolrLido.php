@@ -1415,7 +1415,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     (string)$node->attributes()->lang, $preferredLanguages
                     )
                 ) {
-                    if ($term = trim((string)$node)) {
+                    if ($term = trim((string)$node->descriptiveNoteValue)) {
                         $results[] = $term;
                     }
                 }
