@@ -1134,7 +1134,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 ->titleWrap->titleSet->appellationValue ?? [] as $node
         ) {
             $attr = $node->attributes();
-            if (!empty($attr->label) && $attr->label === 'aiheen aika') {
+            if (!empty($attr->label) && $attr->label === 'aiheen tarkenne') {
                 $results[] = (string)$node;
             }
         }
