@@ -954,7 +954,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         $xml = $this->getXmlRecord();
         foreach ($xml->lido->descriptiveMetadata->objectIdentificationWrap
-                ->inscriptionsWrap->inscriptions ?? [] as $inscriptions
+            ->inscriptionsWrap->inscriptions ?? [] as $inscriptions
         ) {
             $group = [];
             foreach ($inscriptions->inscriptionDescription as $node) {
@@ -1131,7 +1131,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         $xml = $this->getXmlRecord();
         foreach ($xml->lido->descriptiveMetadata->objectIdentificationWrap
-                ->titleWrap->titleSet->appellationValue ?? [] as $node
+            ->titleWrap->titleSet->appellationValue ?? [] as $node
         ) {
             $attr = $node->attributes();
             if (!empty($attr->label) && $attr->label === 'aiheen tarkenne') {
@@ -1151,7 +1151,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         $xml = $this->getXmlRecord();
         foreach ($xml->lido->descriptiveMetadata->objectRelationWrap->subjectWrap
-                ->subjectSet->subject->subjectPlace->displayPlace ?? [] as $node
+            ->subjectSet->subject->subjectPlace->displayPlace ?? [] as $node
         ) {
             $results[] = (string)$node;
         }
@@ -1294,11 +1294,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get identifiers by type
      *
-     * @param array  $xpathRules  XPath rules as associative array
+     * @param array $xpathRules  XPath rules as associative array
      *                            selector -> types
      *                            - selector string [is, not]
      *                            - types    array  ['isbn', 'issn', ...]
-     * @param bool   $includeType Whether to include identifier type in parenthesis
+     * @param bool  $includeType Whether to include identifier type in parenthesis
      *
      * @return array
      */
@@ -1412,8 +1412,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     continue;
                 }
                 $value = trim((string)$node->descriptiveNoteValue);
-                if (in_array($value->attributes()->lang ?? '', $preferredLanguages)
-                ) {
+                $lang = $value->attributes()->lang ?? '';
+                if (in_array($lang, $preferredLanguages)) {
                     $results[] = $value;
                 }
             }
