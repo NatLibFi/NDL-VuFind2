@@ -1411,13 +1411,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (empty($node->descriptiveNoteValue)) {
                     continue;
                 }
-                if (in_array(
-                    (string)$node->attributes()->lang, $preferredLanguages
-                    )
+                $value = trim((string)$node->descriptiveNoteValue);
+                if (in_array($value->attributes()->lang ?? '', $preferredLanguages)
                 ) {
-                    if ($term = trim((string)$node->descriptiveNoteValue)) {
-                        $results[] = $term;
-                    }
+                    $results[] = $value;
                 }
             }
         }
