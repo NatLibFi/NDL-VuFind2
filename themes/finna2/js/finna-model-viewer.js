@@ -311,8 +311,14 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
         _.displayInformation();
       },
       function onLoading(xhr) {
-        if (_.viewerStateInfo && xhr) {
-          _.viewerStateInfo.html((xhr.loaded / xhr.total * 100).toFixed(0) + '%');
+        if (_.viewerStateInfo) {
+          var loaded = '';
+          if (xhr.total < 1) {
+            loaded = (xhr.loaded / 1024 / 1024).toFixed(0) + 'MB';
+          } else {
+            loaded = (xhr.loaded / xhr.total * 100).toFixed(0) + '%';
+          }
+          _.viewerStateInfo.html(loaded);
         }
       },
       function onError(/*error*/) {
