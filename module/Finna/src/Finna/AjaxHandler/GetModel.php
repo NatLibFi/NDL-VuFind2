@@ -120,7 +120,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         $format = $params->fromPost('format', $params->fromQuery('format'));
         $source = $params->fromPost('source', $params->fromQuery('source'));
 
-        if (!$id || !$index || !$format) {
+        if (!$id || !isset($index) || !$format) {
             return $this->formatResponse(
                 ['json' => ['status' => self::STATUS_HTTP_BAD_REQUEST]]
             );

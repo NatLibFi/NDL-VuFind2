@@ -311,7 +311,7 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
         _.displayInformation();
       },
       function onLoading( xhr ) {
-        if (_.viewerStateInfo) {
+        if (_.viewerStateInfo && xhr) {
           _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(0) + '%');
         }
       },
