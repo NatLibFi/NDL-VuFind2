@@ -296,10 +296,10 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
       dracoLoader = new THREE.DRACOLoader();
       dracoLoader.setDecoderPath(VuFind.path + '/themes/finna2/js/vendor/draco/');
     }
-    loader.setDRACOLoader( dracoLoader );
+    loader.setDRACOLoader(dracoLoader);
     loader.load(
       _.modelPath,
-      function onLoad ( obj ) {
+      function onLoad (obj) {
         _.adjustScene(obj.scene);
         _.createControls();
         _.initMesh();
@@ -310,9 +310,9 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
         }
         _.displayInformation();
       },
-      function onLoading( xhr ) {
+      function onLoading(xhr) {
         if (_.viewerStateInfo && xhr) {
-          _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(0) + '%');
+          _.viewerStateInfo.html((xhr.loaded / xhr.total * 100).toFixed(0) + '%');
         }
       },
       function onError(/*error*/) {
