@@ -1,99 +1,11 @@
-/*global VuFind, finna, SimpleMDE */
+/*global VuFind, finna */
 finna.myList = (function finnaMyList() {
 
-  var editor = null;
+  var mdEditable = null;
   var editableSettings = {'minWidth': 200, 'addToHeight': 100};
   var save = false;
   var listUrl = null;
   var refreshLists = null;
-  var truncateDone = '<div class="truncate-field" data-rows="1" data-row-height="5" markdown="1"';
-  var truncateTag = '<truncate>';
-  var truncateCloseTag = '</truncate>';
-  function getEditorCursorPos(mdeditor) {
-    var doc = mdeditor.codemirror.getDoc();
-    var cursorPos = doc.getCursor();
-    var position = {
-      line: cursorPos.line,
-      ch: cursorPos.ch
-    };
-    return position;
-  }
-
-  function insertElement(element, mdeditor) {
-    var doc = mdeditor.codemirror.getDoc();
-    doc.replaceRange(element, getEditorCursorPos(mdeditor));
-    mdeditor.codemirror.focus();
-  }
-
-  function toggleTruncateField(mdeditor) {
-    var value = mdeditor.value();
-    if (value.indexOf(truncateTag) !== -1) {
-      return;
-    } else {
-      var truncateEl = '\n' + truncateTag + '<summary></summary>\n\n' + truncateCloseTag;
-      insertElement(truncateEl, mdeditor);
-      var doc = editor.codemirror.getDoc();
-      var cursorPos = getEditorCursorPos(editor);
-      doc.setCursor({line: cursorPos.line - 2, ch: '<truncate><summary>'.length});
-    }
-  }
-
-  function insertDetails(mdeditor) {
-    var summaryPlaceholder = VuFind.translate('details_summary_placeholder');
-    var detailsElement = '\n<details class="favorite-list-details" markdown="1">' +
-     '<summary markdown="1">' + summaryPlaceholder + '</summary>\n' +
-     VuFind.translate('details_text_placeholder') + '\n' +
-     '</details>';
-
-    insertElement(detailsElement, mdeditor);
-    var doc = editor.codemirror.getDoc();
-    var cursorPos = getEditorCursorPos(editor);
-    var summaryAndPlaceholder = '<summary>' + summaryPlaceholder;
-    doc.setCursor({line: cursorPos.line - 1, ch: summaryAndPlaceholder.length});
-  }
-
-  var mdeToolbar = [
-    'bold', 'italic',
-    'heading', '|',
-    'quote', 'unordered-list',
-    'ordered-list', '|',
-    'link', 'image',
-    '|',
-    {
-      name: 'Details',
-      action: function detailsInsert(mdeditor) {
-        insertDetails(mdeditor);
-      },
-      className: 'fa details-icon',
-      title: 'Insert details element'
-    },
-    {
-      name: 'truncate',
-      action: function truncateFieldToggle(mdeditor) {
-        toggleTruncateField(mdeditor);
-      },
-      className: 'fa fa-pagebreak',
-      title: 'Truncate'
-    },
-    {
-      name: 'close',
-      action: function closeToolbar() {
-        $(document).trigger('click');
-      },
-      className: 'fa fa-times editor-toolbar-close',
-      title: 'Close'
-    }
-  ];
-
-  function initDetailsElements() {
-    $('.favorite-list-details').on('click', function onDetailsClick() {
-      if ($(this).attr('open') === 'open') {
-        $(this).attr('open', false);
-      } else {
-        $(this).attr('open', 'open');
-      }
-    });
-  }
 
   // This is duplicated in image-popup.js to avoid dependency
   function getActiveListId() {
@@ -114,6 +26,10 @@ finna.myList = (function finnaMyList() {
   }
 
   function toggleSpinner(target, mode) {
+    if (target === mdEditable) {
+      mdEditable.setBusy(!mdEditable.isBusy());
+      return;
+    }
     if (mode) {
       // save original classes to a data-attribute
       target.data('class', target.attr('class'));
@@ -124,50 +40,6 @@ finna.myList = (function finnaMyList() {
     }
     // spinner
     target.toggleClass('fa-spinner fa-spin list-save', mode);
-  }
-
-  function handleTruncateField(description, addTruncate) {
-    var trunc = typeof addTruncate !== 'undefined' ? addTruncate : true;
-    var desc = description;
-    var summaryText = '';
-    var truncateEl = '';
-    var tempDom = '';
-    if (trunc && description.indexOf(truncateTag) !== -1) {
-      // Fixes preview bug
-      desc = desc.replace('<p><truncate>', '<truncate>');
-
-      tempDom = $('<div>').append($.parseHTML(desc));
-      // Replace <truncate> with <div class="truncate-field"..>
-      truncateEl = $(tempDom).find('truncate');
-      truncateEl.wrap(truncateDone + '>');
-      var newTruncate = tempDom.find('.truncate-field');
-      truncateEl.contents().unwrap();
-      newTruncate.find('details').wrap('<div>');
-
-      // Remove <summary> element and add its value to data-label attribute
-      if (newTruncate.find(':first-child').is('summary')) {
-        summaryText = newTruncate.find(':first-child')[0];
-        newTruncate.find(':first-child')[0].remove();
-      }
-      if (typeof summaryText.innerHTML !== 'undefined') {
-        newTruncate.attr('data-label', summaryText.innerHTML);
-      }
-      desc = tempDom[0].innerHTML;
-    } else if (desc.indexOf(truncateDone) !== -1) {
-      tempDom = $('<div>').append($.parseHTML(desc));
-      // Replace <div class="truncate-field"..> with <truncate> tag and create summary element
-      truncateEl = $(tempDom).find('.truncate-field');
-      summaryText = truncateEl.attr('data-label');
-      if (typeof summaryText === 'undefined') {
-        summaryText = '';
-      }
-      truncateEl.prepend($('<summary>' + summaryText + '</summary>'));
-      truncateEl.wrap('<truncate>');
-      tempDom.find('.truncate-field details').unwrap();
-      tempDom.find('.truncate-field').children().unwrap();
-      desc = tempDom[0].innerHTML;
-    }
-    return desc;
   }
 
   function updateList(params, callback, type) {
@@ -181,8 +53,7 @@ finna.myList = (function finnaMyList() {
     };
 
     if (type !== 'add-list') {
-      var description = $('.list-description .editable [data-markdown]').data('markdown');
-      description = handleTruncateField(description);
+      var description = $('.list-description [data-markdown]').data('markdown');
       if (description === VuFind.translate('add_list_description')) {
         listParams.desc = '';
       } else {
@@ -211,7 +82,7 @@ finna.myList = (function finnaMyList() {
     if (type === 'title') {
       spinner = $('.list-title .fa');
     } else if (type === 'desc') {
-      spinner = $('.list-description .fa:not(.fa-arrow-down)');
+      spinner = mdEditable;
     } else if (type === 'add-tag' || type === 'delete-tag') {
       $('.list-tags form fieldset').attr('disabled', 'disabled');
       $('.list-tags .fa-spinner').toggleClass('hide', false).show();
@@ -247,11 +118,13 @@ finna.myList = (function finnaMyList() {
           callback(data.data);
         }
         save = false;
+        mdEditable = null;
       })
       .fail(function onEditListFail() {
         toggleErrorMessage(true);
         toggleSpinner(spinner, false);
         save = false;
+        mdEditable = null;
       });
   }
 
@@ -298,9 +171,9 @@ finna.myList = (function finnaMyList() {
       // list title
       var titleCallback = {
         start: function titleEditStart(/*e*/) {
-          if (editor) {
-            // Close active editor
-            $(document).trigger('click');
+          if (mdEditable) {
+            // Close active editable
+            mdEditable.closeEditable();
             return;
           }
           currentTitle = target.find('input').val();
@@ -323,15 +196,16 @@ finna.myList = (function finnaMyList() {
     $('.list-title').toggleClass('disable', !mode);
   }
 
-  function listDescriptionChanged() {
-    var description = $('.list-description .editable [data-markdown]');
-    if (description.html() === '') {
-      description.data('empty', '1');
-      description.html(VuFind.translate('add_list_description'));
+  function listDescriptionChanged(data) {
+    var description = $('.list-description [data-markdown]');
+    if (data.desc === '') {
       $('input[name=listDescription]').val('');
     } else {
-      description.data('empty', '0');
-      $('input[name=listDescription]').val(description.data('markdown'));
+      if (typeof data.descHtml !== 'undefined' && data.descHtml !== '') {
+        description.html(data.descHtml);
+        finna.layout.initTruncate(description);
+      }
+      $('input[name=listDescription]').val(data.desc);
     }
     toggleTitleEditable(true);
   }
@@ -390,8 +264,7 @@ finna.myList = (function finnaMyList() {
     toggleErrorMessage(false);
 
     var parent = input.closest('.myresearch-notes');
-    var spinner = parent.find('.fa-pen');
-    toggleSpinner(spinner, true);
+    toggleSpinner(mdEditable);
 
     $.ajax({
       type: 'POST',
@@ -399,128 +272,28 @@ finna.myList = (function finnaMyList() {
       url: VuFind.path + '/AJAX/JSON?method=editListResource',
       data: {'params': params}
     })
-      .done(function onEditListResourceDone(/*data*/) {
-        if (spinner) {
-          toggleSpinner(spinner, false);
-        }
+      .done(function onEditListResourceDone(data) {
+        toggleSpinner(mdEditable);
 
         var hasNotes = params.notes !== '';
         parent.find('.note-info').toggleClass('hide', !hasNotes);
-        input.data('empty', hasNotes === '' ? '1' : '0');
-        if (!hasNotes) {
-          input.find('[data-markdown]').text(VuFind.translate('add_note'));
+        if (hasNotes
+          && typeof data.data.notesHtml !== 'undefined'
+          && data.data.notesHtml !== '')
+        {
+          input.html(data.data.notesHtml);
+          finna.layout.initTruncate(input);
         }
         toggleTitleEditable(true);
         save = false;
+        mdEditable = null;
       })
       .fail(function onEditListResourceFail() {
         toggleErrorMessage(true);
         toggleTitleEditable(true);
         save = false;
+        mdEditable = null;
       });
-  }
-
-  function initEditableMarkdownField(element, callback) {
-    element.find('[data-markdown], .js-edit').off('click').on('click', function onClickEditable(e) {
-      if (save) {
-        // Do not open the editor when save is in progress.
-        return;
-      }
-
-      if (!editor && e.target.nodeName === 'A') {
-        // Do not open the editor when a link within the editable area was clicked.
-        e.stopPropagation();
-        return;
-      }
-
-      if (editor) {
-        // Close active editor
-        $(document).trigger('click');
-        return;
-      }
-
-      toggleTitleEditable(false);
-
-      element.toggleClass('edit', true);
-      var container = element.find('[data-markdown]');
-
-      var textArea = $('<textarea/>');
-      var currentVal = null;
-      currentVal = container.data('markdown');
-      currentVal = handleTruncateField(currentVal, false);
-      textArea.text(currentVal);
-      container.hide();
-      textArea.insertAfter(container);
-      if (editor) {
-        editor = null;
-      }
-
-      var editorSettings = {
-        autoDownloadFontAwesome: false,
-        autofocus: true,
-        element: textArea[0],
-        toolbar: mdeToolbar,
-        spellChecker: false,
-        status: false
-      };
-
-      editor = new SimpleMDE(editorSettings);
-      currentVal = editor.value();
-
-      if (currentVal.indexOf(truncateTag) !== -1) {
-        $('.fa-pagebreak').addClass('pagebreak-toggled');
-      }
-      // Preview
-      var html = SimpleMDE.prototype.markdown(editor.value());
-      html = handleTruncateField(html);
-      $('.markdown-preview').remove();
-      var preview = $('<div/>').addClass('markdown-preview')
-        .html($('<div/>').addClass('data').html(html));
-      $('<div/>').addClass('preview').text(VuFind.translate('preview').toUpperCase()).prependTo(preview);
-      preview.appendTo(element);
-      finna.layout.initTruncate(preview);
-      initDetailsElements();
-
-      editor.codemirror.on('change', function onChangeEditor() {
-        var result = SimpleMDE.prototype.markdown(editor.value());
-        if (result.indexOf(truncateTag) !== -1) {
-          if (!$('.fa-pagebreak').hasClass('pagebreak-toggled')) {
-            $('.fa-pagebreak').addClass('pagebreak-toggled');
-          }
-        } else {
-          $('.fa-pagebreak').removeClass('pagebreak-toggled');
-        }
-        result = handleTruncateField(result);
-        preview.find('.data').html(result);
-        finna.layout.initTruncate(preview);
-        initDetailsElements();
-      });
-
-      // Close editor and save when user clicks outside the editor
-      $(document).one('click', function onClickDocument() {
-        var markdown = editor.value();
-        var resultHtml = SimpleMDE.prototype.markdown(markdown);
-
-        editor.toTextArea();
-        editor = null;
-        element.toggleClass('edit', false).find('textarea').remove();
-
-        container.show();
-        container.data('markdown', markdown);
-        container.data('empty', markdown.length === 0 ? '1' : '0');
-        resultHtml = handleTruncateField(resultHtml);
-        container.html(resultHtml);
-        finna.layout.initTruncate(container);
-        preview.remove();
-
-        callback(markdown);
-      });
-      $('.CodeMirror-code').focus();
-      // Prevent clicks within the editor area from bubbling up and closing the editor.
-      element.closest('.markdown').off('click').on('click', function onClickEditor() {
-        return false;
-      });
-    });
   }
 
   function initEditComponents() {
@@ -545,10 +318,6 @@ finna.myList = (function finnaMyList() {
 
     if (!isDefaultList) {
       toggleTitleEditable(true);
-
-      initEditableMarkdownField($('.list-description'), function onDoneEditDescription(/*markdown*/) {
-        updateList({}, listDescriptionChanged, 'desc');
-      });
 
       // list tags
       initListTagComponent();
@@ -616,21 +385,6 @@ finna.myList = (function finnaMyList() {
       }
     });
 
-    $('.myresearch-row').each(function initNoteEditor(ind, obj) {
-      var editField = $(obj).find('.myresearch-notes .resource-note');
-      initEditableMarkdownField(editField, function onMarkdownEditDone(markdown) {
-        var row = editField.closest('.myresearch-row');
-        var id = row.find('.hiddenId').val();
-        var source = row.find('.hiddenSource').val();
-        var listId = getActiveListId();
-
-        updateListResource(
-          {'id': id, 'source': source, 'listId': listId, 'notes': markdown},
-          editField.find('> div')
-        );
-      });
-    });
-
     // add resource to list
     $('.mylist-functions #add-to-list').off('change').change(function onChangeAddToList(/*e*/) {
       var val = $(this).val();
@@ -692,11 +446,60 @@ finna.myList = (function finnaMyList() {
     });
   }
 
+  function initListeners() {
+    $(document).on('finna:openEditable', function(event) {
+      if (event.editable.element.hasClass('list-description')
+        || event.editable.element.hasClass('resource-note')
+      ) {
+        if (save) {
+          // Do not open the editable when save is in progress.
+          return false;
+        }
+
+        if (mdEditable) {
+          // Close active editable
+          mdEditable.closeEditable();
+          return false;
+        }
+
+        toggleTitleEditable(false);
+
+        mdEditable = event.editable;
+      }
+    });
+
+    $(document).on('click', function onClickDocument(event) {
+      // Close editable and save when user clicks outside the editable
+      if (mdEditable) {
+        mdEditable.closeEditable();
+      }
+    });
+
+    $(document).on('finna:editableClosed', function(event) {
+      if (event.editable.element.hasClass('list-description')) {
+        updateList({}, listDescriptionChanged, 'desc');
+      }
+      else if (event.editable.element.hasClass('resource-note')) {
+        var markdown = event.editable.container.data('markdown');
+        var row = event.editable.element.closest('.myresearch-row');
+        var id = row.find('.hiddenId').val();
+        var source = row.find('.hiddenSource').val();
+        var listId = getActiveListId();
+
+        updateListResource(
+          {'id': id, 'source': source, 'listId': listId, 'notes': markdown},
+          event.editable.container
+        );
+      }
+    });
+  }
+
   var my = {
     onCustomOrderSaved: onCustomOrderSaved,
     initFavoriteOrderingFunctionality: initFavoriteOrderingFunctionality,
     init: function init() {
       initEditComponents();
+      initListeners();
     }
   };
 

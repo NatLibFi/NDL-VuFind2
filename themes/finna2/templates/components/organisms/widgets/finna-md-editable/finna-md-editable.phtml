@@ -1,0 +1,21 @@
+<?php
+  $__attributes = $this->htmlAttributes($attributes ?? [])->add('class', 'finna-md-editable');
+  $__markdown = $markdown ?? '';
+  $__containerAttributes = $this->htmlAttributes(['data-markdown' => $__markdown]);
+  $__editable = $html ?? '';
+  if (isset($emptyHtml)) {
+    $__containerAttributes['data-empty-html'] = $emptyHtml;
+    if (empty($__markdown)) {
+      $__editable = $emptyHtml;
+    }
+  }
+  if ($preview ?? false) {
+    $__containerAttributes['data-preview'] = "true";
+  }
+?>
+<?= $this->render('components/molecules/containers/finna-editable/finna-editable.phtml', [
+    'attributes' => $__attributes,
+    'containerAttributes' => $__containerAttributes,
+    'editable' => $__editable
+  ]); ?>
+<?php $this->headScript()->appendFile('components/organisms/widgets/finna-md-editable/finna-md-editable.js'); ?>

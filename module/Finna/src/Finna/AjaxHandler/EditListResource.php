@@ -27,6 +27,7 @@
  */
 namespace Finna\AjaxHandler;
 
+use Finna\View\Helper\Root\Markdown;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Row\User;
 use VuFind\Db\Table\UserResource;
@@ -68,17 +69,27 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase
     protected $enabled;
 
     /**
+     * Markdown view helper
+     *
+     * @var Markdown
+     */
+    protected $markdownHelper;
+
+    /**
      * Constructor
      *
-     * @param UserResource $userResource UserResource database table
-     * @param User|bool    $user         Logged in user (or false)
-     * @param bool         $enabled      Are lists enabled?
+     * @param UserResource $userResource   UserResource database table
+     * @param User|bool    $user           Logged in user (or false)
+     * @param bool         $enabled        Are lists enabled?
+     * @param Markdown     $markdownHelper Markdown view helper
      */
-    public function __construct(UserResource $userResource, $user, $enabled = true)
-    {
+    public function __construct(UserResource $userResource, $user, $enabled = true,
+        $markdownHelper = null
+    ) {
         $this->userResource = $userResource;
         $this->user = $user;
         $this->enabled = $enabled;
+        $this->markdownHelper = $markdownHelper;
     }
 
     /**
@@ -140,6 +151,11 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase
             $row->save();
         }
 
-        return $this->formatResponse('');
+        $response = [];
+        if (!empty($notes) && null !== $this->markdownHelper) {
+            $response['notesHtml'] = $this->markdownHelper->toHtml($notes);
+        }
+
+        return $this->formatResponse($response);
     }
 }

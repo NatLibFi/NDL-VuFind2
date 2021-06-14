@@ -57,11 +57,39 @@ class FinnaTruncate extends AbstractBase
             $this->removeSlotElement($labelElement);
         }
 
+        // If only one of the 'rows' and 'row-height' attributes is set, unset the
+        // default value of the other attribute.
+        if (isset($this->attributes['rows'])
+            && !isset($this->attributes['row-height'])
+        ) {
+            $this->getViewModel()->setVariable('rowHeight', null);
+        }
+        if (isset($this->attributes['row-height'])
+            && !isset($this->attributes['rows'])
+        ) {
+            $this->getViewModel()->setVariable('rows', null);
+        }
+
         $this->viewModel->setVariable(
             'content', $this->dom->firstChild()->innerHTML()
         );
 
-        $this->viewModel->setTemplate('CustomElement/finna-truncate');
+        $this->getViewModel()->setTemplate(
+            'components/molecules/containers/finna-truncate/finna-truncate'
+        );
+    }
+
+    /**
+     * Get default values for view model variables.
+     *
+     * @return array
+     */
+    protected function getDefaultVariables(): array
+    {
+        return [
+            'rows'      => 1,
+            'rowHeight' => 5
+        ];
     }
 
     /**
@@ -72,6 +100,9 @@ class FinnaTruncate extends AbstractBase
      */
     protected static function getAttributeToVariableMap(): array
     {
-        return ['rows' => 'rows'];
+        return [
+            'rows'       => 'rows',
+            'row-height' => 'rowHeight'
+        ];
     }
 }

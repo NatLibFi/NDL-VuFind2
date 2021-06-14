@@ -73,3 +73,21 @@
     padding: 10px;
   }
 }
+
+// Minimal custom element styling for Markdown preview.
+
+finna-panel {
+  display: block;
+  outline: 1px solid @gray-lighter;
+  margin-bottom: 21px;
+  padding: 10px;
+  > span[slot="heading"] {
+    outline: 1px solid @gray-lighter;
+    display: block;
+    margin: -10px -10px 10px -10px;
+    padding: 10px;
+    font-size: larger;
+    font-weight: bold;
+    background-color: @gray-ultralight;
+  }
+}

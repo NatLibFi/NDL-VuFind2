@@ -67,11 +67,11 @@ class FinnaPanel extends AbstractBase
             $this->removeSlotElement($heading);
         }
 
-        $this->viewModel->setVariable(
+        $this->getViewModel()->setVariable(
             'content', $this->dom->firstChild()->innerHTML()
         );
 
-        $this->viewModel->setTemplate(
+        $this->getViewModel()->setTemplate(
             'components/molecules/containers/finna-panel/finna-panel'
         );
     }

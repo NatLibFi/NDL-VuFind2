@@ -48,7 +48,7 @@ class FinnaList extends AbstractBase
     {
         parent::__construct($name, $options, true);
 
-        $this->viewModel->setTemplate('CustomElement/finna-list');
+        $this->getViewModel()->setTemplate('CustomElement/finna-list');
     }
 
     /**
@@ -65,7 +65,7 @@ class FinnaList extends AbstractBase
             'title'        => true,
             'date'         => false,
             'allowCopy'    => true,
-            'limit'        => '6',
+            'limit'        => 6,
             'showAllLink'  => true,
             'headingLevel' => 2
         ];
