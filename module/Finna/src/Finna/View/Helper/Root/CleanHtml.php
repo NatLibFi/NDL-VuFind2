@@ -55,7 +55,7 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
     protected $cacheDir;
 
     /**
-     * Whitelisted custom element names and attributes
+     * Allowed custom element names and attributes
      *
      * @var array
      */
@@ -72,9 +72,8 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
      * Constructor
      *
      * @param string $cacheDir       Cache directory
-     * @param array  $customElements Array containing whitelisted custom element
-     *                               names as keys and element attribute name arrays
-     *                               as values
+     * @param array  $customElements Array containing allowed custom element names as
+     *                               keys and element attribute name arrays as values
      */
     public function __construct($cacheDir, $customElements)
     {
