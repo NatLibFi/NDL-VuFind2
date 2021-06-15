@@ -999,29 +999,43 @@ class RecordDataFormatterFactory
 
         // Add arcrole-relations as multiple fields with role as field header
         $getRelations = function ($data, $options) use (&$pos) {
-            $final = [];
-            foreach ($data as $type => $values) {
-                $label = null;
-                if (isset($values['role'])) {
-                    $label = $values['role'];
-                    $label = "CreatorRoles::$label";
+            // Group relations by role
+            $relationsByRole = $relationsWithoutRole = [];
+            foreach ($data as &$relation) {
+                if ($role = ($relation['role'] ?? null)) {
+                    if (!isset($relationsByRole[$role])) {
+                        $relationsByRole[$role] = [];
+                    }
                     // Unset so that role is not appended to name
-                    unset($values['role']);
+                    unset($relation['role']);
+                    $relationsByRole[$role][] = $relation;
+                } else {
+                    $relationsWithoutRole[] = $relation;
                 }
-                $final[] = [
-                    'label' => $label,
-                    'values' => [ 0 => $values],
-                    'options' => [
-                        'pos' => $pos++,
-                        'renderType' => 'RecordDriverTemplate',
-                        'template' => 'data-authors.phtml',
-                        'context' => [
-                            'class' => 'recordRelations',
-                            'type' => $type,
-                            'schemaLabel' => null,
+            }
+            $final = [];
+            // Add one record field for each role (might include several relations).
+            // Lastly, handle possible relations without roles by appending them
+            // under the same record field (using an empty field label).
+            foreach ([true => $relationsByRole,
+                      false => ['' => $relationsWithoutRole]]
+                as $hasRole => $relationGroup
+            ) {
+                foreach ($relationGroup as $role => $relations) {
+                    $final[] = [
+                        'label' => $hasRole ? "CreatorRoles::$role" : null,
+                        'values' => $relations,
+                        'options' => [
+                            'pos' => $pos++,
+                            'renderType' => 'RecordDriverTemplate',
+                            'template' => 'data-authors.phtml',
+                            'context' => [
+                                'class' => 'recordRelations',
+                                'schemaLabel' => null,
+                            ],
                         ],
-                    ],
-                 ];
+                    ];
+                }
             }
             return $final;
         };
