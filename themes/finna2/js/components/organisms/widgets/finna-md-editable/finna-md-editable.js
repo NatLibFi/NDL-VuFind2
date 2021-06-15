@@ -1,11 +1,5 @@
 /* global VuFind, finna, EasyMDE */
 
-FinnaMdEditable.prototype.eventOpenEditable = 'finna:openEditable';
-FinnaMdEditable.prototype.eventEditableClosed = 'finna:editableClosed';
-
-FinnaMdEditable.prototype.busyClass = 'finna-editable-busy';
-FinnaMdEditable.prototype.openClass = 'finna-editable-open';
-
 /**
  * Finna Markdown editable.
  *
@@ -28,6 +22,12 @@ function FinnaMdEditable(element) {
     event.data.instance.openEditable();
   });
 }
+
+FinnaMdEditable.prototype.eventOpenEditable = 'finna:openEditable';
+FinnaMdEditable.prototype.eventEditableClosed = 'finna:editableClosed';
+
+FinnaMdEditable.prototype.busyClass = 'finna-editable-busy';
+FinnaMdEditable.prototype.openClass = 'finna-editable-open';
 
 /**
  * Returns the open state of the editable.
