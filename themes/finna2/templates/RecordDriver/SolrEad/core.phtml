@@ -103,9 +103,12 @@
             : $formatter->filterEADFields($coreFields);
         $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
           ['label' => 'Context',
-           'lines' => ['Archive Origination', 'Archive', 'Archive Series']
-          ]], $coreFields));
-
+           'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
+          ],
+          ['lines' => ['Format', 'Authors', 'Secondary Authors', 'Unit ID', 'Unit IDs', 'Subjects', 'subjects_extended', 'Dates']],
+          ['label' => 'access_restrictions_general',
+           'lines' => ['Access Restrictions Extended']]
+          ], $coreFields));
       ?>
       <?php if (!empty($coreFieldGroups)): ?>
         <table class="table table-finna-record record-details record-field-groups">

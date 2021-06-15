@@ -55,9 +55,11 @@ if ($img):
             <?php // The funky comparison below is due to Laminas translator not supporting empty values (see ExtendedIniReader) ?>
             <?php if (!$this->translationEmpty('Archive Repository')): ?><span class="small"><?=$this->transEsc('Archive Repository')?>:</span><?php endif; ?>
             <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
-            <?php if ($origination = $this->driver->getOrigination()): ?>
-              <br/><span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
-              <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($origination)?>%22&amp;type=Author"><?=$this->escapeHtml($origination)?></a>
+            <?php $originations = $this->driver->tryMethod('getOriginations', [], $this->driver->getOrigination()); if ($originations): ?>
+                <br/><span class="archive-label"><?=$this->transEsc('Archive Origination')?>:</span>
+              <?php $originations = (array)$originations; foreach ($originations as $i => $origination): ?>
+                <?=$i > 0 ? ' ; ' : ''?><a href="<?=$this->escapeHtmlAttr($this->url('search-results', [], ['query' => ['lookfor' => $origination, 'type' => 'Author']]))?>"><?=$this->escapeHtml($origination)?></a>
+              <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $this->driver->getFormats()) || in_array('Document/ArchiveCollection', $this->driver->getFormats()))): ?>
               <?php $parentSource = $this->driver->getSourceIdentifier(); ?>
@@ -74,17 +76,25 @@ if ($img):
               <?php endif; ?>
             <?php endif; ?>
             <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-              <br/><span class="archive-label"><?=$this->transEsc('Archive Series')?>:</span>
-              <?php $parentIds = $this->driver->getHierarchyParentId(); $parentTitles = $this->driver->getHierarchyParentTitle(); ?>
-              <?php foreach ($parentIds as $index => $parentId): ?>
-                <?php
-                  try {
-                    $parentUrl = $this->recordLink()->getUrl("$parentSource|$parentId");
-                  } catch (\Exception $e) {
-                    $parentUrl = '';
-                  }
-                ?>
-                <a href="<?=$this->escapeHtmlAttr($parentUrl)?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+              <?php foreach ([
+                ['Archive Series', \Finna\RecordDriver\SolrEad::SERIES_LEVELS],
+                ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS]
+              ] as [$label, $levels]):
+              ?>
+                <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
+                <?php if ($parentIds): ?>
+                  <br/><span class="archive-label"><?=$this->transEsc($label)?>:</span>
+                  <?php foreach ($parentIds as $index => $parentId): ?>
+                    <?php
+                      try {
+                        $parentUrl = $this->recordLink()->getUrl("$parentSource|$parentId");
+                      } catch (\Exception $e) {
+                        $parentUrl = '';
+                      }
+                    ?>
+                    <a href="<?=$this->escapeHtmlAttr($parentUrl)?>"><?=isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?></a><?=($index < count($parentIds) - 1 ? ', ' : '')?>
+                  <?php endforeach; ?>
+                <?php endif ?>
               <?php endforeach; ?>
             <?php endif; ?>
           </div>

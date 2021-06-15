@@ -224,7 +224,7 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
 
             $data = [];
             if (strpos($url, ',') !== false) {
-                list($url, $target) = explode(',', $url, 2);
+                [$url, $target] = explode(',', $url, 2);
                 $url = trim($url);
                 $data['target'] = trim($target);
             }

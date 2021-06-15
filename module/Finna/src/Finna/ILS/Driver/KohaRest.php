@@ -1224,7 +1224,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                             if (!$issue['received']) {
                                 continue;
                             }
-                            list($year) = explode('-', $issue['publisheddate']);
+                            [$year] = explode('-', $issue['publisheddate']);
                             if ($year > $latestReceived) {
                                 $latestReceived = $year;
                             }
@@ -1234,7 +1234,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                         if (!$issue['received']) {
                             continue;
                         }
-                        list($year) = explode('-', $issue['publisheddate']);
+                        [$year] = explode('-', $issue['publisheddate']);
                         if ($yearFilter) {
                             // Limit to current and last year
                             if ($year && $year != $currentYear
@@ -1279,6 +1279,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $electronic = [];
         if (!empty($holdings)) {
             foreach ($holdings as $holding) {
+                if ($holding['suppressed']) {
+                    continue;
+                }
                 $marc = $this->getHoldingMarc($holding);
                 if (null === $marc) {
                     continue;
@@ -1811,6 +1814,25 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             null,
             $description
         );
+    }
+
+    /**
+     * Translate location name
+     *
+     * @param string $location Location code
+     * @param string $default  Default value if translation is not available
+     *
+     * @return string
+     */
+    protected function translateLocation($location, $default = null)
+    {
+        $defaultTranslation = parent::translateLocation($location, $default);
+        if (empty($this->config['Catalog']['id'])) {
+            return $defaultTranslation;
+        }
+
+        $prefix = $this->config['Catalog']['id'] . '_';
+        return $this->translate("$prefix$location", [], $defaultTranslation);
     }
 
     /**

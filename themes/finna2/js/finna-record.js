@@ -372,6 +372,18 @@ finna.record = (function finnaRecord() {
     VuFind.recordVersions.init(_holder);
   }
 
+  function handleRedirect(oldId, newId) {
+    if (window.history.replaceState) {
+      var pathParts = window.location.pathname.split('/');
+      pathParts.forEach(function handlePathPart(part, i) {
+        if (decodeURIComponent(part) === oldId) {
+          pathParts[i] = encodeURIComponent(newId);
+        }
+      });
+      window.history.replaceState(null, document.title, pathParts.join('/') + window.location.search + window.location.hash);
+    }
+  }
+
   function init() {
     initHideDetails();
     initDescription();
@@ -390,7 +402,8 @@ finna.record = (function finnaRecord() {
     init: init,
     setupHoldingsTab: setupHoldingsTab,
     setupLocationsEad3Tab: setupLocationsEad3Tab,
-    initRecordVersions: initRecordVersions
+    initRecordVersions: initRecordVersions,
+    handleRedirect: handleRedirect
   };
 
   return my;

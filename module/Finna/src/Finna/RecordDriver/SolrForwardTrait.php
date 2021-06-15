@@ -81,9 +81,8 @@ trait SolrForwardTrait
                 if (!empty($attributes->{'finna-kayttooikeus'})) {
                     $rights['copyright']
                         = (string)$attributes->{'finna-kayttooikeus'};
-                    $link = $this->getRightsLink(
-                        strtoupper($rights['copyright']), $language
-                    );
+                    $link
+                        = $this->getRightsLink($rights['copyright'], $language);
                     if ($link) {
                         $rights['link'] = $link;
                     }

@@ -214,7 +214,7 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
                 }
                 if ($parts) {
                     $queryStr = "($queryStr) AND NOT ("
-                        . implode(' AND ', $parts) . ')';
+                        . implode(' OR ', $parts) . ')';
                 }
             }
         }

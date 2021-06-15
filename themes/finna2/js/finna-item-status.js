@@ -38,6 +38,27 @@ finna.itemStatus = (function finnaItemStatus() {
       recordContainer.find('.location').removeClass('hidden');
       recordContainer.removeClass('js-item-done');
       VuFind.itemStatuses.checkRecord(recordContainer);
+
+      // Online URLs
+      var $recordUrls = recordContainer.find('.available-online-links');
+      if ($recordUrls.length) {
+        $recordUrls.html('<i class="fa fa-spinner fa-spin"></i> ' + VuFind.translate('loading') + '...<br>');
+        $.getJSON(
+          VuFind.path + '/AJAX/JSON',
+          {
+            method: 'getRecordData',
+            data: 'onlineUrls',
+            source: recordContainer.find('.hiddenSource')[0].value,
+            id: recordContainer.find('.hiddenId')[0].value
+          }
+        ).done(function onGetRecordLinksDone(response) {
+          $recordUrls.replaceWith(response.data.html);
+          finna.layout.initTruncate(recordContainer);
+          VuFind.openurl.embedOpenUrlLinks(recordContainer.find('.openUrlEmbed a'));
+        }).fail(function onGetRecordLinksFail() {
+          $recordUrls.html(VuFind.translate('error_occurred'));
+        });
+      }
     });
   }
 

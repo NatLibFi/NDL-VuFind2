@@ -136,6 +136,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
         $returnStatus = false
     ) {
         // Set some variables
+        $url = null;
         $result = null;
         $statusCode = null;
         $returnValue = null;
@@ -273,8 +274,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
     {
         // Prepare result array with default values. If no API result can be received
         // these will be returned.
-        $results['total'] = 0;
-        $results['holdings'] = [];
+        $results = ['total' => 0, 'holdings' => []];
 
         // Correct copy count in case of paging
         $copyCount = $options['offset'] ?? 0;
@@ -647,7 +647,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
         $patronId = $username;
         if ('email' === $loginMethod) {
             // Try to find the user in Alma by an identifier
-            list($response, $status) = $this->makeRequest(
+            [$response, $status] = $this->makeRequest(
                 '/users/' . rawurlencode($username),
                 [
                     'view' => 'full'
@@ -709,7 +709,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
             ];
 
             // Try to authenticate the user with Alma
-            list($response, $status) = $this->makeRequest(
+            [$response, $status] = $this->makeRequest(
                 '/users/' . rawurlencode($username),
                 $getParams,
                 [],
@@ -1005,12 +1005,14 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
     /**
      * Get details of a single hold request.
      *
-     * @param array $holdDetails One of the item arrays returned by the
-     *                           getMyHolds method
+     * @param array $holdDetails A single hold array from getMyHolds
+     * @param array $patron      Patron information from patronLogin
      *
      * @return string            The Alma request ID
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelHoldDetails($holdDetails)
+    public function getCancelHoldDetails($holdDetails, $patron = [])
     {
         return $holdDetails['id'];
     }
@@ -1492,14 +1494,14 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getPickupLocations($patron, $holdDetails)
+    public function getPickupLocations($patron, $holdDetails = null)
     {
         $xml = $this->makeRequest('/conf/libraries');
         $libraries = [];
         foreach ($xml as $library) {
             $libraries[] = [
-                'locationID' => $library->code,
-                'locationDisplay' => $library->name
+                'locationID' => (string)$library->code,
+                'locationDisplay' => (string)$library->name
             ];
         }
         return $libraries;

@@ -51,4 +51,34 @@
     </div>
   </div>
 </div>
+
+<!-- 3D model modal -->
+<div id="model-modal" hidden>
+  <div class="model-wrapper">
+    <div class="model-canvas-wrapper">
+      <div class="viewer-state-wrapper">
+      </div>
+      <div class="viewer-options"> 
+        <div class="viewer-controls">
+          <button class="viewer-btn model-fullscreen collapsed" type="button"><i class="fa fa-fullscreen"></i> <span class="sr-only"><?=$this->transEsc('Fullscreen mode')?></span></button>
+          <button class="viewer-btn model-statistics collapsed" data-toggle="collapse" data-target="#model-stats" type="button"><i class="fa fa-info-circle-hollow"></i> <span class="sr-only"><?=$this->transEsc('Information of model')?></span></button>
+          <button class="viewer-btn model-help-btn collapsed" data-toggle="collapse" data-target="#model-help" type="button" ><i class="fa fa-question-circle-o"></i> <span class="sr-only"><?=$this->transEsc('model_help')?></span></button>
+        </div>
+        <div class="viewer-statistics">
+          <div>
+            <div class="model-stats collapse">
+              <table class="table table-finna-record">
+                  <tbody class="statistics-table">
+                      <tr><th class="text-center" colspan="2"><?=$this->transEsc('Information of model')?></th></tr>
+                  </tbody>
+              </table>
+            </div>
+            <div class="model-help collapse">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- END of: finna - search/modals.phtml -->

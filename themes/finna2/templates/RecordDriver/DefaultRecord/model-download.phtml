@@ -1,0 +1,30 @@
+<!-- START of Finna - RecordDriver/DefaultRecord/model-download.phtml -->
+<div class="model-link">
+    <?php if ((count($model) > 1 || count(end($model)) > 1) && !$this->userAgent()->isBot()): ?>
+        <div class="dropdown">
+            <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <?=$this->transEsc('Download the file')?> <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu download" aira-labelledby="downloadMenu-<?=$index?>">
+                <?php foreach ($model as $format => $data): ?>
+                    <?php foreach ($data as $type => $url): ?>
+                        <li><a download href="<?=$type === 'preview' ? $this->url('record-downloadmodel', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $index, 'format' => $format, 'type' => $type]]) : $this->escapeHtmlAttr($url)?>" rel="nofollow"> <?=$this->transEsc("model_type_{$type}", null, $type)?> <span><?=$this->transEsc("model_format_{$format}")?></span></a></li> 
+                    <?php endforeach; ?>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php else: ?>
+        <div class="download-link">
+            <?php
+                $elem = end($model);
+                $type = key($elem);
+                $format = key($model);
+            ?>
+            <a download href="<?= $type === 'preview' ? $this->url('record-downloadmodel', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $index, 'format' => $format, 'type' => $type]]) : $this->escapeHtmlAttr($url)?>" rel="nofollow">
+                <i aria-hidden="true" class="fa fa-download"></i>
+                <?=$this->transEsc('Download the file')?></span>
+            </a>
+        </div>
+    <?php endif; ?>
+</div>
+<!-- END of Finna - RecordDriver/DefaultRecord/model-download.phtml -->

@@ -1,0 +1,19 @@
+<?php // No start or end tags
+echo json_encode([
+    'js-threejs' => $this->headScript()->itemToString(
+    $this->headScript()->createData('text/javascript', ['src' => 'vendor/three.min.js', 'id' => 'js-threejs']),
+    '', '', ''
+    ),
+    'js-gltfloader' => $this->headScript()->itemToString(
+    $this->headScript()->createData('text/javascript', ['src' => 'vendor/GLTFLoader.js', 'id' => 'js-gltfloader']),
+    '', '', ''
+    ),
+    'js-orbitcontrols' => $this->headScript()->itemToString(
+    $this->headScript()->createData('text/javascript', ['src' => 'vendor/OrbitControls.js', 'id' => 'js-orbitcontrols']),
+    '', '', ''
+    ),
+    'js-dracoloader' => $this->headScript()->itemToString(
+    $this->headScript()->createData('text/javascript', ['src' => 'vendor/DRACOLoader.js', 'id' => 'js-dracoloader']),
+    '', '', ''
+    )
+]);

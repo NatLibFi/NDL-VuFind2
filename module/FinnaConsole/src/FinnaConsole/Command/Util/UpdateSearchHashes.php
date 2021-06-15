@@ -137,6 +137,6 @@ class UpdateSearchHashes extends AbstractUtilCommand
         } else {
             echo "No saved rows without hash found\n";
         }
-        return true;
+        return 0;
     }
 }

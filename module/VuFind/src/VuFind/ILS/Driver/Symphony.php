@@ -879,6 +879,7 @@ class Symphony extends AbstractBase implements LoggerAwareInterface
      */
     protected function getLiveStatuses($ids)
     {
+        $items = [];
         foreach ($ids as $id) {
             $items[$id] = [];
         }
@@ -1194,7 +1195,7 @@ class Symphony extends AbstractBase implements LoggerAwareInterface
                 $group = null;
             }
 
-            list($lastname, $firstname)
+            [$lastname, $firstname]
                 = explode(', ', $result->patronInfo->displayName);
 
             $profile = [
@@ -1376,9 +1377,7 @@ class Symphony extends AbstractBase implements LoggerAwareInterface
             }
 
             return $fineList;
-        } catch (SoapFault $e) {
-            throw new ILSException($e->getMessage());
-        } catch (\Exception $e) {
+        } catch (SoapFault | \Exception $e) {
             throw new ILSException($e->getMessage());
         }
     }
@@ -1388,11 +1387,14 @@ class Symphony extends AbstractBase implements LoggerAwareInterface
      *
      * Supplies the form details required to cancel a hold
      *
-     * @param array $holdDetails An array of item data
+     * @param array $holdDetails A single hold array from getMyHolds
+     * @param array $patron      Patron information from patronLogin
      *
      * @return string  Data for use in a form field
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelHoldDetails($holdDetails)
+    public function getCancelHoldDetails($holdDetails, $patron = [])
     {
         return $holdDetails['reqnum'];
     }

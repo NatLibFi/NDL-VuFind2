@@ -369,13 +369,18 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             }
         }
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'patrons', $this->sessionCache->patronId],
             false,
             'GET',
             $patron,
             true
         );
+        if ($code != 200) {
+            $this->error(
+                "patronLogin $username failed ($code): " . print_r($result, true)
+            );
+        }
 
         if ($code == 401 || $code == 403) {
             return null;
@@ -514,7 +519,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         }
         $transactions = [];
         foreach ($result['records'] as $entry) {
-            list($biblionumber, $title, $volume)
+            [$biblionumber, $title, $volume]
                 = $this->getCheckoutInformation($entry);
 
             $dueStatus = false;
@@ -601,8 +606,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $finalResult = ['details' => []];
 
         foreach ($renewDetails['details'] as $details) {
-            list($checkoutId, $itemId) = explode('|', $details);
-            list($code, $result) = $this->makeRequest(
+            [$checkoutId, $itemId] = explode('|', $details);
+            [$code, $result] = $this->makeRequest(
                 ['v1', 'checkouts', $checkoutId], false, 'PUT', $patron, true
             );
             if ($code == 403) {
@@ -670,7 +675,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         ];
 
         foreach ($transactions['records'] as $entry) {
-            list($biblionumber, $title, $volume)
+            [$biblionumber, $title, $volume]
                 = $this->getCheckoutInformation($entry);
 
             $dueStatus = false;
@@ -781,16 +786,16 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Cancel Hold Details
+     * Get details of a single hold request.
      *
-     * Get required data for canceling a hold. This value is used by relayed to the
-     * cancelHolds function when the user attempts to cancel a hold.
+     * @param array $holdDetails A single hold array from getMyHolds
+     * @param array $patron      Patron information from patronLogin
      *
-     * @param array $holdDetails An array of hold data
+     * @return string            The Alma request ID
      *
-     * @return string Data for use in a form field
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelHoldDetails($holdDetails)
+    public function getCancelHoldDetails($holdDetails, $patron = [])
     {
         return $holdDetails['available'] || $holdDetails['in_transit'] ? ''
             : $holdDetails['requestId'] . '|' . $holdDetails['item_id'];
@@ -815,8 +820,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $response = [];
 
         foreach ($details as $detail) {
-            list($holdId, $itemId) = explode('|', $detail, 2);
-            list($resultCode) = $this->makeRequest(
+            [$holdId, $itemId] = explode('|', $detail, 2);
+            [$resultCode] = $this->makeRequest(
                 ['v1', 'holds', $holdId], [], 'DELETE', $patron, true
             );
 
@@ -1109,7 +1114,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             $request['itemnumber'] = (int)$itemId;
         }
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'holds'],
             json_encode($request),
             'POST',
@@ -1210,7 +1215,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $response = [];
 
         foreach ($details as $id) {
-            list($resultCode) = $this->makeRequest(
+            [$resultCode] = $this->makeRequest(
                 ['v1', 'articlerequests', $id], [], 'DELETE', $patron, true
             );
 
@@ -1321,7 +1326,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $request['issue'] = $details['issue'] ?? '';
         $request['date'] = $details['year'] ?? '';
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'articlerequests'],
             json_encode($request),
             'POST',
@@ -1425,7 +1430,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             'current_password' => $details['oldPassword']
         ];
 
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'patrons', $patron['id'], 'password'],
             json_encode($request),
             'PATCH',
@@ -1554,8 +1559,14 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
 
         // Set timeout value
         $timeout = $this->config['Catalog']['http_timeout'] ?? 30;
+        $connectTimeout = $this->config['Catalog']['connect_timeout'] ?? 10;
         $client->setOptions(
-            ['timeout' => $timeout, 'useragent' => 'VuFind', 'keepalive' => true]
+            [
+                'timeout' => $timeout,
+                'connecttimeout' => $connectTimeout,
+                'useragent' => 'VuFind',
+                'keepalive' => false
+            ]
         );
 
         // Set Accept header
@@ -1733,21 +1744,22 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             $response = $client->setMethod('POST')->send();
         } catch (\Exception $e) {
             $this->error(
-                "POST request for '$apiUrl' failed: " . $e->getMessage()
+                "POST request for '$apiUrl' failed for patron "
+                . $patron['cat_username'] . ': ' . $e->getMessage()
             );
             throw new ILSException('Problem with Koha REST API.');
         }
         if (!$response->isSuccess()) {
-            if (in_array((int)$response->getStatusCode(), [401, 403])) {
-                return false;
-            }
             $this->error(
                 "POST request for '" . $client->getRequest()->getUriString()
-                . "' did not succeed: "
+                . "' (patron " . $patron['cat_username'] . ') did not succeed: '
                 . $response->getStatusCode() . ': '
                 . $response->getReasonPhrase()
                 . ', response content: ' . $response->getBody()
             );
+            if (in_array((int)$response->getStatusCode(), [401, 403])) {
+                return false;
+            }
             throw new ILSException('Problem with Koha authentication.');
         }
 
@@ -1773,7 +1785,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getItemStatusesForBiblio($id, $patron = null)
     {
-        list($code, $result) = $this->makeRequest(
+        [$code, $result] = $this->makeRequest(
             ['v1', 'availability', 'biblio', 'search'],
             ['biblionumber' => $id],
             'GET',

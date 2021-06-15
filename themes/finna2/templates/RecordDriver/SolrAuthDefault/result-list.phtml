@@ -28,13 +28,13 @@
             </a>
           </h2>
         </div>
-        <?php if ($titleAltScript = $this->driver->tryMethod('getShortTitleAltScript')): ?>
+        <?php foreach ($this->driver->tryMethod('getFullTitlesAltScript', [], []) as $altTitle): ?>
           <div class="title-alt-script">
-            <?=$this->escapeHtml($titleAltScript)?><?php if ($subtitleAltScript = $this->driver->tryMethod('getSubtitleAltScript')): ?>&nbsp;: <?=$this->escapeHtml($subtitleAltScript)?><?php endif; ?>
+            <?=$this->escapeHtml($altTitle)?>
           </div>
-        <?php endif; ?>
-        <div class="dateyeartype">
+        <?php endforeach; ?>
 
+        <div class="dateyeartype">
           <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
             <div class="resultOtherLinks">
               <?php $prevOtherLinkHeading = ''; ?>

@@ -16,6 +16,12 @@ patron_wsdl = arena_2.7.1_patron.wsdl
 ;patronaurora_wsdl = XXXXXXXXXXX
 ;catalogueaurora_wsdl = XXXXXXXXXXX
 
+; Request timeout in seconds. Default is 60.
+;timeout = 60
+
+; Connection timeout in seconds. Default is 15.
+;connection_timeout = 15
+
 [Loans]
 ; The renewal limit in order to display the remaining amount of renewals
 renewalLimit = 3
@@ -131,6 +137,9 @@ method = driver
 ; Only 'driver' is currently supported.
 [updateEmail]
 ;method = driver
+; Whether to convert + in email address to %2B to work around AWS problem that
+; converts a plus sign to a space. Enabled by default.
+;encodeEmailPlusSign = true
 
 ; Uncomment the following lines to enable updating of phone number.
 ; Choose a method on how to update the phone number.
@@ -194,6 +203,9 @@ currency = 'EUR'
 ; expression enclosed in slashes (e.g. '/^Lasku - Lasku\b/')
 nonPayable[] = '/^Lasku - Lasku\b/'
 nonPayable[] = '/^Muu maksu/'
+; Whether the paid amount must match the payable amount. Default is true. If false,
+; payments of less than the full amount are accepted.
+;exactBalanceRequired = false
 
 ; valid value is 'driver'.
 [updateTransactionHistoryState]

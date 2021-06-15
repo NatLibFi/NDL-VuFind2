@@ -1,0 +1,36 @@
+<?php // Do not add start and end tags
+  if ($this->cookie()->get('hidePreProductionWarning')) {
+    return;
+  }
+  $preproductionRedirect = $this->config()->get('config')->System->preProductionRedirect;
+  $productionUrl = '';
+  if ($preproductionRedirect) {
+    $parts = explode('###', $preproductionRedirect);
+    if (isset($parts[1])) {
+      $productionUrl = preg_replace($parts[0], $parts[1], $this->serverUrl(true), -1, $count);
+      if (!$count) {
+        $productionUrl = '';
+      }
+    }
+  }
+  if (!$productionUrl) {
+    return;
+  }
+
+  $script = <<<JS
+$('.preproduction-warning-dismiss').on('click', function dismissWarning() {
+  finna.common.setCookie('hidePreProductionWarning', 1, { expires: 1/24 });
+  $('.pre-production-warning').addClass('hidden');
+});
+JS;
+?>
+
+<div class="container-fluid pre-production-warning">
+  <div class="cookie-consent-text">
+    <?=$this->translate('preproduction_warning_html', ['%%url%%' => $this->escapeHtmlAttr($productionUrl)])?>
+  </div>
+  <div class="nav navbar-nav nav-absolute cookie-consent-button">
+    <button class="btn btn-primary preproduction-warning-dismiss" aria-label="<?=$this->transEscAttr('close')?>"><?=$this->transEsc('OK')?></button>
+    <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET')?>
+  </div>
+</div>

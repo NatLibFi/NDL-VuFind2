@@ -278,7 +278,7 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
      */
     public function getRecord($recordId, $inst_code = null, $onCampus = false)
     {
-        list(, $recordId) = explode('.', $recordId, 2);
+        [, $recordId] = explode('.', $recordId, 2);
         return parent::getRecord($recordId, $inst_code, $onCampus);
     }
 
@@ -296,7 +296,7 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
     {
         $recordIds = array_map(
             function ($recordId) {
-                list(, $recordId) = explode('.', $recordId, 2);
+                [, $recordId] = explode('.', $recordId, 2);
                 return $recordId;
             },
             $recordIds
@@ -342,14 +342,14 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
                 return $result;
             }
 
-            list($host, $query) = explode('?', $result);
+            [$host, $query] = explode('?', $result);
 
             $params = [];
             foreach (explode('&', $query) as $param) {
                 if (strstr($param, '=') === false) {
                     continue;
                 }
-                list($key, $val) = explode('=', $param, 2);
+                [$key, $val] = explode('=', $param, 2);
                 $val = trim($val);
                 if ($val == ''
                     || isset($blacklist[$key]) && $blacklist[$key] == $val

@@ -259,13 +259,18 @@ class Record extends \VuFind\View\Helper\Root\Record
         $filter = null;
 
         $linkType = $params['linkType'] ?? $this->getAuthorityLinkType($type);
+        $authId = null;
+        if (isset($params['id'])) {
+            // Add namespace to id
+            $authId = $params['id'] = $this->driver->getAuthorityId(
+                $params['id'], $type
+            );
+        }
+
         // Attempt to switch Author search link to Authority link.
         if (null !== $linkType
             && in_array($type, ['author', 'author-id', 'subject'])
-            && isset($params['id'])
-            && $authId = $this->driver->getAuthorityId(
-                $params['id'], $type
-            )
+            && $authId
         ) {
             $type = "authority-$linkType";
             $filter = $linkType === 'search'
@@ -339,24 +344,32 @@ class Record extends \VuFind\View\Helper\Root\Record
         $type, $lookfor, $data, $params = []
     ) {
         $id = $data['id'] ?? null;
-        $linkType = $this->getAuthorityLinkType();
+        $linkType = $this->getAuthorityLinkType($type);
 
         // Discard search tabs hiddenFilters when jumping to Authority page
         $preserveSearchTabsFilters = $linkType !== AuthorityHelper::LINK_TYPE_PAGE;
 
-        list($url, $urlType) = $this->getLink(
+        [$escapedUrl, $urlType] = $this->getLink(
             $type, $lookfor, $params + compact('id', 'linkType'), true,
             $preserveSearchTabsFilters
         );
 
+        $showInlineInfo = !empty($params['showInlineInfo'])
+          && $this->isAuthorityInlineInfoEnabled() && $id;
+
         if (!$this->isAuthorityEnabled()
-            || !in_array($urlType, ['authority-search', 'authority-page'])
+            || (!$showInlineInfo
+            && !in_array(
+                $urlType,
+                ['authority-search', 'authority-page', 'authority-search-subject']
+            ))
         ) {
             $author = [
                'name' => $data['name'] ?? null,
                'date' => !empty($data['date']) ? $data['date'] : null,
                'affiliation' => !empty($data['affiliation'])
                    ? $data['affiliation'] : null,
+               'description' => $data['description'] ?? null
             ];
 
             if (!empty($params['displayRole'])) {
@@ -367,23 +380,22 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
             // NOTE: currently this fallbacks always to a author-link
             // (extend to handle subject/topic fallbacks when needed).
-            return $this->getAuthorLinkElement($url, $author);
+            return $this->getAuthorLinkElement($author);
         }
 
         $authId = $this->driver->getAuthorityId($id, $type);
-        $authorityType = $params['authorityType'] ?? null;
+        $authorityType = $params['authorityType'] ?? 'Personal Name';
         $authorityType
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
 
         $elementParams = [
-           'url' => trim($url),
+           'escapedUrl' => trim($escapedUrl),
            'record' => $this->driver,
            'searchAction' => $params['searchAction'] ?? null,
            'label' => $lookfor,
            'id' => $authId,
            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
-           'showInlineInfo' => !empty($params['showInlineInfo'])
-               && $this->isAuthorityInlineInfoEnabled(),
+           'showInlineInfo' => $showInlineInfo,
            'recordSource' => $this->driver->getDataSource(),
            'type' => $type,
            'authorityType' => $authorityType,
@@ -414,7 +426,23 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
 
+        if (!empty($params['description']) && !empty($data['description'])) {
+            $elementParams['description'] = $data['description'];
+        }
+
         return $this->renderTemplate('authority-link-element.phtml', $elementParams);
+    }
+
+    /**
+     * Is authority functionality enabled?
+     *
+     * @return bool
+     */
+    public function isAuthorityEnabled()
+    {
+        return
+            $this->config->Authority
+            && (bool)$this->config->Authority->enabled ?? false;
     }
 
     /**
@@ -432,32 +460,18 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Utility function for rendering an author search link element.
      *
-     * @param string $url  Link URL
-     * @param array  $data Author data (name, role, date)
+     * @param array $data Author data (name, role, date)
      *
      * @return string HTML
      */
-    protected function getAuthorLinkElement($url, $data)
+    protected function getAuthorLinkElement($data)
     {
         $params = [
-           'url' => $url,
            'record' => $this->driver,
            'author' => $data
         ];
 
-        return $this->renderTemplate('author-link-element.phtml', $params);
-    }
-
-    /**
-     * Is authority functionality enabled?
-     *
-     * @return bool
-     */
-    protected function isAuthorityEnabled()
-    {
-        return
-            $this->config->Authority
-            && (bool)$this->config->Authority->enabled ?? false;
+        return trim($this->renderTemplate('author-link-element.phtml', $params));
     }
 
     /**

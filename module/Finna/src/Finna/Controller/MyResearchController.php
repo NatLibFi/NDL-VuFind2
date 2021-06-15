@@ -52,6 +52,8 @@ use VuFind\Exception\ListPermission as ListPermissionException;
 class MyResearchController extends \VuFind\Controller\MyResearchController
 {
     use FinnaOnlinePaymentControllerTrait;
+    use FinnaUnsupportedFunctionViewTrait;
+    use FinnaPersonalInformationSupportTrait;
 
     /**
      * Catalog Login Action
@@ -268,7 +270,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
         }
 
-        $transactions = $this->getDriversForILSRecords($driversNeeded);
+        $transactions = $this->ilsRecords()->getDrivers($driversNeeded);
 
         $displayItemBarcode
             = !empty($config->Catalog->display_checked_out_item_barcode);
@@ -398,7 +400,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 return $this->createViewModel();
             }
 
-            $listId = $this->params()->fromPost('list');
+            $listId = (int)$this->params()->fromPost('list');
             $favorites = $this->serviceLocator
                 ->get(\VuFind\Favorites\FavoritesService::class);
 
@@ -440,7 +442,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $savedData = $userResource->getSavedData(
                         $current['id'],
                         $current['source'] ?? DEFAULT_SEARCH_BACKEND,
-                        $post['list'] ?? '',
+                        $listId ?? null,
                         $user->id
                     )->current();
                     if (!empty($savedData['notes'])) {
@@ -1079,28 +1081,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send list of holds to view
-     *
-     * @return mixed
-     */
-    public function holdsAction()
-    {
-        // Stop now if the user does not have valid catalog credentials available:
-        if (!is_array($patron = $this->catalogLogin())) {
-            return $patron;
-        }
-
-        if ($view = $this->createViewIfUnsupported('getMyHolds')) {
-            return $view;
-        }
-
-        $view = parent::holdsAction();
-        $view->recordList = $this->orderAvailability($view->recordList);
-        $view->blocks = $this->getAccountBlocks($patron);
-        return $view;
-    }
-
-    /**
      * Save favorite custom order into DB
      *
      * @return mixed
@@ -1112,14 +1092,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $this->forceLogin();
         }
 
+        $listID = $this->params()->fromPost('list_id');
         if ($this->formWasSubmitted('opcode')
             && $this->params()->fromPost('opcode') == 'save_order'
         ) {
-            $listID = $this->params()->fromPost('list_id');
-            $this->session->url = empty($listID)
-                ? $this->url()->fromRoute('myresearch-favorites')
-                : $this->url()->fromRoute('userList', ['id' => $listID]);
-
             $orderedList = $this->params()->fromPost('orderedList');
             $table = $this->getTable('UserResource');
             if (empty($listID) || empty($orderedList)
@@ -1374,62 +1350,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Check if current library card supports a function. If not supported, show
-     * a message and a notice about the possibility to change library card.
-     *
-     * @param string  $function      Function to check
-     * @param boolean $checkFunction Use checkFunction() if true,
-     * checkCapability() otherwise
-     *
-     * @return mixed \Laminas\View if the function is not supported, false otherwise
-     */
-    protected function createViewIfUnsupported($function, $checkFunction = false)
-    {
-        $params = ['patron' => $this->catalogLogin()];
-        if ($checkFunction) {
-            $supported = $this->getILS()->checkFunction($function, $params);
-        } else {
-            $supported = $this->getILS()->checkCapability($function, $params);
-        }
-
-        if (!$supported) {
-            $view = $this->createViewModel();
-            $view->noSupport = true;
-            $this->flashMessenger()->setNamespace('error')
-                ->addMessage('no_ils_support_for_' . strtolower($function));
-            return $view;
-        }
-        return false;
-    }
-
-    /**
-     * Order available records to beginning of the record list
-     *
-     * @param type $recordList list to order
-     *
-     * @return type
-     */
-    protected function orderAvailability($recordList)
-    {
-        if ($recordList === null) {
-            return [];
-        }
-
-        $availableRecordList = [];
-        $recordListBasic = [];
-        foreach ($recordList as $item) {
-            if (isset($item->getExtraDetail('ils_details')['available'])
-                && $item->getExtraDetail('ils_details')['available']
-            ) {
-                $availableRecordList[] = $item;
-            } else {
-                $recordListBasic[] = $item;
-            }
-        }
-        return array_merge($availableRecordList, $recordListBasic);
-    }
-
-    /**
      * Utility function for generating a token.
      *
      * @param object $user current user
@@ -1540,7 +1460,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     protected function saveChangeRequestFeedback($patron, $profile, $data,
         $fields, $subject
     ) {
-        list($library, $username) = explode('.', $patron['cat_username']);
+        [$library, $username] = explode('.', $patron['cat_username']);
         $catalog = $this->getILS();
         $config = $catalog->getConfig('Feedback', $patron);
 
@@ -1717,24 +1637,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         return $userLists;
-    }
-
-    /**
-     * Get account blocks if supported by the ILS
-     *
-     * @param array $patron Patron
-     *
-     * @return array
-     */
-    protected function getAccountBlocks($patron)
-    {
-        $catalog = $this->getILS();
-        if ($catalog->checkCapability('getAccountBlocks', compact('patron'))
-            && $blocks = $catalog->getAccountBlocks($patron)
-        ) {
-            return $blocks;
-        }
-        return [];
     }
 
     /**

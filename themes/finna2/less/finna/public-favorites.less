@@ -68,9 +68,34 @@
                 -moz-transform: rotate(180deg);
             }
         }
+        &.condensed {
+            background: none;
+            border: none;
+        }
     }
-
-    .note-overlay {
+    .condensed-notes {
+        width: 100%;
+    }
+    .note-overlay-condensed {
+        color: #121212;
+        overflow-x: hidden;
+        overflow-y: auto;
+        text-align: left;
+        width: 100%;
+        max-height: 200px;
+        &.note-hide {
+            display: none;
+        }
+        &.note-show {
+            display: block;
+            border-bottom: 1px solid #cccccc;
+        }
+        p {
+            display: block;
+            padding: 0 10px;
+        }
+    }
+    .note-overlay-grid {
         position: absolute;
         z-index: 4;
         color: #121212;
@@ -82,10 +107,6 @@
         right: 0;
         left: 0;
         max-height: 100%;
-        .note-heading {
-            padding-top: 4px;
-            padding-bottom: 10px;
-        }
         p {
             display: block;
             padding: 0 10px;

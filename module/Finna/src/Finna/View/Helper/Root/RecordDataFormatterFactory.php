@@ -75,9 +75,9 @@ class RecordDataFormatterFactory
 
         foreach ($this->getDefaultCoreFields() as $key => $data) {
             if ($data[0] === true) {
-                list($multiLine, $dataMethod, $callback) = $data;
+                [$multiLine, $dataMethod, $callback] = $data;
             } else {
-                list($multiLine, $dataMethod, $template, $options) = $data;
+                [$multiLine, $dataMethod, $template, $options] = $data;
             }
             if ($multiLine) {
                 $spec->setMultiLine($key, $dataMethod, $callback);
@@ -248,7 +248,19 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
             [
-                'context' => ['class' => 'recordSeries']
+                'context' => [
+                    'class' => 'recordSeries',
+                    'levels' => \Finna\RecordDriver\SolrEad::SERIES_LEVELS
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Archive File', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
+            [
+                'context' => [
+                    'class' => 'recordFile',
+                    'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS
+                ]
             ]
         );
         $setTemplateLine(
@@ -587,6 +599,12 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Related Materials', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
+            [
+                'context' => ['class' => 'relatedMaterials']
+            ]
+        );
+        $setTemplateLine(
             'Online Access', true, 'data-onlineAccess.phtml',
             [
                 'context' => ['class' => 'webResource']
@@ -769,10 +787,16 @@ class RecordDataFormatterFactory
 
         $getAccessRestrictions = function ($data, $options) use (&$pos) {
             $final = [];
+            // Check whether the first restriction element is an array. If so,
+            // restrictions are grouped under subheadings.
+            $useSubHeadings = is_array(array_values($data)[0]);
             foreach ($data as $type => $values) {
+                $values = $useSubHeadings && $values
+                  ? array_values($values) : $values;
+                $label = $useSubHeadings ? "access_restrictions_$type" : null;
                 $final[] = [
-                    'label' => "access_restrictions_$type",
-                    'values' => $values ? array_values($values) : null,
+                    'label' => $label,
+                    'values' => $values,
                     'options' => [
                         'pos' => $pos++,
                         'renderType' => 'RecordDriverTemplate',
@@ -893,7 +917,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Available Online', 'getWebResource', 'data-url.phtml',
+            'Available Online', 'getWebResources', 'data-detailed-urls.phtml',
             [
                 'context' => [
                     'class' => 'record-available-online',
@@ -1004,6 +1028,13 @@ class RecordDataFormatterFactory
 
         $setMultiTemplateLine(
             'Archive Relations', 'getRelations', $getRelations
+        );
+
+        $setTemplateLine(
+            'Appraisal', 'getAppraisal', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordAppraisal']
+            ]
         );
 
         return $lines;

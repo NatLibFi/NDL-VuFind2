@@ -193,7 +193,7 @@ class ImportComments extends AbstractUtilCommand
                 $this->log("Invalid rating $rating on row $count", true);
                 return 1;
             }
-            list($recordId, $timestamp, $comment) = $data;
+            [$recordId, $timestamp, $comment] = $data;
 
             if (strncmp($recordId, $idPrefix, strlen($idPrefix)) !== 0) {
                 $recordId = $idPrefix . $recordId;
@@ -244,7 +244,7 @@ class ImportComments extends AbstractUtilCommand
             true
         );
 
-        return true;
+        return 0;
     }
 
     /**

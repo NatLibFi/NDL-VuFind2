@@ -14,9 +14,11 @@
       $originalImageData = $recordImage->getMasterImageWithInfo($ind);
       $originalImage = $originalImageData['url'] ?? false;
       $obj = [
+        'type' => 'image',
         'small' => $img['urls']['small'],
         'medium' => $img['urls']['medium'],
-        'largest' => $enableImageZoom && $originalImage !== false ? $originalImage : $img['urls']['large'] ?? $img['urls']['medium'],
+        'large' => $img['urls']['large'] ?? $img['urls']['medium'],
+        'master' => $originalImage ?: null,
         'index' => $ind++,
         'alt' => $img['description'],
         'description' => $img['description'],
@@ -25,6 +27,58 @@
       $paginatedLinks[] = $obj;
     ?>
   <?php endforeach; ?>
+  <?php if (!empty($models)) {
+    echo $this->inlineScript(
+      \Laminas\View\Helper\HeadScript::SCRIPT,
+      "VuFind.addTranslations({\n"
+      . "    'Vertices': '" . addslashes($this->transEsc('Vertices')) . "',\n"
+      . "    'Triangles': '" . addslashes($this->transEsc('Triangles')) . "',\n"
+      . "    'model_help_pc_html': '" . addslashes($this->translate('model_help_pc_html')) . "',\n"
+      . "    'model_help_mobile_html': '" . addslashes($this->translate('model_help_mobile_html')) . "',\n"
+      . "    'model_loading_file': '" . addslashes($this->transEsc('model_loading_file')) . "'}\n"
+      . ");\n",
+      'SET'
+    );
+    $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
+    $settings = $this->driver->getModelSettings();
+    $settings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);
+    foreach ($models as $index => $model):
+      foreach ($model as $format => $data):
+        $settings['modelload'] = [
+          'id' => $this->driver->getUniqueId(),
+          'index' => $index,
+          'format' => $format,
+          'source' => $this->driver->getSourceIdentifier()
+        ];
+
+        $tmp = [
+          'type' => 'model',
+          'modelsettings' => json_encode($settings ?? []),
+          'scripts' => $modelScripts,
+          'format' => $format
+        ];
+
+        $override = [
+          'small' => null,
+          'medium' => null,
+          'large' => null,
+          'master' => null,
+          'index' => $index,
+          'title' => $this->transEsc('Image') . ' ' . $ind++,
+        ];
+
+        if (!empty($paginatedLinks[$index])) {
+          if (!empty($settings['previewImages'])) {
+            $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $tmp);
+          } else {
+            $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $tmp, $override);
+          }
+        } else {
+          $paginatedLinks[] = array_merge($tmp, $override);
+        }
+      endforeach;
+    endforeach;
+  } ?>
   <?php if (count($paginatedLinks) > 0): ?>
     <?php
       $settings = [
@@ -37,7 +91,7 @@
         'isList' => $type === 'list' || $type === 'list grid',
         'recordCovers' => 'recordcovers',
         'displayIcon' => $displayIcon,
-        'triggerClick' => $this->imageClick ?? 'modal',
+        'triggerClick' => $this->imageClick ?? 'modal'
       ];
     ?>
   <?php endif; ?>
@@ -47,15 +101,22 @@
         <button class="next-image left" type="button"><i class="fa fa-chevron-left"></i><span class="sr-only"><?= $this->transEsc('previous_image') ?></span></button>
         <a class="image-popup-trigger init" href="<?=$this->recordLink()->getUrl($this->driver) ?>" data-images="<?=htmlspecialchars(json_encode($paginatedLinks ?? []), ENT_QUOTES, 'UTF-8');?>" data-settings="<?=htmlspecialchars(json_encode($settings ?? []), ENT_QUOTES, 'UTF-8');?>">
           <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
+          <?php if (!$isList && !empty($models)): ?>
+            <div class="iconlabel fa-finna-3d"></div>
+            <div class="show-3d btn btn-primary"><?=$this->transEsc('Display 3D');?></div>
+          <?php endif; ?>
           <div class="paginator-info"><span class="image-index"></span></div>
           <img src="<?=$this->imageSrc()->getDataPixel()?>" data-src="<?=$this->url('cover-unavailable')?>" class="recordcover<?= ($images[0]['pdf'] ?? false) ? ' pdf-cover' : ''?>" alt="<?=$this->transEsc('No Cover Image')?>"/>
+          <?php if (!$isList): ?>
+            <div id="inline-viewer"></div>
+          <?php endif; ?>
         </a>
         <span class="hidden-trigger" hidden></span>
         <button class="next-image right" type="button"><i class="fa fa-chevron-right"></i><span class="sr-only"><?= $this->transEsc('next_image') ?></span></button>
       </div>
     <?php endif; ?>
   <?php else: ?>
-    <a href="<?=$this->escapeHtmlAttr($img['urls']['large'] ?? $img['urls']['medium']) ?>"><?=($ind + 1) ?></a>
+    <a href="<?=$this->escapeHtmlAttr($img['urls']['large'] ?? $img['urls']['medium']) ?>"><?=($ind + 1)?></a>
   <?php endif; ?>
   <div class="recordcover-image-detail">
     <p class="image-description">

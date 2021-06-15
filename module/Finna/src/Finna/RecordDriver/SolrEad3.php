@@ -86,34 +86,50 @@ class SolrEad3 extends SolrEad
         'Digitaalisen ilmentymän tyyppi' => self::ALTFORM_DIGITAL_TYPE,
         'Tallennusalusta' => self::ALTFORM_FORMAT,
         'Digitaalisen aineiston tiedostomuoto' => self::ALTFORM_FORMAT,
-        'Ilmentym&#xE4;n kuntoon perustuva k&#xE4;ytt&#xF6;rajoitus'
+        'Ilmentymän kuntoon perustuva käyttörajoitus'
             => self::ALTFORM_ACCESS,
+        'Manifestation\'s access restrictions' => self::ALTFORM_ACCESS,
+        'Bruk av manifestationen har begränsats pga' => self::ALTFORM_ACCESS,
         'Internet - ei fyysistä toimipaikkaa' => self::ALTFORM_ONLINE,
         'Lisätietoa kunnosta' => self::ALTFORM_CONDITION,
     ];
 
-    // Accessrestrict types
+    // Accessrestrict types and their order in the UI
     const ACCESS_RESTRICT_TYPES = [
-        'general',
-        'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4', 'ahaa:KR3', 'ahaa:KR1'
+        'ahaa:AI24','general', 'ahaa:KR1', 'ahaa:KR2', 'ahaa:KR3',
+        'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4'
     ];
+
+    // relation@encodinganalog-attribute of relations used by getRelatedRecords
+    const RELATION_RECORD = 'ahaa:AI30';
 
     // Relation types
     const RELATION_CONTINUED_FROM = 'continued-from';
     const RELATION_PART_OF = 'part-of';
     const RELATION_CONTAINS = 'contains';
     const RELATION_SEE_ALSO = 'see-also';
+    const RELATION_SEPARATED = 'separated';
 
     // Relation type map
     const RELATION_MAP = [
         'On jatkoa' => self::RELATION_CONTINUED_FROM,
         'Sisältyy' => self::RELATION_PART_OF,
         'Sisältää' => self::RELATION_CONTAINS,
-        'Katso myös' => self::RELATION_SEE_ALSO
+        'Katso myös' => self::RELATION_SEE_ALSO,
+        'Erotettu aineisto' => self::RELATION_SEPARATED
     ];
 
     // Relator attribute for archive origination
     const RELATOR_ARCHIVE_ORIGINATION = 'Arkistonmuodostaja';
+
+    const RELATOR_TIME_INTERVAL = 'suhteen ajallinen kattavuus';
+    const RELATOR_UNKNOWN_TIME_INTERVAL = 'unknown - open';
+
+    // unitid is shown when label-attribute is missing or is one of:
+    const UNIT_IDS = [
+        'Tekninen', 'Analoginen', 'Vanha analoginen', 'Vanha tekninen',
+        'Diaarinumero', 'Asiaryhmän numero'
+    ];
 
     /**
      * Get the institutions holding the record.
@@ -135,22 +151,17 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Return building from index.
+     * Return buildings from index.
      *
      * @return array
      */
-    public function getBuilding()
+    public function getBuildings()
     {
-        $result = parent::getBuilding();
-
-        if (! $this->preferredLanguage) {
-            return $result;
-        }
-        if ($name = $this->getRepositoryName()) {
+        if ($this->preferredLanguage && $name = $this->getRepositoryName()) {
             return [$name];
         }
 
-        return $result;
+        return parent::getBuildings();
     }
 
     /**
@@ -213,12 +224,25 @@ class SolrEad3 extends SolrEad
      *
      * @return string
      */
-    public function getOrigination()
+    public function getOrigination() : string
     {
-        if ($origination = $this->getOriginationExtended()) {
-            return $origination['name'];
-        }
-        return null;
+        $originations = $this->getOriginations();
+        return $originations[0] ?? '';
+    }
+
+    /**
+     * Get all originations
+     *
+     * @return array
+     */
+    public function getOriginations() : array
+    {
+        return array_map(
+            function ($origination) {
+                return $origination['name'];
+            },
+            $this->getOriginationExtended()
+        );
     }
 
     /**
@@ -226,10 +250,75 @@ class SolrEad3 extends SolrEad
      *
      * @return array
      */
-    public function getOriginationExtended()
+    public function getOriginationExtended() : array
     {
         $record = $this->getXmlRecord();
 
+        $localeResults = $results = [];
+
+        // For filtering out duplicate names
+        $searchNamesFn = function ($origination, $names) {
+            foreach ($names as $name) {
+                $detail1 = $origination['detail'] ?? null;
+                $detail2 = $name['detail'] ?? null;
+                if ($origination['name'] === $name['name']
+                    && ((!$detail1 || !$detail2) || ($detail1 === $detail2))
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        foreach ($record->did->origination ?? [] as $origination) {
+            $originationLocaleResults = $originationResults = [];
+            foreach ($origination->name ?? [] as $name) {
+                $attr = $name->attributes();
+                $id = (string)$attr->identifier;
+                $currentName = null;
+                $names = $name->part ?? [];
+                for ($i=0; $i < count($names); $i++) {
+                    $name = $names[$i];
+                    $attr = $name->attributes();
+                    $value = (string)$name;
+                    $localType = (string)$attr->localtype;
+                    $data = [
+                        'id' => $id, 'name' => $value, 'detail' => $localType
+                    ];
+                    if ($localType !== self::RELATOR_TIME_INTERVAL) {
+                        if ($nextEl = $names[$i + 1] ?? null) {
+                            $localType
+                                = (string)$nextEl->attributes()->localtype;
+                            if ($localType === self::RELATOR_TIME_INTERVAL) {
+                                // Pick relation time interval from
+                                // next part-element
+                                $date = (string)$nextEl;
+                                if ($date !== self::RELATOR_UNKNOWN_TIME_INTERVAL
+                                ) {
+                                    $data['date'] = $date;
+                                }
+                                $i++;
+                            }
+                        }
+                    }
+                    $lang = $this->detectNodeLanguage($name);
+                    if ($lang['preferred']
+                        && !$searchNamesFn($data, $originationLocaleResults)
+                    ) {
+                        $originationLocaleResults[] = $data;
+                    }
+                    if (!$searchNamesFn($data, $originationResults)) {
+                        $originationResults[] = $data;
+                    }
+                }
+            }
+            $localeResults = array_merge(
+                $localeResults, $originationLocaleResults ?: $originationResults
+            );
+            $results = array_merge($results, $originationResults);
+        }
+
+        // // Loop relations and filter out names already added from did->origination
         foreach ($record->relations->relation ?? [] as $relation) {
             $attr = $relation->attributes();
             foreach (['relationtype', 'href', 'arcrole'] as $key) {
@@ -242,22 +331,22 @@ class SolrEad3 extends SolrEad
             ) {
                 continue;
             }
-            if ($name = $this->getDisplayLabel($relation, 'relationentry')) {
-                $id = (string)$attr->href;
-                return ['name' => $name[0], 'id' => $id];
+            $id = (string)$attr->href;
+            if ($name = $this->getDisplayLabel($relation, 'relationentry', true)) {
+                $name = $name[0];
+                if (!$searchNamesFn(compact('name'), $localeResults)) {
+                    $localeResults[] = compact('id', 'name');
+                }
             }
-        }
-        foreach ($record->did->origination->name ?? [] as $name) {
-            $attr = $name->attributes();
-            if (self::RELATOR_ARCHIVE_ORIGINATION === (string)$attr->relator
-            ) {
-                if ($name = $this->getDisplayLabel($name)) {
-                    $id = (string)$attr->identifier;
-                    return ['name' => $name[0], 'id' => $id];
+            if ($name = $this->getDisplayLabel($relation, 'relationentry')) {
+                $name = $name[0];
+                if (!$searchNamesFn(compact('name'), $results)) {
+                    $results[] = compact('id', 'name');
                 }
             }
         }
-        return null;
+
+        return $localeResults ?: $results;
     }
 
     /**
@@ -379,14 +468,16 @@ class SolrEad3 extends SolrEad
             )
         );
 
-        //$onlineType = 'Internet - ei fyysistä toimipaikkaa';
         $results = [];
+        $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
+
         foreach ($xml->altformavail->altformavail as $altform) {
             $itemId = (string)$altform->attributes()->id;
             if ($id && $id !== $itemId) {
                 continue;
             }
             $result = ['id' => $itemId, 'online' => in_array($itemId, $onlineIds)];
+            $accessRestrictions = [];
             $owner = null;
             foreach ($altform->list->defitem ?? [] as $defitem) {
                 $type = self::ALTFORM_MAP[(string)$defitem->label] ?? null;
@@ -413,7 +504,8 @@ class SolrEad3 extends SolrEad
                     $result['format'] = $val;
                     break;
                 case self::ALTFORM_ACCESS:
-                    $result['accessRestriction'] = $val;
+                    $lang = (string)$defitem->item->attributes()->lang ?? 'fin';
+                    $accessRestrictions[$lang] = $val;
                     break;
                 case self::ALTFORM_CONDITION:
                     if ($info = (string)$defitem->label) {
@@ -422,6 +514,15 @@ class SolrEad3 extends SolrEad
                     $info .= $val;
                     $result['info'] = $info;
                     break;
+                }
+            }
+            if ($accessRestrictions) {
+                $result['accessRestriction'] = reset($accessRestrictions);
+                foreach ($accessRestrictions as $lang => $restriction) {
+                    if (in_array($lang, $preferredLangCodes)) {
+                        $result['accessRestriction'] = $restriction;
+                        break;
+                    }
                 }
             }
             if ($id) {
@@ -448,6 +549,9 @@ class SolrEad3 extends SolrEad
         $manyIds = count($xml->did->unitid) > 1;
         foreach ($xml->did->unitid as $id) {
             $label = $fallbackDisplayLabel = (string)$id->attributes()->label;
+            if ($label && !in_array($label, self::UNIT_IDS)) {
+                continue;
+            }
             $displayLabel = null;
             if ($label) {
                 $displayLabel = "Unit ID:$label";
@@ -789,6 +893,7 @@ class SolrEad3 extends SolrEad
         if (isset($xml->accessrestrict)
             && !isset($xml->accessrestrict->accessrestrict)
         ) {
+            // Case 1: no nested accessrestrict elements
             $result = [];
 
             foreach ([true, false] as $obeyPreferredLanguage) {
@@ -807,59 +912,82 @@ class SolrEad3 extends SolrEad
                     break;
                 }
             }
-            return ['general' => $result];
+            return $result;
         }
 
-        if (!isset($xml->accessrestrict->accessrestrict)) {
-            return [];
-        }
+        // Case 2: nested accessrestrict elements grouped under subheadings
         $restrictions = [];
         foreach (self::ACCESS_RESTRICT_TYPES as $type) {
             $restrictions[$type] = [];
         }
-        foreach ($xml->accessrestrict->accessrestrict as $accessNode) {
-            if (!isset($accessNode->accessrestrict)) {
-                continue;
-            }
-            foreach ($accessNode->accessrestrict as $access) {
-                $attr = $access->attributes();
-                if (! isset($attr->encodinganalog)) {
-                    $restrictions['general']
-                        = $this->getDisplayLabel($access, 'p', true);
-                } else {
-                    $type = (string)$attr->encodinganalog;
-                    if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
-                        $type = str_replace(':', '_', $type);
-                        switch ($type) {
-                        case 'ahaa_KR7':
-                            $label = $this->getDisplayLabel(
-                                $access->p->name, 'part', true
-                            );
-                            break;
-                        case 'ahaa_KR9':
-                            $label = [(string)($access->p->date ?? '')];
-                            break;
-                        default:
-                            $label = $this->getDisplayLabel($access, 'p');
-                        }
-                        if ($label) {
-                            $restrictions[$type] = $label;
-                        }
+
+        $processNode = function ($access) use (&$restrictions) {
+            $attr = $access->attributes();
+            if (! isset($attr->encodinganalog)) {
+                $restriction['general'] = array_merge(
+                    $restrictions['general'],
+                    $this->getDisplayLabel($access, 'p', true)
+                );
+            } else {
+                $type = (string)$attr->encodinganalog;
+                if (in_array($type, self::ACCESS_RESTRICT_TYPES)) {
+                    switch ($type) {
+                    case 'ahaa:KR7':
+                        $label = $this->getDisplayLabel(
+                            $access->p->name, 'part', true
+                        );
+                        break;
+                    case 'ahaa:KR9':
+                        $label = [(string)($access->p->date ?? '')];
+                        break;
+                    default:
+                        $label = $this->getDisplayLabel($access, 'p');
                     }
+                    if ($label) {
+                        // These are displayed under the same heading
+                        if (in_array($type, ['ahaa:KR2', 'ahaa:KR3'])) {
+                            $type = 'ahaa:KR1';
+                        }
+                        $restrictions[$type]
+                            = array_merge($restrictions[$type], $label);
+                    }
+                }
+            }
+        };
+
+        foreach ($xml->accessrestrict ?? [] as $accessNode) {
+            $processNode($accessNode);
+            foreach ($accessNode->accessrestrict ?? [] as $accessNode) {
+                $processNode($accessNode);
+                foreach ($accessNode->accessrestrict ?? [] as $accessNode) {
+                    $processNode($accessNode);
                 }
             }
         }
 
-        // Sort and discard empty
         $result = [];
-        foreach ($restrictions as $type => $values) {
-            if (empty($values)) {
-                unset($restrictions[$type]);
+
+        // Sort
+        $order = array_flip(self::ACCESS_RESTRICT_TYPES);
+        $orderCnt = count($order);
+        $sortFn = function ($a, $b) use ($order, $orderCnt) {
+            $pos1 = $order[$a] ?? $orderCnt;
+            $pos2 = $order[$b] ?? $orderCnt;
+            return $pos1 - $pos2;
+        };
+        uksort($restrictions, $sortFn);
+
+        // Rename keys to match translations and filter duplicates
+        $renamedKeys = [];
+        foreach ($restrictions as $key => $val) {
+            if (empty($val)) {
+                continue;
             }
-            $result[$type] = $values;
+            $key = str_replace(':', '_', $key);
+            $renamedKeys[$key] = array_unique($val);
         }
 
-        return $result;
+        return $renamedKeys;
     }
 
     /**
@@ -877,10 +1005,10 @@ class SolrEad3 extends SolrEad
         if (! $restrictions = $this->getAccessRestrictions()) {
             return false;
         }
-        $copyright = $restrictions[0];
+        $copyright = $this->getMappedRights($restrictions[0]);
         $data = [];
         $data['copyright'] = $copyright;
-        if ($link = $this->getRightsLink(strtoupper($copyright), $language)) {
+        if ($link = $this->getRightsLink($copyright, $language)) {
             $data['link'] = $link;
         }
         return $data;
@@ -922,6 +1050,17 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get all subject headings associated with this record with extended data.
+     * (see getAllSubjectHeadings).
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadingsExtended()
+    {
+        return $this->getAllSubjectHeadings(true);
+    }
+
+    /**
      * Get all subject headings associated with this record.  Each heading is
      * returned as an array of chunks, increasing from least specific to most
      * specific.
@@ -941,29 +1080,56 @@ class SolrEad3 extends SolrEad
 
         // geographic names are returned in getRelatedPlacesExtended
         foreach (['genre', 'era'] as $field) {
-            if (isset($this->fields[$field])) {
-                $headings = array_merge($headings, $this->fields[$field]);
-            }
+            $headings = array_merge(
+                $headings,
+                array_map(
+                    function ($term) {
+                        return ['data' => $term];
+                    },
+                    $this->fields[$field] ?? []
+                )
+            );
         }
+        $headings = array_merge(
+            $headings, $this->getRelatedPlacesExtended(['aihe'], [])
+        );
 
         // The default index schema doesn't currently store subject headings in a
         // broken-down format, so we'll just send each value as a single chunk.
         // Other record drivers (i.e. SolrMarc) can offer this data in a more
         // granular format.
         $callback = function ($i) use ($extended) {
-            return $extended
-                ? ['heading' => [$i], 'type' => '', 'source' => '']
-                : [$i];
+            if ($extended) {
+                $data = [
+                    'heading' => [$i['data']],
+                    'type' => 'topic',
+                    'source' => $i['source'] ?? '',
+                    'detail' => $i['detail'] ?? ''
+                ];
+                if ($id = $i['id'] ?? '') {
+                    $data['id'] = $id;
+                    // Categorize non-URI ID's as Unknown Names, since the
+                    // actual authority format can not be determined from metadata.
+                    $data['authType'] = preg_match('/^https?:/', $id)
+                        ? null : 'Unknown Name';
+                }
+            } else {
+                return [$i['data']];
+            }
+            return $data;
         };
-        return array_map($callback, array_unique($headings));
+        return array_map($callback, $headings);
     }
 
     /**
      * Get related places.
      *
+     * @param array $include Relator attributes to include
+     * @param array $exclude Relator attributes to exclude
+     *
      * @return array
      */
-    public function getRelatedPlacesExtended()
+    public function getRelatedPlacesExtended($include = [], $exclude = ['aihe'])
     {
         $record = $this->getXmlRecord();
         if (!isset($record->controlaccess->geogname)) {
@@ -978,6 +1144,12 @@ class SolrEad3 extends SolrEad
         foreach ($record->controlaccess->geogname as $name) {
             $attr = $name->attributes();
             $relator = (string)$attr->relator;
+            if (!empty($include) && !in_array($relator, $include)) {
+                continue;
+            }
+            if (!empty($exclude) && in_array($relator, $exclude)) {
+                continue;
+            }
             if (isset($name->part)) {
                 $part = (string)$name->part;
                 $data = ['data' => $part, 'detail' => $relator];
@@ -1038,13 +1210,11 @@ class SolrEad3 extends SolrEad
      * Get related records (used by RecordDriverRelated - Related module)
      *
      * Returns an associative array of group => records, where each item in
-     * records is either a record id or an array that has a 'wildcard' key
-     * with a Solr compatible pattern as it's value.
-     *
-     * Notes on wildcard queries:
-     *  - Only the first record from the wildcard result set is returned.
-     *  - The wildcard query includes a filter that limits the results to
-     *    the same datasource as the issuing record.
+     * records is either a record id or an array with keys:
+     * - id: record identifier to search
+     * - field (optional): Solr field to search in, defaults to 'identifier'.
+     *                     In addition, the query includes a filter that limits the
+     *                     results to the same datasource as the issuing record.
      *
      * The array may contain the following keys:
      *   - continued-from
@@ -1055,8 +1225,8 @@ class SolrEad3 extends SolrEad
      * Examples:
      * - continued-from
      *     - source1.1234
-     *     - ['wildcard' => '*1234']
-     *     - ['wildcard' => 'source*1234*']
+     *     - ['id' => '1234']
+     *     - ['id' => '1234', 'field' => 'foo']
      *
      * @return array
      */
@@ -1071,14 +1241,12 @@ class SolrEad3 extends SolrEad
         $relations = [];
         foreach ($record->relations->relation as $relation) {
             $attr = $relation->attributes();
-            foreach (['encodinganalog', 'relationtype', 'href', 'arcrole'] as $key) {
+            foreach (['encodinganalog', 'href', 'arcrole'] as $key) {
                 if (!isset($attr->{$key})) {
                     continue 2;
                 }
             }
-            if ((string)$attr->encodinganalog !== 'ahaa:AI30'
-                || (string)$attr->relationtype !== 'resourcerelation'
-            ) {
+            if ((string)$attr->encodinganalog !== self::RELATION_RECORD) {
                 continue;
             }
             $role = self::RELATION_MAP[(string)$attr->arcrole] ?? null;
@@ -1088,8 +1256,9 @@ class SolrEad3 extends SolrEad
             if (!isset($relations[$role])) {
                 $relations[$role] = [];
             }
-            // Use a wildcard since the id is prefixed with hierarchy_parent_id
-            $relations[$role][] = ['wildcard' => '*' . (string)$attr->href];
+            // Search by id in identifier-field
+            $relations[$role][]
+                = ['id' => (string)$attr->href, 'field' => 'identifier'];
         }
         return $relations;
     }
@@ -1106,14 +1275,73 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get all record links related to the current record. Each link is returned as
+     * array.
+     * Format:
+     * array(
+     *        array(
+     *               'title' => label_for_title
+     *               'value' => link_name
+     *               'link'  => link_URI
+     *        ),
+     *        ...
+     * )
+     *
+     * @return null|array
+     */
+    public function getAllRecordLinks()
+    {
+        $record = $this->getXmlRecord();
+
+        if (!isset($record->relations->relation)) {
+            return [];
+        }
+
+        $relations = [];
+        foreach ($record->relations->relation as $relation) {
+            $attr = $relation->attributes();
+            foreach (['encodinganalog', 'relationtype', 'href'] as $key) {
+                if (!isset($attr->{$key})) {
+                    continue 2;
+                }
+            }
+            if ((string)$attr->relationtype !== 'resourcerelation'
+                // This relation is shown via RecordDriverRelated-recommend module
+                // (see getRelatedRecords)
+                || (string)$attr->encodinganalog === self::RELATION_RECORD
+            ) {
+                continue;
+            }
+            $value = $href = (string)$attr->href;
+            if ($title = (string)$relation->relationentry) {
+                $value = $title;
+            }
+            $relations[] = [
+                'value' => $value,
+                'detail' => !empty($attr->arcrole) ? (string)$attr->arcrole : null,
+                'link' => [
+                    'value' => $href,
+                    'type' => 'identifier',
+                    'filter' => ['datasource_str_mv' => $this->getDatasource()]
+                ]
+            ];
+        }
+        return $relations;
+    }
+
+    /**
      * Get the hierarchy parents associated with this item (empty if none).
      * The parents are listed starting from the root of the hierarchy,
      * i.e. the closest parent is at the end of the result array.
      *
+     * @param string[] $levels Optional list of level types to return
+     * (defaults to series and subseries)
+     *
      * @return array Array with id and title
      */
-    protected function getHierarchyParents()
-    {
+    protected function getHierarchyParents(
+        array $levels = self::SERIES_LEVELS
+    ) : array {
         $xml = $this->getXmlRecord();
         if (!isset($xml->{'add-data'}->parent)) {
             return [];
@@ -1121,7 +1349,7 @@ class SolrEad3 extends SolrEad
         $result = [];
         foreach ($xml->{'add-data'}->parent as $parent) {
             $attr = $parent->attributes();
-            if (!in_array((string)$attr->level, ['series','subseries'])) {
+            if (!in_array((string)$attr->level, $levels)) {
                 continue;
             }
             $result[] = [
@@ -1135,35 +1363,99 @@ class SolrEad3 extends SolrEad
     /**
      * Get the hierarchy_parent_id(s) associated with this item (empty if none).
      *
+     * @param string[] $levels Optional list of level types to return
+     * (defaults to series and subseries)
+     *
      * @return array
      */
-    public function getHierarchyParentID()
+    public function getHierarchyParentID(array $levels = self::SERIES_LEVELS) : array
     {
-        if ($parents = $this->getHierarchyParents()) {
+        if ($parents = $this->getHierarchyParents($levels)) {
             return array_map(
                 function ($parent) {
                     return $parent['id'];
                 }, $parents
             );
         }
-        return parent::getHierarchyParentID();
+        return parent::getHierarchyParentID($levels);
     }
 
     /**
      * Get the parent title(s) associated with this item (empty if none).
+     * (defaults to series and subseries)
+     *
+     * @param string[] $levels Optional list of level types to return
      *
      * @return array
      */
-    public function getHierarchyParentTitle()
-    {
-        if ($parents = $this->getHierarchyParents()) {
+    public function getHierarchyParentTitle(
+        array $levels = self::SERIES_LEVELS
+    ) : array {
+        if ($parents = $this->getHierarchyParents($levels)) {
             return array_map(
                 function ($parent) {
                     return $parent['title'];
                 }, $parents
             );
         }
-        return parent::getHierarchyParentTitle();
+        return parent::getHierarchyParentTitle($levels);
+    }
+
+    /**
+     * Get place of storage.
+     *
+     * @return string|null
+     */
+    public function getPlaceOfStorage() : ?string
+    {
+        $xml = $this->getXmlRecord();
+        $firstLoc = $defaultLoc = null;
+        foreach ($xml->did->physloc ?? [] as $loc) {
+            if (!$firstLoc) {
+                $firstLoc = (string)$loc;
+            }
+            if ($lang = $this->detectNodeLanguage($loc)) {
+                if ($lang['preferred']) {
+                    return (string)$loc;
+                }
+                if ($lang['default']) {
+                    $defaultLoc = (string)$loc;
+                }
+            }
+        }
+        return $defaultLoc ?? $firstLoc;
+    }
+
+    /**
+     * Get filing unit.
+     *
+     * @return string|null
+     */
+    public function getFilingUnit() : ?string
+    {
+        $xml = $this->getXmlRecord();
+        return isset($xml->did->container)
+            ? (string)$xml->did->container : null;
+    }
+
+    /**
+     * Get appraisal information.
+     *
+     * @return string[]
+     */
+    public function getAppraisal() : array
+    {
+        $xml = $this->getXmlRecord();
+        $result = $localeResult = [];
+        $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
+        foreach ($xml->appraisal->p ?? [] as $p) {
+            $value = (string)$p;
+            $result[] = $value;
+            if (in_array((string)$p->attributes()->lang, $preferredLangCodes)) {
+                $localeResult[] = $value;
+            }
+        }
+        return $localeResult ?: $result;
     }
 
     /**
@@ -1231,7 +1523,7 @@ class SolrEad3 extends SolrEad
                     $desc = (string)$attr->linktitle;
                     $sort = (string)$attr->label;
                     $items[] = [
-                        'label' => linktitle, $desc, 'url' => $href, 'sort' => $sort
+                        'label' => $desc, 'url' => $href, 'sort' => $sort
                     ];
                 }
             }
@@ -1294,9 +1586,9 @@ class SolrEad3 extends SolrEad
     /**
      * Get topics.
      *
-     * @return string[]
+     * @return array
      */
-    protected function getTopics()
+    protected function getTopics() : array
     {
         $record = $this->getXmlRecord();
 
@@ -1304,16 +1596,20 @@ class SolrEad3 extends SolrEad
         if (isset($record->controlaccess->subject)) {
             foreach ([true, false] as $obeyPreferredLanguage) {
                 foreach ($record->controlaccess->subject as $subject) {
-                    if (isset($subject->attributes()->relator)
-                        && (string)$subject->attributes()->relator !== 'aihe'
-                    ) {
-                        continue;
-                    }
+                    $attr = $subject->attributes();
                     if ($topic = $this->getDisplayLabel(
                         $subject, 'part', $obeyPreferredLanguage
                     )
                     ) {
-                        $topics[] = $topic[0];
+                        if (!$topic[0]) {
+                            continue;
+                        }
+                        $topics[] = [
+                            'data' => $topic[0],
+                            'id' => (string)$attr->identifier,
+                            'source' => (string)$attr->source,
+                            'detail' => (string)$subject->attributes()->relator
+                        ];
                     }
                 }
                 if (!empty($topics)) {
@@ -1346,10 +1642,10 @@ class SolrEad3 extends SolrEad
     /**
      * Helper function for returning a specific language version of a display label.
      *
-     * @param SimpleXMLElement $node                  XML node
-     * @param string           $childNodeName         Name of the child node that
+     * @param \SimpleXMLElement $node                  XML node
+     * @param string            $childNodeName         Name of the child node that
      * contains the display label.
-     * @param bool             $obeyPreferredLanguage If true, returns the
+     * @param bool              $obeyPreferredLanguage If true, returns the
      * translation that corresponds with the current locale.
      * If false, the default language version 'fin' is returned. If not found,
      * the first display label is retured.
@@ -1364,26 +1660,10 @@ class SolrEad3 extends SolrEad
         if (! isset($node->$childNodeName)) {
             return null;
         }
-        $defaultLanguage = 'fin';
-        $languages = $this->preferredLanguage
-            ? $this->mapLanguageCode($this->preferredLanguage)
-            : [];
-
-        $getTermLanguage = function ($node) use ($languages, $defaultLanguage) {
-            if (!isset($node->attributes()->lang)) {
-                return null;
-            }
-            $lang = (string)$node->attributes()->lang;
-            return [
-               'default' => $defaultLanguage === $lang,
-               'preferred' => in_array($lang, $languages)
-            ];
-        };
-
         $allResults = [];
         $defaultLanguageResults = [];
         $languageResults = [];
-        $lang = $getTermLanguage($node);
+        $lang = $this->detectNodeLanguage($node);
         $resolveLangFromChildNode = $lang === null;
         foreach ($node->{$childNodeName} as $child) {
             $name = trim((string)$child);
@@ -1391,16 +1671,16 @@ class SolrEad3 extends SolrEad
 
             if ($resolveLangFromChildNode) {
                 foreach ($child->attributes() as $key => $val) {
-                    $lang = $getTermLanguage($child);
+                    $lang = $this->detectNodeLanguage($child);
                     if ($lang) {
                         break;
                     }
                 }
             }
-            if ($lang['default']) {
+            if ($lang['default'] ?? false) {
                 $defaultLanguageResults[] = $name;
             }
-            if ($lang['preferred']) {
+            if ($lang['preferred'] ?? false) {
                 $languageResults[] = $name;
             }
         }
@@ -1415,6 +1695,37 @@ class SolrEad3 extends SolrEad
         }
 
         return $allResults;
+    }
+
+    /**
+     * Helper for detecting the language of a XML node.
+     * Compares the language attribute of the node to users' preferred language.
+     * Returns an array with keys 'default' and 'preferred'.
+     *
+     * @param \SimpleXMLElement $node              XML node
+     * @param string            $languageAttribute Name of the language attribute
+     * @param string            $defaultLanguage   Default language
+     *
+     * @return array
+     */
+    protected function detectNodeLanguage(
+        \SimpleXMLElement $node,
+        string $languageAttribute = 'lang',
+        string $defaultLanguage = 'fin'
+    ) : ?array {
+        if (!isset($node->attributes()->{$languageAttribute})) {
+            return null;
+        }
+
+        $languages = $this->preferredLanguage
+            ? $this->mapLanguageCode($this->preferredLanguage)
+            : [];
+
+        $lang = (string)$node->attributes()->{$languageAttribute};
+        return [
+            'default' => $defaultLanguage === $lang,
+            'preferred' => in_array($lang, $languages)
+        ];
     }
 
     /**
@@ -1463,8 +1774,6 @@ class SolrEad3 extends SolrEad
             'http://www.rdaregistry.info/Elements/e/#P20052' => 'rpy',
             'http://rdaregistry.info/Elements/w/P10304' => 'rpy',
 
-            'http://rdaregistry.info/Elements/w/P10061' => 'rda:per',
-            'http://rdaregistry.info/Elements/w/P10061' => 'rda:host',
             'http://rdaregistry.info/Elements/w/P10061' => 'rda:writer',
             'http://rdaregistry.info/Elements/a/P50045' => 'rda:collector',
             'http://www.rdaregistry.info/Elements/i/#P40019' => 'rda:former-owner'

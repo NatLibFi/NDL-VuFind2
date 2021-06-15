@@ -112,17 +112,17 @@ class PAIA extends DAIA
      * paiaLogin() might have succeeded. Any other scope not being available for the
      * patron will be handled more or less gracefully through exception handling.
      */
-    const SCOPE_READ_PATRON = 'read_patron';
-    const SCOPE_UPDATE_PATRON = 'update_patron';
-    const SCOPE_UPDATE_PATRON_NAME = 'update_patron_name';
-    const SCOPE_UPDATE_PATRON_EMAIL = 'update_patron_email';
-    const SCOPE_UPDATE_PATRON_ADDRESS = 'update_patron_address';
-    const SCOPE_READ_FEES = 'read_fees';
-    const SCOPE_READ_ITEMS = 'read_items';
-    const SCOPE_WRITE_ITEMS = 'write_items';
-    const SCOPE_CHANGE_PASSWORD = 'change_password';
-    const SCOPE_READ_NOTIFICATIONS = 'read_notifications';
-    const SCOPE_DELETE_NOTIFICATIONS = 'delete_notifications';
+    public const SCOPE_READ_PATRON = 'read_patron';
+    public const SCOPE_UPDATE_PATRON = 'update_patron';
+    public const SCOPE_UPDATE_PATRON_NAME = 'update_patron_name';
+    public const SCOPE_UPDATE_PATRON_EMAIL = 'update_patron_email';
+    public const SCOPE_UPDATE_PATRON_ADDRESS = 'update_patron_address';
+    public const SCOPE_READ_FEES = 'read_fees';
+    public const SCOPE_READ_ITEMS = 'read_items';
+    public const SCOPE_WRITE_ITEMS = 'write_items';
+    public const SCOPE_CHANGE_PASSWORD = 'change_password';
+    public const SCOPE_READ_NOTIFICATIONS = 'read_notifications';
+    public const SCOPE_DELETE_NOTIFICATIONS = 'delete_notifications';
 
     /**
      * Constructor
@@ -403,18 +403,20 @@ class PAIA extends DAIA
      * cancelling each hold item. (optional, but required if you
      * implement cancelHolds). Not supported prior to VuFind 1.2
      *
-     * @param array $checkOutDetails One of the individual item arrays returned by
-     *                               the getMyHolds method
+     * @param array $hold   A single hold array from getMyHolds
+     * @param array $patron Patron information from patronLogin
      *
      * @return string  A string to use as the input form value for cancelling
      *                 each hold item; you can pass any data that is needed
      *                 by your ILS to identify the hold – the output of this
      *                 method will be used as part of the input to the
      *                 cancelHolds method.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelHoldDetails($checkOutDetails)
+    public function getCancelHoldDetails($hold, $patron = [])
     {
-        return $checkOutDetails['cancel_details'];
+        return $hold['cancel_details'];
     }
 
     /**
@@ -476,10 +478,13 @@ class PAIA extends DAIA
      * value is then extracted by the CancelHolds function.
      *
      * @param array $details An array of item data
+     * @param array $patron  Patron information from patronLogin
      *
      * @return string Data for use in a form field
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelStorageRetrievalRequestDetails($details)
+    public function getCancelStorageRetrievalRequestDetails($details, $patron)
     {
         // Not yet implemented
         return '';
@@ -599,10 +604,13 @@ class PAIA extends DAIA
      * Get Cancel ILL Request Details
      *
      * @param array $details An array of item data
+     * @param array $patron  Patron information from patronLogin
      *
      * @return string Data for use in a form field
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelILLRequestDetails($details)
+    public function getCancelILLRequestDetails($details, $patron)
     {
         // Not yet implemented
         return '';
@@ -954,7 +962,7 @@ class PAIA extends DAIA
             case 'access_denied':
                 throw new AuthException(
                     $array['error_description'] ?? $array['error'],
-                    $array['code'] ?? ''
+                    (int)($array['code'] ?? 0)
                 );
 
                 // invalid_grant     401     The access token was missing, invalid
@@ -966,7 +974,7 @@ class PAIA extends DAIA
             case 'insufficient_scope':
                 throw new ForbiddenException(
                     $array['error_description'] ?? $array['error'],
-                    $array['code'] ?? ''
+                    (int)($array['code'] ?? 0)
                 );
 
                 // not_found     404     Unknown request URL or unknown patron.
@@ -1013,7 +1021,7 @@ class PAIA extends DAIA
             default:
                 throw new ILSException(
                     $array['error_description'] ?? $array['error'],
-                    $array['code'] ?? ''
+                    (int)($array['code'] ?? 0)
                 );
             }
         }
@@ -1090,6 +1098,7 @@ class PAIA extends DAIA
         if ($confirm = $this->getConfirmations($holdDetails)) {
             $doc["confirm"] = $confirm;
         }
+        $post_data = [];
         $post_data['doc'][] = $doc;
 
         try {
@@ -1289,9 +1298,8 @@ class PAIA extends DAIA
         }
 
         // check for existing data in cache
-        if ($this->paiaCacheEnabled) {
-            $itemsResponse = $this->getCachedData($patron['cat_username']);
-        }
+        $itemsResponse = $this->paiaCacheEnabled
+            ? $this->getCachedData($patron['cat_username']) : null;
 
         if (!isset($itemsResponse) || $itemsResponse == null) {
             $itemsResponse = $this->paiaGetAsArray(
@@ -1900,6 +1908,7 @@ class PAIA extends DAIA
             throw new ILSException('You are not entitled to read notifications.');
         }
 
+        $cacheKey = null;
         if ($this->paiaCacheEnabled) {
             $cacheKey = $this->getCacheKey(
                 'notifications_' . $patron['cat_username']
@@ -2014,6 +2023,18 @@ class PAIA extends DAIA
         }
 
         return true;
+    }
+
+    /**
+     * Get notification identifier from message identifier
+     *
+     * @param string $messageId Message identifier
+     *
+     * @return string
+     */
+    protected function getPaiaNotificationsId($messageId)
+    {
+        return $messageId;
     }
 
     /**

@@ -270,7 +270,7 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase
                     true
                 );
 
-                if ($driver instanceof Missing) {
+                if ($driver instanceof \VuFind\RecordDriver\Missing) {
                     continue;
                 }
 

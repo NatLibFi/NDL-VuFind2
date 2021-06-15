@@ -76,6 +76,14 @@
   );
   $noImage = empty($images[0]['urls']['medium']) && empty($images[0]['urls']['large']);
   $largeImageLayout = !$noImage && in_array($this->driver->tryMethod('getRecordFormat'), ['lido', 'forward', 'ead', 'ead3', 'forwardAuthority']);
+
+  if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
+    echo $this->inlineScript(
+      \Laminas\View\Helper\HeadScript::SCRIPT,
+      'finna.record.handleRedirect(' . json_encode($oldRecordId) . ', ' . json_encode($this->driver->getUniqueID()) . ');',
+      'SET'
+    );
+  }
 ?>
 </div>
 <div class="container">

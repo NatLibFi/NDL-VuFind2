@@ -32,7 +32,7 @@
 
 <?php foreach ($this->errors as $error): ?>
 <?php $card = $error['card']; ?>
-<?php list($target) = explode('.', $card, 2); ?>
+<?php [$target] = explode('.', $card, 2); ?>
 <?php $cards[] = $this->transEsc("source_$target", null, $target); ?>
 <?php endforeach; ?>
 

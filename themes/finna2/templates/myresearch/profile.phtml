@@ -215,7 +215,7 @@
               <div class="profile-text-value"><?=$this->escapeHtml($this->profile['notes']) ?></div>
             <?php endif; ?>
             <?php if (!empty($this->profile['expiration_date'])): ?>
-              <div class="my-profile-col profile-title"><?=$this->transEsc('Expires') ?>:</div>
+              <div class="my-profile-col profile-title"><?=$this->transEsc('patron_account_expires') ?>:</div>
               <div class="profile-text-value"><?=$this->escapeHtml($this->profile['expiration_date']) ?></div>
             <?php endif; ?>
             <?php if (!empty($this->profile['self_service_pin'])): ?>
