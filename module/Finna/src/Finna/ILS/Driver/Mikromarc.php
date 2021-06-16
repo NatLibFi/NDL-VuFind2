@@ -651,7 +651,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function renewMyItems($renewDetails)
     {
-        $finalResult = ['details' => []];
+        $details = [];
+        $blocks = [];
         foreach ($renewDetails['details'] as $details) {
             $checkedOutId = $details;
             [$code, $result] = $this->makeRequest(
@@ -659,19 +660,17 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 false, 'POST', true
             );
             if ($code != 200 || $result['ServiceCode'] != 'LoanRenewed') {
-                $map = ['ReservedForOtherBorrower' => 'renew_item_requested'];
-                $errorCode = $result['error']['code'] ?? null;
-                $sysMsg = $map[$errorCode] ?? null;
-                $finalResult['details'][$checkedOutId] = [
-                    'item_id' => $checkedOutId,
-                    'success' => false,
-                    'sysMessage' => $sysMsg
-                ];
+                $currentResult = $this->holdError($code, $result);
+                $currentResult['item_id'] = $checkedOutId;
+                $details[$checkedOutId] = $currentResult;
+                if (!in_array($currentResult['sysMessage'], $blocks)) {
+                    $blocks[] = $currentResult['sysMessage'];
+                }
             } else {
                 $newDate = $this->dateConverter->convertToDisplayDate(
                     'U', strtotime($result['DueTime'])
                 );
-                $finalResult['details'][$checkedOutId] = [
+                $details[$checkedOutId] = [
                     'item_id' => $checkedOutId,
                     'success' => true,
                     'new_date' => $newDate
@@ -683,7 +682,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 );
             }
         }
-        return $finalResult;
+        return compact('details', 'blocks');
     }
 
     /**
@@ -1942,7 +1941,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
            'DuplicateReservationExists' => 'hold_error_already_held',
            'NoItemsAvailableByTerm' => 'hold_error_denied',
            'NoItemAvailable' => 'hold_error_denied',
-           'NoTermsPermitLoanOrReservation' => 'hold_error_not_holdable'
+           'NoTermsPermitLoanOrReservation' => 'hold_error_not_holdable',
+           'ReservedForOtherBorrower' => 'renew_item_requested'
         ];
 
         if (isset($map[$message])) {
