@@ -1037,6 +1037,13 @@ class RecordDataFormatterFactory
             ]
         );
 
+        $setTemplateLine(
+            'Arrangement', 'getArrangement', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordArrangement']
+            ]
+        );
+
         return $lines;
     }
 
