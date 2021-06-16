@@ -167,13 +167,6 @@
             <?php endif; ?>
           </p>
         </div>
-      <?php else: ?>
-        <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
-        <?php if ($summary): ?>
-        <div class="truncate-field wide recordSummary">
-            <p class="summary"><?=$summary ?></p>
-        </div>
-        <?php endif; ?>
       <?php endif; ?>
 
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>

@@ -79,7 +79,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $abstracts = [];
         $abstract = '';
         $lang = '';
-        foreach ($this->getXmlRecord()->xpath('/qualifieddc/abstract') as $node) {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->abstract ?? [] as $node) {
             $abstract = (string)$node;
             $lang = (string)$node['lang'];
             if ($lang == 'en') {
@@ -89,6 +90,21 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
 
         return $abstracts;
+    }
+
+    /**
+     * Get descriptions as summary
+     *
+     * @return array
+     */
+    public function getSummary(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ($xml->description ?? [] as $description) {
+            $results[] = (string)$description;
+        }
+        return $results;
     }
 
     /**
@@ -311,6 +327,21 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
         $urls = $this->resolveUrlTypes($urls);
         return $urls;
+    }
+
+    /**
+     * Return identifiers
+     *
+     * @return array
+     */
+    public function getIdentifier(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ($xml->identifier ?? [] as $identifier) {
+            $results[] = (string)$identifier;
+        }
+        return $results;
     }
 
     /**
