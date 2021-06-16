@@ -1459,6 +1459,24 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get notes on finding aids related to the record.
+     *
+     * @return array
+     */
+    public function getFindingAids()
+    {
+        $xml = $this->getXmlRecord();
+        $result = $localeResult = [];
+        foreach ($xml->otherfindaid ?? [] as $aid) {
+            $result[] = (string)($aid->p ?? '');
+            if ($text = $this->getDisplayLabel($aid, 'p')) {
+                $localeResult[] = $text[0];
+            }
+        }
+        return $localeResult ?: $result ?: parent::getFindingAids();
+    }
+
+    /**
      * Get fullresolution images.
      *
      * @return array
