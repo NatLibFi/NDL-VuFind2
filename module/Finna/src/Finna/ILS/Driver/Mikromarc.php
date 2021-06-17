@@ -663,7 +663,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 $currentResult = $this->holdError($code, $result);
                 $currentResult['item_id'] = $checkedOutId;
                 $details[$checkedOutId] = $currentResult;
-                if (!in_array($currentResult['sysMessage'], $blocks)) {
+                if ($code > 204
+                    && !in_array($currentResult['sysMessage'], $blocks)
+                ) {
                     $blocks[] = $currentResult['sysMessage'];
                 }
             } else {
