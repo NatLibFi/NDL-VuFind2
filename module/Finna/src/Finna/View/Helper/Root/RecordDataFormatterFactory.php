@@ -1014,8 +1014,6 @@ class RecordDataFormatterFactory
             }
             $final = [];
             // Add one record field for each role (might include several relations).
-            // Lastly, handle possible relations without roles by appending them
-            // under the same record field (using an empty field label).
             foreach ($relationsByRole as $role => $relations) {
                 $final[] = [
                     'label' => $role !== '0' ? "CreatorRoles::$role" : null,
