@@ -653,8 +653,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     {
         $details = [];
         $blocks = [];
-        foreach ($renewDetails['details'] as $details) {
-            $checkedOutId = $details;
+        foreach ($renewDetails['details'] as $id) {
+            $checkedOutId = $id;
             [$code, $result] = $this->makeRequest(
                 ['odata', "BorrowerLoans($checkedOutId)", 'Default.RenewLoan'],
                 false, 'POST', true
