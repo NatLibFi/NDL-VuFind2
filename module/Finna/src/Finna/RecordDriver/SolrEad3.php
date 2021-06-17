@@ -1460,11 +1460,11 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get arrangement information.
+     * Get material arrangement information.
      *
      * @return string[]
      */
-    public function getArrangement() : array
+    public function getMaterialArrangement() : array
     {
         $xml = $this->getXmlRecord();
         $result = [];
