@@ -1038,7 +1038,8 @@ class RecordDataFormatterFactory
         );
 
         $setTemplateLine(
-            'Material Arrangement', 'getMaterialArrangement', 'data-escapeHtml.phtml',
+            'Material Arrangement', 'getMaterialArrangement',
+            'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordMaterialArrangement']
             ]
