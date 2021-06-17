@@ -1868,9 +1868,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         );
         foreach ($transactions as $transaction => $record) {
             $obj = $record->catalogueRecord;
+            $title = $obj->title;
+            if (!empty($record->note)) {
+                $title .= ' (' . $record->note . ')';
+            }
             $trans = [
                 'id' => $obj->id,
-                'title' => $obj->title,
+                'title' => $title,
                 'checkoutdate' => $this->formatDate($record->checkOutDate),
                 'returndate' => isset($record->checkInDate)
                     ? $this->formatDate($record->checkInDate) : '',

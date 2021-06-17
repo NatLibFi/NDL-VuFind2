@@ -103,6 +103,9 @@ class SolrEad3 extends SolrEad
     // relation@encodinganalog-attribute of relations used by getRelatedRecords
     const RELATION_RECORD = 'ahaa:AI30';
 
+    // relation@encodinganalog-attributes that are discarded from record links
+    const IGNORED_RELATIONS = [self::RELATION_RECORD, 'ahaa:AI41'];
+
     // Relation types
     const RELATION_CONTINUED_FROM = 'continued-from';
     const RELATION_PART_OF = 'part-of';
@@ -1306,9 +1309,7 @@ class SolrEad3 extends SolrEad
                 }
             }
             if ((string)$attr->relationtype !== 'resourcerelation'
-                // This relation is shown via RecordDriverRelated-recommend module
-                // (see getRelatedRecords)
-                || (string)$attr->encodinganalog === self::RELATION_RECORD
+                || in_array((string)$attr->encodinganalog, self::IGNORED_RELATIONS)
             ) {
                 continue;
             }
@@ -1473,6 +1474,24 @@ class SolrEad3 extends SolrEad
             $result = array_merge($result, $localeLabel ?: $label);
         }
         return $result;
+    }
+
+    /**
+     * Get notes on finding aids related to the record.
+     *
+     * @return array
+     */
+    public function getFindingAids()
+    {
+        $xml = $this->getXmlRecord();
+        $result = $localeResult = [];
+        foreach ($xml->otherfindaid ?? [] as $aid) {
+            $result[] = (string)($aid->p ?? '');
+            if ($text = $this->getDisplayLabel($aid, 'p')) {
+                $localeResult[] = $text[0];
+            }
+        }
+        return $localeResult ?: $result ?: parent::getFindingAids();
     }
 
     /**
