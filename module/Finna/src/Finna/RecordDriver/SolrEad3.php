@@ -101,12 +101,10 @@ class SolrEad3 extends SolrEad
     ];
 
     // relation@encodinganalog-attribute of relations used by getRelatedRecords
-    // (discarded from record links)
     const RELATION_RECORD = 'ahaa:AI30';
 
-    // relation@encodinganalog-attribute of a series relation.
-    // (discarded from record links)
-    const RELATION_SERIES = 'ahaa:AI41';
+    // relation@encodinganalog-attributes that are discarded from record links
+    const IGNORED_RELATIONS = [self::RELATION_RECORD, 'ahaa:AI41'];
 
     // Relation types
     const RELATION_CONTINUED_FROM = 'continued-from';
@@ -1312,11 +1310,7 @@ class SolrEad3 extends SolrEad
             }
             $encoding = (string)$attr->encodinganalog;
             if ((string)$attr->relationtype !== 'resourcerelation'
-                // This relation is shown via RecordDriverRelated-recommend module
-                // (see getRelatedRecords)
-                || $encoding === self::RELATION_RECORD
-                // ... and this is shown on HierarchyTree recordtab
-                || $encoding === self::RELATION_SERIES
+                || in_array($encoding, self::IGNORED_RELATIONS)
             ) {
                 continue;
             }
