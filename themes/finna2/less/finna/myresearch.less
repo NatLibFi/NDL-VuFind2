@@ -40,7 +40,7 @@
     }
   }
   #label-title-column span {
-    float: right;    
+    float: right;
   }
 }
 
@@ -125,17 +125,15 @@
   }
   @media(min-width: @screen-xs-min) {
     .renew-button-col {
-      width: 70%;
       float: left;
       text-align: left;
+    }
+    .sort-col {
+      float: right;
+      text-align: right;
       .sort-button {
         margin-bottom: 0px;
       }
-    }
-    .sort-col {
-      width: 30%;
-      float: right;
-      text-align: right;
     }
   }
   @media(max-width: @screen-xxs-max) {
@@ -146,6 +144,9 @@
       input {
         min-width: 170px;
       }
+    }
+    .sort-col {
+      float: left;
     }
   }
   .checkbox-col{
