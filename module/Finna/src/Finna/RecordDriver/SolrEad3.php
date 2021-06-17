@@ -1308,9 +1308,8 @@ class SolrEad3 extends SolrEad
                     continue 2;
                 }
             }
-            $encoding = (string)$attr->encodinganalog;
             if ((string)$attr->relationtype !== 'resourcerelation'
-                || in_array($encoding, self::IGNORED_RELATIONS)
+                || in_array((string)$attr->encodinganalog, self::IGNORED_RELATIONS)
             ) {
                 continue;
             }
