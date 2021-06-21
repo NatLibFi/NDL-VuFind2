@@ -1,6 +1,6 @@
 <?php
 /**
- * Search API Controller
+ * List API Controller
  *
  * PHP version 7
  *
@@ -27,11 +27,14 @@
  */
 namespace FinnaApi\Controller;
 
+use Exception;
 use Finna\Controller\ListController;
+use Laminas\Http\Response;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Stdlib\Parameters;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
+use VuFind\Search\Results\PluginManager;
 use VuFindApi\Controller\ApiInterface;
 use VuFindApi\Controller\ApiTrait;
 use VuFindApi\Formatter\RecordFormatter;
@@ -88,79 +91,122 @@ class ListApiController extends ListController implements ApiInterface
      *
      * @return string
      */
-    public function getSwaggerSpecFragment()
+    public function getSwaggerSpecFragment(): string
     {
-        // TODO: Implement getSwaggerSpecFragment() method.
-        return '';
+        $config = $this->getConfig();
+        $results = $this->serviceLocator
+            ->get(PluginManager::class)->get('Favorites');
+        $options = $results->getOptions();
+
+        $viewParams = [
+            'config' => $config,
+            'recordFields' => $this->recordFormatter->getRecordFieldSpec(),
+            'defaultFields' => $this->defaultRecordFields,
+            'sortOptions' => $options->getSortOptions(),
+        ];
+
+        return $this->getViewRenderer()->render(
+            'listapi/swagger', $viewParams
+        );
     }
 
     /**
      * List action
      *
-     * @return \Laminas\Http\Response
+     * @return Response
+     * @throws Exception
      */
-    public function listAction()
+    public function listAction(): Response
     {
         $requestParams = $this->getRequest()->getQuery()->toArray()
             + $this->getRequest()->getPost()->toArray();
 
-        $id = $requestParams['id'] ?? false;
-        if (!$id) {
+        if (!isset($requestParams['id'])) {
             return $this->output([], self::STATUS_ERROR, 400, 'Missing id');
         }
 
         try {
-            $list = $this->getTable('UserList')->getExisting($id);
-            if (!$list->isPublic()) {
-                return $this->output(
-                    [], self::STATUS_ERROR, 403, 'Permission denied'
-                );
-            }
-        } catch (RecordMissingException $e) {
-            return $this->output([], self::STATUS_ERROR, 404, 'List not found');
-        }
-
-        try {
             $results = $this->serviceLocator
-                ->get(\VuFind\Search\Results\PluginManager::class)->get('Favorites');
-            $params = $results->getParams();
-
-            $params->initFromRequest(new Parameters($requestParams));
-
+                ->get(PluginManager::class)->get('Favorites');
+            $results->getParams()->initFromRequest(new Parameters($requestParams));
             $results->performAndProcessSearch();
             $listObj = $results->getListObject();
 
             $response = [
-                'list' => [
-                    'id' => $listObj->id,
-                    'title' => $listObj->title,
-                    'description' => $listObj->description
-                    // TODO: Add all list data to response
-                ]
+                'id' => $listObj->id,
+                'title' => $listObj->title,
+                'recordCount' => $results->getResultTotal()
             ];
 
-            if ($this->listTagsEnabled()) {
-                $listTags = $this->getTable('Tags')
-                    ->getForList($listObj->id, $listObj->user_id);
-                // TODO: Add list tags to response
+            $description = $listObj->description;
+            if (strlen($description) > 0) {
+                $response['description'] = $description;
             }
 
-            $response['resultCount'] = $results->getResultTotal();
+            if ($this->listTagsEnabled()) {
+                $tags = $this->getTable('Tags')->getForList($listObj->id);
+                if ($tags->count() > 0) {
+                    $response['tags'] = [];
+                    foreach ($tags as $tag) {
+                        $response['tags'][] = $tag->tag;
+                    }
+                }
+            }
 
-            $records = $this->recordFormatter->format(
-                $results->getResults(), $this->defaultRecordFields
-            );
-            if ($records) {
-                $response['records'] = $records;
-                $response['notes'] = [];
+            if ($results->getResultTotal() > 0) {
+                $response['records'] = [];
+                $requestedFields = $this->getFieldList($requestParams);
+
                 foreach ($results->getResults() as $result) {
-                    $response['notes'][] = $result->getListNotes($listObj->id);
+                    $record = [
+                        'record' => ($this->recordFormatter
+                            ->format([$result], $requestedFields))[0]
+                    ];
+
+                    $notes = $result->getListNotes($listObj->id);
+                    if (!empty($notes)) {
+                        $record['notes'] = $notes[0];
+                    }
+
+                    if ($this->tagsEnabled()) {
+                        $tags = $result->getTags($listObj->id);
+                        if ($tags->count() > 0) {
+                            $response['tags'] = [];
+                            foreach ($tags as $tag) {
+                                $record['tags'][] = $tag->tag;
+                            }
+                        }
+                    }
+
+                    $response['records'][] = $record;
                 }
             }
 
             return $this->output($response, self::STATUS_OK);
-        } catch (ListPermissionException $e) {
-            return $this->output([], self::STATUS_ERROR, 403, 'Permission denied');
+        } catch (RecordMissingException | ListPermissionException $e) {
+            return $this->output([], self::STATUS_ERROR, 404, 'List not found');
         }
+    }
+
+    /**
+     * Get field list based on the request
+     *
+     * TODO: Move to ApiTrait
+     *
+     * @param array $request Request params
+     *
+     * @return array
+     */
+    protected function getFieldList($request)
+    {
+        $fieldList = [];
+        if (isset($request['field'])) {
+            if (!empty($request['field']) && is_array($request['field'])) {
+                $fieldList = $request['field'];
+            }
+        } else {
+            $fieldList = $this->defaultRecordFields;
+        }
+        return $fieldList;
     }
 }

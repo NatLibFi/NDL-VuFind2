@@ -71,6 +71,7 @@ class Factory
         $controller->addApi($controllerManager->get('AdminApi'));
         $controller->addApi($controllerManager->get('SearchApi'));
         $controller->addApi($controllerManager->get('AuthApi'));
+        $controller->addApi($controllerManager->get('ListApi'));
         return $controller;
     }
 
