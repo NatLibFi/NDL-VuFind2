@@ -89,7 +89,7 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
   }
   this.element.addClass(this.openClass);
 
-  var instance = this;
+  var self = this;
 
   // Hide container and insert textarea for editor.
   this.container.hide();
@@ -100,49 +100,100 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
 
   // Create editor.
   var toolbar = [
-    'bold', 'italic',
-    'heading', '|',
-    'quote', 'unordered-list',
-    'ordered-list', '|',
-    'link', 'image',
+    {
+      name: 'bold',
+      action: EasyMDE.toggleBold,
+      className: 'fa fa-bold',
+      title: VuFind.translate('editor_bold')
+    },
+    {
+      name: 'italic',
+      action: EasyMDE.toggleItalic,
+      className: 'fa fa-italic',
+      title: VuFind.translate('editor_italic')
+    },
+    {
+      name: 'heading',
+      action: EasyMDE.toggleHeadingSmaller,
+      className: 'fa fa-header fa-heading',
+      title: VuFind.translate('editor_heading')
+    },
     '|',
     {
-      name: "other",
-      className: "fa fa-plus-small",
-      title: "Other",
+      name: 'quote',
+      action: EasyMDE.toggleBlockquote,
+      className: 'fa fa-quote-left',
+      title: VuFind.translate('editor_quote')
+    },
+    {
+      name: 'unordered-list',
+      action: EasyMDE.toggleUnorderedList,
+      className: 'fa fa-list-ul',
+      title: VuFind.translate('editor_unordered_list')
+    },
+    {
+      name: 'ordered-list',
+      action: EasyMDE.toggleOrderedList,
+      className: 'fa fa-list-ol',
+      title: VuFind.translate('editor_ordered_list')
+    },
+    '|',
+    {
+      name: 'link',
+      action: EasyMDE.drawLink,
+      className: 'fa fa-link',
+      title: VuFind.translate('editor_link')
+    },
+    {
+      name: 'image',
+      action: EasyMDE.drawImage,
+      className: 'fa fa-image',
+      title: VuFind.translate('editor_image')
+    },
+    '|',
+    {
+      name: 'other',
+      className: 'fa fa-plus-small',
+      title: VuFind.translate('editor_other'),
       children: [
         {
           name: 'panel',
           action: function toolbarPanelAction() {
-            instance.insertPanel();
+            self.insertPanel();
           },
           className: 'fa details-icon',
-          title: 'Insert panel element'
+          title: VuFind.translate('editor_panel')
         },
         {
           name: 'truncate',
           action: function toolbarTruncateAction() {
-            instance.insertTruncate();
+            self.insertTruncate();
           },
           className: 'fa fa-pagebreak',
-          title: 'Insert truncate element'
+          title: VuFind.translate('editor_truncate')
         }
       ]
     },
     {
       name: 'close',
       action: function toolbarCloseAction() {
-        instance.closeEditable();
+        self.closeEditable();
       },
       className: 'fa fa-times editor-toolbar-close',
-      title: 'Close'
+      title: VuFind.translate('editor_close')
     }
   ];
+  var promptTexts = {
+    link: VuFind.translate('editor_prompt_link'),
+    image: VuFind.translate('editor_prompt_image')
+  };
   var settings = {
     autoDownloadFontAwesome: false,
     autofocus: true,
     element: textArea[0],
     indentWithTabs: false,
+    promptTexts: promptTexts,
+    promptURLs: true,
     toolbar: toolbar,
     spellChecker: false,
     status: false
@@ -166,7 +217,7 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
     preview.appendTo(this.element);
 
     this.editor.codemirror.on('change', function onChangeEditor() {
-      var result = instance.editor.options.previewRender(instance.editor.value());
+      var result = self.editor.options.previewRender(self.editor.value());
       preview.find('.data').html(result);
     });
   }
