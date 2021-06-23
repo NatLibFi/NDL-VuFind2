@@ -72,6 +72,7 @@ class SolrEad3 extends SolrEad
 
     // Altformavail labels
     const ALTFORM_LOCATION = 'location';
+    const ALTFORM_PHYSICAL_LOCATION = 'physicalLocation';
     const ALTFORM_TYPE = 'type';
     const ALTFORM_DIGITAL_TYPE = 'digitalType';
     const ALTFORM_FORMAT = 'format';
@@ -92,6 +93,7 @@ class SolrEad3 extends SolrEad
         'Bruk av manifestationen har begränsats pga' => self::ALTFORM_ACCESS,
         'Internet - ei fyysistä toimipaikkaa' => self::ALTFORM_ONLINE,
         'Lisätietoa kunnosta' => self::ALTFORM_CONDITION,
+        'Säilytysyksikön tunniste' => self::ALTFORM_PHYSICAL_LOCATION,
     ];
 
     // Accessrestrict types and their order in the UI
@@ -496,6 +498,9 @@ class SolrEad3 extends SolrEad
                     } else {
                         $result['service'] = true;
                     }
+                    break;
+                case self::ALTFORM_PHYSICAL_LOCATION:
+                    $result['physicalLocation'] = $val;
                     break;
                 case self::ALTFORM_TYPE:
                     $result['type'] = $val;
@@ -1475,6 +1480,17 @@ class SolrEad3 extends SolrEad
             }
         }
         return $localeResult ?: $result ?: parent::getFindingAids();
+    }
+
+    /**
+     * Get container information.
+     *
+     * @return string
+     */
+    public function getContainerInformation()
+    {
+        $xml = $this->getXmlRecord();
+        return (string)($xml->did->container ?? '');
     }
 
     /**

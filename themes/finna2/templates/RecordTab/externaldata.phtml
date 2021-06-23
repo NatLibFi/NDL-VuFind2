@@ -28,17 +28,22 @@ $physicalItems = $items['physicalItems'] ?? null;
     <?php foreach ($physicalItems as $item): ?>
       <div role="row" class="tbl-row">
         <div class="tbl-cell tbl-left" role="cell">
-          <?=$this->escapeHtml($item['format'] ?? $item['type'] ?? '')?>
-          <?php if (!empty($item['info'])): ?>
-            <span class="info">(<?=$this->escapeHtml($item['info']) ?>)</span>
+          <?php $format = $item['format'] ?? $item['type'] ?? ''; if (!empty($format)): ?>
+            <?= $this->escapeHtml($format) ?>
+          <?php endif; ?>
+          <?php $info = $item['info'] ?? ''; if (!empty($info)): ?>
+            <span class="info">(<?=$this->escapeHtml($info) ?>)</span>
           <?php endif ?>
-          <?php if (!empty($item['accessRestriction'])): ?>
-            <p class="restriction small">(<?=$this->escapeHtml($item['accessRestriction']) ?>)</p>
+          <?php $physicalLocation = $item['physicalLocation'] ?? ''; if (!empty($physicalLocation)): ?>
+            <?php if (!empty($format) || !empty($info)): ?><br /><?php endif; ?><span class="physical-location"><?=$this->escapeHtml($physicalLocation) ?></span>
+          <?php endif ?>
+          <?php $accressRestriction = $item['accessRestriction'] ?? ''; if (!empty($accessRestriction)): ?>
+            <p class="restriction small">(<?=$this->escapeHtml($accessRestriction) ?>)</p>
           <?php endif ?>
         </div>
         <div class="tbl-cell tbl-right location" role="cell">
-          <?php if (!empty($item['location'])): ?>
-            <span class="location-name"><?=$this->escapeHtml($item['location'])?></span>
+          <?php $location = $item['location'] ?? ''; if (!empty($location)): ?>
+            <span class="location-name"><?=$this->escapeHtml($location)?></span>
           <?php endif; ?>
           <?php if (!empty($item['service'])): ?>
             <span class="service alert alert-info"><?= $this->transEsc('external_data_tab_physical_service')?></span>
