@@ -502,7 +502,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Access Restrictions Extended', 'Actors', 'Additional Information',
             'Age Limit', 'Appraisal', 'Archive', 'Archive Films',
             'Archive Origination', 'Archive Series', 'Aspect Ratio',
-            'Audience', 'Author Notes', 'Authors',
+            'Archive Relations', 'Audience', 'Author Notes', 'Authors',
             'Available Online', 'Awards', 'Bibliography',
             'Broadcasting Dates', 'child_records', 'Classification',
             'Collection', 'Color', 'Content Description',
