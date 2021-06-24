@@ -1001,7 +1001,7 @@ class RecordDataFormatterFactory
         $getRelations = function ($data, $options) use (&$pos) {
             // Group relations by role
             $relationsByRole = [];
-            foreach ($data as &$relation) {
+            foreach ($data as $relation) {
                 // Combine all relations without role under the key '0'
                 $role = ($relation['role'] ?? '0') ?: '0';
                 if (!isset($relationsByRole[$role])) {
