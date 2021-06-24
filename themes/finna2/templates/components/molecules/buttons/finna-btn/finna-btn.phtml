@@ -7,7 +7,7 @@
     $__attributes['aria-label'] = $ariaLabel;
   }
 ?>
-<button<?= $__attributes->add('class', 'finna-btn') ?>>
-  <?php if (isset($iconClass)): ?><i class="<?= $iconClass ?>" aria-hidden="true"></i><?php endif; ?>
-  <?= $label ?? '' ?>
-</button>
+<button<?= $__attributes->add('class', 'finna-btn') ?>><?php if (isset($iconClass)): ?>
+  <i class="<?= $iconClass ?>" aria-hidden="true"></i><?php endif; ?><?php if (isset($label)): ?>
+  <?= $label ?>
+<?php endif; ?></button>

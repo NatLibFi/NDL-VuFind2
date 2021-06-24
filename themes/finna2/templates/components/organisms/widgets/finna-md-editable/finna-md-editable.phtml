@@ -16,7 +16,8 @@
 <?= $this->render('components/molecules/containers/finna-editable/finna-editable.phtml', [
     'attributes' => $__attributes,
     'containerAttributes' => $__containerAttributes,
-    'editable' => $__editable
+    'editable' => $__editable,
+    'editLabel' => $editLabel ?? null
   ]); ?>
 <?php $this->jsTranslations()->addStrings([
     'editor_bold' => 'editor_bold',
