@@ -79,7 +79,7 @@ FinnaPopup.prototype.addTrigger = function addTrigger(trigger) {
   if (typeof trigger.data(_.triggerId) === 'undefined') {
     _.triggers.push(trigger);
     trigger.data('popup-id', _.id);
-    trigger.data('popup-' + _.id + '-index', _.triggers.length - 1);
+    trigger.data(_.triggerId, _.triggers.length - 1);
     _.onPopupInit(trigger);
   }
 };
