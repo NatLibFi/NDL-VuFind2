@@ -106,8 +106,10 @@ FinnaPopup.prototype.reIndex = function reIndex() {
   var _ = this;
   _.triggers = [];
   $(':data(popup-id)').each(function toList() {
-    if ($(this).data('popup-id') === _.id) {
-      _.addTrigger($(this));
+    var trigger = $(this);
+    if (trigger.data('popup-id') === _.id) {
+      trigger.removeData(_.triggerId);
+      _.addTrigger(trigger);
     }
   });
 };
