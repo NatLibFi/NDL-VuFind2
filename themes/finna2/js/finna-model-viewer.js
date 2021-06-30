@@ -336,6 +336,9 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
 ModelViewer.prototype.displayInformation = function displayInformation() {
   var _ = this;
   _.informationsArea.toggle(true);
+  _.informationsArea.append(
+    '<tr><th class="text-center" colspan="2">' + VuFind.translate('Information of model') + '</th></tr>'
+  );
   _.setInformation(VuFind.translate('Vertices'), _.vertices);
   _.setInformation(VuFind.translate('Triangles'), _.triangles);
 };
