@@ -120,12 +120,6 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Identifiers', 'getIdentifier', 'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordIdentifiers']
-            ]
-        );
-        $setTemplateLine(
             'Age Limit', 'getAgeLimit', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordAgeLimit']

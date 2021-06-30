@@ -274,6 +274,32 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get an array of all ISSNs associated with the record (may be empty).
+     *
+     * @return array
+     */
+    public function getISSNs(): array
+    {
+        $result = [];
+        $xml = $this->getXmlRecord();
+        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
+            foreach ($field as $identifier) {
+                if ((string)$identifier['type'] === 'issn') {
+                    $result[] = $identifier;
+                    continue;
+                }
+                $trimmed = trim($identifier);
+                if (preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $trimmed)) {
+                    $exploded = explode(':', $trimmed);
+                    $result[] = $exploded[1];
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Return keywords
      *
      * @return array
@@ -327,21 +353,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
         $urls = $this->resolveUrlTypes($urls);
         return $urls;
-    }
-
-    /**
-     * Return identifiers
-     *
-     * @return array
-     */
-    public function getIdentifier(): array
-    {
-        $xml = $this->getXmlRecord();
-        $results = [];
-        foreach ($xml->identifier ?? [] as $identifier) {
-            $results[] = (string)$identifier;
-        }
-        return $results;
     }
 
     /**
