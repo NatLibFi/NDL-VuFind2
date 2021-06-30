@@ -551,7 +551,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'city' => $result['MainPlace'],
             'expiration_date' => $expirationDate,
             'messagingServices' => $messagingSettings,
-            'loan_disabled' => !empty($result['Defaulted'])
+            'loan_blocked' => !empty($result['Defaulted'])
         ];
 
         if (isset($this->config['updateTransactionHistoryState']['method'])) {
@@ -660,7 +660,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 false, 'POST', true
             );
             if ($code != 200 || $result['ServiceCode'] != 'LoanRenewed') {
-                $currentResult = $this->holdError($code, $result);
+                $currentResult = $this->convertError($code, $result);
                 $currentResult['item_id'] = $checkedOutId;
                 $details[$checkedOutId] = $currentResult;
                 if ($code > 204
@@ -842,7 +842,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 
         // Make sure pickup location is valid
         if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError(0, 'hold_invalid_pickup');
+            return $this->convertError(0, 'hold_invalid_pickup');
         }
         $request = [
             'BorrowerId' =>  $patron['id'],
@@ -857,7 +857,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             true
         );
         if ($code >= 300) {
-            return $this->holdError($code, $result);
+            return $this->convertError($code, $result);
         }
         return ['success' => true];
     }
@@ -1244,7 +1244,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $pickUpLocation = $holdDetails['pickupLocationId'];
 
         if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError(0, 'hold_invalid_pickup');
+            return $this->convertError(0, 'hold_invalid_pickup');
         }
 
         $request = [
@@ -1260,7 +1260,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         );
 
         if ($code > 204) {
-            return $this->holdError($code, $result);
+            return $this->convertError($code, $result);
         }
         return ['success' => true];
     }
@@ -1818,11 +1818,10 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getPatronBlocks($patron)
     {
-        $results = [];
-        if (!empty($patron['loan_disabled'])) {
-            $results[] = 'Borrowing Block Message';
+        if (!empty($patron['loan_blocked'])) {
+            return ['Borrowing Block Message'];
         }
-        return !empty($results) ? $results : false;
+        return false;
     }
 
     /**
@@ -1922,14 +1921,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Return a hold error message
+     * Convert error message into a translation key
      *
      * @param int   $code   HTTP Result Code
      * @param array $result API Response
      *
      * @return array
      */
-    protected function holdError($code, $result)
+    protected function convertError($code, $result)
     {
         $message = 'hold_error_fail';
         if (!empty($result['error']['message'])) {
@@ -2200,7 +2199,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             true
         );
         if ($code >= 300) {
-            return $this->holdError($code, $result);
+            return $this->convertError($code, $result);
         }
         return ['success' => true];
     }
