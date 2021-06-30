@@ -551,7 +551,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'city' => $result['MainPlace'],
             'expiration_date' => $expirationDate,
             'messagingServices' => $messagingSettings,
-            'loan_blocked' => !empty($result['Defaulted'])
+            'blocked' => !empty($result['Defaulted'])
         ];
 
         if (isset($this->config['updateTransactionHistoryState']['method'])) {
@@ -1818,7 +1818,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getPatronBlocks($patron)
     {
-        if (!empty($patron['loan_blocked'])) {
+        if (!empty($patron['blocked'])) {
             return ['Borrowing Block Message'];
         }
         return false;
