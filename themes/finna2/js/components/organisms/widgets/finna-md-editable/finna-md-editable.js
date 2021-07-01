@@ -61,11 +61,11 @@ FinnaMdEditable.prototype.setBusy = function setBusy(busy) {
     return this;
   }
   if (this.isBusy()) {
-    if (false === busy) {
+    if (!busy) {
       this.element.removeClass(this.busyClass);
     }
   }
-  else if (true === busy) {
+  else if (busy) {
     this.element.addClass(this.busyClass);
   }
   return this;
@@ -104,57 +104,57 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
       name: 'bold',
       action: EasyMDE.toggleBold,
       className: 'fa fa-bold',
-      title: VuFind.translate('editor_bold')
+      title: VuFind.translate('editor_format_bold')
     },
     {
       name: 'italic',
       action: EasyMDE.toggleItalic,
       className: 'fa fa-italic',
-      title: VuFind.translate('editor_italic')
+      title: VuFind.translate('editor_format_italic')
     },
     {
       name: 'heading',
       action: EasyMDE.toggleHeadingSmaller,
       className: 'fa fa-header fa-heading',
-      title: VuFind.translate('editor_heading')
+      title: VuFind.translate('editor_format_heading')
     },
     '|',
     {
       name: 'quote',
       action: EasyMDE.toggleBlockquote,
       className: 'fa fa-quote-left',
-      title: VuFind.translate('editor_quote')
+      title: VuFind.translate('editor_format_quote')
     },
     {
       name: 'unordered-list',
       action: EasyMDE.toggleUnorderedList,
       className: 'fa fa-list-ul',
-      title: VuFind.translate('editor_unordered_list')
+      title: VuFind.translate('editor_format_unordered_list')
     },
     {
       name: 'ordered-list',
       action: EasyMDE.toggleOrderedList,
       className: 'fa fa-list-ol',
-      title: VuFind.translate('editor_ordered_list')
+      title: VuFind.translate('editor_format_ordered_list')
     },
     '|',
     {
       name: 'link',
       action: EasyMDE.drawLink,
       className: 'fa fa-link',
-      title: VuFind.translate('editor_link')
+      title: VuFind.translate('editor_create_link')
     },
     {
       name: 'image',
       action: EasyMDE.drawImage,
       className: 'fa fa-image',
-      title: VuFind.translate('editor_image')
+      title: VuFind.translate('editor_insert_image')
     },
     '|',
     {
       name: 'other',
       className: 'fa fa-plus-small',
-      title: VuFind.translate('editor_other'),
+      title: VuFind.translate('editor_other_commands'),
       children: [
         {
           name: 'panel',
@@ -162,7 +162,7 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
             editable._insertPanel();
           },
           className: 'fa details-icon',
-          title: VuFind.translate('editor_panel')
+          title: VuFind.translate('editor_insert_panel')
         },
         {
           name: 'truncate',
@@ -170,7 +170,7 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
             editable._insertTruncate();
           },
           className: 'fa fa-pagebreak',
-          title: VuFind.translate('editor_truncate')
+          title: VuFind.translate('editor_insert_truncate')
         }
       ]
     },
@@ -180,7 +180,7 @@ FinnaMdEditable.prototype.openEditable = function openEditable() {
         editable.closeEditable();
       },
       className: 'fa fa-times editor-toolbar-close',
-      title: VuFind.translate('editor_close')
+      title: VuFind.translate('editor_close_editor')
     }
   ];
   var promptTexts = {
@@ -290,14 +290,19 @@ FinnaMdEditable.prototype._insertTruncate = function _insertTruncate() {
 };
 
 finna.mdEditable = (function finnaMdEditable() {
+  var initDone = false;
   var editables = [];
 
   var my = {
+    initDone: initDone,
     editables: editables,
     init: function init() {
-      $('.finna-md-editable').each(function initFinnaMdEditable() {
-        editables.push(new FinnaMdEditable($(this)));
-      });
+      if (!initDone) {
+        $('.finna-md-editable').each(function initFinnaMdEditable() {
+          editables.push(new FinnaMdEditable($(this)));
+        });
+        initDone = true;
+      }
     }
   };
 

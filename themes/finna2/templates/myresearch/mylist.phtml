@@ -61,7 +61,7 @@
         <?= $this->render('components/organisms/widgets/finna-md-editable/finna-md-editable.phtml', [
             'attributes' => ['class' => 'list-description'],
             'markdown' => $markdown,
-            'html' => !empty($markdown) ? $this->markdown()->toHtml($markdown, false) : '',
+            'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
             'emptyHtml' => $this->translate('Add list description'),
             'preview' => true
           ]); ?>

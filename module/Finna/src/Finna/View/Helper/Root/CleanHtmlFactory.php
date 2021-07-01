@@ -70,8 +70,8 @@ class CleanHtmlFactory implements FactoryInterface
         $config = $container->get('config');
         $customElements
             = $config['vufind']['plugin_managers']['view_customelement']['aliases'];
-        foreach ($customElements as $elementName => $elementCass) {
-            $customElements[$elementName] = $elementCass::getAttributes();
+        foreach ($customElements as $elementName => $elementClass) {
+            $customElements[$elementName] = $elementClass::getAttributes();
         }
 
         return new $requestedName($cacheDir, $customElements);
