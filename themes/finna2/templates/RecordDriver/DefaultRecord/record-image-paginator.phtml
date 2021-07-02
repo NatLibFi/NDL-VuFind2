@@ -31,6 +31,7 @@
     echo $this->inlineScript(
       \Laminas\View\Helper\HeadScript::SCRIPT,
       "VuFind.addTranslations({\n"
+      . "    'Information of model': '" . addslashes($this->transEsc('Information of model')) . "',\n"
       . "    'Vertices': '" . addslashes($this->transEsc('Vertices')) . "',\n"
       . "    'Triangles': '" . addslashes($this->transEsc('Triangles')) . "',\n"
       . "    'model_help_pc_html': '" . addslashes($this->translate('model_help_pc_html')) . "',\n"

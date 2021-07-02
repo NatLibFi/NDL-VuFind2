@@ -156,7 +156,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
     /**
      * Parameter object representing user request.
      *
-     * @var \Laminas\StdLib\Parameters
+     * @var \Laminas\Stdlib\Parameters
      */
     protected $request = null;
 
@@ -276,7 +276,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
      * be needed.
      *
      * @param \VuFind\Search\Base\Params $params  Search parameter object
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      *                                            request.
      *
      * @return void

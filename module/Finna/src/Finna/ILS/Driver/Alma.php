@@ -1611,74 +1611,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get Patron Holds
-     *
-     * This is responsible for retrieving all holds by a specific patron.
-     *
-     * @param array $patron The patron array from patronLogin
-     *
-     * @return mixed        Array of the patron's holds on success.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getMyHolds($patron)
-    {
-        $holdList = [];
-        $offset = 0;
-        $totalCount = 1;
-        while ($offset < $totalCount) {
-            $xml = $this->makeRequest(
-                '/users/' . $patron['id'] . '/requests',
-                ['request_type' => 'HOLD', 'offset' => $offset, 'limit' => 100]
-            );
-            $offset += 100;
-            $totalCount = (int)$xml->attributes()->{'total_record_count'};
-            foreach ($xml as $request) {
-                $lastInterestDate = $request->last_interest_date
-                    ? $this->dateConverter->convertToDisplayDate(
-                        'Y-m-dT',
-                        (string)$request->last_interest_date
-                    ) : null;
-                $available = (string)$request->request_status === 'On Hold Shelf';
-                $lastPickupDate = null;
-                if ($available) {
-                    $lastPickupDate = $request->expiry_date
-                        ? $this->dateConverter->convertToDisplayDate(
-                            'Y-m-dT',
-                            (string)$request->expiry_date
-                        ) : null;
-                    $lastInterestDate = null;
-                }
-                $hold = [
-                    'create' => $this->dateConverter->convertToDisplayDate(
-                        'Y-m-dT',
-                        (string)$request->request_date
-                    ),
-                    'expire' => $lastInterestDate,
-                    'id' => (string)$request->request_id,
-                    'available' => $available,
-                    'last_pickup_date' => $lastPickupDate,
-                    'item_id' => (string)$request->mms_id,
-                    'location' => (string)$request->pickup_location,
-                    'processed' => $request->item_policy === 'InterlibraryLoan'
-                        && (string)$request->request_status !== 'Not Started',
-                    'title' => (string)$request->title,
-                ];
-                if (!$available) {
-                    if ('In Process' === (string)$request->request_status) {
-                        $hold['position'] = $this->translate('status_In Process');
-                    } else {
-                        $hold['position'] = (int)($request->place_in_queue ?? 1);
-                    }
-                }
-
-                $holdList[] = $hold;
-            }
-        }
-        return $holdList;
-    }
-
-    /**
      * Check if request is valid
      *
      * This is responsible for determining if an item is requestable
@@ -1896,23 +1828,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             'success' => false,
             'sysMessage' => $errorMsg
         ];
-    }
-
-    /**
-     * Get details of a single hold request.
-     *
-     * @param array $holdDetails A single hold array from getMyHolds
-     * @param array $patron      Patron information from patronLogin
-     *
-     * @return string            The Alma request ID
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getCancelHoldDetails($holdDetails, $patron = [])
-    {
-        return (empty($holdDetails['available'])
-            || !empty($this->config['Holds']['allowCancelingAvailableRequests']))
-            ? $holdDetails['id'] : '';
     }
 
     /**

@@ -1,7 +1,6 @@
 <!-- START of: finna - search/pagination_simple.phtml -->
 <?php if ($this->pageCount): ?>
   <ul class="paginationSimple">
-    <li>
     <?php if (isset($this->previous)): ?>
       <li><a href="<?=$this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><span class="sr-only"><?=$this->transEsc('page_prev')?></span><i class="fa fa-arrow-alt-left"></i></a></li>
     <?php endif; ?>

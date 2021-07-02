@@ -232,26 +232,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Patron Holds
-     *
-     * This is responsible for retrieving all holds by a specific patron.
-     *
-     * @param array $patron The patron array from patronLogin
-     *
-     * @throws DateException
-     * @throws ILSException
-     * @return array        Array of the patron's holds on success.
-     */
-    public function getMyHolds($patron)
-    {
-        $result = parent::getMyHolds($patron);
-        foreach ($result as &$hold) {
-            $hold['is_editable'] = !$hold['in_transit'] && !$hold['available'];
-        }
-        return $result;
-    }
-
-    /**
      * Get Patron Profile
      *
      * This is responsible for retrieving the profile for a specific patron.
@@ -624,84 +604,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 ? 'request_change_done' : 'request_change_accepted',
             'sys_message' => ''
         ];
-    }
-
-    /**
-     * Change pickup location
-     *
-     * This is responsible for changing the pickup location of a hold
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
-     *
-     * @return array Associative array of the results
-     */
-    public function changePickupLocation($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $pickUpLocation = $holdDetails['pickupLocationId'];
-
-        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError('hold_invalid_pickup');
-        }
-
-        $request = [
-            'pickup_library_id' => $pickUpLocation
-        ];
-
-        $result = $this->makeRequest(
-            [
-                'path' => ['v1', 'holds', $requestId],
-                'json' => $request,
-                'method' => 'PUT',
-                'errors' => true
-            ]
-        );
-
-        if ($result['code'] >= 300) {
-            return $this->holdError($result['data']['error'] ?? 'hold_error_fail');
-        }
-        return ['success' => true];
-    }
-
-    /**
-     * Change request status
-     *
-     * This is responsible for changing the status of a hold request
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details (at the moment only 'frozen'
-     * is supported)
-     *
-     * @return array Associative array of the results
-     */
-    public function changeRequestStatus($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $frozen = !empty($holdDetails['frozen']);
-
-        if ($frozen) {
-            $result = $this->makeRequest(
-                [
-                    'path' => ['v1', 'holds', $requestId, 'suspension'],
-                    'method' => 'POST',
-                    'errors' => true
-                ]
-            );
-        } else {
-            $result = $this->makeRequest(
-                [
-                    'path' => ['v1', 'holds', $requestId, 'suspension'],
-                    'method' => 'DELETE',
-                    'errors' => true
-                ]
-            );
-        }
-
-        if ($result['code'] >= 300) {
-            return $this->holdError($result['data']['error'] ?? 'hold_error_fail');
-        }
-        return ['success' => true];
     }
 
     /**

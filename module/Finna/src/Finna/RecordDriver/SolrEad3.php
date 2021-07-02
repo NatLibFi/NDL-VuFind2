@@ -103,6 +103,9 @@ class SolrEad3 extends SolrEad
     // relation@encodinganalog-attribute of relations used by getRelatedRecords
     const RELATION_RECORD = 'ahaa:AI30';
 
+    // relation@encodinganalog-attributes that are discarded from record links
+    const IGNORED_RELATIONS = [self::RELATION_RECORD, 'ahaa:AI41'];
+
     // Relation types
     const RELATION_CONTINUED_FROM = 'continued-from';
     const RELATION_PART_OF = 'part-of';
@@ -768,8 +771,8 @@ class SolrEad3 extends SolrEad
             }
 
             foreach ($images['large'] ?? $images['medium'] as $id => $img) {
-                $large = $images['large'][$id] ?? null;
-                $medium = $images['medium'][$id] ?? null;
+                $large = $images['large'][$id] ?? ['url' => '', 'pdf' => false];
+                $medium = $images['medium'][$id] ?? ['url' => '', 'pdf' => false];
 
                 $data = $img;
                 $data['urls'] = [
@@ -1306,9 +1309,7 @@ class SolrEad3 extends SolrEad
                 }
             }
             if ((string)$attr->relationtype !== 'resourcerelation'
-                // This relation is shown via RecordDriverRelated-recommend module
-                // (see getRelatedRecords)
-                || (string)$attr->encodinganalog === self::RELATION_RECORD
+                || in_array((string)$attr->encodinganalog, self::IGNORED_RELATIONS)
             ) {
                 continue;
             }
@@ -1456,6 +1457,41 @@ class SolrEad3 extends SolrEad
             }
         }
         return $localeResult ?: $result;
+    }
+
+    /**
+     * Get material arrangement information.
+     *
+     * @return string[]
+     */
+    public function getMaterialArrangement() : array
+    {
+        $xml = $this->getXmlRecord();
+        $result = [];
+        foreach ($xml->arrangement ?? [] as $arrangement) {
+            $label = $this->getDisplayLabel($arrangement, 'p');
+            $localeLabel = $this->getDisplayLabel($arrangement, 'p', true);
+            $result = array_merge($result, $localeLabel ?: $label);
+        }
+        return $result;
+    }
+
+    /**
+     * Get notes on finding aids related to the record.
+     *
+     * @return array
+     */
+    public function getFindingAids()
+    {
+        $xml = $this->getXmlRecord();
+        $result = $localeResult = [];
+        foreach ($xml->otherfindaid ?? [] as $aid) {
+            $result[] = (string)($aid->p ?? '');
+            if ($text = $this->getDisplayLabel($aid, 'p')) {
+                $localeResult[] = $text[0];
+            }
+        }
+        return $localeResult ?: $result ?: parent::getFindingAids();
     }
 
     /**
@@ -1656,9 +1692,9 @@ class SolrEad3 extends SolrEad
         $node,
         $childNodeName = 'part',
         $obeyPreferredLanguage = false
-    ) {
+    ) : array {
         if (! isset($node->$childNodeName)) {
-            return null;
+            return [];
         }
         $allResults = [];
         $defaultLanguageResults = [];
