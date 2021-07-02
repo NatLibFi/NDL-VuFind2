@@ -513,7 +513,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $password = $user['cat_password'];
 
         $id = !empty($holdDetails['item_id'])
-            ? $holdDetails['item_id'] : $holdDetails['id'];
+            ? $holdDetails['item_id']
+            : ($holdDetails['id'] ?? '');
 
         $holdType = $this->getHoldType($holdDetails);
 
@@ -769,12 +770,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $functionResult = 'removeReservationResult';
 
         foreach ($cancelDetails['details'] as $details) {
+            [$id] = explode('|', $details);
             $result = $this->doSOAPRequest(
                 $this->reservations_wsdl, $function, $functionResult, $username,
                 ['removeReservationsParam' =>
                    ['arenaMember' => $this->arenaMember,
                     'user' => $username, 'password' => $password,
-                     'language' => 'en', 'id' => $details]
+                     'language' => 'en', 'id' => $id]
                 ]
             );
 
@@ -786,13 +788,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 if ($message == 'ils_connection_failed') {
                     throw new ILSException('ils_offline_status');
                 }
-                $results[$details] = [
+                $results[$id] = [
                     'success' => false,
                     'status' => 'hold_cancel_fail',
                     'sysMessage' => $statusAWS->message ?? $statusAWS->type
                 ];
             } else {
-                $results[$details] = [
+                $results[$id] = [
                     'success' => true,
                     'status' => 'hold_cancel_success',
                     'sysMessage' => ''
@@ -806,86 +808,89 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Get details of a single hold request.
+     * Update holds
      *
-     * @param array $holdDetails A single hold array from getMyHolds
-     * @param array $patron      Patron information from patronLogin
+     * This is responsible for changing the status of hold requests
      *
-     * @return string            The Alma request ID
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getCancelHoldDetails($holdDetails, $patron = [])
-    {
-        return $holdDetails['reqnum'];
-    }
-
-    /**
-     * Change pickup location
-     *
-     * This is responsible for changing the pickup location of a hold
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
+     * @param array $holdsDetails The details identifying the holds
+     * @param array $fields       An associative array of fields to be updated
+     * @param array $patron       Patron array
      *
      * @return array Associative array of the results
      */
-    public function changePickupLocation($patron, $holdDetails)
-    {
-        $username = $patron['cat_username'];
-        $password = $patron['cat_password'];
-        $pickupLocationId = $holdDetails['pickupLocationId'];
-
-        try {
-            $validFromDate = date('Y-m-d');
-
-            $validToDate = isset($holdDetails['requiredBy'])
-                ? $this->dateFormat->convertFromDisplayDate(
-                    'Y-m-d', $holdDetails['requiredBy']
-                )
-                : date('Y-m-d', $this->getDefaultRequiredByDate());
-        } catch (DateException $e) {
-            // Hold Date is invalid
-            throw new ILSException('hold_date_invalid');
-        }
-
-        $requestId = $holdDetails['requestId'];
-        [$organisation, $branch] = explode('.', $pickupLocationId, 2);
-
+    public function updateHolds(array $holdsDetails, array $fields, array $patron
+    ): array {
+        $results = [];
         $function = 'changeReservation';
         $functionResult = 'changeReservationResult';
-        $conf = [
-            'arenaMember' => $this->arenaMember,
-            'user' => $username,
-            'password' => $password,
-            'language' => 'en',
-            'id' => $requestId,
-            'pickUpBranchId' => $branch,
-            'validFromDate' => $validFromDate,
-            'validToDate' => $validToDate
-        ];
-
-        $result = $this->doSOAPRequest(
-            $this->reservations_wsdl, $function, $functionResult, $username,
-            ['changeReservationsParam' => $conf]
-        );
-
-        $statusAWS = $result->$functionResult->status;
-
-        if ($statusAWS->type != 'ok') {
-            $message = $this->handleError($function, $statusAWS, $username);
-            if ($message == 'ils_connection_failed') {
-                throw new ILSException('ils_offline_status');
-            }
-            return [
-                'success' => false,
-                'sysMessage' => $message
+        foreach ($holdsDetails as $details) {
+            [$requestId, $validFromDate, $validToDate, $pickupLocation]
+                = explode('|', $details);
+            $updateRequest = [
+                'arenaMember' => $this->arenaMember,
+                'user' => $patron['cat_username'],
+                'password' => $patron['cat_password'],
+                'language' => 'en',
+                'id' => $requestId,
+                'pickUpBranchId' => $pickupLocation,
+                'validFromDate' => $validFromDate,
+                'validToDate' => $validToDate
             ];
-        }
 
-        return [
-            'success' => true
-        ];
+            if (isset($fields['requiredByTS'])) {
+                $updateRequest['validToDate']
+                    = gmdate('Y-m-d', $fields['requiredByTS']);
+            }
+            if (isset($fields['frozen'])) {
+                if ($fields['frozen']) {
+                    if (isset($fields['frozenThroughTS'])) {
+                        $updateRequest['validFromDate']
+                            = \DateTime::createFromFormat(
+                                'U',
+                                $fields['frozenThroughTS']
+                            )->modify('+1 DAY')->format('Y-m-d');
+                    } else {
+                        $updateRequest['validFromDate']
+                            = $updateRequest['validToDate'];
+                    }
+                } else {
+                    $updateRequest['validFromDate'] = gmdate('Y-m-d');
+                }
+            } elseif ($updateRequest['validFromDate'] > $updateRequest['validToDate']
+            ) {
+                $updateRequest['validFromDate'] = $updateRequest['validToDate'];
+            }
+            if (isset($fields['pickUpLocation'])) {
+                [, $branch] = explode('.', $fields['pickUpLocation'], 2);
+                $updateRequest['pickUpBranchId'] = $branch;
+            }
+            $result = $this->doSOAPRequest(
+                $this->reservations_wsdl,
+                $function,
+                $functionResult,
+                $patron['cat_username'],
+                ['changeReservationsParam' => $updateRequest]
+            );
+
+            $statusAWS = $result->$functionResult->status;
+
+            if ($statusAWS->type != 'ok') {
+                $message = $this->handleError(
+                    $function,
+                    $statusAWS,
+                    $patron['cat_username']
+                );
+                $results[$requestId] = [
+                    'success' => false,
+                    'status' => $message
+                ];
+            } else {
+                $results[$requestId] = [
+                    'success' => true
+                ];
+            }
+        }
+        return $results;
     }
 
     /**
@@ -1868,9 +1873,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         );
         foreach ($transactions as $transaction => $record) {
             $obj = $record->catalogueRecord;
+            $title = $obj->title;
+            if (!empty($record->note)) {
+                $title .= ' (' . $record->note . ')';
+            }
             $trans = [
                 'id' => $obj->id,
-                'title' => $obj->title,
+                'title' => $title,
                 'checkoutdate' => $this->formatDate($record->checkOutDate),
                 'returndate' => isset($record->checkInDate)
                     ? $this->formatDate($record->checkInDate) : '',
@@ -2397,23 +2406,41 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $title .= ' (' . $reservation->note . ')';
             }
 
+            $updateDetails = '';
+            if ('yes' === $reservation->isEditable) {
+                $updateDetails = $reservation->id . '|' . $reservation->validFromDate
+                    . '|' . $reservation->validToDate . '|'
+                    . $reservation->pickUpBranchId;
+            }
+            $frozen = $reservation->validFromDate > date('Y-m-d');
+            if ($frozen && $reservation->validFromDate != $reservation->validToDate
+            ) {
+                $ts = $this->dateFormat->convertFromDisplayDate(
+                    'U',
+                    $this->formatDate($reservation->validFromDate)
+                );
+                $frozenThrough = $this->dateFormat->convertToDisplayDate(
+                    'Y-m-d',
+                    \DateTime::createFromFormat('U', $ts)
+                        ->modify('-1 DAY')->format('Y-m-d')
+                );
+            } else {
+                $frozenThrough = '';
+            }
             $hold = [
                 'id' => $reservation->catalogueRecord->id,
                 'type' => $reservation->reservationStatus,
                 'location' => $reservation->pickUpBranchId,
-                'reqnum' =>
-                   ($reservation->isDeletable == 'yes' &&
-                       isset($reservation->id)) ? $reservation->id : '',
                 'pickupnum' =>
                    $reservation->pickUpNo ?? '',
                 'expire' => $this->formatDate($expireDate),
-                'create' => $this->formatDate($reservation->validFromDate),
+                'frozen' => $frozen,
+                'frozenThrough' => $frozenThrough,
                 'position' =>
                    $reservation->queueNo ?? '-',
                 'available' => $reservation->reservationStatus == 'fetchable',
-                'is_editable' => $reservation->isEditable == 'yes',
-                'item_id' => '',
-                'requestId' => $reservation->id,
+                'item_id' => $reservation->id,
+                'reqnum' => $reservation->id,
                 'volume' =>
                    $reservation->catalogueRecord->volume ?? '',
                 'publication_year' =>
@@ -2424,7 +2451,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                    ? "axiell_$reservation->reservationType"
                    : '',
                 'in_transit' => $reservation->reservationStatus == 'inTransit',
-                'title' => $title
+                'title' => $title,
+                'cancel_details' => $updateDetails,
+                'updateDetails' => $updateDetails,
             ];
             $holdsList[] = $hold;
         }

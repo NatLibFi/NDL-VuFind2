@@ -61,7 +61,9 @@ class HoldsController extends \VuFind\Controller\HoldsController
         }
 
         $view = parent::listAction();
-        $view->recordList = $this->orderAvailability($view->recordList);
+        if (isset($view->recordList)) {
+            $view->recordList = $this->orderAvailability($view->recordList);
+        }
         $view->blocks = $this->getAccountBlocks($patron);
         return $view;
     }

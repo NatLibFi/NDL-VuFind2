@@ -54,9 +54,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 {
     use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
-    use \VuFind\Log\LoggerAwareTrait {
-        logError as error;
-    }
+    use \VuFind\Log\LoggerAwareTrait;
     use \VuFind\ILS\Driver\CacheTrait;
 
     /**
@@ -434,7 +432,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'item_id' => $entry['ItemId'],
                 // Append payment information
                 'payableOnline' => $payable,
-                'fineId' => $fineId
+                'fineId' => $fineId,
+                'organization' => $entry['LocalUnitId'] ?? ''
             ];
             $recordId = $entry['MarcRecordId'] ?? null;
             if ($recordId) {
@@ -1440,7 +1439,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             if ($code !== 200) {
                 $error = "Registration error for fine $fineId, user"
                     . " $userId (HTTP status $code): $result";
-                $this->error($error);
+                $this->logError($error);
                 throw new ILSException($error);
             }
         }
@@ -1860,10 +1859,15 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             }
         }
 
-        // Set timeout value
+        // Set options
         $timeout = $this->config['Catalog']['http_timeout'] ?? 30;
+        $connectTimeout = $this->config['Catalog']['http_connect_timeout'] ?? 10;
         $client->setOptions(
-            ['timeout' => $timeout, 'useragent' => 'VuFind', 'keepalive' => true]
+            [
+                'timeout' => $timeout,
+                'connect_timeout' => $connectTimeout,
+                'useragent' => 'VuFind'
+            ]
         );
 
         // Set Accept header
@@ -2008,7 +2012,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $data = [];
         do {
             $client->setUri($apiUrl);
-            $response = $client->send();
+            try {
+                $response = $client->send();
+            } catch (\Exception $e) {
+                $this->logError(
+                    "$method request for '$apiUrl' failed: " . $e->getMessage()
+                );
+                throw new ILSException('Problem with Mikromarc API.');
+            }
             $result = $response->getBody();
             $this->debug(
                 '[' . round(microtime(true) - $startTime, 4) . 's]'
@@ -2021,13 +2032,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             // valid JSON that the caller can handle
             $decodedResult = json_decode($result, true);
             if (!$response->isSuccess()
-                && (null === $decodedResult || !empty($decodedResult['error']))
+                && (null === $decodedResult || !empty($decodedResult['error'])
+                || !empty($decodedResult['ExceptionTime']))
                 && !$returnCode
             ) {
                 $params = $method == 'GET'
                    ? $client->getRequest()->getQuery()->toString()
                     : $client->getRequest()->getPost()->toString();
-                $this->error(
+                $this->logError(
                     "$method request for '$apiUrl' with params"
                     . "'$params' and contents '"
                     . $client->getRequest()->getContent() . "' failed: "

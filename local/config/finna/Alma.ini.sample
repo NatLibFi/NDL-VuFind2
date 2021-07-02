@@ -100,9 +100,13 @@ titleHoldBibLevels = "monograph:monographpart:serial:serialpart:collectionpart:i
 ; pickupLocationRules[] = "loc=MAIN,SUB:group=STAFF:pickup=MAINLIB,RES_SHARE:work=true"
 ;pickupLocationRules[] = ""
 
-; By default a request cannot be canceled if the item is available for pickup.
-; Uncomment this to enable canceling of available requests.
-;allowCancelingAvailableRequests = true
+; By default a request can be canceled even if the item is available for pickup.
+; Uncomment this to disable canceling of available requests.
+allowCancelingAvailableRequests = false
+
+; Fields that can be updated for holds (unless the hold is already in transit or
+; available for pickup). The only supported value is "pickUpLocation".
+updateFields = pickUpLocation
 
 ; By default a request can be placed if Alma doesn't report any blocks.
 ; Uncomment this setting to require that the patron has an active barcode.

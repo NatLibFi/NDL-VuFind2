@@ -67,6 +67,10 @@ title_hold_bib_levels = a:b:m:d
 ;acceptTermsText = "I accept the terms in any language."
 ;acceptTermsText[en-gb] = "I accept the terms in English."
 
+; Fields that can be updated for holds (unless the hold is already in transit or
+; available for pickup). Supported values are "frozen" and "pickUpLocation".
+updateFields = frozen:pickUpLocation
+
 ; This section allows modification of the default mapping from item status codes to
 ; VuFind item statuses
 [ItemStatusMappings]
@@ -83,16 +87,13 @@ maxLength = 4
 pattern = "numeric"
 ;hint = "Your optional custom hint can go here."
 
-; Changing of pickup location is enabled if method parameter is set. Only valid value
-; is 'driver'.
-[changePickupLocation]
-method = driver
-
-; Changing of hold status is enabled if method parameter is set. Only valid value
-; is 'driver'.
-[changeRequestStatus]
-method = driver
-
 [TransactionHistory]
 ; By default the loan history is disabled. Uncomment the following line to enable it.
 enabled = true
+
+; Changing of loan history state is enabled if method parameter is set. Only
+; valid value is 'driver'.
+[updateTransactionHistoryState]
+method = driver
+options[1] = loan_history_forever
+options[0] = loan_history_never

@@ -20,6 +20,11 @@ host = "http://koha-server/api"
 ; e.g. 0:1:0 will set a "not required after" date of 1 month from the current date
 defaultRequiredDate = 0:0:2
 
+; extraHoldFields - A colon-separated list used to display extra visible fields in the
+; place holds form. Supported values are "startDate", "requiredByDate",
+; "pickUpLocation" and "acceptTerms"
+extraHoldFields = startDate:requiredByDate:pickUpLocation
+
 ; A Pick Up Location Code used to pre-select the pick up location drop down list and
 ; provide a default option if others are not available. Must be one of the following:
 ; 1) empty string to indicate that the first location is default (default setting)
@@ -42,6 +47,11 @@ defaultPickUpLocation = ""
 ; Optional label for the "acceptTerms" extra field
 ;acceptTermsText = "I accept the terms in any language."
 ;acceptTermsText[en-gb] = "I accept the terms in English."
+
+; Fields that can be updated for holds (unless the hold is already in transit or
+; available for pickup). Supported values are "frozen", "frozenThrough" and
+; "pickUpLocation"
+updateFields = frozen:frozenThrough:pickUpLocation
 
 ; This section controls article request behavior. To enable, uncomment (at minimum)
 ; the HMACKeys and extraFields settings below.
