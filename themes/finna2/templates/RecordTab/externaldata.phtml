@@ -35,7 +35,8 @@ $physicalItems = $items['physicalItems'] ?? null;
             <span class="info">(<?=$this->escapeHtml($info) ?>)</span>
           <?php endif ?>
           <?php $physicalLocation = $item['physicalLocation'] ?? ''; if (!empty($physicalLocation)): ?>
-            <?php if (!empty($format) || !empty($info)): ?><br /><?php endif; ?><span class="physical-location"><?=$this->escapeHtml($physicalLocation) ?></span>
+            <?php if (!empty($format) || !empty($info)): ?><br /><?php endif; ?>
+            <span class="physical-location"><?=$this->escapeHtml($physicalLocation) ?></span>
           <?php endif ?>
           <?php $accressRestriction = $item['accessRestriction'] ?? ''; if (!empty($accessRestriction)): ?>
             <p class="restriction small">(<?=$this->escapeHtml($accessRestriction) ?>)</p>
