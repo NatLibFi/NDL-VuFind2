@@ -38,38 +38,53 @@
           <div class="holds-pre-list"><?=$this->render($template)?></div>
         <?php endif; ?>
         <?php if (!empty($this->recordList)): ?>
-          <?php if ($this->cancelForm): ?>
-            <form name="cancelForm" class="inline" method="post" action="<?=$this->escapeHtmlAttr($this->url('holds-list'))?>" id="cancelHold" data-clear-account-cache="holds">
+          <?php if ($this->cancelForm || $this->updateForm): ?>
+            <form name="cancelForm" class="inline" method="post" action="<?=$this->escapeHtmlAttr($this->url('holds-list'))?>" id="update_holds" data-clear-account-cache="holds" data-lightbox>
+              <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
+              <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
               <table class="myresearch-table" role="presentation">
                 <tr class="toolbar">
-                  <td>
-                    <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
-                    <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
+                  <td class="text-left checkbox-col">
+                    <div class="checkboxFilter mylist-select-all">
+                      <div class="checkbox">
+                        <label>
+                          <input type="checkbox" name="selectAll" class="checkbox-select-all"/>
+                          <?=$this->transEsc('select_page')?>
+                        </label>
+                      </div>
+                    </div>
                   </td>
                   <td>
-                    <div class="btn-group">
-                      <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr("hold_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
-                      <ul class="dropdown-menu useraccount-cancel">
-                        <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_selected_text") ?></a></li>
-                        <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                        <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                      </ul>
-                    </div>
-                    <div class="btn-group">
-                      <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr("hold_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
-                      <ul class="dropdown-menu useraccount-cancel">
-                        <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_all_text") ?></a></li>
-                        <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                        <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                      </ul>
-                    </div>
+                    <?php if ($this->updateForm): ?>
+                      <div class="btn-group">
+                        <input id="update_selected" name="updateSelected" type="submit" value="<?=$this->transEscAttr('hold_edit_selected') ?>" class="btn btn-primary hidden">
+                      </div>
+                    <?php endif; ?>
+                    <?php if ($this->cancelForm): ?>
+                      <div class="btn-group">
+                        <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr("hold_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                        <ul class="dropdown-menu useraccount-cancel">
+                          <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_selected_text") ?></a></li>
+                          <li><a href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
+                          <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                        </ul>
+                      </div>
+                      <div class="btn-group">
+                        <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr("hold_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-lightbox-ignore>
+                        <ul class="dropdown-menu useraccount-cancel">
+                          <li class="disabled"><a><?=$this->transEsc("confirm_hold_cancel_all_text") ?></a></li>
+                          <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
+                          <li><a href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                        </ul>
+                      </div>
+                    <?php endif; ?>
                   </td>
                 </tr>
               </table>
           <?php else: ?>
             <table class="myresearch-table" role="presentation">
               <tr class="toolbar">
-                <th colspan="4" class="myresearch-notification"><?=$this->transEsc('cannot cancel any reservations')?></th>
+                <th colspan="4" class="myresearch-notification"><?=$this->transEsc('Cannot update any of the holds')?></th>
               </tr>
             </table>
           <?php endif; ?>
@@ -83,20 +98,20 @@
             <?php foreach ($this->recordList as $resource): ?>
               <?php $iteration++; ?>
               <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
-              <tr class="myresearch-row">
-                <td class="text-center">
+              <tr class="myresearch-row result">
+                <td class="text-left checkbox-col">
                 <?php if ($this->cancelForm && isset($ilsDetails['cancel_details'])): ?>
                   <input type="hidden" name="cancelAllIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
                   <div class="checkboxFilter">
                     <div class="checkbox">
                       <label>
                         <span class="sr-only"><?=$this->transEsc('Select');?></span>
-                        <input type="checkbox" name="cancelSelectedIDS[]" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
+                        <input type="checkbox" name="selectedIDS[]" class="checkbox-select-item" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
                       </label>
                     </div>
                   </div>
                 <?php else: ?>
-                  <span class="no-checkbox"><?=$this->transEsc('cannot cancel');?></span>
+                  <span class="no-checkbox"><?=$this->transEsc('Cannot update');?></span>
                 <?php endif; ?>
                 </td>
                 <td class="text-left hidden-xs" aria-hidden="true">
@@ -222,9 +237,6 @@
                     <?php elseif (isset($ilsDetails['position'])): ?>
                       <p><strong><?=$this->transEsc("hold_queue_position") ?>:</strong> <?=$this->escapeHtml($ilsDetails['position']) ?></p>
                     <?php endif; ?>
-                    <?php if (isset($ilsDetails['cancel_link'])): ?>
-                      <p><a href="<?=$this->escapeHtmlAttr($ilsDetails['cancel_link']) ?>"><?=$this->transEsc("hold_cancel") ?></a></p>
-                    <?php endif; ?>
 
                     <?php if (isset($this->cancelResults['items'])): ?>
                       <?php foreach ($this->cancelResults['items'] as $itemId => $cancelResult): ?>
@@ -232,6 +244,13 @@
                           <div class="alert alert-danger"><?=$this->transEsc($cancelResult['status']) ?><?php if ($cancelResult['sysMessage']) echo ' : ' . $this->transEsc($cancelResult['sysMessage']); ?></div>
                         <?php endif; ?>
                       <?php endforeach; ?>
+                    <?php endif; ?>
+
+                    <?php if (isset($ilsDetails['reqnum']) && !empty($this->updateResults[$ilsDetails['reqnum']])): ?>
+                      <?php $updateResult = $this->updateResults[$ilsDetails['reqnum']]; ?>
+                      <?php if (!$updateResult['success']): ?>
+                        <div class="alert alert-danger"><?=$this->transEsc($updateResult['status']) ?><?php if (!empty($updateResult['sysMessage'])) echo ': ' . $this->transEsc($updateResult['sysMessage']); ?></div>
+                      <?php endif; ?>
                     <?php endif; ?>
 
                     <?php if (isset($ilsDetails['available']) && !$ilsDetails['available'] && $changeRequestStatus && $requestIsEditable): ?>
@@ -246,12 +265,19 @@
                       </div>
                     <?php elseif (!empty($ilsDetails['frozen'])): ?>
                       <strong>
-                        <?php if (empty($ilsDetails['frozen_until'])): ?>
+                        <?php if (empty($ilsDetails['frozenThrough'])): ?>
                           <?=$this->transEsc('hold_frozen') ?>
                         <?php else: ?>
-                          <?=$this->transEsc('hold_frozen_until', ['%%date%%' => $ilsDetails['frozen_until']]) ?>
+                          <?=$this->transEsc('hold_frozen_through', ['%%date%%' => $ilsDetails['frozenThrough']]) ?>
                         <?php endif; ?>
                       </strong>
+                    <?php endif; ?>
+
+                    <?php if (isset($ilsDetails['cancel_link'])): ?>
+                      <p><a href="<?=$this->escapeHtmlAttr($ilsDetails['cancel_link']) ?>"><?=$this->transEsc("hold_cancel") ?></a></p>
+                    <?php endif; ?>
+                    <?php if (isset($ilsDetails['updateDetails'])): ?>
+                      <p><a class="hold-edit" href="<?=$this->escapeHtmlAttr($this->url('holds-edit', [], ['query' => ['selectedIDS[]' => $ilsDetails['updateDetails']]])) ?>" data-lightbox><?=$this->transEsc('Edit') ?></a></p>
                     <?php endif; ?>
                   </div>
                 </td>

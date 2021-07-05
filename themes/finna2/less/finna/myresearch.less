@@ -99,7 +99,7 @@
       }
     }
   }
-  .renew-button {
+  .renew-button, #update_selected, #cancelSelected, #cancelAll {
     height: 35px;
     padding: 0 10px;
     @media (max-width: @screen-sm) {
@@ -157,6 +157,11 @@
     font-weight: bold;
     &.no-buttons {
       line-height: inherit;
+    }
+  }
+  .checkboxFilter.mylist-select-all {
+    .checkbox {
+      margin: 5px 0;
     }
   }
 }
@@ -255,7 +260,7 @@
   }
 }
 // Custom styles for user account functions
-.template-dir-myresearch, .template-dir-search.template-name-history, .template-dir-librarycards {
+.template-dir-myresearch, .template-dir-holds, .template-dir-search.template-name-history, .template-dir-librarycards {
   padding-bottom: 30px;
   h1 {
     font-weight: 500;
@@ -451,7 +456,7 @@
   }
 }
 
-#renewals .toolbar {
+#renewals .toolbar, #update_holds .toolbar {
   @media (max-width:@screen-xs-max) {
     margin-left: -15px;
   }
@@ -473,7 +478,7 @@
   }
 }
 
-.template-dir-myresearch .toolbar {
+.template-dir-myresearch .toolbar, .template-dir-holds .toolbar {
   margin: 0;
   margin-top: 5px;
   border-bottom: 1px solid @gray-lighter;

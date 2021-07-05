@@ -313,40 +313,59 @@ class RecordController extends \VuFind\Controller\RecordController
 
         // Process form submissions if necessary:
         if (null !== $this->params()->fromPost('placeHold')) {
-            // If the form contained a pickup location or request group, make sure
-            // they are valid:
+            // If the form contained a pickup location, request group, start date or
+            // required by date, make sure they are valid:
             $validGroup = $this->holds()->validateRequestGroupInput(
                 $gatheredDetails, $extraHoldFields, $requestGroups
             );
             $validPickup = $validGroup && $this->holds()->validatePickUpInput(
-                $gatheredDetails['pickUpLocation'] ?? '', $extraHoldFields, $pickup
+                $gatheredDetails['pickUpLocation'] ?? null,
+                $extraHoldFields, $pickup
             );
+            $dateValidationResults = $this->holds()->validateDates(
+                $gatheredDetails['startDate'] ?? null,
+                $gatheredDetails['requiredBy'] ?? null,
+                $extraHoldFields
+            );
+            $termsOk = !in_array('acceptTerms', $extraHoldFields)
+                || !empty($gatheredDetails['acceptTerms']);
             if (!$validGroup) {
                 $this->flashMessenger()
-                    ->addMessage('hold_invalid_request_group', 'error');
-            } elseif (!$validPickup) {
-                $this->flashMessenger()->addMessage('hold_invalid_pickup', 'error');
-            } elseif (in_array('acceptTerms', $extraHoldFields)
-                && empty($gatheredDetails['acceptTerms'])
+                    ->addErrorMessage('hold_invalid_request_group');
+            }
+            if (!$validPickup) {
+                $this->flashMessenger()->addErrorMessage('hold_invalid_pickup');
+            }
+            foreach ($dateValidationResults['errors'] as $msg) {
+                $this->flashMessenger()->addErrorMessage($msg);
+            }
+            if (!$termsOk) {
+                $this->flashMessenger()->addErrorMessage('must_accept_terms');
+            }
+            if ($termsOk && $validGroup && $validPickup
+                && !$dateValidationResults['errors']
             ) {
-                $this->flashMessenger()->addMessage(
-                    'must_accept_terms', 'error'
-                );
-            } else {
                 // If we made it this far, we're ready to place the hold;
                 // if successful, we will redirect and can stop here.
 
-                // Add Patron Data to Submitted Data
-                $holdDetails = $gatheredDetails + ['patron' => $patron];
+                // Pass start date to the driver only if it's in the future:
+                if (!empty($gatheredDetails['startDate'])
+                    && $dateValidationResults['startDateTS'] < strtotime('+1 day')
+                ) {
+                    $gatheredDetails['startDate'] = '';
+                    $dateValidationResults['startDateTS'] = 0;
+                }
+
+                // Add patron data and converted dates to submitted data
+                $holdDetails = $gatheredDetails + [
+                    'patron' => $patron,
+                    'startDateTS' => $dateValidationResults['startDateTS'],
+                    'requiredByTS' => $dateValidationResults['requiredByTS'],
+                ];
 
                 // Attempt to place the hold:
-                try {
-                    $function = (string)$checkHolds['function'];
-                    $results = $catalog->$function($holdDetails);
-                } catch (\VuFind\Exception\ILS $e) {
-                    $this->flashMessenger()
-                        ->addErrorMessage('ils_connection_failed');
-                }
+                $function = (string)$checkHolds['function'];
+                $results = $catalog->$function($holdDetails);
 
                 // Success: Go to Display Holds
                 if (isset($results['success']) && $results['success'] == true) {
@@ -358,6 +377,10 @@ class RecordController extends \VuFind\Controller\RecordController
                         ],
                     ];
                     $this->flashMessenger()->addMessage($msg, 'success');
+                    if (!empty($results['warningMessage'])) {
+                        $this->flashMessenger()
+                            ->addWarningMessage($results['warningMessage']);
+                    }
                     return $this->redirectToRecord('#top');
                 } else {
                     // Failure: use flash messenger to display messages, stay on

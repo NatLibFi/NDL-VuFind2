@@ -159,6 +159,103 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
+     * Get Patron Profile
+     *
+     * This is responsible for retrieving the profile for a specific patron.
+     *
+     * @param array $patron The patron array
+     *
+     * @throws ILSException
+     * @return array        Array of the patron's profile data on success.
+     */
+    public function getMyProfile($patron)
+    {
+        $profile = parent::getMyProfile($patron);
+        $result = $this->makeRequest(
+            [
+                'v6', 'patrons', $patron['id'], 'checkouts', 'history',
+                'activationStatus'
+            ],
+            [],
+            'GET',
+            $patron
+        );
+        if (array_key_exists('readingHistoryActivation', $result)) {
+            $profile['loan_history'] = $result['readingHistoryActivation'];
+        }
+
+        return $profile;
+    }
+
+    /**
+     * Update Patron Transaction History State
+     *
+     * Enable or disable patron's transaction history
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param mixed $state  Any of the configured values
+     *
+     * @return array Associative array of the results
+     */
+    public function updateTransactionHistoryState($patron, $state)
+    {
+        $request = ['readingHistoryActivation' => $state == '1'];
+        $result = $this->makeRequest(
+            [
+                'v6', 'patrons', $patron['id'], 'checkouts', 'history',
+                'activationStatus'
+            ],
+            json_encode($request),
+            'POST',
+            $patron
+        );
+
+        if (!empty($result['code'])) {
+            return [
+                'success' => false,
+                'status' => $this->formatErrorMessage(
+                    $result['description'] ?? $result['name']
+                )
+            ];
+        }
+        return ['success' => true, 'status' => 'request_change_done'];
+    }
+
+    /**
+     * Purge Patron Transaction History
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws ILSException
+     * @return array Associative array of the results
+     */
+    public function purgeTransactionHistory($patron)
+    {
+        $result = $this->makeRequest(
+            [
+                'v6', 'patrons', $patron['id'], 'checkouts', 'history'
+            ],
+            '',
+            'DELETE',
+            $patron
+        );
+
+        if (!empty($result['code'])) {
+            return [
+                'success' => false,
+                'status' => $this->formatErrorMessage(
+                    $result['description'] ?? $result['name']
+                )
+            ];
+        }
+        return [
+            'success' => true,
+            'status' => 'loan_history_purged',
+            'sysMessage' => ''
+        ];
+    }
+
+    /**
      * Return summary of holdings items.
      *
      * @param array $holdings Parsed holdings items
@@ -189,84 +286,5 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
            'callnumber' => null,
            'location' => '__HOLDINGSSUMMARYLOCATION__'
         ];
-    }
-
-    /**
-     * Change pickup location
-     *
-     * This is responsible for changing the pickup location of a hold
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
-     *
-     * @return array Associative array of the results
-     */
-    public function changePickupLocation($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $pickUpLocation = $holdDetails['pickupLocationId'];
-
-        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError('hold_invalid_pickup');
-        }
-
-        $request = [
-            'pickupLocation' => $pickUpLocation
-        ];
-
-        $result = $this->makeRequest(
-            [$this->apiBase, 'patrons', 'holds', $requestId],
-            json_encode($request),
-            'PUT',
-            $patron
-        );
-
-        if (!empty($result['code'])) {
-            return [
-                'success' => false,
-                'status' => $this->formatErrorMessage(
-                    $result['description'] ?? $result['name']
-                )
-            ];
-        }
-        return ['success' => true];
-    }
-
-    /**
-     * Change request status
-     *
-     * This is responsible for changing the status of a hold request
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details (at the moment only 'frozen'
-     * is supported)
-     *
-     * @return array Associative array of the results
-     */
-    public function changeRequestStatus($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $frozen = !empty($holdDetails['frozen']);
-
-        $request = [
-            'freeze' => $frozen
-        ];
-
-        $result = $this->makeRequest(
-            [$this->apiBase, 'patrons', 'holds', $requestId],
-            json_encode($request),
-            'PUT',
-            $patron
-        );
-
-        if (!empty($result['code'])) {
-            return [
-                'success' => false,
-                'status' => $this->formatErrorMessage(
-                    $result['description'] ?? $result['name']
-                )
-            ];
-        }
-        return ['success' => true];
     }
 }

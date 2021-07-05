@@ -347,7 +347,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $catalog = $this->getILS();
             $result = $catalog->purgeTransactionHistory($patron);
             $this->flashMessenger()->addMessage(
-                $result['status'], $result['success'] ? 'error' : 'info'
+                $result['status'],
+                $result['success'] ? 'info' : 'error'
             );
             return $this->redirect()->toRoute('myresearch-historicloans');
         }
