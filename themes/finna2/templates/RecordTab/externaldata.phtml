@@ -38,7 +38,7 @@ $physicalItems = $items['physicalItems'] ?? null;
             <?php if (!empty($format) || !empty($info)): ?><br /><?php endif; ?>
             <span class="physical-location"><?=$this->escapeHtml($item['physicalLocation']) ?></span>
           <?php endif ?>
-          <?php if (!empty($item['$accessRestriction'])): ?>
+          <?php if (!empty($item['accessRestriction'])): ?>
             <p class="restriction small">(<?=$this->escapeHtml($item['accessRestriction']) ?>)</p>
           <?php endif ?>
         </div>
