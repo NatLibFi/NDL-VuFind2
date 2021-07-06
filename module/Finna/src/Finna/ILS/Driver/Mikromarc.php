@@ -54,9 +54,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 {
     use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
-    use \VuFind\Log\LoggerAwareTrait {
-        logError as error;
-    }
+    use \VuFind\Log\LoggerAwareTrait;
     use \VuFind\ILS\Driver\CacheTrait;
 
     /**
@@ -713,9 +711,23 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         }
         $holds = [];
         foreach ($result as $entry) {
+            $frozen = !$entry['ResActiveToday'];
+            $frozenThrough = '';
+            if ($frozen && $entry['ResPausedTo'] != $entry['ResValidUntil']) {
+                $frozenThrough = $this->dateConverter->convertToDisplayDate(
+                    'U',
+                    strtotime($entry['ResPausedTo'])
+                );
+            }
+
+            $available = $entry['ServiceCode'] === 'ReservationArrived'
+                    || $entry['ServiceCode'] === 'ReservationNoticeSent';
+            $updateDetails = !$available
+                ? $entry['Id'] . '|' . $entry['ResValidUntil']
+                : '';
             $hold = [
                 'id' => $entry['MarcRecordId'],
-                'item_id' => $entry['ItemId'],
+                'item_id' => $entry['Id'],
                 'location' =>
                    $this->getLibraryUnitName($entry['DeliverAtLocalUnitId']),
                 'create' => $this->dateConverter->convertToDisplayDate(
@@ -725,15 +737,16 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                     'U', strtotime($entry['ResValidUntil'])
                 ),
                 'position' => $entry['NumberInQueue'],
-                'available' => ($entry['ServiceCode'] === 'ReservationArrived'
-                    || $entry['ServiceCode'] === 'ReservationNoticeSent')
-                        ? true : false,
-                'requestId' => $entry['Id'],
-                'frozen' => !$entry['ResActiveToday'],
+                'available' => $available,
+                'reqnum' => $entry['Id'],
+                'frozen' => $frozen,
+                'frozenThrough' => $frozenThrough,
                 'requestGroup' => $this->requestGroupsEnabled &&
                     isset($entry['Scope']) ?
                     "mikromarc_" . $this->getRequestGroupKey($entry['Scope'])
-                    : ''
+                    : '',
+                'cancel_details' => $updateDetails,
+                'updateDetails' => $updateDetails,
             ];
             if (!empty($entry['ResHeldUntil'])) {
                 $hold['last_pickup_date']
@@ -747,74 +760,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $holds[] = $hold;
         }
         return $holds;
-    }
-
-    /**
-     * Get Patron Transaction History
-     *
-     * This is responsible for retrieving all historical transactions
-     * (i.e. checked out items)
-     * by a specific patron.
-     *
-     * @param array $patron The patron array from patronLogin
-     * @param array $params Retrieval params that may contain the following keys:
-     *   sort   Sorting order with date ascending or descending
-     *
-     * @throws DateException
-     * @throws ILSException
-     * @return array        Array of the patron's transactions on success.
-     */
-    public function getMyTransactionHistory($patron, $params)
-    {
-        $sort = strpos($params['sort'], 'desc') ? 'desc' : 'asc';
-        $request = [
-            '$filter' => 'BorrowerId eq' . ' ' . $patron['id'],
-            '$orderby' => 'ServiceTime' . ' ' . $sort
-        ];
-        $result = $this->makeRequest(
-            ['odata', 'BorrowerServiceHistories'],
-            $request
-        );
-        $history = [
-            'count' => count($result),
-            'transactions' => []
-        ];
-        $serviceCodeMap = [
-            'Returned' => 'returndate',
-            'OnLoan' => 'checkoutdate',
-            'LoanRenewed' => 'checkoutdate'
-        ];
-        foreach ($result as $entry) {
-            $code = $entry['ServiceCode'];
-            if (!isset($serviceCodeMap[$code])) {
-                continue;
-            }
-
-            $transaction = [
-                'id' => $entry['MarcRecordId'],
-            ];
-
-            $entryTime = $this->dateConverter->convertToDisplayDate(
-                'U', strtotime($entry['ServiceTime'])
-            );
-
-            $transaction[$serviceCodeMap[$code]] = $entryTime;
-            if (isset($entry['MarcRecordTitle'])) {
-                $transaction['title'] = $entry['MarcRecordTitle'];
-            }
-            if ($params['sort'] == 'checkout ' . $sort
-                && isset($transaction['checkoutdate'])
-            ) {
-                $history['transactions'][] = $transaction;
-            } elseif ($params['sort'] == 'return ' . $sort
-                && isset($transaction['returndate'])
-            ) {
-                $history['transactions'][] = $transaction;
-            } elseif ($params['sort'] == 'everything desc') {
-                $history['transactions'][] = $transaction;
-            }
-        }
-        return $history;
     }
 
     /**
@@ -835,7 +780,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $patron = $holdDetails['patron'];
         $pickUpLocation = !empty($holdDetails['pickUpLocation'])
             ? $holdDetails['pickUpLocation'] : $this->defaultPickUpLocation;
-        $itemId = $holdDetails['item_id'] ?? false;
         $scope = $this->requestGroups[
             $holdDetails['requestGroupId'] ?? 'regional'
         ];
@@ -850,6 +794,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'DeliverAtUnitId' => $pickUpLocation,
             'Scope' => $scope
         ];
+
         [$code, $result] = $this->makeRequest(
             ['odata', 'BorrowerReservations', 'Default.Create'],
             json_encode($request),
@@ -859,6 +804,33 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         if ($code >= 300) {
             return $this->convertError($code, $result);
         }
+
+        if ($holdDetails['startDateTS']) {
+            $requestId = $result['Id'];
+            // Suspend until the previous day from start date:
+            $updateRequest = [
+                'ResPausedFrom' => date('Y-m-d'),
+                'ResPausedTo' => \DateTime::createFromFormat(
+                    'U',
+                    $holdDetails['startDateTS']
+                )->modify('-1 DAY')->format('Y-m-d')
+            ];
+            [$code, $result] = $this->makeRequest(
+                ['odata','BorrowerReservations(' . $requestId . ')'],
+                json_encode($updateRequest),
+                'PATCH',
+                true
+            );
+            if ($code >= 300) {
+                // Report a success since the hold was created, but include a message
+                // about the modification failure:
+                return [
+                    'success' => true,
+                    'warningMessage' => 'hold_error_update_failed'
+                ];
+            }
+        }
+
         return ['success' => true];
     }
 
@@ -876,21 +848,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get details of a single hold request.
-     *
-     * @param array $holdDetails A single hold array from getMyHolds
-     * @param array $patron      Patron information from patronLogin
-     *
-     * @return string            The Alma request ID
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getCancelHoldDetails($holdDetails, $patron = [])
-    {
-        return $holdDetails['available'] ? '' : $holdDetails['requestId'];
-    }
-
-    /**
      * Cancel Holds
      *
      * Attempts to Cancel a hold. The data in $cancelDetails['details'] is determined
@@ -903,22 +860,22 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function cancelHolds($cancelDetails)
     {
-        $details = $cancelDetails['details'];
         $count = 0;
         $response = [];
-        foreach ($details as $detail) {
-            [$resultCode, $result] = $this->makeRequest(
-                ['odata', 'BorrowerReservations(' . $detail . ')'],
+        foreach ($cancelDetails['details'] as $details) {
+            [$requestId] = explode('|', $details);
+            [$resultCode] = $this->makeRequest(
+                ['odata', 'BorrowerReservations(' . $requestId . ')'],
                 false, 'DELETE', true
             );
             if ($resultCode != 204) {
-                $response[$detail] = [
+                $response[$requestId] = [
                     'success' => false,
                     'status' => 'hold_cancel_fail',
                     'sysMessage' => false
                 ];
             } else {
-                $response[$detail] = [
+                $response[$requestId] = [
                     'success' => true,
                     'status' => 'hold_cancel_success'
                 ];
@@ -926,6 +883,63 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             }
         }
         return ['count' => $count, 'items' => $response];
+    }
+
+    /**
+     * Update holds
+     *
+     * This is responsible for changing the status of hold requests
+     *
+     * @param array $holdsDetails The details identifying the holds
+     * @param array $fields       An associative array of fields to be updated
+     * @param array $patron       Patron array
+     *
+     * @return array Associative array of the results
+     */
+    public function updateHolds(array $holdsDetails, array $fields, array $patron
+    ): array {
+        $results = [];
+        foreach ($holdsDetails as $details) {
+            [$requestId, $resValidUntil] = explode('|', $details);
+            $updateRequest = [];
+
+            if (isset($fields['frozen'])) {
+                if ($fields['frozen']) {
+                    $updateRequest['ResPausedFrom'] = date('Y-m-d');
+                    if (isset($fields['frozenThroughTS'])) {
+                        $updateRequest['ResPausedTo']
+                            = date('Y-m-d', $fields['frozenThroughTS']);
+                    } else {
+                        $updateRequest['ResPausedTo'] = $resValidUntil;
+                    }
+                } else {
+                    $updateRequest['ResPausedFrom'] = null;
+                    $updateRequest['ResPausedTo'] = null;
+                }
+            }
+            if (isset($fields['pickUpLocation'])) {
+                $updateRequest['DeliverAtLocalUnitId'] = $fields['pickUpLocation'];
+            }
+
+            [$code, $result] = $this->makeRequest(
+                ['odata','BorrowerReservations(' . $requestId . ')'],
+                json_encode($updateRequest),
+                'PATCH',
+                true
+            );
+            if ($code >= 300) {
+                $holdError = $this->holdError($code, $result);
+                $results[$requestId] = [
+                    'success' => false,
+                    'status' => $holdError['sysMessage']
+                ];
+            } else {
+                $results[$requestId] = [
+                    'success' => true
+                ];
+            }
+        }
+        return $results;
     }
 
     /**
@@ -1011,6 +1025,74 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     public function getDefaultPickUpLocation($patron = false, $holdDetails = null)
     {
         return $this->defaultPickUpLocation;
+    }
+
+    /**
+     * Get Patron Transaction History
+     *
+     * This is responsible for retrieving all historical transactions
+     * (i.e. checked out items)
+     * by a specific patron.
+     *
+     * @param array $patron The patron array from patronLogin
+     * @param array $params Retrieval params that may contain the following keys:
+     *   sort   Sorting order with date ascending or descending
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's transactions on success.
+     */
+    public function getMyTransactionHistory($patron, $params)
+    {
+        $sort = strpos($params['sort'], 'desc') ? 'desc' : 'asc';
+        $request = [
+            '$filter' => 'BorrowerId eq' . ' ' . $patron['id'],
+            '$orderby' => 'ServiceTime' . ' ' . $sort
+        ];
+        $result = $this->makeRequest(
+            ['odata', 'BorrowerServiceHistories'],
+            $request
+        );
+        $history = [
+            'count' => count($result),
+            'transactions' => []
+        ];
+        $serviceCodeMap = [
+            'Returned' => 'returndate',
+            'OnLoan' => 'checkoutdate',
+            'LoanRenewed' => 'checkoutdate'
+        ];
+        foreach ($result as $entry) {
+            $code = $entry['ServiceCode'];
+            if (!isset($serviceCodeMap[$code])) {
+                continue;
+            }
+
+            $transaction = [
+                'id' => $entry['MarcRecordId'],
+            ];
+
+            $entryTime = $this->dateConverter->convertToDisplayDate(
+                'U', strtotime($entry['ServiceTime'])
+            );
+
+            $transaction[$serviceCodeMap[$code]] = $entryTime;
+            if (isset($entry['MarcRecordTitle'])) {
+                $transaction['title'] = $entry['MarcRecordTitle'];
+            }
+            if ($params['sort'] == 'checkout ' . $sort
+                && isset($transaction['checkoutdate'])
+            ) {
+                $history['transactions'][] = $transaction;
+            } elseif ($params['sort'] == 'return ' . $sort
+                && isset($transaction['returndate'])
+            ) {
+                $history['transactions'][] = $transaction;
+            } elseif ($params['sort'] == 'everything desc') {
+                $history['transactions'][] = $transaction;
+            }
+        }
+        return $history;
     }
 
     /**
@@ -1229,43 +1311,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Change pickup location
-     *
-     * This is responsible for changing the pickup location of a hold
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
-     *
-     * @return array Associative array of the results
-     */
-    public function changePickupLocation($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $pickUpLocation = $holdDetails['pickupLocationId'];
-
-        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->convertError(0, 'hold_invalid_pickup');
-        }
-
-        $request = [
-            'PickupUnitId' => $pickUpLocation
-        ];
-
-        [$code, $result] = $this->makeRequest(
-            ['odata', 'BorrowerReservations(' . $requestId . ')',
-             'Default.ChangePickupUnit'],
-            json_encode($request),
-            'POST',
-            true
-        );
-
-        if ($code > 204) {
-            return $this->convertError($code, $result);
-        }
-        return ['success' => true];
-    }
-
-    /**
      * Change Password
      *
      * Attempts to change patron password (PIN code)
@@ -1443,7 +1488,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             if ($code !== 200) {
                 $error = "Registration error for fine $fineId, user"
                     . " $userId (HTTP status $code): $result";
-                $this->error($error);
+                $this->logError($error);
                 throw new ILSException($error);
             }
         }
@@ -1866,10 +1911,15 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             }
         }
 
-        // Set timeout value
+        // Set options
         $timeout = $this->config['Catalog']['http_timeout'] ?? 30;
+        $connectTimeout = $this->config['Catalog']['http_connect_timeout'] ?? 10;
         $client->setOptions(
-            ['timeout' => $timeout, 'useragent' => 'VuFind', 'keepalive' => true]
+            [
+                'timeout' => $timeout,
+                'connect_timeout' => $connectTimeout,
+                'useragent' => 'VuFind'
+            ]
         );
 
         // Set Accept header
@@ -2015,7 +2065,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $data = [];
         do {
             $client->setUri($apiUrl);
-            $response = $client->send();
+            try {
+                $response = $client->send();
+            } catch (\Exception $e) {
+                $this->logError(
+                    "$method request for '$apiUrl' failed: " . $e->getMessage()
+                );
+                throw new ILSException('Problem with Mikromarc API.');
+            }
             $result = $response->getBody();
             $this->debug(
                 '[' . round(microtime(true) - $startTime, 4) . 's]'
@@ -2035,7 +2092,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 $params = $method == 'GET'
                    ? $client->getRequest()->getQuery()->toString()
                     : $client->getRequest()->getPost()->toString();
-                $this->error(
+                $this->logError(
                     "$method request for '$apiUrl' with params"
                     . "'$params' and contents '"
                     . $client->getRequest()->getContent() . "' failed: "
@@ -2163,45 +2220,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         }
 
         return $this->dateConverter->convertToDisplayDate('Y-m-d', $dateString);
-    }
-
-    /**
-     * Change request status
-     *
-     * This is responsible for changing the status of a hold request
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
-     *
-     * @return array Associative array of the results
-     */
-    public function changeRequestStatus($patron, $holdDetails)
-    {
-        if ($holdDetails['frozen'] == 1) {
-            // Mikromarc doesn't have any separate 'freeze' status on reservations
-            $getHold = $this->makeRequest(
-                ['odata','BorrowerReservations(' . $holdDetails['requestId'] . ')']
-            );
-            $pausedFrom = date('Y-m-d', strtotime('today'));
-            $pausedTo = date('Y-m-d', strtotime($getHold['ResValidUntil']));
-        } else {
-            $pausedFrom = null;
-            $pausedTo = null;
-        }
-        $requestBody = [
-            "ResPausedFrom" => $pausedFrom,
-            "ResPausedTo" => $pausedTo
-        ];
-        [$code, $result] = $this->makeRequest(
-            ['odata','BorrowerReservations(' . $holdDetails['requestId'] . ')'],
-            json_encode($requestBody),
-            'PATCH',
-            true
-        );
-        if ($code >= 300) {
-            return $this->convertError($code, $result);
-        }
-        return ['success' => true];
     }
 
     /**

@@ -85,7 +85,12 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     {
         $searchString = parent::normalizeSearchString($searchString);
         $searchString = $this->normalizeUnicodeForm($searchString);
-        $searchString = $this->normalizeISBN($searchString);
+
+        // Don't normalize ISBN when targeting 'identifier' field
+        // (required for GetRecordDriverRelatedRecords to work).
+        if (!preg_match('/identifier:.+/', $searchString)) {
+            $searchString = $this->normalizeISBN($searchString);
+        }
 
         foreach ($this->searchFilters as $i => $filter) {
             if (preg_match("/$filter/", $searchString)) {

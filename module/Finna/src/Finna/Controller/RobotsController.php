@@ -49,6 +49,16 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     protected $config;
 
     /**
+     * Possible sitemap index file names
+     *
+     * @var array
+     */
+    protected $indexFileNames = [
+        'sitemapIndex.xml.gz',
+        'sitemapIndex.xml',
+    ];
+
+    /**
      * Constructor
      *
      * @param ServiceLocatorInterface $sm     Service manager
@@ -81,10 +91,13 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         }
         $robots = file_get_contents(ORIGINAL_WORKING_DIRECTORY . '/robots.txt');
 
-        if (file_exists(ORIGINAL_WORKING_DIRECTORY . '/sitemapIndex.xml')) {
-            $parsed = $this->parseRobotsTxt($robots);
-            $parsed['*'][] = "Sitemap: $requestPath/sitemapIndex.xml";
-            $robots = $this->renderRobotsTxt($parsed);
+        foreach ($this->indexFileNames as $indexFileName) {
+            if (file_exists(ORIGINAL_WORKING_DIRECTORY . '/' . $indexFileName)) {
+                $parsed = $this->parseRobotsTxt($robots);
+                $parsed['*'][] = "Sitemap: $requestPath/$indexFileName";
+                $robots = $this->renderRobotsTxt($parsed);
+                break;
+            }
         }
         $response->setContent($robots);
         return $response;

@@ -72,6 +72,7 @@ class SolrEad3 extends SolrEad
 
     // Altformavail labels
     const ALTFORM_LOCATION = 'location';
+    const ALTFORM_PHYSICAL_LOCATION = 'physicalLocation';
     const ALTFORM_TYPE = 'type';
     const ALTFORM_DIGITAL_TYPE = 'digitalType';
     const ALTFORM_FORMAT = 'format';
@@ -92,6 +93,7 @@ class SolrEad3 extends SolrEad
         'Bruk av manifestationen har begränsats pga' => self::ALTFORM_ACCESS,
         'Internet - ei fyysistä toimipaikkaa' => self::ALTFORM_ONLINE,
         'Lisätietoa kunnosta' => self::ALTFORM_CONDITION,
+        'Säilytysyksikön tunniste' => self::ALTFORM_PHYSICAL_LOCATION,
     ];
 
     // Accessrestrict types and their order in the UI
@@ -102,6 +104,9 @@ class SolrEad3 extends SolrEad
 
     // relation@encodinganalog-attribute of relations used by getRelatedRecords
     const RELATION_RECORD = 'ahaa:AI30';
+
+    // relation@encodinganalog-attributes that are discarded from record links
+    const IGNORED_RELATIONS = [self::RELATION_RECORD, 'ahaa:AI41'];
 
     // Relation types
     const RELATION_CONTINUED_FROM = 'continued-from';
@@ -494,6 +499,9 @@ class SolrEad3 extends SolrEad
                         $result['service'] = true;
                     }
                     break;
+                case self::ALTFORM_PHYSICAL_LOCATION:
+                    $result['physicalLocation'] = $val;
+                    break;
                 case self::ALTFORM_TYPE:
                     $result['type'] = $val;
                     break;
@@ -768,8 +776,8 @@ class SolrEad3 extends SolrEad
             }
 
             foreach ($images['large'] ?? $images['medium'] as $id => $img) {
-                $large = $images['large'][$id] ?? null;
-                $medium = $images['medium'][$id] ?? null;
+                $large = $images['large'][$id] ?? ['url' => '', 'pdf' => false];
+                $medium = $images['medium'][$id] ?? ['url' => '', 'pdf' => false];
 
                 $data = $img;
                 $data['urls'] = [
@@ -1306,9 +1314,7 @@ class SolrEad3 extends SolrEad
                 }
             }
             if ((string)$attr->relationtype !== 'resourcerelation'
-                // This relation is shown via RecordDriverRelated-recommend module
-                // (see getRelatedRecords)
-                || (string)$attr->encodinganalog === self::RELATION_RECORD
+                || in_array((string)$attr->encodinganalog, self::IGNORED_RELATIONS)
             ) {
                 continue;
             }
@@ -1456,6 +1462,52 @@ class SolrEad3 extends SolrEad
             }
         }
         return $localeResult ?: $result;
+    }
+
+    /**
+     * Get material arrangement information.
+     *
+     * @return string[]
+     */
+    public function getMaterialArrangement() : array
+    {
+        $xml = $this->getXmlRecord();
+        $result = [];
+        foreach ($xml->arrangement ?? [] as $arrangement) {
+            $label = $this->getDisplayLabel($arrangement, 'p');
+            $localeLabel = $this->getDisplayLabel($arrangement, 'p', true);
+            $result = array_merge($result, $localeLabel ?: $label);
+        }
+        return $result;
+    }
+
+    /**
+     * Get notes on finding aids related to the record.
+     *
+     * @return array
+     */
+    public function getFindingAids()
+    {
+        $xml = $this->getXmlRecord();
+        $result = $localeResult = [];
+        foreach ($xml->otherfindaid ?? [] as $aid) {
+            $result[] = (string)($aid->p ?? '');
+            if ($text = $this->getDisplayLabel($aid, 'p')) {
+                $localeResult[] = $text[0];
+            }
+        }
+        return $localeResult ?: $result ?: parent::getFindingAids();
+    }
+
+    /**
+     * Get container information.
+     *
+     * @return string
+     */
+    public function getContainerInformation()
+    {
+        $xml = $this->getXmlRecord();
+        return (string)($xml->did->container ?? '');
     }
 
     /**
@@ -1656,9 +1708,9 @@ class SolrEad3 extends SolrEad
         $node,
         $childNodeName = 'part',
         $obeyPreferredLanguage = false
-    ) {
+    ) : array {
         if (! isset($node->$childNodeName)) {
-            return null;
+            return [];
         }
         $allResults = [];
         $defaultLanguageResults = [];

@@ -86,6 +86,11 @@ defaultPickUpLocation = 1.001
 ;acceptTermsText = "I accept the terms in any language."
 ;acceptTermsText[en-gb] = "I accept the terms in English."
 
+; Fields that can be updated for holds (unless the hold is already in transit or
+; available for pickup). The supported values are "pickUpLocation", "frozen",
+; "frozenThrough" and "requiredByDate".
+updateFields = pickUpLocation:frozen:frozenThrough:requiredByDate
+
 [Feedback]
 ; domain = The starting subdomain of url without www.,
 ; for saving updateMessagingSettings / updateAddress to database for correct institution.
@@ -98,10 +103,6 @@ HMACKeys = id
 ; PIN change parameters.
 minLength = 4
 maxLength = 4
-
-; Uncomment the following line to enable changePickupLocation
-[changePickupLocation]
-method = driver
 
 ; Uncomment the following lines to enable updating of address information.
 ; Choose a method on how to update the address information (database or url).

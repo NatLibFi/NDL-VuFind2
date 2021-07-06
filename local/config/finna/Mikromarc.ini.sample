@@ -11,7 +11,8 @@ password =
 HMACKeys = item_id:holdtype:level
 
 ; extraHoldFields - A colon-separated list used to display extra visible fields in the
-; place holds form. Supported values are "requiredByDate", "pickUpLocation", "requestGroup"
+; place holds form. Supported values are "startDate", "pickUpLocation" and
+; "requestGroup".
 extraHoldFields = pickUpLocation
 
 ; A request group ID used to pre-select the request group drop down list and
@@ -49,6 +50,11 @@ titleHoldBibLevels[] = serial
 titleHoldBibLevels[] = serialpart
 titleHoldBibLevels[] = collectionpart
 
+; Fields that can be updated for holds (unless the hold is already in transit or
+; available for pickup). The supported values are "pickUpLocation", "frozen",
+; and "frozenThrough".
+updateFields = pickUpLocation:frozen:frozenThrough
+
 [Holdings]
 ; By default the holdings location list is sorted alphabetically. This setting can be
 ; used to manually set the order by entering location IDs as a colon-separated list.
@@ -62,11 +68,6 @@ titleHoldBibLevels[] = collectionpart
 
 [Loans]
 renewalLimit = 3
-
-; Changing of pickup location is enabled if method parameter is set. Only valid value
-; is 'driver'.
-[changePickupLocation]
-method = driver
 
 ; Uncomment the following lines to enable password (PIN) change
 [changePassword]
@@ -142,11 +143,6 @@ options[1] = loan_history_never
 ; value for Micromarc is 'driver'.
 [updateMessagingSettings]
 method = driver
-
-; Changing of hold status is enabled if method parameter is set. Only valid value
-; is 'driver'.
-;[changeRequestStatus]
-;method = driver
 
 [OnlinePayment]
 ; Whether online payment is enabled. Default is false.

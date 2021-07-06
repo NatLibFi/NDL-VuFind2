@@ -131,7 +131,7 @@ class SideFacets extends \VuFind\Recommend\SideFacets
      * be needed.
      *
      * @param \VuFind\Search\Base\Params $params  Search parameter object
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing
      * user request.
      *
      * @return void
