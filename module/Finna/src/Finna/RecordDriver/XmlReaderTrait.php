@@ -81,6 +81,7 @@ trait XmlReaderTrait
             array_shift($exploded);
         }
         $formatted = [];
+
         // Check each of the paths if they have any filters
         foreach ($exploded as $path) {
             if (!empty($path)) {
@@ -144,7 +145,7 @@ trait XmlReaderTrait
                     }
                 }
                 foreach ($filters['not'] ?? [] as $key => $value) {
-                    if (!empty($attrs->$key) && $attrs->$key !== $value) {
+                    if (!empty($attrs->$key) && $attrs->$key === $value) {
                         $allow = false;
                     }
                 }
