@@ -928,7 +928,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 true
             );
             if ($code >= 300) {
-                $holdError = $this->holdError($code, $result);
+                $holdError = $this->convertError($code, $result);
                 $results[$requestId] = [
                     'success' => false,
                     'status' => $holdError['sysMessage']
