@@ -113,7 +113,7 @@
               <noscript> (<?=$this->transEsc("Please enable JavaScript.")?>)</noscript>
             <?php endif; ?>
           </label>
-          <select id="pickUpLocation" name="gatheredDetails[pickUpLocation]" data-default="<?=$this->escapeHtmlAttr($selected)?>" class="form-control">
+          <select id="pickUpLocation" name="gatheredDetails[pickUpLocation]" data-default="<?=$this->escapeHtmlAttr($selected)?>" class="form-control" aria-labelledby="pickUpLocationLabel">
             <?php if ($selected === false): ?>
             <option value="" selected="selected">
               <?=$this->transEsc('select_pickup_location')?>
@@ -123,8 +123,8 @@
         </div>
       <?php elseif ($this->pickup): ?>
         <div class="form-group hold-pickup-location">
-          <label class="control-label"><?=$this->transEsc("pick_up_location")?>:</label>
-          <select id="pickUpLocation" name="gatheredDetails[pickUpLocation]" class="form-control">
+          <label id="pickUpLocationLabel2" class="control-label"><?=$this->transEsc("pick_up_location")?>:</label>
+          <select id="pickUpLocation" name="gatheredDetails[pickUpLocation]" class="form-control" aria-labelledby="pickUpLocationLabel2">
           <?php if ($selected === false && count($this->pickup) > 1): ?>
             <option value="" selected="selected">
               <?=$this->transEsc('select_pickup_location')?>
