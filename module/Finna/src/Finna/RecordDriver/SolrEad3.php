@@ -592,14 +592,18 @@ class SolrEad3 extends SolrEad
     /**
      * Get an array of summary strings for the record.
      *
+     * @param boolean $withLinks Whether to also return URL's related to
+     * summary strings.
+     *
      * @return array
      */
-    public function getSummary()
+    public function getSummary($withLinks = false)
     {
         $xml = $this->getXmlRecord();
 
         if (!empty($xml->scopecontent)) {
-            $desc = [];
+            $result = $localeResult = [];
+            $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
             foreach ($xml->scopecontent as $el) {
                 if (isset($el->attributes()->encodinganalog)) {
                     continue;
@@ -607,12 +611,52 @@ class SolrEad3 extends SolrEad
                 if (isset($el->head) && (string)$el->head !== 'Tietosisältö') {
                     continue;
                 }
-                if ($desc = $this->getDisplayLabel($el, 'p', true)) {
-                    return $desc;
+                if (!$withLinks) {
+                    if ($desc = $this->getDisplayLabel($el, 'p', true)) {
+                        return $desc;
+                    }
+                } else {
+                    foreach ($el->p ?? [] as $p) {
+                        $text = (string)$p;
+                        $url = isset($p->ref)
+                            ? (string)$p->ref->attributes()->href : null;
+                        if ($this->urlBlocked($url, $text)) {
+                            $url = null;
+                        }
+                        $data = compact('text', 'url');
+                        $result[] = $data;
+                        $lang = $this->detectNodeLanguage($p);
+                        if ($lang['preferred']) {
+                            $localeResult[] = $data;
+                        }
+                    }
                 }
             }
         }
-        return parent::getSummary();
+        if ($res = $localeResult ?: $result) {
+            return $res;
+        }
+        $summary = parent::getSummary();
+        if ($withLinks) {
+            return array_map(
+                function ($text) {
+                    return compact('text');
+                },
+                $summary
+            );
+        }
+        return $summary;
+    }
+
+    /**
+     * Get an array of summary items for the record.
+     * Each item includes the fields 'text' and 'url' (when available).
+     *
+     * @return array
+     */
+    public function getSummaryExtended()
+    {
+        return $this->getSummary(true);
     }
 
     /**
