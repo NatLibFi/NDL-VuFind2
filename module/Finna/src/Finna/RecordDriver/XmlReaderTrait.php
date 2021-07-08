@@ -146,6 +146,9 @@ trait XmlReaderTrait
                     }
                 }
                 foreach ($filters['not'] ?? [] as $key => $value) {
+                    if (!$allow) {
+                        continue;
+                    }
                     if (!empty($attrs->$key) && $attrs->$key === $value) {
                         $allow = false;
                         continue;
