@@ -138,7 +138,7 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
     protected function getTagContentRegex(string $tagName,
         string $attributes = RegexHelper::PARTIAL_ATTRIBUTE . '*'
     ): string {
-        return '/<' . $tagName . $attributes . '\s*>([\S\s]*?)'
-            . '<\/' . $tagName . '\s*[>]/';
+        return '/<' . $tagName . $attributes . '\s*>(.*?)'
+            . '<\/' . $tagName . '\s*[>]/s';
     }
 }

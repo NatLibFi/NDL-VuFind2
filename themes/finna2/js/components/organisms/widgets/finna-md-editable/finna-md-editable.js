@@ -21,6 +21,8 @@ function FinnaMdEditable(element) {
     }
     event.data.editable.openEditable();
   });
+
+  this.element.attr('data-inited', true);
 }
 
 FinnaMdEditable.prototype.eventOpenEditable = 'finna:openEditable';
@@ -290,19 +292,17 @@ FinnaMdEditable.prototype._insertTruncate = function _insertTruncate() {
 };
 
 finna.mdEditable = (function finnaMdEditable() {
-  var initDone = false;
   var editables = [];
 
   var my = {
-    initDone: initDone,
     editables: editables,
     init: function init() {
-      if (!initDone) {
-        $('.finna-md-editable').each(function initFinnaMdEditable() {
-          editables.push(new FinnaMdEditable($(this)));
-        });
-        initDone = true;
-      }
+      $('.finna-md-editable').each(function initFinnaMdEditable() {
+        var editable = $(this);
+        if (!editable.data('inited')) {
+          editables.push(new FinnaMdEditable(editable));
+        }
+      });
     }
   };
 
