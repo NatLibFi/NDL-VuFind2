@@ -143,7 +143,7 @@ class SolrEad extends SolrDefault
         $result = [];
         // All images have same rights..
         $rights = $this->getImageRights($language, true);
-        foreach ($this->getXmlRecord()->xpath('did/daogrp') as $daogrp) {
+        foreach ($this->getXmlNodes('did/daogrp') as $daogrp) {
             $urls = [];
             foreach ($daogrp->daoloc as $daoloc) {
                 $attributes = $daoloc->attributes();

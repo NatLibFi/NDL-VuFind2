@@ -130,7 +130,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getAccessRestrictions($language = '')
     {
         $restrictions = [];
-        $rights = $this->getXmlRecord()->xpath(
+        $rights = $this->getXmlNodes(
             'lido/administrativeMetadata/resourceWrap/resourceSet/rightsResource/'
             . 'rightsType'
         );
@@ -165,13 +165,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAccessRestrictionsType($language)
     {
-        $rightsNodes = $this->getXmlRecord()->xpath(
+        $rightsNodes = $this->getXmlNodes(
             'lido/administrativeMetadata/resourceWrap/resourceSet/rightsResource/'
             . 'rightsType'
         );
 
         foreach ($rightsNodes as $rights) {
-            if ($conceptID = $rights->xpath('conceptID')) {
+            if ($conceptID = $this->getXmlNodes('conceptID', $rights)) {
                 $conceptID = $conceptID[0];
                 $attributes = $conceptID->attributes();
                 if ($attributes->type
@@ -239,8 +239,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         };
 
         $defaultRights = $this->getImageRights($language, true);
-        foreach ($this->getXmlRecord()->xpath(
-            '/lidoWrap/lido/administrativeMetadata/'
+        foreach ($this->getXmlNodes(
+            'lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
         ) as $resourceSet) {
             if (empty($resourceSet->resourceRepresentation->linkResource)) {
@@ -565,7 +565,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         // Main title might be already normalized, but do it again to make sure:
         $mainTitle = \Normalizer::normalize($this->getTitle(), \Normalizer::FORM_KC);
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/'
             . "appellationValue"
         ) as $node) {
@@ -593,7 +593,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getRelatedPublications()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet'
         ) as $node) {
@@ -624,7 +624,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $preferredLanguages = $this->getPreferredLanguageCodes();
         $preferredLangResults = $allResults = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
             . 'classification'
         ) as $node) {
@@ -658,7 +658,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         $allowedTypes = ['Kokoelma', 'kuuluu kokoelmaan', 'kokoelma', 'Alakokoelma',
             'Erityiskokoelma'];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet'
         ) as $node) {
@@ -678,8 +678,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getEvents()
     {
         $events = [];
-        foreach ($this->getXmlRecord()->xpath(
-            '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
+        foreach ($this->getXmlNodes(
+            'lido/descriptiveMetadata/eventWrap/eventSet/event'
         ) as $node) {
             $name = (string)($node->eventName->appellationValue ?? '');
             $type = isset($node->eventType->term)
@@ -737,10 +737,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             } elseif (isset($node->eventMaterialsTech->materialsTech)) {
                 // display label not defined, build from materialsTech
                 $materials = [];
-                foreach ($node->xpath('eventMaterialsTech/materialsTech')
+                foreach ($this->getXmlNodes('eventMaterialsTech/materialsTech', $node)
                     as $materialsTech
                 ) {
-                    if ($terms = $materialsTech->xpath('termMaterialsTech/term')) {
+                    if ($terms = $this->getXmlNodes('termMaterialsTech/term', $materialsTech)) {
                         foreach ($terms as $term) {
                             $label = null;
                             $attributes = $term->attributes();
@@ -854,7 +854,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getFormatClassifications()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectClassificationWrap'
         ) as $node) {
             if (!isset($node->objectWorkTypeWrap->objectWorkType->term)) {
@@ -952,7 +952,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getInscriptions()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectIdentificationWrap/inscriptionsWrap/'
             . 'inscriptions'
         ) as $inscriptions) {
@@ -976,7 +976,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getLocalIdentifiers()
     {
         return $this->getIdentifiersByType(
-            "@type != 'isbn' and @type != 'issn'",
+            "@[type!=isbn,type!=issn]",
             true
         );
     }
@@ -988,7 +988,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISBNs()
     {
-        return $this->getIdentifiersByType("@type = 'isbn'", false);
+        return $this->getIdentifiersByType("@[type==isbn]", false);
     }
 
     /**
@@ -998,7 +998,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISSNs()
     {
-        return $this->getIdentifiersByType("@type = 'issn'", false);
+        return $this->getIdentifiersByType("@[type==issn]", false);
     }
 
     /**
@@ -1029,7 +1029,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $results = $this->fields['measurements'];
             $confParam = 'lido_augment_display_measurement_with_extent';
             if ($this->getDataSourceConfigurationValue($confParam)) {
-                $extent = $this->getXmlRecord()->xpath(
+                $extent = $this->getXmlNodes(
                     'lido/descriptiveMetadata/objectIdentificationWrap/'
                     . 'objectMeasurementsWrap/objectMeasurementsSet/'
                     . 'objectMeasurements/extentMeasurements'
@@ -1050,8 +1050,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterAuthors()
     {
         $authors = [];
-        foreach ($this->getXmlRecord()->xpath(
-            '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
+        foreach ($this->getXmlNodes(
+            'lido/descriptiveMetadata/eventWrap/eventSet/event'
         ) as $node) {
             if (!isset($node->eventActor) || $node->eventType->term != 'valmistus') {
                 continue;
@@ -1092,7 +1092,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getSubjectActors()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
             . 'subjectSet/subject/subjectActor/actor/nameActorSet/appellationValue'
         ) as $node) {
@@ -1109,7 +1109,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getSubjectDates()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
             . 'subjectSet/subject/subjectDate/displayDate'
         ) as $node) {
@@ -1126,12 +1126,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getSubjectDetails()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/'
-            . "appellationValue[@label='aiheen tarkenne']"
+            . "appellationValue@[label==aiheen tarkenne]"
         ) as $node) {
             $results[] = (string)$node;
         }
+
         return $results;
     }
 
@@ -1143,7 +1144,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getSubjectPlaces()
     {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
             . 'subjectSet/subject/subjectPlace/displayPlace'
         ) as $node) {
@@ -1185,7 +1186,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getWebResources(): array
     {
-        $relatedWorks = $this->getXmlRecord()->xpath(
+        $relatedWorks = $this->getXmlNodes(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet/relatedWork'
         );
@@ -1237,9 +1238,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function socialMediaSharingAllowed()
     {
-        $rights = $this->getXmlRecord()->xpath(
+        $rights = $this->getXmlNodes(
             'lido/administrativeMetadata/resourceWrap/resourceSet/rightsResource/'
-            . 'rightsType/conceptID[@type="Social media links"]'
+            . 'rightsType/conceptID@[type==Social media links]'
         );
         return empty($rights) || (string)$rights[0] != 'no';
     }
@@ -1290,9 +1291,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected function getIdentifiersByType(string $xpathRule, bool $includeType
     ): array {
         $results = [];
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectIdentificationWrap/repositoryWrap/'
-            . "repositorySet/workID[$xpathRule]"
+            . "repositorySet/workID$xpathRule"
         ) as $node) {
             $attributes = $node->attributes();
             $type = $attributes->type ?? '';
@@ -1355,7 +1356,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         $label = null;
         $title = str_replace([',', ';'], ' ', $this->getTitle());
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet'
         ) as $node) {
             $subject = $node->displaySubject;
@@ -1369,9 +1370,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         }
 
         $preferredLanguages = $this->getPreferredLanguageCodes();
-        foreach ($this->getXmlRecord()->xpath(
+        foreach ($this->getXmlNodes(
             'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
-            . '/objectDescriptionSet[@type="description"]/descriptiveNoteValue'
+            . '/objectDescriptionSet@[type==description]/descriptiveNoteValue'
         ) as $node) {
             if (in_array((string)$node->attributes()->lang, $preferredLanguages)) {
                 if ($term = trim((string)$node)) {

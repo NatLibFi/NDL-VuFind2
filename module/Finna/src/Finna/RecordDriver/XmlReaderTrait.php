@@ -68,12 +68,12 @@ trait XmlReaderTrait
     /**
      * Given a path will try to find all the nodes and return them in an array
      * 
-     * @param \SimpleXMLElement $xml  Xml node object
      * @param string            $path Nodes to search
+     * @param \SimpleXMLElement $xml  Xml node object
      * 
      * @return array
      */
-    public function getXmlNodes(\SimpleXMLElement $xml, string $path): array
+    public function getXmlNodes(string $path, \SimpleXMLElement $xml = null): array
     {
         $exploded = explode('/', $path);
         $result = [];
@@ -82,7 +82,7 @@ trait XmlReaderTrait
         }
         $formatted = [];
 
-        // Check each of the paths if they have any filters
+        // Format paths into a more readable format
         foreach ($exploded as $path) {
             if (!empty($path)) {
                 $filters = ['not' => [], 'is' => []];
@@ -113,7 +113,7 @@ trait XmlReaderTrait
             }
         }
         if (count($formatted) > 0) {
-            $result = $this->parseNodes($xml, $formatted);
+            $result = $this->parseNodes($xml ?? $this->getXmlRecord(), $formatted);
         }
 
         return $result;
@@ -122,7 +122,7 @@ trait XmlReaderTrait
     /**
      * Function to check the nodes if occurence is found
      * Filters to fetch only certain nodes can be marked like follows:
-     * /nodetolook@[key0=value0,key1=value1]
+     * /nodetolook@[key0==value0,key1!=value1]
      *
      * @param \SimpleXMLElement $xml  Xml node object
      * @param array             $paths Nodes to search
@@ -135,28 +135,36 @@ trait XmlReaderTrait
         $node = $find['node'];
         $filters = $find['filters'];
         $found = [];
-        if (!empty($xml->$node)) {
-            foreach ($xml->$node as $obj) {
+        if ($nodes = $xml->$node) {
+            for ($n = 0; $n < count($nodes); $n++) {
                 $allow = true;
-                $attrs = $obj->attributes();
+                $attrs = $nodes[$n]->attributes();
                 foreach ($filters['is'] ?? [] as $key => $value) {
                     if (empty($attrs->$key) || $attrs->$key !== $value) {
                         $allow = false;
+                        continue;
                     }
                 }
                 foreach ($filters['not'] ?? [] as $key => $value) {
                     if (!empty($attrs->$key) && $attrs->$key === $value) {
                         $allow = false;
+                        continue;
                     }
                 }
                 if ($allow) {
-                    $found[] = $obj;
+                    $found[] = $nodes[$n];
                 }
             }
             if (empty($paths) || empty($found)) {
                 return $found;
             } else {
-                $found = array_merge($found, $this->parseNodes($obj, $paths));
+                $returned = [];
+                for ($i = 0; $i < count($found); $i++) {
+                    if ($result = $this->parseNodes($found[$i], $paths)) {
+                        $returned = array_merge($result, $returned);
+                    }
+                }
+                $found = $returned;
             }
         }
         return $found;
