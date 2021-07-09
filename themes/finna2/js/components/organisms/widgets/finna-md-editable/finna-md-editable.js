@@ -22,7 +22,7 @@ function FinnaMdEditable(element) {
     event.data.editable.openEditable();
   });
 
-  this.element.attr('data-inited', true);
+  this.element.addClass('inited');
 }
 
 FinnaMdEditable.prototype.eventOpenEditable = 'finna:openEditable';
@@ -297,11 +297,8 @@ finna.mdEditable = (function finnaMdEditable() {
   var my = {
     editables: editables,
     init: function init() {
-      $('.finna-md-editable').each(function initFinnaMdEditable() {
-        var editable = $(this);
-        if (!editable.data('inited')) {
-          editables.push(new FinnaMdEditable(editable));
-        }
+      $('.finna-md-editable:not(.inited)').each(function initFinnaMdEditable() {
+        editables.push(new FinnaMdEditable($(this)));
       });
     }
   };
