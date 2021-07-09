@@ -81,7 +81,6 @@ trait XmlReaderTrait
             array_shift($exploded);
         }
         $formatted = [];
-
         // Format paths into a more readable format
         foreach ($exploded as $path) {
             if (!empty($path)) {
@@ -109,7 +108,20 @@ trait XmlReaderTrait
                 } else {
                     $node = $path;
                 }
-                $formatted[] = compact('node', 'filters');
+                // Check if the path has any special searches to take in account
+                $special = mb_substr($node, 0, 2);
+                // >> means all the matching nodes in current nodes
+                $specials = ['>>'];
+                $flags = [];
+                if (in_array($special, $specials)) {
+                    switch ($special) {
+                    case '>>':
+                        $node = mb_substr($node, 2);
+                        $flags = ['allChildren' => true, 'name' => $node];
+                        break;
+                    }
+                }
+                $formatted[] = compact('node', 'filters', 'flags');
             }
         }
         if (count($formatted) > 0) {
@@ -124,21 +136,48 @@ trait XmlReaderTrait
      * Filters to fetch only certain nodes can be marked like follows:
      * /nodetolook@[key0==value0,key1!=value1]
      *
-     * @param \SimpleXMLElement $xml  Xml node object
+     * @param \SimpleXMLElement $xml   Xml node object
      * @param array             $paths Nodes to search
      * 
      * @return array
      */
-    protected function parseNodes(\SimpleXMLElement $xml, array $paths): array
+    protected function parseNodes(\SimpleXMLElement $xml, array $paths, array $flags = []): array
     {
-        $find = array_shift($paths);
+        $searchUntil = false;
+        $nodeFlags = [];
+        // Check the first node of array
+        $find = $paths[0] ?? [];
+
+        if (!empty($flags['allChildren'])) {
+            $searchUntil = true;
+        }
+
+        // Lets see if node contains any flags
+        if (!$searchUntil && !empty($find['flags'])) {
+            $nodeFlags = $find['flags'];
+            if (!empty($nodeFlags['allChildren'])) {
+                $searchUntil = true;
+            }
+        }
+
+        if (!$searchUntil) {
+            array_shift($paths);
+            $filters = $find['filters'];
+        } else {
+            $nodeFlags = $flags;
+        }
+
         $node = $find['node'];
-        $filters = $find['filters'];
+
         $found = [];
-        if ($nodes = $xml->$node) {
+        $stash = [];
+        $nodes = $searchUntil ? $xml->children() : $xml->$node;
+
+        if (!empty($nodes)) {
             for ($n = 0; $n < count($nodes); $n++) {
+                $cur = $nodes[$n];
                 $allow = true;
-                $attrs = $nodes[$n]->attributes();
+                $attrs = $cur->attributes();
                 foreach ($filters['is'] ?? [] as $key => $value) {
                     if (empty($attrs->$key) || $attrs->$key !== $value) {
                         $allow = false;
@@ -146,28 +185,20 @@ trait XmlReaderTrait
                     }
                 }
                 foreach ($filters['not'] ?? [] as $key => $value) {
-                    if (!$allow) {
-                        continue;
-                    }
                     if (!empty($attrs->$key) && $attrs->$key === $value) {
                         $allow = false;
                         continue;
                     }
                 }
                 if ($allow) {
-                    $found[] = $nodes[$n];
-                }
-            }
-            if (empty($paths) || empty($found)) {
-                return $found;
-            } else {
-                $returned = [];
-                for ($i = 0; $i < count($found); $i++) {
-                    if ($result = $this->parseNodes($found[$i], $paths)) {
-                        $returned = array_merge($result, $returned);
+                    if (empty($paths) || ($searchUntil && $cur->getName() === $node)) {
+                        $found[] = $cur;
+                    } else {
+                        if ($result = $this->parseNodes($cur, $paths, $nodeFlags)) {
+                            $found = array_merge($found, $result);
+                        }
                     }
                 }
-                $found = $returned;
             }
         }
         return $found;

@@ -240,8 +240,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
         $defaultRights = $this->getImageRights($language, true);
         foreach ($this->getXmlNodes(
-            'lido/administrativeMetadata/'
-            . 'resourceWrap/resourceSet'
+            '/>>resourceSet'
         ) as $resourceSet) {
             if (empty($resourceSet->resourceRepresentation->linkResource)) {
                 continue;
