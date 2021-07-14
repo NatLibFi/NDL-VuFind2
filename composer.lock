@@ -5982,16 +5982,16 @@
         },
         {
             "name": "paquettg/php-html-parser",
-            "version": "3.1.1",
+            "version": "3.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paquettg/php-html-parser.git",
-                "reference": "4e01a438ad5961cc2d7427eb9798d213c8a12629"
+                "reference": "b200ae9894af3ba309115c120799f3f273d3e2aa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paquettg/php-html-parser/zipball/4e01a438ad5961cc2d7427eb9798d213c8a12629",
-                "reference": "4e01a438ad5961cc2d7427eb9798d213c8a12629",
+                "url": "https://api.github.com/repos/paquettg/php-html-parser/zipball/b200ae9894af3ba309115c120799f3f273d3e2aa",
+                "reference": "b200ae9894af3ba309115c120799f3f273d3e2aa",
                 "shasum": ""
             },
             "require": {
@@ -6002,7 +6002,7 @@
                 "guzzlehttp/psr7": "^1.6",
                 "myclabs/php-enum": "^1.7",
                 "paquettg/string-encode": "~1.0.0",
-                "php": ">=7.2",
+                "php": ">=7.1",
                 "php-http/httplug": "^2.1"
             },
             "require-dev": {
@@ -6038,7 +6038,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paquettg/php-html-parser/issues",
-                "source": "https://github.com/paquettg/php-html-parser/tree/3.1.1"
+                "source": "https://github.com/paquettg/php-html-parser/tree/3.1.0"
             },
             "funding": [
                 {
@@ -6046,7 +6046,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-11-01T20:34:43+00:00"
+            "time": "2020-09-19T19:27:31+00:00"
         },
         {
             "name": "paquettg/string-encode",
@@ -14209,5 +14209,5 @@
     "platform-overrides": {
         "php": "7.3.0"
     },
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }

@@ -28,6 +28,8 @@
  */
 namespace Finna\View\Helper\Root;
 
+use Finna\View\CustomElement\CustomElementInterface;
+
 /**
  * HTML Cleaner view helper
  *
@@ -55,11 +57,12 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
     protected $cacheDir;
 
     /**
-     * Allowed custom element names and attributes
+     * Array containing allowed element names as keys and element info arrays as
+     * values
      *
      * @var array
      */
-    protected $customElements;
+    protected $allowedElements;
 
     /**
      * Current target blank setting
@@ -71,14 +74,13 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
     /**
      * Constructor
      *
-     * @param string $cacheDir       Cache directory
-     * @param array  $customElements Array containing allowed custom element names as
-     *                               keys and element attribute name arrays as values
+     * @param string $cacheDir        Cache directory
+     * @param array  $allowedElements Allowed elements
      */
-    public function __construct($cacheDir, $customElements)
+    public function __construct($cacheDir, $allowedElements)
     {
         $this->cacheDir = $cacheDir;
-        $this->customElements = $customElements;
+        $this->allowedElements = $allowedElements;
     }
 
     /**
@@ -108,24 +110,15 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
 
             // Add elements and attributes not supported by default
             $def = $config->getHTMLDefinition(true);
-            foreach ($this->customElements as $elementName => $elementAttributes) {
-                $def->addElement($elementName, 'Block', 'Flow', 'Common');
-                foreach ($elementAttributes as $attributeName) {
-                    $def->addAttribute($elementName, $attributeName, 'CDATA');
-                }
+            foreach ($this->allowedElements as $elementName => $elementInfo) {
+                $def->addElement(
+                    $elementName,
+                    $elementInfo[CustomElementInterface::TYPE],
+                    $elementInfo[CustomElementInterface::CONTENTS],
+                    $elementInfo[CustomElementInterface::ATTR_COLLECTIONS],
+                    $elementInfo[CustomElementInterface::ATTRIBUTES]
+                );
             }
-            $def->addAttribute('span', 'slot', 'CDATA');
-            $def->addElement(
-                'details',
-                'Block',
-                'Flow',
-                'Common',
-                ['open' => new \HTMLPurifier_AttrDef_HTML_Bool(true)]
-            );
-            $def->addElement('summary', 'Block', 'Flow', 'Common');
-            $def->addAttribute('div', 'data-rows', 'Number');
-            $def->addAttribute('div', 'data-row-height', 'Number');
-            $def->addAttribute('div', 'data-label', 'Text');
 
             $this->purifier = new \HTMLPurifier($config);
         }

@@ -48,45 +48,94 @@ class FinnaPanel extends AbstractBase
     {
         parent::__construct($name, $options, true);
 
-        $collapsible = $this->attributes['collapsible'] ?? true;
-
-        if ($collapsible) {
-            $collapseId = $this->attributes['collapse-id'] ?? uniqid('collapse-');
-            $this->viewModel->setVariable('collapseId', $collapseId);
-        }
-
-        $heading = $this->dom->find('*[slot="heading"]');
-        if ($heading = $heading[0] ?? false) {
-            $this->viewModel->setVariable(
-                'heading', strip_tags($heading->innerHTML())
+        // The 'headingId' and 'collapseId' variables are only set if the
+        // 'collapsible' attribute is not set to false.
+        if ($this->attributes['collapsible'] ?? true) {
+            $this->setVariable(
+                'headingId',
+                $this->attributes['heading-id'] ?? uniqid('heading-')
             );
-            if ($collapsible) {
-                $headingId = $attributes['heading-id'] ?? uniqid('heading-');
-                $this->viewModel->setVariable('headingId', $headingId);
-            }
-            $this->removeSlotElement($heading);
+            $this->setVariable(
+                'collapseId',
+                $this->attributes['collapse-id'] ?? uniqid('collapse-')
+            );
         }
 
-        $this->getViewModel()->setVariable(
-            'content', $this->dom->firstChild()->innerHTML()
-        );
+        if ($this->dom) {
+            $heading = $this->dom->find('[slot="heading"]');
+            if ($heading = $heading[0] ?? false) {
+                $this->setVariable('heading', strip_tags($heading->innerHTML()));
 
-        $this->getViewModel()->setTemplate(
+                // The 'heading-level' attribute takes precedence over a heading
+                // level set in a h-tag.
+                if (!isset($this->attributes['heading-level'])) {
+                    $hName = $heading->getTag()->name();
+                    if (in_array($hName, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])) {
+                        $this->setVariable('headingLevel', substr($hName, 1));
+                    }
+                }
+
+                $this->removeElement($heading);
+            }
+
+            $this->setVariable('content', $this->dom->firstChild()->innerHTML());
+        }
+
+        $this->setTemplate(
             'components/molecules/containers/finna-panel/finna-panel'
         );
     }
 
     /**
-     * Get the names of attributes supported by the element.
+     * Get information about the element.
      *
-     * @return array
+     * @return array Array of HTMLPurifier_HTMLDefinition::addElement() arguments
+     *     excluding the name of the element.
      */
-    public static function getAttributes(): array
+    public static function getInfo(): array
     {
-        return array_merge(
-            ['collapsible', 'collapse-id', 'heading-id'],
-            array_keys(static::getAttributeToVariableMap())
-        );
+        return [
+            self::TYPE => 'Block',
+            self::CONTENTS => 'Flow',
+            self::ATTR_COLLECTIONS => 'Common',
+            self::ATTRIBUTES => array_fill_keys(
+                array_merge(
+                    ['collapse-id', 'collapsible', 'heading-id'],
+                    array_keys(self::getAttributeToVariableMap())
+                ), 'CDATA'
+            )
+        ];
+    }
+
+    /**
+     * Get information about child elements supported by the element.
+     *
+     * @return array Array containing element names as keys and arrays of
+     *     HTMLPurifier_HTMLDefinition::addElement() arguments excluding the name of
+     *     the element as values.
+     */
+    public static function getChildInfo(): array
+    {
+        $hArgs = [
+            self::TYPE => 'Heading',
+            self::CONTENTS => 'Inline',
+            self::ATTR_COLLECTIONS => 'Common',
+            self::ATTRIBUTES => ['slot' => 'CDATA']
+        ];
+        return [
+            'h1' => $hArgs,
+            'h2' => $hArgs,
+            'h3' => $hArgs,
+            'h4' => $hArgs,
+            'h5' => $hArgs,
+            'h6' => $hArgs,
+            'span' => [
+                self::TYPE => 'Inline',
+                self::CONTENTS => 'Inline',
+                self::ATTR_COLLECTIONS => 'Common',
+                self::ATTRIBUTES => ['slot' => 'CDATA']
+            ]
+        ];
     }
 
     /**
@@ -98,7 +147,7 @@ class FinnaPanel extends AbstractBase
     {
         return [
             'attributes'   => ['class' => 'finna-panel-default'],
-            'headingLevel' => 2,
+            'headingLevel' => 3,
             'headingTag'   => true
         ];
     }
