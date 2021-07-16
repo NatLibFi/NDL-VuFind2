@@ -250,7 +250,10 @@ abstract class AbstractBase implements CustomElementInterface
      */
     protected static function getOptionToVariableMap(): array
     {
-        return static::getAttributeToVariableMap();
+        return array_merge(
+            ['attributes' => 'attributes'],
+            static::getAttributeToVariableMap()
+        );
     }
 
     /**
@@ -272,6 +275,19 @@ abstract class AbstractBase implements CustomElementInterface
             }
         }
         return $values;
+    }
+
+    /**
+     * Get a view model variable.
+     *
+     * @param string     $name    Name
+     * @param mixed|null $default Default value if the variable is not present
+     *
+     * @return mixed
+     */
+    protected function getVariable(string $name, $default = null)
+    {
+        return $this->getViewModel()->getVariable($name, $default);
     }
 
     /**
