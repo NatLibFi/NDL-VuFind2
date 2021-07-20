@@ -439,18 +439,24 @@
       margin: 0;
       border-top: none;
       position: relative;
-
+      .parent-holder {
+        width: 100%;
+      }
       .option {
         &.option-parent {
           background-color: white;
           z-index: 1;
         }
         padding: 2px 0;
-        position: relative;
         user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
+
+        .value {
+          display: inline-block;
+        }
+
         .value:before {
             content: '\f096';
             font-family: 'FontAwesome';
@@ -460,13 +466,35 @@
             width: 12px;
             font-size: 16px;
         }
-        &[aria-selected="true"] .value:before {
+        &[aria-selected="true"] > .value:before {
           content: '\f046';
         }
         &.active {
           background-color: lightgray;
         }
-
+        &:not(.active) {
+          background-color: white;
+        }
+        .generate-hierarchy(6);
+        .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
+          &.child-width-@{i} {
+            padding-left: (@i * 10px);
+            &::before {
+              display: inline-block;
+              position: absolute;
+              content: "";
+              border-bottom: 2px solid lightgray;
+              border-left: 2px solid lightgray;
+              width: @i * 10px;
+              height: 100%;
+              left: 3px;
+              /* top: -50%; */
+              z-index: 5;
+              left: 3px;
+            }
+          }
+          .generate-hierarchy(@n, (@i + 1));
+        }
         .hierarchy-line {
           display: inline-block;
           position: absolute;
@@ -476,14 +504,6 @@
           height: 100%;
           left: 4px;
           top: -50%;
-
-          .generate-hierarchy(6);
-          .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
-            &.child-width-@{i} {
-              width: (@i * 13px);
-            }
-            .generate-hierarchy(@n, (@i + 1));
-          }
         }
       }
     }

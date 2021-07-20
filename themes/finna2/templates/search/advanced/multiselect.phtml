@@ -2,7 +2,7 @@
 <div class="facet">
   <div class="solr-adv-filter <?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>-container">
     <label id="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>"><?=$this->transEsc($this->list['label'])?>:</label>
-    <select class="finna-multiselect init" aria-labelledby="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
+    <select class="finna-multiselect init" data-placeholder="<?=$this->transEsc('search_placeholder')?>" data-label="<?= $this->transEsc('Add filter') . ' ' . $this->transEsc($this->list['label']) ?>" aria-labelledby="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" name="filter[]"  multiple="multiple">
       <?php if (is_array($this->hierarchicalFacets) && in_array($this->field, $this->hierarchicalFacets)): ?>
         <?php foreach ($this->list['list'] as $key => $value): ?>
           <?php
@@ -10,7 +10,7 @@
             $isChild = $value['level'] !== '0';
             $display = str_pad('', 4 * $value['level'] * 6, '&nbsp;', STR_PAD_LEFT) . $this->escapeHtml($value['displayText']);
           ?>
-          <option class="<?= $isParent ? 'option-parent' : ''; ?> <?= $isChild ? 'option-child child-width-' . $value['level'] : ''?>" value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$display?></option>
+          <option class="<?= $isParent ? 'option-parent' : ''; ?> <?= $isChild ? 'option-child child-width-' . $value['level'] : ''?>" data-level="<?=$value['level']?>" value="<?=$this->escapeHtmlAttr(($value['operator'] == 'OR' ? '~' : '') . $this->field . ':"' . $value['value'] . '"')?>"<?=(isset($value['selected']) && $value['selected'])?' selected="selected"':''?>><?=$this->escapeHtml($value['displayText'])?></option>
         <?php endforeach; ?>
       <?php else: ?>
         <?php foreach ($this->list['list'] as $value): ?>
@@ -18,9 +18,6 @@
         <?php endforeach; ?>
       <?php endif; ?>
     </select>
-    <input aria-labelledby="limit_<?=$this->escapeHtmlAttr(str_replace(' ', '', $this->field))?>" class="finna-multiselect search form-control" type="text" placeholder="<?= $this->transEsc('search_placeholder') ?>">
-    <ul aria-multiselectable="true" role="listbox" aria-label="<?= $this->transEsc('Add filter') . ' ' . $this->transEsc($this->list['label']) ?>" tabindex="0" class="finna-multiselect done" aria-activedescendant=""></ul>
-    <button type="button" class="finna-multiselect clear btn btn-link"><?= $this->transEsc('Clear Selections') ?></button> 
   </div>
 </div>
 <!-- END of: finna - search/advanced/multiselect.phtml -->
