@@ -8,6 +8,7 @@ finna.multiSelect = (function multiSelect() {
     var _ = this;
     _.id = id;
     _.select = select;
+    _.select.classList.remove('init');
     _.createElements();
     _.select.style.display = 'none';
     _.deleteButton = _.select.parentNode.querySelector('button.clear');
@@ -98,17 +99,22 @@ finna.multiSelect = (function multiSelect() {
 
   MultiSelect.prototype.setEvents = function setEvents() {
     var _ = this;
+    // Record when the user clicks the list element
     _.ul.addEventListener('mousedown', function preventFocus(e) {
       e.preventDefault();
       e.stopPropagation();
       _.wasClicked = true;
       this.focus();
     });
+
+    // Record when the user touches the list element
     _.ul.addEventListener('touchstart', function preventFocus(e) {
       e.stopPropagation();
       _.wasClicked = true;
       this.focus();
     });
+
+    // When the user focuses to the list element
     _.ul.addEventListener('focusin', function setFirstActive() {
       if (_.wasClicked) {
         _.wasClicked = false;
@@ -120,34 +126,38 @@ finna.multiSelect = (function multiSelect() {
         _.scrollList(true);
       }
     });
+
+    // Add dynamic listener to the list element, to check when the user clicks an option
     jsHelper.addDynamicListener(_.ul, '.option', 'click', function optionClick() {
       _.setActive(this);
       _.setSelected();
     });
 
+    // Event when the user focuses out of the element
     _.ul.addEventListener('focusout', function clearState() {
       _.clearActives();
       _.clearCaches();
     });
-
+    
+    // Check for keypresses in the list element
     _.ul.addEventListener('keyup', function charMatches(e) {
       e.preventDefault();
       var keyLower = e.key.toLowerCase();
       if (regExp.test(keyLower) === false) {
         return;
       }
-
       if (_.charCache !== keyLower) {
         _.clearCaches();
       }
 
-      var hasActive = _.active ? _.active.getAttribute('data-formatted').substring(0, 1) === keyLower : false;
+      var hasActive = _.active ? _.active.getAttribute('data-formatted')[0].toLowerCase() === keyLower : false;
 
       if (_.wordCache.length === 0) {
-        _.words.forEach(function appendToUl(word) {
-          var char = word.getAttribute('data-formatted').substring(0, 1);
-          if (char === keyLower && !word.classList.contains('hidden')) {
-            _.wordCache.push(word.value);
+        _.words.forEach(function appendToUl(option) {
+          var char = option.getAttribute('data-formatted')[0];
+          char = char.toLowerCase();
+          if (char === keyLower && !option.classList.contains('hidden')) {
+            _.wordCache.push(option);
           }
         });
       }
@@ -161,24 +171,18 @@ finna.multiSelect = (function multiSelect() {
         _.setActive(_.wordCache[0]);
         _.scrollList(true);
       } else {
-        var oldId = null;
-        var k = 0;
-        _.wordCache.forEach(function getNextActive(word){
-          if (word.classList.contains('active')) {
-            oldId = k + 1;
+        var lookFor = 0;
+        for (var k = 0; k < _.wordCache.length && k > -1; k++) {
+          var current = _.wordCache[k];
+          if (current.classList.contains('active')) {
+            lookFor = jsHelper.keepIndexInBounds(k + 1, 0, _.wordCache.length - 1, true);
+            if (_.wordCache[lookFor]) {
+              _.setActive(_.wordCache[lookFor]);
+              _.scrollList(true);
+              break;
+            }
           }
-
-          if (oldId === k) {
-            _.setActive(word);
-            _.scrollList(true);
-            return false;
-          }
-
-          if (oldId === _.wordCache.length) {
-            _.setActive(_.wordCache[0]);
-            _.scrollList(true);
-          }
-        });
+        }
       }
       _.charCache = keyLower;
 
@@ -196,13 +200,18 @@ finna.multiSelect = (function multiSelect() {
 
       if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
         var found = null;
-        if (_.active && _.active.classList.contains('option-parent')) {
-          console.log("Yup");
-        }
+        var index = +_.active.getAttribute('data-target');
+        var direction = 1;
         if (e.key === 'ArrowUp') {
-          found = jsHelper.getPreviousElementSibling(_.active, 'li:not(.hidden)');
-        } else if (e.key === 'ArrowDown') {
-          found = jsHelper.getNextElementSibling(_.active, 'li:not(.hidden)');
+          direction = -1;
+        }
+        index = jsHelper.keepIndexInBounds(index + direction, 0, _.words.length, true);
+        for (; index < _.words.length && index > -1; index += direction) {
+          var current = _.words[index];
+          if (+current.getAttribute('data-target') === index && !current.classList.contains('hidden')) {
+            found = current;
+            break;
+          }
         }
   
         if (found) {
@@ -239,22 +248,22 @@ finna.multiSelect = (function multiSelect() {
         } else {
           for (var k = 0; k < _.words.length; k++) {
             var child = _.words[k];
-
-            if (String(child.getAttribute('data-formatted').toLowerCase()).indexOf(curVal) !== -1) {
+            var lookFor = child.getAttribute('data-formatted').toLowerCase();
+            if (String(lookFor).indexOf(curVal) !== -1) {
               child.classList.remove('hidden');
+              // If a child node has a parent node, then we need to keep them also displayed
+              if (!child.classList.contains('option-parent')) {
+                var parents = jsHelper.getParentsUntil(child, 'li.option-parent');
+                parents.forEach(function showParent(parent) {
+                  parent.classList.remove('hidden');
+                });
+              } 
             } else {
               child.classList.add('hidden');
             }
-            var hierarchyLine = [];
-            if (hierarchyLine.length !== 0) {
-              var parent = jsHelper.getPreviousElementSibling(child, '.option-parent');
-              if (parent && parent.classList.contains('hidden') && !child.classList.contains('hidden')) {
-                parent.classList.remove('hidden');
-              }
-            }
           }
         }
-      }, 100);
+      }, 200);
     });
   };
 

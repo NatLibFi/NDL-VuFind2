@@ -29,7 +29,6 @@ var jsHelper = (function jsHelper() {
    */
   function getNextElementSibling(elem, selector) {
     var sibling = elem.nextElementSibling;
-
     while (sibling) {
       if (sibling.matches(selector)) {
         return sibling;
@@ -47,7 +46,6 @@ var jsHelper = (function jsHelper() {
    */
   function getPreviousElementSibling(elem, selector) {
     var sibling = elem.previousElementSibling;
-
     while (sibling) {
       if (sibling.matches(selector)) {
         return sibling;
@@ -58,7 +56,7 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Binds an event to the element and given selector checks if the event can be ran
+   * Binds an event to the element and given selector checks if the event can be ran.
    * Useful for binding events to dynamically created buttons etc.
    * 
    * @param {HTMLElement} el
@@ -79,10 +77,27 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Find parent which matches the selector
+   * Find all parents of element until selector is satisfied.
    * 
    * @param {HTMLElement} el 
-   * @param {String} selector 
+   * @param {String} selector
+   */
+  function getParentsUntil(el, selector) {
+    var parents = [];
+    for (var target = el.parentNode; target; target = target.parentNode) {
+      parents.push(target);
+      if (target.matches(selector)) {
+        return parents;
+      }
+    }
+    return [];
+  }
+
+  /**
+   * Find parent which matches the selector.
+   * 
+   * @param {HTMLElement} el 
+   * @param {String} selector
    */
   function findParent(el, selector) {
     for (var target = el.parentNode; target; target = target.parentNode) {
@@ -94,7 +109,7 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Check if the element is same as selector
+   * Check if the element is same as selector.
    * 
    * @param {object} el 
    * @param {String} selector 
@@ -104,7 +119,7 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Check if the element is same as selector
+   * Check if the element is same as selector.
    * 
    * @param {HTMLElement} el 
    * @param {String} selector 
@@ -119,7 +134,7 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Return the outer height of element with margin
+   * Return the outer height of element with margin.
    * 
    * @param {HTMLElement} el 
    */
@@ -132,7 +147,7 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Return the outer width of element with margin
+   * Return the outer width of element with margin.
    * 
    * @param {HTMLElement} el 
    */
@@ -145,9 +160,10 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Add a listener for when DOMContent has been loaded
+   * Add a listener for when DOMContent has been loaded.
+   * If the DOMContent has been loaded, trigger immediatly.
    * 
-   * @param {Function} el 
+   * @param {Function} fn 
    */
   function ready(fn) {
     if (document.readyState !== 'loading'){
@@ -158,13 +174,13 @@ var jsHelper = (function jsHelper() {
   }
   
   /**
-   * Trigger a custom event
+   * Bind a custom event to an element.
    * 
    * @param {HTMLElement} el
    * @param {String} eventName 
    * @param {Object} data 
    */
-  function triggerCustomEvent(el, eventName, data) {
+  function bindCustomEvent(el, eventName, data) {
     var event;
     if (window.CustomEvent && typeof window.CustomEvent === 'function') {
       event = new CustomEvent(eventName, {detail: data});
@@ -177,31 +193,40 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Trigger a native event
-   * 
-   * @param {HTMLElement} el 
-   * @param {String} eventName 
-   */
-  function triggerNativeEvent(el, eventName) {
-    var event = document.createEvent('HTMLEvents');
-    event.initEvent(eventName, true, false);
-    el.dispatchEvent(event);
-  }
-
-  /**
    * Get position of elements as top and left object
    * 
-   * @param {HTMLElement} element 
+   * @param {HTMLElement} el 
    */
-  function getPosition(element) {
-    var style = window.getComputedStyle(element);
+  function getPosition(el) {
+    var style = window.getComputedStyle(el);
     var marginTop = style.getPropertyValue('margin-top');
     var marginLeft = style.getPropertyValue('margin-left');
 
     return {
-      top: element.offsetTop - parseFloat(marginTop),
-      left: element.offsetLeft - parseFloat(marginLeft)
+      top: el.offsetTop - parseFloat(marginTop),
+      left: el.offsetLeft - parseFloat(marginLeft)
     };
+  }
+
+  /**
+   * Keep the given index inside min and max values. If cycle is true
+   * then start from min if it is over max and vice versa.
+   * 
+   * @param {Integer} index 
+   * @param {Integer} min 
+   * @param {Integer} max 
+   * @param {boolean} cycle 
+   */
+  function keepIndexInBounds(index, min, max, cycle) {
+    if (cycle) {
+      if (index > max) {
+        return cycle ? min : max;
+      }
+      if (index < min) {
+        return cycle ? max : min;
+      }
+    }
+    return index;
   }
 
   var my = {
@@ -210,14 +235,15 @@ var jsHelper = (function jsHelper() {
     outerHeightWithMargin: outerHeightWithMargin,
     outerWidthWithMargin: outerWidthWithMargin,
     ready: ready,
-    triggerCustomEvent: triggerCustomEvent,
-    triggerNativeEvent: triggerNativeEvent,
+    bindCustomEvent: bindCustomEvent,
     createElement: createElement,
     addDynamicListener: addDynamicListener,
     getPosition: getPosition,
     getNextElementSibling: getNextElementSibling,
     getPreviousElementSibling: getPreviousElementSibling,
-    findParent: findParent
+    findParent: findParent,
+    keepIndexInBounds: keepIndexInBounds,
+    getParentsUntil: getParentsUntil
   };
 
   return my;
