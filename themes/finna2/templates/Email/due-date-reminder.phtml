@@ -1,4 +1,4 @@
-<?= $this->translate('due_date_hello') ?>
+<?= $this->transEsc('due_date_hello', ['%%firstname%%' => $this->firstname])?>
 
 
 <?php if (!empty($this->loans)): ?>
