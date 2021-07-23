@@ -439,13 +439,24 @@
       margin: 0;
       border-top: none;
       position: relative;
-      .parent-holder {
-        width: 100%;
-      }
       .option {
         &.option-parent {
           background-color: white;
           z-index: 1;
+          &.root >.parent-holder {
+            width: 100%;
+            overflow: hidden;
+            position: relative;
+            &::before {
+              content: "";
+              border-left: 2px solid lightgray;
+              position: absolute;
+              height: 100%;
+              z-index: 6;
+              left: 2px;
+              top: -13px;
+            }            
+          }
         }
         padding: 2px 0;
         user-select: none;
@@ -454,7 +465,8 @@
         -webkit-user-select: none;
 
         .value {
-          display: inline-block;
+          display: block;
+          height: 28px;
         }
 
         .value:before {
@@ -478,32 +490,18 @@
         .generate-hierarchy(6);
         .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
           &.child-width-@{i} {
-            padding-left: (@i * 10px);
-            &::before {
-              display: inline-block;
+            padding: 0 0 0 10px;
+            position: relative;
+            >.line {
+              height: 2px;
               position: absolute;
-              content: "";
+              left: 3px - ((@i - 1) * 10);
+              top: 14px;
               border-bottom: 2px solid lightgray;
-              border-left: 2px solid lightgray;
               width: @i * 10px;
-              height: 100%;
-              left: 3px;
-              /* top: -50%; */
-              z-index: 5;
-              left: 3px;
             }
           }
           .generate-hierarchy(@n, (@i + 1));
-        }
-        .hierarchy-line {
-          display: inline-block;
-          position: absolute;
-          z-index: 0;
-          border-bottom: 2px solid lightgray;
-          border-left: 2px solid lightgray;
-          height: 100%;
-          left: 4px;
-          top: -50%;
         }
       }
     }

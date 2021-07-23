@@ -78,10 +78,17 @@ finna.multiSelect = (function multiSelect() {
           currentParent = jsHelper.findParent(currentParent, 'ul.parent-holder');
         }
         if (level === 0) {
-          optionClone.classList.add('option-parent');
-          optionClone.setAttribute('aria-expanded', 'true');       
           _.ul.append(optionClone);
         } else {
+          if (beforeLevel !== level) {
+            if (beforeLevel === 0) {
+              previousElement.classList.add('root');
+            }
+            previousElement.classList.add('option-parent');
+            previousElement.setAttribute('aria-expanded', 'true');
+          }
+          var line = jsHelper.createElement('div', 'line');
+          optionClone.insertAdjacentElement('afterbegin', line);
           optionClone.classList.add('option-child');
           optionClone.classList.add('child-width-' + level);
           currentParent.insertAdjacentElement('beforeend', optionClone);
@@ -154,8 +161,7 @@ finna.multiSelect = (function multiSelect() {
 
       if (_.wordCache.length === 0) {
         _.words.forEach(function appendToUl(option) {
-          var char = option.getAttribute('data-formatted')[0];
-          char = char.toLowerCase();
+          var char = option.getAttribute('data-formatted')[0].toLowerCase();
           if (char === keyLower && !option.classList.contains('hidden')) {
             _.wordCache.push(option);
           }
@@ -243,7 +249,11 @@ finna.multiSelect = (function multiSelect() {
         var curVal = _.searchField.value.toLowerCase();
         if (curVal.length === 0) {
           for (var o = 0; o < _.words.length; o++) {
-            _.words[o].classList.remove('hidden');
+            var option = _.words[o];
+            option.classList.remove('hidden');
+            if (option.classList.contains('option-parent')) {
+              option.setAttribute('aria-expanded', 'true');
+            }
           }
         } else {
           for (var k = 0; k < _.words.length; k++) {
@@ -252,14 +262,20 @@ finna.multiSelect = (function multiSelect() {
             if (String(lookFor).indexOf(curVal) !== -1) {
               child.classList.remove('hidden');
               // If a child node has a parent node, then we need to keep them also displayed
-              if (!child.classList.contains('option-parent')) {
-                var parents = jsHelper.getParentsUntil(child, 'li.option-parent');
+              if (child.classList.contains('option-child')) {
+                var parents = jsHelper.getParentsUntil(child, "li.root");
                 parents.forEach(function showParent(parent) {
                   parent.classList.remove('hidden');
+                  if (parent.classList.contains('option-parent')) {
+                    parent.setAttribute('aria-expanded', 'true');
+                  }
                 });
-              } 
+              }
             } else {
               child.classList.add('hidden');
+              if (child.classList.contains('option-parent')) {
+                child.setAttribute('aria-expanded', 'false');
+              }
             }
           }
         }
