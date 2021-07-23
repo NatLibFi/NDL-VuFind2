@@ -1,3 +1,6 @@
+<?= $this->transEsc('due_date_hello', ['%%firstname%%' => $this->firstname])?>
+
+
 <?=$this->translate('New results found for search') ?>:
   <?=empty($info['description']) ? $this->translate('history_empty_search') : $this->escapeHtml($info['description'])?>
 
