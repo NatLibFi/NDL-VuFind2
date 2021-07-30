@@ -471,7 +471,7 @@ $config = [
                 ],
                 'aliases' => [
                     'addToList' => 'Finna\AjaxHandler\AddToList',
-                    'updateHolds' => 'Finna\AjaxHandler\updateHolds',
+                    'updateHolds' => 'Finna\AjaxHandler\UpdateHolds',
                     'changeRequestStatus' => 'Finna\AjaxHandler\ChangeRequestStatus',
                     'checkRequestsAreValid' => 'Finna\AjaxHandler\CheckRequestsAreValid',
                     'editList' => 'Finna\AjaxHandler\EditList',
