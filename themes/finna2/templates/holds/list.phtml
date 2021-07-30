@@ -5,11 +5,7 @@
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('My Holds') . '</li>';
     $user = $this->auth()->isLoggedIn();
-    // Add finna-holds.js
-    $this->headScript()->appendFile('finna-holds.js');
     $patron = $user ? $this->auth()->getILSPatron() : false;
-    $changePickupLocation = $this->ils()->checkFunction('changePickupLocation', [$patron]);
-    $changeRequestStatus = $this->ils()->checkFunction('changeRequestStatus', [$patron]);
 ?>
 
 <!-- Leftside navigationbar -->
@@ -191,23 +187,7 @@
                     <?php if (!empty($pickupDisplay)): ?>
                       <div class="pickup-location-container">
                         <strong><?=$this->transEsc('pick_up_location') ?>:</strong>
-                        <?php if (isset($ilsDetails['available']) && !$ilsDetails['available'] && $changePickupLocation && $requestIsEditable): ?>
-                          <div class="changeHolds" data-record-id="<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" data-request-id="<?=$this->escapeHtml($ilsDetails['requestId']) ?>" data-item-id="<?=$this->escapeHtml($ilsDetails['item_id'] ?? '') ?>">
-                            <span class="pickup-change-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i></span>
-                            <div class="view-button pickup-location">
-                              <div class="dropdown">
-                                <a href="" class="dropdown-toggle" data-toggle="dropdown">
-                                  <span class="pickupLocationSelected"><?=$pickupTranslate ? $this->transEsc($pickupDisplay) : $this->escapeHtml($pickupDisplay)?></span> <i class="fa fa-arrow-down"></i>
-                                </a>
-                                <ul class="dropdown-menu pickup-locations" role="menu">
-                                  <li role="menuitem" class="pickup-location-load-indicator hidden"><a><i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...</a></li>
-                                </ul>
-                              </div>
-                            </div>
-                          </div>
-                        <?php else:?>
-                          <?=$pickupTranslate ? $this->transEsc($pickupDisplay) : $this->escapeHtml($pickupDisplay)?>
-                        <?php endif; ?>
+                        <?=$pickupTranslate ? $this->transEsc($pickupDisplay) : $this->escapeHtml($pickupDisplay)?>
                       </div>
                     <?php endif; ?>
 
@@ -253,17 +233,7 @@
                       <?php endif; ?>
                     <?php endif; ?>
 
-                    <?php if (isset($ilsDetails['available']) && !$ilsDetails['available'] && $changeRequestStatus && $requestIsEditable): ?>
-                      <div class="change-hold-status" data-record-id="<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" data-request-id="<?=$this->escapeHtml($ilsDetails['requestId']) ?>" >
-                        <span class="status-change-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i></span>
-                        <span class="hold-status-active<?=!empty($ilsDetails['frozen']) ? ' hidden' : '' ?>">
-                          <a class="hold-status-freeze" href="#"><?=$this->transEsc('request_freeze') ?></a>
-                        </span>
-                        <span class="hold-status-frozen<?=!empty($ilsDetails['frozen']) ? '' : ' hidden' ?>">
-                          <?=$this->transEsc('request_frozen') ?>&nbsp;-&nbsp;<a class="hold-status-release" href="#"><?=$this->transEsc('request_release') ?></a>
-                        </span>
-                      </div>
-                    <?php elseif (!empty($ilsDetails['frozen'])): ?>
+                    <?php if (!empty($ilsDetails['frozen'])): ?>
                       <strong>
                         <?php if (empty($ilsDetails['frozenThrough'])): ?>
                           <?=$this->transEsc('hold_frozen') ?>

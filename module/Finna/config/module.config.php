@@ -394,10 +394,6 @@ $config = [
                 'factories' => [
                     'Finna\AjaxHandler\AddToList' =>
                         'Finna\AjaxHandler\AddToListFactory',
-                    'Finna\AjaxHandler\ChangePickupLocation' =>
-                        'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
-                    'Finna\AjaxHandler\ChangeRequestStatus' =>
-                        'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\CheckRequestsAreValid' =>
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\CommentRecord' =>
@@ -471,8 +467,6 @@ $config = [
                 ],
                 'aliases' => [
                     'addToList' => 'Finna\AjaxHandler\AddToList',
-                    'changePickupLocation' => 'Finna\AjaxHandler\ChangePickupLocation',
-                    'changeRequestStatus' => 'Finna\AjaxHandler\ChangeRequestStatus',
                     'checkRequestsAreValid' => 'Finna\AjaxHandler\CheckRequestsAreValid',
                     'editList' => 'Finna\AjaxHandler\EditList',
                     'editListResource' => 'Finna\AjaxHandler\EditListResource',
