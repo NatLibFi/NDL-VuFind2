@@ -20,7 +20,7 @@ finna.changeHolds = (function finnaChangeHolds() {
       pickupLocationsSelected.text(locationDisplay);
 
       var params = {
-        method: 'changePickupLocation',
+        method: 'updateHolds',
         id: recordId,
         itemId: itemId,
         requestId: requestId,
@@ -32,7 +32,7 @@ finna.changeHolds = (function finnaChangeHolds() {
         cache: false,
         url: VuFind.path + '/AJAX/JSON'
       })
-        .done(function onChangePickupLocationDone(response) {
+        .done(function onUpdateHoldsDone(response) {
           spinnerChange.addClass('hidden');
           if (response.data.success) {
             var success = $('<div></div>').attr('class', 'alert alert-success hold-change-success').text(VuFind.translate('change_hold_success'));
@@ -41,7 +41,7 @@ finna.changeHolds = (function finnaChangeHolds() {
             hold.closest('.pickup-location-container').append(errorOccured);
           }
         })
-        .fail(function onChangePickupLocationFail() {
+        .fail(function onUpdateHoldsFail() {
           spinnerChange.addClass('hidden');
           hold.append(errorOccured);
         });
@@ -60,11 +60,12 @@ finna.changeHolds = (function finnaChangeHolds() {
         var recordId = $(this).data('recordId');
         var itemId = $(this).data('itemId');
         var requestId = $(this).data('requestId');
+        var requestGroupId = $(this).data('requestType');
         var params = {
           method: 'getRequestGroupPickupLocations',
           id: recordId,
           itemId: itemId,
-          requestGroupId: '0',
+          requestGroupId: requestGroupId ? requestGroupId : '0',
           requestId: requestId
         };
         $.ajax({

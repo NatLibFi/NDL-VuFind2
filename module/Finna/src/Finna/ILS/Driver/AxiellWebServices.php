@@ -512,9 +512,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $username = $user['cat_username'];
         $password = $user['cat_password'];
 
-        $id = !empty($holdDetails['item_id'])
-            ? $holdDetails['item_id']
-            : ($holdDetails['id'] ?? '');
+        $id = $holdDetails['id'] ?? '';
 
         $holdType = $this->getHoldType($holdDetails);
 
@@ -2397,7 +2395,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             = $this->objectToArray(
                 $result->$functionResult->reservations->reservation
             );
-
+        echo "<pre>";
+        var_dump($reservations);
+        echo "</pre>";
         foreach ($reservations as $reservation) {
             $expireDate = $reservation->reservationStatus == 'fetchable'
                 ? $reservation->pickUpExpireDate : $reservation->validToDate;
@@ -2454,6 +2454,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'title' => $title,
                 'cancel_details' => $updateDetails,
                 'updateDetails' => $updateDetails,
+                'request_type' => $reservation->reservationType ?? 'normal'
             ];
             $holdsList[] = $hold;
         }

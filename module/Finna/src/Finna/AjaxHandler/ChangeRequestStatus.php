@@ -93,7 +93,7 @@ class ChangeRequestStatus extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 
             return $this->formatResponse($results);
         } catch (\Exception $e) {
-            $this->logError('changePickupLocation failed: ' . $e->getMessage());
+            $this->logError('updateHolds failed: ' . $e->getMessage());
             // Fall through to the error message below.
         }
 

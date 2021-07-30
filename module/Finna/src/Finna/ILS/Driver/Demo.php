@@ -73,7 +73,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
             return !empty($this->config['PasswordRecovery']['enabled'])
                 ? $this->config['PasswordRecovery'] : false;
         }
-        if ('changePickupLocation' === $function) {
+        if ('updateHolds' === $function) {
             return ['method' => 'driver'];
         }
 
@@ -302,7 +302,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
      *
      * @return array Associative array of the results
      */
-    public function changePickupLocation($patron, $holdDetails)
+    public function updateHolds($patron, $holdDetails)
     {
         $requestId = $holdDetails['requestId'];
         $pickUpLocation = $holdDetails['pickupLocationId'];

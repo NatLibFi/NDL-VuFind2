@@ -8,7 +8,7 @@
     // Add finna-holds.js
     $this->headScript()->appendFile('finna-holds.js');
     $patron = $user ? $this->auth()->getILSPatron() : false;
-    $changePickupLocation = $this->ils()->checkFunction('changePickupLocation', [$patron]);
+    $updateHolds = $this->ils()->checkFunction('updateHolds', [$patron]);
     $changeRequestStatus = $this->ils()->checkFunction('changeRequestStatus', [$patron]);
 ?>
 
@@ -191,8 +191,8 @@
                     <?php if (!empty($pickupDisplay)): ?>
                       <div class="pickup-location-container">
                         <strong><?=$this->transEsc('pick_up_location') ?>:</strong>
-                        <?php if (isset($ilsDetails['available']) && !$ilsDetails['available'] && $changePickupLocation && $requestIsEditable): ?>
-                          <div class="changeHolds" data-record-id="<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" data-request-id="<?=$this->escapeHtml($ilsDetails['requestId']) ?>" data-item-id="<?=$this->escapeHtml($ilsDetails['item_id'] ?? '') ?>">
+                        <?php if (isset($ilsDetails['available']) && !$ilsDetails['available'] && $updateHolds && $requestIsEditable): ?>
+                          <div class="changeHolds" data-record-id="<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" data-request-id="<?=$this->escapeHtml($ilsDetails['reqnum']) ?>" data-item-id="<?=$this->escapeHtml($ilsDetails['item_id'] ?? '') ?>" data-request-type="<?=$this->escapeHtml($ilsDetails['request_type'] ?? '')?>">
                             <span class="pickup-change-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i></span>
                             <div class="view-button pickup-location">
                               <div class="dropdown">
@@ -240,7 +240,7 @@
 
                     <?php if (isset($this->cancelResults['items'])): ?>
                       <?php foreach ($this->cancelResults['items'] as $itemId => $cancelResult): ?>
-                        <?php if (($itemId == $ilsDetails['item_id'] || $itemId == ($ilsDetails['requestId'] ?? '')) && $cancelResult['success'] == false): ?>
+                        <?php if (($itemId == $ilsDetails['item_id'] || $itemId == ($ilsDetails['reqnum'] ?? '')) && $cancelResult['success'] == false): ?>
                           <div class="alert alert-danger"><?=$this->transEsc($cancelResult['status']) ?><?php if ($cancelResult['sysMessage']) echo ' : ' . $this->transEsc($cancelResult['sysMessage']); ?></div>
                         <?php endif; ?>
                       <?php endforeach; ?>
@@ -254,7 +254,7 @@
                     <?php endif; ?>
 
                     <?php if (isset($ilsDetails['available']) && !$ilsDetails['available'] && $changeRequestStatus && $requestIsEditable): ?>
-                      <div class="change-hold-status" data-record-id="<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" data-request-id="<?=$this->escapeHtml($ilsDetails['requestId']) ?>" >
+                      <div class="change-hold-status" data-record-id="<?=$this->escapeHtmlAttr($resource->getUniqueId()) ?>" data-request-id="<?=$this->escapeHtml($ilsDetails['reqnum']) ?>" data-request-type="<?=$this->escapeHtml($ilsDetails['request_type'] ?? '')?>">
                         <span class="status-change-load-indicator hidden"><i class="fa fa-spinner fa-spin"></i></span>
                         <span class="hold-status-active<?=!empty($ilsDetails['frozen']) ? ' hidden' : '' ?>">
                           <a class="hold-status-freeze" href="#"><?=$this->transEsc('request_freeze') ?></a>

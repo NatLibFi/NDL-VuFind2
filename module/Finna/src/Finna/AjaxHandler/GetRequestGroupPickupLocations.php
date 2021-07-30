@@ -58,8 +58,7 @@ class GetRequestGroupPickupLocations
     public function handleRequest(Params $params)
     {
         $this->disableSessionWrites();  // avoid session write timing bug
-        $id = $params->fromQuery('id');
-        $itemId = $params->fromQuery('itemId');
+        $id = $params->fromQuery('id', $params->fromQuery('itemId'));
         $requestGroupId = $params->fromQuery('requestGroupId');
         $requestId = $params->fromQuery('requestId');
         if (null === $id || null === $requestGroupId) {
@@ -80,7 +79,6 @@ class GetRequestGroupPickupLocations
             if ($patron = $this->ilsAuthenticator->storedCatalogLogin()) {
                 $details = [
                     'id' => $id,
-                    'item_id' => $itemId,
                     'requestGroupId' => $requestGroupId,
                     'requestId' => $requestId,
                 ];

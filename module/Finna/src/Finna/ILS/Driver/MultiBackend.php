@@ -313,16 +313,16 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
      * @return mixed An array of data on the request including
      * whether or not it was successful and a system message (if available)
      */
-    public function changePickupLocation($patron, $holdDetails)
+    public function updateHolds($patron, $holdDetails)
     {
         $source = $this->getSource($patron['cat_username']);
         $driver = $this->getDriver($source);
         if ($driver
             && $this->methodSupported(
-                $driver, 'changePickupLocation', [$patron, $holdDetails]
+                $driver, 'updateHolds', [$patron, $holdDetails]
             )
         ) {
-            return $driver->changePickupLocation(
+            return $driver->updateHolds(
                 $this->stripIdPrefixes($patron, $source),
                 $this->stripIdPrefixes(
                     $holdDetails, $source, ['id', 'cat_username', 'item_id']

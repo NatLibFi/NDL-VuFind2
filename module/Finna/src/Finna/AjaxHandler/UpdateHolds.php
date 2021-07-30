@@ -1,6 +1,6 @@
 <?php
 /**
- * AJAX handler for changing pickup location.
+ * AJAX handler for updating holds.
  *
  * PHP version 7
  *
@@ -30,15 +30,16 @@ namespace Finna\AjaxHandler;
 use Laminas\Mvc\Controller\Plugin\Params;
 
 /**
- * AJAX handler for changing pickup location.
+ * AJAX handler for updating holds.
  *
  * @category VuFind
  * @package  AJAX
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ChangePickupLocation extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
+class UpdateHolds extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
     implements \Laminas\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
@@ -75,7 +76,7 @@ class ChangePickupLocation extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 
         try {
             $result = $this->ils->checkFunction(
-                'changePickupLocation', compact('patron')
+                'updateHolds', compact('patron')
             );
             if (!$result) {
                 return $this->formatResponse(
@@ -90,11 +91,11 @@ class ChangePickupLocation extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                 'requestId' => $requestId,
                 'pickupLocationId' => $pickupLocationId
             ];
-            $results = $this->ils->changePickupLocation($patron, $details);
+            $results = $this->ils->updateHolds($patron, $details);
 
             return $this->formatResponse($results);
         } catch (\Exception $e) {
-            $this->logError('changePickupLocation failed: ' . $e->getMessage());
+            $this->logError('updateHolds failed: ' . $e->getMessage());
             // Fall through to the error message below.
         }
 

@@ -261,7 +261,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for changePickupLocation
+     * Check for updateHolds
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports change of
@@ -274,13 +274,13 @@ class Connection extends \VuFind\ILS\Connection
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function checkMethodchangePickupLocation($functionConfig, $params)
+    protected function checkMethodupdateHolds($functionConfig, $params)
     {
         if (!isset($functionConfig['method'])) {
             return false;
         }
 
-        if ($this->checkCapability('changePickupLocation', [$params ?: []])
+        if ($this->checkCapability('updateHolds', [$params ?: []])
         ) {
             return $functionConfig;
         }
