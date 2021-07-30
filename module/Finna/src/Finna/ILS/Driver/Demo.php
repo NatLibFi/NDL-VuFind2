@@ -293,21 +293,22 @@ class Demo extends \VuFind\ILS\Driver\Demo
     }
 
     /**
-     * Change pickup location
+     * Update holds
      *
-     * This is responsible for changing the pickup location of a hold
+     * This is responsible for changing the status of hold requests
      *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
+     * @param array $holdsDetails The details identifying the holds
+     * @param array $fields       An associative array of fields to be updated
+     * @param array $patron       Patron array
      *
      * @return array Associative array of the results
      */
-    public function updateHolds($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $pickUpLocation = $holdDetails['pickupLocationId'];
+    public function updateHolds(array $holdsDetails, array $fields, array $patron
+    ): array {
+        $requestId = $holdsDetails['requestId'];
+        $pickUpLocation = $holdsDetails['pickupLocationId'];
 
-        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
+        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdsDetails)) {
             return $this->holdError('hold_invalid_pickup');
         }
 

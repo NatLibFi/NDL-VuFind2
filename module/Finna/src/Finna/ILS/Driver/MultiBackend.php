@@ -303,29 +303,29 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
     }
 
     /**
-     * Change Pickup Location
+     * Update holds
      *
-     * Attempts to change the pickup location of a specific hold
+     * This is responsible for changing the status of hold requests
      *
-     * @param array $patron      The patron array from patronLogin
-     * @param array $holdDetails The request details
+     * @param array $holdsDetails The details identifying the holds
+     * @param array $fields       An associative array of fields to be updated
+     * @param array $patron       Patron array
      *
-     * @return mixed An array of data on the request including
-     * whether or not it was successful and a system message (if available)
+     * @return array Associative array of the results
      */
-    public function updateHolds($patron, $holdDetails)
+    public function updateHolds(array $holdsDetails, array $fields, array $patron)
     {
         $source = $this->getSource($patron['cat_username']);
         $driver = $this->getDriver($source);
         if ($driver
             && $this->methodSupported(
-                $driver, 'updateHolds', [$patron, $holdDetails]
+                $driver, 'updateHolds', [$patron, $holdsDetails]
             )
         ) {
             return $driver->updateHolds(
                 $this->stripIdPrefixes($patron, $source),
                 $this->stripIdPrefixes(
-                    $holdDetails, $source, ['id', 'cat_username', 'item_id']
+                    $holdsDetails, $source, ['id', 'cat_username', 'item_id']
                 )
             );
         }
