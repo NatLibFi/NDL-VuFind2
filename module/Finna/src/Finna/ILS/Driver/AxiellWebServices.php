@@ -2395,9 +2395,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             = $this->objectToArray(
                 $result->$functionResult->reservations->reservation
             );
-        echo "<pre>";
-        var_dump($reservations);
-        echo "</pre>";
+
         foreach ($reservations as $reservation) {
             $expireDate = $reservation->reservationStatus == 'fetchable'
                 ? $reservation->pickUpExpireDate : $reservation->validToDate;
