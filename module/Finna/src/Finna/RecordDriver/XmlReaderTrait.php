@@ -67,6 +67,10 @@ trait XmlReaderTrait
 
     /**
      * Given a path will try to find all the nodes and return them in an array
+     * Filters to fetch only certain nodes can be marked like follows:
+     * /nodetolook@[key0==value0,key1!=value1]
+     * For xpath version of // you can use />> to search for all the nodes
+     * This will also work
      * 
      * @param string            $path Nodes to search
      * @param \SimpleXMLElement $xml  Xml node object
@@ -81,8 +85,10 @@ trait XmlReaderTrait
             array_shift($exploded);
         }
         $formatted = [];
+        $e = 0;
         // Format paths into a more readable format
-        foreach ($exploded as $path) {
+        do {
+            $path = $exploded[$e];
             if (!empty($path)) {
                 $filters = ['not' => [], 'is' => []];
                 $start = strpos($path, '@[');
@@ -94,7 +100,8 @@ trait XmlReaderTrait
                         // Remove the last character as it is ] 
                         $extracted = mb_substr($attrs, 0, -1);
                         $values = explode(',', $extracted);
-                        for ($i = 0; $i < count($values); $i++) {
+                        $i = 0;
+                        do {
                             $cur = $values[$i];
                             if (strpos($cur, '==') !== false) {
                                 [$key, $value] = explode('==', $cur, 2);
@@ -103,7 +110,8 @@ trait XmlReaderTrait
                                 [$key, $value] = explode('!=', $cur, 2);
                                 $filters['not'][$key] = $value;
                             }
-                        }
+                            $i++;
+                        } while($i < count($values));
                     }
                 } else {
                     $node = $path;
@@ -117,13 +125,14 @@ trait XmlReaderTrait
                     switch ($special) {
                     case '>>':
                         $node = mb_substr($node, 2);
-                        $flags = ['allChildren' => true, 'name' => $node];
+                        $flags = ['allUntil' => true];
                         break;
                     }
                 }
                 $formatted[] = compact('node', 'filters', 'flags');
             }
-        }
+            $e++;
+        } while ($e < count($exploded));
         if (count($formatted) > 0) {
             $result = $this->parseNodes($xml ?? $this->getXmlRecord(), $formatted);
         }
@@ -133,74 +142,100 @@ trait XmlReaderTrait
 
     /**
      * Function to check the nodes if occurence is found
-     * Filters to fetch only certain nodes can be marked like follows:
-     * /nodetolook@[key0==value0,key1!=value1]
      *
      * @param \SimpleXMLElement $xml   Xml node object
      * @param array             $paths Nodes to search
      * 
      * @return array
      */
-    protected function parseNodes(\SimpleXMLElement $xml, array $paths, array $flags = []): array
-    {
-        $searchUntil = false;
-        $nodeFlags = [];
+    protected function parseNodes(
+        \SimpleXMLElement $xml, array $paths
+    ): array {
         // Check the first node of array
-        $find = $paths[0] ?? [];
-
-        if (!empty($flags['allChildren'])) {
-            $searchUntil = true;
+        $j = 0; // Level of nodes
+        $find = $paths[$j++] ?? [];
+        if (empty($find)) {
+            return [];
         }
-
-        // Lets see if node contains any flags
-        if (!$searchUntil && !empty($find['flags'])) {
-            $nodeFlags = $find['flags'];
-            if (!empty($nodeFlags['allChildren'])) {
-                $searchUntil = true;
-            }
-        }
-
-        if (!$searchUntil) {
-            array_shift($paths);
-            $filters = $find['filters'];
-        } else {
-            $nodeFlags = $flags;
-        }
-
-        $node = $find['node'];
-
         $found = [];
-        $stash = [];
-        $nodes = $searchUntil ? $xml->children() : $xml->$node;
+        $lookfor = $find['node'];
+        $stash = $xml->$lookfor;
+        $nodes = [];
+        $all = false;
+        $i = 0;
+        $prevJ = 0; // Memory of the latest level, used for comparison
+        // Loop variables
+        $find = [];
+        $filters = [];
+        $flags = [];
+        do {
+            $tmp = $stash[$i] ?? [];
+            if (empty($tmp)) {
+                break;
+            }
+            if ($prevJ !== $j && !$all) {
+                $find = $paths[$j] ?? [];
+                $filters = $find['filters'];
+                $lookfor = $find['node'];
+                $flags = $find['flags'];
+            }
 
-        if (!empty($nodes)) {
-            for ($n = 0; $n < count($nodes); $n++) {
-                $cur = $nodes[$n];
+            $nodes = [];
+            $i++;
+            /*if (!empty($find['flags']['allUntil'])) {
+                $all = true;
+            }*/
+
+            $children = $all ? $tmp->children() : $tmp->$lookfor;
+            echo $lookfor;
+            // Check the children if they are a match
+            $n = 0;
+
+            do {
+                $cur = $children[$n] ?? [];
+                if (empty($cur)) {
+                    break;
+                }
                 $allow = true;
-                $attrs = $cur->attributes();
-                foreach ($filters['is'] ?? [] as $key => $value) {
-                    if (empty($attrs->$key) || $attrs->$key !== $value) {
-                        $allow = false;
-                        continue;
+                if (!empty($filters['is']) || !empty($filters['not'])) {
+                    $attrs = $cur->attributes();
+                    foreach ($filters['is'] ?? [] as $key => $value) {
+                        if (empty($attrs->$key) || $attrs->$key !== $value) {
+                            $allow = false;
+                            continue;
+                        }
                     }
-                }
-                foreach ($filters['not'] ?? [] as $key => $value) {
-                    if (!empty($attrs->$key) && $attrs->$key === $value) {
-                        $allow = false;
-                        continue;
-                    }
-                }
-                if ($allow) {
-                    if (empty($paths) || ($searchUntil && $cur->getName() === $node)) {
-                        $found[] = $cur;
-                    } else {
-                        if ($result = $this->parseNodes($cur, $paths, $nodeFlags)) {
-                            $found = array_merge($found, $result);
+                    foreach ($filters['not'] ?? [] as $key => $value) {
+                        if (!empty($attrs->$key) && $attrs->$key === $value) {
+                            $allow = false;
+                            continue;
                         }
                     }
                 }
+                if ($allow) {
+                    if ($cur->getName() === $lookfor) {
+                        $found[] = $cur;
+                    } else {
+                        $nodes[] = $cur;
+                    }
+                    
+                }
+                $n++;
+            } while ($n < count($children));
+
+            if (!empty($nodes)) {
+                $prevJ = $j;
+                if (!$all) {
+                    $j++;
+                }
+                if ($i === count($stash) - 1) {
+                    $stash = $nodes;
+                    $i = 0;
+                    $nodes = [];
+                }
             }
-        }
+        } while ($stash);
+
         return $found;
     }
 }

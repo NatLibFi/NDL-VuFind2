@@ -203,9 +203,8 @@ class SolrEad extends SolrDefault
      */
     public function getBibliographyNotes()
     {
-        $record = $this->getXmlRecord();
         $bibliography = [];
-        foreach ($record->xpath('//bibliography') as $node) {
+        foreach ($this->getXmlNodes('>>bibliography') as $node) {
             // Filter out Portti links since they're displayed in links
             $match = preg_match(
                 '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/', (string)$node->p
@@ -448,7 +447,7 @@ class SolrEad extends SolrDefault
      */
     public function getUnitID()
     {
-        $unitId = $this->getXmlRecord()->xpath('did/unitid');
+        $unitId = $this->getXmlNodes('did/unitid');
         if (count($unitId)) {
             return (string)$unitId[0];
         }
@@ -473,8 +472,7 @@ class SolrEad extends SolrDefault
     {
         $urls = [];
         $url = '';
-        $record = $this->getXmlRecord();
-        foreach ($record->xpath('//daoloc') as $node) {
+        foreach ($this->getXmlNodes('>>daoloc') as $node) {
             $url = (string)$node->attributes()->href;
             $image = isset($node->attributes()->role) && in_array(
                 $node->attributes()->role,
@@ -505,7 +503,7 @@ class SolrEad extends SolrDefault
         }
 
         // Portti links parsed from bibliography
-        foreach ($record->xpath('//bibliography') as $node) {
+        foreach ($this->getXmlNodes('>>bibliography') as $node) {
             $match = preg_match(
                 '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/',
                 (string)$node->p,
@@ -652,7 +650,7 @@ class SolrEad extends SolrDefault
      */
     public function getUnitDate()
     {
-        $unitdate = $this->getXmlRecord()->xpath('did/unitdate');
+        $unitdate = $this->getXmlNodes('did/unitdate');
         if (isset($unitdate[0])) {
             return (string)$unitdate[0];
         }

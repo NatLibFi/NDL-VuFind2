@@ -223,7 +223,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         if (null !== $this->cachedImages) {
             return $this->cachedImages;
         }
-
+      
         $results = [];
 
         $addToResults = function ($imageData) use (&$results) {
@@ -239,6 +239,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         };
 
         $defaultRights = $this->getImageRights($language, true);
+        $before = microtime(true);
         foreach ($this->getXmlNodes(
             'lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
@@ -444,6 +445,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             );
             $addToResults($result);
         }
+        $after = microtime(true);
+        echo ($after-$before) . " sec/getnodes\n";
         return $this->cachedImages = $results;
     }
 

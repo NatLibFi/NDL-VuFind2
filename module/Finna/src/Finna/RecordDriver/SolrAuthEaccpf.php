@@ -85,7 +85,7 @@ class SolrAuthEacCpf extends SolrAuthDefault
     {
         $titles = [];
         $path = 'cpfDescription/identity/nameEntryParallel/nameEntry';
-        foreach ($this->getXmlRecord()->xpath($path) as $name) {
+        foreach ($this->getXmlNodes($path) as $name) {
             foreach ($name->part ?? [] as $part) {
                 $localType = (string)$part->attributes()->localType;
                 if ($localType === 'http://rdaregistry.info/Elements/a/P50103') {
