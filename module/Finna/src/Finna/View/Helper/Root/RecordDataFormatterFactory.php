@@ -585,6 +585,18 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordTitleStatement']
             ]
         );
+
+        $setTemplateLine(
+            'Additional Information Extended', 'getTitleStatementsExtended',
+            'data-addInfoExtended.phtml',
+            [
+                'context' => [
+                    'class' => 'recordTitleStatement',
+                    'title' => 'Additional Information'
+                ]
+            ]
+        );
+
         $setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             [
