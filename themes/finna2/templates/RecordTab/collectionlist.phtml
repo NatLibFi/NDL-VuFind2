@@ -15,14 +15,14 @@
       <span class="hidden-xs"><?=$this->transEsc('Search from collection')?></span>
       <form class="form-inline" role="form" method="get" name="keywordFilterForm" id="keywordFilterForm">
         <div class="input-group">
-          <input id="keywordFilter_lookfor" type="text" name="lookfor" placeholder="<?=$this->transEsc('Search from collection')?>" value="<?=$params->getDisplayQuery()?>" class="form-control"/>
+          <input id="keywordFilter_lookfor" type="text" name="lookfor" placeholder="<?=$this->transEsc('Search from collection')?>" value="<?=$this->escapeHtmlAttr($params->getDisplayQuery())?>" class="form-control"/>
             <?php foreach ($params->getFilterList(true) as $field => $filters): ?>
               <?php foreach ($filters as $filter): ?>
                 <input type="hidden" name="filter[]" value="<?=$this->escapeHtmlAttr($filter['field'])?>:&quot;<?=$this->escapeHtmlAttr($filter['value'])?>&quot;" />
               <?php endforeach; ?>
             <?php endforeach; ?>
-            <input type="hidden" name="view" value="<?=$params->getView() ?>" />
-            <input type="hidden" name="sort" value="<?=$params->getSort() ?>" />
+            <input type="hidden" name="view" value="<?=$this->escapeHtmlAttr($params->getView()) ?>" />
+            <input type="hidden" name="sort" value="<?=$this->escapeHtmlAttr($params->getSort()) ?>" />
           <span class="input-group-btn"><button class="btn btn-primary" type="submit" name="submit"><span class="sr-only"><?=$this->transEsc('Search')?></span><i class="fa fa-search"></i></button></span>
         </div>
       </form>

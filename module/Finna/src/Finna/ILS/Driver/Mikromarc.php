@@ -712,8 +712,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $holds = [];
         foreach ($result as $entry) {
             $available = $entry['ServiceCode'] === 'ReservationArrived'
-                    || $entry['ServiceCode'] === 'ReservationNoticeSent';
-            $frozen = !$entry['ResActiveToday'] && !$available;
+                || $entry['ServiceCode'] === 'ReservationNoticeSent';
+            $inProcess = $entry['ServiceCode'] === 'Picked';
+            $frozen = !$entry['ResActiveToday'] && !$available && !$inProcess;
             $frozenThrough = '';
             if ($frozen && $entry['ResPausedTo']
                 && $entry['ResPausedTo'] != $entry['ResValidUntil']
@@ -724,21 +725,22 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 );
             }
 
-            $updateDetails = !$available
+            $updateDetails = !$available && !$inProcess
                 ? $entry['Id'] . '|' . $entry['ResValidUntil']
                 : '';
             $hold = [
                 'id' => $entry['MarcRecordId'],
                 'item_id' => $entry['Id'],
                 'location' =>
-                   $this->getLibraryUnitName($entry['DeliverAtLocalUnitId']),
+                    $this->getLibraryUnitName($entry['DeliverAtLocalUnitId']),
                 'create' => $this->dateConverter->convertToDisplayDate(
                     'U', strtotime($entry['ResTime'])
                 ),
                 'expire' => $this->dateConverter->convertToDisplayDate(
                     'U', strtotime($entry['ResValidUntil'])
                 ),
-                'position' => $entry['NumberInQueue'],
+                'position' => $inProcess ? $this->translate('hold_in_process')
+                    : $entry['NumberInQueue'],
                 'available' => $available,
                 'reqnum' => $entry['Id'],
                 'frozen' => $frozen,

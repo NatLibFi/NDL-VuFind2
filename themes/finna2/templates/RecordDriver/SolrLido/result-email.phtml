@@ -36,5 +36,6 @@ foreach ($parentTitles as $i => $parentTitle) {
   }
 }
 ?>
+<?= $this->record($this->driver)->renderTemplate('result-email-copyright.phtml') ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>

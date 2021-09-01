@@ -50,6 +50,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected $messagingPrefTypeMap = [
         'Advance_Notice' => 'dueDateAlert',
+        'Auto_Renewals' => 'autoRenewal',
         'Hold_Filled' => 'pickUpNotice',
         'Item_Check_in' => 'checkinNotice',
         'Item_Checkout' => 'checkoutNotice',
@@ -280,6 +281,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         if ($this->config['Profile']['messagingSettings'] ?? true) {
             foreach ($result['messaging_preferences'] as $type => $prefs) {
                 $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
+                if (!$typeName) {
+                    continue;
+                }
                 $settings = [
                     'type' => $typeName
                 ];
