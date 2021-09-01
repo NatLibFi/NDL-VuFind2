@@ -67,6 +67,13 @@ class CleanHtmlFactory implements FactoryInterface
         $cacheDir = $container->get(\VuFind\Cache\Manager::class)
             ->getCache('object')->getOptions()->getCacheDir();
 
-        return new $requestedName($cacheDir);
+        $config = $container->get('config');
+        $customElements
+            = $config['vufind']['plugin_managers']['view_customelement']['aliases'];
+        foreach ($customElements as $elementName => $elementClass) {
+            $customElements[$elementName] = $elementClass::getAttributes();
+        }
+
+        return new $requestedName($cacheDir, $customElements);
     }
 }

@@ -19,13 +19,13 @@
     <span class="authority-label"><?=$this->escapeHtml($this->label)?></span>
   </a><?= $additionalDataEl?><?php if (!empty($this->description)): ?> <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span><?php endif; ?>
   <?php if ($this->showInlineInfo): ?>
-    <a href="#" class="show-info"><i class="fa <?=$authorityIcon?>"> </i><?=$this->translate('authority_show_info')?> <i class="fa fa-handle-open handle"></i></a>
+    <a href="#" class="show-info"><i class="fa <?=$authorityIcon?>"> </i><span class="link-text"><?=$this->translate('authority_show_info')?></span> <i class="fa fa-handle-open handle"></i></a>
     <div class="authority-info">
       <div class="content">
         <i class="fa fa-spin fa-spinner"></i>
         <div class="no-info hide alert alert-info"><?=$this->translate('authority_no_info') ?></div>
       </div>
-      <a href="#" class="hide-info"><i class="fa <?=$authorityIcon?>"> </i> <?=$this->translate('authority_hide_info')?> <i class="fa fa-handle-close handle"></i></a>
+      <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('authority_hide_info')?> <i class="fa fa-handle-close handle"></i></a>
     </div>
   </div>
 <?php endif; ?>

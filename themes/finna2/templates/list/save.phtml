@@ -5,14 +5,14 @@
 <h2><?=$this->translate("import_favorites_from_list") ?></h2>
 <form class="form-record-save" method="post" action="<?=$this->url('list-save', ['id' => $this->listId])?>" name="cloneList" data-lightbox-onclose="checkSaveStatusesCallback">
   <input type="hidden" name="submit" value="1" />
-  <input type="hidden" name="list" value="<?=$this->listId ?>" />
+  <input type="hidden" name="list" value="<?=$this->escapeHtmlAttr($this->listId) ?>" />
 
   <div class="form-group">
     <label class="control-label" for="save_list"><?=$this->transEsc('Choose a List') ?></label>
     <select class="form-control" id="save_list" name="list">
     <?php if ($this->lists): ?>
       <?php foreach ($this->lists as $list): ?>
-        <option value="<?=$list['id'] ?>"<?php if ($list['id'] == $this->userlist()->lastUsed()): ?> selected="selected"<?php endif; ?>>
+        <option value="<?=$this->escapeHtmlAttr($list['id']) ?>"<?php if ($list['id'] == $this->userlist()->lastUsed()): ?> selected="selected"<?php endif; ?>>
           <?=$this->escapeHtml($list['title'])?><?php if ($list['public']):?> (<?=mb_strtolower($this->transEsc('public_list_indicator'), 'utf-8')?>)<?php endif; ?>
         </option>
       <?php endforeach; ?>
@@ -24,6 +24,6 @@
   </div>
 
   <div class="form-group">
-    <input class="btn btn-primary" type="submit" value="<?=$this->transEsc('Save') ?>"/>
+    <input class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Save') ?>"/>
   </div>
 </form>

@@ -21,7 +21,7 @@ $this->headScript()->prependScript("var listId = {$list->id}; var publicList = 1
 <div class="clearfix hidden-print">
     <div class="public-list-row">
       <div class="public-list-desc">
-        <?=$this->markdown()->toHtml($list->description) ?>
+        <?=$this->markdown()->toHtml($list->description ?? '') ?>
       </div>
       <?php if ($this->listTags): ?>
         <div class="public-list-tags">

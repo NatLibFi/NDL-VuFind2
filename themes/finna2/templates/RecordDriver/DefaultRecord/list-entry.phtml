@@ -134,28 +134,21 @@
         </div>
         <div class="myresearch-notes">
         <?php
-          $hasNote = false;
-          $notes = false;
-          $listNotes = $list_id != null ? $this->driver->getListNotes($list_id, $user_id) : false;
-          if ($listNotes) {
-            $notes = implode('', $listNotes);
-            $hasNote = !empty($listNotes) && strlen($notes) > 0;
+          $notes = $list_id != null ? $this->driver->getListNotes($list_id, $user_id) : false;
+          if ($notes) {
+            $notes = trim(implode('', $notes));
           }
         ?>
-          <div class="note-info <?= $hasNote ? '' : ' hide' ?>"><strong><?=$this->transEsc('Note')?>:</strong></div>
+          <div class="note-info <?= $notes ? '' : ' hide' ?>"><strong><?=$this->transEsc('Note')?>:</strong></div>
           <?php if ($list_id): ?>
-            <div class="resource-note markdown">
-              <div class="editable">
-                <i class="fa fa-pen icon js-edit"></i>
-                <div data-empty="<?= $hasNote ? '0' : '1' ?>" data-markdown="<?=$hasNote && $notes ? $this->escapeHtmlAttr($notes) : ''?>">
-                <?php if ($notes): ?>
-                  <?= $this->markdown()->toHtml($notes); ?>
-                <?php else: ?>
-                  <?=$this->transEsc('Add note')?>
-                <?php endif; ?>
-                </div>
-              </div>
-            </div>
+            <?php $markdown = $notes ? $this->markdown()->replaceDeprecatedTags($notes) : ''; ?>
+            <?= $this->render('components/organisms/widgets/finna-md-editable/finna-md-editable.phtml', [
+                'attributes' => ['class' => 'resource-note'],
+                'markdown' => $markdown,
+                'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
+                'emptyHtml' => $this->translate('Add note'),
+                'preview' => true
+              ]); ?>
           <?php endif;?>
         </div>
         <?php if (count($this->lists ?? []) > 0 && !$list): ?>

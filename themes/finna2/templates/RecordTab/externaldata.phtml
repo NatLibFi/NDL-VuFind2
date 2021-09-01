@@ -28,9 +28,15 @@ $physicalItems = $items['physicalItems'] ?? null;
     <?php foreach ($physicalItems as $item): ?>
       <div role="row" class="tbl-row">
         <div class="tbl-cell tbl-left" role="cell">
-          <?=$this->escapeHtml($item['format'] ?? $item['type'] ?? '')?>
-          <?php if (!empty($item['info'])): ?>
-            <span class="info">(<?=$this->escapeHtml($item['info']) ?>)</span>
+          <?php $format = $item['format'] ?? $item['type'] ?? ''; if (!empty($format)): ?>
+            <?= $this->escapeHtml($format) ?>
+          <?php endif; ?>
+          <?php $info = $item['info'] ?? ''; if (!empty($info)): ?>
+            <span class="info">(<?=$this->escapeHtml($info) ?>)</span>
+          <?php endif ?>
+          <?php if (!empty($item['physicalLocation'])): ?>
+            <?php if (!empty($format) || !empty($info)): ?><br /><?php endif; ?>
+            <span class="physical-location"><?=$this->escapeHtml($item['physicalLocation']) ?></span>
           <?php endif ?>
           <?php if (!empty($item['accessRestriction'])): ?>
             <p class="restriction small">(<?=$this->escapeHtml($item['accessRestriction']) ?>)</p>

@@ -1,7 +1,7 @@
 <!-- START of: finna - organisationinfo/home.phtml -->
 <?php
   $this->headTitle($this->title);
-  $this->layout()->finnaMainHeader = '<div><h3>' . $this->title . '</h3></div>';
+  $this->layout()->finnaMainHeader = '<div><h3>' . $this->escapeHtml($this->title) . '</h3></div>';
 
   $this->headLink()->appendStylesheet('vendor/L.Control.Locate.min.css');
   $this->headScript()->appendFile('vendor/L.Control.Locate.min.js');
@@ -35,14 +35,16 @@
      }
   }
 
-  $consortiumInfo = $this->consortiumInfo ? 1 : 0;
+  $initParams = json_encode(
+    [
+      'id' => $this->id,
+      'consortiumInfo' => $this->consortiumInfo ? 1 : 0,
+      'buildings' => $this->buildings
+    ]
+  );
   $setupJS = <<<JS
 $(document).ready(function() {
-   finna.organisationInfoPage.init({
-      id: "{$this->id}",
-      consortiumInfo: {$consortiumInfo},
-      buildings: "{$this->buildings}"
-   });
+   finna.organisationInfoPage.init({$initParams});
 });
 JS;
    $this->headScript()->appendScript($setupJS);

@@ -77,14 +77,32 @@
         </div>
       <?php endif; ?>
 
-      <?php $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
-      <div class="truncate-field wide recordSummary">
-        <p class="summary">
-        <?php foreach ($summ as $field): ?>
-          <?=$this->escapeHtml($field)?><br/>
-        <?php endforeach; ?>
-        </p>
-      </div>
+      <?php
+        $summExtended = $this->driver->tryMethod('getSummaryExtended');
+        if (empty($summExtended)) {
+          $summ = $this->driver->tryMethod('getSummary');
+        }
+      ?>
+      <?php if (!empty($summExtended)): ?>
+        <div class="truncate-field wide recordSummary">
+          <p class="summary">
+            <?php foreach ($summExtended as $i => $item): ?>
+              <?= $i > 0 ? '<br/>' : '' ?>
+              <?= $this->escapeHtml($item['text']) ?>
+              <?php $url = $item['url'] ?? ''; if (!empty($url)): ?>
+                (<a target="_blank" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url))?>"><?=$this->escapeHtml($this->truncateUrl($url))?></a>)
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </p>
+        </div>
+      <?php elseif (!empty($summ)): ?>
+        <div class="truncate-field wide recordSummary">
+          <p class="summary">
+            <?php foreach ($summ as $field): ?>
+              <?=$this->escapeHtml($field)?><br/>
+            <?php endforeach; ?>
+          </p>
+        </div>
       <?php endif; ?>
 
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>

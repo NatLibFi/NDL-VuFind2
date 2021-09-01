@@ -29,6 +29,16 @@
         $holdings['total'] = 0;
         $holdings['page'] = 1;
         $holdings['itemLimit'] = 10;
+    } else {
+      if (!isset($holdings['total'])) {
+        $holdings['total'] = count($holdings['holdings']);
+      }
+      if (!isset($holdings['page'])) {
+        $holdings['page'] = 1;
+      }
+      if (!isset($holdings['itemLimit'])) {
+        $holdings['itemLimit'] = $holdings['total'];
+      }
     }
 
     $illRequestLink = false;

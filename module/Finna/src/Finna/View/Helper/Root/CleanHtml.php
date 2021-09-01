@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -33,6 +34,7 @@ namespace Finna\View\Helper\Root;
  * @category VuFind
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -53,6 +55,13 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
     protected $cacheDir;
 
     /**
+     * Allowed custom element names and attributes
+     *
+     * @var array
+     */
+    protected $customElements;
+
+    /**
      * Current target blank setting
      *
      * @var boolean
@@ -62,11 +71,14 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
     /**
      * Constructor
      *
-     * @param string $cacheDir Cache directory
+     * @param string $cacheDir       Cache directory
+     * @param array  $customElements Array containing allowed custom element names as
+     *                               keys and element attribute name arrays as values
      */
-    public function __construct($cacheDir)
+    public function __construct($cacheDir, $customElements)
     {
         $this->cacheDir = $cacheDir;
+        $this->customElements = $customElements;
     }
 
     /**
@@ -85,7 +97,6 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
         if (null === $this->purifier || $targetBlank !== $this->currentTargetBlank) {
             $this->currentTargetBlank = $targetBlank;
             $config = \HTMLPurifier_Config::createDefault();
-            $config->set('AutoFormat.AutoParagraph', true);
             // Set cache path to the object cache
             if ($this->cacheDir) {
                 $config->set('Cache.SerializerPath', $this->cacheDir);
@@ -94,8 +105,16 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
                 $config->set('HTML.Nofollow', 1);
                 $config->set('HTML.TargetBlank', 1);
             }
-            // Details & summary elements not supported by default, add them:
+
+            // Add elements and attributes not supported by default
             $def = $config->getHTMLDefinition(true);
+            foreach ($this->customElements as $elementName => $elementAttributes) {
+                $def->addElement($elementName, 'Block', 'Flow', 'Common');
+                foreach ($elementAttributes as $attributeName) {
+                    $def->addAttribute($elementName, $attributeName, 'CDATA');
+                }
+            }
+            $def->addAttribute('span', 'slot', 'CDATA');
             $def->addElement(
                 'details',
                 'Block',
@@ -107,6 +126,7 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
             $def->addAttribute('div', 'data-rows', 'Number');
             $def->addAttribute('div', 'data-row-height', 'Number');
             $def->addAttribute('div', 'data-label', 'Text');
+
             $this->purifier = new \HTMLPurifier($config);
         }
         return $this->purifier->purify($html);

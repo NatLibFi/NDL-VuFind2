@@ -999,29 +999,35 @@ class RecordDataFormatterFactory
 
         // Add arcrole-relations as multiple fields with role as field header
         $getRelations = function ($data, $options) use (&$pos) {
-            $final = [];
-            foreach ($data as $type => $values) {
-                $label = null;
-                if (isset($values['role'])) {
-                    $label = $values['role'];
-                    $label = "CreatorRoles::$label";
-                    // Unset so that role is not appended to name
-                    unset($values['role']);
+            // Group relations by role
+            $relationsByRole = [];
+            foreach ($data as $relation) {
+                // Combine all relations without role under the key '0'
+                $role = ($relation['role'] ?? '0') ?: '0';
+                if (!isset($relationsByRole[$role])) {
+                    $relationsByRole[$role] = [];
                 }
+                // Unset so that role is not appended to relation name
+                // since it's used as the record field label (see below).
+                unset($relation['role']);
+                $relationsByRole[$role][] = $relation;
+            }
+            $final = [];
+            // Add one record field for each role (might include several relations).
+            foreach ($relationsByRole as $role => $relations) {
                 $final[] = [
-                    'label' => $label,
-                    'values' => [ 0 => $values],
+                    'label' => $role !== '0' ? "CreatorRoles::$role" : null,
+                    'values' => $relations,
                     'options' => [
                         'pos' => $pos++,
                         'renderType' => 'RecordDriverTemplate',
                         'template' => 'data-authors.phtml',
                         'context' => [
                             'class' => 'recordRelations',
-                            'type' => $type,
                             'schemaLabel' => null,
                         ],
                     ],
-                 ];
+                ];
             }
             return $final;
         };
@@ -1034,6 +1040,22 @@ class RecordDataFormatterFactory
             'Appraisal', 'getAppraisal', 'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordAppraisal']
+            ]
+        );
+
+        $setTemplateLine(
+            'Container Information', 'getContainerInformation',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordContainerInformation']
+            ]
+        );
+
+        $setTemplateLine(
+            'Material Arrangement', 'getMaterialArrangement',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordMaterialArrangement']
             ]
         );
 

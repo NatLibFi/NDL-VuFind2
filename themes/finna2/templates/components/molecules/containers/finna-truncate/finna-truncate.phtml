@@ -6,6 +6,9 @@
   if (isset($rows)) {
     $__attributes['data-rows'] = $rows;
   }
+  if (isset($rowHeight)) {
+    $__attributes['data-row-height'] = $rowHeight;
+  }
 ?>
 <div<?= $__attributes->add('class', ['finna-truncate', 'truncate-field']) ?>>
   <?= $content ?? '' ?>

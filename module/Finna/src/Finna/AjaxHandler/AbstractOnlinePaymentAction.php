@@ -189,6 +189,10 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         // update the status properly
         $res = $handler->processResponse($request);
 
+        if (!is_array($res) || empty($res['markFeesAsPaid'])) {
+            return ['success' => false, 'msg' => $res];
+        }
+
         if (!$patron) {
             $this->logError(
                 'Error processing transaction id ' . $t['id']
@@ -200,10 +204,6 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
                 $t['transaction_id'], 'patronLogin error'
             );
             return ['success' => false];
-        }
-
-        if (!is_array($res) || empty($res['markFeesAsPaid'])) {
-            return ['success' => false, 'msg' => $res];
         }
 
         $tId = $res['transactionId'];
