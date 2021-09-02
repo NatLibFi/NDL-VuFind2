@@ -12,7 +12,7 @@
           <li>    
             <a href="<?=$this->recordLink()->getUrl($record)?>">
               <?=$this->escapeHtml($record->getTitle())?>
-            </a>
+            </a><br/>
             <?=$this->record($record)->getFormatList();?>
             <?php $topTitles = $record->getHierarchyTopTitle(); if ($topTitles): ?>
               <?php
