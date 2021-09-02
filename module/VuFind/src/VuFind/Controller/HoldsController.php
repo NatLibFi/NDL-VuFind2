@@ -121,7 +121,10 @@ class HoldsController extends AbstractBase
         foreach ($result as $current) {
             // Add cancel details if appropriate:
             $current = $this->holds()->addCancelDetails(
-                $catalog, $current, $cancelStatus, $patron
+                $catalog,
+                $current,
+                $cancelStatus,
+                $patron
             );
             if ($cancelStatus && $cancelStatus['function'] !== 'getCancelHoldLink'
                 && isset($current['cancel_details'])
@@ -131,15 +134,15 @@ class HoldsController extends AbstractBase
             }
 
             // Add update details if appropriate
-            if (empty($holdConfig['updateFields'])) {
-                if (isset($current['updateDetails'])) {
+            if (isset($current['updateDetails'])) {
+                if (empty($holdConfig['updateFields'])
+                    || '' === $current['updateDetails']
+                ) {
                     unset($current['updateDetails']);
+                } else {
+                    $view->updateForm = true;
+                    $this->holds()->rememberValidId($current['updateDetails']);
                 }
-            } elseif (isset($current['updateDetails'])
-                && '' !== $current['updateDetails']
-            ) {
-                $view->updateForm = true;
-                $this->holds()->rememberValidId($current['updateDetails']);
             }
 
             $driversNeeded[] = $current;
@@ -254,6 +257,7 @@ class HoldsController extends AbstractBase
                 'gatheredDetails' => $gatheredDetails,
                 'pickupLocations' => $pickupLocationInfo['pickupLocations'],
                 'conflictingPickupLocations' => $pickupLocationInfo['differences'],
+                'helpTextHtml' => $holdConfig['updateHelpText'],
             ]
         );
 
@@ -272,7 +276,9 @@ class HoldsController extends AbstractBase
      * @return array An array of any common pickup locations and a flag
      * indicating any differences between them.
      */
-    protected function getPickupLocationsForEdit(array $patron, array $selectedIds,
+    protected function getPickupLocationsForEdit(
+        array $patron,
+        array $selectedIds,
         int $checkLimit = 0
     ): ?array {
         $catalog = $this->getILS();
@@ -332,8 +338,10 @@ class HoldsController extends AbstractBase
      *
      * @return null|array Array of fields to update or null on validation error
      */
-    protected function getUpdateFieldsFromGatheredDetails(array $holdConfig,
-        array $gatheredDetails, array $pickupLocations
+    protected function getUpdateFieldsFromGatheredDetails(
+        array $holdConfig,
+        array $gatheredDetails,
+        array $pickupLocations
     ): ?array {
         $validPickup = true;
         $selectedPickupLocation = $gatheredDetails['pickUpLocation'] ?? '';

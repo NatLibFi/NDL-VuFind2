@@ -57,7 +57,7 @@
             <strong><i class="fa fa-public"></i> <?=$this->transEsc('public_list_indicator') ?></strong>
           </div>
         <?php endif; ?>
-        <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->description) : ''; ?>
+        <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->description ?? '') : ''; ?>
         <?= $this->render('components/organisms/widgets/finna-md-editable/finna-md-editable.phtml', [
             'attributes' => ['class' => 'list-description'],
             'markdown' => $markdown,

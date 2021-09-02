@@ -1017,13 +1017,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     ) {
                         continue;
                     }
+                    $id = $this->getSubfield($field, '0');
                     $subfields = $this->getSubfieldArray($field, ['a', 'b', 'c']);
                     $dates = $this->getSubfieldArray($field, ['d']);
                     if (!empty($subfields)) {
                         $result['presenters'][] = [
                             'name' => $this->stripTrailingPunctuation($subfields[0]),
                             'date' => $dates ? $dates[0] : '',
-                            'role' => $role
+                            'role' => $role,
+                            'id' => $id ?: null
                         ];
                     }
                 }

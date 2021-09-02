@@ -551,8 +551,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $result->$functionResult->organisations->organisation
             );
 
+        $keyName = 'limitPickUpLocationChangeToCurrentOrganization';
+        $limitToCurrentOrganisation = ($this->config['Holds'][$keyName]
+            ?? !$this->singleReservationQueue) && $holdType !== 'regional';
         foreach ($organisations as $organisation) {
             if (!isset($organisation->branches->branch)) {
+                continue;
+            }
+
+            if (!empty($holdDetails['_organization']) && $limitToCurrentOrganisation
+                && $organisation->name !== $holdDetails['_organization']
+            ) {
                 continue;
             }
 
@@ -2406,11 +2415,21 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $title .= ' (' . $reservation->note . ')';
             }
 
+            $detailsStr = $reservation->id . '|' . $reservation->validFromDate
+                . '|' . $reservation->validToDate . '|'
+                . $reservation->pickUpBranchId;
             $updateDetails = '';
-            if ('yes' === $reservation->isEditable) {
-                $updateDetails = $reservation->id . '|' . $reservation->validFromDate
-                    . '|' . $reservation->validToDate . '|'
-                    . $reservation->pickUpBranchId;
+            $cancelDetails = '';
+            // Regional holds have isEditable 'no' even when they're editable, so
+            // check for isDeletetable for them:
+            if ('yes' === $reservation->isEditable
+                || ('regional' === $reservation->reservationType
+                && 'yes' === $reservation->isDeletable)
+            ) {
+                $updateDetails = $detailsStr;
+            }
+            if ('yes' === $reservation->isDeletable) {
+                $cancelDetails = $detailsStr;
             }
             $frozen = $reservation->validFromDate > date('Y-m-d');
             if ($frozen && $reservation->validFromDate != $reservation->validToDate
@@ -2439,7 +2458,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'position' =>
                    $reservation->queueNo ?? '-',
                 'available' => $reservation->reservationStatus == 'fetchable',
-                'item_id' => $reservation->id,
                 'reqnum' => $reservation->id,
                 'volume' =>
                    $reservation->catalogueRecord->volume ?? '',
@@ -2450,10 +2468,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                    && $this->requestGroupsEnabled
                    ? "axiell_$reservation->reservationType"
                    : '',
+                'requestGroupId' =>
+                   isset($reservation->reservationType)
+                   && $this->requestGroupsEnabled
+                   ? $reservation->reservationType
+                   : '',
                 'in_transit' => $reservation->reservationStatus == 'inTransit',
                 'title' => $title,
-                'cancel_details' => $updateDetails,
+                'cancel_details' => $cancelDetails,
                 'updateDetails' => $updateDetails,
+                '_organization' => $reservation->organisationId ?? ''
             ];
             $holdsList[] = $hold;
         }

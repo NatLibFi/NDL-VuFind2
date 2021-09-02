@@ -76,6 +76,9 @@ class FormFactory extends \VuFind\Form\FormFactory
             $form->setUser($user, $roles);
         }
         $form->setViewHelperManager($container->get('ViewHelperManager'));
+        $form->setRecordRequestFormsWithBarcode(
+            (array)($config['Record']['repository_library_request_form'] ?? null)
+        );
         return $form;
     }
 }

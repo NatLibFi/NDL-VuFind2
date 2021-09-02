@@ -4,13 +4,13 @@
     <div class="form-ui">
 	  <div class="year-range">
       <label for="year-from" class="sr-only"><?=$this->transEsc('year_from');?></label>
-	    <input id="year-from" class="form-control form-inline input-year year-from" type="number" value="<?= $this->from; ?>">
+	    <input id="year-from" class="form-control form-inline input-year year-from" type="number" value="<?=$this->escapeHtmlAttr($this->from) ?>">
 	    <span class="year-separator">&ndash;</span>
       <label for="year-to" class="sr-only"><?=$this->transEsc('year_to');?></label>
-	    <input id="year-to" class="form-control form-inline input-year year-to" type="number" value="<?= $this->to; ?>">
+	    <input id="year-to" class="form-control form-inline input-year year-to" type="number" value="<?=$this->escapeHtmlAttr($this->to) ?>">
 	  </div>
 	  <button class="btn btn-primary submit" type="submit">
-      <i class="fa fa-search"></i><span><?= $this->translate($this->submitLabel); ?></span>
+      <i class="fa fa-search"></i><span><?= $this->transEsc($this->submitLabel); ?></span>
     </button>
     </div>
     <div class="content">

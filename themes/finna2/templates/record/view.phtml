@@ -150,8 +150,8 @@
               if (!$obj->supportsAjax()) { $tabClasses[] = 'noajax'; }
               if (strtolower($tab) == 'details') { $tabClasses[] = 'hidden-xs tab-right'; }
             ?>
-            <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
-              <a class="<?=strtolower($tab) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
+            <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
+              <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->transEscAttr($desc)?>"
                 href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav" data-lightbox-ignore>
                 <?php if (strtolower($tab) == 'details'): ?><i class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>
                 <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
@@ -183,7 +183,7 @@
         ?>
         <div class="<?=implode(' ', $accordion_classes)?>">
           <div class="accordion-toggle">
-            <a data-tab="<?=strtolower($accordion) ?>" class="accordion-title"
+            <a data-tab="<?=$this->escapeHtmlAttr(strtolower($accordion)) ?>" class="accordion-title"
               href="<?=$this->recordLink()->getTabUrl($this->driver, $accordion)?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
               data-background<?php endif ?>
             >
@@ -197,7 +197,7 @@
 
     <div class="tab-content">
       <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
-        <div class="tab-pane active <?=$this->activeTab ?>-tab">
+        <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab">
             <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
         </div>
       <?php endif; ?>

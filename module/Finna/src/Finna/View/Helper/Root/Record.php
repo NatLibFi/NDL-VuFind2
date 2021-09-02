@@ -197,6 +197,32 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Is repository library request form enabled for this record.
+     *
+     * @return boolean
+     */
+    public function repositoryLibraryRequestEnabled() : bool
+    {
+        if (!isset($this->config->Record->repository_library_request_sources)) {
+            return false;
+        }
+        return in_array(
+            $this->driver->getDataSource(),
+            $this->config->Record->repository_library_request_sources->toArray()
+        );
+    }
+
+    /**
+     * Get repository library request form id.
+     *
+     * @return string|null
+     */
+    public function getRepositoryLibraryRequestFormId()
+    {
+        return $this->config->Record->repository_library_request_form ?? null;
+    }
+
+    /**
      * Return record driver
      *
      * @return \VuFind\RecordDriver\AbstractBase
@@ -998,5 +1024,28 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'external-rating-link.phtml', ['externalRatingLink' => $url]
             );
         }
+    }
+
+    /**
+     * Returns a translated copyright text.
+     *
+     * @param string $copyright Copyright
+     *
+     * @return string
+     */
+    public function translateCopyright(string $copyright) : string
+    {
+        $transEsc = $this->getView()->plugin('transEsc');
+
+        $label = $transEsc($copyright);
+        if ($copyright === 'Luvanvarainen käyttö / ei tiedossa') {
+            $label = $transEsc('usage_F');
+        } else {
+            $translationEmpty = $this->getView()->plugin('translationEmpty');
+            if (!$translationEmpty("rightsstatement_$copyright")) {
+                $label = $transEsc("rightsstatement_$copyright");
+            }
+        }
+        return $label;
     }
 }

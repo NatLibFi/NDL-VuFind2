@@ -236,7 +236,7 @@
        <span class="limit-container">
           <?=$this->render('search/advanced/limit.phtml')?>
         </span>
-        <button class="btn btn-lg btn-primary pull-right" type="submit" value="<?= $this->transEsc('Find')?>"><i class="fa fa-search-adv"></i> <?= $this->transEsc('Find')?></button>
+        <button class="btn btn-lg btn-primary pull-right" type="submit" value="<?= $this->transEscAttr('Find')?>"><i class="fa fa-search-adv"></i> <?= $this->transEsc('Find')?></button>
       </div>
     </div>
     <?php if ($hasDefaultsApplied): ?>

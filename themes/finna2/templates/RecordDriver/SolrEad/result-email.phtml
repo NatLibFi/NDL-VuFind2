@@ -51,5 +51,6 @@
 <?php if ($unit = ($this->driver->tryMethod('getFilingUnit'))): ?>
   <?= PHP_EOL . $this->translate('Filing Unit') . ': ' . $unit ?>
 <?php endif; ?>
+<?= $this->record($this->driver)->renderTemplate('result-email-copyright.phtml') ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>

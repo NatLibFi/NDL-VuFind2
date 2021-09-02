@@ -1,10 +1,10 @@
 <?php
 /**
- * Factory for Shibboleth authentication module.
+ * CSP nonce helper factory.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2019.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,33 +20,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Authentication
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  View_Helpers
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace VuFind\Auth;
+namespace Finna\View\Helper\Root;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use VuFind\Auth\Shibboleth\MultiIdPConfigurationLoader;
-use VuFind\Auth\Shibboleth\SingleIdPConfigurationLoader;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Factory for Shibboleth authentication module.
+ * CSP nonce helper factory.
  *
  * @category VuFind
- * @package  Authentication
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  View_Helpers
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ShibbolethFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class CspNonceFactory implements FactoryInterface
 {
-    public const SHIBBOLETH_CONFIG_FILE_NAME = "Shibboleth";
-
     /**
      * Create an object
      *
@@ -59,7 +56,7 @@ class ShibbolethFactory implements \Laminas\ServiceManager\Factory\FactoryInterf
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException&\Throwable if any other error occurs
+     * @throws ContainerException if any other error occurs
      */
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
@@ -67,33 +64,7 @@ class ShibbolethFactory implements \Laminas\ServiceManager\Factory\FactoryInterf
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $loader = $this->getConfigurationLoader($container);
-        $request = $container->get('Request');
-        return new $requestedName(
-            $container->get(\Laminas\Session\SessionManager::class),
-            $loader, $request
-        );
-    }
-
-    /**
-     * Return configuration loader for shibboleth
-     *
-     * @param ContainerInterface $container Service manager
-     *
-     * @return configuration loader
-     */
-    public function getConfigurationLoader(ContainerInterface $container)
-    {
-        $configManager = $container->get(\VuFind\Config\PluginManager::class);
-        $config = $configManager->get('config');
-        $override = $config->Shibboleth->allow_configuration_override ?? false;
-        $loader = null;
-        if ($override) {
-            $shibConfig = $configManager->get(self::SHIBBOLETH_CONFIG_FILE_NAME);
-            $loader = new MultiIdPConfigurationLoader($config, $shibConfig);
-        } else {
-            $loader = new SingleIdPConfigurationLoader($config);
-        }
-        return $loader;
+        $nonceGenerator = $container->get(\VuFind\Security\NonceGenerator::class);
+        return new $requestedName($nonceGenerator->getNonce());
     }
 }

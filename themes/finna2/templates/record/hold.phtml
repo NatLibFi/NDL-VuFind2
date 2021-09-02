@@ -144,11 +144,11 @@
     <?php if (in_array("acceptTerms", $this->extraHoldFields)): ?>
       <div class="form-group">
         <input id="acceptTerms" type="checkbox" name="gatheredDetails[acceptTerms]">
-        <label for="acceptTerms" class="control-label"><?=$this->translate(empty($this->acceptTermsText) ? "accept_request_terms_html" : $this->acceptTermsText)?></label>
+        <label for="acceptTerms" class="control-label"><?=$this->translate(empty($this->acceptTermsTextHtml) ? "accept_request_terms_html" : $this->acceptTermsTextHtml)?></label>
       </div>
     <?php endif; ?>
     <div class="form-group">
-      <input class="btn btn-primary" type="submit" name="placeHold" value="<?=$this->transEsc('request_submit_text')?>"/>
+      <input class="btn btn-primary" type="submit" name="placeHold" value="<?=$this->transEscAttr('request_submit_text')?>"/>
     </div>
   </form>
 </div>

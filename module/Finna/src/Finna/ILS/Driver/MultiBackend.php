@@ -303,68 +303,6 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
     }
 
     /**
-     * Change Pickup Location
-     *
-     * Attempts to change the pickup location of a specific hold
-     *
-     * @param array $patron      The patron array from patronLogin
-     * @param array $holdDetails The request details
-     *
-     * @return mixed An array of data on the request including
-     * whether or not it was successful and a system message (if available)
-     */
-    public function changePickupLocation($patron, $holdDetails)
-    {
-        $source = $this->getSource($patron['cat_username']);
-        $driver = $this->getDriver($source);
-        if ($driver
-            && $this->methodSupported(
-                $driver, 'changePickupLocation', [$patron, $holdDetails]
-            )
-        ) {
-            return $driver->changePickupLocation(
-                $this->stripIdPrefixes($patron, $source),
-                $this->stripIdPrefixes(
-                    $holdDetails, $source, ['id', 'cat_username', 'item_id']
-                )
-            );
-        }
-        throw new ILSException('No suitable backend driver found');
-    }
-
-    /**
-     * Change Request Status
-     *
-     * Attempts to change the status of a specific hold request
-     *
-     * @param array $patron      The patron array from patronLogin
-     * @param array $holdDetails The request details
-     *
-     * @return mixed An array of data on the request including
-     * whether or not it was successful and a system message (if available)
-     */
-    public function changeRequestStatus($patron, $holdDetails)
-    {
-        $source = $this->getSource($patron['cat_username']);
-        $driver = $this->getDriver($source);
-        if ($driver
-            && $this->methodSupported(
-                $driver, 'changeRequestStatus', [$patron, $holdDetails]
-            )
-        ) {
-            return $driver->changeRequestStatus(
-                $this->stripIdPrefixes(
-                    $patron, $source, ['id', 'cat_username', 'item_id']
-                ),
-                $this->stripIdPrefixes(
-                    $holdDetails, $source, ['id', 'cat_username', 'item_id']
-                )
-            );
-        }
-        throw new ILSException('No suitable backend driver found');
-    }
-
-    /**
      * Return total amount of fees that may be paid online.
      *
      * @param array $patron Patron
