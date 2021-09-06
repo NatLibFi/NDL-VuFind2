@@ -76,7 +76,10 @@ class RemsServiceFactory implements FactoryInterface
             'Shibboleth', $sessionManager
         );
         $auth = $container->get('LmcRbacMvc\Service\AuthorizationService');
-        $user = $container->get('VuFind\Auth\Manager')->isLoggedIn();
+        $r2 = $container->get(\Finna\Service\R2SupportService::class);
+        $user = $r2->isEnabled()
+            ? $container->get('VuFind\Auth\Manager')->isLoggedIn()
+            : false;
 
         return new $requestedName(
             $container->get(\VuFind\Config\PluginManager::class)
@@ -84,7 +87,7 @@ class RemsServiceFactory implements FactoryInterface
             $sessionContainer,
             $shibbolethSessionContainer['identity_number'] ?? null,
             $user ? $user->username : null,
-            $auth->isGranted('access.R2Authenticated'),
+            $user ? $auth->isGranted('access.R2Authenticated') : false,
             new EventManager($container->get('SharedEventManager'))
         );
     }

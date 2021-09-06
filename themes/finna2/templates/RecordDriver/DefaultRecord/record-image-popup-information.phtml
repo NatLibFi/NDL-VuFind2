@@ -78,7 +78,7 @@
   </div>
   <?php if (isset($listNotes) && $listNotes): ?>
     <div class="list-notes">
-      <strong><?=$this->transEsc('Description') ?>:</strong>
+      <strong><?=$this->transEsc('Note')?>:</strong>
       <ul>
       <?php foreach ($listNotes as $note): ?>
         <li><?=$this->markdown()->toHtml($note) ?></li>
@@ -158,7 +158,7 @@
       <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
           <?php if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs)) { continue; } ?>
-          <div class="record-online-link"><a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?php if (count($onlineURLs) == 1 || count($mergedData['urls']) == 1): ?> <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?><?php endif; ?></a>
+          <div class="record-online-link"><a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?php if (count($onlineURLs) == 1 || count($mergedData['urls'] ?? []) == 1): ?> <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?><?php endif; ?></a>
           <?php if ($url['source']): ?>
             <span class="online-source"><?=is_array($url['source']) ? '(' . $this->transEsc('Multiple Organisations') . ')' : '';?></span>
           <?php endif; ?>

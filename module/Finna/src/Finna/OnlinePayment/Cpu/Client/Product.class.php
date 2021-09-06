@@ -17,14 +17,14 @@ class Cpu_Client_Product
      *
      * @var string
      */
-    public $code = null;
+    public $Code = null;
 
     /**
      * Order amount.
      *
      * @var integer
      */
-    public $amount = null;
+    public $Amount = null;
 
     /**
      * Price of single product vat included in cents.
@@ -32,7 +32,7 @@ class Cpu_Client_Product
      * @example 20.50€ = 2050
      * @var integer
      */
-    public $price = null;
+    public $Price = null;
 
     /**
      * Product description. Max. length 40 chars.
@@ -40,7 +40,7 @@ class Cpu_Client_Product
      *
      * @var string
      */
-    public $description = null;
+    public $Description = null;
 
     /**
      * Vat code to be used with this product. Max. length 25 chars.

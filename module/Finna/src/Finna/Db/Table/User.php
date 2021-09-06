@@ -53,13 +53,11 @@ class User extends \VuFind\Db\Table\User
      */
     public function createRowForUsername($username)
     {
-        $row = $this->createRow();
         // Prefix username with the institution code if set
-        $row->username = isset($this->config->Site->institution)
+        $username = isset($this->config->Site->institution)
             ? $this->config->Site->institution . ":$username"
             : $username;
-        $row->created = date('Y-m-d H:i:s');
-        return $row;
+        return parent::createRowForUsername($username);
     }
 
     /**

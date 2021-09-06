@@ -57,6 +57,7 @@ class CoverArtArchive extends \VuFind\Content\AbstractCover
     {
         $this->cacheAllowed = true;
         $this->recordLoader = $loader;
+        $this->supportsRecordid = true;
     }
 
     /**
@@ -110,17 +111,5 @@ class CoverArtArchive extends \VuFind\Content\AbstractCover
             return false;
         }
         return false;
-    }
-
-    /**
-     * Does this plugin support the provided ID array?
-     *
-     * @param array $ids IDs that will later be sent to load() -- see below.
-     *
-     * @return bool
-     */
-    public function supports($ids)
-    {
-        return isset($ids['recordid']);
     }
 }

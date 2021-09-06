@@ -248,8 +248,7 @@ class VoyagerRestful extends Voyager implements \VuFindHttp\HttpServiceAwareInte
         $this->ws_dbKey = $this->config['WebServices']['dbKey'];
         $this->ws_patronHomeUbId = $this->config['WebServices']['patronHomeUbId'];
         $this->ws_pickUpLocations
-            = (isset($this->config['pickUpLocations']))
-            ? $this->config['pickUpLocations'] : false;
+            = $this->config['pickUpLocations'] ?? false;
         $this->defaultPickUpLocation
             = $this->config['Holds']['defaultPickUpLocation'] ?? '';
         if ($this->defaultPickUpLocation === 'user-selected') {
@@ -672,10 +671,12 @@ class VoyagerRestful extends Voyager implements \VuFindHttp\HttpServiceAwareInte
      * @param array $patron      Patron information returned by the patronLogin
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
-     * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.  May be used to limit the pickup options
-     * or may be ignored.  The driver must not add new options to the return array
-     * based on this data or other areas of VuFind may behave incorrectly.
+     * in the context of placing or editing a hold.  When placing a hold, it contains
+     * most of the same values passed to placeHold, minus the patron data.  When
+     * editing a hold it contains all the hold information returned by getMyHolds.
+     * May be used to limit the pickup options or may be ignored.  The driver must
+     * not add new options to the return array based on this data or other areas of
+     * VuFind may behave incorrectly.
      *
      * @throws ILSException
      * @return array        An array of associative arrays with locationID and
@@ -685,6 +686,7 @@ class VoyagerRestful extends Voyager implements \VuFindHttp\HttpServiceAwareInte
      */
     public function getPickUpLocations($patron = false, $holdDetails = null)
     {
+        $pickResponse = [];
         $params = [];
         if ($this->ws_pickUpLocations) {
             foreach ($this->ws_pickUpLocations as $code => $library) {
@@ -1011,6 +1013,7 @@ EOT;
     protected function makeRequest($hierarchy, $params = false, $mode = 'GET',
         $xml = false
     ) {
+        $hierarchyString = [];
         // Build Url Base
         $urlParams = "http://{$this->ws_host}:{$this->ws_port}/{$this->ws_app}";
 
@@ -1255,7 +1258,7 @@ EOT;
             $itemIdentifiers = '';
 
             foreach ($renewDetails['details'] as $renewID) {
-                list($dbKey, $loanId) = explode('|', $renewID);
+                [$dbKey, $loanId] = explode('|', $renewID);
                 if (!$dbKey) {
                     $dbKey = $this->ws_dbKey;
                 }
@@ -2051,7 +2054,7 @@ EOT;
         $response = [];
 
         foreach ($details as $cancelDetails) {
-            list($itemId, $cancelCode) = explode('|', $cancelDetails);
+            [$itemId, $cancelCode] = explode('|', $cancelDetails);
 
             // Create Rest API Cancel Key
             $cancelID = $this->ws_dbKey . '|' . $cancelCode;
@@ -2103,11 +2106,14 @@ EOT;
      * separated by a pipe, which is then submitted as form data in Hold.php. This
      * value is then extracted by the CancelHolds function.
      *
-     * @param array $holdDetails An array of item data
+     * @param array $holdDetails A single hold array from getMyHolds
+     * @param array $patron      Patron information from patronLogin
      *
      * @return string Data for use in a form field
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelHoldDetails($holdDetails)
+    public function getCancelHoldDetails($holdDetails, $patron = [])
     {
         if (!$this->allowCancelingAvailableRequests && $holdDetails['available']) {
             return '';
@@ -2476,6 +2482,7 @@ EOT;
             'view' => 'full'
         ];
 
+        $xml = [];
         if ('title' == $level) {
             $xml['call-slip-title-parameters'] = [
                 'comment' => $comment,
@@ -2518,6 +2525,7 @@ EOT;
                 ? trim((string)$result->$responseNode->note) : false;
 
             // Valid Response
+            $response = [];
             if ($reply == 'ok' && $note == 'Your request was successful.') {
                 $response['success'] = true;
                 $response['status'] = 'storage_retrieval_request_place_success';
@@ -2551,7 +2559,7 @@ EOT;
         $response = [];
 
         foreach ($details as $cancelDetails) {
-            list($dbKey, $itemId, $cancelCode) = explode('|', $cancelDetails);
+            [$dbKey, $itemId, $cancelCode] = explode('|', $cancelDetails);
 
             // Create Rest API Cancel Key
             $cancelID = ($dbKey ? $dbKey : $this->ws_dbKey) . '|' . $cancelCode;
@@ -2605,10 +2613,13 @@ EOT;
      * value is then extracted by the CancelStorageRetrievalRequests function.
      *
      * @param array $details An array of item data
+     * @param array $patron  Patron information from patronLogin
      *
      * @return string Data for use in a form field
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelStorageRetrievalRequestDetails($details)
+    public function getCancelStorageRetrievalRequestDetails($details, $patron)
     {
         $details
             = ($details['institution_dbkey'] ?? '')
@@ -2642,14 +2653,14 @@ EOT;
             $this->putCachedData($cacheId, false);
             return false;
         }
-        list($source, $patronId) = explode('.', $patron['id'], 2);
+        [$source, $patronId] = explode('.', $patron['id'], 2);
         if (!isset($this->config['ILLRequestSources'][$source])) {
             $this->debug("getUBRequestDetails: source '$source' unknown");
             $this->putCachedData($cacheId, false);
             return false;
         }
 
-        list(, $catUsername) = explode('.', $patron['cat_username'], 2);
+        [, $catUsername] = explode('.', $patron['cat_username'], 2);
         $patronId = $this->encodeXML($patronId);
         $patronHomeUbId = $this->encodeXML(
             $this->config['ILLRequestSources'][$source]
@@ -2906,12 +2917,12 @@ EOT;
             return false;
         }
 
-        list($source, $patronId) = explode('.', $patron['id'], 2);
+        [$source, $patronId] = explode('.', $patron['id'], 2);
         if (!isset($this->config['ILLRequestSources'][$source])) {
             return $this->holdError('ill_request_unknown_patron_source');
         }
 
-        list(, $catUsername) = explode('.', $patron['cat_username'], 2);
+        [, $catUsername] = explode('.', $patron['cat_username'], 2);
         $patronId = $this->encodeXML($patronId);
         $patronHomeUbId = $this->encodeXML(
             $this->config['ILLRequestSources'][$source]
@@ -2979,12 +2990,12 @@ EOT;
     public function placeILLRequest($details)
     {
         $patron = $details['patron'];
-        list($source, $patronId) = explode('.', $patron['id'], 2);
+        [$source, $patronId] = explode('.', $patron['id'], 2);
         if (!isset($this->config['ILLRequestSources'][$source])) {
             return $this->holdError('ill_request_error_unknown_patron_source');
         }
 
-        list(, $catUsername) = explode('.', $patron['cat_username'], 2);
+        [, $catUsername] = explode('.', $patron['cat_username'], 2);
         $patronId = htmlspecialchars($patronId, ENT_COMPAT, 'UTF-8');
         $patronHomeUbId = $this->encodeXML(
             $this->config['ILLRequestSources'][$source]
@@ -3146,7 +3157,7 @@ EOT;
         $response = [];
 
         foreach ($details as $cancelDetails) {
-            list($dbKey, $itemId, $type, $cancelCode) = explode('|', $cancelDetails);
+            [$dbKey, $itemId, $type, $cancelCode] = explode('|', $cancelDetails);
 
             // Create Rest API Cancel Key
             $cancelID = ($dbKey ? $dbKey : $this->ws_dbKey) . '|' . $cancelCode;
@@ -3207,10 +3218,13 @@ EOT;
      * submitted as form data and extracted by the CancelILLRequests function.
      *
      * @param array $details An array of item data
+     * @param array $patron  Patron information from patronLogin
      *
      * @return string Data for use in a form field
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelILLRequestDetails($details)
+    public function getCancelILLRequestDetails($details, $patron)
     {
         $details = ($details['institution_dbkey'] ?? '')
             . '|' . $details['item_id']

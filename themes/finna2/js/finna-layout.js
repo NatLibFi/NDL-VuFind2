@@ -1,4 +1,4 @@
-/*global VuFind, videojs, checkSaveStatuses, action, finna, initFacetTree, priorityNav */
+/*global VuFind, videojs, checkSaveStatuses, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
   var currentOpenTooltips = [];
 
@@ -90,7 +90,7 @@ finna.layout = (function finnaLayout() {
 
         var moreLink = $('<button type="button" class="more-link">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
         var lessLink = $('<button type="button" class="less-link">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
-        
+
         var linkClass = self.data('button-class') || '';
         if (linkClass) {
           moreLink.addClass(linkClass);
@@ -99,7 +99,7 @@ finna.layout = (function finnaLayout() {
         lessLink.on('click', function showLess() {
           self.siblings('.less-link').hide();
           self.siblings('.more-link').show();
-          self.css('height', truncation[index] - 1 + 'px');   
+          self.css('height', truncation[index] - 1 + 'px');
         });
         moreLink.on('click', function showMore() {
           self.siblings('.more-link').hide();
@@ -460,7 +460,7 @@ finna.layout = (function finnaLayout() {
       return;
     }
     document.addEventListener('VuFind.lightbox.login', function onLightboxLogin(e) {
-      if (typeof action !== 'undefined' && action === 'home' && !e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
+      if ($('body').hasClass('template-name-home') && !e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
         window.location.href = VuFind.path + '/MyResearch/Home';
         e.preventDefault();
       }
@@ -574,7 +574,7 @@ finna.layout = (function finnaLayout() {
     var loadCount = Object.keys(needed).length;
     if (loadCount) {
       // Load scripts and initialize player when all are loaded
-      var scriptLoaded = function scriptLoaded() {
+      var scriptLoaded = function onScriptLoaded() {
         if (--loadCount === 0) {
           if (typeof callback === 'function') {
             callback();
@@ -624,7 +624,7 @@ finna.layout = (function finnaLayout() {
 
   function initFiltersToggle () {
     var win = $(window);
-    
+
     if (win.width() <= 991) {
       $('.finna-filters .filters').addClass('hidden');
       $('.finna-filters .filters-toggle .toggle-text').html(VuFind.translate('show_filters'));
@@ -635,7 +635,7 @@ finna.layout = (function finnaLayout() {
       if (data.w > 991 && filters.hasClass('hidden')) {
         filters.removeClass('hidden');
       }
-      
+
     });
 
     $('.filters-toggle').on('click', function filterToggleClicked() {
@@ -731,6 +731,26 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  // Used in custom themes
+  function initHelpTabs() {
+    if ($('.help-tabs')[0]) {
+      $('.help-tab').each(function initHelpTab() {
+        if ($(this).hasClass('active')) {
+          $(this).focus();
+        }
+        var url = $(this).data('url');
+        $(this).keydown(function onTabEnter(event) {
+          if (event.which === 13) {
+            window.location.href = url;
+          }
+        });
+        $(this).click(function onTabClick() {
+          window.location.href = url;
+        });
+      });
+    }
+  }
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -779,6 +799,7 @@ finna.layout = (function finnaLayout() {
       initCookieConsent();
       setImagePaginatorTranslations();
       initImagePaginators();
+      initHelpTabs();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };

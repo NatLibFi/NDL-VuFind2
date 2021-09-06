@@ -73,13 +73,11 @@ class RecordDataFormatterFactory
     {
         $spec = new SpecBuilder();
 
-        $fields = $this->getDefaultCoreFields();
-
         foreach ($this->getDefaultCoreFields() as $key => $data) {
             if ($data[0] === true) {
-                list($multiLine, $dataMethod, $callback) = $data;
+                [$multiLine, $dataMethod, $callback] = $data;
             } else {
-                list($multiLine, $dataMethod, $template, $options) = $data;
+                [$multiLine, $dataMethod, $template, $options] = $data;
             }
             if ($multiLine) {
                 $spec->setMultiLine($key, $dataMethod, $callback);
@@ -250,7 +248,19 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Archive Series', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
             [
-                'context' => ['class' => 'recordSeries']
+                'context' => [
+                    'class' => 'recordSeries',
+                    'levels' => \Finna\RecordDriver\SolrEad::SERIES_LEVELS
+                ]
+            ]
+        );
+        $setTemplateLine(
+            'Archive File', 'isPartOfArchiveSeries', 'data-archiveSeries.phtml',
+            [
+                'context' => [
+                    'class' => 'recordFile',
+                    'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS
+                ]
             ]
         );
         $setTemplateLine(
@@ -575,6 +585,18 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordTitleStatement']
             ]
         );
+
+        $setTemplateLine(
+            'Additional Information Extended', 'getTitleStatementsExtended',
+            'data-addInfoExtended.phtml',
+            [
+                'context' => [
+                    'class' => 'recordTitleStatement',
+                    'title' => 'Additional Information'
+                ]
+            ]
+        );
+
         $setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             [
@@ -586,6 +608,12 @@ class RecordDataFormatterFactory
             'Record Links', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
             [
                 'context' => ['class' => 'recordLinks', 'title' => ""]
+            ]
+        );
+        $setTemplateLine(
+            'Related Materials', 'getAllRecordLinks', 'data-allRecordLinks.phtml',
+            [
+                'context' => ['class' => 'relatedMaterials']
             ]
         );
         $setTemplateLine(
@@ -771,10 +799,16 @@ class RecordDataFormatterFactory
 
         $getAccessRestrictions = function ($data, $options) use (&$pos) {
             $final = [];
+            // Check whether the first restriction element is an array. If so,
+            // restrictions are grouped under subheadings.
+            $useSubHeadings = is_array(array_values($data)[0]);
             foreach ($data as $type => $values) {
+                $values = $useSubHeadings && $values
+                  ? array_values($values) : $values;
+                $label = $useSubHeadings ? "access_restrictions_$type" : null;
                 $final[] = [
-                    'label' => "access_restrictions_$type",
-                    'values' => $values ? array_values($values) : null,
+                    'label' => $label,
+                    'values' => $values,
                     'options' => [
                         'pos' => $pos++,
                         'renderType' => 'RecordDriverTemplate',
@@ -895,7 +929,7 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Available Online', 'getWebResource', 'data-url.phtml',
+            'Available Online', 'getWebResources', 'data-detailed-urls.phtml',
             [
                 'context' => [
                     'class' => 'record-available-online',
@@ -977,35 +1011,64 @@ class RecordDataFormatterFactory
 
         // Add arcrole-relations as multiple fields with role as field header
         $getRelations = function ($data, $options) use (&$pos) {
-            $final = [];
-            foreach ($data as $type => $values) {
-                $label = null;
-                if (isset($values['role'])) {
-                    $label = $values['role'];
-                    $label = "CreatorRoles::$label";
-                    // Unset so that role is not appended to name
-                    unset($values['role']);
+            // Group relations by role
+            $relationsByRole = [];
+            foreach ($data as $relation) {
+                // Combine all relations without role under the key '0'
+                $role = ($relation['role'] ?? '0') ?: '0';
+                if (!isset($relationsByRole[$role])) {
+                    $relationsByRole[$role] = [];
                 }
+                // Unset so that role is not appended to relation name
+                // since it's used as the record field label (see below).
+                unset($relation['role']);
+                $relationsByRole[$role][] = $relation;
+            }
+            $final = [];
+            // Add one record field for each role (might include several relations).
+            foreach ($relationsByRole as $role => $relations) {
                 $final[] = [
-                    'label' => $label,
-                    'values' => [ 0 => $values],
+                    'label' => $role !== '0' ? "CreatorRoles::$role" : null,
+                    'values' => $relations,
                     'options' => [
                         'pos' => $pos++,
                         'renderType' => 'RecordDriverTemplate',
                         'template' => 'data-authors.phtml',
                         'context' => [
                             'class' => 'recordRelations',
-                            'type' => $type,
                             'schemaLabel' => null,
                         ],
                     ],
-                 ];
+                ];
             }
             return $final;
         };
 
         $setMultiTemplateLine(
             'Archive Relations', 'getRelations', $getRelations
+        );
+
+        $setTemplateLine(
+            'Appraisal', 'getAppraisal', 'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordAppraisal']
+            ]
+        );
+
+        $setTemplateLine(
+            'Container Information', 'getContainerInformation',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordContainerInformation']
+            ]
+        );
+
+        $setTemplateLine(
+            'Material Arrangement', 'getMaterialArrangement',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordMaterialArrangement']
+            ]
         );
 
         return $lines;

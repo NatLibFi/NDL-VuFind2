@@ -83,9 +83,11 @@ class Connection extends \VuFind\ILS\Connection
         // the sources beforehand.
         if ('getConfig' === $method && 'Holds' === ($params[0] ?? '')) {
             // Check source of record id vs. patron id
-            list($recordSource) = explode('.', $params[1]['id'] ?? '');
-            list($patronSource) = explode('.', $params[1]['patron']['id'] ?? '');
-            if ($patronSource && $patronSource !== $recordSource) {
+            [$recordSource] = explode('.', $params[1]['id'] ?? '');
+            [$patronSource] = explode('.', $params[1]['patron']['id'] ?? '');
+            if ($patronSource && $recordSource && $patronSource !== $recordSource
+                && ($params[1]['patron']['email'] ?? '') !== 'Lib.Rarian@library.not'
+            ) {
                 return false;
             }
         }
@@ -251,62 +253,6 @@ class Connection extends \VuFind\ILS\Connection
         }
         if ($functionConfig['method'] == 'driver'
             && $this->checkCapability('updateAddress', [$params ?: []])
-        ) {
-            return $functionConfig;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check for changePickupLocation
-     *
-     * A support method for checkFunction(). This is responsible for checking
-     * the driver configuration to determine if the system supports change of
-     * the pickup location.
-     *
-     * @param array $functionConfig The configuration values
-     * @param array $params         Patron data
-     *
-     * @return mixed On success, array of configuration data; on failure, false.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function checkMethodchangePickupLocation($functionConfig, $params)
-    {
-        if (!isset($functionConfig['method'])) {
-            return false;
-        }
-
-        if ($this->checkCapability('changePickupLocation', [$params ?: []])
-        ) {
-            return $functionConfig;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check for changeRequestStatus
-     *
-     * A support method for checkFunction(). This is responsible for checking
-     * the driver configuration to determine if the system supports change of
-     * request status.
-     *
-     * @param array $functionConfig The configuration values
-     * @param array $params         Patron data
-     *
-     * @return mixed On success, array of configuration data; on failure, false.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function checkMethodchangeRequestStatus($functionConfig, $params)
-    {
-        if (!isset($functionConfig['method'])) {
-            return false;
-        }
-
-        if ($this->checkCapability('changeRequestStatus', [$params ?: []])
         ) {
             return $functionConfig;
         }

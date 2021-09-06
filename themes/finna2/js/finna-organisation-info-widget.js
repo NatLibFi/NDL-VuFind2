@@ -344,7 +344,7 @@ finna.organisationInfoWidget = (function finnaOrganisationInfoWidget() {
       map.find('> a').attr('href', data.mapUrl);
       map.find('.map-address')
         .text(data.address)
-        .attr('aria-label', data.address + ' (' + VuFind.translate('external_link') + ')');
+        .attr('aria-label', VuFind.translate('Location') + ': ' + data.address + ' (' + VuFind.translate('external_link') + ', ' + VuFind.translate('Open in a new window') + ')');
       map.show();
     }
 

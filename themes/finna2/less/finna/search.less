@@ -30,6 +30,7 @@
 }
 @media (max-width: @screen-sm-max) {
   .template-dir-myresearch .container.main-content > .mainbody,
+  .template-dir-holds .container.main-content > .mainbody,
   .template-dir-librarycards .container.main-content > .mainbody,
   .template-name-mylist .container.main-content > .mainbody,
   .template-name-history .container.main-content > .mainbody {
@@ -171,6 +172,12 @@ mark, .highlight {
 .bulkActionButtons {
   font-size: 0.9em;
   margin: 0.5em 0;
+  display: flex;
+  align-items: center;
+  flex-flow: row wrap;
+  >* {
+    margin-right: 4px;
+  }
 }
 
 .bulkActionButtons .checkbox,

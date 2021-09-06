@@ -62,7 +62,8 @@ class L1RecordController extends RecordController
      */
     protected function resultScrollerActive()
     {
-        $config = $this->serviceLocator->get(\VuFind\Config::class)->get('L1');
+        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class)
+            ->get('L1');
         return isset($config->Record->next_prev_navigation)
             && $config->Record->next_prev_navigation;
     }

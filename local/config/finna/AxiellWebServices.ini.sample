@@ -16,6 +16,12 @@ patron_wsdl = arena_2.7.1_patron.wsdl
 ;patronaurora_wsdl = XXXXXXXXXXX
 ;catalogueaurora_wsdl = XXXXXXXXXXX
 
+; Request timeout in seconds. Default is 60.
+;timeout = 60
+
+; Connection timeout in seconds. Default is 15.
+;connection_timeout = 15
+
 [Loans]
 ; The renewal limit in order to display the remaining amount of renewals
 renewalLimit = 3
@@ -72,13 +78,25 @@ defaultPickUpLocation = 1.001
 ; a single reservation queue.
 ;singleReservationQueue = true
 
-; Optional help texts that can be displayed on the hold form
-;helpText = "Help text for all languages."
-;helpText[en-gb] = "Help text for English language."
+; Optional help texts that can be displayed on the hold form. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;helpText[*] = "Default help text used if not overridden."
+;helpText[en-gb] = "Help text for British English localization."
 
-; Optional label for the "acceptTerms" extra field
-;acceptTermsText = "I accept the terms in any language."
-;acceptTermsText[en-gb] = "I accept the terms in English."
+; Optional help texts that can be displayed on the hold update form. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;updateHelpText[*] = "Hold update default help text used if not overridden."
+;updateHelpText[en-gb] = "Hold update help text for British English localization."
+
+; Optional label for the "acceptTerms" extra field. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;acceptTermsText[*] = "I accept the terms in any language."
+;acceptTerms[en-gb] = "I accept the terms in English."
+
+; Fields that can be updated for holds (unless the hold is already in transit or
+; available for pickup). The supported values are "pickUpLocation", "frozen",
+; "frozenThrough" and "requiredByDate".
+updateFields = pickUpLocation:frozen:frozenThrough:requiredByDate
 
 [Feedback]
 ; domain = The starting subdomain of url without www.,
@@ -92,10 +110,6 @@ HMACKeys = id
 ; PIN change parameters.
 minLength = 4
 maxLength = 4
-
-; Uncomment the following line to enable changePickupLocation
-[changePickupLocation]
-method = driver
 
 ; Uncomment the following lines to enable updating of address information.
 ; Choose a method on how to update the address information (database or url).
@@ -131,6 +145,9 @@ method = driver
 ; Only 'driver' is currently supported.
 [updateEmail]
 ;method = driver
+; Whether to convert + in email address to %2B to work around AWS problem that
+; converts a plus sign to a space. Enabled by default.
+;encodeEmailPlusSign = true
 
 ; Uncomment the following lines to enable updating of phone number.
 ; Choose a method on how to update the phone number.
@@ -194,6 +211,9 @@ currency = 'EUR'
 ; expression enclosed in slashes (e.g. '/^Lasku - Lasku\b/')
 nonPayable[] = '/^Lasku - Lasku\b/'
 nonPayable[] = '/^Muu maksu/'
+; Whether the paid amount must match the payable amount. Default is true. If false,
+; payments of less than the full amount are accepted.
+;exactBalanceRequired = false
 
 ; valid value is 'driver'.
 [updateTransactionHistoryState]

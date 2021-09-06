@@ -39,11 +39,18 @@ namespace Finna\View\Helper\Root;
 class Primo extends \Laminas\View\Helper\AbstractHelper
 {
     /**
+     * Primo configuration
+     *
+     * @var \Laminas\Config\Config
+     */
+    protected $config;
+
+    /**
      * Constructor
      *
-     * @param \VuFind\Config\PluginManager $config Primo configuration
+     * @param \Laminas\Config\Config $config Primo configuration
      */
-    public function __construct($config)
+    public function __construct(\Laminas\Config\Config $config)
     {
         $this->config = $config;
     }

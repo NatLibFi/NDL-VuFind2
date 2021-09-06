@@ -1,0 +1,11 @@
+<?php //Don't add START and END comments ?>
+<div class="truncate-field" data-rows="2">
+    <?php foreach ($data as $url): ?>
+        <div class="detailed-url">
+            <a href="<?=$this->escapeHtmlAttr($url['url'])?>" target="_blank"><?=!empty($url['desc']) ? $this->transEsc('default::link_' . $url['desc'], null, $url['desc']) : $this->truncateUrl($url['url'])?> <?=!empty($url['label']) ? '(' . $this->escapeHtml($url['label']) . ')' : ''?></a>
+            <?php if (!empty($url['info'])): ?>
+                <div><?=$this->escapeHtml($url['info'])?></div>
+            <?php endif; ?>
+        </div>
+    <?php endforeach; ?>
+</div>

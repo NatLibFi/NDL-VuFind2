@@ -31,42 +31,48 @@
           </div>
         <?php endif; ?>
       <?php else: ?>
-      <?php if ($template = $this->content()->findTemplateForLng("content/Additions/storageretrievalrequests-pre-list")): ?>
-        <div class="storageretrievalrequests-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
-      <?php if (!empty($this->recordList)): ?>
-        <?php if ($this->cancelForm): ?>
-        <form name="cancelForm" class="inline" method="post" id="cancelStorageRetrievalRequest"  data-clear-account-cache="storageRetrievalRequests">
-            <div class="toolbar">
-              <div>
-                <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
-                <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
-              </div>
-              <div>
-                <div class="btn-group">
-                  <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEsc("storage_retrieval_request_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
-                  <ul class="dropdown-menu useraccount-cancel">
-                    <li class="disabled"><a><?=$this->transEsc("confirm_storage_retrieval_request_cancel_selected_text") ?></a></li>
-                    <li><a id="confirm_cancel_selected_yes" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                    <li><a class="confirm_cancel_no" href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                  </ul>
+        <?php if ($template = $this->content()->findTemplateForLng("content/Additions/storageretrievalrequests-pre-list")): ?>
+          <div class="storageretrievalrequests-pre-list"><?=$this->render($template)?></div>
+        <?php endif; ?>
+        <?php if (!empty($this->recordList)): ?>
+          <?php if ($this->cancelForm): ?>
+            <form name="cancelForm" class="inline" method="post" id="cancelStorageRetrievalRequest"  data-clear-account-cache="storageRetrievalRequests">
+              <div class="toolbar">
+                <div>
+                  <input type="hidden" id="submitType" name="cancelSelected" value="1"/>
+                  <input type="hidden" id="cancelConfirm" name="confirm" value="0"/>
                 </div>
-                <div class="btn-group">
-                  <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEsc("storage_retrieval_request_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
-                  <ul class="dropdown-menu useraccount-cancel">
-                    <li class="disabled"><a><?=$this->transEsc("confirm_storage_retrieval_request_cancel_all_text") ?></a></li>
-                    <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                    <li><a class="confirm_cancel_no" href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
-                  </ul>
+                <div>
+                  <div class="btn-group">
+                    <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr("storage_retrieval_request_cancel_selected") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
+                    <ul class="dropdown-menu useraccount-cancel">
+                      <li class="disabled"><a><?=$this->transEsc("confirm_storage_retrieval_request_cancel_selected_text") ?></a></li>
+                      <li><a id="confirm_cancel_selected_yes" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
+                      <li><a class="confirm_cancel_no" href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                    </ul>
+                  </div>
+                  <div class="btn-group">
+                    <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr("storage_retrieval_request_cancel_all") ?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"/>
+                    <ul class="dropdown-menu useraccount-cancel">
+                      <li class="disabled"><a><?=$this->transEsc("confirm_storage_retrieval_request_cancel_all_text") ?></a></li>
+                      <li><a href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
+                      <li><a class="confirm_cancel_no" href="#"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                    </ul>
+                  </div>
                 </div>
               </div>
-            </div>
           <?php else: ?>
             <div class="toolbar">
               <p><?=$this->transEsc('Cannot cancel any Retrieval Requests')?></p>
             </div>
           <?php endif; ?>
-          <table class="myresearch-table">
+          <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Storage Retrieval Requests');?>" tabindex="0">
+            <tr class="sr-only myresearch-row" aria-hidden="true">
+              <th id="label-select-column"><?=$this->transEsc('Select');?></th>
+              <th class="hidden-xs"></th>
+              <th id="label-title-column"><?=$this->transEsc('Request Details');?></th>
+              <th id="label-core-metadata" class="text-right"></th>
+            </tr>
           <?php $iteration = 0; ?>
           <?php foreach ($this->recordList as $resource): ?>
             <?php $iteration++; ?>
@@ -86,29 +92,29 @@
                 </div>
               </td>
               <?php endif; ?>
-              <td class="text-left hidden-xs">
-                <div aria-hidden="true" class="cover-image">
+              <td class="text-left hidden-xs" aria-hidden="true">
+                <div class="cover-image">
                   <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
-                    <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEsc('Cover Image')?>"/>
+                    <img src="<?=$this->escapeHtmlAttr($summThumb)?>" class="recordcover" alt="<?=$this->transEscAttr('Cover Image')?>"/>
                   <?php else: ?>
-                    <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEsc('No Cover Image')?>"/>
+                    <img src="<?=$this->url('cover-unavailable')?>" class="recordcover" alt="<?=$this->transEscAttr('No Cover Image')?>"/>
                   <?php endif; ?>
                 </div>
               </td>
-              <td class="">
+              <td headers="label-title-column" aria-labelledby="label-title-column">
                 <?php
                   // If this is a non-missing Solr record, we should display a link:
                   if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
                     $title = $resource->getTitle();
                     $title = empty($title) ? $this->transEsc('Title not available') : $this->escapeHtml($title);
-                    echo '<h3><a href="' . $this->recordLink()->getUrl($resource)
-                      . '" class="record-title">' . $title . '</a></h3>';
+                    echo '<a href="' . $this->recordLink()->getUrl($resource)
+                      . '" class="record-title">' . $title . '</a>';
                   } elseif (isset($ilsDetails['title']) && !empty($ilsDetails['title'])){
                     // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...
-                    echo '<h3 class="record-title">' . $this->escapeHtml($ilsDetails['title']) . '</h3>';
+                    echo '<span class="record-title">' . $this->escapeHtml($ilsDetails['title']) . '</span>';
                   } else {
                     // Last resort -- indicate that no title could be found.
-                    echo '<h3 class="record-title">' . $this->transEsc('Title not available') . '</h3>';
+                    echo '<span class="record-title">' . $this->transEsc('Title not available') . '</span>';
                   }
                 ?>
                 <div class="record-core-metadata">
@@ -116,11 +122,7 @@
                     <?=$this->record($resource)->getFormatList() ?>
                     <br/>
                   <?php endif; ?>
-
-                  <?php $listAuthor = $resource->getPrimaryAuthor(); if (!empty($listAuthor)): ?>
-                    <a href="<?=$this->record($resource)->getLink('author', $listAuthor)?>"><?=$this->escapeHtml($listAuthor)?></a><br/>
-                  <?php endif; ?>
-
+                  <?=$this->partial('myresearch/helpers/record-author.phtml', ['record' => $resource]);?>
                   <?php if (isset($ilsDetails['volume']) && !empty($ilsDetails['volume'])): ?>
                     <strong><?=$this->transEsc('Volume')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
                     <br />
@@ -132,7 +134,7 @@
                   <?php endif; ?>
                 </div>
               </td>
-              <td class="text-right">
+              <td class="text-right" headers="label-core-metadata" aria-labelledby="label-core-metadata">
                 <?php /* Depending on the ILS driver, the "location" value may be a string or an ID; figure out the best
                   value to display... */ ?>
                 <?php $pickupDisplay = ''; ?>
@@ -161,7 +163,7 @@
                   <?php if (!empty($ilsDetails['expire'])): ?>|<?php endif; ?>
                 <?php endif; ?>
                 <?php if (!empty($ilsDetails['expire'])): ?>
-                  <strong><?=$this->transEsc('Expires') ?>:</strong> <?=$this->escapeHtml($ilsDetails['expire']) ?>
+                  <strong><?=$this->transEsc('storage_retrieval_request_expires') ?>:</strong> <?=$this->escapeHtml($ilsDetails['expire']) ?>
                 <?php endif; ?>
                 <br />
 
@@ -188,8 +190,8 @@
               </td>
             </tr>
           <?php endforeach; ?>
-        </table>
-        <?php if ($this->cancelForm): ?></form><?php endif; ?>
+          </table>
+          <?php if ($this->cancelForm): ?></form><?php endif; ?>
           <?php if ($template = $this->content()->findTemplateForLng("content/Additions/storageretrievalrequests-post-list")): ?>
             <div class="storageretrievalrequests-post-list"><?=$this->render($template)?></div>
           <?php endif; ?>

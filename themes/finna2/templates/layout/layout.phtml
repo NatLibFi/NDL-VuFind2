@@ -204,6 +204,7 @@ JS;
           <?=$this->translate('outdated_browser_message_html');?>
         </div>
       <?php endif; ?>
+      <?=$this->render('Helpers/pre-production-warning.phtml')?>
       <?php if ($messages = $this->systemMessages()): ?>
         <div class="container-fluid system-messages">
           <?php foreach ($messages as $message): ?>

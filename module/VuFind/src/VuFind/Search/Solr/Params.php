@@ -417,7 +417,8 @@ class Params extends \VuFind\Search\Base\Params
 
         // Special case -- no IDs to set:
         if (empty($ids)) {
-            return $this->setOverrideQuery('NOT *:*');
+            $this->setOverrideQuery('NOT *:*');
+            return;
         }
 
         $callback = function ($i) {
@@ -554,6 +555,7 @@ class Params extends \VuFind\Search\Base\Params
 
         if ($pf = $this->getPivotFacets()) {
             $backendParams->add('facet.pivot', $pf);
+            $backendParams->set('facet', 'true');
         }
 
         return $backendParams;

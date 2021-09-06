@@ -41,6 +41,13 @@ use Laminas\Http\PhpEnvironment\Request;
 class Auth extends \VuFind\View\Helper\Root\Auth
 {
     /**
+     * Request
+     *
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * Constructor
      *
      * @param \VuFind\Auth\Manager          $manager          Authentication manager

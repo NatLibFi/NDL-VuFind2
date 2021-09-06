@@ -1,0 +1,17 @@
+<?php
+  $__attributes = $this->htmlAttributes($attributes ?? []);
+  if (!isset($__attributes['type'])) {
+    $__attributes['type'] = 'button';
+  }
+  if (!isset($label) && isset($ariaLabel)) {
+    $__attributes['aria-label'] = $ariaLabel;
+  }
+  // Avoid unwanted whitespace in all possible variations.
+?>
+<button<?= $__attributes->add('class', 'finna-btn') ?>><?php
+  if (isset($iconClass) || isset($label)): ?><?php
+    if (isset($iconClass)): ?><i class="<?= $iconClass ?>" aria-hidden="true"></i><?php endif; ?><?php
+    if (isset($iconClass) && isset($label)): ?> <?php endif; ?><?=
+    $label ?? '' ?><?php
+  endif;
+?></button>

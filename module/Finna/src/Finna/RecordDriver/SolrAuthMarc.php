@@ -202,9 +202,11 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     public function getAlternativeTitles()
     {
         $result = [];
-        foreach (['400', '410'] as $fieldCode) {
+        foreach (['400' => ['a', 'b', 'c'], '410' => ['a', 'b']]
+            as $fieldCode => $subfields
+        ) {
             foreach ($this->getMarcReader()->getFields($fieldCode) as $field) {
-                if ($matches = $this->getSubfieldArray($field, ['a','b'], false)) {
+                if ($matches = $this->getSubfieldArray($field, $subfields, false)) {
                     $matches = array_map(
                         function ($val) {
                             return $this->stripTrailingPunctuation($val, '.');

@@ -135,7 +135,7 @@ class ListController extends \Finna\Controller\MyResearchController
     {
         // Fail if lists are disabled:
         if (!$this->listsEnabled()) {
-            throw new ForbiddenException('Lists disabled');
+            throw new \VuFind\Exception\Forbidden('Lists disabled');
         }
 
         // Check permission:

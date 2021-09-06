@@ -120,6 +120,32 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
     protected $validatePasswords;
 
     /**
+     * Authorised values category for location, defaults to 'LOC'
+     *
+     * @var string
+     */
+    protected $locationAuthorisedValuesCategory;
+
+    /**
+     * Default terms for block types, can be overridden by configuration
+     *
+     * @var array
+     */
+    protected $blockTerms = [
+        'SUSPENSION' => 'Account Suspended',
+        'OVERDUES' => 'Account Blocked (Overdue Items)',
+        'MANUAL' => 'Account Blocked',
+        'DISCHARGE' => 'Account Blocked for Discharge',
+    ];
+
+    /**
+     * Display comments for patron debarments, see KohaILSDI.ini
+     *
+     * @var array
+     */
+    protected $showBlockComments;
+
+    /**
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter object
@@ -178,14 +204,6 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
         $this->debug("ILS URL: " . $this->ilsBaseUrl);
         $this->debug("Locations: " . $this->locations);
         $this->debug("Default Location: " . $this->defaultLocation);
-
-        // Set our default terms for block types
-        $this->blockTerms = [
-            'SUSPENSION' => 'Account Suspended',
-            'OVERDUES' => 'Account Blocked (Overdue Items)',
-            'MANUAL' => 'Account Blocked',
-            'DISCHARGE' => 'Account Blocked for Discharge',
-        ];
 
         // Now override the default with any defined in the `KohaILSDI.ini` config
         // file
@@ -452,7 +470,7 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
         }
         $end = microtime(true);
         $time2 = $end - $start;
-        echo "\t$time1 - $time2";
+        $this->debug("Request times: $time1 - $time2");
         return $result;
     }
 
@@ -528,10 +546,12 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
      * @param array $patron      Patron information returned by the patronLogin
      * method.
      * @param array $holdDetails Optional array, only passed in when getting a list
-     * in the context of placing a hold; contains most of the same values passed to
-     * placeHold, minus the patron data.    May be used to limit the pickup options
-     * or may be ignored.  The driver must not add new options to the return array
-     * based on this data or other areas of VuFind may behave incorrectly.
+     * in the context of placing or editing a hold.  When placing a hold, it contains
+     * most of the same values passed to placeHold, minus the patron data.  When
+     * editing a hold it contains all the hold information returned by getMyHolds.
+     * May be used to limit the pickup options or may be ignored.  The driver must
+     * not add new options to the return array based on this data or other areas of
+     * VuFind may behave incorrectly.
      *
      * @throws ILSException
      * @return array An array of associative arrays with locationID and
@@ -1258,11 +1278,14 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
      * an item ID. This function returns the item id as a string. This
      * value is then used by the CancelHolds function.
      *
-     * @param array $holdDetails An array of item data
+     * @param array $holdDetails A single hold array from getMyHolds
+     * @param array $patron      Patron information from patronLogin
      *
      * @return string Data for use in a form field
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getCancelHoldDetails($holdDetails)
+    public function getCancelHoldDetails($holdDetails, $patron = [])
     {
         return $holdDetails['reserve_id'];
     }
@@ -1485,7 +1508,6 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getMyTransactions($patron)
     {
-        echo "<!--";
         $id = $patron['id'];
         $transactionLst = [];
         $start = microtime(true);
@@ -1493,7 +1515,7 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
             "GetPatronInfo&patron_id=$id" . "&show_contact=0&show_loans=1"
         );
         $end = microtime(true);
-        $requestTimes[] = $end - $start;
+        $requestTimes = [$end - $start];
 
         $this->debug("ID: " . $rsp->{'borrowernumber'});
 
@@ -1526,9 +1548,8 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
             ];
         }
         foreach ($requestTimes as $time) {
-            echo "\n$time\n";
+            $this->debug("Request time: $time");
         }
-        echo "-->";
         return $transactionLst;
     }
 
@@ -1571,7 +1592,7 @@ class KohaILSDI extends \VuFind\ILS\Driver\AbstractBase implements
         foreach ($details as $renewItem) {
             $rsp = $this->makeRequest($request_prefix . $renewItem);
             if ($rsp->{'success'} != '0') {
-                list($date, $time)
+                [$date, $time]
                     = explode(" ", $this->getField($rsp->{'date_due'}));
                 $retVal['details'][$renewItem] = [
                     "success"  => true,

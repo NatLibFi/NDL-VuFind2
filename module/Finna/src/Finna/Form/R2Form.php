@@ -94,18 +94,22 @@ class R2Form extends Form
      */
     public function getDisplayString($translationKey, $escape = null)
     {
+        $urlHelper = $this->viewHelperManager->get('url');
         // R2 registration form help texts
         switch ($translationKey) {
         case 'R2_register_form_usage_link_html':
         case 'R2_register_form_help_returninguser_pre_html':
-            $url = $this->viewHelperManager->get('url')
-                ->__invoke('content-page', ['page' => 'tutkijasali']);
+            $url = $urlHelper->__invoke('content-page', ['page' => 'tutkijasali']);
             return $this->translate($translationKey, ['%%url%%' => $url]);
-
         case 'R2_register_form_help_post_html':
-            $url = $this->viewHelperManager->get('url')
-                ->__invoke('content-page', ['page' => 'privacy']);
-            return $this->translate($translationKey, ['%%url%%' => $url]);
+            return $this->translate(
+                $translationKey, [
+                    '%%url%%' =>
+                        $urlHelper->__invoke('content-page', ['page' => 'privacy']),
+                    '%%urlTerms%%' =>
+                        $urlHelper->__invoke('content-page', ['page' => 'terms'])
+                ]
+            );
 
         case 'R2_register_form_usage_help_html':
             $help = $this->translate('R2_register_form_usage_help_tooltip_html');

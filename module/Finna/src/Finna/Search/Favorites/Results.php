@@ -132,6 +132,9 @@ class Results extends \VuFind\Search\Favorites\Results
     {
         $filters = $this->getParams()->getRawFilters();
         $listId = $filters['lists'][0] ?? null;
+        if (null !== $listId) {
+            $listId = intval($listId);
+        }
 
         // Load a list when
         //   a. if we haven't previously tried to load a list ($this->list = false)

@@ -168,7 +168,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Support method for initSearch() -- handle basic settings.
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return boolean True if search settings were found, false if not.
@@ -214,7 +214,7 @@ class Params extends \VuFind\Search\Solr\Params
     public function addFilter($filter)
     {
         // Extract field and value from URL string:
-        list($field, $value) = $this->parseFilter($filter);
+        [$field, $value] = $this->parseFilter($filter);
 
         if ($field == $this->getDateRangeSearchField()
             || $field == self::SPATIAL_DATERANGE_FIELD_VF1
@@ -261,8 +261,8 @@ class Params extends \VuFind\Search\Solr\Params
                     $filter, "$dateRangeField:", strlen($dateRangeField) + 1
                 ) == 0;
                 if ($dateRange) {
-                    list($field, $value) = $this->parseFilter($filter);
-                    list($op, $range) = explode('|', $value);
+                    [$field, $value] = $this->parseFilter($filter);
+                    [$op, $range] = explode('|', $value);
                     $op = $op == 'within' ? 'Within' : 'Intersects';
                     $filter = "{!field f=$dateRangeField op=$op}$range";
                 }
@@ -340,7 +340,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Pull the search parameters
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -376,7 +376,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Initialize coordinate filter (coordinates, VuFind1)
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -395,7 +395,7 @@ class Params extends \VuFind\Search\Solr\Params
             $matches
         );
         if ($simple) {
-            list(, $minX, $minY, $maxX, $maxY) = $matches;
+            [, $minX, $minY, $maxX, $maxY] = $matches;
             $coordinates = "POLYGON(($minX $maxY,$maxX $maxY,$maxX $minY"
                 . ",$minX $minY,$minX $maxY))";
         }
@@ -408,7 +408,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Initialize date range filter (search_daterange_mv)
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -434,7 +434,7 @@ class Params extends \VuFind\Search\Solr\Params
         // Date range filter
         if (($reqFilters = $request->get('filter')) && is_array($reqFilters)) {
             foreach ($reqFilters as $f) {
-                list($field, $value) = $this->parseFilter($f);
+                [$field, $value] = $this->parseFilter($f);
                 if ($field == $dateRangeField
                     || $field == self::SPATIAL_DATERANGE_FIELD_VF1
                 ) {
@@ -595,7 +595,7 @@ class Params extends \VuFind\Search\Solr\Params
                     if ($includeRole) {
                         $result[] = $filter;
                     } else {
-                        list($id, $role)
+                        [$id, $role]
                             = $this->authorityHelper->extractRole($filter);
                         $result[] = $id;
                     }
@@ -646,10 +646,10 @@ class Params extends \VuFind\Search\Solr\Params
         }
 
         $domain = $this->getOptions()->getTextDomainForTranslatedFacet($field);
-        list($from, $fromDate) = $this->formatNewItemsDateForDisplay(
+        [$from, $fromDate] = $this->formatNewItemsDateForDisplay(
             $range['from'], $domain
         );
-        list($to, $toDate) = $this->formatNewItemsDateForDisplay(
+        [$to, $toDate] = $this->formatNewItemsDateForDisplay(
             $range['to'], $domain
         );
         $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
@@ -801,7 +801,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Add filters to the object based on values found in the request object.
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -817,7 +817,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Initialize new items filter (first_indexed)
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void

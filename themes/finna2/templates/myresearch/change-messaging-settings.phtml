@@ -29,14 +29,14 @@
             <?php endforeach; ?>
             <?php if ($service == 'dueDateAlert'): ?>
               <?php foreach ($this->emailDays as $day => $label): ?>
-                <option value="<?=$day + 1 ?>"<?php if ($data['numOfDays'] == $day + 1): ?> selected<?php endif; ?>><?=$this->escapeHtml($label) ?></option>
+                <option value="<?=$this->escapeHtmlAttr($day + 1) ?>"<?php if ($data['numOfDays'] == $day + 1): ?> selected<?php endif; ?>><?=$this->escapeHtml($label) ?></option>
               <?php endforeach; ?>
             <?php endif; ?>
           </select>
         </div>
       <?php endforeach; ?>
       <div class="form-group">
-        <input name="messaging_update_request" class="btn btn-primary" type="submit" value="<?=$this->transEsc('Send') ?>" />
+        <input name="messaging_update_request" class="btn btn-primary" type="submit" value="<?=$this->transEscAttr('Send') ?>" />
       </div>
     </form>
   <?php endif; ?>

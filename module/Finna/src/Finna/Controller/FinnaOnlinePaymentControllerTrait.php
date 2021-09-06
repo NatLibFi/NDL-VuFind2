@@ -28,7 +28,7 @@
  */
 namespace Finna\Controller;
 
-use Laminas\Console\Console;
+use Laminas\Stdlib\Parameters;
 
 /**
  * Online payment controller trait.
@@ -220,7 +220,8 @@ trait FinnaOnlinePaymentControllerTrait
             && $payableOnline['payable'] && $payableOnline['amount']
         ) {
             // Payment started, check that fee list has not been updated
-            if (($paymentConfig['exactBalanceRequired'] ?? true)
+            if ((($paymentConfig['exactBalanceRequired'] ?? true)
+                || !empty($paymentConfig['creditUnsupported']))
                 && $this->checkIfFinesUpdated($patron, $payableOnline['amount'])
             ) {
                 // Fines updated, redirect and show updated list.
@@ -230,7 +231,7 @@ trait FinnaOnlinePaymentControllerTrait
             }
             $finesUrl = $this->getServerUrl('myresearch-fines');
             $ajaxUrl = $this->getServerUrl('home') . 'AJAX';
-            list($driver, ) = explode('.', $patron['cat_username'], 2);
+            [$driver, ] = explode('.', $patron['cat_username'], 2);
 
             $user = $this->getUser();
             if (!$user) {
@@ -355,9 +356,9 @@ trait FinnaOnlinePaymentControllerTrait
     protected function handleException($e)
     {
         $this->setLogger($this->serviceLocator->get(\VuFind\Log\Logger::class));
-        if (!Console::isConsole()) {
+        if (PHP_SAPI !== 'cli') {
             if (is_callable([$this->logger, 'logException'])) {
-                $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
+                $this->logger->logException($e, new Parameters());
             }
         } else {
             $this->logException($e);

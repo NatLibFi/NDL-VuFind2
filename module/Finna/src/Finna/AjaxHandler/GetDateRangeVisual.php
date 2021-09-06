@@ -90,7 +90,7 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
         if (!$backend) {
             $backend = 'Solr';
         }
-        $isSolr = $backend == 'Solr';
+        $isSolr = in_array($backend, ['Solr', 'R2']);
 
         $configFile = $isSolr ? 'facets' : $backend;
         $config = $this->configManager->get($configFile);
@@ -98,7 +98,7 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
             return $this->formatResponse([], self::STATUS_HTTP_ERROR);
         }
 
-        list($filterField, $facet)
+        [$filterField, $facet]
             = explode(':', $config->SpecialFacets->dateRangeVis);
 
         $results = $this->resultsManager->get($backend);

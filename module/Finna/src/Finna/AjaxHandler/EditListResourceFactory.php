@@ -71,7 +71,8 @@ class EditListResourceFactory
         return new $requestedName(
             $tablePluginManager->get(\VuFind\Db\Table\UserResource::class),
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
-            $capabilities->getListSetting() !== 'disabled'
+            $capabilities->getListSetting() !== 'disabled',
+            $container->get('ViewRenderer')->plugin('markdown')
         );
     }
 }
