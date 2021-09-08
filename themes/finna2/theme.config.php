@@ -32,7 +32,6 @@ $config = [
             'Finna\View\Helper\Root\ImageSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\LayoutClass' => 'VuFind\View\Helper\Bootstrap3\LayoutClassFactory',
             'Finna\View\Helper\Root\LinkedEventsTabs' => 'Laminas\ServiceManager\Factory\InvokableFactory',
-            'Finna\View\Helper\Root\Linkify' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Markdown' => 'Finna\View\Helper\Root\MarkdownFactory',
             'Finna\View\Helper\Root\Matomo' => 'VuFind\View\Helper\Root\MatomoFactory',
             'Finna\View\Helper\Root\MetaLib' => 'Laminas\ServiceManager\Factory\InvokableFactory',
@@ -71,6 +70,8 @@ $config = [
             'Finna\View\Helper\Root\UserAgent' => 'Finna\View\Helper\Root\UserAgentFactory',
             'Finna\View\Helper\Root\UserListEmbed' => 'Finna\View\Helper\Root\UserListEmbedFactory',
             'Finna\View\Helper\Root\UserPublicName' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+
+            'VuFind\View\Helper\Root\Linkify' => 'Finna\View\Helper\Root\LinkifyFactory',
         ],
         'aliases' => [
             'auth' => 'Finna\View\Helper\Root\Auth',
@@ -137,7 +138,6 @@ $config = [
             'VuFind\View\Helper\Root\Config' => 'Finna\View\Helper\Root\Config',
             'VuFind\View\Helper\Root\Matomo' => 'Finna\View\Helper\Root\Matomo',
             'VuFind\View\Helper\Root\OpenUrl' => 'Finna\View\Helper\Root\OpenUrl',
-            'VuFind\View\Helper\Root\Linkify' => 'Finna\View\Helper\Root\Linkify',
             'VuFind\View\Helper\Root\Piwik' => 'Finna\View\Helper\Root\Piwik',
             'VuFind\View\Helper\Root\ProxyUrl' => 'Finna\View\Helper\Root\ProxyUrl',
             'VuFind\View\Helper\Root\Record' => 'Finna\View\Helper\Root\Record',
