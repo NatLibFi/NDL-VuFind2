@@ -32,7 +32,6 @@ use Laminas\EventManager\EventInterface;
 
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use VuFindSearch\Backend\BackendInterface;
 use VuFindSearch\Query\QueryGroup;
 
 /**
@@ -47,11 +46,11 @@ use VuFindSearch\Query\QueryGroup;
 class SolrExtensionsListener
 {
     /**
-     * Backend.
+     * Backend identifier.
      *
-     * @var BackendInterface
+     * @var string
      */
-    protected $backend;
+    protected $backendId;
 
     /**
      * Superior service manager.
@@ -84,7 +83,7 @@ class SolrExtensionsListener
     /**
      * Constructor.
      *
-     * @param BackendInterface        $backend          Search backend
+     * @param string                  $backendId        Search backend identifier
      * @param ServiceLocatorInterface $serviceLocator   Service locator
      * @param string                  $searchConfig     Search config file id
      * @param string                  $facetConfig      Facet config file id
@@ -93,13 +92,13 @@ class SolrExtensionsListener
      * @return void
      */
     public function __construct(
-        BackendInterface $backend,
+        string $backendId,
         ServiceLocatorInterface $serviceLocator,
         $searchConfig,
         $facetConfig,
         $dataSourceConfig = 'datasources'
     ) {
-        $this->backend = $backend;
+        $this->backendId = $backendId;
         $this->serviceLocator = $serviceLocator;
         $this->searchConfig = $searchConfig;
         $this->facetConfig = $facetConfig;
@@ -130,9 +129,9 @@ class SolrExtensionsListener
     public function onSearchPre(EventInterface $event)
     {
         $command = $event->getParam('command');
-        if ($command->getTargetIdentifier() === $this->backend->getIdentifier()) {
+        if ($command->getTargetIdentifier() === $this->backendId) {
             $this->addDataSourceFilter($event);
-            $context = $event->getParam('context');
+            $context = $command->getContext();
             if (in_array($context, ['search', 'getids', 'workExpressions'])) {
                 $this->addHiddenComponentPartFilter($event);
                 $this->handleAvailabilityFilters($event);
@@ -154,7 +153,7 @@ class SolrExtensionsListener
     public function onSearchPost(EventInterface $event)
     {
         $command = $event->getParam('command');
-        if ($command->getTargetIdentifier() === $this->backend->getIdentifier()) {
+        if ($command->getTargetIdentifier() === $this->backendId) {
             if ($event->getParam('context') == 'search') {
                 $this->displayDebugInfo($event);
             }
@@ -192,7 +191,7 @@ class SolrExtensionsListener
                 },
                 $sources
             );
-            $params = $event->getParam('params');
+            $params = $event->getParam('command')->getSearchParameters();
             if ($params) {
                 $params->add(
                     'fq',

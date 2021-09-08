@@ -171,7 +171,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
 
         $events = $this->serviceLocator->get('SharedEventManager');
         $authListener = new AuthenticationListener(
-            $backend,
+            $backend->getIdentifier(),
             $this->r2SupportService,
             $backend->getConnector(),
             $this->rems
