@@ -110,7 +110,7 @@ class Map extends \VuFind\RecordTab\Map
     {
         $array = [];
         $envelope = preg_replace('/.*\((.+)\).*/', '\\1', $envelope);
-        list($minX, $maxX, $maxY, $minY) = explode(',', trim($envelope));
+        [$minX, $maxX, $maxY, $minY] = explode(',', trim($envelope));
         return [
             [(float)$minY, (float)$minX],
             [(float)$minY, (float)$maxX],
@@ -143,7 +143,10 @@ class Map extends \VuFind\RecordTab\Map
 
         if ($type == 'point' || $type == 'multipoint') {
             $isPoint = preg_match_all(
-                '/\((.+)\s+?(.+)\)/', $location, $matches, PREG_SET_ORDER
+                '/\((.+)\s+?(.+)\)/',
+                $location,
+                $matches,
+                PREG_SET_ORDER
             );
             if ($isPoint) {
                 $results = [];

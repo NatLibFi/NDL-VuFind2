@@ -53,6 +53,13 @@ class Loader extends \VuFind\Cover\Loader
     protected $url;
 
     /**
+     * Image parameters
+     *
+     * @var array
+     */
+    protected $imageParams = [];
+
+    /**
      * Record id
      *
      * @var string
@@ -156,11 +163,12 @@ class Loader extends \VuFind\Cover\Loader
         if (!$this->fetchFromAPI()
             && !$this->fetchFromContentType()
         ) {
-            if (isset($this->config->Content->makeDynamicCovers)
-                && $this->config->Content->makeDynamicCovers
-            ) {
-                $this->image = $this->getCoverGenerator()->generate(
-                    $settings['title'], $settings['author'], $settings['callnumber']
+            if ($this->generator) {
+                $this->generator->setOptions($this->getCoverGeneratorSettings());
+                $this->image = $this->generator->generate(
+                    $settings['title'],
+                    $settings['author'],
+                    $settings['callnumber']
                 );
                 $this->contentType = 'image/png';
             } else {
@@ -194,7 +202,9 @@ class Loader extends \VuFind\Cover\Loader
         header("Content-Type: $contentType");
         header("Content-disposition: attachment; filename=\"{$filename}\"");
         $client = $this->httpService->createClient(
-            $url, \Laminas\Http\Request::METHOD_GET, 300
+            $url,
+            \Laminas\Http\Request::METHOD_GET,
+            300
         );
         $client->setOptions(['useragent' => 'VuFind']);
         $client->setStream();
@@ -230,15 +240,17 @@ class Loader extends \VuFind\Cover\Loader
      * @return void
      */
     public function loadRecordImage(
-        \VuFind\RecordDriver\SolrDefault $driver, $index, $size
+        \VuFind\RecordDriver\SolrDefault $driver,
+        $index,
+        $size
     ) {
         $this->index = $index;
 
         $params = $driver->getRecordImage($size, $index);
-
         if (isset($params['url'])) {
             $this->id = $driver->getUniqueID();
             $this->url = $params['url'];
+            $this->imageParams = $params;
             return parent::fetchFromAPI();
         }
     }
@@ -267,7 +279,7 @@ class Loader extends \VuFind\Cover\Loader
      * @param array  $ids     IDs returned by getIdentifiers() method
      * @param string $apiName Name of the API
      *
-     * @return void
+     * @return string
      */
     protected function determineLocalFile($ids, $apiName = 'default')
     {
@@ -354,7 +366,9 @@ class Loader extends \VuFind\Cover\Loader
                 if ($handler->supports($ids)) {
                     if ($url = $handler->getUrl($key, $this->size, $ids)) {
                         $success = $this->processImageURLForSource(
-                            $url, $handler->isCacheAllowed(), $apiName
+                            $url,
+                            $handler->isCacheAllowed(),
+                            $apiName
                         );
                         if ($success) {
                             return true;
@@ -422,7 +436,9 @@ class Loader extends \VuFind\Cover\Loader
         $tempFile = str_replace('.jpg', uniqid(), $this->localFile);
         $finalFile = $cache ? $this->localFile : $tempFile . '.jpg';
 
-        $pdfFile = preg_match('/\.pdf$/i', $url);
+        $pdfFile
+            = ($this->imageParams['pdf'] ?? false) || preg_match('/\.pdf$/i', $url);
+
         $convertPdfService
             = $this->config->Content->convertPdfToCoverImageService
             ?? false;
@@ -480,7 +496,7 @@ class Loader extends \VuFind\Cover\Loader
             return false;
         }
 
-        list($width, $height, $type) = @getimagesizefromstring($image);
+        [$width, $height, $type] = @getimagesizefromstring($image);
 
         $reqWidth = $this->width ?: $width;
         $reqHeight = $this->height ?: $height;
@@ -496,8 +512,16 @@ class Loader extends \VuFind\Cover\Loader
 
             $imageGDResized = imagecreatetruecolor($newWidth, $newHeight);
             imagecopyresampled(
-                $imageGDResized, $imageGD, 0, 0, 0, 0,
-                $newWidth, $newHeight, $width, $height
+                $imageGDResized,
+                $imageGD,
+                0,
+                0,
+                0,
+                0,
+                $newWidth,
+                $newHeight,
+                $width,
+                $height
             );
             if (isset($exif['Orientation'])) {
                 $orientation = $exif['Orientation'];

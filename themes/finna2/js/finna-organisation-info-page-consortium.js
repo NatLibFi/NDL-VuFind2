@@ -192,7 +192,7 @@ finna.organisationInfoPageConsortium = (function organisationInfoPageConsortium(
 
       var sections = holder.find('.navi-section');
       holder.find('.consortium-navigation-list .scroll').each(function initConsortiumNaviScroll(ind) {
-        $(this).click(function onClickConsortiumNavi() {
+        $(this).on('click', function onClickConsortiumNavi() {
           $('html, body').animate({
             scrollTop: $(sections[ind]).offset().top - 45
           }, 200);

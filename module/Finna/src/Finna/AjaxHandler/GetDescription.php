@@ -88,8 +88,12 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
      * @param Loader            $loader   Record loader
      * @param RendererInterface $renderer View renderer
      */
-    public function __construct(SessionSettings $ss, CacheManager $cm,
-        Config $config, Loader $loader, RendererInterface $renderer
+    public function __construct(
+        SessionSettings $ss,
+        CacheManager $cm,
+        Config $config,
+        Loader $loader,
+        RendererInterface $renderer
     ) {
         $this->sessionSettings = $ss;
         $this->cacheManager = $cm;
@@ -120,8 +124,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
 
         $localFile = "$cacheDir/" . urlencode($id) . '.txt';
 
-        $maxAge = isset($this->config->Content->summarycachetime)
-            ? $this->config->Content->summarycachetime : 1440;
+        $maxAge = $this->config->Content->summarycachetime ?? 1440;
 
         if (is_readable($localFile)
             && time() - filemtime($localFile) < $maxAge * 60
@@ -141,7 +144,8 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
                 $result = $this->httpService->get($url, [], 60);
                 if ($result->isSuccess() && ($content = $result->getBody())) {
                     $encoding = mb_detect_encoding(
-                        $content, ['UTF-8', 'ISO-8859-1']
+                        $content,
+                        ['UTF-8', 'ISO-8859-1']
                     );
                     if ('UTF-8' !== $encoding) {
                         $content = utf8_encode($content);
@@ -154,14 +158,16 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
                     );
 
                     $content = preg_replace('/.*<.B>(.*)/', '\1', $content);
-                    $content = strip_tags($content, '<br>');
+                    $content = strip_tags($content, '<br><p>');
 
                     // Trim leading and trailing whitespace
                     $content = trim($content);
 
                     // Replace line breaks with <br>
                     $content = preg_replace(
-                        '/(\r\n|\n|\r){3,}/', '<br><br>', $content
+                        '/(\r\n|\n|\r){3,}/',
+                        '<br><br>',
+                        $content
                     );
 
                     file_put_contents($localFile, $content);

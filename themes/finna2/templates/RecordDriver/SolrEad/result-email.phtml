@@ -3,7 +3,7 @@
   $date = substr($title, strpos($title, '('), strpos($title, ')'));
   $formats = $this->driver->getFormats();
   $format = end($formats);
-  $url = $this->recordLink()->getUrl($this->driver);
+  $url = $this->recordLinker()->getUrl($this->driver);
 
   // NOTE: use $info['baseUrl'] instead of serverUrl view helper when this template is
   // rendered by scheduled alerts console action.
@@ -13,8 +13,8 @@
 <?= $this->translate('Title'); ?>: <?= !empty($title) ? $title : $this->translate('Title not available'); ?>
 <?php if (!$this->translationEmpty('Archive Repository')): ?><?= $this->transEsc('Archive Repository')?>:<?php endif; ?>
 <?= PHP_EOL . $this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
-<?php if ($origination = $this->driver->getOrigination()): ?>
-<?= PHP_EOL . $this->transEsc('Archive Origination')?>: <?=$this->escapeHtml($origination)?>
+<?php if ($originations = $this->driver->trymethod('getOriginations', [], $this->driver->getOrigination())): ?>
+<?= PHP_EOL . $this->transEsc('Archive Origination')?>: <?=implode(', ', array_map($this->escapeHtml, (array)$originations))?>
 <?php endif; ?>
 <?php if (!($fondsOrCollection = in_array('Document/ArchiveFonds', $formats) || in_array('Document/ArchiveCollection', $formats))): ?>
   <?php if ($this->driver->isPartOfArchiveSeries()): ?>
@@ -25,13 +25,32 @@
 <?= PHP_EOL . $this->transEsc('Archive')?>: <?php foreach($topIds as $index => $parentId): ?><?=isset($topTitles[$index]) ? $this->truncate($topTitles[$index], 180) : ''?><?php endforeach; ?>
 <?php endif; ?>
 <?php if (!$fondsOrCollection && $this->driver->isPartOfArchiveSeries()): ?>
-<?= PHP_EOL . $this->transEsc('Archive Series')?>: <?php $parentIds = $this->driver->getHierarchyParentId(); $parentTitles = $this->driver->getHierarchyParentTitle(); ?><?php foreach ($parentIds as $index => $parentId): ?><?= isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?><?=($index < count($parentIds) - 1 ? ', ' : '')?><?php endforeach; ?>
+  <?php foreach ([
+    ['Archive Series', \Finna\RecordDriver\SolrEad::SERIES_LEVELS],
+    ['Archive File', \Finna\RecordDriver\SolrEad::FILE_LEVELS]
+  ] as [$label, $levels]):
+  ?>
+    <?php $parentIds = $this->driver->getHierarchyParentId($levels); $parentTitles = $this->driver->getHierarchyParentTitle($levels); ?>
+    <?php if ($parentIds): ?>
+      <?= PHP_EOL . $this->transEsc($label)?>: <?php foreach ($parentIds as $index => $parentId): ?><?= isset($parentTitles[$index]) ? $this->truncate($parentTitles[$index], 180) : ''?><?=($index < count($parentIds) - 1 ? ', ' : '')?><?php endforeach; ?>
+    <?php endif; ?>
+  <?php endforeach; ?>
 <?php endif; ?>
-<?php if (!empty($dates)): ?>
-<?= PHP_EOL . $this->translate('Published') . ': ' . $this->escapeHtml($dates);?>
+<?php if (!empty($date)): ?>
+<?= PHP_EOL . $this->translate('Published') . ': ' . $this->escapeHtml($date);?>
 <?php endif; ?>
 <?php if (!empty($format)): ?>
 <?= PHP_EOL . $this->translate($format) ?>
 <?php endif; ?>
+<?php if ($identifier = ($this->driver->getIdentifier())): ?>
+  <?= PHP_EOL . $this->translate('Identifier') . ': ' . implode(', ', $identifier) ?>
+<?php endif; ?>
+<?php if ($place = ($this->driver->tryMethod('getPlaceOfStorage'))): ?>
+  <?= PHP_EOL . $this->translate('Place of Storage') . ': ' . $place ?>
+<?php endif; ?>
+<?php if ($unit = ($this->driver->tryMethod('getFilingUnit'))): ?>
+  <?= PHP_EOL . $this->translate('Filing Unit') . ': ' . $unit ?>
+<?php endif; ?>
+<?= $this->record($this->driver)->renderTemplate('result-email-copyright.phtml') ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>

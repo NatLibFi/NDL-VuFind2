@@ -34,14 +34,16 @@ finna.contentFeed = (function finnaContentFeed() {
               document.title = title + ' | ' + document.title;
             }
             if (typeof item.contentDate != 'undefined') {
-              container.find('.date span').text(item.contentDate);
-              container.find('.date').css('display', 'inline-block');
+              var date = container.find('.date');
+              date.find('span').text(item.contentDate);
+              date.css('display', 'inline-block');
             }
             if (typeof item.xcal != 'undefined') {
               $.each(item.xcal, function addXcal(key, value) {
                 var field = container.find('.xcal-' + key);
+                var xcalValue = field.find('.xcal-value');
                 if (key === 'organizer-url' || key === 'url') {
-                  field.find('.xcal-value').attr('href', value);
+                  xcalValue.attr('href', value);
                 } else if (key === 'featured') {
                   container.find('.xcal-featured').attr('src', value);
                 } else if (key === 'endDate' && value === item.xcal.startDate) {
@@ -49,21 +51,19 @@ finna.contentFeed = (function finnaContentFeed() {
                 } else if ((key === 'startTime' || key === 'endTime') && item.xcal.startDate !== item.xcal.endDate) {
                   return true;
                 } else if (key === 'startDate' || key === 'startTime' || key === 'endDate' || key === 'endTime') {
-                  field.find('.xcal-value .xcal-' + key).append(value);
-                  field.find('.xcal-value .xcal-' + key).removeClass('hidden');
+                  var xcalKey = field.find('.xcal-value .xcal-' + key);
+                  xcalKey.append(value).removeClass('hidden');
                   field.removeClass('hidden');
                   return true;
                 }
-                field.find('.xcal-value').text(value);
+                xcalValue.text(value);
                 field.removeClass('hidden');
               });
             }
           } else {
-            var err = $('<div/>').addClass('alert alert-danger');
-            err.append($('<p/>').text(VuFind.translate('rss_article_not_found')));
-            err.append($('<a/>')
-              .attr('href', data.channel.link)
-              .text(VuFind.translate('rss_article_channel_link').replace('%title%', data.channel.title)));
+            var err = $('<div class="alert alert-danger"/>');
+            err.append($('<p>' + VuFind.translate('rss_article_not_found') + '</p>'));
+            err.append($('<a href="' + data.channel.link + '">' + VuFind.translate('rss_article_channel_link').replace('%title%', data.channel.title) + '</a>'));
             contentHolder.empty().append(err);
           }
 

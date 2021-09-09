@@ -1,6 +1,5 @@
-/*global VuFind, videojs, checkSaveStatuses, action, finna, initFacetTree, priorityNav */
+/*global VuFind, videojs, checkSaveStatuses, finna, initFacetTree, priorityNav */
 finna.layout = (function finnaLayout() {
-  var _fixFooterTimeout = null;
   var currentOpenTooltips = [];
 
   function initResizeListener() {
@@ -12,7 +11,7 @@ finna.layout = (function finnaLayout() {
           w: $(window).width(),
           h: $(window).height()
         };
-        $(window).trigger('resize.screen.finna', data);
+        $(window).trigger('throttled-resize.finna', [data]);
       }, 100);
     });
   }
@@ -36,37 +35,18 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function initFixFooter() {
-    $(window).resize(function onResizeWindow(/*e*/) {
-      if (!_fixFooterTimeout) {
-        _fixFooterTimeout = setTimeout(function fixFooterCallback() {
-          _fixFooterTimeout = null;
-          $('footer').height('auto');
-          var detectHeight = $(window).height() - $('body').height();
-          if (detectHeight > 0) {
-            var expandedFooter = $('footer').height() + detectHeight;
-            $('footer').height(expandedFooter);
-          }
-        }, 50);
-      }
-    }).resize();
-  }
-
   function initLocationService(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    function closeModalCallback(modal) {
-      modal.removeClass('location-service location-service-qrcode');
-      modal.find('.modal-dialog').removeClass('modal-lg');
-    }
-
-    holder.find('a.location-service.location-service-modal').click(function onClickModalLink(/*e*/) {
+    holder.find('a.location-service.location-service-modal').on('click', function onClickModalLink(/*e*/) {
       var modal = $('#modal');
+      var dialog = modal.find('.modal-dialog');
       modal.addClass('location-service');
-      modal.find('.modal-dialog').addClass('modal-lg');
+      dialog.addClass('modal-lg');
 
-      $('#modal').one('hidden.bs.modal', function onHiddenModal() {
-        closeModalCallback($(this));
+      modal.one('hidden.bs.modal', function onHiddenModal() {
+        modal.removeClass('location-service location-service-qrcode');
+        dialog.removeClass('modal-lg');
       });
       modal.find('.modal-body').load($(this).data('lightbox-href') + '&layout=lightbox');
       modal.modal();
@@ -110,7 +90,7 @@ finna.layout = (function finnaLayout() {
 
         var moreLink = $('<button type="button" class="more-link">' + moreLabel + ' <i class="fa fa-arrow-down" aria-hidden="true"></i></button>');
         var lessLink = $('<button type="button" class="less-link">' + lessLabel + ' <i class="fa fa-arrow-up" aria-hidden="true"></i></button>');
-        
+
         var linkClass = self.data('button-class') || '';
         if (linkClass) {
           moreLink.addClass(linkClass);
@@ -119,7 +99,7 @@ finna.layout = (function finnaLayout() {
         lessLink.on('click', function showLess() {
           self.siblings('.less-link').hide();
           self.siblings('.more-link').show();
-          self.css('height', truncation[index] - 1 + 'px');   
+          self.css('height', truncation[index] - 1 + 'px');
         });
         moreLink.on('click', function showMore() {
           self.siblings('.more-link').hide();
@@ -150,65 +130,43 @@ finna.layout = (function finnaLayout() {
           .appendTo($('.content-navigation-menu'));
         $('<a>')
           .attr('href', link)
-          .text($('h2', this).text())
+          .text($('h2', this).first().text())
           .appendTo($p);
       });
     }
   }
 
-  function initHelpTabs() {
-    if ($('.help-tabs')[0]) {
-      $('.help-tab').each(function initHelpTab() {
-        if ($(this).hasClass('active')) {
-          $(this).focus();
-        }
-        var url = $(this).data('url');
-        $(this).keydown(function onTabEnter(event) {
-          if (event.which === 13) {
-            window.location.href = url;
-          }
-        });
-        $(this).click(function onTabClick() {
-          window.location.href = url;
-        });
-      });
-    }
-  }
-
   function initMobileNarrowSearch() {
-    $('.mobile-navigation .sidebar-navigation, .sidebar h1').unbind('click').click(function onClickMobileNav(e) {
+    $('.mobile-navigation .sidebar-navigation, .sidebar h1').off('click').on('click', function onClickMobileNav(e) {
       if ($(e.target).attr('class') !== 'fa fa-info-big') {
         $('.sidebar').toggleClass('open');
       }
       $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
       $('body').toggleClass('prevent-scroll');
     });
-    $('.mobile-navigation .sidebar-navigation .active-filters').unbind('click').click(function onClickMobileActiveFilters() {
+    $('.mobile-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
       $('.sidebar').scrollTop(0);
     });
   }
 
   function initCheckboxClicks() {
-    $('.checkboxFilter:not(.mylist-select-all) .checkbox input').click(function onClickCheckbox() {
+    $('.checkboxFilter:not(.mylist-select-all) .checkbox input').on('click', function onClickCheckbox() {
       $(this).closest('.checkbox').toggleClass('checked');
-      var nonChecked = true;
-      $('.myresearch-row .checkboxFilter .checkbox').each(function setupCheckbox() {
-        if ($(this).hasClass('checked')) {
-          $('.mylist-functions button, .mylist-functions select').removeAttr('disabled');
-          $('.mylist-functions .jump-menu-style').removeClass('disabled');
-          nonChecked = false;
-        }
-      });
-      if (nonChecked) {
-        $('.mylist-functions button, .mylist-functions select').attr('disabled', true);
-        $('.mylist-functions .jump-menu-style').addClass('disabled');
+      var select = $('.mylist-functions button, .mylist-functions select');
+      var jumpMenu = $('.mylist-functions .jump-menu-style');
+      var checked = $('.myresearch-row .checkboxFilter .checkbox.checked');
+      if (checked.length > 0) {
+        select.removeAttr('disabled');
+      } else {
+        select.attr('disabled', true);
       }
+      jumpMenu.toggleClass('disabled', checked.length === 0);
     });
 
     var myListSelectAll = $('.checkboxFilter.mylist-select-all');
     var myListJumpMenu = $('.mylist-functions .jump-menu-style');
     var myListFunctions = $('.mylist-functions button, .mylist-functions select');
-    myListSelectAll.find('.checkbox .checkbox-select-all').click(function onClickCheckbox() {
+    myListSelectAll.find('.checkbox .checkbox-select-all').on('click', function onClickCheckbox() {
       var checkboxes = $('.myresearch-row .checkboxFilter .checkbox, .checkboxFilter.mylist-select-all .checkbox');
       if ($(this).closest('.checkbox').hasClass('checked')) {
         var isEverythingChecked = !$('.myresearch-row .checkboxFilter .checkbox').not('.checked').length;
@@ -224,32 +182,22 @@ finna.layout = (function finnaLayout() {
   }
 
   function initScrollLinks() {
-    $('.library-link').click(function onClickLibraryLink() {
+    $('.library-link').on('click', function onClickLibraryLink() {
       $('html, body').animate({
         scrollTop: $('.recordProvidedBy').offset().top
       }, 500);
     });
-    if ($('.floating-feedback-btn').length) {
-      var feedbackBtnOffset = $('.floating-feedback-btn').offset().top;
+    var feedbackBtn = $('.floating-feedback-btn');
+    if (feedbackBtn.length) {
+      var feedbackBtnOffset = feedbackBtn.offset().top;
       $(window).scroll(function onScrollWindow(/*event*/) {
-        var scroll = $(window).scrollTop();
-        if (scroll > feedbackBtnOffset) {
-          $('.floating-feedback-btn').addClass('fixed');
-        }
-        else {
-          $('.floating-feedback-btn').removeClass('fixed');
-        }
+        feedbackBtn.toggleClass('fixed', $(window).scrollTop() > feedbackBtnOffset);
       });
     }
-    if ($('.template-dir-record .back-to-up').length) {
-      $(window).scroll(function onScrollWindow(/*event*/) {
-        var scroll = $(window).scrollTop();
-        if (scroll > 2000) {
-          $('.template-dir-record .back-to-up').removeClass('hidden');
-        }
-        else {
-          $('.template-dir-record .back-to-up').addClass('hidden');
-        }
+    var backUp = $('.template-dir-record .back-to-up');
+    if (backUp.length) {
+      $(window).on('scroll', function onScrollWindow(/*event*/) {
+        backUp.toggleClass('hidden', $(window).scrollTop() <= 2000);
       });
     }
   }
@@ -259,19 +207,14 @@ finna.layout = (function finnaLayout() {
       $('.autocomplete-results').addClass('checkbox-active');
     }
     $('.searchForm_lookfor').on('input', function onInputLookfor() {
-      var form = $(this).closest('.searchForm');
-      if ($(this).val() !== '' ) {
-        form.find('.clear-button').removeClass('hidden');
-      } else {
-        form.find('.clear-button').addClass('hidden');
-      }
+      var lfor = $(this);
+      lfor.closest('.searchForm').find('.clear-button').toggleClass('hidden', lfor.val() === '');
     });
 
-    $('.clear-button').click(function onClickClear() {
-      var form = $(this).closest('.searchForm');
-      form.find('.searchForm_lookfor').val('');
-      form.find('.clear-button').addClass('hidden');
-      form.find('.searchForm_lookfor').focus();
+    $('.clear-button').on('click', function onClickClear() {
+      var btn = $(this);
+      btn.closest('.searchForm').find('.searchForm_lookfor').val('').focus();
+      btn.addClass('hidden');
     });
 
     $('.searchForm_lookfor').bind('autocomplete:select', function onAutocompleteSelect() {
@@ -290,23 +233,12 @@ finna.layout = (function finnaLayout() {
     });
 
     if (sessionStorage.getItem('vufind_retain_filters')) {
-      if (sessionStorage.getItem('vufind_retain_filters') === 'true') {
-        $('.searchFormKeepFilters').closest('.checkbox').addClass('checked');
-      } else {
-        $('.searchFormKeepFilters').closest('.checkbox').removeClass('checked');
-      }
+      $('.searchFormKeepFilters').closest('.checkbox').toggleClass('checked', sessionStorage.getItem('vufind_retain_filters') === 'true');
     }
   }
 
   function initToolTips(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
-    // show hover tooltips on grid image notes
-    if (window.matchMedia("(min-width: 768px)").matches) {
-      holder.find('.grid-image .note-button').tooltip();
-      holder.find('.grid-image .note-button').click(function clickHideTooltip() {
-        $("[data-toggle='tooltip']").tooltip('hide');
-      });
-    }
     // other tooltips
     holder.find('[data-toggle="tooltip"]')
       .on('show.bs.tooltip', function onShowTooltip() {
@@ -323,11 +255,11 @@ finna.layout = (function finnaLayout() {
       })
       .tooltip({trigger: 'click', viewport: '.container'});
     // prevent link opening if tooltip is placed inside link element
-    holder.find('[data-toggle="tooltip"] > i').click(function onClickTooltip(event) {
+    holder.find('[data-toggle="tooltip"] > i').on('click', function onClickTooltip(event) {
       event.preventDefault();
     });
     // close tooltip if user clicks anything else than tooltip button
-    $('html').click(function onClickHtml(e) {
+    $('html').on('click', function onClickHtml(e) {
       if (typeof $(e.target).parent().data('original-title') == 'undefined' && typeof $(e.target).data('original-title') == 'undefined') {
         $('[data-toggle="tooltip"]').tooltip('hide');
         currentOpenTooltips = [];
@@ -344,7 +276,7 @@ finna.layout = (function finnaLayout() {
   function initCondensedList(_holder) {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
-    holder.find('.condensed-collapse-toggle').off('click').click(function onClickCollapseToggle(event) {
+    holder.find('.condensed-collapse-toggle').off('click').on('click', function onClickCollapseToggle(event) {
       if ((event.target.nodeName) !== 'A' && (event.target.nodeName) !== 'MARK') {
         holder = $(this).parent().parent();
         holder.toggleClass('open');
@@ -377,7 +309,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function initBuildingFilter() {
-    $('#building_filter').keyup(function onKeyUpFilter() {
+    $('#building_filter').on('keyup', function onKeyUpFilter() {
       var valThis = this.value.toLowerCase();
       $('#facet_building>ul>li>a .text').each(function doBuildingSearch() {
         var text = $(this).text().toLowerCase();
@@ -391,7 +323,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function addJSTreeListener(treeNode) {
-    treeNode.bind('ready.jstree', function onReadyJstree() {
+    treeNode.on('ready.jstree', function onReadyJstree() {
       var tree = $(this);
       // if hierarchical facet contains 2 or less top level items, it is opened by default
       if (tree.find('ul > li').length <= 2) {
@@ -405,7 +337,7 @@ finna.layout = (function finnaLayout() {
         initBuildingFilter();
       }
       // open facet if it has children and it is selected
-      $(tree.find('.jstree-node.active.jstree-closed')).each(function openNode() {
+      tree.find('.jstree-node.active.jstree-closed').each(function openNode() {
         tree.jstree('open_node', this, null, false);
       });
     });
@@ -418,8 +350,8 @@ finna.layout = (function finnaLayout() {
 
   function initJumpMenus(_holder) {
     var holder = typeof _holder === 'undefined' ? $('body') : _holder;
-    holder.find('select.jumpMenu').unbind('change').change(function onChangeJumpMenu() { $(this).closest('form').submit(); });
-    holder.find('select.jumpMenuUrl').unbind('change').change(function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
+    holder.find('select.jumpMenu').off('change').on('change', function onChangeJumpMenu() { $(this).closest('form').submit(); });
+    holder.find('select.jumpMenuUrl').off('change').on('change', function onChangeJumpMenuUrl(e) { window.location.href = $(e.target).val(); });
   }
 
   function initSecondaryLoginField() {
@@ -428,7 +360,7 @@ finna.layout = (function finnaLayout() {
 
   function initILSPasswordRecoveryLink(links, idPrefix) {
     var searchPrefix = idPrefix ? '#' + idPrefix : '#';
-    $(searchPrefix + 'target').change(function onChangeLoginTargetLink() {
+    $(searchPrefix + 'target').on('change', function onChangeLoginTargetLink() {
       var target = $(searchPrefix + 'target').val();
       if (links[target]) {
         $('#login_library_card_recovery').attr('href', links[target]).show();
@@ -440,7 +372,7 @@ finna.layout = (function finnaLayout() {
 
   function initILSSelfRegistrationLink(links, idPrefix) {
     var searchPrefix = idPrefix ? '#' + idPrefix : '#';
-    $(searchPrefix + 'target').change(function onChangeLoginTargetLink() {
+    $(searchPrefix + 'target').on('change', function onChangeLoginTargetLink() {
       var target = $(searchPrefix + 'target').val();
       if (links[target]) {
         $('#login_library_card_register').attr('href', links[target]).show();
@@ -483,7 +415,7 @@ finna.layout = (function finnaLayout() {
 
   function initAutoScrollTouch() {
     if (!navigator.userAgent.match(/iemobile/i) && isTouchDevice() && $(window).width() < 1025) {
-      $('.search-query').click(function onClickSearchQuery() {
+      $('.search-query').on('click', function onClickSearchQuery() {
         $('html, body').animate({
           scrollTop: $(this).offset().top - 75
         }, 200);
@@ -528,7 +460,7 @@ finna.layout = (function finnaLayout() {
       return;
     }
     document.addEventListener('VuFind.lightbox.login', function onLightboxLogin(e) {
-      if (typeof action !== 'undefined' && action === 'home' && !e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
+      if ($('body').hasClass('template-name-home') && !e.detail.formUrl.match(/catalogLogin/) && !e.detail.formUrl.match(/\Save/) && !e.detail.formUrl.match(/%2[fF]Save/)) {
         window.location.href = VuFind.path + '/MyResearch/Home';
         e.preventDefault();
       }
@@ -572,7 +504,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function initOrganisationPageLinks() {
-    $('.organisation-page-link').not('.done').map(function setupOrganisationPageLinks() {
+    $('.organisation-page-link').not('.done').each(function setupOrganisationPageLinks() {
       $(this).one('inview', function onInViewLink() {
         var holder = $(this);
         var organisationId = $(this).data('organisation');
@@ -592,10 +524,9 @@ finna.layout = (function finnaLayout() {
   }
 
   function initOrganisationInfoWidgets() {
-    $('.organisation-info[data-init="1"]').map(function setupOrganisationInfo() {
-      var service = finna.organisationInfo;
+    $('.organisation-info[data-init="1"]').each(function setupOrganisationInfo() {
       var widget = finna.organisationInfoWidget;
-      widget.init($(this), service);
+      widget.init($(this), finna.organisationInfo);
       widget.loadOrganisationList();
     });
   }
@@ -605,11 +536,10 @@ finna.layout = (function finnaLayout() {
       var self = $(this);
       var play = self.find('.play');
       var source = self.find('source');
-      play.click(function onPlay() {
+      play.on('click', function onPlay() {
         self.find('.audio-player-wrapper').removeClass('hide');
         var audio = self.find('audio');
-        audio.removeClass('hide');
-        audio.addClass('video-js');
+        audio.removeClass('hide').addClass('video-js');
         source.attr('src', source.data('src'));
         finna.layout.loadScripts(
           $(this).data('scripts'),
@@ -644,7 +574,7 @@ finna.layout = (function finnaLayout() {
     var loadCount = Object.keys(needed).length;
     if (loadCount) {
       // Load scripts and initialize player when all are loaded
-      var scriptLoaded = function scriptLoaded() {
+      var scriptLoaded = function onScriptLoaded() {
         if (--loadCount === 0) {
           if (typeof callback === 'function') {
             callback();
@@ -693,18 +623,22 @@ finna.layout = (function finnaLayout() {
   }
 
   function initFiltersToggle () {
-    if ($(window).width() <= 991) {
+    var win = $(window);
+
+    if (win.width() <= 991) {
       $('.finna-filters .filters').addClass('hidden');
       $('.finna-filters .filters-toggle .toggle-text').html(VuFind.translate('show_filters'));
     }
 
-    $(window).resize(function checkFiltersEnabled(){
-      if ($(window).width() > 991 && $('.finna-filters .filters').hasClass('hidden')) {
-        $('.finna-filters .filters').removeClass('hidden');
+    win.on('throttled-resize.finna', function checkFiltersEnabled(e, data) {
+      var filters = $('.finna-filters .filters');
+      if (data.w > 991 && filters.hasClass('hidden')) {
+        filters.removeClass('hidden');
       }
+
     });
 
-    $('.filters-toggle').click(function filterToggleClicked() {
+    $('.filters-toggle').on('click', function filterToggleClicked() {
       var button = $(this);
       var filters = button.closest('.finna-filters').find('.filters');
 
@@ -722,18 +656,10 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function initFiltersCheckbox() {
-    $('#filter-checkbox').change(function setCheckboxClass(){
-      $('.finna-filters .checkbox').toggleClass('checked');
-      var sort = $(this).closest('form').find('input[name=sort]');
-      sort.val($('.finna-filters .checkbox').hasClass('checked') ? sort.data('value') : '');
-    });
-  }
-
   function initCookieConsent() {
     var state = finna.common.getCookie('cookieConsent');
     if ('undefined' === typeof state || !state) {
-      $('.cookie-consent-dismiss').click(function dismiss() {
+      $('.cookie-consent-dismiss').on('click', function dismiss() {
         finna.common.setCookie('cookieConsent', 1, { expires: 365 });
         $('.cookie-consent').addClass('hidden');
       });
@@ -774,7 +700,7 @@ finna.layout = (function finnaLayout() {
 
   function initLoginTabs() {
     // Tabs
-    $('.login-tabs .nav-tabs a').click(function recordTabsClick() {
+    $('.login-tabs .nav-tabs a').on('click', function recordTabsClick() {
       if (!$(this).closest('li').hasClass('active')) {
         _activateLoginTab(this.className);
       }
@@ -782,11 +708,47 @@ finna.layout = (function finnaLayout() {
     });
 
     // Accordion
-    $('.login-accordion .accordion-toggle').click(function accordionClicked() {
+    $('.login-accordion .accordion-toggle').on('click', function accordionClicked() {
       _activateLoginTab($(this).find('a').data('tab'));
     });
     // Call activation to position the initial content properly
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
+  }
+
+  function setImagePaginatorTranslations() {
+    $.fn.setPaginatorTranslations({
+      image: VuFind.translate('Image'),
+      close: VuFind.translate('close'),
+      next: VuFind.translate('Next Record'),
+      previous: VuFind.translate('Previous Record'),
+      no_cover: VuFind.translate('No Cover Image')
+    });
+  }
+
+  function initImagePaginators() {
+    $('.image-popup-trigger.init').each(function initImages() {
+      $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
+    });
+  }
+
+  // Used in custom themes
+  function initHelpTabs() {
+    if ($('.help-tabs')[0]) {
+      $('.help-tab').each(function initHelpTab() {
+        if ($(this).hasClass('active')) {
+          $(this).focus();
+        }
+        var url = $(this).data('url');
+        $(this).keydown(function onTabEnter(event) {
+          if (event.which === 13) {
+            window.location.href = url;
+          }
+        });
+        $(this).click(function onTabClick() {
+          window.location.href = url;
+        });
+      });
+    }
   }
 
   var my = {
@@ -805,19 +767,18 @@ finna.layout = (function finnaLayout() {
     initLoginTabs: initLoginTabs,
     loadScripts: loadScripts,
     initToolTips: initToolTips,
+    initImagePaginators: initImagePaginators,
     init: function init() {
+      initResizeListener();
       initScrollRecord();
       initJumpMenus();
       initAnchorNavigationLinks();
-      initFixFooter();
       initTruncate();
       initContentNavigation();
-      initHelpTabs();
       initMobileNarrowSearch();
       initCheckboxClicks();
       initToolTips();
       initModalToolTips();
-      initResizeListener();
       initScrollLinks();
       initSearchboxFunctions();
       initCondensedList();
@@ -835,8 +796,10 @@ finna.layout = (function finnaLayout() {
       initKeyboardNavigation();
       initPriorityNav();
       initFiltersToggle();
-      initFiltersCheckbox();
       initCookieConsent();
+      setImagePaginatorTranslations();
+      initImagePaginators();
+      initHelpTabs();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };

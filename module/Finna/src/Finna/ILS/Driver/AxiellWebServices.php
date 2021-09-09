@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -59,7 +59,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     use \VuFind\Log\LoggerAwareTrait {
         logError as error;
     }
-    use \VuFind\ILS\Driver\CacheTrait;
+    use \VuFind\Cache\CacheTrait;
 
     /**
      * Date formatting object
@@ -260,7 +260,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         'soap_version' => SOAP_1_1,
         'exceptions' => true,
         'trace' => false,
-        'connection_timeout' => 60,
+        'timeout' => 60,
+        'connection_timeout' => 15,
         'typemap' => [
             [
                 'type_ns' => 'http://www.w3.org/2001/XMLSchema',
@@ -443,6 +444,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'mostborrowed' => 480,
                 'mostrequested' => 240
             ];
+
+        if (!empty($this->config['Catalog']['connection_timeout'])) {
+            $this->soapOptions['connection_timeout']
+                = $this->config['Catalog']['connection_timeout'];
+        }
+        if (!empty($this->config['Catalog']['timeout'])) {
+            $this->soapOptions['timeout']
+                = $this->config['Catalog']['timeout'];
+        }
     }
 
     /**
@@ -503,7 +513,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $password = $user['cat_password'];
 
         $id = !empty($holdDetails['item_id'])
-            ? $holdDetails['item_id'] : $holdDetails['id'];
+            ? $holdDetails['item_id']
+            : ($holdDetails['id'] ?? '');
 
         $holdType = $this->getHoldType($holdDetails);
 
@@ -520,7 +531,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->reservations_wsdl, $function, $functionResult, $username,
+            $this->reservations_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['getReservationBranchesParam' => $conf]
         );
 
@@ -540,8 +554,17 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $result->$functionResult->organisations->organisation
             );
 
+        $keyName = 'limitPickUpLocationChangeToCurrentOrganization';
+        $limitToCurrentOrganisation = ($this->config['Holds'][$keyName]
+            ?? !$this->singleReservationQueue) && $holdType !== 'regional';
         foreach ($organisations as $organisation) {
             if (!isset($organisation->branches->branch)) {
+                continue;
+            }
+
+            if (!empty($holdDetails['_organization']) && $limitToCurrentOrganisation
+                && $organisation->name !== $holdDetails['_organization']
+            ) {
                 continue;
             }
 
@@ -560,11 +583,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $locationsList[] = [
                     'locationID' => $locationID,
                     'locationDisplay' => $organisation->branches->branch->name
+                        ?? $locationID
                 ];
             } else {
                 foreach ($organisation->branches->branch as $branch) {
-                    $locationID
-                        = $organisationID . '.' . $branch->id;
+                    $locationID = $organisationID . '.' . $branch->id;
                     if (in_array($locationID, $this->excludePickUpLocations)) {
                         continue;
                     }
@@ -682,7 +705,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
             $validToDate = isset($holdDetails['requiredBy'])
                 ? $this->dateFormat->convertFromDisplayDate(
-                    'Y-m-d', $holdDetails['requiredBy']
+                    'Y-m-d',
+                    $holdDetails['requiredBy']
                 )
                 : date('Y-m-d', $this->getDefaultRequiredByDate());
         } catch (DateException $e) {
@@ -691,7 +715,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $pickUpLocation = $holdDetails['pickUpLocation'];
-        list($organisation, $branch) = explode('.', $pickUpLocation, 2);
+        [$organisation, $branch] = explode('.', $pickUpLocation, 2);
 
         $function = 'addReservation';
         $functionResult = 'addReservationResult';
@@ -714,7 +738,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->reservations_wsdl, $function, $functionResult, $username,
+            $this->reservations_wsdl,
+            $function,
+            $functionResult,
+            $username,
             [$functionParam => $conf]
         );
 
@@ -759,12 +786,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $functionResult = 'removeReservationResult';
 
         foreach ($cancelDetails['details'] as $details) {
+            [$id] = explode('|', $details);
             $result = $this->doSOAPRequest(
-                $this->reservations_wsdl, $function, $functionResult, $username,
+                $this->reservations_wsdl,
+                $function,
+                $functionResult,
+                $username,
                 ['removeReservationsParam' =>
                    ['arenaMember' => $this->arenaMember,
                     'user' => $username, 'password' => $password,
-                     'language' => 'en', 'id' => $details]
+                     'language' => 'en', 'id' => $id]
                 ]
             );
 
@@ -776,13 +807,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 if ($message == 'ils_connection_failed') {
                     throw new ILSException('ils_offline_status');
                 }
-                $results[$details] = [
+                $results[$id] = [
                     'success' => false,
                     'status' => 'hold_cancel_fail',
                     'sysMessage' => $statusAWS->message ?? $statusAWS->type
                 ];
             } else {
-                $results[$details] = [
+                $results[$id] = [
                     'success' => true,
                     'status' => 'hold_cancel_success',
                     'sysMessage' => ''
@@ -796,85 +827,92 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     }
 
     /**
-     * Cancel Hold Details
+     * Update holds
      *
-     * This is responsible for getting the details required for canceling holds.
+     * This is responsible for changing the status of hold requests
      *
-     * @param string $holdDetails The request details
-     *
-     * @return string           Required details passed to cancelHold
-     */
-    public function getCancelHoldDetails($holdDetails)
-    {
-        return $holdDetails['reqnum'];
-    }
-
-    /**
-     * Change pickup location
-     *
-     * This is responsible for changing the pickup location of a hold
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
+     * @param array $holdsDetails The details identifying the holds
+     * @param array $fields       An associative array of fields to be updated
+     * @param array $patron       Patron array
      *
      * @return array Associative array of the results
      */
-    public function changePickupLocation($patron, $holdDetails)
-    {
-        $username = $patron['cat_username'];
-        $password = $patron['cat_password'];
-        $pickupLocationId = $holdDetails['pickupLocationId'];
-
-        try {
-            $validFromDate = date('Y-m-d');
-
-            $validToDate = isset($holdDetails['requiredBy'])
-                ? $this->dateFormat->convertFromDisplayDate(
-                    'Y-m-d', $holdDetails['requiredBy']
-                )
-                : date('Y-m-d', $this->getDefaultRequiredByDate());
-        } catch (DateException $e) {
-            // Hold Date is invalid
-            throw new ILSException('hold_date_invalid');
-        }
-
-        $requestId = $holdDetails['requestId'];
-        list($organisation, $branch) = explode('.', $pickupLocationId, 2);
-
+    public function updateHolds(
+        array $holdsDetails,
+        array $fields,
+        array $patron
+    ): array {
+        $results = [];
         $function = 'changeReservation';
         $functionResult = 'changeReservationResult';
-        $conf = [
-            'arenaMember' => $this->arenaMember,
-            'user' => $username,
-            'password' => $password,
-            'language' => 'en',
-            'id' => $requestId,
-            'pickUpBranchId' => $branch,
-            'validFromDate' => $validFromDate,
-            'validToDate' => $validToDate
-        ];
-
-        $result = $this->doSOAPRequest(
-            $this->reservations_wsdl, $function, $functionResult, $username,
-            ['changeReservationsParam' => $conf]
-        );
-
-        $statusAWS = $result->$functionResult->status;
-
-        if ($statusAWS->type != 'ok') {
-            $message = $this->handleError($function, $statusAWS, $username);
-            if ($message == 'ils_connection_failed') {
-                throw new ILSException('ils_offline_status');
-            }
-            return [
-                'success' => false,
-                'sysMessage' => $message
+        foreach ($holdsDetails as $details) {
+            [$requestId, $validFromDate, $validToDate, $pickupLocation]
+                = explode('|', $details);
+            $updateRequest = [
+                'arenaMember' => $this->arenaMember,
+                'user' => $patron['cat_username'],
+                'password' => $patron['cat_password'],
+                'language' => 'en',
+                'id' => $requestId,
+                'pickUpBranchId' => $pickupLocation,
+                'validFromDate' => $validFromDate,
+                'validToDate' => $validToDate
             ];
-        }
 
-        return [
-            'success' => true
-        ];
+            if (isset($fields['requiredByTS'])) {
+                $updateRequest['validToDate']
+                    = gmdate('Y-m-d', $fields['requiredByTS']);
+            }
+            if (isset($fields['frozen'])) {
+                if ($fields['frozen']) {
+                    if (isset($fields['frozenThroughTS'])) {
+                        $updateRequest['validFromDate']
+                            = \DateTime::createFromFormat(
+                                'U',
+                                $fields['frozenThroughTS']
+                            )->modify('+1 DAY')->format('Y-m-d');
+                    } else {
+                        $updateRequest['validFromDate']
+                            = $updateRequest['validToDate'];
+                    }
+                } else {
+                    $updateRequest['validFromDate'] = gmdate('Y-m-d');
+                }
+            } elseif ($updateRequest['validFromDate'] > $updateRequest['validToDate']
+            ) {
+                $updateRequest['validFromDate'] = $updateRequest['validToDate'];
+            }
+            if (isset($fields['pickUpLocation'])) {
+                [, $branch] = explode('.', $fields['pickUpLocation'], 2);
+                $updateRequest['pickUpBranchId'] = $branch;
+            }
+            $result = $this->doSOAPRequest(
+                $this->reservations_wsdl,
+                $function,
+                $functionResult,
+                $patron['cat_username'],
+                ['changeReservationsParam' => $updateRequest]
+            );
+
+            $statusAWS = $result->$functionResult->status;
+
+            if ($statusAWS->type != 'ok') {
+                $message = $this->handleError(
+                    $function,
+                    $statusAWS,
+                    $patron['cat_username']
+                );
+                $results[$requestId] = [
+                    'success' => false,
+                    'status' => $message
+                ];
+            } else {
+                $results[$requestId] = [
+                    'success' => true
+                ];
+            }
+        }
+        return $results;
     }
 
     /**
@@ -942,7 +980,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $response = $this->doSOAPRequest(
-            $this->catalogue_wsdl, $function, $functionResult, $id,
+            $this->catalogue_wsdl,
+            $function,
+            $functionResult,
+            $id,
             ['GetHoldingsRequest' => $conf]
         );
 
@@ -981,7 +1022,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                     $result = array_merge(
                         $result,
                         $this->parseHoldings(
-                            $holdingsOrganisations, $id, $journalInfo
+                            $holdingsOrganisations,
+                            $id,
+                            $journalInfo
                         )
                     );
                 }
@@ -1183,7 +1226,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             ) {
                 $reservationsTotal
                     = max(
-                        $reservationsTotal, $item['availabilityInfo']['reservations']
+                        $reservationsTotal,
+                        $item['availabilityInfo']['reservations']
                     );
             }
             $locations[$item['location']] = true;
@@ -1249,7 +1293,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->patron_wsdl, $function, $functionResult, $username,
+            $this->patron_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['patronInformationParam' => $conf]
         );
 
@@ -1575,7 +1622,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         if (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
             if ('onlinePayment' === $function) {
-                $functionConfig['exactBalanceRequired'] = true;
+                if (!isset($functionConfig['exactBalanceRequired'])) {
+                    $functionConfig['exactBalanceRequired'] = true;
+                }
+                $functionConfig['creditUnsupported'] = true;
             }
         } else {
             $functionConfig = false;
@@ -1614,7 +1664,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $functionResult = 'searchResult';
 
         $result = $this->doSOAPRequest(
-            $this->catalogueaurora_wsdl, $function, $functionResult, '',
+            $this->catalogueaurora_wsdl,
+            $function,
+            $functionResult,
+            '',
             ['searchRequest' => $conf]
         );
         $statusAWS = $result->$functionResult->status;
@@ -1705,7 +1758,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->loans_wsdl, $function, $functionResult, $username,
+            $this->loans_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['loansRequest' => $conf]
         );
 
@@ -1719,12 +1775,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             return [];
         }
 
+        // Create a timestamp for calculating the due / overdue status
+        $now = time();
+
         $transList = [];
         if (!isset($result->$functionResult->loans->loan)) {
             return $transList;
         }
-        $loans =  $this->objectToArray($result->$functionResult->loans->loan);
-
+        $loans = $this->objectToArray($result->$functionResult->loans->loan);
         foreach ($loans as $loan) {
             $title = $loan->catalogueRecord->title;
             if (!empty($loan->note)) {
@@ -1750,11 +1808,21 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 );
             }
 
+            $dueDate = strtotime($loan->loanDueDate . ' 23:59:59');
+            if ($now > $dueDate) {
+                $dueStatus = 'overdue';
+            } elseif (($dueDate - $now) < 86400) {
+                $dueStatus = 'due';
+            } else {
+                $dueStatus = false;
+            }
+
             $trans = [
                 'id' => $loan->catalogueRecord->id,
                 'item_id' => $loan->id,
                 'title' => $title,
                 'duedate' => $loan->loanDueDate,
+                'dueStatus' => $dueStatus,
                 'renewable' => (string)$loan->loanStatus->isRenewable == 'yes',
                 'message' => $message,
                 'renewalCount' => $renewals,
@@ -1798,7 +1866,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $sort = explode(
             ' ',
             !empty($params['sort'])
-                ? $params['sort'] : 'CHECK_OUT_DATE DESCENDING', 2
+                ? $params['sort'] : 'CHECK_OUT_DATE DESCENDING',
+            2
         );
 
         $sortField = $sort[0] ?? 'CHECK_OUT_DATE';
@@ -1821,7 +1890,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->loansaurora_wsdl, $function, $functionResult, $username,
+            $this->loansaurora_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['loanHistoryRequest' => $conf]
         );
 
@@ -1842,12 +1914,18 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         );
         foreach ($transactions as $transaction => $record) {
             $obj = $record->catalogueRecord;
+            $title = $obj->title;
+            if (!empty($record->note)) {
+                $title .= ' (' . $record->note . ')';
+            }
             $trans = [
                 'id' => $obj->id,
-                'title' => $obj->title,
+                'title' => $title,
                 'checkoutdate' => $this->formatDate($record->checkOutDate),
                 'returndate' => isset($record->checkInDate)
-                    ? $this->formatDate($record->checkInDate) : ''
+                    ? $this->formatDate($record->checkInDate) : '',
+                'publication_year' => $obj->publicationYear ?? '',
+                'volume' => $obj->volume ?? ''
             ];
             $transList[] = $trans;
         }
@@ -1879,7 +1957,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->patron_wsdl, $function, $functionResult, $username,
+            $this->patron_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['authenticatePatronParam' => $conf]
         );
 
@@ -1965,7 +2046,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->patronaurora_wsdl, $function, $functionResult, $username,
+            $this->patronaurora_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['messageServicesRequest' => $conf]
         );
 
@@ -2036,7 +2120,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $result = $this->doSOAPRequest(
-            $this->patronaurora_wsdl, $function, $functionResult, $username,
+            $this->patronaurora_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['changeMessageServiceRequest' => $conf]
         );
 
@@ -2083,7 +2170,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->patronaurora_wsdl, $function, $functionResult, $username,
+            $this->patronaurora_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['removeMessageServiceRequest' => $conf]
         );
 
@@ -2133,7 +2223,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->payments_wsdl, $function, $functionResult, $username,
+            $this->payments_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['debtsRequest' => $conf]
         );
 
@@ -2257,7 +2350,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $function = 'AddPayment';
@@ -2281,7 +2377,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->payments_wsdl, $function, $functionResult,
+            $this->payments_wsdl,
+            $function,
+            $functionResult,
             $patron['cat_username'],
             [$functionParam => $request]
         );
@@ -2290,7 +2388,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
         if ($statusAWS->type != 'ok') {
             $message = $this->handleError(
-                $function, $statusAWS, $patron['cat_username']
+                $function,
+                $statusAWS,
+                $patron['cat_username']
             );
             if ($message == 'ils_connection_failed') {
                 throw new ILSException('ils_offline_status');
@@ -2338,7 +2438,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->reservations_wsdl, $function, $functionResult, $username,
+            $this->reservations_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['getReservationsParam' => $conf]
         );
 
@@ -2364,29 +2467,55 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         foreach ($reservations as $reservation) {
             $expireDate = $reservation->reservationStatus == 'fetchable'
                 ? $reservation->pickUpExpireDate : $reservation->validToDate;
-            $title = isset($reservation->catalogueRecord->title)
-                ? $reservation->catalogueRecord->title : '';
+            $title = $reservation->catalogueRecord->title ?? '';
             if (isset($reservation->note)) {
                 $title .= ' (' . $reservation->note . ')';
             }
 
+            $detailsStr = $reservation->id . '|' . $reservation->validFromDate
+                . '|' . $reservation->validToDate . '|'
+                . $reservation->pickUpBranchId;
+            $updateDetails = '';
+            $cancelDetails = '';
+            // Regional holds have isEditable 'no' even when they're editable, so
+            // check for isDeletetable for them:
+            if ('yes' === $reservation->isEditable
+                || ('regional' === $reservation->reservationType
+                && 'yes' === $reservation->isDeletable)
+            ) {
+                $updateDetails = $detailsStr;
+            }
+            if ('yes' === $reservation->isDeletable) {
+                $cancelDetails = $detailsStr;
+            }
+            $frozen = $reservation->validFromDate > date('Y-m-d');
+            if ($frozen && $reservation->validFromDate != $reservation->validToDate
+            ) {
+                $ts = $this->dateFormat->convertFromDisplayDate(
+                    'U',
+                    $this->formatDate($reservation->validFromDate)
+                );
+                $frozenThrough = $this->dateFormat->convertToDisplayDate(
+                    'Y-m-d',
+                    \DateTime::createFromFormat('U', $ts)
+                        ->modify('-1 DAY')->format('Y-m-d')
+                );
+            } else {
+                $frozenThrough = '';
+            }
             $hold = [
                 'id' => $reservation->catalogueRecord->id,
                 'type' => $reservation->reservationStatus,
                 'location' => $reservation->pickUpBranchId,
-                'reqnum' =>
-                   ($reservation->isDeletable == 'yes' &&
-                       isset($reservation->id)) ? $reservation->id : '',
                 'pickupnum' =>
-                   isset($reservation->pickUpNo) ? $reservation->pickUpNo : '',
+                   $reservation->pickUpNo ?? '',
                 'expire' => $this->formatDate($expireDate),
-                'create' => $this->formatDate($reservation->validFromDate),
+                'frozen' => $frozen,
+                'frozenThrough' => $frozenThrough,
                 'position' =>
-                   isset($reservation->queueNo) ? $reservation->queueNo : '-',
+                   $reservation->queueNo ?? '-',
                 'available' => $reservation->reservationStatus == 'fetchable',
-                'is_editable' => $reservation->isEditable == 'yes',
-                'item_id' => '',
-                'requestId' => $reservation->id,
+                'reqnum' => $reservation->id,
                 'volume' =>
                    $reservation->catalogueRecord->volume ?? '',
                 'publication_year' =>
@@ -2396,8 +2525,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                    && $this->requestGroupsEnabled
                    ? "axiell_$reservation->reservationType"
                    : '',
+                'requestGroupId' =>
+                   isset($reservation->reservationType)
+                   && $this->requestGroupsEnabled
+                   ? $reservation->reservationType
+                   : '',
                 'in_transit' => $reservation->reservationStatus == 'inTransit',
-                'title' => $title
+                'title' => $title,
+                'cancel_details' => $cancelDetails,
+                'updateDetails' => $updateDetails,
+                '_organization' => $reservation->organisationId ?? ''
             ];
             $holdsList[] = $hold;
         }
@@ -2459,7 +2596,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->loans_wsdl, $function, $functionResult, $username,
+            $this->loans_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['renewLoansRequest' => $conf]
         );
 
@@ -2540,7 +2680,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $result = $this->doSOAPRequest(
-            $this->patron_wsdl, $function, $functionResult, $username,
+            $this->patron_wsdl,
+            $function,
+            $functionResult,
+            $username,
             [$functionParam => $conf]
         );
 
@@ -2592,7 +2735,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->patronaurora_wsdl, $function, $functionResult, $username,
+            $this->patronaurora_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['changeLoanHistoryStatusParam' => $conf]
         );
 
@@ -2636,6 +2782,12 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $functionResult = '';
         $functionParam = '';
 
+        // Workaround for AWS issue where a bare plus sign gets converted to a space
+        if (!isset($this->config['updateEmail']['encodeEmailPlusSign'])
+            || $this->config['updateEmail']['encodeEmailPlusSign']
+        ) {
+            $email = str_replace('+', '%2B', $email);
+        }
         $conf = [
             'arenaMember'  => $this->arenaMember,
             'language'     => 'en',
@@ -2657,7 +2809,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         }
 
         $result = $this->doSOAPRequest(
-            $this->patron_wsdl, $function, $functionResult, $username,
+            $this->patron_wsdl,
+            $function,
+            $functionResult,
+            $username,
             [$functionParam => $conf]
         );
 
@@ -2698,6 +2853,20 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     public function updateAddress($patron, $details)
     {
+        if (isset($details['email'])) {
+            $result = $this->updateEmail($patron, $details['email']);
+            if (!$result['success']) {
+                return $result;
+            }
+        }
+
+        if (isset($details['phone'])) {
+            $result = $this->updatePhone($patron, $details['phone']);
+            if (!$result['success']) {
+                return $result;
+            }
+        }
+
         $username = $patron['cat_username'];
         $password = $patron['cat_password'];
 
@@ -2723,7 +2892,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $functionResult = 'changeAddressResponse';
 
         $result = $this->doSOAPRequest(
-            $this->patronaurora_wsdl, $function, $functionResult, $username,
+            $this->patronaurora_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['changeAddressRequest' => $conf]
         );
 
@@ -2781,7 +2953,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         ];
 
         $result = $this->doSOAPRequest(
-            $this->patron_wsdl, $function, $functionResult, $username,
+            $this->patron_wsdl,
+            $function,
+            $functionResult,
+            $username,
             ['changeCardPinParam' => $conf]
         );
 
@@ -2899,7 +3074,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         // Support also the more complex date format of the old AWS version
         if (!preg_match('/^(\d{4}-\d{2}-\d{2})/', $dateString, $matches)) {
             return $this->dateFormat->convertToDisplayDate(
-                '* M d G:i:s e Y', $dateString
+                '* M d G:i:s e Y',
+                $dateString
             );
         }
         // remove timezone from Axiell obscure dateformat
@@ -3099,11 +3275,16 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      */
     protected function getDefaultRequiredByDate()
     {
-        list($d, $m, $y) = isset($this->config['Holds']['defaultRequiredDate'])
+        [$d, $m, $y] = isset($this->config['Holds']['defaultRequiredDate'])
              ? explode(':', $this->config['Holds']['defaultRequiredDate'])
              : [0, 1, 0];
         return mktime(
-            0, 0, 0, date('m') + $m, date('d') + $d, date('Y') + $y
+            0,
+            0,
+            0,
+            date('m') + $m,
+            date('d') + $d,
+            date('Y') + $y
         );
     }
 

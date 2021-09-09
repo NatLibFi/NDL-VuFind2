@@ -4,7 +4,7 @@
   $dates = $this->driver->getResultDateRange();
   $formats = $this->driver->getFormats();
   $format = end($formats);
-  $url = $this->recordLink()->getUrl($this->driver);
+  $url = $this->recordLinker()->getUrl($this->driver);
 
   // NOTE: use $info['baseUrl'] instead of serverUrl view helper when this template is
   // rendered by scheduled alerts console action.
@@ -21,5 +21,21 @@
 <?php if (!empty($format)): ?>
 <?= PHP_EOL . $this->translate($format) ?>
 <?php endif; ?>
+<?php if ($identifier = ($this->driver->getIdentifier())): ?>
+  <?= PHP_EOL . $this->translate('Identifier') . ': ' . implode(', ', $identifier) ?>
+<?php endif; ?>
+<?php
+$parentTitles = $this->driver->getHierarchyParentTitle();
+$topTitles = $this->driver->getHierarchyTopTitle();
+foreach ($parentTitles as $i => $parentTitle) {
+  if ($topTitle = ($topTitles[$i] ?? '')) {
+    $parentTitle = "{$parentTitle}, {$topTitle}";
+  }
+  if ($parentTitle !== $title) {
+    echo PHP_EOL . $this->translate('component_part_is_part_of') . ': ' . $parentTitle;
+  }
+}
+?>
+<?= $this->record($this->driver)->renderTemplate('result-email-copyright.phtml') ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>

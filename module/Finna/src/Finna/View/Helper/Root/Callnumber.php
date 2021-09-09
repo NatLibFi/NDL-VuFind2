@@ -72,15 +72,29 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
      * @return string
      */
     public function callnumber(
-        $source, $title, $callnumber, $collection, $location,
-        $language, $page = 'record'
+        $source,
+        $title,
+        $callnumber,
+        $collection,
+        $location,
+        $language,
+        $page = 'record'
     ) {
         $params = [
             'callnumber' => $callnumber, 'location' => $location, 'title' => $title,
             'page' => $page, 'source' => $source
         ];
+        // Set results-online to just results for qrCode config below
+        if ('results-online' === $page) {
+            $page = 'results';
+        }
         $config = $this->locationService->getConfig(
-            $source, $title, $callnumber, $collection, $location, $language
+            $source,
+            $title,
+            $callnumber,
+            $collection,
+            $location,
+            $language
         );
 
         if ($config) {
@@ -93,7 +107,8 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
                 = $config[$page == 'results' ? 'qrCodeResults' : 'qrCodeRecord'];
         }
         return $this->getView()->render(
-            'Helpers/holding-callnumber.phtml', $params
+            'Helpers/holding-callnumber.phtml',
+            $params
         );
     }
 

@@ -50,6 +50,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected $messagingPrefTypeMap = [
         'Advance_Notice' => 'dueDateAlert',
+        'Auto_Renewals' => 'autoRenewal',
         'Hold_Filled' => 'pickUpNotice',
         'Item_Check_in' => 'checkinNotice',
         'Item_Checkout' => 'checkoutNotice',
@@ -105,13 +106,13 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             = 'patron_status_restricted_with_reason';
 
         $this->groupHoldingsByLocation
-            = isset($this->config['Holdings']['group_by_location'])
-            ? $this->config['Holdings']['group_by_location']
-            : '';
+            = $this->config['Holdings']['group_by_location']
+            ?? '';
 
         if (isset($this->config['Holdings']['holdings_branch_order'])) {
             $values = explode(
-                ':', $this->config['Holdings']['holdings_branch_order']
+                ':',
+                $this->config['Holdings']['holdings_branch_order']
             );
             foreach ($values as $i => $value) {
                 $parts = explode('=', $value, 2);
@@ -233,26 +234,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Patron Holds
-     *
-     * This is responsible for retrieving all holds by a specific patron.
-     *
-     * @param array $patron The patron array from patronLogin
-     *
-     * @throws DateException
-     * @throws ILSException
-     * @return array        Array of the patron's holds on success.
-     */
-    public function getMyHolds($patron)
-    {
-        $result = parent::getMyHolds($patron);
-        foreach ($result as &$hold) {
-            $hold['is_editable'] = !$hold['in_transit'] && !$hold['available'];
-        }
-        return $result;
-    }
-
-    /**
      * Get Patron Profile
      *
      * This is responsible for retrieving the profile for a specific patron.
@@ -300,8 +281,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $messagingSettings = [];
         if ($this->config['Profile']['messagingSettings'] ?? true) {
             foreach ($result['messaging_preferences'] as $type => $prefs) {
-                $typeName = isset($this->messagingPrefTypeMap[$type])
-                    ? $this->messagingPrefTypeMap[$type] : $type;
+                $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
+                if (!$typeName) {
+                    continue;
+                }
                 $settings = [
                     'type' => $typeName
                 ];
@@ -358,13 +341,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ];
         }
 
-        $phoneField = isset($this->config['Profile']['phoneNumberField'])
-            ? $this->config['Profile']['phoneNumberField']
-            : 'mobile';
+        $phoneField = $this->config['Profile']['phoneNumberField']
+            ?? 'mobile';
 
-        $smsField = isset($this->config['Profile']['smsNumberField'])
-            ? $this->config['Profile']['smsNumberField']
-            : 'sms_number';
+        $smsField = $this->config['Profile']['smsNumberField']
+            ?? 'sms_number';
 
         $profile = [
             'firstname' => $result['firstname'],
@@ -515,8 +496,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $request = [];
         $addressFields = [];
-        $fieldConfig = isset($this->config['updateAddress']['fields'])
-            ? $this->config['updateAddress']['fields'] : [];
+        $fieldConfig = $this->config['updateAddress']['fields'] ?? [];
         foreach ($fieldConfig as $field) {
             $parts = explode(':', $field);
             if (isset($parts[1])) {
@@ -632,84 +612,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Change pickup location
-     *
-     * This is responsible for changing the pickup location of a hold
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
-     *
-     * @return array Associative array of the results
-     */
-    public function changePickupLocation($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $pickUpLocation = $holdDetails['pickupLocationId'];
-
-        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError('hold_invalid_pickup');
-        }
-
-        $request = [
-            'pickup_library_id' => $pickUpLocation
-        ];
-
-        $result = $this->makeRequest(
-            [
-                'path' => ['v1', 'holds', $requestId],
-                'json' => $request,
-                'method' => 'PUT',
-                'errors' => true
-            ]
-        );
-
-        if ($result['code'] >= 300) {
-            return $this->holdError($result['data']['error'] ?? 'hold_error_fail');
-        }
-        return ['success' => true];
-    }
-
-    /**
-     * Change request status
-     *
-     * This is responsible for changing the status of a hold request
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details (at the moment only 'frozen'
-     * is supported)
-     *
-     * @return array Associative array of the results
-     */
-    public function changeRequestStatus($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $frozen = !empty($holdDetails['frozen']);
-
-        if ($frozen) {
-            $result = $this->makeRequest(
-                [
-                    'path' => ['v1', 'holds', $requestId, 'suspension'],
-                    'method' => 'POST',
-                    'errors' => true
-                ]
-            );
-        } else {
-            $result = $this->makeRequest(
-                [
-                    'path' => ['v1', 'holds', $requestId, 'suspension'],
-                    'method' => 'DELETE',
-                    'errors' => true
-                ]
-            );
-        }
-
-        if ($result['code'] >= 300) {
-            return $this->holdError($result['data']['error'] ?? 'hold_error_fail');
-        }
-        return ['success' => true];
-    }
-
-    /**
      * Return total amount of fees that may be paid online.
      *
      * @param array $patron Patron
@@ -757,7 +659,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $request = [
@@ -807,11 +712,18 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ]
         );
 
-        if (200 === $result['code'] && !empty($result['data'][0])) {
-            return [
-                'success' => true,
-                'token' => $result['data'][0]['patron_id']
-            ];
+        if (200 === $result['code']) {
+            if (!empty($result['data'][0])) {
+                return [
+                    'success' => true,
+                    'token' => $result['data'][0]['patron_id']
+                ];
+            } else {
+                return [
+                    'success' => false,
+                    'error' => 'Patron not found'
+                ];
+            }
         }
 
         if (404 !== $result['code']) {
@@ -976,8 +888,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         // Do we need to sort pickup locations? If the setting is false, don't
         // bother doing any more work. If it's not set at all, default to
         // alphabetical order.
-        $orderSetting = isset($this->config['Holds']['pickUpLocationOrder'])
-            ? $this->config['Holds']['pickUpLocationOrder'] : 'default';
+        $orderSetting = $this->config['Holds']['pickUpLocationOrder'] ?? 'default';
         if (count($locations) > 1 && !empty($orderSetting)) {
             $locationOrder = $orderSetting === 'default'
                 ? [] : array_flip(explode(':', $orderSetting));
@@ -1223,7 +1134,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                             if (!$issue['received']) {
                                 continue;
                             }
-                            list($year) = explode('-', $issue['publisheddate']);
+                            [$year] = explode('-', $issue['publisheddate']);
                             if ($year > $latestReceived) {
                                 $latestReceived = $year;
                             }
@@ -1233,7 +1144,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                         if (!$issue['received']) {
                             continue;
                         }
-                        list($year) = explode('-', $issue['publisheddate']);
+                        [$year] = explode('-', $issue['publisheddate']);
                         if ($yearFilter) {
                             // Limit to current and last year
                             if ($year && $year != $currentYear
@@ -1278,6 +1189,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $electronic = [];
         if (!empty($holdings)) {
             foreach ($holdings as $holding) {
+                if ($holding['suppressed']) {
+                    continue;
+                }
                 $marc = $this->getHoldingMarc($holding);
                 if (null === $marc) {
                     continue;
@@ -1638,9 +1552,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         // Get Notes
         $data = $this->getMARCData(
             $marc,
-            isset($this->config['Holdings']['notes'])
-            ? $this->config['Holdings']['notes']
-            : '852z'
+            $this->config['Holdings']['notes']
+            ?? '852z'
         );
         if ($data) {
             $marcDetails['notes'] = $data;
@@ -1649,9 +1562,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         // Get Summary (may be multiple lines)
         $data = $this->getMARCData(
             $marc,
-            isset($this->config['Holdings']['summary'])
-            ? $this->config['Holdings']['summary']
-            : '866a'
+            $this->config['Holdings']['summary']
+            ?? '866a'
         );
         if ($data) {
             $marcDetails['summary'] = $data;
@@ -1815,6 +1727,25 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
+     * Translate location name
+     *
+     * @param string $location Location code
+     * @param string $default  Default value if translation is not available
+     *
+     * @return string
+     */
+    protected function translateLocation($location, $default = null)
+    {
+        $defaultTranslation = parent::translateLocation($location, $default);
+        if (empty($this->config['Catalog']['id'])) {
+            return $defaultTranslation;
+        }
+
+        $prefix = $this->config['Catalog']['id'] . '_';
+        return $this->translate("$prefix$location", [], $defaultTranslation);
+    }
+
+    /**
      * Get a description for a block
      *
      * @param string $reason  Koha block reason
@@ -1835,10 +1766,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         case 'Patron::Debt':
         case 'Patron::DebtGuarantees':
             $count = isset($details['current_outstanding'])
-                ? $this->safeMoneyFormat->__invoke($details['current_outstanding'])
+                ? ($this->safeMoneyFormat)($details['current_outstanding'])
                 : '-';
             $limit = isset($details['max_outstanding'])
-                ? $this->safeMoneyFormat->__invoke($details['max_outstanding'])
+                ? ($this->safeMoneyFormat)($details['max_outstanding'])
                 : '-';
             $params = [
                 '%%blockCount%%' => $count,
@@ -1935,7 +1866,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $entry['renewability_blocks']
                 );
                 $permanent = in_array(
-                    $entry['renewability_blocks'], $this->permanentRenewalBlocks
+                    $entry['renewability_blocks'],
+                    $this->permanentRenewalBlocks
                 );
                 if ($permanent) {
                     $renewals = null;

@@ -49,7 +49,10 @@ class Memory extends \VuFind\Search\Memory
      * @return void
      */
     public function rememberSearchData(
-        $searchId, $searchType, $lookfor, $searchClassId = 'Solr'
+        $searchId,
+        $searchType,
+        $lookfor,
+        $searchClassId = 'Solr'
     ) {
         $this->session->searchData = (object)[
             'id' => $searchId,
@@ -66,7 +69,7 @@ class Memory extends \VuFind\Search\Memory
      */
     public function retrieveLastSearchData()
     {
-        return isset($this->session->searchData) ? $this->session->searchData : null;
+        return $this->session->searchData ?? null;
     }
 
     /**
@@ -88,6 +91,6 @@ class Memory extends \VuFind\Search\Memory
      */
     public function retrieveScrollData()
     {
-        return isset($this->session->scrollData) ? $this->session->scrollData : null;
+        return $this->session->scrollData ?? null;
     }
 }

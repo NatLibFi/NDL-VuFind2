@@ -17,7 +17,7 @@
       <h2><?=$this->escapeHtml($title)?></h2>
     <?php endif; ?>
   <?php endif; ?>
-  <p><?= $this->translate($form->getSubmitResponse()) ?></p>
+  <p role="status"><?= $this->translate($form->getSubmitResponse()) ?></p>
 <?php if (!$lightbox): ?>
 </div>
 <?php endif; ?>

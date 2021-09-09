@@ -66,6 +66,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                         if (!empty($profile['barcode'])) {
                             $card['barcode'] = $profile['barcode'];
                         }
+                        array_unshift($cards, $card);
+                        continue;
                     }
                     $cards[] = $card;
                 }
@@ -184,7 +186,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     {
         // Make sure we're configured to do this
         $target = $this->params()->fromQuery(
-            'target', $this->params()->fromPost('target', '')
+            'target',
+            $this->params()->fromPost('target', '')
         );
         $catalog = $this->getILS();
         $recoveryConfig = $catalog->checkFunction(
@@ -338,7 +341,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     public function registrationFormAction()
     {
         // Verify hash
-        $sessionManager = $this->serviceLocator->get(\VuFind\SessionManager::class);
+        $sessionManager = $this->serviceLocator
+            ->get(\Laminas\Session\SessionManager::class);
         $session = new \Laminas\Session\Container('registerPatron', $sessionManager);
         $hash = $this->params()->fromQuery(
             'hash',
@@ -488,7 +492,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     public function registrationDoneAction()
     {
         // Verify hash
-        $sessionManager = $this->serviceLocator->get(\VuFind\SessionManager::class);
+        $sessionManager = $this->serviceLocator
+            ->get(\Laminas\Session\SessionManager::class);
         $session = new \Laminas\Session\Container('registerPatron', $sessionManager);
         $hash = $this->params()->fromQuery(
             'hash',
@@ -525,12 +530,15 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     {
         if ($this->getUser()) {
             return $this->redirect()->toRoute(
-                'myresearch-home', [], ['query' => ['redirect' => 0]]
+                'myresearch-home',
+                [],
+                ['query' => ['redirect' => 0]]
             );
         }
 
         $hash = $this->params()->fromQuery(
-            'hash', $this->params()->fromPost('hash', '')
+            'hash',
+            $this->params()->fromPost('hash', '')
         );
         // Make sure to not include '>' if the mail client doesn't handle links
         // properly
@@ -539,9 +547,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         // Check if hash is expired
         $hashtime = $this->getHashAge($hash);
         $config = $this->getConfig();
-        $hashLifetime = isset($config->Authentication->recover_hash_lifetime)
-            ? $config->Authentication->recover_hash_lifetime
-            : 1209600; // Two weeks
+        $hashLifetime = $config->Authentication->recover_hash_lifetime
+            ?? 1209600; // Two weeks
         if (time() - $hashtime > $hashLifetime) {
             error_log(
                 "Recovery hash expired: $hash, time: $hashtime,"
@@ -550,7 +557,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             );
             $this->flashMessenger()->addErrorMessage('recovery_expired_hash');
             return $this->redirect()->toRoute(
-                'myresearch-home', [], ['query' => ['redirect' => 0]]
+                'myresearch-home',
+                [],
+                ['query' => ['redirect' => 0]]
             );
         }
 
@@ -559,7 +568,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         if (!$recoveryRecord) {
             $this->flashMessenger()->addMessage('recovery_invalid_hash', 'error');
             return $this->redirect()->toRoute(
-                'myresearch-home', [], ['query' => ['redirect' => 0]]
+                'myresearch-home',
+                [],
+                ['query' => ['redirect' => 0]]
             );
         }
         $recoveryData = json_decode($recoveryRecord->data, true);
@@ -573,7 +584,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         if (!$recoveryConfig) {
             $this->flashMessenger()->addMessage('recovery_disabled', 'error');
             return $this->redirect()->toRoute(
-                'myresearch-home', [], ['query' => ['redirect' => 0]]
+                'myresearch-home',
+                [],
+                ['query' => ['redirect' => 0]]
             );
         }
         $policy = $catalog->getPasswordPolicy(['cat_username' => "$target.123"]);
@@ -612,7 +625,9 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $this->flashMessenger()->addSuccessMessage('new_password_success');
                 $recoveryRecord->delete();
                 return $this->redirect()->toRoute(
-                    'myresearch-home', [], ['query' => ['redirect' => 0]]
+                    'myresearch-home',
+                    [],
+                    ['query' => ['redirect' => 0]]
                 );
             } else {
                 $this->flashMessenger()->addErrorMessage('password_error_invalid');
@@ -685,17 +700,18 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         }
 
         if (!empty($cardName)) {
-            list($cardInstitution) = explode('.', $username, 2);
+            [$cardInstitution] = explode('.', $username, 2);
             foreach ($user->getLibraryCards() as $otherCard) {
                 if ($otherCard->id == $id) {
                     continue;
                 }
-                list($otherInstitution) = explode('.', $otherCard->cat_username, 2);
+                [$otherInstitution] = explode('.', $otherCard->cat_username, 2);
                 if ($cardInstitution == $otherInstitution
                     && strcasecmp($cardName, $otherCard->card_name) == 0
                 ) {
                     $this->flashMessenger()->addMessage(
-                        'library_card_name_exists', 'error'
+                        'library_card_name_exists',
+                        'error'
                     );
                     return false;
                 }
@@ -704,7 +720,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
         try {
             $user->saveLibraryCard(
-                $id == 'NEW' ? null : $id, $cardName, $username, $password
+                $id == 'NEW' ? null : $id,
+                $cardName,
+                $username,
+                $password
             );
         } catch (\VuFind\Exception\LibraryCard $e) {
             $this->flashMessenger()->addMessage($e->getMessage(), 'error');
@@ -791,7 +810,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             return false;
         }
         $user->saveLibraryCard(
-            $card->id, $card->card_name, $card->cat_username, $password
+            $card->id,
+            $card->card_name,
+            $card->cat_username,
+            $password
         );
         if (strcasecmp($user->cat_username, $card->cat_username) === 0) {
             $user->saveCredentials($card->cat_username, $password);
@@ -843,7 +865,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $subject,
                 $message
             );
-        } catch (MailException $e) {
+        } catch (\VuFind\Exception\Mail $e) {
             $this->flashMessenger()->addMessage($e->getMessage(), 'error');
         }
     }

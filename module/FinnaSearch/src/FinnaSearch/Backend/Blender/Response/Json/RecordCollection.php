@@ -75,6 +75,7 @@ class RecordCollection
     {
         $this->config = $config;
         $this->mappings = $mappings;
+        $this->response = static::$template;
     }
 
     /**
@@ -90,9 +91,12 @@ class RecordCollection
      *
      * @return void
      */
-    public function initBlended(RecordCollectionInterface $primaryCollection = null,
+    public function initBlended(
+        RecordCollectionInterface $primaryCollection = null,
         RecordCollectionInterface $secondaryCollection = null,
-        $offset, $limit, $blockSize
+        $offset,
+        $limit,
+        $blockSize
     ) {
         $this->response = static::$template;
         $this->response['response']['numFound']
@@ -118,7 +122,9 @@ class RecordCollection
         }
 
         $this->records = array_slice(
-            $records, $offset, $limit
+            $records,
+            $offset,
+            $limit
         );
 
         $this->mergeFacets($primaryCollection, $secondaryCollection);
@@ -202,12 +208,16 @@ class RecordCollection
      *
      * @return void
      */
-    protected function mergeFacets($primaryCollection = null,
+    protected function mergeFacets(
+        $primaryCollection = null,
         $secondaryCollection = null
     ) {
         $facets = $primaryCollection
             ? $primaryCollection->getFacets()->getFieldFacets() : [];
         $secondary = $secondaryCollection ? $secondaryCollection->getFacets() : [];
+        if ($secondary instanceof \VuFindSearch\Backend\Solr\Response\Json\Facets) {
+            $secondary = $secondary->getFieldFacets();
+        }
         foreach ($facets as $facet => &$values) {
             if (is_object($values)) {
                 $values = $values->toArray();
@@ -275,6 +285,12 @@ class RecordCollection
 
             $facets[$facet] = $list;
         }
+
+        $facets['blender_backend'] = [
+            'primary' => $primaryCollection ? $primaryCollection->getTotal() : 0,
+            'secondary' => $secondaryCollection
+                ? $secondaryCollection->getTotal() : 0
+        ];
 
         // Break the keyed array back to Solr-style array with two elements
         $facetFields = [];

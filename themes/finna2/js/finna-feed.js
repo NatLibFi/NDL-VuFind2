@@ -68,11 +68,25 @@ finna.feed = (function finnaFeed() {
       dots: settings.dots,
       swipe: !settings.vertical,
       infinite: true,
-      prevArrow: '<button class="slick-prev" aria-label=' + VuFind.translate("Prev") + ' type="button">' + VuFind.translate("Prev") + '</button>',
-      nextArrow: '<button class="slick-next" aria-label=' + VuFind.translate("Next") + ' type="button">' + VuFind.translate("Next") + '</button>',
+      prevArrow: '<button class="slick-prev" type="button">'
+        + '<span class="slick-prev-icon" aria-hidden="true"></span>'
+        + '<span class="slick-sr-only">' + VuFind.translate("Prev") + '</span>'
+        + '</button>',
+      nextArrow: '<button class="slick-next" type="button">'
+        + '<span class="slick-next-icon" aria-hidden="true"></span>'
+        + '<span class="slick-sr-only">' + VuFind.translate("Next") + '</span>'
+                + '</button>',
+      regionLabel: VuFind.translate("Image Carousel"),
+      customPaging: function initCustomPaging(slider, i) {
+        return $('<button type="button">'
+         + '<span class="slick-dot-icon" aria-hidden="true"></span>'
+         + '<span class="slick-sr-only">' + VuFind.translate("Go to slide") + ' ' + (i + 1) + '</span>'
+         + '</button>');
+      },
       touchThreshold: 8,
       autoplay: autoplay !== 0,
       autoplaySpeed: autoplay,
+      useAutoplayToggleButton: false,
       slidesToShow: settings.slidesToShow.desktop,
       slidesToScroll: settings.scrolledItems.desktop,
       speed: calculateScrollSpeed(settings.scrolledItems.desktop, settings.scrollSpeed),
@@ -164,6 +178,9 @@ finna.feed = (function finnaFeed() {
               if (titleBottom) {
                 adjustTitles(holder);
                 holder.find('.carousel-hover-title').hide();
+                holder.find('.carousel-hover-date').hide();
+              } else {
+                holder.find('.carousel-header-date').hide();
               }
 
               holder.find('.slick-slide')
@@ -194,7 +211,7 @@ finna.feed = (function finnaFeed() {
             // Text hover for touch devices
             if (finna.layout.isTouchDevice() && typeof settings.linkText === 'undefined') {
               $('.carousel-text').css('padding-bottom', '30px');
-              holder.find('.slick-slide a, .slick-slide').click(function onClickSlideLink(/*event*/) {
+              holder.find('.slick-slide a, .slick-slide').on('click', function onClickSlideLink(/*event*/) {
                 var closestSlide = $(this).closest('.slick-slide');
                 if (!closestSlide.hasClass('clicked')) {
                   closestSlide.addClass('clicked');
@@ -207,7 +224,7 @@ finna.feed = (function finnaFeed() {
                 }
               });
               if (navigator.userAgent.match(/iemobile/i)) {
-                $('.slick-slide').click(function onIeClick() {
+                $('.slick-slide').on('click', function onIeClick() {
                   $(this).toggleClass('ie-mobile-tap');
                 });
               }
@@ -220,7 +237,7 @@ finna.feed = (function finnaFeed() {
 
           // Bind lightbox if feed content is shown in modal
           if (typeof settings.modal !== 'undefined' && settings.modal) {
-            holder.find('a').click(function onClickHolderLink() {
+            holder.find('a').on('click', function onClickHolderLink() {
               $('#modal').addClass('feed-content');
             });
             VuFind.lightbox.bind(holder);
@@ -229,12 +246,12 @@ finna.feed = (function finnaFeed() {
         if (holder.find('.grid-item.truncate').length > 0) {
           holder.find('.show-more-feeds').removeClass('hidden');
         }
-        holder.find('.show-more-feeds').click(function moreFeedsButton() {
+        holder.find('.show-more-feeds').on('click', function moreFeedsButton() {
           holder.find('.grid-item.truncate').removeClass('hidden');
           holder.find('.show-less-feeds').removeClass('hidden');
           $(this).addClass('hidden');
         });
-        holder.find('.show-less-feeds').click(function lessFeedsButton() {
+        holder.find('.show-less-feeds').on('click', function lessFeedsButton() {
           holder.find('.grid-item.truncate').addClass('hidden');
           holder.find('.show-more-feeds').removeClass('hidden');
           $(this).addClass('hidden');

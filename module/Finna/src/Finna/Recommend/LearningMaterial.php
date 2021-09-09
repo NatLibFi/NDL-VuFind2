@@ -50,14 +50,14 @@ class LearningMaterial implements RecommendInterface
      *
      * @var string
      */
-    const LEARNING_MATERIAL_FILTER_VALUE = 'LearningMaterial';
+    public const LEARNING_MATERIAL_FILTER_VALUE = 'LearningMaterial';
 
     /**
      * Array of filter fields checked for the the learning material value.
      *
      * @var array
      */
-    const LEARNING_MATERIAL_FILTER_FIELDS = [
+    public const LEARNING_MATERIAL_FILTER_FIELDS = [
         'format',
         'format_ext_str_mv'
     ];
@@ -98,7 +98,8 @@ class LearningMaterial implements RecommendInterface
     }
 
     /**
-     * Called at the end of the Search Params objects' initFromRequest() method.
+     * Called before the Search Results object performs its main search
+     * (specifically, in response to \VuFind\Search\SearchRunner::EVENT_CONFIGURED).
      * This method is responsible for setting search parameters needed by the
      * recommendation module and for reading any existing search parameters that may
      * be needed.

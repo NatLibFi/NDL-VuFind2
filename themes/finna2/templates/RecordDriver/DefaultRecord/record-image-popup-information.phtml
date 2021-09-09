@@ -14,6 +14,16 @@
 ?>
 <div id="popup-content-collapse" class="content">
   <h3 id="popup-image-title" class="title"><?=$this->escapeHtml($this->driver->getTitle())?></h3>
+<?php
+$otherTitles = array_merge(
+    $this->driver->tryMethod('getUniformTitles') ?? [],
+    $this->driver->tryMethod('getAlternativeTitles') ?? []
+);
+if ($otherTitles):?>
+    <div class="result-other-titles">
+      <?=implode(' &ndash; ', array_map($this->escapeHtml, $otherTitles)) ?>
+    </div>
+  <?php endif; ?>
   <div class="author-and-dates">
     <?php if ($recordType != 'lido'): ?>
       <p>
@@ -48,7 +58,7 @@
     <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
   </div>
   <div class="popup-link-buttons">
-    <div class="record-link"><a href="<?=$this->recordLink()->getUrl($this->driver) ?>"><i class="fa fa-arrow-circle-right"></i> <span><?=$this->transEsc('To the record') ?></span></a></div>
+    <div class="record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver)) ?>"><i class="fa fa-arrow-circle-right"></i> <span><?=$this->transEsc('To the record') ?></span></a></div>
   </div>
   <div class="summary loading">
     <div data-rows="6" class="truncate-field">
@@ -70,7 +80,7 @@
   </div>
   <?php if (isset($listNotes) && $listNotes): ?>
     <div class="list-notes">
-      <strong><?=$this->transEsc('Description') ?>:</strong>
+      <strong><?=$this->transEsc('Note')?>:</strong>
       <ul>
       <?php foreach ($listNotes as $note): ?>
         <li><?=$this->markdown()->toHtml($note) ?></li>
@@ -102,7 +112,7 @@
               'title' => $url['url']
             ];
             $isVideo = !empty($url['videoSources']);
-            $embed = $this->recordLink()->getEmbeddedVideo($url['url']);
+            $embed = $this->recordLinker()->getEmbeddedVideo($url['url']);
             if ($embed !== '') {
               $current[$embed] = '';
               $isVideo = true;
@@ -150,7 +160,7 @@
       <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
           <?php if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs)) { continue; } ?>
-          <div class="record-online-link"><a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?php if (count($onlineURLs) == 1 || count($mergedData['urls']) == 1): ?> <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?><?php endif; ?></a>
+          <div class="record-online-link"><a href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" title="<?=$this->escapeHtmlAttr($url['url']) ?>"><i class="fa fa-external-link"></i> <?php if (count($onlineURLs) == 1 || count($mergedData['urls'] ?? []) == 1): ?> <?=$this->transEsc('open_online_link', ['%%format%%' => $translatedFormat])?><?php else: ?><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?><?php endif; ?></a>
           <?php if ($url['source']): ?>
             <span class="online-source"><?=is_array($url['source']) ? '(' . $this->transEsc('Multiple Organisations') . ')' : '';?></span>
           <?php endif; ?>
@@ -158,10 +168,8 @@
         <?php endforeach; ?>
       <?php endif; ?>
     <?php endif; ?>
-    <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
-    <?php if ($this->record($this->driver)->allowRecordImageDownload()): ?>
-      <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => ['urls' => ['large' => $largeImage]], 'hiRes' => $highResolution ?? false]) ?>
-    <?php endif ?>
+    <?php if ($this->userlist()->getMode() !== 'disabled'): ?><div class="save-record-link"><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><i class="fa fa-heart"></i> <span><?=$this->transEsc('Add to favorites')?></span></a></div><?php endif; ?>
+    <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => ['urls' => ['large' => $largeImage]], 'hiRes' => $highResolution ?? false]) ?>
     <?= $this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => 'popup', 'image' => $allImages[$this->index] ?? []]); ?>
   </div>
   <?php if ($this->driver->getSourceIdentifier() !== 'SolrAuth'): ?>
@@ -175,7 +183,7 @@
 <?=
 $this->piwik([
   'lightbox' => true, 'record' => $this->driver, 'action' => 'imagePopup',
-  'recordUrl' => $this->recordLink()->getUrl($this->driver)
+  'recordUrl' => $this->recordLinker()->getUrl($this->driver)
 ]);
 ?>
 

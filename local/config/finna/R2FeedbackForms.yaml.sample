@@ -55,8 +55,6 @@ forms:
         type: email
         required: true
         label: Email
-        help:
-          post: R2_register_form_datasource
       - name: license
         type: checkbox
         options:
@@ -118,8 +116,6 @@ forms:
         type: email
         required: true
         label: Email
-        help:
-          post: R2_register_form_datasource
       - name: license
         type: checkbox
         options:

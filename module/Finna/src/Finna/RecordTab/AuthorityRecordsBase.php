@@ -39,7 +39,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
  */
-class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
+abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
@@ -97,7 +97,8 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     {
         $count = $this->getNumOfRecords();
         return $this->translate(
-            'authority_records_' . $this->label . '_count', ['%%count%%' => $count]
+            'authority_records_' . $this->getLabel() . '_count',
+            ['%%count%%' => $count]
         );
     }
 
@@ -124,7 +125,8 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
             return $this->records;
         }
         $this->records = $this->authorityHelper->getRecordsByAuthorityId(
-            $this->driver->getUniqueID(), $this->getRelation()
+            $this->driver->getUniqueID(),
+            $this->getRelation()
         );
         return $this->records;
     }
@@ -141,18 +143,6 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     }
 
     /**
-     * Set the record driver to operate on
-     *
-     * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
-     *
-     * @return AbstractBase
-     */
-    public function setRecordDriver(\VuFind\RecordDriver\AbstractBase $driver)
-    {
-        $this->driver = $driver;
-    }
-
-    /**
      * Get search query for returning biblio records by authority.
      *
      * @return string
@@ -160,17 +150,22 @@ class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     public function getSearchQuery()
     {
         return $this->authorityHelper->getRecordsByAuthorityQuery(
-            $this->driver->getUniqueID(), $this->getRelation()
+            $this->driver->getUniqueID(),
+            $this->getRelation()
         );
     }
 
     /**
-     * Return index fields that is used when listing records.
+     * Get record tab label
      *
      * @return string
      */
-    protected function getRelation()
-    {
-        return $this->relation;
-    }
+    abstract protected function getLabel();
+
+    /**
+     * Return index field used when listing records
+     *
+     * @return string
+     */
+    abstract protected function getRelation();
 }

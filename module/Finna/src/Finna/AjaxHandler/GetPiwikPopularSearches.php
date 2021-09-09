@@ -80,8 +80,11 @@ class GetPiwikPopularSearches extends \VuFind\AjaxHandler\AbstractBase
      * @param Config            $config   Main configuration
      * @param RendererInterface $renderer View renderer
      */
-    public function __construct(SessionSettings $ss, CacheManager $cm,
-        Config $config, RendererInterface $renderer
+    public function __construct(
+        SessionSettings $ss,
+        CacheManager $cm,
+        Config $config,
+        RendererInterface $renderer
     ) {
         $this->sessionSettings = $ss;
         $this->cacheManager = $cm;
@@ -126,8 +129,7 @@ class GetPiwikPopularSearches extends \VuFind\AjaxHandler\AbstractBase
             . md5(implode('|', $params) . "|$url") . '.html';
 
         // Minutes
-        $maxAge = isset($this->config->Piwik->querycachetime)
-            ? $this->config->Piwik->querycachetime : 60;
+        $maxAge = $this->config->Piwik->querycachetime ?? 60;
 
         if (is_readable($cacheFile)
             && time() - filemtime($cacheFile) < $maxAge * 60
@@ -182,7 +184,8 @@ class GetPiwikPopularSearches extends \VuFind\AjaxHandler\AbstractBase
         arsort($searchPhrases);
 
         $html = $this->renderer->render(
-            'ajax/piwik-popular-searches.phtml', ['searches' => $searchPhrases]
+            'ajax/piwik-popular-searches.phtml',
+            ['searches' => $searchPhrases]
         );
 
         file_put_contents($cacheFile, $html);

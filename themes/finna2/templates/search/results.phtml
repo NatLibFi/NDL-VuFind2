@@ -26,8 +26,8 @@
             'hasDefaultsApplied' => $this->params->hasDefaultsApplied(),
             'selectedShards' => $this->params->getSelectedShards(),
             'savedSearches' => $this->layout()->savedTabs,
-            'ignoreHiddenFiltersInRequest' => isset($this->ignoreHiddenFiltersInRequest) ? $this->ignoreHiddenFiltersInRequest : false,
-            'ignoreHiddenFilterMemory' => isset($this->ignoreHiddenFilterMemory) ? $this->ignoreHiddenFilterMemory : false,
+            'ignoreHiddenFiltersInRequest' => $this->ignoreHiddenFiltersInRequest ?? false,
+            'ignoreHiddenFilterMemory' => $this->ignoreHiddenFilterMemory ?? false,
         ]
     );
 
@@ -38,8 +38,7 @@
       'results' => $this->results,
       'params' => $this->params,
       'lookfor' => $lookfor,
-      'overrideSearchHeading' => isset($this->overrideSearchHeading)
-          ? $this->overrideSearchHeading : null,
+      'overrideSearchHeading' => $this->overrideSearchHeading ?? null,
       'startRecord' => $this->results->getStartRecord(),
       'endRecord' => $this->results->getEndRecord(),
       'recordsFound' => $this->results->getResultTotal() > 0,
@@ -47,14 +46,16 @@
   ];
   if ($searchType == 'advanced') {
     $this->layout()->advSearchHeader = $this->context($this)->renderInContext(
-        'search/header.phtml', $searchData
+        'search/header.phtml',
+        $searchData
     );
   }
   elseif (!$browse && $this->fromStreetSearch) {
     // Set up Finna Main Header:
     $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
-        'search/header.phtml', $searchData
-     );
+        'search/header.phtml',
+        $searchData
+    );
   }
 
   $filterCount = 0;
@@ -193,12 +194,12 @@
       <?php endif; ?>
       <div class="search-controls">
         <?php $resultsStr = $this->translate(
-                'showing_results_of_html',
-                [
-                  '%%start%%' => $this->results->getStartRecord(),
-                  '%%end%%' => $this->results->getEndRecord(),
-                  '%%total%%' => $this->localizedNumber($recordTotal)
-                ]
+            'showing_results_of_html',
+            [
+            '%%start%%' => $this->results->getStartRecord(),
+            '%%end%%' => $this->results->getEndRecord(),
+            '%%total%%' => $this->localizedNumber($recordTotal)
+          ]
         );?>
         <div class="pagination-container">
           <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $resultsStr])?>

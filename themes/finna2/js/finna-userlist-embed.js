@@ -8,7 +8,7 @@ finna.userListEmbed = (function userListEmbed() {
 
         var showMore = embed.find('.show-more');
         var spinner = embed.find('.fa-spinner');
-        embed.find('.btn.load-more').click(function initLoadMore() {
+        embed.find('.btn.load-more').on('click', function initLoadMore() {
           spinner.removeClass('hide').show();
 
           var btn = $(this);
@@ -45,6 +45,7 @@ finna.userListEmbed = (function userListEmbed() {
               finna.myList.init();
               finna.layout.initCondensedList(resultsContainer);
               finna.layout.initTruncate();
+              finna.layout.initImagePaginators();
               finna.openUrl.initLinks(resultsContainer);
               finna.videoPopup.initIframeEmbed(resultsContainer);
               finna.videoPopup.initVideoPopup(resultsContainer);

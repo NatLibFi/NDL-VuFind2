@@ -1,0 +1,10 @@
+<div<?= $this->htmlAttributes($attributes ?? [])->add('class', ['finna-editable', 'clearfix']) ?>>
+  <?= $this->render('components/molecules/buttons/finna-btn/finna-btn.phtml', [
+      'ariaLabel' => $editLabel ?? $this->transEsc('Edit'),
+      'attributes' => ['class' => 'finna-editable-btn'],
+      'iconClass' => 'finna-editable-btn-icon'
+    ]); ?>
+  <div<?= $this->htmlAttributes($containerAttributes ?? [])->add('class', 'finna-editable-container') ?>>
+    <?= $editable ?? '' ?>
+  </div>
+</div>

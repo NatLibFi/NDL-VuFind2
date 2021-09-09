@@ -27,10 +27,10 @@
  */
 namespace Finna\AjaxHandler;
 
+use Laminas\Mvc\Controller\Plugin\Params;
+use Laminas\View\Renderer\RendererInterface;
 use VuFind\Record\Loader;
 use VuFind\Search\SearchRunner;
-use Zend\Mvc\Controller\Plugin\Params;
-use Zend\View\Renderer\RendererInterface;
 
 /**
  * Get "RecordDriverRelatedRecords" AJAX handler
@@ -72,7 +72,9 @@ class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
      * @param RendererInterface $renderer     View renderer
      */
     public function __construct(
-        Loader $loader, SearchRunner $searchRunner, RendererInterface $renderer
+        Loader $loader,
+        SearchRunner $searchRunner,
+        RendererInterface $renderer
     ) {
         $this->recordLoader = $loader;
         $this->searchRunner = $searchRunner;
@@ -117,13 +119,12 @@ class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
                         } catch (\Exception $e) {
                             // Ignore missing record
                         }
-                    } elseif ($id = ($id['wildcard'] ?? null)) {
-                        // Wildcard id. Needed when the indexed record id's
-                        // differ from the ones used in metadata.
-                        // For example indexed archive record id's are prefixed
-                        // with archive top-level id's.
+                    } elseif ($identifier = ($id['id'] ?? null)) {
+                        $field = $id['field'] ?? 'identifier';
+                        // Search by id in the specified Solr field
                         $results = $this->searchRunner->run(
-                            ['lookfor' => 'id:' . addcslashes($id, '"')],
+                            ['lookfor' =>
+                                "{$field}:" . addcslashes($identifier, '"')],
                             $source,
                             function ($runner, $params, $searchId) use ($driver) {
                                 $params->setLimit(1);

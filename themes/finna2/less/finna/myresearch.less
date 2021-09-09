@@ -8,7 +8,7 @@
   &:nth-child(odd) {
     background: @table-bg-accent;
   }
-  h3 {
+  .record-title {
     margin: 0;
     font-weight: 400;
     font-size: 1.2em;
@@ -38,6 +38,9 @@
         margin-left: 0;
       }
     }
+  }
+  #label-title-column span {
+    float: right;
   }
 }
 
@@ -70,8 +73,7 @@
 
 .myresearch-table {
   width: 100%;
-  margin: 15px 0px;
-
+  margin: 0;
   th,td {
     vertical-align: top;
     padding: 5px;
@@ -97,7 +99,7 @@
       }
     }
   }
-  .renew-button {
+  .renew-button, #update_selected, #cancelSelected, #cancelAll {
     height: 35px;
     padding: 0 10px;
     @media (max-width: @screen-sm) {
@@ -122,23 +124,29 @@
     }
   }
   @media(min-width: @screen-xs-min) {
-    .sort-col,
     .renew-button-col {
-      width: 50%;
       float: left;
+      text-align: left;
+    }
+    .sort-col {
+      float: right;
+      text-align: right;
       .sort-button {
         margin-bottom: 0px;
       }
     }
-    .sort-col{ text-align: right; }
-    .renew-button-col { text-align: left; }
   }
   @media(max-width: @screen-xxs-max) {
     .renew-button-col {
       margin-bottom: 10px;
+      width: 100%;
+      float: left;
       input {
         min-width: 170px;
       }
+    }
+    .sort-col {
+      float: left;
     }
   }
   .checkbox-col{
@@ -149,6 +157,11 @@
     font-weight: bold;
     &.no-buttons {
       line-height: inherit;
+    }
+  }
+  .checkboxFilter.mylist-select-all {
+    .checkbox {
+      margin: 5px 0;
     }
   }
 }
@@ -247,7 +260,7 @@
   }
 }
 // Custom styles for user account functions
-.template-dir-myresearch, .template-dir-search.template-name-history, .template-dir-librarycards {
+.template-dir-myresearch, .template-dir-holds, .template-dir-search.template-name-history, .template-dir-librarycards {
   padding-bottom: 30px;
   h1 {
     font-weight: 500;
@@ -292,35 +305,6 @@
     width: 205px;
   }
 
-  .markdown.edit {
-    .CodeMirror {
-      height: 300px;
-    }
-    .markdown-preview {
-      padding: 10px;
-      background: #fafafa;
-      height: 300px;
-      overflow-y: auto;
-      border: 1px solid @gray-lighter;
-      .preview {
-        position: absolute;
-        right: 40px;
-        background-color: @body-bg;
-        padding: 3px 9px;
-      }
-    }
-  }
-  .markdown .editable {
-    padding: 5px;
-    > p {
-      margin: 0;
-    }
-  }
-
-  .markdown.edit .fa-pen {
-    display: none;
-  }
-
   .resource-note {
     margin-left: -5px;
   }
@@ -356,7 +340,6 @@
   .borrowing-block-container {
     p.borrowing-block {
       padding: 0;
-      font-weight: bold;
       margin-bottom: 0;
     }
   }
@@ -443,7 +426,7 @@
   }
 }
 
-#renewals .toolbar {
+#renewals .toolbar, #update_holds .toolbar {
   @media (max-width:@screen-xs-max) {
     margin-left: -15px;
   }
@@ -465,7 +448,7 @@
   }
 }
 
-.template-dir-myresearch .toolbar {
+.template-dir-myresearch .toolbar, .template-dir-holds .toolbar {
   margin: 0;
   margin-top: 5px;
   border-bottom: 1px solid @gray-lighter;
@@ -482,6 +465,9 @@
       &:first-child {
         vertical-align: top;
         padding-top: 10px;
+      }
+      &:nth-child(2) {
+        width: 100%;
       }
     }
   }
@@ -739,6 +725,19 @@
         padding: 10px;
       }
     }
+    .tooltip-myaccount {
+      background: initial;
+      border: none;
+      float: right;
+      padding: 0;
+      margin: 0;
+      > i {
+        color: white;
+        cursor: pointer;
+        margin: 0;
+        padding: 0;
+      }
+    }
   }
 }
 
@@ -798,12 +797,13 @@
   @media (min-width: @screen-sm) {
     display: flex;
     flex-direction: row-reverse;
+    align-items: baseline;
   }
   .right-control {
     @media (max-width: @screen-sm) {
       text-align: right;
       float: right;
-      width: 65%;
+      width: 50%;
     }
   }
   .left-control {

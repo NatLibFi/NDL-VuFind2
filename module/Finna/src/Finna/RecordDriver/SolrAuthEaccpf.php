@@ -41,20 +41,39 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthEacCpf extends SolrAuthDefault
 {
-    use SolrAuthFinnaTrait;
-    use XmlReaderTrait;
+    use Feature\SolrAuthFinnaTrait {
+        getOccupations as _getOccupations;
+    }
+    use Feature\FinnaXmlReaderTrait;
 
     /**
      * Get authority title
      *
-     * @return string|null
+     * @return string
      */
     public function getTitle()
     {
+        $firstTitle = '';
         $record = $this->getXmlRecord();
-        return isset($record->cpfDescription->identity->nameEntry->part[0])
-            ? (string)$record->cpfDescription->identity->nameEntry->part[0]
-            : null;
+        if (isset($record->cpfDescription->identity->nameEntry)) {
+            $languages = $this->mapLanguageCode($this->getLocale());
+            $name = $record->cpfDescription->identity->nameEntry;
+            if (!isset($name->part)) {
+                return '';
+            }
+            $lang = (string)$name->attributes()->lang;
+            foreach ($name->part as $part) {
+                if ($title = (string)$part) {
+                    if (!$firstTitle) {
+                        $firstTitle = $title;
+                    }
+                    if ($lang && in_array($lang, $languages)) {
+                        return $title;
+                    }
+                }
+            }
+        }
+        return $firstTitle;
     }
 
     /**
@@ -67,7 +86,12 @@ class SolrAuthEacCpf extends SolrAuthDefault
         $titles = [];
         $path = 'cpfDescription/identity/nameEntryParallel/nameEntry';
         foreach ($this->getXmlRecord()->xpath($path) as $name) {
-            $titles[] = $name->part[0];
+            foreach ($name->part ?? [] as $part) {
+                $localType = (string)$part->attributes()->localType;
+                if ($localType === 'http://rdaregistry.info/Elements/a/P50103') {
+                    $titles[] = ['data' => (string)$part];
+                }
+            }
         }
         return $titles;
     }
@@ -98,7 +122,9 @@ class SolrAuthEacCpf extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
-        return $this->formatDate($this->fields['birth_date'] ?? '');
+        return $this->formatDate(
+            $this->getExistDate('http://rdaregistry.info/Elements/a/P50120') ?? ''
+        );
     }
 
     /**
@@ -113,7 +139,35 @@ class SolrAuthEacCpf extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
-        return $this->formatDate($this->fields['death_date'] ?? '');
+        return $this->formatDate(
+            $this->getExistDate('http://rdaregistry.info/Elements/a/P50121') ?? ''
+        );
+    }
+
+    /**
+     * Return exist date
+     *
+     * @param string $localType localType attribute
+     *
+     * @return null|string
+     */
+    protected function getExistDate(string $localType) : ?string
+    {
+        $record = $this->getXmlRecord();
+        if (!isset($record->cpfDescription->description->existDates->dateSet->date)
+        ) {
+            return null;
+        }
+        foreach ($record->cpfDescription->description->existDates->dateSet->date
+            as $date
+        ) {
+            $attrs = $date->attributes();
+            $type = (string)$attrs->localType;
+            if ($localType === $type) {
+                return (string)$attrs->standardDate;
+            }
+        }
+        return null;
     }
 
     /**
@@ -141,6 +195,66 @@ class SolrAuthEacCpf extends SolrAuthDefault
             }
         }
         return $result;
+    }
+
+    /**
+     * Return relations to other authority records.
+     *
+     * @return array
+     */
+    public function getRelations()
+    {
+        $record = $this->getXmlRecord();
+        $result = [];
+        foreach ($record->cpfDescription->relations->cpfRelation ?? []
+            as $relation
+        ) {
+            $attr = $relation->attributes();
+            $id = (string)$attr->href;
+            $name = (string)$relation->relationEntry;
+            if ($id && $name) {
+                $result[] = [
+                    'id' => $id,
+                    'name' => $name,
+                    'role' => (string)$attr->title,
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Return occupations.
+     *
+     * @return array
+     */
+    public function getOccupations()
+    {
+        $result = [];
+        $record = $this->getXmlRecord();
+        if (isset($record->cpfDescription->description->occupations)) {
+            $languages = $this->mapLanguageCode($this->getLocale());
+            foreach ($record->cpfDescription->description->occupations
+                as $occupations
+            ) {
+                if (!isset($occupations->occupation)) {
+                    continue;
+                }
+                foreach ($occupations->occupation as $occupation) {
+                    if (!isset($occupation->term)) {
+                        continue;
+                    }
+                    $term = $occupation->term;
+                    $attr = $term->attributes();
+                    if ($attr->lang && in_array((string)$attr->lang, $languages)
+                    ) {
+                        $result[] = (string)$term;
+                    }
+                }
+            }
+        }
+        return $result ?: $this->_getOccupations();
     }
 
     /**
@@ -174,12 +288,10 @@ class SolrAuthEacCpf extends SolrAuthDefault
                     'Y',
                     $this->dateConverter->convertToDisplayDate('Y', $date)
                 );
-            } else {
-                return $date;
             }
         } catch (\Exception $e) {
-            return $date;
         }
+        return $this->translate(ucfirst($date), [], $date);
     }
 
     /**

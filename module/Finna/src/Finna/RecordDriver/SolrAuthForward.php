@@ -39,13 +39,13 @@ namespace Finna\RecordDriver;
 class SolrAuthForward extends SolrAuthDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrAuthFinnaTrait;
-    use SolrForwardTrait {
+    use Feature\SolrAuthFinnaTrait;
+    use Feature\SolrForwardTrait {
         getBirthPlace as _getBirthPlace;
         getDeathPlace as _getDeathPlace;
     }
-    use XmlReaderTrait;
-    use UrlCheckTrait;
+    use Feature\FinnaXmlReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -79,12 +79,14 @@ class SolrAuthForward extends SolrAuthDefault
      */
     public function getSummary()
     {
-        return explode(
-            PHP_EOL,
-            $this->isPerson()
-              ? $this->getBiographicalNote('henkilo-biografia-tyyppi', 'biografia')
-              : $this->getBiographicalNote()
-        );
+        $desc = $this->isPerson()
+          ? $this->getBiographicalNote('henkilo-biografia-tyyppi', 'biografia')
+          : $this->getBiographicalNote();
+
+        if (empty($desc)) {
+            return null;
+        }
+        return explode(PHP_EOL, $desc);
     }
 
     /**
@@ -114,6 +116,8 @@ class SolrAuthForward extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
+        // Apparently phpstan doesn't understand 'as' in use clause
+        // @phpstan-ignore-next-line
         return $this->_getBirthPlace();
     }
 
@@ -144,6 +148,8 @@ class SolrAuthForward extends SolrAuthDefault
         if (!$this->isPerson() && !$force) {
             return '';
         }
+        // Apparently phpstan doesn't understand 'as' in use clause
+        // @phpstan-ignore-next-line
         return $this->_getDeathPlace();
     }
 

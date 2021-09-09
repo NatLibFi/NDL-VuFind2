@@ -159,7 +159,7 @@ trait FinnaParams
     public function hasHiddenFilter($filter)
     {
         // Extract field and value from URL string:
-        list($field, $value) = $this->parseFilter($filter);
+        [$field, $value] = $this->parseFilter($filter);
 
         if (isset($this->hiddenFilters[$field])
             && in_array($value, $this->hiddenFilters[$field])
@@ -370,7 +370,7 @@ trait FinnaParams
     /**
      * Pull the page size parameter or set to default
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void

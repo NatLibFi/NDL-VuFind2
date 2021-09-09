@@ -27,7 +27,7 @@
  */
 namespace Finna\AjaxHandler;
 
-use Finna\View\Helper\Root\UserlistEmbed;
+use Finna\View\Helper\Root\UserListEmbed;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Session\Settings as SessionSettings;
 

@@ -29,6 +29,16 @@
         $holdings['total'] = 0;
         $holdings['page'] = 1;
         $holdings['itemLimit'] = 10;
+    } else {
+      if (!isset($holdings['total'])) {
+        $holdings['total'] = count($holdings['holdings']);
+      }
+      if (!isset($holdings['page'])) {
+        $holdings['page'] = 1;
+      }
+      if (!isset($holdings['itemLimit'])) {
+        $holdings['itemLimit'] = $holdings['total'];
+      }
     }
 
     $illRequestLink = false;
@@ -102,7 +112,7 @@
       <div class="clearfix"></div>
     <?php elseif (!$user->cat_username): ?>
       <div class="alert alert-info">
-        <?=$this->translate("hold_profile_html", ['%%url%%' => $this->recordLink()->getTabUrl($this->driver, 'Holdings', ['catalogLogin' => 'true'])])?>
+        <?=$this->translate("hold_profile_html", ['%%url%%' => $this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'Holdings', ['catalogLogin' => 'true']))])?>
       </div>
     <?php endif; ?>
   <?php endif; ?>
@@ -135,19 +145,28 @@
   <div class="place-hold-wrapper text-right hidden-print">
   <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn(), 'label' => 'Library Card']); ?>
   <?php if ($illRequestLink): ?>
-    <a class="expandedCheckILLRequest placeILLRequest btn btn-primary hidden-print" data-lightbox href="<?=$this->recordLink()->getRequestUrl($illRequestLink)?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('ill_request_place_text') . ': ' . $this->driver->getTitle()) ?>"><?=$this->transEsc("ill_request_check_text")?></a>
+    <a class="expandedCheckILLRequest placeILLRequest btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($illRequestLink))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('ill_request_place_text') . ': ' . $this->driver->getTitle()) ?>"><?=$this->transEsc("ill_request_check_text")?></a>
   <?php endif; ?>
   <?php if (!$disableTitleHold): ?>
     <?php $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold'); if (!empty($holdingTitleHold)): ?>
-      <a class="placehold btn btn-primary hidden-print" data-lightbox data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $this->driver->getTitle()) ?>" href="<?=$this->recordLink()->getRequestUrl($holdingTitleHold)?>"> <?=$this->transEsc('title_hold_place')?></a>
+      <a class="placehold btn btn-primary hidden-print" data-lightbox data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $this->driver->getTitle()) ?>" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdingTitleHold))?>"> <?=$this->transEsc('title_hold_place')?></a>
     <?php elseif ($user): ?>
       <?php
         $blocks = [];
         if (!empty($holdings['blocks'])) {
           $blocks = $holdings['blocks'];
-          $blocks[] = $this->translate('hold_error_blocked');
+          // Check if we have hold-specific blocks. Add the general hold_error_blocked only if no other hold blocks to avoid repetition.
+          $holdBlocks = false;
+          foreach ($blocks as $block) {
+            if (mb_substr((string)$block, 0, 11, 'UTF-8') === 'hold_error_') {
+              $holdBlocks = true;
+            }
+          }
+          if (!$holdBlocks) {
+              $blocks[] = 'hold_error_blocked';
+          }
         } elseif (!$illRequestLink && !$holdLinks) {
-          $blocks[] = $this->translate('title_cant_place_hold');
+          $blocks[] = 'title_cant_place_hold';
         }
         if ($blocks):
       ?>
@@ -159,10 +178,12 @@
 <?php endif; ?>
 
 <?php if (!empty($holdings['electronic_holdings'])): ?>
-  <?=$this->context($this)->renderInContext(
-      'RecordTab/holdingsils/electronic.phtml',
-      ['holdings' => $holdings['electronic_holdings']]
-  );?>
+  <?=
+    $this->context($this)->renderInContext(
+        'RecordTab/holdingsils/electronic.phtml',
+        ['holdings' => $holdings['electronic_holdings']]
+    )
+  ?>
 <?php endif; ?>
 
 <div class="table record-holdings-table">
@@ -176,12 +197,12 @@
           <option value="#" role="option" selected="selected"><?=$this->transEsc('Other Libraries'); ?></option>
           <?php foreach ($mergedData['records'] as $current): ?>
             <?php if ($recordSource != $current['source']): ?>
-              <option value="<?=$this->recordLink()->getUrl($recordSourceId . '|' . $current['id']) ?>" role="option"><?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?></option>
+              <option value="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($recordSourceId . '|' . $current['id'])) ?>" role="option"><?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?></option>
             <?php endif; ?>
           <?php endforeach; ?>
         </select>
       <?php endif; ?>
-      </div>
+    </div>
     <?php if (!empty($holdings['holdings'])): ?>
       <div class="reservations-container">
         <?php if ($showSummary): ?>
@@ -198,6 +219,15 @@
       </div>
     <?php endif; ?>
   </div>
+
+<?php if ($containerLinksHtml = trim($this->record($this->driver)->renderTemplate('container-links.phtml'))): ?>
+  <div class="holdings-group">
+    <div class="copy-details">
+      <?=$containerLinksHtml?>
+    </div>
+  </div>
+<?php endif; ?>
+
 <?php $holdingsGroup = 0; ?>
 <?php foreach ($holdings['holdings'] as $holdingId => $holding): ?>
   <?php
@@ -301,7 +331,7 @@
           <?=$this->callnumber()->callnumber($recordSource, $this->driver->getFullTitle(), $data['callNo'], $data['collection'], $data['location'], $this->layout()->userLang)?>
         <?php endforeach; ?>
         <?php if ($holdsAllowed && isset($holdLinksLocation[$holding['location']])): ?>
-          <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->recordLink()->getRequestUrl($holdLinksLocation[$holding['location']])?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc("request_place_text")?></a>
+          <a class="expandedCheckRequest inlineblock placehold btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdLinksLocation[$holding['location']]))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('request_place_text') . $dialogTitle); ?>"><?=$this->transEsc("request_place_text")?></a>
         <?php endif; ?>
       </div>
     </div>
@@ -358,9 +388,9 @@
 
 <?php
   $this->inlineScript(
-    \Laminas\View\Helper\HeadScript::SCRIPT,
-    'finna.record.setupHoldingsTab();',
-    'SET'
+      \Laminas\View\Helper\HeadScript::SCRIPT,
+      'finna.record.setupHoldingsTab();',
+      'SET'
   );
   echo $this->inlineScript();
 ?>

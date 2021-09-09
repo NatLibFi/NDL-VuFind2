@@ -73,9 +73,6 @@ class Demo extends \VuFind\ILS\Driver\Demo
             return !empty($this->config['PasswordRecovery']['enabled'])
                 ? $this->config['PasswordRecovery'] : false;
         }
-        if ('changePickupLocation' === $function) {
-            return ['method' => 'driver'];
-        }
 
         return parent::getConfig($function, $params);
     }
@@ -158,8 +155,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
     {
         $accruedType = 'Accrued Fine';
 
-        $config = isset($this->config['OnlinePayment'])
-            ? $this->config['OnlinePayment'] : [];
+        $config = $this->config['OnlinePayment'] ?? [];
         $nonPayable = $config['nonPayable'] ?? []
         ;
         $nonPayable[] = $accruedType;
@@ -190,7 +186,10 @@ class Demo extends \VuFind\ILS\Driver\Demo
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         if ((rand() % 10) > 8) {

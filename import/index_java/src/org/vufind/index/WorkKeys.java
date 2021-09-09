@@ -67,16 +67,9 @@ public class WorkKeys
     ) {
         Set<String> workKeys = new LinkedHashSet<String>();
 
-        if (!transliterationRules.isEmpty()) {
-            if (!this.transliterators.containsKey(transliterationRules)) {
-                this.transliterators.put(
-                    transliterationRules,
-                    Transliterator.createFromRules("workkeys", transliterationRules, Transliterator.FORWARD)
-                );
-            }
-        }
         final Transliterator transliterator = transliterationRules.isEmpty()
-            ? null : this.transliterators.get(transliterationRules);
+            ? null : this.transliterators.computeIfAbsent(transliterationRules, rules ->
+                Transliterator.createFromRules("workkeys", rules, Transliterator.FORWARD));
 
         // Uniform title
         final Set<String> uniformTitles = FieldSpecTools.getFieldsByTagList(record, uniformTitleTagList);
@@ -125,7 +118,7 @@ public class WorkKeys
     ) {
         String normalized = transliterator != null ? transliterator.transliterate(s)
             : Normalizer.normalize(s, Normalizer.Form.NFKC);
-        if (!includeRegEx.isBlank()) {
+        if (!includeRegEx.chars().allMatch(Character::isWhitespace)) {
             StringBuilder result = new StringBuilder();
             Matcher m = Pattern.compile(includeRegEx).matcher(normalized);
             while (m.find()) {
@@ -133,7 +126,7 @@ public class WorkKeys
             }
             normalized = result.toString();
         }
-        if (!excludeRegEx.isBlank()) {
+        if (!excludeRegEx.chars().allMatch(Character::isWhitespace)) {
             normalized = normalized.replaceAll(excludeRegEx, "");
         }
         int length = normalized.length();

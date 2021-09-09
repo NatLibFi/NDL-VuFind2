@@ -36,6 +36,7 @@ use Laminas\View\Resolver\TemplatePathStack;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VuFind\Mailer\Mailer;
 
 /**
  * Console service for sending due date reminders.
@@ -50,6 +51,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DueDateReminders extends AbstractUtilCommand
 {
+    use EmailWithRetryTrait;
+
     /**
      * The name of the command (the part after "public/index.php")
      *
@@ -60,7 +63,7 @@ class DueDateReminders extends AbstractUtilCommand
     /**
      * Date format for due dates in database.
      */
-    const DUE_DATE_FORMAT = 'Y-m-d H:i:s';
+    public const DUE_DATE_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * ILS connection.
@@ -126,20 +129,6 @@ class DueDateReminders extends AbstractUtilCommand
     protected $viewRenderer;
 
     /**
-     * Mailer factory callable
-     *
-     * @var callable
-     */
-    protected $mailerFactory;
-
-    /**
-     * Mailer
-     *
-     * @var \VuFind\Mailer\Mailer
-     */
-    protected $mailer = null;
-
-    /**
      * Translator
      *
      * We don't use the interface and trait since the trait only defines an interface
@@ -197,7 +186,7 @@ class DueDateReminders extends AbstractUtilCommand
      * @param PhpRenderer                     $renderer             View renderer
      * @param \VuFind\Record\Loader           $recordLoader         Record loader
      * @param \VuFind\Crypt\HMAC              $hmac                 HMAC
-     * @param callable                        $mailerFactory        Mailer factory
+     * @param Mailer                          $mailer               Mailer
      * @param Translator                      $translator           Translator
      */
     public function __construct(
@@ -209,7 +198,7 @@ class DueDateReminders extends AbstractUtilCommand
         PhpRenderer $renderer,
         \VuFind\Record\Loader $recordLoader,
         \VuFind\Crypt\HMAC $hmac,
-        callable $mailerFactory,
+        Mailer $mailer,
         Translator $translator
     ) {
         $this->userTable = $userTable;
@@ -228,7 +217,7 @@ class DueDateReminders extends AbstractUtilCommand
         $this->urlHelper = $renderer->plugin('url');
         $this->recordLoader = $recordLoader;
         $this->hmac = $hmac;
-        $this->mailerFactory = $mailerFactory;
+        $this->mailer = $mailer;
         $this->translator = $translator;
         parent::__construct();
     }
@@ -273,22 +262,33 @@ class DueDateReminders extends AbstractUtilCommand
             $this->msg('Processing ' . count($users) . ' users');
 
             foreach ($users as $user) {
-                $results = $this->getReminders($user);
-                $errors = $results['errors'];
-                $remindLoans = $results['remindLoans'];
-                $remindCnt = count($remindLoans);
-                $errorCnt = count($errors);
-                if ($remindCnt || $errorCnt) {
-                    $this->msg(
-                        "$remindCnt reminders and $errorCnt errors to send for user"
-                        . " {$user->username} (id {$user->id})"
+                try {
+                    $results = $this->getReminders($user);
+                    $errors = $results['errors'];
+                    $remindLoans = $results['remindLoans'];
+                    $remindCnt = count($remindLoans);
+                    $errorCnt = count($errors);
+                    if ($remindCnt || $errorCnt) {
+                        $this->msg(
+                            "$remindCnt reminders and $errorCnt errors to send for"
+                            . " user {$user->username} (id {$user->id})"
+                        );
+                        $this->sendReminder($user, $remindLoans, $errors);
+                    } else {
+                        $this->msg(
+                            "No loans to remind for user {$user->username}"
+                            . " (id {$user->id})"
+                        );
+                    }
+                } catch (\Exception $e) {
+                    $this->err(
+                        "Exception while processing user {$user->id}: "
+                            . $e->getMessage(),
+                        'Exception occurred while processing a user'
                     );
-                    $this->sendReminder($user, $remindLoans, $errors);
-                } else {
-                    $this->msg(
-                        "No loans to remind for user {$user->username}"
-                        . " (id {$user->id})"
-                    );
+                    while ($e = $e->getPrevious()) {
+                        $this->err("  Previous exception: " . $e->getMessage());
+                    }
                 }
             }
             $this->msg('Completed processing users');
@@ -300,10 +300,12 @@ class DueDateReminders extends AbstractUtilCommand
             while ($e = $e->getPrevious()) {
                 $this->err("  Previous exception: " . $e->getMessage());
             }
-            exit(1);
+            return 1;
         }
 
-        return true;
+        $this->mailer->resetConnection();
+
+        return 0;
     }
 
     /**
@@ -337,11 +339,6 @@ class DueDateReminders extends AbstractUtilCommand
             // boolean..
             if (isset($ddrConfig['enabled']) && $ddrConfig['enabled'] !== true) {
                 // Due date reminders disabled for the source
-                $this->warn(
-                    "Due date reminders disabled for source, user {$user->username}"
-                    . " (id {$user->id}), card {$card->cat_username}"
-                    . " (id {$card->id})"
-                );
                 continue;
             }
 
@@ -435,11 +432,9 @@ class DueDateReminders extends AbstractUtilCommand
                         );
                     }
 
-                    $dateFormat = isset(
-                        $this->currentSiteConfig['Site']['displayDateFormat']
-                    )
-                        ? $this->currentSiteConfig['Site']['displayDateFormat']
-                        : $this->mainConfig->Site->displayDateFormat;
+                    $dateFormat
+                        = $this->currentSiteConfig['Site']['displayDateFormat']
+                        ?? $this->mainConfig->Site->displayDateFormat;
 
                     $remindLoans[] = [
                         'loanId' => $loan['item_id'],
@@ -473,7 +468,7 @@ class DueDateReminders extends AbstractUtilCommand
             return false;
         }
 
-        list($userInstitution, ) = explode(':', $user['username'], 2);
+        [$userInstitution, ] = explode(':', $user['username'], 2);
 
         if (!$this->currentInstitution
             || $userInstitution != $this->currentInstitution
@@ -503,8 +498,7 @@ class DueDateReminders extends AbstractUtilCommand
             $this->currentSiteConfig = parse_ini_file($siteConfig, true);
         }
 
-        $language = isset($this->currentSiteConfig['Site']['language'])
-            ? $this->currentSiteConfig['Site']['language'] : 'fi';
+        $language = $this->currentSiteConfig['Site']['language'] ?? 'fi';
         $validLanguages = array_keys($this->currentSiteConfig['Languages']);
         if (!empty($user->last_language)
             && in_array($user->last_language, $validLanguages)
@@ -525,8 +519,7 @@ class DueDateReminders extends AbstractUtilCommand
             'type' => 'reminder',
             'key' => $key
         ];
-        $unsubscribeUrl
-            = $this->urlHelper->__invoke('myresearch-unsubscribe')
+        $unsubscribeUrl = ($this->urlHelper)('myresearch-unsubscribe')
             . '?' . http_build_query($urlParams);
 
         $urlParts = explode('/', $this->currentViewPath);
@@ -543,9 +536,8 @@ class DueDateReminders extends AbstractUtilCommand
         $serviceName = $urlInstitution . '.finna.fi';
         $lastLogin = new \DateTime($user->last_login);
         $loginMethod = strtolower($user->auth_method);
-        $dateFormat = isset($this->currentSiteConfig['Site']['displayDateFormat'])
-            ? $this->currentSiteConfig['Site']['displayDateFormat']
-            : $this->mainConfig->Site->displayDateFormat;
+        $dateFormat = $this->currentSiteConfig['Site']['displayDateFormat']
+            ?? $this->mainConfig->Site->displayDateFormat;
 
         $params = [
             'loans' => $remindLoans,
@@ -573,25 +565,7 @@ class DueDateReminders extends AbstractUtilCommand
         $to = $user->email;
         $from = $this->currentSiteConfig['Site']['email'];
         try {
-            try {
-                if (null === $this->mailer) {
-                    $this->mailer = ($this->mailerFactory)();
-                }
-                $this->mailer->send($to, $from, $subject, $message);
-            } catch (\Exception $e) {
-                $this->warn(
-                    "First SMTP send attempt to user {$user->username}"
-                        . " (id {$user->id}, email '$to') failed, resetting",
-                    ''
-                );
-                try {
-                    $this->mailer->resetConnection();
-                } catch (\Exception $e) {
-                    // Failed to reset connection, create a new mailer
-                    $this->mailer = ($this->mailerFactory)();
-                }
-                $this->mailer->send($to, $from, $subject, $message);
-            }
+            $this->sendEmailWithRetry($to, $from, $subject, $message);
         } catch (\Exception $e) {
             $this->err(
                 "Failed to send due date reminders to user {$user->username}"

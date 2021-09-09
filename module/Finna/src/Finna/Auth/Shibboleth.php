@@ -88,18 +88,18 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
 
         // Has the user configured attributes to use for populating the user table?
         foreach ($this->attribsToCheck as $attribute) {
-            if (isset($shib->$attribute)) {
-                $value = $this->getServerParam($request, $shib->$attribute);
-                if ($attribute != 'cat_password') {
-                    // Special case: don't override existing email address:
-                    if ($attribute == 'email') {
-                        if (isset($user->email) && trim($user->email) != '') {
-                            continue;
-                        }
-                    }
-                    $user->$attribute = ($value === null) ? '' : $value;
-                } else {
+            if (isset($shib[$attribute])) {
+                $value = $this->getAttribute($request, $shib[$attribute]);
+                if ($attribute == 'email') {
+                    $user->updateEmail($value);
+                } elseif ($attribute == 'cat_username' && isset($shib['prefix'])
+                    && !empty($value)
+                ) {
+                    $user->cat_username = $shib['prefix'] . '.' . $value;
+                } elseif ($attribute == 'cat_password') {
                     $catPassword = $value;
+                } else {
+                    $user->$attribute = ($value === null) ? '' : $value;
                 }
             }
         }
@@ -128,7 +128,8 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
             $url = $this->getServerParam($request, $shib->logout_attribute);
             if ($url) {
                 $session = new \Laminas\Session\Container(
-                    'Shibboleth', $this->sessionManager
+                    'Shibboleth',
+                    $this->sessionManager
                 );
                 $session['logoutUrl'] = $url;
             }
@@ -175,7 +176,8 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
     protected function getServerParam($request, $param)
     {
         return $request->getServer()->get(
-            $param, $request->getServer()->get("REDIRECT_$param")
+            $param,
+            $request->getServer()->get("REDIRECT_$param")
         );
     }
 }

@@ -41,11 +41,11 @@ namespace Finna\RecordDriver;
 class SolrForward extends \VuFind\RecordDriver\SolrDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use SolrForwardTrait {
-        SolrForwardTrait::getAllImages insteadof SolrFinnaTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\SolrForwardTrait {
+        Feature\SolrForwardTrait::getAllImages insteadof Feature\SolrFinnaTrait;
     }
-    use UrlCheckTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -55,13 +55,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     protected $nonPresenterAuthorRelators = [
         'a00', 'a01', 'a03', 'a06', 'a50', 'a99',
+        'b13',
         'd01', 'd02', 'd99',
-        'e02', 'e03', 'e04', 'e05', 'e06', 'e08',
+        'e02', 'e03', 'e04', 'e05', 'e06', 'e08', 'e99',
         'f01', 'f02', 'f99',
         'cmp', 'cph', 'exp', 'fds', 'fmp', 'rce', 'wst', 'oth', 'prn',
         // These are copied from Marc
         'act', 'anm', 'ann', 'arr', 'acp', 'ar', 'ard', 'aft', 'aud', 'aui', 'aus',
-        'bjd', 'bpd', 'cll', 'ctg', 'chr', 'cng', 'clb', 'clr', 'cwt', 'com',
+        'bjd', 'bpd', 'cll', 'ctg', 'chr', 'cng', 'clb', 'clr', 'cwt', 'cmm', 'com',
         'cpl', 'cpt', 'cpe', 'ccp', 'cnd', 'cos', 'cot', 'coe', 'cts', 'ctt', 'cte',
         'ctb', 'crp', 'cst', 'cov', 'cur', 'dnc', 'dtc', 'dto', 'dfd', 'dft', 'dfe',
         'dln', 'dpc', 'dsr', 'dis', 'drm', 'edt', 'elt', 'egr', 'etr', 'fac',
@@ -102,10 +103,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'A06' => 'cmp',
         'A50' => 'aud',
         'A99' => 'oth',
+        'B13' => 'Sound editor',
         'D01' => 'fmp',
         'D02' => 'drt',
         'E01' => 'act',
-        'E04' => 'spk',
+        'E04' => 'cmm',
         'E10' => 'pro',
         'F01' => 'cng',
         'F02' => 'flm'
@@ -124,7 +126,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'tuotannon suunnittelu' => 'prs',
         'tuotantopäällikkö' => 'pmn',
         'muusikko' => 'mus',
-        'selostaja' => 'spk',
+        'selostaja' => 'cmm',
         'valokuvaaja' => 'pht',
         'valonmääritys' => 'lgd',
         'äänitys' => 'rce',
@@ -151,9 +153,97 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $uncreditedRoleAttributes = [
-        'elokuva-elokreditoimatontekija-nimi',
         'elokuva-elokreditoimatonnayttelija-rooli',
         'elokuva-elokreditoimatonesiintyja-maare'
+    ];
+
+    /**
+     * Content descriptors
+     *
+     * @var array
+     */
+    protected $contentDescriptors = [
+        'väkivalta' => 'content_descriptor_violence',
+        'seksi' => 'content_descriptor_sexual_content',
+        'päihde' => 'content_descriptor_drug_use',
+        'ahdistus' => 'content_descriptor_anxiety'
+    ];
+
+    /**
+     * Age restrictions
+     *
+     * @var array
+     */
+    protected $ageRestrictions = [
+        'S' => 'age_rating_for_all_ages',
+        'T' => 'age_rating_for_all_ages',
+        '7' => 'age_rating_7',
+        '12' => 'age_rating_12',
+        '16' => 'age_rating_16',
+        '18' => 'age_rating_18'
+    ];
+
+    /**
+     * Unwanted video warnings
+     *
+     * @var array
+     */
+    protected $filteredWarnings = [
+        'K'
+    ];
+
+    /**
+     * Inspection attributes
+     *
+     * @var array
+     */
+    protected $inspectionAttributes = [
+        'number' => 'elokuva-tarkastus-tarkastusnro',
+        'inspectiontype' => 'elokuva-tarkastus-tarkastamolaji',
+        'length' => 'elokuva-tarkastus-pituus',
+        'taxclass' => 'elokuva-tarkastus-veroluokka',
+        'agerestriction' => 'elokuva-tarkastus-ikaraja',
+        'format' => 'elokuva-tarkastus-formaatti',
+        'part' => 'elokuva-tarkastus-osalkm',
+        'office' => 'elokuva-tarkastus-tarkastuttaja',
+        'runningtime' => 'elokuva-tarkastus-kesto',
+        'subject' => 'elokuva-tarkastus-tarkastusaihe',
+        'reason' => 'elokuva-tarkastus-perustelut',
+        'additional' => 'elokuva-tarkastus-muuttiedot',
+        'notification' => 'elokuva-tarkastus-tarkastusilmoitus',
+        'inspector' => 'elokuva-tarkastus-tarkastuselin'
+    ];
+
+    /**
+     * Roles to not display
+     *
+     * @var array
+     */
+    protected $filteredRoles = [
+        'prf',
+        'oth'
+    ];
+
+    /**
+     * Uncredited name attributes
+     *
+     * @var array
+     */
+    protected $uncreditedNameAttributes = [
+        'elokuva-elokreditoimatontekija-nimi',
+        'elokuva-elokreditoimatonnayttelija-nimi'
+    ];
+
+    /**
+     * Descriptions
+     *
+     * @var array
+     */
+    protected $roleDescriptions = [
+        'elokuva-elotekija-selitys',
+        'elokuva-elonayttelija-selitys',
+        'elokuva-elokreditoimatonnayttelija-selitys',
+        'elokuva-elokreditoimatontekija-selitys'
     ];
 
     /**
@@ -180,7 +270,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -227,8 +319,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     if (!empty($attributes['finna-kayttooikeus'])) {
                         $type = (string)$attributes['finna-kayttooikeus'];
                         $result = ['copyright' => $type];
-                        $link = $this->getRightsLink(strtoupper($type), $language);
-                        if ($link) {
+                        if ($link = $this->getRightsLink($type, $language)) {
                             $result['link'] = $link;
                         }
                         return $result;
@@ -511,18 +602,22 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterSecondaryAuthors()
     {
         $authors = $this->getNonPresenterAuthors(false);
-        $uncredited = $credited = [];
+        $uncredited = [];
+        $credited = [];
+        $uncreditedEnsembles = [];
+
         foreach ($authors as $author) {
             if ($author['uncredited']) {
-                $uncredited[] = $author;
+                if ($author['type'] === 'elonet_kokoonpano') {
+                    $uncreditedEnsembles[] = $author;
+                } else {
+                    $uncredited[] = $author;
+                }
             } else {
                 $credited[] = $author;
             }
         }
-        if (!empty($credited) || !empty($uncredited)) {
-            return ['credited' => $credited, 'uncredited' => $uncredited];
-        }
-        return [];
+        return compact('credited', 'uncredited', 'uncreditedEnsembles');
     }
 
     /**
@@ -537,7 +632,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $filters = [
             'a99' => [
-                'types' => ['elonet_kokoonpano'],
                 'tags' => ['avustajat']
             ],
             'oth' => [
@@ -549,7 +643,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $authors = [];
         if (null === $this->nonPresenterAuthorsCache) {
             $this->nonPresenterAuthorsCache = $this->getAuthorsByRelators(
-                $this->nonPresenterAuthorRelators, $filters
+                $this->nonPresenterAuthorRelators,
+                $filters
             );
         }
         $authors = $this->nonPresenterAuthorsCache;
@@ -561,7 +656,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         foreach ($authors as $author) {
             $isPrimary = isset($author['role'])
                 && in_array(
-                    strtolower($author['role']), $this->primaryAuthorRelators
+                    strtolower($author['role']),
+                    $this->primaryAuthorRelators
                 );
             if ($isPrimary === $primary) {
                 $result[] = $author;
@@ -629,7 +725,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $filters = [
             'a99' => [
-                'types' => ['elonet_kokoonpano'],
                 'tags' => ['avustajat']
             ],
             'oth' => [
@@ -638,7 +733,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'exclude' => false
         ];
         $presenters = $this->getAuthorsByRelators(
-            $this->presenterAuthorRelators, $filters
+            $this->presenterAuthorRelators,
+            $filters
         );
 
         // Lets arrange the results as an assoc array with easy to read results
@@ -682,7 +778,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     } else {
                         $result['credited']['presenters'][] = $presenter;
                     }
-                } elseif ($role === 'prf') {
+                } elseif (empty($role)) {
                     if (!empty($presenter['uncredited'])
                         && $presenter['uncredited']
                     ) {
@@ -694,7 +790,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 }
                 break;
             case 'elonet_kokoonpano':
-                if ($role === 'oth') {
+                if (empty($role)) {
                     $result['performingEnsemble']['presenters'][] = $presenter;
                 } else {
                     $result['actingEnsemble']['presenters'][] = $presenter;
@@ -702,7 +798,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
                 break;
             default:
-                if ($role === 'oth') {
+                if (empty($role)) {
                     $result['other']['presenters'][] = $presenter;
                 } elseif ($role === 'avustajat') {
                     $result['assistant']['presenters'][] = $presenter;
@@ -841,7 +937,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected function getAgentsWithActivityAttribute($attribute, $includeAttrs = [])
     {
         if (strpos($attribute, '=') > 0) {
-            list($attribute, $requiredValue) = explode('=', $attribute, 2);
+            [$attribute, $requiredValue] = explode('=', $attribute, 2);
         }
         $result = [];
         $xml = $this->getRecordXML();
@@ -999,15 +1095,26 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
 
             $description = '';
-            if (!empty($nameAttrs->{'elokuva-elotekija-selitys'})) {
-                $description = (string)$nameAttrs->{'elokuva-elotekija-selitys'};
+            foreach ($this->roleDescriptions as $desc) {
+                if (!empty($nameAttrs->{$desc})) {
+                    $description = (string)$nameAttrs->{$desc};
+                    break;
+                }
             }
 
             $name = (string)$agent->AgentName;
-            if (empty($name)
-                && !empty($nameAttrs->{'elokuva-elokreditoimatontekija-nimi'})
-            ) {
-                $name = (string)$nameAttrs->{'elokuva-elokreditoimatontekija-nimi'};
+            if (empty($name)) {
+                foreach ($this->uncreditedNameAttributes as $value) {
+                    if (!empty($nameAttrs->{$value})) {
+                        $name = (string)$nameAttrs->{$value};
+                        break;
+                    }
+                }
+            }
+
+            // Remove unwanted roles here
+            if (in_array($role, $this->filteredRoles)) {
+                $role = '';
             }
 
             ++$idx;
@@ -1138,8 +1245,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         if (empty($sourceConfigs)) {
             return [];
         }
-        $posterSource = isset($this->recordConfig->Record->poster_sources[$source])
-            ? $this->recordConfig->Record->poster_sources[$source] : '';
+        $posterSource = $this->recordConfig->Record->poster_sources[$source] ?? '';
 
         $videoUrls = [];
         foreach ($this->getAllRecordsXML() as $xml) {
@@ -1155,6 +1261,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $poster = '';
                 $videoType = 'elokuva';
                 $description = '';
+                $warnings = [];
                 if (isset($title->PartDesignation->Value)) {
                     $attributes = $title->PartDesignation->Value->attributes();
                     if (!empty($attributes['video-tyyppi'])) {
@@ -1168,8 +1275,25 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     $posterFilename = (string)$title->PartDesignation->Value;
                     if ($posterFilename) {
                         $poster = str_replace(
-                            '{filename}', $posterFilename, $posterSource
+                            '{filename}',
+                            $posterFilename,
+                            $posterSource
                         );
+                    }
+
+                    // Check for warnings
+                    if (!empty($attributes->{'video-rating'})) {
+                        $tmpWarnings
+                            = explode(', ', (string)$attributes->{'video-rating'});
+                        // Translate to english, for universal usage
+                        foreach ($tmpWarnings as $warning) {
+                            if (!in_array($warning, $this->filteredWarnings)) {
+                                $warnings[]
+                                    = $this->contentDescriptors[$warning]
+                                    ?? $this->ageRestrictions[$warning]
+                                    ?? $warning;
+                            }
+                        }
                     }
                 }
 
@@ -1185,7 +1309,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $vimeo_url = $this->recordConfig->Record->vimeo_url;
                 if (!empty($vimeo) && !empty($vimeo_url)) {
                     $src = str_replace(
-                        '{videoid}', $vimeo, $vimeo_url
+                        '{videoid}',
+                        $vimeo,
+                        $vimeo_url
                     );
                     $videoUrls[] = [
                         'url' => $src,
@@ -1194,7 +1320,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'text' => $description ?: $videoType,
                         'desc' => $description ?: $videoType,
                         'source' => $source,
-                        'embed' => 'iframe'
+                        'embed' => 'iframe',
+                        'warnings' => $warnings
                     ];
                 }
 
@@ -1205,7 +1332,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         continue;
                     }
                     $src = str_replace(
-                        '{videoname}', $videoUrl, $config['src']
+                        '{videoname}',
+                        $videoUrl,
+                        $config['src']
                     );
                     $videoSources[] = [
                         'src' => $src,
@@ -1237,7 +1366,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     'text' => $description ? $description : $videoType,
                     'desc' => $description ? $description : $videoType,
                     'source' => $source,
-                    'embed' => 'video'
+                    'embed' => 'video',
+                    'warnings' => $warnings
                 ];
             }
         }
@@ -1288,6 +1418,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
+        return '';
     }
 
     /**
@@ -1441,73 +1572,18 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     || !empty($atr->{'elokuva-tarkastus-tarkastuselin'})
                     || !empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})
                 ) {
-                    $office = $reason = $length = $subject = $notification = '';
-                    $format = $part = $tax = $type  = $date = $inspector = $age = '';
-                    $number = $time = '';
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusnro'})) {
-                        $number = (string)$atr->{'elokuva-tarkastus-tarkastusnro'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastamolaji'})) {
-                        $type = (string)$atr->{'elokuva-tarkastus-tarkastamolaji'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-pituus'})) {
-                        $length = (string)$atr->{'elokuva-tarkastus-pituus'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-veroluokka'})) {
-                        $tax = (string)$atr->{'elokuva-tarkastus-veroluokka'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-ikaraja'})) {
-                        $age = (string)$atr->{'elokuva-tarkastus-ikaraja'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-formaatti'})) {
-                        $format = (string)$atr->{'elokuva-tarkastus-formaatti'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-osalkm'})) {
-                        $part = (string)$atr->{'elokuva-tarkastus-osalkm'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastuttaja'})) {
-                        $office = (string)$atr->{'elokuva-tarkastus-tarkastuttaja'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-kesto'})) {
-                        $time = (string)$atr->{'elokuva-tarkastus-kesto'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusaihe'})) {
-                        $subject = (string)$atr->{'elokuva-tarkastus-tarkastusaihe'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusaihe'})) {
-                        $reason = (string)$atr->{'elokuva-tarkastus-perustelut'};
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})) {
-                        $notification = (string)$atr->{
-                            'elokuva-tarkastus-tarkastusilmoitus'
-                        };
-                    }
-                    if (!empty($atr->{'elokuva-tarkastus-tarkastuselin'})) {
-                        $inspector = (string)$atr->{
-                            'elokuva-tarkastus-tarkastuselin'
-                        };
+                    $result = [];
+                    foreach ($this->inspectionAttributes as $key => $value) {
+                        if (!empty($atr->{$value})) {
+                            $result[$key] = (string)$atr->{$value};
+                        }
                     }
                     if (!empty($event->DateText)
                         && strpos($event->DateText, '0000') == false
                     ) {
-                        $date = (string)$event->DateText;
+                        $result['date'] = (string)$event->DateText;
                     }
-                    $results[] = [
-                        'inspector' => $inspector,
-                        'number' => $number,
-                        'format' => $format,
-                        'length' => $length,
-                        'taxclass' => $tax,
-                        'agerestriction' => $age,
-                        'inspectiontype' => $type,
-                        'part' => $part,
-                        'office' => $office,
-                        'runningtime' => $time,
-                        'subject' => $subject,
-                        'date' => $date,
-                        'reason' => $reason,
-                        'notification' => $notification
-                    ];
+                    $results[] = $result;
                 }
             }
         }

@@ -15,7 +15,6 @@ var finna = (function finnaModule() {
         'dateRangeVis',
         'feed',
         'feedback',
-        'imagePopup',
         'itemStatus',
         'layout',
         'menu',
@@ -28,7 +27,8 @@ var finna = (function finnaModule() {
         'StreetSearch',
         'finnaSurvey',
         'multiSelect',
-        'finnaMovement'
+        'finnaMovement',
+        'mdEditable'
       ];
 
       $.each(modules, function initModule(ind, module) {

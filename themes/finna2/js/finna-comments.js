@@ -20,7 +20,7 @@ finna.comments = (function finnaComments() {
     $('.comment-list .delete').off('click');
     parentMethod();
 
-    $('form.comment-form').unbind('submit').submit(function onCommentSubmit(event) {
+    $('form.comment-form').off('submit').on('submit', function onCommentSubmit(event) {
       var form = this;
       var id = form.id.value;
       var recordSource = form.source.value;
@@ -97,7 +97,7 @@ finna.comments = (function finnaComments() {
   }
 
   function initEditComment(allowCommenting, allowRating) {
-    $('.comment-list .edit').unbind('click').click(function onCommentEditClick() {
+    $('.comment-list .edit').off('click').on('click', function onCommentEditClick() {
       var comment = $(this).closest('.comment');
       var form = $('form.comment-form');
       form.toggle(true);
@@ -119,7 +119,7 @@ finna.comments = (function finnaComments() {
       return false;
     });
 
-    $('form.comment-form input.cancel').unbind('click').click(function onCommentCancelClick() {
+    $('form.comment-form input.cancel').off('click').on('click', function onCommentCancelClick() {
       var form = $('form.comment-form');
       form.toggle(allowCommenting);
       form.find('textarea[name="comment"]').val('');

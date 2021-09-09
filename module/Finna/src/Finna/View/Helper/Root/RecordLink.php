@@ -1,6 +1,6 @@
 <?php
 /**
- * RecordLink view helper
+ * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
  * PHP version 7
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * RecordLink view helper
+ * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
  * @category VuFind
  * @package  View_Helpers
@@ -57,7 +57,7 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
      */
     public function __construct(\VuFind\Record\Router $router, $config)
     {
-        parent::__construct($router);
+        // parent no longer has a constructor that uses $router
         $this->datasourceConfig = $config;
     }
 
@@ -117,11 +117,42 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
      */
     public function related($link, $escape = true, $source = DEFAULT_SEARCH_BACKEND)
     {
-        $result = parent::related($link, $escape, $source);
+        if ('identifier' === $link['type']) {
+            $urlHelper = $this->getView()->plugin('url');
+            $baseUrl = $urlHelper($this->getSearchActionForSource($source));
+
+            $result = $baseUrl
+                . '?lookfor=' . urlencode($link['value'])
+                . '&type=Identifier&jumpto=1';
+        } else {
+            $result = parent::related($link, false, $source);
+        }
 
         $driver = $this->getView()->plugin('record')->getDriver();
         $result .= $this->getView()->plugin('searchTabs')
-            ->getCurrentHiddenFilterParams($driver->getSourceIdentifier());
+            ->getCurrentHiddenFilterParams(
+                $driver->getSourceIdentifier(),
+                false,
+                '&'
+            );
+
+        if ($filters = ($link['filter'] ?? [])) {
+            $result .= '&' . implode(
+                '&',
+                array_map(
+                    function ($key, $val) {
+                        return 'filter[]=' . urlencode("$key:$val");
+                    },
+                    array_keys($filters),
+                    $filters
+                )
+            );
+        }
+
+        if ($escape) {
+            $escapeHelper = $this->getView()->plugin('escapeHtml');
+            $result = $escapeHelper($result);
+        }
 
         return $result;
     }

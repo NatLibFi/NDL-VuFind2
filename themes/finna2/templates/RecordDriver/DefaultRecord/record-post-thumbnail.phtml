@@ -15,7 +15,7 @@
 <?php endif; ?>
 <?php
   $script = <<<JS
-$('.rating-link').click(function () {
+$('.rating-link').on('click', function () {
   $('a.usercomments').click();
   $('html, body').animate(
     {

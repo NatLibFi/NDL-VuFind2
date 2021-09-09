@@ -94,7 +94,10 @@ class R2 extends \VuFind\Hierarchy\TreeDataSource\Solr
      *
      * @return string
      */
-    public function getFormattedData($id, $format, $options = [],
+    public function getFormattedData(
+        $id,
+        $format,
+        $options = [],
         $cacheTemplate = 'tree_%s'
     ) {
         if ($this->rems && $this->rems->hasUserAccess()) {

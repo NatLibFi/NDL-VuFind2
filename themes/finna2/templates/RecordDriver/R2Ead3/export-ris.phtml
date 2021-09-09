@@ -1,5 +1,5 @@
 <?php
-  $url = $this->recordLink()->getUrl($this->driver);
+  $url = $this->recordLinker()->getUrl($this->driver);
   $url = isset($info['baseUrl']) ? ($info['baseUrl'] . $url) : $this->serverUrl($url);
 ?>
 UR  - <?= "$url\r\n" ?>

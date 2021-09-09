@@ -65,7 +65,7 @@ class Citation extends \VuFind\View\Helper\Root\Citation
             $harvard['year'] = $this->getYear();
             return $partial('Citation/harvard.phtml', $harvard);
         } else {
-            list($harvard['volume'], $harvard['issue'], $harvard['date'])
+            [$harvard['volume'], $harvard['issue'], $harvard['date']]
                 = $this->getAPANumbersAndDate();
             $harvard['journal'] = $this->details['journal'];
             $harvard['pageRange'] = $this->getPageRange();

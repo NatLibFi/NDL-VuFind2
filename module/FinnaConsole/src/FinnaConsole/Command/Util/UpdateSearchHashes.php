@@ -69,7 +69,8 @@ class UpdateSearchHashes extends AbstractUtilCommand
      * @param \VuFind\Search\Results\PluginManager $manager Search results manager.
      */
     public function __construct(
-        \VuFind\Db\Table\Search $table, \VuFind\Search\Results\PluginManager $manager
+        \VuFind\Db\Table\Search $table,
+        \VuFind\Search\Results\PluginManager $manager
     ) {
         $this->table = $table;
         $this->resultsManager = $manager;
@@ -137,6 +138,6 @@ class UpdateSearchHashes extends AbstractUtilCommand
         } else {
             echo "No saved rows without hash found\n";
         }
-        return true;
+        return 0;
     }
 }

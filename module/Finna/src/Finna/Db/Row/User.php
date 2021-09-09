@@ -92,7 +92,10 @@ class User extends \VuFind\Db\Row\User
     {
         $resource = $this->getDbTable('Resource');
         $userResources = $resource->getFavorites(
-            $this->id, null, null, null
+            $this->id,
+            null,
+            null,
+            null
         );
         return count($userResources);
     }

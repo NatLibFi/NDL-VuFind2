@@ -25,7 +25,7 @@ finna.authority = (function finnaAuthority() {
 
   function initAuthorityRecommendTabs()
   {
-    $('div.authority-recommend .nav-tabs li').not('.toggle').click(function onTabClick() {
+    $('div.authority-recommend .nav-tabs li').not('.toggle').on('click', function onTabClick() {
       var self = $(this);
       var id = self.data('id');
       var parent = self.closest('.authority-recommend');
@@ -64,41 +64,62 @@ finna.authority = (function finnaAuthority() {
           toggleAuthorityInfoCollapse(false);
         });
     });
-    $('div.authority-recommend .nav-tabs li.toggle').click(function onToggle() {
+    $('div.authority-recommend .nav-tabs li.toggle').on('click', function onToggle() {
       toggleAuthorityInfoCollapse();
     });
   }
 
   function initInlineInfoLinks()
   {
+    var toggleHandle = function onToggleHandle(handle, open) {
+      handle
+        .removeClass(open ? 'fa-handle-open' : 'fa-handle-close')
+        .addClass(open ? 'fa-handle-close' : 'fa-handle-open');
+    };
     $('div.authority').each(function initAuthority() {
       var $authority = $(this);
-      $authority.find('a.show-info').click(function onClickShowInfo() {
-        var $authorityInfo = $authority.find('.authority-info .content');
-        if (!$authority.hasClass('loaded')) {
-          $authority.addClass('loaded');
-          $.getJSON(
-            VuFind.path + '/AJAX/JSON',
-            {
-              method: 'getAuthorityInfo',
-              id: $authority.data('authority'),
-              type: $authority.data('type'),
-              source: $authority.data('source')
-            }
-          )
-            .done(function onGetAuthorityInfoDone(response) {
-              $authorityInfo.html(typeof response.data.html !== 'undefined' ? response.data.html : '--');
-            })
-            .fail(function onGetAuthorityInfoFail() {
-              $authorityInfo.text(VuFind.translate('error_occurred'));
-            });
+      $authority.find('a.show-info').on('click', function onClickShowInfo() {
+        if (!$authority.hasClass('open')) {
+          var $authorityInfo = $authority.find('.authority-info .content');
+          if (!$authority.hasClass('loaded')) {
+            $authority.addClass('loaded');
+            $.getJSON(
+              VuFind.path + '/AJAX/JSON',
+              {
+                method: 'getAuthorityInfo',
+                id: $authority.data('authority'),
+                type: $authority.data('type'),
+                source: $authority.data('source')
+              }
+            )
+              .done(function onGetAuthorityInfoDone(response) {
+                $authorityInfo.find('.fa-spinner').remove();
+                var desc = typeof response.data.html !== 'undefined' ? response.data.html : null;
+                if (desc && desc.trim()) {
+                  $authorityInfo.html(desc);
+                  finna.layout.initTruncate($authorityInfo);
+                } else {
+                  $authorityInfo.find('.no-info').removeClass('hide');
+                }
+              })
+              .fail(function onGetAuthorityInfoFail() {
+                $authorityInfo.text(VuFind.translate('error_occurred'));
+              });
+          }
+          $authority.addClass('open');
+          // trigger parent collapsed area open so that authority info is not hidden
+          $authority.closest('.truncate-field.truncated').next('.more-link').click();
+          toggleHandle($(this).parent().find('i.handle'), true);
+        } else {
+          $authority.removeClass('open');
+          toggleHandle($(this).parent().find('i.handle'), false);
         }
-        $authority.addClass('open');
         return false;
       });
 
-      $authority.find('a.hide-info').click(function onClickHideInfo() {
+      $authority.find('a.hide-info').on('click', function onClickHideInfo() {
         $authority.removeClass('open');
+        toggleHandle($authority.find('i.handle'), false);
         return false;
       });
     });

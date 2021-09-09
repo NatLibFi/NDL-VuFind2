@@ -14,7 +14,7 @@
     <div class="condensed-body">
       <i class="fa fa-arrow-right"></i>
       <h2 class="title">
-        <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title">
+        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>" class="title">
         <?php
           $summHighlightedTitle = $this->driver->getHighlightedTitle();
           $summTitle = $this->driver->getTitle();
@@ -28,6 +28,11 @@
         ?>
         </a>
       </h2>
+      <?php if ($otherTitles = $this->driver->tryMethod('getAlternativeTitles')): ?>
+        <div class="result-alt-titles">
+          <?=implode(' &ndash; ', array_map($this->escapeHtml, $otherTitles)) ?>
+        </div>
+      <?php endif; ?>
       <div class="dateyeartype">
         <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?></div>
         <?=$this->escapeHtml($this->organisationDisplayName($this->driver)) ?>
@@ -48,6 +53,9 @@
     </div>
     <div class="condensed-links">
       <?=$this->record($this->driver)->getOnlineUrls('results')?>
+    </div>
+    <div class="condensed-notes">
+      <?=$this->render('list/list-notes.phtml')?>
     </div>
   </div>
   <div class="clearfix"></div>
@@ -88,7 +96,7 @@
 
           <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
               <?php /* Add to favorites */ ?>
-            <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
+            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to favorites')?></span> <span class="sr-only hidden-xs"><?=$this->transEsc('Add to favorites')?></span></a>
           <?php endif; ?>
         </div>
 
@@ -98,7 +106,7 @@
           <div class="hierarchyTreeLink">
             <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
             <i class="fa fa-sitemap"></i>
-            <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID])?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->recordLink()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID])?>" data-lightbox-post="tab=hierarchytree">
+            <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
                 <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
             </a>
           </div>
@@ -123,7 +131,6 @@
     <?php endif; ?>
     <div class="clearfix visible-xs"></div>
     <?=$this->record($this->driver)->getPreviews()?>
-    <?=$this->render('list/list-notes.phtml')?>
   </div>
 </div>
 <!-- END of: finna - RecordDriver/SolrLido/result-condensed.phtml -->

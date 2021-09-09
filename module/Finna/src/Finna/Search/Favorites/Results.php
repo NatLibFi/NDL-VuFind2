@@ -62,13 +62,20 @@ class Results extends \VuFind\Search\Favorites\Results
      * @param ListTable                  $listTable         UserList table
      * @param UserResourceTable          $userResourceTable UserResource table
      */
-    public function __construct(\VuFind\Search\Base\Params $params,
-        SearchService $searchService, Loader $recordLoader,
-        ResourceTable $resourceTable, ListTable $listTable,
+    public function __construct(
+        \VuFind\Search\Base\Params $params,
+        SearchService $searchService,
+        Loader $recordLoader,
+        ResourceTable $resourceTable,
+        ListTable $listTable,
         UserResourceTable $userResourceTable
     ) {
         parent::__construct(
-            $params, $searchService, $recordLoader, $resourceTable, $listTable
+            $params,
+            $searchService,
+            $recordLoader,
+            $resourceTable,
+            $listTable
         );
         $this->userResourceTable = $userResourceTable;
     }
@@ -132,6 +139,9 @@ class Results extends \VuFind\Search\Favorites\Results
     {
         $filters = $this->getParams()->getRawFilters();
         $listId = $filters['lists'][0] ?? null;
+        if (null !== $listId) {
+            $listId = intval($listId);
+        }
 
         // Load a list when
         //   a. if we haven't previously tried to load a list ($this->list = false)

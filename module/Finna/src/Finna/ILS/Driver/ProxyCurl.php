@@ -56,6 +56,27 @@ class ProxyCurl extends Curl
     protected $response = null;
 
     /**
+     * Last error code
+     *
+     * @var int
+     */
+    protected $lastErrorCode = 0;
+
+    /**
+     * Last error message
+     *
+     * @var string
+     */
+    protected $lastErrorMessage = '';
+
+    /**
+     * Last request headers
+     *
+     * @var string
+     */
+    protected $requestHeaders = '';
+
+    /**
      * Options
      *
      * @var array
@@ -72,8 +93,10 @@ class ProxyCurl extends Curl
      * @param int                  $followLocationMaxRedirects Redirection limit for
      * Location header
      */
-    public function __construct(HttpServiceInterface $httpService,
-        array $options = [], $followLocationMaxRedirects = 10
+    public function __construct(
+        HttpServiceInterface $httpService,
+        array $options = [],
+        $followLocationMaxRedirects = 10
     ) {
         $this->httpService = $httpService;
         $this->followLocationMaxRedirects = $followLocationMaxRedirects;
@@ -111,17 +134,23 @@ class ProxyCurl extends Curl
      *
      * @return bool
      */
-    public function exec($location, $request = null, $requestHeaders = [],
+    public function exec(
+        $location,
+        $request = null,
+        $requestHeaders = [],
         $requestOptions = []
     ) {
         $client = $this->httpService->createClient($location);
 
+        $clientOptions = [];
         if (isset($this->options['connection_timeout'])) {
-            $client->setOptions(
-                [
-                    'connect_timeout' => $this->options['connection_timeout']
-                ]
-            );
+            $clientOptions['connect_timeout'] = $this->options['connection_timeout'];
+        }
+        if (isset($this->options['timeout'])) {
+            $clientOptions['timeout'] = $this->options['timeout'];
+        }
+        if ($clientOptions) {
+            $client->setOptions($clientOptions);
         }
         $authType = $this->options['auth_type'] ?? Curl::AUTH_TYPE_NONE;
         if (isset($this->options['login']) && Curl::AUTH_TYPE_NONE !== $authType) {

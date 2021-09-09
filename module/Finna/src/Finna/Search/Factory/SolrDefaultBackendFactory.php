@@ -6,7 +6,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2013.
- * Copyright (C) The National Library of Finland 2013-2019.
+ * Copyright (C) The National Library of Finland 2013-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -36,7 +36,6 @@ use Finna\Search\Solr\SolrExtensionsListener;
 use FinnaSearch\Backend\Solr\LuceneSyntaxHelper;
 use FinnaSearch\Backend\Solr\QueryBuilder;
 
-use VuFindSearch\Backend\BackendInterface;
 use VuFindSearch\Backend\Solr\Backend;
 use VuFindSearch\Backend\Solr\Connector;
 use VuFindSearch\Backend\Solr\Response\Json\RecordCollectionFactory;
@@ -60,6 +59,13 @@ class SolrDefaultBackendFactory
      * @var string
      */
     protected $createRecordMethod = 'getSolrRecord';
+
+    /**
+     * Solr connector class
+     *
+     * @var string
+     */
+    protected $connectorClass = \VuFindSearch\Backend\Solr\Connector::class;
 
     /**
      * Create the SOLR backend.
@@ -124,34 +130,28 @@ class SolrDefaultBackendFactory
      */
     protected function createQueryBuilder()
     {
-        $specs   = $this->loadSpecs();
         $config = $this->config->get('config');
-        $defaultDismax = isset($config->Index->default_dismax_handler)
-            ? $config->Index->default_dismax_handler : 'dismax';
-        $builder = new QueryBuilder($specs, $defaultDismax);
+        $search = $this->config->get($this->searchConfig);
+
+        $specs   = $this->loadSpecs();
+        $defaultDismax = $config->Index->default_dismax_handler ?? 'dismax';
+        $maxSpellcheckWords = $search->General->max_spellcheck_words ?? 5;
+        $builder = new QueryBuilder($specs, $defaultDismax, $maxSpellcheckWords);
 
         // Configure builder:
-        $search = $this->config->get($this->searchConfig);
         $caseSensitiveBooleans
-            = isset($search->General->case_sensitive_bools)
-            ? $search->General->case_sensitive_bools : true;
+            = $search->General->case_sensitive_bools ?? true;
         $caseSensitiveRanges
-            = isset($search->General->case_sensitive_ranges)
-            ? $search->General->case_sensitive_ranges : true;
+            = $search->General->case_sensitive_ranges ?? true;
         $unicodeNormalizationForm
-            = isset($search->General->unicode_normalization_form)
-            ? $search->General->unicode_normalization_form : 'NFKC';
+            = $search->General->unicode_normalization_form ?? 'NFKC';
         $searchFilters
-            = isset($config->Index->search_filters)
-            ? $config->Index->search_filters : [];
-        $maxSpellcheckWords = isset($search->General->max_spellcheck_words)
-            ? $search->General->max_spellcheck_words : 5;
+            = $config->Index->search_filters ?? [];
         $helper = new LuceneSyntaxHelper(
             $caseSensitiveBooleans,
             $caseSensitiveRanges,
             $unicodeNormalizationForm,
-            $searchFilters,
-            $maxSpellcheckWords
+            $searchFilters
         );
         $builder->setLuceneHelper($helper);
 
@@ -166,19 +166,20 @@ class SolrDefaultBackendFactory
     protected function createSimilarBuilder()
     {
         return new \FinnaSearch\Backend\Solr\SimilarBuilder(
-            $this->config->get($this->searchConfig), $this->uniqueKey
+            $this->config->get($this->searchConfig),
+            $this->uniqueKey
         );
     }
 
     /**
      * Get a deduplication listener for the backend
      *
-     * @param BackendInterface $backend Search backend
-     * @param bool             $enabled Whether deduplication is enabled
+     * @param Backend $backend Search backend
+     * @param bool    $enabled Whether deduplication is enabled
      *
      * @return Finna\Search\Solr\DeduplicationListener
      */
-    protected function getDeduplicationListener(BackendInterface $backend, $enabled)
+    protected function getDeduplicationListener(Backend $backend, $enabled)
     {
         return new DeduplicationListener(
             $backend,

@@ -52,8 +52,8 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     public function onSearchPre(EventInterface $event)
     {
         $saveEnabled = $this->enabled;
-        $backend = $event->getTarget();
-        if ($backend === $this->backend) {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backend->getIdentifier()) {
             // Check that we're not doing a known record search
             $query = $event->getParam('query');
             if ($query && !($query instanceof QueryGroup)
@@ -109,8 +109,8 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     {
         $saveEnabled = $this->enabled;
 
-        $backend = $event->getParam('backend');
-        if ($backend != $this->backend->getIdentifier()) {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() !== $this->backend->getIdentifier()) {
             return $event;
         }
         $context = $event->getParam('context');
@@ -138,8 +138,11 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
      *
      * @return array Local record data
      */
-    protected function appendDedupRecordFields($localRecordData, $dedupRecordData,
-        $recordSources, $sourcePriority
+    protected function appendDedupRecordFields(
+        $localRecordData,
+        $dedupRecordData,
+        $recordSources,
+        $sourcePriority
     ) {
         // Copy over only those local IDs that
         if (empty($recordSources)) {
@@ -149,7 +152,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
             $sources = array_flip($recordSources);
             $localIds = $dedupRecordData['local_ids_str_mv'];
             foreach ($localIds as $id) {
-                list($idSource) = explode('.', $id, 2);
+                [$idSource] = explode('.', $id, 2);
                 if (isset($sources[$idSource])) {
                     $localRecordData['local_ids_str_mv'][] = $id;
                 }
@@ -232,7 +235,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         $authManager = $this->serviceLocator->get(\VuFind\Auth\Manager::class);
         if ($user = $authManager->isLoggedIn()) {
             if ($user->cat_username) {
-                list($preferred) = explode('.', $user->cat_username, 2);
+                [$preferred] = explode('.', $user->cat_username, 2);
                 // array_search may return 0, but that's fine since it means the
                 // source already has highest priority
                 if ($preferred && $key = array_search($preferred, $recordSources)) {

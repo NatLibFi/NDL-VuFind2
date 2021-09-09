@@ -7,7 +7,7 @@
     $otherUrls = [];
     foreach ($urls as $url){
       $type = $url['type'] ?? null;
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
+      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
         array_push($videoUrls, $url);
       } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
         array_push($audioUrls, $url);
@@ -77,14 +77,32 @@
         </div>
       <?php endif; ?>
 
-      <?php $summ = $this->driver->getSummary(); if (!empty($summ)): ?>
-      <div class="truncate-field wide recordSummary">
-        <p class="summary">
-        <?php foreach ($summ as $field): ?>
-          <?=$this->escapeHtml($field)?><br/>
-        <?php endforeach; ?>
-        </p>
-      </div>
+      <?php
+        $summExtended = $this->driver->tryMethod('getSummaryExtended');
+        if (empty($summExtended)) {
+          $summ = $this->driver->tryMethod('getSummary');
+        }
+      ?>
+      <?php if (!empty($summExtended)): ?>
+        <div class="truncate-field wide recordSummary">
+          <p class="summary">
+            <?php foreach ($summExtended as $i => $item): ?>
+              <?= $i > 0 ? '<br/>' : '' ?>
+              <?= $this->escapeHtml($item['text']) ?>
+              <?php $url = $item['url'] ?? ''; if (!empty($url)): ?>
+                (<a target="_blank" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url))?>"><?=$this->escapeHtml($this->truncateUrl($url))?></a>)
+              <?php endif; ?>
+            <?php endforeach; ?>
+          </p>
+        </div>
+      <?php elseif (!empty($summ)): ?>
+        <div class="truncate-field wide recordSummary">
+          <p class="summary">
+            <?php foreach ($summ as $field): ?>
+              <?=$this->escapeHtml($field)?><br/>
+            <?php endforeach; ?>
+          </p>
+        </div>
       <?php endif; ?>
 
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
@@ -103,16 +121,17 @@
             : $formatter->filterEADFields($coreFields);
         $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
           ['label' => 'Context',
-           'lines' => ['Archive Origination', 'Archive', 'Archive Series']
-          ]], $coreFields));
-
+           'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
+          ],
+          ['lines' => ['Format', 'Authors', 'Secondary Authors', 'Unit ID', 'Unit IDs', 'Subjects', 'subjects_extended', 'Dates']],
+          ['label' => 'access_restrictions_general',
+           'lines' => ['Access Restrictions Extended']]
+          ], $coreFields));
       ?>
       <?php if (!empty($coreFieldGroups)): ?>
-        <table class="table table-finna-record record-details record-details-more record-field-groups">
+        <table class="table table-finna-record record-details record-field-groups">
           <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFieldGroups]);?>
         </table>
-        <button class="btn show-details-button hidden"><?=$this->transEsc('show_more_details');?> <i class="fa fa-arrow-down"></i></button>
-        <button class="btn hide-details-button hidden"><?=$this->transEsc('show_less_details');?> <i class="fa fa-arrow-up"></i></button>
       <?php endif; ?>
       <?/* End Main Details */?>
 

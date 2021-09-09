@@ -51,7 +51,8 @@ trait ILSFinna
     {
         $catalog = $this->getCatalog();
         $recoveryConfig = $catalog->checkFunction(
-            'recoverPassword', ['cat_username' => "$target.123"]
+            'recoverPassword',
+            ['cat_username' => "$target.123"]
         );
         return $recoveryConfig ? true : false;
     }
@@ -67,7 +68,8 @@ trait ILSFinna
     {
         $catalog = $this->getCatalog();
         $config = $catalog->checkFunction(
-            'registerPatron', ['cat_username' => "$target.123"]
+            'registerPatron',
+            ['cat_username' => "$target.123"]
         );
         return !empty($config);
     }
@@ -121,8 +123,8 @@ trait ILSFinna
         // Figure out which field of the response to use as an identifier; fail
         // if the expected field is missing or empty:
         $config = $this->getConfig();
-        $usernameField = isset($config->Authentication->ILS_username_field)
-            ? $config->Authentication->ILS_username_field : 'cat_username';
+        $usernameField = $config->Authentication->ILS_username_field
+            ?? 'cat_username';
         if (!isset($info[$usernameField]) || empty($info[$usernameField])) {
             throw new AuthException('authentication_error_technical');
         }

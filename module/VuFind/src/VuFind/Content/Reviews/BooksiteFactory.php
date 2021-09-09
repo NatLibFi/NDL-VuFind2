@@ -55,9 +55,11 @@ class BooksiteFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if ($options !== null) {
@@ -65,8 +67,7 @@ class BooksiteFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
         }
         $config = $container->get(\VuFind\Config\PluginManager::class)
             ->get('config');
-        $url = isset($config->Booksite->url)
-            ? $config->Booksite->url : 'https://api.booksite.com';
+        $url = $config->Booksite->url ?? 'https://api.booksite.com';
         if (!isset($config->Booksite->key)) {
             throw new \Exception("Booksite 'key' not set in VuFind config");
         }

@@ -70,7 +70,7 @@ trait FinnaSearchControllerTrait
         if ($savedTabs = $this->getRequest()->getQuery()->get('search')) {
             $saved = [];
             foreach ($savedTabs as $tab) {
-                list($searchClass, $searchId) = explode(':', $tab);
+                [$searchClass, $searchId] = explode(':', $tab);
                 $saved[$searchClass] = $searchId;
             }
             $this->layout()->savedTabs = $saved;
@@ -131,7 +131,7 @@ trait FinnaSearchControllerTrait
 
         $ids = [];
         foreach ($saved as $search) {
-            list($backend, $searchId) = explode(':', $search, 2);
+            [$backend, $searchId] = explode(':', $search, 2);
             $ids[$backend] = $searchId;
         }
         return $ids;
@@ -157,7 +157,8 @@ trait FinnaSearchControllerTrait
             return $all;
         }
         return array_diff(
-            $all, array_map('trim', explode(',', strtolower($noRecommend)))
+            $all,
+            array_map('trim', explode(',', strtolower($noRecommend)))
         );
     }
 }

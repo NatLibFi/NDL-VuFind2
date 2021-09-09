@@ -67,8 +67,10 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
      * @param ConfigManager   $config  Config loader
      * @param ResultsManager  $results Results manager
      */
-    public function __construct(SessionSettings $ss,
-        ConfigManager $config, ResultsManager $results
+    public function __construct(
+        SessionSettings $ss,
+        ConfigManager $config,
+        ResultsManager $results
     ) {
         $this->sessionSettings = $ss;
         $this->configManager = $config;
@@ -90,7 +92,7 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
         if (!$backend) {
             $backend = 'Solr';
         }
-        $isSolr = $backend == 'Solr';
+        $isSolr = in_array($backend, ['Solr', 'R2']);
 
         $configFile = $isSolr ? 'facets' : $backend;
         $config = $this->configManager->get($configFile);
@@ -98,7 +100,7 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
             return $this->formatResponse([], self::STATUS_HTTP_ERROR);
         }
 
-        list($filterField, $facet)
+        [$filterField, $facet]
             = explode(':', $config->SpecialFacets->dateRangeVis);
 
         $results = $this->resultsManager->get($backend);
@@ -117,6 +119,7 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
         } else {
             $options = $results->getOptions();
             $options->disableHighlighting();
+            $results->getParams()->setLimit(0);
             $results->performAndProcessSearch();
             $facets = $results->getFacetlist([$facet => $facet]);
             $facetList = $facets[$facet]['list'] ?? [];

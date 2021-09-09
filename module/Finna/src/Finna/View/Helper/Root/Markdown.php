@@ -22,10 +22,13 @@
  * @category VuFind
  * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
 namespace Finna\View\Helper\Root;
+
+use League\CommonMark\Util\RegexHelper;
 
 /**
  * Markdown view helper
@@ -33,34 +36,42 @@ namespace Finna\View\Helper\Root;
  * @category VuFind
  * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
 class Markdown extends \VuFind\View\Helper\Root\Markdown
 {
     /**
-     * Parsedown parser
-     *
-     * @var \Parsedown
-     */
-    protected $parsedown = null;
-
-    /**
      * Return HTML.
      *
-     * @param string $markdown Markdown
+     * @param string $markdown              Markdown
+     * @param bool   $replaceDeprecatedTags Replace deprecated tags?
      *
      * @return string
      */
-    public function toHtml($markdown)
-    {
-        $cleanHtml = $this->getView()->plugin('cleanHtml');
-        if (null === $this->parsedown) {
-            $this->parsedown = new \ParsedownExtra();
-            $this->parsedown->setBreaksEnabled(true);
+    public function toHtml(
+        string $markdown,
+        bool $replaceDeprecatedTags = true
+    ): string {
+        if ($replaceDeprecatedTags) {
+            $markdown = $this->replaceDeprecatedTags($markdown);
+        } else {
+            // Fix for deprecated tags.
+            $markdown = str_replace("</summary>", "</summary>\n", $markdown);
         }
-        $text = $this->parsedown->text($markdown);
-        return $cleanHtml($text);
+
+        // Clean HTML while in Markdown format, since HTML from server-side rendered
+        // custom tags should not be cleaned.
+        $cleanHtml = $this->getView()->plugin('cleanHtml');
+        $text = $this->converter->convertToHtml($cleanHtml($markdown));
+
+        if (!$replaceDeprecatedTags) {
+            // Fix for Markdown processed deprecated tags.
+            $text = str_replace('<p><br /></p>', '', $text);
+        }
+
+        return $text;
     }
 
     /**
@@ -75,5 +86,62 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
     public function __invoke(string $markdown = null)
     {
         return null === $markdown ? $this : parent::__invoke($markdown);
+    }
+
+    /**
+     * Replace deprecated tags with supported ones.
+     *
+     * @param string $markdown Markdown formatted text
+     *
+     * @return string
+     */
+    public function replaceDeprecatedTags(string $markdown): string
+    {
+        // Replace details elements.
+        $markdown = preg_replace(
+            $this->getTagContentRegex('details'),
+            "<finna-panel>\n$1\n</finna-panel>\n",
+            $markdown
+        );
+
+        // Replace details > summary elements, which have the markdown attribute.
+        $markdown = preg_replace(
+            $this->getTagContentRegex('summary', ' markdown="1"'),
+            "  <h3 slot=\"heading\">$1</h3>\n",
+            $markdown
+        );
+
+        // Replace truncate elements.
+        $markdown = preg_replace(
+            $this->getTagContentRegex('truncate'),
+            "<finna-truncate>\n$1\n</finna-truncate>\n",
+            $markdown
+        );
+
+        // Replace truncate > summary elements, which do not have the markdown
+        // attribute.
+        $markdown = preg_replace(
+            $this->getTagContentRegex('summary'),
+            "  <span slot=\"label\">$1</span>\n",
+            $markdown
+        );
+
+        return $markdown;
+    }
+
+    /**
+     * Get tag content capturing regex.
+     *
+     * @param string $tagName    Tag name
+     * @param string $attributes Tag attributes (optional)
+     *
+     * @return string
+     */
+    protected function getTagContentRegex(
+        string $tagName,
+        string $attributes = RegexHelper::PARTIAL_ATTRIBUTE . '*'
+    ): string {
+        return '/<' . $tagName . $attributes . '\s*>(.*?)'
+            . '<\/' . $tagName . '\s*[>]/s';
     }
 }

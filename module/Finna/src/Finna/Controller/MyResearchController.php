@@ -52,6 +52,8 @@ use VuFind\Exception\ListPermission as ListPermissionException;
 class MyResearchController extends \VuFind\Controller\MyResearchController
 {
     use FinnaOnlinePaymentControllerTrait;
+    use FinnaUnsupportedFunctionViewTrait;
+    use FinnaPersonalInformationSupportTrait;
 
     /**
      * Catalog Login Action
@@ -130,7 +132,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $renewStatus = $catalog->checkFunction('Renewals', compact('patron'));
         $renewResult = $renewStatus
             ? $this->renewals()->processRenewals(
-                $this->getRequest()->getPost(), $catalog, $patron
+                $this->getRequest()->getPost(),
+                $catalog,
+                $patron
             )
             : [];
 
@@ -142,8 +146,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $pageOptions = $this->getPaginationHelper()->getOptions(
             (int)$this->params()->fromQuery('page', 1),
             $this->params()->fromQuery('sort'),
-            isset($config->Catalog->checked_out_page_size)
-                ? $config->Catalog->checked_out_page_size : 50,
+            $config->Catalog->checked_out_page_size ?? 50,
             $catalog->checkFunction('getMyTransactions', compact('patron'))
         );
 
@@ -160,7 +163,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         // Build paginator if needed:
         $paginator = $this->getPaginationHelper()->getPaginator(
-            $pageOptions, $result['count'], $result['records']
+            $pageOptions,
+            $result['count'],
+            $result['records']
         );
         if ($paginator) {
             $pageStart = $paginator->getAbsoluteItemNumber(1) - 1;
@@ -234,11 +239,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $accountStatus = null;
         }
 
-        $transactions = $hiddenTransactions = [];
+        $driversNeeded = $hiddenTransactions = [];
         foreach ($result['records'] as $i => $current) {
             // Add renewal details if appropriate:
             $current = $this->renewals()->addRenewDetails(
-                $catalog, $current, $renewStatus
+                $catalog,
+                $current,
+                $renewStatus
             );
             if ($renewStatus && !isset($current['renew_link'])
                 && $current['renewable']
@@ -263,11 +270,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
             // Build record driver (only for the current visible page):
             if ($pageOptions['ilsPaging'] || ($i >= $pageStart && $i <= $pageEnd)) {
-                $transactions[] = $this->getDriverForILSRecord($current);
+                $driversNeeded[] = $current;
             } else {
                 $hiddenTransactions[] = $current;
             }
         }
+
+        $transactions = $this->ilsRecords()->getDrivers($driversNeeded);
 
         $displayItemBarcode
             = !empty($config->Catalog->display_checked_out_item_barcode);
@@ -284,7 +293,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
         if ($renewedCount > 0) {
             $msg = $this->translate(
-                'renew_ok', ['%%count%%' => $renewedCount,
+                'renew_ok',
+                ['%%count%%' => $renewedCount,
                 '%%transactionscount%%' => $result['count']]
             );
             $this->flashMessenger()->addInfoMessage($msg);
@@ -301,8 +311,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $ilsPaging = $pageOptions['ilsPaging'];
         $view = $this->createViewModel(
             compact(
-                'transactions', 'renewForm', 'renewResult', 'paginator', 'ilsPaging',
-                'hiddenTransactions', 'displayItemBarcode', 'sortList', 'params',
+                'transactions',
+                'renewForm',
+                'renewResult',
+                'paginator',
+                'ilsPaging',
+                'hiddenTransactions',
+                'displayItemBarcode',
+                'sortList',
+                'params',
                 'accountStatus'
             )
         );
@@ -344,7 +361,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $catalog = $this->getILS();
             $result = $catalog->purgeTransactionHistory($patron);
             $this->flashMessenger()->addMessage(
-                $result['status'], $result['success'] ? 'error' : 'info'
+                $result['status'],
+                $result['success'] ? 'info' : 'error'
             );
             return $this->redirect()->toRoute('myresearch-historicloans');
         }
@@ -356,6 +374,189 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
+     * Save historic loans to favorites
+     *
+     * @return mixed
+     */
+    public function saveHistoricloansAction()
+    {
+        // Fail if lists are disabled:
+        if (!$this->listsEnabled()) {
+            throw new ForbiddenException('Lists disabled');
+        }
+
+        // Retrieve user object and force login if necessary:
+        if (!($user = $this->getUser())) {
+            return $this->forceLogin();
+        }
+
+        // Stop now if the user does not have valid catalog credentials available:
+        if (!is_array($patron = $this->catalogLogin())) {
+            return $patron;
+        }
+
+        // Check permission:
+        $response = $this->permission()->check('feature.Favorites', false);
+        if (is_object($response)) {
+            return $response;
+        }
+
+        // Process form submission:
+        if ($this->formWasSubmitted('submit')) {
+            // Connect to the ILS:
+            $catalog = $this->getILS();
+
+            // Check function config
+            $functionConfig = $catalog->checkFunction(
+                'getMyTransactionHistory',
+                $patron
+            );
+            if (false === $functionConfig) {
+                $this->flashMessenger()->addErrorMessage('ils_action_unavailable');
+                return $this->createViewModel();
+            }
+
+            $listId = (int)$this->params()->fromPost('list');
+            $favorites = $this->serviceLocator
+                ->get(\VuFind\Favorites\FavoritesService::class);
+
+            $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
+            $tableManager = $this->serviceLocator
+                ->get(\VuFind\Db\Table\PluginManager::class);
+            $userResource = $tableManager->get(\VuFind\Db\Table\UserResource::class);
+
+            $notesSeparator = '#### ' . $this->translate('Loan History') . "\n";
+
+            $page = 1;
+            do {
+                // Try to use large page size, but take ILS limits into account
+                $pageOptions = $this->getPaginationHelper()
+                    ->getOptions($page, null, 1000, $functionConfig);
+                $result = $catalog
+                    ->getMyTransactionHistory($patron, $pageOptions['ilsParams']);
+
+                if (isset($result['success']) && !$result['success']) {
+                    $this->flashMessenger()->addErrorMessage($result['status']);
+                    return $this->createViewModel();
+                }
+
+                $ids = [];
+                foreach ($result['transactions'] as $current) {
+                    $id = $current['id'] ?? '';
+                    $source = $current['source'] ?? DEFAULT_SEARCH_BACKEND;
+                    $ids[] = compact('id', 'source');
+                }
+                $records = $recordLoader->loadBatch($ids, true);
+
+                foreach ($result['transactions'] as $i => $current) {
+                    // loadBatch ensures correct indexing
+                    $driver = $records[$i];
+                    $otherNotes = '';
+                    $notesBlocks = [];
+
+                    // Keep existing notes
+                    $savedData = $userResource->getSavedData(
+                        $current['id'],
+                        $current['source'] ?? DEFAULT_SEARCH_BACKEND,
+                        $listId ?? null,
+                        $user->id
+                    )->current();
+                    if (!empty($savedData['notes'])) {
+                        $notesBlocks
+                            = explode($notesSeparator, $savedData['notes']);
+                        // Separate any other notes from the loan notes blocks
+                        $otherBlock = strncmp(
+                            $savedData['notes'],
+                            $notesSeparator,
+                            strlen($notesSeparator)
+                        );
+                        if ($notesBlocks && $otherBlock) {
+                            $otherNotes = array_shift($notesBlocks);
+                        }
+                    }
+
+                    $notes = [];
+                    if (!empty($current['volume'])) {
+                        $notes[] = $this->translate('Issue') . ': '
+                            . $current['volume'];
+                    }
+                    if (!empty($current['publication_year'])) {
+                        $notes[] = $this->translate('Year of Publication') . ': '
+                            . $current['publication_year'];
+                    }
+
+                    $inst = $current['institution_name'] ?? '';
+                    $loc = $current['borrowingLocation'] ?? '';
+                    if ($inst && $inst !== $loc) {
+                        $notes[] = $this->translateWithPrefix('location_', $inst);
+                    }
+                    if ($loc) {
+                        $notes[] = $this->translate('Borrowing Location') . ': '
+                            . $this->translateWithPrefix('location_', $inst);
+                    }
+
+                    if (!empty($current['checkoutdate'])) {
+                        $notes[] = $this->translate('Checkout Date') . ': '
+                            . $current['checkoutdate'];
+                    }
+                    if (!empty($current['returndate'])) {
+                        $notes[] = $this->translate('Return Date') . ': '
+                            . $current['returndate'];
+                    }
+                    if (!empty($current['duedate'])) {
+                        $notes[] = $this->translate('Due Date') . ': '
+                            . $current['duedate'];
+                    }
+
+                    $notesStr = implode("\n", $notes);
+                    if ($notesStr) {
+                        $notesBlocks[] = $notesStr;
+                    }
+                    $notesBlocks = array_unique($notesBlocks);
+                    $allNotes = $otherNotes;
+                    if ($notesBlocks) {
+                        $allNotes .= "\n$notesSeparator"
+                            . implode("\n$notesSeparator", $notesBlocks);
+                    }
+
+                    $saveResult = $favorites->save(
+                        [
+                            'list' => $listId,
+                            'notes' => $allNotes
+                        ],
+                        $user,
+                        $driver
+                    );
+                    // If save() added a new list, make sure to add subsequent
+                    // records to the same list:
+                    $listId = $saveResult['listId'];
+                }
+
+                $pageEnd = $pageOptions['ilsPaging']
+                    ? ceil($result['count'] / $pageOptions['limit'])
+                    : 1;
+                $page++;
+            } while ($page <= $pageEnd);
+
+            // Display a success status message:
+            $listUrl = $this->url()->fromRoute('userList', ['id' => $listId ?: 0]);
+            $message = [
+                'html' => true,
+                'msg' => $this->translate('bulk_save_success') . '. '
+                . '<a href="' . $listUrl . '" class="gotolist">'
+                . $this->translate('go_to_list') . '</a>.'
+            ];
+            $this->flashMessenger()->addSuccessMessage($message);
+        }
+        $view = $this->createViewModel(
+            [
+                'lists' => $user->getLists()
+            ]
+        );
+        return $view;
+    }
+
+    /**
      * Send user's saved favorites from a particular list to the edit view
      *
      * @return mixed
@@ -363,12 +564,26 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public function editlistAction()
     {
         $view = parent::editlistAction();
-        if ($view instanceof \Laminas\Http\PhpEnvironment\Response
-            && !empty($url = $this->getFollowupUrl())
-        ) {
-            return $this->redirect()->toUrl($url);
+        // If the user is in the process of saving a public list, send them back
+        // to the save screen
+        if ($view instanceof \Laminas\Http\PhpEnvironment\Response) {
+            if ($this->formWasSubmitted('submit')
+                && ($listId = $this->params()->fromQuery('saveListId'))
+            ) {
+                $saveUrl = $this->url()->fromRoute('list-save', ['id' => $listId]);
+                return $this->redirect()->toUrl($saveUrl);
+            }
         }
-        $this->setFollowupUrlToReferer();
+        // If the user is in the process of saving historic loans, send them back
+        // to the save screen
+        if ($view instanceof \Laminas\Http\PhpEnvironment\Response) {
+            if ($this->formWasSubmitted('submit')
+                && ($this->params()->fromQuery('saveHistoricLoans'))
+            ) {
+                $saveUrl = $this->url()->fromRoute('myresearch-savehistoricloans');
+                return $this->redirect()->toUrl($saveUrl);
+            }
+        }
         return $view;
     }
 
@@ -400,7 +615,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 if ($r2->isEnabled()) {
                     $table = $this->getTable('Resource');
                     if ($table->doesListIncludeRecordsFromSource(
-                        $user->id, $list->id, 'R2'
+                        $user->id,
+                        $list->id,
+                        'R2'
                     )
                     ) {
                         $this->flashMessenger()
@@ -451,7 +668,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
         if ($this->formWasSubmitted('saveOrdering')) {
             $orderedList = json_decode(
-                $this->params()->fromPost('orderedList'), true
+                $this->params()->fromPost('orderedList'),
+                true
             );
             $table = $this->getTable('UserResource');
             $listID = $this->params()->fromPost('list_id');
@@ -516,11 +734,26 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         if ($this->formWasSubmitted('saveUserProfile')) {
-            $validator = new \Laminas\Validator\EmailAddress();
+            // Do CSRF check
+            $csrf = $this->serviceLocator->get(\VuFind\Validator\Csrf::class);
+            if (!$csrf->isValid($this->getRequest()->getPost()->get('csrf'))) {
+                throw new \VuFind\Exception\BadRequest(
+                    'error_inconsistent_parameters'
+                );
+            }
             $showSuccess = $showError = false;
+
+            // Update email
+            $validator = new \Laminas\Validator\EmailAddress();
             if ('' === $values->email || $validator->isValid($values->email)) {
-                $user->email = $values->email;
-                $user->save();
+                $this->getAuthManager()->updateEmail($user, $values->email);
+                // If we have a pending change, we need to send a verification email:
+                if (!empty($user->pending_email)) {
+                    $this->sendVerificationEmail($user, true);
+                } else {
+                    $this->flashMessenger()
+                        ->addMessage('new_email_success', 'success');
+                }
                 $showSuccess = true;
             } else {
                 $showError = true;
@@ -716,7 +949,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
             } else {
                 $result = $this->saveChangeRequestFeedback(
-                    $patron, $profile, $data, $fields,
+                    $patron,
+                    $profile,
+                    $data,
+                    $fields,
                     'finna_UpdatePersonalInformation'
                 );
                 if ($result) {
@@ -757,11 +993,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         }
                         if ('boolean' == $setting['type']) {
                             $setting['active'] = (bool)$request->getPost(
-                                $serviceId . '_' . $settingId, false
+                                $serviceId . '_' . $settingId,
+                                false
                             );
                         } elseif ('select' == $setting['type']) {
                             $setting['value'] = $request->getPost(
-                                $serviceId . '_' . $settingId, ''
+                                $serviceId . '_' . $settingId,
+                                ''
                             );
                         } elseif ('multiselect' == $setting['type']) {
                             foreach ($setting['options'] as $optionId
@@ -808,7 +1046,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
 
                 $result = $this->saveChangeRequestFeedback(
-                    $patron, $profile, $data, [],
+                    $patron,
+                    $profile,
+                    $data,
+                    [],
                     'finna_UpdateMessagingSettings'
                 );
                 if ($result) {
@@ -867,28 +1108,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send list of holds to view
-     *
-     * @return mixed
-     */
-    public function holdsAction()
-    {
-        // Stop now if the user does not have valid catalog credentials available:
-        if (!is_array($patron = $this->catalogLogin())) {
-            return $patron;
-        }
-
-        if ($view = $this->createViewIfUnsupported('getMyHolds')) {
-            return $view;
-        }
-
-        $view = parent::holdsAction();
-        $view->recordList = $this->orderAvailability($view->recordList);
-        $view->blocks = $this->getAccountBlocks($patron);
-        return $view;
-    }
-
-    /**
      * Save favorite custom order into DB
      *
      * @return mixed
@@ -900,14 +1119,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $this->forceLogin();
         }
 
+        $listID = $this->params()->fromPost('list_id');
         if ($this->formWasSubmitted('opcode')
             && $this->params()->fromPost('opcode') == 'save_order'
         ) {
-            $listID = $this->params()->fromPost('list_id');
-            $this->session->url = empty($listID)
-                ? $this->url()->fromRoute('myresearch-favorites')
-                : $this->url()->fromRoute('userList', ['id' => $listID]);
-
             $orderedList = $this->params()->fromPost('orderedList');
             $table = $this->getTable('UserResource');
             if (empty($listID) || empty($orderedList)
@@ -1002,7 +1217,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $this->forceLogin();
         }
 
-        $rems = $this->serviceLocator->get('Finna\Service\RemsService');
+        $rems = $this->serviceLocator->get(\Finna\Service\RemsService::class);
         $error = false;
         $hasAccess = $usagePurpose = null;
         try {
@@ -1079,7 +1294,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $user = $this->getUser();
         if (!$user) {
             return $this->redirect()->toRoute(
-                'default', ['controller' => 'MyResearch', 'action' => 'Login']
+                'default',
+                ['controller' => 'MyResearch', 'action' => 'Login']
             );
         }
 
@@ -1162,62 +1378,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Check if current library card supports a function. If not supported, show
-     * a message and a notice about the possibility to change library card.
-     *
-     * @param string  $function      Function to check
-     * @param boolean $checkFunction Use checkFunction() if true,
-     * checkCapability() otherwise
-     *
-     * @return mixed \Laminas\View if the function is not supported, false otherwise
-     */
-    protected function createViewIfUnsupported($function, $checkFunction = false)
-    {
-        $params = ['patron' => $this->catalogLogin()];
-        if ($checkFunction) {
-            $supported = $this->getILS()->checkFunction($function, $params);
-        } else {
-            $supported = $this->getILS()->checkCapability($function, $params);
-        }
-
-        if (!$supported) {
-            $view = $this->createViewModel();
-            $view->noSupport = true;
-            $this->flashMessenger()->setNamespace('error')
-                ->addMessage('no_ils_support_for_' . strtolower($function));
-            return $view;
-        }
-        return false;
-    }
-
-    /**
-     * Order available records to beginning of the record list
-     *
-     * @param type $recordList list to order
-     *
-     * @return type
-     */
-    protected function orderAvailability($recordList)
-    {
-        if ($recordList === null) {
-            return [];
-        }
-
-        $availableRecordList = [];
-        $recordListBasic = [];
-        foreach ($recordList as $item) {
-            if (isset($item->getExtraDetail('ils_details')['available'])
-                && $item->getExtraDetail('ils_details')['available']
-            ) {
-                $availableRecordList[] = $item;
-            } else {
-                $recordListBasic[] = $item;
-            }
-        }
-        return array_merge($availableRecordList, $recordListBasic);
-    }
-
-    /**
      * Utility function for generating a token.
      *
      * @param object $user current user
@@ -1292,7 +1452,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             && $catalog->checkFunction('updateSmsNumber', compact('patron'))
         ) {
             $result = $catalog->updateSmsNumber(
-                $patron, $values->profile_sms_number
+                $patron,
+                $values->profile_sms_number
             );
             if (!$result['success']) {
                 $this->flashMessenger()->addErrorMessage($result['status']);
@@ -1304,7 +1465,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             ->checkFunction('updateTransactionHistoryState', compact('patron'));
         if (isset($values->loan_history) && $updateState) {
             $result = $catalog->updateTransactionHistoryState(
-                $patron, $values->loan_history
+                $patron,
+                $values->loan_history
             );
             if (!$result['success']) {
                 $this->flashMessenger()->addErrorMessage($result['status']);
@@ -1325,10 +1487,14 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      *
      * @return bool
      */
-    protected function saveChangeRequestFeedback($patron, $profile, $data,
-        $fields, $subject
+    protected function saveChangeRequestFeedback(
+        $patron,
+        $profile,
+        $data,
+        $fields,
+        $subject
     ) {
-        list($library, $username) = explode('.', $patron['cat_username']);
+        [$library, $username] = explode('.', $patron['cat_username']);
         $catalog = $this->getILS();
         $config = $catalog->getConfig('Feedback', $patron);
 
@@ -1392,7 +1558,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $messageString = $this->getMessageString($userData, $message, $oldMessage);
         $feedback = $this->getTable('feedback');
         $feedback->saveFeedback(
-            $url, $formId, $userId, $messageString, $messageJson
+            $url,
+            $formId,
+            $userId,
+            $messageString,
+            $messageJson
         );
 
         return true;
@@ -1472,7 +1642,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $userLists = [];
         foreach ($user->getLists() as $list) {
             $listRecords = $runner->run(
-                ['id' => $list->id], 'Favorites', $setupCallback
+                ['id' => $list->id],
+                'Favorites',
+                $setupCallback
             );
             $outputList = [
                 'title' => $list->title,
@@ -1505,49 +1677,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         return $userLists;
-    }
-
-    /**
-     * Get a record driver object corresponding to an array returned by an ILS
-     * driver's getMyHolds / getMyTransactions method.
-     *
-     * @param array $current Record information
-     *
-     * @return \VuFind\RecordDriver\AbstractBase
-     */
-    protected function getDriverForILSRecord($current)
-    {
-        try {
-            return parent::getDriverForILSRecord($current);
-        } catch (\Exception $e) {
-            $id = $current['id'] ?? null;
-            $source = $current['source'] ?? DEFAULT_SEARCH_BACKEND;
-            $recordFactory = $this->serviceLocator
-                ->get(\VuFind\RecordDriver\PluginManager::class);
-            $record = $recordFactory->get('Missing');
-            $record->setRawData(['id' => $id]);
-            $record->setSourceIdentifier($source);
-            $record->setExtraDetail('ils_details', $current);
-            return $record;
-        }
-    }
-
-    /**
-     * Get account blocks if supported by the ILS
-     *
-     * @param array $patron Patron
-     *
-     * @return array
-     */
-    protected function getAccountBlocks($patron)
-    {
-        $catalog = $this->getILS();
-        if ($catalog->checkCapability('getAccountBlocks', compact('patron'))
-            && $blocks = $catalog->getAccountBlocks($patron)
-        ) {
-            return $blocks;
-        }
-        return [];
     }
 
     /**

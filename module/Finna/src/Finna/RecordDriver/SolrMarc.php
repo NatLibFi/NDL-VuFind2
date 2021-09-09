@@ -43,9 +43,9 @@ namespace Finna\RecordDriver;
 class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use MarcReaderTrait;
-    use UrlCheckTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\FinnaMarcReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -75,7 +75,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -147,12 +149,38 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             return $this->cache[__FUNCTION__];
         }
         $result = parent::getAllRecordLinks();
+
+        // Handle 730 separately so that ind2 can be checked.
+        foreach ($this->getMarcReader()->getFields('730') as $field) {
+            if ($field['i2'] !== ' ') {
+                continue;
+            }
+
+            // Get data for field
+            $tmp = $this->getFieldData($field);
+            if (is_array($tmp)) {
+                if ('' === $tmp['value']) {
+                    // getfieldData doesn't handle subfield a (it's not the same for
+                    // other fields), so do it now if we didn't get a title:
+                    $tmp['value'] = $this->getSubfield($field, 'a');
+                    if ('title' === $tmp['link']['type']) {
+                        $tmp['link']['value'] = $tmp['value'];
+                    }
+                }
+                if (null === $result) {
+                    $result = [];
+                }
+                $result[] = $tmp;
+            }
+        }
+
         if ($result !== null) {
             foreach ($result as &$link) {
                 if (isset($link['value'])) {
                     $link['value'] = $this->stripTrailingPunctuation($link['value']);
                 }
             }
+            unset($link);
         }
 
         $this->cache[__FUNCTION__] = $result;
@@ -194,6 +222,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $type = $this->getSubfield($url, 'q');
             $image = 'image/jpeg' === $type || strcasecmp('image', $type) === 0;
             $pdf = 'application/pdf' === $type || preg_match('/\.pdf$/i', $address);
+
+            if (!$image && !$pdf) {
+                // Overdrive records only have a subfield 3, check for that
+                $part = $this->getSubfield($url, '3');
+                // Only take large image. Thumbnail is too small.
+                $image = strcasecmp($part, 'Image') === 0;
+            }
 
             if (($image || $pdf) && $this->urlAllowed($address)
                 && ($pdf || $this->isUrlLoadable($address, $this->getUniqueID()))
@@ -527,10 +562,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             ];
         }
 
-        // Try field 700 if 979 is empty
+        // Try fields 700 and 730 if 979 is empty
         if (!$componentParts) {
             foreach ($this->getMarcReader()->getFields('700') as $field) {
-                if ($field['i2'] != 2 || !$this->getSubfield($field, 't')) {
+                if ($field['i2'] != 2 || '' === $this->getSubfield($field, 't')) {
                     continue;
                 }
                 $partOrderCounter++;
@@ -541,7 +576,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 );
                 $partTitle = reset($partTitle);
                 $partAuthors = $this->getSubfieldArray(
-                    $field, ['a', 'q', 'b', 'c', 'd', 'e']
+                    $field,
+                    ['a', 'q', 'b', 'c', 'd', 'e']
                 );
 
                 $partPresenters = [];
@@ -582,6 +618,50 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     'presenters' => $partPresenters,
                     'arrangers' => $partArrangers,
                     'otherAuthors' => $partOtherAuthors,
+                ];
+            }
+
+            foreach ($this->getMarcReader()->getFields('730') as $field) {
+                if ($field['i2'] != 2) {
+                    continue;
+                }
+
+                $partTitle = $this->getSubfieldArray(
+                    $field,
+                    ['m', 'n', 'r', 'h', 'i', 'g', 'n', 'p', 's', 'l', 'o', 'k']
+                );
+                $partTitle = reset($partTitle);
+
+                // If there's only a uniform title without a title, use it as the
+                // title. Otherwise leave uniform title to its own field.
+                $partUniformTitle = $this->getSubfield($field, 'a');
+                $partTitleMain = $this->getSubfield($field, 't');
+                if ('' === $partTitleMain) {
+                    if ('' === $partUniformTitle) {
+                        continue;
+                    }
+                    $partTitle = "$partUniformTitle $partTitle";
+                    $partUniformTitle = '';
+                } else {
+                    $partTitle = "$partTitleMain $partTitle";
+                }
+
+                $partOrderCounter++;
+
+                $partAuthors = [];
+                $partPresenters = [];
+                $partArrangers = [];
+                $partOtherAuthors = [];
+                $componentParts[] = [
+                    'number' => $partOrderCounter,
+                    'title' => $partTitle,
+                    'link' => null,
+                    'authors' => [],
+                    'uniformTitle' => $partUniformTitle,
+                    'duration' => '',
+                    'presenters' => [],
+                    'arrangers' => [],
+                    'otherAuthors' => [],
                 ];
             }
         }
@@ -746,7 +826,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $isbn = array_merge(
                 $isbn,
                 $this->stripTrailingPunctuation(
-                    $this->getFieldArray($field, $subfields), '-'
+                    $this->getFieldArray($field, $subfields),
+                    '-'
                 )
             );
         }
@@ -856,7 +937,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     $dates = $this->getSubfieldArray($field, ['d']);
 
                     $altSubfields = $this->getLinkedMarcFieldContents(
-                        $field, ['a', 'b', 'c']
+                        $field,
+                        ['a', 'b', 'c']
                     );
                     $altSubfields = $this->stripTrailingPunctuation($altSubfields);
 
@@ -939,13 +1021,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     ) {
                         continue;
                     }
+                    $id = $this->getSubfield($field, '0');
                     $subfields = $this->getSubfieldArray($field, ['a', 'b', 'c']);
                     $dates = $this->getSubfieldArray($field, ['d']);
                     if (!empty($subfields)) {
                         $result['presenters'][] = [
                             'name' => $this->stripTrailingPunctuation($subfields[0]),
                             'date' => $dates ? $dates[0] : '',
-                            'role' => $role
+                            'role' => $role,
+                            'id' => $id ?: null
                         ];
                     }
                 }
@@ -1091,25 +1175,93 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     {
         $record = $this->getMarcReader();
         $id = $record->getField('001');
-        $field090 = $record->getField('090');
-        $objectId = $field090 ? $this->getSubfield($field090, 'a') : '';
-        if ($objectId) {
-            if (strncmp($objectId, '(Alma)', 6) === 0) {
-                $objectId = substr($objectId, 6);
-            } else {
-                $objectId = '';
+        foreach ($record->getFields('090') as $field090) {
+            $objectId = $this->getSubfield($field090, 'a');
+            if ($objectId) {
+                if (strncmp($objectId, '(Alma)', 6) === 0) {
+                    $objectId = substr($objectId, 6);
+                } else {
+                    $objectId = '';
+                }
+            }
+            if ($id === $objectId) {
+                return $objectId;
             }
         }
-        if ($id === $objectId) {
-            return $objectId;
-        }
         return '';
+    }
+
+    /**
+     * Get the full title of the record.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFirstFieldValue('245', ['a', 'b', 'n', 'p'])
+        );
+    }
+
+    /**
+     * Get the short (pre-subtitle) title of the record.
+     *
+     * @return string
+     */
+    public function getShortTitle()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFirstFieldValue('245', ['a'])
+        );
+    }
+
+    /**
+     * Get the subtitle of the record.
+     *
+     * @return string
+     */
+    public function getSubtitle()
+    {
+        return $this->stripTrailingPunctuation(
+            $this->getFirstFieldValue('245', ['b', 'n', 'p'])
+        );
+    }
+
+    /**
+     * Get the full titles of the record in alternative scripts.
+     *
+     * @return array
+     */
+    public function getTitlesAltScript(): array
+    {
+        if (!($titles = parent::getTitlesAltScript())) {
+            $titles = $this->getMarcReader()
+                ->getLinkedFieldsSubfields('880', '240', ['a', 'b']);
+        }
+        return $this->stripTrailingPunctuation($titles);
+    }
+
+    /**
+     * Get the full titles of the record including section and part information in
+     * alternative scripts.
+     *
+     * @return array
+     */
+    public function getFullTitlesAltScript(): array
+    {
+        if (!($titles = parent::getFullTitlesAltScript())) {
+            $titles = $this->getMarcReader()
+                ->getLinkedFieldsSubfields('880', '240', ['a', 'b', 'n', 'p']);
+        }
+        return $this->stripTrailingPunctuation($titles);
     }
 
     /**
      * Get the short (pre-subtitle) title of the record in alternative script.
      *
      * @return string
+     *
+     * @deprecated Use getTitlesAltScript instead
      */
     public function getShortTitleAltScript()
     {
@@ -1123,6 +1275,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      * Get the subtitle of the record in alternative script.
      *
      * @return string
+     *
+     * @deprecated Use getTitlesAltScript instead
      */
     public function getSubtitleAltScript()
     {
@@ -1319,7 +1473,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         }
         // Alternatively, are there titles in 700 fields?
         foreach ($this->getMarcReader()->getFields('700') as $field) {
-            if ($field['i2'] == 2 && $this->getSubfield($field, 't')) {
+            if ($field['i2'] == 2 && '' !== $this->getSubfield($field, 't')) {
+                return true;
+            }
+        }
+        // Or maybe in 730 fields?
+        foreach ($this->getMarcReader()->getFields('730') as $field) {
+            if ($field['i2'] == 2 && ('' !== $this->getSubfield($field, 'a')
+                || '' !== $this->getSubfield($field, 't'))
+            ) {
                 return true;
             }
         }
@@ -1364,7 +1526,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             if (!$heading = $subject['heading'][0] ?? null) {
                 continue;
             }
-            $authId = $authType = null;
+            $authType = null;
 
             // Check if we can find an authority id with a matching heading
             foreach ($subjectIdFields as $type => $codes) {
@@ -1374,14 +1536,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         if (!$subfield || trim($subfield) !== $heading) {
                             continue;
                         }
-                        if ($authId = $this->getSubfield($field, '0')) {
+                        if (isset($subject['id'])) {
                             $authType = $type;
                             break 3;
                         }
                     }
                 }
             }
-            $subject['id'] = $authId;
             $subject['authType'] = $authType;
         }
         return $result;
@@ -1415,9 +1576,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $title .= $qualifyingInfo;
         }
 
-        $linkTypeSetting = isset($this->mainConfig->Record->marc_links_link_types)
-            ? $this->mainConfig->Record->marc_links_link_types
-            : 'id,oclc,dlc,isbn,issn,title';
+        $linkTypeSetting = $this->mainConfig->Record->marc_links_link_types
+            ?? 'id,oclc,dlc,isbn,issn,title';
         $linkTypes = explode(',', $linkTypeSetting);
         $linkFields = $this->getSubfields($field, 'w');
 
@@ -1485,8 +1645,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     /**
      * Get linked MARC field contents
      *
-     * @param string|\File_MARC_Field $field     Field tag or actual field
-     * @param array                   $subfields Subfields
+     * @param string|array $field     Field tag or actual field
+     * @param array        $subfields Subfields
      *
      * @return string
      */
@@ -1503,18 +1663,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         if (!$link) {
             return '';
         }
-        $parts = explode('-', $link);
-        if (count($parts) != 2) {
-            return '';
+        $linkage = $marc->parseLinkageField($link);
+        foreach ($marc->getFields($linkage['field']) as $linkedField) {
+            $sub6 = $marc->getSubfield($linkedField, '6');
+            $targetLinkage = $marc->parseLinkageField($sub6);
+            if ($targetLinkage['field'] == $field['tag']
+                && $targetLinkage['occurrence'] === $linkage['occurrence']
+            ) {
+                $data = $this->getSubfieldArray($linkedField, $subfields);
+                return implode(' ', $data);
+            }
         }
-        $linkedFieldCode = $parts[0];
-        $linkedFieldNum = (int)$parts[1] - 1;
-        $linkedFields = $marc->getFields($linkedFieldCode);
-        if (!isset($linkedFields[$linkedFieldNum])) {
-            return '';
-        }
-        $data = $this->getSubfieldArray($linkedFields[$linkedFieldNum], $subfields);
-        return implode(' ', $data);
+        return '';
     }
 
     /**
@@ -1538,7 +1698,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 foreach ($series as $currentField) {
                     // Can we find a name using the specified subfield list?
                     $name = $this->getSubfieldArray(
-                        $currentField, $subfields, false
+                        $currentField,
+                        $subfields,
+                        false
                     );
                     if ($name) {
                         $currentArray = [
@@ -1690,7 +1852,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Get methodologoy from field 567.
+     * Get methodology from field 567.
      *
      * @return array
      */
@@ -1846,22 +2008,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         foreach ($this->getMarcReader()->getFields('024') as $field) {
             $subfields = [];
             switch ($field['i1']) {
-            case 0:
+            case '0':
                 $subfields[] = 'ISRC';
                 break;
-            case 1:
+            case '1':
                 $subfields[] = 'UPC';
                 break;
-            case 2:
+            case '2':
                 $subfields[] = 'ISMN';
                 break;
-            case 3:
+            case '3':
                 $subfields[] = 'EAN';
                 break;
-            case 4:
+            case '4':
                 $subfields[] = 'SICI';
                 break;
-            case 7:
+            case '7':
                 if ($sub2 = $this->getSubfield($field, '2')) {
                     $subfields[] = $this->stripTrailingPunctuation($sub2);
                 }

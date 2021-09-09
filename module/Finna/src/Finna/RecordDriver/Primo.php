@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2012-2020.
+ * Copyright (C) The National Library of Finland 2012-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -43,8 +43,8 @@ namespace Finna\RecordDriver;
  */
 class Primo extends \VuFind\RecordDriver\Primo
 {
-    use FinnaRecordTrait;
-    use XmlReaderTrait;
+    use Feature\FinnaRecordTrait;
+    use Feature\FinnaXmlReaderTrait;
 
     /**
      * Indicate whether export is disabled for a particular format.
@@ -85,9 +85,26 @@ class Primo extends \VuFind\RecordDriver\Primo
 
         // Allowed formats:
         $allowed = array_map(
-            'trim', explode(',', $this->mainConfig->Record->citation_formats)
+            'trim',
+            explode(',', $this->mainConfig->Record->citation_formats)
         );
         return array_intersect($allowed, $this->getSupportedCitationFormats());
+    }
+
+    /**
+     * Get an array of all the formats associated with the record.
+     *
+     * @return array
+     */
+    public function getFormats()
+    {
+        if (isset($this->fields['format'])) {
+            // No casting since the format may be a TranslatableString object as well
+            return is_array(($this->fields['format']))
+                ? $this->fields['format']
+                : [$this->fields['format']];
+        }
+        return [];
     }
 
     /**
@@ -221,7 +238,8 @@ class Primo extends \VuFind\RecordDriver\Primo
                     $hideFromSourceWithFulltext = [$hideFromSourceWithFulltext];
                 }
                 $hideFromSource = array_merge(
-                    $hideFromSource, $hideFromSourceWithFulltext
+                    $hideFromSource,
+                    $hideFromSourceWithFulltext
                 );
             }
 
@@ -232,7 +250,8 @@ class Primo extends \VuFind\RecordDriver\Primo
                     $showFromSourceWithFulltext = [$showFromSourceWithFulltext];
                 }
                 $showFromSource = array_merge(
-                    $showFromSource, $showFromSourceWithFulltext
+                    $showFromSource,
+                    $showFromSourceWithFulltext
                 );
             }
         }
@@ -282,9 +301,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     public function getPublicationDates()
     {
         $xml = $this->getXmlRecord();
-        if (isset($xml->facets->creationdate)) {
-            return (array)($xml->facets->creationdate);
-        }
+        return (array)($xml->facets->creationdate ?? []);
     }
 
     /**
@@ -331,7 +348,8 @@ class Primo extends \VuFind\RecordDriver\Primo
         }
         foreach ($this->fields['highlightDetails']['author'] as $highlightedAuthor) {
             $cleanAuthor = str_replace(
-                '{{{{END_HILITE}}}}', '',
+                '{{{{END_HILITE}}}}',
+                '',
                 str_replace('{{{{START_HILITE}}}}', '', $highlightedAuthor)
             );
             foreach ($authors as &$author) {
@@ -499,7 +517,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     protected function getDefaultOpenUrlParams()
     {
-        $link = isset($this->fields['url']) ? $this->fields['url'] : '';
+        $link = $this->fields['url'] ?? '';
 
         $params = [];
         // Take params from the OpenURL returned from Primo, if available

@@ -60,7 +60,7 @@ class PCIController extends \VuFind\Controller\AbstractBase
             $params['filter'] = [];
             $map = ['pfilter' => 'rtype'];
             foreach ($params['filterpci'] as $filter) {
-                list($facet, $val) = explode(':', $filter, 2);
+                [$facet, $val] = explode(':', $filter, 2);
                 if (isset($map[$facet])) {
                     $facet = $map[$facet];
                 }

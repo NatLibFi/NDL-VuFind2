@@ -45,9 +45,9 @@ namespace Finna\RecordDriver;
 class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use XmlReaderTrait;
-    use UrlCheckTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\FinnaXmlReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -60,7 +60,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -159,9 +161,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
 
         $rights['copyright'] = !empty($xml->rights) ? (string)$xml->rights : '';
-        $rights['link'] = $this->getRightsLink(
-            strtoupper($rights['copyright']), $language
-        );
+        $rights['copyright'] = $this->getMappedRights($rights['copyright']);
+        $rights['link']
+            = $this->getRightsLink($rights['copyright'], $language);
 
         if ($urls) {
             if (!isset($urls['small'])) {
@@ -232,6 +234,29 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             }
         }
         return $record->asXML();
+    }
+
+    /**
+     * Get an array of all ISBNs associated with the record (may be empty).
+     *
+     * @return array
+     */
+    public function getISBNs()
+    {
+        $result = [];
+        $xml = $this->getXmlRecord();
+        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
+            foreach ($field as $identifier) {
+                $trimmed = str_replace('-', '', trim($identifier));
+                if ((string)$identifier['type'] === 'isbn'
+                    || preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)
+                ) {
+                    $result[] = $identifier;
+                }
+            }
+        }
+
+        return array_values(array_unique($result));
     }
 
     /**

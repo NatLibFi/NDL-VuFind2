@@ -56,7 +56,7 @@ trait SearchResultsTrait
      */
     public function getBackendId()
     {
-        return isset($this->backendId) ? $this->backendId : 'Solr';
+        return $this->backendId ?? 'Solr';
     }
 
     /**
@@ -72,7 +72,8 @@ trait SearchResultsTrait
         if (!isset($this->helpers['urlQuery'])) {
             $factory = new UrlQueryHelperFactory();
             $this->helpers['urlQuery'] = $factory->fromParams(
-                $this->getParams(), $this->getUrlQueryHelperOptions()
+                $this->getParams(),
+                $this->getUrlQueryHelperOptions()
             );
             if (null !== $this->request
                 && is_callable([$this->helpers['urlQuery'], 'setSearchId'])

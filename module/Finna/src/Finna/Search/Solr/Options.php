@@ -96,7 +96,7 @@ class Options extends \VuFind\Search\Solr\Options
      *
      * @param string $action Route
      *
-     * @return string
+     * @return void
      */
     public function setBrowseAction($action)
     {
@@ -110,7 +110,7 @@ class Options extends \VuFind\Search\Solr\Options
      */
     public function getDateRangeSearchField()
     {
-        list($field) = explode(':', $this->dateRangeVis);
+        [$field] = explode(':', $this->dateRangeVis);
         return $field;
     }
 

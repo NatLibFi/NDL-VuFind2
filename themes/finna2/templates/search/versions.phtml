@@ -7,7 +7,7 @@
   $this->slot('head-title')->set($title);
   $this->slot('search-heading')->set('');
   $this->slot('empty-message')->set(
-    $this->translate('nohit_lookfor_html', ['%%lookfor%%' => $this->transEsc('Versions')])
+      $this->translate('nohit_lookfor_html', ['%%lookfor%%' => $this->transEsc('Versions')])
   );
 
   // Call the standard search template:
@@ -17,17 +17,17 @@
   $this->layout()->searchbox = $this->context($this)->renderInContext(
       'search/versions-searchbox.phtml',
       [
-        'searchType' => 'basic',
-        'searchIndex' => $this->params->getSearchHandler(),
-        'searchClassId' => $this->params->getSearchClassId(),
-        'selectedShards' => $this->params->getSelectedShards(),
+          'searchType' => 'basic',
+          'searchIndex' => $this->params->getSearchHandler(),
+          'searchClassId' => $this->params->getSearchClassId(),
+          'selectedShards' => $this->params->getSelectedShards(),
       ]
   );
 
   // Override breadcrumbs:
   $titleLink = '';
   if ($this->driver) {
-    $titleLink .= ' - <a href="' . $this->escapeHtmlAttr($this->recordLink()->getUrl($this->driver)) . '">' . $this->driver->getBreadcrumb() . '</a>';
+    $titleLink .= ' - <a href="' . $this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver)) . '">' . $this->driver->getBreadcrumb() . '</a>';
   }
 
   $this->layout()->breadcrumbs = '<li class="active">' . $this->transEsc('Versions') . $titleLink . '</li>';

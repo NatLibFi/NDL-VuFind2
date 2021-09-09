@@ -56,9 +56,11 @@ class WorldCatUtilsFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -69,8 +71,10 @@ class WorldCatUtilsFactory implements FactoryInterface
         $client = $container->get(\VuFindHttp\HttpService::class)->createClient();
         $ip = $container->get('Request')->getServer()->get('SERVER_ADDR');
         return new $requestedName(
-            isset($config->WorldCat) ? $config->WorldCat : null,
-            $client, true, $ip
+            $config->WorldCat ?? null,
+            $client,
+            true,
+            $ip
         );
     }
 }

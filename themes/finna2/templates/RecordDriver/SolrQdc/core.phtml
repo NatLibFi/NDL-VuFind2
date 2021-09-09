@@ -10,7 +10,8 @@
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
   $images = $img->getAllImagesAsCoverLinks(
-      $this->layout()->userLang, $params
+      $this->layout()->userLang,
+      $params
   );
 
   $hasOnlineURLs =
@@ -24,7 +25,7 @@
     $audioUrls = [];
     $otherUrls = [];
     foreach ($urls as $url) {
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
         array_push($videoUrls, $url);
       } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
         array_push($audioUrls, $url);
@@ -72,12 +73,12 @@
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media" vocab="http://schema.org/" resource="#record" typeof="<?=$this->driver->getSchemaOrgFormats()?> Product">
-  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+  <h1 property="name" class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-      <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getShortTitle())?><?php if ($subtitle = $this->driver->getSubtitle()): ?>&nbsp;: <?=$this->escapeHtml($subtitle) ?><?php endif; ?></h1>
+      <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       <div class="description">
         <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
           <i class="fa fa-spinner fa-spin"></i>
@@ -187,15 +188,14 @@
       <?php
         $formatter = $this->recordDataFormatter();
         $coreFields = $formatter->getData(
-            $driver, $formatter->filterQDCFields($formatter->getDefaults('core'))
+            $driver,
+            $formatter->filterQDCFields($formatter->getDefaults('core'))
         );
       ?>
       <?php if (!empty($coreFields)): ?>
-        <table class="table table-finna-record record-details record-details-more">
+        <table class="table table-finna-record record-details">
           <?=$this->record($this->driver)->renderTemplate('core-fields.phtml', ['coreFields' => $coreFields]);?>
         </table>
-        <button class="btn show-details-button hidden"><?=$this->transEsc('show_more_details');?> <i class="fa fa-arrow-down"></i></button>
-        <button class="btn hide-details-button hidden"><?=$this->transEsc('show_less_details');?> <i class="fa fa-arrow-up"></i></button>
       <?php endif; ?>
       <?/* End Main Details */?>
 

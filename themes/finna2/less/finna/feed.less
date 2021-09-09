@@ -77,11 +77,19 @@
         &.title-bottom {
             top: 100%;
         }
+        .carousel-date {
+            display: block;
+            font-weight: 400;
+        }
     }
     .carousel-hover-title {
         font-size: 14px;
         font-weight: 900;
         color: @carousel-slide-header-color;
+    }
+    .carousel-hover-date {
+        font-weight: 300;
+        color: @gray-lighter;
     }
     .carousel-text {
         position: absolute;
@@ -161,7 +169,7 @@
             text-align: left;
             right: 0;
         }
-        .carousel-hover-title {
+        .carousel-hover-title, .carousel-hover-date {
             display: none;  
         }
     }
@@ -191,6 +199,9 @@
                 max-width: 50%;
                 text-align: left;
                 left: 50%;
+            }
+            .carousel-date {
+                color: @gray-light;
             }
         }
         .carousel-text {

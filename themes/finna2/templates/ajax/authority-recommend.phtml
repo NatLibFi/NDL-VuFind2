@@ -1,10 +1,10 @@
 <!-- START of: finna - ajax/authority-recommend.phtml -->
 <?php
-$results = $this->recommend->getResults();
-$record = $this->authority;
-$formats = $record->getFormats();
-$formatter = $this->recordDataFormatter();
-$coreFields = $formatter->getDefaults('authorityRecommend');
+  $results = $this->recommend->getResults();
+  $record = $this->authority;
+  $formats = $record->getFormats();
+  $formatter = $this->recordDataFormatter();
+  $coreFields = $formatter->getDefaults('authorityRecommend');
 ?>
 <div class="media-left">
   <h3 property="name" class="record-title"><?=$this->escapeHtml($record->getTitle())?></h3>
@@ -46,9 +46,14 @@ $coreFields = $formatter->getDefaults('authorityRecommend');
     $img = $this->recordImage($this->record($this->driver));
   ?>
   <?=$this->record($this->driver)->renderTemplate(
-    'record-image-information.phtml',
-    ['img' => $img, 'imageClick' => 'none', 'imageRightsLabel' => 'Image Rights Authority',
-     'numOfImages' => ['mobile' => 4, 'normal' => 4]]);
+      'record-image-information.phtml',
+      [
+          'img' => $img,
+          'imageClick' => 'none',
+          'imageRightsLabel' => 'Image Rights Authority',
+          'numOfImages' => ['mobile' => 4, 'normal' => 4]
+      ]
+  );
   ?>
   </div>
 <?php endif; ?>

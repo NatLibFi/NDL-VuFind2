@@ -39,16 +39,22 @@ namespace Finna\RecordTab;
 class AuthorityRecordsAuthor extends AuthorityRecordsBase
 {
     /**
-     * Record tab label
+     * Get record tab label
      *
-     * @var String
+     * @return string
      */
-    protected $label = 'author';
+    protected function getLabel()
+    {
+        return 'author';
+    }
 
     /**
-     * Index field that is used when listing records.
+     * Return index field used when listing records
      *
-     * @var string
+     * @return string
      */
-    protected $relation = 'author2_id_str_mv';
+    protected function getRelation()
+    {
+        return 'author2_id_str_mv';
+    }
 }

@@ -124,12 +124,9 @@ class AbstractExpireCommandTest extends \PHPUnit\Framework\TestCase
         $table = $this->getMockBuilder($this->validTableClass)
             ->disableOriginalConstructor()
             ->getMock();
-        $table->expects($this->at(0))->method('deleteExpired')
-            ->with($this->equalTo(2), $this->equalTo(1000))
-            ->will($this->returnValue(1000));
-        $table->expects($this->at(1))->method('deleteExpired')
-            ->with($this->equalTo(2), $this->equalTo(1000))
-            ->will($this->returnValue(7));
+        $table->expects($this->exactly(3))->method('deleteExpired')
+            ->withConsecutive([2, 1000], [2, 1000], [2, 1000])
+            ->willReturnOnConsecutiveCalls(1000, 7, false);
         $command = new $this->targetClass($table, 'foo');
         $commandTester = new CommandTester($command);
         $commandTester->execute(['--sleep' => 1]);
@@ -175,7 +172,8 @@ class AbstractExpireCommandTest extends \PHPUnit\Framework\TestCase
         $parts = explode("\n", trim($response));
         $this->assertEquals(1, count($parts));
         $this->assertEquals(
-            "Total 0 {$this->rowLabel} deleted.", explode('] ', $parts[0])[1]
+            "Total 0 {$this->rowLabel} deleted.",
+            explode('] ', $parts[0])[1]
         );
         $this->assertEquals(0, $commandTester->getStatusCode());
     }

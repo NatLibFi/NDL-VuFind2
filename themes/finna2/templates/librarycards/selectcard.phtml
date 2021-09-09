@@ -5,7 +5,7 @@
     <?php if (isset($loginMenu) && $loginMenu): ?>
       <li class="logoutOptions card-selection">
         <a class="card-header" href="<?=$this->url('librarycards-home')?>">
-          <?=$this->transEsc(isset($this->label) ? $this->label : 'Kirjastokortti') ?>
+          <?=$this->transEsc($this->label ?? 'Kirjastokortti') ?>
         </a>
         <label id="select-card-label-dropdown"><?= $this->transEsc('Library Card') ?></label>
         <?php if ($cards->count() > 1 || empty($this->user->cat_username)) : ?>
@@ -14,7 +14,7 @@
               $target = '';
               $username = $card->cat_username;
               if (strstr($username, '.')) {
-                list($target, $username) = explode('.', $username, 2);
+                [$target, $username] = explode('.', $username, 2);
               }
               $display = $this->transEsc($card->card_name ? $card->card_name : $username);
               if ($display == "$target.$username") {
@@ -46,7 +46,7 @@
                 $target = '';
                 $username = $card->cat_username;
                 if (strstr($username, '.')) {
-                  list($target, $username) = explode('.', $username, 2);
+                  [$target, $username] = explode('.', $username, 2);
                 }
                 $display = $this->transEsc($card->card_name ? $card->card_name : $username);
                 if ($display == "$target.$username") {
@@ -68,7 +68,7 @@
               $target = '';
               $username = $card->cat_username;
               if (strstr($username, '.')) {
-                list($target, $username) = explode('.', $username, 2);
+                [$target, $username] = explode('.', $username, 2);
               }
               $display = $this->transEsc($card->card_name ? $card->card_name : $username);
               if ($display == "$target.$username") {

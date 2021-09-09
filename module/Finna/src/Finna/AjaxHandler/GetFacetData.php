@@ -83,8 +83,12 @@ class GetFacetData extends \VuFind\AjaxHandler\GetFacetData
      * @param Config                  $bc Browse configuration
      * @param Config                  $fc Facet configuration
      */
-    public function __construct(SessionSettings $ss, HierarchicalFacetHelper $fh,
-        ResultsManager $rm, Config $bc, Config $fc
+    public function __construct(
+        SessionSettings $ss,
+        HierarchicalFacetHelper $fh,
+        ResultsManager $rm,
+        Config $bc,
+        Config $fc
     ) {
         parent::__construct($ss, $fh, $rm);
         $this->browseConfig = $bc;

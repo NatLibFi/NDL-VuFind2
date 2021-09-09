@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2016.
- * Copyright (C) The National Library of Finland 2017.
+ * Copyright (C) The National Library of Finland 2017-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -179,7 +179,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Filming Location Notes', 'Finding Aid', 'First Lyrics',
             'Foreign Distribution', 'Funding', 'Genre',
             'Inscriptions', 'Inspection Details', 'Interior Images',
-            'Inventory ID', 'ISSN', 'Item Description',
+            'Inventory ID', 'ISBN', 'ISSN', 'Item Description',
             'Item History', 'Keywords', 'Language',
             'Language Notes', 'Learning Resource Type', 'Location',
             'Manufacturer', 'Measurements', 'Medium of Performance',
@@ -275,11 +275,11 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $include = [
             'Accessibility Feature', 'Accessibility Hazard', 'Access Restrictions',
             'Access Restrictions Extended', 'Additional Information', 'Age Limit',
-            'Archive', 'Archive Films', 'Archive Origination',
+            'Archive', 'Archive File', 'Archive Films', 'Archive Origination',
             'Archive Series', 'Aspect Ratio', 'Audience',
             'Author Notes', 'Authors', 'Available Online',
             'Awards', 'Bibliography', 'Broadcasting Dates',
-            'child_records', 'Classification', 'Collection',
+            'Classification', 'Collection',
             'Color', 'Content Description', 'Copyright Notes',
             'Date', 'Description FWD', 'Dissertation Note',
             'Distribution', 'DOI', 'Edition',
@@ -330,14 +330,15 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     {
         $include = [
             'Accessibility Feature', 'Accessibility Hazard',
-            'Access Restrictions Extended', 'Additional Information',
-            'Age Limit', 'Archive', 'Archive Films',
+            'Access Restrictions', 'Access Restrictions Extended',
+            'Additional Information Extended',
+            'Age Limit', 'Appraisal', 'Archive', 'Archive Films',
             'Archive Origination', 'Archive Relations',
-            'Archive Series', 'Aspect Ratio', 'Audience',
-            'Author Notes', 'Available Online', 'Awards',
-            'Bibliography', 'Broadcasting Dates', 'child_records',
-            'Classification', 'Collection', 'Color',
-            'Content Description', 'Copyright Notes', 'Date',
+            'Archive Series', 'Archive File', 'Aspect Ratio', 'Audience',
+            'Authors', 'Author Notes', 'Available Online', 'Awards',
+            'Bibliography', 'Broadcasting Dates',
+            'Classification', 'Collection', 'Color', 'Container Information',
+            'Content Description', 'Copyright Notes', 'Dates',
             'Description FWD', 'Dissertation Note', 'Distribution',
             'DOI', 'Edition', 'Educational Level',
             'Educational Role', 'Educational Subject', 'Educational Use',
@@ -350,8 +351,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'ISBN', 'ISSN', 'Item Description',
             'Item History', 'Keywords', 'Language',
             'Language Notes', 'Learning Resource Type', 'Location',
-            'Manufacturer', 'Measurements', 'Medium of Performance',
-            'Methodology', 'Music', 'New Title',
+            'Manufacturer', 'Material Arrangement', 'Measurements',
+            'Medium of Performance', 'Methodology', 'Music', 'New Title',
             'Notated Music Format', 'Notes', 'Objective and Content',
             'Original Work', 'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID', 'Other Links',
@@ -361,12 +362,12 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Production', 'Production Costs', 'Production Credits',
             'Projected Publication Date', 'Publication Frequency', 'Publications',
             'Publication_Place', 'Publish date', 'Publisher',
-            'Publisher or Distributor Number', 'Record Links', 'Related Items',
-            'Related Places', 'Scale', 'Secondary Authors',
+            'Publisher or Distributor Number', 'Related Items',
+            'Related Materials', 'Related Places', 'Scale', 'Secondary Authors',
             'Sound', 'Source of Acquisition', 'Standard Codes',
             'Studios', 'Subject Actor', 'Subject Date',
-            'Subject Detail', 'Subject Place', 'Subjects',
-            'subjects_extended', 'System Format', 'Terms of Use',
+            'Subject Detail', 'Subject Place', 'subjects_extended',
+            'System Format', 'Terms of Use',
             'Time Period', 'Time Period of Creation', 'Trade Availability Note',
             'Uncontrolled Title', 'Uniform Title', 'Unit IDs'
         ];
@@ -499,13 +500,13 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $include = [
             'Accessibility Feature', 'Accessibility Hazard', 'Access Restrictions',
             'Access Restrictions Extended', 'Actors', 'Additional Information',
-            'Age Limit', 'Archive', 'Archive Films',
-            'Archive Origination', 'Archive Series', 'Aspect Ratio',
-            'Audience', 'Author Notes', 'Authors',
+            'Age Limit', 'Appraisal', 'Archive', 'Archive Films',
+            'Archive Origination', 'Archive Relations', 'Archive Series',
+            'Aspect Ratio', 'Audience', 'Author Notes', 'Authors',
             'Available Online', 'Awards', 'Bibliography',
             'Broadcasting Dates', 'child_records', 'Classification',
             'Collection', 'Color', 'Content Description',
-            'Copyright Notes', 'Date', 'Description FWD',
+            'Copyright Notes', 'Date', 'Dates', 'Description FWD',
             'Dissertation Note', 'Distribution', 'DOI',
             'Edition', 'Educational Level', 'Educational Role',
             'Educational Subject', 'Educational Use', 'Education Programs',
@@ -518,8 +519,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'ISSN', 'Item Description', 'Item History',
             'Keywords', 'Language', 'Language Notes',
             'Learning Resource Type', 'Location', 'Manufacturer',
-            'Measurements', 'Medium of Performance', 'Methodology',
-            'Music', 'New Title', 'Notated Music Format',
+            'Material Arrangement', 'Measurements', 'Medium of Performance',
+            'Methodology', 'Music', 'New Title', 'Notated Music Format',
             'Notes', 'Objective and Content', 'Organisation',
             'Original Work', 'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID', 'Other Links',
@@ -529,8 +530,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Production', 'Production Costs', 'Production Credits',
             'Projected Publication Date', 'Publication Frequency', 'Publications',
             'Publication_Place', 'Publish date', 'Publisher',
-            'Publisher or Distributor Number', 'Record Links', 'Related Items',
-            'Related Places', 'Scale', 'Secondary Authors',
+            'Publisher or Distributor Number', 'Related Items',
+            'Related Materials', 'Related Places', 'Scale', 'Secondary Authors',
             'Series', 'Sound', 'Source of Acquisition',
             'Standard Codes', 'Studios', 'Subject Actor',
             'Subject Date', 'Subject Detail', 'Subject Place',
@@ -561,13 +562,20 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      *
      * @return array
      */
-    public function getGroupedFields($groups, $lines,
-        $template = 'core-field-group-fields.phtml', $options = [],
+    public function getGroupedFields(
+        $groups,
+        $lines,
+        $template = 'core-field-group-fields.phtml',
+        $options = [],
         $unusedOptions = []
     ) {
         $fieldGroups = new FieldGroupBuilder();
         $fieldGroups->setGroups(
-            $groups, $lines, $template, $options, $unusedOptions
+            $groups,
+            $lines,
+            $template,
+            $options,
+            $unusedOptions
         );
         return $fieldGroups->getArray();
     }
@@ -595,7 +603,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             }
             // Render the fields in the group as the value for the group.
             $value = $this->renderRecordDriverTemplate(
-                $driver, $data, ['template' => $group['template']]
+                $driver,
+                $data,
+                ['template' => $group['template']]
             );
             $result[] = [
                 'label' => $group['label'],

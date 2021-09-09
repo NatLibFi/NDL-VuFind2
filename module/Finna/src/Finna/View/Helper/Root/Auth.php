@@ -41,14 +41,23 @@ use Laminas\Http\PhpEnvironment\Request;
 class Auth extends \VuFind\View\Helper\Root\Auth
 {
     /**
+     * Request
+     *
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * Constructor
      *
      * @param \VuFind\Auth\Manager          $manager          Authentication manager
      * @param \VuFind\Auth\ILSAuthenticator $ilsAuthenticator ILS Authenticator
      * @param Request                       $request          Request
      */
-    public function __construct(\VuFind\Auth\Manager $manager,
-        \VuFind\Auth\ILSAuthenticator $ilsAuthenticator, Request $request
+    public function __construct(
+        \VuFind\Auth\Manager $manager,
+        \VuFind\Auth\ILSAuthenticator $ilsAuthenticator,
+        Request $request
     ) {
         parent::__construct($manager, $ilsAuthenticator);
         $this->request = $request;

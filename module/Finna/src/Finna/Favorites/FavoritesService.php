@@ -33,6 +33,7 @@ namespace Finna\Favorites;
 use VuFind\Db\Table\Resource as ResourceTable;
 use VuFind\Db\Table\UserList as UserListTable;
 use VuFind\Db\Table\UserResource as UserResourceTable;
+use VuFind\Exception\LoginRequired as LoginRequiredException;
 use VuFind\Record\Cache as RecordCache;
 
 /**
@@ -61,8 +62,11 @@ class FavoritesService extends \VuFind\Favorites\FavoritesService
      * @param RecordCache       $cache             Record cache
      * @param UserResourceTable $userResourceTable User Resource join table
      */
-    public function __construct(UserListTable $userList, ResourceTable $resource,
-        RecordCache $cache = null, UserResourceTable $userResourceTable
+    public function __construct(
+        UserListTable $userList,
+        ResourceTable $resource,
+        RecordCache $cache = null,
+        UserResourceTable $userResourceTable
     ) {
         $this->recordCache = $cache;
         $this->userListTable = $userList;

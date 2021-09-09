@@ -43,42 +43,50 @@ class AuthorityHelper
      *
      * @var string
      */
-    const AUTHOR2_ID_FACET = 'author2_id_str_mv';
+    public const AUTHOR2_ID_FACET = 'author2_id_str_mv';
 
     /**
      * Index field for author id-role combinations
      *
      * @var string
      */
-    const AUTHOR_ID_ROLE_FACET = 'author2_id_role_str_mv';
+    public const AUTHOR_ID_ROLE_FACET = 'author2_id_role_str_mv';
 
     /**
      * Index field for author2-ids.
      *
      * @var string
      */
-    const TOPIC_ID_FACET = 'topic_id_str_mv';
+    public const TOPIC_ID_FACET = 'topic_id_str_mv';
 
     /**
      * Delimiter used to separate author id and role.
      *
      * @var string
      */
-    const AUTHOR_ID_ROLE_SEPARATOR = '###';
+    public const AUTHOR_ID_ROLE_SEPARATOR = '###';
 
     /**
      * Authority link type: authority page.
      *
      * @var string
      */
-    const LINK_TYPE_PAGE = 'page';
+    public const LINK_TYPE_PAGE = 'page';
 
     /**
      * Authority link type: search results filtered by authority id.
      *
      * @var string
      */
-    const LINK_TYPE_SEARCH = 'search';
+    public const LINK_TYPE_SEARCH = 'search';
+
+    /**
+     * Authority link type: search results filtered by topic_id_tr_mv (either
+     * an internal authority index id or external URI (YSO etc)).
+     *
+     * @var string
+     */
+    public const LINK_TYPE_SEARCH_SUBJECT = 'search-subject';
 
     /**
      * Record loader
@@ -189,7 +197,7 @@ class AuthorityHelper
             $facetList = $facetSet[$field]['list'] ?? [];
             $authIds[$field] = [];
             foreach ($facetList as $facet) {
-                list($id, $role) = $this->extractRole($facet['displayText']);
+                [$id, $role] = $this->extractRole($facet['displayText']);
                 $authIds[$field][] = $id;
             }
         }
@@ -199,10 +207,10 @@ class AuthorityHelper
             $records
                 = $this->recordLoader->loadBatchForSource($ids, 'SolrAuth', true);
             foreach ($facetList as &$facet) {
-                list($id, $role) = $this->extractRole($facet['displayText']);
+                [$id, $role] = $this->extractRole($facet['displayText']);
                 foreach ($records as $record) {
                     if ($record->getUniqueId() === $id) {
-                        list($displayText, $role)
+                        [$displayText, $role]
                             = $this->formatDisplayText($record, $role);
                         $facet['displayText'] = $displayText;
                         $facet['role'] = $role;
@@ -242,9 +250,9 @@ class AuthorityHelper
     {
         $id = $value;
         $role = null;
-        list($id, $role) = $this->extractRole($value);
+        [$id, $role] = $this->extractRole($value);
         $record = $this->recordLoader->load($id, 'SolrAuth', true);
-        list($displayText, $role) = $this->formatDisplayText($record, $role);
+        [$displayText, $role] = $this->formatDisplayText($record, $role);
         return $extendedInfo
             ? ['id' => $id, 'displayText' => $displayText, 'role' => $role]
             : $displayText;
@@ -263,7 +271,7 @@ class AuthorityHelper
         $role = null;
         $separator = self::AUTHOR_ID_ROLE_SEPARATOR;
         if (strpos($value, $separator) !== false) {
-            list($id, $role) = explode($separator, $value, 2);
+            [$id, $role] = explode($separator, $value, 2);
         }
         return [$id, $role];
     }
@@ -279,7 +287,9 @@ class AuthorityHelper
      * @return \VuFind\Search\Results|int
      */
     public function getRecordsByAuthorityId(
-        $id, $field = AuthorityHelper::AUTHOR2_ID_FACET, $onlyCount = false
+        $id,
+        $field = AuthorityHelper::AUTHOR2_ID_FACET,
+        $onlyCount = false
     ) {
         $query = $this->getRecordsByAuthorityQuery($id, $field);
         $results = $this->searchRunner->run(
@@ -332,7 +342,13 @@ class AuthorityHelper
             $setting = self::LINK_TYPE_SEARCH;
         }
         return
-            in_array($setting, [self::LINK_TYPE_PAGE, self::LINK_TYPE_SEARCH])
+            in_array(
+                $setting,
+                [
+                    self::LINK_TYPE_PAGE, self::LINK_TYPE_SEARCH,
+                    self::LINK_TYPE_SEARCH_SUBJECT
+                ]
+            )
             ? $setting : null;
     }
 

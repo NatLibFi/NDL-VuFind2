@@ -87,8 +87,10 @@ class VerifyResourceMetadata extends AbstractUtilCommand
      * @param \VuFind\Date\Converter $dateConverter Date converter
      * @param \VuFind\Record\Loader  $recordLoader  Record loader
      */
-    public function __construct(ResourceTable $resourceTable,
-        \VuFind\Date\Converter $dateConverter, \VuFind\Record\Loader $recordLoader
+    public function __construct(
+        ResourceTable $resourceTable,
+        \VuFind\Date\Converter $dateConverter,
+        \VuFind\Record\Loader $recordLoader
     ) {
         $this->resourceTable = $resourceTable;
         $this->dateConverter = $dateConverter;
@@ -135,7 +137,7 @@ class VerifyResourceMetadata extends AbstractUtilCommand
         $resources = $this->resourceTable->select($callback);
         if (!$resources) {
             $this->msg('No resources found');
-            return true;
+            return 0;
         }
 
         $count = 0;
@@ -178,6 +180,6 @@ class VerifyResourceMetadata extends AbstractUtilCommand
             "Resource metadata verification completed with $count resources"
             . " processed, $fixed fixed"
         );
-        return true;
+        return 0;
     }
 }

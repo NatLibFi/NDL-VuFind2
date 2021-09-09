@@ -48,12 +48,12 @@ require_once 'Cpu/Client/Product.class.php';
  */
 class CPU extends BaseHandler
 {
-    const STATUS_SUCCESS = 1;
-    const STATUS_CANCELLED = 0;
-    const STATUS_PENDING = 2;
-    const STATUS_ID_EXISTS = 97;
-    const STATUS_ERROR = 98;
-    const STATUS_INVALID_REQUEST = 99;
+    public const STATUS_SUCCESS = 1;
+    public const STATUS_CANCELLED = 0;
+    public const STATUS_PENDING = 2;
+    public const STATUS_ID_EXISTS = 97;
+    public const STATUS_ERROR = 98;
+    public const STATUS_INVALID_REQUEST = 99;
 
     /**
      * Start transaction.
@@ -72,8 +72,16 @@ class CPU extends BaseHandler
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl, $ajaxUrl, $user, $patron, $driver, $amount, $transactionFee,
-        $fines, $currency, $statusParam
+        $finesUrl,
+        $ajaxUrl,
+        $user,
+        $patron,
+        $driver,
+        $amount,
+        $transactionFee,
+        $fines,
+        $currency,
+        $statusParam
     ) {
         $patronId = $patron['cat_username'];
         $orderNumber = $this->generateTransactionId($patronId);
@@ -99,7 +107,7 @@ class CPU extends BaseHandler
             // last name.
             if (strpos($lastname, ',') > 0) {
                 // Lastname, Firstname
-                list($lastname, $firstname) = explode(',', $lastname, 2);
+                [$lastname, $firstname] = explode(',', $lastname, 2);
             } else {
                 // First Middle Last
                 if (preg_match('/^(.*) (.*?)$/', $lastname, $matches)) {
@@ -116,7 +124,7 @@ class CPU extends BaseHandler
         $payment->LastName = empty($lastname) ? 'ei tietoa' : $lastname;
 
         $locale = $this->translator->getLocale();
-        list($lang) = explode('-', $locale);
+        [$lang] = explode('-', $locale);
         if (!empty($this->config->supportedLanguages)) {
             $languageMappings = [];
             foreach (explode(':', $this->config->supportedLanguages) as $item) {
@@ -132,14 +140,16 @@ class CPU extends BaseHandler
         }
 
         $payment->Description
-            = isset($this->config->paymentDescription)
-            ? $this->config->paymentDescription : '';
+            = $this->config->paymentDescription ?? '';
 
         $payment->ReturnAddress = $returnUrl;
         $payment->NotificationAddress = $notifyUrl;
 
         if (!isset($this->config->productCode)) {
-            $this->handleCPUError('missing productCode configuration option');
+            $this->logPaymentError(
+                'missing productCode configuration option',
+                compact('user', 'patron', 'fines')
+            );
             return '';
         }
         $productCode = $this->config->productCode;
@@ -162,8 +172,12 @@ class CPU extends BaseHandler
             }
             if (!empty($fine['title'])) {
                 $fineDesc .= ' ('
-                    . substr($fine['title'], 0, 100 - 4 - strlen($fineDesc))
-                    . ')';
+                    . mb_substr(
+                        $fine['title'],
+                        0,
+                        100 - 4 - strlen($fineDesc),
+                        'UTF-8'
+                    ) . ')';
             }
             if ($fineDesc) {
                 // Get rid of characters that cannot be converted to ISO-8859-1 since
@@ -173,10 +187,13 @@ class CPU extends BaseHandler
                     'UTF-8',
                     iconv('UTF-8', 'ISO-8859-1//IGNORE', $fineDesc)
                 );
-                // Remove ' since that causes the string to be truncated
+                // Remove ' since it causes the string to be truncated
                 $fineDesc = str_replace("'", ' ', $fineDesc);
-                // Make sure that description length does not exceed CPU
-                // max limit of 100 characters.
+                // Sanitize before limiting the length, otherwise the sanitization
+                // process may blow the string through the limit
+                $fineDesc = \Cpu_Client::sanitize($fineDesc);
+                // Make sure that description length does not exceed CPU max limit of
+                // 100 characters.
                 $fineDesc = mb_substr($fineDesc, 0, 100, 'UTF-8');
             }
 
@@ -185,50 +202,69 @@ class CPU extends BaseHandler
                 $code = $organizationProductCodeMappings[$fineOrg]
                     . ($productCodeMappings[$fineType] ?? '');
             }
-            $code = substr($code, 0, 25);
+            $code = mb_substr($code, 0, 25, 'UTF-8');
             $product = new \Cpu_Client_Product(
-                $code, 1, $fine['balance'], $fineDesc ?: null
+                $code,
+                1,
+                $fine['balance'],
+                $fineDesc ?: null
             );
             $payment = $payment->addProduct($product);
         }
         if ($transactionFee) {
-            $code = isset($this->config->transactionFeeProductCode)
-                ? $this->config->transactionFeeProductCode : $productCode;
+            $code = $this->config->transactionFeeProductCode ?? $productCode;
             $product = new \Cpu_Client_Product(
-                $code, 1, $transactionFee,
+                $code,
+                1,
+                $transactionFee,
                 'Palvelumaksu / Serviceavgift / Transaction fee'
             );
             $payment = $payment->addProduct($product);
         }
 
         if (!($module = $this->initCpu())) {
-            $this->handleCPUError('error initializing CPU online payment');
+            $this->logPaymentError(
+                'error initializing CPU online payment',
+                compact('user', 'patron', 'fines')
+            );
             return '';
         }
 
         try {
             $response = $module->sendPayment($payment);
         } catch (\Exception $e) {
-            $this->handleCPUError('exception sending payment: ' . $e->getMessage());
+            $this->logPaymentError(
+                'exception sending payment: ' . $e->getMessage(),
+                compact('user', 'patron', 'fines', 'payment')
+            );
             return '';
         }
         if (isset($response['error']) || !$response) {
-            $errorMessage = $response['error'] ?? 'Sendpayment returned false';
-            $this->handleCPUError('error sending payment: ' . $errorMessage);
+            $errorMessage = $response['error'] ?? 'sendPayment returned false';
+            $this->logPaymentError(
+                'error sending payment: ' . $errorMessage,
+                compact('user', 'patron', 'fines', 'payment')
+            );
             return '';
         }
 
         $response = json_decode($response);
 
         if (empty($response->Id) || empty($response->Status)) {
-            $this->handleCPUError('error starting payment, no response');
+            $this->logPaymentError(
+                'error starting payment, no response',
+                compact('user', 'patron', 'fines', 'payment')
+            );
             return '';
         }
 
         $status = intval($response->Status);
         if (in_array($status, [self::STATUS_ERROR, self::STATUS_INVALID_REQUEST])) {
             // System error or Request failed.
-            $this->handleCPUError('error starting transaction', $response);
+            $this->logPaymentError(
+                'error starting transaction',
+                compact('response', 'user', 'patron', 'fines', 'payment')
+            );
             return '';
         }
 
@@ -237,34 +273,36 @@ class CPU extends BaseHandler
             $response->Reference, $response->PaymentAddress
         ];
         if (!$this->verifyHash($params, $response->Hash)) {
-            $this->handleCPUError(
-                'error starting transaction, invalid checksum', $response
+            $this->logPaymentError(
+                'error starting transaction, invalid checksum',
+                compact('response', 'user', 'patron', 'fines', 'payment')
             );
             return '';
         }
 
         if ($status === self::STATUS_SUCCESS) {
             // Already processed
-            $this->handleCPUError(
+            $this->logPaymentError(
                 'error starting transaction, transaction already processed',
-                $response
+                compact('response', 'user', 'patron', 'fines', 'payment')
             );
             return '';
         }
 
         if ($status === self::STATUS_ID_EXISTS) {
             // Order exists
-            $this->handleCPUError(
+            $this->logPaymentError(
                 'error starting transaction, order exists',
-                $response
+                compact('response', 'user', 'patron', 'fines', 'payment')
             );
             return '';
         }
 
         if ($status === self::STATUS_CANCELLED) {
             // Cancelled
-            $this->handleCPUError(
-                'error starting transaction, order cancelled', $response
+            $this->logPaymentError(
+                'error starting transaction, order cancelled',
+                compact('response', 'user', 'patron', 'fines', 'payment')
             );
             return '';
         }
@@ -318,9 +356,9 @@ class CPU extends BaseHandler
                 continue;
             }
 
-            $this->handleCPUError(
+            $this->logPaymentError(
                 "missing parameter $name in payment response",
-                ['params' => $params, 'payload' => $payload]
+                compact('request', 'params', 'payload')
             );
 
             return false;
@@ -358,13 +396,14 @@ class CPU extends BaseHandler
 
         if (!$this->verifyHash([$id, $status, $reference], $hash)) {
             $this->setTransactionFailed($orderNum, 'invalid checksum');
-            $this->handleCPUError(
-                'error processing response: invalid checksum', $params
+            $this->logPaymentError(
+                'error processing response: invalid checksum',
+                compact('request', 'params')
             );
             return 'online_payment_failed';
         }
 
-        list($success, $data) = $this->getStartedTransaction($orderNum);
+        [$success, $data] = $this->getStartedTransaction($orderNum);
         if (!$success) {
             return $data;
         }
@@ -393,7 +432,7 @@ class CPU extends BaseHandler
     {
         foreach (['merchantId', 'secret', 'url'] as $req) {
             if (!isset($this->config[$req])) {
-                $this->logger->err("CPU: missing parameter $req");
+                $this->logger->err("missing parameter $req");
                 return false;
             }
         }
@@ -420,20 +459,5 @@ class CPU extends BaseHandler
     {
         $params[] = $this->config['secret'];
         return hash('sha256', implode('&', $params)) === $hash;
-    }
-
-    /**
-     * Handle error.
-     *
-     * @param string $msg      Error message.
-     * @param Object $response Response.
-     *
-     * @return void
-     */
-    protected function handleCPUError($msg, $response = '')
-    {
-        $this->logger->err(
-            "CPU error: $msg (response: " . var_export($response, true) . ')'
-        );
     }
 }

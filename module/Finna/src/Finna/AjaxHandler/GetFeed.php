@@ -37,7 +37,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Cache\Manager as CacheManager;
-use Vufind\ILS\Connection;
+use VuFind\ILS\Connection;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
 
@@ -117,9 +117,15 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
      * @param Url               $url          URL helper
      * @param CacheManager      $cm           Cache manager
      */
-    public function __construct(SessionSettings $ss, Config $config,
-        FeedService $fs, Loader $recordLoader, Connection $ils,
-        RendererInterface $renderer, Url $url, CacheManager $cm
+    public function __construct(
+        SessionSettings $ss,
+        Config $config,
+        FeedService $fs,
+        Loader $recordLoader,
+        Connection $ils,
+        RendererInterface $renderer,
+        Url $url,
+        CacheManager $cm
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;
@@ -170,7 +176,8 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
 
         if (!$feed) {
             return $this->formatResponse(
-                'Error reading feed', self::STATUS_HTTP_ERROR
+                'Error reading feed',
+                self::STATUS_HTTP_ERROR
             );
         }
 
@@ -204,7 +211,8 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
         $amount = $amount > 20 ? 20 : $amount;
 
         $ilsConfig = $this->ils->checkFunction(
-            'getTitleList', ['id' => $patronId]
+            'getTitleList',
+            ['id' => $patronId]
         );
         if (!$ilsConfig) {
             return $this->formatResponse('Missing configuration', 501);

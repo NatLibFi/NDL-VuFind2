@@ -57,7 +57,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
      * @param boolean $success  Was email sent successfully?
      * @param string  $errorMsg Error message (optional)
      *
-     * @return array with name, email
+     * @return void
      */
     protected function showResponse($view, $form, $success, $errorMsg = null)
     {
@@ -71,7 +71,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
      * Handles rendering and submit of dynamic forms.
      * Form configurations are specified in FeedbackForms.json
      *
-     * @return void
+     * @return mixed
      */
     public function formAction()
     {
@@ -98,7 +98,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             $this->getRequest()->getQuery('record_id')
         ))
         ) {
-            list($source, $recId) = explode('|', $id, 2);
+            [$source, $recId] = explode('|', $id, 2);
             $view->form->setRecord($this->getRecordLoader()->load($recId, $source));
             $data['record_id'] = $id;
         }
@@ -148,8 +148,14 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
      * @return array with elements success:boolean, errorMessage:string (optional)
      */
     protected function sendEmail(
-        $recipientName, $recipientEmail, $senderName, $senderEmail,
-        $replyToName, $replyToEmail, $emailSubject, $emailMessage
+        $recipientName,
+        $recipientEmail,
+        $senderName,
+        $senderEmail,
+        $replyToName,
+        $replyToEmail,
+        $emailSubject,
+        $emailMessage
     ) {
         $formId = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
         if (!$formId) {
@@ -166,14 +172,13 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
                 $this->getRequest()->getQuery('record_id')
             ))
             ) {
-                list($source, $recId) = explode('|', $id, 2);
+                [$source, $recId] = explode('|', $id, 2);
                 $driver = $this->getRecordLoader()->load($recId, $source);
                 $dataSource = $driver->getDataSource();
                 $dataSources = $this->serviceLocator
                     ->get(\VuFind\Config\PluginManager::class)->get('datasources');
                 $inst = $dataSources->$dataSource ?? null;
-                $recipientEmail = isset($inst->feedbackEmail) ?
-                    $inst->feedbackEmail : null;
+                $recipientEmail = $inst->feedbackEmail ?? null;
                 if ($recipientEmail == null) {
                     throw new \Exception(
                         'Error sending record feedback:'
@@ -212,7 +217,11 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
 
         $feedback = $this->getTable('Feedback');
         $feedback->saveFeedback(
-            $url, $formId, $userId, $message, $messageJson
+            $url,
+            $formId,
+            $userId,
+            $message,
+            $messageJson
         );
 
         return [true, null];

@@ -56,7 +56,7 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
             if ($facet !== $checkboxFacet['filter']) {
                 continue;
             }
-            list($field, $value) = explode(':', $facet, 2);
+            [$field, $value] = explode(':', $facet, 2);
             $checkboxResults = $results->getFacetList(
                 [$field => $value]
             );
@@ -98,7 +98,8 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
     {
         $setupCallback = function ($runner, $params, $searchId) use ($index, $loc) {
             $listener = new RecommendListener(
-                $this->recommendPluginManager, $searchId
+                $this->recommendPluginManager,
+                $searchId
             );
             $config = [];
             $rawConfig = $params->getOptions()

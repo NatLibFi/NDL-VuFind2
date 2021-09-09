@@ -27,6 +27,8 @@
  */
 namespace Finna\OnlinePayment;
 
+use Laminas\Stdlib\Parameters;
+
 /**
  * OnlinePayment module trait.
  *
@@ -75,12 +77,18 @@ trait OnlinePaymentModuleTrait
      * - response => Response body
      */
     protected function postRequest(
-        $url, $body, $options = [], $headers = [],
-        $username = null, $password = null
+        $url,
+        $body,
+        $options = [],
+        $headers = [],
+        $username = null,
+        $password = null
     ) {
         try {
             $client = $this->http->createClient(
-                $url, \Laminas\Http\Request::METHOD_POST, 30
+                $url,
+                \Laminas\Http\Request::METHOD_POST,
+                30
             );
             if (!empty($username) && !empty($password)) {
                 $client->setAuth($username, $password);
@@ -101,7 +109,7 @@ trait OnlinePaymentModuleTrait
                 "Error posting request: " . $e->getMessage()
                 . ", url: $url, body: $body, headers: " . var_export($headers, true)
             );
-            $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
+            $this->logger->logException($e, new Parameters());
             return false;
         }
 

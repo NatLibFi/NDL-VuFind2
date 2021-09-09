@@ -95,7 +95,9 @@ class SolrExtensionsListener
     public function __construct(
         BackendInterface $backend,
         ServiceLocatorInterface $serviceLocator,
-        $searchConfig, $facetConfig, $dataSourceConfig = 'datasources'
+        $searchConfig,
+        $facetConfig,
+        $dataSourceConfig = 'datasources'
     ) {
         $this->backend = $backend;
         $this->serviceLocator = $serviceLocator;
@@ -119,25 +121,6 @@ class SolrExtensionsListener
     }
 
     /**
-     * Customize Solr response.
-     *
-     * @param EventInterface $event Event
-     *
-     * @return EventInterface
-     */
-    public function onSearchPost(EventInterface $event)
-    {
-        $backend = $event->getParam('backend');
-        if ($backend != $this->backend->getIdentifier()) {
-            return $event;
-        }
-
-        if ($event->getParam('context') == 'search') {
-            $this->displayDebugInfo($event);
-        }
-    }
-
-    /**
      * Customize Solr request.
      *
      * @param EventInterface $event Event
@@ -146,8 +129,8 @@ class SolrExtensionsListener
      */
     public function onSearchPre(EventInterface $event)
     {
-        $backend = $event->getTarget();
-        if ($backend === $this->backend) {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backend->getIdentifier()) {
             $this->addDataSourceFilter($event);
             $context = $event->getParam('context');
             if (in_array($context, ['search', 'getids', 'workExpressions'])) {
@@ -156,6 +139,24 @@ class SolrExtensionsListener
             }
             if ('search' === $context) {
                 $this->addGeoFilterBoost($event);
+            }
+        }
+        return $event;
+    }
+
+    /**
+     * Customize Solr response.
+     *
+     * @param EventInterface $event Event
+     *
+     * @return EventInterface
+     */
+    public function onSearchPost(EventInterface $event)
+    {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backend->getIdentifier()) {
+            if ($event->getParam('context') == 'search') {
+                $this->displayDebugInfo($event);
             }
         }
         return $event;
@@ -223,20 +224,21 @@ class SolrExtensionsListener
                         }
                         foreach (preg_split('/\s+OR\s+/', $value) as $filter) {
                             $bq = substr_replace(
-                                $filter, 'score=recipDistance ', 10, 0
+                                $filter,
+                                'score=recipDistance ',
+                                10,
+                                0
                             );
                             $boosts[] = $bq;
                             // Add a separate boost for the centroid
                             $bq = preg_replace(
-                                '/sfield=\w+/', 'sfield=center_coords', $bq
+                                '/sfield=\w+/',
+                                'sfield=center_coords',
+                                $bq
                             );
                             $boosts[] = $bq;
                         }
                         $params->set('bq', $boosts);
-
-                        // Set also default query type since bq only works with
-                        // DisMax and eDisMax.
-                        $params->set('defType', 'edismax');
                     }
                 }
             }
@@ -295,32 +297,34 @@ class SolrExtensionsListener
         echo 'Query string: ' . $debugInfo['querystring'] . "\n\n";
         echo 'Parsed query: ' . $debugInfo['parsedquery'] . "\n\n";
         echo 'Query parser: ' . $debugInfo['QParser'] . "\n\n";
-        echo 'Alt query string: ' . $debugInfo['altquerystring'] . "\n\n";
+        if (!empty($debugInfo['altquerystring'])) {
+            echo 'Alt query string: ' . $debugInfo['altquerystring'] . "\n\n";
+        }
         echo "Boost functions:\n";
-        if ($debugInfo['boostfuncs']) {
+        if (!empty($debugInfo['boostfuncs'])) {
             echo '  ' . implode("\n  ", $debugInfo['boostfuncs']);
         }
         echo "\n\n";
         echo "Filter queries:\n";
-        if ($debugInfo['filter_queries']) {
+        if (!empty($debugInfo['filter_queries'])) {
             echo '  ' . implode("\n  ", $debugInfo['filter_queries']);
         }
         echo "\n\n";
         echo "Parsed filter queries:\n";
-        if ($debugInfo['parsed_filter_queries']) {
+        if (!empty($debugInfo['parsed_filter_queries'])) {
             echo '  ' . implode("\n  ", $debugInfo['parsed_filter_queries']);
         }
         echo "\n\n";
         echo "Timing:\n";
         echo "  Total: " . $debugInfo['timing']['time'] . "\n";
         echo "  Prepare:\n";
-        foreach ($debugInfo['timing']['prepare'] as $key => $value) {
+        foreach ($debugInfo['timing']['prepare'] ?? [] as $key => $value) {
             echo "    $key: ";
             echo is_array($value) ? $value['time'] : $value;
             echo "\n";
         }
         echo "  Process:\n";
-        foreach ($debugInfo['timing']['process'] as $key => $value) {
+        foreach ($debugInfo['timing']['process'] ?? [] as $key => $value) {
             echo "    $key: ";
             echo is_array($value) ? $value['time'] : $value;
             echo "\n";
@@ -359,10 +363,16 @@ class SolrExtensionsListener
     }
 
     /**
-     * Change the online_boolean filter to online_str_mv filter or
-     * free_online_boolean to free_online_str_mv filter if deduplication is enabled.
-     * Combine that with source_available_str_mv if no building filter is active
-     * or building_available_str_mv if building filter is active.
+     * Process availability checkbox filters
+     *
+     * Changes the following filters if deduplication is enabled:
+     *
+     *  - online_boolean            to online_str_mv
+     *  - free_online_boolean       to free_online_str_mv
+     *  - hires_image_boolean       to hires_image_str_mv
+     *  - source_available_str_mv:* to source_available_str_mv:(...) or
+     *                                 building_available_str_mv:(...) if a building
+     *                                 filter is active
      *
      * @param EventInterface $event Event
      *
@@ -385,17 +395,19 @@ class SolrExtensionsListener
                 );
 
                 if (!empty($searchConfig->Records->deduplication)) {
-                    foreach ($filters as $key => $value) {
-                        if ($value === 'online_boolean:"1"'
-                            || $value === 'free_online_boolean:"1"'
-                        ) {
-                            unset($filters[$key]);
-                            $filter = $value == 'online_boolean:"1"'
-                                ? 'online_str_mv' : 'free_online_str_mv';
-                            $filter .= ':(' . implode(' OR ', $sources) . ')';
-                            $filters[] = $filter;
-                            $params->set('fq', $filters);
-                            break;
+                    $prefixes = [
+                        'online', 'free_online', 'hires_images'
+                    ];
+                    foreach ($prefixes as $prefix) {
+                        foreach ($filters as $key => $value) {
+                            if ($value === $prefix . '_boolean:"1"') {
+                                unset($filters[$key]);
+                                $filter = $prefix . '_str_mv:('
+                                    . implode(' OR ', $sources) . ')';
+                                $filters[] = $filter;
+                                $params->set('fq', $filters);
+                                break;
+                            }
                         }
                     }
                 }

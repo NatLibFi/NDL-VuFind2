@@ -100,9 +100,14 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
      * @param User|bool       $user      Logged in user (or false)
      * @param Record          $rp        Record plugin
      */
-    public function __construct(SessionSettings $ss,
-        Config $config, Loader $loader, UserTable $userTable, UserList $userList,
-        $user, Record $rp
+    public function __construct(
+        SessionSettings $ss,
+        Config $config,
+        Loader $loader,
+        UserTable $userTable,
+        UserList $userList,
+        $user,
+        Record $rp
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;
@@ -130,7 +135,7 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
         $listId = $params->fromQuery('listId');
 
         if (null === ($source = $params->fromQuery('source'))) {
-            list($source, $recId) = explode('.', $id, 2);
+            [$source, $recId] = explode('.', $id, 2);
             if ('pci' === $source) {
                 $source = 'Primo';
             } else {

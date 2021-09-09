@@ -40,13 +40,14 @@ namespace Finna\RecordDriver;
  */
 interface FinnaRecordLabelInterface
 {
-    const FULL_TEXT_AVAILABLE = 'full_text_available';
+    public const FULL_TEXT_AVAILABLE = 'full_text_available';
 
-    const OPEN_ACCESS = 'open_access';
+    public const OPEN_ACCESS = 'open_access';
 
-    const PEER_REVIEWED = 'peer_reviewed';
+    public const PEER_REVIEWED = 'peer_reviewed';
 
-    const R2_RESTRICTED_METADATA_AVAILABLE = 'R2_restricted_metadata_available';
+    public const R2_RESTRICTED_METADATA_AVAILABLE
+        = 'R2_restricted_metadata_available';
 
-    const R2_RESTRICTED_METADATA_INCLUDED = 'R2_restricted_metadata_included';
+    public const R2_RESTRICTED_METADATA_INCLUDED = 'R2_restricted_metadata_included';
 }

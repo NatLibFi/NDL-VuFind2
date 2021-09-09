@@ -60,7 +60,9 @@ class EditListResourceFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -71,7 +73,8 @@ class EditListResourceFactory
         return new $requestedName(
             $tablePluginManager->get(\VuFind\Db\Table\UserResource::class),
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
-            $capabilities->getListSetting() !== 'disabled'
+            $capabilities->getListSetting() !== 'disabled',
+            $container->get('ViewRenderer')->plugin('markdown')
         );
     }
 }

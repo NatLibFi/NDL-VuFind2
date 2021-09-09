@@ -99,6 +99,13 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
     protected $stopWords = ['and', 'not', 'the'];
 
     /**
+     * Whether to exclude other versions of the reference record from results
+     *
+     * @var bool
+     */
+    protected $excludeOtherVersions = false;
+
+    /**
      * Constructor.
      *
      * @param \Laminas\Config\Config $searchConfig Search config
@@ -107,17 +114,16 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
      *
      * @return void
      */
-    public function __construct(\Laminas\Config\Config $searchConfig = null,
+    public function __construct(
+        \Laminas\Config\Config $searchConfig = null,
         $uniqueKey = 'id'
     ) {
         $this->uniqueKey = $uniqueKey;
         if (isset($searchConfig->MoreLikeThis)) {
             $mlt = $searchConfig->MoreLikeThis;
-            if (isset($mlt->useMoreLikeThisHandler)
-                && $mlt->useMoreLikeThisHandler
-            ) {
+            if (!empty($mlt->useMoreLikeThisHandler)) {
                 $this->useHandler = true;
-                $this->handlerParams = isset($mlt->params) ? $mlt->params : '';
+                $this->handlerParams = $mlt->params ?? '';
             }
             if (isset($mlt->count)) {
                 $this->count = $mlt->count;
@@ -125,6 +131,7 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
             if (isset($mlt->fullMatchBoostMultiplier)) {
                 $this->fullMatchBoostMultiplier = $mlt->fullMatchBoostMultiplier;
             }
+            $this->excludeOtherVersions = !empty($mlt->excludeOtherVersions);
         }
     }
 
@@ -196,9 +203,23 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
             }
         }
         if (!$query) {
-            $query[] = 'noproperinterestingtermsfound';
+            $queryStr = 'noproperinterestingtermsfound';
+        } else {
+            $queryStr = implode(' OR ', $query);
+            if ($this->excludeOtherVersions) {
+                // Filter out records with same work keys
+                $parts = [];
+                foreach ((array)($record['work_keys_str_mv'] ?? []) as $workKey) {
+                    $workKey = addcslashes($workKey, $this->escapedChars);
+                    $parts[] = "work_keys_str_mv:(\"$workKey\")";
+                }
+                if ($parts) {
+                    $queryStr = "($queryStr) AND NOT ("
+                        . implode(' OR ', $parts) . ')';
+                }
+            }
         }
-        $params->set('q', implode(' OR ', $query));
+        $params->set('q', $queryStr);
 
         if (null === $params->get('rows')) {
             $params->set('rows', $this->count);

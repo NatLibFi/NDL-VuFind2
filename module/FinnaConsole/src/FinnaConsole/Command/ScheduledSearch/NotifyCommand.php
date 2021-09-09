@@ -79,6 +79,34 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
     protected $confDir = 'local';
 
     /**
+     * View base directory
+     *
+     * @var string
+     */
+    protected $viewBaseDir = '';
+
+    /**
+     * View local configuration base directory
+     *
+     * @var string
+     */
+    protected $baseDir = '';
+
+    /**
+     * Schedule base url
+     *
+     * @var string
+     */
+    protected $scheduleBaseUrl = '';
+
+    /**
+     * VuFind local directory
+     *
+     * @var string
+     */
+    protected $localDir = '';
+
+    /**
      * Run the command.
      *
      * @param InputInterface  $input  Input object
@@ -143,7 +171,9 @@ For example:
 EOT
             )
             ->addArgument(
-                'view_base', InputArgument::REQUIRED, 'View base directory'
+                'view_base',
+                InputArgument::REQUIRED,
+                'View base directory'
             )
             ->addArgument(
                 'local_conf',

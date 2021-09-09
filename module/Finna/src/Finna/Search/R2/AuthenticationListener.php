@@ -86,8 +86,11 @@ class AuthenticationListener
      *
      * @return void
      */
-    public function __construct(BackendInterface $backend, R2SupportService $r2,
-        Connector $connector, RemsService $rems
+    public function __construct(
+        BackendInterface $backend,
+        R2SupportService $r2,
+        Connector $connector,
+        RemsService $rems
     ) {
         $this->backend = $backend;
         $this->r2SupportService = $r2;

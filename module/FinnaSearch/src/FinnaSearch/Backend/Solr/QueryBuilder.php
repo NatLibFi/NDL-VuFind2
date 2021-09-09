@@ -53,6 +53,31 @@ use VuFindSearch\Query\QueryGroup;
 class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
 {
     /**
+     * Maximum number of words in search query for spellcheck to be used
+     */
+    protected $maxSpellcheckWords;
+
+    /**
+     * Constructor.
+     *
+     * @param array  $specs                Search handler specifications
+     * @param string $defaultDismaxHandler Default dismax handler (if no
+     *                                     DismaxHandler set in specs).
+     * @param int    $maxSpellcheckWords   Max number of words in query for
+     *                                     spellcheck to be used
+     *
+     * @return void
+     */
+    public function __construct(
+        array $specs = [],
+        $defaultDismaxHandler = 'dismax',
+        $maxSpellcheckWords = 5
+    ) {
+        parent::__construct($specs, $defaultDismaxHandler);
+        $this->maxSpellcheckWords = $maxSpellcheckWords;
+    }
+
+    /**
      * Return SOLR search parameters based on a user query and params.
      *
      * @param AbstractQuery $query User query
@@ -62,6 +87,12 @@ class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
     public function build(AbstractQuery $query)
     {
         $params = parent::build($query);
+
+        if ($this->createSpellingQuery && ($sq = $params->get('spellcheck.q'))) {
+            if (str_word_count(end($sq)) > $this->maxSpellcheckWords) {
+                $params->set('spellcheck.q', '');
+            }
+        }
 
         if (!($query instanceof QueryGroup)) {
             $q = $params->get('q');
@@ -91,7 +122,8 @@ class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
     {
         if ($component instanceof QueryGroup) {
             $reduced = array_map(
-                [$this, 'reduceQueryGroupComponents'], $component->getQueries()
+                [$this, 'reduceQueryGroupComponents'],
+                $component->getQueries()
             );
             $searchString = $component->isNegated() ? 'NOT ' : '';
             $reduced = array_filter(
@@ -102,7 +134,8 @@ class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
             );
             if ($reduced) {
                 $searchString .= sprintf(
-                    '(%s)', implode(" {$component->getOperator()} ", $reduced)
+                    '(%s)',
+                    implode(" {$component->getOperator()} ", $reduced)
                 );
             }
         } else {
