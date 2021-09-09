@@ -57,7 +57,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
      * @param boolean $success  Was email sent successfully?
      * @param string  $errorMsg Error message (optional)
      *
-     * @return array with name, email
+     * @return void
      */
     protected function showResponse($view, $form, $success, $errorMsg = null)
     {
@@ -148,8 +148,14 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
      * @return array with elements success:boolean, errorMessage:string (optional)
      */
     protected function sendEmail(
-        $recipientName, $recipientEmail, $senderName, $senderEmail,
-        $replyToName, $replyToEmail, $emailSubject, $emailMessage
+        $recipientName,
+        $recipientEmail,
+        $senderName,
+        $senderEmail,
+        $replyToName,
+        $replyToEmail,
+        $emailSubject,
+        $emailMessage
     ) {
         $formId = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
         if (!$formId) {
@@ -211,7 +217,11 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
 
         $feedback = $this->getTable('Feedback');
         $feedback->saveFeedback(
-            $url, $formId, $userId, $message, $messageJson
+            $url,
+            $formId,
+            $userId,
+            $message,
+            $messageJson
         );
 
         return [true, null];

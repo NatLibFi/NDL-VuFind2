@@ -55,7 +55,10 @@ class Backend extends \VuFindSearch\Backend\Solr\Backend
      *
      * @return RecordCollectionInterface
      */
-    public function search(AbstractQuery $query, $offset, $limit,
+    public function search(
+        AbstractQuery $query,
+        $offset,
+        $limit,
         ParamBag $params = null
     ) {
         // Enforce a hard limit to avoid problems due to bad configuration

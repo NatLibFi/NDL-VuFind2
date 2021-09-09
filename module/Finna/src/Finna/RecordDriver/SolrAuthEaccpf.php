@@ -41,10 +41,10 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthEacCpf extends SolrAuthDefault
 {
-    use SolrAuthFinnaTrait {
+    use Feature\SolrAuthFinnaTrait {
         getOccupations as _getOccupations;
     }
-    use XmlReaderTrait;
+    use Feature\FinnaXmlReaderTrait;
 
     /**
      * Get authority title

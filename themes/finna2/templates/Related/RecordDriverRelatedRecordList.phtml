@@ -8,8 +8,8 @@
         <ul class="list-group list-sub-group <?=$this->escapeHtmlAttr($type)?>">
         <?php foreach ($records as $record): ?>
         <?php $formats = $record->getFormats(); ?>
-          <li>    
-            <a href="<?=$this->recordLink()->getUrl($record)?>">
+          <li>
+            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($record))?>">
               <?=$this->escapeHtml($record->getTitle())?>
             </a>
             <?=$this->record($record)->getFormatList();?>

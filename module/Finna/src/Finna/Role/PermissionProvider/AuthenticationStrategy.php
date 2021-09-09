@@ -83,8 +83,11 @@ class AuthenticationStrategy implements PermissionProviderInterface
      * @param ILSAuthenticator $ilsAuth ILS authenticator
      * @param SessionContainer $session Session container
      */
-    public function __construct(AuthManager $am, ILSConnection $ils,
-        ILSAuthenticator $ilsAuth, SessionContainer $session
+    public function __construct(
+        AuthManager $am,
+        ILSConnection $ils,
+        ILSAuthenticator $ilsAuth,
+        SessionContainer $session
     ) {
         $this->authManager = $am;
         $this->ils = $ils;

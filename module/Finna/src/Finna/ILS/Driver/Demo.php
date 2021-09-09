@@ -186,7 +186,10 @@ class Demo extends \VuFind\ILS\Driver\Demo
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         if ((rand() % 10) > 8) {

@@ -60,15 +60,17 @@ class GetAuthorityInfoFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
         $result = new $requestedName(
-            $container->get('VuFind\Session\Settings'),
-            $container->get('VuFind\Record\Loader'),
+            $container->get(\VuFind\Session\Settings::class),
+            $container->get(\VuFind\Record\Loader::class),
             $container->get('ViewRenderer')
         );
         return $result;

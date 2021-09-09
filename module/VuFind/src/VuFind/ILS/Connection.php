@@ -127,7 +127,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
      * @param \VuFind\Config\PluginManager     $configReader  Configuration loader
      * @param \Laminas\Http\Request            $request       Request object
      */
-    public function __construct(\Laminas\Config\Config $config,
+    public function __construct(
+        \Laminas\Config\Config $config,
         \VuFind\ILS\Driver\PluginManager $driverManager,
         \VuFind\Config\PluginManager $configReader,
         \Laminas\Http\Request $request = null
@@ -305,7 +306,9 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
         try {
             // Extract the configuration from the driver if available:
             $functionConfig = $this->checkCapability(
-                'getConfig', [$function, $params], true
+                'getConfig',
+                [$function, $params],
+                true
             ) ? $this->getDriver()->getConfig($function, $params) : false;
 
             // See if we have a corresponding check method to analyze the response:
@@ -474,7 +477,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
         // $params doesn't include all of the keys used by
         // placeStorageRetrievalRequest, but it is the best we can do in the context.
         $check = $this->checkCapability(
-            'placeStorageRetrievalRequest', [$params ?: []]
+            'placeStorageRetrievalRequest',
+            [$params ?: []]
         );
         if ($check && isset($functionConfig['HMACKeys'])) {
             $response = ['function' => 'placeStorageRetrievalRequest'];
@@ -504,7 +508,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function checkMethodcancelStorageRetrievalRequests($functionConfig,
+    protected function checkMethodcancelStorageRetrievalRequests(
+        $functionConfig,
         $params
     ) {
         $response = false;
@@ -513,7 +518,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
             && $this->config->cancel_storage_retrieval_requests_enabled
         ) {
             $check = $this->checkCapability(
-                'cancelStorageRetrievalRequests', [$params ?: []]
+                'cancelStorageRetrievalRequests',
+                [$params ?: []]
             );
             if ($check) {
                 $response = ['function' => 'cancelStorageRetrievalRequests'];
@@ -523,7 +529,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
                     $params['patron'] ?? null
                 ];
                 $check2 = $this->checkCapability(
-                    'getCancelStorageRetrievalRequestLink', $cancelParams
+                    'getCancelStorageRetrievalRequestLink',
+                    $cancelParams
                 );
                 if ($check2) {
                     $response = [
@@ -596,7 +603,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
             && $this->config->cancel_ill_requests_enabled
         ) {
             $check = $this->checkCapability(
-                'cancelILLRequests', [$params ?: []]
+                'cancelILLRequests',
+                [$params ?: []]
             );
             if ($check) {
                 $response = ['function' => 'cancelILLRequests'];
@@ -606,7 +614,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
                     $params['patron'] ?? null
                 ];
                 $check2 = $this->checkCapability(
-                    'getCancelILLRequestLink', $cancelParams
+                    'getCancelILLRequestLink',
+                    $cancelParams
                 );
                 if ($check2) {
                     $response = [
@@ -769,11 +778,14 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
     {
         try {
             $check = $this->checkCapability(
-                'checkStorageRetrievalRequestIsValid', [$id, $data, $patron]
+                'checkStorageRetrievalRequestIsValid',
+                [$id, $data, $patron]
             );
             if ($check) {
                 return $this->getDriver()->checkStorageRetrievalRequestIsValid(
-                    $id, $data, $patron
+                    $id,
+                    $data,
+                    $patron
                 );
             }
         } catch (\Exception $e) {
@@ -805,7 +817,9 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
             $params = [$id, $data, $patron];
             if ($this->checkCapability('checkILLRequestIsValid', $params)) {
                 return $this->getDriver()->checkILLRequestIsValid(
-                    $id, $data, $patron
+                    $id,
+                    $data,
+                    $patron
                 );
             }
         } catch (\Exception $e) {
@@ -989,7 +1003,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
     public function getPasswordPolicy($patron)
     {
         return $this->checkCapability(
-            'getConfig', ['changePassword', compact('patron')]
+            'getConfig',
+            ['changePassword', compact('patron')]
         ) ? $this->getDriver()->getConfig('changePassword', compact('patron'))
             : false;
     }
@@ -1091,7 +1106,8 @@ class Connection implements TranslatorAwareInterface, LoggerAwareInterface
         try {
             if ($this->checkCapability($methodName, $params)) {
                 return call_user_func_array(
-                    [$this->getDriver(), $methodName], $params
+                    [$this->getDriver(), $methodName],
+                    $params
                 );
             }
         } catch (\Exception $e) {

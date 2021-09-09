@@ -226,7 +226,8 @@ class FinnaSuggestions implements
             ]
         );
         $client->getRequest()->getHeaders()->addHeaderLine(
-            'Accept', 'application/json'
+            'Accept',
+            'application/json'
         );
         $client->setParameterGet(['limit' => 0]);
         $response = $client->setMethod('GET')->send();

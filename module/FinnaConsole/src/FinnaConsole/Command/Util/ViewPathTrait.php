@@ -87,7 +87,8 @@ trait ViewPathTrait
                 [$institution, $view]
                     = explode(
                         '/',
-                        $this->datasourceConfig[$institution]['mainView'], 2
+                        $this->datasourceConfig[$institution]['mainView'],
+                        2
                     );
             }
         }

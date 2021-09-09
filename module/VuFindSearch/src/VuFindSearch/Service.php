@@ -110,16 +110,17 @@ class Service
         // All other legacy event parameters are accessible via the command object.
         $args = ['command' => $command];
 
-        $backendInstance = $this->resolve($command->getTargetBackendName(), $args);
+        $backendInstance = $this->resolve($command->getTargetIdentifier(), $args);
 
-        $this->triggerPre($command, $args);
+        $this->triggerPre($this, $args);
         try {
             $command->execute($backendInstance);
         } catch (BackendException $e) {
-            $this->triggerError($e, $args);
+            $args['error'] = $e;
+            $this->triggerError($this, $args);
             throw $e;
         }
-        $this->triggerPost($command, $args);
+        $this->triggerPost($this, $args);
 
         return $command;
     }
@@ -137,12 +138,17 @@ class Service
      *
      * @deprecated Use Service::invoke(SearchCommand $command) instead
      */
-    public function search($backend, Query\AbstractQuery $query, $offset = 0,
-        $limit = 20, ParamBag $params = null
+    public function search(
+        $backend,
+        Query\AbstractQuery $query,
+        $offset = 0,
+        $limit = 20,
+        ParamBag $params = null
     ) {
         $command = new SearchCommand($backend, $query, $offset, $limit, $params);
         return $this->legacyInvoke(
-            $command, ['query' => $query, 'offset' => $offset, 'limit' => $limit]
+            $command,
+            ['query' => $query, 'offset' => $offset, 'limit' => $limit]
         );
     }
 
@@ -159,12 +165,17 @@ class Service
      *
      * @deprecated Use Service::invoke(GetIdsCommand $command) instead
      */
-    public function getIds($backend, Query\AbstractQuery $query, $offset = 0,
-        $limit = 20, ParamBag $params = null
+    public function getIds(
+        $backend,
+        Query\AbstractQuery $query,
+        $offset = 0,
+        $limit = 20,
+        ParamBag $params = null
     ) {
         $command = new GetIdsCommand($backend, $query, $offset, $limit, $params);
         return $this->legacyInvoke(
-            $command, ['query' => $query, 'offset' => $offset, 'limit' => $limit]
+            $command,
+            ['query' => $query, 'offset' => $offset, 'limit' => $limit]
         );
     }
 
@@ -250,7 +261,10 @@ class Service
      *
      * @deprecated Use Service::invoke(WorkExpressionsCommand $command) instead
      */
-    public function workExpressions($backend, $id, $workKeys = null,
+    public function workExpressions(
+        $backend,
+        $id,
+        $workKeys = null,
         ParamBag $params = null
     ) {
         $command = new WorkExpressionsCommand($backend, $id, $workKeys, $params);
@@ -298,11 +312,12 @@ class Service
      */
     protected function legacyInvoke(CommandInterface $command, array $args = [])
     {
-        $backend = $command->getTargetBackendName();
+        $backend = $command->getTargetIdentifier();
         $params = $command->getSearchParameters();
         $context = $command->getContext();
         $args = array_merge(
-            compact('backend', 'params', 'context', 'command'), $args
+            compact('backend', 'params', 'context', 'command'),
+            $args
         );
 
         $backendInstance = $this->resolve($backend, $args);
@@ -312,6 +327,7 @@ class Service
         try {
             $response = $command->execute($backendInstance)->getResult();
         } catch (BackendException $e) {
+            $args['error'] = $e;
             $this->triggerError($e, $args);
             throw $e;
         }
@@ -342,10 +358,19 @@ class Service
                 $args
             );
             if (!$response->stopped()) {
+                // We need to construct our error message differently depending
+                // on whether or not we have a command object...
+                $context = isset($args['command'])
+                    ? $args['command']->getContext()
+                    : ($args['context'] ?? 'null');
+                $backend = isset($args['command'])
+                    ? $args['command']->getTargetIdentifier()
+                    : ($args['backend'] ?? $backend);
                 throw new Exception\RuntimeException(
                     sprintf(
-                        'Unable to resolve backend: %s, %s', $args['context'],
-                        $args['backend']
+                        'Unable to resolve backend: %s, %s',
+                        $context,
+                        $backend
                     )
                 );
             }
@@ -357,20 +382,21 @@ class Service
     /**
      * Trigger the error event.
      *
-     * @param BackendException $exception Error exception
-     * @param array            $args      Event arguments
+     * @param mixed $target Service instance, or error exception for deprecated
+     *                      legacy events
+     * @param array $args   Event arguments
      *
      * @return void
      */
-    public function triggerError(BackendException $exception, $args)
+    public function triggerError($target, $args)
     {
-        $this->getEventManager()->trigger(self::EVENT_ERROR, $exception, $args);
+        $this->getEventManager()->trigger(self::EVENT_ERROR, $target, $args);
     }
 
     /**
      * Trigger the pre event.
      *
-     * @param mixed $target Command object, or backend instance for deprecated
+     * @param mixed $target Service instance, or backend instance for deprecated
      *                      legacy events
      * @param array $args   Event arguments
      *
@@ -384,7 +410,7 @@ class Service
     /**
      * Trigger the post event.
      *
-     * @param mixed $target Command object, or backend response for deprecated
+     * @param mixed $target Service instance, or backend response for deprecated
      *                      legacy events
      * @param array $args   Event arguments
      *

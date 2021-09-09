@@ -12,7 +12,7 @@
 </div>
 
 <?php if ($user): ?>
-  <form class="comment-form" action="<?=$this->recordLink()->getActionUrl($this->driver, 'AddComment')?>" method="post">
+  <form class="comment-form" action="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'AddComment'))?>" method="post">
     <div class="comment-col">
       <div>
         <input type="hidden" name="id" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>"/>

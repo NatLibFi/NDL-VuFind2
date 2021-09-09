@@ -47,14 +47,14 @@ class Suomifi extends Shibboleth
      *
      * @var string
      */
-    const EVENT_LOGIN = 'login';
+    public const EVENT_LOGIN = 'login';
 
     /**
      * Logout event.
      *
      * @var string
      */
-    const EVENT_LOGOUT = 'logout';
+    public const EVENT_LOGOUT = 'logout';
 
     /**
      * Event manager.
@@ -100,12 +100,15 @@ class Suomifi extends Shibboleth
                 parent::getServerParam($request, $config->username)
             );
             $session = new \Laminas\Session\Container(
-                'Shibboleth', $this->sessionManager
+                'Shibboleth',
+                $this->sessionManager
             );
             $session['identity_number'] = $encrypted;
         }
         $this->events->trigger(
-            self::EVENT_LOGIN, 'Finna\Auth\Suomifi', ['user' => $result]
+            self::EVENT_LOGIN,
+            'Finna\Auth\Suomifi',
+            ['user' => $result]
         );
         return $result;
     }
@@ -158,7 +161,9 @@ class Suomifi extends Shibboleth
         }
         // Set 'auth_method' to Suomifi
         $url = str_replace(
-            'auth_method%3DShibboleth', 'auth_method%3DSuomifi', $url
+            'auth_method%3DShibboleth',
+            'auth_method%3DSuomifi',
+            $url
         );
         return $url;
     }
@@ -174,7 +179,9 @@ class Suomifi extends Shibboleth
      * @throws AuthException
      * @return mixed
      */
-    protected function getServerParam($request, $param
+    protected function getServerParam(
+        $request,
+        $param
     ) {
         $val = parent::getServerParam($request, $param);
 

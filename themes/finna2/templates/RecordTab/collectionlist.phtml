@@ -42,17 +42,20 @@
     $filterCount = $this->search()->getFilterCount($checkboxFilters, $filterList);
   ?>
   <?php if (!empty($params->getFilterList(false))): ?>
-    <?=$this->render('search/filters.phtml',
-      [
-        'filterList' => $filterList,
-        'checkboxFilters' => $checkboxFilters,
-        'defaultSortApplied' => $defaultSortApplied,
-        'options' => $options,
-        'params' => $params,
-        'urlQuery' => $results->getUrlQuery(),
-        'isCollectionTab' => true
-      ]
-    ); ?>
+    <?=
+      $this->render(
+          'search/filters.phtml',
+          [
+              'filterList' => $filterList,
+              'checkboxFilters' => $checkboxFilters,
+              'defaultSortApplied' => $defaultSortApplied,
+              'options' => $options,
+              'params' => $params,
+              'urlQuery' => $results->getUrlQuery(),
+              'isCollectionTab' => true
+          ]
+      )
+    ?>
   <?php endif; ?>
 
   <?php if (($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>

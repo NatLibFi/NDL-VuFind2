@@ -36,11 +36,11 @@
   }
 
   $initParams = json_encode(
-    [
-      'id' => $this->id,
-      'consortiumInfo' => $this->consortiumInfo ? 1 : 0,
-      'buildings' => $this->buildings
-    ]
+      [
+          'id' => $this->id,
+          'consortiumInfo' => $this->consortiumInfo ? 1 : 0,
+          'buildings' => $this->buildings
+      ]
   );
   $setupJS = <<<JS
 $(document).ready(function() {

@@ -30,7 +30,6 @@ namespace VuFindSearch\Command;
 
 use VuFindSearch\Backend\BackendInterface;
 use VuFindSearch\Backend\Exception\BackendException;
-use VuFindSearch\Exception\RuntimeException;
 use VuFindSearch\ParamBag;
 
 /**
@@ -87,8 +86,13 @@ abstract class CallMethodCommand extends AbstractBase
      *                                   search interface method is used as the
      *                                   context.
      */
-    public function __construct(string $backend, string $interface, string $method,
-        array $args, ?ParamBag $params = null, bool $addParamsToArgs = true,
+    public function __construct(
+        string $backend,
+        string $interface,
+        string $method,
+        array $args,
+        ?ParamBag $params = null,
+        bool $addParamsToArgs = true,
         $context = null
     ) {
         parent::__construct($backend, $context ?: $method, $params);
@@ -107,11 +111,7 @@ abstract class CallMethodCommand extends AbstractBase
      */
     public function execute(BackendInterface $backendInstance): CommandInterface
     {
-        if (($backend = $backendInstance->getIdentifier()) !== $this->backend) {
-            throw new RuntimeException(
-                "Excpected backend instance $this->backend instead of $backend"
-            );
-        }
+        $this->validateBackend($backendInstance);
         if (!($backendInstance instanceof $this->interface)
             || !method_exists($this->interface, $this->method)
         ) {
@@ -123,9 +123,18 @@ abstract class CallMethodCommand extends AbstractBase
         if ($this->addParamsToArgs) {
             $callArgs[] = $this->params;
         }
-        $this->result
-            = call_user_func([$backendInstance, $this->method], ...$callArgs);
+        return $this->finalizeExecution(
+            call_user_func([$backendInstance, $this->method], ...$callArgs)
+        );
+    }
 
-        return parent::execute($backendInstance);
+    /**
+     * Get function arguments.
+     *
+     * @return array
+     */
+    public function getArguments(): array
+    {
+        return $this->args;
     }
 }

@@ -43,28 +43,28 @@ class Form extends \VuFind\Form\Form
      *
      * @var string
      */
-    const HANDLER_EMAIL = 'email';
+    public const HANDLER_EMAIL = 'email';
 
     /**
      * Database form handler
      *
      * @var string
      */
-    const HANDLER_DATABASE = 'database';
+    public const HANDLER_DATABASE = 'database';
 
     /**
      * Site feedback form id.
      *
      * @var string
      */
-    const FEEDBACK_FORM = 'FeedbackSite';
+    public const FEEDBACK_FORM = 'FeedbackSite';
 
     /**
      * Record feedback form id.
      *
      * @var string
      */
-    const RECORD_FEEDBACK_FORM = 'FeedbackRecord';
+    public const RECORD_FEEDBACK_FORM = 'FeedbackRecord';
 
     /**
      * Form id
@@ -404,7 +404,7 @@ class Form extends \VuFind\Form\Form
 
         // Help text from configuration
         $pre = isset($this->formConfig['help']['pre'])
-            && !$translationEmpty->__invoke($this->formConfig['help']['pre'])
+            && !$translationEmpty($this->formConfig['help']['pre'])
             ? $this->translate($this->formConfig['help']['pre'])
             : null;
 
@@ -424,14 +424,16 @@ class Form extends \VuFind\Form\Form
         if ($this->formId === self::RECORD_FEEDBACK_FORM && null !== $this->record) {
             // Append receiver info after general record feedback instructions
             // (translation key for this is defined in FeedbackForms.yaml)
-            if (!$translationEmpty->__invoke('feedback_recipient_info_record')) {
+            if (!$translationEmpty('feedback_recipient_info_record')) {
                 if (!empty($pre)) {
                     $pre .= '<br><br>';
                 }
                 $pre .= $transEsc(
                     'feedback_recipient_info_record',
-                    ['%%institution%%'
-                         => $organisationDisplayName->__invoke($this->record, true)]
+                    [
+                        '%%institution%%'
+                            => ($organisationDisplayName)($this->record, true)
+                    ]
                 );
             }
             $datasourceKey = 'feedback_recipient_info_record_'
@@ -449,7 +451,9 @@ class Form extends \VuFind\Form\Form
             // Receiver info
             $institution = $this->institution;
             $institutionName = $this->translate(
-                "institution::$institution", null, $institution
+                "institution::$institution",
+                null,
+                $institution
             );
 
             // Try to handle cases like tritonia-tria
@@ -457,7 +461,9 @@ class Form extends \VuFind\Form\Form
             ) {
                 $part = substr($institution, 0, strpos($institution, '-'));
                 $institutionName = $this->translate(
-                    "institution::$part", null, $institution
+                    "institution::$part",
+                    null,
+                    $institution
                 );
             }
 
@@ -466,7 +472,8 @@ class Form extends \VuFind\Form\Form
                 : 'feedback_recipient_info';
 
             $recipientInfo = $this->translate(
-                $translationKey, ['%%institution%%' => $institutionName]
+                $translationKey,
+                ['%%institution%%' => $institutionName]
             );
 
             if (!empty($pre)) {

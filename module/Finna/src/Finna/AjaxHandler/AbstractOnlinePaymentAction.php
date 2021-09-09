@@ -95,8 +95,12 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
      * @param OnlinePayment    $op  Online payment manager
      * @param SessionContainer $os  Online payment session
      */
-    public function __construct(SessionSettings $ss, Connection $ils,
-        TransactionTable $tt, UserCardTable $uc, OnlinePayment $op,
+    public function __construct(
+        SessionSettings $ss,
+        Connection $ils,
+        TransactionTable $tt,
+        UserCardTable $uc,
+        OnlinePayment $op,
         SessionContainer $os
     ) {
         $this->sessionSettings = $ss;
@@ -179,7 +183,8 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         $patron = null;
         try {
             $patron = $this->ils->patronLogin(
-                $userCard['cat_username'], $userCard->getCatPassword()
+                $userCard['cat_username'],
+                $userCard->getCatPassword()
             );
         } catch (\Exception $e) {
             $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
@@ -201,7 +206,8 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
             );
 
             $this->transactionTable->setTransactionRegistrationFailed(
-                $t['transaction_id'], 'patronLogin error'
+                $t['transaction_id'],
+                'patronLogin error'
             );
             return ['success' => false];
         }
@@ -263,7 +269,8 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
             $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
 
             $result = $this->transactionTable->setTransactionRegistrationFailed(
-                $tId, $e->getMessage()
+                $tId,
+                $e->getMessage()
             );
             if (!$result) {
                 $this->logError(

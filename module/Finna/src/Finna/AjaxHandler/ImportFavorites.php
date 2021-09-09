@@ -124,10 +124,15 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase
      * @param Loader            $rl        Record loader
      * @param FavoritesService  $favorites Favorites service
      */
-    public function __construct($user, RendererInterface $renderer,
-        SearchTable $st, UserListTable $ult,
-        UserResourceTable $urt, ResultsManager $rm,
-        Loader $rl, FavoritesService $favorites
+    public function __construct(
+        $user,
+        RendererInterface $renderer,
+        SearchTable $st,
+        UserListTable $ult,
+        UserResourceTable $urt,
+        ResultsManager $rm,
+        Loader $rl,
+        FavoritesService $favorites
     ) {
         $this->user = $user;
         $this->renderer = $renderer;

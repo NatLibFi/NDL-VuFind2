@@ -104,11 +104,18 @@
       <?php if ($rights || !empty($coreFields)): ?>
         <table class="table table-finna-record record-details record-field-groups">
           <?php if ($rights): ?>
-            <?= $this->record($this->driver)->renderTemplate('core-field-group-fields.phtml',
-              ['data' => [[
-                'label' => 'Image Rights',
-                'value' => $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights])
-              ]]]);
+            <?=
+              $this->record($this->driver)->renderTemplate(
+                  'core-field-group-fields.phtml',
+                  [
+                      'data' => [
+                          [
+                              'label' => 'Image Rights',
+                              'value' => $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights])
+                          ]
+                      ]
+                  ]
+              )
             ?>
           <?php endif; ?>
           <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFields]);?>

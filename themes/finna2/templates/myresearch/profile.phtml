@@ -36,11 +36,7 @@
     $guarantorFullName = '';
     if (!empty($this->profile['guarantor'])) {
       $guarantor = $this->profile['guarantor'];
-      $guarantorFullName = trim(
-        ($guarantor['firstname'] ?? '')
-        . ' '
-        . ($guarantor['lastname'] ?? '')
-      );
+      $guarantorFullName = trim(($guarantor['firstname'] ?? '') . ' ' . ($guarantor['lastname'] ?? ''));
     }
 ?>
 
@@ -231,13 +227,9 @@
               <?php foreach ($this->profile['guarantors'] as $guarantor): ?>
                 <div class="my-profile-col profile-title"><?=++$i == 1 ? $this->transEsc('Guarantor') . ':' : ''?></div>
                 <?php
-                  $guarantorFullName = trim(
-                    ($guarantor['firstname'] ?? '')
-                    . ' '
-                    . ($guarantor['lastname'] ?? '')
-                  );
+                  $guarantorName = trim(($guarantor['firstname'] ?? '') . ' ' . ($guarantor['lastname'] ?? ''));
                 ?>
-                <div class="profile-text-value"><?=$this->escapeHtml($guarantorFullName) ?></div>
+                <div class="profile-text-value"><?=$this->escapeHtml($guarantorName) ?></div>
               <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!empty($this->profile['guarantees'])): ?>
@@ -245,11 +237,7 @@
               <?php foreach ($this->profile['guarantees'] as $guarantee): ?>
                 <div class="my-profile-col profile-title"><?=++$i == 1 ? $this->transEsc('Guarantees') . ':' : ''?></div>
                 <?php
-                  $guaranteeFullName = trim(
-                    ($guarantee['firstname'] ?? '')
-                    . ' '
-                    . ($guarantee['lastname'] ?? '')
-                  );
+                  $guaranteeFullName = trim(($guarantee['firstname'] ?? '') . ' ' . ($guarantee['lastname'] ?? ''));
                 ?>
                 <div class="profile-text-value"><?=$this->escapeHtml($guaranteeFullName) ?></div>
               <?php endforeach; ?>

@@ -56,7 +56,8 @@ class CustomElementContainerBlockRenderer extends CustomElementRendererBase
      * @return HtmlElement|string|null
      */
     public function render(
-        AbstractBlock $block, ElementRendererInterface $htmlRenderer,
+        AbstractBlock $block,
+        ElementRendererInterface $htmlRenderer,
         bool $inTightList = false
     ) {
         if (!($block instanceof CustomElementContainerBlock)) {
@@ -72,7 +73,8 @@ class CustomElementContainerBlockRenderer extends CustomElementRendererBase
         if ($block->shouldSsr()) {
             try {
                 $stringContent = $this->customElementRenderer->render(
-                    $block->getName(), ['outerHTML' => $stringContent]
+                    $block->getName(),
+                    ['outerHTML' => $stringContent]
                 );
             } catch (Exception $e) {
                 // If server-side rendering fails for some reason, just return the

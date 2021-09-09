@@ -128,7 +128,8 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
             $url = $this->getServerParam($request, $shib->logout_attribute);
             if ($url) {
                 $session = new \Laminas\Session\Container(
-                    'Shibboleth', $this->sessionManager
+                    'Shibboleth',
+                    $this->sessionManager
                 );
                 $session['logoutUrl'] = $url;
             }
@@ -175,7 +176,8 @@ class Shibboleth extends \VuFind\Auth\Shibboleth
     protected function getServerParam($request, $param)
     {
         return $request->getServer()->get(
-            $param, $request->getServer()->get("REDIRECT_$param")
+            $param,
+            $request->getServer()->get("REDIRECT_$param")
         );
     }
 }

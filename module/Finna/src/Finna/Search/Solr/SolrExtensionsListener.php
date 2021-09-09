@@ -95,7 +95,9 @@ class SolrExtensionsListener
     public function __construct(
         BackendInterface $backend,
         ServiceLocatorInterface $serviceLocator,
-        $searchConfig, $facetConfig, $dataSourceConfig = 'datasources'
+        $searchConfig,
+        $facetConfig,
+        $dataSourceConfig = 'datasources'
     ) {
         $this->backend = $backend;
         $this->serviceLocator = $serviceLocator;
@@ -119,25 +121,6 @@ class SolrExtensionsListener
     }
 
     /**
-     * Customize Solr response.
-     *
-     * @param EventInterface $event Event
-     *
-     * @return EventInterface
-     */
-    public function onSearchPost(EventInterface $event)
-    {
-        $backend = $event->getParam('backend');
-        if ($backend != $this->backend->getIdentifier()) {
-            return $event;
-        }
-
-        if ($event->getParam('context') == 'search') {
-            $this->displayDebugInfo($event);
-        }
-    }
-
-    /**
      * Customize Solr request.
      *
      * @param EventInterface $event Event
@@ -146,8 +129,8 @@ class SolrExtensionsListener
      */
     public function onSearchPre(EventInterface $event)
     {
-        $backend = $event->getTarget();
-        if ($backend === $this->backend) {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backend->getIdentifier()) {
             $this->addDataSourceFilter($event);
             $context = $event->getParam('context');
             if (in_array($context, ['search', 'getids', 'workExpressions'])) {
@@ -156,6 +139,24 @@ class SolrExtensionsListener
             }
             if ('search' === $context) {
                 $this->addGeoFilterBoost($event);
+            }
+        }
+        return $event;
+    }
+
+    /**
+     * Customize Solr response.
+     *
+     * @param EventInterface $event Event
+     *
+     * @return EventInterface
+     */
+    public function onSearchPost(EventInterface $event)
+    {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backend->getIdentifier()) {
+            if ($event->getParam('context') == 'search') {
+                $this->displayDebugInfo($event);
             }
         }
         return $event;
@@ -223,12 +224,17 @@ class SolrExtensionsListener
                         }
                         foreach (preg_split('/\s+OR\s+/', $value) as $filter) {
                             $bq = substr_replace(
-                                $filter, 'score=recipDistance ', 10, 0
+                                $filter,
+                                'score=recipDistance ',
+                                10,
+                                0
                             );
                             $boosts[] = $bq;
                             // Add a separate boost for the centroid
                             $bq = preg_replace(
-                                '/sfield=\w+/', 'sfield=center_coords', $bq
+                                '/sfield=\w+/',
+                                'sfield=center_coords',
+                                $bq
                             );
                             $boosts[] = $bq;
                         }

@@ -6,9 +6,11 @@
   <div class="cover-wrapper">
     <?php /* Display thumbnail if appropriate: */ ?>
     <?php if ($img): ?>
-      <?=$img->renderImage(
-        'record', $localSizes,
-        ['imageClick' => $this->imageClick ?? 'modal', 'imageRightsLabel' => $this->imageRightsLabel ?? null, 'numOfImages' => $numOfImages ?? null]
+      <?=
+      $img->renderImage(
+          'record',
+          $localSizes,
+          ['imageClick' => $this->imageClick ?? 'modal', 'imageRightsLabel' => $this->imageRightsLabel ?? null, 'numOfImages' => $numOfImages ?? null]
       ) ?>
     <?php endif;?>
     <?php /* Display qrcode if appropriate: */ ?>

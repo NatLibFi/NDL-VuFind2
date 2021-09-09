@@ -72,8 +72,11 @@ class CoverController extends \VuFind\Controller\CoverController
      * @param \Laminas\Config\Config $datasources  Data source settings
      * @param \VuFind\Record\Loader  $recordLoader Record loader
      */
-    public function __construct(Loader $loader, CachingProxy $proxy,
-        SessionSettings $ss, \Laminas\Config\Config $datasources,
+    public function __construct(
+        Loader $loader,
+        CachingProxy $proxy,
+        SessionSettings $ss,
+        \Laminas\Config\Config $datasources,
         \VuFind\Record\Loader $recordLoader
     ) {
         parent::__construct($loader, $proxy, $ss);
@@ -97,7 +100,8 @@ class CoverController extends \VuFind\Controller\CoverController
 
         if (($id = $params->fromQuery('id')) && in_array($size, $allowedSizes)) {
             $driver = $this->recordLoader->load(
-                $id, $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
+                $id,
+                $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
             );
             $index = (int)$params->fromQuery('index');
             $images = $driver->getAllImages();
@@ -105,7 +109,9 @@ class CoverController extends \VuFind\Controller\CoverController
             if (isset($highResolution[$size][$format]['url'])) {
                 $url = $highResolution[$size][$format]['url'];
                 $res = $this->loader->loadExternalImage(
-                    $url, $format, "{$id}_{$index}_{$size}.{$format}"
+                    $url,
+                    $format,
+                    "{$id}_{$index}_{$size}.{$format}"
                 );
                 if (!$res) {
                     $response->setStatusCode(500);
@@ -154,7 +160,8 @@ class CoverController extends \VuFind\Controller\CoverController
 
         if ($id = $params->fromQuery('id')) {
             $driver = $this->recordLoader->load(
-                $id, $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
+                $id,
+                $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
             );
             $index = (int)$params->fromQuery('index');
             $this->loader->loadRecordImage($driver, $index, $size);
@@ -200,7 +207,8 @@ class CoverController extends \VuFind\Controller\CoverController
                     $filename = preg_replace('/[^\w_ -]/', '_', $filename);
                     $filename .= '.jpg';
                     $headers->addHeaderLine(
-                        'Content-Disposition', "inline; filename=$filename"
+                        'Content-Disposition',
+                        "inline; filename=$filename"
                     );
                 }
             }

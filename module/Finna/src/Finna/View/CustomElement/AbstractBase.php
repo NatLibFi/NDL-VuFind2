@@ -111,7 +111,9 @@ abstract class AbstractBase implements CustomElementInterface
      *
      * @throws Exception If element name or outerHTML is not valid
      */
-    public function __construct(string $name, array $options = [],
+    public function __construct(
+        string $name,
+        array $options = [],
         bool $convertToBool = false
     ) {
         $matches = [];
@@ -127,7 +129,9 @@ abstract class AbstractBase implements CustomElementInterface
         if (isset($options['outerHTML'])) {
             $dom = (new Dom())->loadStr(
                 $options['outerHTML'],
-                (new Options())->setCleanupInput(false)
+                (new Options())
+                    ->setCleanupInput(false)
+                    ->setRemoveDoubleSpace(false)
             );
             if ($dom->countChildren() !== 1
                 || $dom->firstChild()->getTag()->name() !== $this->getName()
@@ -138,7 +142,8 @@ abstract class AbstractBase implements CustomElementInterface
 
             // Attributes set in options overwrite attributes set in HTML.
             $attributes = array_merge(
-                $dom->firstChild()->getAttributes(), $attributes
+                $dom->firstChild()->getAttributes(),
+                $attributes
             );
         }
 
@@ -183,13 +188,31 @@ abstract class AbstractBase implements CustomElementInterface
     }
 
     /**
-     * Get the names of attributes supported by the element.
+     * Get information about the element.
      *
      * @return array
      */
-    public static function getAttributes(): array
+    public static function getInfo(): array
     {
-        return array_keys(static::getAttributeToVariableMap());
+        return [
+            self::TYPE => 'Block',
+            self::CONTENTS => 'Flow',
+            self::ATTR_COLLECTIONS => 'Common',
+            self::ATTRIBUTES => array_fill_keys(
+                array_keys(static::getAttributeToVariableMap()),
+                'CDATA'
+            )
+        ];
+    }
+
+    /**
+     * Get information about child elements supported by the element.
+     *
+     * @return array
+     */
+    public static function getChildInfo(): array
+    {
+        return [];
     }
 
     /**
@@ -231,7 +254,10 @@ abstract class AbstractBase implements CustomElementInterface
      */
     protected static function getOptionToVariableMap(): array
     {
-        return static::getAttributeToVariableMap();
+        return array_merge(
+            ['attributes' => 'attributes'],
+            static::getAttributeToVariableMap()
+        );
     }
 
     /**
@@ -256,33 +282,71 @@ abstract class AbstractBase implements CustomElementInterface
     }
 
     /**
-     * Remove a slot element from the DOM, with additional cleanup of possible
-     * unneeded elements added by Markdown processing.
+     * Get a view model variable.
      *
-     * @param $slotElement HtmlNode Element with a slot attribute
+     * @param string     $name    Name
+     * @param mixed|null $default Default value if the variable is not present
+     *
+     * @return mixed
+     */
+    protected function getVariable(string $name, $default = null)
+    {
+        return $this->getViewModel()->getVariable($name, $default);
+    }
+
+    /**
+     * Set a view model variable.
+     *
+     * @param string $name  Name
+     * @param mixed  $value Value
      *
      * @return void
      */
-    protected function removeSlotElement($slotElement): void
+    protected function setVariable(string $name, $value): void
     {
-        // Remove br elements immediately following the slot element.
-        $slotElementParent = $slotElement->getParent();
-        while ($slotElement->hasNextSibling()) {
-            $sibling = $slotElement->nextSibling();
+        $this->getViewModel()->setVariable($name, $value);
+    }
+
+    /**
+     * Set the view model template.
+     *
+     * @param string $template Template
+     *
+     * @return void
+     */
+    protected function setTemplate(string $template): void
+    {
+        $this->getViewModel()->setTemplate($template);
+    }
+
+    /**
+     * Remove an element from the DOM, with additional cleanup of possible unneeded
+     * elements added by Markdown processing.
+     *
+     * @param $element HtmlNode Element
+     *
+     * @return void
+     */
+    protected function removeElement(HtmlNode $element): void
+    {
+        // Remove br elements immediately following the element.
+        $parent = $element->getParent();
+        while ($element->hasNextSibling()) {
+            $sibling = $element->nextSibling();
             if ($sibling->getTag()->name() !== 'br') {
                 break;
             }
-            $slotElementParent->removeChild($sibling->id());
+            $parent->removeChild($sibling->id());
         }
 
-        // Remove the slot element.
-        $slotElementParent->removeChild($slotElement->id());
+        // Remove the element.
+        $parent->removeChild($element->id());
 
         // If the parent is an empty p element, remove the parent also.
-        if (!$slotElementParent->hasChildren()
-            && $slotElementParent->getTag()->name() === 'p'
+        if (!$parent->hasChildren()
+            && $parent->getTag()->name() === 'p'
         ) {
-            $slotElementParent->getParent()->removeChild($slotElementParent->id());
+            $parent->getParent()->removeChild($parent->id());
         }
     }
 }

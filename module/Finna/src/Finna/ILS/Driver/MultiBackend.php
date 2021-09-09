@@ -46,7 +46,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
     implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
-    use \VuFind\ILS\Driver\CacheTrait;
+    use \VuFind\Cache\CacheTrait;
 
     /**
      * Initialize the driver.
@@ -175,7 +175,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
             && $this->methodSupported($driver, 'updatePhone', [$patron, $phone])
         ) {
             return $driver->updatePhone(
-                $this->stripIdPrefixes($patron, $source), $phone
+                $this->stripIdPrefixes($patron, $source),
+                $phone
             );
         }
         throw new ILSException('No suitable backend driver found');
@@ -199,7 +200,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
             && $this->methodSupported($driver, 'updatePhone', [$patron, $number])
         ) {
             return $driver->updateSmsNumber(
-                $this->stripIdPrefixes($patron, $source), $number
+                $this->stripIdPrefixes($patron, $source),
+                $number
             );
         }
         throw new ILSException('No suitable backend driver found');
@@ -246,7 +248,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
             && $this->methodSupported($driver, 'updateEmail', [$patron, $email])
         ) {
             return $driver->updateEmail(
-                $this->stripIdPrefixes($patron, $source), $email
+                $this->stripIdPrefixes($patron, $source),
+                $email
             );
         }
         throw new ILSException('No suitable backend driver found');
@@ -270,7 +273,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
             && $this->methodSupported($driver, 'updateAddress', [$patron, $details])
         ) {
             return $driver->updateAddress(
-                $this->stripIdPrefixes($patron, $source), $details
+                $this->stripIdPrefixes($patron, $source),
+                $details
             );
         }
         throw new ILSException('No suitable backend driver found');
@@ -292,11 +296,14 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
         $driver = $this->getDriver($source);
         if ($driver
             && $this->methodSupported(
-                $driver, 'updateMessagingSettings', [$patron, $details]
+                $driver,
+                'updateMessagingSettings',
+                [$patron, $details]
             )
         ) {
             return $driver->updateMessagingSettings(
-                $this->stripIdPrefixes($patron, $source), $details
+                $this->stripIdPrefixes($patron, $source),
+                $details
             );
         }
         throw new ILSException('No suitable backend driver found');
@@ -339,7 +346,10 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $source = $this->getSource($patron['cat_username']);
@@ -348,7 +358,9 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
             && $this->methodSupported($driver, 'markFeesAsPaid')
         ) {
             return $driver->markFeesAsPaid(
-                $this->stripIdPrefixes($patron, $source), $amount, $transactionId,
+                $this->stripIdPrefixes($patron, $source),
+                $amount,
+                $transactionId,
                 $transactionNumber
             );
         }
@@ -408,7 +420,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
         $driver = $this->getDriver($source);
         if ($driver) {
             $transactions = $driver->getMyTransactionHistory(
-                $this->stripIdPrefixes($patron, $source), $params
+                $this->stripIdPrefixes($patron, $source),
+                $params
             );
             return $this->addIdPrefixes($transactions, $source);
         }
@@ -450,7 +463,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
         $driver = $this->getDriver($source);
         if ($driver) {
             return $driver->updateTransactionHistoryState(
-                $this->stripIdPrefixes($patron, $source), $state
+                $this->stripIdPrefixes($patron, $source),
+                $state
             );
         }
         throw new ILSException('No suitable backend driver found');

@@ -27,6 +27,7 @@
  */
 namespace Finna\Cache;
 
+use Laminas\Cache\Service\StorageAdapterFactory;
 use Laminas\Config\Config;
 
 /**
@@ -41,16 +42,18 @@ use Laminas\Config\Config;
 class Manager extends \VuFind\Cache\Manager
 {
     /**
-     * Constructor.
+     * Constructor
      *
-     * Add file cache for record descriptions loaded from external sources.
-     *
-     * @param Config $config       Main VuFind configuration
-     * @param Config $searchConfig Search configuration
+     * @param Config                $config       Main VuFind configuration
+     * @param Config                $searchConfig Search configuration
+     * @param StorageAdapterFactory $factory      Cache storage adapter factory
      */
-    public function __construct(Config $config, Config $searchConfig)
-    {
-        parent::__construct($config, $searchConfig);
+    public function __construct(
+        Config $config,
+        Config $searchConfig,
+        StorageAdapterFactory $factory
+    ) {
+        parent::__construct($config, $searchConfig, $factory);
 
         $cacheBase = $this->getCacheDir();
         $ids = ['feed', 'description', 'organisation-info', 'stylesheet'];

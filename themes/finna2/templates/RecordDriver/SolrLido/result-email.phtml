@@ -4,7 +4,7 @@
   $dates = $this->driver->getResultDateRange();
   $formats = $this->driver->getFormats();
   $format = end($formats);
-  $url = $this->recordLink()->getUrl($this->driver);
+  $url = $this->recordLinker()->getUrl($this->driver);
 
   // NOTE: use $info['baseUrl'] instead of serverUrl view helper when this template is
   // rendered by scheduled alerts console action.
