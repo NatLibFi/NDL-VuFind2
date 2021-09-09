@@ -32,6 +32,7 @@ use Laminas\EventManager\EventInterface;
 
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
 /**
@@ -154,7 +155,7 @@ class SolrExtensionsListener
     {
         $command = $event->getParam('command');
         if ($command->getTargetIdentifier() === $this->backendId) {
-            if ($event->getParam('context') == 'search') {
+            if ($command->getContext() == 'search') {
                 $this->displayDebugInfo($event);
             }
         }
@@ -210,7 +211,7 @@ class SolrExtensionsListener
      */
     protected function addGeoFilterBoost(EventInterface $event)
     {
-        $params = $event->getParam('params');
+        $params = $event->getParam('command')->getSearchParameters();
         if ($params) {
             $filters = $params->get('fq');
             if (null !== $filters) {
@@ -262,13 +263,16 @@ class SolrExtensionsListener
         if (isset($searchConfig->General->hide_component_parts)
             && $searchConfig->General->hide_component_parts
         ) {
-            $params = $event->getParam('params');
+            $command = $event->getParam('command');
+            $params = $command->getSearchParameters();
             if ($params) {
                 // Check that search is not for a known record id
-                $query = $event->getParam('query');
+                $query = method_exists($command, 'getQuery')
+                    ? $command->getQuery()
+                    : null;
                 if (!$query
                     || $query instanceof QueryGroup
-                    || $query->getHandler() !== 'id'
+                    || ($query instanceof Query && $query->getHandler() !== 'id')
                 ) {
                     $params->add('fq', '-hidden_component_boolean:true');
                 }
@@ -285,11 +289,12 @@ class SolrExtensionsListener
      */
     protected function displayDebugInfo(EventInterface $event)
     {
-        $params = $event->getParam('params');
+        $command = $event->getParam('command');
+        $params = $command->getSearchParameters();
         if (!$params->get('debugQuery')) {
             return;
         }
-        $collection = $event->getTarget();
+        $collection = $command->getResult();
         $debugInfo = $collection->getDebugInformation();
         echo "<!--\n";
         echo 'Raw query string: ' . $debugInfo['rawquerystring'] . "\n\n";
@@ -382,7 +387,7 @@ class SolrExtensionsListener
         $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $searchConfig = $config->get($this->searchConfig);
         if (!empty($searchConfig->Records->sources)) {
-            $params = $event->getParam('params');
+            $params = $event->getParam('command')->getSearchParameters();
             $filters = $params->get('fq');
             if (null !== $filters) {
                 $sources = explode(',', $searchConfig->Records->sources);
