@@ -13,11 +13,11 @@
 <h2><?=$this->transEsc($pageTitle); ?></h2>
 
 <form class="form-edit-list" method="post" name="<?=empty($this->list->id) ? 'newList' : 'editListForm'?>">
-  <input type="hidden" name="id" value="<?=empty($this->list->id) ? 'NEW' : $this->list->id ?>"/>
-  <input type="hidden" name="followup" value="<?= $this->escapeHtml($this->followup) ?>"/>
+  <input type="hidden" name="id" value="<?=empty($this->list->id) ? 'NEW' : $this->escapeHtmlAttr($this->list->id) ?>"/>
+  <input type="hidden" name="followup" value="<?=$this->escapeHtmlAttr($this->followup) ?>"/>
   <div class="form-group">
     <label class="control-label" for="list_title"><?=$this->transEsc('List'); ?>:</label>
-    <input id="list_title" class="form-control" type="text" name="title" value="<?=isset($this->list['title']) ? $this->escapeHtml($this->list['title']) : ''?>"/>
+    <input id="list_title" class="form-control" type="text" name="title" value="<?=isset($this->list['title']) ? $this->escapeHtmlAttr($this->list['title']) : ''?>"/>
   </div>
   <div class="form-group">
     <label class="control-label" for="list_desc"><?=$this->transEsc('Description') ?></label>
@@ -43,6 +43,6 @@
     </div>
   <?php endif; ?>
   <div class="form-group">
-    <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEsc('Save') ?>"/>
+    <input class="btn btn-primary" type="submit" name="submit" value="<?=$this->transEscAttr('Save') ?>"/>
   </div>
 </form>

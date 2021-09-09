@@ -677,7 +677,8 @@ class AccountExpirationReminders extends AbstractUtilCommand
         );
 
         $message = $this->renderer->render(
-            'Email/account-expiration-reminder.phtml', $params
+            'Email/account-expiration-reminder.phtml',
+            $params
         );
 
         $to = $user->email;

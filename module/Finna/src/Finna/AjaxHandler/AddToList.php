@@ -92,8 +92,12 @@ class AddToList extends \VuFind\AjaxHandler\AbstractBase
      * @param User|bool        $user      Logged in user (or false)
      * @param bool             $enabled   Are lists enabled?
      */
-    public function __construct(UserList $userList, FavoritesService $favorites,
-        Loader $loader, $user, $enabled = true
+    public function __construct(
+        UserList $userList,
+        FavoritesService $favorites,
+        Loader $loader,
+        $user,
+        $enabled = true
     ) {
         $this->userList = $userList;
         $this->favorites = $favorites;

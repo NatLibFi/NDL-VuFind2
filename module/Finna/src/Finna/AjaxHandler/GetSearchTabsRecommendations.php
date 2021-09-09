@@ -94,8 +94,12 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
      * @param RendererInterface $renderer View renderer
      * @param SearchRunner      $sr       Search runner
      */
-    public function __construct(SessionSettings $ss, Config $config,
-        SearchTable $st, ResultsManager $results, RendererInterface $renderer,
+    public function __construct(
+        SessionSettings $ss,
+        Config $config,
+        SearchTable $st,
+        ResultsManager $results,
+        RendererInterface $renderer,
         SearchRunner $sr
     ) {
         $this->sessionSettings = $ss;
@@ -129,7 +133,8 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
         $search = $this->searchTable->select(['id' => $id])->current();
         if (empty($search)) {
             return $this->formatResponse(
-                'Search not found', self::STATUS_HTTP_BAD_REQUEST
+                'Search not found',
+                self::STATUS_HTTP_BAD_REQUEST
             );
         }
 

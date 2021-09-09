@@ -48,12 +48,12 @@ require_once 'Cpu/Client/Product.class.php';
  */
 class CPU extends BaseHandler
 {
-    const STATUS_SUCCESS = 1;
-    const STATUS_CANCELLED = 0;
-    const STATUS_PENDING = 2;
-    const STATUS_ID_EXISTS = 97;
-    const STATUS_ERROR = 98;
-    const STATUS_INVALID_REQUEST = 99;
+    public const STATUS_SUCCESS = 1;
+    public const STATUS_CANCELLED = 0;
+    public const STATUS_PENDING = 2;
+    public const STATUS_ID_EXISTS = 97;
+    public const STATUS_ERROR = 98;
+    public const STATUS_INVALID_REQUEST = 99;
 
     /**
      * Start transaction.
@@ -72,8 +72,16 @@ class CPU extends BaseHandler
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl, $ajaxUrl, $user, $patron, $driver, $amount, $transactionFee,
-        $fines, $currency, $statusParam
+        $finesUrl,
+        $ajaxUrl,
+        $user,
+        $patron,
+        $driver,
+        $amount,
+        $transactionFee,
+        $fines,
+        $currency,
+        $statusParam
     ) {
         $patronId = $patron['cat_username'];
         $orderNumber = $this->generateTransactionId($patronId);
@@ -165,7 +173,10 @@ class CPU extends BaseHandler
             if (!empty($fine['title'])) {
                 $fineDesc .= ' ('
                     . mb_substr(
-                        $fine['title'], 0, 100 - 4 - strlen($fineDesc), 'UTF-8'
+                        $fine['title'],
+                        0,
+                        100 - 4 - strlen($fineDesc),
+                        'UTF-8'
                     ) . ')';
             }
             if ($fineDesc) {
@@ -193,14 +204,19 @@ class CPU extends BaseHandler
             }
             $code = mb_substr($code, 0, 25, 'UTF-8');
             $product = new \Cpu_Client_Product(
-                $code, 1, $fine['balance'], $fineDesc ?: null
+                $code,
+                1,
+                $fine['balance'],
+                $fineDesc ?: null
             );
             $payment = $payment->addProduct($product);
         }
         if ($transactionFee) {
             $code = $this->config->transactionFeeProductCode ?? $productCode;
             $product = new \Cpu_Client_Product(
-                $code, 1, $transactionFee,
+                $code,
+                1,
+                $transactionFee,
                 'Palvelumaksu / Serviceavgift / Transaction fee'
             );
             $payment = $payment->addProduct($product);

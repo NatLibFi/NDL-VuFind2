@@ -227,8 +227,11 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
      * @param SearchRunner  $searchRunner  Search runner
      */
     public function __construct(
-        Finto $finto, CookieManager $cookieManager, Url $urlHelper,
-        PluginManager $configLoader, SearchRunner $searchRunner
+        Finto $finto,
+        CookieManager $cookieManager,
+        Url $urlHelper,
+        PluginManager $configLoader,
+        SearchRunner $searchRunner
     ) {
         $this->finto = $finto;
         $this->cookieManager = $cookieManager;
@@ -408,7 +411,10 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
                 $fintoTerm = str_replace('**', '*', $fintoTerm);
             }
             $fintoResults = $this->finto->extendedSearch(
-                $fintoTerm, $language, [], $narrower
+                $fintoTerm,
+                $language,
+                [],
+                $narrower
             );
             $this->apiCallTotal += 1;
 
@@ -428,14 +434,18 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
                 // Narrower results are used for hyponym recommendations.
                 foreach ($fintoResults[Finto::NARROWER_RESULTS] as $fintoResult) {
                     $this->addOntologyResult(
-                        $term, $fintoResult, $fintoResults[Finto::RESULT_TYPE],
+                        $term,
+                        $fintoResult,
+                        $fintoResults[Finto::RESULT_TYPE],
                         $termUri
                     );
                 }
             } else {
                 foreach ($fintoResults[Finto::RESULTS]['results'] as $fintoResult) {
                     $this->addOntologyResult(
-                        $term, $fintoResult, $fintoResults[Finto::RESULT_TYPE]
+                        $term,
+                        $fintoResult,
+                        $fintoResults[Finto::RESULT_TYPE]
                     );
                 }
             }
@@ -531,7 +541,10 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
      * @return void
      */
     protected function addOntologyResult(
-        string $term, array $fintoResult, string $resultType, ?string $termUri = null
+        string $term,
+        array $fintoResult,
+        string $resultType,
+        ?string $termUri = null
     ): void {
         // Do not add the result if the URI already exists in the original search.
         if (false !== strpos($this->lookfor, $fintoResult['uri'])) {
@@ -546,8 +559,11 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
 
         // Replace original search term with the recommended term in the lookfor.
         $recommendationLookfor = $this->replaceWithRecommendedTerm(
-            $this->lookfor, $fintoResult['prefLabel'], $fintoResult['uri'],
-            $term, $termUri
+            $this->lookfor,
+            $fintoResult['prefLabel'],
+            $fintoResult['uri'],
+            $term,
+            $termUri
         );
 
         // Abort if the replacement failed for some reason.
@@ -563,9 +579,7 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
                 unset($params[$key]);
             }
         }
-        $href = $this->urlHelper->__invoke(
-            'search-results', [], ['query' => $params]
-        );
+        $href = ($this->urlHelper)('search-results', [], ['query' => $params]);
 
         // Add result and increase counter if the result is for a new term.
         $this->recommendationUris[] = $fintoResult['uri'];
@@ -594,8 +608,12 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
      *
      * @return string
      */
-    protected function replaceWithRecommendedTerm(string $lookfor,
-        string $repTerm, string $repUri, string $origTerm, ?string $origUri = null
+    protected function replaceWithRecommendedTerm(
+        string $lookfor,
+        string $repTerm,
+        string $repUri,
+        string $origTerm,
+        ?string $origUri = null
     ): string {
         // Add quotes to multi-word terms if appropriate.
         if (false !== strpos($repTerm, ' ')) {
@@ -611,8 +629,10 @@ class Ontology implements RecommendInterface, TranslatorAwareInterface
         if ($origUri) {
             $count = 0;
             $lookfor = str_replace(
-                $this->getInQueryStringFormat($origTerm, $origUri), $replace,
-                $lookfor, $count
+                $this->getInQueryStringFormat($origTerm, $origUri),
+                $replace,
+                $lookfor,
+                $count
             );
             if ($count > 0) {
                 return $lookfor;

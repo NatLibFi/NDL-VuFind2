@@ -27,24 +27,27 @@
     </div>
   <?php endif; ?>
   <div class="public-list-view results result-view-<?=$this->escapeHtmlAttr($this->view)?>">
-    <?= $this->partial('search/list-' . $this->view . '.phtml',
-    [
-      'results' => $this->results,
-      'params' => $this->params,
-      'indexStart' => $this->indexStart,
-      'hideCartControls' => true
-    ])
+    <?php
+      $viewParams = [
+        'results' => $this->results,
+        'params' => $this->params,
+        'indexStart' => $this->indexStart,
+        'hideCartControls' => true
+      ];
     ?>
+    <?=$this->partial('search/list-' . $this->view . '.phtml', $viewParams)?>
     <?php if ($this->showAllLink): ?>
-      <?php $limit = $this->params->getLimit(); ?>  
+      <?php $limit = $this->params->getLimit(); ?>
       <div class="show-more">
-        <div><?= $this->translate(
-             'showing_results_of_html', [
-               '%%start%%' => 1,
-               '%%end%%' => $limit,
-               '%%total%%' => $this->localizedNumber($this->total)
-             ]
-        ); ?>
+        <div>
+          <?php
+            $transParams = [
+              '%%start%%' => 1,
+              '%%end%%' => $limit,
+              '%%total%%' => $this->localizedNumber($this->total)
+            ];
+          ?>
+          <?=$this->translate('showing_results_of_html', $transParams)?>
         </div>
         <button class="btn btn-outline-primary load-more" aria-label="<?= $this->transEsc('See all')?>" data-id="<?= $this->escapeHtmlAttr($this->id)?>" data-start-index="<?= $this->escapeHtmlAttr($this->indexStart + $limit)?>" data-offset="<?= $this->escapeHtmlAttr($limit + 1)?>" data-view="<?= $this->escapeHtmlAttr($this->view)?>"<?= $this->sort ? (' data-sort="' . $this->escapeHtmlAttr($this->sort) . '"') : ''?>><?= $this->transEsc('See all'); ?></button>
         <i class="fa fa-spinner fa-spin hide"></i>

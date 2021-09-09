@@ -83,8 +83,11 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
      * @param OrganisationInfo    $organisationInfo Organisation info
      * @param VuFind\CacheManager $cacheManager     Cache manager
      */
-    public function __construct(SessionSettings $ss, CookieManager $cookieManager,
-        OrganisationInfo $organisationInfo, $cacheManager
+    public function __construct(
+        SessionSettings $ss,
+        CookieManager $cookieManager,
+        OrganisationInfo $organisationInfo,
+        $cacheManager
     ) {
         $this->sessionSettings = $ss;
         $this->cookieManager = $cookieManager;
@@ -144,10 +147,12 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
 
         if ('lookup' === $action) {
             $reqParams['link'] = $params->fromPost(
-                'link', $params->fromQuery('link', false)
+                'link',
+                $params->fromQuery('link', false)
             );
             $reqParams['parentName'] = $params->fromPost(
-                'parentName', $params->fromQuery('parentName', null)
+                'parentName',
+                $params->fromQuery('parentName', null)
             );
         }
 
@@ -210,7 +215,10 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
 
             try {
                 $response = $this->organisationInfo->query(
-                    $parent['id'], $reqParams, $buildings, $action
+                    $parent['id'],
+                    $reqParams,
+                    $buildings,
+                    $action
                 );
             } catch (\Exception $e) {
                 $this->handleError(
@@ -232,7 +240,10 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
             $libraries = implode(',', $libraries);
             $reqParams['orgType'] = 'library';
             $libraries = $this->organisationInfo->query(
-                $libraries, $reqParams, $buildings, $action
+                $libraries,
+                $reqParams,
+                $buildings,
+                $action
             );
             if (isset($libraries['items'])) {
                 $libraries = $libraries['items'];

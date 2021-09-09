@@ -78,9 +78,14 @@ class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
      * @param Loader            $loader           Record loader
      * @param HoldLogic         $holdLogic        Hold Logic
      */
-    public function __construct(SessionSettings $ss, Connection $ils,
-        ILSAuthenticator $ilsAuthenticator, $user,
-        RendererInterface $renderer, Loader $loader, HoldLogic $holdLogic
+    public function __construct(
+        SessionSettings $ss,
+        Connection $ils,
+        ILSAuthenticator $ilsAuthenticator,
+        $user,
+        RendererInterface $renderer,
+        Loader $loader,
+        HoldLogic $holdLogic
     ) {
         parent::__construct($ss, $ils, $ilsAuthenticator, $user);
 
@@ -142,7 +147,8 @@ class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 
         $mode = 'expanded';
         $details = $this->renderer->partial(
-            'RecordTab/holdings-details.phtml', compact('holding', 'mode')
+            'RecordTab/holdings-details.phtml',
+            compact('holding', 'mode')
         );
         $holdingItems = reset($result['holdings']);
         $moreLinkPage = $result['page'] * $result['itemLimit'] < $result['total']

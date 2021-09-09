@@ -48,13 +48,13 @@ namespace Finna\RecordDriver;
 class SolrEad3 extends SolrEad
 {
     // Image types
-    const IMAGE_MEDIUM = 'medium';
-    const IMAGE_LARGE = 'large';
-    const IMAGE_FULLRES = 'fullres';
-    const IMAGE_OCR = 'ocr';
+    public const IMAGE_MEDIUM = 'medium';
+    public const IMAGE_LARGE = 'large';
+    public const IMAGE_FULLRES = 'fullres';
+    public const IMAGE_OCR = 'ocr';
 
     // Image type map
-    const IMAGE_MAP = [
+    public const IMAGE_MAP = [
         'Bittikartta - Fullres - Jakelukappale' => self::IMAGE_FULLRES,
         'Bittikartta - Pikkukuva - Jakelukappale' => self::IMAGE_MEDIUM,
         'OCR-data - Alto - Jakelukappale' => self::IMAGE_OCR,
@@ -64,24 +64,24 @@ class SolrEad3 extends SolrEad
 
     // URLs that are displayed on ExternalData record tab
     // (not below record title)
-    const EXTERNAL_DATA_URLS = [
+    public const EXTERNAL_DATA_URLS = [
         'Bittikartta - Fullres - Jakelukappale',
         'Bittikartta - Pikkukuva - Jakelukappale',
         'OCR-data - Alto - Jakelukappale',
     ];
 
     // Altformavail labels
-    const ALTFORM_LOCATION = 'location';
-    const ALTFORM_PHYSICAL_LOCATION = 'physicalLocation';
-    const ALTFORM_TYPE = 'type';
-    const ALTFORM_DIGITAL_TYPE = 'digitalType';
-    const ALTFORM_FORMAT = 'format';
-    const ALTFORM_ACCESS = 'access';
-    const ALTFORM_ONLINE = 'online';
-    const ALTFORM_CONDITION = 'condition';
+    public const ALTFORM_LOCATION = 'location';
+    public const ALTFORM_PHYSICAL_LOCATION = 'physicalLocation';
+    public const ALTFORM_TYPE = 'type';
+    public const ALTFORM_DIGITAL_TYPE = 'digitalType';
+    public const ALTFORM_FORMAT = 'format';
+    public const ALTFORM_ACCESS = 'access';
+    public const ALTFORM_ONLINE = 'online';
+    public const ALTFORM_CONDITION = 'condition';
 
     // Altformavail label map
-    const ALTFORM_MAP = [
+    public const ALTFORM_MAP = [
         'Tietopalvelun tarjoamispaikka' => self::ALTFORM_LOCATION,
         'Tekninen tyyppi' => self::ALTFORM_TYPE,
         'Digitaalisen ilmentymän tyyppi' => self::ALTFORM_DIGITAL_TYPE,
@@ -97,26 +97,26 @@ class SolrEad3 extends SolrEad
     ];
 
     // Accessrestrict types and their order in the UI
-    const ACCESS_RESTRICT_TYPES = [
+    public const ACCESS_RESTRICT_TYPES = [
         'ahaa:AI24','general', 'ahaa:KR1', 'ahaa:KR2', 'ahaa:KR3',
         'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4'
     ];
 
     // relation@encodinganalog-attribute of relations used by getRelatedRecords
-    const RELATION_RECORD = 'ahaa:AI30';
+    public const RELATION_RECORD = 'ahaa:AI30';
 
     // relation@encodinganalog-attributes that are discarded from record links
-    const IGNORED_RELATIONS = [self::RELATION_RECORD, 'ahaa:AI41'];
+    public const IGNORED_RELATIONS = [self::RELATION_RECORD, 'ahaa:AI41'];
 
     // Relation types
-    const RELATION_CONTINUED_FROM = 'continued-from';
-    const RELATION_PART_OF = 'part-of';
-    const RELATION_CONTAINS = 'contains';
-    const RELATION_SEE_ALSO = 'see-also';
-    const RELATION_SEPARATED = 'separated';
+    public const RELATION_CONTINUED_FROM = 'continued-from';
+    public const RELATION_PART_OF = 'part-of';
+    public const RELATION_CONTAINS = 'contains';
+    public const RELATION_SEE_ALSO = 'see-also';
+    public const RELATION_SEPARATED = 'separated';
 
     // Relation type map
-    const RELATION_MAP = [
+    public const RELATION_MAP = [
         'On jatkoa' => self::RELATION_CONTINUED_FROM,
         'Sisältyy' => self::RELATION_PART_OF,
         'Sisältää' => self::RELATION_CONTAINS,
@@ -125,13 +125,13 @@ class SolrEad3 extends SolrEad
     ];
 
     // Relator attribute for archive origination
-    const RELATOR_ARCHIVE_ORIGINATION = 'Arkistonmuodostaja';
+    public const RELATOR_ARCHIVE_ORIGINATION = 'Arkistonmuodostaja';
 
-    const RELATOR_TIME_INTERVAL = 'suhteen ajallinen kattavuus';
-    const RELATOR_UNKNOWN_TIME_INTERVAL = 'unknown - open';
+    public const RELATOR_TIME_INTERVAL = 'suhteen ajallinen kattavuus';
+    public const RELATOR_UNKNOWN_TIME_INTERVAL = 'unknown - open';
 
     // unitid is shown when label-attribute is missing or is one of:
-    const UNIT_IDS = [
+    public const UNIT_IDS = [
         'Tekninen', 'Analoginen', 'Vanha analoginen', 'Vanha tekninen',
         'Diaarinumero', 'Asiaryhmän numero'
     ];
@@ -318,7 +318,8 @@ class SolrEad3 extends SolrEad
                 }
             }
             $localeResults = array_merge(
-                $localeResults, $originationLocaleResults ?: $originationResults
+                $localeResults,
+                $originationLocaleResults ?: $originationResults
             );
             $results = array_merge($results, $originationResults);
         }
@@ -469,7 +470,8 @@ class SolrEad3 extends SolrEad
                 self::ALTFORM_MAP,
                 function ($label, $type) {
                     return $type === self::ALTFORM_ONLINE;
-                }, ARRAY_FILTER_USE_BOTH
+                },
+                ARRAY_FILTER_USE_BOTH
             )
         );
 
@@ -705,7 +707,8 @@ class SolrEad3 extends SolrEad
      * @return array
      */
     public function getAllImages(
-        $language = 'fi', $includePdf = false
+        $language = 'fi',
+        $includePdf = false
     ) {
         $result = $images = [];
         $xml = $this->getXmlRecord();
@@ -848,8 +851,43 @@ class SolrEad3 extends SolrEad
         if (!isset($xml->bibliography->p)) {
             return null;
         }
-        $label = $this->getDisplayLabel($xml->bibliography, 'p', true);
-        return $label ? $label[0] : null;
+        if ($label = $this->getDisplayLabel($xml->bibliography, 'p', true)) {
+            return $label[0];
+        } elseif ($label = $this->getDisplayLabel($xml->bibliography, 'p')) {
+            return $label[0];
+        }
+        return null;
+    }
+
+    /**
+     * Get the statement of responsibility that goes with the title.
+     * Returns an array of statements that contain the fields
+     * 'text' and 'url' (when available).
+     *
+     * @return array
+     */
+    public function getTitleStatementsExtended() : array
+    {
+        $xml = $this->getXmlRecord();
+        if (!isset($xml->bibliography->p)) {
+            return [];
+        }
+        $localeResults = $results = [];
+        foreach ($xml->bibliography->p ?? [] as $p) {
+            $text = (string)$p;
+            $url = isset($p->ref)
+                 ? (string)$p->ref->attributes()->href : null;
+            if ($this->urlBlocked($url, $text)) {
+                $url = null;
+            }
+            $data = compact('text', 'url');
+            $results[] = $data;
+            $lang = $this->detectNodeLanguage($p);
+            if ($lang['preferred']) {
+                $localeResults[] = $data;
+            }
+        }
+        return $localeResults ?: $results ?: [];
     }
 
     /**
@@ -902,7 +940,9 @@ class SolrEad3 extends SolrEad
             foreach ([true, false] as $obeyPreferredLanguage) {
                 foreach ($xml->accessrestrict as $accessNode) {
                     if ($label = $this->getDisplayLabel(
-                        $accessNode, 'p', $obeyPreferredLanguage
+                        $accessNode,
+                        'p',
+                        $obeyPreferredLanguage
                     )
                     ) {
                         if (empty($label[0])) {
@@ -937,7 +977,9 @@ class SolrEad3 extends SolrEad
                     switch ($type) {
                     case 'ahaa:KR7':
                         $label = $this->getDisplayLabel(
-                            $access->p->name, 'part', true
+                            $access->p->name,
+                            'part',
+                            true
                         );
                         break;
                     case 'ahaa:KR9':
@@ -1094,7 +1136,8 @@ class SolrEad3 extends SolrEad
             );
         }
         $headings = array_merge(
-            $headings, $this->getRelatedPlacesExtended(['aihe'], [])
+            $headings,
+            $this->getRelatedPlacesExtended(['aihe'], [])
         );
 
         // The default index schema doesn't currently store subject headings in a
@@ -1375,7 +1418,8 @@ class SolrEad3 extends SolrEad
             return array_map(
                 function ($parent) {
                     return $parent['id'];
-                }, $parents
+                },
+                $parents
             );
         }
         return parent::getHierarchyParentID($levels);
@@ -1396,7 +1440,8 @@ class SolrEad3 extends SolrEad
             return array_map(
                 function ($parent) {
                     return $parent['title'];
-                }, $parents
+                },
+                $parents
             );
         }
         return parent::getHierarchyParentTitle($levels);
@@ -1601,7 +1646,8 @@ class SolrEad3 extends SolrEad
     protected function sortImageUrls(&$urls, $field = 'sort')
     {
         usort(
-            $urls, function ($a, $b) use ($field) {
+            $urls,
+            function ($a, $b) use ($field) {
                 $f1 = (int)$a[$field];
                 $f2 = (int)$b[$field];
                 if ($f1 === $f2) {
@@ -1645,7 +1691,9 @@ class SolrEad3 extends SolrEad
                 foreach ($record->controlaccess->subject as $subject) {
                     $attr = $subject->attributes();
                     if ($topic = $this->getDisplayLabel(
-                        $subject, 'part', $obeyPreferredLanguage
+                        $subject,
+                        'part',
+                        $obeyPreferredLanguage
                     )
                     ) {
                         if (!$topic[0]) {
@@ -1697,9 +1745,8 @@ class SolrEad3 extends SolrEad
     protected function getSummaryWithData($withLinks = false) : array
     {
         $xml = $this->getXmlRecord();
-
+        $result = $localeResult = [];
         if (!empty($xml->scopecontent)) {
-            $result = $localeResult = [];
             $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
             foreach ($xml->scopecontent as $el) {
                 if (isset($el->attributes()->encodinganalog)) {
@@ -1734,13 +1781,25 @@ class SolrEad3 extends SolrEad
             return $res;
         }
         $summary = parent::getSummary();
-        if ($withLinks) {
-            return array_map(
-                function ($text) {
-                    return compact('text');
-                },
-                $summary
-            );
+
+        // Return parent summary text only if it differs from item history
+        // (otherwise it gets displayed multiple times on record page).
+        $itemHistory = trim($this->getItemHistory());
+        $summary = array_filter(
+            $summary,
+            function ($item) use ($itemHistory) {
+                return trim($item) !== $itemHistory;
+            }
+        );
+        if ($summary) {
+            if ($withLinks) {
+                return array_map(
+                    function ($text) {
+                        return compact('text');
+                    },
+                    $summary
+                );
+            }
         }
         return $summary;
     }

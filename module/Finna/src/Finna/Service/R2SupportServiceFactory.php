@@ -58,7 +58,9 @@ class R2SupportServiceFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -68,7 +70,7 @@ class R2SupportServiceFactory implements FactoryInterface
         return new $requestedName(
             $container->get(\VuFind\Config\PluginManager::class)
                 ->get('R2'),
-            $container->get('LmcRbacMvc\Service\AuthorizationService')
+            $container->get(\LmcRbacMvc\Service\AuthorizationService::class)
         );
     }
 }

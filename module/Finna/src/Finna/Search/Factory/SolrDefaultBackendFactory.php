@@ -166,7 +166,8 @@ class SolrDefaultBackendFactory
     protected function createSimilarBuilder()
     {
         return new \FinnaSearch\Backend\Solr\SimilarBuilder(
-            $this->config->get($this->searchConfig), $this->uniqueKey
+            $this->config->get($this->searchConfig),
+            $this->uniqueKey
         );
     }
 

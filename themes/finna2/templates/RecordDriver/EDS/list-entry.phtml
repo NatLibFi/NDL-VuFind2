@@ -19,7 +19,7 @@
       <?=$this->record($this->driver)->getCheckbox('', false, true) ?>
     </div>
   </div>
-  <input type="hidden" value="<?=$id ?>" class="hiddenId"/>
+  <input type="hidden" value="<?=$this->escapeHtmlAttr($id) ?>" class="hiddenId"/>
   <div class="media">
     <div class="media-left text-center">
       <?php $img = $this->recordImage($this->record($this->driver))?>
@@ -28,7 +28,7 @@
     <div class="media-body">
       <div class="result-body">
         <div class="resultItemLine1">
-          <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
+          <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>">
             <h3 class="record-title"><?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span></h3>
           </a>
         </div>
@@ -97,8 +97,9 @@
           <?php endif; ?>
 
           <?php $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
-              null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
-              $user_id, 'tag'
+                null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
+                $user_id,
+                'tag'
             ) : [];
           ?>
           <?php if (count($listTags) > 0): ?>

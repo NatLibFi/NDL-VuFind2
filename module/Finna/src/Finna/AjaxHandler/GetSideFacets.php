@@ -98,7 +98,8 @@ class GetSideFacets extends \VuFind\AjaxHandler\GetSideFacets
     {
         $setupCallback = function ($runner, $params, $searchId) use ($index, $loc) {
             $listener = new RecommendListener(
-                $this->recommendPluginManager, $searchId
+                $this->recommendPluginManager,
+                $searchId
             );
             $config = [];
             $rawConfig = $params->getOptions()

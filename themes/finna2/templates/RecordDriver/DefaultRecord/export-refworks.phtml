@@ -116,9 +116,9 @@ if ($urls = $this->record($this->driver)->getUrlList()) {
     foreach ($urls as $url) {
         echo "UL $url\n";
     }
-    echo "LK " . $this->serverUrl($this->recordLink()->getUrl($this->driver)) . "\n";
+    echo "LK " . $this->serverUrl($this->recordLinker()->getUrl($this->driver)) . "\n";
 } else {
-    echo "UL " . $this->serverUrl($this->recordLink()->getUrl($this->driver)) . "\n";
+    echo "UL " . $this->serverUrl($this->recordLinker()->getUrl($this->driver)) . "\n";
 }
 
 $summary = $this->driver->tryMethod('getSummary');

@@ -144,7 +144,7 @@
                 <?php elseif (!isset($record['driver']) || !is_object($record['driver'])): ?>
                   <?=$this->escapeHtml(trim($record['title'], '/: '))?>
                 <?php else: ?>
-                  <a href="<?=$this->recordLink()->getUrl($record['driver'])?>"><?=$this->escapeHtml(trim($record['title'], '/: '))?></a>
+                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($record['driver']))?>"><?=$this->escapeHtml(trim($record['title'], '/: '))?></a>
                 <?php endif; ?>
               <td class="<?= $hideCheckout ? "hidden" : "hidden-xs" ?>">
                 <?=isset($record['checkout']) ? $this->escapeHtml($record['checkout']) : ''?>
@@ -198,24 +198,20 @@
     <?php endif; ?>
   </div>
 </div>
-<?php if (!empty($this->registerPayment)): ?>
-  <?php $this->headScript()->appendFile('finna-online-payment.js'); ?>
-  <?=$this->inlineScript(
-    \Laminas\View\Helper\HeadScript::SCRIPT,
-    '$(document).ready(function() {'
-        . "finna.onlinePayment.registerPayment('" . $this->json($registerPaymentParams) . "');" . '
-    });',
-    'SET'
-  ); ?>
-<?php elseif (!empty($this->paymentRegistered)): ?>
-  <?=$this->inlineScript(
-    \Laminas\View\Helper\HeadScript::SCRIPT,
-    '$(document).ready(function() {'
-        . "VuFind.account.clearCache();" . '
-    });',
-    'SET'
-  ); ?>
-<?php endif; ?>
+<?php
+  if (!empty($this->registerPayment)) {
+    $this->headScript()->appendFile('finna-online-payment.js');
+    $paramsJson = json_encode($registerPaymentParams);
+    $js = <<<JS
+$(document).ready(function() {
+  finna.onlinePayment.registerPayment($paramsJson);
+});
+JS;
+    echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $js, 'SET');
+  } elseif (!empty($this->paymentRegistered)) {
+    echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, '$(document).ready(function() { VuFind.account.clearCache(); });', 'SET');
+  }
+?>
 
 <?=$this->render('myresearch/notify-account-status.phtml', ['method' => 'fines', 'accountStatus' => $this->accountStatus]); ?>
 <!-- END of: finna - myresearch/fines.phtml -->

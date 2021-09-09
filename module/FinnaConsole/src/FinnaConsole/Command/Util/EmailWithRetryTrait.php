@@ -60,7 +60,12 @@ trait EmailWithRetryTrait
      * @throws MailException
      * @return void
      */
-    protected function sendEmailWithRetry($to, $from, $subject, $body, $cc = null,
+    protected function sendEmailWithRetry(
+        $to,
+        $from,
+        $subject,
+        $body,
+        $cc = null,
         $replyTo = null
     ) {
         try {

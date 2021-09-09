@@ -20,8 +20,8 @@
       <p><?=$this->translate('loan_history_purge_prompt_html')?></p>
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->csrf)?>" name="csrf"/>
       <div class="form-group">
-        <input class="btn btn-primary" name="submit" type="submit" value="<?=$this->transEsc('confirm_dialog_yes')?>" data-lightbox-ignore/>
-        <input class="btn btn-primary" name="cancel" type="submit" value="<?=$this->transEsc('confirm_dialog_no')?>" data-lightbox-ignore/>
+        <input class="btn btn-primary" name="submit" type="submit" value="<?=$this->transEscAttr('confirm_dialog_yes')?>" data-lightbox-ignore/>
+        <input class="btn btn-primary" name="cancel" type="submit" value="<?=$this->transEscAttr('confirm_dialog_no')?>" data-lightbox-ignore/>
       </div>
     </form>
   </div>

@@ -33,7 +33,7 @@
       <?=$this->captcha()->html($this->useCaptcha) ?>
     </div>
     <div class="form-group">
-      <input class="btn btn-primary" name="submit" type="submit" value="<?=$this->transEsc('Recover Account') ?>"/>
+      <input class="btn btn-primary" name="submit" type="submit" value="<?=$this->transEscAttr('Recover Account') ?>"/>
     </div>
   </form>
 <?php endif; ?>

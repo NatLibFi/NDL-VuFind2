@@ -5,7 +5,7 @@
     <?php foreach ($parentIds as $index => $parentId): ?>
       <?php
         try {
-          $parentUrl = $this->recordLink()->getUrl("$parentSource|$parentId");
+          $parentUrl = $this->recordLinker()->getUrl("$parentSource|$parentId");
         } catch (\Exception $e) {
           $parentUrl = '';
         }

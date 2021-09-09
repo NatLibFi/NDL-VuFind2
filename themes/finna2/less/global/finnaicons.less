@@ -525,7 +525,7 @@ table .iconlabel {
 .iconlabel.format-kirja:before, .iconlabel.format-book:before, .iconlabel.format-1bookbook:before, .iconlabel.kirja:before, .iconlabel.format-1bookbooksection:before, .iconlabel.format-1bookbraille:before {
     content: "\e616";
 }
-.iconlabel.format-1journalarticle:before, .iconlabel.format-1journaljournal:before, .iconlabel.format-1journalserial:before, .iconlabel.format-1journalnewspaper:before, .iconlabel.format-1journalappendix:before, .iconlabel.format-1journalnewspaperarticle:before, .iconlabel.format-journal:before, .iconlabel.format-newspaper:before, .iconlabel.format-news:before, .iconlabel.format-report:before, .iconlabel.format-review:before, .iconlabel.format-academicjournal:before {
+.iconlabel.format-1journalarticle:before, .iconlabel.format-1journaljournal:before, .iconlabel.format-1journalserial:before, .iconlabel.format-1journalnewspaper:before, .iconlabel.format-1journalappendix:before, .iconlabel.format-1journalnewspaperarticle:before, .iconlabel.format-journal:before, .iconlabel.format-newspaper:before, .iconlabel.format-news:before, .iconlabel.format-report:before, .iconlabel.format-review:before, .iconlabel.format-academicjournal:before, .iconlabel.format-1othertextephemera:before {
     content: "\e001";
 }
 .iconlabel.format-1journaleserial:before, .iconlabel.format-1journalearticle:before, .iconlabel.format-1journalejournal:before, .iconlabel.format-1journalenewspaper:before {
@@ -537,31 +537,39 @@ table .iconlabel {
 .iconlabel.format-1otherother:before, .iconlabel.format-1othercollection:before, .iconlabel.format-1othersubunit:before, .iconlabel.format-1otherkit:before, .iconlabel.format-1othermanuscript:before, .iconlabel.format-1othertext:before, .iconlabel.format-1othercdrom:before  {
     content: "\e00d";
 }
+.iconlabel.format-1othermicrofilm:before {
+    font-family: FontAwesome;
+    content: @fa-var-film;
+}
+.iconlabel.format-1otherinterview:before {
+    font-family: FontAwesome;
+    content: @fa-var-microphone;  
+}
 .iconlabel.format-manuscript:before, .iconlabel.format-1thesisother:before, .iconlabel.format-1thesisgradu:before, .iconlabel.format-1thesisthesis:before, .iconlabel.format-1thesislaudatur:before, .iconlabel.format-1thesismasters:before, .iconlabel.format-1thesisbachelorspolytechnic:before, .iconlabel.format-1thesisbachelors:before, .iconlabel.format-1thesismasterspolytechnic:before, .iconlabel.yamk:before, .iconlabel.format-1thesislicentiate:before, .iconlabel.format-1otherresearchdata:before {
     content: "\e00c";
 }
-.iconlabel.format-0workofart:before, .iconlabel.format-1workofartsculpture:before, .iconlabel.format-1workofartpainting:before, .iconlabel.format-1workofartinstallation:before, .iconlabel.format-1workofartdrawing:before, .iconlabel.format-1workofartgraphic:before, .iconlabel.format-1workofartscuplture:before, .iconlabel.format-1workofartartindustry:before, .iconlabel.format-1workofartphysical:before {
+.iconlabel.format-0workofart:before, .iconlabel[class*="format-1workofart"]:before {
     content: "\e00b";
 }
-.iconlabel.format-1videovideo:before, .iconlabel.format-1videodvd:before, .iconlabel.format-1videobluray:before, .iconlabel.format-1videovideodisc:before, .iconlabel.format-1videovideocassette:before, .iconlabel.format-1videomotionpicture:before, .iconlabel.format-videorecording:before {
+.iconlabel[class*="format-1video"] {
     content: "\e00a";
 }
-.iconlabel.format-1soundsoundrecording:before, .iconlabel.format-1soundrecord:before, .iconlabel.format-1soundmusicrecording:before, .iconlabel.format-1soundnonmusicalrecording:before, .iconlabel.format-audio:before, .iconlabel.format-1soundinterview:before, .iconlabel.format-1soundother:before {
+.iconlabel[class*="format-1sound"]:before {
     content: "\e009";
 }
  .iconlabel.format-1soundcd:before, .iconlabel.format-1soundsounddisc:before, .iconlabel.format-1soundnonmusicalcd:before, .iconlabel.format-1soundnonmusicaldisc:before {
     content: "\e802";
 }
-.iconlabel.format-1soundsoundcassette:before, .iconlabel.format-1soundnonmusicalcassette:before {
+.iconlabel.format-1soundsoundcassette:before, .iconlabel.format-1soundnonmusicalcassette:before, .iconlabel.format-1othertapecassette:before, .iconlabel.format-1otherdisccartridge:before {
     content: "\e8ad";
 }
-.iconlabel.format-1imagephoto:before, .iconlabel.format-1imageimage:before, .iconlabel.format-1imagephotograph:before, .iconlabel.format-1imageslide:before, .iconlabel.format-1imagedrawing:before, .iconlabel.format-1imagetransparency:before {
+.iconlabel[class*="format-1image"]:before {
     content: "\e008";
 }
 .iconlabel-smallpress:before, .iconlabel.format-1otherprint:before {
     content: "\e007";
 }
-.fa.fa-TOC:before, .iconlabel.format-1document:before, .iconlabel.format-1documentarchive:before, .iconlabel.format-1documentarchivematerial:before, .iconlabel.format-1documentarchiveitem:before, .iconlabel.format-1documentarchivefonds:before, .iconlabel.format-1documentarchiveseries:before, .iconlabel.format-1documentarchivecollection:before, .iconlabel.format-1documentothercollection:before, .iconlabel.format-1documentcollection:before, .iconlabel.format-1documentdigitizedarchiveitem:before {
+.fa.fa-TOC:before, .iconlabel.format-1document:before, .iconlabel.format-1documentarchive:before, .iconlabel.format-1documentarchivematerial:before, .iconlabel.format-1documentarchiveitem:before, .iconlabel.format-1documentarchivefonds:before, .iconlabel.format-1documentarchiveseries:before, .iconlabel.format-1documentarchivecollection:before, .iconlabel.format-1documentothercollection:before, .iconlabel.format-1documentcollection:before, .iconlabel.format-1documentdigitizedarchiveitem:before, .iconlabel.format-1othertexttext:before, .iconlabel.format-1othertextdiary:before, .iconlabel.format-1othertextconferenceproceeding:before, .iconlabel.format-1othertextmanuscript:before, .iconlabel.format-1othertextresearchreport:before, .iconlabel.format-1othertextletter:before {
     font-family: finnaicons;
     content: "\e006";
 }
@@ -574,7 +582,7 @@ table .iconlabel {
 .iconlabel.esine:before, .iconlabel.format-1physicalobjectother:before, .iconlabel.format-1physicalobjectculturehistoricalobject:before, .iconlabel.format-0physicalobject:before {
     content: "\e003";
 }
-.iconlabel.format-1mapmap:before, .iconlabel.format-1mapatlas:before, .iconlabel.karttapallo:before {
+.iconlabel[class*="format-1map"]:before, .iconlabel.karttapallo:before {
     content: "\e002";
 }
 .iconlabel.format-0learningmaterial:before {

@@ -50,7 +50,9 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
      *
      * @return string
      */
-    public function toHtml(string $markdown, bool $replaceDeprecatedTags = true
+    public function toHtml(
+        string $markdown,
+        bool $replaceDeprecatedTags = true
     ): string {
         if ($replaceDeprecatedTags) {
             $markdown = $this->replaceDeprecatedTags($markdown);
@@ -105,7 +107,7 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
         // Replace details > summary elements, which have the markdown attribute.
         $markdown = preg_replace(
             $this->getTagContentRegex('summary', ' markdown="1"'),
-            "  <span slot=\"heading\">$1</span>\n",
+            "  <h3 slot=\"heading\">$1</h3>\n",
             $markdown
         );
 
@@ -135,7 +137,8 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
      *
      * @return string
      */
-    protected function getTagContentRegex(string $tagName,
+    protected function getTagContentRegex(
+        string $tagName,
         string $attributes = RegexHelper::PARTIAL_ATTRIBUTE . '*'
     ): string {
         return '/<' . $tagName . $attributes . '\s*>(.*?)'

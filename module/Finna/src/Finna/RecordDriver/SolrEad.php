@@ -48,9 +48,9 @@ namespace Finna\RecordDriver;
 class SolrEad extends SolrDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use XmlReaderTrait;
-    use UrlCheckTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\FinnaXmlReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     // add-data > parent elements with these level-attributes are archive series
@@ -69,7 +69,9 @@ class SolrEad extends SolrDefault
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -79,7 +81,7 @@ class SolrEad extends SolrDefault
     /**
      * Get access restriction notes for the record.
      *
-     * @return string[] Notes
+     * @return mixed Notes
      */
     public function getAccessRestrictions()
     {
@@ -208,7 +210,8 @@ class SolrEad extends SolrDefault
         foreach ($record->xpath('//bibliography') as $node) {
             // Filter out Portti links since they're displayed in links
             $match = preg_match(
-                '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/', (string)$node->p
+                '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/',
+                (string)$node->p
             );
             if (!$match) {
                 $bibliography[] = (string)$node->p;

@@ -94,7 +94,8 @@ class CustomElement extends AbstractHelper implements CustomElementRendererInter
             $viewModel->setTemplate('CustomElement/' . $element->getName());
         }
         return $this->getView()->render(
-            $viewModel->getTemplate(), $viewModel->getVariables()
+            $viewModel->getTemplate(),
+            $viewModel->getVariables()
         );
     }
 }

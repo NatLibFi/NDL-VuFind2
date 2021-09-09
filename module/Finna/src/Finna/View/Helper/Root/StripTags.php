@@ -57,12 +57,16 @@ class StripTags extends \Laminas\View\Helper\AbstractHelper
         // Replace specific tags with a space. This is to prevent words from being
         // concatenated in cases like foo<br>bar and <p>foo</p><p>bar</p>.
         $string = str_replace(
-            ['<p>', '<br>', '<br/>', '<br />', '<li>'], ' ', $string
+            ['<p>', '<br>', '<br/>', '<br />', '<li>'],
+            ' ',
+            $string
         );
 
         // Remove the contents of <script> and <style> tags.
         $string = preg_replace(
-            '@<(script|style)[^>]*?>.*?</\\1>@si', '', $string
+            '@<(script|style)[^>]*?>.*?</\\1>@si',
+            '',
+            $string
         );
 
         $string = strip_tags($string);

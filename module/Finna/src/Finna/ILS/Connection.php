@@ -136,7 +136,8 @@ class Connection extends \VuFind\ILS\Connection
     protected function checkMethodStorageRetrievalRequests($functionConfig, $params)
     {
         $response = parent::checkMethodStorageRetrievalRequests(
-            $functionConfig, $params
+            $functionConfig,
+            $params
         );
 
         if (isset($functionConfig['acceptTermsText'])) {
@@ -190,7 +191,8 @@ class Connection extends \VuFind\ILS\Connection
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function checkMethodgetPatronAuthorizationStatus(
-        $functionConfig, $params
+        $functionConfig,
+        $params
     ) {
         if ($this->checkCapability('getPatronAuthorizationStatus', [$params ?: []])
         ) {
@@ -215,10 +217,12 @@ class Connection extends \VuFind\ILS\Connection
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function checkMethodgetPatronStaffAuthorizationStatus(
-        $functionConfig, $params
+        $functionConfig,
+        $params
     ) {
         $capability = $this->checkCapability(
-            'getPatronStaffAuthorizationStatus', [$params ?: []]
+            'getPatronStaffAuthorizationStatus',
+            [$params ?: []]
         );
         if ($capability) {
             return ['function' => 'getPatronStaffAuthorizationStatus'];
@@ -240,7 +244,8 @@ class Connection extends \VuFind\ILS\Connection
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function checkMethodupdateAddress(
-        $functionConfig, $params
+        $functionConfig,
+        $params
     ) {
         if (!isset($functionConfig['method'])) {
             return false;
@@ -253,62 +258,6 @@ class Connection extends \VuFind\ILS\Connection
         }
         if ($functionConfig['method'] == 'driver'
             && $this->checkCapability('updateAddress', [$params ?: []])
-        ) {
-            return $functionConfig;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check for changePickupLocation
-     *
-     * A support method for checkFunction(). This is responsible for checking
-     * the driver configuration to determine if the system supports change of
-     * the pickup location.
-     *
-     * @param array $functionConfig The configuration values
-     * @param array $params         Patron data
-     *
-     * @return mixed On success, array of configuration data; on failure, false.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function checkMethodchangePickupLocation($functionConfig, $params)
-    {
-        if (!isset($functionConfig['method'])) {
-            return false;
-        }
-
-        if ($this->checkCapability('changePickupLocation', [$params ?: []])
-        ) {
-            return $functionConfig;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check for changeRequestStatus
-     *
-     * A support method for checkFunction(). This is responsible for checking
-     * the driver configuration to determine if the system supports change of
-     * request status.
-     *
-     * @param array $functionConfig The configuration values
-     * @param array $params         Patron data
-     *
-     * @return mixed On success, array of configuration data; on failure, false.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    protected function checkMethodchangeRequestStatus($functionConfig, $params)
-    {
-        if (!isset($functionConfig['method'])) {
-            return false;
-        }
-
-        if ($this->checkCapability('changeRequestStatus', [$params ?: []])
         ) {
             return $functionConfig;
         }
@@ -330,7 +279,8 @@ class Connection extends \VuFind\ILS\Connection
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function checkMethodupdateTransactionHistoryState($functionConfig,
+    protected function checkMethodupdateTransactionHistoryState(
+        $functionConfig,
         $params
     ) {
         if (!isset($functionConfig['method'])) {
@@ -338,7 +288,8 @@ class Connection extends \VuFind\ILS\Connection
         }
 
         $capability = $this->checkCapability(
-            'updateTransactionHistoryState', [$params ?: []]
+            'updateTransactionHistoryState',
+            [$params ?: []]
         );
         return $capability ? $functionConfig : false;
     }
