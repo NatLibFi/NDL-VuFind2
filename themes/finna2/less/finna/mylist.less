@@ -526,6 +526,15 @@ span.caret {
 }
 .mylist-controls {
   .control-container {
+    display: flex;
+    align-items: center;
+    .sort-option-container, .limit-option-container, .view-option-container{
+      margin-left: 5px;
+    }
+    .btn-sort-order {
+      padding-top: 7px;
+      padding-bottom: 7px;
+    }
     .sort-option-container {
       @media (max-width: @screen-sm) {
         a.dropdown-toggle {
