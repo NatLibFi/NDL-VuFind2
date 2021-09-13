@@ -115,7 +115,7 @@ class SolrDefaultBackendFactory
 
         // Finna Solr Extensions
         $solrExtensions = new SolrExtensionsListener(
-            $backend,
+            $backend->getIdentifier(),
             $this->serviceLocator,
             $this->searchConfig,
             $this->facetConfig
