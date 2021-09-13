@@ -106,7 +106,8 @@ class ListApiController extends ListController implements ApiInterface
         ];
 
         return $this->getViewRenderer()->render(
-            'listapi/swagger', $viewParams
+            'listapi/swagger',
+            $viewParams
         );
     }
 
