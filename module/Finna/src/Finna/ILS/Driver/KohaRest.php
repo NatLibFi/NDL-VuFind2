@@ -111,7 +111,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         if (isset($this->config['Holdings']['holdings_branch_order'])) {
             $values = explode(
-                ':', $this->config['Holdings']['holdings_branch_order']
+                ':',
+                $this->config['Holdings']['holdings_branch_order']
             );
             foreach ($values as $i => $value) {
                 $parts = explode('=', $value, 2);
@@ -658,7 +659,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $request = [
@@ -1762,10 +1766,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         case 'Patron::Debt':
         case 'Patron::DebtGuarantees':
             $count = isset($details['current_outstanding'])
-                ? $this->safeMoneyFormat->__invoke($details['current_outstanding'])
+                ? ($this->safeMoneyFormat)($details['current_outstanding'])
                 : '-';
             $limit = isset($details['max_outstanding'])
-                ? $this->safeMoneyFormat->__invoke($details['max_outstanding'])
+                ? ($this->safeMoneyFormat)($details['max_outstanding'])
                 : '-';
             $params = [
                 '%%blockCount%%' => $count,
@@ -1862,7 +1866,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $entry['renewability_blocks']
                 );
                 $permanent = in_array(
-                    $entry['renewability_blocks'], $this->permanentRenewalBlocks
+                    $entry['renewability_blocks'],
+                    $this->permanentRenewalBlocks
                 );
                 if ($permanent) {
                     $renewals = null;

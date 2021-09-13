@@ -126,7 +126,8 @@ class ExpireUsers extends AbstractUtilCommand
         if ($daysOld < $this->minAge) {
             $output->writeln(
                 str_replace(
-                    '%%age%%', $this->minAge,
+                    '%%age%%',
+                    $this->minAge,
                     'Expiration age must be at least %%age%% days.'
                 )
             );

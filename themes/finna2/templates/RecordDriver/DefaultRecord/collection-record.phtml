@@ -1,6 +1,6 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/collection-record.phtml -->
 <h2><?=$this->escapeHtml($this->driver->getTitle())?></h2>
-<a href="<?=$this->recordLink()->getUrl($this->driver)?>"><?=$this->transEsc('View Full ' . ($this->driver->isCollection() ? 'Collection' : 'Record'))?></a>
+<a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>"><?=$this->transEsc('View Full ' . ($this->driver->isCollection() ? 'Collection' : 'Record'))?></a>
 
 <table class="table table-striped" summary="<?=$this->transEsc('Bibliographic Details')?>">
   <?php $summary = $this->driver->getSummary(); $summary = $summary[0] ?? false; ?>
@@ -28,7 +28,7 @@
           $containerID = $this->driver->getContainerRecordID();
         ?>
         <span class="recordContainerReference">
-          <?=$this->transEsc('Published in')?> <a href="<?=($containerID ? $this->recordLink()->getUrl("$containerSource|$containerID") : $this->record($this->driver)->getLink('title', $containerTitle))?>"><?=$this->escapeHtml($containerTitle)?></a>
+          <?=$this->transEsc('Published in')?> <a href="<?=($containerID ? $this->escapeHtmlAttr($this->recordLinker()->getUrl("$containerSource|$containerID")) : $this->record($this->driver)->getLink('title', $containerTitle))?>"><?=$this->escapeHtml($containerTitle)?></a>
           <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } ?>
         </span>
       <?php endif; ?>

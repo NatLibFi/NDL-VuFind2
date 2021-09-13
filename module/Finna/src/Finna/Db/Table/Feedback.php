@@ -51,8 +51,12 @@ class Feedback extends \VuFind\Db\Table\Gateway
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      * @param string        $table   Name of database table to interface with
      */
-    public function __construct(Adapter $adapter, PluginManager $tm, $cfg,
-        RowGateway $rowObj = null, $table = 'finna_feedback'
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
+        $cfg,
+        RowGateway $rowObj = null,
+        $table = 'finna_feedback'
     ) {
         parent::__construct($adapter, $tm, $cfg, $rowObj, $table);
     }
@@ -69,7 +73,11 @@ class Feedback extends \VuFind\Db\Table\Gateway
      * @return FeedbackRow
      */
     public function saveFeedback(
-        $url, $formId, $userId = null, $message = null, $messageJson = null
+        $url,
+        $formId,
+        $userId = null,
+        $message = null,
+        $messageJson = null
     ) {
         $feedback = $this->createRow();
         $feedback->user_id = $userId;

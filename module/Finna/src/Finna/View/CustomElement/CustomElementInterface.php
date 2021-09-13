@@ -41,6 +41,38 @@ use Laminas\View\Model\ModelInterface;
 interface CustomElementInterface
 {
     /**
+     * Element information array key for the content set type.
+     * See HTML Purifier documentation for possible values.
+     *
+     * @var string
+     */
+    public const TYPE = 'type';
+
+    /**
+     * Element information array key for allowed children.
+     * See HTML Purifier documentation for possible values.
+     *
+     * @var string
+     */
+    public const CONTENTS = 'contents';
+
+    /**
+     * Element information array key for common attributes collections.
+     * See HTML Purifier documentation for possible values.
+     *
+     * @var string
+     */
+    public const ATTR_COLLECTIONS = 'attrCollections';
+
+    /**
+     * Element information array key for attributes.
+     * See HTML Purifier documentation for possible values.
+     *
+     * @var string
+     */
+    public const ATTRIBUTES = 'attributes';
+
+    /**
      * Get the name of the element.
      *
      * @return string
@@ -48,11 +80,18 @@ interface CustomElementInterface
     public function getName(): string;
 
     /**
-     * Get the names of attributes supported by the element.
+     * Get information about the element.
      *
      * @return array
      */
-    public static function getAttributes(): array;
+    public static function getInfo(): array;
+
+    /**
+     * Get information about child elements supported by the element.
+     *
+     * @return array
+     */
+    public static function getChildInfo(): array;
 
     /**
      * Get the view model for server-side rendering the element.

@@ -27,6 +27,8 @@
  */
 namespace Finna\Form;
 
+use VuFind\Exception\BadConfig;
+
 /**
  * Configurable form.
  *
@@ -43,28 +45,45 @@ class Form extends \VuFind\Form\Form
      *
      * @var string
      */
-    const HANDLER_EMAIL = 'email';
+    public const HANDLER_EMAIL = 'email';
 
     /**
      * Database form handler
      *
      * @var string
      */
-    const HANDLER_DATABASE = 'database';
+    public const HANDLER_DATABASE = 'database';
+
+    /**
+     * API form handler
+     *
+     * @var string
+     */
+    public const HANDLER_API = 'api';
 
     /**
      * Site feedback form id.
      *
      * @var string
      */
-    const FEEDBACK_FORM = 'FeedbackSite';
+    public const FEEDBACK_FORM = 'FeedbackSite';
 
     /**
      * Record feedback form id.
      *
      * @var string
      */
-    const RECORD_FEEDBACK_FORM = 'FeedbackRecord';
+    public const RECORD_FEEDBACK_FORM = 'FeedbackRecord';
+
+    /**
+     * Handlers that are considered safe for transmitting information about the user
+     *
+     * @var array
+     */
+    protected $secureHandlers = [
+        Form::HANDLER_DATABASE,
+        Form::HANDLER_API,
+    ];
 
     /**
      * Form id
@@ -145,6 +164,16 @@ class Form extends \VuFind\Form\Form
     protected $formSettings = [];
 
     /**
+     * Get form id
+     *
+     * @return string
+     */
+    public function getFormId(): string
+    {
+        return $this->formId;
+    }
+
+    /**
      * Set form id
      *
      * @param string $formId Form id
@@ -164,17 +193,19 @@ class Form extends \VuFind\Form\Form
         parent::setFormId($formId, $params);
         $this->setName($formId);
 
-        // Validate repository library request form settings
+        // Validate form settings
         if ($this->formSettings['includeBarcode'] ?? false) {
             if (!$this->isRecordRequestFormWithBarcode()) {
                 throw new \VuFind\Exception\BadConfig(
                     'Library card barcode can not be used with this form.'
                 );
             }
-            if ('database' !== ($this->formSettings['sendMethod'] ?? null)) {
+            $handler = $this->formSettings['sendMethod'] ?? Form::HANDLER_EMAIL;
+            if (!in_array($handler, $this->secureHandlers)) {
                 throw new \VuFind\Exception\BadConfig(
-                    'Configure sendMethod to \'database\' when'
-                    . ' \'includeBarcode\' is enabled'
+                    'Use one of the following values for sendMethod when'
+                    . ' \'includeBarcode\' is enabled: '
+                    . implode(', ', $this->secureHandlers)
                 );
             }
             if (!($this->formSettings['onlyForLoggedUsers'] ?? false)) {
@@ -203,6 +234,21 @@ class Form extends \VuFind\Form\Form
             if ($this->user && ($catId = $this->user->cat_id)) {
                 [, $id] = explode('.', $catId);
                 $this->userCatId = $id;
+            }
+        }
+        if ($this->getSendMethod() === Form::HANDLER_API) {
+            if (empty($this->formSettings['apiSettings']['url'])) {
+                throw new \VuFind\Exception\BadConfig(
+                    "'apiSettings/url' is required when 'sendMethod' is '"
+                    . Form::HANDLER_API . "'"
+                );
+            }
+            if (strpos($this->formSettings['apiSettings']['url'], 'https://') !== 0
+                && 'development' !== APPLICATION_ENV
+            ) {
+                throw new \VuFind\Exception\BadConfig(
+                    "'apiSettings/url' must begin with https://"
+                );
             }
         }
     }
@@ -297,9 +343,9 @@ class Form extends \VuFind\Form\Form
 
         $recipients = parent::getRecipient();
 
-        if (! $this->useEmailHandler()) {
+        if ($this->getSendMethod() !== Form::HANDLER_EMAIL) {
             // Return a single "receiver" so that the response does not
-            // get saved multiple times to the database.
+            // get stored multiple times.
             return [$recipients[0]];
         }
 
@@ -385,9 +431,9 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Return form help text.
+     * Return form help texts.
      *
-     * @return string|null
+     * @return array|null
      */
     public function getHelp()
     {
@@ -397,50 +443,56 @@ class Form extends \VuFind\Form\Form
             throw new \Exception('ViewHelperManager not defined');
         }
 
+        $escapeHtml = $this->viewHelperManager->get('escapeHtml');
         $transEsc = $this->viewHelperManager->get('transEsc');
         $translationEmpty = $this->viewHelperManager->get('translationEmpty');
         $organisationDisplayName
             = $this->viewHelperManager->get('organisationDisplayName');
 
-        // Help text from configuration
-        $pre = isset($this->formConfig['help']['pre'])
-            && !$translationEmpty->__invoke($this->formConfig['help']['pre'])
-            ? $this->translate($this->formConfig['help']['pre'])
-            : null;
+        $preParagraphs = [];
+        $postParagraphs = [];
 
         // 'feedback_instructions_html' translation
         if ($this->formId === self::FEEDBACK_FORM) {
             $key = 'feedback_instructions_html';
             $instructions = $this->translate($key);
-            // Remove zero width space
-            $instructions = str_replace("\xE2\x80\x8C", '', $instructions);
-            if (!empty($instructions) && $instructions !== $key) {
-                $pre = !empty($pre)
-                    ? $instructions . '<br><br>' . $pre
-                    : $instructions;
+            if ($instructions !== $key && !$translationEmpty($instructions)) {
+                $preParagraphs[] = $instructions;
             }
+        }
+
+        // Help texts from configuration
+        $pre = isset($this->formConfig['help']['pre'])
+            && !$translationEmpty($this->formConfig['help']['pre'])
+            ? $this->translate($this->formConfig['help']['pre'])
+            : null;
+        if ($pre) {
+            $preParagraphs[] = $pre;
+        }
+        $post = isset($this->formConfig['help']['post'])
+            && !$translationEmpty($this->formConfig['help']['post'])
+            ? $this->translate($this->formConfig['help']['post'])
+            : null;
+        if ($post) {
+            $postParagraphs[] = $post;
         }
 
         if ($this->formId === self::RECORD_FEEDBACK_FORM && null !== $this->record) {
             // Append receiver info after general record feedback instructions
             // (translation key for this is defined in FeedbackForms.yaml)
-            if (!$translationEmpty->__invoke('feedback_recipient_info_record')) {
-                if (!empty($pre)) {
-                    $pre .= '<br><br>';
-                }
-                $pre .= $transEsc(
+            if (!$translationEmpty('feedback_recipient_info_record')) {
+                $preParagraphs[] = $transEsc(
                     'feedback_recipient_info_record',
-                    ['%%institution%%'
-                         => $organisationDisplayName->__invoke($this->record, true)]
+                    [
+                        '%%institution%%'
+                            => $organisationDisplayName($this->record, true)
+                    ]
                 );
             }
             $datasourceKey = 'feedback_recipient_info_record_'
                 . $this->record->getDataSource() . '_html';
             if (!$translationEmpty($datasourceKey)) {
-                if (!empty($pre)) {
-                    $pre .= '<br>';
-                }
-                $pre .= '<span class="datasource-info">'
+                $preParagraphs[] = '<span class="datasource-info">'
                     . $this->translate($datasourceKey) . '</span>';
             }
         } elseif (!($this->formConfig['hideRecipientInfo'] ?? false)
@@ -449,7 +501,9 @@ class Form extends \VuFind\Form\Form
             // Receiver info
             $institution = $this->institution;
             $institutionName = $this->translate(
-                "institution::$institution", null, $institution
+                "institution::$institution",
+                null,
+                $institution
             );
 
             // Try to handle cases like tritonia-tria
@@ -457,38 +511,51 @@ class Form extends \VuFind\Form\Form
             ) {
                 $part = substr($institution, 0, strpos($institution, '-'));
                 $institutionName = $this->translate(
-                    "institution::$part", null, $institution
+                    "institution::$part",
+                    null,
+                    $institution
                 );
             }
 
-            $translationKey = $this->useEmailHandler()
+            $translationKey = $this->getSendMethod() === Form::HANDLER_EMAIL
                 ? 'feedback_recipient_info_email'
                 : 'feedback_recipient_info';
 
             $recipientInfo = $this->translate(
-                $translationKey, ['%%institution%%' => $institutionName]
+                $translationKey,
+                ['%%institution%%' => $institutionName]
             );
 
-            if (!empty($pre)) {
-                $pre .= '<br><br>';
-            }
-            $pre .= '<strong>' . $recipientInfo . '</strong>';
+            $postParagraphs[] = '<strong>' . $recipientInfo . '</strong>';
+        }
+
+        // Append record title
+        if (null !== $this->record
+            && ($this->formId === self::RECORD_FEEDBACK_FORM
+            || $this->isRecordRequestFormWithBarcode())
+        ) {
+            $preParagraphs[] = '<strong>'
+                . $transEsc('repository_library_request_material') . '</strong>:<br>'
+                . $escapeHtml($this->record->getTitle());
         }
 
         if ($this->userCatUsername) {
-            $pre .= '<br><br>' . $this->translate(
+            $preParagraphs[] = $this->translate(
                 'feedback_library_card_barcode_html',
                 ['%%barcode%%' => $this->userCatUsername]
             );
         }
         if ($this->userCatId) {
-            $pre .= '<br><br>' . $this->translate(
+            $postParagraphs[] = $this->translate(
                 'feedback_library_patron_id_html',
                 ['%%id%%' => $this->userCatId]
             );
         }
 
-        $help['pre'] = $pre;
+        $pre = implode('</div><div>', $preParagraphs);
+        $help['pre'] = $pre ? "<div>$pre</div>" : '';
+        $post = implode('</div><div>', $postParagraphs);
+        $help['post'] = $post ? "<div>$post</div>" : '';
 
         return $help;
     }
@@ -592,19 +659,30 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Should submitted form data be sent via email?
+     * Return the handler to be used for sending the email
      *
-     * @return boolean
+     * @return string
      */
-    public function useEmailHandler()
+    public function getSendMethod(): string
     {
-        // Never send librarycard barcode via email
-        if ($this->formConfig['includeBarcode'] ?? false) {
-            return false;
+        $handler = $this->formConfig['sendMethod'] ?? Form::HANDLER_EMAIL;
+        // Allow only secure handlers to send patron's barcode
+        if (($this->formConfig['includeBarcode'] ?? false)
+            && !in_array($handler, $this->secureHandlers)
+        ) {
+            throw new BadConfig("includeBarcode not allowed with $handler");
         }
-        // Send via email if not configured otherwise locally.
-        return !isset($this->formConfig['sendMethod'])
-                || $this->formConfig['sendMethod'] !== Form::HANDLER_DATABASE;
+        return $handler;
+    }
+
+    /**
+     * Return API settings
+     *
+     * @return string
+     */
+    public function getApiSettings(): array
+    {
+        return $this->formConfig['apiSettings'] ?? [];
     }
 
     /**
@@ -767,8 +845,14 @@ class Form extends \VuFind\Form\Form
 
         $fields = array_merge(
             $fields,
-            ['hideRecipientInfo', 'hideSenderInfo', 'sendMethod', 'senderInfoHelp',
-             'includeBarcode']
+            [
+                'apiSettings',
+                'hideRecipientInfo',
+                'hideSenderInfo',
+                'includeBarcode',
+                'senderInfoHelp',
+                'sendMethod',
+            ]
         );
 
         return $fields;

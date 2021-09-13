@@ -51,8 +51,10 @@ interface OnlinePaymentHandlerInterface
      * @param \VuFindHttp\HttpService $http       HTTP service
      * @param TranslatorInterface     $translator Translator
      */
-    public function __construct(\Laminas\Config\Config $config,
-        \VuFindHttp\HttpService $http, TranslatorInterface $translator
+    public function __construct(
+        \Laminas\Config\Config $config,
+        \VuFindHttp\HttpService $http,
+        TranslatorInterface $translator
     );
 
     /**
@@ -81,8 +83,15 @@ interface OnlinePaymentHandlerInterface
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl, $ajaxUrl, $user, $patron, $driver,
-        $amount, $transactionFee, $fines, $currency,
+        $finesUrl,
+        $ajaxUrl,
+        $user,
+        $patron,
+        $driver,
+        $amount,
+        $transactionFee,
+        $fines,
+        $currency,
         $statusParam
     );
 

@@ -52,8 +52,12 @@ class CommentsInappropriate extends Gateway
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      * @param string        $table   Name of database table to interface with
      */
-    public function __construct(Adapter $adapter, PluginManager $tm, $cfg,
-        RowGateway $rowObj = null, $table = 'finna_comments_inappropriate'
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
+        $cfg,
+        RowGateway $rowObj = null,
+        $table = 'finna_comments_inappropriate'
     ) {
         parent::__construct($adapter, $tm, $cfg, $rowObj, $table);
     }
@@ -72,7 +76,8 @@ class CommentsInappropriate extends Gateway
             $select->where->equalTo('user_id', $userId);
             $select->join(
                 ['cr' => 'finna_comments_record'],
-                'finna_comments_inappropriate.comment_id = cr.comment_id', []
+                'finna_comments_inappropriate.comment_id = cr.comment_id',
+                []
             );
 
             $select->where->equalTo('record_id', $recordId);

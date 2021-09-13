@@ -58,8 +58,16 @@ class TurkuPayment extends Paytrail
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl, $ajaxUrl, $user, $patron, $driver, $amount, $transactionFee,
-        $fines, $currency, $statusParam
+        $finesUrl,
+        $ajaxUrl,
+        $user,
+        $patron,
+        $driver,
+        $amount,
+        $transactionFee,
+        $fines,
+        $currency,
+        $statusParam
     ) {
         $required = ['merchantId', 'secret', 'sapCode', 'oId', 'applicationName'];
         foreach ($required as $req) {
@@ -112,7 +120,11 @@ class TurkuPayment extends Paytrail
             }
 
             $module->addProduct(
-                $fineDesc, $code, 1, $fine['balance'], 0,
+                $fineDesc,
+                $code,
+                1,
+                $fine['balance'],
+                0,
                 TurkuPaytrailE2::TYPE_NORMAL
             );
         }
@@ -120,8 +132,12 @@ class TurkuPayment extends Paytrail
             $code = $this->config->transactionFeeProductCode ??
                 $this->config->productCode ?? '';
             $module->addProduct(
-                'Palvelumaksu / Serviceavgift / Transaction fee', $code, 1,
-                $transactionFee, 0, TurkuPaytrailE2::TYPE_HANDLING
+                'Palvelumaksu / Serviceavgift / Transaction fee',
+                $code,
+                1,
+                $transactionFee,
+                0,
+                TurkuPaytrailE2::TYPE_HANDLING
             );
         }
 
@@ -151,6 +167,7 @@ class TurkuPayment extends Paytrail
         $module->setHttpService($this->http);
         $module->setLogger($this->logger);
         $module->sendRequest($this->config->url);
+        return '';
     }
 
     /**
@@ -170,7 +187,9 @@ class TurkuPayment extends Paytrail
         }
 
         return new TurkuPaytrailE2(
-            $this->config->merchantId, $this->config->secret, $paytrailLocale
+            $this->config->merchantId,
+            $this->config->secret,
+            $paytrailLocale
         );
     }
 

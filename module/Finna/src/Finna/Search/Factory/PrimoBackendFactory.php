@@ -73,7 +73,9 @@ class PrimoBackendFactory
         $client->setOptions(['timeout' => $timeout]);
 
         $connector = new Connector(
-            $this->primoConfig->General->url, $instCode, $client
+            $this->primoConfig->General->url,
+            $instCode,
+            $client
         );
         $connector->setLogger($this->logger);
 

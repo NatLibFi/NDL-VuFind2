@@ -108,7 +108,7 @@ foreach ($this->record($this->driver)->getUrlList() as $url) {
     echo "%U $url\n";
 }
 
-echo "%U " . $this->serverUrl($this->recordLink()->getUrl($this->driver)) . "\n";
+echo "%U " . $this->serverUrl($this->recordLinker()->getUrl($this->driver)) . "\n";
 
 $edition = $this->driver->tryMethod('getEdition');
 if (!empty($edition)) {

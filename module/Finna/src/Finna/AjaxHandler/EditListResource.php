@@ -83,7 +83,10 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase
      * @param bool         $enabled        Are lists enabled?
      * @param Markdown     $markdownHelper Markdown view helper
      */
-    public function __construct(UserResource $userResource, $user, $enabled = true,
+    public function __construct(
+        UserResource $userResource,
+        $user,
+        $enabled = true,
         $markdownHelper = null
     ) {
         $this->userResource = $userResource;
@@ -141,7 +144,8 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase
         $resources = $this->user->getSavedData($listParams['id'], $listId, $source);
         if (empty($resources)) {
             return $this->formatResponse(
-                'User resource not found', self::STATUS_HTTP_BAD_REQUEST
+                'User resource not found',
+                self::STATUS_HTTP_BAD_REQUEST
             );
         }
 

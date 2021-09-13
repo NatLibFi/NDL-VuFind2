@@ -54,8 +54,13 @@ class Resource extends \VuFind\Db\Table\Resource
      * @return \Laminas\Db\ResultSet\AbstractResultSet
      * @todo   Refactor to avoid duplication
      */
-    public function getFavorites($user, $list = null, $tags = [],
-        $sort = null, $offset = 0, $limit = null
+    public function getFavorites(
+        $user,
+        $list = null,
+        $tags = [],
+        $sort = null,
+        $offset = 0,
+        $limit = null
     ) {
         // Set up base query:
         $obj = & $this;
@@ -64,7 +69,8 @@ class Resource extends \VuFind\Db\Table\Resource
                 $s->columns(
                     [
                         new Expression(
-                            'DISTINCT(?)', ['resource.id'],
+                            'DISTINCT(?)',
+                            ['resource.id'],
                             [Expression::TYPE_IDENTIFIER]
                         ), '*'
                     ]
@@ -72,22 +78,26 @@ class Resource extends \VuFind\Db\Table\Resource
                 $urColumns = $list === null ?
                     [
                     'id' => new Expression(
-                        'MAX(?)', ['ur.id'],
+                        'MAX(?)',
+                        ['ur.id'],
                         [Expression::TYPE_IDENTIFIER]
                     )
                     ]
                     : [
                     'id' => new Expression(
-                        'MAX(?)', ['ur.id'],
+                        'MAX(?)',
+                        ['ur.id'],
                         [Expression::TYPE_IDENTIFIER]
                     ),
                     'finna_custom_order_index' => new Expression(
-                        'MAX(?)', ['ur.finna_custom_order_index'],
+                        'MAX(?)',
+                        ['ur.finna_custom_order_index'],
                         [Expression::TYPE_IDENTIFIER]
                     )
                     ];
                 $s->join(
-                    ['ur' => 'user_resource'], 'resource.id = ur.resource_id',
+                    ['ur' => 'user_resource'],
+                    'resource.id = ur.resource_id',
                     $urColumns
                 );
                 $s->where->equalTo('ur.user_id', $user);
@@ -139,12 +149,15 @@ class Resource extends \VuFind\Db\Table\Resource
         $select->columns(
             [
                 'records' => new Expression(
-                    'COUNT(?)', ['resource.id']
+                    'COUNT(?)',
+                    ['resource.id']
                 )
             ]
         );
         $select->join(
-            ['ur' => 'user_resource'], 'resource.id = ur.resource_id', []
+            ['ur' => 'user_resource'],
+            'resource.id = ur.resource_id',
+            []
         );
         $select->where->equalTo('ur.user_id', $user);
         $select->where->equalTo('ur.list_id', $list);
@@ -191,11 +204,13 @@ class Resource extends \VuFind\Db\Table\Resource
             // isnull() sort in that case. In finna_custom_order_index it's fine for
             // it to be null.
             $special = in_array(
-                strtolower($rawField), ['title', 'id', 'finna_custom_order_index']
+                strtolower($rawField),
+                ['title', 'id', 'finna_custom_order_index']
             );
             if (!$special) {
                 $order[] = new Expression(
-                    'isnull(?)', [$alias . '.' . $rawField],
+                    'isnull(?)',
+                    [$alias . '.' . $rawField],
                     [Expression::TYPE_IDENTIFIER]
                 );
             }
@@ -204,7 +219,8 @@ class Resource extends \VuFind\Db\Table\Resource
             if ('id' === $rawField || 'finna_custom_order_index' === $rawField) {
                 $desc = $parts[1] ?? '';
                 $order[] = new Expression(
-                    'MAX(?)' . $desc, ['ur.' . $rawField],
+                    'MAX(?)' . $desc,
+                    ['ur.' . $rawField],
                     [Expression::TYPE_IDENTIFIER]
                 );
             } else {

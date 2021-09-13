@@ -43,9 +43,9 @@ namespace Finna\RecordDriver;
 class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use MarcReaderTrait;
-    use UrlCheckTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\FinnaMarcReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -75,7 +75,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -574,7 +576,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 );
                 $partTitle = reset($partTitle);
                 $partAuthors = $this->getSubfieldArray(
-                    $field, ['a', 'q', 'b', 'c', 'd', 'e']
+                    $field,
+                    ['a', 'q', 'b', 'c', 'd', 'e']
                 );
 
                 $partPresenters = [];
@@ -823,7 +826,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $isbn = array_merge(
                 $isbn,
                 $this->stripTrailingPunctuation(
-                    $this->getFieldArray($field, $subfields), '-'
+                    $this->getFieldArray($field, $subfields),
+                    '-'
                 )
             );
         }
@@ -1694,7 +1698,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                 foreach ($series as $currentField) {
                     // Can we find a name using the specified subfield list?
                     $name = $this->getSubfieldArray(
-                        $currentField, $subfields, false
+                        $currentField,
+                        $subfields,
+                        false
                     );
                     if ($name) {
                         $currentArray = [

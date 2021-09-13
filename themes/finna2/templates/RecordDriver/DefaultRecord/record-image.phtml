@@ -10,12 +10,15 @@
 ?>
 <div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>">
   <div class="recordcover-holder paginate" aria-hidden="true" data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
-  <?= $this->record($this->driver)->renderTemplate(
-    'record-image-paginator.phtml',
-    ['images' => $images, 'type' => $type, 'formats' => $formats, 'enableImagePopupZoom' => $enableImagePopupZoom,
-     'numOfImages' => $numOfImages ?? null, 'displayIcon' => $displayIcon ?? false, 'models' => $models ?? []
-    ]
-  ); ?>
+    <?=
+      $this->record($this->driver)->renderTemplate(
+          'record-image-paginator.phtml',
+          [
+              'images' => $images, 'type' => $type, 'formats' => $formats, 'enableImagePopupZoom' => $enableImagePopupZoom,
+              'numOfImages' => $numOfImages ?? null, 'displayIcon' => $displayIcon ?? false, 'models' => $models ?? []
+          ]
+      )
+    ?>
   </div>
   <?php if (!$isList): ?>
     <?php $ind = 0; ?>

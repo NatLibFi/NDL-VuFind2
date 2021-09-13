@@ -105,7 +105,7 @@ class R2BackendFactory extends SolrDefaultBackendFactory
      */
     public function __invoke(ContainerInterface $sm, $name, array $options = null)
     {
-        $this->r2Config = $sm->get('VuFind\Config\PluginManager')->get('R2');
+        $this->r2Config = $sm->get(\VuFind\Config\PluginManager::class)->get('R2');
         $this->r2SupportService = $sm->get(\Finna\Service\R2SupportService::class);
         $this->solrCore = $this->r2Config->Index->default_core;
         $this->rems = $sm->get(\Finna\Service\RemsService::class);
@@ -124,7 +124,8 @@ class R2BackendFactory extends SolrDefaultBackendFactory
         $connector = parent::createConnector();
         $credentials = $this->r2SupportService->getCredentials();
         $connector->setApiAuthentication(
-            $credentials['apiUser'], $credentials['apiKey']
+            $credentials['apiUser'],
+            $credentials['apiKey']
         );
         $connector->setRems($this->rems);
         $connector->setEventManager($this->events);

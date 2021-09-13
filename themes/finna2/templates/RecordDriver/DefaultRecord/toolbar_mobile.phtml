@@ -1,7 +1,7 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/toolbar_mobile.phtml -->
 <?php
   if ($this->driver->tryMethod('socialMediaSharingAllowed') !== false) {
-      $shareUrl = $this->serverUrl($this->recordLink()->getUrl($this->driver));
+      $shareUrl = $this->serverUrl($this->recordLinker()->getUrl($this->driver));
       $shareUrl .= (strpos($shareUrl, '?') ? '&' : '?') . 'lng=' . urlencode($this->layout()->userLang);
   }
 
@@ -25,7 +25,7 @@
   <div class="mobile-toolbar">
     <ul class="nav nav-pills mobile-actions hidden-print">
           <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-          <li><a class="save-record-mobile" data-lightbox href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-plus"></i> <span class="sr-only"><?=$this->transEsc('Add to favorites')?></span></a></li>
+          <li><a class="save-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-plus"></i> <span class="sr-only"><?=$this->transEsc('Add to favorites')?></span></a></li>
           <?php endif; ?>
 
           <li class="dropdown dropup nav-pills mobile-sharing">
@@ -42,10 +42,10 @@
                 <meta property="og:image" content="<?=$this->escapeHtmlAttr($mediumThumb);?>" />
                 -->
               <li class="whatsapp">
-                <span class="visible-xs"><a class="whatsapp-record" href="whatsapp://send?text=<?=urlencode($this->serverUrl() . $this->recordLink()->getUrl($this->driver)) ?>" data-action="share/whatsapp/share" rel="nofollow"><i class="fa fa-phone"></i><span class="sr-only">Whatsapp</span></a></span>
+                <span class="visible-xs"><a class="whatsapp-record" href="whatsapp://send?text=<?=urlencode($this->serverUrl() . $this->recordLinker()->getUrl($this->driver)) ?>" data-action="share/whatsapp/share" rel="nofollow"><i class="fa fa-phone"></i><span class="sr-only">Whatsapp</span></a></span>
               </li>
               <?php endif; ?>
-              <li class="mail-record"><a class="mail-record-mobile" data-lightbox href="<?=$this->recordLink()->getActionUrl($this->driver, 'Email') ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow"><i class="fa fa-envelope"></i> <span class="sr-only"><?=$this->transEsc('Email this')?></span></a></li>
+              <li class="mail-record"><a class="mail-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email')) ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow"><i class="fa fa-envelope"></i> <span class="sr-only"><?=$this->transEsc('Email this')?></span></a></li>
             </ul>
           </li>
 
@@ -53,17 +53,17 @@
 
           <?php if(count($exportFormats) > 0): ?>
           <li class="dropdown dropup">
-            <a class="export-toggle dropdown-toggle" data-toggle="dropdown" href="<?=$this->recordLink()->getActionUrl($this->driver, 'Export')?>" rel="nofollow"><i class="fa fa-list-alt"></i> <span class="sr-only"><?=$this->transEsc('Export Record') ?></span></a>
+            <a class="export-toggle dropdown-toggle" data-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export'))?>" rel="nofollow"><i class="fa fa-list-alt"></i> <span class="sr-only"><?=$this->transEsc('Export Record') ?></span></a>
             <ul class="dropdown-menu" role="menu">
               <?php foreach ($exportFormats as $exportFormat): ?>
-              <li class="export-list"><a <?php if ($this->export()->needsRedirect($exportFormat)): ?>target="<?=$this->escapeHtmlAttr($exportFormat)?>Main" <?php endif; ?>href="<?=$this->recordLink()->getActionUrl($this->driver, 'Export')?>?style=<?=$this->escapeHtmlAttr($exportFormat)?>"><?=$this->transEsc('Export to')?> <?=$this->transEsc($exportFormat)?></a></li>
+              <li class="export-list"><a <?php if ($this->export()->needsRedirect($exportFormat)): ?>target="<?=$this->escapeHtmlAttr($exportFormat)?>Main" <?php endif; ?>href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export'))?>?style=<?=$this->escapeHtmlAttr($exportFormat)?>"><?=$this->transEsc('Export to')?> <?=$this->transEsc($exportFormat)?></a></li>
               <?php endforeach; ?>
             </ul>
           </li>
           <?php endif; ?>
 
           <?php if (count($this->driver->getCitationFormats()) > 0): ?>
-          <li><a class="cite-record-mobile" data-lightbox href="<?=$this->recordLink()->getActionUrl($this->driver, 'Cite') ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><i class="fa fa-asterisk"></i> <span class="sr-only"><?=$this->transEsc('Cite this')?></span></a></li>
+          <li><a class="cite-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><i class="fa fa-asterisk"></i> <span class="sr-only"><?=$this->transEsc('Cite this')?></span></a></li>
           <?php endif; ?>
 
           <li class="hidden-xs hidden-sm"><a href="javascript:window.print()"><i class="fa fa-print" rel="nofollow"></i> <?=$this->transEsc('Print')?></a></li>

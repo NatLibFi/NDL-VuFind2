@@ -83,7 +83,8 @@ class R2FeedbackController extends FeedbackController
                         // Replace R2 new user registration form id with the id for
                         // returning user registration form.
                         return $this->forwardTo(
-                            'R2Feedback', 'Form',
+                            'R2Feedback',
+                            'Form',
                             ['id' => R2Form::R2_REGISTER_RETURNING_USER_FORM]
                         );
                     }

@@ -63,7 +63,9 @@ class HtmlAttributesSet extends ArrayObject
      * @param iterable $attributes           Attributes to manage
      */
     public function __construct(
-        $htmlEscaper, $htmlAttributeEscaper, $attributes = []
+        $htmlEscaper,
+        $htmlAttributeEscaper,
+        $attributes = []
     ) {
         parent::__construct();
         $this->htmlEscaper = $htmlEscaper;

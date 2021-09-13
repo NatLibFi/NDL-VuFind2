@@ -66,7 +66,9 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
      * searches
      */
     public function __construct(
-        $csBools = true, $csRanges = true, $unicodeNormalizationForm = 'NFKC',
+        $csBools = true,
+        $csRanges = true,
+        $unicodeNormalizationForm = 'NFKC',
         $searchFilters = []
     ) {
         parent::__construct($csBools, $csRanges);

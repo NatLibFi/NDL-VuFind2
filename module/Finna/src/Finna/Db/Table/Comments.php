@@ -80,7 +80,8 @@ class Comments extends \VuFind\Db\Table\Comments
      * @return array
      */
     public function getAverageRatingForResource(
-        $id, $source = DEFAULT_SEARCH_BACKEND
+        $id,
+        $source = DEFAULT_SEARCH_BACKEND
     ) {
         $query = 'SELECT AVG(comments.finna_rating) as average, ' .
                'COUNT(comments.id) as count ' .
@@ -187,12 +188,15 @@ class Comments extends \VuFind\Db\Table\Comments
         $callback = function ($select) use ($id, $userId) {
             $select->columns(['*']);
             $select->join(
-                ['u' => 'user'], 'u.id = comments.user_id',
+                ['u' => 'user'],
+                'u.id = comments.user_id',
                 ['firstname', 'lastname', 'email'],
                 $select::JOIN_LEFT
             );
             $select->join(
-                ['cr' => 'finna_comments_record'], 'comments.id = cr.comment_id', []
+                ['cr' => 'finna_comments_record'],
+                'comments.id = cr.comment_id',
+                []
             );
             $select->where->equalTo('cr.record_id', $id);
             $select->where->equalTo('comments.finna_visible', 1);

@@ -64,7 +64,9 @@ class SolrFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         $config = $container->get(\VuFind\Config\PluginManager::class);

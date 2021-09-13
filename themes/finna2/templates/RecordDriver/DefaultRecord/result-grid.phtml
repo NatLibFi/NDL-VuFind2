@@ -30,7 +30,7 @@ $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
     <?php endif; ?>
     <div class="text-center grid-title">
       <h2 class="title">
-        <a class="title" href="<?=$this->recordLink()->getUrl($this->driver)?>" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
+        <a class="title" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
           <?= $this->record($this->driver)->getTitleHtml(50); ?><span class="sr-only"> <?=$this->transEsc('To the record')?></span>
         </a>
       </h2>
@@ -58,21 +58,6 @@ $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
         <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
         <?php if (!empty($journalTitle)): ?>
           <?=!empty($summAuthor) ? '' : ' '?>
-          <?php
-          $parentSource = $this->driver->getSourceIdentifier();
-          $parentId = $this->driver->tryMethod('getHierarchyParentId');
-          $parentLink = false;
-          if ($parentId) {
-            try {
-              $parentLink = $this->recordLink()->getUrl("$parentSource|{$parentId[0]}");
-            } catch (Exception $e) {
-              // Probably parent record doesn't exist, fall back to linking by title
-            }
-          }
-          if ($parentLink === false) {
-            $parentLink = $this->record($this->driver)->getLink('journaltitle', str_replace(['{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'], '', $journalTitle));
-          }
-          ?>
           <?php $ref = $this->driver->getContainerReference();
           if (!empty($ref)): ?>
             <?=$this->escapeHtml($ref); ?>
@@ -93,7 +78,7 @@ $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
         <?php /* Add to favorites */ ?>
         <div class="save-record-container">
-          <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Save')?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <?=$this->transEsc('Add to favorites')?></a>
+          <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><i class="fa fa-heart"></i> <?=$this->transEsc('Add to favorites')?></a>
         </div>
       <?php endif; ?>
       <?php if ($this->layout()->templateDir === 'list' && $this->params->getView() !== 'grid'): ?>

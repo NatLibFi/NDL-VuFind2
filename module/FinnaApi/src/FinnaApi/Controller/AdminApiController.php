@@ -85,7 +85,7 @@ class AdminApiController extends \VuFindApi\Controller\ApiController
         $this->determineOutputMode();
 
         $factory = new RecordDataFormatterFactory();
-        $formatter = $factory->__invoke();
+        $formatter = $factory();
         $fields = $formatter->getDefaults('core');
 
         $data = [];

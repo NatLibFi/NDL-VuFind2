@@ -136,7 +136,8 @@ class Connection extends \VuFind\ILS\Connection
     protected function checkMethodStorageRetrievalRequests($functionConfig, $params)
     {
         $response = parent::checkMethodStorageRetrievalRequests(
-            $functionConfig, $params
+            $functionConfig,
+            $params
         );
 
         if (isset($functionConfig['acceptTermsText'])) {
@@ -190,7 +191,8 @@ class Connection extends \VuFind\ILS\Connection
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function checkMethodgetPatronAuthorizationStatus(
-        $functionConfig, $params
+        $functionConfig,
+        $params
     ) {
         if ($this->checkCapability('getPatronAuthorizationStatus', [$params ?: []])
         ) {
@@ -215,10 +217,12 @@ class Connection extends \VuFind\ILS\Connection
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function checkMethodgetPatronStaffAuthorizationStatus(
-        $functionConfig, $params
+        $functionConfig,
+        $params
     ) {
         $capability = $this->checkCapability(
-            'getPatronStaffAuthorizationStatus', [$params ?: []]
+            'getPatronStaffAuthorizationStatus',
+            [$params ?: []]
         );
         if ($capability) {
             return ['function' => 'getPatronStaffAuthorizationStatus'];
@@ -240,7 +244,8 @@ class Connection extends \VuFind\ILS\Connection
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function checkMethodupdateAddress(
-        $functionConfig, $params
+        $functionConfig,
+        $params
     ) {
         if (!isset($functionConfig['method'])) {
             return false;
@@ -274,7 +279,8 @@ class Connection extends \VuFind\ILS\Connection
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function checkMethodupdateTransactionHistoryState($functionConfig,
+    protected function checkMethodupdateTransactionHistoryState(
+        $functionConfig,
         $params
     ) {
         if (!isset($functionConfig['method'])) {
@@ -282,7 +288,8 @@ class Connection extends \VuFind\ILS\Connection
         }
 
         $capability = $this->checkCapability(
-            'updateTransactionHistoryState', [$params ?: []]
+            'updateTransactionHistoryState',
+            [$params ?: []]
         );
         return $capability ? $functionConfig : false;
     }

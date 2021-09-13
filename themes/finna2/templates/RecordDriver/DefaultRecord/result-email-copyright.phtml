@@ -1,29 +1,28 @@
 <?php $termsOfUse = $this->driver->tryMethod('getTermsOfUse'); if (!empty($termsOfUse)): ?>
   <?php
-    $terms = array_map(
-      function ($term) {
-        $text = $term['terms'] ?? '';
-        if ($copyright = $term['source'] ?? null) {
-          if (!empty($text)) {
-            if (substr($text, -1, 1) !== '.') {
-              $text .= '.';
-            }
-            $text .= ' ';
+    $termFunc = function ($term) {
+      $text = $term['terms'] ?? '';
+      if ($copyright = $term['source'] ?? null) {
+        if (!empty($text)) {
+          if (substr($text, -1, 1) !== '.') {
+            $text .= '.';
           }
-          $text .= $this->record($this->driver)->translateCopyright($copyright);
+          $text .= ' ';
         }
-        if ($link = $term['url'] ?? null) {
-          if (!empty($text)) {
-            $text .= '. ';
-          }
-          $text .= $link;
+        $text .= $this->record($this->driver)->translateCopyright($copyright);
+      }
+      if ($link = $term['url'] ?? null) {
+        if (!empty($text)) {
+          $text .= '. ';
         }
-        return $text;
-      },
-      $termsOfUse
-    );
-   ?>
-   <?= PHP_EOL . $this->translate('Image Rights') . ': ' . implode(', ', $terms); ?>
+        $text .= $link;
+      }
+      return $text;
+    };
+
+    $terms = array_map($termFunc, $termsOfUse);
+  ?>
+  <?=PHP_EOL . $this->translate('Image Rights') . ': ' . implode(', ', $terms); ?>
 <?php else: ?>
   <?php
     $copyrightInfo = $copyright = $copyrightLink = null;
@@ -34,7 +33,8 @@
       $copyright = $this->record($this->driver)->translateCopyright($copyright, $this->transEsc, $this->translationEmpty);
       $copyrightLink = $copyrightInfo['link'] ?? null;
     }
-    if ($copyright): ?>
-    <?= PHP_EOL . $this->translate('Image Rights') . ': ' . $copyright . ($copyrightLink ? " $copyrightLink" : '') ?>
+  ?>
+  <?php if ($copyright): ?>
+    <?=PHP_EOL . $this->translate('Image Rights') . ': ' . $copyright . ($copyrightLink ? " $copyrightLink" : '') ?>
   <?php endif; ?>
 <?php endif; ?>

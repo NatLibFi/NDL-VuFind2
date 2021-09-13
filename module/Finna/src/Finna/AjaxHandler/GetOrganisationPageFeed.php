@@ -88,8 +88,12 @@ class GetOrganisationPageFeed extends \VuFind\AjaxHandler\AbstractBase
      * @param RendererInterface $renderer View renderer
      * @param Url               $url      URL helper
      */
-    public function __construct(SessionSettings $ss, Config $config,
-        FeedService $fs, RendererInterface $renderer, Url $url
+    public function __construct(
+        SessionSettings $ss,
+        Config $config,
+        FeedService $fs,
+        RendererInterface $renderer,
+        Url $url
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;
