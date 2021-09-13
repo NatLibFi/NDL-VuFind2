@@ -1,0 +1,6 @@
+[Parent_Config]
+relative_path = "../finna/contentsecuritypolicy.ini"
+merge_array_settings = true
+
+[Directives]
+;script-src[] = "https://trusted.service.something"

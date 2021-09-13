@@ -15,7 +15,7 @@
         <th><?=$this->transEsc($title);?></th>
         <td>
           <?php foreach ($links as $link): ?>
-            <a href="<?=$this->recordLink()->related($link['link'], true, $this->driver->getSourceIdentifier());?>"><?=$this->escapeHtml($link['value'] ?: $this->translate($title));?></a><?php if (isset($link['detail'])): ?> (<?=$this->escapeHtml($link['detail'])?>)<?php endif; ?>
+            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->related($link['link'], true, $this->driver->getSourceIdentifier()));?>"><?=$this->escapeHtml($link['value'] ?: $this->translate($title));?></a><?php if (isset($link['detail'])): ?> (<?=$this->escapeHtml($link['detail'])?>)<?php endif; ?>
             <br />
           <?php endforeach; ?>
         </td>
@@ -24,7 +24,7 @@
   <?php else:?>
     <div class="truncate-field">
       <?php foreach ($allLinks as $link): ?>
-        <a href="<?=$this->recordLink()->related($link['link'], true, $this->driver->getSourceIdentifier());?>"><?=$this->escapeHtml($link['value'])?></a><?php if (isset($link['detail'])): ?> (<?=$this->escapeHtml($link['detail'])?>)<?php endif; ?>
+        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->related($link['link'], true, $this->driver->getSourceIdentifier()));?>"><?=$this->escapeHtml($link['value'])?></a><?php if (isset($link['detail'])): ?> (<?=$this->escapeHtml($link['detail'])?>)<?php endif; ?>
         <br />
       <?php endforeach; ?>
     </div>

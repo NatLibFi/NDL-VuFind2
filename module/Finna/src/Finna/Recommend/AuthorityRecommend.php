@@ -321,7 +321,8 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
             if ($this->authorityHelper) {
                 foreach ($roles as &$role) {
                     $authorityInfo = $this->authorityHelper->formatFacet(
-                        $role['displayText'], true
+                        $role['displayText'],
+                        true
                     );
                     $role['displayText'] = $authorityInfo['displayText'];
                     $role['role'] = $authorityInfo['role'];

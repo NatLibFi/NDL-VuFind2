@@ -76,7 +76,8 @@ class Module
     public static function getThemeInfo()
     {
         return new \VuFindTheme\ThemeInfo(
-            realpath(APPLICATION_PATH . '/themes'), 'bootprint3'
+            realpath(APPLICATION_PATH . '/themes'),
+            'bootprint3'
         );
     }
 

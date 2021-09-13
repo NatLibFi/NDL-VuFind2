@@ -44,18 +44,18 @@ use VuFind\Db\Table\PluginManager;
  */
 class Transaction extends \VuFind\Db\Table\Gateway
 {
-    const STATUS_PROGRESS              = 0;
-    const STATUS_COMPLETE              = 1;
+    public const STATUS_PROGRESS              = 0;
+    public const STATUS_COMPLETE              = 1;
 
-    const STATUS_CANCELLED             = 2;
-    const STATUS_PAID                  = 3;
-    const STATUS_PAYMENT_FAILED        = 4;
+    public const STATUS_CANCELLED             = 2;
+    public const STATUS_PAID                  = 3;
+    public const STATUS_PAYMENT_FAILED        = 4;
 
-    const STATUS_REGISTRATION_FAILED   = 5;
-    const STATUS_REGISTRATION_EXPIRED  = 6;
-    const STATUS_REGISTRATION_RESOLVED = 7;
+    public const STATUS_REGISTRATION_FAILED   = 5;
+    public const STATUS_REGISTRATION_EXPIRED  = 6;
+    public const STATUS_REGISTRATION_RESOLVED = 7;
 
-    const STATUS_FINES_UPDATED         = 8;
+    public const STATUS_FINES_UPDATED         = 8;
 
     /**
      * Constructor
@@ -66,8 +66,12 @@ class Transaction extends \VuFind\Db\Table\Gateway
      * @param RowGateway    $rowObj  Row prototype object (null for default)
      * @param string        $table   Name of database table to interface with
      */
-    public function __construct(Adapter $adapter, PluginManager $tm, $cfg,
-        RowGateway $rowObj = null, $table = 'finna_transaction'
+    public function __construct(
+        Adapter $adapter,
+        PluginManager $tm,
+        $cfg,
+        RowGateway $rowObj = null,
+        $table = 'finna_transaction'
     ) {
         parent::__construct($adapter, $tm, $cfg, $rowObj, $table);
     }
@@ -86,7 +90,13 @@ class Transaction extends \VuFind\Db\Table\Gateway
      * @return Finna\Db\Row\Transaction
      */
     public function createTransaction(
-        $id, $driver, $userId, $patronId, $amount, $transactionFee, $currency
+        $id,
+        $driver,
+        $userId,
+        $patronId,
+        $amount,
+        $transactionFee,
+        $currency
     ) {
         $t = $this->createRow();
         $t->transaction_id = $id;
@@ -175,7 +185,8 @@ class Transaction extends \VuFind\Db\Table\Gateway
                 ->equalTo('complete', self::STATUS_PAID)
                 ->greaterThan('paid', '2000-01-01 00:00:00')
                 ->lessThan(
-                    'paid', date('Y-m-d H:i:s', time() - $minimumPaidAge)
+                    'paid',
+                    date('Y-m-d H:i:s', time() - $minimumPaidAge)
                 );
 
             $select->order('user_id');
@@ -201,10 +212,13 @@ class Transaction extends \VuFind\Db\Table\Gateway
         $expiredStatus = self::STATUS_REGISTRATION_EXPIRED;
 
         $callback = function ($select) use (
-            $updatedStatus, $expiredStatus, $interval
+            $updatedStatus,
+            $expiredStatus,
+            $interval
         ) {
             $select->where->in(
-                'complete', [$updatedStatus, $expiredStatus]
+                'complete',
+                [$updatedStatus, $expiredStatus]
             );
             $select->where->greaterThan('paid', '2000-01-01 00:00:00');
             $select->where(
@@ -253,7 +267,10 @@ class Transaction extends \VuFind\Db\Table\Gateway
     public function setTransactionPaid($transactionId, $timestamp)
     {
         return $this->updateTransactionStatus(
-            $transactionId, $timestamp, self::STATUS_PAID, 'paid'
+            $transactionId,
+            $timestamp,
+            self::STATUS_PAID,
+            'paid'
         );
     }
 
@@ -267,7 +284,10 @@ class Transaction extends \VuFind\Db\Table\Gateway
     public function setTransactionCancelled($transactionId)
     {
         return $this->updateTransactionStatus(
-            $transactionId, false, self::STATUS_CANCELLED, 'cancel'
+            $transactionId,
+            false,
+            self::STATUS_CANCELLED,
+            'cancel'
         );
     }
 
@@ -281,7 +301,10 @@ class Transaction extends \VuFind\Db\Table\Gateway
     public function setTransactionRegistered($transactionId)
     {
         return $this->updateTransactionStatus(
-            $transactionId, false, self::STATUS_COMPLETE, 'register_ok'
+            $transactionId,
+            false,
+            self::STATUS_COMPLETE,
+            'register_ok'
         );
     }
 
@@ -296,7 +319,10 @@ class Transaction extends \VuFind\Db\Table\Gateway
     public function setTransactionRegistrationFailed($transactionId, $msg)
     {
         return $this->updateTransactionStatus(
-            $transactionId, false, self::STATUS_REGISTRATION_FAILED, $msg
+            $transactionId,
+            false,
+            self::STATUS_REGISTRATION_FAILED,
+            $msg
         );
     }
 
@@ -311,7 +337,9 @@ class Transaction extends \VuFind\Db\Table\Gateway
     public function setTransactionExpired($transactionId, $timestamp)
     {
         return $this->updateTransactionStatus(
-            $transactionId, false, self::STATUS_REGISTRATION_EXPIRED
+            $transactionId,
+            false,
+            self::STATUS_REGISTRATION_EXPIRED
         );
     }
 
@@ -325,7 +353,9 @@ class Transaction extends \VuFind\Db\Table\Gateway
     public function setTransactionResolved($transactionId)
     {
         return $this->updateTransactionStatus(
-            $transactionId, false, self::STATUS_REGISTRATION_RESOLVED
+            $transactionId,
+            false,
+            self::STATUS_REGISTRATION_RESOLVED
         );
     }
 
@@ -339,7 +369,10 @@ class Transaction extends \VuFind\Db\Table\Gateway
     public function setTransactionFinesUpdated($transactionId)
     {
         return $this->updateTransactionStatus(
-            $transactionId, false, self::STATUS_FINES_UPDATED, 'fines_updated'
+            $transactionId,
+            false,
+            self::STATUS_FINES_UPDATED,
+            'fines_updated'
         );
     }
 
@@ -371,7 +404,10 @@ class Transaction extends \VuFind\Db\Table\Gateway
      * @return boolean success
      */
     protected function updateTransactionStatus(
-        $transactionId, $timestamp, $status, $statusMsg = false
+        $transactionId,
+        $timestamp,
+        $status,
+        $statusMsg = false
     ) {
         if (!$t = $this->getTransaction($transactionId)) {
             return false;

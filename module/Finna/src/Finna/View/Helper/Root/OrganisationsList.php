@@ -88,8 +88,10 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
      * @param OrganisationInfo        $organisationInfo Organisation info service
      */
     public function __construct(
-        StorageInterface $cache, HierarchicalFacetHelper $facetHelper,
-        PluginManager $resultsManager, OrganisationInfo $organisationInfo
+        StorageInterface $cache,
+        HierarchicalFacetHelper $facetHelper,
+        PluginManager $resultsManager,
+        OrganisationInfo $organisationInfo
     ) {
         $this->cache = $cache;
         $this->facetHelper = $facetHelper;

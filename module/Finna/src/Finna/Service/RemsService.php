@@ -50,37 +50,37 @@ class RemsService implements
     use \VuFindHttp\HttpServiceAwareTrait;
 
     // REMS Application statuses
-    const STATUS_APPROVED = 'approved';
-    const STATUS_NOT_SUBMITTED = 'not-submitted';
-    const STATUS_CLOSED = 'closed';
-    const STATUS_DRAFT = 'draft';
-    const STATUS_REVOKED = 'revoked';
-    const STATUS_REJECTED = 'rejected';
-    const STATUS_EXPIRED = 'expired';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_NOT_SUBMITTED = 'not-submitted';
+    public const STATUS_CLOSED = 'closed';
+    public const STATUS_DRAFT = 'draft';
+    public const STATUS_REVOKED = 'revoked';
+    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_EXPIRED = 'expired';
 
     // Session keys
 
     // Has the user registered during the current session
-    const SESSION_REGISTRATION_SUBMITTED = 'registration-submitted';
+    public const SESSION_REGISTRATION_SUBMITTED = 'registration-submitted';
 
     // Is the user currently registered
-    const SESSION_IS_REMS_REGISTERED = 'is-rems-user';
+    public const SESSION_IS_REMS_REGISTERED = 'is-rems-user';
     // Current access info
-    const SESSION_ACCESS_STATUS = 'access-status';
-    const SESSION_BLOCKLISTED = 'blocklisted';
-    const SESSION_USAGE_PURPOSE = 'usage-purpose';
+    public const SESSION_ACCESS_STATUS = 'access-status';
+    public const SESSION_BLOCKLISTED = 'blocklisted';
+    public const SESSION_USAGE_PURPOSE = 'usage-purpose';
 
-    const SESSION_DAILY_LIMIT_EXCEEDED = 'daily-limit-exceeded';
-    const SESSION_MONTHLY_LIMIT_EXCEEDED = 'monthly-limit-exceeded';
+    public const SESSION_DAILY_LIMIT_EXCEEDED = 'daily-limit-exceeded';
+    public const SESSION_MONTHLY_LIMIT_EXCEEDED = 'monthly-limit-exceeded';
 
-    const SESSION_USER_REGISTERED_TIME = 'user-registered-time';
+    public const SESSION_USER_REGISTERED_TIME = 'user-registered-time';
 
     // REMS API user types
-    const TYPE_ADMIN = 0;
-    const TYPE_USER = 1;
+    public const TYPE_ADMIN = 0;
+    public const TYPE_USER = 1;
 
     // Events
-    const EVENT_USER_REGISTERED = 'event-user-registered';
+    public const EVENT_USER_REGISTERED = 'event-user-registered';
 
     /**
      * REMS configuration
@@ -284,7 +284,10 @@ class RemsService implements
         $blocklist = $this->sendRequest(
             'blacklist',
             ['user' => $this->getUserId(), 'resource' => $this->getResourceItemId()],
-            'GET', RemsService::TYPE_ADMIN, null, false
+            'GET',
+            RemsService::TYPE_ADMIN,
+            null,
+            false
         );
         if (!empty($blocklist)) {
             $addedAt = $blocklist[0]['blacklist/added-at'];
@@ -316,7 +319,10 @@ class RemsService implements
             return $this->sendRequest(
                 'entitlements',
                 ['user' => $userId, 'resource' => $this->getResourceItemId()],
-                'GET', RemsService::TYPE_USER, null, false
+                'GET',
+                RemsService::TYPE_USER,
+                null,
+                false
             );
         } catch (\Exception $e) {
             return [];
@@ -392,7 +398,11 @@ class RemsService implements
 
         $this->sendRequest(
             'users/create',
-            $params, 'POST', RemsService::TYPE_ADMIN, null, false
+            $params,
+            'POST',
+            RemsService::TYPE_ADMIN,
+            null,
+            false
         );
 
         // 2. Create draft application
@@ -401,7 +411,11 @@ class RemsService implements
 
         $response = $this->sendRequest(
             'applications/create',
-            $params, 'POST', RemsService::TYPE_USER, null, false
+            $params,
+            'POST',
+            RemsService::TYPE_USER,
+            null,
+            false
         );
 
         if (!isset($response['application-id'])) {
@@ -435,7 +449,11 @@ class RemsService implements
 
         $response = $this->sendRequest(
             'applications/save-draft',
-            $params, 'POST', RemsService::TYPE_USER, null, false
+            $params,
+            'POST',
+            RemsService::TYPE_USER,
+            null,
+            false
         );
 
         // 5. Submit application
@@ -444,7 +462,11 @@ class RemsService implements
         ];
         $response = $this->sendRequest(
             'applications/submit',
-            $params, 'POST', RemsService::TYPE_USER, null, false
+            $params,
+            'POST',
+            RemsService::TYPE_USER,
+            null,
+            false
         );
 
         $this->session->{RemsService::SESSION_REGISTRATION_SUBMITTED}
@@ -457,7 +479,9 @@ class RemsService implements
         $this->getAccessPermission(true);
 
         $this->events->trigger(
-            self::EVENT_USER_REGISTERED, __CLASS__, ['user' => $this->getUserId()]
+            self::EVENT_USER_REGISTERED,
+            __CLASS__,
+            ['user' => $this->getUserId()]
         );
 
         return true;
@@ -527,8 +551,12 @@ class RemsService implements
                     'comment' => 'ULOSKIRJAUTUMINEN'
                 ];
                 $this->sendRequest(
-                    'applications/close', [], 'POST', RemsService::TYPE_ADMIN,
-                    json_encode($params), $requireRegistration
+                    'applications/close',
+                    [],
+                    'POST',
+                    RemsService::TYPE_ADMIN,
+                    json_encode($params),
+                    $requireRegistration
                 );
             }
         } catch (\Exception $e) {
@@ -656,8 +684,13 @@ class RemsService implements
     protected function getApplication($id, $throw = false)
     {
         return $this->sendRequest(
-            "applications/$id/raw", [], 'GET', RemsService::TYPE_ADMIN,
-            null, false, $throw
+            "applications/$id/raw",
+            [],
+            'GET',
+            RemsService::TYPE_ADMIN,
+            null,
+            false,
+            $throw
         );
     }
 
@@ -683,8 +716,12 @@ class RemsService implements
             }
 
             $result = $this->sendRequest(
-                'my-applications', $params, 'GET',
-                RemsService::TYPE_USER, null, false
+                'my-applications',
+                $params,
+                'GET',
+                RemsService::TYPE_USER,
+                null,
+                false
             );
         } catch (\Exception $e) {
             return [];

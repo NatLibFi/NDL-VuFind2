@@ -70,7 +70,7 @@ class SolrAuthBackendFactory
 
         // Finna Solr Auth Extensions
         $solrExtensions = new SolrAuthExtensionsListener(
-            $backend,
+            $backend->getIdentifier(),
             $this->serviceLocator,
             $this->searchConfig,
             $this->facetConfig

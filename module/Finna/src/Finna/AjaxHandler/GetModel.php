@@ -94,8 +94,11 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
      * @param Router          $router       Router
      */
     public function __construct(
-        SessionSettings $ss, RecordLoader $recordLoader,
-        Url $urlHelper, FileLoader $fileLoader, TreeRouteStack $router
+        SessionSettings $ss,
+        RecordLoader $recordLoader,
+        Url $urlHelper,
+        FileLoader $fileLoader,
+        TreeRouteStack $router
     ) {
         $this->sessionSettings = $ss;
         $this->recordLoader = $recordLoader;
@@ -139,7 +142,7 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase
         if (!empty($file['result'])) {
             $route = stripslashes($this->router->getBaseUrl());
             // Point url to public cache so viewer has access to it
-            $url = $this->urlHelper->__invoke('home') . 'cache/' . $fileName;
+            $url = ($this->urlHelper)('home') . 'cache/' . $fileName;
             return $this->formatResponse(compact('url'));
         } else {
             return $this->formatResponse(

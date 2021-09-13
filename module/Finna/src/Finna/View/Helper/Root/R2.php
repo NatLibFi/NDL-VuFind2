@@ -87,7 +87,10 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
      * @param string      $blocklistEmail Email address for blocklist inquiries
      */
     public function __construct(
-        bool $enabled, ?User $user, bool $authenticated, RemsService $rems,
+        bool $enabled,
+        ?User $user,
+        bool $authenticated,
+        RemsService $rems,
         string $blocklistEmail
     ) {
         $this->enabled = $enabled;
@@ -187,7 +190,8 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
             ];
 
             return $this->getView()->render(
-                'Helpers/R2RestrictedRecordRegistered.phtml', $tplParams
+                'Helpers/R2RestrictedRecordRegistered.phtml',
+                $tplParams
             );
         }
 
@@ -230,7 +234,8 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
                         $dateTime = $this->getView()->plugin('dateTime');
                         try {
                             $blocklistedDate = $dateTime->convertToDisplayDate(
-                                'Y-m-d', $blocklisted
+                                'Y-m-d',
+                                $blocklisted
                             );
                         } catch (\Exception $e) {
                         }
@@ -287,7 +292,8 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
             ];
 
             return $this->getView()->render(
-                'Helpers/R2RestrictedRecordRegister.phtml', $params
+                'Helpers/R2RestrictedRecordRegister.phtml',
+                $params
             );
         }
 

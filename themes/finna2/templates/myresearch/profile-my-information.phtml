@@ -8,7 +8,7 @@
           <label for="email"><?=$this->transEsc("Email") ?>:</label>
         </div>
         <div class="my-profile-col">
-          <input id="email" type="email" class="form-control" name="email" value="<?=$user->email?>"/>
+          <input id="email" type="email" class="form-control" name="email" value="<?=$this->escapeHtmlAttr($user->email)?>"/>
         </div>
         <div class="clearfix visible-xs"></div>
         <div class="my-profile-col">
@@ -20,7 +20,7 @@
           <label for="finna_nickname"><?=$this->transEsc("finna_nickname") ?>:</label>
         </div>
         <div class="my-profile-col">
-          <input id="finna_nickname" type="text" class="form-control profileinfo-fields" name="finna_nickname" value="<?=$this->escapeHtml(trim($user->finna_nickname))?>" pattern="^(?!.*[._\-\s]{2})[A-ZÅÄÖa-zåäö0-9._\-\s]{3,50}$" title="<?=$this->transEsc('finna_nickname_restrictions')?>"/>
+          <input id="finna_nickname" type="text" class="form-control profileinfo-fields" name="finna_nickname" value="<?=$this->escapeHtmlAttr(trim($user->finna_nickname))?>" pattern="^(?!.*[._\-\s]{2})[A-ZÅÄÖa-zåäö0-9._\-\s]{3,50}$" title="<?=$this->transEsc('finna_nickname_restrictions')?>"/>
         </div>
         <div class="clearfix visible-xs"></div>
         <div class="my-profile-col">
@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="my-profile-row">
-          <input id="save-user-profile" name="saveUserProfile" type="submit" value="<?=$this->transEsc("Save") ?>" class="btn btn-primary" />
+          <input id="save-user-profile" name="saveUserProfile" type="submit" value="<?=$this->transEscAttr("Save") ?>" class="btn btn-primary" />
       </div>
     <?php endif; ?>
   </form>

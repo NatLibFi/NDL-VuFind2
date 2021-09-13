@@ -93,8 +93,10 @@ class ProxyCurl extends Curl
      * @param int                  $followLocationMaxRedirects Redirection limit for
      * Location header
      */
-    public function __construct(HttpServiceInterface $httpService,
-        array $options = [], $followLocationMaxRedirects = 10
+    public function __construct(
+        HttpServiceInterface $httpService,
+        array $options = [],
+        $followLocationMaxRedirects = 10
     ) {
         $this->httpService = $httpService;
         $this->followLocationMaxRedirects = $followLocationMaxRedirects;
@@ -132,7 +134,10 @@ class ProxyCurl extends Curl
      *
      * @return bool
      */
-    public function exec($location, $request = null, $requestHeaders = [],
+    public function exec(
+        $location,
+        $request = null,
+        $requestHeaders = [],
         $requestOptions = []
     ) {
         $client = $this->httpService->createClient($location);

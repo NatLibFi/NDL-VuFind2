@@ -1,0 +1,77 @@
+.finna-md-editable {
+  padding: 0;
+  .fa {
+    margin-top: 0.25rem;
+    margin-right: 5px;
+  }
+  .fa-pen {
+    margin-bottom: -12px;
+  }
+  h1 {
+    display: inherit;
+  }
+  ul,
+  ol {
+    margin-left: 25px;
+  }
+  ul li {
+    list-style-type: disc;
+  }
+  ol li {
+    list-style-type: decimal;
+  }
+  @media (min-width: @screen-sm) {
+    margin-bottom: 4px;
+  }
+  .editor-toolbar {
+    position: relative;
+    padding-right: 3.2rem;
+
+    .editor-toolbar-close {
+      position: absolute;
+      right: 0;
+      top: 0.8rem;
+      border: none;
+      color: @gray !important;
+      font-size: 1.6rem;
+
+      &:hover,
+      &:active {
+        background: white;
+        color: @gray !important;
+      }
+    }
+  }
+  .markdown-preview {
+    display: none;
+  }
+  &.finna-editable-open {
+    .CodeMirror {
+      height: 300px;
+    }
+    .markdown-preview {
+      position: relative;
+      display: block;
+      padding: 10px;
+      background: #fafafa;
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid @gray-lighter;
+      .preview {
+        position: absolute;
+        right: 40px;
+        background-color: @body-bg;
+        padding: 3px 9px;
+      }
+    }
+  }
+  & {
+    padding: 5px;
+    > p {
+      margin: 0;
+    }
+  }
+  &.edit .fa-pen {
+    display: none;
+  }
+}

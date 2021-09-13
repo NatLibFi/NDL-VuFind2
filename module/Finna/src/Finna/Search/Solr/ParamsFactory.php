@@ -57,7 +57,9 @@ class ParamsFactory extends \VuFind\Search\Params\ParamsFactory
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -69,7 +71,8 @@ class ParamsFactory extends \VuFind\Search\Params\ParamsFactory
             = $container->get(\Finna\Search\Solr\AuthorityHelper::class);
         $converter = $container->get(\VuFind\Date\Converter::class);
         return parent::__invoke(
-            $container, $requestedName,
+            $container,
+            $requestedName,
             [$helper, $authorityHelper, $converter]
         );
     }

@@ -87,6 +87,7 @@ class EDS extends \VuFind\RecordDriver\EDS
                 return $title['TitleFull'];
             }
         }
+        return '';
     }
 
     /**
@@ -403,5 +404,6 @@ class EDS extends \VuFind\RecordDriver\EDS
                 return $item['Value'];
             }
         }
+        return '';
     }
 }

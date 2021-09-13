@@ -63,12 +63,7 @@
   </div>
 </div>
 <?php
-$this->jsTranslations()->addStrings(
-  [
-    'nohit_heading' => 'nohit_heading',
-  ]
-);
-$translations = $this->jsTranslations()->getJSON();
+$translations = $this->jsTranslations()->getJSONFromArray(['nohit_heading' => 'nohit_heading']);
 $js = <<<JS
 $(document).ready(function(){
   finna.linkedEvents.initEventsTabs("{$this->id}");

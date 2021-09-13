@@ -86,7 +86,8 @@ class ImportComments extends AbstractUtilCommand
      * @param Finna\Db\Table\CommentsRecord $commentsRecord CommentsRecord table
      * @param Finna\Db\Table\Resource       $resource       Resource table
      */
-    public function __construct(\Finna\Db\Table\Comments $comments,
+    public function __construct(
+        \Finna\Db\Table\Comments $comments,
         \Finna\Db\Table\CommentsRecord $commentsRecord,
         \Finna\Db\Table\Resource $resource
     ) {
@@ -170,7 +171,8 @@ class ImportComments extends AbstractUtilCommand
             $num = count($data);
             if ($num < 3) {
                 $this->log(
-                    "Could not read CSV line $count (only $num elements found)", true
+                    "Could not read CSV line $count (only $num elements found)",
+                    true
                 );
                 return 1;
             }

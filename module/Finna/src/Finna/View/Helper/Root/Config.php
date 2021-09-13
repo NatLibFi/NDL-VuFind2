@@ -1,6 +1,6 @@
 <?php
 /**
- * Record driver view helper
+ * Config view helper
  *
  * PHP version 7
  *

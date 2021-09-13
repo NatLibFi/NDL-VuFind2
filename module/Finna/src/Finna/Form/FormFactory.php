@@ -57,7 +57,9 @@ class FormFactory extends \VuFind\Form\FormFactory
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         $config = $container->get(\VuFind\Config\PluginManager::class)
@@ -76,6 +78,9 @@ class FormFactory extends \VuFind\Form\FormFactory
             $form->setUser($user, $roles);
         }
         $form->setViewHelperManager($container->get('ViewHelperManager'));
+        $form->setRecordRequestFormsWithBarcode(
+            (array)($config['Record']['repository_library_request_form'] ?? null)
+        );
         return $form;
     }
 }

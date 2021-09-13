@@ -14,7 +14,7 @@
   if (!empty($urls)){
     foreach ($urls as $url) {
       $renderedURLs[] = $url['url'];
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
         $videoUrls[] = $url;
       } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
         $audioUrls[] = $url;
@@ -81,7 +81,7 @@
       <div class="record-uniform-titles">
         <?php foreach ($uniformTitles as $uniformTitle): ?>
           <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
-            <a href="<?=$this->escapeHtmlAttr($this->recordLink()->getVersionsSearchUrl($this->driver))?>" rel="nofollow">
+            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getVersionsSearchUrl($this->driver))?>" rel="nofollow">
               <?=$this->escapeHtml($uniformTitle) ?>
             </a>
             <br>
@@ -242,7 +242,8 @@
     <?php
       $formatter = $this->recordDataFormatter();
       $coreFields = $formatter->getData(
-          $driver, $formatter->filterMarcFields($formatter->getDefaults('core'))
+          $driver,
+          $formatter->filterMarcFields($formatter->getDefaults('core'))
       );
     ?>
     <?php if (!empty($coreFields)): ?>

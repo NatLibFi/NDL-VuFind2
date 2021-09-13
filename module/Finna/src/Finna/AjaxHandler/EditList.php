@@ -27,6 +27,7 @@
  */
 namespace Finna\AjaxHandler;
 
+use Finna\View\Helper\Root\Markdown;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Stdlib\Parameters;
 use Laminas\View\Renderer\RendererInterface;
@@ -84,6 +85,13 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase
     protected $listTagsEnabled;
 
     /**
+     * Markdown view helper
+     *
+     * @var Markdown
+     */
+    protected $markdownHelper;
+
+    /**
      * Constructor
      *
      * @param UserList          $userList        UserList database table
@@ -91,16 +99,22 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase
      * @param RendererInterface $renderer        View renderer
      * @param bool              $enabled         Are lists enabled?
      * @param bool              $listTagsEnabled Are list tags enabled?
+     * @param Markdown          $markdownHelper  Markdown view helper
      */
     public function __construct(
-        UserList $userList, $user, RendererInterface $renderer,
-        $enabled = true, $listTagsEnabled = false
+        UserList $userList,
+        $user,
+        RendererInterface $renderer,
+        $enabled = true,
+        $listTagsEnabled = false,
+        $markdownHelper = null
     ) {
         $this->userList = $userList;
         $this->user = $user;
         $this->renderer = $renderer;
         $this->enabled = $enabled;
         $this->listTagsEnabled = $listTagsEnabled;
+        $this->markdownHelper = $markdownHelper;
     }
 
     /**
@@ -147,7 +161,8 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase
                     // Quote tag with whitespace to prevent VuFind
                     // from creating multiple tags.
                     return false !== strpos($tag, ' ') ? "\"{$tag}\"" : $tag;
-                }, $listParams['tags']
+                },
+                $listParams['tags']
             );
             $listParams['tags'] = implode(' ', $tags);
         } elseif (!$this->listTagsEnabled) {
@@ -156,7 +171,8 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase
         }
 
         $finalId = $list->updateFromRequest(
-            $this->user, new Parameters($listParams)
+            $this->user,
+            new Parameters($listParams)
         );
 
         $listParams['id'] = $finalId;
@@ -173,6 +189,11 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase
             );
         } else {
             unset($listParams['tags']);
+        }
+
+        if (!empty($listParams['desc']) && null !== $this->markdownHelper) {
+            $listParams['descHtml']
+                = $this->markdownHelper->toHtml($listParams['desc']);
         }
 
         return $this->formatResponse($listParams);

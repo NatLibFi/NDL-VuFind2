@@ -132,7 +132,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $renewStatus = $catalog->checkFunction('Renewals', compact('patron'));
         $renewResult = $renewStatus
             ? $this->renewals()->processRenewals(
-                $this->getRequest()->getPost(), $catalog, $patron
+                $this->getRequest()->getPost(),
+                $catalog,
+                $patron
             )
             : [];
 
@@ -161,7 +163,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         // Build paginator if needed:
         $paginator = $this->getPaginationHelper()->getPaginator(
-            $pageOptions, $result['count'], $result['records']
+            $pageOptions,
+            $result['count'],
+            $result['records']
         );
         if ($paginator) {
             $pageStart = $paginator->getAbsoluteItemNumber(1) - 1;
@@ -239,7 +243,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         foreach ($result['records'] as $i => $current) {
             // Add renewal details if appropriate:
             $current = $this->renewals()->addRenewDetails(
-                $catalog, $current, $renewStatus
+                $catalog,
+                $current,
+                $renewStatus
             );
             if ($renewStatus && !isset($current['renew_link'])
                 && $current['renewable']
@@ -287,7 +293,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
         if ($renewedCount > 0) {
             $msg = $this->translate(
-                'renew_ok', ['%%count%%' => $renewedCount,
+                'renew_ok',
+                ['%%count%%' => $renewedCount,
                 '%%transactionscount%%' => $result['count']]
             );
             $this->flashMessenger()->addInfoMessage($msg);
@@ -304,8 +311,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $ilsPaging = $pageOptions['ilsPaging'];
         $view = $this->createViewModel(
             compact(
-                'transactions', 'renewForm', 'renewResult', 'paginator', 'ilsPaging',
-                'hiddenTransactions', 'displayItemBarcode', 'sortList', 'params',
+                'transactions',
+                'renewForm',
+                'renewResult',
+                'paginator',
+                'ilsPaging',
+                'hiddenTransactions',
+                'displayItemBarcode',
+                'sortList',
+                'params',
                 'accountStatus'
             )
         );
@@ -394,7 +408,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
             // Check function config
             $functionConfig = $catalog->checkFunction(
-                'getMyTransactionHistory', $patron
+                'getMyTransactionHistory',
+                $patron
             );
             if (false === $functionConfig) {
                 $this->flashMessenger()->addErrorMessage('ils_action_unavailable');
@@ -600,7 +615,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 if ($r2->isEnabled()) {
                     $table = $this->getTable('Resource');
                     if ($table->doesListIncludeRecordsFromSource(
-                        $user->id, $list->id, 'R2'
+                        $user->id,
+                        $list->id,
+                        'R2'
                     )
                     ) {
                         $this->flashMessenger()
@@ -651,7 +668,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
         if ($this->formWasSubmitted('saveOrdering')) {
             $orderedList = json_decode(
-                $this->params()->fromPost('orderedList'), true
+                $this->params()->fromPost('orderedList'),
+                true
             );
             $table = $this->getTable('UserResource');
             $listID = $this->params()->fromPost('list_id');
@@ -931,7 +949,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
             } else {
                 $result = $this->saveChangeRequestFeedback(
-                    $patron, $profile, $data, $fields,
+                    $patron,
+                    $profile,
+                    $data,
+                    $fields,
                     'finna_UpdatePersonalInformation'
                 );
                 if ($result) {
@@ -972,11 +993,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         }
                         if ('boolean' == $setting['type']) {
                             $setting['active'] = (bool)$request->getPost(
-                                $serviceId . '_' . $settingId, false
+                                $serviceId . '_' . $settingId,
+                                false
                             );
                         } elseif ('select' == $setting['type']) {
                             $setting['value'] = $request->getPost(
-                                $serviceId . '_' . $settingId, ''
+                                $serviceId . '_' . $settingId,
+                                ''
                             );
                         } elseif ('multiselect' == $setting['type']) {
                             foreach ($setting['options'] as $optionId
@@ -1023,7 +1046,10 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
 
                 $result = $this->saveChangeRequestFeedback(
-                    $patron, $profile, $data, [],
+                    $patron,
+                    $profile,
+                    $data,
+                    [],
                     'finna_UpdateMessagingSettings'
                 );
                 if ($result) {
@@ -1191,7 +1217,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $this->forceLogin();
         }
 
-        $rems = $this->serviceLocator->get('Finna\Service\RemsService');
+        $rems = $this->serviceLocator->get(\Finna\Service\RemsService::class);
         $error = false;
         $hasAccess = $usagePurpose = null;
         try {
@@ -1268,7 +1294,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $user = $this->getUser();
         if (!$user) {
             return $this->redirect()->toRoute(
-                'default', ['controller' => 'MyResearch', 'action' => 'Login']
+                'default',
+                ['controller' => 'MyResearch', 'action' => 'Login']
             );
         }
 
@@ -1425,7 +1452,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             && $catalog->checkFunction('updateSmsNumber', compact('patron'))
         ) {
             $result = $catalog->updateSmsNumber(
-                $patron, $values->profile_sms_number
+                $patron,
+                $values->profile_sms_number
             );
             if (!$result['success']) {
                 $this->flashMessenger()->addErrorMessage($result['status']);
@@ -1437,7 +1465,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             ->checkFunction('updateTransactionHistoryState', compact('patron'));
         if (isset($values->loan_history) && $updateState) {
             $result = $catalog->updateTransactionHistoryState(
-                $patron, $values->loan_history
+                $patron,
+                $values->loan_history
             );
             if (!$result['success']) {
                 $this->flashMessenger()->addErrorMessage($result['status']);
@@ -1458,8 +1487,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
      *
      * @return bool
      */
-    protected function saveChangeRequestFeedback($patron, $profile, $data,
-        $fields, $subject
+    protected function saveChangeRequestFeedback(
+        $patron,
+        $profile,
+        $data,
+        $fields,
+        $subject
     ) {
         [$library, $username] = explode('.', $patron['cat_username']);
         $catalog = $this->getILS();
@@ -1525,7 +1558,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $messageString = $this->getMessageString($userData, $message, $oldMessage);
         $feedback = $this->getTable('feedback');
         $feedback->saveFeedback(
-            $url, $formId, $userId, $messageString, $messageJson
+            $url,
+            $formId,
+            $userId,
+            $messageString,
+            $messageJson
         );
 
         return true;
@@ -1605,7 +1642,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $userLists = [];
         foreach ($user->getLists() as $list) {
             $listRecords = $runner->run(
-                ['id' => $list->id], 'Favorites', $setupCallback
+                ['id' => $list->id],
+                'Favorites',
+                $setupCallback
             );
             $outputList = [
                 'title' => $list->title,

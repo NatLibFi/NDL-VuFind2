@@ -61,7 +61,9 @@ class OpenUrlFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -72,7 +74,8 @@ class OpenUrlFactory implements FactoryInterface
         $file = \VuFind\Config\Locator::getLocalConfigPath('OpenUrlRules.json');
         if ($file === null) {
             $file = \VuFind\Config\Locator::getLocalConfigPath(
-                'OpenUrlRules.json', 'config/finna'
+                'OpenUrlRules.json',
+                'config/finna'
             );
             if ($file === null) {
                 $file = \VuFind\Config\Locator::getConfigPath('OpenUrlRules.json');

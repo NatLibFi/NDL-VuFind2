@@ -65,7 +65,8 @@ class SystemStatus extends \VuFind\AjaxHandler\SystemStatus
         ) {
             error_log('SystemStatus: Health check file exists');
             return $this->formatResponse(
-                'Health check file exists', self::STATUS_HTTP_UNAVAILABLE
+                'Health check file exists',
+                self::STATUS_HTTP_UNAVAILABLE
             );
         }
 
@@ -101,7 +102,8 @@ class SystemStatus extends \VuFind\AjaxHandler\SystemStatus
         } catch (\Exception $e) {
             error_log('SystemStatus ERROR: Database error: ' . $e->getMessage());
             return $this->formatResponse(
-                'Database error: ' . $e->getMessage(), self::STATUS_HTTP_ERROR
+                'Database error: ' . $e->getMessage(),
+                self::STATUS_HTTP_ERROR
             );
         }
 

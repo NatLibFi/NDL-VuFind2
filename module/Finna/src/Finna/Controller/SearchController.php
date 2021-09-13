@@ -59,7 +59,8 @@ class SearchController extends \VuFind\Controller\SearchController
         $ticks = [-1000, 0, 900, 1800, 1900];
         if (!empty($config->Site->advSearchYearScale)) {
             $ticks = array_map(
-                'trim', explode(',', $config->Site->advSearchYearScale)
+                'trim',
+                explode(',', $config->Site->advSearchYearScale)
             );
         }
         $rangeEnd = date('Y', strtotime('+1 year'));
@@ -403,8 +404,17 @@ class SearchController extends \VuFind\Controller\SearchController
         }
 
         return compact(
-            'journal', 'atitle', 'title', 'author', 'isbn', 'issn', 'eissn', 'date',
-            'volume', 'issue', 'spage'
+            'journal',
+            'atitle',
+            'title',
+            'author',
+            'isbn',
+            'issn',
+            'eissn',
+            'date',
+            'volume',
+            'issue',
+            'spage'
         );
     }
 
@@ -424,12 +434,16 @@ class SearchController extends \VuFind\Controller\SearchController
         // Journal first..
         if (!$params['eissn']
             || !($results = $this->trySearch(
-                $runner, ['ISN' => $params['eissn']], $hiddenFilters
+                $runner,
+                ['ISN' => $params['eissn']],
+                $hiddenFilters
             ))
         ) {
             if ($params['issn']) {
                 $results = $this->trySearch(
-                    $runner, ['ISN' => $params['issn']], $hiddenFilters
+                    $runner,
+                    ['ISN' => $params['issn']],
+                    $hiddenFilters
                 );
             }
         }
@@ -481,7 +495,9 @@ class SearchController extends \VuFind\Controller\SearchController
                     if (isset($query[$param])) {
                         unset($query[$param]);
                         $articles = $this->trySearch(
-                            $runner, $query, $hiddenFilters
+                            $runner,
+                            $query,
+                            $hiddenFilters
                         );
                         if ($articles) {
                             return $articles;
@@ -496,7 +512,9 @@ class SearchController extends \VuFind\Controller\SearchController
         // Try to find a book or something
         if (!$params['isbn']
             || !($results = $this->trySearch(
-                $runner, ['ISN' => $params['isbn']], $hiddenFilters
+                $runner,
+                ['ISN' => $params['isbn']],
+                $hiddenFilters
             ))
         ) {
             $query = [];
@@ -513,7 +531,10 @@ class SearchController extends \VuFind\Controller\SearchController
 
         if ($results === false) {
             $results = $this->trySearch(
-                $runner, ['id' => 'notfound'], $hiddenFilters, true
+                $runner,
+                ['id' => 'notfound'],
+                $hiddenFilters,
+                true
             );
         }
 
@@ -531,8 +552,11 @@ class SearchController extends \VuFind\Controller\SearchController
      *
      * @return bool|\VuFind\Search\Base\Results
      */
-    protected function trySearch(\VuFind\Search\SearchRunner $runner, $params,
-        $hiddenFilters = [], $returnEmptyResults = false
+    protected function trySearch(
+        \VuFind\Search\SearchRunner $runner,
+        $params,
+        $hiddenFilters = [],
+        $returnEmptyResults = false
     ) {
         $mapFunc = function ($val) {
             return addcslashes($val, '"');

@@ -114,12 +114,12 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
         }
         $searches = [];
         foreach ($params['search'] as $search) {
-            [$searchClass, $searchId] = explode(':', $search);
+            [$searchClass] = explode(':', $search);
             if ($searchClass != $class) {
                 $searches[] = $search;
             }
         }
-        $this->setDefaultParameter('search', $searches);
+        $this->setDefaultParameter('search', $searches, true);
     }
 
     /**
@@ -148,11 +148,12 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
                 $res[] = "$searchClass:$searchId";
             }
         }
-        $this->setDefaultParameter('search', $res);
+        $this->setDefaultParameter('search', $res, true);
 
         if ($output) {
             return $this->getParams(false);
         }
+        return '';
     }
 
     /**

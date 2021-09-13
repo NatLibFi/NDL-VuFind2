@@ -89,7 +89,10 @@ class Cpu_Client
             ];
 
             $response = $this->postRequest(
-                $this->service_url, $json_data, $options, $headers
+                $this->service_url,
+                $json_data,
+                $options,
+                $headers
             );
 
             if (!$response) {

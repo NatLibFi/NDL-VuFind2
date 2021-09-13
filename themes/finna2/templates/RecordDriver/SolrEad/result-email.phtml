@@ -3,7 +3,7 @@
   $date = substr($title, strpos($title, '('), strpos($title, ')'));
   $formats = $this->driver->getFormats();
   $format = end($formats);
-  $url = $this->recordLink()->getUrl($this->driver);
+  $url = $this->recordLinker()->getUrl($this->driver);
 
   // NOTE: use $info['baseUrl'] instead of serverUrl view helper when this template is
   // rendered by scheduled alerts console action.
@@ -51,5 +51,6 @@
 <?php if ($unit = ($this->driver->tryMethod('getFilingUnit'))): ?>
   <?= PHP_EOL . $this->translate('Filing Unit') . ': ' . $unit ?>
 <?php endif; ?>
+<?= $this->record($this->driver)->renderTemplate('result-email-copyright.phtml') ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>

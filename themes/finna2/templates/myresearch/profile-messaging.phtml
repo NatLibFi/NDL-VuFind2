@@ -12,7 +12,7 @@ if (!isset($capabilityParams)) {
     </div>
     <?php foreach ($profile['messagingServices'] as $service): ?>
             <?php
-            echo '<div class="my-profile-col profile-title">' . $this->transEsc('messaging_settings_type_' . $service['type'], null, $service['type']) . ':</div>';
+            echo '<div class="my-profile-col profile-title">' . $this->transEscWithPrefix('messaging_settings_type_', $service['type']) . ':</div>';
             echo '<div class="profile-text-value">';
             if (isset($service['sendMethods'])) {
                 // Axiell

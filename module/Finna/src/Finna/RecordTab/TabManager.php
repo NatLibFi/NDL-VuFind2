@@ -86,8 +86,10 @@ class TabManager extends \VuFind\RecordTab\TabManager
      *
      * @return string
      */
-    public function getDefaultTabForRecord(AbstractRecordDriver $driver,
-        array $tabs, $fallback = null
+    public function getDefaultTabForRecord(
+        AbstractRecordDriver $driver,
+        array $tabs,
+        $fallback = null
     ) {
         $result = parent::getDefaultTabForRecord($driver, $tabs, $fallback);
         if ('Details' === $result) {

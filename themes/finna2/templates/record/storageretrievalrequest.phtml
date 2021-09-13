@@ -4,7 +4,7 @@
 
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'), '<li>', '</li>')
-        . '<li>' . $this->recordLink()->getBreadcrumb($this->driver) . '</li>'
+        . '<li>' . $this->recordLinker()->getBreadcrumbHtml($this->driver) . '</li>'
         . '<li class="active">' . $this->transEsc('storage_retrieval_request_place_text') . '</li>';
 ?>
 <h2><?=$this->transEsc('storage_retrieval_request_place_text')?></h2>
@@ -91,12 +91,12 @@
   <?php if (in_array("acceptTerms", $this->extraFields)): ?>
     <div class="form-group">
       <input id="acceptTerms" type="checkbox" name="gatheredDetails[acceptTerms]">
-      <label for="acceptTerms" class="control-label"><?=$this->translate(empty($this->acceptTermsText) ? "accept_request_terms_html" : $this->acceptTermsText)?></label>
+      <label for="acceptTerms" class="control-label"><?=$this->translate(empty($this->acceptTermsTextHtml) ? "accept_request_terms_html" : $this->acceptTermsTextHtml)?></label>
     </div>
   <?php endif; ?>
 
   <div class="form-group">
-    <input class="btn btn-primary" type="submit" name="placeStorageRetrievalRequest" value="<?=$this->transEsc('storage_retrieval_request_submit_text')?>"/>
+    <input class="btn btn-primary" type="submit" name="placeStorageRetrievalRequest" value="<?=$this->transEscAttr('storage_retrieval_request_submit_text')?>"/>
   </div>
 </form>
 

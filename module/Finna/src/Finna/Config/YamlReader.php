@@ -63,7 +63,8 @@ class YamlReader extends \VuFind\Config\YamlReader
                 $localFile = null;
             }
             $this->files[$filename] = $this->getFromPaths(
-                Locator::getBaseConfigPath($filename), $localFile
+                Locator::getBaseConfigPath($filename),
+                $localFile
             );
         }
 
@@ -80,7 +81,9 @@ class YamlReader extends \VuFind\Config\YamlReader
      * @return array
      */
     public function getFinna(
-        $filename, $localDir = 'local/vufind', $ignoreFileCache = false
+        $filename,
+        $localDir = 'local/vufind',
+        $ignoreFileCache = false
     ) {
         $key = "$localDir/$filename";
 

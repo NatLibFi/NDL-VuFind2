@@ -19,8 +19,8 @@ autoConfigure = "0"
 ;healthCheckFile = /tmp/disable_vufind
 ; This setting allows a redirection message to production system to be displayed in
 ; a pre-production view. The regexp contains the rule to change the URL for
-; production.
-;preProductionRedirect = "/(https:.*?)\.finna-pre\.fi(.*)/i###$1.finna.fi$2"
+; production. First rule to match will take effect.
+;preProductionRedirect[] = "/(https:.*?)\.finna-pre\.fi(.*)/i###$1.finna.fi$2"
 
 ; This section will need to be customized for your installation
 [Site]
