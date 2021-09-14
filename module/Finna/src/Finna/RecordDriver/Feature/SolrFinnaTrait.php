@@ -1006,6 +1006,7 @@ trait SolrFinnaTrait
                     break;
                 case 'jpg':
                 case 'png':
+                case 'tif':
                     $type = 'image';
                     break;
                 }
