@@ -44,6 +44,7 @@ function getTanDeg(deg) {
 function ModelViewer(trigger, options, scripts)
 {
   var _ = this;
+  console.log(options);
   _.trigger = $(trigger);
   _.texturePath = options.texturePath;
   if (typeof options.popup === 'undefined' || options.popup === false) {
@@ -70,9 +71,9 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
   var _ = this;
   var modal = $('#model-modal').find('.model-wrapper').first().clone();
   _.trigger.finnaPopup({
-    id: 'modelViewer',
+    id: options.idOverride || 'modelViewer',
     cycle: false,
-    parent: _.inlineId || undefined,
+    parent: _.isFileInput ? 'debugViewerArea' : _.inlineId || undefined,
     overrideEvents: _.isFileInput ? 'change' : undefined,
     classes: 'model-viewer',
     translations: options.translations,
@@ -263,6 +264,11 @@ ModelViewer.prototype.createRenderer = function createRenderer()
 ModelViewer.prototype.getModelPath = function getModelPath()
 {
   var _ = this;
+  if (_.isFileInput && _.modelPath) {
+    _.loadGLTF();
+    _.setEvents();
+    return;
+  }
   _.viewerStateInfo.html(VuFind.translate('model_loading_file'));
   $.getJSON(
     VuFind.path + '/AJAX/JSON',

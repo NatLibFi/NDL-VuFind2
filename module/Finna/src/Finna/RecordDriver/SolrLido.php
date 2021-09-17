@@ -85,7 +85,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'ambientIntensity',
         'hemisphereIntensity',
         'viewerPaddingAngle',
-        'debug'
+        'debug',
+        'fileInput'
     ];
 
     /**

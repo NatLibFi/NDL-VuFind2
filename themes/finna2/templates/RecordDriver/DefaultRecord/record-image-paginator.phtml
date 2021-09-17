@@ -2,6 +2,8 @@
 <?php
   $isList = ($type === 'list' || $type === 'list grid');
   $enableImageZoom = (isset($enableImagePopupZoom) && $enableImagePopupZoom) && in_array($this->driver->tryMethod('getRecordFormat'), ['lido', 'forward', 'ead', 'qdc']);
+  $modelScripts;
+  $modelSettings;
 ?>
 <?php if ($type === 'record' || !$this->userAgent()->isBot()): ?>
   <?php
@@ -39,12 +41,14 @@
         ]
     );
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "VuFind.addTranslations($translations);", 'SET');
-    $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
-    $settings = $this->driver->getModelSettings();
-    $settings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);
+    if (empty($modelScripts)) {
+      $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
+    }
+    $modelSettings = $this->driver->getModelSettings();
+    $modelSettings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);
     foreach ($models as $index => $model):
       foreach ($model as $format => $data):
-        $settings['modelload'] = [
+        $modelSettings['modelload'] = [
           'id' => $this->driver->getUniqueId(),
           'index' => $index,
           'format' => $format,
@@ -53,7 +57,7 @@
 
         $tmp = [
           'type' => 'model',
-          'modelsettings' => json_encode($settings ?? []),
+          'modelsettings' => json_encode($modelSettings ?? []),
           'scripts' => $modelScripts,
           'format' => $format
         ];
@@ -135,4 +139,20 @@
     <button type="button" class="show-less-images"><?= $this->transEsc('less') ?> <i class="fa fa-arrow-up"></i></button>
   </div>
 <?php endif;?>
+<?php if (!empty($modelSettings['fileInput'])): ?>
+  <div class="debug-model-viewer">
+    <div id="debugViewerArea"></div>
+    <input type="file" class="model-viewer-input">
+  </div>
+  <?php
+  $modelSettings['idOverride'] = 'debugViewer';
+  $conversion = json_encode($modelSettings);
+  $script = <<<JS
+
+  new ModelViewer($('.model-viewer-input')[0], $conversion, $modelScripts);
+JS;
+?>
+<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET') ?>
+<?php endif; ?>
+
 <!-- END of: finna - RecordDriver/DefaultRecord/record-image-paginator.phtml -->
