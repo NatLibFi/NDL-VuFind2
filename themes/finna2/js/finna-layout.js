@@ -150,33 +150,13 @@ finna.layout = (function finnaLayout() {
   }
 
   function initCheckboxClicks() {
-    $('.checkboxFilter:not(.mylist-select-all) .checkbox input').on('click', function onClickCheckbox() {
-      $(this).closest('.checkbox').toggleClass('checked');
-      var select = $('.mylist-functions button, .mylist-functions select');
-      var jumpMenu = $('.mylist-functions .jump-menu-style');
-      var checked = $('.myresearch-row .checkboxFilter .checkbox.checked');
-      if (checked.length > 0) {
-        select.removeAttr('disabled');
+    $('.template-name-mylist input.checkbox-select-item').on('click', function onClickCheckbox() {
+      var actions = $('.mylist-functions button, .mylist-functions select');
+      var noneChecked = $('.template-name-mylist input.checkbox-select-item:checked').length === 0;
+      if (noneChecked) {
+        actions.attr('disabled', true);
       } else {
-        select.attr('disabled', true);
-      }
-      jumpMenu.toggleClass('disabled', checked.length === 0);
-    });
-
-    var myListSelectAll = $('.checkboxFilter.mylist-select-all');
-    var myListJumpMenu = $('.mylist-functions .jump-menu-style');
-    var myListFunctions = $('.mylist-functions button, .mylist-functions select');
-    myListSelectAll.find('.checkbox .checkbox-select-all').on('click', function onClickCheckbox() {
-      var checkboxes = $('.myresearch-row .checkboxFilter .checkbox, .checkboxFilter.mylist-select-all .checkbox');
-      if ($(this).closest('.checkbox').hasClass('checked')) {
-        var isEverythingChecked = !$('.myresearch-row .checkboxFilter .checkbox').not('.checked').length;
-        checkboxes.toggleClass('checked', !isEverythingChecked);
-        myListJumpMenu.toggleClass('disabled', isEverythingChecked);
-        myListFunctions.attr('disabled', isEverythingChecked);
-      } else {
-        checkboxes.toggleClass('checked', true);
-        myListJumpMenu.toggleClass('disabled', false);
-        myListFunctions.attr('disabled', false);
+        actions.removeAttr('disabled');
       }
     });
   }
