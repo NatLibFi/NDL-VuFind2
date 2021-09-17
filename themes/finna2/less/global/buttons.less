@@ -16,3 +16,27 @@
   text-transform: uppercase;
 }
 
+// Truncation mechanism buttons
+.more-link,     // Finna legacy
+.less-link,     // Finna legacy
+.less-link-top, // Finna legacy
+.more-less-btn-wrapper > .btn.more-btn,
+.more-less-btn-wrapper > .btn.less-btn {
+  cursor: pointer;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  &:hover,
+  &:focus {
+    color: inherit;
+  }
+  &.link-buttons {
+    color: @link-color;
+    font-weight: 400;
+  }
+}
