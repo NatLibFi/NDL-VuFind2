@@ -408,7 +408,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                 $representationAttributes = $representation->attributes();
                 $linkResourceAttributes = $linkResource->attributes();
-                $linkResourceFormat 
+                $linkResourceFormat
                     = (string)$linkResourceAttributes->formatResource;
                 $representationType = (string)$representationAttributes->type;
                 $linkResourceFormat = strtolower($linkResourceFormat);
@@ -517,7 +517,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
                 if (!empty($resourceSet->resourceDescription)) {
-                    $imageResult['description'] 
+                    $imageResult['description']
                         = (string)$this->getLanguageSpecificItem(
                             $resourceSet->resourceDescription,
                             $language
