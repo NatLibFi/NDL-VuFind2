@@ -304,6 +304,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * Parse given lido representations and save them into a cache assigned for each type
      *
      * @param string $language language to get information
+     *
+     * @return void
      */
     protected function parseRepresentations(string $language = null): void
     {
@@ -379,7 +381,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $resourceSet->rightsResource->rightsType->term,
                     $language
                 );
-                if (!isset($rights['copyright']) || $rights['copyright'] !== $term) {
+                if (!isset($rights['copyright'])
+                    || $rights['copyright'] !== $term
+                ) {
                     $rights['description'][] = $term;
                 }
             }
@@ -416,11 +420,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         && $representationType !== 'image_original'
                     ) {
                         $format = strtolower($linkResourceFormat);
-                        $formatDisallowed = in_array(
+                        if (in_array(
                             $format,
                             $this->undisplayableFileFormats
-                        );
-                        if ($formatDisallowed) {
+                        )
+                        ) {
                             continue;
                         }
                     }
@@ -452,7 +456,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                             $currentHiRes['resourceID']
                                 = (int)$resourceSet->resourceID;
                         }
-                        $highResolution[$size][$linkResourceFormat ?: 'jpg'] = $currentHiRes;
+                        $highResolution[$size][$linkResourceFormat ?: 'jpg']
+                            = $currentHiRes;
                     }
                 }
 
@@ -461,7 +466,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $type = $this->modelTypes[$representationType];
                     switch ($type) {
                     case 'preview_3d':
-                        if (in_array($linkResourceFormat, $this->displayableModelFormats)) {
+                        if (in_array(
+                            $linkResourceFormat,
+                            $this->displayableModelFormats
+                        )
+                        ) {
                             $modelUrls[$format][$type] = $url;
                         }
                         break;
@@ -492,7 +501,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $imageResult['identifier'] = (string)$resourceSet->resourceID;
                 }
                 if (!empty($resourceSet->resourceType->term)) {
-                    $type = (string)$this->getLanguageSpecificItem(
+                    $imageResult['type'] = (string)$this->getLanguageSpecificItem(
                         $resourceSet->resourceType->term,
                         $language
                     );
@@ -507,10 +516,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
                 if (!empty($resourceSet->resourceDescription)) {
-                    $imageResult['description'] = (string)$this->getLanguageSpecificItem(
-                        $resourceSet->resourceDescription,
-                        $language
-                    );
+                    $imageResult['description'] =
+                        (string)$this->getLanguageSpecificItem(
+                            $resourceSet->resourceDescription,
+                            $language
+                        );
                 }
                 if (!empty($resourceSet->resourceDateTaken->displayDate)) {
                     $imageResult['dateTaken']
