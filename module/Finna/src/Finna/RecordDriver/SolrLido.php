@@ -65,7 +65,28 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $undisplayableFileFormats = [
-        'tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb','obj'
+        'tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb','obj', 'mp3', 'wav', 'mp4'
+    ];
+
+    /**
+     * Image types array
+     *
+     * @var array
+     */
+    protected $imageTypes = [
+        'image_thumb' => 'small',
+        'thumb' => 'small',
+        'medium' => 'medium',
+        'image_large' => 'large',
+        'large' => 'large',
+        'zoomview' => 'large',
+        'image_master' => 'master',
+        'image_original' => 'original'
+    ];
+
+    protected $modelTypes = [
+        'preview_3d' => 'preview',
+        'provided_3d' => 'provided'
     ];
 
     /**
@@ -87,13 +108,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'viewerPaddingAngle',
         'debug'
     ];
-
-    /**
-     * Images cache
-     *
-     * @var array
-     */
-    protected $cachedImages;
 
     /**
      * Constructor
@@ -223,34 +237,100 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = null)
     {
-        if (null !== $this->cachedImages) {
-            return $this->cachedImages;
+        if (isset($this->cache['images'])) {
+            return $this->cache['images'];
         }
+        $this->parseRepresentations($language);
+        return $this->cache['images'];
+    }
 
-        $results = [];
+    /**
+     * Function to format given resourceMeasurementsSet to readable format
+     *
+     * @param object $measurements of the image
+     * @param string $language     to search data for
+     *
+     * @return array
+     */
+    public function formatImageMeasurements($measurements, $language = 'en')
+    {
+        $data = [];
+        foreach ($measurements as $set) {
+            if (empty($set->measurementValue)) {
+                continue;
+            }
+            $type = '';
+            foreach ($set->measurementType as $t) {
+                if ((string)$t->attributes()->lang !== $language) {
+                    continue;
+                }
+                $type = trim((string)$t);
+                break;
+            }
+            $unit = '';
+            foreach ($set->measurementUnit as $u) {
+                if ((string)$u->attributes()->lang !== $language) {
+                    continue;
+                }
+                $unit = trim((string)$u);
+                break;
+            }
 
-        $addToResults = function ($imageData) use (&$results) {
+            $value = trim((string)$set->measurementValue);
+            $data[$type] = compact('unit', 'value');
+        }
+        return $data;
+    }
+
+    /**
+     * Get 3D models
+     *
+     * @return array
+     */
+    public function getModels(): array
+    {
+        if (isset($this->cache['models'])) {
+            return $this->cache['models'];
+        }
+        $this->parseRepresentations();
+        return $this->cache['models'];
+    }
+
+    /**
+     * Parse given lido representations and save them into a cache assigned for each type
+     *
+     * @param string $language language to get information
+     */
+    protected function parseRepresentations(string $language = null): void
+    {
+        $defaultRights = $this->getImageRights($language, true);
+        $imageTypeKeys = array_keys($this->imageTypes);
+        $modelTypeKeys = array_keys($this->modelTypes);
+        $imageResults = [];
+        $modelResults = [];
+
+        $addToResults = function ($imageData) use (&$imageResults) {
             if (!isset($imageData['urls']['small'])) {
                 $imageData['urls']['small'] = $imageData['urls']['medium']
                     ?? $imageData['urls']['large'];
             }
             if (!isset($imageData['urls']['medium'])) {
-                $imageData['urls']['medium'] = $imageData['urls']['small']
-                    ?? $imageData['urls']['large'];
+                $imageData['urls']['medium'] = $imageData['urls']['small'];
             }
-            $results[] = $imageData;
+            $imageResults[] = $imageData;
         };
 
-        $defaultRights = $this->getImageRights($language, true);
+        $i = 0;
         foreach ($this->getXmlRecord()->xpath(
             '/lidoWrap/lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
         ) as $resourceSet) {
+            // Check if there is any links in given resourceSet so we can continue
             if (empty($resourceSet->resourceRepresentation->linkResource)) {
                 continue;
             }
             // Process rights first since we may need to duplicate them if there
-            // are multiple images in the set (non-standard)
+            // are multiple representations in the set (non-standard)
             $rights = [];
             foreach ($resourceSet->rightsResource ?? [] as $rightsResource) {
                 if (!empty($rightsResource->rightsType->conceptID)) {
@@ -302,7 +382,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             if (empty($rights)) {
                 $rights = $defaultRights;
             }
-            $urls = [];
+
+            // End of rights check
+            $imageUrls = [];
+            $modelUrls = [];
             $highResolution = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
@@ -310,223 +393,155 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (empty($url)) {
                     continue;
                 }
-                $attributes = $representation->attributes();
-                if (!empty($this->undisplayableFileFormats)
-                    && isset($linkResource->attributes()->formatResource)
-                    && (string)$attributes->type !== 'image_original'
-                ) {
-                    $format = trim(
-                        (string)$linkResource->attributes()->formatResource
-                    );
-                    $format = strtolower($format);
-                    $formatDisallowed = in_array(
-                        $format,
-                        $this->undisplayableFileFormats
-                    );
-                    if ($formatDisallowed) {
-                        continue;
-                    }
-                }
-
                 if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                     continue;
                 }
 
-                $size = '';
-                switch ($attributes->type) {
-                case 'image_thumb':
-                case 'thumb':
-                    $size = 'small';
-                    break;
-                case 'medium':
-                    $size = 'medium';
-                    break;
-                case 'image_large':
-                case 'large':
-                case 'zoomview':
-                    $size = 'large';
-                    break;
-                case 'image_master':
-                    $size = 'master';
-                    break;
-                case 'image_original':
-                    $size = 'original';
-                    break;
-                }
-
-                if (!$size) {
-                    if ($urls) {
-                        // We already have URL's, store them in the final results
-                        // first. This shouldn't happen unless there are multiple
+                $representationAttributes = $representation->attributes();
+                $linkResourceAttributes = $linkResource->attributes();
+                $linkResourceFormat =
+                    (string)$linkResourceAttributes->formatResource;
+                $representationType = (string)$representationAttributes->type;
+                $linkResourceFormat = strtolower($linkResourceFormat);
+                $representationType = strtolower($representationType);
+                // Representation is an image
+                if (in_array($representationType, $imageTypeKeys)) {
+                    // Is browser capable of showing this format?
+                    if (!empty($this->undisplayableFileFormats)
+                        && !empty($linkResourceFormat)
+                        && $representationType !== 'image_original'
+                    ) {
+                        $format = strtolower($linkResourceFormat);
+                        $formatDisallowed = in_array(
+                            $format,
+                            $this->undisplayableFileFormats
+                        );
+                        if ($formatDisallowed) {
+                            continue;
+                        }
+                    }
+                    $size = $this->imageTypes[$representationType] ?? null;
+                    if ($size) {
+                        $imageUrls[$size] = $url;
+                    } elseif ($imageUrls) {
+                        // We already have URL's, store them in the
+                        // final results first. This shouldn't
+                        // happen unless there are multiple
                         // images without type in the same set.
                         $addToResults(
                             [
-                                'urls' => $urls,
+                                'urls' => $imageUrls,
                                 'description' => '',
                                 'rights' => $rights
                             ]
                         );
                     }
-                    $urls['small'] = $urls['medium'] = $urls['large'] = $url;
-                } else {
-                    $urls[$size] = $url;
+
+                    if ($size === 'master' || $size === 'original') {
+                        $currentHiRes = [];
+                        $currentHiRes['data']
+                            = $this->formatImageMeasurements(
+                                $representation->resourceMeasurementsSet
+                            );
+                        $currentHiRes['url'] = $url;
+                        if (!empty($resourceSet->resourceID)) {
+                            $currentHiRes['resourceID']
+                                = (int)$resourceSet->resourceID;
+                        }
+                        $highResolution[$size][$linkResourceFormat ?: 'jpg'] = $currentHiRes;
+                    }
                 }
 
-                if ($size === 'master' || $size === 'original') {
-                    $currentHiRes = [];
-                    $currentHiRes['data']
-                        = $this->formatImageMeasurements(
-                            $representation->resourceMeasurementsSet
-                        );
-                    $currentHiRes['url'] = (string)$linkResource;
-                    if (!empty($resourceSet->resourceID)) {
-                        $currentHiRes['resourceID']
-                            = (int)$resourceSet->resourceID;
+                // Representation is a 3d model
+                if (in_array($representationType, $modelTypeKeys)) {
+                    $type = $this->modelTypes[$representationType];
+                    switch ($type) {
+                    case 'preview_3d':
+                        if (in_array($linkResourceFormat, $this->displayableModelFormats)) {
+                            $modelUrls[$format][$type] = $url;
+                        }
+                        break;
+                    default:
+                        $modelUrls[$linkResourceFormat][$type] = $url;
+                        break;
                     }
-                    $format = (string)$linkResource->attributes()->formatResource;
-
-                    $highResolution[$size][$format ?: 'jpg'] = $currentHiRes;
                 }
             }
+            // Save all the found results here as a new object or discard if we wish so
             // If current set has no images to show, continue to next one
-            if (empty($urls)) {
+            if (empty($imageUrls) && empty($modelUrls)) {
                 continue;
             }
+            $imageResult = [];
+            $modelResult = [];
 
-            $result = [
-                'urls' => $urls,
-                'description' => '',
-                'rights' => $rights,
-                'highResolution' => $highResolution
-            ];
+            // Process found image urls
+            if ($imageUrls) {
+                $imageResult = [
+                    'urls' => $imageUrls,
+                    'description' => '',
+                    'rights' => $rights,
+                    'highResolution' => $highResolution
+                ];
 
-            if (!empty($resourceSet->resourceID)) {
-                $result['identifier'] = (string)$resourceSet->resourceID;
-            }
-            if (!empty($resourceSet->resourceType->term)) {
-                $type = (string)$this->getLanguageSpecificItem(
-                    $resourceSet->resourceType->term,
-                    $language
-                );
-            }
-            foreach ($resourceSet->resourceRelType ?? [] as $relType) {
-                if (!empty($relType->term)) {
-                    $result['relationTypes'][]
-                        = (string)$this->getLanguageSpecificItem(
-                            $relType->term,
-                            $language
-                        );
+                if (!empty($resourceSet->resourceID)) {
+                    $imageResult['identifier'] = (string)$resourceSet->resourceID;
                 }
-            }
-            if (!empty($resourceSet->resourceDescription)) {
-                $result['description'] = (string)$this->getLanguageSpecificItem(
-                    $resourceSet->resourceDescription,
-                    $language
-                );
-            }
-            if (!empty($resourceSet->resourceDateTaken->displayDate)) {
-                $result['dateTaken']
-                    = (string)$resourceSet->resourceDateTaken->displayDate;
-            }
-            foreach ($resourceSet->resourcePerspective ?? [] as $perspective) {
-                if (!empty($perspective->term)) {
-                    $result['perspectives'][]
-                        = (string)$this->getLanguageSpecificItem(
-                            $perspective->term,
-                            $language
-                        );
+                if (!empty($resourceSet->resourceType->term)) {
+                    $type = (string)$this->getLanguageSpecificItem(
+                        $resourceSet->resourceType->term,
+                        $language
+                    );
                 }
-            }
-
-            // Trim resulting strings
-            array_walk_recursive(
-                $result,
-                function (&$current) {
-                    if (is_string($current)) {
-                        $current = trim($current);
+                foreach ($resourceSet->resourceRelType ?? [] as $relType) {
+                    if (!empty($relType->term)) {
+                        $imageResult['relationTypes'][]
+                            = (string)$this->getLanguageSpecificItem(
+                                $relType->term,
+                                $language
+                            );
                     }
                 }
-            );
-            $addToResults($result);
-        }
-        return $this->cachedImages = $results;
-    }
-
-    /**
-     * Function to format given resourceMeasurementsSet to readable format
-     *
-     * @param object $measurements of the image
-     * @param string $language     to search data for
-     *
-     * @return array
-     */
-    public function formatImageMeasurements($measurements, $language = 'en')
-    {
-        $data = [];
-        foreach ($measurements as $set) {
-            if (empty($set->measurementValue)) {
-                continue;
-            }
-            $type = '';
-            foreach ($set->measurementType as $t) {
-                if ((string)$t->attributes()->lang !== $language) {
-                    continue;
+                if (!empty($resourceSet->resourceDescription)) {
+                    $imageResult['description'] = (string)$this->getLanguageSpecificItem(
+                        $resourceSet->resourceDescription,
+                        $language
+                    );
                 }
-                $type = trim((string)$t);
-                break;
-            }
-            $unit = '';
-            foreach ($set->measurementUnit as $u) {
-                if ((string)$u->attributes()->lang !== $language) {
-                    continue;
+                if (!empty($resourceSet->resourceDateTaken->displayDate)) {
+                    $imageResult['dateTaken']
+                        = (string)$resourceSet->resourceDateTaken->displayDate;
                 }
-                $unit = trim((string)$u);
-                break;
-            }
-
-            $value = trim((string)$set->measurementValue);
-            $data[$type] = compact('unit', 'value');
-        }
-        return $data;
-    }
-
-    /**
-     * Get 3D models
-     *
-     * @return array
-     */
-    public function getModels(): array
-    {
-        $models = [];
-        $i = 0;
-        $xml = $this->getXmlRecord();
-        foreach ($xml->lido->administrativeMetadata->resourceWrap->resourceSet
-        as $resourceSet) {
-            foreach ($resourceSet->resourceRepresentation as $representation) {
-                $linkResource = $representation->linkResource;
-                $url = trim((string)$linkResource);
-                if (empty($url)) {
-                    continue;
-                }
-                $type = strtolower(
-                    (string)$representation->attributes()->type ?? ''
-                );
-                $format = $linkResource->attributes()->formatResource ?? '';
-                $format = strtolower(trim($format));
-                switch ($type) {
-                case 'preview_3d':
-                    if (in_array($format, $this->displayableModelFormats)) {
-                        $models[$i][$format]['preview'] = $url;
+                foreach ($resourceSet->resourcePerspective ?? [] as $perspective) {
+                    if (!empty($perspective->term)) {
+                        $imageResult['perspectives'][]
+                            = (string)$this->getLanguageSpecificItem(
+                                $perspective->term,
+                                $language
+                            );
                     }
-                    break;
-                case 'provided_3d':
-                    $models[$i][$format]['provided'] = $url;
-                    break;
                 }
+
+                // Trim resulting strings
+                array_walk_recursive(
+                    $imageResult,
+                    function (&$current) {
+                        if (is_string($current)) {
+                            $current = trim($current);
+                        }
+                    }
+                );
+                $addToResults($imageResult);
+            }
+
+            // Process found model urls
+            if ($modelUrls) {
+                $modelResults[$i] = $modelUrls;
             }
             $i++;
         }
-        return $models;
+        $this->cache['images'] = $imageResults;
+        $this->cache['models'] = $modelResults;
     }
 
     /**
@@ -543,8 +558,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $settings[$setting] = $iniData->$setting;
             }
         }
-        $modelImages = 'model_preview_images';
-        $datasource = $this->getDataSource();
         $settings['previewImages'] = $this->allowModelPreviewImages();
         return $settings;
     }
