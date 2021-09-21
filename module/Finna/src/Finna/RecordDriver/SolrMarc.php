@@ -1860,9 +1860,25 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     {
         $results = [];
         foreach ($this->getMarcReader()->getFields('567') as $field) {
-            foreach ($this->getSubfields($field, 'a') as $method) {
-                $results[] = $this->stripTrailingPunctuation($method);
+            $result = [];
+            foreach ($this->getAllSubfields($field) as $subfield) {
+                $data = trim($subfield['data']);
+                if ('' === $data) {
+                    continue;
+                }
+                switch ($subfield['code']) {
+                case 'a':
+                    $result['description'] = $data;
+                    break;
+                case 'b':
+                    $result['term'] = $data;
+                    break;
+                case '0':
+                    $result['url'] = $data;
+                    break;
+                }
             }
+            $results[] = $result;
         }
         return $results;
     }
@@ -1878,7 +1894,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $fields = ['348' => ['a', 'b', '2']];
         $matches = $this->getSeriesFromMARC($fields);
         foreach ($matches as $match) {
-            $subfields[] =  $this->stripTrailingPunctuation($match);
+            $subfields[] = $this->stripTrailingPunctuation($match);
         }
         if (!empty($subfields)) {
             $results = implode(', ', $subfields[0]);

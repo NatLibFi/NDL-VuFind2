@@ -1134,7 +1134,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Methodology',
             'getMethodology',
-            'data-escapeHtml.phtml',
+            'methodology-links.phtml',
             [
                 'context' => ['class' => 'recordMethodology']
             ]

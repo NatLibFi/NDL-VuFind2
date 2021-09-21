@@ -1,0 +1,17 @@
+<?php /* Don't add start or end tags */ ?>
+<div class="truncate-field" data-rows="5">
+    <?php foreach ($data as $obj): ?>
+        <?php if (!empty($obj['url'])): ?>
+            <a title="<?=$this->escapeHtmlAttr($obj['term'] ?? $obj['description'])?>" target="_blank" href="<?=$this->escapeHtmlAttr($obj['url'])?>">
+        <?php endif; ?>    
+            <?php if (!empty($obj['description'])): ?>
+                <div><?=$this->escapeHtml($obj['description'])?></div>
+            <?php endif; ?>
+            <?php if (!empty($obj['term'])): ?>
+                <div><?=$this->escapeHtml($obj['term'])?></div>
+            <?php endif; ?>
+        <?php if (!empty($obj['url'])): ?>    
+            </a>
+        <?php endif; ?>
+    <?php endforeach; ?>
+</div>
