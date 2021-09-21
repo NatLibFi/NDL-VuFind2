@@ -57,7 +57,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'a00', 'a01', 'a03', 'a06', 'a50', 'a99',
         'b13',
         'd01', 'd02', 'd99',
-        'e02', 'e03', 'e04', 'e05', 'e06', 'e08', 'e99',
+        'e02', 'e03', 'e04', 'e05', 'e06', 'e08',
         'f01', 'f02', 'f99',
         'cmp', 'cph', 'exp', 'fds', 'fmp', 'rce', 'wst', 'oth', 'prn',
         // These are copied from Marc
