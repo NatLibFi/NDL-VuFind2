@@ -301,7 +301,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Parse given lido representations and save them into a cache assigned for each type
+     * Parse given lido representations and save them
+     * into a cache assigned for each type
      *
      * @param string $language language to get information
      *
@@ -407,8 +408,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                 $representationAttributes = $representation->attributes();
                 $linkResourceAttributes = $linkResource->attributes();
-                $linkResourceFormat =
-                    (string)$linkResourceAttributes->formatResource;
+                $linkResourceFormat 
+                    = (string)$linkResourceAttributes->formatResource;
                 $representationType = (string)$representationAttributes->type;
                 $linkResourceFormat = strtolower($linkResourceFormat);
                 $representationType = strtolower($representationType);
@@ -480,8 +481,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
             }
-            // Save all the found results here as a new object or discard if we wish so
-            // If current set has no images to show, continue to next one
+            // Save all the found results here as a new object
+            // If current set has no links, continue to next one
             if (empty($imageUrls) && empty($modelUrls)) {
                 continue;
             }
@@ -516,8 +517,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
                 if (!empty($resourceSet->resourceDescription)) {
-                    $imageResult['description'] =
-                        (string)$this->getLanguageSpecificItem(
+                    $imageResult['description'] 
+                        = (string)$this->getLanguageSpecificItem(
                             $resourceSet->resourceDescription,
                             $language
                         );
