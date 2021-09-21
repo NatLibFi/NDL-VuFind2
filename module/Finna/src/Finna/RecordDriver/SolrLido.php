@@ -65,7 +65,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $undisplayableFileFormats = [
-        'tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb','obj', 'mp3', 'wav', 'mp4'
+        'tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb',
+        'obj', 'mp3', 'wav', 'mp4'
     ];
 
     /**
@@ -84,6 +85,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'image_original' => 'original'
     ];
 
+    /**
+     * Model types array
+     */
     protected $modelTypes = [
         'preview_3d' => 'preview',
         'provided_3d' => 'provided'
