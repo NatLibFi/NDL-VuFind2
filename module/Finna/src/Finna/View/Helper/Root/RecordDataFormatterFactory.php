@@ -553,6 +553,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Methodology',
+            'getMethodology',
+            'methodology-links.phtml',
+            [
+                'context' => ['class' => 'recordMethodology']
+            ]
+        );
+        $setTemplateLine(
             'Publications',
             'getRelatedPublications',
             'data-relatedPublications.phtml',
@@ -1129,14 +1137,6 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordTradeNote']
-            ]
-        );
-        $setTemplateLine(
-            'Methodology',
-            'getMethodology',
-            'methodology-links.phtml',
-            [
-                'context' => ['class' => 'recordMethodology']
             ]
         );
         $setTemplateLine(

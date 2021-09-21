@@ -5,7 +5,7 @@
             <a title="<?=$this->escapeHtmlAttr($obj['term'] ?? $obj['description'])?>" target="_blank" href="<?=$this->escapeHtmlAttr($obj['url'])?>">
         <?php endif; ?>    
             <?php if (!empty($obj['description'])): ?>
-                <div><?=$this->escapeHtml($obj['description'])?></div>
+                <div><?=$this->escapeHtml($obj['description'])?> </div>
             <?php endif; ?>
             <?php if (!empty($obj['term'])): ?>
                 <div><?=$this->escapeHtml($obj['term'])?></div>
