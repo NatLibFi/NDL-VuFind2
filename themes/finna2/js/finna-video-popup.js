@@ -5,16 +5,28 @@ finna.videoPopup = (function finnaVideoPopup() {
     var $container = $(_container);
     var $videoElem = $(_container).find('video');
 
-    // Use a fairly small buffer for faster quality changes
-    videojs.Hls.GOAL_BUFFER_LENGTH = 10;
-    videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
-    var player = videojs($videoElem.get(0), {
+    var options = {
+      preload: 'metadata',
+      autoplay: false,
+      controls: true,
+      preloadWebComponents: true,
+      nativeControlsForTouch: true,
+      techOrder: [ 'chromecast', 'html5' ],
+      plugins: {
+        airPlay: { addButtonToControlBar: true },
+        chromecast: { addButtonToControlBar: true }
+      },
       html5: {
-        hls: {
+        Vhs: {
           overrideNative: !videojs.browser.IS_SAFARI
         }
       }
-    });
+    };
+
+    // Use a fairly small buffer for faster quality changes
+    videojs.Vhs.GOAL_BUFFER_LENGTH = 10;
+    videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 20;
+    var player = videojs($videoElem.get(0), options);
  
     player.ready(function onReady() {
       this.hotkeys({
