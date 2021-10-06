@@ -119,6 +119,18 @@ class CleanHtml extends \Laminas\View\Helper\AbstractHelper
                     $elementInfo[CustomElementInterface::ATTRIBUTES]
                 );
             }
+            // Support for deprecated tags.
+            $def->addElement(
+                'details',
+                'Block',
+                'Flow',
+                'Common',
+                ['open' => new \HTMLPurifier_AttrDef_HTML_Bool(true)]
+            );
+            $def->addElement('summary', 'Block', 'Flow', 'Common');
+            $def->addAttribute('div', 'data-rows', 'Number');
+            $def->addAttribute('div', 'data-row-height', 'Number');
+            $def->addAttribute('div', 'data-label', 'Text');
 
             $this->purifier = new \HTMLPurifier($config);
         }
