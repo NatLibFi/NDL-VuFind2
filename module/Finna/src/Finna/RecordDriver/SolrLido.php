@@ -51,6 +51,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
+     * Representation cache keys
+     *
+     * @var array
+     */
+    protected const CACHE_KEYS = [
+        'models' => 'models/',
+        'images' => 'images/'
+    ];
+
+    /**
      * Map from site locale to Lido language codes.
      */
     public const LANGUAGE_CODES = [
@@ -87,10 +97,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Model types array
+     *
+     * @var array
      */
     protected $modelTypes = [
-        'preview_3d' => 'preview',
-        'provided_3d' => 'provided'
+        'preview_3D' => 'preview',
+        'provided_3D' => 'provided'
     ];
 
     /**
@@ -241,11 +253,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = null)
     {
-        if (isset($this->cache['images'])) {
-            return $this->cache['images'];
-        }
-        $this->parseRepresentations($language);
-        return $this->cache['images'];
+        return $this->getFromCache('images', $language);
     }
 
     /**
@@ -293,22 +301,41 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModels(): array
     {
-        if (isset($this->cache['models'])) {
-            return $this->cache['models'];
-        }
-        $this->parseRepresentations();
-        return $this->cache['models'];
+        return $this->getFromCache('models');
     }
 
     /**
-     * Parse given lido representations and save them
-     * into a cache assigned for each type
+     * Function to control the cache in a single function
+     * Return given type of cache with key
+     *
+     * @param string $key      Key of CACHE_KEYS constant
+     * @param string $language Language of texts
+     *
+     * @return array
+     */
+    protected function getFromCache(string $key, $language = null): array
+    {
+        $lang = !empty($language) ? $language : $this->getLocale();
+        $cacheKey = self::CACHE_KEYS[$key] . $lang;
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+        $result = $this->parseRepresentations($lang);
+        foreach (self::CACHE_KEYS as $type => $value) {
+            $this->cache[$value . $lang] = $result[$type] ?? [];
+        }
+        return $this->cache[$cacheKey] ?? [];
+    }
+
+    /**
+     * Parse given representations and return them in proper
+     * associative array
      *
      * @param string $language language to get information
      *
-     * @return void
+     * @return array
      */
-    protected function parseRepresentations(string $language = null): void
+    protected function parseRepresentations(string $language): array
     {
         $defaultRights = $this->getImageRights($language, true);
         $imageTypeKeys = array_keys($this->imageTypes);
@@ -332,67 +359,17 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             '/lidoWrap/lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
         ) as $resourceSet) {
-            // Check if there is any links in given resourceSet so we can continue
+            // Skip if there are no links in the resourceSet
             if (empty($resourceSet->resourceRepresentation->linkResource)) {
                 continue;
             }
             // Process rights first since we may need to duplicate them if there
             // are multiple representations in the set (non-standard)
-            $rights = [];
-            foreach ($resourceSet->rightsResource ?? [] as $rightsResource) {
-                if (!empty($rightsResource->rightsType->conceptID)) {
-                    $conceptID = $rightsResource->rightsType->conceptID;
-                    $type = strtolower((string)$conceptID->attributes()->type);
-                    if ($type === 'copyright' && trim((string)$conceptID)) {
-                        $rights['copyright']
-                            = $this->getMappedRights((string)$conceptID);
-                        $link
-                            = $this->getRightsLink($rights['copyright'], $language);
-                        if ($link) {
-                            $rights['link'] = $link;
-                        }
-                    }
-                }
-
-                foreach ($rightsResource->rightsHolder ?? [] as $holder) {
-                    if (empty($holder->legalBodyName->appellationValue)) {
-                        continue;
-                    }
-                    $rightsHolder = [
-                        'name' => (string)$holder->legalBodyName->appellationValue
-                    ];
-
-                    if (!empty($holder->legalBodyWeblink)) {
-                        $rightsHolder['link']
-                            = (string)$holder->legalBodyWeblink;
-                    }
-                    $rights['rightsHolders'][] = $rightsHolder;
-                }
-
-                if (!empty($rightsResource->creditLine)) {
-                    $rights['creditLine'] = (string)$this->getLanguageSpecificItem(
-                        $rightsResource->creditLine,
-                        $language
-                    );
-                }
-            }
-
-            if (!empty($resourceSet->rightsResource->rightsType->term)) {
-                $term = (string)$this->getLanguageSpecificItem(
-                    $resourceSet->rightsResource->rightsType->term,
-                    $language
-                );
-                if (!isset($rights['copyright'])
-                    || $rights['copyright'] !== $term
-                ) {
-                    $rights['description'][] = $term;
-                }
-            }
+            $rights = $this->parseResourceRights($resourceSet, $language);
             if (empty($rights)) {
                 $rights = $defaultRights;
             }
 
-            // End of rights check
             $imageUrls = [];
             $modelUrls = [];
             $highResolution = [];
@@ -405,79 +382,51 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                     continue;
                 }
-
-                $representationAttributes = $representation->attributes();
-                $linkResourceAttributes = $linkResource->attributes();
-                $linkResourceFormat
-                    = (string)$linkResourceAttributes->formatResource;
-                $representationType = (string)$representationAttributes->type;
-                $linkResourceFormat = strtolower($linkResourceFormat);
-                $representationType = strtolower($representationType);
+                $data = [
+                    'format' => (string)$linkResource->attributes()->formatResource,
+                    'type' => (string)$representation->attributes()->type,
+                    'url' => $url,
+                    'measurements' => $representation->resourceMeasurementsSet,
+                    'ID' => $resourceSet->resourceID ?? ''
+                ];
                 // Representation is an image
-                if (in_array($representationType, $imageTypeKeys)) {
-                    // Is browser capable of showing this format?
-                    if (!empty($this->undisplayableFileFormats)
-                        && !empty($linkResourceFormat)
-                        && $representationType !== 'image_original'
-                    ) {
-                        $format = strtolower($linkResourceFormat);
-                        if (in_array(
-                            $format,
-                            $this->undisplayableFileFormats
-                        )
-                        ) {
-                            continue;
+                if (in_array($data['type'], $imageTypeKeys)) {
+                    $parsedImage = $this->parseImage(
+                        $data,
+                        $language
+                    );
+                    if (!empty($parsedImage['url'])) {
+                        if (!empty($parsedImage['sizeless'])) {
+                            if (!empty($imageUrls)) {
+                                $addToResults([
+                                    'urls' => $imageUrls,
+                                    'description' => '',
+                                    'rights' => $rights
+                                ]);
+                            }
+                            // We already have URL's, store them in the
+                            // final results first. This shouldn't
+                            // happen unless there are multiple
+                            // images without type in the same set.
+                            $imageUrls['small'] = $imageUrls['medium']
+                                = $imageUrls['large'] = $url;
+                        } else {
+                            $imageUrls
+                                = array_merge($imageUrls, $parsedImage['url']);
                         }
-                    }
-                    $size = $this->imageTypes[$representationType] ?? null;
-                    if ($size) {
-                        $imageUrls[$size] = $url;
-                    } elseif ($imageUrls) {
-                        // We already have URL's, store them in the
-                        // final results first. This shouldn't
-                        // happen unless there are multiple
-                        // images without type in the same set.
-                        $addToResults(
-                            [
-                                'urls' => $imageUrls,
-                                'description' => '',
-                                'rights' => $rights
-                            ]
-                        );
-                    }
-
-                    if ($size === 'master' || $size === 'original') {
-                        $currentHiRes = [];
-                        $currentHiRes['data']
-                            = $this->formatImageMeasurements(
-                                $representation->resourceMeasurementsSet
+                        if (!empty($parsedImage['highResolution'])) {
+                            $highResolution = array_merge(
+                                $highResolution,
+                                $parsedImage['highResolution']
                             );
-                        $currentHiRes['url'] = $url;
-                        if (!empty($resourceSet->resourceID)) {
-                            $currentHiRes['resourceID']
-                                = (int)$resourceSet->resourceID;
                         }
-                        $highResolution[$size][$linkResourceFormat ?: 'jpg']
-                            = $currentHiRes;
                     }
                 }
 
                 // Representation is a 3d model
-                if (in_array($representationType, $modelTypeKeys)) {
-                    $type = $this->modelTypes[$representationType];
-                    switch ($type) {
-                    case 'preview_3d':
-                        if (in_array(
-                            $linkResourceFormat,
-                            $this->displayableModelFormats
-                        )
-                        ) {
-                            $modelUrls[$format][$type] = $url;
-                        }
-                        break;
-                    default:
-                        $modelUrls[$linkResourceFormat][$type] = $url;
-                        break;
+                if (in_array($data['type'], $modelTypeKeys)) {
+                    if ($parsedModel = $this->parseModel($data)) {
+                        $modelUrls = array_merge($modelUrls, $parsedModel);
                     }
                 }
             }
@@ -555,8 +504,153 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
             $i++;
         }
-        $this->cache['images'] = $imageResults;
-        $this->cache['models'] = $modelResults;
+        return [
+            'images' => $imageResults,
+            'models' => $modelResults
+        ];
+    }
+
+    /**
+     * Function to return model in formatted format
+     *
+     * @param array $data Data of the representation
+     *
+     * @return array
+     */
+    protected function parseModel(array $data): array
+    {
+        $type = $this->modelTypes[$data['type']];
+        $results = [];
+        switch ($type) {
+        case 'preview_3D':
+            if (in_array(
+                $data['format'],
+                $this->displayableModelFormats
+            )
+            ) {
+                $results[$data['format']][$type] = $data['url'];
+            }
+            break;
+        default:
+            $results[$data['format']][$type] = $data['url'];
+            break;
+        }
+        return $results;
+    }
+
+    /**
+     * Function to return image in formatted format
+     *
+     * @param array $data Data of the representation
+     *
+     * @return array
+     */
+    protected function parseImage(array $data): array
+    {
+        // Check if the image is really an image
+        // Original images can be any type and are not displayed
+        if (!empty($this->undisplayableFileFormats)
+            && !empty($data['format'])
+            && $data['type'] !== 'image_original'
+        ) {
+            $format = strtolower($data['format']);
+            if (in_array(
+                $format,
+                $this->undisplayableFileFormats
+            )
+            ) {
+                return [];
+            }
+        }
+        $url = [];
+        $sizeless = false;
+        $highResolution = [];
+        $size = $this->imageTypes[$data['type']] ?? null;
+        if ($size) {
+            $url[$size] = $data['url'];
+        } else {
+            $sizeless = true;
+        }
+
+        if (in_array($size, ['master', 'original'])) {
+            $currentHiRes = [
+                'data' => $this->formatImageMeasurements($data['measurements']),
+                'url' => $data['url']
+            ];
+            if (!empty($data['ID'])) {
+                $currentHiRes['resourceID']
+                    = (int)$data['ID'];
+            }
+            $highResolution[$size][$data['format'] ?: 'jpg']
+                = $currentHiRes;
+        }
+
+        return compact('url', 'highResolution', 'sizeless');
+    }
+
+    /**
+     * Get rights from the given resourceSet
+     *
+     * @param object $resourceSet Given resourceSet from lido
+     * @param string $language    Language to look for
+     *
+     * @return array
+     */
+    protected function parseResourceRights($resourceSet, $language): array
+    {
+        $defaultRights = $this->getImageRights($language, true);
+        $rights = [];
+        foreach ($resourceSet->rightsResource ?? [] as $rightsResource) {
+            if (!empty($rightsResource->rightsType->conceptID)) {
+                $conceptID = $rightsResource->rightsType->conceptID;
+                $type = strtolower((string)$conceptID->attributes()->type);
+                if ($type === 'copyright' && trim((string)$conceptID)) {
+                    $rights['copyright']
+                        = $this->getMappedRights((string)$conceptID);
+                    $link
+                        = $this->getRightsLink($rights['copyright'], $language);
+                    if ($link) {
+                        $rights['link'] = $link;
+                    }
+                }
+            }
+
+            foreach ($rightsResource->rightsHolder ?? [] as $holder) {
+                if (empty($holder->legalBodyName->appellationValue)) {
+                    continue;
+                }
+                $rightsHolder = [
+                    'name' => (string)$holder->legalBodyName->appellationValue
+                ];
+
+                if (!empty($holder->legalBodyWeblink)) {
+                    $rightsHolder['link']
+                        = (string)$holder->legalBodyWeblink;
+                }
+                $rights['rightsHolders'][] = $rightsHolder;
+            }
+
+            if (!empty($rightsResource->creditLine)) {
+                $rights['creditLine'] = (string)$this->getLanguageSpecificItem(
+                    $rightsResource->creditLine,
+                    $language
+                );
+            }
+        }
+
+        if (!empty($resourceSet->rightsResource->rightsType->term)) {
+            $term = (string)$this->getLanguageSpecificItem(
+                $resourceSet->rightsResource->rightsType->term,
+                $language
+            );
+            if (!isset($rights['copyright'])
+                || $rights['copyright'] !== $term
+            ) {
+                $rights['description'][] = $term;
+            }
+        }
+
+        return !empty($rights) ? $rights : $defaultRights;
     }
 
     /**
