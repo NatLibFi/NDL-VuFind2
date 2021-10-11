@@ -179,7 +179,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Filming Location Notes', 'Finding Aid', 'First Lyrics',
             'Foreign Distribution', 'Funding', 'Genre',
             'Inscriptions', 'Inspection Details', 'Interior Images',
-            'ISBN', 'ISSN', 'Item Description',
+            'Inventory ID', 'ISBN', 'ISSN', 'Item Description',
             'Item History', 'Keywords', 'Language',
             'Language Notes', 'Learning Resource Type', 'Location',
             'Manufacturer', 'Measurements', 'Medium of Performance',
