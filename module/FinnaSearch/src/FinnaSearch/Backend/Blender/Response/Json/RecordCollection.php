@@ -91,9 +91,12 @@ class RecordCollection
      *
      * @return void
      */
-    public function initBlended(RecordCollectionInterface $primaryCollection = null,
+    public function initBlended(
+        RecordCollectionInterface $primaryCollection = null,
         RecordCollectionInterface $secondaryCollection = null,
-        $offset, $limit, $blockSize
+        $offset,
+        $limit,
+        $blockSize
     ) {
         $this->response = static::$template;
         $this->response['response']['numFound']
@@ -119,7 +122,9 @@ class RecordCollection
         }
 
         $this->records = array_slice(
-            $records, $offset, $limit
+            $records,
+            $offset,
+            $limit
         );
 
         $this->mergeFacets($primaryCollection, $secondaryCollection);
@@ -203,7 +208,8 @@ class RecordCollection
      *
      * @return void
      */
-    protected function mergeFacets($primaryCollection = null,
+    protected function mergeFacets(
+        $primaryCollection = null,
         $secondaryCollection = null
     ) {
         $facets = $primaryCollection

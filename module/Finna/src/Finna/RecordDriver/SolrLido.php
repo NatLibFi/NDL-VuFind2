@@ -45,15 +45,15 @@ namespace Finna\RecordDriver;
 class SolrLido extends \VuFind\RecordDriver\SolrDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use XmlReaderTrait;
-    use UrlCheckTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\FinnaXmlReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Map from site locale to Lido language codes.
      */
-    const LANGUAGE_CODES = [
+    public const LANGUAGE_CODES = [
         'fi' => ['fi','fin'],
         'sv' => ['sv','swe'],
         'en-gb' => ['en','eng']
@@ -105,7 +105,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -142,7 +144,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $type = strtolower((string)$right->conceptID->attributes()->type);
                 if ($type == 'copyright') {
                     $term = (string)$this->getLanguageSpecificItem(
-                        $right->term, $language
+                        $right->term,
+                        $language
                     );
                     if ($term) {
                         $restrictions[] = $term;
@@ -289,7 +292,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
             if (!empty($resourceSet->rightsResource->rightsType->term)) {
                 $term = (string)$this->getLanguageSpecificItem(
-                    $resourceSet->rightsResource->rightsType->term, $language
+                    $resourceSet->rightsResource->rightsType->term,
+                    $language
                 );
                 if (!isset($rights['copyright']) || $rights['copyright'] !== $term) {
                     $rights['description'][] = $term;
@@ -316,7 +320,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     );
                     $format = strtolower($format);
                     $formatDisallowed = in_array(
-                        $format, $this->undisplayableFileFormats
+                        $format,
+                        $this->undisplayableFileFormats
                     );
                     if ($formatDisallowed) {
                         continue;
@@ -702,14 +707,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                     $date = $this->dateConverter
                         ? $this->dateConverter->convertToDisplayDate(
-                            $startDateType, $startDate
+                            $startDateType,
+                            $startDate
                         )
                         : $startDate;
 
                     if ($startDate != $endDate) {
                         $date .= '-' . ($this->dateConverter
                             ? $this->dateConverter->convertToDisplayDate(
-                                $endDateType, $endDate
+                                $endDateType,
+                                $endDate
                             )
                             : $endDate);
                     }
@@ -820,7 +827,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
             }
             $culture = (string)($node->culture->term ?? '');
-            $description = (string)($node->eventDescriptionSet->descriptiveNoteValue
+            $description = (string)(
+                $node->eventDescriptionSet->descriptiveNoteValue
                 ?? ''
             );
 
@@ -1287,7 +1295,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    protected function getIdentifiersByType(string $xpathRule, bool $includeType
+    protected function getIdentifiersByType(
+        string $xpathRule,
+        bool $includeType
     ): array {
         $results = [];
         foreach ($this->getXmlRecord()->xpath(

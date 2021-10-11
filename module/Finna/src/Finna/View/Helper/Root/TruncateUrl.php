@@ -58,7 +58,9 @@ class TruncateUrl extends \Laminas\View\Helper\AbstractHelper
         // Shorten if necessary
         if (strlen($url) > 40) {
             $url = preg_replace(
-                '#^ (?>((?:.*:/+)?[^/]+/.{8})) .{4,} (.{12}) $#x', '$1...$2', $url
+                '#^ (?>((?:.*:/+)?[^/]+/.{8})) .{4,} (.{12}) $#x',
+                '$1...$2',
+                $url
             );
         }
         return $url;

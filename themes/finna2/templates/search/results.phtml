@@ -46,14 +46,16 @@
   ];
   if ($searchType == 'advanced') {
     $this->layout()->advSearchHeader = $this->context($this)->renderInContext(
-        'search/header.phtml', $searchData
+        'search/header.phtml',
+        $searchData
     );
   }
   elseif (!$browse && $this->fromStreetSearch) {
     // Set up Finna Main Header:
     $this->layout()->finnaMainHeader = $this->context($this)->renderInContext(
-        'search/header.phtml', $searchData
-     );
+        'search/header.phtml',
+        $searchData
+    );
   }
 
   $filterCount = 0;
@@ -192,12 +194,12 @@
       <?php endif; ?>
       <div class="search-controls">
         <?php $resultsStr = $this->translate(
-                'showing_results_of_html',
-                [
-                  '%%start%%' => $this->results->getStartRecord(),
-                  '%%end%%' => $this->results->getEndRecord(),
-                  '%%total%%' => $this->localizedNumber($recordTotal)
-                ]
+            'showing_results_of_html',
+            [
+            '%%start%%' => $this->results->getStartRecord(),
+            '%%end%%' => $this->results->getEndRecord(),
+            '%%total%%' => $this->localizedNumber($recordTotal)
+          ]
         );?>
         <div class="pagination-container">
           <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results, 'label' => $resultsStr])?>

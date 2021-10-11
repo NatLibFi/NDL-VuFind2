@@ -139,7 +139,7 @@ class FinnaSuggestions implements
      * be needed.
      *
      * @param \VuFind\Search\Base\Params $params  Search parameter object
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -226,7 +226,8 @@ class FinnaSuggestions implements
             ]
         );
         $client->getRequest()->getHeaders()->addHeaderLine(
-            'Accept', 'application/json'
+            'Accept',
+            'application/json'
         );
         $client->setParameterGet(['limit' => 0]);
         $response = $client->setMethod('GET')->send();

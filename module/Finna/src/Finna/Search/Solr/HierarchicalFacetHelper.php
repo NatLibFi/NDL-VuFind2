@@ -49,7 +49,10 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
      *
      * @return array Facet hierarchy
      */
-    public function buildFacetArray($facet, $facetList, $urlHelper = false,
+    public function buildFacetArray(
+        $facet,
+        $facetList,
+        $urlHelper = false,
         $escape = true
     ) {
         $result = parent::buildFacetArray($facet, $facetList, $urlHelper, $escape);
@@ -93,7 +96,9 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
                     unset($facets[$key]);
                 } elseif (!empty($facet['children'])) {
                     $facet['children'] = $this->filterFacets(
-                        $facet['children'], $filters, $excludeFilters
+                        $facet['children'],
+                        $filters,
+                        $excludeFilters
                     );
                 }
             }
@@ -111,7 +116,9 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
                 }
                 if (!empty($facet['children'])) {
                     $facet['children'] = $this->filterFacets(
-                        $facet['children'], $filters, $excludeFilters
+                        $facet['children'],
+                        $filters,
+                        $excludeFilters
                     );
                 }
             }
@@ -139,7 +146,8 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
         }
         // Extract the ancestor level part from the item value
         $part = implode(
-            '/', array_slice(explode('/', $item['value']), 1, $level + 1)
+            '/',
+            array_slice(explode('/', $item['value']), 1, $level + 1)
         ) . '/';
 
         // Extract value part from filter and compare with ancestor level part
@@ -183,7 +191,9 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
      * @return array Modified facet array
      */
     protected function removeAncestorAndChildFilters(
-        $facetName, $facets, $ancestorApplied = false
+        $facetName,
+        $facets,
+        $ancestorApplied = false
     ) {
         foreach ($facets as &$item) {
             if (!$item['isApplied'] && $item['hasAppliedChildren']) {
@@ -194,7 +204,8 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
             }
             if ($item['children']) {
                 $item['children'] = $this->removeAncestorAndChildFilters(
-                    $facetName, $item['children'],
+                    $facetName,
+                    $item['children'],
                     $ancestorApplied || $item['isApplied']
                 );
             }
@@ -269,7 +280,8 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
             $results[] = $tmpFacet;
             if ($children) {
                 $results = array_merge(
-                    $results, $this->flattenFacetHierarchy($children)
+                    $results,
+                    $this->flattenFacetHierarchy($children)
                 );
             }
         }

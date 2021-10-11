@@ -72,7 +72,9 @@ class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
      * @param RendererInterface $renderer     View renderer
      */
     public function __construct(
-        Loader $loader, SearchRunner $searchRunner, RendererInterface $renderer
+        Loader $loader,
+        SearchRunner $searchRunner,
+        RendererInterface $renderer
     ) {
         $this->recordLoader = $loader;
         $this->searchRunner = $searchRunner;

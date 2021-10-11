@@ -370,7 +370,7 @@ trait FinnaParams
     /**
      * Pull the page size parameter or set to default
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void

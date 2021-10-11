@@ -50,7 +50,7 @@
         var value = finna.recommendationMemory.getDataString('Ontology', rec, orig, recType);
         finna.common.setCookie(key, value);
         $(this).attr(
-          'href', 
+          'href',
           $(this).attr('href') + '&' + finna.recommendationMemory.PARAMETER_NAME + '=' + key
         );
       });
@@ -59,6 +59,7 @@ EOT;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
   ?>
   <?= $this->piwik(['customVars' => ['RecommendationShown' => 'OntologyRecommendation']]) ?>
+  <?= $this->matomo(['customData' => ['RecommendationShown' => 'OntologyRecommendation']]) ?>
   <?= $this->googleanalytics($this->serverUrl(true)) ?>
   <!-- END of: finna - Recommend/Ontology.phtml -->
 <?php endif; ?>

@@ -1,0 +1,41 @@
+<?php
+  $__attributes = $this->htmlAttributes($attributes ?? [])->add('class', 'finna-md-editable');
+  $__markdown = $markdown ?? '';
+  $__containerAttributes = $this->htmlAttributes(['data-markdown' => $__markdown]);
+  $__editable = $html ?? '';
+  if (isset($emptyHtml)) {
+    $__containerAttributes['data-empty-html'] = $emptyHtml;
+    if (empty($__markdown)) {
+      $__editable = $emptyHtml;
+    }
+  }
+  if ($preview ?? false) {
+    $__containerAttributes['data-preview'] = 'true';
+  }
+?>
+<?= $this->render('components/molecules/containers/finna-editable/finna-editable.phtml', [
+    'attributes' => $__attributes,
+    'containerAttributes' => $__containerAttributes,
+    'editable' => $__editable,
+    'editLabel' => $editLabel ?? null
+  ]); ?>
+<?php $this->jsTranslations()->addStrings([
+    'editor_close_editor' => 'editor_close_editor',
+    'editor_create_link' => 'editor_create_link',
+    'editor_format_bold' => 'editor_format_bold',
+    'editor_format_heading' => 'editor_format_heading',
+    'editor_format_italic' => 'editor_format_italic',
+    'editor_format_ordered_list' => 'editor_format_ordered_list',
+    'editor_format_quote' => 'editor_format_quote',
+    'editor_format_unordered_list' => 'editor_format_unordered_list',
+    'editor_insert_image' => 'editor_insert_image',
+    'editor_insert_panel' => 'editor_insert_panel',
+    'editor_insert_truncate' => 'editor_insert_truncate',
+    'editor_other_commands' => 'editor_other_commands',
+    'editor_prompt_image' => 'editor_prompt_image',
+    'editor_prompt_link' => 'editor_prompt_link',
+    'details_summary_placeholder' => 'details_summary_placeholder',
+    'details_text_placeholder' => 'details_text_placeholder',
+    'preview' => 'Preview'
+  ]); ?>
+<?php $this->headScript()->appendFile('components/organisms/widgets/finna-md-editable/finna-md-editable.js'); ?>

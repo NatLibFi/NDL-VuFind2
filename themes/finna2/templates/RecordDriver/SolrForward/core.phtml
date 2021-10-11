@@ -14,7 +14,7 @@
     $videoUrls = [];
     $otherUrls = [];
     foreach ($urls as $url) {
-      if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
+      if(!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
         array_push($videoUrls, $url);
         $renderedURLs[] = $url['url'];
       }
@@ -86,7 +86,7 @@
         <div class="record-uniform-titles">
           <?php foreach ($uniformTitles as $uniformTitle): ?>
             <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
-              <a href="<?=$this->escapeHtmlAttr($this->recordLink()->getVersionsSearchUrl($this->driver))?>" rel="nofollow">
+              <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getVersionsSearchUrl($this->driver))?>" rel="nofollow">
                 <?=$this->escapeHtml($uniformTitle) ?>
               </a>
               <br>
@@ -167,7 +167,7 @@
                 $containerID = $this->driver->getContainerRecordID();
               ?>
               <span class="recordContainerReference">
-                <?=$this->transEsc('Published in')?> <a href="<?=($containerID ? $this->recordLink()->getUrl("$containerSource|$containerID") : $this->record($this->driver)->getLink('title', $containerTitle))?>"><?=$this->escapeHtml($containerTitle)?></a>
+                <?=$this->transEsc('Published in')?> <a href="<?=($containerID ? $this->escapeHtmlAttr($this->recordLinker()->getUrl("$containerSource|$containerID")) : $this->record($this->driver)->getLink('title', $containerTitle))?>"><?=$this->escapeHtml($containerTitle)?></a>
                 <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } ?>
               </span>
             <?php endif; ?>

@@ -36,11 +36,7 @@
     $guarantorFullName = '';
     if (!empty($this->profile['guarantor'])) {
       $guarantor = $this->profile['guarantor'];
-      $guarantorFullName = trim(
-        ($guarantor['firstname'] ?? '')
-        . ' '
-        . ($guarantor['lastname'] ?? '')
-      );
+      $guarantorFullName = trim(($guarantor['firstname'] ?? '') . ' ' . ($guarantor['lastname'] ?? ''));
     }
 ?>
 
@@ -147,7 +143,7 @@
               <?php if ($updatePhone): ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
                 <div>
-                  <input class="form-control" type="tel" name="profile_tel" value="<?=empty($this->profile['phone']) ? '' : $this->escapeHtml($this->profile['phone']) ?>" title="<?=$this->transEsc('Phone') ?>" />
+                  <input class="form-control" type="tel" name="profile_tel" value="<?=empty($this->profile['phone']) ? '' : $this->escapeHtmlAttr($this->profile['phone']) ?>" title="<?=$this->transEscAttr('Phone') ?>" />
                 </div>
               <?php else: ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('Phone') ?>:</div>
@@ -158,7 +154,7 @@
               <?php if ($updateSmsNumber): ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('SMS Number') ?>:</div>
                 <div>
-                  <input class="form-control" type="tel" name="profile_sms_number" value="<?=empty($this->profile['smsnumber']) ? '' : $this->escapeHtml($this->profile['smsnumber']) ?>" title="<?=$this->transEsc('SMS Number') ?>" />
+                  <input class="form-control" type="tel" name="profile_sms_number" value="<?=empty($this->profile['smsnumber']) ? '' : $this->escapeHtmlAttr($this->profile['smsnumber']) ?>" title="<?=$this->transEscAttr('SMS Number') ?>" />
                 </div>
               <?php else: ?>
                 <div class="my-profile-col profile-title"><?=$this->transEsc('SMS Number') ?>:</div>
@@ -169,7 +165,7 @@
               <div class="my-profile-col profile-title"><?=$this->transEsc('Email') ?>:</div>
               <?php if ($updateEmail): ?>
                 <div>
-                  <input class="form-control" type="email" name="profile_email" value="<?=empty($this->profile['email']) ? '' : $this->escapeHtml($this->profile['email']) ?>" title="<?=$this->transEsc('Email') ?>" />
+                  <input class="form-control" type="email" name="profile_email" value="<?=empty($this->profile['email']) ? '' : $this->escapeHtmlAttr($this->profile['email']) ?>" title="<?=$this->transEscAttr('Email') ?>" />
                 </div>
               <?php else: ?>
                 <div class="profile-text-value"><?=$this->escapeHtml($this->profile['email']) ?></div>
@@ -231,13 +227,9 @@
               <?php foreach ($this->profile['guarantors'] as $guarantor): ?>
                 <div class="my-profile-col profile-title"><?=++$i == 1 ? $this->transEsc('Guarantor') . ':' : ''?></div>
                 <?php
-                  $guarantorFullName = trim(
-                    ($guarantor['firstname'] ?? '')
-                    . ' '
-                    . ($guarantor['lastname'] ?? '')
-                  );
+                  $guarantorName = trim(($guarantor['firstname'] ?? '') . ' ' . ($guarantor['lastname'] ?? ''));
                 ?>
-                <div class="profile-text-value"><?=$this->escapeHtml($guarantorFullName) ?></div>
+                <div class="profile-text-value"><?=$this->escapeHtml($guarantorName) ?></div>
               <?php endforeach; ?>
             <?php endif; ?>
             <?php if (!empty($this->profile['guarantees'])): ?>
@@ -245,11 +237,7 @@
               <?php foreach ($this->profile['guarantees'] as $guarantee): ?>
                 <div class="my-profile-col profile-title"><?=++$i == 1 ? $this->transEsc('Guarantees') . ':' : ''?></div>
                 <?php
-                  $guaranteeFullName = trim(
-                    ($guarantee['firstname'] ?? '')
-                    . ' '
-                    . ($guarantee['lastname'] ?? '')
-                  );
+                  $guaranteeFullName = trim(($guarantee['firstname'] ?? '') . ' ' . ($guarantee['lastname'] ?? ''));
                 ?>
                 <div class="profile-text-value"><?=$this->escapeHtml($guaranteeFullName) ?></div>
               <?php endforeach; ?>
@@ -261,7 +249,7 @@
             <?php endif; ?>
             <div class="my-profile-row">
               <?php if ($updatePhone || $updateEmail || $updateLoanHistory): ?>
-                <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEsc("save_my_profile") ?>" class="btn btn-primary my-profile-btn" />
+                <input id="save-library-profile" name="saveLibraryProfile" type="submit" value="<?=$this->transEscAttr("save_my_profile") ?>" class="btn btn-primary my-profile-btn" />
               <?php endif; ?>
               <div class="clearfix"></div>
             </div>

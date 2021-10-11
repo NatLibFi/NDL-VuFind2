@@ -404,13 +404,19 @@ class SolrLrmi extends SolrQdc
                 $position = (int)$material->position ?? 0;
                 $filesize = (string)$material->filesize ?? null;
                 $materials[] = compact(
-                    'url', 'pdfUrl', 'title', 'format', 'filesize', 'position'
+                    'url',
+                    'pdfUrl',
+                    'title',
+                    'format',
+                    'filesize',
+                    'position'
                 );
             }
         }
 
         usort(
-            $materials, function ($a, $b) {
+            $materials,
+            function ($a, $b) {
                 return (int)$a['position'] <=> (int)$b['position'];
             }
         );

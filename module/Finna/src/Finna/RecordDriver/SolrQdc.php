@@ -45,9 +45,9 @@ namespace Finna\RecordDriver;
 class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use XmlReaderTrait;
-    use UrlCheckTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\FinnaXmlReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -60,7 +60,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);

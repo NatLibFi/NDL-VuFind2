@@ -11,7 +11,7 @@
         <div class="year-input-container text-center">
           <input type="hidden" name="<?=$this->escapeHtmlAttr($current['type'])?>range[]" value="<?=$escField?>"/>
           <?php if (isset($current['rangeType'])): ?>
-             <input type="hidden" name="<?= $current['field'] ?>_type" value="<?= $current['rangeType'] ?>"/>
+             <input type="hidden" name="<?=$this->escapeHtmlAttr($current['field']) ?>_type" value="<?=$this->escapeHtmlAttr($current['rangeType']) ?>"/>
           <?php endif ?>
           <label for="<?=$escField?>from" class="sr-only"><?=$this->transEsc('year_from');?></label>
           <input id="<?=$escField?>from" type="number" class="form-control form-inline input-year" value="<?=isset($current['values'][0])?$this->escapeHtmlAttr($current['values'][0]):''?>" size="5"/>

@@ -92,7 +92,8 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
         $buildingOperator = '';
         if (isset($facetConfig->Results_Settings->orFacets)) {
             $orFacets = array_map(
-                'trim', explode(',', $facetConfig->Results_Settings->orFacets)
+                'trim',
+                explode(',', $facetConfig->Results_Settings->orFacets)
             );
             if (!empty($orFacets[0])
                 && ($orFacets[0] == '*' || in_array('building', $orFacets))

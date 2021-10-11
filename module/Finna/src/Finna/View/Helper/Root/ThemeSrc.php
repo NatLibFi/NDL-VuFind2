@@ -68,7 +68,9 @@ class ThemeSrc extends \Laminas\View\Helper\AbstractHelper
      * @return mixed
      */
     protected function fileFromCurrentTheme(
-        $relPath, $returnAbsolute = false, $allowParentThemes = false
+        $relPath,
+        $returnAbsolute = false,
+        $allowParentThemes = false
     ) {
         $currentTheme = $this->themeInfo->getTheme();
         $basePath = $this->themeInfo->getBaseDir();

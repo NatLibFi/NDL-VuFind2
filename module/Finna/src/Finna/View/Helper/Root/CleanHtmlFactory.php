@@ -27,6 +27,7 @@
  */
 namespace Finna\View\Helper\Root;
 
+use Finna\View\CustomElement\CustomElementInterface;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -58,7 +59,9 @@ class CleanHtmlFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -67,6 +70,23 @@ class CleanHtmlFactory implements FactoryInterface
         $cacheDir = $container->get(\VuFind\Cache\Manager::class)
             ->getCache('object')->getOptions()->getCacheDir();
 
-        return new $requestedName($cacheDir);
+        $config = $container->get('config');
+        $allowedElements
+            = $config['vufind']['plugin_managers']['view_customelement']['aliases'];
+        $attrs = CustomElementInterface::ATTRIBUTES;
+        foreach ($allowedElements as $elementName => $elementClass) {
+            $allowedElements[$elementName] = $elementClass::getInfo();
+            foreach ($elementClass::getChildInfo() as $childName => $childInfo) {
+                if (isset($allowedElements[$childName][$attrs])) {
+                    $childInfo[$attrs] = array_merge(
+                        $allowedElements[$childName][$attrs],
+                        $childInfo[$attrs]
+                    );
+                }
+                $allowedElements[$childName] = $childInfo;
+            }
+        }
+
+        return new $requestedName($cacheDir, $allowedElements);
     }
 }

@@ -61,7 +61,7 @@
             $containerSource = $this->driver->getSourceIdentifier();
             $containerID = $this->driver->getContainerRecordID();
           ?>
-          <a href="<?=($containerID ? $this->recordLink()->getUrl("$containerSource|$containerID") : $this->record($this->driver)->getLink('journaltitle', $journalTitle))?>"><?=$this->escapeHtml($journalTitle)?></a>
+          <a href="<?=($containerID ? $this->escapeHtmlAttr($this->recordLinker()->getUrl("$containerSource|$containerID")) : $this->record($this->driver)->getLink('journaltitle', $journalTitle))?>"><?=$this->escapeHtml($journalTitle)?></a>
           <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)) { echo $this->escapeHtml($ref); } ?>
       <?php elseif (!empty($summDate)): ?>
         <?=$this->escapeHtml($summDate[0])?>
@@ -73,7 +73,8 @@
       <?php
         $formatter = $this->recordDataFormatter();
         $coreFields = $formatter->getData(
-            $driver, $formatter->filterPrimoFields($formatter->getDefaults('core'))
+            $driver,
+            $formatter->filterPrimoFields($formatter->getDefaults('core'))
         );
       ?>
       <?php if (!empty($coreFields)): ?>

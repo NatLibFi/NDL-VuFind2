@@ -1,21 +1,21 @@
 <!-- START of: finna - Helpers/streetsearch.phtml -->
 <?php
-    $this->headScript()->appendFile('finna-street-search.js');
-    $this->jsTranslations()->addStrings(
+  $this->headScript()->appendFile('finna-street-search.js');
+  $this->jsTranslations()->addStrings(
       [
-        'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
-        'street_search_checking_for_geolocation' => 'street_search_checking_for_geolocation',
-        'street_search_geolocation_available' => 'street_search_geolocation_available',
-        'street_search_geolocation_position_unavailable' => 'street_search_geolocation_position_unavailable',
-        'street_search_geolocation_other_error' => 'street_search_geolocation_other_error',
-        'street_search_timeout' => 'street_search_timeout',
-        'street_search_no_streetname_found' => 'street_search_no_streetname_found',
-        'street_search_reversegeocode_unavailable' => 'street_search_reversegeocode_unavailable',
-        'street_search_searching_for' => 'street_search_searching_for',
-        'street_search_coordinates_found' => 'street_search_coordinates_found',
-        'street_search_coordinates_found_accuracy_bad' => 'street_search_coordinates_found_accuracy_bad'
+          'street_search_geolocation_inactive' => 'street_search_geolocation_inactive',
+          'street_search_checking_for_geolocation' => 'street_search_checking_for_geolocation',
+          'street_search_geolocation_available' => 'street_search_geolocation_available',
+          'street_search_geolocation_position_unavailable' => 'street_search_geolocation_position_unavailable',
+          'street_search_geolocation_other_error' => 'street_search_geolocation_other_error',
+          'street_search_timeout' => 'street_search_timeout',
+          'street_search_no_streetname_found' => 'street_search_no_streetname_found',
+          'street_search_reversegeocode_unavailable' => 'street_search_reversegeocode_unavailable',
+          'street_search_searching_for' => 'street_search_searching_for',
+          'street_search_coordinates_found' => 'street_search_coordinates_found',
+          'street_search_coordinates_found_accuracy_bad' => 'street_search_coordinates_found_accuracy_bad'
       ]
-    );
+  );
 ?>
 <?php if (!$this->translationEmpty('street_search_header_html')): ?>
   <div class="introduction">

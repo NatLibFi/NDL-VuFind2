@@ -59,7 +59,9 @@ class GetFeedFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -68,7 +70,7 @@ class GetFeedFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('rss'),
-            $container->get('Finna\Feed\Feed'),
+            $container->get(\Finna\Feed\Feed::class),
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\VuFind\ILS\Connection::class),
             $container->get('ViewRenderer'),

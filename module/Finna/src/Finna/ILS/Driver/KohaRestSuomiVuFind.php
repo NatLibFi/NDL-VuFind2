@@ -4,7 +4,7 @@
  *
  * PHP version 5
  *
- * Copyright (C) The National Library of Finland 2016-2019.
+ * Copyright (C) The National Library of Finland 2016-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -51,7 +51,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     use \VuFind\Log\LoggerAwareTrait {
         logError as error;
     }
-    use \VuFind\ILS\Driver\CacheTrait;
+    use \VuFind\Cache\CacheTrait;
 
     /**
      * Date converter object
@@ -158,7 +158,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
      * @param Callable               $sessionFactory Factory function returning
      * SessionContainer object
      */
-    public function __construct(\VuFind\Date\Converter $dateConverter,
+    public function __construct(
+        \VuFind\Date\Converter $dateConverter,
         $sessionFactory
     ) {
         $this->dateConverter = $dateConverter;
@@ -193,13 +194,15 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
 
         if (!empty($this->config['StatusRankings'])) {
             $this->statusRankings = array_merge(
-                $this->statusRankings, $this->config['StatusRankings']
+                $this->statusRankings,
+                $this->config['StatusRankings']
             );
         }
 
         if (!empty($this->config['FeeTypeMappings'])) {
             $this->feeTypeMappings = array_merge(
-                $this->feeTypeMappings, $this->config['FeeTypeMappings']
+                $this->feeTypeMappings,
+                $this->config['FeeTypeMappings']
             );
         }
 
@@ -441,12 +444,16 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     public function getMyProfile($patron)
     {
         $result = $this->makeRequest(
-            ['v1', 'patrons', $patron['id']], false, 'GET', $patron
+            ['v1', 'patrons', $patron['id']],
+            false,
+            'GET',
+            $patron
         );
 
         $expirationDate = !empty($result['dateexpiry'])
             ? $this->dateConverter->convertToDisplayDate(
-                'Y-m-d', $result['dateexpiry']
+                'Y-m-d',
+                $result['dateexpiry']
             ) : '';
         return [
             'firstname' => $result['firstname'],
@@ -479,7 +486,9 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     {
         if (!empty($this->config['Catalog']['checkoutsSupportPaging'])) {
             $sort = explode(
-                ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
+                ' ',
+                !empty($params['sort']) ? $params['sort'] : 'checkout desc',
+                2
             );
             $sortKey = $this->getSortParamValue($sort[0], 'date_due');
             $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
@@ -542,7 +551,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                     $entry['renewability_error']
                 );
                 $permanent = in_array(
-                    $entry['renewability_error'], $this->permanentRenewalBlocks
+                    $entry['renewability_error'],
+                    $this->permanentRenewalBlocks
                 );
                 if ($permanent) {
                     $renewals = null;
@@ -558,7 +568,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 'title' => $title,
                 'volume' => $volume,
                 'duedate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP', $entry['date_due']
+                    'Y-m-d\TH:i:sP',
+                    $entry['date_due']
                 ),
                 'dueStatus' => $dueStatus,
                 'renew' => $renewals,
@@ -608,7 +619,11 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         foreach ($renewDetails['details'] as $details) {
             [$checkoutId, $itemId] = explode('|', $details);
             [$code, $result] = $this->makeRequest(
-                ['v1', 'checkouts', $checkoutId], false, 'PUT', $patron, true
+                ['v1', 'checkouts', $checkoutId],
+                false,
+                'PUT',
+                $patron,
+                true
             );
             if ($code == 403) {
                 $finalResult['details'][$itemId] = [
@@ -618,7 +633,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             } else {
                 $newDate = !empty($result['date_due'])
                     ? $this->dateConverter->convertToDisplayDate(
-                        'Y-m-d\TH:i:sP', $result['date_due']
+                        'Y-m-d\TH:i:sP',
+                        $result['date_due']
                     ) : '-';
                 $finalResult['details'][$itemId] = [
                     'item_id' => $itemId,
@@ -647,7 +663,9 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     public function getMyTransactionHistory($patron, $params)
     {
         $sort = explode(
-            ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
+            ' ',
+            !empty($params['sort']) ? $params['sort'] : 'checkout desc',
+            2
         );
         $sortKey = $this->getSortParamValue($sort[0], 'date_due');
         $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'desc' : 'asc';
@@ -696,14 +714,17 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 'title' => $title,
                 'volume' => $volume,
                 'checkoutdate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP', $entry['issuedate']
+                    'Y-m-d\TH:i:sP',
+                    $entry['issuedate']
                 ),
                 'duedate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP', $entry['date_due']
+                    'Y-m-d\TH:i:sP',
+                    $entry['date_due']
                 ),
                 'dueStatus' => $dueStatus,
                 'returndate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP', $entry['returndate']
+                    'Y-m-d\TH:i:sP',
+                    $entry['returndate']
                 ),
                 'renew' => $entry['renewals']
             ];
@@ -742,7 +763,6 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             $itemId = $entry['itemnumber'] ?? null;
             $title = '';
             $volume = '';
-            $publicationYear = '';
             if ($itemId) {
                 $item = $this->getItem($itemId);
                 $bibId = $item['biblionumber'];
@@ -757,48 +777,45 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 }
             }
             $frozen = false;
+            $frozenThrough = '';
             if (!empty($entry['suspend'])) {
-                $frozen = !empty($entry['suspend_until']) ? $entry['suspend_until']
-                    : true;
+                $frozen = true;
+                $frozenThrough = !empty($entry['suspend_until'])
+                    ? $this->dateConverter->convertToDisplayDate(
+                        'Y-m-d',
+                        $entry['suspend_until']
+                    ) : '';
             }
+            $available = !empty($entry['waitingdate']);
+            $inTransit = strtolower($entry['found'] ?? '') === 't';
+            $updateDetails = $available || $inTransit
+                ? '' : $entry['reserve_id'];
             $holds[] = [
                 'id' => $bibId,
-                'item_id' => $itemId ? $itemId : $entry['reserve_id'],
+                'item_id' => $entry['reserve_id'],
                 'location' => $entry['branchcode'],
                 'create' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d', $entry['reservedate']
+                    'Y-m-d',
+                    $entry['reservedate']
                 ),
                 'expire' => !empty($entry['expirationdate'])
                     ? $this->dateConverter->convertToDisplayDate(
-                        'Y-m-d', $entry['expirationdate']
+                        'Y-m-d',
+                        $entry['expirationdate']
                     ) : '',
                 'position' => $entry['priority'],
-                'available' => !empty($entry['waitingdate']),
-                'in_transit' => isset($entry['found'])
-                    && strtolower($entry['found']) == 't',
-                'requestId' => $entry['reserve_id'],
+                'available' => $available,
+                'in_transit' => $inTransit,
+                'reqnum' => $entry['reserve_id'],
                 'title' => $title,
                 'volume' => $volume,
-                'frozen' => $frozen
+                'frozen' => $frozen,
+                'frozenThrough' => $frozenThrough,
+                'cancel_details' => $updateDetails,
+                'updateDetails' => $updateDetails,
             ];
         }
         return $holds;
-    }
-
-    /**
-     * Get details of a single hold request.
-     *
-     * @param array $holdDetails A single hold array from getMyHolds
-     * @param array $patron      Patron information from patronLogin
-     *
-     * @return string            The Alma request ID
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getCancelHoldDetails($holdDetails, $patron = [])
-    {
-        return $holdDetails['available'] || $holdDetails['in_transit'] ? ''
-            : $holdDetails['requestId'] . '|' . $holdDetails['item_id'];
     }
 
     /**
@@ -819,20 +836,23 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $count = 0;
         $response = [];
 
-        foreach ($details as $detail) {
-            [$holdId, $itemId] = explode('|', $detail, 2);
+        foreach ($details as $requestId) {
             [$resultCode] = $this->makeRequest(
-                ['v1', 'holds', $holdId], [], 'DELETE', $patron, true
+                ['v1', 'holds', $requestId],
+                [],
+                'DELETE',
+                $patron,
+                true
             );
 
             if ($resultCode != 200) {
-                $response[$itemId] = [
+                $response[$requestId] = [
                     'success' => false,
                     'status' => 'hold_cancel_fail',
                     'sysMessage' => false
                 ];
             } else {
-                $response[$itemId] = [
+                $response[$requestId] = [
                     'success' => true,
                     'status' => 'hold_cancel_success'
                 ];
@@ -840,6 +860,78 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             }
         }
         return ['count' => $count, 'items' => $response];
+    }
+
+    /**
+     * Update holds
+     *
+     * This is responsible for changing the status of hold requests
+     *
+     * @param array $holdsDetails The details identifying the holds
+     * @param array $fields       An associative array of fields to be updated
+     * @param array $patron       Patron array
+     *
+     * @return array Associative array of the results
+     */
+    public function updateHolds(
+        array $holdsDetails,
+        array $fields,
+        array $patron
+    ): array {
+        $results = [];
+        foreach ($holdsDetails as $requestId) {
+            $updateFields = [];
+            if (isset($fields['frozen'])) {
+                $updateFields['suspend'] = $fields['frozen'];
+                if ($fields['frozen']) {
+                    if (isset($fields['frozenThrough'])) {
+                        $updateFields['suspend_until']
+                            = date('Y-m-d', $fields['frozenThroughTS']);
+                    }
+                }
+            }
+            if (isset($fields['pickUpLocation'])) {
+                $updateFields['branchcode'] = $fields['pickUpLocation'];
+            }
+            [$code, $result] = $this->makeRequest(
+                ['v1', 'holds', $requestId],
+                ['##body##' => json_encode($updateFields)],
+                'PUT',
+                $patron,
+                true
+            );
+
+            if ($code >= 200 && $code < 300) {
+                // There's a bug in Koha that causes suspend status to always toggle
+                // when trying to update it. Check and replay the request if
+                // necessary:
+                if (isset($updateFields['suspend'])
+                    && $updateFields['suspend'] !== $result['suspend']
+                ) {
+                    [$code, $result] = $this->makeRequest(
+                        ['v1', 'holds', $requestId],
+                        ['##body##' => json_encode($updateFields)],
+                        'PUT',
+                        $patron,
+                        true
+                    );
+                }
+            }
+
+            if ($code >= 300) {
+                $results[$requestId] = [
+                    'success' => false,
+                    'status'
+                        => $result['data']['error'] ?? 'hold_error_update_failed'
+                ];
+            } else {
+                $results[$requestId] = [
+                    'success' => true
+                ];
+            }
+        }
+
+        return $results;
     }
 
     /**
@@ -1067,34 +1159,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $comment = $holdDetails['comment'] ?? '';
         $bibId = $holdDetails['id'];
 
-        // Convert last interest date from Display Format to Koha's required format
-        try {
-            $lastInterestDate = $this->dateConverter->convertFromDisplayDate(
-                'Y-m-d', $holdDetails['requiredBy']
-            );
-        } catch (DateException $e) {
-            // Hold Date is invalid
-            return $this->holdError('hold_date_invalid');
-        }
-
         if ($level == 'copy' && empty($itemId)) {
             throw new ILSException("Hold level is 'copy', but item ID is empty");
-        }
-
-        try {
-            $checkTime = $this->dateConverter->convertFromDisplayDate(
-                'U', $holdDetails['requiredBy']
-            );
-            if (!is_numeric($checkTime)) {
-                throw new DateException('Result should be numeric');
-            }
-        } catch (DateException $e) {
-            throw new ILSException('Problem parsing required by date.');
-        }
-
-        if (time() > $checkTime) {
-            // Hold Date is in the past
-            return $this->holdError('hold_date_past');
         }
 
         // Make sure pickup location is valid
@@ -1106,10 +1172,12 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             'biblionumber' => (int)$bibId,
             'borrowernumber' => (int)$patron['id'],
             'branchcode' => $pickUpLocation,
-            'expirationdate' => $this->dateConverter->convertFromDisplayDate(
-                'Y-m-d', $holdDetails['requiredBy']
-            )
+            'reservenotes' => $comment,
         ];
+        if (isset($holdDetails['requiredByTS'])) {
+            $request['expirationdate'] = date('Y-m-d', $holdDetails['requiredByTS']);
+        }
+
         if ($level == 'copy') {
             $request['itemnumber'] = (int)$itemId;
         }
@@ -1125,6 +1193,34 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         if ($code >= 300) {
             return $this->holdError($code, $result);
         }
+
+        if (isset($holdDetails['startDateTS'])) {
+            $holdId = $result['reserve_id'];
+            // Suspend until the previous day from start date:
+            $request = [
+                'suspend' => true,
+                'suspend_until' => \DateTime::createFromFormat(
+                    'U',
+                    $holdDetails['startDateTS']
+                )->modify('-1 DAY')->format('Y-m-d')
+            ];
+            [$code, $result] = $this->makeRequest(
+                ['v1', 'holds', $holdId],
+                ['##body##' => json_encode($request)],
+                'PUT',
+                $patron,
+                true
+            );
+            if ($code >= 300) {
+                // Report a success since the hold was created, but include a message
+                // about the modification failure:
+                return [
+                    'success' => true,
+                    'warningMessage' => 'hold_error_update_failed'
+                ];
+            }
+        }
+
         return ['success' => true];
     }
 
@@ -1173,7 +1269,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 'item_id' => $entry['id'],
                 'location' => $entry['branchcode'],
                 'create' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d', $entry['created_on']
+                    'Y-m-d',
+                    $entry['created_on']
                 ),
                 'available' => $entry['status'] === 'COMPLETED',
                 'title' => $title,
@@ -1216,7 +1313,11 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
 
         foreach ($details as $id) {
             [$resultCode] = $this->makeRequest(
-                ['v1', 'articlerequests', $id], [], 'DELETE', $patron, true
+                ['v1', 'articlerequests', $id],
+                [],
+                'DELETE',
+                $patron,
+                true
             );
 
             if ($resultCode != 200) {
@@ -1547,7 +1648,10 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             if ($adapter instanceof \Laminas\Http\Client\Adapter\Socket) {
                 $context = $adapter->getStreamContext();
                 $res = stream_context_set_option(
-                    $context, 'ssl', 'verify_peer_name', false
+                    $context,
+                    'ssl',
+                    'verify_peer_name',
+                    false
                 );
                 if (!$res) {
                     throw new \Exception('Unable to set sslverifypeername option');
@@ -1571,7 +1675,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
 
         // Set Accept header
         $client->getRequest()->getHeaders()->addHeaderLine(
-            'Accept', 'application/json'
+            'Accept',
+            'application/json'
         );
 
         return $client;
@@ -1594,8 +1699,12 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
      * @return mixed JSON response decoded to an associative array or null on
      * authentication error
      */
-    protected function makeRequest($hierarchy, $params = false, $method = 'GET',
-        $patron = null, $returnCode = false
+    protected function makeRequest(
+        $hierarchy,
+        $params = false,
+        $method = 'GET',
+        $patron = null,
+        $returnCode = false
     ) {
         if ($patron) {
             // Clear current patron cookie if it's not specific to the given patron
@@ -2062,7 +2171,9 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         $branches = $this->getCachedData($cacheKey);
         if (null === $branches) {
             $result = $this->makeRequest(
-                ['v1', 'libraries'], false, 'GET'
+                ['v1', 'libraries'],
+                false,
+                'GET'
             );
             $branches = [];
             foreach ($result as $branch) {
@@ -2130,7 +2241,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 // other than hold block
                 if ($nonHoldBlock) {
                     array_unshift(
-                        $blockReason, $this->translate('Borrowing Block Message')
+                        $blockReason,
+                        $this->translate('Borrowing Block Message')
                     );
                 }
             }

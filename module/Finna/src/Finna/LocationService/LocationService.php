@@ -71,7 +71,12 @@ class LocationService
      *   [qr]    boolean True if a QR-code of the map link should be displayed.
      */
     public function getConfig(
-        $source, $title, $callnumber, $collection, $location, $language
+        $source,
+        $title,
+        $callnumber,
+        $collection,
+        $location,
+        $language
     ) {
         if (empty($this->config['General']['enabled'])
             || empty($this->config['General']['url'])

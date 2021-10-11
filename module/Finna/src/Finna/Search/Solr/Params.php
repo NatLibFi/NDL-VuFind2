@@ -80,8 +80,8 @@ class Params extends \VuFind\Search\Solr\Params
     protected $checkboxFacetCounts = false;
 
     // Date range index field (VuFind1)
-    const SPATIAL_DATERANGE_FIELD_VF1 = 'search_sdaterange_mv';
-    const SPATIAL_DATERANGE_FIELD_TYPE_VF1 = 'search_sdaterange_mvtype';
+    public const SPATIAL_DATERANGE_FIELD_VF1 = 'search_sdaterange_mv';
+    public const SPATIAL_DATERANGE_FIELD_TYPE_VF1 = 'search_sdaterange_mvtype';
 
     /**
      * Hierarchical facet limit when facets are requested.
@@ -168,7 +168,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Support method for initSearch() -- handle basic settings.
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return boolean True if search settings were found, false if not.
@@ -209,7 +209,7 @@ class Params extends \VuFind\Search\Solr\Params
      *
      * @param string $filter A filter string from url : "field:value"
      *
-     * @return bool
+     * @return void
      */
     public function addFilter($filter)
     {
@@ -258,7 +258,9 @@ class Params extends \VuFind\Search\Solr\Params
         if ($dateRangeField) {
             foreach ($result as &$filter) {
                 $dateRange = strncmp(
-                    $filter, "$dateRangeField:", strlen($dateRangeField) + 1
+                    $filter,
+                    "$dateRangeField:",
+                    strlen($dateRangeField) + 1
                 ) == 0;
                 if ($dateRange) {
                     [$field, $value] = $this->parseFilter($filter);
@@ -340,7 +342,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Pull the search parameters
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -376,7 +378,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Initialize coordinate filter (coordinates, VuFind1)
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -408,7 +410,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Initialize date range filter (search_daterange_mv)
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -624,21 +626,30 @@ class Params extends \VuFind\Search\Solr\Params
                 && in_array($field, $this->getOptions()->getHierarchicalFacets())
             ) {
                 return $this->translateHierarchicalFacetFilter(
-                    $field, $value, $operator
+                    $field,
+                    $value,
+                    $operator
                 );
             }
             $result = parent::formatFilterListEntry(
-                $field, $value, $operator, $translate
+                $field,
+                $value,
+                $operator,
+                $translate
             );
 
             if ($this->isDateRangeFilter($field)) {
                 return $this->formatDateRangeFilterListEntry(
-                    $result, $field, $value
+                    $result,
+                    $field,
+                    $value
                 );
             }
             if ($this->isGeographicFilter($field)) {
                 return $this->formatGeographicFilterListEntry(
-                    $result, $field, $value
+                    $result,
+                    $field,
+                    $value
                 );
             }
 
@@ -647,10 +658,12 @@ class Params extends \VuFind\Search\Solr\Params
 
         $domain = $this->getOptions()->getTextDomainForTranslatedFacet($field);
         [$from, $fromDate] = $this->formatNewItemsDateForDisplay(
-            $range['from'], $domain
+            $range['from'],
+            $domain
         );
         [$to, $toDate] = $this->formatNewItemsDateForDisplay(
-            $range['to'], $domain
+            $range['to'],
+            $domain
         );
         $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
         if ($fromDate && $toDate) {
@@ -679,6 +692,9 @@ class Params extends \VuFind\Search\Solr\Params
     {
         if ($field === AuthorityHelper::AUTHOR2_ID_FACET) {
             return 'authority_id_label';
+        }
+        if (strpos($field, '{!geofilt ') === 0) {
+            return 'Geographical Area';
         }
         return parent::getFacetLabel($field, $value, $default);
     }
@@ -801,7 +817,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Add filters to the object based on values found in the request object.
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -817,7 +833,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Initialize new items filter (first_indexed)
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void

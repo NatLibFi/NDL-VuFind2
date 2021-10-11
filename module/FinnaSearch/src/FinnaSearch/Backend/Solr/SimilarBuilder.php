@@ -114,7 +114,8 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
      *
      * @return void
      */
-    public function __construct(\Laminas\Config\Config $searchConfig = null,
+    public function __construct(
+        \Laminas\Config\Config $searchConfig = null,
         $uniqueKey = 'id'
     ) {
         $this->uniqueKey = $uniqueKey;
@@ -208,7 +209,7 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
             if ($this->excludeOtherVersions) {
                 // Filter out records with same work keys
                 $parts = [];
-                foreach ((array)$record['work_keys_str_mv'] ?? [] as $workKey) {
+                foreach ((array)($record['work_keys_str_mv'] ?? []) as $workKey) {
                     $workKey = addcslashes($workKey, $this->escapedChars);
                     $parts[] = "work_keys_str_mv:(\"$workKey\")";
                 }

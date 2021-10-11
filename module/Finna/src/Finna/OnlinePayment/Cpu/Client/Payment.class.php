@@ -14,7 +14,7 @@ class Cpu_Client_Payment
      *
      * @var string
      */
-    const MODE_ECOMMERCE = '3';
+    public const MODE_ECOMMERCE = '3';
 
     /**
      * Version of integration software.

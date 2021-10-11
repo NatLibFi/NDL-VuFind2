@@ -14,7 +14,7 @@
 
   // Add RDF header link if applicable:
   if ($this->export()->recordSupportsFormat($this->driver, 'RDF')) {
-    $this->headLink()->appendAlternate($this->recordLink()->getActionUrl($this->driver, 'RDF'), 'application/rdf+xml', 'RDF Representation');
+    $this->headLink()->appendAlternate($this->recordLinker()->getActionUrl($this->driver, 'RDF'), 'application/rdf+xml', 'RDF Representation');
   }
 
   // Set flag for special cases relating to full-width hierarchy tree tab:
@@ -27,7 +27,7 @@
   } else {
       $this->layout()->breadcrumbs = '';
   }
-  $this->layout()->breadcrumbs .= '<li class="active" aria-current="page">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li>';
+  $this->layout()->breadcrumbs .= '<li class="active" aria-current="page">' . $this->recordLinker()->getBreadcrumbHtml($this->driver) . '</li>';
 
   // Set page title.
   $dataSource = $this->driver->tryMethod('getDataSource');
@@ -85,7 +85,8 @@
     <?php
       $formatter = $this->recordDataFormatter();
       $coreFields = $formatter->getData(
-          $driver, $formatter->filterCollectionFields($formatter->getDefaults('core'), $driver->getRecordFormat())
+          $driver,
+          $formatter->filterCollectionFields($formatter->getDefaults('core'), $driver->getRecordFormat())
       );
     ?>
     <?php if (!empty($coreFields)): ?>
@@ -138,8 +139,8 @@
               if (strtolower($tab) == 'details') { $tabClasses[] = 'hidden-xs tab-right'; }
             ?>
             <li class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$tabName?>">
-            <a class="<?=strtolower($tab) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
-              href="<?=$this->recordLink()->getTabUrl($this->driver, $tab)?>#tabnav" data-lightbox-ignore<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
+            <a class="<?=$this->escapeHtmlAttr(strtolower($tab)) ?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
+              href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-lightbox-ignore<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?>
               data-background<?php endif ?>>
               <?php if (strtolower($tab) == 'details'): ?><i class="fa fa-lg fa-<?=$this->escapeHtmlAttr($tab)?>"></i><?php endif; ?>
               <?php if (strtolower($tab) != 'details'): ?><?=$this->transEsc($desc)?><?php endif; ?><?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?>
@@ -154,7 +155,7 @@
 
     <div class="tab-content collectionDetails<?=$tree ? 'Tree' : ''?>">
       <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
-        <div class="tab-pane active <?=$this->activeTab ?>-tab">
+        <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab">
           <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
         </div>
       <?php endif; ?>
@@ -166,7 +167,7 @@
          $desc = $obj->getDescription();
          $accordion_classes = [
            'accordion',
-           'accordion-' . strtolower($accordion)
+           'accordion-' . preg_replace("/\W/", "-", strtolower($accordion))
          ];
          if (0 === strcasecmp($this->activeTab, $accordion)) {
            if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
@@ -179,8 +180,8 @@
        ?>
        <div class="<?=implode(' ', $accordion_classes)?>">
          <div class="accordion-toggle">
-           <a data-tab="<?=strtolower($accordion) ?>" class="accordion-title"
-             href="<?=$this->recordLink()->getTabUrl($this->driver, $accordion)?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
+           <a data-tab="<?=$this->escapeHtmlAttr(strtolower($accordion)) ?>" class="accordion-title"
+             href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
              data-background<?php endif ?>
            >
              <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->driver->getComments()) ?></span>)<?php endif; ?></span>

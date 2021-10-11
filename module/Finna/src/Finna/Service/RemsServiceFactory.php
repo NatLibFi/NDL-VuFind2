@@ -59,7 +59,9 @@ class RemsServiceFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -73,10 +75,14 @@ class RemsServiceFactory implements FactoryInterface
             $sessionManager
         );
         $shibbolethSessionContainer = new \Laminas\Session\Container(
-            'Shibboleth', $sessionManager
+            'Shibboleth',
+            $sessionManager
         );
-        $auth = $container->get('LmcRbacMvc\Service\AuthorizationService');
-        $user = $container->get('VuFind\Auth\Manager')->isLoggedIn();
+        $auth = $container->get(\LmcRbacMvc\Service\AuthorizationService::class);
+        $r2 = $container->get(\Finna\Service\R2SupportService::class);
+        $user = $r2->isEnabled()
+            ? $container->get(\VuFind\Auth\Manager::class)->isLoggedIn()
+            : false;
 
         return new $requestedName(
             $container->get(\VuFind\Config\PluginManager::class)
@@ -84,7 +90,7 @@ class RemsServiceFactory implements FactoryInterface
             $sessionContainer,
             $shibbolethSessionContainer['identity_number'] ?? null,
             $user ? $user->username : null,
-            $auth->isGranted('access.R2Authenticated'),
+            $user ? $auth->isGranted('access.R2Authenticated') : false,
             new EventManager($container->get('SharedEventManager'))
         );
     }

@@ -296,10 +296,10 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
       dracoLoader = new THREE.DRACOLoader();
       dracoLoader.setDecoderPath(VuFind.path + '/themes/finna2/js/vendor/draco/');
     }
-    loader.setDRACOLoader( dracoLoader );
+    loader.setDRACOLoader(dracoLoader);
     loader.load(
       _.modelPath,
-      function onLoad ( obj ) {
+      function onLoad (obj) {
         _.adjustScene(obj.scene);
         _.createControls();
         _.initMesh();
@@ -310,9 +310,15 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
         }
         _.displayInformation();
       },
-      function onLoading( xhr ) {
+      function onLoading(xhr) {
         if (_.viewerStateInfo) {
-          _.viewerStateInfo.html(( xhr.loaded / xhr.total * 100 ).toFixed(0) + '%');
+          var loaded = '';
+          if (xhr.total < 1) {
+            loaded = (xhr.loaded / 1024 / 1024).toFixed(0) + 'MB';
+          } else {
+            loaded = (xhr.loaded / xhr.total * 100).toFixed(0) + '%';
+          }
+          _.viewerStateInfo.html(loaded);
         }
       },
       function onError(/*error*/) {
@@ -330,6 +336,9 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
 ModelViewer.prototype.displayInformation = function displayInformation() {
   var _ = this;
   _.informationsArea.toggle(true);
+  _.informationsArea.append(
+    '<tr><th class="text-center" colspan="2">' + VuFind.translate('Information of model') + '</th></tr>'
+  );
   _.setInformation(VuFind.translate('Vertices'), _.vertices);
   _.setInformation(VuFind.translate('Triangles'), _.triangles);
 };

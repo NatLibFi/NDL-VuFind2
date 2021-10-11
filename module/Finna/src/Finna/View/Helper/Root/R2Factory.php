@@ -58,7 +58,9 @@ class R2Factory implements FactoryInterface
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -67,13 +69,18 @@ class R2Factory implements FactoryInterface
 
         $r2 = $container->get(\Finna\Service\R2SupportService::class);
         $rems = $container->get(\Finna\Service\RemsService::class);
-        $user = $container->get('VuFind\Auth\Manager')->isLoggedIn();
+        $user = $r2->isEnabled()
+            ? $container->get(\VuFind\Auth\Manager::class)->isLoggedIn()
+            : false;
         $conf = $container->get(\VuFind\Config\PluginManager::class);
         $blocklistEmail = $conf->get('Rems')->General->blocklistEmail
             ?? $conf->get('config')->Site->email;
         return new $requestedName(
-            $r2->isEnabled(), $user ?: null,
-            (false !== $user) && $r2->isAuthenticated(), $rems, $blocklistEmail
+            $r2->isEnabled(),
+            $user ?: null,
+            (false !== $user) && $r2->isAuthenticated(),
+            $rems,
+            $blocklistEmail
         );
     }
 }

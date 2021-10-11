@@ -153,7 +153,12 @@ class TurkuPaytrailE2 extends PaytrailE2
      *
      * @return void
      */
-    public function addProduct($name, $code, $quantity, $unitPrice, $vatPercent,
+    public function addProduct(
+        $name,
+        $code,
+        $quantity,
+        $unitPrice,
+        $vatPercent,
         $type
     ) {
         // For some reason the E2 interface does not allow alphanumeric item codes
@@ -161,7 +166,9 @@ class TurkuPaytrailE2 extends PaytrailE2
             $name = "$code $name";
         }
         $name = preg_replace(
-            '/[^\pL0-9 "\',()\[\]{}*\/+\-_,.:&!?@#$£=*;~]+/u', ' ', $name
+            '/[^\pL0-9 "\',()\[\]{}*\/+\-_,.:&!?@#$£=*;~]+/u',
+            ' ',
+            $name
         );
         $this->products[] = [
             "title" => substr($name, 0, 255),
@@ -246,7 +253,8 @@ class TurkuPaytrailE2 extends PaytrailE2
     public function generateHash()
     {
         return hash(
-            'sha256', $this->applicationName .
+            'sha256',
+            $this->applicationName .
             $this->timeStamp . $this->requestBody . $this->secret
         );
     }
@@ -262,7 +270,11 @@ class TurkuPaytrailE2 extends PaytrailE2
      *
      * @return bool
      */
-    public function validateRequest($orderNumber, $paid, $timeStamp, $method,
+    public function validateRequest(
+        $orderNumber,
+        $paid,
+        $timeStamp,
+        $method,
         $authCode
     ) {
         $response = "$orderNumber|$timeStamp|$paid|$method|{$this->secret}";

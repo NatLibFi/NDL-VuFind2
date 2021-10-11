@@ -129,7 +129,7 @@
                       <span class="no-checkbox"><?=$this->transEsc('cannot renew');?></span>
                     <?php endif; ?>
                   <?php endif; ?>
-                </td>  
+                </td>
                 <td class="text-center hidden-xs" aria-hidden="true">
                   <div class="cover-image">
                     <?php if ($summThumb = $this->record($resource)->getThumbnail()): ?>
@@ -151,7 +151,7 @@
                           $title = $resource->getTitle();
                           $title = empty($title) ? $this->transEsc('Title not available') : $this->escapeHtml($title);
                         }
-                        echo '<a href="' . $this->recordLink()->getUrl($resource) .
+                        echo '<a href="' . $this->escapeHtmlAttr($this->recordLinker()->getUrl($resource)) .
                           '" class="record-title">' . $title . '</a>';
                       } elseif (isset($ilsDetails['title']) && !empty($ilsDetails['title'])){
                         // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...

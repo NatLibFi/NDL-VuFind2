@@ -34,15 +34,15 @@ use Finna\Util\MetadataUtils;
  *
  * @category VuFind
  * @package  RecordDrivers
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsisnki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 {
-    use MarcReaderTrait;
-    use SolrCommonFinnaTrait;
-    use SolrAuthFinnaTrait {
+    use Feature\FinnaMarcReaderTrait;
+    use Feature\SolrCommonFinnaTrait;
+    use Feature\SolrAuthFinnaTrait {
         getFormats as _getFormats;
     }
 
@@ -202,9 +202,11 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     public function getAlternativeTitles()
     {
         $result = [];
-        foreach (['400', '410'] as $fieldCode) {
+        foreach (['400' => ['a', 'b', 'c'], '410' => ['a', 'b']]
+            as $fieldCode => $subfields
+        ) {
             foreach ($this->getMarcReader()->getFields($fieldCode) as $field) {
-                if ($matches = $this->getSubfieldArray($field, ['a','b'], false)) {
+                if ($matches = $this->getSubfieldArray($field, $subfields, false)) {
                     $matches = array_map(
                         function ($val) {
                             return $this->stripTrailingPunctuation($val, '.');

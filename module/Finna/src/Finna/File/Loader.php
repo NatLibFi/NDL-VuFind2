@@ -81,8 +81,10 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
      * @return array
      */
     public function getFile(
-        string $url, string $fileName,
-        string $configSection, string $cacheFolder
+        string $url,
+        string $fileName,
+        string $configSection,
+        string $cacheFolder
     ): array {
         $cacheDir = $this->cacheManager->getCache($cacheFolder ?? 'public')
             ->getOptions()->getCacheDir();
@@ -92,7 +94,9 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         $error = '';
         if (!file_exists($path) || time() - filemtime($path) > $maxAge * 60) {
             $client = $this->httpService->createClient(
-                $url, \Laminas\Http\Request::METHOD_GET, 300
+                $url,
+                \Laminas\Http\Request::METHOD_GET,
+                300
             );
             $client->setOptions(['useragent' => 'VuFind']);
             $client->setStream();

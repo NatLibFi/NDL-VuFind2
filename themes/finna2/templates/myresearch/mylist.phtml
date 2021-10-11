@@ -27,7 +27,7 @@
 
   $lists = $user ? $user->getLists() : null;
 
-  $this->jsTranslations()->addStrings(['add_note' => 'Add note', 'add_list_description' => 'Add list description', 'loading' => 'Loading', 'preview' => 'Preview', 'details_summary_placeholder' => 'details_summary_placeholder', 'details_text_placeholder' => 'details_text_placeholder']);
+  $this->jsTranslations()->addStrings(['add_list_description' => 'Add list description', 'loading' => 'Loading']);
 ?>
 
 <!-- Leftside navigationbar -->
@@ -47,19 +47,24 @@
     <div>
       <?=$this->flashmessages()?>
     </div>
-    <div class="useraccount-header">
+    <div>
       <?php if ($list): ?>
-        <h2 class="list-title"><i class="list-title-edit fa fa-pen"></i><span><?=$this->escapeHtml($list->title)?></span></h2>
+        <div class="useraccount-header">
+          <h2 class="list-title"><i class="list-title-edit fa fa-pen"></i><span><?=$this->escapeHtml($list->title)?></span></h2>
+        </div>
         <?php if ($list && $user && $list->user_id === $user->id && $list->public): ?>
           <div class="list-public-indicator">
             <strong><i class="fa fa-public"></i> <?=$this->transEsc('public_list_indicator') ?></strong>
           </div>
         <?php endif; ?>
-        <div class="list-description markdown">
-          <div class="editable">
-            <i class="list-description-edit fa fa-pen js-edit" aria-hidden="true"></i><div data-markdown="<?=$this->escapeHtmlAttr($list ? $list->description : '')?>"><?=(!empty($list->description) ? $this->markdown()->toHtml($list->description) : $this->translate('Add list description'))?></div>
-          </div>
-        </div>
+        <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->description ?? '') : ''; ?>
+        <?= $this->render('components/organisms/widgets/finna-md-editable/finna-md-editable.phtml', [
+            'attributes' => ['class' => 'list-description'],
+            'markdown' => $markdown,
+            'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
+            'emptyHtml' => $this->translate('Add list description'),
+            'preview' => true
+          ]); ?>
         <?php if ($this->usertags()->getListMode() === 'enabled'): ?>
           <?php $listTags = $list->getListTags(); ?>
           <div class="list-tags">
@@ -93,7 +98,9 @@
           </div>
         <?php endif ?>
       <?php else: ?>
-        <h2 class="list-title no-edit"><span><?=$this->transEsc("All Favourites")?></span></h2>
+        <div class="useraccount-header">
+          <h2 class="list-title no-edit"><span><?=$this->transEsc("All Favourites")?></span></h2>
+        </div>
       <?php endif; ?>
     </div>
   </div>
@@ -102,7 +109,7 @@
       <?=$this->render($template)?>
     </div>
   <?php endif; ?>
-  <div class="mylist-header useraccount-header">
+  <div class="mylist-header">
     <?php if ($recordTotal > 0): ?>
       <div class="mylist-controls-bar">
         <div class="pagination-container">
@@ -117,7 +124,7 @@
         </div>
       </div>
       <div>
-        <form class="form" method="post" name="bulkActionForm" action="<?=$this->url('cart-myresearchbulk')?>" data-lightbox>
+        <form class="form" method="post" name="bulkActionForm" action="<?=$this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
           <?=$this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $lists])?>
           <?php foreach ($this->results->getResults() as $i => $current): ?>
             <?=$this->record($current)->getListEntry($list, $user)?>
@@ -125,7 +132,9 @@
         </form>
       </div>
     <?php else: ?>
-      <h3><?=$this->transEsc('You do not have any saved resources')?></h3>
+      <div class="useraccount-header">
+        <h3><?=$this->transEsc('You do not have any saved resources')?></h3>
+      </div>
     <?php endif; ?>
   </div>
   <?php if ($recordTotal > 0): ?>

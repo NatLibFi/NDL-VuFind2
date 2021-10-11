@@ -101,7 +101,8 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
      * @param CleanHtml              $cleanHtml     cleanHtml helper
      */
     public function __construct(
-        \Laminas\Config\Config $config, \VuFind\Date\Converter $dateConverter,
+        \Laminas\Config\Config $config,
+        \VuFind\Date\Converter $dateConverter,
         \Laminas\Mvc\Controller\Plugin\Url $url,
         \Finna\View\Helper\Root\CleanHtml $cleanHtml
     ) {
@@ -137,14 +138,18 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
             $paramArray = $params['query'];
             if (isset($paramArray['start'])) {
                 $paramArray['start'] = $this->dateConverter->convert(
-                    'd-m-Y', 'Y-m-d', $paramArray['start']
+                    'd-m-Y',
+                    'Y-m-d',
+                    $paramArray['start']
                 );
             } elseif (empty($paramArray['end'])) {
                 $paramArray['start'] = date('Y-m-d');
             }
             if (isset($paramArray['end'])) {
                 $paramArray['end'] = $this->dateConverter->convert(
-                    'd-m-Y', 'Y-m-d', $paramArray['end']
+                    'd-m-Y',
+                    'Y-m-d',
+                    $paramArray['end']
                 );
             }
             if (isset($paramArray['language'])) {
@@ -195,7 +200,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
                     $event = [
                         'id' => $eventData['id'],
                         'title' => $this->getField($eventData, 'name'),
-                        'description' => $this->cleanHtml->__invoke(
+                        'description' => ($this->cleanHtml)(
                             $this->getField($eventData, 'description')
                         ),
                         'image' => ['url' => $eventData['images'][0]['url'] ?? ''],
@@ -219,7 +224,8 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
                         'email' => $this->getField($eventData, 'provider_email'),
                         'address' =>
                             $this->getField(
-                                $eventData['location'], 'street_address'
+                                $eventData['location'],
+                                'street_address'
                             ),
                         'price' => $this->getField($eventData, 'offers'),
                         'audience' => $this->getField($eventData, 'audience'),

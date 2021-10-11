@@ -5,12 +5,17 @@
   $preproductionRedirect = $this->config()->get('config')->System->preProductionRedirect;
   $productionUrl = '';
   if ($preproductionRedirect) {
-    $parts = explode('###', $preproductionRedirect);
-    if (isset($parts[1])) {
-      $productionUrl = preg_replace($parts[0], $parts[1], $this->url(null, [], ['force_canonical' => true], true), -1, $count);
-      $url = $this->url(null);
-      if (!$count) {
-        $productionUrl = '';
+    $redirects = is_object($preproductionRedirect)
+      ? $preproductionRedirect->toArray() : (array)$preproductionRedirect;
+    foreach ($redirects as $redirect) {
+      $parts = explode('###', $redirect);
+      if (isset($parts[1])) {
+        $productionUrl = preg_replace($parts[0], $parts[1], $this->serverUrl(true), -1, $count);
+        if (!$count) {
+          $productionUrl = '';
+        } else {
+          break;
+        }
       }
     }
   }
