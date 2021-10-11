@@ -281,8 +281,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISBNs(): array
     {
-        $result = $this->getFromCache('ISBNs');
-        return $result));
+        return $this->getFromCache('ISBNs');
     }
 
     /**
@@ -292,8 +291,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISSNs(): array
     {
-        $result = $this->getFromCache('ISSNs');
-        return array_values(array_unique($result));
+        return $this->getFromCache('ISSNs');
     }
 
     /**
