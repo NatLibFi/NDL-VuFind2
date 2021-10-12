@@ -1859,26 +1859,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getMethodology()
     {
         $results = [];
-        foreach ($this->getMarcReader()->getFields('567') as $field) {
+        $marcReader = $this->getMarcReader();
+        foreach ($marcReader->getFields('567') as $field) {
             $result = [];
-            foreach ($this->getAllSubfields($field) as $subfield) {
-                $data = trim($subfield['data']);
-                if ('' === $data) {
-                    continue;
-                }
-                switch ($subfield['code']) {
-                case 'a':
-                    $result['description'] = $data;
-                    break;
-                case 'b':
-                    $result['term'] = $data;
-                    break;
-                case '0':
-                    $result['url'] = $data;
-                    break;
-                }
-            }
-            $results[] = $result;
+            $description = $marcReader->getSubfield($field, 'a');
+            $terms = array_filter($marcReader->getSubfields($field, 'b'));
+            $urls = array_filter($marcReader->getSubfields($field, '0'));
+            $results[] = compact('description', 'terms', 'urls');
         }
         return $results;
     }

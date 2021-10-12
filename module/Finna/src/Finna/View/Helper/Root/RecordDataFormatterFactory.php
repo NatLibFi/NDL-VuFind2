@@ -555,7 +555,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Methodology',
             'getMethodology',
-            'methodology-links.phtml',
+            'data-methodology-links.phtml',
             [
                 'context' => ['class' => 'recordMethodology']
             ]
