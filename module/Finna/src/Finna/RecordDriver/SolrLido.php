@@ -481,11 +481,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     if (!empty($parsedImage['url'])) {
                         if (!empty($parsedImage['sizeless'])) {
                             if (!empty($imageUrls)) {
-                                $addToResults([
-                                    'urls' => $imageUrls,
-                                    'description' => '',
-                                    'rights' => $rights
-                                ]);
+                                $addToResults(
+                                    [
+                                        'urls' => $imageUrls,
+                                        'description' => '',
+                                        'rights' => $rights
+                                    ]
+                                );
                             }
                             // We already have URL's, store them in the
                             // final results first. This shouldn't
