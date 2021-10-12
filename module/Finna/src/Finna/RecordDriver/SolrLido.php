@@ -57,7 +57,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected const CACHE_KEYS = [
         'models' => 'models/',
-        'images' => 'images/'
+        'images' => 'images/',
+        'audios' => 'audios/',
+        'videos' => 'videos/'
     ];
 
     /**
@@ -103,6 +105,43 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $modelTypes = [
         'preview_3D' => 'preview',
         'provided_3D' => 'provided'
+    ];
+
+    /**
+     * Audio types array
+     *
+     * @var array
+     */
+    protected $audioTypes = [
+        'preview_audio' => 'audio',
+    ];
+
+    /**
+     * Video types array
+     *
+     * @var array
+     */
+    protected $videoTypes = [
+        'preview_video' => 'video',
+    ];
+
+    /**
+     * Supported audio formats
+     *
+     * @var array
+     */
+    protected $supportedAudioFormats = [
+        'mp3' => 'mpeg',
+        'wav' => 'wav'
+    ];
+
+    /**
+     * Supported video formats
+     *
+     * @var array
+     */
+    protected $supportedVideoFormats = [
+        'mp4' => 'video/mp4'
     ];
 
     /**
@@ -257,6 +296,24 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Returns one of three things: a full URL to a thumbnail preview of the record
+     * if an image is available in an external system; an array of parameters to
+     * send to VuFind's internal cover generator if no fixed URL exists; or false
+     * if no thumbnail can be generated.
+     *
+     * Overwrite parent function so there is no auto-generated images
+     *
+     * @param string $size Size of thumbnail (small, medium or large -- small is
+     * default).
+     *
+     * @return string|array|bool
+     */
+    public function getThumbnail($size = 'small')
+    {
+        return ['small' => ''];
+    }
+
+    /**
      * Function to format given resourceMeasurementsSet to readable format
      *
      * @param object $measurements of the image
@@ -305,6 +362,26 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get audios
+     *
+     * @return array
+     */
+    public function getAudios(): array
+    {
+        return $this->getFromCache('audios');
+    }
+
+    /**
+     * Get videos
+     *
+     * @return array
+     */
+    public function getVideos(): array
+    {
+        return $this->getFromCache('videos');
+    }
+
+    /**
      * Function to control the cache in a single function
      * Return given type of cache with key
      *
@@ -340,8 +417,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $defaultRights = $this->getImageRights($language, true);
         $imageTypeKeys = array_keys($this->imageTypes);
         $modelTypeKeys = array_keys($this->modelTypes);
+        $audioTypeKeys = array_keys($this->audioTypes);
+        $videoTypeKeys = array_keys($this->videoTypes);
         $imageResults = [];
         $modelResults = [];
+        $audioResults = [];
+        $videoResults = [];
 
         $addToResults = function ($imageData) use (&$imageResults) {
             if (!isset($imageData['urls']['small'])) {
@@ -372,6 +453,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
             $imageUrls = [];
             $modelUrls = [];
+            $audioUrls = [];
+            $videoUrls = [];
             $highResolution = [];
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
@@ -429,15 +512,25 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         $modelUrls = array_merge($modelUrls, $parsedModel);
                     }
                 }
+                // Representation is an audio
+                if (in_array($data['type'], $audioTypeKeys)) {
+                    if ($parsedAudio = $this->parseAudio($data)) {
+                        $audioUrls = array_merge($audioUrls, $parsedAudio);
+                    }
+                }
+                // Representation is a video
+                if (in_array($data['type'], $videoTypeKeys)) {
+                    if ($parsedVideo = $this->parseVideo($data)) {
+                        $videoUrls = array_merge($videoUrls, $parsedVideo);
+                    }
+                }
             }
             // Save all the found results here as a new object
             // If current set has no links, continue to next one
-            if (empty($imageUrls) && empty($modelUrls)) {
+            if (!$imageUrls && !$modelUrls && !$audioUrls && !$videoUrls) {
                 continue;
             }
             $imageResult = [];
-            $modelResult = [];
-
             // Process found image urls
             if ($imageUrls) {
                 $imageResult = [
@@ -498,15 +591,30 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $addToResults($imageResult);
             }
 
-            // Process found model urls
             if ($modelUrls) {
+                $modelUrls['rights'] = $rights;
                 $modelResults[$i] = $modelUrls;
+            }
+            if ($audioUrls) {
+                $audioResults[$i] = $audioUrls;
+            }
+            if ($videoUrls) {
+                $videoResults[$i] = $videoUrls;
             }
             $i++;
         }
+
+        // Some images are placeholder images we don't want to show
+        $imageResults = array_diff_key($imageResults, $audioResults, $videoResults);
+        if (!$this->allowModelPreviewImages()) {
+            $imageResults = array_diff_key($imageResults, $modelResults);
+        }
+
         return [
             'images' => $imageResults,
-            'models' => $modelResults
+            'models' => $modelResults,
+            'audios' => $audioResults,
+            'videos' => $videoResults
         ];
     }
 
@@ -519,8 +627,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected function parseModel(array $data): array
     {
+        if (empty($data['type']) || empty($data['format'])) {
+            return [];
+        }
         $type = $this->modelTypes[$data['type']];
-        $results = [];
+        $result = [];
+        $format = strtolower($data['format']);
         switch ($type) {
         case 'preview_3D':
             if (in_array(
@@ -528,14 +640,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $this->displayableModelFormats
             )
             ) {
-                $results[$data['format']][$type] = $data['url'];
+                $result[$format][$type] = $data['url'];
             }
             break;
         default:
-            $results[$data['format']][$type] = $data['url'];
+            $result[$format][$type] = $data['url'];
             break;
         }
-        return $results;
+        return $result;
     }
 
     /**
@@ -586,6 +698,57 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         }
 
         return compact('url', 'highResolution', 'sizeless');
+    }
+
+    /**
+     * Function to parse an audio
+     *
+     * @param array $data Data of representation
+     *
+     * @return array
+     */
+    protected function parseAudio(array $data): array
+    {
+        if (empty($data['format']) || empty($data['url'])) {
+            return [];
+        }
+        $codec = $this->supportedAudioFormats[$data['format']] ?? false;
+        if (!$codec) {
+            return [];
+        }
+        return [
+            'desc' => false,
+            'url' => $data['url'],
+            'codec' => $codec,
+            'type' => 'audio',
+            'embed' => 'audio'
+        ];
+    }
+
+    /**
+     * Function to parse a video
+     *
+     * @param array $data Data of representation
+     *
+     * @return array
+     */
+    protected function parseVideo(array $data): array
+    {
+        if (empty($data['format']) || empty($data['url'])) {
+            return [];
+        }
+        $codec = $this->supportedVideoFormats[$data['format']] ?? false;
+        if (!$codec) {
+            return [];
+        }
+        return [
+            'url' => $data['url'],
+            'embed' => 'video',
+            'videoSources' => [
+                'src' => $data['url'],
+                'type' => $codec,
+            ]
+        ];
     }
 
     /**
@@ -1305,6 +1468,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
         $urls = $this->resolveUrlTypes($urls);
+        $urls = array_merge($urls, $this->getAudios(), $this->getVideos());
         return $urls;
     }
 
