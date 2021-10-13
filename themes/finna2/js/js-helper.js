@@ -22,7 +22,7 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Find next sibling with syntax
+   * Find next sibling with selector
    * 
    * @param {HTMLElement} elem 
    * @param {String} selector 
@@ -39,7 +39,7 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Find previous sibling with syntax
+   * Find previous sibling with selector
    * 
    * @param {HTMLElement} elem 
    * @param {String} selector 
@@ -67,28 +67,32 @@ var jsHelper = (function jsHelper() {
   function addDynamicListener(el, selector, eventName, handler) {
     el.addEventListener(eventName, function checkEvent(e) {
       // loop parent nodes from the target to the delegation node
-      for (var target = e.target; target && target !== this; target = target.parentNode) {
+      var target = e.target;
+      while (target) {
         if (target.matches(selector)) {
           handler.call(target, e);
           break;
         }
+        target = target.parentNode;
       }
     }, false);
   }
 
   /**
-   * Find all parents of element until selector is satisfied.
+   * Return all parents of the element until selector is satisfied.
    * 
    * @param {HTMLElement} el 
    * @param {String} selector
    */
   function getParentsUntil(el, selector) {
     var parents = [];
-    for (var target = el.parentNode; target; target = target.parentNode) {
+    var target = el.parentNode;
+    while (target) {
       parents.push(target);
       if (target.matches(selector)) {
         return parents;
       }
+      target = target.parentNode;
     }
     return [];
   }
@@ -100,10 +104,12 @@ var jsHelper = (function jsHelper() {
    * @param {String} selector
    */
   function findParent(el, selector) {
-    for (var target = el.parentNode; target; target = target.parentNode) {
+    var target = el.parentNode;
+    while (target) {
       if (target.matches(selector)) {
         return target;
       }
+      target = target.parentNode;
     }
     return undefined;
   }
@@ -161,7 +167,7 @@ var jsHelper = (function jsHelper() {
 
   /**
    * Add a listener for when DOMContent has been loaded.
-   * If the DOMContent has been loaded, trigger immediatly.
+   * If the DOMContent has been loaded, trigger immediately.
    * 
    * @param {Function} fn 
    */
