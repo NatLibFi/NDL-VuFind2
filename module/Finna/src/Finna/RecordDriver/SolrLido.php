@@ -296,24 +296,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Returns one of three things: a full URL to a thumbnail preview of the record
-     * if an image is available in an external system; an array of parameters to
-     * send to VuFind's internal cover generator if no fixed URL exists; or false
-     * if no thumbnail can be generated.
-     *
-     * Overwrite parent function so there is no auto-generated images
-     *
-     * @param string $size Size of thumbnail (small, medium or large -- small is
-     * default).
-     *
-     * @return string|array|bool
-     */
-    public function getThumbnail($size = 'small')
-    {
-        return ['small' => ''];
-    }
-
-    /**
      * Function to format given resourceMeasurementsSet to readable format
      *
      * @param object $measurements of the image
@@ -606,8 +588,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $i++;
         }
 
-        // Some images are placeholder images we don't want to show
-        $imageResults = array_diff_key($imageResults, $audioResults, $videoResults);
+        // Does 3D models have a preview image?
         if (!$this->allowModelPreviewImages()) {
             $imageResults = array_diff_key($imageResults, $modelResults);
         }
