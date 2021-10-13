@@ -1451,7 +1451,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $format = $isChrome ? "" : "";
         $videoSources = [
             'src' => $url,
-            'type' => $format === 'mpd' ? 'application/dash+xml' : 'application/x-mpegURL'
+            'type' => $format === 'mpd'
+                ? 'application/dash+xml'
+                : 'application/x-mpegURL'
         ];
         return compact('url', 'posterUrl', 'videoSources');
     }
