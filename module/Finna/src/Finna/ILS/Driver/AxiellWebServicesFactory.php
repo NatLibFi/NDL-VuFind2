@@ -58,7 +58,9 @@ class AxiellWebServicesFactory
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -67,7 +69,8 @@ class AxiellWebServicesFactory
         $sessionFactory = function ($namespace) use ($container) {
             $manager = $container->get(\Laminas\Session\SessionManager::class);
             return new \Laminas\Session\Container(
-                "AxiellWebServices_$namespace", $manager
+                "AxiellWebServices_$namespace",
+                $manager
             );
         };
         return parent::__invoke($container, $requestedName, [$sessionFactory]);

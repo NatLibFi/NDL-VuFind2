@@ -88,8 +88,12 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
      * @param Loader            $loader   Record loader
      * @param RendererInterface $renderer View renderer
      */
-    public function __construct(SessionSettings $ss, CacheManager $cm,
-        Config $config, Loader $loader, RendererInterface $renderer
+    public function __construct(
+        SessionSettings $ss,
+        CacheManager $cm,
+        Config $config,
+        Loader $loader,
+        RendererInterface $renderer
     ) {
         $this->sessionSettings = $ss;
         $this->cacheManager = $cm;
@@ -140,7 +144,8 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
                 $result = $this->httpService->get($url, [], 60);
                 if ($result->isSuccess() && ($content = $result->getBody())) {
                     $encoding = mb_detect_encoding(
-                        $content, ['UTF-8', 'ISO-8859-1']
+                        $content,
+                        ['UTF-8', 'ISO-8859-1']
                     );
                     if ('UTF-8' !== $encoding) {
                         $content = utf8_encode($content);
@@ -160,7 +165,9 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase
 
                     // Replace line breaks with <br>
                     $content = preg_replace(
-                        '/(\r\n|\n|\r){3,}/', '<br><br>', $content
+                        '/(\r\n|\n|\r){3,}/',
+                        '<br><br>',
+                        $content
                     );
 
                     file_put_contents($localFile, $content);

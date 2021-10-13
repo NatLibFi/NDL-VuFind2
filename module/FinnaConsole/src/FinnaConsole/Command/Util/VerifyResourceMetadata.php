@@ -87,8 +87,10 @@ class VerifyResourceMetadata extends AbstractUtilCommand
      * @param \VuFind\Date\Converter $dateConverter Date converter
      * @param \VuFind\Record\Loader  $recordLoader  Record loader
      */
-    public function __construct(ResourceTable $resourceTable,
-        \VuFind\Date\Converter $dateConverter, \VuFind\Record\Loader $recordLoader
+    public function __construct(
+        ResourceTable $resourceTable,
+        \VuFind\Date\Converter $dateConverter,
+        \VuFind\Record\Loader $recordLoader
     ) {
         $this->resourceTable = $resourceTable;
         $this->dateConverter = $dateConverter;

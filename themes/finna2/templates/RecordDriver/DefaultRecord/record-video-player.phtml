@@ -44,7 +44,7 @@
     <?php $i = 0; ?>
     <?php foreach ($videoUrls as $url): ?>
       <?php
-      $embeddedVideo = $this->recordLink()->getEmbeddedVideo($url['url']);
+      $embeddedVideo = $this->recordLinker()->getEmbeddedVideo($url['url']);
       $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
 
       if (isset($type) && $type === 'SolrEad') {
@@ -65,7 +65,7 @@
         if ($inlineVideo) {
           $currentVideo['data-inline-iframe'] = '';
         }
-        $currentVideo['data-embed-url'] = $this->recordLink()->getEmbeddedVideoUrl($url['url']);
+        $currentVideo['data-embed-url'] = $this->recordLinker()->getEmbeddedVideoUrl($url['url']);
         $currentVideo[$embeddedVideo] = '';
       }
 

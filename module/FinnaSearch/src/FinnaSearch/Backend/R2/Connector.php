@@ -50,21 +50,22 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
      *
      * @var string
      */
-    const EVENT_DAILY_REQUEST_LIMIT_EXCEEDED = 'daily-request-limit-exceeded';
+    public const EVENT_DAILY_REQUEST_LIMIT_EXCEEDED = 'daily-request-limit-exceeded';
 
     /**
      * R2 monthly request limit exceeded.
      *
      * @var string
      */
-    const EVENT_MONTHLY_REQUEST_LIMIT_EXCEEDED = 'monthly-request-limit-exceeded';
+    public const EVENT_MONTHLY_REQUEST_LIMIT_EXCEEDED
+        = 'monthly-request-limit-exceeded';
 
     /**
      * REMS session expired.
      *
      * @var string
      */
-    const EVENT_REMS_SESSION_EXPIRED = 'rems-session-expired';
+    public const EVENT_REMS_SESSION_EXPIRED = 'rems-session-expired';
 
     /**
      * Username
@@ -93,13 +94,6 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
      * @var \Finna\Service\RemsService
      */
     protected $rems = null;
-
-    /**
-     * HTTP options
-     *
-     * @var array
-     */
-    protected $httpOptions = [];
 
     /**
      * R2 field used to store unique identifier
@@ -186,7 +180,7 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
      */
     public function setHttpOptions(array $options)
     {
-        $this->httpOptions = $options;
+        $this->client->setOptions($options);
     }
 
     /**
@@ -252,9 +246,11 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
 
         $this->debug(
             sprintf(
-                '<= %s %s', $response->getStatusCode(),
+                '<= %s %s',
+                $response->getStatusCode(),
                 $response->getReasonPhrase()
-            ), ['time' => $time]
+            ),
+            ['time' => $time]
         );
 
         if ($this->rems) {
@@ -281,7 +277,8 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
             ];
             foreach ($limits as $header => $type) {
                 $this->rems->setSearchLimitExceededFromConnector(
-                    $type, (bool)$headers->get($header)
+                    $type,
+                    (bool)$headers->get($header)
                 );
             }
 
@@ -297,24 +294,5 @@ class Connector extends \VuFindSearch\Backend\Solr\Connector
             throw HttpErrorException::createFromResponse($response);
         }
         return $response->getBody();
-    }
-
-    /**
-     * Create the HTTP client.
-     *
-     * @param string $url    Target URL
-     * @param string $method Request method
-     *
-     * @return HttpClient
-     */
-    protected function createClient($url, $method)
-    {
-        $client = parent::createClient($url, $method);
-
-        $options = array_merge(
-            $this->httpOptions, ['timeout' => $this->timeout]
-        );
-        $client->setOptions($options);
-        return $client;
     }
 }

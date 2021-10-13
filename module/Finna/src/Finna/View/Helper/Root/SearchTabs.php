@@ -74,8 +74,11 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
      * @param SessionManager   $session Session manager
      * @param TableManager     $table   Database manager
      */
-    public function __construct(ResultsManager $results, Url $url,
-        SearchTabsHelper $helper, SessionManager $session,
+    public function __construct(
+        ResultsManager $results,
+        Url $url,
+        SearchTabsHelper $helper,
+        SessionManager $session,
         TableManager $table
     ) {
         parent::__construct($results, $url, $helper);
@@ -95,13 +98,22 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
      *
      * @return array
      */
-    public function getTabConfig($activeSearchClass, $query, $handler,
-        $type = 'basic', $hiddenFilters = [], $savedSearches = []
+    public function getTabConfig(
+        $activeSearchClass,
+        $query,
+        $handler,
+        $type = 'basic',
+        $hiddenFilters = [],
+        $savedSearches = []
     ) {
         $this->activeSearchClass = $activeSearchClass;
 
         $tabConfig = parent::getTabConfig(
-            $activeSearchClass, $query, $handler, $type, $hiddenFilters
+            $activeSearchClass,
+            $query,
+            $handler,
+            $type,
+            $hiddenFilters
         );
         $tabs = &$tabConfig['tabs'];
         if ($type == 'advanced') {
@@ -179,7 +191,8 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
                     if (isset($searchSettings['filters'])) {
                         $filterQuery .= '&' .
                             $helper->buildQueryString(
-                                ['filter' => $searchSettings['filters']], false
+                                ['filter' => $searchSettings['filters']],
+                                false
                             );
                     }
                 }
@@ -210,8 +223,12 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
      *
      * @return string
      */
-    protected function remapBasicSearch($activeOptions, $targetClass, $query,
-        $handler, $filters
+    protected function remapBasicSearch(
+        $activeOptions,
+        $targetClass,
+        $query,
+        $handler,
+        $filters
     ) {
         $urlQueryFactory = new \Finna\Search\Factory\UrlQueryHelperFactory();
 
@@ -262,7 +279,7 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
         }
 
         // Build new URL
-        $url = $this->url->__invoke($targetOptions->getSearchAction())
+        $url = ($this->url)($targetOptions->getSearchAction())
             . $currentUrlQuery->getParams(false);
 
         return $url;

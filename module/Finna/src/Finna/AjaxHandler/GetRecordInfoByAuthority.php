@@ -74,7 +74,10 @@ class GetRecordInfoByAuthority extends \VuFind\AjaxHandler\AbstractBase
      * @param TabManager      $tm           Recordtab manager
      */
     public function __construct(
-        SessionSettings $ss, Loader $loader, RecordHelper $recordHelper, $tm
+        SessionSettings $ss,
+        Loader $loader,
+        RecordHelper $recordHelper,
+        $tm
     ) {
         $this->sessionSettings = $ss;
         $this->recordLoader = $loader;
@@ -95,7 +98,7 @@ class GetRecordInfoByAuthority extends \VuFind\AjaxHandler\AbstractBase
 
         $id = $params->fromPost('id', $params->fromQuery('id'));
         $driver = $this->recordLoader->load($id, 'SolrAuth');
-        $html = $this->recordHelper->__invoke($driver)->getAuthoritySummary();
+        $html = ($this->recordHelper)($driver)->getAuthoritySummary();
 
         return $this->formatResponse(compact('html'));
     }

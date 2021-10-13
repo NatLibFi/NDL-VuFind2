@@ -96,7 +96,7 @@ class Options extends \VuFind\Search\Solr\Options
      *
      * @param string $action Route
      *
-     * @return string
+     * @return void
      */
     public function setBrowseAction($action)
     {

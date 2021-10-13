@@ -102,8 +102,9 @@
   .renew-button, #update_selected, #cancelSelected, #cancelAll {
     height: 35px;
     padding: 0 10px;
+    margin-right: 12px;
     @media (max-width: @screen-sm) {
-      margin-bottom: 5px;
+      margin-bottom: 12px;
     }
   }
   .sort-col .dropdown-toggle {
@@ -737,6 +738,12 @@
         margin: 0;
         padding: 0;
       }
+    }
+  }
+  // remove exclamation mark from fines row
+  .fines-status .badge.overdue {
+    &:before {
+      content:"";
     }
   }
 }

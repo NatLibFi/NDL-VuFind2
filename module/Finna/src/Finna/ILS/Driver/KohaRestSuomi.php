@@ -107,7 +107,8 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         if (isset($this->config['Holdings']['holdings_branch_order'])) {
             $values = explode(
-                ':', $this->config['Holdings']['holdings_branch_order']
+                ':',
+                $this->config['Holdings']['holdings_branch_order']
             );
             foreach ($values as $i => $value) {
                 $parts = explode('=', $value, 2);
@@ -241,19 +242,26 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     public function getMyProfile($patron)
     {
         $result = $this->makeRequest(
-            ['v1', 'patrons', $patron['id']], false, 'GET', $patron
+            ['v1', 'patrons', $patron['id']],
+            false,
+            'GET',
+            $patron
         );
 
         $expirationDate = !empty($result['dateexpiry'])
             ? $this->dateConverter->convertToDisplayDate(
-                'Y-m-d', $result['dateexpiry']
+                'Y-m-d',
+                $result['dateexpiry']
             ) : '';
 
         $guarantor = [];
         $guarantees = [];
         if (!empty($result['guarantorid'])) {
             $guarantorRecord = $this->makeRequest(
-                ['v1', 'patrons', $result['guarantorid']], false, 'GET', $patron
+                ['v1', 'patrons', $result['guarantorid']],
+                false,
+                'GET',
+                $patron
             );
             if ($guarantorRecord) {
                 $guarantor['firstname'] = $guarantorRecord['firstname'];
@@ -262,7 +270,9 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         } else {
             // Assume patron can have guarantees only if there is no guarantor
             $guaranteeRecords = $this->makeRequest(
-                ['v1', 'patrons'], ['guarantorid' => $patron['id']], 'GET',
+                ['v1', 'patrons'],
+                ['guarantorid' => $patron['id']],
+                'GET',
                 $patron
             );
             foreach ($guaranteeRecords as $guarantee) {
@@ -735,7 +745,10 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $request = [

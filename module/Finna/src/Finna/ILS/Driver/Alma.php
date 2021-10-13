@@ -140,7 +140,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
         if (!empty($this->config['FeeTypeMappings'])) {
             $this->feeTypeMappings = array_merge(
-                $this->feeTypeMappings, $this->config['FeeTypeMappings']
+                $this->feeTypeMappings,
+                $this->config['FeeTypeMappings']
             );
         }
 
@@ -198,7 +199,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     . $fine['payableOnline'];
                 if (isset($finesGrouped[$key])) {
                     $dateCmp = strcmp(
-                        $finesGrouped[$key]['_create_time'], $fine['_create_time']
+                        $finesGrouped[$key]['_create_time'],
+                        $fine['_create_time']
                     );
                     if ($dateCmp < 0) {
                         $finesGrouped[$key]['_create_time'] = $fine['_create_time'];
@@ -244,7 +246,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $nowTS = time();
 
         $sort = explode(
-            ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
+            ' ',
+            !empty($params['sort']) ? $params['sort'] : 'checkout desc',
+            2
         );
         if ($sort[0] == 'checkout') {
             $sortKey = 'loan_date';
@@ -384,7 +388,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $fines = $this->getMyFines($patron);
@@ -1040,7 +1047,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         $xml->addChild('last_name', $formParams['lastname']);
         $xml->addChild('user_group', $newUserConfig['userGroup']);
         $xml->addChild(
-            'preferred_language', $formParams['language']
+            'preferred_language',
+            $formParams['language']
         );
         $xml->addChild('account_type', $newUserConfig['accountType']);
         $xml->addChild('status', $newUserConfig['status']);
@@ -1189,7 +1197,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                             'label' => $fieldLabel,
                             'type' => 'select',
                             'options' => $this->getCodeTableOptions(
-                                'CountryCodes', 'description'
+                                'CountryCodes',
+                                'description'
                             ),
                             'required' => $fieldRequired,
                         ];
@@ -1567,7 +1576,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 
                 if (!empty($rule['group'])) {
                     $match = $this->compareRuleWithArray(
-                        $rule['group'], (array)$patronGroup
+                        $rule['group'],
+                        (array)$patronGroup
                     );
                     if (!$match) {
                         $this->debug('No match: group: ' . $rule['_str']);
@@ -1586,13 +1596,15 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 if (!empty($rule['home'])) {
                     $home = !empty($profile['homeAddress'])
                         && $this->compareRuleWithArray(
-                            $rule['home'], ['true']
+                            $rule['home'],
+                            ['true']
                         );
                 }
                 if (!empty($rule['work'])) {
                     $work = !empty($profile['workAddress'])
                         && $this->compareRuleWithArray(
-                            $rule['work'], ['true']
+                            $rule['work'],
+                            ['true']
                         );
                 }
 
@@ -1932,7 +1944,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         // Check if the request is for more details
         if (!empty($options['detailsGroupKey'])) {
             return $this->getHoldingsDetails(
-                $id, $options['detailsGroupKey'], $patron, $options
+                $id,
+                $options['detailsGroupKey'],
+                $patron,
+                $options
             );
         }
 
@@ -2174,7 +2189,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      *
      * @return array
      */
-    protected function getHoldingsDetails($id, $groupKey, $patron = null,
+    protected function getHoldingsDetails(
+        $id,
+        $groupKey,
+        $patron = null,
         $params = []
     ) {
         [$holdingId, $libraryCode, $locationCode] = explode('||', $groupKey);
@@ -2311,8 +2329,12 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      *
      * @return array
      */
-    protected function getHoldingsItems($itemsResult, $id, $patron = null,
-        $sortItems = false, $addItemlessHoldings = false
+    protected function getHoldingsItems(
+        $itemsResult,
+        $id,
+        $patron = null,
+        $sortItems = false,
+        $addItemlessHoldings = false
     ) {
         // For checking for suppressed holdings. This is a bit complicated,
         // but the holding information in items is missing this crucial bit.
@@ -3030,8 +3052,14 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             return $this->cachedRequest['response'];
         }
         $result = parent::makeRequest(
-            $path, $paramsGet, $paramsPost, $method, $rawBody, $headers,
-            $allowedErrors, $returnStatus
+            $path,
+            $paramsGet,
+            $paramsPost,
+            $method,
+            $rawBody,
+            $headers,
+            $allowedErrors,
+            $returnStatus
         );
         if ('GET' === $method) {
             $this->cachedRequest = [

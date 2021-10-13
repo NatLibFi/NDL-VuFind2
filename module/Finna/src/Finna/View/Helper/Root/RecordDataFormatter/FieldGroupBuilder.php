@@ -90,7 +90,11 @@ class FieldGroupBuilder
      *
      * @return void
      */
-    public function setGroups($groups, $lines, $template, $options = [],
+    public function setGroups(
+        $groups,
+        $lines,
+        $template,
+        $options = [],
         $unusedOptions = []
     ) {
         $allUsed = [];
@@ -121,7 +125,10 @@ class FieldGroupBuilder
         $allUnused = array_diff_key($lines, $allUsed);
         $unusedTemplate = $unusedOptions['template'] ?? $template;
         $this->addGroup(
-            false, $allUnused, $unusedTemplate, $unusedOptions
+            false,
+            $allUnused,
+            $unusedTemplate,
+            $unusedOptions
         );
     }
 

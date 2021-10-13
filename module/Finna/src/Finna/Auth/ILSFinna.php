@@ -51,7 +51,8 @@ trait ILSFinna
     {
         $catalog = $this->getCatalog();
         $recoveryConfig = $catalog->checkFunction(
-            'recoverPassword', ['cat_username' => "$target.123"]
+            'recoverPassword',
+            ['cat_username' => "$target.123"]
         );
         return $recoveryConfig ? true : false;
     }
@@ -67,7 +68,8 @@ trait ILSFinna
     {
         $catalog = $this->getCatalog();
         $config = $catalog->checkFunction(
-            'registerPatron', ['cat_username' => "$target.123"]
+            'registerPatron',
+            ['cat_username' => "$target.123"]
         );
         return !empty($config);
     }

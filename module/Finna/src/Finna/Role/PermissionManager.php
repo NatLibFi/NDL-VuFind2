@@ -53,7 +53,8 @@ class PermissionManager extends \VuFind\Role\PermissionManager
             }
             if ($authService->isGranted($key)) {
                 $permissions = array_merge(
-                    $permissions, (array)$value['permission']
+                    $permissions,
+                    (array)$value['permission']
                 );
             }
         }

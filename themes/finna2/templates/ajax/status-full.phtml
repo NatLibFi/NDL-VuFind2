@@ -274,7 +274,7 @@ foreach ($this->statusItems as $item):
 
 <div class="actions">
 <?php
-$holdingsLink = $this->recordLink()->getUrl($driver);
+$holdingsLink = $this->recordLinker()->getUrl($driver);
 $disableTitleHold = isset($summary['holdable']) && !$summary['holdable'];
 
 if (!$disableTitleHold
@@ -297,7 +297,7 @@ if (!$disableTitleHold
       } else {
         $holdingTitleHold = $driver ? $driver->tryMethod('getRealTimeTitleHold') : false;
         if (!empty($holdingTitleHold)) {
-          $link = $this->recordLink()->getRequestUrl($holdingTitleHold);
+          $link = $this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdingTitleHold));
         }
       }
       if ($link) {

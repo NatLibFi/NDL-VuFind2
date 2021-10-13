@@ -114,7 +114,8 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
      *
      * @return void
      */
-    public function __construct(\Laminas\Config\Config $searchConfig = null,
+    public function __construct(
+        \Laminas\Config\Config $searchConfig = null,
         $uniqueKey = 'id'
     ) {
         $this->uniqueKey = $uniqueKey;

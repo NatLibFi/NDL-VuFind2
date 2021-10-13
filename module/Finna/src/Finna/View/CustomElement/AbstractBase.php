@@ -111,7 +111,9 @@ abstract class AbstractBase implements CustomElementInterface
      *
      * @throws Exception If element name or outerHTML is not valid
      */
-    public function __construct(string $name, array $options = [],
+    public function __construct(
+        string $name,
+        array $options = [],
         bool $convertToBool = false
     ) {
         $matches = [];
@@ -140,7 +142,8 @@ abstract class AbstractBase implements CustomElementInterface
 
             // Attributes set in options overwrite attributes set in HTML.
             $attributes = array_merge(
-                $dom->firstChild()->getAttributes(), $attributes
+                $dom->firstChild()->getAttributes(),
+                $attributes
             );
         }
 
@@ -196,7 +199,8 @@ abstract class AbstractBase implements CustomElementInterface
             self::CONTENTS => 'Flow',
             self::ATTR_COLLECTIONS => 'Common',
             self::ATTRIBUTES => array_fill_keys(
-                array_keys(static::getAttributeToVariableMap()), 'CDATA'
+                array_keys(static::getAttributeToVariableMap()),
+                'CDATA'
             )
         ];
     }

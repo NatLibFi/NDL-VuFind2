@@ -356,9 +356,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Notated Music Format', 'Notes', 'Objective and Content',
             'Original Work', 'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID', 'Other Links',
-            'Other Screenings', 'Other Titles', 'Place of Origin',
-            'Playing Time', 'Premiere Night', 'Premiere Theaters',
-            'Presenters', 'Press Reviews', 'Previous Title',
+            'Other Related Material', 'Other Screenings', 'Other Titles',
+            'Place of Origin', 'Playing Time', 'Premiere Night',
+            'Premiere Theaters', 'Presenters', 'Press Reviews', 'Previous Title',
             'Production', 'Production Costs', 'Production Credits',
             'Projected Publication Date', 'Publication Frequency', 'Publications',
             'Publication_Place', 'Publish date', 'Publisher',
@@ -524,9 +524,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Notes', 'Objective and Content', 'Organisation',
             'Original Work', 'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID', 'Other Links',
-            'Other Screenings', 'Other Titles', 'Place of Origin',
-            'Playing Time', 'Premiere Night', 'Premiere Theaters',
-            'Presenters', 'Press Reviews', 'Previous Title',
+            'Other Related Material', 'Other Screenings', 'Other Titles',
+            'Place of Origin', 'Playing Time', 'Premiere Night',
+            'Premiere Theaters', 'Presenters', 'Press Reviews', 'Previous Title',
             'Production', 'Production Costs', 'Production Credits',
             'Projected Publication Date', 'Publication Frequency', 'Publications',
             'Publication_Place', 'Publish date', 'Publisher',
@@ -562,13 +562,20 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      *
      * @return array
      */
-    public function getGroupedFields($groups, $lines,
-        $template = 'core-field-group-fields.phtml', $options = [],
+    public function getGroupedFields(
+        $groups,
+        $lines,
+        $template = 'core-field-group-fields.phtml',
+        $options = [],
         $unusedOptions = []
     ) {
         $fieldGroups = new FieldGroupBuilder();
         $fieldGroups->setGroups(
-            $groups, $lines, $template, $options, $unusedOptions
+            $groups,
+            $lines,
+            $template,
+            $options,
+            $unusedOptions
         );
         return $fieldGroups->getArray();
     }
@@ -596,7 +603,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             }
             // Render the fields in the group as the value for the group.
             $value = $this->renderRecordDriverTemplate(
-                $driver, $data, ['template' => $group['template']]
+                $driver,
+                $data,
+                ['template' => $group['template']]
             );
             $result[] = [
                 'label' => $group['label'],

@@ -60,8 +60,9 @@ class OpenUrl extends \VuFind\View\Helper\Root\OpenUrl
         ];
 
         // Render the subtemplate:
-        return $this->context->__invoke($this->getView())->renderInContext(
-            'Helpers/openurl-moreoptions.phtml', $params
+        return ($this->context)($this->getView())->renderInContext(
+            'Helpers/openurl-moreoptions.phtml',
+            $params
         );
     }
 }

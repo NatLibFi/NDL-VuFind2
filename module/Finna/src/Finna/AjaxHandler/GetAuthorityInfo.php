@@ -65,7 +65,9 @@ class GetAuthorityInfo extends \VuFind\AjaxHandler\AbstractBase
      * @param Loader            $loader   Record loader
      * @param RendererInterface $renderer View renderer
      */
-    public function __construct(SessionSettings $ss, Loader $loader,
+    public function __construct(
+        SessionSettings $ss,
+        Loader $loader,
         RendererInterface $renderer
     ) {
         $this->sessionSettings = $ss;
@@ -97,14 +99,18 @@ class GetAuthorityInfo extends \VuFind\AjaxHandler\AbstractBase
         $params->set('recordSource', $source);
         try {
             $driver = $this->loader->load(
-                $id, 'SolrAuth', false, $params
+                $id,
+                'SolrAuth',
+                false,
+                $params
             );
         } catch (\VuFind\Exception\RecordMissing $e) {
             return $this->formatResponse('');
         }
 
         $html = $this->renderer->partial(
-            'ajax/authority.phtml', ['driver' => $driver]
+            'ajax/authority.phtml',
+            ['driver' => $driver]
         );
 
         return $this->formatResponse(compact('html'));

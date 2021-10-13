@@ -311,11 +311,6 @@ finna.myList = (function finnaMyList() {
     //Init mobile navigation collapse after list has been reloaded
     finna.layout.initMobileNarrowSearch();
 
-    // Checkbox select all
-    $('.mylist-controls-bar .checkbox-select-all').off('change').change(function onChangeSelectAll() {
-      $('.myresearch-row .checkbox-select-item').prop('checked', $(this).is(':checked'));
-    });
-
     if (!isDefaultList) {
       toggleTitleEditable(true);
 

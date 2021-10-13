@@ -89,7 +89,10 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      * image with the given index was found.
      */
     public function getLargeImage(
-        $index = 0, $params = [], $canonical = false, $includePdf = true
+        $index = 0,
+        $params = [],
+        $canonical = false,
+        $includePdf = true
     ) {
         $image = $this->getLargeImageWithInfo(...func_get_args());
         return $image['url'] ?? false;
@@ -113,10 +116,14 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      * image with the given index was found.
      */
     public function getLargeImageWithInfo(
-        $index = 0, $params = [], $canonical = false, $includePdf = true
+        $index = 0,
+        $params = [],
+        $canonical = false,
+        $includePdf = true
     ) {
         $images = $this->record->getAllImages(
-            $this->view->layout()->userLang, $includePdf
+            $this->view->layout()->userLang,
+            $includePdf
         );
         if (!isset($images[$index])) {
             return false;
@@ -130,7 +137,9 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             ?? $this->record->getDriver()->getSourceIdentifier();
 
         $url = $urlHelper(
-            'cover-show', [], $canonical ? ['force_canonical' => true] : []
+            'cover-show',
+            [],
+            $canonical ? ['force_canonical' => true] : []
         ) . '?' . http_build_query($imageParams);
         $pdf = $images[$index]['pdf'] ?? false;
 
@@ -170,7 +179,9 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      * image with the given index was found.
      */
     public function getMasterImageWithInfo(
-        $index = 0, $params = [], $canonical = false
+        $index = 0,
+        $params = [],
+        $canonical = false
     ) {
         $images = $this->record->getAllImages($this->view->layout()->userLang);
         if (!isset($images[$index])) {
@@ -189,7 +200,9 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             ?? $this->record->getDriver()->getSourceIdentifier();
 
         $url = $urlHelper(
-            'cover-show', [], $canonical ? ['force_canonical' => true] : []
+            'cover-show',
+            [],
+            $canonical ? ['force_canonical' => true] : []
         ) . '?' . http_build_query($imageParams);
         $pdf = $images[$index]['pdf'] ?? false;
         return compact('url', 'pdf');
@@ -224,8 +237,12 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      *
      * @return array
      */
-    public function getAllImagesAsCoverLinks($language, $params = [],
-        $thumbnails = true, $includePdf = true, $source = null
+    public function getAllImagesAsCoverLinks(
+        $language,
+        $params = [],
+        $thumbnails = true,
+        $includePdf = true,
+        $source = null
     ) {
         $imageParams = [
             'small' => [],
@@ -283,7 +300,10 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      * @return string
      */
     public function render(
-        $type = 'list', $params = null, $source = 'Solr', $extraParams = []
+        $type = 'list',
+        $params = null,
+        $source = 'Solr',
+        $extraParams = []
     ) {
         return $this->renderImage($type, $params, $extraParams);
     }
@@ -317,7 +337,10 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
 
         $view = $this->getView();
         $images = $this->getAllImagesAsCoverLinks(
-            $view->layout()->userLang, $params, true, true,
+            $view->layout()->userLang,
+            $params,
+            true,
+            true,
             $this->record->getDriver()->getSourceIdentifier()
         );
         if ($images && $view->layout()->templateDir === 'combined') {

@@ -30,13 +30,13 @@
         <?php endif; ?>
           <?php if ($this->organisationInfo() && $organisationInfoId = $this->driver->getOrganisationInfoId()): ?><li class="organisation-page-link" data-organisation="<?=$this->escapeHtmlAttr($organisationInfoId)?>" data-organisation-name="<?=$this->escapeHtmlAttr($currentSourceTranslated)?>" data-organisation-sector="<?=$this->escapeHtmlAttr($sector)?>"></li><?php endif; ?>
           <li class="material-questions-feedback"><?=$this->transEsc('material_questions_feedback')?></li>
-          <li><a href="<?=$this->recordLink()->getActionUrl($this->driver, 'Feedback')?>" data-lightbox class="btn btn-primary feedback-record"><?=$this->transEsc('Send feedback on record')?></a></li>
+          <li><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Feedback'))?>" data-lightbox class="btn btn-primary feedback-record"><?=$this->transEsc('Send feedback on record')?></a></li>
           <?php if ($this->record($this->driver)->repositoryLibraryRequestEnabled()): ?>
             <li class="repository-library-request"><?=$this->transEsc('repository_library_request')?></li>
             <li>
               <?php $user = $this->auth()->isLoggedIn(); if ($user): ?>
                 <?php if ($user->getLibraryCards()->count()): ?>
-                  <a href="<?=$this->recordLink()->getActionUrl($this->driver, 'RepositoryLibraryRequest')?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
+                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
                 <?php else: ?>
                   <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="login hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
                 <?php endif; ?>
@@ -54,7 +54,7 @@
         <div class="truncate-field other-organisation-links" data-rows="5">
         <?php foreach ($mergedData['records'] as $current): ?>
           <?php if ($current['source'] != $currentSource) : ?>
-          <a href="<?=$this->recordLink()->getUrl($current['id']) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
+          <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
             <?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?>
           </a>
           <?php endif; ?>

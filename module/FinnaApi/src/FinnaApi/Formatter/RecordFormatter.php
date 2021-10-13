@@ -55,7 +55,9 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
      * @param HelperPluginManager $helperManager View helper plugin manager
      * @param TranslatorInterface $translator    Translator
      */
-    public function __construct($recordFields, HelperPluginManager $helperManager,
+    public function __construct(
+        $recordFields,
+        HelperPluginManager $helperManager,
         TranslatorInterface $translator
     ) {
         parent::__construct($recordFields, $helperManager);
@@ -76,7 +78,10 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         $recordHelper = $this->helperManager->get('record');
         $translate = $this->helperManager->get('translate');
         $images = $imageHelper($recordHelper($record))->getAllImagesAsCoverLinks(
-            $lang, [], false, false
+            $lang,
+            [],
+            false,
+            false
         );
         foreach ($images as &$image) {
             if (empty($image['rights']['copyright'])) {
@@ -170,7 +175,9 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
                 $result[] = [
                     'value' => $institution,
                     'translated' => $translate(
-                        "0/$institution/", null, $institution
+                        "0/$institution/",
+                        null,
+                        $institution
                     )
                 ];
             }
@@ -198,7 +205,9 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
                         $translated = [];
                         foreach ($url['source'] as $source) {
                             $translated[] = $translate->translate(
-                                "source_$source", null, $source
+                                "source_$source",
+                                null,
+                                $source
                             );
                         }
                     } else {

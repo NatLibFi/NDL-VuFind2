@@ -100,9 +100,14 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
      * @param User|bool       $user      Logged in user (or false)
      * @param Record          $rp        Record plugin
      */
-    public function __construct(SessionSettings $ss,
-        Config $config, Loader $loader, UserTable $userTable, UserList $userList,
-        $user, Record $rp
+    public function __construct(
+        SessionSettings $ss,
+        Config $config,
+        Loader $loader,
+        UserTable $userTable,
+        UserList $userList,
+        $user,
+        Record $rp
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;

@@ -72,7 +72,8 @@ class FinnaTruncate extends AbstractBase
             }
 
             $this->viewModel->setVariable(
-                'content', $this->dom->firstChild()->innerHTML()
+                'content',
+                $this->dom->firstChild()->innerHTML()
             );
         }
 

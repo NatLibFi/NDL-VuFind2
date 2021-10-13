@@ -133,7 +133,8 @@ class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
         $search = $this->searchTable->getOwnedRowById($searchId, $sessId, null);
         if (empty($search)) {
             return $this->formatResponse(
-                'Search not found', self::STATUS_HTTP_BAD_REQUEST
+                'Search not found',
+                self::STATUS_HTTP_BAD_REQUEST
             );
         }
 

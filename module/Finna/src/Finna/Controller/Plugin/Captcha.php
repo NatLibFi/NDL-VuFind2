@@ -89,9 +89,12 @@ class Captcha extends \VuFind\Controller\Plugin\Captcha
      *
      * @return void
      */
-    public function __construct($config, array $captchas=[],
+    public function __construct(
+        $config,
+        array $captchas=[],
         \VuFind\Auth\Manager $authManager = null,
-        SessionManager $sessionManager = null, TranslatorInterface $translator = null
+        SessionManager $sessionManager = null,
+        TranslatorInterface $translator = null
     ) {
         parent::__construct($config, $captchas);
         $this->authManager = $authManager;
@@ -152,7 +155,8 @@ class Captcha extends \VuFind\Controller\Plugin\Captcha
 
         // Session checks
         $storage = new \Laminas\Session\Container(
-            'SessionState', $this->sessionManager
+            'SessionState',
+            $this->sessionManager
         );
         if (empty($storage->sessionStartTime)) {
             $storage->sessionStartTime = time();

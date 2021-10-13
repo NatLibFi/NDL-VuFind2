@@ -1,15 +1,21 @@
 <?php // No start or end tags
 echo json_encode([
     'js-videojs' => $this->headScript()->itemToString(
-    $this->headScript()->createData('text/javascript', ['src' => 'vendor/video.min.js', 'id' => 'js-videojs']),
-    '', '', ''
+        $this->headScript()->createData('text/javascript', ['src' => 'vendor/video.min.js', 'id' => 'js-videojs']),
+        '',
+        '',
+        ''
     ),
     'js-videojs-hotkeys' => $this->headScript()->itemToString(
-    $this->headScript()->createData('text/javascript', ['src' => 'vendor/videojs.hotkeys.min.js', 'id' => 'js-videojs-hotkeys']),
-    '', '', ''
+        $this->headScript()->createData('text/javascript', ['src' => 'vendor/videojs.hotkeys.min.js', 'id' => 'js-videojs-hotkeys']),
+        '',
+        '',
+        ''
     ),
     'js-videojs-quality' => $this->headScript()->itemToString(
-    $this->headScript()->createData('text/javascript', ['src' => 'vendor/videojs-contrib-quality-levels.js', 'id' => 'js-videojs-quality']),
-    '', '', ''
+        $this->headScript()->createData('text/javascript', ['src' => 'vendor/videojs-contrib-quality-levels.js', 'id' => 'js-videojs-quality']),
+        '',
+        '',
+        ''
     )
 ]);

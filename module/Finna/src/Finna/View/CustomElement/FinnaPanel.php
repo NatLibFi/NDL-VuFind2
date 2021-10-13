@@ -102,7 +102,8 @@ class FinnaPanel extends AbstractBase
                 array_merge(
                     ['collapse-id', 'collapsible', 'heading-id'],
                     array_keys(self::getAttributeToVariableMap())
-                ), 'CDATA'
+                ),
+                'CDATA'
             )
         ];
     }

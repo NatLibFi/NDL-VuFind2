@@ -171,7 +171,9 @@ For example:
 EOT
             )
             ->addArgument(
-                'view_base', InputArgument::REQUIRED, 'View base directory'
+                'view_base',
+                InputArgument::REQUIRED,
+                'View base directory'
             )
             ->addArgument(
                 'local_conf',

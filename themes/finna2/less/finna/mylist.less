@@ -114,10 +114,12 @@
 
       i {
         margin-right: 3px;
-        background-color: @action-link-color;
-        font-size: 10px;
+        color: @action-link-color;
+        background-color: @btn-primary-color;
+        font-size: 1em;
         display: block;
-        padding-right: 3px;
+        margin-top: 3px;
+        padding: 0;
       }
     }
     .favorite-list-holder {
@@ -133,6 +135,9 @@
 
       .public-favorite-list {
         padding: 2px;
+        &:before {
+          line-height: 19px;
+        }
       }
     }
   }

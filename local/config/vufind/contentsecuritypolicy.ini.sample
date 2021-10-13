@@ -4,3 +4,62 @@ merge_array_settings = true
 
 [Directives]
 ;script-src[] = "https://trusted.service.something"
+
+; Boost.ai (universitiesfront)
+;connect-src[] = "https://universitiesfront.boost.ai"
+;connect-src[] = "https://static.aim.front.ai"
+
+; Dream Broker
+;frame-src[] = "https://dreambroker.com"
+
+; Elisa Chat / LiveChat
+;connect-src[] = "https://zefzhat-eu.appspot.com"
+;connect-src[] = "https://stats.livezhat.com"
+
+; Giosg
+;connect-src[] = "https://service.giosg.com"
+
+; Kirjastot.fi:n rajapinta:
+;script-src[] = "https://api.kirjastot.fi"
+;connect-src[] = "https://api.kirjastot.fi"
+
+; Kirjastot.fi:n upokkeet:
+;frame-src[] = "https://*.kirjastot.fi"
+
+; olli-suutari-jkl/jyvaskyla.fi.kirjasto
+;frame-src[] = "https://olli-suutari-jkl.github.io"
+
+; Smilee
+;script-src[] = "'unsafe-eval'"
+;script-src[] = "https://cdn.smilee.io"
+;script-src[] = "https://saas.smilee.fi"
+;connect-src[] = "https://saas.smilee.fi"
+
+; Tawk
+;script-src[] = "https://va.tawk.to"
+;connect-src[] = "https://*.tawk.to"
+;connect-src[] = "wss://*.tawk.to"
+
+; Vimeo
+;frame-src[] = "https://player.vimeo.com"
+
+; Youtube
+;frame-src[] = "https://www.youtube.com"
+
+; Zendesk chat (Zopim) - https://developer.zendesk.com/documentation/classic-web-widget-sdks/web-widget/integrating-with-google/csp/
+;connect-src[] = "https://ekr.zdassets.com"
+;connect-src[] = "wss://widget-mediator.zopim.com"
+; Vaihtoehto 1 - uusi lataustapa: (yllämainitussa osoitteessa):
+;script-src[] = "'strict-dynamic'"
+;script-src[] = "'unsafe-eval'"
+; Vaihtoehto 2 - vanha lataustapa:
+;script-src[] = "https://static.zdassets.com"
+;script-src[] = "https://ekr.zdassets.com"
+;script-src[] = "https://*.zendesk.com"
+;script-src[] = "https://*.zopim.com"
+;script-src[] = "wss://*.zendesk.com"
+;script-src[] = "wss://*.zopim.com"
+;script-src[] = "'unsafe-eval'"
+;connect-src[] = "https://ekr.zdassets.com"
+;connect-src[] = "wss://widget-mediator.zopim.com"
+

@@ -59,7 +59,9 @@ class CleanHtmlFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -77,7 +79,8 @@ class CleanHtmlFactory implements FactoryInterface
             foreach ($elementClass::getChildInfo() as $childName => $childInfo) {
                 if (isset($allowedElements[$childName][$attrs])) {
                     $childInfo[$attrs] = array_merge(
-                        $allowedElements[$childName][$attrs], $childInfo[$attrs]
+                        $allowedElements[$childName][$attrs],
+                        $childInfo[$attrs]
                     );
                 }
                 $allowedElements[$childName] = $childInfo;

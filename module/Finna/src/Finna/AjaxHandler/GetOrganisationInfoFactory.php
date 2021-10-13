@@ -60,7 +60,9 @@ class GetOrganisationInfoFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -69,7 +71,7 @@ class GetOrganisationInfoFactory
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Cookie\CookieManager::class),
-            $container->get('Finna\OrganisationInfo\OrganisationInfo'),
+            $container->get(\Finna\OrganisationInfo\OrganisationInfo::class),
             $container->get(\VuFind\Cache\Manager::class)
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));

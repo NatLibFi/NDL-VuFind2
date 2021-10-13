@@ -157,7 +157,8 @@ trait FinnaSearchControllerTrait
             return $all;
         }
         return array_diff(
-            $all, array_map('trim', explode(',', strtolower($noRecommend)))
+            $all,
+            array_map('trim', explode(',', strtolower($noRecommend)))
         );
     }
 }
