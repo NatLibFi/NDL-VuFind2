@@ -261,18 +261,25 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected $nonPresenterAuthorsCache = null;
 
     /**
-     * Stream secret
-     * 
+     * VOD secret
+     *
      * @var string
      */
-    protected $streamSecret;
+    protected $VODSecret;
 
     /**
-     * Stream url
-     * 
+     * VOD production url
+     *
      * @var string
      */
-    protected $streamBaseUrl;
+    protected $VODUrl;
+
+    /**
+     * Timestamp precision
+     *
+     * @var int
+     */
+    protected $timestampPrecision;
 
     /**
      * Constructor
@@ -290,8 +297,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
-        $this->streamBaseUrl = $this->recordConfig->Record->streamBaseUrl;
-        $this->streamSecret = $this->recordConfig->Record->streamSecret;
+        if (strpos($_SERVER['HTTP_HOST'], "finna-pre") !== false) {
+            $this->VODUrl = $this->recordConfig->VOD->testUrl ?? '';
+        } else {
+            $this->VODUrl = $this->recordConfig->VOD->url ?? '';
+        }
+        $this->VODSecret = $this->recordConfig->VOD->secret ?? '';
+        $this->timestampPrecision
+            = $this->recordConfig->VOD->timestampPrecision ?? 3000;
         $this->searchSettings = $searchSettings;
     }
 
@@ -1264,7 +1277,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $posterSource = $this->recordConfig->Record->poster_sources[$source] ?? '';
         $vimeo_url = $this->recordConfig->Record->vimeo_url;
 
-
         $videoUrls = [];
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->Title as $title) {
@@ -1324,7 +1336,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
                 // Lets see if this video has a vimeo-id
                 $vimeo = (string)$eventAttrs->{'vimeo-id'};
-                if (!empty($vimeo) && !empty($vimeo_url) && empty($this->streamBaseUrl)) {
+                if (!empty($vimeo) && !empty($vimeo_url) && empty($this->VODUrl)) {
                     $src = str_replace(
                         '{videoid}',
                         $vimeo,
@@ -1340,6 +1352,15 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'embed' => 'iframe',
                         'warnings' => $warnings
                     ];
+                } elseif (!empty($vimeo) && !empty($this->VODUrl)) {
+                    $result = [
+                        'text' => $description ?: $videoType,
+                        'desc' => $description ?: $videoType,
+                        'source' => $source,
+                        'embed' => 'video',
+                        'warnings' => $warnings
+                    ];
+                    $videoUrls[] = array_merge($result, $this->getVODData($vimeo));
                 }
 
                 $url = (string)$eventAttrs->{'elokuva-elonet-materiaali-video-url'};
@@ -1374,7 +1395,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 if ($this->urlBlocked($url, $description)) {
                     continue;
                 }
-                $video = [
+                $videoUrls[] = [
+                    'videoSources' => $videoSources,
+                    'posterUrl' => $poster,
+                    'url' => $url,
                     // Include both 'text' and 'desc' for online and normal urls
                     'text' => $description ? $description : $videoType,
                     'desc' => $description ? $description : $videoType,
@@ -1382,51 +1406,54 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     'embed' => 'video',
                     'warnings' => $warnings
                 ];
-                var_dump($vimeo);
-                if (!empty($this->streamBaseUrl) && !empty($vimeo)) {
-                    $streamData = $this->getStreamVideoData($vimeo);
-                    $video['posterUrl'] = $streamData['poster'];
-                    $video['url'] = $streamData['url'];
-                    $video['videoSources'] = [
-                        'src' => $streamData['url'],
-                        'type' => $streamData['format'] === 'mpd'
-                            ? "application/dash+xml"
-                            : "application/x-mpegURL"
-                    ];
-                    $video['embed'] = 'video';
-                } else {
-                    $video['videoSources'] = $videoSources;
-                    $video['posterUrl'] = $poster;
-                    $video['url'] = $url;
-                }
-                $videoUrls[] = $video;
             }
         }
         return $videoUrls;
     }
 
-    protected function getStreamUrl($path) {
+    /**
+     * Get url with hashed signature for VODs
+     *
+     * @param string $path Path to video location after base url
+     *
+     * @return string
+     */
+    protected function getVODUrl($path): string
+    {
         $now = time();
         // Round the timestamp to the wanted precision to allow CDN caching by not
         // generating unique URLs for every response.
         $timestamp = $now - $now % $this->timestampPrecision;
         $hashable = implode(':', [$path, (string)$timestamp]);
-        $signature = hash_hmac('sha256', $hashable, $this->streamSecret);
+        $signature = hash_hmac('sha256', $hashable, $this->VODSecret);
         return sprintf(
             '%s%s?ts=%s&sig=%s',
-            $this->streamBaseUrl,
+            $this->VODUrl,
             $path,
             $timestamp,
             $signature
         );
     }
 
-    public function getStreamVideoData($videoId) {
-        $isChrome   = browserIsChrome();
-        $format     = $isChrome ? 'mpd' : 'm3u8';
-        $url = $this->getStreamUrl('/playlist/' . $videoId .'.' . $format);
-        $poster = $this->getStreamUrl('/picture/' . $videoId . '.1280.jpg');
-        return compact('url', 'poster', 'format');
+    /**
+     * Function to create required data for VOD
+     *
+     * @param string $videoId Video id for vimeo
+     *
+     * @return array
+     */
+    public function getVODData($videoId): array
+    {
+        $isChrome = stripos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
+        $format = $isChrome ? 'mpd' : 'm3u8';
+        $url = $this->getVODUrl('/playlist/' . $videoId . '.' . $format);
+        $posterUrl = $this->getVODUrl('/picture/' . $videoId . '.1280.jpg');
+        $format = $isChrome ? "" : "";
+        $videoSources = [
+            'src' => $url,
+            'type' => $format === 'mpd' ? 'application/dash+xml' : 'application/x-mpegURL'
+        ];
+        return compact('url', 'posterUrl', 'videoSources');
     }
 
     /**
