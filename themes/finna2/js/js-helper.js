@@ -115,7 +115,7 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Check if the element is same as selector.
+   * Check if the element is the selector.
    * 
    * @param {object} el 
    * @param {String} selector 
@@ -125,10 +125,9 @@ var jsHelper = (function jsHelper() {
   }
 
   /**
-   * Check if the element is same as selector.
+   * Get the current coordinates of the element
    * 
    * @param {HTMLElement} el 
-   * @param {String} selector 
    */
   function offset(el) {
     var rect = el.getBoundingClientRect();
@@ -172,7 +171,7 @@ var jsHelper = (function jsHelper() {
    * @param {Function} fn 
    */
   function ready(fn) {
-    if (document.readyState !== 'loading'){
+    if (document.readyState !== 'loading') {
       fn();
     } else {
       document.addEventListener('DOMContentLoaded', fn);
