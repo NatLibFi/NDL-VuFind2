@@ -25,6 +25,7 @@
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -41,6 +42,7 @@ use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -76,12 +78,12 @@ class RecordDataFormatterFactory
 
         foreach ($this->getDefaultCoreFields() as $key => $data) {
             if ($data[0] === true) {
-                [$multiLine, $dataMethod, $callback] = $data;
+                [$multiLine, $dataMethod, $callback, $options] = $data;
             } else {
                 [$multiLine, $dataMethod, $template, $options] = $data;
             }
             if ($multiLine) {
-                $spec->setMultiLine($key, $dataMethod, $callback);
+                $spec->setMultiLine($key, $dataMethod, $callback, $options);
             } else {
                 $spec->setTemplateLine($key, $dataMethod, $template, $options);
             }
@@ -110,9 +112,15 @@ class RecordDataFormatterFactory
             };
 
         $setMultiTemplateLine
-            = function ($key, $dataMethod, $callback) use (&$lines, &$pos) {
+            = function (
+                $key,
+                $dataMethod,
+                $callback,
+                $options = []
+            ) use (&$lines, &$pos) {
                 $pos += 100;
-                $lines[$key] = [true, $dataMethod, $callback];
+                $options['pos'] = $pos;
+                $lines[$key] = [true, $dataMethod, $callback, $options];
             };
 
         $setTemplateLine(
@@ -451,14 +459,35 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordIdentifiers']
             ]
         );
-        $setTemplateLine(
+
+        $getEvents = function ($data, $options) {
+            $final = [];
+            $pos = $options['pos'];
+            foreach ($data as $eventType => $events) {
+                $final[] = [
+                    'values' => $events,
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-mainFormat.phtml',
+                        'context' => ['class' => 'recordEvents'],
+                        'labelFunction'
+                            => function ($data, $driver) use ($eventType) {
+                                $mainFormat = $driver->getMainFormat();
+                                return "lido_event_type_{$mainFormat}_$eventType";
+                            },
+                    ],
+                ];
+            }
+            return $final;
+        };
+
+        $setMultiTemplateLine(
             'Events',
             'getEvents',
-            'data-mainFormat.phtml',
-            [
-                'context' => ['class' => 'recordEvents', 'title' => ""]
-            ]
+            $getEvents
         );
+
         $setTemplateLine(
             'Unit ID',
             'getUnitID',
@@ -1002,8 +1031,9 @@ class RecordDataFormatterFactory
             ]
         );
 
-        $getAccessRestrictions = function ($data, $options) use (&$pos) {
+        $getAccessRestrictions = function ($data, $options) {
             $final = [];
+            $pos = $options['pos'];
             // Check whether the first restriction element is an array. If so,
             // restrictions are grouped under subheadings.
             $useSubHeadings = is_array(array_values($data)[0]);
@@ -1265,7 +1295,7 @@ class RecordDataFormatterFactory
         );
 
         // Add arcrole-relations as multiple fields with role as field header
-        $getRelations = function ($data, $options) use (&$pos) {
+        $getRelations = function ($data, $options) {
             // Group relations by role
             $relationsByRole = [];
             foreach ($data as $relation) {
@@ -1280,6 +1310,7 @@ class RecordDataFormatterFactory
                 $relationsByRole[$role][] = $relation;
             }
             $final = [];
+            $pos = $options['pos'];
             // Add one record field for each role (might include several relations).
             foreach ($relationsByRole as $role => $relations) {
                 $final[] = [
