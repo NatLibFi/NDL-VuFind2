@@ -1384,7 +1384,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 ];
                 var_dump($vimeo);
                 if (!empty($this->streamBaseUrl) && !empty($vimeo)) {
-                    var_dump('here');
                     $streamData = $this->getStreamVideoData($vimeo);
                     $video['posterUrl'] = $streamData['poster'];
                     $video['url'] = $streamData['url'];
