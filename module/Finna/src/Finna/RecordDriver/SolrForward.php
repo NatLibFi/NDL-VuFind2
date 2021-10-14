@@ -1448,7 +1448,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $format = $isChrome ? 'mpd' : 'm3u8';
         $url = $this->getVODUrl('/playlist/' . $videoId . '.' . $format);
         $posterUrl = $this->getVODUrl('/picture/' . $videoId . '.1280.jpg');
-        $format = $isChrome ? "" : "";
         $videoSources = [
             'src' => $url,
             'type' => $format === 'mpd'
