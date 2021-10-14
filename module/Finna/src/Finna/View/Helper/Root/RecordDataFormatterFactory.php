@@ -1031,40 +1031,6 @@ class RecordDataFormatterFactory
             ]
         );
 
-        $getAccessRestrictions = function ($data, $options) {
-            $final = [];
-            $pos = $options['pos'];
-            // Check whether the first restriction element is an array. If so,
-            // restrictions are grouped under subheadings.
-            $useSubHeadings = is_array(array_values($data)[0]);
-            foreach ($data as $type => $values) {
-                $values = $useSubHeadings && $values
-                  ? array_values($values) : $values;
-                $label = $useSubHeadings ? "access_restrictions_$type" : null;
-                $final[] = [
-                    'label' => $label,
-                    'values' => $values,
-                    'options' => [
-                        'pos' => $pos++,
-                        'renderType' => 'RecordDriverTemplate',
-                        'template' => 'data-escapeHtml.phtml',
-                        'context' => [
-                            'class' => 'extendedAccess',
-                            'type' => "access_restrictions_$type",
-                            'schemaLabel' => null,
-                        ],
-                    ],
-                ];
-            }
-            return $final;
-        };
-
-        $setMultiTemplateLine(
-            'Access Restrictions Extended',
-            'getExtendedAccessRestrictions',
-            $getAccessRestrictions
-        );
-
         $setTemplateLine(
             'Terms of Use',
             'getTermsOfUse',
@@ -1121,6 +1087,41 @@ class RecordDataFormatterFactory
                 'context' => ['title' => 'Date']
             ]
         );
+
+        $getAccessRestrictions = function ($data, $options) {
+            $final = [];
+            $pos = $options['pos'];
+            // Check whether the first restriction element is an array. If so,
+            // restrictions are grouped under subheadings.
+            $useSubHeadings = is_array(array_values($data)[0]);
+            foreach ($data as $type => $values) {
+                $values = $useSubHeadings && $values
+                    ? array_values($values) : $values;
+                $label = $useSubHeadings ? "access_restrictions_$type" : null;
+                $final[] = [
+                    'label' => $label,
+                    'values' => $values,
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-escapeHtml.phtml',
+                        'context' => [
+                            'class' => 'extendedAccess',
+                            'type' => "access_restrictions_$type",
+                            'schemaLabel' => null,
+                        ],
+                    ],
+                ];
+            }
+            return $final;
+        };
+
+        $setMultiTemplateLine(
+            'Access Restrictions Extended',
+            'getExtendedAccessRestrictions',
+            $getAccessRestrictions
+        );
+
         $setTemplateLine(
             'Source of Acquisition',
             'getAcquisitionSource',
