@@ -86,8 +86,12 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
      * @param RendererInterface $renderer View renderer
      * @param Url               $url      URL helper
      */
-    public function __construct(SessionSettings $ss, Config $config,
-        FeedService $fs, RendererInterface $renderer, Url $url
+    public function __construct(
+        SessionSettings $ss,
+        Config $config,
+        FeedService $fs,
+        RendererInterface $renderer,
+        Url $url
     ) {
         $this->sessionSettings = $ss;
         $this->config = $config;
@@ -124,7 +128,10 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
             if ($feedUrl) {
                 $config = $this->getOrganisationFeedConfig($id, $feedUrl);
                 $feed = $this->feedService->readFeedFromUrl(
-                    $id, $feedUrl, $config, $homeUrl
+                    $id,
+                    $feedUrl,
+                    $config,
+                    $homeUrl
                 );
             } else {
                 $feed = $this->feedService->readFeed($id, $homeUrl);
@@ -135,7 +142,8 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
 
         if (!$feed) {
             return $this->formatResponse(
-                'Error reading feed', self::STATUS_HTTP_ERROR
+                'Error reading feed',
+                self::STATUS_HTTP_ERROR
             );
         }
 

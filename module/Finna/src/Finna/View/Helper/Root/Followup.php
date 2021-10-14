@@ -54,7 +54,8 @@ class Followup extends \Laminas\View\Helper\AbstractHelper
      *
      * @param FollowupPLugin $followup Followup controller plugin.
      */
-    public function __construct(FollowupPlugin $followup
+    public function __construct(
+        FollowupPlugin $followup
     ) {
         $this->followup = $followup;
     }

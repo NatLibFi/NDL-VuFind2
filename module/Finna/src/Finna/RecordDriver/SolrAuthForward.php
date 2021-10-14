@@ -39,13 +39,13 @@ namespace Finna\RecordDriver;
 class SolrAuthForward extends SolrAuthDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrAuthFinnaTrait;
-    use SolrForwardTrait {
+    use Feature\SolrAuthFinnaTrait;
+    use Feature\SolrForwardTrait {
         getBirthPlace as _getBirthPlace;
         getDeathPlace as _getDeathPlace;
     }
-    use XmlReaderTrait;
-    use UrlCheckTrait;
+    use Feature\FinnaXmlReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**

@@ -85,15 +85,16 @@ if ($this->fromStreetSearch) {
     <div class="list-group facets<?= $daterangeFacet ? ' daterange-facet' : '' ?> facet-group" id="side-panel-<?=$escTitle?>">
       <button class="list-group-item title<?= $isCollapsed ? ' collapsed': '' ?>" data-toggle="collapse" data-target="#<?=$dataTarget?>"><?=$this->transEsc($cluster['label'])?></button>
       <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' in' : '' ?>" data-facet="<?=$escTitle?>">
-        <?=$this->context($this)->renderInContext(
-          'Recommend/SideFacets/facet.phtml',
-          [
-            'facet' => $title,
-            'cluster' => $cluster,
-            'collapsedFacets' => $collapsedFacets,
-            'datePickerLang' => $datePickerLang
-          ]
-        ); ?>
+        <?=
+          $this->context($this)->renderInContext(
+              'Recommend/SideFacets/facet.phtml',
+              [
+                  'facet' => $title,
+                  'cluster' => $cluster,
+                  'collapsedFacets' => $collapsedFacets,
+                  'datePickerLang' => $datePickerLang
+              ]
+          )?>
       </div>
     </div>
   <?php endforeach; ?>

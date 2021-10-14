@@ -1,6 +1,6 @@
 <?php
 /**
- * RecordLink view helper
+ * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
  * PHP version 7
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * RecordLink view helper
+ * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
  *
  * @category VuFind
  * @package  View_Helpers
@@ -57,7 +57,7 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
      */
     public function __construct(\VuFind\Record\Router $router, $config)
     {
-        parent::__construct($router);
+        // parent no longer has a constructor that uses $router
         $this->datasourceConfig = $config;
     }
 
@@ -131,7 +131,9 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
         $driver = $this->getView()->plugin('record')->getDriver();
         $result .= $this->getView()->plugin('searchTabs')
             ->getCurrentHiddenFilterParams(
-                $driver->getSourceIdentifier(), false, '&'
+                $driver->getSourceIdentifier(),
+                false,
+                '&'
             );
 
         if ($filters = ($link['filter'] ?? [])) {
@@ -141,7 +143,8 @@ class RecordLink extends \VuFind\View\Helper\Root\RecordLink
                     function ($key, $val) {
                         return 'filter[]=' . urlencode("$key:$val");
                     },
-                    array_keys($filters), $filters
+                    array_keys($filters),
+                    $filters
                 )
             );
         }

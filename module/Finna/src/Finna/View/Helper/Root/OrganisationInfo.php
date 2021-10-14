@@ -86,7 +86,8 @@ class OrganisationInfo extends \Laminas\View\Helper\AbstractHelper
             || $this->config->OpeningTimesWidget->details;
 
         return $this->getView()->render(
-            'Helpers/organisation-info.phtml', [
+            'Helpers/organisation-info.phtml',
+            [
                'id' => $id,
                'buildings' => $buildings,
                'target' => $params['target'] ?? 'widget',

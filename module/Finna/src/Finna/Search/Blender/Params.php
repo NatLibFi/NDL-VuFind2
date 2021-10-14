@@ -76,7 +76,8 @@ class Params extends \Finna\Search\Solr\Params
      * @param \Laminas\Config\Config       $blenderConfig   Blender configuration
      * @param array                        $mappings        Blender mappings
      */
-    public function __construct(\VuFind\Search\Base\Options $options,
+    public function __construct(
+        \VuFind\Search\Base\Options $options,
         \VuFind\Config\PluginManager $configLoader,
         HierarchicalFacetHelper $facetHelper,
         AuthorityHelper $authorityHelper,
@@ -86,7 +87,11 @@ class Params extends \Finna\Search\Solr\Params
         $mappings
     ) {
         parent::__construct(
-            $options, $configLoader, $facetHelper, $authorityHelper, $dateConverter
+            $options,
+            $configLoader,
+            $facetHelper,
+            $authorityHelper,
+            $dateConverter
         );
 
         $this->secondaryParams = $secondaryParams;

@@ -183,8 +183,10 @@ class Bootstrapper
         $sm = $this->event->getApplication()->getServiceManager();
         $callback = function ($event) use ($sm) {
             // Open REMS registration form after Suomifi login
-            $lightboxUrl = $sm->get('ViewHelperManager')
-                ->get('url')->__invoke('r2feedback-form', ['id' => 'R2Register']);
+            $lightboxUrl = ($sm->get('ViewHelperManager')->get('url'))(
+                'r2feedback-form',
+                ['id' => 'R2Register']
+            );
 
             $followup = $sm->get(\Laminas\Mvc\Controller\PluginManager::class)
                 ->get(\VuFind\Controller\Plugin\Followup::class);
@@ -196,7 +198,9 @@ class Bootstrapper
         };
 
         $sm->get('SharedEventManager')->attach(
-            'Finna\Auth\Suomifi', \Finna\Auth\Suomifi::EVENT_LOGIN, $callback
+            'Finna\Auth\Suomifi',
+            \Finna\Auth\Suomifi::EVENT_LOGIN,
+            $callback
         );
     }
 
@@ -217,7 +221,9 @@ class Bootstrapper
         };
 
         $sm->get('SharedEventManager')->attach(
-            'Finna\Auth\Suomifi', \Finna\Auth\Suomifi::EVENT_LOGOUT, $callback
+            'Finna\Auth\Suomifi',
+            \Finna\Auth\Suomifi::EVENT_LOGOUT,
+            $callback
         );
     }
 
@@ -245,7 +251,8 @@ class Bootstrapper
 
         $sm->get('SharedEventManager')->attach(
             'Finna\Service\RemsService',
-            \Finna\Service\RemsService::EVENT_USER_REGISTERED, $callback
+            \Finna\Service\RemsService::EVENT_USER_REGISTERED,
+            $callback
         );
     }
 
@@ -279,7 +286,8 @@ class Bootstrapper
                 $format = 'H:i';
                 $time = $sm->get(\VuFind\Date\Converter::class)
                     ->convertToDisplayDateAndTime(
-                        $format, date($format, $expirationTime->getTimeStamp())
+                        $format,
+                        date($format, $expirationTime->getTimeStamp())
                     );
                 $messages[$key] = ['%%expire%%' => $time];
                 $session->messages = $messages;

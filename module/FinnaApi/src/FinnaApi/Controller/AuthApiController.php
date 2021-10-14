@@ -65,7 +65,8 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
             // Disable session writes
             $this->disableSessionWrites();
             $headers->addHeaderLine(
-                'Access-Control-Allow-Methods', 'GET, POST, OPTIONS'
+                'Access-Control-Allow-Methods',
+                'GET, POST, OPTIONS'
             );
             $headers->addHeaderLine('Access-Control-Max-Age', '86400');
 
@@ -98,7 +99,8 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
             $config = [];
             try {
                 $config = $catalog->getConfig(
-                    'patronLogin', ['cat_username' => "$target.username"]
+                    'patronLogin',
+                    ['cat_username' => "$target.username"]
                 );
             } catch (\Exception $e) {
                 // nevermind
@@ -152,7 +154,10 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
 
         if (empty($username) || empty($password)) {
             return $this->output(
-                [], self::STATUS_ERROR, 400, 'Missing parameters'
+                [],
+                self::STATUS_ERROR,
+                400,
+                'Missing parameters'
             );
         }
 
@@ -160,7 +165,10 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
             $targets = $this->getAvailableLoginTargets();
             if (!in_array($target, $targets)) {
                 return $this->output(
-                    [], self::STATUS_ERROR, 400, 'Invalid login target'
+                    [],
+                    self::STATUS_ERROR,
+                    400,
+                    'Invalid login target'
                 );
             }
             $username = "$target.$username";
@@ -169,7 +177,8 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
         $config = [];
         try {
             $config = $catalog->getConfig(
-                'patronLogin', ['cat_username' => $username]
+                'patronLogin',
+                ['cat_username' => $username]
             );
         } catch (\Exception $e) {
             // nevermind
@@ -177,7 +186,10 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
         $loginMethod = $config['loginMethod'] ?? 'password';
         if (in_array($loginMethod, ['vufind', 'email'])) {
             return $this->output(
-                [], self::STATUS_ERROR, 400, 'Invalid login target'
+                [],
+                self::STATUS_ERROR,
+                400,
+                'Invalid login target'
             );
         }
 

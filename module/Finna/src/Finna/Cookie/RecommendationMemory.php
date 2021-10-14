@@ -113,7 +113,10 @@ class RecommendationMemory
      * @return string
      */
     public function getDataString(
-        string $srcMod, string $rec, string $orig = '', string $recType = ''
+        string $srcMod,
+        string $rec,
+        string $orig = '',
+        string $recType = ''
     ): string {
         $data = [
             self::SOURCE_MODULE => $srcMod,

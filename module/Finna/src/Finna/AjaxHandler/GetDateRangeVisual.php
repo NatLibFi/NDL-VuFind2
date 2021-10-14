@@ -67,8 +67,10 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
      * @param ConfigManager   $config  Config loader
      * @param ResultsManager  $results Results manager
      */
-    public function __construct(SessionSettings $ss,
-        ConfigManager $config, ResultsManager $results
+    public function __construct(
+        SessionSettings $ss,
+        ConfigManager $config,
+        ResultsManager $results
     ) {
         $this->sessionSettings = $ss;
         $this->configManager = $config;

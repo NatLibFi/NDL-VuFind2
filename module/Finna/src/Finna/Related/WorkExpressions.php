@@ -89,7 +89,8 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
      * @param \VuFindSearch\Service  $search       Search service
      * @param \Laminas\Config\Config $searchConfig Search configuration
      */
-    public function __construct(\VuFindSearch\Service $search,
+    public function __construct(
+        \VuFindSearch\Service $search,
         \Laminas\Config\Config $searchConfig
     ) {
         $this->searchService = $search;

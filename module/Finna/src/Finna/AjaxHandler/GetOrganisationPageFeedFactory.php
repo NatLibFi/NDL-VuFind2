@@ -60,7 +60,9 @@ class GetOrganisationPageFeedFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -70,7 +72,7 @@ class GetOrganisationPageFeedFactory
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Config\PluginManager::class)
                 ->get('rss-organisation-page'),
-            $container->get('Finna\Feed\Feed'),
+            $container->get(\Finna\Feed\Feed::class),
             $container->get('ViewRenderer'),
             $container->get('ControllerPluginManager')->get('url')
         );

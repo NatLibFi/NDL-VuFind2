@@ -77,12 +77,18 @@ trait OnlinePaymentModuleTrait
      * - response => Response body
      */
     protected function postRequest(
-        $url, $body, $options = [], $headers = [],
-        $username = null, $password = null
+        $url,
+        $body,
+        $options = [],
+        $headers = [],
+        $username = null,
+        $password = null
     ) {
         try {
             $client = $this->http->createClient(
-                $url, \Laminas\Http\Request::METHOD_POST, 30
+                $url,
+                \Laminas\Http\Request::METHOD_POST,
+                30
             );
             if (!empty($username) && !empty($password)) {
                 $client->setAuth($username, $password);

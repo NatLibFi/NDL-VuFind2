@@ -72,7 +72,8 @@ class EdsController extends \VuFind\Controller\EdsController
         $ticks = [-1000, 0, 900, 1800, 1900];
         if (!empty($config->Site->advSearchYearScale)) {
             $ticks = array_map(
-                'trim', explode(',', $config->Site->advSearchYearScale)
+                'trim',
+                explode(',', $config->Site->advSearchYearScale)
             );
         }
         $rangeEnd = date('Y', strtotime('+1 year'));

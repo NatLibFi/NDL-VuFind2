@@ -80,8 +80,10 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
      * @param \VuFindHttp\HttpService $http       HTTP service
      * @param TranslatorInterface     $translator Translator
      */
-    public function __construct(\Laminas\Config\Config $config,
-        \VuFindHttp\HttpService $http, TranslatorInterface $translator
+    public function __construct(
+        \Laminas\Config\Config $config,
+        \VuFindHttp\HttpService $http,
+        TranslatorInterface $translator
     ) {
         $this->config = $config;
         $this->http = $http;
@@ -127,8 +129,14 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
      * @return boolean success
      */
     protected function createTransaction(
-        $orderNumber, $driver, $userId, $patronId, $amount, $transactionFee,
-        $currency, $fines
+        $orderNumber,
+        $driver,
+        $userId,
+        $patronId,
+        $amount,
+        $transactionFee,
+        $currency,
+        $fines
     ) {
         $t = $this->getTable('transaction')->createTransaction(
             $orderNumber,

@@ -83,7 +83,10 @@ class GetRecordData extends \VuFind\AjaxHandler\AbstractBase
      * @param Loader            $loader   Record loader
      * @param RendererInterface $renderer Renderer
      */
-    public function __construct(array $config, Request $request, Loader $loader,
+    public function __construct(
+        array $config,
+        Request $request,
+        Loader $loader,
         RendererInterface $renderer
     ) {
         $this->config = $config;

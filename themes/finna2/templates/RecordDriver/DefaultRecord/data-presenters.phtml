@@ -3,7 +3,7 @@
   <div class="truncate-field">
     <?php if (!empty($data['presenters'])): ?>
       <?php foreach($data['presenters'] as $index => $author): ?>
-        <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+        <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null, 'showInlineInfo' => true])?>
       <?php endforeach; ?>
     <br/>
     <?php endif; ?>

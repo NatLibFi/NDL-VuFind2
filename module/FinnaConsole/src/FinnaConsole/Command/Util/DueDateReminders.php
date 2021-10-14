@@ -63,7 +63,7 @@ class DueDateReminders extends AbstractUtilCommand
     /**
      * Date format for due dates in database.
      */
-    const DUE_DATE_FORMAT = 'Y-m-d H:i:s';
+    public const DUE_DATE_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * ILS connection.
@@ -519,8 +519,7 @@ class DueDateReminders extends AbstractUtilCommand
             'type' => 'reminder',
             'key' => $key
         ];
-        $unsubscribeUrl
-            = $this->urlHelper->__invoke('myresearch-unsubscribe')
+        $unsubscribeUrl = ($this->urlHelper)('myresearch-unsubscribe')
             . '?' . http_build_query($urlParams);
 
         $urlParts = explode('/', $this->currentViewPath);

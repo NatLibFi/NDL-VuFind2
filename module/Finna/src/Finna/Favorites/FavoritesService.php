@@ -62,8 +62,11 @@ class FavoritesService extends \VuFind\Favorites\FavoritesService
      * @param RecordCache       $cache             Record cache
      * @param UserResourceTable $userResourceTable User Resource join table
      */
-    public function __construct(UserListTable $userList, ResourceTable $resource,
-        RecordCache $cache = null, UserResourceTable $userResourceTable
+    public function __construct(
+        UserListTable $userList,
+        ResourceTable $resource,
+        RecordCache $cache = null,
+        UserResourceTable $userResourceTable
     ) {
         $this->recordCache = $cache;
         $this->userListTable = $userList;

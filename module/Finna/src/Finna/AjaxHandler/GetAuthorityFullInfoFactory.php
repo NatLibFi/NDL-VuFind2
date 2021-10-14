@@ -60,7 +60,9 @@ class GetAuthorityFullInfoFactory implements FactoryInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -78,7 +80,8 @@ class GetAuthorityFullInfoFactory implements FactoryInterface
             $resultsManager,
             $tablePluginManager->get(\VuFind\Db\Table\Search::class),
             new \Laminas\Session\Container(
-                'Authority', $container->get(\Laminas\Session\SessionManager::class)
+                'Authority',
+                $container->get(\Laminas\Session\SessionManager::class)
             ),
             $container->get(\Laminas\Session\SessionManager::class)
         );

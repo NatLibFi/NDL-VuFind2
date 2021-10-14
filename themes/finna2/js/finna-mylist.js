@@ -311,11 +311,6 @@ finna.myList = (function finnaMyList() {
     //Init mobile navigation collapse after list has been reloaded
     finna.layout.initMobileNarrowSearch();
 
-    // Checkbox select all
-    $('.mylist-controls-bar .checkbox-select-all').off('change').change(function onChangeSelectAll() {
-      $('.myresearch-row .checkbox-select-item').prop('checked', $(this).is(':checked'));
-    });
-
     if (!isDefaultList) {
       toggleTitleEditable(true);
 
@@ -447,7 +442,7 @@ finna.myList = (function finnaMyList() {
   }
 
   function initListeners() {
-    $(document).on('finna:openEditable', function(event) {
+    $(document).on('finna:openEditable', function onOpenEditable(event) {
       if (event.editable.element.hasClass('list-description')
         || event.editable.element.hasClass('resource-note')
       ) {
@@ -468,14 +463,14 @@ finna.myList = (function finnaMyList() {
       }
     });
 
-    $(document).on('click', function onClickDocument(event) {
+    $(document).on('click', function onClickDocument(/*event*/) {
       // Close editable and save when user clicks outside the editable
       if (mdEditable) {
         mdEditable.closeEditable();
       }
     });
 
-    $(document).on('finna:editableClosed', function(event) {
+    $(document).on('finna:editableClosed', function onEditableClosed(event) {
       if (event.editable.element.hasClass('list-description')) {
         updateList({}, listDescriptionChanged, 'desc');
       }

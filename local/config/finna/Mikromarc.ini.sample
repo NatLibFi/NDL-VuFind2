@@ -55,6 +55,16 @@ titleHoldBibLevels[] = collectionpart
 ; and "frozenThrough".
 updateFields = pickUpLocation:frozen:frozenThrough
 
+; Optional help texts that can be displayed on the hold form. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;helpText[*] = "Default help text used if not overridden."
+;helpText[en-gb] = "Help text for British English localization."
+
+; Optional help texts that can be displayed on the hold update form. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;updateHelpText[*] = "Hold update default help text used if not overridden."
+;updateHelpText[en-gb] = "Hold update help text for British English localization."
+
 [Holdings]
 ; By default the holdings location list is sorted alphabetically. This setting can be
 ; used to manually set the order by entering location IDs as a colon-separated list.
