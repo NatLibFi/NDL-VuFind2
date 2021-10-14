@@ -467,7 +467,7 @@ class DueDateReminders extends AbstractUtilCommand
             );
             return false;
         }
-
+                
         [$userInstitution, ] = explode(':', $user['username'], 2);
 
         if (!$this->currentInstitution
@@ -539,6 +539,7 @@ class DueDateReminders extends AbstractUtilCommand
         $loginMethod = strtolower($user->auth_method);
         $dateFormat = $this->currentSiteConfig['Site']['displayDateFormat']
             ?? $this->mainConfig->Site->displayDateFormat;
+        $firstname = $user->firstname ?? '';
 
         $params = [
             'loans' => $remindLoans,
@@ -547,7 +548,8 @@ class DueDateReminders extends AbstractUtilCommand
             'lastLogin' => $lastLogin->format($dateFormat),
             'loginMethod' => $loginMethod,
             'serviceName' => $serviceName,
-            'userInstitution' => $userInstitution
+            'userInstitution' => $userInstitution,
+            'firstname' => $firstname
         ];
 
         $urlHelper = $this->urlHelper;

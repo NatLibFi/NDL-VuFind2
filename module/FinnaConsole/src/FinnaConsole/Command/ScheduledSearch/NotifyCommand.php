@@ -294,4 +294,51 @@ EOT
         }
         $this->msg('Done processing searches');
     }
+    
+    /**
+     * Build the email message.
+     *
+     * @param \VuFind\Db\Row\Search       $s            Search table row
+     * @param \VuFind\Db\Row\User         $user         User owning search row
+     * @param \VuFind\Search\Base\Results $searchObject Search results object
+     * @param array                       $newRecords   New results in search
+     *
+     * @return string
+     */
+    protected function buildEmail($s, $user, $searchObject, $newRecords)
+    {
+        $firstname = $user->firstname ?? '';
+        $viewBaseUrl = $searchUrl = $s->notification_base_url;
+        $searchUrl .= $this->urlHelper->__invoke(
+            $searchObject->getOptions()->getSearchAction()
+        ) . $searchObject->getUrlQuery()->getParams(false);
+        $secret = $s->getUnsubscribeSecret($this->hmac, $user);
+        $unsubscribeUrl = $s->notification_base_url
+            . $this->urlHelper->__invoke('myresearch-unsubscribe')
+            . "?id={$s->id}&key=$secret";
+        $userInstitution = $this->mainConfig->Site->institution;
+        $params = $searchObject->getParams();
+        // Filter function to only pass along selected checkboxes:
+        $selectedCheckboxes = function ($data) {
+            return $data['selected'] ?? false;
+        };
+        $viewParams = [
+            'records' => $newRecords,
+            'info' => [
+                'baseUrl' => $viewBaseUrl,
+                'description' => $params->getDisplayQuery(),
+                'recordCount' => count($newRecords),
+                'url' => $searchUrl,
+                'unsubscribeUrl' => $unsubscribeUrl,
+                'checkboxFilters' => array_filter(
+                    $params->getCheckboxFacets(), $selectedCheckboxes
+                ),
+                'filters' => $params->getFilterList(true),
+                'userInstitution' => $userInstitution,
+                'firstname' => $firstname
+             ]
+        ];
+        return $this->renderer
+            ->render('Email/scheduled-alert.phtml', $viewParams);
+    }
 }
