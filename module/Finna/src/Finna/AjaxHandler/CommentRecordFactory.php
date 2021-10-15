@@ -63,7 +63,9 @@ class CommentRecordFactory implements FactoryInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -80,7 +82,7 @@ class CommentRecordFactory implements FactoryInterface
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
             $capabilities->getCommentSetting() !== 'disabled',
             $tablePluginManager->get(\VuFind\Db\Table\Comments::class),
-            $tablePluginManager->get('Finna\Db\Table\CommentsRecord'),
+            $tablePluginManager->get(\Finna\Db\Table\CommentsRecord::class),
             $container->get(\VuFind\Search\SearchRunner::class)
         );
     }

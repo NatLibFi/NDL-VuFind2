@@ -49,8 +49,12 @@ class UserResource extends \VuFind\Db\Table\UserResource
      *
      * @return void
      */
-    public function createOrUpdateLink($resource_id, $user_id, $list_id,
-        $notes = '', $order = null
+    public function createOrUpdateLink(
+        $resource_id,
+        $user_id,
+        $list_id,
+        $notes = '',
+        $order = null
     ) {
         $row = parent::createOrUpdateLink($resource_id, $user_id, $list_id, $notes);
         $row->finna_custom_order_index = $order;

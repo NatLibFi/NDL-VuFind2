@@ -10,7 +10,7 @@
       <?php $i = 0; ?>
       <?php foreach ($records as $data): ?>
         <div class="list-group-item<?=++$i > $limit ? ' hidden' : ''?>">
-          <a href="<?=$this->recordLink()->getUrl($data)?>">
+          <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($data))?>">
             <?=$this->escapeHtml($data->getTitle())?>
           </a>
           <div class="details">

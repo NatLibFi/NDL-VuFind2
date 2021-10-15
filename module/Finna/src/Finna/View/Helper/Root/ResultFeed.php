@@ -77,9 +77,9 @@ class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
             empty($title) ? $this->translate('Title not available') : $title
         );
         $serverUrl = $this->getView()->plugin('serverUrl');
-        $recordLink = $this->getView()->plugin('recordLink');
+        $recordLinker = $this->getView()->plugin('recordLinker');
         try {
-            $url = $serverUrl($recordLink->getUrl($record));
+            $url = $serverUrl($recordLinker->getUrl($record));
         } catch (\Laminas\Router\Exception\RuntimeException $e) {
             // No route defined? See if we can get a URL out of the driver.
             // Useful for web results, among other things.
@@ -93,7 +93,8 @@ class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
         if ($this->list) {
             if (method_exists($record, 'getListSavedDate')) {
                 $saved = $record->getListSavedDate(
-                    $this->list->id, $this->list->user_id
+                    $this->list->id,
+                    $this->list->user_id
                 );
                 if ($saved) {
                     $entry->setDateModified(new \DateTime($saved));

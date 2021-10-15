@@ -62,7 +62,8 @@ class CheckRequestsAreValid extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         $id = $params->fromPost('id', $params->fromQuery('id'));
         $data = $params->fromPost('data', $params->fromQuery('data'));
         $requestType = $params->fromPost(
-            'requestType', $params->fromQuery('requestType')
+            'requestType',
+            $params->fromQuery('requestType')
         );
         if (!empty($id) && !empty($data)) {
             try {
@@ -73,7 +74,9 @@ class CheckRequestsAreValid extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                         switch ($requestType) {
                         case 'ILLRequest':
                             $result = $this->ils->checkILLRequestIsValid(
-                                $id, $item, $patron
+                                $id,
+                                $item,
+                                $patron
                             );
 
                             if (is_array($result)) {
@@ -88,7 +91,9 @@ class CheckRequestsAreValid extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                         case 'StorageRetrievalRequest':
                             $result = $this->ils
                                 ->checkStorageRetrievalRequestIsValid(
-                                    $id, $item, $patron
+                                    $id,
+                                    $item,
+                                    $patron
                                 );
 
                             if (is_array($result)) {
@@ -102,7 +107,9 @@ class CheckRequestsAreValid extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
                             break;
                         default:
                             $result = $this->ils->checkRequestIsValid(
-                                $id, $item, $patron
+                                $id,
+                                $item,
+                                $patron
                             );
 
                             if (is_array($result)) {
@@ -128,7 +135,8 @@ class CheckRequestsAreValid extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
         }
 
         return $this->formatResponse(
-            $this->translate('An error has occurred'), self::STATUS_HTTP_ERROR
+            $this->translate('An error has occurred'),
+            self::STATUS_HTTP_ERROR
         );
     }
 }

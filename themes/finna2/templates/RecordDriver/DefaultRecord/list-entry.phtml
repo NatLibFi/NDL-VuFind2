@@ -44,7 +44,7 @@
         <div class="resultItemLine1">
           <?php $missing = $this->driver instanceof \VuFind\RecordDriver\Missing; ?>
           <?php if (!$missing): ?>
-            <a href="<?=$this->recordLink()->getUrl($this->driver)?>">
+            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>">
           <?php endif; ?>
           <h3><?=$this->record($this->driver)->getTitleHtml()?></h3>
           <?php if (!$missing): ?>
@@ -117,8 +117,9 @@
           <?php endif; ?>
 
           <?php $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
-              null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
-              $user_id, 'tag'
+                null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
+                $user_id,
+                'tag'
             ) : [];
           ?>
           <?php if (count($listTags) > 0): ?>

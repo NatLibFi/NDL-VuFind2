@@ -25,6 +25,7 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -39,21 +40,22 @@ namespace Finna\RecordDriver;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrLido extends \VuFind\RecordDriver\SolrDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use XmlReaderTrait;
-    use UrlCheckTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\FinnaXmlReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Map from site locale to Lido language codes.
      */
-    const LANGUAGE_CODES = [
+    public const LANGUAGE_CODES = [
         'fi' => ['fi','fin'],
         'sv' => ['sv','swe'],
         'en-gb' => ['en','eng']
@@ -105,7 +107,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -142,7 +146,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $type = strtolower((string)$right->conceptID->attributes()->type);
                 if ($type == 'copyright') {
                     $term = (string)$this->getLanguageSpecificItem(
-                        $right->term, $language
+                        $right->term,
+                        $language
                     );
                     if ($term) {
                         $restrictions[] = $term;
@@ -289,7 +294,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
             if (!empty($resourceSet->rightsResource->rightsType->term)) {
                 $term = (string)$this->getLanguageSpecificItem(
-                    $resourceSet->rightsResource->rightsType->term, $language
+                    $resourceSet->rightsResource->rightsType->term,
+                    $language
                 );
                 if (!isset($rights['copyright']) || $rights['copyright'] !== $term) {
                     $rights['description'][] = $term;
@@ -316,7 +322,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     );
                     $format = strtolower($format);
                     $formatDisallowed = in_array(
-                        $format, $this->undisplayableFileFormats
+                        $format,
+                        $this->undisplayableFileFormats
                     );
                     if ($formatDisallowed) {
                         continue;
@@ -538,8 +545,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $settings[$setting] = $iniData->$setting;
             }
         }
-        $modelImages = 'model_preview_images';
-        $datasource = $this->getDataSource();
         $settings['previewImages'] = $this->allowModelPreviewImages();
         return $settings;
     }
@@ -702,14 +707,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
                     $date = $this->dateConverter
                         ? $this->dateConverter->convertToDisplayDate(
-                            $startDateType, $startDate
+                            $startDateType,
+                            $startDate
                         )
                         : $startDate;
 
                     if ($startDate != $endDate) {
                         $date .= '-' . ($this->dateConverter
                             ? $this->dateConverter->convertToDisplayDate(
-                                $endDateType, $endDate
+                                $endDateType,
+                                $endDate
                             )
                             : $endDate);
                     }
@@ -820,7 +827,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
             }
             $culture = (string)($node->culture->term ?? '');
-            $description = (string)($node->eventDescriptionSet->descriptiveNoteValue
+            $description = (string)(
+                $node->eventDescriptionSet->descriptiveNoteValue
                 ?? ''
             );
 
@@ -1287,7 +1295,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    protected function getIdentifiersByType(string $xpathRule, bool $includeType
+    protected function getIdentifiersByType(
+        string $xpathRule,
+        bool $includeType
     ): array {
         $results = [];
         foreach ($this->getXmlRecord()->xpath(
@@ -1385,6 +1395,28 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 ? (string)$this->fields['description'] : '';
         }
         return array_unique($results);
+    }
+
+    /**
+     * Get introduction.
+     *
+     * @return array
+     */
+    public function getIntroduction()
+    {
+        $results = [];
+        $preferredLanguages = $this->getPreferredLanguageCodes();
+        foreach ($this->getXmlRecord()->xpath(
+            'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
+            . '/objectDescriptionSet[@type="introduction"]/descriptiveNoteValue'
+        ) as $node) {
+            if (in_array((string)$node->attributes()->lang, $preferredLanguages)) {
+                if ($term = trim((string)$node)) {
+                    $results[] = $term;
+                }
+            }
+        }
+        return $results;
     }
 
     /**

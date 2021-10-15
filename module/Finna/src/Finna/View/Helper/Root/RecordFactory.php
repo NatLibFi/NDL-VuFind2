@@ -58,7 +58,9 @@ class RecordFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -71,7 +73,8 @@ class RecordFactory implements FactoryInterface
             $container->get(\Finna\Search\Solr\AuthorityHelper::class),
             $container->get('ViewHelperManager')->get('url'),
             $container->get('ViewHelperManager')->get('recordLink'),
-            $container->get(\VuFind\RecordTab\TabManager::class)
+            $container->get(\VuFind\RecordTab\TabManager::class),
+            $container->get(\VuFind\Form\Form::class)
         );
         if ('cli' !== php_sapi_name()) {
             $helper->setCoverRouter(

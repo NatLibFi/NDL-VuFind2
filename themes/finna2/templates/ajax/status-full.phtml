@@ -274,7 +274,7 @@ foreach ($this->statusItems as $item):
 
 <div class="actions">
 <?php
-$holdingsLink = $this->recordLink()->getUrl($driver);
+$holdingsLink = $this->recordLinker()->getUrl($driver);
 $disableTitleHold = isset($summary['holdable']) && !$summary['holdable'];
 
 if (!$disableTitleHold
@@ -297,17 +297,17 @@ if (!$disableTitleHold
       } else {
         $holdingTitleHold = $driver ? $driver->tryMethod('getRealTimeTitleHold') : false;
         if (!empty($holdingTitleHold)) {
-          $link = $this->recordLink()->getRequestUrl($holdingTitleHold);
+          $link = $this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdingTitleHold));
         }
       }
       if ($link) {
         if ($logged) {
 ?>
-      <a href="<?=$link?>" class="placehold btn btn-primary hidden-print" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $driver->getTitle()) ?>" data-lightbox><?=$this->transEsc('title_hold_place')?><span class="sr-only">: <?=$driver->getTitle()?></span></a>
+      <a href="<?=$link?>" class="placehold btn btn-primary hidden-print" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $driver->getTitle()) ?>" data-lightbox><?=$this->transEsc('title_hold_place')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
 <?php
         } else {
 ?>
-      <a href="<?=$link?>" class="login btn btn-primary hidden-print" data-lightbox><?=$this->transEsc('title_hold_login')?><span class="sr-only">: <?=$driver->getTitle()?></span></a>
+      <a href="<?=$link?>" class="login btn btn-primary hidden-print" data-lightbox><?=$this->transEsc('title_hold_login')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
 <?php
         }
       }

@@ -26,32 +26,30 @@ use_nonce = true
 ; https://vufind.org/wiki/administration:security:content_security_policy
 [Directives]
 default-src[] = "'none'"
-script-src[] = "'strict-dynamic'"
+;script-src[] = "'strict-dynamic'"
 ; 'unsafe-inline' is set for compatibility with older or buggy browsers. Newer ones
 ; will ignore it.
-script-src[] = "'unsafe-inline'"
+;script-src[] = "'unsafe-inline'"
+script-src[] = "'report-sample'"
 script-src[] = "'self'"
 script-src[] = "http:"
 script-src[] = "https:"
+script-src[] = "wss:"
+script-src[] = "blob:"
 connect-src[] = "'self'"
-style-src[] = "'self'"
+
+style-src[] = "*"
 style-src[] = "'unsafe-inline'"
-img-src[] = "'self'"
+img-src[] = "*"
 img-src[] = "data:"
-; If you are using MapSelection recommendation module, uncommnent a line below
-; for basemap you are using:
-;img-src[] = "https://maps.wikimedia.org"
-;img-src[] = "http://tile.stamen.com"
-;img-src[] = "http://basemaps.cartocdn.com"
-font-src[] = "'self'"
+media-src[] = "*"
+font-src[] = "*"
 font-src[] = "data:"
 base-uri[] = "'self'"
 ; Set URI which browser should use to report CSP violation; you should provide URL
 ; when you enable report_only
 ;report-to[] = 'https://example.report-uri.com'
 ; Finna-specific:
-img-src[] = "https://kirkanta.kirjastot.fi"
-img-src[] = "https://museot.fi"
-img-src[] = "http://map-api.finna.fi"
-img-src[] = "https://map-api.finna.fi"
 manifest-src[] = "'self'"
+; At least Chrome needs this for videos:
+media-src[] = "blob:"

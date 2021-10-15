@@ -4,15 +4,15 @@
   $activeTree = $this->tab->getActiveTree();
 
   $this->inlineScript(
-     \Laminas\View\Helper\HeadScript::SCRIPT,
-     "var hierarchySettings = {\n"
-     . "    lightboxMode: " . ($this->layout()->getTemplate() == 'layout/lightbox' ? 'true' : 'false') . ",\n"
-     . "    fullHierarchy: " . ($this->tab->isFullHierarchyVisible() ? 'true' : 'false') . "\n"
-     . "};\n",
-     'SET'
+      \Laminas\View\Helper\HeadScript::SCRIPT,
+      "var hierarchySettings = {\n"
+      . "    lightboxMode: " . ($this->layout()->getTemplate() == 'layout/lightbox' ? 'true' : 'false') . ",\n"
+      . "    fullHierarchy: " . ($this->tab->isFullHierarchyVisible() ? 'true' : 'false') . "\n"
+      . "};\n",
+      'SET'
   );
   $this->jsTranslations()->addStrings(
-    ['showTree' => 'hierarchy_show_tree', 'hideTree' => 'hierarchy_hide_tree']
+      ['showTree' => 'hierarchy_show_tree', 'hideTree' => 'hierarchy_hide_tree']
   );
   $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'vendor/jsTree/jstree.min.js');
   $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'hierarchyTree.js');
@@ -27,7 +27,7 @@
       <?php if($activeTree == $hierarchy): ?>
         <i class="fa fa-sitemap" aria-hidden="true"></i> <?=$this->escapeHtml($hierarchyTitle)?>
       <?php else: ?>
-        <i class="fa fa-sitemap text-muted" aria-hidden="true"></i> <a href="<?=$this->recordLink()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID])?>"><?=$this->escapeHtml($hierarchyTitle)?></a>
+        <i class="fa fa-sitemap text-muted" aria-hidden="true"></i> <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>"><?=$this->escapeHtml($hierarchyTitle)?></a>
       <?php endif; ?>
     <?php endforeach; ?>
   </div>
@@ -36,10 +36,10 @@
   <div id="hierarchyTreeHolder">
     <div id="hierarchyLoading" class="hide"><i class="fa fa-spinner fa-spin" aria-hidden="true"></i> <?=$this->transEsc("Loading")?>...</div>
     <div id="hierarchyTree" class="hierarchy-tree">
-      <input type="hidden" value="<?=$this->escapeHtml($this->driver->getUniqueId())?>" class="hiddenRecordId" />
-      <input type="hidden" value="<?=$this->escapeHtml($activeTree)?>" class="hiddenHierarchyId" />
-      <input type="hidden" value="<?=$this->escapeHtml($this->driver->getSourceIdentifier())?>" class="hiddenRecordSource" />
-      <input type="hidden" value="<?=$this->treeContext ?? 'Record'?>" class="hiddenContext" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenRecordId" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($activeTree)?>" class="hiddenHierarchyId" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenRecordSource" />
+      <input type="hidden" value="<?=$this->escapeHtmlAttr($this->treeContext ?? 'Record')?>" class="hiddenContext" />
     </div>
     <div class="back-to-up hidden"><?=$this->transEsc("Back to top")?> <i class="fa fa-arrow-up"></i></div>
   </div>

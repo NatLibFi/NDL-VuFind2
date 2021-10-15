@@ -4,7 +4,7 @@
 <?php $currentTabClass = $this->layout()->currentTabId ? ' tab-' . preg_replace('/[^a-z0-9]/', '', strtolower($this->layout()->currentTabId)) : '' ?>
 <html lang="<?=$this->layout()->userLang?>"<?php if ($this->layout()->rtl): ?> dir="rtl"<?php endif; ?>>
   <head>
-    <?php $this->headThemeResources() ?>
+    <?php $this->setupThemeResources(); ?>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <?php // Turn off automatic telephone number detection on iOS ?>
@@ -27,12 +27,12 @@
     <?php
       // Set up OpenSearch link:
       $this->headLink(
-        [
-          'href' => $this->url('search-opensearch') . '?method=describe',
-          'type' => 'application/opensearchdescription+xml',
-          'title' => $this->transEsc('Library Catalog Search'),
-          'rel' => 'search'
-        ]
+          [
+              'href' => $this->url('search-opensearch') . '?method=describe',
+              'type' => 'application/opensearchdescription+xml',
+              'title' => $this->transEsc('Library Catalog Search'),
+              'rel' => 'search'
+          ]
       );
 
       $finnaSurvey = in_array($this->layout()->templateDir, ['search', 'record']) && $this->finnaSurvey()->isEnabled();
@@ -49,7 +49,7 @@
 
       // Set global variables for Javascript code:
       $this->headScript()->prependScript(
-        'var userIsLoggedIn = ' . ($this->auth()->isLoggedIn() ? 'true' : 'false') . ';'
+          'var userIsLoggedIn = ' . ($this->auth()->isLoggedIn() ? 'true' : 'false') . ';'
       );
 
       if (!isset($this->renderingError)) {
@@ -105,10 +105,12 @@
         $translations = $this->render('js-translations.phtml');
       }
       $dsb = DEFAULT_SEARCH_BACKEND;
+      $cspNonce = $this->cspNonce();
       $appendScripts[] = <<<JS
 VuFind.path = '{$root}';
 VuFind.defaultSearchBackend = '{$dsb}';
 VuFind.addTranslations({$translations});
+VuFind.setCspNonce('{$cspNonce}');
 JS;
       $this->headScript()->appendScript(implode("\n", $appendScripts));
     ?>
@@ -274,25 +276,7 @@ JS;
       ): ?>
       <nav class="breadcrumbs hidden-print" aria-label="<?=$this->transEsc('Breadcrumbs') ?>">
         <div class="container">
-          <ul class="breadcrumb">
-            <?php if (is_array($this->layout()->breadcrumbs)): ?>
-              <?php if (count($this->layout()->breadcrumbs) > 1): ?>
-                <?=$this->render('breadcrumbs/multi.phtml', [
-                    'parents' => $this->layout()->breadcrumbs,
-                    'title' => $this->layout()->title,
-                    'end' => $this->layout()->breadcrumbEnd,
-                    'from' => $this->layout()->from
-                  ]) ?>
-              <?php else: ?>
-                <?=$this->render('breadcrumbs/default.phtml', [
-                    'parents' => $this->layout()->breadcrumbs,
-                    'title' => $this->layout()->title
-                  ]) ?>
-              <?php endif; ?>
-            <?php else: ?>
-              <?=$this->layout()->breadcrumbs ?>
-            <?php endif; ?>
-          </ul>
+          <ul class="breadcrumb"><?=$this->layout()->breadcrumbs ?></ul>
         </div>
       </nav>
     <?php endif; ?>
@@ -337,6 +321,7 @@ JS;
     </footer>
     <?=$this->googleanalytics()?>
     <?=$this->piwik()?>
+    <?=$this->matomo()?>
     <?php if ($template = $this->content()->findTemplateForLng("content/Additions/general-post-body")): ?>
       <div class="container-fluid general-post-body">
         <div class="container">
@@ -362,6 +347,7 @@ EOT;
           echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
       }
     ?>
+    <?=$this->footScript() ?>
   </body>
 </html>
 <!-- END of: finna - layout/layout.phtml -->

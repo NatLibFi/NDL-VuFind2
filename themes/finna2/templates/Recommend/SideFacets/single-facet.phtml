@@ -19,6 +19,8 @@
   } elseif (!empty($this->facet['value'])) {
     $displayText = $this->escapeHtml($this->facet['value']);
   }
+
+  $displayCount = $this->localizedNumber($this->facet['count'])
 ?>
 <?php if ($hasSubLinks): ?>
   <li class="<?=implode(' ', $classList) ?>">
@@ -33,12 +35,13 @@
   <?php else: ?>
     <span class="text">
       <?=$displayText ?>
+      <span class="sr-only">, <?=$this->transEsc('result_count', ['%%count%%' => $displayCount]) ?></span>
     </span>
   <?php endif; ?>
 
   <?php if (!$this->facet['isApplied']): ?>
-    <span class="badge">
-      <?=$this->localizedNumber($this->facet['count']) ?>
+    <span class="badge" aria-hidden="true">
+      <?=$displayCount ?>
     </span>
   <?php else: ?>
     <span class="status">

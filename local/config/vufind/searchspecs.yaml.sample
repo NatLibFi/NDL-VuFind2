@@ -1,7 +1,7 @@
 ---
-# Override any of the default search settings in local/config/finna/searchspecs.yaml 
-# by copying the full section from it to this file and modifying it here. 
-# Below is a commented-out example.
+# Override any of the default search settings in local/config/finna/searchspecs.yaml
+# by copying the full section from it to this file and modifying it here.
+# Below are a couple of commented-out examples.
 
 #ISN:
 #  DismaxFields:
@@ -18,3 +18,12 @@
 #    other_ids_str_mv:
 #      - [and, 100]
 #      - [or, ~]
+
+# Boost most recent material in AllFields and Title searches:
+#GlobalExtraParams:
+#  - param: bf
+#    value: "recip(ms(NOW/YEAR,main_date),1,1000,1000)^20000"
+#    conditions:
+#      - SearchTypeIn:
+#        - AllFields
+#        - Title

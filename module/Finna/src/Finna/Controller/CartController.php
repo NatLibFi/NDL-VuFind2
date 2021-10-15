@@ -69,12 +69,14 @@ class CartController extends \VuFind\Controller\CartController
             && !$this->getUser()
         ) {
             return $this->forceLogin(
-                null, ['cartIds' => $ids, 'cartAction' => 'Email']
+                null,
+                ['cartIds' => $ids, 'cartAction' => 'Email']
             );
         }
 
         $view = $this->createEmailViewModel(
-            null, $this->translate('bulk_email_title')
+            null,
+            $this->translate('bulk_email_title')
         );
         $view->records = $this->getRecordLoader()->loadBatch($ids);
         // Set up Captcha
@@ -90,8 +92,13 @@ class CartController extends \VuFind\Controller\CartController
                 $cc = $this->params()->fromPost('ccself') && $view->from != $view->to
                     ? $view->from : null;
                 $mailer->sendRecords(
-                    $view->to, $view->from, $view->message, $view->records,
-                    $this->getViewRenderer(), $view->subject, $cc
+                    $view->to,
+                    $view->from,
+                    $view->message,
+                    $view->records,
+                    $this->getViewRenderer(),
+                    $view->subject,
+                    $cc
                 );
                 return $this->redirectToSource('success', 'bulk_email_success');
             } catch (MailException $e) {

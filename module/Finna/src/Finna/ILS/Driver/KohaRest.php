@@ -50,6 +50,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected $messagingPrefTypeMap = [
         'Advance_Notice' => 'dueDateAlert',
+        'Auto_Renewals' => 'autoRenewal',
         'Hold_Filled' => 'pickUpNotice',
         'Item_Check_in' => 'checkinNotice',
         'Item_Checkout' => 'checkoutNotice',
@@ -110,7 +111,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         if (isset($this->config['Holdings']['holdings_branch_order'])) {
             $values = explode(
-                ':', $this->config['Holdings']['holdings_branch_order']
+                ':',
+                $this->config['Holdings']['holdings_branch_order']
             );
             foreach ($values as $i => $value) {
                 $parts = explode('=', $value, 2);
@@ -280,6 +282,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         if ($this->config['Profile']['messagingSettings'] ?? true) {
             foreach ($result['messaging_preferences'] as $type => $prefs) {
                 $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
+                if (!$typeName) {
+                    continue;
+                }
                 $settings = [
                     'type' => $typeName
                 ];
@@ -654,7 +659,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $request = [
@@ -809,7 +817,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $bibId = $holdDetails['id'] ?? null;
         $itemId = $holdDetails['item_id'] ?? false;
-        $requestId = $holdDetails['requestId'] ?? false;
+        $requestId = $holdDetails['reqnum'] ?? false;
         $requestType
             = array_key_exists('StorageRetrievalRequest', $holdDetails ?? [])
                 ? 'StorageRetrievalRequests' : 'Holds';
@@ -1758,10 +1766,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         case 'Patron::Debt':
         case 'Patron::DebtGuarantees':
             $count = isset($details['current_outstanding'])
-                ? $this->safeMoneyFormat->__invoke($details['current_outstanding'])
+                ? ($this->safeMoneyFormat)($details['current_outstanding'])
                 : '-';
             $limit = isset($details['max_outstanding'])
-                ? $this->safeMoneyFormat->__invoke($details['max_outstanding'])
+                ? ($this->safeMoneyFormat)($details['max_outstanding'])
                 : '-';
             $params = [
                 '%%blockCount%%' => $count,
@@ -1858,7 +1866,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $entry['renewability_blocks']
                 );
                 $permanent = in_array(
-                    $entry['renewability_blocks'], $this->permanentRenewalBlocks
+                    $entry['renewability_blocks'],
+                    $this->permanentRenewalBlocks
                 );
                 if ($permanent) {
                     $renewals = null;

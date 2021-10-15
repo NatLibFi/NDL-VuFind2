@@ -1,40 +1,42 @@
 <!-- START of: finna - Content/help-tabs.phtml -->
-<?= $this->render('components/organisms/navigation/finna-multi-level-nav/finna-multi-level-nav.phtml',
-  [
-    'ariaLabel' => $this->translate('Help'),
-    'attributes' => [
-      'class' => ['finna-multi-level-nav-content', 'finna-multi-level-nav-lg']
-    ],
-    'brandContent' => $this->translate('tabs_' . $activeTab),
-    'collapseId' => 'nav-help-collapse',
-    'items' => [
-      [
-        'active' => 'help' === $activeTab,
-        'label' => $this->translate('tabs_help'),
-        'link' => $this->url('content-page', ['page' => 'help'])
+<?= $this->render(
+    'components/organisms/navigation/finna-multi-level-nav/finna-multi-level-nav.phtml',
+    [
+      'ariaLabel' => $this->translate('Help'),
+      'attributes' => [
+        'class' => ['finna-multi-level-nav-content', 'finna-multi-level-nav-lg']
       ],
-      [
-        'active' => 'help-basic' === $activeTab,
-        'label' => $this->translate('tabs_help-basic'),
-        'link' => $this->url('content-page', ['page' => 'help-basic']),
+      'brandContent' => $this->transEsc('tabs_' . $activeTab),
+      'collapseId' => 'nav-help-collapse',
+      'items' => [
+        [
+          'active' => 'help' === $activeTab,
+          'label' => $this->translate('tabs_help'),
+          'link' => $this->url('content-page', ['page' => 'help'])
+        ],
+        [
+          'active' => 'help-basic' === $activeTab,
+          'label' => $this->translate('tabs_help-basic'),
+          'link' => $this->url('content-page', ['page' => 'help-basic']),
+        ],
+        [
+          'active' => 'help-advanced' === $activeTab,
+          'label' => $this->translate('tabs_help-advanced'),
+          'link' => $this->url('content-page', ['page' => 'help-advanced']),
+        ],
+        [
+          'active' => 'help-syntax' === $activeTab,
+          'label' => $this->translate('tabs_help-syntax'),
+          'link' => $this->url('content-page', ['page' => 'help-syntax']),
+        ],
+        [
+          'active' => 'help-favorites' === $activeTab,
+          'label' => $this->translate('tabs_help-favorites'),
+          'link' => $this->url('content-page', ['page' => 'help-favorites']),
+        ],
       ],
-      [
-        'active' => 'help-advanced' === $activeTab,
-        'label' => $this->translate('tabs_help-advanced'),
-        'link' => $this->url('content-page', ['page' => 'help-advanced']),
-      ],
-      [
-        'active' => 'help-syntax' === $activeTab,
-        'label' => $this->translate('tabs_help-syntax'),
-        'link' => $this->url('content-page', ['page' => 'help-syntax']),
-      ],
-      [
-        'active' => 'help-favorites' === $activeTab,
-        'label' => $this->translate('tabs_help-favorites'),
-        'link' => $this->url('content-page', ['page' => 'help-favorites']),
-      ],
-    ],
-    "toggleBtnLabel" => $this->transEsc("More"),
-  ]);
+      'toggleBtnLabel' => $this->transEsc('More'),
+    ]
+);
 ?>
 <!-- END of: finna - Content/help-tabs.phtml -->

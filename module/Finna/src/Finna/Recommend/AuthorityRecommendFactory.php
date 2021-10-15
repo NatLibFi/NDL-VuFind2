@@ -61,7 +61,9 @@ class AuthorityRecommendFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -71,7 +73,8 @@ class AuthorityRecommendFactory
             $container->get(ResultsManager::class),
             $container->get(\Finna\Search\Solr\AuthorityHelper::class),
             new \Laminas\Session\Container(
-                'Authority', $container->get(\Laminas\Session\SessionManager::class)
+                'Authority',
+                $container->get(\Laminas\Session\SessionManager::class)
             ),
             $container->get(\VuFind\Cookie\CookieManager::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('config')

@@ -32,7 +32,7 @@
       <td style="width: 10%"><?=$this->escapeHtml($part['number']) ?></td>
       <td>
         <?php if (!empty($part['id'])): ?>
-          <a href="<?=$this->recordLink()->getUrl($part['id']) ?>"><?=$this->escapeHtml($part['title']) ?></a>
+          <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($part['id'])) ?>"><?=$this->escapeHtml($part['title']) ?></a>
         <?php else: ?>
           <?=$this->escapeHtml($part['title']) ?>
         <?php endif; ?>
@@ -60,21 +60,21 @@
 
 <?php
 $translations = json_encode(
-  [
-      'search' => $this->transEsc('component_parts_filter'),
-      'lengthMenu' => $this->transEsc('component_parts_show_entries'),
-      'infoFiltered' => $this->transEsc('component_parts_filtered'),
-      'info' => $this->transEsc('component_parts_entries_on_page'),
-      'paginate' => [
-        'next' => '<i class="fa fa-arrow-right"></i> <span class="sr-only">' . $this->transEsc('component_parts_next') . '</span>',
-        'previous' => '<span class="sr-only">' . $this->transEsc('component_parts_previous') . '</span> <i class="fa fa-arrow-left"></i>',
-      ],
-      'thousands' => $this->transEsc('number_thousands_separator'),
-      'aria' => [
-          'sortAscending' => ' - ' . $this->transEsc('label_sort_ascending'),
-          'sortDescending' => ' - ' . $this->transEsc('label_sort_descending'),
-      ]
-  ]
+    [
+        'search' => $this->transEsc('component_parts_filter'),
+        'lengthMenu' => $this->transEsc('component_parts_show_entries'),
+        'infoFiltered' => $this->transEsc('component_parts_filtered'),
+        'info' => $this->transEsc('component_parts_entries_on_page'),
+        'paginate' => [
+            'next' => '<i class="fa fa-arrow-right"></i> <span class="sr-only">' . $this->transEsc('component_parts_next') . '</span>',
+            'previous' => '<span class="sr-only">' . $this->transEsc('component_parts_previous') . '</span> <i class="fa fa-arrow-left"></i>',
+        ],
+        'thousands' => $this->transEsc('number_thousands_separator'),
+        'aria' => [
+            'sortAscending' => ' - ' . $this->transEsc('label_sort_ascending'),
+            'sortDescending' => ' - ' . $this->transEsc('label_sort_descending'),
+        ]
+    ]
 );
 
 $script = <<<JS

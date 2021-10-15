@@ -61,8 +61,12 @@ trait FeedTrait
      *   html (string)    Rendered feed content
      *   settings (array) Feed settings
      */
-    protected function formatFeed($feed, Config $config,
-        RendererInterface $viewRenderer, $feedUrl = false, $touchDevice = false
+    protected function formatFeed(
+        $feed,
+        Config $config,
+        RendererInterface $viewRenderer,
+        $feedUrl = false,
+        $touchDevice = false
     ) {
         $channel = $feed['channel'];
         $items = $feed['items'];

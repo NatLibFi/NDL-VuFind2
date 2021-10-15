@@ -9,13 +9,14 @@
     <?php endif; ?>
     </li>
     <li>
-      <?=$this->label ?: $this->translate(
-        'showing_results_of_html', [
+      <?php
+        $transParams = [
           '%%start%%' => $this->firstItemNumber,
           '%%end%%' => $this->lastItemNumber,
           '%%total%%' => $this->localizedNumber($this->totalItemCount)
-        ]
-      );?>
+        ];
+      ?>
+      <?=$this->label ?: $this->translate('showing_results_of_html', $transParams)?>
     </li>
     <li<?php if (isset($this->next)): ?>>
       <?php $newParams = $this->params; $newParams['page'] = $this->next; ?>

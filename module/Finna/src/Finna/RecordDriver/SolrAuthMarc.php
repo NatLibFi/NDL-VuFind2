@@ -34,15 +34,15 @@ use Finna\Util\MetadataUtils;
  *
  * @category VuFind
  * @package  RecordDrivers
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Samuli Sillanpää <samuli.sillanpaa@helsisnki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
 {
-    use MarcReaderTrait;
-    use SolrCommonFinnaTrait;
-    use SolrAuthFinnaTrait {
+    use Feature\FinnaMarcReaderTrait;
+    use Feature\SolrCommonFinnaTrait;
+    use Feature\SolrAuthFinnaTrait {
         getFormats as _getFormats;
     }
 

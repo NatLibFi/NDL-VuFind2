@@ -52,16 +52,19 @@ class CustomElementExtension extends CustomElementRendererBase
     public function register(ConfigurableEnvironmentInterface $environment)
     {
         $environment->addBlockParser(
-            new CustomElementBlockParser($this->customElements), 100
+            new CustomElementBlockParser($this->customElements),
+            100
         );
         $environment->addBlockRenderer(
             CustomElementContainerBlock::class,
             new CustomElementContainerBlockRenderer(
-                $this->customElements, $this->customElementRenderer
+                $this->customElements,
+                $this->customElementRenderer
             )
         );
         $environment->addBlockRenderer(
-            CustomElementCloseBlock::class, new CustomElementCloseBlockRenderer()
+            CustomElementCloseBlock::class,
+            new CustomElementCloseBlockRenderer()
         );
     }
 }

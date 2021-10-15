@@ -60,14 +60,16 @@ class GetLinkedEventsFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
         $result = new $requestedName(
-            $container->get('Finna\Feed\LinkedEvents'),
+            $container->get(\Finna\Feed\LinkedEvents::class),
             $container->get('ViewRenderer')
         );
         return $result;

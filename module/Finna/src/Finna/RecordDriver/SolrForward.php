@@ -41,11 +41,11 @@ namespace Finna\RecordDriver;
 class SolrForward extends \VuFind\RecordDriver\SolrDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use SolrForwardTrait {
-        SolrForwardTrait::getAllImages insteadof SolrFinnaTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\SolrForwardTrait {
+        Feature\SolrForwardTrait::getAllImages insteadof Feature\SolrFinnaTrait;
     }
-    use UrlCheckTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -57,7 +57,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'a00', 'a01', 'a03', 'a06', 'a50', 'a99',
         'b13',
         'd01', 'd02', 'd99',
-        'e02', 'e03', 'e04', 'e05', 'e06', 'e08', 'e99',
+        'e02', 'e03', 'e04', 'e05', 'e06', 'e08',
         'f01', 'f02', 'f99',
         'cmp', 'cph', 'exp', 'fds', 'fmp', 'rce', 'wst', 'oth', 'prn',
         // These are copied from Marc
@@ -270,7 +270,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -641,7 +643,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $authors = [];
         if (null === $this->nonPresenterAuthorsCache) {
             $this->nonPresenterAuthorsCache = $this->getAuthorsByRelators(
-                $this->nonPresenterAuthorRelators, $filters
+                $this->nonPresenterAuthorRelators,
+                $filters
             );
         }
         $authors = $this->nonPresenterAuthorsCache;
@@ -653,7 +656,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         foreach ($authors as $author) {
             $isPrimary = isset($author['role'])
                 && in_array(
-                    strtolower($author['role']), $this->primaryAuthorRelators
+                    strtolower($author['role']),
+                    $this->primaryAuthorRelators
                 );
             if ($isPrimary === $primary) {
                 $result[] = $author;
@@ -729,7 +733,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'exclude' => false
         ];
         $presenters = $this->getAuthorsByRelators(
-            $this->presenterAuthorRelators, $filters
+            $this->presenterAuthorRelators,
+            $filters
         );
 
         // Lets arrange the results as an assoc array with easy to read results
@@ -1270,7 +1275,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     $posterFilename = (string)$title->PartDesignation->Value;
                     if ($posterFilename) {
                         $poster = str_replace(
-                            '{filename}', $posterFilename, $posterSource
+                            '{filename}',
+                            $posterFilename,
+                            $posterSource
                         );
                     }
 
@@ -1302,7 +1309,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $vimeo_url = $this->recordConfig->Record->vimeo_url;
                 if (!empty($vimeo) && !empty($vimeo_url)) {
                     $src = str_replace(
-                        '{videoid}', $vimeo, $vimeo_url
+                        '{videoid}',
+                        $vimeo,
+                        $vimeo_url
                     );
                     $videoUrls[] = [
                         'url' => $src,
@@ -1323,7 +1332,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         continue;
                     }
                     $src = str_replace(
-                        '{videoname}', $videoUrl, $config['src']
+                        '{videoname}',
+                        $videoUrl,
+                        $config['src']
                     );
                     $videoSources[] = [
                         'src' => $src,
@@ -1407,6 +1418,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
+        return '';
     }
 
     /**

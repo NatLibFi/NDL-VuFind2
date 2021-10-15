@@ -109,7 +109,7 @@ trait FinnaOnlinePaymentControllerTrait
     protected function getOnlinePaymentHandler($driver)
     {
         $onlinePayment = $this->serviceLocator
-            ->get('Finna\OnlinePayment\OnlinePayment');
+            ->get(\Finna\OnlinePayment\OnlinePayment::class);
         if (!$onlinePayment->isEnabled($driver)) {
             return false;
         }
@@ -159,7 +159,7 @@ trait FinnaOnlinePaymentControllerTrait
 
         // Check if payment handler is configured in datasources.ini
         $onlinePayment = $this->serviceLocator
-            ->get('Finna\OnlinePayment\OnlinePayment');
+            ->get(\Finna\OnlinePayment\OnlinePayment::class);
         if (!$onlinePayment->isEnabled($patron['source'])) {
             return;
         }
@@ -189,7 +189,8 @@ trait FinnaOnlinePaymentControllerTrait
 
         $tr = $this->getTable('transaction');
         $paymentPermittedForUser = $tr->isPaymentPermitted(
-            $patron['cat_username'], $transactionMaxDuration
+            $patron['cat_username'],
+            $transactionMaxDuration
         );
 
         if (!$paymentHandler = $this->getOnlinePaymentHandler($patron['source'])) {
@@ -214,7 +215,8 @@ trait FinnaOnlinePaymentControllerTrait
         $request = $this->getRequest();
         $pay = $this->formWasSubmitted('pay-confirm');
         $payment = $request->getQuery()->get(
-            $paymentParam, $request->getPost($paymentParam)
+            $paymentParam,
+            $request->getPost($paymentParam)
         );
         if ($pay && $session && $payableOnline
             && $payableOnline['payable'] && $payableOnline['amount']
@@ -257,7 +259,8 @@ trait FinnaOnlinePaymentControllerTrait
                 $paymentParam
             );
             $this->flashMessenger()->addMessage(
-                $result ? $result : 'online_payment_failed', 'error'
+                $result ? $result : 'online_payment_failed',
+                'error'
             );
             header("Location: " . $this->getServerUrl('myresearch-fines'));
             exit();
@@ -269,7 +272,8 @@ trait FinnaOnlinePaymentControllerTrait
             // processed.
             if (!$payableOnline) {
                 $this->flashMessenger()->addMessage(
-                    'online_payment_successful', 'success'
+                    'online_payment_successful',
+                    'success'
                 );
                 $view->paymentRegistered = true;
                 return;
@@ -292,19 +296,22 @@ trait FinnaOnlinePaymentControllerTrait
             if (!empty($session->payment_fines_changed)) {
                 $view->paymentFinesChanged = true;
                 $this->flashMessenger()->addMessage(
-                    'online_payment_fines_changed', 'error'
+                    'online_payment_fines_changed',
+                    'error'
                 );
                 unset($session->payment_fines_changed);
             } elseif (!empty($session->paymentOk)) {
                 $this->flashMessenger()->addMessage(
-                    'online_payment_successful', 'success'
+                    'online_payment_successful',
+                    'success'
                 );
                 unset($session->paymentOk);
             } else {
                 $view->onlinePaymentEnabled = $allowPayment;
                 if ($paymentPermittedForUser !== true) {
                     $this->flashMessenger()->addMessage(
-                        strip_tags($paymentPermittedForUser), 'error'
+                        strip_tags($paymentPermittedForUser),
+                        'error'
                     );
                 } elseif (!empty($payableOnline['reason'])) {
                     $view->nonPayableReason = $payableOnline['reason'];

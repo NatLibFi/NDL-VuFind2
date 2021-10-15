@@ -32,7 +32,7 @@ use Laminas\EventManager\EventInterface;
 
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use VuFindSearch\Backend\BackendInterface;
+use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
 /**
@@ -47,11 +47,11 @@ use VuFindSearch\Query\QueryGroup;
 class SolrExtensionsListener
 {
     /**
-     * Backend.
+     * Backend identifier.
      *
-     * @var BackendInterface
+     * @var string
      */
-    protected $backend;
+    protected $backendId;
 
     /**
      * Superior service manager.
@@ -84,7 +84,7 @@ class SolrExtensionsListener
     /**
      * Constructor.
      *
-     * @param BackendInterface        $backend          Search backend
+     * @param string                  $backendId        Search backend identifier
      * @param ServiceLocatorInterface $serviceLocator   Service locator
      * @param string                  $searchConfig     Search config file id
      * @param string                  $facetConfig      Facet config file id
@@ -93,11 +93,13 @@ class SolrExtensionsListener
      * @return void
      */
     public function __construct(
-        BackendInterface $backend,
+        string $backendId,
         ServiceLocatorInterface $serviceLocator,
-        $searchConfig, $facetConfig, $dataSourceConfig = 'datasources'
+        $searchConfig,
+        $facetConfig,
+        $dataSourceConfig = 'datasources'
     ) {
-        $this->backend = $backend;
+        $this->backendId = $backendId;
         $this->serviceLocator = $serviceLocator;
         $this->searchConfig = $searchConfig;
         $this->facetConfig = $facetConfig;
@@ -119,25 +121,6 @@ class SolrExtensionsListener
     }
 
     /**
-     * Customize Solr response.
-     *
-     * @param EventInterface $event Event
-     *
-     * @return EventInterface
-     */
-    public function onSearchPost(EventInterface $event)
-    {
-        $backend = $event->getParam('backend');
-        if ($backend != $this->backend->getIdentifier()) {
-            return $event;
-        }
-
-        if ($event->getParam('context') == 'search') {
-            $this->displayDebugInfo($event);
-        }
-    }
-
-    /**
      * Customize Solr request.
      *
      * @param EventInterface $event Event
@@ -146,16 +129,34 @@ class SolrExtensionsListener
      */
     public function onSearchPre(EventInterface $event)
     {
-        $backend = $event->getTarget();
-        if ($backend === $this->backend) {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backendId) {
             $this->addDataSourceFilter($event);
-            $context = $event->getParam('context');
+            $context = $command->getContext();
             if (in_array($context, ['search', 'getids', 'workExpressions'])) {
                 $this->addHiddenComponentPartFilter($event);
                 $this->handleAvailabilityFilters($event);
             }
             if ('search' === $context) {
                 $this->addGeoFilterBoost($event);
+            }
+        }
+        return $event;
+    }
+
+    /**
+     * Customize Solr response.
+     *
+     * @param EventInterface $event Event
+     *
+     * @return EventInterface
+     */
+    public function onSearchPost(EventInterface $event)
+    {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backendId) {
+            if ($command->getContext() == 'search') {
+                $this->displayDebugInfo($event);
             }
         }
         return $event;
@@ -191,7 +192,7 @@ class SolrExtensionsListener
                 },
                 $sources
             );
-            $params = $event->getParam('params');
+            $params = $event->getParam('command')->getSearchParameters();
             if ($params) {
                 $params->add(
                     'fq',
@@ -210,7 +211,7 @@ class SolrExtensionsListener
      */
     protected function addGeoFilterBoost(EventInterface $event)
     {
-        $params = $event->getParam('params');
+        $params = $event->getParam('command')->getSearchParameters();
         if ($params) {
             $filters = $params->get('fq');
             if (null !== $filters) {
@@ -223,12 +224,17 @@ class SolrExtensionsListener
                         }
                         foreach (preg_split('/\s+OR\s+/', $value) as $filter) {
                             $bq = substr_replace(
-                                $filter, 'score=recipDistance ', 10, 0
+                                $filter,
+                                'score=recipDistance ',
+                                10,
+                                0
                             );
                             $boosts[] = $bq;
                             // Add a separate boost for the centroid
                             $bq = preg_replace(
-                                '/sfield=\w+/', 'sfield=center_coords', $bq
+                                '/sfield=\w+/',
+                                'sfield=center_coords',
+                                $bq
                             );
                             $boosts[] = $bq;
                         }
@@ -257,13 +263,16 @@ class SolrExtensionsListener
         if (isset($searchConfig->General->hide_component_parts)
             && $searchConfig->General->hide_component_parts
         ) {
-            $params = $event->getParam('params');
+            $command = $event->getParam('command');
+            $params = $command->getSearchParameters();
             if ($params) {
                 // Check that search is not for a known record id
-                $query = $event->getParam('query');
+                $query = method_exists($command, 'getQuery')
+                    ? $command->getQuery()
+                    : null;
                 if (!$query
                     || $query instanceof QueryGroup
-                    || $query->getHandler() !== 'id'
+                    || ($query instanceof Query && $query->getHandler() !== 'id')
                 ) {
                     $params->add('fq', '-hidden_component_boolean:true');
                 }
@@ -280,11 +289,12 @@ class SolrExtensionsListener
      */
     protected function displayDebugInfo(EventInterface $event)
     {
-        $params = $event->getParam('params');
+        $command = $event->getParam('command');
+        $params = $command->getSearchParameters();
         if (!$params->get('debugQuery')) {
             return;
         }
-        $collection = $event->getTarget();
+        $collection = $command->getResult();
         $debugInfo = $collection->getDebugInformation();
         echo "<!--\n";
         echo 'Raw query string: ' . $debugInfo['rawquerystring'] . "\n\n";
@@ -377,7 +387,7 @@ class SolrExtensionsListener
         $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
         $searchConfig = $config->get($this->searchConfig);
         if (!empty($searchConfig->Records->sources)) {
-            $params = $event->getParam('params');
+            $params = $event->getParam('command')->getSearchParameters();
             $filters = $params->get('fq');
             if (null !== $filters) {
                 $sources = explode(',', $searchConfig->Records->sources);
