@@ -11,6 +11,13 @@
     "scripts": {
         "create-translation-files": "touch local/languages/finna/fi-datasources.ini; touch local/languages/finna/sv-datasources.ini; touch local/languages/finna/en-gb-datasources.ini",
         "post-install-cmd": ["@phing-install-dependencies", "@create-translation-files"],
-        "post-update-cmd": ["@phing-install-dependencies", "@create-translation-files"]
+        "post-update-cmd": ["@phing-install-dependencies", "@create-translation-files"],
+        "qa": [
+            "phing eslint",
+            "phing eslint-finna",
+            "phing phpunitfast",
+            "phing phpcs-console",
+            "phing php-cs-fixer-dryrun"
+        ]
     }
 }
