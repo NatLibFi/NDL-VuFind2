@@ -287,7 +287,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getIdentifier(): array
+    public function getIdentifiers(): array
     {
         $results = [];
         $xml = $this->getXmlRecord();
@@ -310,11 +310,13 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
 
                 // Leave out some obvious matches like urls or urns
                 if (!preg_match('{(Fi-H|URN:|http://|https://)}', $trimmed)) {
-                    $results[] = $identifier;
+                    $detail = (string)$identifier['type'];
+                    $data = $identifier;
+                    $results[] = compact('data', 'detail');
                 }
             }
         }
-        return array_unique(array_values($results));
+        return $results;
     }
 
     /**
@@ -324,7 +326,19 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISBNs(): array
     {
-        return $this->fields['isbn'] ?? [];
+        $result = [];
+        $xml = $this->getXmlRecord();
+        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
+            foreach ($field as $identifier) {
+                $trimmed = str_replace('-', '', trim($identifier));
+                if ((string)$identifier['type'] === 'isbn'
+                    || preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)
+                ) {
+                    $result[] = $identifier;
+                }
+            }
+        }
+        return array_values(array_unique($result));
     }
 
     /**
