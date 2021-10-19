@@ -309,7 +309,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 }
 
                 // Leave out some obvious matches like urls or urns
-                if (!preg_match('{(Fi-H|URN:|http://|https://)}', $trimmed)) {
+                if (!preg_match('{(URN:|http://|https://)}', $trimmed)) {
                     $detail = (string)$identifier['type'];
                     $data = $identifier;
                     $results[] = compact('data', 'detail');
