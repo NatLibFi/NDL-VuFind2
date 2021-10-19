@@ -60,12 +60,15 @@ class UserCardFactory extends \VuFind\Db\Row\RowGatewayFactory
      * creating a service.
      * @throws ContainerException if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
-        $adapter = $container->get('Laminas\Db\Adapter\Adapter');
+        $adapter = $container->get(\Laminas\Db\Adapter\Adapter::class);
         $prototype = new $requestedName(
-            $adapter, ...($options !== null ? $options : [])
+            $adapter,
+            ...($options !== null ? $options : [])
         );
         $config
             = $container->get(\VuFind\Config\PluginManager::class)->get('config');

@@ -11,12 +11,7 @@
         <?php if (!empty($rights['copyright'])): ?>
           <?php
             $copyright = $rights['copyright'];
-            $label = $this->transEsc($copyright);
-            if ($copyright === 'Luvanvarainen käyttö / ei tiedossa') {
-              $label = $this->transEsc('usage_F');
-            } elseif (!$this->translationEmpty("rightsstatement_$copyright")) {
-              $label = $this->transEsc("rightsstatement_$copyright");
-            }
+            $label = $this->record($this->driver)->translateCopyright($copyright);
           ?>
           <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?><?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><?= $label ?><?php if ($hasLink): ?></a><?php endif; ?>
         <?php else: ?>

@@ -76,7 +76,8 @@ class Params extends \Finna\Search\Solr\Params
      * @param \Laminas\Config\Config       $blenderConfig   Blender configuration
      * @param array                        $mappings        Blender mappings
      */
-    public function __construct(\VuFind\Search\Base\Options $options,
+    public function __construct(
+        \VuFind\Search\Base\Options $options,
         \VuFind\Config\PluginManager $configLoader,
         HierarchicalFacetHelper $facetHelper,
         AuthorityHelper $authorityHelper,
@@ -86,7 +87,11 @@ class Params extends \Finna\Search\Solr\Params
         $mappings
     ) {
         parent::__construct(
-            $options, $configLoader, $facetHelper, $authorityHelper, $dateConverter
+            $options,
+            $configLoader,
+            $facetHelper,
+            $authorityHelper,
+            $dateConverter
         );
 
         $this->secondaryParams = $secondaryParams;
@@ -97,7 +102,7 @@ class Params extends \Finna\Search\Solr\Params
     /**
      * Pull the search parameters
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -132,10 +137,10 @@ class Params extends \Finna\Search\Solr\Params
     /**
      * Translate a request for the secondary backend
      *
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
-     * @return \Laminas\StdLib\Parameters
+     * @return \Laminas\Stdlib\Parameters
      */
     protected function translateRequest($request)
     {

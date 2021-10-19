@@ -81,8 +81,12 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
      * @param CommmentsRecord $commentsRecord CommentsRecord table
      * @param SearchRunner    $searchRunner   Search runner
      */
-    public function __construct(Resource $table, Captcha $captcha, $user,
-        $enabled = true, Comments $comments = null,
+    public function __construct(
+        Resource $table,
+        Captcha $captcha,
+        $user,
+        $enabled = true,
+        Comments $comments = null,
         CommentsRecord $commentsRecord = null,
         SearchRunner $searchRunner = null
     ) {

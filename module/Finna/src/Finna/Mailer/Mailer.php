@@ -60,7 +60,13 @@ class Mailer  extends \VuFind\Mailer\Mailer
      * @throws MailException
      * @return void
      */
-    public function sendRecords($to, $from, $msg, $records, $view, $subject = null,
+    public function sendRecords(
+        $to,
+        $from,
+        $msg,
+        $records,
+        $view,
+        $subject = null,
         $cc = null
     ) {
         if (null === $subject) {

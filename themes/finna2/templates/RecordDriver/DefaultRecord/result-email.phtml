@@ -10,7 +10,7 @@
   $containerReference = $this->driver->getContainerReference();
   $formats = $this->driver->getFormats();
   $format = end($formats);
-  $url = $this->recordLink()->getUrl($this->driver);
+  $url = $this->recordLinker()->getUrl($this->driver);
   $organisation = $this->organisationDisplayName($this->driver);
 
   // NOTE: use $info['baseUrl'] instead of serverUrl view helper when this template is
@@ -47,5 +47,6 @@
 <?php if (!empty($format)): ?>
 <?= PHP_EOL . $this->translate($format) ?>
 <?php endif; ?>
+<?= $this->record($this->driver)->renderTemplate('result-email-copyright.phtml') ?>
 
 <?= $this->translate('View Full Record') . ": $url"; ?>

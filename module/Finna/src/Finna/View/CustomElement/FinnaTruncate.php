@@ -48,20 +48,70 @@ class FinnaTruncate extends AbstractBase
     {
         parent::__construct($name, $options);
 
-        $labelElement = $this->dom->find('*[slot="label"]');
-        if ($labelElement = $labelElement[0] ?? false) {
-            $label = trim(strip_tags($labelElement->innerHtml()));
-            if (!empty($label)) {
-                $this->viewModel->setVariable('label', $label);
-            }
-            $this->removeSlotElement($labelElement);
+        // If only one of the 'rows' and 'row-height' attributes is set, unset the
+        // default value of the other attribute.
+        if (isset($this->attributes['rows'])
+            && !isset($this->attributes['row-height'])
+        ) {
+            $this->setVariable('rowHeight', null);
+        }
+        if (isset($this->attributes['row-height'])
+            && !isset($this->attributes['rows'])
+        ) {
+            $this->setVariable('rows', null);
         }
 
-        $this->viewModel->setVariable(
-            'content', $this->dom->firstChild()->innerHTML()
-        );
+        if ($this->dom) {
+            $labelElement = $this->dom->find('[slot="label"]');
+            if ($labelElement = $labelElement[0] ?? false) {
+                $label = trim(strip_tags($labelElement->innerHtml()));
+                if (!empty($label)) {
+                    $this->setVariable('label', $label);
+                }
+                $this->removeElement($labelElement);
+            }
 
-        $this->viewModel->setTemplate('CustomElement/finna-truncate');
+            $this->viewModel->setVariable(
+                'content',
+                $this->dom->firstChild()->innerHTML()
+            );
+        }
+
+        $this->setTemplate(
+            'components/molecules/containers/finna-truncate/finna-truncate'
+        );
+    }
+
+    /**
+     * Get information about child elements supported by the element.
+     *
+     * @return array Array containing element names as keys and arrays of
+     *     HTMLPurifier_HTMLDefinition::addElement() arguments excluding the name of
+     *     the element as values.
+     */
+    public static function getChildInfo(): array
+    {
+        return [
+            'span' => [
+                self::TYPE => 'Inline',
+                self::CONTENTS => 'Inline',
+                self::ATTR_COLLECTIONS => 'Common',
+                self::ATTRIBUTES => ['slot' => 'CDATA']
+            ]
+        ];
+    }
+
+    /**
+     * Get default values for view model variables.
+     *
+     * @return array
+     */
+    protected function getDefaultVariables(): array
+    {
+        return [
+            'rows'      => 1,
+            'rowHeight' => 5
+        ];
     }
 
     /**
@@ -72,6 +122,9 @@ class FinnaTruncate extends AbstractBase
      */
     protected static function getAttributeToVariableMap(): array
     {
-        return ['rows' => 'rows'];
+        return [
+            'rows'       => 'rows',
+            'row-height' => 'rowHeight'
+        ];
     }
 }

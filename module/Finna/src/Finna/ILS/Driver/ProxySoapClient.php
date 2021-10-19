@@ -53,7 +53,9 @@ class ProxySoapClient extends \BeSimple\SoapClient\SoapClient
      *
      * @throws \SoapFault
      */
-    public function __construct(HttpServiceInterface $httpService, $wsdl,
+    public function __construct(
+        HttpServiceInterface $httpService,
+        $wsdl,
         array $options = []
     ) {
         // tracing enabled: store last request/response header and body
@@ -88,7 +90,8 @@ class ProxySoapClient extends \BeSimple\SoapClient\SoapClient
             // Kludge to call grandparent's constructor
             call_user_func(
                 [get_parent_class(get_parent_class($this)), '__construct'],
-                $wsdlFile, $options
+                $wsdlFile,
+                $options
             );
         } catch (\SoapFault $soapFault) {
             // Discard cached WSDL file if there's a problem with it

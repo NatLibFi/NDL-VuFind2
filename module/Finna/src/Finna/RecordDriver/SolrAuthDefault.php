@@ -40,6 +40,6 @@ namespace Finna\RecordDriver;
  */
 class SolrAuthDefault extends \VuFind\RecordDriver\SolrAuthDefault
 {
-    use SolrCommonFinnaTrait;
-    use SolrAuthFinnaTrait;
+    use Feature\SolrCommonFinnaTrait;
+    use Feature\SolrAuthFinnaTrait;
 }

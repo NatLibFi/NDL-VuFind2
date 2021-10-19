@@ -104,7 +104,9 @@ class CustomElementBlockParser implements BlockParserInterface
      *
      * @return bool
      */
-    protected function parseOpeningTag(ContextInterface $context, Cursor $cursor
+    protected function parseOpeningTag(
+        ContextInterface $context,
+        Cursor $cursor
     ): bool {
         if ($cursor->isIndented()) {
             return false;
@@ -125,7 +127,9 @@ class CustomElementBlockParser implements BlockParserInterface
 
             $name = mb_strtolower($matches[1], 'UTF-8');
             $block = new CustomElementContainerBlock(
-                $name, $match, in_array($name, $this->ssrElements)
+                $name,
+                $match,
+                in_array($name, $this->ssrElements)
             );
             $context->addBlock($block);
 
@@ -145,7 +149,9 @@ class CustomElementBlockParser implements BlockParserInterface
      *
      * @return bool
      */
-    protected function parseClosingTag(ContextInterface $context, Cursor $cursor
+    protected function parseClosingTag(
+        ContextInterface $context,
+        Cursor $cursor
     ): bool {
         if ($cursor->isIndented()) {
             return false;
@@ -169,7 +175,7 @@ class CustomElementBlockParser implements BlockParserInterface
         if (null !== $match) {
             // Close possible blocks between tip and CustomElementContainerBlock.
             $tip = $context->getTip();
-            while ($container !== $tip) {
+            while (null !== $tip && $container !== $tip) {
                 $tip->finalize($context, $context->getLineNumber());
                 $tip = $context->getTip();
             }
@@ -180,7 +186,7 @@ class CustomElementBlockParser implements BlockParserInterface
             $closeBlock->finalize($context, $context->getLineNumber());
 
             // Close parent CustomElementContainerBlock.
-            $context->getTip()->finalize($context, $context->getLineNumber());
+            $container->finalize($context, $context->getLineNumber());
 
             return true;
         }

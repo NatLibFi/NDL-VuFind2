@@ -26,7 +26,7 @@
         <span class="help-block hidden-xs"><?=$this->transEsc("in")?></span>
         <select id="search_type0_<?=$search ?>" name="type0[]" class="adv-term-type form-control">
           <?php foreach ($this->options->getAdvancedHandlers() as $searchVal => $searchDesc): ?>
-            <option value="<?=$this->escapeHtml($searchVal)?>"><?=$this->transEsc($searchDesc)?></option>
+            <option value="<?=$this->escapeHtmlAttr($searchVal)?>"><?=$this->transEsc($searchDesc)?></option>
           <?php endforeach; ?>
         </select>
         <a class="adv-term-remove"><i class="fa fa-times"></i></a>

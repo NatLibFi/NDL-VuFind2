@@ -48,7 +48,7 @@ finna.layout = (function finnaLayout() {
         modal.removeClass('location-service location-service-qrcode');
         dialog.removeClass('modal-lg');
       });
-      modal.find('.modal-body').load($(this).data('lightbox-href') + '&layout=lightbox');
+      VuFind.loadHtml(modal.find('.modal-body'), $(this).data('lightbox-href') + '&layout=lightbox');
       modal.modal();
       return false;
     });
@@ -150,33 +150,13 @@ finna.layout = (function finnaLayout() {
   }
 
   function initCheckboxClicks() {
-    $('.checkboxFilter:not(.mylist-select-all) .checkbox input').on('click', function onClickCheckbox() {
-      $(this).closest('.checkbox').toggleClass('checked');
-      var select = $('.mylist-functions button, .mylist-functions select');
-      var jumpMenu = $('.mylist-functions .jump-menu-style');
-      var checked = $('.myresearch-row .checkboxFilter .checkbox.checked');
-      if (checked.length > 0) {
-        select.removeAttr('disabled');
+    $('.template-name-mylist input.checkbox-select-item').on('click', function onClickCheckbox() {
+      var actions = $('.mylist-functions button, .mylist-functions select');
+      var noneChecked = $('.template-name-mylist input.checkbox-select-item:checked').length === 0;
+      if (noneChecked) {
+        actions.attr('disabled', true);
       } else {
-        select.attr('disabled', true);
-      }
-      jumpMenu.toggleClass('disabled', checked.length === 0);
-    });
-
-    var myListSelectAll = $('.checkboxFilter.mylist-select-all');
-    var myListJumpMenu = $('.mylist-functions .jump-menu-style');
-    var myListFunctions = $('.mylist-functions button, .mylist-functions select');
-    myListSelectAll.find('.checkbox .checkbox-select-all').on('click', function onClickCheckbox() {
-      var checkboxes = $('.myresearch-row .checkboxFilter .checkbox, .checkboxFilter.mylist-select-all .checkbox');
-      if ($(this).closest('.checkbox').hasClass('checked')) {
-        var isEverythingChecked = !$('.myresearch-row .checkboxFilter .checkbox').not('.checked').length;
-        checkboxes.toggleClass('checked', !isEverythingChecked);
-        myListJumpMenu.toggleClass('disabled', isEverythingChecked);
-        myListFunctions.attr('disabled', isEverythingChecked);
-      } else {
-        checkboxes.toggleClass('checked', true);
-        myListJumpMenu.toggleClass('disabled', false);
-        myListFunctions.attr('disabled', false);
+        actions.removeAttr('disabled');
       }
     });
   }
@@ -322,7 +302,19 @@ finna.layout = (function finnaLayout() {
     });
   }
 
-  function addJSTreeListener(treeNode) {
+  function renderFacetSRLabel(tree) {
+    // Add count descriptor to every facet value node for accessibility
+    tree.find('.facet').each(function appendDescriptors() {
+      var badge = $(this).find('.badge');
+      badge.attr('aria-hidden', 'true');
+      if ($(this).find('.facet-value .sr-only').length > 0) {
+        return;
+      }
+      $(this).find('.facet-value').append('<span class="sr-only">, ' + VuFind.translate('result_count', {'%%count%%': badge.text()}) + '</span>');
+    });
+  }
+
+  function addJSTreeListeners(treeNode) {
     treeNode.on('ready.jstree', function onReadyJstree() {
       var tree = $(this);
       // if hierarchical facet contains 2 or less top level items, it is opened by default
@@ -336,15 +328,23 @@ finna.layout = (function finnaLayout() {
         $(this).prepend('<div class="building-filter"><label for="building_filter" class="sr-only">' + VuFind.translate('Organisation') + '</label><input class="form-control" id="building_filter" placeholder="' + VuFind.translate('Organisation') + '..."></input></div>');
         initBuildingFilter();
       }
+
+      renderFacetSRLabel(tree);
+
       // open facet if it has children and it is selected
       tree.find('.jstree-node.active.jstree-closed').each(function openNode() {
         tree.jstree('open_node', this, null, false);
       });
     });
+
+    // Update screen reader labels when opening nodes
+    treeNode.on('after_open.jstree', function afterOpenJstree() {
+      renderFacetSRLabel($(this));
+    });
   }
 
   function initHierarchicalFacet(treeNode, inSidebar) {
-    addJSTreeListener(treeNode);
+    addJSTreeListeners(treeNode);
     initFacetTree(treeNode, inSidebar);
   }
 
@@ -393,7 +393,7 @@ finna.layout = (function finnaLayout() {
       VuFind.lightbox.bind($('.sidebar'));
     });
     document.addEventListener('VuFind.sidefacets.treenodeloaded', function onTreeNodeLoaded(e) {
-      addJSTreeListener(e.detail.node);
+      addJSTreeListeners(e.detail.node);
     });
   }
 
@@ -405,7 +405,7 @@ finna.layout = (function finnaLayout() {
     $container.find('.load-indicator').removeClass('hidden');
     $.getJSON(VuFind.path + '/AJAX/JSON?method=getPiwikPopularSearches')
       .done(function onGetPiwikSearchesDone(response) {
-        $container.html(response.data.html);
+        $container.html(VuFind.updateCspNonce(response.data.html));
       })
       .fail(function onGetPiwikSearchesFail() {
         $container.find('.load-indicator').addClass('hidden');

@@ -72,7 +72,7 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper
      *
      * @var string
      */
-    const SESSION_NAME = 'SystemMessages';
+    public const SESSION_NAME = 'SystemMessages';
 
     /**
      * Constructor
@@ -82,7 +82,9 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper
      * @param Container $session     Session container
      */
     public function __construct(
-        Config $coreConfig, Config $localConfig, Container $session
+        Config $coreConfig,
+        Config $localConfig,
+        Container $session
     ) {
         $this->coreConfig = $coreConfig;
         $this->localConfig = $localConfig;
@@ -111,13 +113,15 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper
 
         if (!empty($this->coreConfig->Site->systemMessages)) {
             $messages = $getMessageFn(
-                $this->coreConfig->Site->systemMessages->toArray(), $language
+                $this->coreConfig->Site->systemMessages->toArray(),
+                $language
             );
         }
 
         if (!empty($this->localConfig->Site->systemMessages)) {
             $localMessages = $getMessageFn(
-                $this->localConfig->Site->systemMessages->toArray(), $language
+                $this->localConfig->Site->systemMessages->toArray(),
+                $language
             );
 
             $messages = array_filter(array_merge($messages, $localMessages));

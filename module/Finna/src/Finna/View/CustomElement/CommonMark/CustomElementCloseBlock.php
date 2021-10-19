@@ -116,7 +116,9 @@ class CustomElementCloseBlock extends AbstractStringContainerBlock
      *
      * @return void
      */
-    public function handleRemainingContents(ContextInterface $context, Cursor $cursor
+    public function handleRemainingContents(
+        ContextInterface $context,
+        Cursor $cursor
     ) {
         if (!$cursor->isAtEnd()) {
             // Create paragraph container for line

@@ -103,7 +103,8 @@ class VerifyRecordLinks extends AbstractUtilCommand
      * @param \VuFind\Record\Loader              $recordLoader   Record loader
      * @param \Laminas\Config\Config             $searchConfig   Search config
      */
-    public function __construct(\VuFind\Db\Table\Comments $comments,
+    public function __construct(
+        \VuFind\Db\Table\Comments $comments,
         \Finna\Db\Table\CommentsRecord $commentsRecord,
         \VuFind\Db\Table\Resource $resource,
         \VuFindSearch\Backend\Solr\Backend $solr,

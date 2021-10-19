@@ -59,7 +59,9 @@ class EditListFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -72,7 +74,8 @@ class EditListFactory implements \Laminas\ServiceManager\Factory\FactoryInterfac
             $container->get(\VuFind\Auth\Manager::class)->isLoggedIn(),
             $container->get('ViewRenderer'),
             $capabilities->getListSetting() !== 'disabled',
-            $capabilities->getListTagSetting() !== 'disabled'
+            $capabilities->getListTagSetting() !== 'disabled',
+            $container->get('ViewRenderer')->plugin('markdown')
         );
     }
 }

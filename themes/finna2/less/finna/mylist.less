@@ -6,12 +6,6 @@
   }
 }
 
-.mylist-controls {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
 .main.template-dir-myresearch.template-name-mylist {
   .search-controls {
     margin-top: 10px;
@@ -114,10 +108,12 @@
 
       i {
         margin-right: 3px;
-        background-color: @action-link-color;
-        font-size: 10px;
+        color: @action-link-color;
+        background-color: @btn-primary-color;
+        font-size: 1em;
         display: block;
-        padding-right: 3px;
+        margin-top: 3px;
+        padding: 0;
       }
     }
     .favorite-list-holder {
@@ -133,6 +129,9 @@
 
       .public-favorite-list {
         padding: 2px;
+        &:before {
+          line-height: 19px;
+        }
       }
     }
   }
@@ -237,54 +236,11 @@
   padding-left: 5px;
 }
 
-.list-description {
-  @media (min-width: @screen-sm) {
-    margin-bottom: 4px;
-  }
-}
-.list-description i.fa-pen {
-  margin-bottom: -12px;
-}
-.list-description h1 {
-  display: inherit;
-}
-.list-description {
-  ul, ol {
-    margin-left: 25px;
-  }
-  ul li {
-    list-style-type: disc;
-  }
-  ol li {
-    list-style-type: decimal;
-  }
-}
-
-.editable .editor-toolbar {
-  position: relative;
-  padding-right: 3.2rem;
-
-  .editor-toolbar-close {
-    position: absolute;
-    right: 0;
-    top: 0.8rem;
-    border: none;
-    color: @gray !important;
-    font-size: 1.6rem;
-
-    &:hover,
-    &:active {
-      background: white;
-      color: @gray !important;
-    }
-  }
-}
-
 .resource-note i.fa-pen {
   margin-bottom: -18px;
 }
 
-.list-title, .list-description:not(.edit), .resource-note:not(.edit), .add-new-list {
+.list-title, .add-new-list {
   border: 1px solid transparent;
   display: inline-block;
   padding: 5px;
@@ -315,16 +271,6 @@
         outline: none;
       }
     }
-  }
-  .markdown-preview {
-    display: none;
-  }
-}
-.list-description.markdown, .resource-note.markdown {
-  padding: 0;
-  .fa {
-    margin-top: 0.25rem;
-    margin-right: 5px;
   }
 }
 .list-title.disable {
@@ -583,48 +529,19 @@ span.caret {
     margin-left: 6px;
   }
 }
-.mylist-controls-bar {
-  display: inline-block;
-  width: 100%;
-  .mylist-controls {
-    float: right;
-    text-align: right;
-    @media (max-width: @screen-sm) {
-      width: 100%;
-      text-align: left;
-    }
-    @media (max-width: @screen-xxs-max) {
-      text-align: right;
-    }
-    .button-label {
+.mylist-controls {
+  .control-container {
+    display: flex;
+    align-items: center;
+    .sort-option-container, .limit-option-container, .view-option-container{
       margin-left: 5px;
     }
-    a.btn.btn-primary {
-      display: inline-block;
-      margin-top: -1px;
-      margin-right: 1em;
-      @media (max-width: @screen-xxs-max) {
-        max-width: 60%;
-        display: block;
-        margin-bottom: 5px;
-      }
+    .btn-sort-order {
+      padding-top: 7px;
+      padding-bottom: 7px;
     }
     .sort-option-container {
-      display: inline-block;
       @media (max-width: @screen-sm) {
-        text-align: left;
-        max-width: 50%;
-        .sort-button {
-          span {
-            display: inline-block;
-            max-width: 100%;
-            padding-right: 20px;
-            margin-bottom: -6px;
-          }
-        }
-        div, a {
-          width: 100%;
-        }
         a.dropdown-toggle {
           white-space: initial;
           i.fa-arrow-down {
@@ -634,32 +551,6 @@ span.caret {
             margin-left: 0;
           }
         }
-      }
-      @media (max-width: @screen-xxs-max) {
-        float: left;
-        margin-right: 5px;
-      }
-    }
-    .limit-option-container {
-      display: inline-block;
-      @media (max-width: @screen-xxs-max) {
-        text-align: right;
-        float: left;
-        width: 20%;
-        div, a {
-          width: 100%;
-        }
-      }
-    }
-  }
-  .pagination-container {
-    display: inline-block;
-    padding: 8px;
-    padding-left: 6px;
-    .paginationSimple {
-      margin-left: 0px;
-      .pagination-text {
-        font-size: 14px;
       }
     }
   }

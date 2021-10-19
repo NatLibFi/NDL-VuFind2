@@ -1,14 +1,15 @@
 <!-- START of: finna - search/advanced/map.phtml -->
 <?php
-  $this->jsTranslations()->addStrings(
+$this->jsTranslations()->addStrings(
     [
-      'radiusPrefix' => 'Radius',
-      'circleCaption' => 'Select Area',
-      'clearCaption' => 'Clear Selections',
-      'removeCaption' => 'Clear',
-      'map_zoom_in' => 'map_zoom_in',
-      'map_zoom_out' => 'map_zoom_out'
-  ]);
+        'radiusPrefix' => 'Radius',
+        'circleCaption' => 'Select Area',
+        'clearCaption' => 'Clear Selections',
+        'removeCaption' => 'Clear',
+        'map_zoom_in' => 'map_zoom_in',
+        'map_zoom_out' => 'map_zoom_out'
+    ]
+);
   $items = [];
   if ($saved && ($filters = $saved->getParams()->getGeographicFilters($saved->getParams()->getFilterList()))) {
     foreach ($filters as $filter) {

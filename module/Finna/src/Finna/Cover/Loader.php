@@ -166,7 +166,9 @@ class Loader extends \VuFind\Cover\Loader
             if ($this->generator) {
                 $this->generator->setOptions($this->getCoverGeneratorSettings());
                 $this->image = $this->generator->generate(
-                    $settings['title'], $settings['author'], $settings['callnumber']
+                    $settings['title'],
+                    $settings['author'],
+                    $settings['callnumber']
                 );
                 $this->contentType = 'image/png';
             } else {
@@ -200,7 +202,9 @@ class Loader extends \VuFind\Cover\Loader
         header("Content-Type: $contentType");
         header("Content-disposition: attachment; filename=\"{$filename}\"");
         $client = $this->httpService->createClient(
-            $url, \Laminas\Http\Request::METHOD_GET, 300
+            $url,
+            \Laminas\Http\Request::METHOD_GET,
+            300
         );
         $client->setOptions(['useragent' => 'VuFind']);
         $client->setStream();
@@ -236,7 +240,9 @@ class Loader extends \VuFind\Cover\Loader
      * @return void
      */
     public function loadRecordImage(
-        \VuFind\RecordDriver\SolrDefault $driver, $index, $size
+        \VuFind\RecordDriver\SolrDefault $driver,
+        $index,
+        $size
     ) {
         $this->index = $index;
 
@@ -360,7 +366,9 @@ class Loader extends \VuFind\Cover\Loader
                 if ($handler->supports($ids)) {
                     if ($url = $handler->getUrl($key, $this->size, $ids)) {
                         $success = $this->processImageURLForSource(
-                            $url, $handler->isCacheAllowed(), $apiName
+                            $url,
+                            $handler->isCacheAllowed(),
+                            $apiName
                         );
                         if ($success) {
                             return true;
@@ -504,8 +512,16 @@ class Loader extends \VuFind\Cover\Loader
 
             $imageGDResized = imagecreatetruecolor($newWidth, $newHeight);
             imagecopyresampled(
-                $imageGDResized, $imageGD, 0, 0, 0, 0,
-                $newWidth, $newHeight, $width, $height
+                $imageGDResized,
+                $imageGD,
+                0,
+                0,
+                0,
+                0,
+                $newWidth,
+                $newHeight,
+                $width,
+                $height
             );
             if (isset($exif['Orientation'])) {
                 $orientation = $exif['Orientation'];

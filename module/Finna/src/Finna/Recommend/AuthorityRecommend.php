@@ -182,7 +182,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
      * be needed.
      *
      * @param \VuFind\Search\Base\Params $params  Search parameter object
-     * @param \Laminas\StdLib\Parameters $request Parameter object representing user
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
      *
      * @return void
@@ -321,7 +321,8 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
             if ($this->authorityHelper) {
                 foreach ($roles as &$role) {
                     $authorityInfo = $this->authorityHelper->formatFacet(
-                        $role['displayText'], true
+                        $role['displayText'],
+                        true
                     );
                     $role['displayText'] = $authorityInfo['displayText'];
                     $role['role'] = $authorityInfo['role'];

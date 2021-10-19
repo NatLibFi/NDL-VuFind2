@@ -10,7 +10,7 @@ finna.record = (function finnaRecord() {
       $.getJSON(url)
         .done(function onGetDescriptionDone(response) {
           if (response.data.html.length > 0) {
-            description.html(response.data.html);
+            description.html(VuFind.updateCspNonce(response.data.html));
 
             // Make sure any links open in a new window
             description.find('a').attr('target', '_blank');
@@ -94,7 +94,7 @@ finna.record = (function finnaRecord() {
           var element = elements[idx];
           if (response.status) {
             $(element).removeClass('disabled')
-              .html(response.msg);
+              .html(VuFind.updateCspNonce(response.msg));
           } else {
             $(element).remove();
           }
@@ -122,9 +122,9 @@ finna.record = (function finnaRecord() {
           var $group = $(element).parents('.holdings-group');
           $group.find('.load-more-indicator-ajax').addClass('hidden');
           // This can be called several times to load more items. Only update the hidden element.
-          $group.find('.holdings-details-ajax.hidden').html(response.data.details).removeClass('hidden');
+          $group.find('.holdings-details-ajax.hidden').html(VuFind.updateCspNonce(response.data.details)).removeClass('hidden');
           var $itemsContainer = $group.find('.holdings-items-ajax.hidden');
-          $itemsContainer.html(response.data.items).removeClass('hidden');
+          $itemsContainer.html(VuFind.updateCspNonce(response.data.items)).removeClass('hidden');
           checkRequestsAreValid($group.find('.expandedCheckRequest').removeClass('expandedCheckRequest'), 'Hold');
           checkRequestsAreValid($group.find('.expandedCheckStorageRetrievalRequest').removeClass('expandedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest');
           checkRequestsAreValid($group.find('.expandedCheckILLRequest').removeClass('expandedCheckILLRequest'), 'ILLRequest');
@@ -348,7 +348,7 @@ finna.record = (function finnaRecord() {
     $.getJSON(VuFind.path + '/AJAX/JSON', data)
       .done(function onGetRecordsDone(response) {
         if (response.data.html.length > 0) {
-          container.html(response.data.html);
+          container.html(VuFind.updateCspNonce(response.data.html));
         }
         spinner.addClass('hidden');
       })

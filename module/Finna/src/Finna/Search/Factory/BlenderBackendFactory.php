@@ -164,12 +164,13 @@ class BlenderBackendFactory implements FactoryInterface
         $search = $this->config->get($this->searchConfig);
         $events = $this->serviceLocator->get('SharedEventManager');
         $this->getDeduplicationListener(
-            $backend, $search->Records->deduplication ?? false
+            $backend,
+            $search->Records->deduplication ?? false
         )->attach($events);
 
         // Finna Solr Extensions
         $solrExtensions = new SolrExtensionsListener(
-            $backend,
+            $backend->getIdentifier(),
             $this->serviceLocator,
             $this->searchConfig,
             $this->facetConfig

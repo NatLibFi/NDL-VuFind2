@@ -66,8 +66,8 @@ class SolrAuthExtensionsListener extends \Finna\Search\Solr\SolrExtensionsListen
      */
     public function onSearchPre(EventInterface $event)
     {
-        $backend = $event->getTarget();
-        if ($backend === $this->backend) {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backendId) {
             $this->addDataSourceFilter($event);
         }
         return $event;

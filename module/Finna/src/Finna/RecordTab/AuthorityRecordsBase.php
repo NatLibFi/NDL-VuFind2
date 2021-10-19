@@ -125,7 +125,8 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
             return $this->records;
         }
         $this->records = $this->authorityHelper->getRecordsByAuthorityId(
-            $this->driver->getUniqueID(), $this->getRelation()
+            $this->driver->getUniqueID(),
+            $this->getRelation()
         );
         return $this->records;
     }
@@ -142,18 +143,6 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     }
 
     /**
-     * Set the record driver to operate on
-     *
-     * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
-     *
-     * @return AbstractBase
-     */
-    public function setRecordDriver(\VuFind\RecordDriver\AbstractBase $driver)
-    {
-        $this->driver = $driver;
-    }
-
-    /**
      * Get search query for returning biblio records by authority.
      *
      * @return string
@@ -161,7 +150,8 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase
     public function getSearchQuery()
     {
         return $this->authorityHelper->getRecordsByAuthorityQuery(
-            $this->driver->getUniqueID(), $this->getRelation()
+            $this->driver->getUniqueID(),
+            $this->getRelation()
         );
     }
 

@@ -143,7 +143,10 @@ class Map extends \VuFind\RecordTab\Map
 
         if ($type == 'point' || $type == 'multipoint') {
             $isPoint = preg_match_all(
-                '/\((.+)\s+?(.+)\)/', $location, $matches, PREG_SET_ORDER
+                '/\((.+)\s+?(.+)\)/',
+                $location,
+                $matches,
+                PREG_SET_ORDER
             );
             if ($isPoint) {
                 $results = [];

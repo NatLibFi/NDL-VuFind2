@@ -132,7 +132,7 @@ finna.feed = (function finnaFeed() {
     $.getJSON(url)
       .done(function loadFeedDone(response) {
         if (response.data) {
-          holder.html(response.data.html);
+          holder.html(VuFind.updateCspNonce(response.data.html));
           var settings = response.data.settings;
           if (typeof settings.height == 'undefined') {
             settings.height = 300;

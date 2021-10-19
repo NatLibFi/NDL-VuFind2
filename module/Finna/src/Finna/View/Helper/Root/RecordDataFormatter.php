@@ -126,7 +126,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Finding Aid', 'First Lyrics', 'Foreign Distribution',
             'Format', 'Funding', 'Genre',
             'Inscriptions', 'Inspection Details', 'Interior Images',
-            'Inventory ID', 'ISBN', 'ISSN',
+            'Introduction', 'Inventory ID', 'ISBN', 'ISSN',
             'Item Description', 'Item History', 'Keywords',
             'Language', 'Language Notes', 'Learning Resource Type',
             'Location', 'Manufacturer', 'Measurements',
@@ -331,13 +331,13 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         $include = [
             'Accessibility Feature', 'Accessibility Hazard',
             'Access Restrictions', 'Access Restrictions Extended',
-            'Additional Information',
+            'Additional Information Extended',
             'Age Limit', 'Appraisal', 'Archive', 'Archive Films',
             'Archive Origination', 'Archive Relations',
             'Archive Series', 'Archive File', 'Aspect Ratio', 'Audience',
             'Authors', 'Author Notes', 'Available Online', 'Awards',
             'Bibliography', 'Broadcasting Dates',
-            'Classification', 'Collection', 'Color',
+            'Classification', 'Collection', 'Color', 'Container Information',
             'Content Description', 'Copyright Notes', 'Dates',
             'Description FWD', 'Dissertation Note', 'Distribution',
             'DOI', 'Edition', 'Educational Level',
@@ -351,14 +351,15 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'ISBN', 'ISSN', 'Item Description',
             'Item History', 'Keywords', 'Language',
             'Language Notes', 'Learning Resource Type', 'Location',
-            'Manufacturer', 'Material Condition', 'Measurements',
+            'Manufacturer', 'Material Condition',
+            'Material Arrangement', 'Measurements',
             'Medium of Performance', 'Methodology', 'Music', 'New Title',
             'Notated Music Format', 'Notes', 'Objective and Content',
             'Original Work', 'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID', 'Other Links',
-            'Other Screenings', 'Other Titles', 'Place of Origin',
-            'Playing Time', 'Premiere Night', 'Premiere Theaters',
-            'Presenters', 'Press Reviews', 'Previous Title',
+            'Other Related Material', 'Other Screenings', 'Other Titles',
+            'Place of Origin', 'Playing Time', 'Premiere Night',
+            'Premiere Theaters', 'Presenters', 'Press Reviews', 'Previous Title',
             'Production', 'Production Costs', 'Production Credits',
             'Projected Publication Date', 'Publication Frequency', 'Publications',
             'Publication_Place', 'Publish date', 'Publisher',
@@ -501,8 +502,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Accessibility Feature', 'Accessibility Hazard', 'Access Restrictions',
             'Access Restrictions Extended', 'Actors', 'Additional Information',
             'Age Limit', 'Appraisal', 'Archive', 'Archive Films',
-            'Archive Origination', 'Archive Series', 'Aspect Ratio',
-            'Audience', 'Author Notes', 'Authors',
+            'Archive Origination', 'Archive Relations', 'Archive Series',
+            'Aspect Ratio', 'Audience', 'Author Notes', 'Authors',
             'Available Online', 'Awards', 'Bibliography',
             'Broadcasting Dates', 'child_records', 'Classification',
             'Collection', 'Color', 'Content Description',
@@ -519,14 +520,15 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'ISSN', 'Item Description', 'Item History',
             'Keywords', 'Language', 'Language Notes', 'Learning Resource Type',
             'Location', 'Manufacturer', 'Material Condition',
-            'Measurements', 'Medium of Performance', 'Methodology',
+            'Material Arrangement', 'Measurements',
+            'Medium of Performance', 'Methodology',
             'Music', 'New Title', 'Notated Music Format',
             'Notes', 'Objective and Content', 'Organisation',
             'Original Work', 'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID', 'Other Links',
-            'Other Screenings', 'Other Titles', 'Place of Origin',
-            'Playing Time', 'Premiere Night', 'Premiere Theaters',
-            'Presenters', 'Press Reviews', 'Previous Title',
+            'Other Related Material', 'Other Screenings', 'Other Titles',
+            'Place of Origin', 'Playing Time', 'Premiere Night',
+            'Premiere Theaters', 'Presenters', 'Press Reviews', 'Previous Title',
             'Production', 'Production Costs', 'Production Credits',
             'Projected Publication Date', 'Publication Frequency', 'Publications',
             'Publication_Place', 'Publish date', 'Publisher',
@@ -562,13 +564,20 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      *
      * @return array
      */
-    public function getGroupedFields($groups, $lines,
-        $template = 'core-field-group-fields.phtml', $options = [],
+    public function getGroupedFields(
+        $groups,
+        $lines,
+        $template = 'core-field-group-fields.phtml',
+        $options = [],
         $unusedOptions = []
     ) {
         $fieldGroups = new FieldGroupBuilder();
         $fieldGroups->setGroups(
-            $groups, $lines, $template, $options, $unusedOptions
+            $groups,
+            $lines,
+            $template,
+            $options,
+            $unusedOptions
         );
         return $fieldGroups->getArray();
     }
@@ -596,7 +605,9 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             }
             // Render the fields in the group as the value for the group.
             $value = $this->renderRecordDriverTemplate(
-                $driver, $data, ['template' => $group['template']]
+                $driver,
+                $data,
+                ['template' => $group['template']]
             );
             $result[] = [
                 'label' => $group['label'],

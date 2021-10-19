@@ -43,42 +43,42 @@ class AuthorityHelper
      *
      * @var string
      */
-    const AUTHOR2_ID_FACET = 'author2_id_str_mv';
+    public const AUTHOR2_ID_FACET = 'author2_id_str_mv';
 
     /**
      * Index field for author id-role combinations
      *
      * @var string
      */
-    const AUTHOR_ID_ROLE_FACET = 'author2_id_role_str_mv';
+    public const AUTHOR_ID_ROLE_FACET = 'author2_id_role_str_mv';
 
     /**
      * Index field for author2-ids.
      *
      * @var string
      */
-    const TOPIC_ID_FACET = 'topic_id_str_mv';
+    public const TOPIC_ID_FACET = 'topic_id_str_mv';
 
     /**
      * Delimiter used to separate author id and role.
      *
      * @var string
      */
-    const AUTHOR_ID_ROLE_SEPARATOR = '###';
+    public const AUTHOR_ID_ROLE_SEPARATOR = '###';
 
     /**
      * Authority link type: authority page.
      *
      * @var string
      */
-    const LINK_TYPE_PAGE = 'page';
+    public const LINK_TYPE_PAGE = 'page';
 
     /**
      * Authority link type: search results filtered by authority id.
      *
      * @var string
      */
-    const LINK_TYPE_SEARCH = 'search';
+    public const LINK_TYPE_SEARCH = 'search';
 
     /**
      * Authority link type: search results filtered by topic_id_tr_mv (either
@@ -86,7 +86,7 @@ class AuthorityHelper
      *
      * @var string
      */
-    const LINK_TYPE_SEARCH_SUBJECT = 'search-subject';
+    public const LINK_TYPE_SEARCH_SUBJECT = 'search-subject';
 
     /**
      * Record loader
@@ -287,7 +287,9 @@ class AuthorityHelper
      * @return \VuFind\Search\Results|int
      */
     public function getRecordsByAuthorityId(
-        $id, $field = AuthorityHelper::AUTHOR2_ID_FACET, $onlyCount = false
+        $id,
+        $field = AuthorityHelper::AUTHOR2_ID_FACET,
+        $onlyCount = false
     ) {
         $query = $this->getRecordsByAuthorityQuery($id, $field);
         $results = $this->searchRunner->run(
@@ -341,7 +343,8 @@ class AuthorityHelper
         }
         return
             in_array(
-                $setting, [
+                $setting,
+                [
                     self::LINK_TYPE_PAGE, self::LINK_TYPE_SEARCH,
                     self::LINK_TYPE_SEARCH_SUBJECT
                 ]

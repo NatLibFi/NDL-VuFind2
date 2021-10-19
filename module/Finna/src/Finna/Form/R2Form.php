@@ -43,14 +43,14 @@ class R2Form extends Form
      *
      * @var string
      */
-    const R2_REGISTER_FORM = 'R2Register';
+    public const R2_REGISTER_FORM = 'R2Register';
 
     /**
      * R2 returning user registration form id
      *
      * @var string
      */
-    const R2_REGISTER_RETURNING_USER_FORM = 'R2RegisterReturningUser';
+    public const R2_REGISTER_RETURNING_USER_FORM = 'R2RegisterReturningUser';
 
     /**
      * Get form configuration
@@ -99,18 +99,10 @@ class R2Form extends Form
         switch ($translationKey) {
         case 'R2_register_form_usage_link_html':
         case 'R2_register_form_help_returninguser_pre_html':
-            $url = $urlHelper->__invoke('content-page', ['page' => 'tutkijasali']);
+            $url = $urlHelper('content-page', ['page' => 'tutkijasali']);
             return $this->translate($translationKey, ['%%url%%' => $url]);
         case 'R2_register_form_help_post_html':
-            return $this->translate(
-                $translationKey, [
-                    '%%url%%' =>
-                        $urlHelper->__invoke('content-page', ['page' => 'privacy']),
-                    '%%urlTerms%%' =>
-                        $urlHelper->__invoke('content-page', ['page' => 'terms'])
-                ]
-            );
-
+            return $this->translate($translationKey);
         case 'R2_register_form_usage_help_html':
             $help = $this->translate('R2_register_form_usage_help_tooltip_html');
             return $this->translate($translationKey, ['%%title%%' => $help]);

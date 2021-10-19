@@ -115,7 +115,7 @@ class SolrDefaultBackendFactory
 
         // Finna Solr Extensions
         $solrExtensions = new SolrExtensionsListener(
-            $backend,
+            $backend->getIdentifier(),
             $this->serviceLocator,
             $this->searchConfig,
             $this->facetConfig
@@ -166,7 +166,8 @@ class SolrDefaultBackendFactory
     protected function createSimilarBuilder()
     {
         return new \FinnaSearch\Backend\Solr\SimilarBuilder(
-            $this->config->get($this->searchConfig), $this->uniqueKey
+            $this->config->get($this->searchConfig),
+            $this->uniqueKey
         );
     }
 

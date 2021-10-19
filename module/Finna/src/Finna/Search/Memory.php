@@ -49,7 +49,10 @@ class Memory extends \VuFind\Search\Memory
      * @return void
      */
     public function rememberSearchData(
-        $searchId, $searchType, $lookfor, $searchClassId = 'Solr'
+        $searchId,
+        $searchType,
+        $lookfor,
+        $searchClassId = 'Solr'
     ) {
         $this->session->searchData = (object)[
             'id' => $searchId,

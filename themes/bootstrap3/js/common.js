@@ -9,6 +9,7 @@ var VuFind = (function VuFind() {
   var path = null;
   var _initialized = false;
   var _submodules = [];
+  var _cspNonce = '';
   var _translations = {};
 
   // Emit a custom event
@@ -100,6 +101,34 @@ var VuFind = (function VuFind() {
     }
   };
 
+  var getCspNonce = function getCspNonce() {
+    return _cspNonce;
+  };
+
+  var setCspNonce = function setCspNonce(nonce) {
+    _cspNonce = nonce;
+  };
+
+  var updateCspNonce = function updateCspNonce(html) {
+    // Fix any inline script nonces
+    return html.replaceAll(/(<script[^>]*) nonce=["'].*?["']/ig, '$1 nonce="' + getCspNonce() + '"');
+  };
+
+  var loadHtml = function loadHtml(_element, url, data, success) {
+    var $elem = $(_element);
+    if ($elem.length === 0) {
+      return;
+    }
+    $.get(url, typeof data !== 'undefined' ? data : {}, function onComplete(responseText, textStatus, jqXhr) {
+      if ('success' === textStatus || 'notmodified' === textStatus) {
+        $elem.html(updateCspNonce(responseText));
+      }
+      if (typeof success !== 'undefined') {
+        success(responseText, textStatus, jqXhr);
+      }
+    });
+  };
+
   //Reveal
   return {
     defaultSearchBackend: defaultSearchBackend,
@@ -108,10 +137,14 @@ var VuFind = (function VuFind() {
     addTranslations: addTranslations,
     init: init,
     emit: emit,
+    getCspNonce: getCspNonce,
     listen: listen,
     refreshPage: refreshPage,
     register: register,
-    translate: translate
+    setCspNonce: setCspNonce,
+    loadHtml: loadHtml,
+    translate: translate,
+    updateCspNonce: updateCspNonce
   };
 })();
 
@@ -368,18 +401,25 @@ function setupMultiILSLoginFields(loginMethods, idPrefix) {
   var searchPrefix = idPrefix ? '#' + idPrefix : '#';
   $(searchPrefix + 'target').change(function onChangeLoginTarget() {
     var target = $(this).val();
-    var $usernameGroup = $(searchPrefix + 'username').closest('.form-group');
+    var $username = $(searchPrefix + 'username');
+    var $usernameGroup = $username.closest('.form-group');
     var $password = $(searchPrefix + 'password');
     if (loginMethods[target] === 'email') {
+      $username.attr('type', 'email').attr('autocomplete', 'email');
       $usernameGroup.find('label.password-login').addClass('hidden');
       $usernameGroup.find('label.email-login').removeClass('hidden');
       $password.closest('.form-group').addClass('hidden');
       // Set password to a dummy value so that any checks for username+password work
       $password.val('****');
     } else {
+      $username.attr('type', 'text').attr('autocomplete', 'username');
       $usernameGroup.find('label.password-login').removeClass('hidden');
       $usernameGroup.find('label.email-login').addClass('hidden');
       $password.closest('.form-group').removeClass('hidden');
+      // Reset password from the dummy value in email login
+      if ($password.val() === '****') {
+        $password.val('');
+      }
     }
   }).change();
 }
@@ -422,20 +462,26 @@ $(document).ready(function commonDocReady() {
   setupQRCodeLinks();
 
   // Checkbox select all
-  $('.checkbox-select-all').change(function selectAllCheckboxes() {
+  $('.checkbox-select-all').on('change', function selectAllCheckboxes() {
     var $form = this.form ? $(this.form) : $(this).closest('form');
-    $form.find('.checkbox-select-item').prop('checked', this.checked);
+    if (this.checked) {
+      $form.find('.checkbox-select-item:not(:checked)').trigger('click');
+    } else {
+      $form.find('.checkbox-select-item:checked').trigger('click');
+    }
     $('[form="' + $form.attr('id') + '"]').prop('checked', this.checked);
     $form.find('.checkbox-select-all').prop('checked', this.checked);
     $('.checkbox-select-all[form="' + $form.attr('id') + '"]').prop('checked', this.checked);
   });
-  $('.checkbox-select-item').change(function selectAllDisable() {
+  $('.checkbox-select-item').on('change', function selectAllDisable() {
     var $form = this.form ? $(this.form) : $(this).closest('form');
     if ($form.length === 0) {
       return;
     }
-    $form.find('.checkbox-select-all').prop('checked', false);
-    $('.checkbox-select-all[form="' + $form.attr('id') + '"]').prop('checked', false);
+    if (!$(this).prop('checked')) {
+      $form.find('.checkbox-select-all').prop('checked', false);
+      $('.checkbox-select-all[form="' + $form.attr('id') + '"]').prop('checked', false);
+    }
   });
 
   // Print

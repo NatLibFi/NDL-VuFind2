@@ -106,6 +106,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $tabManager;
 
     /**
+     * Form
+     *
+     * @var \Finna\Form\Form
+     */
+    protected $form;
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config              $config           VuFind config
@@ -117,6 +124,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param \VuFind\View\Helper\Root\RecordLink $recordLinkHelper Record link
      * helper
      * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
+     * @param \Finna\Form\Form                    $form             Form
      */
     public function __construct(
         \Laminas\Config\Config $config,
@@ -125,7 +133,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
         \VuFind\View\Helper\Root\Url $urlHelper,
         \VuFind\View\Helper\Root\RecordLink $recordLinkHelper,
-        \VuFind\RecordTab\TabManager $tabManager
+        \VuFind\RecordTab\TabManager $tabManager,
+        \Finna\Form\Form $form
     ) {
         parent::__construct($config);
         $this->loader = $loader;
@@ -134,6 +143,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->urlHelper = $urlHelper;
         $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
+        $this->form = $form;
     }
 
     /**
@@ -197,6 +207,45 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Is repository library request form enabled for this record.
+     *
+     * @return boolean
+     */
+    public function repositoryLibraryRequestEnabled() : bool
+    {
+        if (!isset($this->config->Record->repository_library_request_sources)) {
+            return false;
+        }
+        return in_array(
+            $this->driver->tryMethod('getDataSource'),
+            $this->config->Record->repository_library_request_sources->toArray()
+        ) && $this->getRepositoryLibraryRequestFormId();
+    }
+
+    /**
+     * Get repository library request form id.
+     *
+     * @return string|null
+     */
+    public function getRepositoryLibraryRequestFormId()
+    {
+        $formId = $this->config->Record->repository_library_request_form ?? null;
+        if ($formId) {
+            try {
+                if ($this->form->getFormId() !== $formId) {
+                    $this->form->setFormId($formId);
+                }
+                if (!$this->form->isEnabled()) {
+                    $formId = null;
+                }
+            } catch (\VuFind\Exception\RecordMissing $e) {
+                $formId = null;
+            }
+        }
+        return $formId;
+    }
+
+    /**
      * Return record driver
      *
      * @return \VuFind\RecordDriver\AbstractBase
@@ -247,7 +296,10 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @return string
      */
     public function getLink(
-        $type, $lookfor, $params = [], $withInfo = false,
+        $type,
+        $lookfor,
+        $params = [],
+        $withInfo = false,
         $searchTabsFilters = true
     ) {
         if (is_array($lookfor)) {
@@ -263,7 +315,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (isset($params['id'])) {
             // Add namespace to id
             $authId = $params['id'] = $this->driver->getAuthorityId(
-                $params['id'], $type
+                $params['id'],
+                $type
             );
         }
 
@@ -289,7 +342,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             ]
         );
         $result = $this->renderTemplate(
-            'link-' . $type . '.phtml', $params
+            'link-' . $type . '.phtml',
+            $params
         );
 
         if ($searchTabsFilters) {
@@ -341,7 +395,10 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @return string HTML
      */
     public function getAuthorityLinkElement(
-        $type, $lookfor, $data, $params = []
+        $type,
+        $lookfor,
+        $data,
+        $params = []
     ) {
         $id = $data['id'] ?? null;
         $linkType = $this->getAuthorityLinkType($type);
@@ -350,7 +407,10 @@ class Record extends \VuFind\View\Helper\Root\Record
         $preserveSearchTabsFilters = $linkType !== AuthorityHelper::LINK_TYPE_PAGE;
 
         [$escapedUrl, $urlType] = $this->getLink(
-            $type, $lookfor, $params + compact('id', 'linkType'), true,
+            $type,
+            $lookfor,
+            $params + compact('id', 'linkType'),
+            true,
             $preserveSearchTabsFilters
         );
 
@@ -524,7 +584,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             $context['formAttr'] = $formAttr;
         }
         return $this->contextHelper->renderInContext(
-            'record/checkbox.phtml', $context
+            'record/checkbox.phtml',
+            $context
         );
     }
 
@@ -800,7 +861,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param array $urls Array of rendered URLs
      *
-     * @return array
+     * @return void
      */
     public function setRenderedUrls($urls)
     {
@@ -897,10 +958,14 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $id = $this->driver->getUniqueID();
         $authorCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id, AuthorityHelper::AUTHOR2_ID_FACET, true
+            $id,
+            AuthorityHelper::AUTHOR2_ID_FACET,
+            true
         );
         $topicCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id, AuthorityHelper::TOPIC_ID_FACET, true
+            $id,
+            AuthorityHelper::TOPIC_ID_FACET,
+            true
         );
 
         $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
@@ -910,7 +975,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'cnt' => $authorCnt,
                 'tabUrl' => in_array('AuthorityRecordsAuthor', $tabs)
                     ? $this->recordLinkHelper->getTabUrl(
-                        $this->driver, 'AuthorityRecordsAuthor'
+                        $this->driver,
+                        'AuthorityRecordsAuthor'
                     )
                     : null
             ],
@@ -918,7 +984,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'cnt' => $topicCnt,
                 'tabUrl' => in_array('AuthorityRecordsTopic', $tabs)
                     ? $this->recordLinkHelper->getTabUrl(
-                        $this->driver, 'AuthorityRecordsTopic'
+                        $this->driver,
+                        'AuthorityRecordsTopic'
                     )
                     : null
             ]
@@ -995,8 +1062,32 @@ class Record extends \VuFind\View\Helper\Root\Record
         } catch (\Laminas\View\Exception\RuntimeException $e) {
             // Data source specific template does not exist.
             return $this->renderTemplate(
-                'external-rating-link.phtml', ['externalRatingLink' => $url]
+                'external-rating-link.phtml',
+                ['externalRatingLink' => $url]
             );
         }
+    }
+
+    /**
+     * Returns a translated copyright text.
+     *
+     * @param string $copyright Copyright
+     *
+     * @return string
+     */
+    public function translateCopyright(string $copyright) : string
+    {
+        $transEsc = $this->getView()->plugin('transEsc');
+
+        $label = $transEsc($copyright);
+        if ($copyright === 'Luvanvarainen käyttö / ei tiedossa') {
+            $label = $transEsc('usage_F');
+        } else {
+            $translationEmpty = $this->getView()->plugin('translationEmpty');
+            if (!$translationEmpty("rightsstatement_$copyright")) {
+                $label = $transEsc("rightsstatement_$copyright");
+            }
+        }
+        return $label;
     }
 }

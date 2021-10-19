@@ -108,8 +108,12 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
      *
      * @return void
      */
-    public function __construct(AbstractBackend $primary, AbstractBackend $secondary,
-        \Laminas\Config\Config $config, $mappings, EventManager $events
+    public function __construct(
+        AbstractBackend $primary,
+        AbstractBackend $secondary,
+        \Laminas\Config\Config $config,
+        $mappings,
+        EventManager $events
     ) {
         $this->primaryBackend = $primary;
         $this->secondaryBackend = $secondary;
@@ -133,11 +137,15 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
      *
      * @return RecordCollectionInterface
      */
-    public function search(AbstractQuery $query, $offset, $limit,
+    public function search(
+        AbstractQuery $query,
+        $offset,
+        $limit,
         ParamBag $params = null
     ) {
         $mergedCollection = new Response\Json\RecordCollection(
-            $this->config, $this->mappings
+            $this->config,
+            $this->mappings
         );
 
         $secondaryQuery = $this->translateQuery($query);
@@ -400,8 +408,10 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
      *
      * @return array
      */
-    protected function getRecord(AbstractBackend $backend,
-        ParamBag $params, AbstractQuery $query,
+    protected function getRecord(
+        AbstractBackend $backend,
+        ParamBag $params,
+        AbstractQuery $query,
         RecordCollectionInterface &$collection,
         &$collectionOffset,
         $offset

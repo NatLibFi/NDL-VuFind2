@@ -54,7 +54,8 @@ class CustomElementCloseBlockRenderer implements BlockRendererInterface
      * @return HtmlElement|string|null
      */
     public function render(
-        AbstractBlock $block, ElementRendererInterface $htmlRenderer,
+        AbstractBlock $block,
+        ElementRendererInterface $htmlRenderer,
         bool $inTightList = false
     ) {
         if (!($block instanceof CustomElementCloseBlock)) {

@@ -107,7 +107,8 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         if (isset($this->config['Holdings']['holdings_branch_order'])) {
             $values = explode(
-                ':', $this->config['Holdings']['holdings_branch_order']
+                ':',
+                $this->config['Holdings']['holdings_branch_order']
             );
             foreach ($values as $i => $value) {
                 $parts = explode('=', $value, 2);
@@ -241,19 +242,26 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     public function getMyProfile($patron)
     {
         $result = $this->makeRequest(
-            ['v1', 'patrons', $patron['id']], false, 'GET', $patron
+            ['v1', 'patrons', $patron['id']],
+            false,
+            'GET',
+            $patron
         );
 
         $expirationDate = !empty($result['dateexpiry'])
             ? $this->dateConverter->convertToDisplayDate(
-                'Y-m-d', $result['dateexpiry']
+                'Y-m-d',
+                $result['dateexpiry']
             ) : '';
 
         $guarantor = [];
         $guarantees = [];
         if (!empty($result['guarantorid'])) {
             $guarantorRecord = $this->makeRequest(
-                ['v1', 'patrons', $result['guarantorid']], false, 'GET', $patron
+                ['v1', 'patrons', $result['guarantorid']],
+                false,
+                'GET',
+                $patron
             );
             if ($guarantorRecord) {
                 $guarantor['firstname'] = $guarantorRecord['firstname'];
@@ -262,7 +270,9 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         } else {
             // Assume patron can have guarantees only if there is no guarantor
             $guaranteeRecords = $this->makeRequest(
-                ['v1', 'patrons'], ['guarantorid' => $patron['id']], 'GET',
+                ['v1', 'patrons'],
+                ['guarantorid' => $patron['id']],
+                'GET',
                 $patron
             );
             foreach ($guaranteeRecords as $guarantee) {
@@ -688,77 +698,6 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Change pickup location
-     *
-     * This is responsible for changing the pickup location of a hold
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details
-     *
-     * @return array Associative array of the results
-     */
-    public function changePickupLocation($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $pickUpLocation = $holdDetails['pickupLocationId'];
-
-        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError('hold_invalid_pickup');
-        }
-
-        $request = [
-            'branchcode' => $pickUpLocation
-        ];
-
-        [$code, $result] = $this->makeRequest(
-            ['v1', 'holds', $requestId],
-            json_encode($request),
-            'PUT',
-            $patron,
-            true
-        );
-
-        if ($code >= 300) {
-            return $this->holdError($code, $result);
-        }
-        return ['success' => true];
-    }
-
-    /**
-     * Change request status
-     *
-     * This is responsible for changing the status of a hold request
-     *
-     * @param string $patron      Patron array
-     * @param string $holdDetails The request details (at the moment only 'frozen'
-     * is supported)
-     *
-     * @return array Associative array of the results
-     */
-    public function changeRequestStatus($patron, $holdDetails)
-    {
-        $requestId = $holdDetails['requestId'];
-        $frozen = !empty($holdDetails['frozen']);
-
-        $request = [
-            'suspend' => $frozen
-        ];
-
-        [$code, $result] = $this->makeRequest(
-            ['v1', 'holds', $requestId],
-            json_encode($request),
-            'PUT',
-            $patron,
-            true
-        );
-
-        if ($code >= 300) {
-            return $this->holdError($code, $result);
-        }
-        return ['success' => true];
-    }
-
-    /**
      * Return total amount of fees that may be paid online.
      *
      * @param array $patron Patron
@@ -806,7 +745,10 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $request = [
@@ -929,79 +871,6 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         return [
             'success' => true
         ];
-    }
-
-    /**
-     * Get Patron Holds
-     *
-     * This is responsible for retrieving all holds by a specific patron.
-     *
-     * @param array $patron The patron array from patronLogin
-     *
-     * @throws DateException
-     * @throws ILSException
-     * @return array        Array of the patron's holds on success.
-     */
-    public function getMyHolds($patron)
-    {
-        $result = $this->makeRequest(
-            ['v1', 'holds'],
-            ['borrowernumber' => $patron['id']],
-            'GET',
-            $patron
-        );
-        if (!isset($result)) {
-            return [];
-        }
-        $holds = [];
-        foreach ($result as $entry) {
-            $bibId = $entry['biblionumber'] ?? null;
-            $itemId = $entry['itemnumber'] ?? null;
-            $title = '';
-            $volume = '';
-            if ($itemId) {
-                $item = $this->getItem($itemId);
-                $bibId = $item['biblionumber'] ?? null;
-                $volume = $item['enumchron'] ?? '';
-            }
-            if (!empty($bibId)) {
-                $bib = $this->getBibRecord($bibId);
-                $title = $bib['title'] ?? '';
-                if (!empty($bib['title_remainder'])) {
-                    $title .= ' ' . $bib['title_remainder'];
-                    $title = trim($title);
-                }
-            }
-            $frozen = false;
-            if (!empty($entry['suspend'])) {
-                $frozen = !empty($entry['suspend_until']) ? $entry['suspend_until']
-                    : true;
-            }
-            $available = !empty($entry['waitingdate']);
-            $inTransit = isset($entry['found'])
-                && strtolower($entry['found']) == 't';
-            $holds[] = [
-                'id' => $bibId,
-                'item_id' => $itemId ? $itemId : $entry['reserve_id'],
-                'location' => $entry['branchcode'],
-                'create' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d', $entry['reservedate']
-                ),
-                'expire' => !empty($entry['expirationdate'])
-                    ? $this->dateConverter->convertToDisplayDate(
-                        'Y-m-d', $entry['expirationdate']
-                    ) : '',
-                'position' => $entry['priority'],
-                'available' => $available,
-                'in_transit' => $inTransit,
-                'requestId' => $entry['reserve_id'],
-                'title' => $title,
-                'volume' => $volume,
-                'frozen' => $frozen,
-                'is_editable' => !$available && !$inTransit
-            ];
-        }
-        return $holds;
     }
 
     /**
@@ -1299,92 +1168,6 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         }
         $str = implode(', ', $result);
         return $str;
-    }
-
-    /**
-     * Place Hold
-     *
-     * Attempts to place a hold or recall on a particular item and returns
-     * an array with result details or throws an exception on failure of support
-     * classes
-     *
-     * @param array $holdDetails An array of item and patron data
-     *
-     * @throws ILSException
-     * @return mixed An array of data on the request including
-     * whether or not it was successful and a system message (if available)
-     */
-    public function placeHold($holdDetails)
-    {
-        $patron = $holdDetails['patron'];
-        $level = isset($holdDetails['level']) && !empty($holdDetails['level'])
-            ? $holdDetails['level'] : 'copy';
-        $pickUpLocation = !empty($holdDetails['pickUpLocation'])
-            ? $holdDetails['pickUpLocation'] : $this->defaultPickUpLocation;
-        $itemId = $holdDetails['item_id'] ?? false;
-        $comment = $holdDetails['comment'] ?? '';
-        $bibId = $holdDetails['id'];
-
-        // Convert last interest date from Display Format to Koha's required format
-        try {
-            $lastInterestDate = $this->dateConverter->convertFromDisplayDate(
-                'Y-m-d', $holdDetails['requiredBy']
-            );
-        } catch (DateException $e) {
-            // Hold Date is invalid
-            return $this->holdError('hold_date_invalid');
-        }
-
-        if ($level == 'copy' && empty($itemId)) {
-            throw new ILSException("Hold level is 'copy', but item ID is empty");
-        }
-
-        try {
-            $checkTime = $this->dateConverter->convertFromDisplayDate(
-                'U', $holdDetails['requiredBy']
-            );
-            if (!is_numeric($checkTime)) {
-                throw new DateException('Result should be numeric');
-            }
-        } catch (DateException $e) {
-            throw new ILSException('Problem parsing required by date.');
-        }
-
-        if (time() > $checkTime) {
-            // Hold Date is in the past
-            return $this->holdError('hold_date_past');
-        }
-
-        // Make sure pickup location is valid
-        if (!$this->pickUpLocationIsValid($pickUpLocation, $patron, $holdDetails)) {
-            return $this->holdError('hold_invalid_pickup');
-        }
-
-        $request = [
-            'biblionumber' => (int)$bibId,
-            'borrowernumber' => (int)$patron['id'],
-            'branchcode' => $pickUpLocation,
-            'reservenotes' => $comment,
-            'expirationdate' => $this->dateConverter->convertFromDisplayDate(
-                'Y-m-d', $holdDetails['requiredBy']
-            )
-        ];
-        if ($level == 'copy') {
-            $request['itemnumber'] = (int)$itemId;
-        }
-
-        [$code, $result] = $this->makeRequest(
-            ['v1', 'holds'],
-            json_encode($request),
-            'POST',
-            $patron,
-            true
-        );
-
-        if ($code >= 300) {
-            return $this->holdError($code, $result);
-        }
-        return ['success' => true];
     }
 
     /**
