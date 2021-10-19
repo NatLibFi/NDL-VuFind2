@@ -51,18 +51,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Array of cache keys
-     *
-     * @var array
-     */
-    protected const CACHE_KEYS = [
-        'ISSNs' => 'ISSNs/',
-        'ISBNs' => 'ISBNs/',
-        'inventoryID' => 'inventoryID/',
-        'images' => 'images/'
-    ];
-
-    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
@@ -114,9 +102,39 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     public function getSummary(): array
     {
         $xml = $this->getXmlRecord();
+        $locale = $this->getLocale();
         $results = [];
+        $resultsWithLanguage = [];
         foreach ($xml->description ?? [] as $description) {
-            $results[] = (string)$description;
+            if ($lang = (string)$description['lang']) {
+                if ($lang === $locale) {
+                    $resultsWithLanguage[] = (string)$description;
+                }
+            } else {
+                $results[] = (string)$description;
+            }
+        }
+        return $resultsWithLanguage ?: $results;
+    }
+
+    /**
+     * Get an array of format classifications for the record.
+     *
+     * @return array
+     */
+    public function getFormatClassifications(): array
+    {
+        $xml = $this->getXmlRecord();
+        $locale = $this->getLocale();
+        $results = [];
+        foreach ($xml->type ?? [] as $type) {
+            if ($lang = (string)$type['lang']) {
+                if ($lang === $locale) {
+                    $resultsWithLanguage[] = (string)$type;
+                }
+            } else {
+                $results[] = (string)$type;
+            }
         }
         return $results;
     }
@@ -136,7 +154,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      *
      * @return mixed
      */
-    public function parseImages($language = 'fi', $includePdf = true)
+    public function getAllImages($language = 'fi', $includePdf = true)
     {
         $result = [];
         $urls = [];
@@ -265,13 +283,38 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get identifier as a string
+     * Get identifiers as an array
      *
      * @return array
      */
     public function getIdentifier(): array
     {
-        return $this->getFromCache('inventoryID');
+        $results = [];
+        $xml = $this->getXmlRecord();
+        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
+            foreach ($field as $identifier) {
+                $type = (string)$identifier['type'];
+                if (in_array($type, ['issn', 'isbn'])) {
+                    continue;
+                }
+                $trimmed = str_replace('-', '', trim($identifier));
+                // ISBN
+                if (preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)) {
+                    continue;
+                }
+                $trimmed = trim($identifier);
+                // ISSN
+                if (preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $trimmed)) {
+                    continue;
+                }
+
+                // Leave out some obvious matches like urls or urns
+                if (!preg_match('{(Fi-H|URN:|http://|https://)}', $trimmed)) {
+                    $results[] = $identifier;
+                }
+            }
+        }
+        return array_unique(array_values($results));
     }
 
     /**
@@ -281,7 +324,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISBNs(): array
     {
-        return $this->getFromCache('ISBNs');
+        return $this->fields['isbn'] ?? [];
     }
 
     /**
@@ -291,73 +334,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getISSNs(): array
     {
-        return $this->getFromCache('ISSNs');
-    }
-
-    /**
-     * Parse identifiers into propers caches and return them in assoc
-     *
-     * @return array
-     */
-    protected function parseIdentifiers(): array
-    {
-        $ISBNs = [];
-        $ISSNs = [];
-        $inventoryID = [];
-        $xml = $this->getXmlRecord();
-        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
-            foreach ($field as $identifier) {
-                $type = (string)$identifier['type'];
-                $trimmed = str_replace('-', '', trim($identifier));
-                // ISBN
-                if ($type === 'isbn'
-                    || preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)
-                ) {
-                    $ISBNs[] = $identifier;
-                    continue;
-                }
-                $trimmed = trim($identifier);
-                // ISSN
-                if ($type === 'issn'
-                    || preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $trimmed)
-                ) {
-                    $exploded = explode(':', $trimmed);
-                    $ISSNs[] = $exploded[1];
-                    continue;
-                }
-
-                // Not sure what is the identifier so save it to the others
-                if (!preg_match('{(Fi-H|URN:|http://|https://)}', $trimmed)) {
-                    $inventoryID[] = $identifier;
-                }
-            }
-        }
-        $ISBNs = array_values(array_unique($ISBNs));
-        $ISSNs = array_values(array_unique($ISSNs));
-        return compact('ISBNs', 'ISSNs', 'inventoryID');
-    }
-
-    /**
-     * Function to control the cache in a single function
-     * Return given type of cache with key
-     *
-     * @param string $key      Key of CACHE_KEYS constant
-     * @param string $language Language of texts
-     *
-     * @return array
-     */
-    protected function getFromCache(string $key, $language = null): array
-    {
-        $lang = !empty($language) ? $language : $this->getLocale();
-        $cacheKey = self::CACHE_KEYS[$key] . $lang;
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
-        }
-        $result = $this->parseIdentifiers();
-        foreach (self::CACHE_KEYS as $type => $value) {
-            $this->cache[$value . $lang] = $result[$type] ?? [];
-        }
-        return $this->cache[$cacheKey] ?? [];
+        return $this->fields['issn'] ?? [];
     }
 
     /**
