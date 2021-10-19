@@ -101,7 +101,7 @@ class SolrEad3 extends SolrEad
         'ahaa:AI24','general', 'ahaa:KR1', 'ahaa:KR2', 'ahaa:KR3',
         'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4'
     ];
-    
+
     // Accessrestrict material condition
     public const ACCESS_RESTRICT_MATERIAL_CONDITION = 'ahaa:IL14';
 
