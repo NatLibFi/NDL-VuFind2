@@ -95,11 +95,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get descriptions as summary
+     * Get descriptions
      *
      * @return array
      */
-    public function getSummary(): array
+    public function getDescriptions(): array
     {
         $xml = $this->getXmlRecord();
         $locale = $this->getLocale();
@@ -118,23 +118,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get an array of format classifications for the record.
+     * Get an array of types for the record.
      *
      * @return array
      */
-    public function getFormatClassifications(): array
+    public function getTypes(): array
     {
         $xml = $this->getXmlRecord();
-        $locale = $this->getLocale();
         $results = [];
         foreach ($xml->type ?? [] as $type) {
-            if ($lang = (string)$type['lang']) {
-                if ($lang === $locale) {
-                    $resultsWithLanguage[] = (string)$type;
-                }
-            } else {
-                $results[] = (string)$type;
-            }
+            $results[] = (string)$type;
         }
         return $results;
     }
@@ -309,7 +302,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 }
 
                 // Leave out some obvious matches like urls or urns
-                if (!preg_match('{(URN:|http://|https://)}', $trimmed)) {
+                if (!preg_match('{(^urn:|/^http?)}i', $trimmed)) {
                     $detail = (string)$identifier['type'];
                     $data = $identifier;
                     $results[] = compact('data', 'detail');

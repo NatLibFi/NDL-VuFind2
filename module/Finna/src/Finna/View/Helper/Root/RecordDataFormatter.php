@@ -177,7 +177,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Event Notice', 'Events', 'Exterior Images',
             'Film Copies', 'Film Festivals', 'Filming Date',
             'Filming Location Notes', 'Finding Aid', 'First Lyrics',
-            'Foreign Distribution', 'Funding', 'Genre',  'Identifiers Qdc',
+            'Foreign Distribution', 'Funding', 'Genre', 'Identifiers Qdc',
             'Inscriptions', 'Inspection Details', 'Interior Images',
             'Inventory ID', 'ISBN', 'ISSN', 'Item Description',
             'Item History', 'Keywords', 'Language',
@@ -200,8 +200,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subject Date', 'Subject Detail', 'Subject Place',
             'Subjects', 'subjects_extended', 'System Format',
             'Terms of Use', 'Time Period', 'Time Period of Creation',
-            'Trade Availability Note', 'Uncontrolled Title', 'Uniform Title',
-            'Unit ID', 'Unit IDs'
+            'Trade Availability Note', 'Type', 'Uncontrolled Title',
+            'Uniform Title', 'Unit ID', 'Unit IDs'
         ];
 
         return array_intersect_key($coreFields, array_flip($include));

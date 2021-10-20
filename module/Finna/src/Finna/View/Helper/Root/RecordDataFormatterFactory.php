@@ -114,7 +114,6 @@ class RecordDataFormatterFactory
                 $pos += 100;
                 $lines[$key] = [true, $dataMethod, $callback];
             };
-
         $setTemplateLine(
             'Genre',
             'getGenres',
@@ -197,6 +196,14 @@ class RecordDataFormatterFactory
             'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'recordDescription']
+            ]
+        );
+        $setTemplateLine(
+            'Identifiers Qdc',
+            'getIdentifiers',
+            'data-lines-with-detail.phtml',
+            [
+                'context' => ['class' => 'recordIdentifiers']
             ]
         );
         $setTemplateLine(
@@ -446,14 +453,6 @@ class RecordDataFormatterFactory
             'Other ID',
             'getLocalIdentifiers',
             'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordIdentifiers']
-            ]
-        );
-        $setTemplateLine(
-            'Identifiers Qdc',
-            'getIdentifiers',
-            'data-lines-with-detail.phtml',
             [
                 'context' => ['class' => 'recordIdentifiers']
             ]
@@ -998,6 +997,14 @@ class RecordDataFormatterFactory
             'data-accrest.phtml',
             [
                 'context' => ['class' => 'extendedAccess']
+            ]
+        );
+        $setTemplateLine(
+            'Type',
+            'getTypes',
+            'data-escapeHtml',
+            [
+                'context' => ['class' => 'record-type']
             ]
         );
 
