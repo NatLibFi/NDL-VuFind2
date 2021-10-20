@@ -10,6 +10,8 @@
 #   useCaptcha (boolean) Should the form use Captcha validation? Requires the "feedback"
 #                        option to be turned on in the config.ini [Captcha] form setting.
 #                        (default = true, if Captcha turned on for feedback overall).
+#                        N.B. In Finna the captcha check is invisible, and this
+#                        setting should not be used or set to false.
 #   reportReferrer (boolean) Should the form report the page from which it was invoked
 #   reportUserAgent (boolean) Should the form report the browser's user agent string
 #   title (string) Form title (translation key)
@@ -165,7 +167,6 @@ forms:
     allowLocalOverride: true
     title: Feedback
     enabled: true
-    useCaptcha: false
     #recipient:
     #  name: Your Library
     #  email: feedback@myuniversity.edu
@@ -224,7 +225,6 @@ forms:
     allowLocalOverride: true
     title: Send feedback on record
     enabled: true
-    useCaptcha: false
     #sendMethod: "database"
 
     onlyForLoggedUsers: false
@@ -257,7 +257,6 @@ forms:
     allowLocalOverride: true
     title: repository_library_request
     enabled: false
-    useCaptcha: false
     sendMethod: "database"
     includeBarcode: true
     onlyForLoggedUsers: true

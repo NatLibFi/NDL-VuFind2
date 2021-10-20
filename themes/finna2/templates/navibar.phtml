@@ -1,5 +1,10 @@
-<!-- START of: finna - navibar.phtml -->
-<?php $account = $this->auth()->getManager(); ?>
+<!-- START of: finna - navibar.phtml --> 
+<?php
+    $user = $this->auth()->isLoggedIn();
+    $patron = $user ? $this->auth()->getILSPatron() : false;
+    $capabilityParams = $patron ? ['patron' => $patron] : [];
+    $account = $this->auth()->getManager();
+?>
 <div role="navigation" aria-label="<?=$this->transEscAttr('Main Menu')?>" class="finna-navbar">
   <div class="navbar-header">
     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#header-collapse" aria-label="<?=$this->transEscAttr('Mobile Menu') ?>" aria-expanded="false">
@@ -94,7 +99,6 @@
       </div>
     <?php //hide login if unavailable ?>
     <?php if (is_object($account) && $account->loginEnabled()): ?>
-      <?php $user = $account->isLoggedIn(); ?>
       <?php if (!$user): ?>
         <ul role="menubar" class="nav navbar-nav nav-login">
           <li class="nav-login" id="loginOptions-navi">
@@ -129,6 +133,13 @@
                     <span class="checkedout-status status hidden"><i class="fa fa-spin fa-spinner" aria-hidden="true"></i></span>
                   </a>
                 </li>
+                <?php if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
+                <li>
+                  <a role="menuitem" href="<?=$this->url('myresearch-historicloans')?>">
+                    <?=$this->transEsc('Loan History')?>
+                  </a>
+                </li>
+                <?php endif; ?>
                 <li>
                   <a role="menuitem" href="<?=$this->url('holds-list')?>">
                     <?=$this->transEsc('Holds and Recalls')?>

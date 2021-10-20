@@ -38,7 +38,7 @@ finna.userListEmbed = (function userListEmbed() {
           )
             .done(function onListLoaded(response) {
               showMore.remove();
-              $(response.data.html).find('.result').each(function appendResult(/*index*/) {
+              $(VuFind.updateCspNonce(response.data.html)).find('.result').each(function appendResult(/*index*/) {
                 resultsContainer.append($(this));
               });
 

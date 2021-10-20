@@ -66,7 +66,7 @@ VuFind.register('embedded', function embedded() {
         success: function ajaxTabSuccess(data) {
           var html = data.trim();
           if (html.length > 0) {
-            $('#' + tabid + '-content').html(html);
+            $('#' + tabid + '-content').html(VuFind.updateCspNonce(html));
             registerTabEvents();
           } else {
             $('#' + tabid + '-content').html(VuFind.translate('collection_empty'));
@@ -137,7 +137,7 @@ VuFind.register('embedded', function embedded() {
           }),
           success: function getRecordDetailsSuccess(response) {
             // Insert tabs html
-            longNode.html(response.data.html);
+            longNode.html(VuFind.updateCspNonce(response.data.html));
             // Hide loading
             loadingNode.addClass('hidden');
             longNode.collapse('show');
