@@ -376,7 +376,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected function getFromCache(string $key, $language = null): array
     {
-        $lang = !empty($language) ? $language : $this->getLocale();
+        $lang = !empty($language) ? $language : $this->getTranslatorLocale();
         $cacheKey = self::CACHE_KEYS[$key] . $lang;
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
