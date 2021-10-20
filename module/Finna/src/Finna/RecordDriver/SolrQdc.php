@@ -106,13 +106,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         $resultsWithLanguage = [];
         foreach ($xml->description ?? [] as $description) {
-            if ($lang = (string)$description['lang']) {
-                if ($lang === $locale) {
-                    $resultsWithLanguage[] = (string)$description;
-                }
-            } else {
-                $results[] = (string)$description;
+            $lang = (string)$description['lang'];
+            if ($lang === $locale) {
+                $resultsWithLanguage[] = (string)$description;
             }
+            $results[] = (string)$description;
         }
         return $resultsWithLanguage ?: $results;
     }
