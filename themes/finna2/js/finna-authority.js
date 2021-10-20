@@ -51,7 +51,7 @@ finna.authority = (function finnaAuthority() {
         }
       )
         .done(function onGetAuthorityInfoDone(response) {
-          authoritybox.html(typeof response.data.html !== 'undefined' ? response.data.html : '--');
+          authoritybox.html(typeof response.data.html !== 'undefined' ? VuFind.updateCspNonce(response.data.html) : '--');
           toggleAuthorityInfoCollapse(false);
           if (!authoritybox.hasClass('hide')) {
             finna.layout.initTruncate(authoritybox);
@@ -96,7 +96,7 @@ finna.authority = (function finnaAuthority() {
                 $authorityInfo.find('.fa-spinner').remove();
                 var desc = typeof response.data.html !== 'undefined' ? response.data.html : null;
                 if (desc && desc.trim()) {
-                  $authorityInfo.html(desc);
+                  $authorityInfo.html(VuFind.updateCspNonce(desc));
                   finna.layout.initTruncate($authorityInfo);
                 } else {
                   $authorityInfo.find('.no-info').removeClass('hide');
@@ -153,7 +153,7 @@ finna.authority = (function finnaAuthority() {
         )
           .done(function onGetAuthorityRecordCountDone(response) {
             if (response.data.html.length > 0) {
-              $elem.html(response.data.html);
+              $elem.html(VuFind.updateCspNonce(response.data.html));
             } else {
               $elem.text('');
             }

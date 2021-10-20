@@ -52,7 +52,7 @@ finna.itemStatus = (function finnaItemStatus() {
             id: recordContainer.find('.hiddenId')[0].value
           }
         ).done(function onGetRecordLinksDone(response) {
-          $recordUrls.replaceWith(response.data.html);
+          $recordUrls.replaceWith(VuFind.updateCspNonce(response.data.html));
           finna.layout.initTruncate(recordContainer);
           VuFind.openurl.embedOpenUrlLinks(recordContainer.find('.openUrlEmbed a'));
         }).fail(function onGetRecordLinksFail() {

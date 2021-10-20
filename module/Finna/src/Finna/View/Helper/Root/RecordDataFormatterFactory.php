@@ -571,6 +571,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Introduction',
+            'getIntroduction',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-introduction']
+            ]
+        );
+        $setTemplateLine(
             'Manufacturer',
             'getManufacturer',
             'data-transEsc.phtml',

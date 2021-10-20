@@ -114,6 +114,13 @@ class Form extends \VuFind\Form\Form
     protected $user = null;
 
     /**
+     * ILS Patron
+     *
+     * @var array
+     */
+    protected $ilsPatron = null;
+
+    /**
      * User roles
      *
      * @var array
@@ -226,7 +233,7 @@ class Form extends \VuFind\Form\Form
                     . ' \'includePatronId\' is enabled'
                 );
             }
-            if ($this->user && ($catId = $this->user->cat_id)) {
+            if ($this->ilsPatron && ($catId = $this->ilsPatron['id'] ?? '')) {
                 [, $id] = explode('.', $catId);
                 $this->userCatId = $id;
             }
@@ -275,15 +282,17 @@ class Form extends \VuFind\Form\Form
     /**
      * Set user
      *
-     * @param User  $user  User
-     * @param array $roles User roles
+     * @param User  $user      User
+     * @param array $roles     User roles
+     * @param array $ilsPatron ILS patron account
      *
      * @return void
      */
-    public function setUser($user, $roles)
+    public function setUser($user, $roles, ?array $ilsPatron)
     {
         $this->user = $user;
         $this->userRoles = $roles;
+        $this->ilsPatron = $ilsPatron;
     }
 
     /**

@@ -1,10 +1,10 @@
 <?php
 /**
- * Organisations list helper factory.
+ * CSP nonce helper factory.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -25,17 +25,16 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace VuFind\View\Helper\Root;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use VuFind\I18n\Locale\LocaleSettings;
 
 /**
- * Organisations list helper factory.
+ * CSP nonce helper factory.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -43,7 +42,7 @@ use VuFind\I18n\Locale\LocaleSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class OrganisationsListFactory implements FactoryInterface
+class CspNonceFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -67,13 +66,7 @@ class OrganisationsListFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-
-        return new $requestedName(
-            $container->get(\VuFind\Cache\Manager::class)->getCache('object'),
-            $container->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class),
-            $container->get(\VuFind\Search\Results\PluginManager::class),
-            $container->get(\Finna\OrganisationInfo\OrganisationInfo::class),
-            $container->get(LocaleSettings::class)->getUserLocale()
-        );
+        $nonceGenerator = $container->get(\VuFind\Security\NonceGenerator::class);
+        return new $requestedName($nonceGenerator->getNonce());
     }
 }

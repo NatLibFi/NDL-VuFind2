@@ -725,7 +725,7 @@ class SolrEad3 extends SolrEad
                 $attr = $daoset->attributes();
                 // localtype could be defined for daoset or for dao-element (below)
                 $localtype = (string)($attr->localtype ?? null);
-                $localtype = self::IMAGE_MAP[$localtype] ?? self::IMAGE_FULLRES;
+                $localtype = self::IMAGE_MAP[$localtype] ?? self::IMAGE_LARGE;
                 $size = $localtype === self::IMAGE_FULLRES
                       ? self::IMAGE_LARGE : $localtype;
                 if (!isset($images[$size])) {
