@@ -116,6 +116,53 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get series
+     * 
+     * @return array
+     */
+    public function getSeries(): array
+    {
+        $xml = $this->getXmlRecord();
+        $locale = $this->getLocale();
+        $results = [];
+        $resultsWithLanguage = [];
+        foreach ($xml->description ?? [] as $description) {
+            $type = (string)$description->attributes()->{'type'};
+            $lang = (string)$description->attributes()->{'lang'};
+            $trimmed = trim((string)$description);
+            if ($type === 'ispartofseries') {
+                if ($lang === $locale) {
+                    $resultsWithLanguage = $trimmed;
+                }
+                $results[] = $trimmed;
+            }
+        }
+        return $resultsWithLanguage ?: $results;
+    }
+
+    /**
+     * Get series number
+     * 
+     * @return array
+     */
+    public function getSeriesNumber(): string
+    {
+        $xml = $this->getXmlRecord();
+        $locale = $this->getLocale();
+        $result = [];
+        foreach ($xml->description ?? [] as $description) {
+            if ($lang = (string)$description['lang']) {
+                if ($lang === $locale) {
+                    $resultsWithLanguage[] = (string)$description;
+                }
+            } else {
+                $results[] = (string)$description;
+            }
+        }
+        return [];
+    }
+
+    /**
      * Get an array of types for the record.
      *
      * @return array
