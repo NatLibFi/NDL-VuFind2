@@ -300,7 +300,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 }
 
                 // Leave out some obvious matches like urls or urns
-                if (!preg_match('{(^urn:|/^http?)}i', $trimmed)) {
+                if (!preg_match('{(^urn:|^https?)}i', $trimmed)) {
                     $detail = (string)$identifier['type'];
                     $data = $identifier;
                     $results[] = compact('data', 'detail');
