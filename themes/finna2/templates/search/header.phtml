@@ -6,7 +6,7 @@
     }
 
     // Load search actions and settings (if any):
-    $options = $this->searchOptions($this->searchMemory()->getLastSearchClassId() ?? $this->searchClassId);
+    $options = $this->searchOptions($this->searchClassId);
     $handlers = $this->searchbox()->getHandlers(
         $this->searchClassId,
         $this->searchIndex ?? null
