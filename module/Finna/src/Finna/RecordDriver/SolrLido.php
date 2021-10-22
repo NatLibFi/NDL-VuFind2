@@ -53,16 +53,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Representation cache keys
-     *
-     * @var array
-     */
-    protected const CACHE_KEYS = [
-        'models' => 'models/',
-        'images' => 'images/'
-    ];
-
-    /**
      * Map from site locale to Lido language codes.
      */
     public const LANGUAGE_CODES = [
@@ -255,7 +245,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = null)
     {
-        return $this->getFromCache('images', $language);
+        $language = $language ?? $this->getTranslatorLocale();
+        $representations = $this->getRepresentations($language);
+        return $representations['images'];
     }
 
     /**
@@ -303,30 +295,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModels(): array
     {
-        return $this->getFromCache('models');
-    }
-
-    /**
-     * Function to control the cache in a single function
-     * Return given type of cache with key
-     *
-     * @param string $key      Key of CACHE_KEYS constant
-     * @param string $language Language of texts
-     *
-     * @return array
-     */
-    protected function getFromCache(string $key, $language = null): array
-    {
-        $lang = !empty($language) ? $language : $this->getTranslatorLocale();
-        $cacheKey = self::CACHE_KEYS[$key] . $lang;
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
-        }
-        $result = $this->parseRepresentations($lang);
-        foreach (self::CACHE_KEYS as $type => $value) {
-            $this->cache[$value . $lang] = $result[$type] ?? [];
-        }
-        return $this->cache[$cacheKey] ?? [];
+        $language = $this->getTranslatorLocale();
+        $representations = $this->getRepresentations($language);
+        return $representations['models'];
     }
 
     /**
@@ -337,8 +308,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    protected function parseRepresentations(string $language): array
+    protected function getRepresentations(string $language): array
     {
+        $cacheKey = __FUNCTION__ . "/$language";
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
         $defaultRights = $this->getImageRights($language, true);
         $imageTypeKeys = array_keys($this->imageTypes);
         $modelTypeKeys = array_keys($this->modelTypes);
@@ -508,10 +484,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
             $i++;
         }
-        return [
+
+        $result = [
             'images' => $imageResults,
             'models' => $modelResults
         ];
+        $this->cache[$cacheKey] = $result;
+        return $result;
     }
 
     /**
@@ -595,13 +574,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get rights from the given resourceSet
      *
-     * @param object $resourceSet Given resourceSet from lido
-     * @param string $language    Language to look for
+     * @param \SimpleXmlElement $resourceSet Given resourceSet from lido
+     * @param string           $language    Language to look for
      *
      * @return array
      */
-    protected function parseResourceRights($resourceSet, $language): array
-    {
+    protected function parseResourceRights(
+        \SimpleXmlElement $resourceSet,
+        string $language
+    ): array {
         $defaultRights = $this->getImageRights($language, true);
         $rights = [];
         foreach ($resourceSet->rightsResource ?? [] as $rightsResource) {
