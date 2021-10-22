@@ -2,27 +2,23 @@
 <div class="truncate-field" data-rows="5">
     <?php foreach ($data as $obj): ?>
         <?php
-            $loopUntil = max(count($obj['urls']), count($obj['terms']));
+            $desc = $obj['description'] ?? '';
+            $url = $obj['url'] ?? '';
+            $term = $obj['term'] ?? '';
         ?>
-        <?php if (!empty($obj['description'])): ?>
-            <div><?=$this->escapeHtml($obj['description'])?></div>
+        <?php if ($desc): ?>
+            <div><?=$this->escapeHtml($desc)?></div>
         <?php endif; ?>
-        <?php for ($i = 0; $i < $loopUntil; $i++): ?>
-            <?php
-                $url = $obj['urls'][$i] ?? false;
-                $term = $obj['terms'][$i] ?? false;
-            ?>
-            <?php if (!empty($url)): ?>
-                <a title="<?=$this->escapeHtmlAttr($term ?: $obj['description']) ?? $this->transEsc('external_link')?>" target="_blank" href="<?=$this->escapeHtmlAttr($url)?>">
-            <?php endif; ?>    
-            <?php if (!empty($term)): ?>
-                <div><?=$this->escapeHtml($term)?></div>
-            <?php elseif (!empty($url)): ?>
-                <div><?=$this->escapeHtml($this->truncateUrl($url))?></div>
-            <?php endif; ?>
-            <?php if (!empty($url)): ?>    
-                </a>
-            <?php endif; ?>
-        <?php endfor; ?>
+        <?php if ($url): ?>
+            <a title="<?=$this->escapeHtmlAttr($term ?: $desc)?>" target="_blank" href="<?=$this->escapeHtmlAttr($url)?>">
+        <?php endif; ?>    
+        <?php if ($term): ?>
+            <div><?=$this->escapeHtml($term)?></div>
+        <?php elseif ($url): ?>
+            <div><?=$this->escapeHtml($this->truncateUrl($url))?></div>
+        <?php endif; ?>
+        <?php if ($url): ?>    
+            </a>
+        <?php endif; ?>
     <?php endforeach; ?>
 </div>

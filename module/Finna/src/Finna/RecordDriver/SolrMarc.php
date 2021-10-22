@@ -1863,9 +1863,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         foreach ($marcReader->getFields('567') as $field) {
             $result = [];
             $description = $marcReader->getSubfield($field, 'a');
-            $terms = array_filter($marcReader->getSubfields($field, 'b'));
-            $urls = array_filter($marcReader->getSubfields($field, '0'));
-            $results[] = compact('description', 'terms', 'urls');
+            $term = $marcReader->getSubfield($field, 'b');
+            $url = $marcReader->getSubfield($field, '0');
+            $results[] = compact('description', 'term', 'url');
         }
         return $results;
     }
