@@ -8,11 +8,24 @@
         <ul class="list-group list-sub-group <?=$this->escapeHtmlAttr($type)?>">
         <?php foreach ($records as $record): ?>
         <?php $formats = $record->getFormats(); ?>
+        <?php $parentSource = $record->getSourceIdentifier(); ?>
           <li>
             <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($record))?>">
               <?=$this->escapeHtml($record->getTitle())?>
             </a>
+            <br>
             <?=$this->record($record)->getFormatList();?>
+            <?php $topTitles = $record->getHierarchyTopTitle(); if ($topTitles): ?>
+              <?php
+                $topTitle = $topTitles[0];
+                $topIds = $record->getHierarchyTopId();
+                $topId = $topIds[0] ?? '';
+              ?>
+              <br>
+              <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl("$parentSource|$topId"))?>">
+                <?=$this->escapeHtml($this->truncate($topTitle, 180)) ?>
+              </a>
+            <?php endif?>
           </li>
         <?php endforeach; ?>
         </ul>

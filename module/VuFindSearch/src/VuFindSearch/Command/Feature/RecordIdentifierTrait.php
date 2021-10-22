@@ -1,6 +1,7 @@
 <?php
+
 /**
- * CSP nonce view helper
+ * Trait for commands with a record identifier argument.
  *
  * PHP version 7
  *
@@ -20,50 +21,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Search
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org
  */
-namespace Finna\View\Helper\Root;
+namespace VuFindSearch\Command\Feature;
 
 /**
- * CSP nonce view helper
+ * Trait for commands with a record identifier argument.
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Search
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org
  */
-class CspNonce extends \Laminas\View\Helper\AbstractHelper
+trait RecordIdentifierTrait
 {
     /**
-     * CSP nonce
+     * Record identifier.
      *
      * @var string
      */
-    protected $cspNonce;
+    protected $id;
 
     /**
-     * Constructor
-     *
-     * @param string $nonce Nonce from nonce generator
-     */
-    public function __construct($nonce)
-    {
-        $this->cspNonce = $nonce;
-    }
-
-    /**
-     * Return the current nonce
-     *
-     * Result is a base64 encoded string that does not need escaping.
+     * Return record identifier.
      *
      * @return string
      */
-    public function __invoke()
+    public function getRecordIdentifier(): string
     {
-        return $this->cspNonce;
+        return $this->id;
     }
 }

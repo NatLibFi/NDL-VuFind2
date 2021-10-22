@@ -73,7 +73,8 @@ class RecordFactory implements FactoryInterface
             $container->get(\Finna\Search\Solr\AuthorityHelper::class),
             $container->get('ViewHelperManager')->get('url'),
             $container->get('ViewHelperManager')->get('recordLink'),
-            $container->get(\VuFind\RecordTab\TabManager::class)
+            $container->get(\VuFind\RecordTab\TabManager::class),
+            $container->get(\VuFind\Form\Form::class)
         );
         if ('cli' !== php_sapi_name()) {
             $helper->setCoverRouter(

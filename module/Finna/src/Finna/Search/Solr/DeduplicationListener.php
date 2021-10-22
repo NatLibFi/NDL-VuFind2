@@ -29,6 +29,7 @@ namespace Finna\Search\Solr;
 
 use Laminas\EventManager\EventInterface;
 
+use VuFindSearch\Query\Query;
 use VuFindSearch\Query\QueryGroup;
 
 /**
@@ -55,14 +56,17 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         $command = $event->getParam('command');
         if ($command->getTargetIdentifier() === $this->backend->getIdentifier()) {
             // Check that we're not doing a known record search
-            $query = $event->getParam('query');
-            if ($query && !($query instanceof QueryGroup)
-                && $query->getHandler() === 'id'
+            $query = method_exists($command, 'getQuery')
+                ? $command->getQuery()
+                : null;
+            if ($query
+                && !($query instanceof QueryGroup)
+                && ($query instanceof Query && $query->getHandler() === 'id')
             ) {
                 return $event;
             }
-            $params = $event->getParam('params');
-            $context = $event->getParam('context');
+            $params = $command->getSearchParameters();
+            $context = $command->getContext();
             $allowedContexts = ['search', 'similar', 'workExpressions', 'getids'];
             if ($params && in_array($context, $allowedContexts)) {
                 // Check for a special filter that enables deduplication
@@ -113,9 +117,11 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         if ($command->getTargetIdentifier() !== $this->backend->getIdentifier()) {
             return $event;
         }
-        $context = $event->getParam('context');
-        $params = $event->getParam('params');
-        if ($params && in_array($context, ['search', 'similar', 'workExpression'])) {
+        $context = $command->getContext();
+        $params = $command->getSearchParameters();
+        if ($params
+            && in_array($context, ['search', 'similar', 'workExpressions'])
+        ) {
             if ($params->contains('finna.deduplication', '1')) {
                 $this->enabled = true;
             } elseif ($params->contains('finna.deduplication', '0')) {
@@ -293,7 +299,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
         }
         $excluded = explode(',', $searchConfig->Records->apiExcludedSources);
 
-        $result = $event->getTarget();
+        $result = $event->getParam('command')->getResult();
         foreach ($result->getRecords() as $record) {
             $fields = $record->getRawData();
             if (!isset($fields['dedup_data'])) {

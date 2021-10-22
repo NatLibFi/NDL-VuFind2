@@ -35,8 +35,6 @@ use FinnaSearch\Backend\R2\Connector;
 use Laminas\EventManager\EventInterface;
 use Laminas\EventManager\SharedEventManagerInterface;
 
-use VuFindSearch\Backend\BackendInterface;
-
 /**
  * Restricted Solr (R2) Search authentication listener.
  *
@@ -49,11 +47,11 @@ use VuFindSearch\Backend\BackendInterface;
 class AuthenticationListener
 {
     /**
-     * Backend.
+     * Backend identifier.
      *
-     * @var BackendInterface
+     * @var string
      */
-    protected $backend;
+    protected $backendId;
 
     /**
      * R2 service
@@ -65,7 +63,7 @@ class AuthenticationListener
     /**
      * Connector
      *
-     * @var FinnaSearch\Backend\R2\Connector
+     * @var \FinnaSearch\Backend\R2\Connector
      */
     protected $connector;
 
@@ -79,20 +77,20 @@ class AuthenticationListener
     /**
      * Constructor.
      *
-     * @param BackendInterface $backend   Search backend
-     * @param R2SupporService  $r2        R2 support service
+     * @param string           $backendId Search backend identifier
+     * @param R2SupportService $r2        R2 support service
      * @param Connector        $connector Backend connector
      * @param RemsService      $rems      REMS service
      *
      * @return void
      */
     public function __construct(
-        BackendInterface $backend,
+        string $backendId,
         R2SupportService $r2,
         Connector $connector,
         RemsService $rems
     ) {
-        $this->backend = $backend;
+        $this->backendId = $backendId;
         $this->r2SupportService = $r2;
         $this->connector = $connector;
         $this->rems = $rems;
@@ -120,10 +118,8 @@ class AuthenticationListener
      */
     public function onSearchPre(EventInterface $event)
     {
-        $backend = $event->getTarget();
-        if ($backend === $this->backend) {
-            $params = $event->getParam('params');
-            $context = $event->getParam('context');
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() === $this->backendId) {
             $this->connector->setUsername(null);
             if ($this->r2SupportService->isAuthenticated()) {
                 // Pass the username to connector in order to

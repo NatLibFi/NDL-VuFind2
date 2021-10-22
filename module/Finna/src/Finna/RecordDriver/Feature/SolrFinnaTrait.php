@@ -992,7 +992,7 @@ trait SolrFinnaTrait
         $newUrls = [];
         foreach ($urls as $url) {
             if (preg_match(
-                '/^http(s)?:\/\/.*\.([a-zA-Z0-9]{3,4}.*)$/',
+                '/^http(s)?:\/\/.*\.([a-zA-Z0-9]{3,4})$/',
                 $url['url'],
                 $match
             )
@@ -1006,6 +1006,7 @@ trait SolrFinnaTrait
                     break;
                 case 'jpg':
                 case 'png':
+                case 'tif':
                     $type = 'image';
                     break;
                 }

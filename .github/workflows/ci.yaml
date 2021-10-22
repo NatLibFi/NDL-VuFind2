@@ -20,7 +20,7 @@ jobs:
           - php-version: 7.4
             phing_tasks: "phpunitfast phpcs-console php-cs-fixer-dryrun phpstan-console"
           - php-version: 8.0
-            phing_tasks: "eslint jshint phpunitfast phpcs-console php-cs-fixer-dryrun checkLessToSass phpstan-console"
+            phing_tasks: "eslint eslint-finna jshint phpunitfast phpcs-console php-cs-fixer-dryrun phpstan-console"
 
     steps:
       - name: Setup PHP

@@ -72,6 +72,8 @@ class IconTest extends \PHPUnit\Framework\TestCase
             ],
             'aliases' => [
                 'bar' => 'Fugue:baz.png',
+                'bar-rtl' => 'Fugue:zab.png',
+                'ltronly' => 'Fugue:ltronly.png',
                 'xyzzy' => 'FakeSprite:sprite',
             ],
         ];
@@ -123,13 +125,15 @@ class IconTest extends \PHPUnit\Framework\TestCase
         array $config = null,
         StorageInterface $cache = null,
         HeadLink $headLink = null,
-        array $plugins = []
+        array $plugins = [],
+        $rtl = false
     ): Icon {
         $icon = new Icon(
             $config ?? $this->getDefaultTestConfig(),
             $cache ?? new BlackHole(),
             new EscapeHtmlAttr(),
-            $headLink ?? $this->getMockHeadLink()
+            $headLink ?? $this->getMockHeadLink(),
+            $rtl
         );
         $icon->setView($this->getPhpRenderer($plugins));
         return $icon;
@@ -143,7 +147,7 @@ class IconTest extends \PHPUnit\Framework\TestCase
     public function testFontIcon(): void
     {
         $helper = $this->getIconHelper();
-        $expected = '<span class="icon--font fa&amp;&#x23;x20&#x3B;fa-foo" '
+        $expected = '<span class="icon--font fa&#x20;fa-foo" '
             . 'role="img" aria-hidden="true"></span>';
         $this->assertEquals($expected, trim($helper('foo')));
     }
@@ -156,9 +160,16 @@ class IconTest extends \PHPUnit\Framework\TestCase
     public function testFontIconWithExtras(): void
     {
         $helper = $this->getIconHelper();
-        $expected = '<span class="icon--font fa&amp;&#x23;x20&#x3B;fa-foo" '
+        $expected = '<span class="icon--font fa&#x20;fa-foo" '
             . 'bar="baz" role="img" aria-hidden="true"></span>';
         $this->assertEquals($expected, trim($helper('foo', ['bar' => 'baz'])));
+
+        // Add class to class
+        $expected = '<span class="icon--font fa&#x20;fa-foo foo-bar" role="img" aria-hidden="true"></span>';
+        $this->assertEquals($expected, trim($helper('foo', ['class' => 'foo-bar'])));
+
+        // Shortcut
+        $this->assertEquals($expected, trim($helper('foo', 'foo-bar')));
     }
 
     /**
@@ -168,7 +179,7 @@ class IconTest extends \PHPUnit\Framework\TestCase
      */
     public function testCaching(): void
     {
-        $expected = '<span class="icon--font fa&amp;&#x23;x20&#x3B;fa-foo" '
+        $expected = '<span class="icon--font fa&#x20;fa-foo" '
             . 'bar="baz" role="img" aria-hidden="true"></span>' . "\n";
         $key = 'foo+c0dc783820069fb9337be7366f7945bf';
 
@@ -200,6 +211,26 @@ class IconTest extends \PHPUnit\Framework\TestCase
         $helper = $this->getIconHelper(null, null, null, $plugins);
         $expected = '<img class="icon--img" src="baz.png" aria-hidden="true"/>';
         $this->assertEquals($expected, trim($helper('bar')));
+    }
+
+    /**
+     * Test RTL
+     *
+     * @return void
+     */
+    public function testRTL(): void
+    {
+        // RTL exists
+        $plugins = ['imageLink' => $this->getMockImageLink('icons/zab.png')];
+        $helper = $this->getIconHelper(null, null, null, $plugins, true);
+        $expected = '<img class="icon--img" src="zab.png" aria-hidden="true"/>';
+        $this->assertEquals($expected, trim($helper('bar')));
+
+        // RTL does not exist
+        $plugins = ['imageLink' => $this->getMockImageLink('icons/ltronly.png')];
+        $helper = $this->getIconHelper(null, null, null, $plugins, true);
+        $expected = '<img class="icon--img" src="ltronly.png" aria-hidden="true"/>';
+        $this->assertEquals($expected, trim($helper('ltronly')));
     }
 
     /**

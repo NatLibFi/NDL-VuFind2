@@ -93,6 +93,13 @@ class Icon extends AbstractHelper
     protected $headLink;
 
     /**
+     * Are we in right to left text mode?
+     *
+     * @var boolean
+     */
+    protected $rtl;
+
+    /**
      * Prevent extra work by only appending the stylesheet once
      *
      * @var boolean
@@ -106,12 +113,14 @@ class Icon extends AbstractHelper
      * @param StorageInterface $cache    Cache instance
      * @param EscapeHtmlAttr   $escAttr  EscapeHtmlAttr view helper
      * @param HeadLink         $headLink HeadLink view helper
+     * @param bool             $rtl      Are we in right to left text mode?
      */
     public function __construct(
         array $config,
         StorageInterface $cache,
         EscapeHtmlAttr $escAttr,
-        HeadLink $headLink
+        HeadLink $headLink,
+        bool $rtl = false
     ) {
         $this->config = $config;
         $this->defaultSet = $this->config['defaultSet'] ?? 'FontAwesome';
@@ -120,6 +129,7 @@ class Icon extends AbstractHelper
         $this->cache = $cache;
         $this->esc = $escAttr;
         $this->headLink = $headLink;
+        $this->rtl = $rtl;
     }
 
     /**
@@ -132,7 +142,8 @@ class Icon extends AbstractHelper
      */
     protected function mapIcon(string $name): array
     {
-        $icon = $this->iconMap[$name] ?? $name;
+        $rtl = $this->rtl ? '-rtl' : '';
+        $icon = $this->iconMap[$name . $rtl] ?? $this->iconMap[$name] ?? $name;
         $set = $this->defaultSet;
 
         // Override set from config (ie. FontAwesome:icon)
@@ -185,8 +196,8 @@ class Icon extends AbstractHelper
     /**
      * Returns inline HTML for icon
      *
-     * @param string $name  Which icon?
-     * @param array  $attrs Additional HTML attributes
+     * @param string       $name  Which icon?
+     * @param array|string $attrs Additional HTML attributes
      *
      * @return string
      */
@@ -197,14 +208,16 @@ class Icon extends AbstractHelper
             $this->styleAppended = true;
         }
 
+        // Class name shortcut
+        if (is_string($attrs)) {
+            $attrs = ['class' => $attrs];
+        }
+
         $cacheKey = $this->cacheKey($name, $attrs);
         $cached = $this->cache->getItem($cacheKey);
 
         if ($cached == null) {
             [$icon, $set, $template] = $this->mapIcon($name);
-
-            // Compile additional HTML attributes
-            $attrs = $this->compileAttrs($attrs);
 
             // Surface set config and add icon and attrs
             $cached = $this->getView()->render(
@@ -213,7 +226,7 @@ class Icon extends AbstractHelper
                     $this->config['sets'][$set] ?? [],
                     [
                         'icon' => ($this->esc)($icon),
-                        'attrs' => $attrs,
+                        'attrs' => $this->compileAttrs($attrs),
                         'extra' => $attrs
                     ]
                 )

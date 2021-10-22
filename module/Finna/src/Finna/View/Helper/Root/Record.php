@@ -106,6 +106,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $tabManager;
 
     /**
+     * Form
+     *
+     * @var \Finna\Form\Form
+     */
+    protected $form;
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config              $config           VuFind config
@@ -117,6 +124,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param \VuFind\View\Helper\Root\RecordLink $recordLinkHelper Record link
      * helper
      * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
+     * @param \Finna\Form\Form                    $form             Form
      */
     public function __construct(
         \Laminas\Config\Config $config,
@@ -125,7 +133,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
         \VuFind\View\Helper\Root\Url $urlHelper,
         \VuFind\View\Helper\Root\RecordLink $recordLinkHelper,
-        \VuFind\RecordTab\TabManager $tabManager
+        \VuFind\RecordTab\TabManager $tabManager,
+        \Finna\Form\Form $form
     ) {
         parent::__construct($config);
         $this->loader = $loader;
@@ -134,6 +143,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->urlHelper = $urlHelper;
         $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
+        $this->form = $form;
     }
 
     /**
@@ -207,9 +217,9 @@ class Record extends \VuFind\View\Helper\Root\Record
             return false;
         }
         return in_array(
-            $this->driver->getDataSource(),
+            $this->driver->tryMethod('getDataSource'),
             $this->config->Record->repository_library_request_sources->toArray()
-        );
+        ) && $this->getRepositoryLibraryRequestFormId();
     }
 
     /**
@@ -219,7 +229,20 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getRepositoryLibraryRequestFormId()
     {
-        return $this->config->Record->repository_library_request_form ?? null;
+        $formId = $this->config->Record->repository_library_request_form ?? null;
+        if ($formId) {
+            try {
+                if ($this->form->getFormId() !== $formId) {
+                    $this->form->setFormId($formId);
+                }
+                if (!$this->form->isEnabled()) {
+                    $formId = null;
+                }
+            } catch (\VuFind\Exception\RecordMissing $e) {
+                $formId = null;
+            }
+        }
+        return $formId;
     }
 
     /**
