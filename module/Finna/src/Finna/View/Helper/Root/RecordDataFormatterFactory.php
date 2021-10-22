@@ -481,7 +481,6 @@ class RecordDataFormatterFactory
             }
             return $final;
         };
-
         $setMultiTemplateLine(
             'Events',
             'getEvents',
@@ -1087,6 +1086,14 @@ class RecordDataFormatterFactory
                 'context' => ['title' => 'Date']
             ]
         );
+        $setTemplateLine(
+            'Material Condition',
+            'getMaterialCondition',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'materialCondition']
+            ]
+        );
 
         $getAccessRestrictions = function ($data, $options) {
             $final = [];
@@ -1115,7 +1122,6 @@ class RecordDataFormatterFactory
             }
             return $final;
         };
-
         $setMultiTemplateLine(
             'Access Restrictions Extended',
             'getExtendedAccessRestrictions',

@@ -318,16 +318,24 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         );
         if (($code != 200 && $code != 403) || empty($patronId)) {
             return null;
-        } elseif ($code == 403 && !empty($patronId['error']['code'])
-            && $patronId['error']['code'] == 'Defaulted'
-        ) {
-            $defaultedPatron = $this->makeRequest(
-                ['odata', 'Borrowers', 'Default.AuthenticateDebtor'],
-                $request,
-                'POST',
-                false
-            );
-            $patronId = $defaultedPatron['BorrowerId'];
+        } elseif ($code == 403) {
+            if (!empty($patronId['error']['code'])
+                && $patronId['error']['code'] == 'Defaulted'
+            ) {
+                $defaultedPatron = $this->makeRequest(
+                    ['odata', 'Borrowers', 'Default.AuthenticateDebtor'],
+                    $request,
+                    'POST',
+                    false
+                );
+                if (!empty($defaultedPatron['BorrowerId'])) {
+                    $patronId = $defaultedPatron['BorrowerId'];
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         }
         $patron = [
             'cat_username' => $username,

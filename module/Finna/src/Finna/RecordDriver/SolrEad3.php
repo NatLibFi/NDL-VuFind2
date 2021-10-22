@@ -102,6 +102,9 @@ class SolrEad3 extends SolrEad
         'ahaa:KR5', 'ahaa:KR7', 'ahaa:KR9', 'ahaa:KR4'
     ];
 
+    // Accessrestrict material condition
+    public const ACCESS_RESTRICT_MATERIAL_CONDITION = 'ahaa:IL14';
+
     // relation@encodinganalog-attribute of relations used by getRelatedRecords
     public const RELATION_RECORD = 'ahaa:AI30';
 
@@ -1009,6 +1012,29 @@ class SolrEad3 extends SolrEad
         }
 
         return $renamedKeys;
+    }
+
+    /**
+     * Get material condition notes for the record.
+     *
+     * @return string[] Notes
+     */
+    public function getMaterialCondition()
+    {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->accessrestrict ?? [] as $accessrestrict) {
+            foreach ($accessrestrict->accessrestrict ?? [] as $node) {
+                $attr = $node->attributes();
+                $encoding = (string)$attr->encodinganalog;
+                if ($encoding === self::ACCESS_RESTRICT_MATERIAL_CONDITION
+                ) {
+                    return
+                        $this->getDisplayLabel($node, 'p', true)
+                        ?: $this->getDisplayLabel($node, 'p', false);
+                }
+            }
+        }
+        return [];
     }
 
     /**

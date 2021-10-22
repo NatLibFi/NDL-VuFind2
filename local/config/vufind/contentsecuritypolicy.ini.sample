@@ -22,7 +22,15 @@ merge_array_settings = true
 ;frame-src[] = "https://*.facebook.com/"
 
 ; Giosg
-;connect-src[] = "https://service.giosg.com"
+;connect-src[] = "https://*.giosg.com"
+;connect-src[] = "https://*.giosgusercontent.com"
+;frame-src[] = "https://*.giosg.com"
+;frame-src[] = "https://*.giosgusercontent.com"
+;script-src[] = "https://*.giosg.com"
+; HUOM. Seuraavat asetukset, jotka giosg vaatii, käytännössä pilaavat CSP:n suurelta
+; osin:
+;script-src[] = "'unsafe-inline'"
+;script-src[] = "'unsafe-eval'"
 
 ; Kirjastokartta:
 ;connect-src[] = "https://kirjastokartta.kansalliskirjasto.fi"
@@ -58,10 +66,7 @@ merge_array_settings = true
 ; Zendesk chat (Zopim) - https://developer.zendesk.com/documentation/classic-web-widget-sdks/web-widget/integrating-with-google/csp/
 ;connect-src[] = "https://ekr.zdassets.com"
 ;connect-src[] = "wss://widget-mediator.zopim.com"
-;; Vaihtoehto 1 - uusi lataustapa, ks. yllämainittu osoite:
-;script-src[] = "'strict-dynamic'"
-;script-src[] = "'unsafe-eval'"
-;; Vaihtoehto 2 - vanha lataustapa:
+;; Suositellaan tätä lataustapaa alla, uudempi ei toimi Safarilla:
 ;script-src[] = "https://static.zdassets.com"
 ;script-src[] = "https://ekr.zdassets.com"
 ;script-src[] = "https://*.zendesk.com"
@@ -71,4 +76,3 @@ merge_array_settings = true
 ;script-src[] = "'unsafe-eval'"
 ;connect-src[] = "https://ekr.zdassets.com"
 ;connect-src[] = "wss://widget-mediator.zopim.com"
-

@@ -502,8 +502,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $models = [];
         $i = 0;
         $xml = $this->getXmlRecord();
-        foreach ($xml->lido->administrativeMetadata->resourceWrap->resourceSet
-        as $resourceSet) {
+        foreach ($xml->lido->administrativeMetadata->resourceWrap->resourceSet ?? []
+            as $resourceSet
+        ) {
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
                 $url = trim((string)$linkResource);
