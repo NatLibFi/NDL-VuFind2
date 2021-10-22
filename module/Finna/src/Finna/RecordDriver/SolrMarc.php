@@ -1861,11 +1861,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $results = [];
         $marcReader = $this->getMarcReader();
         foreach ($marcReader->getFields('567') as $field) {
-            $result = [];
-            $description = $marcReader->getSubfield($field, 'a');
-            $term = $marcReader->getSubfield($field, 'b');
-            $url = $marcReader->getSubfield($field, '0');
-            $results[] = compact('description', 'term', 'url');
+            $results[] = [
+                'description' => $marcReader->getSubfield($field, 'a'),
+                'term' => $marcReader->getSubfield($field, 'b'),
+                'url' => $marcReader->getSubfield($field, '0')
+            ];
         }
         return $results;
     }
