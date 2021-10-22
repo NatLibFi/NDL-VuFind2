@@ -575,7 +575,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * Get rights from the given resourceSet
      *
      * @param \SimpleXmlElement $resourceSet Given resourceSet from lido
-     * @param string           $language    Language to look for
+     * @param string            $language    Language to look for
      *
      * @return array
      */
