@@ -318,7 +318,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getIdentifiers(): array
+    public function getOtherIdentifiers(): array
     {
         $results = [];
         $xml = $this->getXmlRecord();
