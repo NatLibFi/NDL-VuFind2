@@ -635,7 +635,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
 
-        return !empty($rights) ? $rights : $defaultRights;
+        return $rights ?: $defaultRights;
     }
 
     /**
