@@ -247,7 +247,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $language = $language ?? $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return $representations['images'];
+        return array_filter(array_column($representations, 'images'));
     }
 
     /**
@@ -297,7 +297,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return $representations['models'];
+        return array_filter(array_column($representations, 'models'));
     }
 
     /**
@@ -318,21 +318,28 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $defaultRights = $this->getImageRights($language, true);
         $imageTypeKeys = array_keys($this->imageTypes);
         $modelTypeKeys = array_keys($this->modelTypes);
-        $imageResults = [];
-        $modelResults = [];
+        $results = [];
 
-        $addToResults = function ($imageData) use (&$imageResults) {
-            if (!isset($imageData['urls']['small'])) {
-                $imageData['urls']['small'] = $imageData['urls']['medium']
-                    ?? $imageData['urls']['large'];
+        $addToResults = function ($imageData = [], $models = []) use (&$results) {
+            $result = ['images' => [], 'models' => []];
+            if ($imageData) {
+                if (!isset($imageData['urls']['small'])) {
+                    $imageData['urls']['small'] = $imageData['urls']['medium']
+                        ?? $imageData['urls']['large'];
+                }
+                if (!isset($imageData['urls']['medium'])) {
+                    $imageData['urls']['medium'] = $imageData['urls']['small'];
+                }
+                $result['images'] = $imageData;
             }
-            if (!isset($imageData['urls']['medium'])) {
-                $imageData['urls']['medium'] = $imageData['urls']['small'];
+
+            if ($models) {
+                $result['models'] = $models;
             }
-            $imageResults[] = $imageData;
+
+            $results[] = $result;
         };
 
-        $i = 0;
         foreach ($this->getXmlRecord()->xpath(
             '/lidoWrap/lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
@@ -416,8 +423,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 continue;
             }
             $imageResult = [];
-            $modelResult = [];
-
             // Process found image urls
             if ($imageUrls) {
                 $imageResult = [
@@ -475,22 +480,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         }
                     }
                 );
-                $addToResults($imageResult);
             }
-
-            // Process found model urls
-            if ($modelUrls) {
-                $modelResults[$i] = $modelUrls;
-            }
-            $i++;
+            $addToResults($imageResult, $modelUrls);
         }
 
-        $result = [
-            'images' => $imageResults,
-            'models' => $modelResults
-        ];
-        $this->cache[$cacheKey] = $result;
-        return $result;
+        $this->cache[$cacheKey] = $results;
+        return $results;
     }
 
     /**
