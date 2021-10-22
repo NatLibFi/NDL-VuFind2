@@ -321,7 +321,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $results = [];
 
         $addToResults = function ($imageData = [], $models = []) use (&$results) {
-            
             if ($imageData) {
                 if (!isset($imageData['urls']['small'])) {
                     $imageData['urls']['small'] = $imageData['urls']['medium']
