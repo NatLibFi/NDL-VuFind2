@@ -330,13 +330,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $imageData['urls']['medium'] = $imageData['urls']['small'];
                 }
             }
-
-            $result = [
+            $results[] = [
                 'images' => $imageData,
                 'models' => $models
             ];
-
-            $results[] = $result;
         };
 
         foreach ($this->getXmlRecord()->xpath(
