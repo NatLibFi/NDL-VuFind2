@@ -199,8 +199,8 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Identifiers Qdc',
-            'getIdentifiers',
+            'Identifiers',
+            'getOtherIdentifiers',
             'data-lines-with-detail.phtml',
             [
                 'context' => ['class' => 'recordIdentifiers']
