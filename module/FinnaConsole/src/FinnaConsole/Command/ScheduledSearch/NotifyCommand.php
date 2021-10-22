@@ -258,6 +258,54 @@ EOT
     }
 
     /**
+     * Build the email message.
+     *
+     * @param \VuFind\Db\Row\Search       $s            Search table row
+     * @param \VuFind\Db\Row\User         $user         User owning search row
+     * @param \VuFind\Search\Base\Results $searchObject Search results object
+     * @param array                       $newRecords   New results in search
+     *
+     * @return string
+     */
+    protected function buildEmail($s, $user, $searchObject, $newRecords)
+    {
+        $firstName = $user->firstname ?? '';
+        $viewBaseUrl = $searchUrl = $s->notification_base_url;
+        $searchUrl .= ($this->urlHelper)(
+            $searchObject->getOptions()->getSearchAction()
+        ) . $searchObject->getUrlQuery()->getParams(false);
+        $secret = $s->getUnsubscribeSecret($this->hmac, $user);
+        $unsubscribeUrl = $s->notification_base_url
+            . ($this->urlHelper)('myresearch-unsubscribe')
+            . "?id={$s->id}&key=$secret";
+        $userInstitution = $this->mainConfig->Site->institution;
+        $params = $searchObject->getParams();
+        // Filter function to only pass along selected checkboxes:
+        $selectedCheckboxes = function ($data) {
+            return $data['selected'] ?? false;
+        };
+        $viewParams = [
+            'firstname' => $firstName,
+            'records' => $newRecords,
+            'info' => [
+                'baseUrl' => $viewBaseUrl,
+                'description' => $params->getDisplayQuery(),
+                'recordCount' => count($newRecords),
+                'url' => $searchUrl,
+                'unsubscribeUrl' => $unsubscribeUrl,
+                'checkboxFilters' => array_filter(
+                    $params->getCheckboxFacets(),
+                    $selectedCheckboxes
+                ),
+                'filters' => $params->getFilterList(true),
+                'userInstitution' => $userInstitution
+             ]
+        ];
+        return $this->renderer
+            ->render('Email/scheduled-alert.phtml', $viewParams);
+    }
+
+    /**
      * Send scheduled alerts for a view.
      *
      * Finna: Use the specified base url
