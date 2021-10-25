@@ -57,6 +57,9 @@ merge_array_settings = true
 ;connect-src[] = "https://*.tawk.to"
 ;connect-src[] = "wss://*.tawk.to"
 
+; Twitter
+frame-src[] = "https://*.twitter.com"
+
 ; Vimeo
 ;frame-src[] = "https://player.vimeo.com"
 
@@ -64,6 +67,7 @@ merge_array_settings = true
 ;frame-src[] = "https://www.youtube.com"
 
 ; Zendesk chat (Zopim) - https://developer.zendesk.com/documentation/classic-web-widget-sdks/web-widget/integrating-with-google/csp/
+;; Uusi lataustapa, ei toimi Safarilla:
 ;connect-src[] = "https://ekr.zdassets.com"
 ;connect-src[] = "wss://widget-mediator.zopim.com"
 ;; Suositellaan tätä lataustapaa alla, uudempi ei toimi Safarilla:
