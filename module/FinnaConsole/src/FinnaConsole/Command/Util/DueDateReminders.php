@@ -538,7 +538,7 @@ class DueDateReminders extends AbstractUtilCommand
         $loginMethod = strtolower($user->auth_method);
         $dateFormat = $this->currentSiteConfig['Site']['displayDateFormat']
             ?? $this->mainConfig->Site->displayDateFormat;
-        $firstName = $user->firstname ?? '';
+        $firstName = $user->firstname;
 
         $params = [
             'loans' => $remindLoans,

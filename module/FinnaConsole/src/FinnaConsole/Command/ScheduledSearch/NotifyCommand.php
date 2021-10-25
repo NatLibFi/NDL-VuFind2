@@ -269,7 +269,7 @@ EOT
      */
     protected function buildEmail($s, $user, $searchObject, $newRecords)
     {
-        $firstName = $user->firstname ?? '';
+        $firstName = $user->firstname;
         $viewBaseUrl = $searchUrl = $s->notification_base_url;
         $searchUrl .= ($this->urlHelper)(
             $searchObject->getOptions()->getSearchAction()
