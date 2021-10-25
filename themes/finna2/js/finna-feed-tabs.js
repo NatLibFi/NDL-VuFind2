@@ -1,110 +1,134 @@
 /*global finna */
 finna.feedTabs = (function finnaFeedTab() {
-  function getTabContainer(tabs) {
-    return tabs.find('.tab-content');
+  function FeedTab(container) {
+    var _ = this;
+    container.classList.add('inited');
+    _.tabs = container.querySelectorAll('.feed-tab-anchor');
+    _.accordions = container.querySelectorAll('.feed-accordion-anchor');
+    _.tabContent = container.querySelector('.tab-content');
+    _.setEvents();
+    _.firstLoad();
+
+    _.isLoading = false;
   }
 
-  function loadFeed(tabs, tabId) {
-    var tabContainer = getTabContainer(tabs);
-    var feedContainer = tabContainer.find('.feed-container');
-    feedContainer.data('init', null);
-    feedContainer.data('feed', tabId);
-    finna.feed.loadFeed(feedContainer);
-  }
-
-  function keyHandler(e/*, cb*/) {
-    if (e.which === 13 || e.which === 32) {
-      $(e.target).click();
-      e.preventDefault();
-      return false;
-    }
-    return true;
-  }
-
-  function toggleAccordion(container, accordion) {
-    var tabContent = container.find('.tab-content').detach();
-    var tabId = accordion.data('tab');
-    var loadContent = false;
-    var accordions = container.find('.feed-accordions');
-    if (!accordion.hasClass('active') || accordion.hasClass('initial-active')) {
-      accordions.find('.accordion.active')
-        .removeClass('active')
-        .attr('aria-selected', false);
-
-      container.find('.feed-tab.active')
-        .removeClass('active')
-        .attr('aria-selected', false);
-
-      accordions.toggleClass('all-closed', false);
-
-      accordion
-        .addClass('active')
-        .attr('aria-selected', true);
-
-      container.find('.feed-tab[data-tab="' + tabId + '"]')
-        .addClass('active')
-        .attr('aria-selected', true);
-
-      loadContent = true;
-    }
-    tabContent.insertAfter(accordion);
-    accordion.removeClass('initial-active');
-
-    return loadContent;
-  }
-
-  function loadFeedTabs(container) {
-    if (container.hasClass('inited')) {
-      return;
-    }
-    container.addClass('inited');
-    container.tab('show');
-
-    // Init feed tabs
-    container.find('li.nav-item').on('click', function feedTabClick() {
-      var tabId = $(this).data('tab');
-      var li = $(this).closest('li');
-      if (li.hasClass('active') && !li.hasClass('initial-active')) {
-        return false;
-      }
-      li.removeClass('initial-active');
-
-      getTabContainer(container).removeClass('active');
-
-      var accordion = container.find('.feed-accordions .accordion[data-tab="' + tabId + '"]');
-      if (toggleAccordion(container, accordion)) {
-        loadFeed(container, tabId);
-      }
-
-      return false;
-    }).keyup(function onKeyUp(e) {
-      return keyHandler(e);
+  /**
+   * Set proper events to listen for
+   */
+  FeedTab.prototype.setEvents = function setEvents() {
+    var _ = this;
+    _.tabs.forEach(function addClickListener(element) {
+      element.parentNode.addEventListener('click', function onFeedTabClick(e) {
+        e.preventDefault();
+        _.displayTab(element);
+      });
+    });
+    _.accordions.forEach(function addClickListener(element) {
+      element.parentNode.addEventListener('click', function onFeedTabClick(e) {
+        e.preventDefault();
+        _.displayTab(element);
+      });
     });
 
-    // Init accordions (mobile)
-    container.find('.feed-accordions .accordion').on('click', function accordionClicked(/*e*/) {
-      var accordion = $(this);
-      var tabId = accordion.data('tab');
-
-      var tabs = accordion.closest('.feed-tabs');
-      getTabContainer(tabs).removeClass('active');
-
-      if (toggleAccordion(container, accordion)) {
-        loadFeed(container, tabId);
+    window.addEventListener('hashchange', function checkForHashChange() {
+      if (_.isLoading) {
+        return;
       }
-      return false;
-    }).keyup(function onKeyUp(e) {
-      return keyHandler(e);
+      var hash = window.location.hash;
+      if (hash) {
+        _.tabs.forEach(function checkIfThis(element) {
+          if (element.getAttribute('href') === hash) {
+            element.click();
+          }
+        });
+      }
     });
+  };
 
-    container.find('.feed-accordions .accordion.active').click();
-  }
+  /**
+   * Display the proper feedtab and accordion tab
+   * 
+   * @param {HTMLElement} element
+   */
+  FeedTab.prototype.displayTab = function displayTab(element) {
+    var _ = this;
 
+    _.isLoading = true;
+    var tab = element.dataset.tab;
+    var href = element.getAttribute('href');
+    if (window.location.hash !== href) {
+      window.location.hash = href;
+    }
+
+    _.accordions.forEach(function removeActive(el) {
+      el.parentNode.classList.remove('active');
+      el.parentNode.setAttribute('aria-selected', false);
+      if (el.dataset.tab === tab) {
+        el.parentNode.classList.add('active');
+        el.parentNode.setAttribute('aria-selected', true);
+        el.parentNode.insertAdjacentElement('afterend', _.tabContent);
+      }
+    });
+    _.tabs.forEach(function removeActive(el) {
+      el.parentNode.classList.remove('active');
+      el.parentNode.setAttribute('aria-selected', false);
+      if (el.dataset.tab === tab) {
+        el.parentNode.classList.add('active');
+        el.parentNode.setAttribute('aria-selected', true);
+      }
+    });
+    _.tabContent.innerHTML = '';
+    delete _.tabContent.dataset.init;
+    _.tabContent.dataset.feed = tab;
+    finna.feed.loadFeed(_.tabContent, function onLoad() {
+      _.isLoading = false;
+    });
+  };
+
+  /**
+   * Load first tab page when initialization is completed
+   */
+  FeedTab.prototype.firstLoad = function firstLoad() {
+    var _ = this;
+    var hash = window.location.hash;
+
+    _.tabs.forEach(function checkFirst(element) {
+      if (!hash && !_.isLoading && element.parentNode.classList.contains('active')) {
+        element.parentNode.click();
+      }
+      if (hash === element.getAttribute('href')) {
+        element.parentNode.click();
+      }
+    });
+    if (_.tabs[0] && !_.isLoading) {
+      _.tabs[0].parentNode.click();
+    }
+  };
+  
+  /**
+   * Init feedtabs
+   * 
+   * @param {String} id 
+   */
   function init(id) {
-    var container = $('.feed-tabs#' + id);
-    $(container).one('inview', function doInit() {
-      loadFeedTabs(container);
-    });
+    var containers = document.querySelectorAll('.feed-tabs#' + id + ':not(.inited)');
+
+    // TODO: remove jquery version of the init
+    if (window.IntersectionObserver) {
+      var observer = new IntersectionObserver(function observe(entries, obs) {
+        entries.forEach(function checkEntry(entry) {
+          new FeedTab(entry.target);
+          obs.unobserve(entry.target);
+        }); 
+      }, {rootMargin: "0px 0px -200px 0px"});
+      containers.forEach(function observeFeedTab(container) {
+        observer.observe(container);
+      });
+    } else {
+      $(containers).one('inview', function onInview() {
+        new FeedTab(this);
+      });
+    }
   }
 
   var my = {

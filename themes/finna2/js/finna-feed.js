@@ -121,7 +121,7 @@ finna.feed = (function finnaFeed() {
     };
   }
 
-  function processLoadFeed(holder, params) {
+  function processLoadFeed(holder, params, callback) {
     params['touch-device'] = (finna.layout.isTouchDevice() ? 1 : 0);
 
     var url = VuFind.path + '/AJAX/JSON?' + $.param(params);
@@ -262,6 +262,10 @@ finna.feed = (function finnaFeed() {
         } else if (feedGrid.width() <= 800) {
           feedGrid.find('.grid-item').css('flex-basis', '50%');
         }
+        if (callback) {
+          callback();
+        }
+        feedGrid.find('img').unveil();
       })
       .fail(function loadFeedFail(response/*, textStatus, err*/) {
         var err = '<!-- Feed could not be loaded';
@@ -273,12 +277,13 @@ finna.feed = (function finnaFeed() {
       });
   }
 
-  function loadFeed(holder) {
-    var id = holder.data('feed');
+  function loadFeed(holder, callback) {
+    var container = holder instanceof jQuery ? holder : $(holder);
+    var id = container.data('feed');
     if (typeof id == 'undefined') {
       return;
     }
-    processLoadFeed(holder, {method: 'getFeed', id: id});
+    processLoadFeed(container, {method: 'getFeed', id: id}, callback);
   }
 
   function loadFeedFromUrl(holder) {
