@@ -51,6 +51,30 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
+     * Image size mappings
+     *
+     * @var array
+     */
+    protected $imageSizes = [
+        'THUMBNAIL' => 'small',
+        'square' => 'small',
+        'small' => 'small',
+        'medium' => 'medium',
+        'large' => 'large',
+        'original' => 'original'
+    ];
+
+    /**
+     * Allowed image mimes
+     *
+     * @var array
+     */
+    protected $mimeTypes = [
+        'image/jpeg',
+        'image/png'
+    ];
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
@@ -110,33 +134,81 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = 'fi', $includePdf = true)
     {
-        $result = [];
-        $urls = [];
+        $cacheKey = __FUNCTION__ . "/$language";
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
+        $results = [];
         $rights = [];
         $pdf = false;
         $xml = $this->getXmlRecord();
+        $thumbnails = [];
+        $otherSizes = [];
+
+        $rightsStmt = $this->getMappedRights((string)($xml->rights ?? ''));
+        $rights = [
+            'copyright' => $rightsStmt,
+            'link' => $this->getRightsLink($rightsStmt, $language)
+        ];
+
+        $addToResults = function ($imageData) use (&$results) {
+            if (!isset($imageData['urls']['small'])) {
+                $imageData['urls']['small'] = $imageData['urls']['medium']
+                    ?? $imageData['urls']['large'];
+            }
+            if (!isset($imageData['urls']['medium'])) {
+                $imageData['urls']['medium'] = $imageData['urls']['small'];
+            }
+            $results[] = $imageData;
+        };
+
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
-            $size = $attributes->bundle == 'THUMBNAIL' ? 'small' : 'large';
-            $mimes = ['image/jpeg', 'image/png'];
-            if (isset($attributes->type)) {
-                if (!in_array($attributes->type, $mimes)) {
-                    continue;
-                }
+            $type = $attributes->type ?? '';
+            if (!empty($attributes->type) && !in_array($type, $this->mimeTypes)) {
+                continue;
             }
-            $url = isset($attributes->href)
-                ? (string)$attributes->href : (string)$node;
-
+            $url = (string)($attributes->href ?? $node);
             if (!preg_match('/\.(jpg|png)$/i', $url)
                 || !$this->isUrlLoadable($url, $this->getUniqueID())
             ) {
                 continue;
             }
-            $urls[$size] = $url;
+
+            $bundle = (string)$attributes->bundle;
+            if ($bundle === 'THUMBNAIL' && !$otherSizes) {
+                // Lets see if the record contains only thumbnails
+                $thumbnails[] = $url;
+            } else {
+                // QDC has no way of telling how to link images so take only first in this situation
+                $size = $this->imageSizes[$bundle] ?? false;
+                if ($size && !isset($otherSizes[$size])) {
+                    $otherSizes[$size] = $url;
+                }
+            }
+        }
+
+        // Lets create final results from arrays...
+        if ($thumbnails && !$otherSizes) {
+            foreach ($thumbnails as $url) {
+                $addToResults([
+                    'urls' => ['large' => $url],
+                    'description' => '',
+                    'rights' => $rights
+                ]);
+            }
+        } elseif ($otherSizes) {
+            $addToResults([
+                'urls' => $otherSizes,
+                'description' => '',
+                'rights' => $rights
+            ]);
         }
 
         // Attempt to find a PDF file to be converted to a coverimage
-        if ($includePdf && empty($urls)) {
+        if ($includePdf && empty($results)) {
+            $urls = [];
             foreach ($xml->file as $node) {
                 $attributes = $node->attributes();
                 if ((string)$attributes->bundle !== 'ORIGINAL') {
@@ -155,30 +227,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                     continue;
                 }
                 $urls['small'] = $urls['large'] = $url;
-                $pdf = true;
+                $addToResults([
+                    'urls' => $urls,
+                    'description' => '',
+                    'rights' => $rights,
+                    'pdf' => true
+                ]);
                 break;
             }
         }
-
-        $rights['copyright'] = !empty($xml->rights) ? (string)$xml->rights : '';
-        $rights['copyright'] = $this->getMappedRights($rights['copyright']);
-        $rights['link']
-            = $this->getRightsLink($rights['copyright'], $language);
-
-        if ($urls) {
-            if (!isset($urls['small'])) {
-                $urls['small'] = $urls['large'];
-            }
-            $urls['medium'] = $urls['small'];
-
-            $result[] = [
-                'urls' => $urls,
-                'description' => '',
-                'rights' => $rights,
-                'pdf' => $pdf
-            ];
-        }
-        return $result;
+        return $this->cache[$cacheKey] = $results;
     }
 
     /**
