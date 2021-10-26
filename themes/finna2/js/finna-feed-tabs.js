@@ -7,7 +7,7 @@ finna.feedTabs = (function finnaFeedTab() {
     _.tabContent = container.querySelector('.tab-content');
     _.setEvents();
     _.firstLoad();
-
+    _.allowHashchange = false;
     _.isLoading = false;
   }
 
@@ -24,16 +24,17 @@ finna.feedTabs = (function finnaFeedTab() {
     });
 
     window.addEventListener('hashchange', function checkForHashChange() {
-      if (_.isLoading) {
+      if (_.isLoading || !_.allowHashchange) {
         return;
       }
-      var hash = window.location.hash;
+      var hash = getHashWithoutHashTag();
       if (hash) {
         _.anchors.forEach(function checkIfThis(element) {
           if (element.classList.contains('feed-tab-anchor') &&
-            element.getAttribute('href') === hash
+            element.dataset.tab === hash
           ) {
             element.click();
+            element.focus();
           }
         });
       }
@@ -50,9 +51,8 @@ finna.feedTabs = (function finnaFeedTab() {
 
     _.isLoading = true;
     var tab = element.dataset.tab;
-    var href = element.getAttribute('href');
-    if (window.location.hash !== href) {
-      window.location.hash = href;
+    if (window.location.hash !== tab) {
+      window.location.hash = tab;
     }
 
     _.anchors.forEach(function removeActive(el) {
@@ -73,6 +73,9 @@ finna.feedTabs = (function finnaFeedTab() {
     _.tabContent.dataset.feed = tab;
     finna.feed.loadFeed(_.tabContent, function onLoad() {
       _.isLoading = false;
+      if (!_.allowHashchange) {
+        _.allowHashchange = true;
+      }
     });
   };
 
@@ -81,7 +84,7 @@ finna.feedTabs = (function finnaFeedTab() {
    */
   FeedTab.prototype.firstLoad = function firstLoad() {
     var _ = this;
-    var hash = window.location.hash;
+    var hash = getHashWithoutHashTag();
 
     _.anchors.forEach(function checkFirst(element) {
       if (!element.classList.contains('feed-tab-anchor')) {
@@ -89,7 +92,7 @@ finna.feedTabs = (function finnaFeedTab() {
       }
       var parent = element.parentNode;
       if ((!hash && !_.isLoading && parent.classList.contains('active')) ||
-        hash === element.getAttribute('href')
+        hash === element.dataset.tab
       ) {
         parent.click();
       }
@@ -99,6 +102,11 @@ finna.feedTabs = (function finnaFeedTab() {
     }
   };
   
+  function getHashWithoutHashTag() {
+    var hash = window.location.hash;
+    return hash ? hash.substring(1) : '';
+  }
+
   /**
    * Init feedtabs
    * 
