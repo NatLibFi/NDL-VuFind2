@@ -5,7 +5,6 @@
 
     $images = $this->record($this->driver)->getAllRecordImageUrls();
     $urls = $this->driver->getURLs();
-
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
     $mergedData = $this->driver->tryMethod('getMergedRecordData');
 
