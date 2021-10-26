@@ -8,9 +8,6 @@
 
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
     $mergedData = $this->driver->tryMethod('getMergedRecordData');
-    echo "<pre>";
-    var_dump($urls, $onlineURLs);
-    echo "</pre>";
     $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 
     $urlBase = [
