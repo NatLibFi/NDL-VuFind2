@@ -3,8 +3,7 @@ finna.feedTabs = (function finnaFeedTab() {
   function FeedTab(container) {
     var _ = this;
     container.classList.add('inited');
-    _.tabs = container.querySelectorAll('.feed-tab-anchor');
-    _.accordions = container.querySelectorAll('.feed-accordion-anchor');
+    _.anchors = container.querySelectorAll('.feed-tab-anchor, .feed-accordion-anchor');
     _.tabContent = container.querySelector('.tab-content');
     _.setEvents();
     _.firstLoad();
@@ -17,13 +16,7 @@ finna.feedTabs = (function finnaFeedTab() {
    */
   FeedTab.prototype.setEvents = function setEvents() {
     var _ = this;
-    _.tabs.forEach(function addClickListener(element) {
-      element.parentNode.addEventListener('click', function onFeedTabClick(e) {
-        e.preventDefault();
-        _.displayTab(element);
-      });
-    });
-    _.accordions.forEach(function addClickListener(element) {
+    _.anchors.forEach(function addClickListener(element) {
       element.parentNode.addEventListener('click', function onFeedTabClick(e) {
         e.preventDefault();
         _.displayTab(element);
@@ -36,8 +29,10 @@ finna.feedTabs = (function finnaFeedTab() {
       }
       var hash = window.location.hash;
       if (hash) {
-        _.tabs.forEach(function checkIfThis(element) {
-          if (element.getAttribute('href') === hash) {
+        _.anchors.forEach(function checkIfThis(element) {
+          if (element.classList.contains('feed-tab-anchor') &&
+            element.getAttribute('href') === hash
+          ) {
             element.click();
           }
         });
@@ -60,23 +55,17 @@ finna.feedTabs = (function finnaFeedTab() {
       window.location.hash = href;
     }
 
-    _.accordions.forEach(function removeActive(el) {
-      var accParent = el.parentNode;
-      accParent.classList.remove('active');
-      accParent.setAttribute('aria-selected', false);
+    _.anchors.forEach(function removeActive(el) {
+      var parent = el.parentNode;
       if (el.dataset.tab === tab) {
-        accParent.classList.add('active');
-        accParent.setAttribute('aria-selected', true);
-        accParent.insertAdjacentElement('afterend', _.tabContent);
-      }
-    });
-    _.tabs.forEach(function removeActive(el) {
-      var tabParent = el.parentNode;
-      tabParent.classList.remove('active');
-      tabParent.setAttribute('aria-selected', false);
-      if (el.dataset.tab === tab) {
-        tabParent.classList.add('active');
-        tabParent.setAttribute('aria-selected', true);
+        parent.classList.add('active');
+        parent.setAttribute('aria-selected', true);
+        if (el.classList.contains('feed-accordion-anchor')) {
+          parent.insertAdjacentElement('afterend', _.tabContent);
+        }
+      } else {
+        parent.classList.remove('active');
+        parent.setAttribute('aria-selected', false);
       }
     });
     _.tabContent.innerHTML = '';
@@ -94,17 +83,19 @@ finna.feedTabs = (function finnaFeedTab() {
     var _ = this;
     var hash = window.location.hash;
 
-    _.tabs.forEach(function checkFirst(element) {
-      var parent = element.parentNode;
-      if (!hash && !_.isLoading && parent.classList.contains('active')) {
-        parent.click();
+    _.anchors.forEach(function checkFirst(element) {
+      if (!element.classList.contains('feed-tab-anchor')) {
+        return;
       }
-      if (hash === element.getAttribute('href')) {
+      var parent = element.parentNode;
+      if ((!hash && !_.isLoading && parent.classList.contains('active')) ||
+        hash === element.getAttribute('href')
+      ) {
         parent.click();
       }
     });
-    if (_.tabs[0] && !_.isLoading) {
-      _.tabs[0].parentNode.click();
+    if (_.anchors[0] && !_.isLoading) {
+      _.anchors[0].parentNode.click();
     }
   };
   
@@ -115,7 +106,6 @@ finna.feedTabs = (function finnaFeedTab() {
    */
   function init(id) {
     var containers = document.querySelectorAll('.feed-tabs#' + id + ':not(.inited)');
-
     // TODO: remove jquery version of the init
     if (window.IntersectionObserver) {
       var observer = new IntersectionObserver(function observe(entries, obs) {

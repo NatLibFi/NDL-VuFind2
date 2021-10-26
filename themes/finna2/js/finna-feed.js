@@ -279,6 +279,8 @@ finna.feed = (function finnaFeed() {
 
   function loadFeed(holder, callback) {
     var container = holder instanceof jQuery ? holder : $(holder);
+    // Clear the internal jQuery memory of data feed so proper data being taken
+    container.removeData('feed');
     var id = container.data('feed');
     if (typeof id == 'undefined') {
       return;
