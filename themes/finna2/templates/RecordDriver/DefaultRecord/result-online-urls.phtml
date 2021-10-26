@@ -64,12 +64,12 @@
         <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
           <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $i => $url): ?>
             <?php
-              if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs))
+              if ((isset($images[$url['url']])
+                || in_array($url['url'], $renderedURLs))
+                && strcasecmp(pathinfo($url['url'], PATHINFO_EXTENSION), 'pdf') !== 0)
               {
-                // PDF links should be displayed still as they are not originally images
-                if (strcasecmp(pathinfo($url['url'], PATHINFO_EXTENSION), 'pdf') !== 0) {
-                  continue;
-                }
+                // PDF links should be displayed as they are not originally images
+                continue;
               }
               $currentUrl = [
                 'href' => $this->proxyUrl($url['url']),
