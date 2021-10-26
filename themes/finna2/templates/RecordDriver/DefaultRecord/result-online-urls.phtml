@@ -5,9 +5,12 @@
 
     $images = $this->record($this->driver)->getAllRecordImageUrls();
     $urls = $this->driver->getURLs();
+
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
     $mergedData = $this->driver->tryMethod('getMergedRecordData');
-
+    echo "<pre>";
+    var_dump($urls, $onlineURLs);
+    echo "</pre>";
     $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 
     $urlBase = [
@@ -66,7 +69,10 @@
             <?php
               if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs))
               {
-                continue;
+                // PDF links should be displayed still as they are not originally images
+                if (strcasecmp(pathinfo($url['url'], PATHINFO_EXTENSION), 'pdf') !== 0) {
+                  continue;
+                }
               }
               $currentUrl = [
                 'href' => $this->proxyUrl($url['url']),
