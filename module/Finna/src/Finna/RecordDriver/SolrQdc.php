@@ -181,7 +181,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 // Lets see if the record contains only thumbnails
                 $thumbnails[] = $url;
             } else {
-                // QDC has no way of telling how to link images so take only first in this situation
+                // QDC has no way of telling how to link
+                // images so take only first in this situation
                 $size = $this->imageSizes[$bundle] ?? false;
                 if ($size && !isset($otherSizes[$size])) {
                     $otherSizes[$size] = $url;
@@ -192,18 +193,22 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         // Lets create final results from arrays...
         if ($thumbnails && !$otherSizes) {
             foreach ($thumbnails as $url) {
-                $addToResults([
-                    'urls' => ['large' => $url],
-                    'description' => '',
-                    'rights' => $rights
-                ]);
+                $addToResults(
+                    [
+                        'urls' => ['large' => $url],
+                        'description' => '',
+                        'rights' => $rights
+                    ]
+                );
             }
         } elseif ($otherSizes) {
-            $addToResults([
-                'urls' => $otherSizes,
-                'description' => '',
-                'rights' => $rights
-            ]);
+            $addToResults(
+                [
+                    'urls' => $otherSizes,
+                    'description' => '',
+                    'rights' => $rights
+                ]
+            );
         }
 
         // Attempt to find a PDF file to be converted to a coverimage
@@ -227,12 +232,14 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                     continue;
                 }
                 $urls['small'] = $urls['large'] = $url;
-                $addToResults([
-                    'urls' => $urls,
-                    'description' => '',
-                    'rights' => $rights,
-                    'pdf' => true
-                ]);
+                $addToResults(
+                    [
+                        'urls' => $urls,
+                        'description' => '',
+                        'rights' => $rights,
+                        'pdf' => true
+                    ]
+                );
                 break;
             }
         }
