@@ -1,5 +1,15 @@
 /*global finna */
 finna.feedTabs = (function finnaFeedTab() {
+
+  /**
+   * Return the location hash without hashtag
+   * 
+   * @return {String} hash without hashtag
+   */
+  function getHashWithoutHashTag() {
+    var hash = window.location.hash;
+    return hash ? hash.substring(1) : '';
+  }
   function FeedTab(container) {
     var _ = this;
     container.classList.add('inited');
@@ -101,11 +111,6 @@ finna.feedTabs = (function finnaFeedTab() {
       _.anchors[0].parentNode.click();
     }
   };
-  
-  function getHashWithoutHashTag() {
-    var hash = window.location.hash;
-    return hash ? hash.substring(1) : '';
-  }
 
   /**
    * Init feedtabs
