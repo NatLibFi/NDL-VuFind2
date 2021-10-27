@@ -134,7 +134,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = 'fi', $includePdf = true)
     {
-        $cacheKey = __FUNCTION__ . "/$language";
+        $cacheKey = __FUNCTION__ . "/$language" . $includePdf ? '/1' : '/0';
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -190,7 +190,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             }
         }
 
-        // Lets create final results from arrays...
         if ($thumbnails && !$otherSizes) {
             foreach ($thumbnails as $url) {
                 $addToResults(
