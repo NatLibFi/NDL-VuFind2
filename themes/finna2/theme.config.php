@@ -243,7 +243,6 @@ $config = [
         'vendor/jquery.inview.min.js',
         'vendor/jquery.unveil.min.js',
         'vendor/jquery-ui-custom.min.js',
-        'vendor/jquery.ui.touch-punch.min.js',
         'vendor/jsTree/jstree.min.js',
         'vendor/easymde.min.js',
         'vendor/slick.min.js',
