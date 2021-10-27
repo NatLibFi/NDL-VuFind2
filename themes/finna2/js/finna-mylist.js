@@ -1,4 +1,4 @@
-/*global VuFind, finna */
+/*global VuFind, finna, Sortable */
 finna.myList = (function finnaMyList() {
 
   var mdEditable = null;
@@ -429,14 +429,18 @@ finna.myList = (function finnaMyList() {
       });
   };
 
-  function initFavoriteOrderingFunctionality(url) {
-    listUrl = url;
-
-    $('#sortable').sortable({cursor: 'move', opacity: 0.7});
-
+  function initFavoriteOrderingFunctionality() {
+    var el = document.getElementById('sortable');
+    var sortable = Sortable.create(el);
     $('#sort_form').on('submit', function onSubmitSortForm(/*event*/) {
-      var listOfItems = $('#sortable').sortable('toArray');
-      $('#sort_form input[name="orderedList"]').val(JSON.stringify(listOfItems));
+      var list = [];
+      var children = sortable.el.children;
+      if (children.length > 0) {
+        for (var i = 0; i < children.length; i++) {
+          list.push(children[i].innerHTML);
+        }
+      }
+      $('#sort_form input[name="orderedList"]').val(JSON.stringify(list));
       return true;
     });
   }

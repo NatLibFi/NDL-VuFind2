@@ -245,6 +245,7 @@ $config = [
         'vendor/jquery-ui-custom.min.js',
         'vendor/jquery.ui.touch-punch.min.js',
         'vendor/jsTree/jstree.min.js',
+        'vendor/sortable.min.js',
         'vendor/easymde.min.js',
         'vendor/slick.min.js',
         'vendor/gauge.min.js',
