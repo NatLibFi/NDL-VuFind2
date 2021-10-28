@@ -242,7 +242,6 @@ $config = [
         'vendor/jquery.flot.selection.min.js',
         'vendor/jquery.inview.min.js',
         'vendor/jquery.unveil.min.js',
-        'vendor/jquery-ui-custom.min.js',
         'vendor/jquery.ui.touch-punch.min.js',
         'vendor/jsTree/jstree.min.js',
         'vendor/easymde.min.js',
