@@ -1,4 +1,4 @@
-/*global VuFind, finna */
+/*global VuFind, finna, accessibleAutocomplete */
 finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   var updateURL = false;
   var parent = null;
@@ -156,67 +156,57 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   }
 
   function initSearch() {
-    var officeSearch = holder.find('#office-search');
-    officeSearch.autocomplete({
-      source: function autocompleteSource(request, response) {
-        var term = request.term.toLowerCase();
+    var container = document.querySelector('#office-search-container');
+    var count = Object.keys(organisationList).length;
+    var translation = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', count);
+    accessibleAutocomplete({
+      element: container,
+      id: 'office-search', // To match it to the existing <label>.
+      showNoOptionsFound: false,
+      showAllValues: true,
+      placeholder: translation,
+      dropdownArrow: function dontShow () {},
+      source: function stuff(query, populateResults) {
         var result = [];
-        $.each(organisationList, function handleOrganisation(id, obj) {
+        $.each(organisationList, function formatOrganisation(id, obj) {
           var label = obj.name;
           if (obj.address && obj.address.city) {
             label += ', ' + obj.address.city;
           }
-          if (label.toLowerCase().indexOf(term) !== -1) {
-            result.push({value: id, label: label});
+          if (label.indexOf(query) !== -1) {
+            result.push(label + ":::" + obj.id);
           }
         });
         result = result.sort(function sortCallback(a, b) {
-          return a.label > b.label ? 1 : -1;
+          return a > b ? 1 : -1;
         });
-        response(result);
+        populateResults(result);
       },
-
-      select: function onSelectAutocomplete(event, ui) {
-        holder.find('#office-search').val(ui.item.label);
-        var hash = ui.item.value;
-        updateWindowHash(hash);
-        return false;
-      },
-
-      focus: function onFocusAutocomplete(/*event, ui*/) {
-        if ($(window).width() < 768) {
-          $('html, body').animate({
-            scrollTop: officeSearch.offset().top - 5
-          }, 100);
-        }
-        return false;
-      },
-      open: function onOpenAutocomplete(/*event, ui*/) {
-        if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-          holder.find('.ui-autocomplete').off('menufocus hover mouseover');
+      templates: {
+        suggestion: function createSuggestion(arg) {
+          var exploded = arg.split(':::');
+          return exploded[0];
+        },
+        inputValue: function adjustInputValue(arg) {
+          if (arg) {
+            var exploded = arg.split(':::');
+            return exploded[0] || '';
+          } else {
+            return '';
+          }
         }
       },
-      minLength: 0,
-      delay: 100,
-      appendTo: '.autocomplete-container',
-      autoFocus: false
-    }).data("ui-autocomplete")._renderItem = function addLabels(ul, item) {
-      return $('<li>')
-        .attr('aria-label', item.label)
-        .html(item.label)
-        .appendTo(ul);
-    };
-    officeSearch.on('click', function onClickSearch() {
-      officeSearch.autocomplete('search', $(this).val());
-    });
-    officeSearch.find('li').on('touchstart', function onTouchStartSearch() {
-      officeSearch.autocomplete('search', $(this).val());
-    });
-    holder.find('.btn-office-search').on('click', function onClickSearchBtn(e) {
-      officeSearch.autocomplete('search', '');
-      officeSearch.focus();
-      e.preventDefault();
-      return false;
+      onConfirm: function onConfirm(arg) {
+        if (arg) {
+          var exploded = arg.split(':::');
+          if (exploded[1]) {
+            updateWindowHash(exploded[1]);
+          }
+        }
+      },
+      tAssistiveHint: function setAssistiveHint() {
+        return '';
+      }
     });
   }
 
@@ -245,11 +235,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
             // IE opens Delay initing autocomplete menu to prevent IE from opening it automatically at
             initSearch();
           }
-          var desc = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', cnt);
-          holder.find('.ui-autocomplete-input')
-            .attr('placeholder', desc)
-            .attr('aria-label', desc)
-            .focus().blur();
 
           if (typeof id != 'undefined' && id) {
             updateSelectedOrganisation(id, true);
