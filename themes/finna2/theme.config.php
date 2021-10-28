@@ -248,7 +248,7 @@ $config = [
         'vendor/easymde.min.js',
         'vendor/slick.min.js',
         'vendor/gauge.min.js',
-        'vendor/autocomplete.min.js',
+        'vendor/accessible-autocomplete.min.js',
         'vendor/priority-nav.min.js',
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
