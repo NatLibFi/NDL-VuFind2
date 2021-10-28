@@ -166,7 +166,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       showAllValues: true,
       placeholder: translation,
       dropdownArrow: function dontShow () {},
-      source: function stuff(query, populateResults) {
+      source: function createSources(query, populateResults) {
         var result = [];
         $.each(organisationList, function formatOrganisation(id, obj) {
           var label = obj.name;
