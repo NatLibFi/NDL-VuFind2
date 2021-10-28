@@ -173,7 +173,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           if (obj.address && obj.address.city) {
             label += ', ' + obj.address.city;
           }
-          if (label.indexOf(query) !== -1) {
+          if (label.toLowerCase().indexOf(query.toLowerCase()) !== -1) {
             result.push(label + ":::" + obj.id);
           }
         });
@@ -191,9 +191,8 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
           if (arg) {
             var exploded = arg.split(':::');
             return exploded[0] || '';
-          } else {
-            return '';
           }
+          return '';
         }
       },
       onConfirm: function onConfirm(arg) {
