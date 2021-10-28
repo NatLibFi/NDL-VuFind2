@@ -66,8 +66,8 @@
             <?php
               if ((isset($images[$url['url']])
                 || in_array($url['url'], $renderedURLs))
-                && strcasecmp(pathinfo($url['url'], PATHINFO_EXTENSION), 'pdf') !== 0)
-              {
+                && strcasecmp(pathinfo($url['url'], PATHINFO_EXTENSION), 'pdf') !== 0
+              ) {
                 // PDF links should be displayed as they are not originally images
                 continue;
               }
