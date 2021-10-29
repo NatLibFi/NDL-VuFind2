@@ -405,7 +405,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             foreach ($excludePickUpLocations as $location) {
                 $this->pickUpLocationBlockList['regional']['unit'][]
                     = $this->pickUpLocationBlockList['normal']['unit'][]
-                    = $location;
+                        = $location;
             }
         }
 
