@@ -335,4 +335,45 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
         return parent::getXML($format, $baseUrl, $recordLink);
     }
+
+    /**
+     * Get series information
+     *
+     * @return array
+     */
+    public function getSeries(): array
+    {
+        $xml = $this->getXmlRecord();
+        $locale = $this->getLocale();
+        $all = [];
+        $primary = [];
+        $number = '';
+        foreach ($xml->relation ?? [] as $relation) {
+            $type = (string)$relation->attributes()->{'type'};
+            $lang = (string)$relation->attributes()->{'lang'};
+            $trimmed = trim((string)$relation);
+            switch ($type) {
+            case 'ispartofseries':
+                $name = ['name' => $trimmed];
+                if ($lang === $locale) {
+                    $primary[] = $name;
+                }
+                $all[] = $name;
+                break;
+            case 'numberinseries':
+                $number = $trimmed;
+                break;
+            }
+        }
+        $final = $primary ?: $all;
+        if ($number) {
+            array_walk(
+                $final,
+                function (&$item) use ($number) {
+                    $item['partNumber'] = $number;
+                }
+            );
+        }
+        return $final;
+    }
 }
