@@ -6,18 +6,18 @@ finna.feedTabs = (function finnaFeedTab() {
    * 
    * @return {String} hash without hashtag
    */
-  function getHashWithoutHashTag() {
+  function getTabFromLocationHash() {
     var hash = window.location.hash;
     return hash ? hash.substring(1) : '';
   }
   function FeedTab(container) {
     var _ = this;
-    container.classList.add('inited');
+    container.classList.add('init-done');
     _.anchors = container.querySelectorAll('.feed-tab-anchor, .feed-accordion-anchor');
     _.tabContent = container.querySelector('.tab-content');
     _.setEvents();
     _.firstLoad();
-    _.allowHashchange = false;
+    _.allowHashChange = false;
     _.isLoading = false;
   }
 
@@ -34,10 +34,10 @@ finna.feedTabs = (function finnaFeedTab() {
     });
 
     window.addEventListener('hashchange', function checkForHashChange() {
-      if (_.isLoading || !_.allowHashchange) {
+      if (_.isLoading || !_.allowHashChange) {
         return;
       }
-      var hash = getHashWithoutHashTag();
+      var hash = getTabFromLocationHash();
       if (hash) {
         _.anchors.forEach(function checkIfThis(element) {
           if (element.classList.contains('feed-tab-anchor') &&
@@ -83,8 +83,8 @@ finna.feedTabs = (function finnaFeedTab() {
     _.tabContent.dataset.feed = tab;
     finna.feed.loadFeed(_.tabContent, function onLoad() {
       _.isLoading = false;
-      if (!_.allowHashchange) {
-        _.allowHashchange = true;
+      if (!_.allowHashChange) {
+        _.allowHashChange = true;
       }
     });
   };
@@ -94,7 +94,7 @@ finna.feedTabs = (function finnaFeedTab() {
    */
   FeedTab.prototype.firstLoad = function firstLoad() {
     var _ = this;
-    var hash = getHashWithoutHashTag();
+    var hash = getTabFromLocationHash();
 
     _.anchors.forEach(function checkFirst(element) {
       if (!element.classList.contains('feed-tab-anchor')) {
@@ -118,8 +118,7 @@ finna.feedTabs = (function finnaFeedTab() {
    * @param {String} id 
    */
   function init(id) {
-    var containers = document.querySelectorAll('.feed-tabs#' + id + ':not(.inited)');
-    // TODO: remove jquery version of the init
+    var containers = document.querySelectorAll('.feed-tabs#' + id + ':not(.init-done)');
     if (window.IntersectionObserver) {
       var observer = new IntersectionObserver(function observe(entries, obs) {
         entries.forEach(function checkEntry(entry) {
@@ -131,6 +130,8 @@ finna.feedTabs = (function finnaFeedTab() {
         observer.observe(container);
       });
     } else {
+      // TODO: remove jquery version of the init
+      // Support for older browsers
       $(containers).one('inview', function onInview() {
         new FeedTab(this);
       });
