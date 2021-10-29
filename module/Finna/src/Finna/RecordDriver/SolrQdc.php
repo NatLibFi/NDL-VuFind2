@@ -55,7 +55,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      *
      * @var array
      */
-    protected $imageSizes = [
+    protected $imageSizeMappings = [
         'THUMBNAIL' => 'small',
         'square' => 'small',
         'small' => 'small',
@@ -65,11 +65,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Allowed image mimes
+     * Image mime types
      *
      * @var array
      */
-    protected $mimeTypes = [
+    protected $imageMimeTypes = [
         'image/jpeg',
         'image/png'
     ];
@@ -166,7 +166,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
             $type = $attributes->type ?? '';
-            if (!empty($attributes->type) && !in_array($type, $this->mimeTypes)) {
+            if (!empty($attributes->type) && !in_array($type, $this->imageMimeTypes)) {
                 continue;
             }
             $url = (string)($attributes->href ?? $node);
@@ -183,7 +183,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             } else {
                 // QDC has no way of telling how to link
                 // images so take only first in this situation
-                $size = $this->imageSizes[$bundle] ?? false;
+                $size = $this->imageSizeMappings[$bundle] ?? false;
                 if ($size && !isset($otherSizes[$size])) {
                     $otherSizes[$size] = $url;
                 }
