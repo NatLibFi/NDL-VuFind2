@@ -166,7 +166,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
             $type = $attributes->type ?? '';
-            if (!empty($attributes->type) && !in_array($type, $this->imageMimeTypes)) {
+            if (!empty($attributes->type)
+                && !in_array($type, $this->imageMimeTypes)
+            ) {
                 continue;
             }
             $url = (string)($attributes->href ?? $node);
