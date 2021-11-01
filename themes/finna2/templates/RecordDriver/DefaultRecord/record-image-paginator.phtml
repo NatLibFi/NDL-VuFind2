@@ -42,6 +42,7 @@
     $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
     $settings = $this->driver->getModelSettings();
     $settings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);
+    $previewImages = $this->driver->allowModelPreviewImages();
     foreach ($models as $index => $model):
       foreach ($model as $format => $data):
         if ($format === 'rights') {
@@ -71,7 +72,7 @@
         ];
 
         if (!empty($paginatedLinks[$index])) {
-          if (!empty($settings['previewImages'])) {
+          if ($previewImages) {
             $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $tmp);
           } else {
             $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $tmp, $override);
