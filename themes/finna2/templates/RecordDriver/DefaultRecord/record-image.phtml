@@ -37,7 +37,7 @@
           <?=$this->record($this->driver)->renderTemplate('image-download.phtml', ['index' => $ind, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false])?>
           <?=$this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => $ind, 'image' => $image]);?>
         <?php endif; ?>
-        <?php if (!empty($model)): unset($model['rights']);?>
+        <?php if (!empty($model)): ?>
           <?=$this->record($this->driver)->renderTemplate('model-download.phtml', ['index' => $ind, 'rights' => $rights, 'model' => $model]);?>
         <?php endif; ?>
         <?=$this->record($this->driver)->renderTemplate('image-rights.phtml', ['imageRightsLabel' => $imageRightsLabel, 'rights' => $rights, 'truncateLicense' => $ind === 0]);?>
