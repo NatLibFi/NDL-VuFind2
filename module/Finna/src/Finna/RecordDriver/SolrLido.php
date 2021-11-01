@@ -485,7 +485,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Function to return model in formatted format
+     * Function to return model as associative array
+     * - format Model format as key
+     *   - type Model type preview_3d or provided_3d as key
+     *          url to model as value
      *
      * @param array $data Data of the representation
      *
@@ -513,7 +516,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Function to return image in formatted format
+     * Function to return image in associative array
+     * - url
+     *  - small                 Image size with url as value
+     *  - medium                Image size with url as value
+     *  - large                 Image size with url as value
+     * - highResolution
+     *  - size                  Image size master or original
+     *      - format            Image format as key
+     *          - data          Contains data like measurements
+     *          - resourceID    ID to which resource belongs to
+     *          - url           Url of the image
+     * - sizeless               If no size has been found
      *
      * @param array $data Data of the representation
      *
