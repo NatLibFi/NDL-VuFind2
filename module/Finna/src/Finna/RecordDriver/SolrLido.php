@@ -53,18 +53,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Representation cache keys
-     *
-     * @var array
-     */
-    protected const CACHE_KEYS = [
-        'models' => 'models/',
-        'images' => 'images/',
-        'audios' => 'audios/',
-        'videos' => 'videos/'
-    ];
-
-    /**
      * Map from site locale to Lido language codes.
      */
     public const LANGUAGE_CODES = [
@@ -294,7 +282,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = null)
     {
-        return $this->getFromCache('images', $language);
+        $language = $language ?? $this->getTranslatorLocale();
+        $representations = $this->getRepresentations($language);
+        return array_filter(array_column($representations, 'images'));
     }
 
     /**
@@ -342,7 +332,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModels(): array
     {
-        return $this->getFromCache('models');
+        $language = $this->getTranslatorLocale();
+        $representations = $this->getRepresentations($language);
+        return array_filter(array_column($representations, 'models'));
     }
 
     /**
@@ -366,29 +358,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Function to control the cache in a single function
-     * Return given type of cache with key
-     *
-     * @param string $key      Key of CACHE_KEYS constant
-     * @param string $language Language of texts
-     *
-     * @return array
-     */
-    protected function getFromCache(string $key, $language = null): array
-    {
-        $lang = !empty($language) ? $language : $this->getTranslatorLocale();
-        $cacheKey = self::CACHE_KEYS[$key] . $lang;
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
-        }
-        $result = $this->parseRepresentations($lang);
-        foreach (self::CACHE_KEYS as $type => $value) {
-            $this->cache[$value . $lang] = $result[$type] ?? [];
-        }
-        return $this->cache[$cacheKey] ?? [];
-    }
-
-    /**
      * Parse given representations and return them in proper
      * associative array
      *
@@ -396,30 +365,36 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    protected function parseRepresentations(string $language): array
+    protected function getRepresentations(string $language): array
     {
+        $cacheKey = __FUNCTION__ . "/$language";
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
         $defaultRights = $this->getImageRights($language, true);
         $imageTypeKeys = array_keys($this->imageTypes);
         $modelTypeKeys = array_keys($this->modelTypes);
         $audioTypeKeys = array_keys($this->audioTypes);
         $videoTypeKeys = array_keys($this->videoTypes);
-        $imageResults = [];
-        $modelResults = [];
-        $audioResults = [];
-        $videoResults = [];
+        $results = [];
 
-        $addToResults = function ($imageData) use (&$imageResults) {
-            if (!isset($imageData['urls']['small'])) {
-                $imageData['urls']['small'] = $imageData['urls']['medium']
-                    ?? $imageData['urls']['large'];
+        $addToResults = function ($imageData = [], $models = []) use (&$results) {
+            if ($imageData) {
+                if (!isset($imageData['urls']['small'])) {
+                    $imageData['urls']['small'] = $imageData['urls']['medium']
+                        ?? $imageData['urls']['large'];
+                }
+                if (!isset($imageData['urls']['medium'])) {
+                    $imageData['urls']['medium'] = $imageData['urls']['small'];
+                }
             }
-            if (!isset($imageData['urls']['medium'])) {
-                $imageData['urls']['medium'] = $imageData['urls']['small'];
-            }
-            $imageResults[] = $imageData;
+            $results[] = [
+                'images' => $imageData,
+                'models' => $models
+            ];
         };
 
-        $i = 0;
         foreach ($this->getXmlRecord()->xpath(
             '/lidoWrap/lido/administrativeMetadata/'
             . 'resourceWrap/resourceSet'
@@ -574,37 +549,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                         }
                     }
                 );
-                $addToResults($imageResult);
             }
-
-            if ($modelUrls) {
-                $modelUrls['rights'] = $rights;
-                $modelResults[$i] = $modelUrls;
-            }
-            if ($audioUrls) {
-                $audioResults[$i] = $audioUrls;
-            }
-            if ($videoUrls) {
-                $videoResults[$i] = $videoUrls;
-            }
-            $i++;
+            $addToResults($imageResult, $modelUrls);
         }
 
-        // Does 3D models have a preview image?
-        if (!$this->allowModelPreviewImages()) {
-            $imageResults = array_diff_key($imageResults, $modelResults);
-        }
-
-        return [
-            'images' => $imageResults,
-            'models' => $modelResults,
-            'audios' => $audioResults,
-            'videos' => $videoResults
-        ];
+        $this->cache[$cacheKey] = $results;
+        return $results;
     }
 
     /**
-     * Function to return model in formatted format
+     * Function to return model as associative array
+     * - format Model format as key
+     *   - type Model type preview_3d or provided_3d as key
+     *          url to model as value
      *
      * @param array $data Data of the representation
      *
@@ -636,7 +593,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Function to return image in formatted format
+     * Function to return image in associative array
+     * - url
+     *  - small                 Image size with url as value
+     *  - medium                Image size with url as value
+     *  - large                 Image size with url as value
+     * - highResolution
+     *  - size                  Image size master or original
+     *      - format            Image format as key
+     *          - data          Contains data like measurements
+     *          - resourceID    ID to which resource belongs to
+     *          - url           Url of the image
+     * - sizeless               If no size has been found
      *
      * @param array $data Data of the representation
      *
@@ -739,13 +707,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get rights from the given resourceSet
      *
-     * @param object $resourceSet Given resourceSet from lido
-     * @param string $language    Language to look for
+     * @param \SimpleXmlElement $resourceSet Given resourceSet from lido
+     * @param string            $language    Language to look for
      *
      * @return array
      */
-    protected function parseResourceRights($resourceSet, $language): array
-    {
+    protected function parseResourceRights(
+        \SimpleXmlElement $resourceSet,
+        string $language
+    ): array {
         $defaultRights = $this->getImageRights($language, true);
         $rights = [];
         foreach ($resourceSet->rightsResource ?? [] as $rightsResource) {
@@ -798,7 +768,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
 
-        return !empty($rights) ? $rights : $defaultRights;
+        return $rights ?: $defaultRights;
     }
 
     /**
