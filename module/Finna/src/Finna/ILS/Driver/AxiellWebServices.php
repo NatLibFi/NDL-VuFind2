@@ -277,7 +277,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      *
      * @var array
      */
-    protected $pickUpLocationBlockList = [
+    protected $excludedPickUpLocations = [
         'regional' => [
             'organisation' => [],
             'unit' => []
@@ -375,39 +375,46 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $this->defaultPickUpLocation
             = $this->config['Holds']['defaultPickUpLocation'] ?? false;
 
+        $holds = $this->config['Holds'];
         // Bc for older setting
-        $excludePickUpLocations
-            = isset($this->config['Holds']['excludePickUpLocations'])
-            ? explode(':', $this->config['Holds']['excludePickUpLocations']) : [];
+        $excludedPickUpLocationsBc
+            = isset($holds['excludePickUpLocations'])
+            ? explode(':', $holds['excludePickUpLocations']) : [];
 
-        $pickUpLocationBlockList
-            = $this->config['Holds']['pickUpLocationBlockList'] ?? [];
+        $excludedNormalLocations
+            = isset($holds['excludeLocationsFromNormalHoldPickUp'])
+            ? array_merge(
+                explode(':', $holds['excludeLocationsFromNormalHoldPickUp']),
+                $excludedPickUpLocationsBc
+            ) : $excludedPickUpLocationsBc;
 
-        if ($pickUpLocationBlockList || $excludePickUpLocations) {
-            foreach ($pickUpLocationBlockList as $type => $list) {
-                $typeResult = [
-                    'unit' => [],
-                    'organisation' => []
-                ];
-                foreach (explode(':', $list) as $location) {
-                    if (empty($location)) {
-                        continue;
-                    }
-                    $exploded = explode('=', $location);
-                    if (count($exploded) > 0) {
-                        $typeResult['organisation'][] = $exploded[1];
-                    } else {
-                        $typeResult['unit'][] = $exploded[0];
-                    }
-                }
-                $this->pickUpLocationBlockList[$type] = $typeResult;
-            }
-            foreach ($excludePickUpLocations as $location) {
-                $this->pickUpLocationBlockList['regional']['unit'][]
-                    = $this->pickUpLocationBlockList['normal']['unit'][]
-                        = $location;
-            }
-        }
+        $excludedRegionalLocations
+            = isset($holds['excludeLocationsFromRegionalHoldPickUp'])
+            ? array_merge(
+                explode(':', $holds['excludeLocationsFromRegionalHoldPickUp']),
+                $excludedPickUpLocationsBc
+            ) : $excludedPickUpLocationsBc;
+
+        $excludedNormalOrganisations
+            = isset($holds['excludeOrganisationsFromNormalHoldPickUp'])
+            ? explode(':', $holds['excludeOrganisationsFromNormalHoldPickUp'])
+            : [];
+
+        $excludedRegionalOrganisations
+            = isset($holds['excludeOrganisationsFromRegionalHoldPickUp'])
+            ? explode(':', $holds['excludeOrganisationsFromRegionalHoldPickUp'])
+            : [];
+
+        $this->excludedPickUpLocations = [
+            'normal' => [
+                'unit' => $excludedNormalLocations,
+                'organisation' => $excludedNormalOrganisations
+            ],
+            'regional' => [
+                'unit' => $excludedRegionalLocations,
+                'organisation' => $excludedRegionalOrganisations
+            ]
+        ];
 
         if ($this->defaultPickUpLocation == '0') {
             $this->defaultPickUpLocation = false;
@@ -608,11 +615,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             }
 
             $organisationID = $organisation->id;
-            if ($this->isUnitPickUpBlocked(
-                $organisationID,
-                $holdType,
-                'organisation'
-            )
+            if (!empty($this->excludedPickUpLocations[$holdType])
+                && in_array(
+                    $organisationID,
+                    $this->excludedPickUpLocations[$holdType]['organisation'] ?? []
+                )
             ) {
                 continue;
             }
@@ -625,9 +632,15 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             foreach ($branches as $branch) {
                 $locationID
                     = $organisationID . '.' . $branch->id;
-                if ($this->isUnitPickUpBlocked($locationID, $holdType, 'unit')) {
+                if (!empty($this->excludedPickUpLocations[$holdType])
+                    && in_array(
+                        $locationID,
+                        $this->excludedPickUpLocations[$holdType]['unit'] ?? []
+                    )
+                ) {
                     continue;
                 }
+
                 $locationsList[] = [
                     'locationID' => $locationID,
                     'locationDisplay' => $branch->name
@@ -639,26 +652,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         usort($locationsList, [$this, 'pickUpLocationsSortFunction']);
 
         return $locationsList;
-    }
-
-    /**
-     * Check if unit has been blocked in the config
-     *
-     * @param string $compare  unit id to compare
-     * @param string $holdType type of the hold to compare
-     * @param string $unitType type of the unit to compare
-     *
-     * @return bool
-     */
-    protected function isUnitPickUpBlocked($compare, $holdType, $unitType): bool
-    {
-        if (!empty($this->pickUpLocationBlockList[$holdType])) {
-            return in_array(
-                $compare,
-                $this->pickUpLocationBlockList[$holdType][$unitType] ?? []
-            );
-        }
-        return false;
     }
 
     /**
