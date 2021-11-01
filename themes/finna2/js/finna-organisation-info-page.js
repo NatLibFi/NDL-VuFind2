@@ -158,6 +158,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   function initSearch() {
     var count = Object.keys(organisationList).length;
     var translation = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', count);
+
     $(document).ready(function initSelect() {
       var select = document.querySelector('#office-search');
       var placeholder = document.createElement('option');
@@ -177,7 +178,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       }).on('select2:select', function updateHash(e) {
         updateWindowHash(e.params.data.id || 'undefined');
       });
-
     });
   }
 
