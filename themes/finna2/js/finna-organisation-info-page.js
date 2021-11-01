@@ -1,4 +1,4 @@
-/*global VuFind, finna, accessibleAutocomplete */
+/*global VuFind, finna*/
 finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   var updateURL = false;
   var parent = null;
@@ -156,56 +156,28 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   }
 
   function initSearch() {
-    var container = document.querySelector('#office-search-container');
     var count = Object.keys(organisationList).length;
     var translation = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', count);
-    accessibleAutocomplete({
-      element: container,
-      id: 'office-search', // To match it to the existing <label>.
-      showNoOptionsFound: false,
-      showAllValues: true,
-      placeholder: translation,
-      dropdownArrow: function dontShow () {},
-      source: function createSources(query, populateResults) {
-        var result = [];
-        $.each(organisationList, function formatOrganisation(id, obj) {
-          var label = obj.name;
-          if (obj.address && obj.address.city) {
-            label += ', ' + obj.address.city;
-          }
-          if (label.toLowerCase().indexOf(query.toLowerCase()) !== -1) {
-            result.push(label + ":::" + obj.id);
-          }
-        });
-        result = result.sort(function sortCallback(a, b) {
-          return a > b ? 1 : -1;
-        });
-        populateResults(result);
-      },
-      templates: {
-        suggestion: function createSuggestion(arg) {
-          var exploded = arg.split(':::');
-          return exploded[0];
-        },
-        inputValue: function adjustInputValue(arg) {
-          if (arg) {
-            var exploded = arg.split(':::');
-            return exploded[0] || '';
-          }
-          return '';
+    $(document).ready(function initSelect() {
+      var select = document.querySelector('#office-search');
+      var placeholder = document.createElement('option');
+      select.append(placeholder);
+      $.each(organisationList, function addToSelect(id, el) {
+        var option = document.createElement('option');
+        option.innerHTML = el.name;
+        if (el.address && el.address.city) {
+          option.innerHTML += ', ' + el.address.city;
         }
-      },
-      onConfirm: function onConfirm(arg) {
-        if (arg) {
-          var exploded = arg.split(':::');
-          if (exploded[1]) {
-            updateWindowHash(exploded[1]);
-          }
-        }
-      },
-      tAssistiveHint: function setAssistiveHint() {
-        return '';
-      }
+        option.value = el.id;
+        select.append(option);
+      });
+      $(select).select2({
+        placeholder: translation,
+        allowClear: true
+      }).on('select2:select', function updateHash(e) {
+        updateWindowHash(e.params.data.id || 'undefined');
+      });
+
     });
   }
 
