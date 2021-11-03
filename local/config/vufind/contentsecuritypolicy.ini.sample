@@ -53,6 +53,9 @@ merge_array_settings = true
 ;connect-src[] = "https://saas.smilee.fi"
 ;connect-src[] = "wss://saas.smilee.fi"
 
+; SoundCloud
+;frame-src[] = "*.soundcloud.com"
+
 ; Tawk
 ;script-src[] = "https://va.tawk.to"
 ;connect-src[] = "https://*.tawk.to"
