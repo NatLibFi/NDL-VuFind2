@@ -367,6 +367,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
-        return $results[$locale] ?? array_values($results);
+        return [$results[$locale]] ?? array_values($results);
     }
 }
