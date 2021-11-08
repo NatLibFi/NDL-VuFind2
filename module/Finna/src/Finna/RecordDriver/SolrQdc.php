@@ -315,7 +315,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getISBNs(): array
+    public function getISBNs()
     {
         $result = [];
         $xml = $this->getXmlRecord();
@@ -330,16 +330,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             }
         }
         return array_values(array_unique($result));
-    }
-
-    /**
-     * Get an array of all ISSNs associated with the record (may be empty).
-     *
-     * @return array
-     */
-    public function getISSNs(): array
-    {
-        return $this->fields['issn'] ?? [];
     }
 
     /**
