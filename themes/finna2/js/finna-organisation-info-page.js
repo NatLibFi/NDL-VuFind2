@@ -17,19 +17,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   }
 
   function updateWindowHash(hash) {
-    // Create a fake hidden div with id=hash and absolute position
-    // so that window scroll position is preserved when the hash is updated below.
-    holder.find('div.hash').remove();
-    $('<div/>')
-      .css({
-        position: 'absolute',
-        visibility: 'hidden',
-        top: $(document).scrollTop() + 'px'
-      })
-      .addClass('hash')
-      .attr( 'id', hash )
-      .appendTo(holder);
-
     if (hash === window.location.hash) {
       // Set hash first to empty value, so that onhashchange is triggered when
       // the same menu item is re-selected.
@@ -176,11 +163,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
         placeholder: translation,
         allowClear: true
       }).on('select2:select', function updateHash(e) {
-        var hash = 'undefined';
-        if (e.params && e.params.data && e.params.data.id) {
-          hash = encodeURIComponent(e.params.data.id);
-        }
-        updateWindowHash(hash);
+        updateWindowHash(encodeURIComponent(e.params.data.id || 'undefined'));
       });
     });
   }
@@ -590,9 +573,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       if (id) {
         updateSelectedOrganisation(id, false);
       }
-
-      // Blur so that mobile keyboard is closed
-      holder.find('#office-search').blur();
     };
 
     var library = null;
