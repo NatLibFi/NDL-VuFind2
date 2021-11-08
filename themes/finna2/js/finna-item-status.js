@@ -30,7 +30,7 @@ finna.itemStatus = (function finnaItemStatus() {
       // Item statuses
       var $loading = $('<span/>')
         .addClass('location ajax-availability hidden')
-        .html('<i class="fa fa-spinner fa-spin"></i> ' + VuFind.translate('loading') + '...<br>');
+        .html(VuFind.loading());
       recordContainer.find('.callnumAndLocation')
         .empty()
         .append($loading);
@@ -42,7 +42,7 @@ finna.itemStatus = (function finnaItemStatus() {
       // Online URLs
       var $recordUrls = recordContainer.find('.available-online-links');
       if ($recordUrls.length) {
-        $recordUrls.html('<i class="fa fa-spinner fa-spin"></i> ' + VuFind.translate('loading') + '...<br>');
+        $recordUrls.html(VuFind.loading());
         $.getJSON(
           VuFind.path + '/AJAX/JSON',
           {

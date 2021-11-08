@@ -136,19 +136,33 @@ class Icon extends AbstractHelper
      * Map icon to set. Add prefix, return with set and template.
      * Broken out for easier customization.
      *
-     * @param string $name Icon name or key from theme.config.php
+     * @param string $name       Icon name or key from theme.config.php
+     * @param array  $aliasTrail Safety mechanism to prevent circular aliases
      *
      * @return array
      */
-    protected function mapIcon(string $name): array
+    protected function mapIcon(string $name, $aliasTrail = []): array
     {
         $rtl = $this->rtl ? '-rtl' : '';
         $icon = $this->iconMap[$name . $rtl] ?? $this->iconMap[$name] ?? $name;
         $set = $this->defaultSet;
+        $class = null;
 
         // Override set from config (ie. FontAwesome:icon)
         if (strpos($icon, ':') !== false) {
-            [$set, $icon] = explode(':', $icon, 2);
+            $parts = explode(':', $icon, 3);
+            $set = $parts[0];
+            $icon = $parts[1];
+            $class = $parts[2] ?? null;
+        }
+
+        // Special case: aliases:
+        if ($set === 'Alias') {
+            $aliasTrail[] = $name;
+            if (in_array($icon, $aliasTrail)) {
+                throw new \Exception("Circular icon alias detected: $icon!");
+            }
+            return $this->mapIcon($icon, $aliasTrail);
         }
 
         // Find set in theme.config.php
@@ -156,7 +170,7 @@ class Icon extends AbstractHelper
         $template = $setConfig['template'] ?? $this->defaultTemplate;
         $prefix = $setConfig['prefix'] ?? '';
 
-        return [$prefix . $icon, $set, $template];
+        return [$prefix . $icon, $set, $template, $class];
     }
 
     /**
@@ -171,6 +185,10 @@ class Icon extends AbstractHelper
     {
         $attrStr = '';
         foreach ($attrs as $key => $val) {
+            // class gets special handling in the template; don't use it now:
+            if ($key == 'class') {
+                continue;
+            }
             $attrStr .= ' ' . $key . '="' . ($this->esc)($val) . '"';
         }
         return $attrStr;
@@ -217,7 +235,8 @@ class Icon extends AbstractHelper
         $cached = $this->cache->getItem($cacheKey);
 
         if ($cached == null) {
-            [$icon, $set, $template] = $this->mapIcon($name);
+            [$icon, $set, $template, $class] = $this->mapIcon($name);
+            $attrs['class'] = trim(($attrs['class'] ?? '') . ' ' . $class);
 
             // Surface set config and add icon and attrs
             $cached = $this->getView()->render(
@@ -227,7 +246,7 @@ class Icon extends AbstractHelper
                     [
                         'icon' => ($this->esc)($icon),
                         'attrs' => $this->compileAttrs($attrs),
-                        'extra' => $attrs
+                        'extra' => $attrs,
                     ]
                 )
             );

@@ -13,10 +13,10 @@
             $copyright = $rights['copyright'];
             $label = $this->record($this->driver)->translateCopyright($copyright);
           ?>
-          <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?><?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><?= $label ?><?php if ($hasLink): ?></a><?php endif; ?>
+          <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?><?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><span><?= $label ?></span><?php if ($hasLink): ?></a><?php endif; ?>
         <?php else: ?>
           <?php foreach ($descriptions as $item): ?>
-            <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $item])?> <?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><?= $item ?><?php if ($hasLink): ?></a><?php endif; ?>
+            <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $item])?> <?php if ($hasLink): ?><a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>"><?php endif; ?><span><?= $item ?></span><?php if ($hasLink): ?></a><?php endif; ?>
           <?php endforeach ?>
           <?php $descriptions = []; ?>
         <?php endif; ?>

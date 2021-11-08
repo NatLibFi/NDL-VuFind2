@@ -35,7 +35,7 @@ $config = [
             'content-page' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
-                    'route'    => '/Content/[:page]',
+                    'route'    => '/Content/:page',
                     'constraints' => [
                         'page'     => '[a-zA-Z][a-zA-Z0-9_-]*',
                     ],
@@ -652,6 +652,13 @@ $recordRoutes = [
     'search2collectionrecord' => 'Search2Record',
 ];
 
+// Define non tab record actions
+$nonTabRecordActions = [
+    'AddComment', 'DeleteComment', 'AddTag', 'DeleteTag', 'Save', 'Email', 'SMS',
+    'Cite', 'Export', 'RDF', 'Hold', 'Home', 'StorageRetrievalRequest',
+    'AjaxTab', 'ILLRequest', 'PDF', 'Epub', 'LinkedText', 'Permalink',
+];
+
 // Define dynamic routes -- controller => [route name => action]
 $dynamicRoutes = [
     'Feedback' => ['feedback-form' => 'Form/[:id]'],
@@ -720,6 +727,7 @@ $staticRoutes = [
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
+$routeGenerator->addNonTabRecordActions($config, $nonTabRecordActions);
 $routeGenerator->addRecordRoutes($config, $recordRoutes);
 $routeGenerator->addDynamicRoutes($config, $dynamicRoutes);
 $routeGenerator->addStaticRoutes($config, $staticRoutes);

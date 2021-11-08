@@ -218,7 +218,6 @@ showMore[*] = 6
 showMoreInLightbox[*] = more
 ;lightboxLimit = 50
 top_rows = 2
-top_cols = 3
 ;exclude = *
 orFacets = *
 collapsedFacets = usage_rights_str_mv,educational_audience_str_mv,educational_material_type_str_mv,educational_subject_str_mv,educational_aim_str_mv,topic_facet,author_facet,language

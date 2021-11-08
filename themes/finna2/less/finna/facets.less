@@ -85,15 +85,6 @@
     &:hover {
       text-decoration: underline;
     }
-    &.more-narrow-toggle, &.less-narrow-toggle {
-      border-radius: 0px;
-      color: @gray;
-      font-weight: bold;
-      font-size: 0.8em;
-      text-transform: uppercase;
-      text-decoration: none;
-      width: 100%;
-    }
   }
   button.list-group-item.title {
     font-size: 1em;
@@ -105,6 +96,23 @@
     text-align: left;
     border: 1px solid  @facet-border-color;
     padding: 15px 10px;
+  }
+
+  .more-less-btn-wrapper .btn, a.more-narrow-toggle {
+    border-radius: 0px;
+    color: @gray;
+    background: transparent;
+    font-weight: bold;
+    font-size: 0.8em;
+    text-transform: uppercase;
+    text-decoration: none;
+    width: 100%;
+    box-shadow: none;
+  }
+  .more-less-btn-wrapper .btn {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: baseline;
   }
 
   .list-group-item i.fa.fa-check-square-o {
@@ -156,10 +164,10 @@
    position: absolute;
    padding-left: 6px;
    width: 24px;
-   height: 24px;    
+   height: 24px;
    font-size: 16px;
   }
- 
+
   .jstree-leaf > .jstree-ocl:before {
     content: " ";
   }
@@ -181,7 +189,7 @@
     .datepicker.datepicker-dropdown {
         font-size: 1.4em;
     }
-    .jstree-ocl:before {  
+    .jstree-ocl:before {
       width: 32px;
     }
   }
