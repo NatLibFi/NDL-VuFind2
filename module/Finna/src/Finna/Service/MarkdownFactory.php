@@ -1,10 +1,10 @@
 <?php
 /**
- * Markdown view helper factory
+ * Finna Markdown Service factory
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,33 +20,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
+ * @package  VuFind\Service
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace Finna\Service;
 
+use Finna\Service\CommonMark\MarkdownBlockRenderer;
+use Finna\Service\CommonMark\MarkdownHeadingRenderer;
 use Finna\View\CustomElement\CommonMark\CustomElementExtension;
 use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\Factory\FactoryInterface;
-use League\CommonMark\CommonMarkConverter;
-use League\CommonMark\Environment;
-use League\CommonMark\Extension\Autolink\AutolinkExtension;
+use Laminas\Config\Config;
+use League\CommonMark\ConfigurableEnvironmentInterface;
 
 /**
- * Markdown view helper factory
+ * Finna Markdown Service factory
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
+ * @package  VuFind\Service
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org   Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class MarkdownFactory implements FactoryInterface
+class MarkdownFactory extends \VuFind\Service\MarkdownFactory
 {
+    /**
+     * Service Manager
+     *
+     * @var ContainerInterface
+     */
+    protected $container;
+
     /**
      * Create an object
      *
@@ -66,7 +71,24 @@ class MarkdownFactory implements FactoryInterface
         $requestedName,
         array $options = null
     ) {
-        $environment = Environment::createCommonMarkEnvironment();
+        $this->container = $container;
+        return parent::__invoke($container, $requestedName, $options);
+    }
+
+    /**
+     * Add extensions to Markdown environment.
+     *
+     * @param $environment    ConfigurableEnvironmentInterface Markdown environment
+     * @param $markdownConfig Config                           VuFind Markdown config
+     *
+     * @return void
+     */
+    protected function addExtensions(
+        ConfigurableEnvironmentInterface $environment,
+        Config $markdownConfig
+    ): void {
+        parent::addExtensions($environment, $markdownConfig);
+
         $environment->addBlockRenderer(
             'League\CommonMark\Block\Element\HtmlBlock',
             new MarkdownBlockRenderer()
@@ -75,27 +97,18 @@ class MarkdownFactory implements FactoryInterface
             'League\CommonMark\Block\Element\Heading',
             new MarkdownHeadingRenderer()
         );
-        $environment->addExtension(new AutolinkExtension());
 
-        $cConfig = $container->get('config');
-        $elements = array_keys(
-            $cConfig['vufind']['plugin_managers']['view_customelement']['aliases']
-            ?? []
-        );
-        $environment->addExtension(
-            new CustomElementExtension(
-                $elements,
-                $container->get('ViewHelperManager')->get('customElement')
-            )
-        );
-
-        $config = [
-            'renderer' => [
-                'soft_break' => "<br>",
-            ]
-        ];
-        $converter = new CommonMarkConverter($config, $environment);
-
-        return new $requestedName($converter);
+        $config = $this->container->get('config');
+        $customElementConfig
+            = $config['vufind']['plugin_managers']['view_customelement'] ?? [];
+        $elements = array_keys($customElementConfig['aliases'] ?? []);
+        if (!empty($elements)) {
+            $environment->addExtension(
+                new CustomElementExtension(
+                    $elements,
+                    $this->container->get('ViewHelperManager')->get('customElement')
+                )
+            );
+        }
     }
 }
