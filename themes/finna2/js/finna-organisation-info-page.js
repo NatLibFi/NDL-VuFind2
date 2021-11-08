@@ -165,18 +165,22 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       select.append(placeholder);
       $.each(organisationList, function addToSelect(id, el) {
         var option = document.createElement('option');
-        option.innerHTML = el.name;
+        option.appendChild(document.createTextNode(el.name));
         if (el.address && el.address.city) {
-          option.innerHTML += ', ' + el.address.city;
+          option.appendChild(document.createTextNode(', ' + el.address.city));
         }
-        option.value = el.id;
+        option.value = document.createTextNode(el.id).nodeValue;
         select.append(option);
       });
       $(select).select2({
         placeholder: translation,
         allowClear: true
       }).on('select2:select', function updateHash(e) {
-        updateWindowHash(e.params.data.id || 'undefined');
+        var hash = 'undefined';
+        if (e.params && e.params.data && e.params.data.id) {
+          hash = encodeURIComponent(e.params.data.id);
+        }
+        updateWindowHash(hash);
       });
     });
   }
