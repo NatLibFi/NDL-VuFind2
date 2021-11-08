@@ -55,7 +55,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      *
      * @var array
      */
-    protected $seriesInfos = [
+    protected $seriesInfoMappings = [
         'ispartofseries' => 'name',
         'numberinseries' => 'partNumber'
     ];
@@ -361,8 +361,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $lang = (string)$relation->attributes()->{'lang'} ?: 'nolocale';
             $trimmed = trim((string)$relation);
 
-            if (in_array($type, array_keys($this->seriesInfos))) {
-                $key = $this->seriesInfos[$type];
+            if (in_array($type, array_keys($this->seriesInfoMappings))) {
+                $key = $this->seriesInfoMappings[$type];
                 if (empty($results[$lang][$key])) {
                     $results[$lang][$key] = $trimmed;
                 }
