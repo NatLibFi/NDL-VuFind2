@@ -95,7 +95,6 @@ class SearchController extends \VuFind\Controller\SearchController
         $range['ticks'] = $ticks;
 
         $positions = [];
-        $position = 0;
         for ($i = 0; $i < count($ticks); $i++) {
             $positions[] = floor($i * 100 / (count($ticks) - 1));
         }

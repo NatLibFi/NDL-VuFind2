@@ -34,7 +34,7 @@
   <property name="skip_phpdoc" value="false" />
   <property name="phpdoc_version" value="3.0.0" />
 
-  <property name="version" value="8.0" />
+  <property name="version" value="8.0.1" />
 
   <!-- We only need the -p switch if the password is non-blank -->
   <if>
@@ -83,6 +83,28 @@
     <phingcall target="eslint-report"/>
     <phingcall target="jshint-report"/>
     <phingcall target="phpstan-checkstyle"/>
+  </target>
+
+  <!-- Quality Assurance Tasks -->
+  <target name="qa-console" description="quality assurance tasks">
+    <!-- Call standard tasks -->
+    <phingcall target="qa-js-and-less"/>
+    <phingcall target="qa-php"/>
+  </target>
+
+  <!-- Quality Assurance Javascript Tasks -->
+  <target name="qa-js-and-less" description="quality assurance js and less tasks">
+    <phingcall target="eslint"/>
+    <phingcall target="eslint-finna"/>
+    <phingcall target="jshint"/>
+  </target>
+
+  <!-- Quality Assurance PHP Tasks -->
+  <target name="qa-php" description="quality assurance php tasks">
+    <phingcall target="phpunitfast"/>
+    <phingcall target="phpcs-console"/>
+    <phingcall target="php-cs-fixer-dryrun"/>
+    <phingcall target="phpstan-console"/>
   </target>
 
   <!-- Report rule violations with PHPMD (mess detector) -->

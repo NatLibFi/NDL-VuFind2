@@ -5,6 +5,9 @@ merge_array_settings = true
 [Directives]
 ;script-src[] = "https://trusted.service.something"
 
+; Avointen oppimateriaalien kirjasto
+; frame-src[] = “https://aoe.fi”
+
 ; Boost.ai (universitiesfront)
 ;connect-src[] = "https://universitiesfront.boost.ai"
 ;connect-src[] = "https://static.aim.front.ai"
@@ -51,11 +54,18 @@ merge_array_settings = true
 ;script-src[] = "https://cdn.smilee.io"
 ;script-src[] = "https://saas.smilee.fi"
 ;connect-src[] = "https://saas.smilee.fi"
+;connect-src[] = "wss://saas.smilee.fi"
+
+; SoundCloud
+;frame-src[] = "*.soundcloud.com"
 
 ; Tawk
 ;script-src[] = "https://va.tawk.to"
 ;connect-src[] = "https://*.tawk.to"
 ;connect-src[] = "wss://*.tawk.to"
+
+; Twitter
+;frame-src[] = "https://*.twitter.com"
 
 ; Vimeo
 ;frame-src[] = "https://player.vimeo.com"
@@ -63,13 +73,14 @@ merge_array_settings = true
 ; Youtube
 ;frame-src[] = "https://www.youtube.com"
 
+; Youtube nocookie
+; frame-src[] = “https://www.youtube-nocookie.com”
+
 ; Zendesk chat (Zopim) - https://developer.zendesk.com/documentation/classic-web-widget-sdks/web-widget/integrating-with-google/csp/
+;; Uusi lataustapa, ei toimi Safarilla:
 ;connect-src[] = "https://ekr.zdassets.com"
 ;connect-src[] = "wss://widget-mediator.zopim.com"
-;; Vaihtoehto 1 - uusi lataustapa, ks. yllämainittu osoite:
-;script-src[] = "'strict-dynamic'"
-;script-src[] = "'unsafe-eval'"
-;; Vaihtoehto 2 - vanha lataustapa:
+;; Suositellaan tätä lataustapaa alla, uudempi ei toimi Safarilla:
 ;script-src[] = "https://static.zdassets.com"
 ;script-src[] = "https://ekr.zdassets.com"
 ;script-src[] = "https://*.zendesk.com"
@@ -79,4 +90,3 @@ merge_array_settings = true
 ;script-src[] = "'unsafe-eval'"
 ;connect-src[] = "https://ekr.zdassets.com"
 ;connect-src[] = "wss://widget-mediator.zopim.com"
-
