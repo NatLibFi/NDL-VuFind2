@@ -601,7 +601,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Introduction',
             'getIntroduction',
-            'data-escapeHtml.phtml',
+            'data-markdown.phtml',
             [
                 'context' => ['class' => 'record-introduction']
             ]
