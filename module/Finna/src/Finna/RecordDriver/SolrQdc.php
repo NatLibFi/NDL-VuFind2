@@ -51,6 +51,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
+     * Mappings for series information, type => key
+     *
+     * @var array
+     */
+    protected $seriesInfos = [
+        'ispartofseries' => 'name',
+        'numberinseries' => 'partNumber'
+    ];
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
@@ -343,37 +353,21 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getSeries(): array
     {
-        $xml = $this->getXmlRecord();
         $locale = $this->getLocale();
-        $all = [];
-        $primary = [];
-        $number = '';
+        $xml = $this->getXmlRecord();
+        $results = [];
         foreach ($xml->relation ?? [] as $relation) {
             $type = (string)$relation->attributes()->{'type'};
-            $lang = (string)$relation->attributes()->{'lang'};
+            $lang = (string)$relation->attributes()->{'lang'} ?: 'nolocale';
             $trimmed = trim((string)$relation);
-            switch ($type) {
-            case 'ispartofseries':
-                $name = ['name' => $trimmed];
-                if ($lang === $locale) {
-                    $primary[] = $name;
+
+            if (in_array($type, array_keys($this->seriesInfos))) {
+                $key = $this->seriesInfos[$type];
+                if (empty($results[$lang][$key])) {
+                    $results[$lang][$key] = $trimmed;
                 }
-                $all[] = $name;
-                break;
-            case 'numberinseries':
-                $number = $trimmed;
-                break;
             }
         }
-        $final = $primary ?: $all;
-        if ($number) {
-            array_walk(
-                $final,
-                function (&$item) use ($number) {
-                    $item['partNumber'] = $number;
-                }
-            );
-        }
-        return $final;
+        return $results[$locale] ?? array_values($results);
     }
 }
