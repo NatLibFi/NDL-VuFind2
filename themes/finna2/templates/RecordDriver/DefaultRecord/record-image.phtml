@@ -20,30 +20,22 @@
     ?>
   </div>
   <?php if (!$isList): ?>
-    <?php
-      // Keep the indexes properly aligned, as there can be imageless entries
-      $keys = array_merge(array_keys($images), array_keys($models ?? []));
-      $keys = array_unique($keys);
-    ?>
-    <?php for ($i = 0; $i < count($keys); $i++): ?>
-      <?php
-        $ind = $keys[$i];
-        $image = $images[$ind] ?? [];
-        $model = $models[$ind] ?? [];
-      ?>
-      <?php $rights = $image['rights'] ?? $model['rights'] ?? [];?>
+    <?php $ind = 0; ?>
+    <?php $modelPreviewImages = $this->driver->tryMethod('allowModelPreviewImages'); ?>
+    <?php foreach ($images as $image): ?>
+      <?php $rights = $image['rights']; ?>
       <div class="image-details-container<?=$ind > 0 ? ' hidden' : '' ?> text-left" data-img-index="<?=$ind?>">
-        <?php if (!empty($image)): ?>
-          <?=$this->record($this->driver)->renderTemplate('image-download.phtml', ['index' => $ind, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false])?>
+        <?php if (empty($models[$ind]) || (!empty($models[$ind]) && !empty($modelPreviewImages))): ?>
+          <?=$this->record($this->driver)->renderTemplate('image-download.phtml', ['index' => $ind, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false, 'models' => $models ?? []])?>
           <?=$this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => $ind, 'image' => $image]);?>
         <?php endif; ?>
-        <?php if (!empty($model)): ?>
-          <?=$this->record($this->driver)->renderTemplate('model-download.phtml', ['index' => $ind, 'rights' => $rights, 'model' => $model]);?>
+        <?php if (!empty($models[$ind])): ?>
+          <?=$this->record($this->driver)->renderTemplate('model-download.phtml', ['index' => $ind, 'rights' => $rights, 'model' => $models[$ind]]);?>
         <?php endif; ?>
         <?=$this->record($this->driver)->renderTemplate('image-rights.phtml', ['imageRightsLabel' => $imageRightsLabel, 'rights' => $rights, 'truncateLicense' => $ind === 0]);?>
       </div>
       <?php $ind++; ?>
-    <?php endfor; ?>
+    <?php endforeach; ?>
   <?php endif; ?>
 </div>
 
