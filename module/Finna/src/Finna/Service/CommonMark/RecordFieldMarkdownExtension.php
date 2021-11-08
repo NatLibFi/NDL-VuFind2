@@ -50,7 +50,13 @@ final class RecordFieldMarkdownExtension implements ExtensionInterface
     public static function createRecordFieldMarkdownEnvironment():
         ConfigurableEnvironmentInterface
     {
-        $environment = new Environment();
+        $environment = new Environment(
+            [
+                'renderer' => [
+                    'soft_break' => '<br>'
+                ]
+            ]
+        );
         $environment->addExtension(new static());
         return $environment;
     }
