@@ -361,8 +361,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $lang = (string)$relation->attributes()->{'lang'} ?: 'nolocale';
             $trimmed = trim((string)$relation);
 
-            if (in_array($type, array_keys($this->seriesInfoMappings))) {
-                $key = $this->seriesInfoMappings[$type];
+            if ($key = $this->seriesInfoMappings[$type] ?? false) {
                 if (empty($results[$lang][$key])) {
                     $results[$lang][$key] = $trimmed;
                 }
