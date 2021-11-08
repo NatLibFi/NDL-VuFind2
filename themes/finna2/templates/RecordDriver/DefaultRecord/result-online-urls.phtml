@@ -26,7 +26,7 @@
         <?php if (!empty($urls)): ?>
           <?php foreach ($urls as $i => $url): ?>
             <?php
-              if (isset($images[$url['url']]) && !empty($url['codec']) && $url['codec'] !== 'pdf') {
+              if (isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') {
                 continue;
               }
               $renderedURLs[] = $url['url'];
@@ -63,10 +63,8 @@
         <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
           <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $i => $url): ?>
             <?php
-              if (isset($images[$url['url']]) || in_array($url['url'], $renderedURLs)) {
-                if (!empty($url['codec']) && $url['codec'] !== 'pdf') {
-                  continue;
-                }
+              if ((isset($images[$url['url']]) || in_array($url['url'], $renderedURLs)) && ($url['codec'] ?? '') !== 'pdf') {
+                continue;
               }
               $currentUrl = [
                 'href' => $this->proxyUrl($url['url']),
