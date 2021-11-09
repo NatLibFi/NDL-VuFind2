@@ -88,8 +88,10 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
     {
         $this->disableSessionWrites();  // avoid session write timing bug
 
-        $backend = $params->fromQuery('backend');
-        if (!$backend) {
+        $backend = $params->fromQuery('backend', 'Solr');
+        if ($backend) {
+            $backend = ucfirst($backend);
+        } else {
             $backend = 'Solr';
         }
         $isSolr = in_array($backend, ['Solr', 'R2']);

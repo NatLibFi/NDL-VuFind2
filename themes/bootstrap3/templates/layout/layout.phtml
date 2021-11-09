@@ -6,8 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
     <?=$this->headMeta()?>
-    <?=$this->headTitle()?>
     <?php
+      // Format the page title using the translation system:
+      $siteConfig = $this->config()->get('config')->Site;
+      $fullTitle = $this->translate(
+          'title_wrapper',
+          [
+            '%%pageTitle%%' => $this->headTitle()->renderTitle(),
+            '%%siteTitle%%' => $siteConfig->title,
+            '%%titleSeparator%%' => $siteConfig->titleSeparator ?? '::'
+          ]
+      );
+      echo $this->headTitle($fullTitle, \Laminas\View\Helper\Placeholder\Container\AbstractContainer::SET);
+
       // Set up OpenSearch link:
       $this->headLink(
           [
@@ -17,6 +28,10 @@
             'rel' => 'search'
           ]
       );
+      // We need to generate the icons early, because they may add some stylesheets;
+      // if we render them after the headLink / headStyle calls, some dependencies
+      // may not load correctly. Thus, we render early, but use this later.
+      $icons = !isset($this->renderingError) ? $this->render('js-icons.phtml') : '{}';
     ?>
     <!-- RTL styling -->
     <?php if ($this->layout()->rtl) {
@@ -72,6 +87,7 @@
 VuFind.path = '{$root}';
 VuFind.defaultSearchBackend = '{$dsb}';
 VuFind.addTranslations({$translations});
+VuFind.addIcons({$icons});
 VuFind.setCspNonce('{$cspNonce}');
 JS;
       $this->headScript()->appendScript(implode("\n", $appendScripts));
@@ -123,7 +139,7 @@ JS;
           <button type="button" class="close" data-dismiss="modal">
             <svg aria-label="<?=$this->transEscAttr('Close') ?>" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"></path></svg>
           </button>
-          <div class="modal-body"><?=$this->transEsc('Loading') ?>...</div>
+          <div class="modal-body"><?=$this->icon('spinner') . $this->transEsc('Loading') ?>...</div>
         </div>
       </div>
     </div>

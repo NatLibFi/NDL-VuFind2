@@ -432,7 +432,7 @@ EOT;
                     || $elements[$setting] != 0
                 ) {
                     $value = $item->{$method}();
-                    if (is_object($value)) {
+                    if (is_object($value) && !($value instanceof \DateTime)) {
                         $value = get_object_vars($value);
                     }
 
@@ -450,16 +450,16 @@ EOT;
                             }
                         }
                     } elseif ($setting == 'date') {
-                        if (isset($value['date'])) {
-                            $date = new \DateTime(($value['date']));
+                        if (null !== $value) {
+                            $date = $value;
                             if ($dateFormat) {
                                 $value = $date->format($dateFormat);
                             }
                             $data['dateFull'] = $date->format($fullDateFormat);
                         }
                     } elseif ($setting == 'contentDate') {
-                        if (isset($value['date'])) {
-                            $date = new \DateTime(($value['date']));
+                        if (null !== $value) {
+                            $date = $value;
                             if ($contentDateFormat) {
                                 $value = $date->format($contentDateFormat);
                             }

@@ -141,7 +141,7 @@ finna.authority = (function finnaAuthority() {
         $elem.addClass('loaded');
         $elem.addClass('loading');
         $elem.removeClass('hidden');
-        $elem.append('<span class="js-load">' + VuFind.translate('loading') + '...</span>');
+        $elem.append(VuFind.loading());
         var id = $item.find('.hiddenId')[0].value;
         $.getJSON(
           VuFind.path + '/AJAX/JSON',
