@@ -159,20 +159,18 @@
       </div>
 
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
-        <div class="truncate-field wide recordSummary">
-          <p class="summary">
+        <div class="truncate-field wide summary recordSummary">
           <?php if (isset($abstracts[$this->layout()->userLang])): ?>
-              <?=$this->escapeHtml($abstracts[$this->layout()->userLang])?>
-            <?php else: ?>
-              <?=implode('<br><br>', array_map([$this, 'escapeHtml'], $abstracts))?>
-            <?php endif; ?>
-          </p>
+            <?= $this->recordFieldMarkdown()->toHTML(($abstracts[$this->layout()->userLang]), "\n") ?>
+          <?php else: ?>
+            <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", array_map([$this, 'escapeHtml'], $abstracts)), "\n") ?>
+          <?php endif; ?>
         </div>
       <?php else: ?>
         <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
         <?php if ($summary): ?>
-        <div class="truncate-field wide recordSummary">
-            <p class="summary"><?=$summary ?></p>
+        <div class="truncate-field wide summary recordSummary">
+          <?= $this->recordFieldMarkdown()->toHTML($summary, "\n") ?>
         </div>
         <?php endif; ?>
       <?php endif; ?>
