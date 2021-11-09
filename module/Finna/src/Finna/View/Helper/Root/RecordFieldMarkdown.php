@@ -41,13 +41,22 @@ class RecordFieldMarkdown extends \VuFind\View\Helper\Root\Markdown
     /**
      * Return HTML
      *
-     * @param string $markdown Markdown
+     * @param string $markdown  Markdown
+     * @param string $softBreak String to use for rendering soft breaks.
+     *                          Optional, default '<br>'.
      *
      * @return string
      */
-    public function toHtml(string $markdown): string
+    public function toHtml(string $markdown, string $softBreak = '<br>'): string
     {
         $cleanHtml = $this->getView()->plugin('cleanHtml');
+        $this->converter->getEnvironment()->mergeConfig(
+            [
+                'renderer' => [
+                    'soft_break' => $softBreak
+                ]
+            ]
+        );
         return $this->converter->convertToHtml($cleanHtml($markdown));
     }
 
