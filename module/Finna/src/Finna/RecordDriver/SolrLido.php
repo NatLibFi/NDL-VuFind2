@@ -695,6 +695,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Function to return a video in associative array
+     * - desc           Default is Video
      * - url            Video url
      * - embed          Video embed is video
      * - videosources
