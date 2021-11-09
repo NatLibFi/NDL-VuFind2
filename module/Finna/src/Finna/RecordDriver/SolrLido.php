@@ -682,17 +682,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         if (empty($data['format']) || empty($data['url'])) {
             return [];
         }
-        $codec = $this->supportedAudioFormats[$data['format']] ?? false;
-        if (!$codec) {
-            return [];
+        if ($codec = $this->supportedAudioFormats[$data['format']] ?? false) {
+            return [
+                'url' => $data['url'],
+                'codec' => $codec,
+                'type' => 'audio',
+                'embed' => 'audio'
+            ];
         }
-        return [
-            'desc' => false,
-            'url' => $data['url'],
-            'codec' => $codec,
-            'type' => 'audio',
-            'embed' => 'audio'
-        ];
+        return [];
     }
 
     /**
@@ -712,18 +710,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         if (empty($data['format']) || empty($data['url'])) {
             return [];
         }
-        $codec = $this->supportedVideoFormats[$data['format']] ?? false;
-        if (!$codec) {
-            return [];
+        if ($codec = $this->supportedVideoFormats[$data['format']] ?? false) {
+            return [
+                'desc' => 'Video',
+                'url' => $data['url'],
+                'embed' => 'video',
+                'videoSources' => [
+                    'src' => $data['url'],
+                    'type' => $codec,
+                ]
+            ];
         }
-        return [
-            'url' => $data['url'],
-            'embed' => 'video',
-            'videoSources' => [
-                'src' => $data['url'],
-                'type' => $codec,
-            ]
-        ];
+        return [];
     }
 
     /**
