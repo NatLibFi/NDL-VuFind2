@@ -107,6 +107,9 @@ if ($otherTitles):?>
         <?php foreach ($urls as $url): ?>
           <?php
             $renderedURLs[] = $url['url'];
+            if (isset($images[$url['url']])) {
+              continue;
+            }
             $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
             $current = [
               'title' => $url['url']

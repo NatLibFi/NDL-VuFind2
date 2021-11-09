@@ -817,7 +817,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $bibId = $holdDetails['id'] ?? null;
         $itemId = $holdDetails['item_id'] ?? false;
-        $requestId = $holdDetails['requestId'] ?? false;
+        $requestId = $holdDetails['reqnum'] ?? false;
         $requestType
             = array_key_exists('StorageRetrievalRequest', $holdDetails ?? [])
                 ? 'StorageRetrievalRequests' : 'Holds';

@@ -39,10 +39,10 @@
 <?php
 $script = <<<EOT
 if ($.isReady) {
-  finna.myList.initFavoriteOrderingFunctionality('{$this->listUrl}');
+  finna.myList.initFavoriteOrderingFunctionality();
 } else {
   $(document).ready(function(){
-    finna.myList.initFavoriteOrderingFunctionality('{$this->listUrl}');
+    finna.myList.initFavoriteOrderingFunctionality();
   });
 }
 EOT;

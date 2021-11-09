@@ -25,6 +25,7 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -39,6 +40,7 @@ namespace Finna\RecordDriver;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -500,8 +502,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $models = [];
         $i = 0;
         $xml = $this->getXmlRecord();
-        foreach ($xml->lido->administrativeMetadata->resourceWrap->resourceSet
-        as $resourceSet) {
+        foreach ($xml->lido->administrativeMetadata->resourceWrap->resourceSet ?? []
+            as $resourceSet
+        ) {
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
                 $url = trim((string)$linkResource);
@@ -543,8 +546,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $settings[$setting] = $iniData->$setting;
             }
         }
-        $modelImages = 'model_preview_images';
-        $datasource = $this->getDataSource();
         $settings['previewImages'] = $this->allowModelPreviewImages();
         return $settings;
     }
@@ -1395,6 +1396,28 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 ? (string)$this->fields['description'] : '';
         }
         return array_unique($results);
+    }
+
+    /**
+     * Get introduction.
+     *
+     * @return array
+     */
+    public function getIntroduction()
+    {
+        $results = [];
+        $preferredLanguages = $this->getPreferredLanguageCodes();
+        foreach ($this->getXmlRecord()->xpath(
+            'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
+            . '/objectDescriptionSet[@type="introduction"]/descriptiveNoteValue'
+        ) as $node) {
+            if (in_array((string)$node->attributes()->lang, $preferredLanguages)) {
+                if ($term = trim((string)$node)) {
+                    $results[] = $term;
+                }
+            }
+        }
+        return $results;
     }
 
     /**

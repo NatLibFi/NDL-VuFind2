@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2015-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -38,6 +39,7 @@ use VuFind\Log\LoggerAwareTrait;
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -296,7 +298,20 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
                 'formats' => array_values(
                     array_unique(
                         array_map(
-                            [$this, 'translate'],
+                            function ($s) {
+                                if ($s instanceof \VuFind\I18n\TranslatableString) {
+                                    return $s->getDisplayString();
+                                }
+                                return strval($s);
+                            },
+                            $driver->tryMethod('getFormats', [], [])
+                        )
+                    )
+                ),
+                'formatsRaw' => array_values(
+                    array_unique(
+                        array_map(
+                            'strval',
                             $driver->tryMethod('getFormats', [], [])
                         )
                     )
@@ -307,6 +322,11 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             if ($openUrl = $driver->tryMethod('getOpenUrl')) {
                 parse_str($openUrl, $openUrlFields);
                 $message['recordMetadata']['openurl'] = $openUrlFields;
+            }
+            if ($rawData = $driver->getRawData()) {
+                if ($holdings = $rawData['holdings_txtP_mv'] ?? []) {
+                    $message['recordHoldingsSummary'] = (array)$holdings;
+                }
             }
         }
 

@@ -704,7 +704,7 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     url: src,
     dataType: 'html'
   }).done( function setImageData(response) {
-    _.popup.collapseArea.html(JSON.parse(response).data.html);
+    _.popup.collapseArea.html(VuFind.updateCspNonce(JSON.parse(response).data.html));
     _.popup.summary = _.popup.collapseArea.find('.summary');
     _.setDimensions();
     if (_.settings.recordType === 'marc') {
@@ -719,8 +719,11 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     }
     _.popup.collapseArea.find('[data-embed-video]').each(function initVideo() {
       var videoSources = $(this).data('videoSources');
-      var scripts = $(this).data('scripts');
       var posterUrl = $(this).data('posterUrl');
+      var scripts = $(this).data('scripts');
+      $.each(scripts, function updateNonces(key, value) {
+        scripts[key] = VuFind.updateCspNonce(value);
+      });
       $(this).finnaPopup({
         id: 'popupvideo',
         cycle: false,
@@ -788,7 +791,7 @@ FinnaPaginator.prototype.loadBookDescription = function loadBookDescription() {
     .done(function onGetDescriptionDone(response) {
       var data = response.data.html;
       if (data.length > 0) {
-        _.popup.summary.find('> div p').html(data);
+        _.popup.summary.find('> div p').html(VuFind.updateCspNonce(data));
         finna.layout.initTruncate(_.popup.summary);
       }
       _.popup.summary.removeClass('loading');
