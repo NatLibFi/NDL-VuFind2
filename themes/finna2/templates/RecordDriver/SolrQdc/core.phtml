@@ -79,11 +79,6 @@
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-      <div class="description">
-        <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
-          <i class="fa fa-spinner fa-spin"></i>
-        </span>
-      </div>
 
       <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php if ($hasOnlineURLs || $openUrlActive): ?>
