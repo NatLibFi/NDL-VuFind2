@@ -1478,7 +1478,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         ) {
             $result[] = $item['callnumber'];
         }
-        $str = implode(', ', $result); // This might be a problem
+        $str = implode(', ', $result);
         return $str;
     }
 
