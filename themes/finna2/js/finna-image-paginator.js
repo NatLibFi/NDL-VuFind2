@@ -719,8 +719,11 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     }
     _.popup.collapseArea.find('[data-embed-video]').each(function initVideo() {
       var videoSources = $(this).data('videoSources');
-      var scripts = $(this).data('scripts');
       var posterUrl = $(this).data('posterUrl');
+      var scripts = $(this).data('scripts');
+      $.each(scripts, function updateNonces(key, value) {
+        scripts[key] = VuFind.updateCspNonce(value);
+      });
       $(this).finnaPopup({
         id: 'popupvideo',
         cycle: false,
