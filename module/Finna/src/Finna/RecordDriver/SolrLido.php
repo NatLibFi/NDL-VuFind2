@@ -684,6 +684,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         }
         if ($codec = $this->supportedAudioFormats[$data['format']] ?? false) {
             return [
+                'desc' => false,
                 'url' => $data['url'],
                 'codec' => $codec,
                 'type' => 'audio',
@@ -695,7 +696,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Function to return a video in associative array
-     * - desc           Default is Video
+     * - desc           Default is false
      * - url            Video url
      * - embed          Video embed is video
      * - videosources
@@ -713,7 +714,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         }
         if ($codec = $this->supportedVideoFormats[$data['format']] ?? false) {
             return [
-                'desc' => 'Video',
+                'desc' => false,
                 'url' => $data['url'],
                 'embed' => 'video',
                 'videoSources' => [
