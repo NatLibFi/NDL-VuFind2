@@ -1173,12 +1173,18 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $entry = $this->createSerialEntry($subscription, $i);
 
                     foreach ($statuses as &$status) {
-                        if ($status['callnumber'] === $entry['callnumber']) {
+                        if ($status['callnumber'] === $entry['callnumber']
+                            && $status['location'] === $entry['location']
+                        ) {
                             $status['purchase_history'] = $issues;
-                            continue 2;
+                            $entry = null;
+                            break;
                         }
                     }
                     unset($status);
+                    if (null === $entry) {
+                        continue;
+                    }
                     $entry['purchase_history'] = $issues;
                     $statuses[] = $entry;
                 }
@@ -1478,8 +1484,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         ) {
             $result[] = $item['callnumber'];
         }
-        $str = implode(', ', $result);
-        return $str;
+        return implode(', ', $result);
     }
 
     /**
