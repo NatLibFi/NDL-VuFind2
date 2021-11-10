@@ -50,13 +50,7 @@ final class RecordFieldMarkdownExtension implements ExtensionInterface
     public static function createRecordFieldMarkdownEnvironment():
         ConfigurableEnvironmentInterface
     {
-        $environment = new Environment(
-            [
-                'renderer' => [
-                    'soft_break' => '<br>'
-                ]
-            ]
-        );
+        $environment = new Environment();
         $environment->addExtension(new static());
         return $environment;
     }
@@ -91,7 +85,7 @@ final class RecordFieldMarkdownExtension implements ExtensionInterface
             )
             ->addInlineRenderer(
                 \League\CommonMark\Inline\Element\Newline::class,
-                new \League\CommonMark\Inline\Renderer\NewlineRenderer(),
+                new FlexibleNewlineRenderer(),
                 0
             )
             ->addInlineRenderer(

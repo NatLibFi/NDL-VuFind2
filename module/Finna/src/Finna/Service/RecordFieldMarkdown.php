@@ -27,6 +27,8 @@
  */
 namespace Finna\Service;
 
+use Finna\Service\CommonMark\FlexibleNewlineRenderer;
+use League\CommonMark\Inline\Element\Newline;
 use League\CommonMark\MarkdownConverter;
 
 /**
@@ -40,4 +42,48 @@ use League\CommonMark\MarkdownConverter;
  */
 class RecordFieldMarkdown extends MarkdownConverter
 {
+    /**
+     * Flexible newline renderer.
+     *
+     * @var FlexibleNewlineRenderer
+     */
+    protected $flexibleNewlineRenderer = null;
+
+    /**
+     * Converts Markdown to HTML.
+     *
+     * @param string  $markdown  Markdown
+     * @param ?string $softBreak Alternative string to use for rendering soft breaks
+     *                           (optional)
+     *
+     * @return string
+     */
+    public function convertToHtml(string $markdown, ?string $softBreak = null)
+        : string
+    {
+        if (isset($softBreak) && !$this->flexibleNewlineRenderer) {
+            $renderers = $this->getEnvironment()
+                ->getInlineRenderersForClass(Newline::class);
+            foreach ($renderers as $renderer) {
+                if ($renderer instanceof FlexibleNewlineRenderer) {
+                    $this->flexibleNewlineRenderer = $renderer;
+                    break;
+                }
+            }
+        }
+        $isNonDefault
+            = isset($softBreak)
+                && $this->flexibleNewlineRenderer
+                && ($softBreak !== FlexibleNewlineRenderer::DEFAULT_SOFT_BREAK);
+        if ($isNonDefault) {
+            $this->flexibleNewlineRenderer->setSoftBreak($softBreak);
+        }
+        $html = parent::convertToHtml($markdown);
+        if ($isNonDefault) {
+            $this->flexibleNewlineRenderer->setSoftBreak(
+                FlexibleNewlineRenderer::DEFAULT_SOFT_BREAK
+            );
+        }
+        return $html;
+    }
 }
