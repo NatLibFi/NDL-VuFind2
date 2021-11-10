@@ -50,7 +50,12 @@ final class RecordFieldMarkdownExtension implements ExtensionInterface
     public static function createRecordFieldMarkdownEnvironment():
         ConfigurableEnvironmentInterface
     {
-        $environment = new Environment();
+        $environment = new Environment(
+            [
+                'html_input' => 'escape',
+                'allow_unsafe_links' => false
+            ]
+        );
         $environment->addExtension(new static());
         return $environment;
     }
