@@ -349,7 +349,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getAudios(): array
+    protected function getAudios(): array
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
@@ -361,7 +361,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getVideos(): array
+    protected function getVideos(): array
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
