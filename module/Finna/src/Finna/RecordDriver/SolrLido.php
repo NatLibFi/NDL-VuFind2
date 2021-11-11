@@ -295,7 +295,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function formatImageMeasurements(
+    protected function formatImageMeasurements(
         \SimpleXmlElement $measurements,
         string $language
     ) {
@@ -304,27 +304,34 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             if (empty($set->measurementValue)) {
                 continue;
             }
+            $value = trim((string)$set->measurementValue);
             $type = '';
             foreach ($set->measurementType as $t) {
-                if ((string)$t->attributes()->lang !== $language) {
-                    continue;
+                $lang = (string)$t->attributes()->lang;
+                if (!$lang) {
+                    $lang = 'nolocale';
                 }
                 $type = trim((string)$t);
-                break;
+                if (!isset($data[$lang][$type])) {
+                    $data[$lang][$type] = [];
+                }
             }
             $unit = '';
             foreach ($set->measurementUnit as $u) {
-                if ((string)$u->attributes()->lang !== $language) {
-                    continue;
+                $lang = (string)$u->attributes()->lang;
+                if (!$lang) {
+                    $lang = 'nolocale';
                 }
                 $unit = trim((string)$u);
-                break;
+                if (!isset($data[$lang][$type]['unit'])) {
+                    $data[$lang][$type]['unit'] = $unit;
+                }
+                if (!isset($data[$lang][$type]['value'])) {
+                    $data[$lang][$type]['value'] = $value;
+                }
             }
-
-            $value = trim((string)$set->measurementValue);
-            $data[$type] = compact('unit', 'value');
         }
-        return $data;
+        return $data[$language] ?? reset($data);
     }
 
     /**
