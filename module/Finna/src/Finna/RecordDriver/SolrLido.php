@@ -307,8 +307,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $value = trim((string)$set->measurementValue);
             $type = '';
             foreach ($set->measurementType as $t) {
-                $lang = (string)$t->attributes()->lang;
-                if (!$lang) {
+                if (!($lang = (string)$t->attributes()->lang)) {
                     $lang = 'nolocale';
                 }
                 $type = trim((string)$t);
@@ -318,8 +317,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
             $unit = '';
             foreach ($set->measurementUnit as $u) {
-                $lang = (string)$u->attributes()->lang;
-                if (!$lang) {
+                if (!($lang = (string)$u->attributes()->lang)) {
                     $lang = 'nolocale';
                 }
                 $unit = trim((string)$u);
