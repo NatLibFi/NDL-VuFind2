@@ -51,6 +51,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
+     * Mappings for series information, type => key
+     *
+     * @var array
+     */
+    protected $seriesInfoMappings = [
+        'ispartofseries' => 'name',
+        'numberinseries' => 'partNumber'
+    ];
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
@@ -334,5 +344,32 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             return $this->fields['fullrecord'];
         }
         return parent::getXML($format, $baseUrl, $recordLink);
+    }
+
+    /**
+     * Get series information
+     *
+     * @return array
+     */
+    public function getSeries(): array
+    {
+        $locale = $this->getLocale();
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ($xml->relation ?? [] as $relation) {
+            $type = (string)$relation->attributes()->{'type'};
+            $lang = (string)$relation->attributes()->{'lang'} ?: 'nolocale';
+            $trimmed = trim((string)$relation);
+
+            if ($key = $this->seriesInfoMappings[$type] ?? false) {
+                if (empty($results[$lang][$key])) {
+                    $results[$lang][$key] = $trimmed;
+                }
+            }
+        }
+
+        return isset($results[$locale])
+            ? [$results[$locale]]
+            : array_values($results);
     }
 }

@@ -142,6 +142,7 @@
             .flex-item {
                 display: flex;
                 width: 40%;
+                padding: 0 5px;
                 &.map-buttons {
                     width: 60%;
                 }
@@ -411,9 +412,20 @@
 
                 .input-group {
                     width: 100%;
-                    margin-left: 10px;
+                    margin-right: 10px;
+                    display: flex;
+                    flex: 1 1 100%;
+                    height: 100%;
+                    #office-search-container {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        .select2-container--default .select2-selection--single {
+                            border-radius: 0;
+                        }
+                    }
                 }
-
                 input {
                     background: none;
                     background-color: white;
@@ -422,21 +434,6 @@
                     padding-right: 0px;
                     width: 100%;
                     height: 40px;
-                    &:focus {
-                        outline: none;
-                    }
-                }
-
-                .input-group-btn {
-                    left: -1px;
-                }
-
-                .btn-office-search {
-                    height: 40px;
-                    padding-top: 0.65em;
-                    i {
-                        font-size: 1.2em;
-                    }
                 }
             }
             .office-search-notifications {

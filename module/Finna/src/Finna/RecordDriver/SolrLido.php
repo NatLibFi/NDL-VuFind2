@@ -291,11 +291,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * Function to format given resourceMeasurementsSet to readable format
      *
      * @param object $measurements of the image
-     * @param string $language     to search data for
+     * @param string $language     language to get information
      *
      * @return array
      */
-    public function formatImageMeasurements($measurements, $language = 'en')
+    public function formatImageMeasurements($measurements, $language)
     {
         $data = [];
         foreach ($measurements as $set) {
@@ -618,11 +618,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *          - url           Url of the image
      * - sizeless               If no size has been found
      *
-     * @param array $data Data of the representation
+     * @param array  $data     Data of the representation
+     * @param string $language Language to get information
      *
      * @return array
      */
-    protected function parseImage(array $data): array
+    protected function parseImage(array $data, string $language): array
     {
         // Check if the image is really an image
         // Original images can be any type and are not displayed
@@ -651,7 +652,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
 
         if (in_array($size, ['master', 'original'])) {
             $currentHiRes = [
-                'data' => $this->formatImageMeasurements($data['measurements']),
+                'data' => $this->formatImageMeasurements(
+                    $data['measurements'],
+                    $language
+                ),
                 'url' => $data['url']
             ];
             if (!empty($data['ID'])) {

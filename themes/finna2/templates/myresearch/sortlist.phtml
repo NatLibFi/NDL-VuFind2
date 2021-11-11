@@ -1,6 +1,5 @@
 <!-- START of: finna - myresearch/sortlist.phtml -->
 <?php
-  $this->headScript()->appendFile('vendor/jquery-ui-custom.min.js');
   $this->headScript()->appendFile('finna-mylist.js');
   $list = $this->results->getListObject();
   $user = $this->auth()->isLoggedIn();

@@ -109,26 +109,30 @@
     width: 100%;
     box-shadow: none;
   }
-  .more-less-btn-wrapper .btn {
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-    align-items: baseline;
-  }
 
   .list-group-item i.fa.fa-check-square-o {
     color: @link-color;
   }
 
   // Hierarchical facets
-  .jstree-node .facet {
-    border: none;
+  .jstree-ocl:before {
+    font-family: finnaicons;
+    // Line height makes sure the icon doesn't overflow the container. That would
+    // cause the layout to shift when opening and closing a facet group.
+    line-height: 1;
+  }
+  .jstree-open > .jstree-ocl:before {
+    content: "\e027";
+  }
+  .jstree-closed > .jstree-ocl:before {
+    content: "\e025";
+  }
+  .jstree-leaf > .jstree-ocl:before {
+    content: " ";
   }
   .jstree-facet {
-    .jstree-anchor {
-      padding: 0;
-    }
     .jstree-node {
-      padding: 3px 0 3px 10px;
+      padding: 3px 0 3px 5px;
       border: 0;
     }
     .jstree-container-ul {
@@ -141,14 +145,18 @@
       }
     }
     .facet {
-      padding: 4px 8px 0 10px;
+      line-height: inherit;
+      padding: 0;
+      .badge {
+        margin-top: 3px;
+      }
     }
-  }
-  .jstree-container-ul {
-    padding-left: 8px;
   }
   .jstree-children {
     padding-left: 8px;
+  }
+  .jstree-container-ul {
+    padding: 0;
   }
 
   .jstree-facet .jstree-container-ul .jstree-icon {
@@ -160,12 +168,7 @@
     }
   }
   .jstree-ocl:before {
-   display: inline-block;
-   position: absolute;
-   padding-left: 6px;
-   width: 24px;
-   height: 24px;
-   font-size: 16px;
+    padding-top: 0;
   }
 
   .jstree-leaf > .jstree-ocl:before {
@@ -177,13 +180,9 @@
     .facet:not(.facet-group), .usage-right-group {
       font-size: 1.15em;
     }
-    .narrow-toggle .text {
+    .narrow-toggle .text, .more-less-btn-wrapper {
       font-size: 0.8em;
     }
-    .jstree-facet .list-group-item {
-      padding: 6px 0 3px 10px;
-    }
-
   }
   @media (max-width: @screen-sm-max) {
     .datepicker.datepicker-dropdown {
@@ -228,26 +227,14 @@ span.badge.cb-facet {
 }
 
 .facet-group {
-  display: block;
   margin-bottom: 1rem;
 
-  .facet,
   .title {
     display: block;
     line-height: 1.5rem;
-
-    .badge,
-    .status {
-      float: right;
-
-      body.rtl { float: left; }
-    }
-    .badge {
-      max-height: 19px;
-      margin-top: 0;
-    }
   }
   .facet {
+    line-height: 1.5rem;
     padding: 5px 8px;
     display: flex;
     .text { flex-grow: 1; }
