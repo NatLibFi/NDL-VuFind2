@@ -290,13 +290,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Function to format given resourceMeasurementsSet to readable format
      *
-     * @param object $measurements of the image
-     * @param string $language     language to get information
+     * @param \SimpleXmlElement $measurements of the image
+     * @param string            $language     language to get information
      *
      * @return array
      */
-    public function formatImageMeasurements($measurements, $language)
-    {
+    public function formatImageMeasurements(
+        \SimpleXmlElement $measurements,
+        string $language
+    ) {
         $data = [];
         foreach ($measurements as $set) {
             if (empty($set->measurementValue)) {
