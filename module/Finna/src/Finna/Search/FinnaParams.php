@@ -246,7 +246,7 @@ trait FinnaParams
         $regex = '/\[([\d-]+|\*)\s+TO\s+([\d-]+|\*)\]/';
         if (preg_match($regex, $filter, $matches)) {
             return [
-                'from' => $matches[1], 'to' => $matches[2]
+                'from' => $matches[1], 'to' => $matches[2], 'type' => 'overlap'
             ];
         }
 

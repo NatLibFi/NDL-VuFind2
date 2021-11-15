@@ -539,7 +539,7 @@ class Form extends \VuFind\Form\Form
             || $this->isRecordRequestFormWithBarcode())
         ) {
             $preParagraphs[] = '<strong>'
-                . $transEsc('repository_library_request_material') . '</strong>:<br>'
+                . $transEsc('feedback_material') . '</strong>:<br>'
                 . $escapeHtml($this->record->getTitle());
         }
 

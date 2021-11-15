@@ -1,4 +1,4 @@
-/*global VuFind, finna */
+/*global VuFind, finna, Sortable */
 finna.myList = (function finnaMyList() {
 
   var mdEditable = null;
@@ -391,7 +391,7 @@ finna.myList = (function finnaMyList() {
     // hide/show notes on images
     $('.note-button:not(.inited)').each(function initNotes() {
       var btn = $(this);
-      var noteOverlay = btn.siblings('.note-overlay-grid, .note-overlay-condensed').first();
+      var noteOverlay = btn.siblings('.note-overlay-grid, .note-overlay-condensed, .note-overlay-list').first();
       btn.off('click').on('click', function onClick(e) {
         e.stopPropagation();
         btn.add(noteOverlay).toggleClass('note-show', !btn.hasClass('note-show'));
@@ -429,14 +429,18 @@ finna.myList = (function finnaMyList() {
       });
   };
 
-  function initFavoriteOrderingFunctionality(url) {
-    listUrl = url;
-
-    $('#sortable').sortable({cursor: 'move', opacity: 0.7});
-
+  function initFavoriteOrderingFunctionality() {
+    var el = document.getElementById('sortable');
+    var sortable = Sortable.create(el);
     $('#sort_form').on('submit', function onSubmitSortForm(/*event*/) {
-      var listOfItems = $('#sortable').sortable('toArray');
-      $('#sort_form input[name="orderedList"]').val(JSON.stringify(listOfItems));
+      var list = [];
+      var children = sortable.el.children;
+      if (children.length > 0) {
+        for (var i = 0; i < children.length; i++) {
+          list.push(children[i].innerHTML);
+        }
+      }
+      $('#sort_form input[name="orderedList"]').val(JSON.stringify(list));
       return true;
     });
   }

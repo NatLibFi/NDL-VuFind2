@@ -1173,12 +1173,18 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $entry = $this->createSerialEntry($subscription, $i);
 
                     foreach ($statuses as &$status) {
-                        if ($status['location'] === $entry['location']) {
+                        if ($status['callnumber'] === $entry['callnumber']
+                            && $status['location'] === $entry['location']
+                        ) {
                             $status['purchase_history'] = $issues;
-                            continue 2;
+                            $entry = null;
+                            break;
                         }
                     }
                     unset($status);
+                    if (null === $entry) {
+                        continue;
+                    }
                     $entry['purchase_history'] = $issues;
                     $statuses[] = $entry;
                 }
@@ -1372,16 +1378,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     protected function createHoldingsEntry($id, $holdings, $sortKey)
     {
         $location = $this->getLibraryName($holdings['holding_library_id']);
-        $callnumber = '';
-        if (!empty($holdings['collection_code'])
-            && !empty($this->config['Holdings']['display_ccode'])
-        ) {
-            $callnumber = $this->translateCollection(
-                $holdings['collection_code'],
-                $holdings['collection_code_description']
-                ?? $holdings['collection_code']
-            );
-        }
 
         if ($this->groupHoldingsByLocation) {
             $holdingLoc = $this->translateLocation(
@@ -1395,21 +1391,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 }
                 $location .= $holdingLoc;
             }
-        } else {
-            if ($callnumber) {
-                $callnumber .= ', ';
-            }
-            $callnumber .= $this->translateLocation(
-                $holdings['location'],
-                !empty($holdings['location_description'])
-                    ? $holdings['location_description']
-                    : $holdings['location']
-            );
         }
-        if ($holdings['callnumber']) {
-            $callnumber .= ' ' . $holdings['callnumber'];
-        }
-        $callnumber = trim($callnumber);
+
+        $callnumber = $this->getItemCallNumber($holdings);
         $libraryId = $holdings['holding_library_id'];
         $locationId = $holdings['location'];
 
@@ -1500,8 +1484,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         ) {
             $result[] = $item['callnumber'];
         }
-        $str = implode(', ', $result);
-        return $str;
+        return implode(', ', $result);
     }
 
     /**

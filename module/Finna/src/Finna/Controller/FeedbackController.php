@@ -298,7 +298,20 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
                 'formats' => array_values(
                     array_unique(
                         array_map(
-                            [$this, 'translate'],
+                            function ($s) {
+                                if ($s instanceof \VuFind\I18n\TranslatableString) {
+                                    return $s->getDisplayString();
+                                }
+                                return strval($s);
+                            },
+                            $driver->tryMethod('getFormats', [], [])
+                        )
+                    )
+                ),
+                'formatsRaw' => array_values(
+                    array_unique(
+                        array_map(
+                            'strval',
                             $driver->tryMethod('getFormats', [], [])
                         )
                     )

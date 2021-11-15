@@ -73,6 +73,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         'image/jpeg',
         'image/png'
     ];
+  
+    /**
+     * Mappings for series information, type => key
+     *
+     * @var array
+     */
+    protected $seriesInfoMappings = [
+        'ispartofseries' => 'name',
+        'numberinseries' => 'partNumber'
+    ];
 
     /**
      * Constructor
@@ -94,8 +104,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return an associative array of abstracts associated with this record,
-     * if available; false otherwise.
+     * Return an associative array of abstracts associated with this record
      *
      * @return array of abstracts using abstract languages as keys
      */
@@ -105,7 +114,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $abstracts = [];
         $abstract = '';
         $lang = '';
-        foreach ($this->getXmlRecord()->xpath('/qualifieddc/abstract') as $node) {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->abstract ?? [] as $node) {
             $abstract = (string)$node;
             $lang = (string)$node['lang'];
             if ($lang == 'en') {
@@ -115,6 +125,43 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
 
         return $abstracts;
+    }
+
+    /**
+     * Get descriptions as an array
+     *
+     * @return array
+     */
+    public function getDescriptions(): array
+    {
+        $xml = $this->getXmlRecord();
+        $locale = $this->getLocale();
+        $all = [];
+        $primary = [];
+        foreach ($xml->description ?? [] as $description) {
+            $lang = (string)$description['lang'];
+            $trimmed = trim((string)$description);
+            if ($lang === $locale) {
+                $primary[] = $trimmed;
+            }
+            $all[] = $trimmed;
+        }
+        return $primary ?: $all;
+    }
+
+    /**
+     * Get an array of types for the record.
+     *
+     * @return array
+     */
+    public function getTypes(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ($xml->type ?? [] as $type) {
+            $results[] = (string)$type;
+        }
+        return $results;
     }
 
     /**
@@ -303,6 +350,43 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get identifiers as an array
+     *
+     * @return array
+     */
+    public function getOtherIdentifiers(): array
+    {
+        $results = [];
+        $xml = $this->getXmlRecord();
+        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
+            foreach ($field as $identifier) {
+                $type = (string)$identifier['type'];
+                if (in_array($type, ['issn', 'isbn'])) {
+                    continue;
+                }
+                $trimmed = str_replace('-', '', trim($identifier));
+                // ISBN
+                if (preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)) {
+                    continue;
+                }
+                $trimmed = trim($identifier);
+                // ISSN
+                if (preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $trimmed)) {
+                    continue;
+                }
+
+                // Leave out some obvious matches like urls or urns
+                if (!preg_match('{(^urn:|^https?)}i', $trimmed)) {
+                    $detail = (string)$identifier['type'];
+                    $data = $identifier;
+                    $results[] = compact('data', 'detail');
+                }
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get an array of all ISBNs associated with the record (may be empty).
      *
      * @return array
@@ -321,7 +405,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
-
         return array_values(array_unique($result));
     }
 
@@ -400,5 +483,32 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             return $this->fields['fullrecord'];
         }
         return parent::getXML($format, $baseUrl, $recordLink);
+    }
+
+    /**
+     * Get series information
+     *
+     * @return array
+     */
+    public function getSeries(): array
+    {
+        $locale = $this->getLocale();
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ($xml->relation ?? [] as $relation) {
+            $type = (string)$relation->attributes()->{'type'};
+            $lang = (string)$relation->attributes()->{'lang'} ?: 'nolocale';
+            $trimmed = trim((string)$relation);
+
+            if ($key = $this->seriesInfoMappings[$type] ?? false) {
+                if (empty($results[$lang][$key])) {
+                    $results[$lang][$key] = $trimmed;
+                }
+            }
+        }
+
+        return isset($results[$locale])
+            ? [$results[$locale]]
+            : array_values($results);
     }
 }

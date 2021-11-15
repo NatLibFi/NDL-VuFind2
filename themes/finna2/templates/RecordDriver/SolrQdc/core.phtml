@@ -75,11 +75,6 @@
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-      <div class="description">
-        <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
-          <i class="fa fa-spinner fa-spin"></i>
-        </span>
-      </div>
 
       <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php if ($hasOnlineURLs || $openUrlActive): ?>
@@ -131,21 +126,21 @@
         </div>
         <?php endif; ?>
 
-        <?php $publications = $this->driver->getPublicationDetails(); if (!empty($publications)): ?>
-        <div class="recordPublications">
-        <?php foreach ($publications as $field): ?>
-            <span property="publisher" typeof="Organization">
-            <?php $pubPlace = $field->getPlace(); if (!empty($pubPlace)): ?>
-              <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
-            <?php endif; ?>
-            <?php $pubName = $field->getName(); if (!empty($pubName)): ?>
-              <span property="name"><?=$this->escapeHtml($pubName)?></span>
-            <?php endif; ?>
-            <?php $pubDate = $field->getDate(); if (!empty($pubDate)): ?>
-              <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
-            <?php endif; ?>
-            </span>
-          <?php endforeach; ?>
+        <?php if ($publications = $this->driver->getPublicationDetails()): ?>
+          <div class="recordPublications">
+            <?php foreach ($publications as $field): ?>
+              <span property="publisher" typeof="Organization">
+                <?php if ($pubPlace = $field->getPlace()): ?>
+                  <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
+                <?php endif; ?>
+                <?php if ($pubName = $field->getName()): ?>
+                  <span property="name"><?=$this->escapeHtml($pubName)?></span>
+                <?php endif; ?>
+                <?php if ($pubDate = $field->getDate()): ?>
+                  <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
+                <?php endif; ?>
+              </span>
+            <?php endforeach; ?>
           </div>
         <?php endif; ?>
 
@@ -164,13 +159,13 @@
             <?php endif; ?>
           </p>
         </div>
-      <?php else: ?>
-        <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
-        <?php if ($summary): ?>
+      <?php endif; ?>
+      <?php if ($descriptions = $this->driver->getDescriptions()): ?>
         <div class="truncate-field wide recordSummary">
-            <p class="summary"><?=$summary ?></p>
+          <p class="summary">
+            <?=implode('<br><br>', array_map([$this, 'escapeHtml'], $descriptions))?>
+          </p>
         </div>
-        <?php endif; ?>
       <?php endif; ?>
 
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>

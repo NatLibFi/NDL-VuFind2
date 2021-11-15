@@ -83,7 +83,7 @@ fi = "Finnish"
 recipient_email = ""
 recipient_name = ""
 
-[Piwik]
+[Matomo]
 site_id =
 token_auth =
 
