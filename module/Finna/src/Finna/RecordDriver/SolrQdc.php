@@ -73,7 +73,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         'image/jpeg',
         'image/png'
     ];
-  
+
     /**
      * Mappings for series information, type => key
      *
