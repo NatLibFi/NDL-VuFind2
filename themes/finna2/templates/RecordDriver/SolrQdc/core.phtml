@@ -14,11 +14,10 @@
       $params
   );
 
-  $hasOnlineURLs =
-      $this->record($this->driver)->containsNonImageURL($urls, $images)
-      || $this->record($this->driver)->containsNonImageURL($onlineURLs, $images)
-      || !empty($mergedData['urls']) && $this->record($this->driver)->containsNonImageURL($mergedData['urls'], $images)
-  ;
+  $hasOnlineURLs = count($this->record($this->driver)->filterImageURLs(
+    array_merge($urls, $onlineURLs, $mergedData['urls'] ?? []),
+    $images
+  )) > 0;
 
   if (!empty($urls)) {
     $videoUrls = [];
@@ -41,7 +40,7 @@
     }
     $tempUrlArray = [];
     foreach ($onlineURLs as $url) {
-      if (!empty($url['embed']) && $url['embed'] == 'audio') {
+      if (($url['embed'] ?? '') === 'audio') {
         array_push($audioUrls, $url);
       } else {
         array_push($tempUrlArray, $url);
@@ -82,32 +81,29 @@
 
       <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php if ($hasOnlineURLs || $openUrlActive): ?>
-        <div class="recordURLs local-available-online-record">
-          <div class="truncate-field">
-            <?php if (!empty($otherUrls)): ?>
-              <?php foreach ($otherUrls as $url): ?>
-                <?php if (isset($images[$url['url']])) { continue; } ?>
-                <?php $desc = $url['desc'] ?? $this->truncateUrl($url['url']); ?>
-                <div class="fulltextField">
-                  <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"
-                    <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>
-                  >
-                    <i class="fa fa-external-link"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
-                  </a>
-                </div>
-              <?php endforeach; ?>
-            <?php endif; ?>
-            <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-              <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
-                <?php if (isset($images[$url['url']])) { continue; } ?>
+          <div class="recordURLs local-available-online-record">
+            <div class="truncate-field">
+              <?php if (!empty($otherUrls)): ?>
+                <?php foreach ($this->record($this->driver)->filterImageURLs($otherUrls) as $url): ?>
+                  <?php $desc = $url['desc'] ?? $this->truncateUrl($url['url']); ?>
+                  <div class="fulltextField">
+                    <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"
+                      <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>
+                    >
+                      <i class="fa fa-external-link"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
+                    </a>
+                  </div>
+                <?php endforeach; ?>
+              <?php endif; ?>
+              <?php foreach ($this->record($this->driver)->filterImageURLs($mergedData['urls'] ?? $onlineURLs) as $url): ?>
+                <?php if (empty($url['url'])) { continue; } ?>
                 <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><i class="fa fa-external-link"></i> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
                 <?php if ($url['source']): ?>
                   <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
                 <?php endif; ?>
                 </div>
               <?php endforeach; ?>
-            <?php endif; ?>
-          </div>
+            </div>
           <?php if ($openUrlActive): ?>
             <?=$openUrl->renderTemplate()?><br/>
           <?php endif; ?>

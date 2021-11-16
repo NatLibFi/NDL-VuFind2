@@ -802,26 +802,38 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if the given array of URLs contain URLs that
-     * are not record images.
-     *
-     * @param array $urls      Array of URLs in the format returned by
-     *                         getURLs and getOnlineURLs.
-     * @param array $imageURLs Array of record image URLs as keys.
-     *
-     * @return boolean
+     * Filter record images from array.
+     * PDF URLs are not filtered.
+     * 
+     * @param array $urls to filter
+     * 
+     * @return array
      */
-    public function containsNonImageURL($urls, $imageURLs)
+    public function filterImageURLs($urls)
     {
         if (!$urls) {
-            return false;
+            return [];
         }
+        $cacheKey = __FUNCTION__;
+        $allImages = [];
+        if (!isset($this->cache[$cacheKey])) {
+            foreach (
+                array_column($this->driver->getAllImages(), 'urls') as $values
+            ) {
+                $allImages = array_merge($allImages, array_values($values));
+            }
+            $this->cache[$cacheKey] = $allImages = array_unique($allImages);
+        } else {
+            $allImages = $this->cache[$cacheKey];
+        }
+        $filtered = [];
         foreach ($urls as $url) {
-            if (!isset($imageURLs[$url['url']])) {
-                return true;
+            if ('pdf' === $url['codec'] || !in_array($url['url'], $allImages)) {
+                $filtered[] = $urls;
             }
         }
-        return false;
+
+        return $filtered;
     }
 
     /**
