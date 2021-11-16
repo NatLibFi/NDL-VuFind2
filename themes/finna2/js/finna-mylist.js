@@ -13,7 +13,6 @@ finna.myList = (function finnaMyList() {
   }
 
   function onCustomOrderSaved(/*ev, data*/) {
-    console.log(listUrl);
     location.href = listUrl;
   }
 
