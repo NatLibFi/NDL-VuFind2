@@ -13,6 +13,7 @@ finna.myList = (function finnaMyList() {
   }
 
   function onCustomOrderSaved(/*ev, data*/) {
+    console.log(listUrl);
     location.href = listUrl;
   }
 
@@ -440,6 +441,7 @@ finna.myList = (function finnaMyList() {
           list.push(children[i].innerHTML);
         }
       }
+      listUrl = this.querySelector('input[name="list_url"]').value;
       $('#sort_form input[name="orderedList"]').val(JSON.stringify(list));
       return true;
     });
