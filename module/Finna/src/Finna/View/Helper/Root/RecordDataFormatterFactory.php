@@ -322,6 +322,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Physical Medium',
+            'getPhysicalMediums',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'physical-medium']
+            ]
+        );
+        $setTemplateLine(
             'Physical Description',
             'getPhysicalDescriptions',
             'data-escapeHtml.phtml',

@@ -165,6 +165,63 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get an array of mediums/materials for the record
+     *
+     * @return array
+     */
+    public function getPhysicalMediums(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ([$xml->material, $xml->medium] as $nodes) {
+            foreach ($nodes as $node) {
+                $results[] = trim((string)$node);
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of formats/extents for the record
+     *
+     * @return array
+     */
+    public function getPhysicalDescriptions(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ([$xml->format, $xml->extent] as $nodes) {
+            foreach ($nodes as $node) {
+                $attributes = $node->attributes();
+                if (!$attributes['width'] || !$attributes['height']) {
+                    $results[] = trim((string)$node);
+                }
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of measurements for the record
+     *
+     * @return array
+     */
+    public function getMeasurements(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ([$xml->format, $xml->extent] as $nodes) {
+            foreach ($nodes as $node) {
+                $attributes = $node->attributes();
+                if ($attributes['width'] && $attributes['height']) {
+                    $results[] = "{$attributes['width']} x {$attributes['height']}";
+                }
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
