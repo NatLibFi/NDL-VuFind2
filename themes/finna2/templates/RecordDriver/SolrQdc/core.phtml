@@ -17,8 +17,8 @@
   $videoUrls = [];
   $otherUrls = [];
   $hasOnlineURLs = count($this->record($this->driver)->filterImageURLs(
-    array_merge($urls, $onlineURLs, $mergedData['urls'] ?? []),
-    $images
+      array_merge($urls, $onlineURLs, $mergedData['urls'] ?? []),
+      $images
   )) > 0;
 
   if (!empty($urls)) {

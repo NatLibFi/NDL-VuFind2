@@ -799,9 +799,9 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Filter record images from array.
      * PDF URLs are not filtered.
-     * 
+     *
      * @param array $urls to filter
-     * 
+     *
      * @return array
      */
     public function filterImageURLs($urls)
