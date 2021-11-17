@@ -587,6 +587,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Methodology',
+            'getMethodology',
+            'data-methodology-links.phtml',
+            [
+                'context' => ['class' => 'recordMethodology']
+            ]
+        );
+        $setTemplateLine(
             'Publications',
             'getRelatedPublications',
             'data-relatedPublications.phtml',
@@ -607,7 +615,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Introduction',
             'getIntroduction',
-            'data-escapeHtml.phtml',
+            'data-markdown.phtml',
             [
                 'context' => ['class' => 'record-introduction']
             ]
@@ -1188,14 +1196,6 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordTradeNote']
-            ]
-        );
-        $setTemplateLine(
-            'Methodology',
-            'getMethodology',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordMethodology']
             ]
         );
         $setTemplateLine(

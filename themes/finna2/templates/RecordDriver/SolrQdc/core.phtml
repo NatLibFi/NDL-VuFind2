@@ -13,16 +13,15 @@
       $this->layout()->userLang,
       $params
   );
-
+  $audioUrls = [];
+  $videoUrls = [];
+  $otherUrls = [];
   $hasOnlineURLs = count($this->record($this->driver)->filterImageURLs(
     array_merge($urls, $onlineURLs, $mergedData['urls'] ?? []),
     $images
   )) > 0;
 
   if (!empty($urls)) {
-    $videoUrls = [];
-    $audioUrls = [];
-    $otherUrls = [];
     foreach ($urls as $url) {
       if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
         array_push($videoUrls, $url);
@@ -35,9 +34,6 @@
   }
 
   if (!empty($onlineURLs)) {
-    if (empty($audioUrls)) {
-      $audioUrls = [];
-    }
     $tempUrlArray = [];
     foreach ($onlineURLs as $url) {
       if (($url['embed'] ?? '') === 'audio') {

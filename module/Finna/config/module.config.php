@@ -370,6 +370,7 @@ $config = [
             'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Service\R2SupportService' => 'Finna\Service\R2SupportServiceFactory',
+            'Finna\Service\RecordFieldMarkdown' => 'Finna\Service\RecordFieldMarkdownFactory',
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
             'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -378,6 +379,7 @@ $config = [
             'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
             'Laminas\Session\SessionManager' => 'Finna\Session\ManagerFactory',
+            'League\CommonMark\MarkdownConverterInterface' => 'Finna\Service\MarkdownFactory',
         ],
         'aliases' => [
             'VuFind\Autocomplete\PluginManager' => 'Finna\Autocomplete\PluginManager',

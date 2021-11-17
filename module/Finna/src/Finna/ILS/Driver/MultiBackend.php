@@ -166,6 +166,26 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend
     }
 
     /**
+     * Helper method to determine whether or not a certain method can be
+     * called on this driver.  Required method for any smart drivers.
+     *
+     * @param string $method The name of the called method.
+     * @param array  $params Array of passed parameters.
+     *
+     * @return bool True if the method can be called with the given parameters,
+     * false otherwise.
+     */
+    public function supportsMethod($method, $params)
+    {
+        if ($method == 'loginIsHidden') {
+            // Workaround for too early call before theme init
+            return false;
+        }
+
+        return parent::supportsMethod($method, $params);
+    }
+
+    /**
      * Get configuration for the ILS driver.  We will load an .ini file named
      * after the driver class and number if it exists;
      * otherwise we will return an empty array.

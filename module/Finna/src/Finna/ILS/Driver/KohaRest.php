@@ -1749,10 +1749,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         case 'Patron::Debt':
         case 'Patron::DebtGuarantees':
             $count = isset($details['current_outstanding'])
-                ? ($this->safeMoneyFormat)($details['current_outstanding'])
+                ? $this->formatMoney($details['current_outstanding'])
                 : '-';
             $limit = isset($details['max_outstanding'])
-                ? ($this->safeMoneyFormat)($details['max_outstanding'])
+                ? $this->formatMoney($details['max_outstanding'])
                 : '-';
             $params = [
                 '%%blockCount%%' => $count,
