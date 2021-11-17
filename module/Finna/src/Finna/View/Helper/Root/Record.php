@@ -596,17 +596,12 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAllRecordImageUrls()
     {
-        $images = $this->driver->tryMethod('getAllImages', ['']);
-        if (empty($images)) {
+        if (!($images = $this->driver->tryMethod('getAllImages', ['']))) {
             return [];
         }
         $urls = [];
-        foreach ($images as $image) {
-            $urls[] = $image['urls']['small'];
-            $urls[] = $image['urls']['medium'];
-            if (isset($image['urls']['large'])) {
-                $urls[] = $image['urls']['large'];
-            }
+        foreach (array_column($images, 'urls') as $image) {
+            $urls = array_merge($urls, array_values($image));
         }
         return array_flip($urls);
     }
@@ -814,25 +809,13 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (!$urls) {
             return [];
         }
-        $cacheKey = __FUNCTION__;
-        $allImages = [];
-        if (!isset($this->cache[$cacheKey])) {
-            foreach (
-                array_column($this->driver->getAllImages(), 'urls') as $values
-            ) {
-                $allImages = array_merge($allImages, array_values($values));
-            }
-            $this->cache[$cacheKey] = $allImages = array_unique($allImages);
-        } else {
-            $allImages = $this->cache[$cacheKey];
-        }
+        $images = $this->getAllRecordImageUrls();
         $filtered = [];
         foreach ($urls as $url) {
-            if ('pdf' === $url['codec'] || !in_array($url['url'], $allImages)) {
-                $filtered[] = $urls;
+            if ('pdf' === ($url['codec'] ?? '') || !isset($images[$url['url']])) {
+                $filtered[] = $url;
             }
         }
-
         return $filtered;
     }
 
