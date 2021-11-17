@@ -165,7 +165,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get an array of mediums/materials for the record
+     * Get an array of mediums for the record
      *
      * @return array
      */
@@ -173,10 +173,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     {
         $xml = $this->getXmlRecord();
         $results = [];
-        foreach ([$xml->material, $xml->medium] as $nodes) {
-            foreach ($nodes as $node) {
-                $results[] = trim((string)$node);
-            }
+        foreach ($xml->medium as $medium) {
+            $results[] = trim((string)$medium);
         }
         return $results;
     }
