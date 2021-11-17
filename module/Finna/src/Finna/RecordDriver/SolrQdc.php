@@ -192,30 +192,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $results = [];
         foreach ([$xml->format, $xml->extent] as $nodes) {
             foreach ($nodes as $node) {
-                $attributes = $node->attributes();
-                if (!$attributes['width'] || !$attributes['height']) {
-                    $results[] = trim((string)$node);
-                }
-            }
-        }
-        return $results;
-    }
-
-    /**
-     * Get an array of measurements for the record
-     *
-     * @return array
-     */
-    public function getMeasurements(): array
-    {
-        $xml = $this->getXmlRecord();
-        $results = [];
-        foreach ([$xml->format, $xml->extent] as $nodes) {
-            foreach ($nodes as $node) {
-                $attributes = $node->attributes();
-                if ($attributes['width'] && $attributes['height']) {
-                    $results[] = "{$attributes['width']} x {$attributes['height']}";
-                }
+                $results[] = trim((string)$node);
             }
         }
         return $results;
