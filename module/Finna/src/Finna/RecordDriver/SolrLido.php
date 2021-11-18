@@ -445,39 +445,37 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     'measurements' => $representation->resourceMeasurementsSet,
                     'ID' => $resourceSet->resourceID ?? ''
                 ];
-                // Representation is an image
-                if (in_array($data['type'], $imageTypeKeys)) {
+
+                // Representation is an image, default is an image if no type is set
+                if (in_array($data['type'], $imageTypeKeys) || empty($data['type'])) {
                     $parsedImage = $this->parseImage(
                         $data,
                         $language
                     );
                     if (!empty($parsedImage['url'])) {
-                        if (!empty($parsedImage['sizeless'])) {
-                            if (!empty($imageUrls)) {
-                                $addToResults(
-                                    [
-                                        'urls' => $imageUrls,
-                                        'description' => '',
-                                        'rights' => $rights
-                                    ]
-                                );
-                            }
-                            // We already have URL's, store them in the
-                            // final results first. This shouldn't
-                            // happen unless there are multiple
-                            // images without type in the same set.
-                            $imageUrls['small'] = $imageUrls['medium']
-                                = $imageUrls['large'] = $url;
-                        } else {
-                            $imageUrls
-                                = array_merge($imageUrls, $parsedImage['url']);
-                        }
+                        $imageUrls = array_merge($imageUrls, $parsedImage['url']);
                         if (!empty($parsedImage['highResolution'])) {
                             $highResolution = array_merge(
                                 $highResolution,
                                 $parsedImage['highResolution']
                             );
                         }
+                    } elseif (!empty($parsedImage['sizeless'])) {
+                        // We already have URL's, store them in the
+                        // final results first. This shouldn't
+                        // happen unless there are multiple
+                        // images without type in the same set.
+                        if (!empty($imageUrls)) {
+                            $addToResults(
+                                [
+                                    'urls' => $imageUrls,
+                                    'description' => '',
+                                    'rights' => $rights
+                                ]
+                            );
+                        }
+                        $imageUrls['small'] = $imageUrls['medium']
+                            = $imageUrls['large'] = $url;
                     }
                 }
 
