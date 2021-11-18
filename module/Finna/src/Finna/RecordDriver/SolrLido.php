@@ -447,7 +447,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 ];
 
                 // Representation is an image, default is an image if no type is set
-                if (in_array($data['type'], $imageTypeKeys) || empty($data['type'])) {
+                if (in_array($data['type'], $imageTypeKeys)|| !$data['type']) {
                     $parsedImage = $this->parseImage(
                         $data,
                         $language
