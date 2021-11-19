@@ -265,7 +265,7 @@ finna.feed = (function finnaFeed() {
         if (onFeedLoaded) {
           onFeedLoaded();
         }
-        feedGrid.find('img').unveil();
+        holder.find('img').unveil();
       })
       .fail(function loadFeedFail(response/*, textStatus, err*/) {
         var err = '<!-- Feed could not be loaded';
