@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2019.
+ * Copyright (C) The National Library of Finland 2015-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -38,6 +39,7 @@ use VuFind\Log\LoggerAwareTrait;
  * @category VuFind
  * @package  Controller
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -286,10 +288,50 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         $message['emailSubject'] = $subject;
         $message['internalUserId'] = $userId;
         $message['viewBaseUrl'] = $url;
+        if (!empty($message['recordId'])) {
+            [$recordSource, $recordId] = explode('|', $message['recordId'], 2);
+            $driver = $this->getRecordLoader()->load($recordId, $recordSource);
+            $message['recordMetadata'] = [
+                'title' => $driver->tryMethod('getTitle'),
+                'authors' => $driver->tryMethod('getAuthorsWithRoles'),
+                'publicationDates' => $driver->tryMethod('getPublicationDates'),
+                'formats' => array_values(
+                    array_unique(
+                        array_map(
+                            function ($s) {
+                                if ($s instanceof \VuFind\I18n\TranslatableString) {
+                                    return $s->getDisplayString();
+                                }
+                                return strval($s);
+                            },
+                            $driver->tryMethod('getFormats', [], [])
+                        )
+                    )
+                ),
+                'formatsRaw' => array_values(
+                    array_unique(
+                        array_map(
+                            'strval',
+                            $driver->tryMethod('getFormats', [], [])
+                        )
+                    )
+                ),
+                'isbns' => $driver->tryMethod('getISBNs'),
+                'issns' => $driver->tryMethod('getISSNs'),
+            ];
+            if ($openUrl = $driver->tryMethod('getOpenUrl')) {
+                parse_str($openUrl, $openUrlFields);
+                $message['recordMetadata']['openurl'] = $openUrlFields;
+            }
+            if ($rawData = $driver->getRawData()) {
+                if ($holdings = $rawData['holdings_txtP_mv'] ?? []) {
+                    $message['recordHoldingsSummary'] = (array)$holdings;
+                }
+            }
+        }
+
         $messageJson = json_encode($message);
-
         $apiSettings = $form->getApiSettings();
-
         $httpService = $this->serviceLocator->get(\VuFindHttp\HttpService::class);
         $client = $httpService->createClient(
             $apiSettings['url'],

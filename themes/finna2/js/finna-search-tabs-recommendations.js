@@ -14,7 +14,7 @@ finna.searchTabsRecommendations = (function finnaSearchTabsRecommendations() {
     $.getJSON(url, {searchId: searchId, limit: limit})
       .done(function getRecommendationsDone(response) {
         var container = $('#search-tabs-recommendations-holder');
-        container.html(response.data.html);
+        container.html(VuFind.updateCspNonce(response.data.html));
         finna.layout.initTruncate(container);
         finna.openUrl.initLinks();
         VuFind.lightbox.bind(container);

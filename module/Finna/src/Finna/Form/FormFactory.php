@@ -73,9 +73,15 @@ class FormFactory extends \VuFind\Form\FormFactory
             $form->setInstitutionEmail($config['Site']['email']);
         }
         if ($user = $container->get(\VuFind\Auth\Manager::class)->isLoggedIn()) {
-            $roles= $container->get(\VuFind\Role\PermissionManager::class)
+            $roles = $container->get(\VuFind\Role\PermissionManager::class)
                 ->getActivePermissions();
-            $form->setUser($user, $roles);
+            try {
+                $patron = $container->get(\VuFind\Auth\ILSAuthenticator::class)
+                    ->storedCatalogLogin();
+            } catch (\Exception $e) {
+                $patron = [];
+            }
+            $form->setUser($user, $roles, $patron ?: []);
         }
         $form->setViewHelperManager($container->get('ViewHelperManager'));
         $form->setRecordRequestFormsWithBarcode(

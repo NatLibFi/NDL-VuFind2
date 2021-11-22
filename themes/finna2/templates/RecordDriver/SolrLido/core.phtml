@@ -50,9 +50,9 @@
   ob_start();
 ?>
 <?php if (!empty($summaries)): ?>
-  <div class="truncate-field wide recordSummary">
+  <div class="truncate-field wide summary recordSummary">
     <?php foreach ($summaries as $s): ?>
-      <p class="summary"><?=preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($s)); /* Allow <br> tag */ ?></p>
+      <?= $this->recordFieldMarkdown()->toHtml($s) ?>
     <?php endforeach; ?>
   </div>
 <?php endif; ?>

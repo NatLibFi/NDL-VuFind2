@@ -1,6 +1,6 @@
 <?php
 /**
- * CSP nonce helper factory.
+ * CSP helper factory.
  *
  * PHP version 7
  *
@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace VuFind\View\Helper\Root;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -34,7 +34,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * CSP nonce helper factory.
+ * CSP helper factory.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -42,7 +42,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class CspNonceFactory implements FactoryInterface
+class CspFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -66,7 +66,6 @@ class CspNonceFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $nonceGenerator = $container->get(\VuFind\Security\NonceGenerator::class);
-        return new $requestedName($nonceGenerator->getNonce());
+        return new $requestedName($container->get('Response'));
     }
 }

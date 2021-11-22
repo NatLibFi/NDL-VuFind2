@@ -32,6 +32,7 @@ use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use VuFind\I18n\Locale\LocaleSettings;
 
 /**
  * Organisations list helper factory.
@@ -71,7 +72,8 @@ class OrganisationsListFactory implements FactoryInterface
             $container->get(\VuFind\Cache\Manager::class)->getCache('object'),
             $container->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class),
             $container->get(\VuFind\Search\Results\PluginManager::class),
-            $container->get(\Finna\OrganisationInfo\OrganisationInfo::class)
+            $container->get(\Finna\OrganisationInfo\OrganisationInfo::class),
+            $container->get(LocaleSettings::class)->getUserLocale()
         );
     }
 }

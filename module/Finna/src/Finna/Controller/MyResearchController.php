@@ -680,6 +680,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             } else {
                 $this->flashMessenger()->addMessage('list_order_saved', 'success');
             }
+            if ($this->inLightbox()) {
+                return $this->getRefreshResponse();
+            }
         }
 
         // If we got this far, we just need to display the favorites:

@@ -105,9 +105,12 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
         );
 
         // Replace details > summary elements, which have the markdown attribute.
-        $markdown = preg_replace(
+        $markdown = preg_replace_callback(
             $this->getTagContentRegex('summary', ' markdown="1"'),
-            "  <h3 slot=\"heading\">$1</h3>\n",
+            function ($matches) {
+                $heading = str_replace('**', '', $matches[1]);
+                return "  <h3 slot=\"heading\">$heading</h3>\n";
+            },
             $markdown
         );
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * CSP nonce view helper
+ * Record field Markdown view helper
  *
  * PHP version 7
  *
@@ -21,49 +21,49 @@
  *
  * @category VuFind
  * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 namespace Finna\View\Helper\Root;
 
 /**
- * CSP nonce view helper
+ * Record field Markdown view helper
  *
  * @category VuFind
  * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class CspNonce extends \Laminas\View\Helper\AbstractHelper
+class RecordFieldMarkdown extends \VuFind\View\Helper\Root\Markdown
 {
     /**
-     * CSP nonce
+     * Return HTML
      *
-     * @var string
-     */
-    protected $cspNonce;
-
-    /**
-     * Constructor
-     *
-     * @param string $nonce Nonce from nonce generator
-     */
-    public function __construct($nonce)
-    {
-        $this->cspNonce = $nonce;
-    }
-
-    /**
-     * Return the current nonce
-     *
-     * Result is a base64 encoded string that does not need escaping.
+     * @param string  $markdown  Markdown
+     * @param ?string $softBreak Alternative string to use for rendering soft breaks
+     *                           (optional)
      *
      * @return string
      */
-    public function __invoke()
+    public function toHtml(string $markdown, ?string $softBreak = null): string
     {
-        return $this->cspNonce;
+        $cleanHtml = $this->getView()->plugin('cleanHtml');
+        return $this->converter->convertToHtml($cleanHtml($markdown), $softBreak);
+    }
+
+    /**
+     * Converts Markdown to HTML
+     *
+     * Finna: back-compatibility with default param and call logic
+     *
+     * @param ?string $markdown Markdown formatted text
+     *
+     * @return RecordFieldMarkdown|string
+     */
+    public function __invoke(string $markdown = null)
+    {
+        return null === $markdown ? $this : parent::__invoke($markdown);
     }
 }
