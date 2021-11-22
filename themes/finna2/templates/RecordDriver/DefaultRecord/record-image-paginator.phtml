@@ -42,8 +42,8 @@
     );
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "VuFind.addTranslations($translations);", 'SET');
     $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
-    $settings = $this->driver->getModelSettings();
-    $settings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);
+    $modelSettings = $this->driver->getModelSettings();
+    $modelSettings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);
     $previewImages = $this->driver->allowModelPreviewImages();
     foreach ($models as $index => $model):
       foreach ($model as $format => $data):
@@ -138,6 +138,7 @@
     <button type="button" class="show-less-images"><?= $this->transEsc('less') ?> <i class="fa fa-arrow-up"></i></button>
   </div>
 <?php endif;?>
+<?php var_dump($settings); ?>
 <?php if (!empty($modelSettings['fileInput'])): ?>
   <div class="debug-model-viewer">
     <div id="debugViewerArea"></div>

@@ -480,11 +480,13 @@ ModelViewer.prototype.initMesh = function initMesh()
 ModelViewer.prototype.createLights = function createLights()
 {
   var _ = this;
-  
+  var hemiLight = new THREE.HemisphereLight(0xffffbb, 0x080820, _.hemisphereIntensity);
+  _.scene.add(hemiLight);
   // Ambient light basically just is there all the time
   var ambientLight = new THREE.AmbientLight(0xFFFFFF, _.ambientIntensity); // soft white light
   _.scene.add(ambientLight);
-  var light = new THREE.HemisphereLight(0xffffbb, 0x080820, _.hemisphereIntensity);
+  var light = new THREE.DirectionalLight(0xffffff, 0.3 * Math.PI);
+  light.position.set(0.2, 0, 0.2); // ~60º
   _.scene.add( light );
 };
 
