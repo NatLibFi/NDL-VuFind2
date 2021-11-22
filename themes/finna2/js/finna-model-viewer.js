@@ -44,12 +44,12 @@ function getTanDeg(deg) {
 function ModelViewer(trigger, options, scripts)
 {
   var _ = this;
-  console.log(options);
   _.trigger = $(trigger);
   _.texturePath = options.texturePath;
   if (typeof options.popup === 'undefined' || options.popup === false) {
     _.inlineId = 'inline-viewer';
   }
+  _.disableDefaultLights = options.disableDefaultLights || false;
   _.debug = options.debug || false;
   _.ambientIntensity = +options.ambientIntensity || 1;
   _.hemisphereIntensity = +options.hemisphereIntensity || 0.3;
@@ -480,6 +480,9 @@ ModelViewer.prototype.initMesh = function initMesh()
 ModelViewer.prototype.createLights = function createLights()
 {
   var _ = this;
+  if (_.disableDefaultLights) {
+    return;
+  }
   var hemiLight = new THREE.HemisphereLight(0xffffbb, 0x080820, _.hemisphereIntensity);
   _.scene.add(hemiLight);
   // Ambient light basically just is there all the time

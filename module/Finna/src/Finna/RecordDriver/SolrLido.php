@@ -152,7 +152,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'hemisphereIntensity',
         'viewerPaddingAngle',
         'debug',
-        'fileInput'
+        'fileInput',
+        'disableDefaultLights'
     ];
 
     /**
@@ -817,9 +818,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $settings = [];
         $iniData = $this->recordConfig->Models ?? [];
         foreach ($this->modelViewerSettings as $setting) {
-            
             if (!empty($iniData->$setting)) {
-                var_dump($iniData->$setting);
                 $settings[$setting] = $iniData->$setting;
             }
         }

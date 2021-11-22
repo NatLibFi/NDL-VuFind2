@@ -1733,3 +1733,5 @@ viewerPaddingAngle = 35
 ;fileInput = false
 ; Array of institutions which have proper preview images to show
 ;previewImages['museovirasto_testi'] = true
+; Disable viewer default lights;
+;disableDefaultLights = true
