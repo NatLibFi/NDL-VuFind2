@@ -63,7 +63,7 @@
         <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
           <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $i => $url): ?>
             <?php
-              if ((isset($images[$url['url']]) || in_array($url['url'], $renderedURLs)) && ($url['codec'] ?? '') !== 'pdf') {
+              if ((isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') || in_array($url['url'], $renderedURLs)) {
                 continue;
               }
               $currentUrl = [
