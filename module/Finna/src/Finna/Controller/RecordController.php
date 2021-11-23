@@ -947,7 +947,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 $response->setStatusCode(400);
                 break;
             }
-            if (!$representations && !$paramsUrl) {
+            if (!$representations) {
                 return $response;
             }
             $id = $driver->getUniqueID();
