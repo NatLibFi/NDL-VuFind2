@@ -150,9 +150,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $supportedDocumentFormats = [
-        'pdf' => 'pdf',
-        'docx' => 'docx',
-        'xlsx' => 'xlsx'
+        'pdf' => 'PDF',
+        'doc' => 'Word',
+        'docx' => 'Word',
+        'xlsx' => 'Excel',
+        'xls' => 'Excel'
     ];
 
     /**
@@ -382,7 +384,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    protected function getAudios(): array
+    public function getAudios(): array
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
@@ -394,7 +396,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    protected function getVideos(): array
+    public function getVideos(): array
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
@@ -858,6 +860,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'desc' => $description ?: false,
                 'url' => $url,
                 'embed' => 'video',
+                'format' => $format,
                 'videoSources' => [
                     'src' => $url,
                     'type' => $codec,
@@ -881,12 +884,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         string $format,
         string $description
     ): array {
-        var_dump($format);
-        if ($format = $this->supportedDocumentFormats[$format] ?? false) {
+        $format = strtolower($format);
+        if ($fileType = $this->supportedDocumentFormats[$format] ?? false) {
             return [
                 'description' => $description ?: false,
                 'url' => $url,
-                'format' => $format
+                'format' => $format,
+                'type' => $fileType
             ];
         }
         return [];
@@ -1615,7 +1619,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
         $urls = $this->resolveUrlTypes($urls);
-        $urls = array_merge($urls, $this->getAudios(), $this->getVideos());
         return $urls;
     }
 

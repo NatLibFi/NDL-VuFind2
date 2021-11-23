@@ -1,13 +1,18 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-audio-player.phtml -->
 <?php
-$videoScripts = $this->partial('Helpers/videojs-urls.phtml');
-$audioElementBase = [
-  'data-scripts' => $videoScripts
-];
-$this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
+  $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
+  $audioElementBase = [
+    'data-scripts' => $videoScripts
+  ];
+  $this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
 ?>
 <div class="audio-accordion">
 <?php foreach ($audioUrls as $ind => $url): ?>
+  <?php
+    if (($type ?? '') === 'SolrLido') {
+      $url['url'] = $this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $ind, 'format' => $url['codec'], 'type' => 'audio']]);
+    }
+  ?>
   <div class="audio-item-wrapper">
     <div class="audio-title-wrapper">
       <div class="audio-title">
@@ -27,7 +32,7 @@ $this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
           <source data-src="<?=$url['url']?>" type="audio/<?= $url['codec'] ?>"/>
         </audio>
       </div>
-      <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><i class="fa fa-download"></i> <?=$this->transEsc('Download recording') ?></a></div>
+      <div class="open-link"><a target="_blank" href="<?=$url['proxyUrl'] ?? $url['url']?>"><i class="fa fa-download"></i> <?=$this->transEsc('Download recording')?></a></div>
     </div>
   </div>
 <?php endforeach; ?>

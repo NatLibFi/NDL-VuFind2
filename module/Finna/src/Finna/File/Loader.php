@@ -59,6 +59,23 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     protected $cacheManager;
 
     /**
+     * Mime type mappings
+     * 
+     * @var array
+     */
+    protected $mimeTypeMappings = [
+        'mp3' => 'audio/mpeg',
+        'mp4' => 'video/mp4',
+        'wav' => 'audio/wav',
+        'xlsx' => 'application/vnd.openxmlformats-officedocument'
+            . '.spreadsheetml.sheet',
+        'xls' => 'application/vnd.ms-excel',
+        'docx' => 'application/vnd.openxmlformats-officedocument'
+            . '.wordprocessingml.document',
+        'doc' => 'application/msword'
+    ];
+
+    /**
      * Constructor
      *
      * @param CacheManager $cm     Cache Manager
@@ -68,6 +85,19 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     {
         $this->cacheManager = $cm;
         $this->config = $config;
+    }
+
+    /**
+     * Convert format to mime
+     * 
+     * @param string $format Format to convert.
+     * 
+     * @return string
+     */
+    protected function getMimeType(string $format): string
+    {
+        return $this->mimeTypeMappings[strtolower($format)]
+            ?? 'application/octet-stream';
     }
 
     /**
@@ -121,5 +151,56 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         }
 
         return compact('result', 'path', 'error');
+    }
+
+    /**
+     * Proxy a file and set proper headers, useful if download has no information
+     * 
+     * @param string $url      Url to load the file from
+     * @param string $fileName Display name of the file to download
+     * @param string $format   File format
+     * 
+     * @return bool True if success, false if not
+     */
+    public function proxyFileLoad(
+        string $url,
+        string $fileName,
+        string $format
+    ): bool {
+        $client = $this->httpService->createClient(
+            $url,
+            \Laminas\Http\Request::METHOD_GET,
+            300
+        );
+        $contentType = $this->getMimeType($format);
+        header('Pragma: public');
+        header("Content-Type: {$contentType}");
+        header("Content-disposition: attachment; filename=\"{$fileName}\"");
+        header('Cache-Control: public');
+        header('Transfer-Encoding: gzip');
+        $client->setOptions(['useragent' => 'VuFind']);
+        $client->setStream();
+        $adapter = new \Laminas\Http\Client\Adapter\Curl();
+        $adapter->setOptions(
+            [
+                'curloptions' => [
+                    CURLOPT_WRITEFUNCTION => function ($ch, $str) {
+                        echo $str;
+                        return strlen($str);
+                    },
+                    CURLOPT_HEADER => true,
+                    CURLOPT_RETURNTRANSFER => 1
+                ]
+            ]
+        );
+        $client->setAdapter($adapter);
+        $result = $client->send();
+
+        if (!$result->isSuccess()) {
+            $this->debug("Failed to retrieve file from $url");
+            return false;
+        }
+
+        return true;
     }
 }
