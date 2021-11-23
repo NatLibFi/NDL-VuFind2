@@ -54,7 +54,7 @@
       } elseif (($type ?? '') === 'SolrLido') {
         $desc = $desc ?: $this->translate('format_Video');
         if (!empty($url['videoSources'])) {
-          $url['videoSources']['src'] = $this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' =>  $pos, 'format' => $url['format'], 'type' => 'video']]);
+          $url['videoSources']['src'] = $this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $pos, 'format' => $url['format'], 'type' => 'video']]);
         }
       } else {
         $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $desc;

@@ -60,7 +60,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
 
     /**
      * Mime type mappings
-     * 
+     *
      * @var array
      */
     protected $mimeTypeMappings = [
@@ -89,9 +89,9 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
 
     /**
      * Convert format to mime
-     * 
+     *
      * @param string $format Format to convert.
-     * 
+     *
      * @return string
      */
     protected function getMimeType(string $format): string
@@ -155,11 +155,11 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
 
     /**
      * Proxy a file and set proper headers, useful if download has no information
-     * 
+     *
      * @param string $url      Url to load the file from
      * @param string $fileName Display name of the file to download
      * @param string $format   File format
-     * 
+     *
      * @return bool True if success, false if not
      */
     public function proxyFileLoad(
