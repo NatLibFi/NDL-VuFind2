@@ -2,8 +2,8 @@
 <?php
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
-  $documents = $this->driver->getDocuments();
 
+  $documents = $this->driver->getDocuments();
   $videoUrls = $this->driver->getVideos();
   $audioUrls = $this->driver->getAudios();
   $getOtherUrls = $this->record($this->driver)->getLinkDetails();
