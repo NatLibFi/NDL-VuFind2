@@ -1,8 +1,11 @@
+<?php/*Don't add start or end tags*/?>
 <?php
     $translations = $this->jsTranslations()->getJSONFromArray(
-    [
+        [
             'Open chromecast menu' => 'Open chromecast menu',
             'Open AirPlay menu' => 'Open AirPlay menu'
         ]
-);
+    );
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "VuFind.addTranslations($translations);", 'SET');
+?>
+<?php/*Don't add start or end tags*/?>
