@@ -1275,7 +1275,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             return [];
         }
         $posterSource = $this->recordConfig->Record->poster_sources[$source] ?? '';
-        $vimeo_url = $this->recordConfig->Record->vimeo_url;
+        $vimeo_url = $this->recordConfig->Record->vimeo_url ?? '';
 
         $videoUrls = [];
         foreach ($this->getAllRecordsXML() as $xml) {
@@ -1336,7 +1336,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
                 // Lets see if this video has a vimeo-id
                 $vimeo = (string)$eventAttrs->{'vimeo-id'};
-                if (!empty($vimeo) && !empty($vimeo_url) && empty($this->VODUrl)) {
+                if ($vimeo && $vimeo_url && !$this->VODUrl) {
                     $src = str_replace(
                         '{videoid}',
                         $vimeo,
@@ -1352,7 +1352,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'embed' => 'iframe',
                         'warnings' => $warnings
                     ];
-                } elseif (!empty($vimeo) && !empty($this->VODUrl)) {
+                } elseif ($vimeo && $this->VODUrl) {
                     $result = [
                         'text' => $description ?: $videoType,
                         'desc' => $description ?: $videoType,
@@ -1436,7 +1436,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Function to create required data for VOD
+     * Return VOD data as associative array for video
+     *  - url          Generated VOD url
+     *  - posterUrl    Generated poster url
+     *  - videoSources Videosources for video js
      *
      * @param string $videoId Video id for vimeo
      *
