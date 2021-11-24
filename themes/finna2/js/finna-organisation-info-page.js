@@ -1,4 +1,4 @@
-/*global VuFind, finna */
+/*global VuFind, finna*/
 finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   var updateURL = false;
   var parent = null;
@@ -17,19 +17,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   }
 
   function updateWindowHash(hash) {
-    // Create a fake hidden div with id=hash and absolute position
-    // so that window scroll position is preserved when the hash is updated below.
-    holder.find('div.hash').remove();
-    $('<div/>')
-      .css({
-        position: 'absolute',
-        visibility: 'hidden',
-        top: $(document).scrollTop() + 'px'
-      })
-      .addClass('hash')
-      .attr( 'id', hash )
-      .appendTo(holder);
-
     if (hash === window.location.hash) {
       // Set hash first to empty value, so that onhashchange is triggered when
       // the same menu item is re-selected.
@@ -156,67 +143,28 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
   }
 
   function initSearch() {
-    var officeSearch = holder.find('#office-search');
-    officeSearch.autocomplete({
-      source: function autocompleteSource(request, response) {
-        var term = request.term.toLowerCase();
-        var result = [];
-        $.each(organisationList, function handleOrganisation(id, obj) {
-          var label = obj.name;
-          if (obj.address && obj.address.city) {
-            label += ', ' + obj.address.city;
-          }
-          if (label.toLowerCase().indexOf(term) !== -1) {
-            result.push({value: id, label: label});
-          }
-        });
-        result = result.sort(function sortCallback(a, b) {
-          return a.label > b.label ? 1 : -1;
-        });
-        response(result);
-      },
+    var count = Object.keys(organisationList).length;
+    var translation = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', count);
 
-      select: function onSelectAutocomplete(event, ui) {
-        holder.find('#office-search').val(ui.item.label);
-        var hash = ui.item.value;
-        updateWindowHash(hash);
-        return false;
-      },
-
-      focus: function onFocusAutocomplete(/*event, ui*/) {
-        if ($(window).width() < 768) {
-          $('html, body').animate({
-            scrollTop: officeSearch.offset().top - 5
-          }, 100);
+    $(document).ready(function initSelect() {
+      var select = document.querySelector('#office-search');
+      var placeholder = document.createElement('option');
+      select.append(placeholder);
+      $.each(organisationList, function addToSelect(id, el) {
+        var option = document.createElement('option');
+        option.appendChild(document.createTextNode(el.name));
+        if (el.address && el.address.city) {
+          option.appendChild(document.createTextNode(', ' + el.address.city));
         }
-        return false;
-      },
-      open: function onOpenAutocomplete(/*event, ui*/) {
-        if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-          holder.find('.ui-autocomplete').off('menufocus hover mouseover');
-        }
-      },
-      minLength: 0,
-      delay: 100,
-      appendTo: '.autocomplete-container',
-      autoFocus: false
-    }).data("ui-autocomplete")._renderItem = function addLabels(ul, item) {
-      return $('<li>')
-        .attr('aria-label', item.label)
-        .html(item.label)
-        .appendTo(ul);
-    };
-    officeSearch.on('click', function onClickSearch() {
-      officeSearch.autocomplete('search', $(this).val());
-    });
-    officeSearch.find('li').on('touchstart', function onTouchStartSearch() {
-      officeSearch.autocomplete('search', $(this).val());
-    });
-    holder.find('.btn-office-search').on('click', function onClickSearchBtn(e) {
-      officeSearch.autocomplete('search', '');
-      officeSearch.focus();
-      e.preventDefault();
-      return false;
+        option.value = document.createTextNode(el.id).nodeValue;
+        select.append(option);
+      });
+      $(select).select2({
+        placeholder: translation,
+        allowClear: true
+      }).on('select2:select', function updateHash(e) {
+        updateWindowHash(encodeURIComponent(e.params.data.id || 'undefined'));
+      });
     });
   }
 
@@ -245,11 +193,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
             // IE opens Delay initing autocomplete menu to prevent IE from opening it automatically at
             initSearch();
           }
-          var desc = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', cnt);
-          holder.find('.ui-autocomplete-input')
-            .attr('placeholder', desc)
-            .attr('aria-label', desc)
-            .focus().blur();
 
           if (typeof id != 'undefined' && id) {
             updateSelectedOrganisation(id, true);
@@ -630,9 +573,6 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
       if (id) {
         updateSelectedOrganisation(id, false);
       }
-
-      // Blur so that mobile keyboard is closed
-      holder.find('#office-search').blur();
     };
 
     var library = null;

@@ -1,11 +1,10 @@
 <?php
-
 /**
- * Prepend the site title from config.ini if it exists.
+ * CSP nonce view helper
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,59 +21,49 @@
  *
  * @category VuFind
  * @package  View_Helpers
- * @author   Aleksi Turpeinen <aleksi.turpeinen@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\View\Helper\Root;
+namespace VuFind\View\Helper\Root;
 
 /**
- * Prepend the site title from config.ini if it exists.
+ * CSP nonce view helper
  *
  * @category VuFind
  * @package  View_Helpers
- * @author   Aleksi Turpeinen <aleksi.turpeinen@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class HeadTitle extends \Laminas\View\Helper\HeadTitle
+class CspNonce extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Main configuration
+     * CSP nonce
      *
-     * @var \Laminas\Config\Config
+     * @var string
      */
-    protected $config;
+    protected $cspNonce;
 
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $config Main configuration
+     * @param string $nonce Nonce from nonce generator
      */
-    public function __construct(\Laminas\Config\Config $config)
+    public function __construct($nonce)
     {
-        $this->config = $config;
+        $this->cspNonce = $nonce;
     }
 
     /**
-     * Render title string
+     * Return the current nonce
+     *
+     * Result is a base64 encoded string that does not need escaping.
      *
      * @return string
      */
-    public function renderTitle()
+    public function __invoke()
     {
-        $output = parent::renderTitle();
-        if (isset($this->config['Site']['title'])) {
-            $title = $this->config['Site']['title'];
-            if ($this->autoEscape) {
-                $title = $this->escape($title);
-            }
-            if ($output) {
-                $output .= " | $title";
-            } else {
-                $output = $title;
-            }
-        }
-        return $output;
+        return $this->cspNonce;
     }
 }

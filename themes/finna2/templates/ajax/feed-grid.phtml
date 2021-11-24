@@ -21,7 +21,7 @@
         <?php if (isset($item['image']) && isset($item['image']['url'])): ?>
           <span class="grid-image <?= empty($item['image']['url']) ? 'no-image' : ''; ?>">
             <?php if (!empty($item['image']['url'])): ?>
-              <img src="<?= $item['image']['url']; ?>" alt="" />
+              <img data-src="<?= $item['image']['url']; ?>" alt="" />
             <?php else: ?>
               <i class="fa fa-calendar-o image-placeholder"></i>
             <?php endif; ?>

@@ -2,11 +2,11 @@
 
 @font-face {
     font-family: 'finnaicons';
-    src:url('../../../themes/finna2/css/fonts/finnaicons.eot?28a794a5');
-    src:url('../../../themes/finna2/css/fonts/finnaicons.eot?28a794a5#iefix') format('embedded-opentype'),
-    url('../../../themes/finna2/css/fonts/finnaicons.woff?28a794a5') format('woff'),
-    url('../../../themes/finna2/css/fonts/finnaicons.ttf?28a794a5') format('truetype'),
-    url('../../../themes/finna2/css/fonts/finnaicons.svg?28a794a5#finnaicons') format('svg');
+    src:url('../../../themes/finna2/css/fonts/finnaicons.eot?b6b5d44b');
+    src:url('../../../themes/finna2/css/fonts/finnaicons.eot?b6b5d44b#iefix') format('embedded-opentype'),
+    url('../../../themes/finna2/css/fonts/finnaicons.woff?b6b5d44b') format('woff'),
+    url('../../../themes/finna2/css/fonts/finnaicons.ttf?b6b5d44b') format('truetype'),
+    url('../../../themes/finna2/css/fonts/finnaicons.svg?b6b5d44b#finnaicons') format('svg');
     font-weight: normal;
     font-style: normal;
 
@@ -551,7 +551,7 @@ table .iconlabel {
 .iconlabel.format-0workofart:before, .iconlabel[class*="format-1workofart"]:before {
     content: "\e00b";
 }
-.iconlabel[class*="format-1video"] {
+.iconlabel[class*="format-1video"]:before {
     content: "\e00a";
 }
 .iconlabel[class*="format-1sound"]:before {
@@ -569,11 +569,11 @@ table .iconlabel {
 .iconlabel-smallpress:before, .iconlabel.format-1otherprint:before {
     content: "\e007";
 }
-.fa.fa-TOC:before, .iconlabel.format-1document:before, .iconlabel.format-1documentarchive:before, .iconlabel.format-1documentarchivematerial:before, .iconlabel.format-1documentarchiveitem:before, .iconlabel.format-1documentarchivefonds:before, .iconlabel.format-1documentarchiveseries:before, .iconlabel.format-1documentarchivecollection:before, .iconlabel.format-1documentothercollection:before, .iconlabel.format-1documentcollection:before, .iconlabel.format-1documentdigitizedarchiveitem:before, .iconlabel.format-1othertexttext:before, .iconlabel.format-1othertextdiary:before, .iconlabel.format-1othertextconferenceproceeding:before, .iconlabel.format-1othertextmanuscript:before, .iconlabel.format-1othertextresearchreport:before, .iconlabel.format-1othertextletter:before {
+.fa.fa-TOC:before, .iconlabel.format-1document:before, .iconlabel.format-1documentarchive:before, .iconlabel.format-1documentarchivematerial:before, .iconlabel.format-1documentarchiveitem:before, .iconlabel.format-1documentarchivefonds:before, .iconlabel.format-1documentarchiveseries:before, .iconlabel.format-1documentarchivecollection:before, .iconlabel.format-1documentothercollection:before, .iconlabel.format-1documentcollection:before, .iconlabel.format-1documentdigitizedarchiveitem:before, .iconlabel.format-1othertexttext:before, .iconlabel.format-1othertextdiary:before, .iconlabel.format-1othertextconferenceproceeding:before, .iconlabel.format-1othertextmanuscript:before, .iconlabel.format-1othertextresearchreport:before, .iconlabel.format-1othertextletter:before, .iconlabel.format-0manuscript:before {
     font-family: finnaicons;
     content: "\e006";
 }
-.iconlabel.format-0note:before, .iconlabel.format-0manuscript:before, .iconlabel.format-0musicalscore:before {
+.iconlabel.format-0note:before, .iconlabel.format-0musicalscore:before, .iconlabel[class*="format-1musicalscore"]:before {
     content: "\e005";
 }
 .iconlabel.format-0database:before {
@@ -587,6 +587,13 @@ table .iconlabel {
 }
 .iconlabel.format-0learningmaterial:before {
     content: "\e971";
+}
+.iconlabel[class*="format-1gameboardgame"]:before {
+	content: "\e8c2";
+}
+.iconlabel[class*="format-1gamevideogame"]:before, .iconlabel[class*="format-2gamevideogame"]:before {
+	font-family: FontAwesome;
+	content: @fa-var-gamepad;
 }
 .iconlabel.full-text-available:before {
     content: "\e96e";

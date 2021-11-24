@@ -351,13 +351,14 @@
       <?=$this->render('RecordTab/holdings-items.phtml', ['holding' => $holding, 'driver' => $driver, 'mode' => $holdingsDetails, 'holdsAllowed' => $holdsAllowed])?>
     <?php endif; ?>
     <?php if (!empty($holding['purchase_history'])): ?>
-      <div class="ils-purchase-history">
+      <div class="ils-purchase-history <?=$holdingsDetails?>">
         <div class="title"><?=$this->transEsc("Most Recent Received Issues")?>:</div>
         <div class="history">
           <?php foreach ($holding['purchase_history'] as $current): ?>
             <?=$this->escapeHtml($current['issue'])?><br/>
           <?php endforeach; ?>
         </div>
+        <div class="clearfix"></div>
       </div>
     <?php endif; ?>
     <div class="clearfix"></div>

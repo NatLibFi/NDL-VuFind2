@@ -29,6 +29,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       .done(function onGetEventsDone(response) {
         if (response.data) {
           callback(response.data, append, container);
+          container.find('img').unveil();
         } else {
           var err = $('<div></div>').attr('class', 'linked-events-noresults infobox').text(VuFind.translate('nohit_heading'));
           container.find($('.linked-events-content')).html(err);
@@ -123,9 +124,9 @@ finna.linkedEvents = (function finnaLinkedEvents() {
   var handleMultipleEvents = function handleMultipleEvents(data, append, container) {
     var content = container.find($('.linked-events-content'));
     if (append) {
-      content.append(data.html);
+      content.append(VuFind.updateCspNonce(data.html));
     } else {
-      content.html(data.html);
+      content.html(VuFind.updateCspNonce(data.html));
     }
     if (data.next !== '') {
       container.find($('.linked-events-next')).removeClass('hidden');
@@ -238,7 +239,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
           container.find($('.events-searchtools-toggle')).removeClass('open');
         } else {
           container.find($('.events-searchtools-container')).addClass('open');
-          container.find($('.events-searchtools-toggle')).addClass('open');      
+          container.find($('.events-searchtools-toggle')).addClass('open');
         }
       });
     }

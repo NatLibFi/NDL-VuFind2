@@ -57,7 +57,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'a00', 'a01', 'a03', 'a06', 'a50', 'a99',
         'b13',
         'd01', 'd02', 'd99',
-        'e02', 'e03', 'e04', 'e05', 'e06', 'e08', 'e99',
+        'e02', 'e03', 'e04', 'e05', 'e06', 'e08',
         'f01', 'f02', 'f99',
         'cmp', 'cph', 'exp', 'fds', 'fmp', 'rce', 'wst', 'oth', 'prn',
         // These are copied from Marc
@@ -1674,7 +1674,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return movie Age limit'
+     * Return movie Age limit
+     *
      * Get Age limit from last inspection's details
      *
      * @return string AgeLimit
@@ -1682,21 +1683,23 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getAgeLimit()
     {
         $inspectionDetails = $this->getInspectionDetails();
+        $currentDate = 0;
+        $currentLimit = null;
         foreach ($inspectionDetails as $inspection) {
-            if (isset($inspection['agerestriction'])) {
-                if (!isset($agerestriction) && $inspection['agerestriction']) {
-                    $agerestriction = $inspection['agerestriction'];
-                    $date = $inspection['date'] ? $inspection['date'] : '';
-                } elseif ($inspection['agerestriction']
-                    && isset($date)
-                    && strtotime($inspection['date']) > strtotime($date)
-                ) {
-                    $agerestriction = $inspection['agerestriction'];
-                    $date = $inspection['date'];
-                }
+            if (empty($inspection['agerestriction'])) {
+                continue;
+            }
+
+            // Use this age restriction if we don't have an earlier one or the
+            // inspection is at least as new as the earlier one.
+            $inspectionDate = isset($inspection['date'])
+                ? strtotime($inspection['date']) : 0;
+            if (null === $currentLimit || $inspectionDate >= $currentDate) {
+                $currentLimit = $inspection['agerestriction'];
+                $currentDate = $inspectionDate;
             }
         }
-        return $agerestriction ?? null;
+        return $currentLimit;
     }
 
     /**

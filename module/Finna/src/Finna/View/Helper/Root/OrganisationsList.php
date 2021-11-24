@@ -5,7 +5,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -45,11 +45,16 @@ use VuFind\Search\Results\PluginManager;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
-    \VuFind\I18n\Translator\TranslatorAwareInterface,
     \Laminas\Log\LoggerAwareInterface
 {
-    use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
+
+    /**
+     * Current locale
+     *
+     * @var string
+     */
+    protected $locale;
 
     /**
      * Cache
@@ -86,17 +91,20 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
      * @param HierarchicalFacetHelper $facetHelper      Facet helper
      * @param PluginManager           $resultsManager   Search result manager
      * @param OrganisationInfo        $organisationInfo Organisation info service
+     * @param string                  $locale           Current locale
      */
     public function __construct(
         StorageInterface $cache,
         HierarchicalFacetHelper $facetHelper,
         PluginManager $resultsManager,
-        OrganisationInfo $organisationInfo
+        OrganisationInfo $organisationInfo,
+        string $locale
     ) {
         $this->cache = $cache;
         $this->facetHelper = $facetHelper;
         $this->resultsManager = $resultsManager;
         $this->organisationInfo = $organisationInfo;
+        $this->locale = $locale;
     }
 
     /**
@@ -106,27 +114,26 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
      */
     public function __invoke()
     {
-        $language = $this->translator->getLocale();
-        $cacheName = 'organisations_list_' . $language;
+        $cacheName = 'organisations_list_' . $this->locale;
         $list = $this->cache->getItem($cacheName);
 
         if (!$list) {
             $emptyResults = $this->resultsManager->get('EmptySet');
 
-            $sectors = ['arc', 'lib', 'mus', 'otherSector'];
             try {
-                foreach ($sectors as $sector) {
-                    $list[$sector] = [];
-                    $results = $this->resultsManager->get('Solr');
-                    $params = $results->getParams();
-                    $params->addFacet('building', 'Building', false);
-                    $params->addFilter('sector_str_mv:0/' . $sector . '/');
-                    $params->setLimit(0);
-                    $params->setFacetPrefix('0');
-                    $params->setFacetLimit('-1');
+                $sectorFacets = $this->getFacetList('sector_str_mv');
 
-                    $facetList = $results->getFacetList();
-                    $collection = $facetList['building']['list'] ?? [];
+                foreach ($sectorFacets as $sectorFacet) {
+                    $sectorParts = explode('/', $sectorFacet['value']);
+                    $sectorParts = array_splice($sectorParts, 1, -1);
+                    $sector = implode('/', $sectorParts);
+                    $list[$sector] = [];
+
+                    $collection = $this->getFacetList(
+                        'building',
+                        '0/',
+                        'sector_str_mv:' . $sectorFacet['value']
+                    );
 
                     foreach ($collection as $item) {
                         $link = $emptyResults->getUrlQuery()
@@ -149,24 +156,53 @@ class OrganisationsList extends \Laminas\View\Helper\AbstractHelper implements
                             'sector' => $sector
                         ];
                     }
-                    usort(
-                        $list[$sector],
-                        function ($a, $b) {
-                            return strtolower($a['name']) > strtolower($b['name']);
-                        }
-                    );
+                    $collator = \Collator::create($this->locale);
+                    $collator->sort($list[$sector]);
                 }
                 $this->cache->setItem($cacheName, $list);
             } catch (\VuFindSearch\Backend\Exception\BackendException $e) {
-                foreach ($sectors as $sector) {
-                    $list[$sector] = [];
-                }
                 $this->logError(
                     'Error creating organisations list: ' . $e->getMessage()
                 );
+                throw $e;
             }
         }
 
         return $list;
+    }
+
+    /**
+     * Get facet data from a field
+     *
+     * @param string $field  Field to return
+     * @param string $prefix Optional facet prefix limiter
+     * @param string $filter Optional filter
+     *
+     * @return array
+     */
+    protected function getFacetList(
+        string $field,
+        string $prefix = '',
+        string $filter = ''
+    ): array {
+        $results = $this->resultsManager->get('Solr');
+        $params = $results->getParams();
+        // Disable deduplication so that facet results are not affected:
+        $params->addFilter('finna.deduplication:"0"');
+        $params->setLimit(0);
+        $params->setFacetLimit(-1);
+        if ('' !== $prefix) {
+            $params->setFacetPrefix($prefix);
+        }
+        $options = $params->getOptions();
+        $options->disableHighlighting();
+        $options->spellcheckEnabled(false);
+
+        $params->addFacet($field, $field, false);
+        if ('' !== $filter) {
+            $params->addFilter($filter);
+        }
+        $facetList = $results->getFacetList();
+        return $facetList[$field]['list'] ?? [];
     }
 }

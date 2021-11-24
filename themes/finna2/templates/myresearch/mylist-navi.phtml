@@ -14,8 +14,8 @@
 ?>
 <ul class="dropdown-menu subtabs collapse in" role="presentation">
   <li><h1 class="visible-xs visible-sm"><i class="fa fa-arrow-down pull-left"></i> <?=$this->transEsc('Your Lists')?></h1></li>
-  <li role="menuitem" class="favorites-menulist-item">
-    <a href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">
+  <li role="none" class="favorites-menulist-item">
+    <a role="menuitem" href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">
       <div class="favorite-list-holder">
         <div class="pull-left favorite-list-title"><?=$this->transEsc('All Favourites')?></div>
         <div class="pull-right">(<?=$numOfResources;?>)</div>
@@ -24,8 +24,8 @@
   </li>
   <?php foreach ($lists as $list): ?>
   <?php $active = ($list['id'] === $activeId); ?>
-  <li role="menuitem" class="favorites-menulist-item">
-    <a href="<?= $active ? '#' : $this->url('userList', ['id' => $list['id']])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
+  <li role="none" class="favorites-menulist-item">
+    <a role="menuitem" href="<?= $active ? '#' : $this->url('userList', ['id' => $list['id']])?>?limit=<?=$currentLimit;?>" class="<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
       <div class="favorite-list-holder">
         <div class="pull-left favorite-list-title"><?=$this->escapeHtml($list['title'])?></div>
         <?php if ($list['public']): ?>
