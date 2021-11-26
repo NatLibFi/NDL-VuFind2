@@ -60,6 +60,7 @@
       <div class="viewer-options">
         <div class="viewer-controls">
           <button class="viewer-btn model-fullscreen collapsed" type="button"><i class="fa fa-fullscreen"></i> <span class="sr-only"><?=$this->transEsc('Fullscreen mode')?></span></button>
+          <button class="viewer-btn model-lights-btn collapsed" data-toggle="collapse" data-target="#model-lights" type="button"><i class="fa fa-star"></i> <span class="sr-only">Valot</span></button>
           <button class="viewer-btn model-statistics collapsed" data-toggle="collapse" data-target="#model-stats" type="button"><i class="fa fa-info-circle-hollow"></i> <span class="sr-only"><?=$this->transEsc('Information of model')?></span></button>
           <button class="viewer-btn model-help-btn collapsed" data-toggle="collapse" data-target="#model-help" type="button" ><i class="fa fa-question-circle-o"></i> <span class="sr-only"><?=$this->transEsc('model_help')?></span></button>
         </div>
@@ -72,6 +73,32 @@
               </table>
             </div>
             <div class="model-help collapse">
+            </div>
+            <div class="model-lights collapse">
+              <div class="model-light template hidden">
+                <form name="templateform">
+                  <span>light name:</span>
+                  <input name="light-name" type="text" value=""/>
+                  <span>light type:</span>
+                  <select class="light-type" name="light-type">
+                    <option value="spot">Spot</option>
+                    <option value="directional">Directional</option>
+                  </select>
+                  <span>position:</span>
+                  <span>x:</span><input name="light-position-x" type="number" value=""/>
+                  <span>y:</span><input name="light-position-y" type="number" value=""/>
+                  <span>z:</span><input name="light-position-z" type="number" value=""/>
+                  <span>intensity:</span>
+                  <input name="light-intensity" type="number" value=""/>
+                  <span>color1:</span>
+                  <input name="light-color-1" type="text" value="#ffffff"/>
+                  <button class="save-light" type="button" value="save-light">Save</button>
+                  <button class="delete-light hidden" type="button" value="delete-light">Delete</button>
+                </form>
+              </div>
+              <button class="add-light template" type="button" value="add-light">Add light</button>
+              <button class="export-lights template" type="button" value="export-lights">Export</button>
+              <button class="import-lights template" type="button" value="import-lights">Import</button>
             </div>
           </div>
         </div>

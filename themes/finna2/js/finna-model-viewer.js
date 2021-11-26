@@ -54,10 +54,21 @@ function ModelViewer(trigger, options, scripts)
   _.ambientIntensity = +options.ambientIntensity || 1;
   _.hemisphereIntensity = +options.hemisphereIntensity || 0.3;
   _.viewerPaddingAngle = +options.viewerPaddingAngle || 35;
-
+  _.lights = [];
   _.loadInfo = options.modelload;
   _.loaded = false;
   _.isFileInput = _.trigger.is('input');
+  _.defaultLightObject = {
+    name: 'originalname',
+    type: 'type',
+    intensity: 0,
+    position: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
+    color: '#ffffff'
+  };
   _.createTrigger(options, scripts);
 }
 
@@ -103,6 +114,7 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.informationsArea = _.root.find('.statistics-table');
           _.root.find('.model-stats').attr('id', 'model-stats');
           _.root.find('.model-help').attr('id', 'model-help');
+          _.root.find('.model-lights').attr('id', 'model-lights');
           _.informationsArea.toggle(false);
           _.trigger.addClass('open');
         }
@@ -484,13 +496,278 @@ ModelViewer.prototype.createLights = function createLights()
     return;
   }
   var hemiLight = new THREE.HemisphereLight(0xffffbb, 0x080820, _.hemisphereIntensity);
+  hemiLight.name = 'hemisphere_finna';
   _.scene.add(hemiLight);
   // Ambient light basically just is there all the time
   var ambientLight = new THREE.AmbientLight(0xFFFFFF, _.ambientIntensity); // soft white light
+  ambientLight.name = 'ambient_finna';
   _.scene.add(ambientLight);
   var light = new THREE.DirectionalLight(0xffffff, 0.3 * Math.PI);
+  light.name = 'directional_finna';
   light.position.set(0.2, 0, 0.2); // ~60º
-  _.scene.add( light );
+  _.scene.add(light);
+  _.lights.push(hemiLight, ambientLight, light);
+  if (!_.debugLights) {
+    _.createMenuForLights();
+  }
+};
+
+ModelViewer.prototype.createMenuForLights = function createMenuForLights(notInitial) {
+  var _ = this;
+  var lightsMenu = document.getElementById('model-lights');
+  var template = lightsMenu.querySelector('.template');
+  var addLight = lightsMenu.querySelector('button.add-light');
+  var exportButton = lightsMenu.querySelector('button.export-lights');
+  var importButton = lightsMenu.querySelector('button.import-lights');
+  var inputLights = document.querySelector('input[name="light-file-input"]');
+  addLight.classList.remove('hidden');
+  var children = Array.prototype.slice.call(lightsMenu.children);
+  children.forEach(function clearMenu(child) {
+    if (child.classList.contains('template')) {
+      return;
+    }
+    child.remove();
+  });
+  var defaultLights = ['directional_finna', 'ambient_finna', 'hemisphere_finna'];
+  _.lights.forEach(function createLightMenu(light) {
+    var isDefault = defaultLights.includes(light.name);
+    var area = template.cloneNode(true);
+    area.classList.remove('hidden', 'template');
+    var name = area.querySelector('input[name="light-name"]');
+    name.value = light.name;
+    if (isDefault) {
+      name.setAttribute('readonly', 'readonly');
+    }
+    area.querySelector('.light-type').classList.add('hidden');
+    var intensity = area.querySelector('input[name="light-intensity"]');
+    intensity.value = light.intensity;
+    area.querySelector('input[name="light-color-1"]').value = '#' + light.color.getHexString();
+    area.querySelector('input[name="light-position-x"]').value = light.position.x;
+    area.querySelector('input[name="light-position-y"]').value = light.position.y;
+    area.querySelector('input[name="light-position-z"]').value = light.position.z;
+    var deleteLight = area.querySelector('button.delete-light');
+    if (isDefault) {
+      deleteLight.remove();
+    } else {
+      deleteLight.classList.remove('hidden');
+      deleteLight.addEventListener('click', function removeLight(e) {
+        var form = e.target.closest('form');
+        if (form) {
+          _.deleteLight(form);
+        }
+      });
+    }
+    area.querySelector('button.save-light').remove();
+    lightsMenu.append(area);
+  });
+  var updateFunction = function checkWhatToAdjust(e) {
+    var form = e.target.closest('form');
+    if (form) {
+      _.updateLight(form);
+    }
+  };
+  lightsMenu.addEventListener('change', updateFunction);
+  if (notInitial) {
+    return;
+  }
+  exportButton.addEventListener('click', function startExport() {
+    lightsMenu.removeEventListener('change', updateFunction);
+    _.getLightsAsJson(lightsMenu);
+  });
+  importButton.addEventListener('click', function openFileDialog() {
+    inputLights.click();
+  });
+  inputLights.addEventListener('change', function startImport() {
+    var file = inputLights.files[0];
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = function onFileLoaded(event) {
+        var fileString = event.target.result;
+        if (fileString) {
+          _.getLightsFromJson(JSON.parse(fileString));
+        }
+      };
+      reader.readAsText(file);
+    }
+  });
+  addLight.addEventListener('click', function createNewLightTemplate(/*e*/) {
+    lightsMenu.removeEventListener('change', updateFunction);
+    var area = template.cloneNode(true);
+    area.classList.remove('hidden', 'template');
+    addLight.classList.add('hidden');
+    lightsMenu.prepend(area);
+    area.querySelector('.save-light').addEventListener('click', function saveFromTemplate(ev) {
+      var form = ev.target.closest('form');
+      if (form) {
+        _.addLight(form);
+      }
+    });
+  });
+};
+
+ModelViewer.prototype.getLightsFromJson = function getLightsFromJson(settings) {
+  var _ = this;
+  if (settings.lights) {
+    settings.lights.forEach(function checkLight(jsonObj) {
+      var light = _.lights.find(function findLight(element) {
+        return element.name === jsonObj.name;
+      });
+      if (light) {
+        light.color = new THREE.Color().set(jsonObj.color);
+        light.intensity = jsonObj.intensity;
+        
+        light.position.x = jsonObj.position.x;
+        light.position.y = jsonObj.position.y;
+        light.position.z = jsonObj.position.z;
+      } else {
+        _.createLightToScene(jsonObj);
+      }
+    });
+  }
+  _.createMenuForLights(true);
+};
+
+/**
+ * Update a light in the scene
+ */
+ModelViewer.prototype.updateLight = function updateLight(form) {
+  var _ = this;
+  var inputList = form.querySelectorAll('input:not([name="light-name"]), select');
+  var name = form.querySelector('input[name="light-name"]');
+  var light = _.lights.find(function findLight(element) {
+    return element.name === name.value;
+  });
+  if (!light) {
+    return;
+  }
+  inputList.forEach(function checkInput(input) {
+    _.getDataOfInput(light, input, true);
+  });
+};
+
+/**
+ * Add a light to the scene
+ */
+ModelViewer.prototype.addLight = function addLight(form) {
+  var _ = this;
+  var inputList = form.querySelectorAll('input, select');
+  var name = form.querySelector('input[name="light-name"]');
+  var light = _.lights.find(function findLight(element) {
+    return element.name === name.value;
+  });
+  if (light) {
+    return;
+  }
+  var object = Object.assign({}, _.defaultLightObject);
+  inputList.forEach(function checkInput(input) {
+    _.getDataOfInput(object, input);
+  });
+  _.createLightToScene(object);
+  _.createMenuForLights(true);
+};
+
+ModelViewer.prototype.createLightToScene = function createLightToScene(object) {
+  var _ = this;
+  var newLight;
+  switch (object.type) {
+  case 'spot':
+    newLight = new THREE.SpotLight(object.color);
+    newLight.position.set(object.position.x, object.position.y, object.position.z);
+    newLight.intensity = object.intensity;
+    newLight.name = object.name;
+    newLight.lookAt(new THREE.Vector3());
+    break;
+  case 'directional':
+    newLight = new THREE.DirectionalLight(object.color, object.intensity);
+    newLight.position.set(object.position.x, object.position.y, object.position.z);
+    newLight.name = object.name;
+    break;
+  }
+  if (!newLight) {
+    return;
+  }
+  _.scene.add(newLight);
+  _.lights.push(newLight);
+};
+
+/**
+ * Delete a light from the scene
+ */
+ModelViewer.prototype.deleteLight = function deleteLight(form) {
+  var _ = this;
+  var name = form.querySelector('input[name="light-name"]');
+  if (name) {
+    var light = _.scene.getObjectByName(name.value);
+    if (light) {
+      _.scene.remove(light);
+      _.lights = _.lights.filter(function findLight(element) {
+        return element.name !== name.value;
+      });
+      _.createMenuForLights(true);
+    }
+  }
+};
+
+ModelViewer.prototype.getLightsAsJson = function getLightsAsJson(parent) {
+  var _ = this;
+  var forms = parent.querySelectorAll('.model-light:not(.template) > form');
+  var json = '';
+  var object = {
+    lights: []
+  };
+  forms.forEach(function getFormAsObject(form) {
+    var inputs = form.querySelectorAll('input, select');
+    var current = Object.assign({}, _.defaultLightObject);
+    var failed = false;
+    inputs.forEach(function getInputsAsObject(input) {
+      if (failed) {
+        return;
+      }
+      failed = _.getDataOfInput(current, input);
+    });
+    if (!failed) {
+      current.position = Object.assign({}, current.position);
+      object.lights.push(current);
+    }
+  });
+  json = JSON.stringify(object);
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(json);
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", "lightsettings.json");
+  document.body.appendChild(downloadAnchorNode); // required for firefox
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+};
+
+ModelViewer.prototype.getDataOfInput = function getDataOfInput(object, input, inScene) {
+  switch (input.name) {
+  case 'light-name':
+    object.name = input.value;
+    break;
+  case 'light-type':
+    object.type = input.value;
+    break;
+  case 'light-intensity':
+    object.intensity = input.value;
+    break;
+  case 'light-position-x':
+    object.position.x = input.value;
+    break;
+  case 'light-position-y':
+    object.position.y = input.value;
+    break;
+  case 'light-position-z':
+    object.position.z = input.value;
+    break;
+  case 'light-color-1':
+    if (inScene) {
+      object.color = new THREE.Color().set(input.value);
+    } else {
+      object.color = input.value;
+    }
+    break;
+  }
 };
 
 /**
