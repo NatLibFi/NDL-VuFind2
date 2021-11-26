@@ -61,11 +61,11 @@ class SolrDefaultBackendFactory
     protected $createRecordMethod = 'getSolrRecord';
 
     /**
-     * Solr connector class
+     * Solr backend class
      *
      * @var string
      */
-    protected $connectorClass = \VuFindSearch\Backend\Solr\Connector::class;
+    protected $backendClass = \FinnaSearch\Backend\Solr\Backend::class;
 
     /**
      * Create the SOLR backend.
@@ -76,7 +76,7 @@ class SolrDefaultBackendFactory
      */
     protected function createBackend(Connector $connector)
     {
-        $backend = new \FinnaSearch\Backend\Solr\Backend($connector);
+        $backend = new $this->backendClass($connector);
         $backend->setQueryBuilder($this->createQueryBuilder());
         $backend->setSimilarBuilder($this->createSimilarBuilder());
         if ($this->logger) {

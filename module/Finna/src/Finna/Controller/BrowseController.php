@@ -41,22 +41,22 @@ namespace Finna\Controller;
 class BrowseController extends \VuFind\Controller\BrowseController
 {
     /**
-     * Forward database browse to SearchController.
+     * Forward database browse to BrowseSearchController.
      *
      * @return mixed
      */
     public function databaseAction()
     {
-        return $this->forwardTo('Search', 'Database');
+        return $this->forwardTo('BrowseSearch', 'Database');
     }
 
     /**
-     * Forward journal browse to SearchController.
+     * Forward journal browse to BrowseSearchController.
      *
      * @return mixed
      */
     public function journalAction()
     {
-        return $this->forwardTo('Search', 'Journal');
+        return $this->forwardTo('BrowseSearch', 'Journal');
     }
 }
