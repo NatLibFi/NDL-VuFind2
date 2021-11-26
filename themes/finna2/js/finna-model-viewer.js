@@ -72,7 +72,8 @@ function ModelViewer(trigger, options, scripts)
   };
   _.defaultMaterialObject = {
     name: 'originalname',
-    metalness: 0
+    metalness: 0,
+    roughness: 0,
   };
   _.createTrigger(options, scripts);
 }
@@ -576,13 +577,13 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(not
     lightHolder.append(area);
   });
   _.materials.forEach(function createMaterialMenu(material) {
-    console.log(material);
     var area = materialTemplate.cloneNode(true);
     area.classList.remove('hidden', 'template');
     var name = area.querySelector('input[name="material-name"]');
     name.value = material.name;
     name.setAttribute('readonly', 'readonly');
     area.querySelector('input[name="material-metalness"]').value = material.metalness;
+    area.querySelector('input[name="material-roughness"]').value = material.roughness;
     materialHolder.append(area);
   });
   var updateFunction = function checkWhatToAdjust(e) {
@@ -672,11 +673,11 @@ ModelViewer.prototype.updateMaterial = function updateMaterial(form) {
   var material = _.materials.find(function findMaterial(element) {
     return element.name === name.value;
   });
+  console.log(material);
   if (!material) {
     return;
   }
   inputList.forEach(function checkInput(input) {
-    console.log(input);
     _.getDataOfInput(material, input, true);
     material.needsUpdate = true;
   });
@@ -831,6 +832,10 @@ ModelViewer.prototype.getDataOfInput = function getDataOfInput(object, input, in
   // Material specific stuff
   case 'material-metalness':
     object.metalness = input.value;
+    break;
+    // Material specific stuff
+  case 'material-roughness':
+    object.roughness = input.value;
     break;
   }
 };
