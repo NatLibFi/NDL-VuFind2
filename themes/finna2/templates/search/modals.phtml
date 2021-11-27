@@ -75,36 +75,27 @@
             <div class="model-help collapse">
             </div>
             <div class="model-settings collapse">
+              <div class="camera-holder">
+                <div class="model-setting camera template hidden">
+                  <form class="camera-form" name="templateform">
+                  </form>
+                </div>
+              </div>
+              <div class="renderer-holder">
+                <div class="model-setting renderer template hidden">
+                  <form class="renderer-form" name="templateform">
+                  </form>
+                </div>
+              </div>
               <div class="material-holder">
                 <div class="model-setting material template hidden">
                   <form class="material-form" name="templateform">
-                    <span>material name:</span>
-                    <input name="material-name" type="text" value=""/>
-                    <span>metalness:</span>
-                    <input name="material-metalness" type="number" value=""/>
-                    <span>roughness:</span>
-                    <input name="material-roughness" type="number" value=""/>
                   </form>
                 </div>
               </div>
               <div class="light-holder">
                 <div class="model-setting light template hidden">
                   <form class="light-form" name="templateform">
-                    <span>light name:</span>
-                    <input name="light-name" type="text" value=""/>
-                    <span>light type:</span>
-                    <select class="light-type" name="light-type">
-                      <option value="spot">Spot</option>
-                      <option value="directional">Directional</option>
-                    </select>
-                    <span>position:</span>
-                    <span>x:</span><input name="light-position-x" type="number" value=""/>
-                    <span>y:</span><input name="light-position-y" type="number" value=""/>
-                    <span>z:</span><input name="light-position-z" type="number" value=""/>
-                    <span>intensity:</span>
-                    <input name="light-intensity" type="number" value=""/>
-                    <span>color1:</span>
-                    <input name="light-color-1" type="text" value="#ffffff"/>
                     <button class="save-light" type="button" value="save-light">Save</button>
                     <button class="delete-light hidden" type="button" value="delete-light">Delete</button>
                   </form>
