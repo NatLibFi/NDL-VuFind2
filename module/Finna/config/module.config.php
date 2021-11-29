@@ -30,6 +30,26 @@ namespace Finna\Module\Configuration;
 $config = [
     'router' => [
         'routes' => [
+            'browse-database' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/Browse/Database',
+                    'defaults' => [
+                        'controller' => 'BrowseSearch',
+                        'action'     => 'Database',
+                    ]
+                ],
+            ],
+            'browse-journal' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/Browse/Journal',
+                    'defaults' => [
+                        'controller' => 'BrowseSearch',
+                        'action'     => 'Journal',
+                    ]
+                ],
+            ],
             'comments-inappropriate' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
@@ -237,7 +257,6 @@ $config = [
             'Finna\Controller\AuthorityController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\AuthorityRecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\BarcodeController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\BrowseController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\BrowseSearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\CartController' => 'VuFind\Controller\CartControllerFactory',
             'Finna\Controller\CollectionController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
@@ -307,7 +326,6 @@ $config = [
             // Overrides:
             'VuFind\Controller\AuthorityController' => 'Finna\Controller\AuthorityController',
             'VuFind\Controller\AjaxController' => 'Finna\Controller\AjaxController',
-            'VuFind\Controller\BrowseController' => 'Finna\Controller\BrowseController',
             'VuFind\Controller\CartController' => 'Finna\Controller\CartController',
             'VuFind\Controller\CombinedController' => 'Finna\Controller\CombinedController',
             'VuFind\Controller\CollectionController' => 'Finna\Controller\CollectionController',
@@ -975,7 +993,7 @@ $dynamicRoutes = [
 ];
 
 $staticRoutes = [
-    'Browse/Database', 'Browse/Journal', 'Cover/Download',
+    'Cover/Download',
     'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',
