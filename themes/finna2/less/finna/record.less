@@ -955,24 +955,6 @@ a.authority {
         color: #1f1f1f;
       }
     }
-    .model-settings {
-      max-height: 600px;
-      overflow-y: scroll;
-      width: 200px;
-      form {
-        display: flex;
-        flex-flow: column;
-        text-align: start;
-        color: black;
-        background: #f2f2f2;
-        border: 1px solid black;
-        padding: 2px;
-        div.setting-child {
-          display: flex;
-          flex-flow: column;
-        }
-      }
-    }
     .model-help {
       background: white;
       text-align: left;
@@ -1025,5 +1007,31 @@ a.authority {
     position: absolute;
     left: 0;
     z-index: 10000;
+  }
+}
+.model-settings {
+  max-height: 100%;
+  position: absolute;
+  right: 0;
+  overflow-y: scroll;
+  width: 200px;
+  z-index: 2000;
+  background: #e8e8e8;
+  color: #2f2f2f;
+  .holder-title {
+    border-bottom: 1px solid black;
+  }
+  form {
+    display: flex;
+    flex-flow: column;
+    text-align: start;
+    color: black;
+    background: #f2f2f2;
+    border: 1px solid black;
+    padding: 2px;
+    div.setting-child {
+      display: flex;
+      flex-flow: column;
+    }
   }
 }

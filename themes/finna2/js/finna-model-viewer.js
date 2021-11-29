@@ -56,6 +56,10 @@ function ModelViewer(trigger, options, scripts)
   _.viewerPaddingAngle = +options.viewerPaddingAngle || 35;
   _.lights = [];
   _.materials = [];
+  _.meshes = [];
+  _.cameras = [];
+  _.renderers = [];
+  _.scenes = [];
   _.loadInfo = options.modelload;
   _.loaded = false;
   _.isFileInput = _.trigger.is('input');
@@ -243,6 +247,7 @@ ModelViewer.prototype.createRenderer = function createRenderer()
   _.renderer = new THREE.WebGLRenderer({
     antialias: true
   });
+  _.renderers.push(_.renderer);
   // These are the settings to make glb files look good with threejs
   _.renderer.physicallyCorrectLights = true;
   _.renderer.gammaOutput = true;
@@ -261,6 +266,7 @@ ModelViewer.prototype.createRenderer = function createRenderer()
   if (!_.loaded) {
     // Create camera now.
     _.camera = new THREE.PerspectiveCamera(50, _.size.x / _.size.y, 0.1, 1000);
+    _.cameras.push(_.camera);
     _.camera.name = 'main_camera';
     _.cameraPosition = new THREE.Vector3(0, 0, 0);
     _.camera.position.set(_.cameraPosition.x, _.cameraPosition.y, _.cameraPosition.z);
@@ -380,6 +386,7 @@ ModelViewer.prototype.adjustScene = function adjustScene(scene)
   }
 
   _.scene = scene;
+  _.scenes.push(_.scene);
   _.scene.background = _.background;
   if (_.debug) {
     var axesHelper = new THREE.AxesHelper( 5 );
@@ -431,10 +438,11 @@ ModelViewer.prototype.initMesh = function initMesh()
   if (!_.loaded) {
     _.vertices = 0;
     _.triangles = 0;
-    _.meshes = 0;
+    _.meshCount = 0;
     _.scene.traverse(function traverseMeshes(obj) {
       if (obj.type === 'Mesh') {
-        _.meshes++;
+        _.meshCount++;
+        _.meshes.push(obj);
         meshMaterial = obj.material;
         // Bumpscale and depthwrite settings
         meshMaterial.depthWrite = !meshMaterial.transparent;
@@ -452,7 +460,7 @@ ModelViewer.prototype.initMesh = function initMesh()
           _.vertices += +geo.attributes.position.count;
           _.triangles += +geo.index.count / 3;
         }
-        meshMaterial.name = 'material_found_' + _.meshes;
+        meshMaterial.name = 'material_' + _.meshCount;
         newBox.expandByObject(obj);
         _.materials.push(meshMaterial);
         if (_.debug) {
@@ -513,52 +521,126 @@ ModelViewer.prototype.createLights = function createLights()
   _.lights.push(hemiLight, ambientLight, light);
 };
 
-var lightTypes = [
-  'SpotLight',
-  'DirectionalLight',
-  'AmbientLight',
-  'PointLight',
-  'HemisphereLight'
+var lightTypeMappings = [
+  {name: 'SpotLight', value: 'SpotLight'},
+  {name: 'DirectionalLight', value: 'DirectionalLight'},
+  {name: 'AmbientLight', value: 'AmbientLight'},
+  {name: 'PointLight', value: 'PointLight'},
+  {name: 'HemisphereLight', value: 'HemisphereLight'}
+];
+
+var booleanOptions = [
+  {value: 'true', name: 'true'},
+  {value: 'false', name: 'false'}
+];
+
+var createInput = function createInput(inputType, name, value) {
+  var input = document.createElement('input');
+  input.type = inputType;
+  input.name = name;
+  input.value = value;
+  return input;
+};
+
+var createSelect = function createSelect(options, name, selected) {
+  var select = document.createElement('select');
+  select.name = name; 
+  for (var i = 0; i < options.length; i++) {
+    var current = options[i];
+    var option = document.createElement('option');
+    option.value = current.value;
+    option.innerHTML = current.name || current.value;
+    select.append(option);
+  }
+  select.value = selected;
+  return select;
+};
+
+var createDiv = function createDiv(className) {
+  var div = document.createElement('div');
+  div.className = className;
+  return div;
+};
+
+var createForm = function createForm(formClass) {
+  var form = document.createElement('form');
+  form.className = formClass;
+  return form;
+};
+
+var createButton = function createButton(className, value, text) {
+  var button = document.createElement('button');
+  button.className = className;
+  button.type = 'button';
+  button.value = 'value';
+  button.innerHTML = text;
+  return button;
+};
+
+var defaultLights = [
+  'directional_finna',
+  'ambient_finna',
+  'hemisphere_finna'
 ];
 
 ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(notInitial) {
   var _ = this;
-  var settingsMenu = document.getElementById('model-settings');
+  if (!_.encodingMappings) {
+    _.encodingMappings = [
+      {name: 'LinearEncoding', value: THREE.LinearEncoding},
+      {name: 'sRGBEncoding', value: THREE.sRGBEncoding},
+      {name: 'GammaEncoding', value: THREE.GammaEncoding},
+      {name: 'RGBEEncoding', value: THREE.RGBEEncoding},
+      {name: 'RGBM7Encoding', value: THREE.RGBM7Encoding},
+      {name: 'RGBM16Encoding', value: THREE.RGBM16Encoding},
+      {name: 'RGBDEncoding', value: THREE.RGBDEncoding},
+      {name: 'BasicDepthPacking', value: THREE.BasicDepthPacking},
+      {name: 'RGBADepthPacking', value: THREE.RGBADepthPacking}
+    ];
+  }
 
-  var lightHolder = settingsMenu.querySelector('.light-holder');
-  var materialHolder = settingsMenu.querySelector('.material-holder');
-  var cameraHolder = settingsMenu.querySelector('.camera-holder');
-  var rendererHolder = settingsMenu.querySelector('.renderer-holder');
-
-  var lightTemplate = lightHolder.querySelector('.light.template');
-  var materialTemplate = materialHolder.querySelector('.material.template');
-  var cameraTemplate = cameraHolder.querySelector('.camera.template');
-  var rendererTemplate = rendererHolder.querySelector('.renderer.template');
-
-  var addLight = lightHolder.querySelector('button.add-light');
-  var exportButton = settingsMenu.querySelector('button.export-settings');
-  var importButton = settingsMenu.querySelector('button.import-settings');
-  var inputLights = document.querySelector('input[name="light-file-input"]');
-  addLight.classList.remove('hidden');
-
-  var removeOldSettings = function removeOldSettings(objects) {
-    objects.forEach(function clearMenu(child) {
-      if (child.classList.contains('template')) {
-        return;
+  if (!_.menuAreas) {
+    _.menuAreas = [
+      {done: false, name: 'Extra', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: []},
+      {done: false, name: 'Renderers', prefix: 'renderer', holder: undefined, template: undefined, objects: _.renderers, created: []},
+      {done: false, name: 'Scenes', prefix: 'scene', holder: undefined, template: undefined, objects: _.scenes, created: []},
+      {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: _.cameras, created: []},
+      {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: _.meshes, created: []},
+      {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: []},
+      {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: []},
+    ];
+  } else {
+    _.menuAreas.forEach(function updateReferences(current) {
+      switch (current.name) {
+      case 'Renderers':
+        current.objects = _.renderers;
+        break;
+      case 'Cameras':
+        current.objects = _.cameras;
+        break;
+      case 'Materials':
+        current.objects = _.materials;
+        break;
+      case 'Lights':
+        current.objects = _.lights;
+        break;
+      case 'Meshes':
+        current.objects = _.meshes;
+        break;
+      case 'Scenes':
+        current.objects = _.scenes;
+        break;
       }
-      child.remove();
     });
-  };
-  var lightChildren = Array.prototype.slice.call(lightHolder.children);
-  var materialChildren = Array.prototype.slice.call(materialHolder.children);
-  var cameraChildren = Array.prototype.slice.call(cameraHolder.children);
-  var rendererChildren = Array.prototype.slice.call(rendererHolder.children);
-  removeOldSettings(lightChildren);
-  removeOldSettings(materialChildren);
-  removeOldSettings(cameraChildren);
-  removeOldSettings(rendererChildren);
+  }
 
-  var defaultLights = ['directional_finna', 'ambient_finna', 'hemisphere_finna'];
+  if (!_.settingsMenu) {
+    _.settingsMenu = createDiv('model-settings collapse');
+    _.settingsMenu.id = 'model-settings';
+    var viewer = document.querySelector('.model-viewer.modal-holder');
+    viewer.prepend(_.settingsMenu);
+  }
+
   var createSettings = function createSettings(object, template, prefix) {
     var form = template.querySelector('form');
     var keys = Object.keys(object);
@@ -570,47 +652,15 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(not
       }
     }
   };
-  _.lights.forEach(function createLightMenu(light) {
-    var area = lightTemplate.cloneNode(true);
-    area.classList.remove('hidden', 'template');
-    createSettings(light, area, 'light-');
-    lightHolder.append(area);
-    var deleteLight = area.querySelector('button.delete-light');
-    var isDefault = defaultLights.includes(light.name);
-    if (isDefault) {
-      deleteLight.remove();
-    } else {
-      deleteLight.classList.remove('hidden');
-      deleteLight.addEventListener('click', function removeLight(e) {
-        var form = e.target.closest('form');
-        if (form) {
-          _.deleteLight(form);
-        }
-      });
-    }
-    area.querySelector('button.save-light').remove();
-    lightHolder.append(area);
-  });
-  _.materials.forEach(function createMaterialMenu(material) {
-    var area = materialTemplate.cloneNode(true);
-    area.classList.remove('hidden', 'template');
-    createSettings(material, area, 'material-');
-    materialHolder.append(area);
-  });
 
-  // Singleton settings area
-  var area = cameraTemplate.cloneNode(true);
-  area.classList.remove('hidden', 'template');
-  createSettings(_.camera, area, 'camera-');
-  cameraHolder.append(area);
-
-  var rendererArea = rendererTemplate.cloneNode(true);
-  rendererArea.classList.remove('hidden', 'template');
-  createSettings(_.renderer, rendererArea, 'renderer-');
-  rendererHolder.append(rendererArea);
-
-  var updateFunction = function checkWhatToAdjust(e) {
+  var updateFunction = function onValueUpdated(e) {
     var form = e.target.closest('form');
+    if (form.classList.length === 0) {
+      return;
+    }
+    _.menuAreas.forEach(function checkIfUpdate() {
+      
+    });
     if (form && form.classList.contains('light-form')) {
       var lightName = form.querySelector('input[name="light-name"]').value;
       _.updateObject(_.lights, e.target, lightName);
@@ -620,84 +670,148 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(not
     } else if (form && form.classList.contains('camera-form')) {
       var cameraName = form.querySelector('input[name="camera-name"]').value;
       _.updateObject([_.camera], e.target, cameraName);
+      /* Update cube locations */
+      //_.updateCubes();
     } else if (form && form.classList.contains('renderer-form')) {
       var rendererName = form.querySelector('input[name="renderer-name"]').value;
       _.updateObject([_.renderer], e.target, rendererName);
     }
+    /* Update materials just in case */
     _.scene.traverse(function setUpdate(child) {
       if (child.material) {
         child.material.needsUpdate = true;
       }
     });
   };
-  settingsMenu.addEventListener('change', updateFunction);
+
+  _.menuAreas.forEach(function createAreaForMenu(menu) {    
+    if (!menu.done) {
+      var holderRoot = createDiv(menu.prefix + '-root');
+      var titleSpan = document.createElement('span');
+      titleSpan.addEventListener('click', function toggleSettings(/*e*/) {
+        var holder = this.parentNode.querySelector('.toggle');
+        if (holder) {
+          if (holder.classList.contains('hidden')) {
+            holder.classList.remove('hidden');
+          } else {
+            holder.classList.add('hidden');
+          }
+        }
+      });
+      titleSpan.className = 'holder-title';
+      titleSpan.innerHTML = menu.name;
+      holderRoot.append(titleSpan);
+      menu.holder = createDiv(menu.prefix + '-holder toggle hidden');
+      menu.template = createDiv('model-setting ' + menu.prefix + ' template hidden');
+      menu.template.append(createForm(menu.prefix + '-form'));
+      holderRoot.append(menu.holder);
+      _.settingsMenu.append(holderRoot);
+    } else {
+      menu.created.forEach(function removeCreated(child) {
+        child.remove();
+      });
+      menu.created = [];
+    }
+    
+    if (!menu.done) {
+      switch (menu.prefix) {
+      case 'light':
+        var addLightButton = createButton('add-light', 'add-light', 'Add light');
+        menu.holder.append(addLightButton);
+        addLightButton.addEventListener('click', function createNewLightTemplate(/*e*/) {
+          var selfBtn = this;
+          selfBtn.classList.add('hidden');
+          _.settingsMenu.removeEventListener('change', updateFunction);
+          var templateClone = menu.template.cloneNode(true);
+          var div = createDiv('setting-child');
+          var span = document.createElement('span');
+          span.innerHTML = 'name';
+          div.append(span, createInput('text', 'light-name', ''));
+          var selectDiv = document.createElement('div');
+          selectDiv.classList.add('setting-child');
+          var select = createSelect(lightTypeMappings, 'light-type', 'SpotLight');
+          var selectSpan = document.createElement('span');
+          selectSpan.innerHTML = 'type';
+          selectDiv.append(selectSpan, select);
+          var saveLight = createButton('save-light', 'save-light', 'Save');
+          var form = templateClone.querySelector('form');
+          form.prepend(saveLight, selectDiv, div);
+          templateClone.classList.remove('template', 'hidden');
+          menu.holder.prepend(templateClone);
+          saveLight.addEventListener('click', function saveFromTemplate(ev) {
+            form = ev.target.closest('form');
+            if (form) {
+              _.addLight(form);
+              templateClone.remove();
+              selfBtn.classList.remove('hidden');
+              _.settingsMenu.addEventListener('change', updateFunction);
+            }
+          });
+        });
+        break;
+      case 'custom':
+        var exportButton = createButton('button export-settings', 'export', 'Export');
+        var importButton = createButton('button import-settings', 'import', 'Import');
+        var inputLights = document.querySelector('input[name="light-file-input"]');
+        exportButton.addEventListener('click', function startExport() {
+          _.saveSettingsAsJson(_.settingsMenu);
+        });
+        importButton.addEventListener('click', function openFileDialog() {
+          inputLights.click();
+        });
+        inputLights.addEventListener('change', function startImport() {
+          var file = inputLights.files[0];
+          if (file) {
+            var reader = new FileReader();
+            reader.onload = function onFileLoaded(event) {
+              var fileString = event.target.result;
+              if (fileString) {
+                _.getSettingsFromJson(JSON.parse(fileString));
+              }
+            };
+            reader.readAsText(file);
+          }
+        });
+        menu.holder.append(exportButton, importButton);
+        break;
+      }
+    }
+
+    menu.objects.forEach(function createSetting(current) {
+      // Create settings
+      var templateClone = menu.template.cloneNode(true);
+      templateClone.classList.remove('hidden', 'template');
+      createSettings(current, templateClone, menu.prefix + '-');
+      menu.holder.append(templateClone);
+      menu.created.push(templateClone);
+      switch (menu.prefix) {
+      case 'light':
+        if (!defaultLights.includes(current.name)) {
+          var deleteButton = createButton('delete-light', 'delete-light', 'Delete');
+          deleteButton.addEventListener('click', function removeLight(e) {
+            var form = e.target.parentNode.querySelector('form');
+            if (form) {
+              _.deleteLight(form);
+            }
+          });
+          templateClone.append(deleteButton);
+        }
+        break;
+      }
+    });
+    menu.done = true;
+  });
+  _.settingsMenu.addEventListener('change', updateFunction);
   if (notInitial) {
     return;
   }
-  exportButton.addEventListener('click', function startExport() {
-    settingsMenu.removeEventListener('change', updateFunction);
-    _.saveSettingsAsJson(settingsMenu);
-  });
-  importButton.addEventListener('click', function openFileDialog() {
-    inputLights.click();
-  });
-  inputLights.addEventListener('change', function startImport() {
-    var file = inputLights.files[0];
-    if (file) {
-      var reader = new FileReader();
-      reader.onload = function onFileLoaded(event) {
-        var fileString = event.target.result;
-        if (fileString) {
-          _.getSettingsFromJson(JSON.parse(fileString));
-        }
-      };
-      reader.readAsText(file);
-    }
-  });
-  addLight.addEventListener('click', function createNewLightTemplate(/*e*/) {
-    settingsMenu.removeEventListener('change', updateFunction);
-    area = lightTemplate.cloneNode(true);
-    var form = area.querySelector('form');
-    area.classList.remove('hidden', 'template');
-    var div = document.createElement('div');
-    div.classList.add('setting-child');
-    var span = document.createElement('span');
-    span.innerHTML = 'name';
-    var input = document.createElement('input');
-    input.name = 'light-name';
-    input.value = '';
-    div.append(span, input);
-    var selectDiv = document.createElement('div');
-    selectDiv.classList.add('setting-child');
-    var select = document.createElement('select');
-    lightTypes.forEach(function createLightOptions(l) {
-      var option = document.createElement('option');
-      option.value = l;
-      option.innerHTML = l;
-      select.append(option);
-    });
-    var selectSpan = document.createElement('span');
-    selectSpan.innerHTML = 'type';
-    select.value = 'SpotLight';
-    select.name = 'light-type';
-    selectDiv.append(selectSpan, select);
-    form.append(div, selectDiv);
-    addLight.classList.add('hidden');
-    lightHolder.prepend(area);
-    area.querySelector('.save-light').addEventListener('click', function saveFromTemplate(ev) {
-      form = ev.target.closest('form');
-      if (form) {
-        _.addLight(form);
-      }
-    });
-  });
 };
 
 var allowedProperties = [
   'name', 'type', 'position', 'color', 'groundColor',
   'intensity', 'roughness', 'clipIntersection', 'clipShadows',
   'depthWrite', 'dithering', 'emissive', 'emissiveIntensity',
-  'flatShading', 'fog', 'metalness', 'morphNormals', 'morphTargets',
+  'flatShading', 'metalness', 'morphNormals', 'morphTargets',
   'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
   'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
   'gammaInput', 'gammaOutput', 'physicallyCorrectLights', 'outputEncoding',
@@ -705,50 +819,28 @@ var allowedProperties = [
 ];
 
 var allowedSubProperties = [
-  'x', 'y', 'z', 'r', 'g', 'b', '_x', '_y', '_z', '_w'
+  'x', 'y', 'z', 'r', 'g', 'b', '_x', '_y', '_z', '_w', 'encoding'
 ];
 
 ModelViewer.prototype.createElement = function createElement(object, key, prefix) {
-  if (!allowedProperties.includes(key)) {
+  if (!allowedProperties.includes(key) || object[key] === null) {
     return;
   }
   var type = typeof object[key];
   var objValue = object[key];
-  var div = document.createElement('div');
-  div.classList.add('setting-child');
+  var div = createDiv('setting-child');
   var span = document.createElement('span');
   span.append(document.createTextNode(key));
   div.append(span);
   switch (type) {
   case 'boolean':
-    var select = document.createElement('select');
-    select.name = prefix + key;
-    var trueOption = document.createElement('option');
-    trueOption.value = "true";
-    trueOption.innerHTML = 'true';
-    var falseOption = document.createElement('option');
-    falseOption.value = "false";
-    falseOption.innerHTML = 'false';
-    select.append(trueOption, falseOption);
-    select.value = objValue;
-    div.append(select);
+    div.append(createSelect(booleanOptions, prefix + key, '' + objValue));
     break;
   case 'number':
-    var numberInput = document.createElement('input');
-    numberInput.type = 'number';
-    numberInput.name = prefix + key;
-    numberInput.value = object[key];
-    div.append(numberInput);
+    div.append(createInput('number', prefix + key, objValue));
     break;
   case 'string':
-    var stringInput = document.createElement('input');
-    stringInput.type = 'text';
-    stringInput.name = prefix + key;
-    stringInput.value = object[key];
-    if (['type', 'name'].includes(key)) {
-      stringInput.setAttribute('readonly', 'readonly');
-    }
-    div.append(stringInput);
+    div.append(createInput('text', prefix + key, objValue));
     break;
   case 'object':
     var subKeys = Object.keys(objValue);
@@ -758,23 +850,21 @@ ModelViewer.prototype.createElement = function createElement(object, key, prefix
         continue;
       }
       var subKeyType = typeof objValue[subKey];
+      var subValue = objValue[subKey];
       var subSpan = document.createElement('span');
+      var subPrefix = prefix + key + '-' + subKey;
+
       subSpan.append(document.createTextNode(subKey));
       div.append(subSpan);
       switch (subKeyType) {
       case 'number':
-        numberInput = document.createElement('input');
-        numberInput.type = 'number';
-        numberInput.name = prefix + key + '-' + subKey;
-        numberInput.value = objValue[subKey];
-        div.append(numberInput);
+        div.append(createInput('number', subPrefix, subValue));
         break;
       case 'string':
-        stringInput = document.createElement('input');
-        stringInput.type = 'text';
-        stringInput.name = prefix + key + '-' + subKey;
-        stringInput.value = objValue[subKey];
-        div.append(stringInput);
+        div.append(createInput('text', subPrefix, subValue));
+        break;
+      case 'boolean':
+        div.append(createSelect(booleanOptions, subPrefix, '' + subValue));
         break;
       }
     }
@@ -790,7 +880,10 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
       var found = targets.find(function findMaterial(element) {
         return element.name === current.name;
       });
-      if (!found && lightTypes.includes(current.type)) {
+      var isLight = lightTypeMappings.find(function findLightPreset(element) {
+        return element.type === current.value;
+      });
+      if (!found && isLight) {
         _.createLightToScene(current);
         found = targets.find(function findMaterial(element) {
           return element.name === current.name;
@@ -820,18 +913,15 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
       }
     });
   };
-  if (settings.materials) {
-    importFunction(_.materials, settings.materials);
-  }
-  if (settings.renderers) {
-    importFunction([_.renderer], settings.renderers);
-  }
-  if (settings.cameras) {
-    importFunction([_.camera], settings.cameras);
-  }
-  if (settings.lights) {
-    importFunction(_.lights, settings.lights);
-  }
+  var keys = Object.keys(settings);
+  keys.forEach(function saveSection(section) {
+    var menu = _.menuAreas.find(function menuObject(obj) {
+      return obj.name === section;
+    });
+    if (menu) {
+      importFunction(menu.objects, settings[section]);
+    }
+  });
   _.createMenuForSettings(true);
 };
 
@@ -879,6 +969,12 @@ ModelViewer.prototype.addLight = function addLight(form) {
   var _ = this;
   var inputList = form.querySelectorAll('input, select');
   var name = form.querySelector('input[name="light-name"]');
+  var found = _.lights.find(function findLight(element) {
+    return element.name === name.value;
+  });
+  if (found) {
+    return false;
+  }
   var object = Object.assign({}, _.defaultLightObject);
   object.name = name.value;
   inputList.forEach(function checkInput(input) {
@@ -950,12 +1046,8 @@ ModelViewer.prototype.deleteLight = function deleteLight(form) {
 ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
   var _ = this;
   var json = '';
-  var object = {
-    lights: [],
-    materials: [],
-    renderers: [],
-    cameras: []
-  };
+  var object = {};
+
   var assignFunction = function assignObjects(objects, holder) {
     objects.forEach(function getInputsAsObject(el) {
       var keys = Object.keys(el);
@@ -971,10 +1063,12 @@ ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
       object[holder].push(current);
     });
   };
-  assignFunction(_.lights, 'lights');
-  assignFunction(_.materials, 'materials');
-  assignFunction([_.renderer], 'renderers');
-  assignFunction([_.camera], 'cameras');
+  _.menuAreas.forEach(function saveSection(section) {
+    if (!object[section.name]) {
+      object[section.name] = [];
+    }
+    assignFunction(section.objects, section.name);
+  });
 
   json = JSON.stringify(object);
   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(json);
