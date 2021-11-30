@@ -202,11 +202,6 @@ class Form extends \VuFind\Form\Form
 
         // Validate form settings
         if ($this->formSettings['includeBarcode'] ?? false) {
-            if (!$this->isRecordRequestFormWithBarcode()) {
-                throw new \VuFind\Exception\BadConfig(
-                    'Library card barcode can not be used with this form.'
-                );
-            }
             $handler = $this->formSettings['sendMethod'] ?? Form::HANDLER_EMAIL;
             if (!in_array($handler, $this->secureHandlers)) {
                 throw new \VuFind\Exception\BadConfig(
@@ -215,24 +210,12 @@ class Form extends \VuFind\Form\Form
                     . implode(', ', $this->secureHandlers)
                 );
             }
-            if (!($this->formSettings['onlyForLoggedUsers'] ?? false)) {
-                throw new \VuFind\Exception\BadConfig(
-                    'Enable \'onlyForLoggedUsers\' when'
-                    . ' \'includeBarcode\' is enabled'
-                );
-            }
             if ($this->user && ($catUsername = $this->user->cat_username)) {
                 [, $barcode] = explode('.', $catUsername);
                 $this->userCatUsername = $barcode;
             }
         }
         if ($this->formSettings['includePatronId'] ?? false) {
-            if (!($this->formSettings['onlyForLoggedUsers'] ?? false)) {
-                throw new \VuFind\Exception\BadConfig(
-                    'Enable \'onlyForLoggedUsers\' when'
-                    . ' \'includePatronId\' is enabled'
-                );
-            }
             if ($this->ilsPatron && ($catId = $this->ilsPatron['id'] ?? '')) {
                 [, $id] = explode('.', $catId);
                 $this->userCatId = $id;
@@ -539,7 +522,7 @@ class Form extends \VuFind\Form\Form
             || $this->isRecordRequestFormWithBarcode())
         ) {
             $preParagraphs[] = '<strong>'
-                . $transEsc('repository_library_request_material') . '</strong>:<br>'
+                . $transEsc('feedback_material') . '</strong>:<br>'
                 . $escapeHtml($this->record->getTitle());
         }
 

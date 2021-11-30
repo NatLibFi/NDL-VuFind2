@@ -1336,18 +1336,22 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $offset += 100;
             $totalCount = (int)$xml->attributes()->{'total_record_count'};
             foreach ($xml as $request) {
+                // The dates contain Z for time zone, but it seems they don't really
+                // mean it.
                 $lastInterestDate = $request->last_interest_date
                     ? $this->dateConverter->convertToDisplayDate(
-                        'Y-m-dT',
-                        (string)$request->last_interest_date
+                        'Y-m-d',
+                        rtrim((string)$request->last_interest_date, 'Z')
                     ) : null;
                 $available = (string)$request->request_status === 'On Hold Shelf';
                 $lastPickupDate = null;
                 if ($available) {
+                    // The dates contain Z for time zone, but it seems they don't
+                    // really mean it.
                     $lastPickupDate = $request->expiry_date
                         ? $this->dateConverter->convertToDisplayDate(
-                            'Y-m-dT',
-                            (string)$request->expiry_date
+                            'Y-m-d',
+                            rtrim((string)$request->expiry_date, 'Z')
                         ) : null;
                     $lastInterestDate = null;
                 }

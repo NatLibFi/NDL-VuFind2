@@ -1859,10 +1859,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     public function getMethodology()
     {
         $results = [];
-        foreach ($this->getMarcReader()->getFields('567') as $field) {
-            foreach ($this->getSubfields($field, 'a') as $method) {
-                $results[] = $this->stripTrailingPunctuation($method);
-            }
+        $marcReader = $this->getMarcReader();
+        foreach ($marcReader->getFields('567') as $field) {
+            $results[] = [
+                'description' => $marcReader->getSubfield($field, 'a'),
+                'term' => $marcReader->getSubfield($field, 'b'),
+                'url' => $marcReader->getSubfield($field, '0')
+            ];
         }
         return $results;
     }
@@ -1878,7 +1881,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
         $fields = ['348' => ['a', 'b', '2']];
         $matches = $this->getSeriesFromMARC($fields);
         foreach ($matches as $match) {
-            $subfields[] =  $this->stripTrailingPunctuation($match);
+            $subfields[] = $this->stripTrailingPunctuation($match);
         }
         if (!empty($subfields)) {
             $results = implode(', ', $subfields[0]);
@@ -1965,6 +1968,22 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             }
         }
         return implode(', ', $results);
+    }
+
+    /**
+     * Get audience characteristics from field 385
+     *
+     * @return array
+     */
+    public function getAudienceCharacteristics()
+    {
+        $results = [];
+        foreach ($this->getMarcReader()->getFields('385') as $field) {
+            foreach ($this->getSubfields($field, 'a') as $ch) {
+                $results[] = $this->stripTrailingPunctuation($ch);
+            }
+        }
+        return $results;
     }
 
     /**

@@ -161,17 +161,9 @@ maxLength = 4
 ;method = driver
 
 ; Uncomment the following lines to enable update messaging settings
-; Choose a method on how to update the phone number (database or driver)
 [updateMessagingSettings]
 ; Accepted methods are; database, driver.
 ;method = database
-; url is required for the url method. url can be a single address or an array of
-; language-specific addresses. First example is a single one:
-;url = "http://address.of.change.form"
-; Alternatively different links can be specified for each language:
-;url[fi] = http://address.of.change.form/finnish
-;url[sv] = http://address.of.change.form/swedish
-;url[en-gb] = http://address.of.change.form/english
 
 ; Filters for removing certain methods from a service
 [messagingFilters]
@@ -228,7 +220,7 @@ options[0] = loan_history_never
 
 ; How long should the titlelist be cached in minutes
 ;[titleListCacheSettings]
-;settings[new] => 15,
-;settings[lastreturned] => 15,
-;settings[mostborrowed] => 480,
-;settings[mostrequested] => 240
+;settings[new] = 15
+;settings[lastreturned] = 15
+;settings[mostborrowed] = 480
+;settings[mostrequested] = 240

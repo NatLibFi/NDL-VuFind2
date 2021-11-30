@@ -122,7 +122,6 @@ class RecordDataFormatterFactory
                 $options['pos'] = $pos;
                 $lines[$key] = [true, $dataMethod, $callback, $options];
             };
-
         $setTemplateLine(
             'Genre',
             'getGenres',
@@ -131,7 +130,6 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordGenres']
             ]
         );
-
         $setTemplateLine(
             'Age Limit',
             'getAgeLimit',
@@ -206,6 +204,14 @@ class RecordDataFormatterFactory
             'data-forwardFields.phtml',
             [
                 'context' => ['class' => 'recordDescription']
+            ]
+        );
+        $setTemplateLine(
+            'Identifiers',
+            'getOtherIdentifiers',
+            'data-lines-with-detail.phtml',
+            [
+                'context' => ['class' => 'recordIdentifiers']
             ]
         );
         $setTemplateLine(
@@ -313,6 +319,14 @@ class RecordDataFormatterFactory
                     'class' => 'recordFile',
                     'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS
                 ]
+            ]
+        );
+        $setTemplateLine(
+            'Physical Medium',
+            'getPhysicalMediums',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'physical-medium']
             ]
         );
         $setTemplateLine(
@@ -581,6 +595,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Methodology',
+            'getMethodology',
+            'data-methodology-links.phtml',
+            [
+                'context' => ['class' => 'recordMethodology']
+            ]
+        );
+        $setTemplateLine(
             'Publications',
             'getRelatedPublications',
             'data-relatedPublications.phtml',
@@ -601,7 +623,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Introduction',
             'getIntroduction',
-            'data-escapeHtml.phtml',
+            'data-markdown.phtml',
             [
                 'context' => ['class' => 'record-introduction']
             ]
@@ -1029,6 +1051,14 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'extendedAccess']
             ]
         );
+        $setTemplateLine(
+            'Type',
+            'getTypes',
+            'data-escapeHtml',
+            [
+                'context' => ['class' => 'record-type']
+            ]
+        );
 
         $setTemplateLine(
             'Terms of Use',
@@ -1174,14 +1204,6 @@ class RecordDataFormatterFactory
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordTradeNote']
-            ]
-        );
-        $setTemplateLine(
-            'Methodology',
-            'getMethodology',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordMethodology']
             ]
         );
         $setTemplateLine(
@@ -1375,6 +1397,14 @@ class RecordDataFormatterFactory
             'data-otherRelatedMaterial.phtml',
             [
                 'context' => ['class' => 'other-related-material']
+            ]
+        );
+        $setTemplateLine(
+            'Audience Characteristics',
+            'getAudienceCharacteristics',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'audience-characteristics']
             ]
         );
 

@@ -330,8 +330,23 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             }
         }
 
-        $messageJson = json_encode($message);
         $apiSettings = $form->getApiSettings();
+        if ('test' === $apiSettings['url']) {
+            if ($this->inLightbox()) {
+                $this->flashMessenger()->addErrorMessage(
+                    json_encode($message, JSON_PRETTY_PRINT)
+                );
+                return [
+                    false,
+                    'Simulated API request not sent'
+                ];
+            } else {
+                header('Content-type: application/json');
+                echo json_encode($message, JSON_PRETTY_PRINT);
+                exit(0);
+            }
+        }
+        $messageJson = json_encode($message);
         $httpService = $this->serviceLocator->get(\VuFindHttp\HttpService::class);
         $client = $httpService->createClient(
             $apiSettings['url'],

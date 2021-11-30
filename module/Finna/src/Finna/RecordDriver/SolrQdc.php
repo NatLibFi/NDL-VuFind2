@@ -51,6 +51,40 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
+     * Image size mappings
+     *
+     * @var array
+     */
+    protected $imageSizeMappings = [
+        'THUMBNAIL' => 'small',
+        'square' => 'small',
+        'small' => 'small',
+        'medium' => 'medium',
+        'large' => 'large',
+        'original' => 'original'
+    ];
+
+    /**
+     * Image mime types
+     *
+     * @var array
+     */
+    protected $imageMimeTypes = [
+        'image/jpeg',
+        'image/png'
+    ];
+
+    /**
+     * Mappings for series information, type => key
+     *
+     * @var array
+     */
+    protected $seriesInfoMappings = [
+        'ispartofseries' => 'name',
+        'numberinseries' => 'partNumber'
+    ];
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
@@ -70,8 +104,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return an associative array of abstracts associated with this record,
-     * if available; false otherwise.
+     * Return an associative array of abstracts associated with this record
      *
      * @return array of abstracts using abstract languages as keys
      */
@@ -81,7 +114,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $abstracts = [];
         $abstract = '';
         $lang = '';
-        foreach ($this->getXmlRecord()->xpath('/qualifieddc/abstract') as $node) {
+        $xml = $this->getXmlRecord();
+        foreach ($xml->abstract ?? [] as $node) {
             $abstract = (string)$node;
             $lang = (string)$node['lang'];
             if ($lang == 'en') {
@@ -91,6 +125,75 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
 
         return $abstracts;
+    }
+
+    /**
+     * Get descriptions as an array
+     *
+     * @return array
+     */
+    public function getDescriptions(): array
+    {
+        $xml = $this->getXmlRecord();
+        $locale = $this->getLocale();
+        $all = [];
+        $primary = [];
+        foreach ($xml->description ?? [] as $description) {
+            $lang = (string)$description['lang'];
+            $trimmed = trim((string)$description);
+            if ($lang === $locale) {
+                $primary[] = $trimmed;
+            }
+            $all[] = $trimmed;
+        }
+        return $primary ?: $all;
+    }
+
+    /**
+     * Get an array of types for the record.
+     *
+     * @return array
+     */
+    public function getTypes(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ($xml->type ?? [] as $type) {
+            $results[] = (string)$type;
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of mediums for the record
+     *
+     * @return array
+     */
+    public function getPhysicalMediums(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ($xml->medium as $medium) {
+            $results[] = trim((string)$medium);
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of formats/extents for the record
+     *
+     * @return array
+     */
+    public function getPhysicalDescriptions(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ([$xml->format, $xml->extent] as $nodes) {
+            foreach ($nodes as $node) {
+                $results[] = trim((string)$node);
+            }
+        }
+        return $results;
     }
 
     /**
@@ -110,33 +213,87 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAllImages($language = 'fi', $includePdf = true)
     {
-        $result = [];
-        $urls = [];
+        $cacheKey = __FUNCTION__ . "/$language" . $includePdf ? '/1' : '/0';
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
+        $results = [];
         $rights = [];
         $pdf = false;
         $xml = $this->getXmlRecord();
+        $thumbnails = [];
+        $otherSizes = [];
+
+        $rightsStmt = $this->getMappedRights((string)($xml->rights ?? ''));
+        $rights = [
+            'copyright' => $rightsStmt,
+            'link' => $this->getRightsLink($rightsStmt, $language)
+        ];
+
+        $addToResults = function ($imageData) use (&$results) {
+            if (!isset($imageData['urls']['small'])) {
+                $imageData['urls']['small'] = $imageData['urls']['medium']
+                    ?? $imageData['urls']['large'];
+            }
+            if (!isset($imageData['urls']['medium'])) {
+                $imageData['urls']['medium'] = $imageData['urls']['small'];
+            }
+            $results[] = $imageData;
+        };
+
         foreach ($xml->file as $node) {
             $attributes = $node->attributes();
-            $size = $attributes->bundle == 'THUMBNAIL' ? 'small' : 'large';
-            $mimes = ['image/jpeg', 'image/png'];
-            if (isset($attributes->type)) {
-                if (!in_array($attributes->type, $mimes)) {
-                    continue;
-                }
+            $type = $attributes->type ?? '';
+            if (!empty($attributes->type)
+                && !in_array($type, $this->imageMimeTypes)
+            ) {
+                continue;
             }
-            $url = isset($attributes->href)
-                ? (string)$attributes->href : (string)$node;
-
+            $url = (string)($attributes->href ?? $node);
             if (!preg_match('/\.(jpg|png)$/i', $url)
                 || !$this->isUrlLoadable($url, $this->getUniqueID())
             ) {
                 continue;
             }
-            $urls[$size] = $url;
+
+            $bundle = (string)$attributes->bundle;
+            if ($bundle === 'THUMBNAIL' && !$otherSizes) {
+                // Lets see if the record contains only thumbnails
+                $thumbnails[] = $url;
+            } else {
+                // QDC has no way of telling how to link
+                // images so take only first in this situation
+                $size = $this->imageSizeMappings[$bundle] ?? false;
+                if ($size && !isset($otherSizes[$size])) {
+                    $otherSizes[$size] = $url;
+                }
+            }
+        }
+
+        if ($thumbnails && !$otherSizes) {
+            foreach ($thumbnails as $url) {
+                $addToResults(
+                    [
+                        'urls' => ['large' => $url],
+                        'description' => '',
+                        'rights' => $rights
+                    ]
+                );
+            }
+        } elseif ($otherSizes) {
+            $addToResults(
+                [
+                    'urls' => $otherSizes,
+                    'description' => '',
+                    'rights' => $rights
+                ]
+            );
         }
 
         // Attempt to find a PDF file to be converted to a coverimage
-        if ($includePdf && empty($urls)) {
+        if ($includePdf && empty($results)) {
+            $urls = [];
             foreach ($xml->file as $node) {
                 $attributes = $node->attributes();
                 if ((string)$attributes->bundle !== 'ORIGINAL') {
@@ -155,30 +312,18 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                     continue;
                 }
                 $urls['small'] = $urls['large'] = $url;
-                $pdf = true;
+                $addToResults(
+                    [
+                        'urls' => $urls,
+                        'description' => '',
+                        'rights' => $rights,
+                        'pdf' => true
+                    ]
+                );
                 break;
             }
         }
-
-        $rights['copyright'] = !empty($xml->rights) ? (string)$xml->rights : '';
-        $rights['copyright'] = $this->getMappedRights($rights['copyright']);
-        $rights['link']
-            = $this->getRightsLink($rights['copyright'], $language);
-
-        if ($urls) {
-            if (!isset($urls['small'])) {
-                $urls['small'] = $urls['large'];
-            }
-            $urls['medium'] = $urls['small'];
-
-            $result[] = [
-                'urls' => $urls,
-                'description' => '',
-                'rights' => $rights,
-                'pdf' => $pdf
-            ];
-        }
-        return $result;
+        return $this->cache[$cacheKey] = $results;
     }
 
     /**
@@ -237,6 +382,43 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get identifiers as an array
+     *
+     * @return array
+     */
+    public function getOtherIdentifiers(): array
+    {
+        $results = [];
+        $xml = $this->getXmlRecord();
+        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
+            foreach ($field as $identifier) {
+                $type = (string)$identifier['type'];
+                if (in_array($type, ['issn', 'isbn'])) {
+                    continue;
+                }
+                $trimmed = str_replace('-', '', trim($identifier));
+                // ISBN
+                if (preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)) {
+                    continue;
+                }
+                $trimmed = trim($identifier);
+                // ISSN
+                if (preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $trimmed)) {
+                    continue;
+                }
+
+                // Leave out some obvious matches like urls or urns
+                if (!preg_match('{(^urn:|^https?)}i', $trimmed)) {
+                    $detail = (string)$identifier['type'];
+                    $data = $identifier;
+                    $results[] = compact('data', 'detail');
+                }
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get an array of all ISBNs associated with the record (may be empty).
      *
      * @return array
@@ -255,7 +437,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
-
         return array_values(array_unique($result));
     }
 
@@ -334,5 +515,32 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             return $this->fields['fullrecord'];
         }
         return parent::getXML($format, $baseUrl, $recordLink);
+    }
+
+    /**
+     * Get series information
+     *
+     * @return array
+     */
+    public function getSeries(): array
+    {
+        $locale = $this->getLocale();
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ($xml->relation ?? [] as $relation) {
+            $type = (string)$relation->attributes()->{'type'};
+            $lang = (string)$relation->attributes()->{'lang'} ?: 'nolocale';
+            $trimmed = trim((string)$relation);
+
+            if ($key = $this->seriesInfoMappings[$type] ?? false) {
+                if (empty($results[$lang][$key])) {
+                    $results[$lang][$key] = $trimmed;
+                }
+            }
+        }
+
+        return isset($results[$locale])
+            ? [$results[$locale]]
+            : array_values($results);
     }
 }

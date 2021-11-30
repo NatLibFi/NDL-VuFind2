@@ -306,6 +306,9 @@ finna.layout = (function finnaLayout() {
     // Add count descriptor to every facet value node for accessibility
     tree.find('.facet').each(function appendDescriptors() {
       var badge = $(this).find('.badge');
+      if (badge.length === 0) {
+        return;
+      }
       badge.attr('aria-hidden', 'true');
       if ($(this).find('.facet-value .sr-only').length > 0) {
         return;
