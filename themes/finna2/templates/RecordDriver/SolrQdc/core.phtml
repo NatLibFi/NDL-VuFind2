@@ -160,7 +160,7 @@
       <?php endif; ?>
       <?php if ($descriptions = $this->driver->getDescriptions()): ?>
         <div class="truncate-field wide summary recordSummary">
-            <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions), "\n") ?>
+          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions), "\n") ?>
         </div>
       <?php endif; ?>
 
