@@ -1063,7 +1063,7 @@ ModelViewer.prototype.addLight = function addLight(form) {
   inputList.forEach(function checkInput(input) {
     _.updateObject([object], input, name.value);
   });
-  _.createLightToScene(object);
+  _.createObjectToScene(object);
   _.createMenuForSettings(true);
 };
 
