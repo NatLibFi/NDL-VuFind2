@@ -787,7 +787,6 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
           var selfBtn = this;
           selfBtn.classList.add('hidden');
           _.settingsMenu.removeEventListener('change', updateFunction);
-          console.log('yeoaaa');
           var templateClone = menu.template.cloneNode(true);
           var div = createDiv('setting-child');
           var span = document.createElement('span');
@@ -848,7 +847,6 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
         createAnnotation.addEventListener('click', function onCreateAnnotation(/*e*/) {
           var self = this;
           _.settingsMenu.removeEventListener('change', updateFunction);
-          console.log('yeo');
           var annotationClone = menu.template.cloneNode(true);
           createSettings(_.annotationTemplate, annotationClone, menu.prefix + '-');
           annotationClone.classList.remove('template', 'hidden');
@@ -1156,7 +1154,8 @@ ModelViewer.prototype.createObjectToScene = function createObjectToScene(object)
     var material = new THREE.SpriteMaterial({map: map, depthTest: false});
     var sprite = new THREE.Sprite( material );
     sprite.onMouseClicked = function onAnnotationClicked(/*e*/) {
-      console.log(this.texts);
+      // Not implemented yet
+      //console.log(this.texts);
     };
     sprite.position.set(0, 0, 0);
     sprite.renderOrder = 5;
