@@ -46,6 +46,7 @@ function ModelViewer(trigger, options, scripts)
   var _ = this;
   _.trigger = $(trigger);
   _.texturePath = options.texturePath;
+  _.poiTexturePath = options.poiTexturePath;
   if (typeof options.popup === 'undefined' || options.popup === false) {
     _.inlineId = 'inline-viewer';
   }
@@ -60,6 +61,7 @@ function ModelViewer(trigger, options, scripts)
   _.cameras = [];
   _.renderers = [];
   _.scenes = [];
+  _.annotations = [];
   _.loadInfo = options.modelload;
   _.loaded = false;
   _.isFileInput = _.trigger.is('input');
@@ -330,7 +332,7 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
         _.createLights();
         _.initMesh();
         if (!_.debugLights) {
-          _.createMenuForSettings();
+          _.initMenu();
         }
         _.viewerStateInfo.hide();
         _.optionsArea.toggle(true);
@@ -583,63 +585,80 @@ var defaultLights = [
   'hemisphere_finna'
 ];
 
-ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(notInitial) {
+ModelViewer.prototype.initMenu = function initMenu() {
   var _ = this;
-  if (!_.encodingMappings) {
-    _.encodingMappings = [
-      {name: 'LinearEncoding', value: THREE.LinearEncoding},
-      {name: 'sRGBEncoding', value: THREE.sRGBEncoding},
-      {name: 'GammaEncoding', value: THREE.GammaEncoding},
-      {name: 'RGBEEncoding', value: THREE.RGBEEncoding},
-      {name: 'RGBM7Encoding', value: THREE.RGBM7Encoding},
-      {name: 'RGBM16Encoding', value: THREE.RGBM16Encoding},
-      {name: 'RGBDEncoding', value: THREE.RGBDEncoding},
-      {name: 'BasicDepthPacking', value: THREE.BasicDepthPacking},
-      {name: 'RGBADepthPacking', value: THREE.RGBADepthPacking}
-    ];
-  }
+  _.raycaster = new THREE.Raycaster();
+  _.raycaster.far = 1000;
+  _.raycaster.near = 1;
+  _.mouse = new THREE.Vector2();
+  _.menuAreas = [
+    {done: false, name: 'File', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: []},
+    {done: false, name: 'Renderers', prefix: 'renderer', holder: undefined, template: undefined, objects: _.renderers, created: []},
+    {done: false, name: 'Scenes', prefix: 'scene', holder: undefined, template: undefined, objects: _.scenes, created: []},
+    {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: _.cameras, created: []},
+    {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: _.meshes, created: []},
+    {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: []},
+    {done: false, name: 'Annotations', prefix: 'annotation', holder: undefined, template: undefined, objects: _.annotations, created: []},
+    {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: []},
+  ];
+  _.encodingMappings = [
+    {name: 'LinearEncoding', value: THREE.LinearEncoding},
+    {name: 'sRGBEncoding', value: THREE.sRGBEncoding},
+    {name: 'GammaEncoding', value: THREE.GammaEncoding},
+    {name: 'RGBEEncoding', value: THREE.RGBEEncoding},
+    {name: 'RGBM7Encoding', value: THREE.RGBM7Encoding},
+    {name: 'RGBM16Encoding', value: THREE.RGBM16Encoding},
+    {name: 'RGBDEncoding', value: THREE.RGBDEncoding},
+    {name: 'BasicDepthPacking', value: THREE.BasicDepthPacking},
+    {name: 'RGBADepthPacking', value: THREE.RGBADepthPacking}
+  ];
+  _.annotationTemplate = {
+    name: 'template',
+    type: 'PlaneGeometry',
+    customName: 'Annotation',
+    position: {
+      x: 0,
+      y: 0,
+      z: 0
+    },
+    texts: {
+      fi: 'testi',
+      en: 'test',
+      sv: 'testen'
+    }
+  };
 
-  if (!_.menuAreas) {
-    _.menuAreas = [
-      {done: false, name: 'Extra', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: []},
-      {done: false, name: 'Renderers', prefix: 'renderer', holder: undefined, template: undefined, objects: _.renderers, created: []},
-      {done: false, name: 'Scenes', prefix: 'scene', holder: undefined, template: undefined, objects: _.scenes, created: []},
-      {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: _.cameras, created: []},
-      {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: _.meshes, created: []},
-      {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: []},
-      {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: []},
-    ];
-  } else {
-    _.menuAreas.forEach(function updateReferences(current) {
-      switch (current.name) {
-      case 'Renderers':
-        current.objects = _.renderers;
-        break;
-      case 'Cameras':
-        current.objects = _.cameras;
-        break;
-      case 'Materials':
-        current.objects = _.materials;
-        break;
-      case 'Lights':
-        current.objects = _.lights;
-        break;
-      case 'Meshes':
-        current.objects = _.meshes;
-        break;
-      case 'Scenes':
-        current.objects = _.scenes;
-        break;
-      }
-    });
-  }
+  window.addEventListener('mousemove', function checkForAnnotation(event) {
+    if (event.target.tagName !== 'CANVAS') {
+      return;
+    }
+    event.preventDefault();
+    var rect = _.renderer.domElement.getBoundingClientRect();
+    _.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    _.mouse.y = - ((event.clientY - rect.top) / rect.height) * 2 + 1;
+    _.raycaster.setFromCamera(_.mouse, _.camera);
 
-  if (!_.settingsMenu) {
-    _.settingsMenu = createDiv('model-settings collapse');
-    _.settingsMenu.id = 'model-settings';
-    var viewer = document.querySelector('.model-viewer.modal-holder');
-    viewer.prepend(_.settingsMenu);
-  }
+    var intersects = _.raycaster.intersectObjects(_.annotations, true);
+    if (intersects.length > 0) {
+      intersects[0].object.onMouseClicked();
+    }
+  });
+  _.settingsMenu = createDiv('model-settings collapse');
+  _.settingsMenu.id = 'model-settings';
+  var viewer = document.querySelector('.model-viewer.modal-holder');
+  viewer.prepend(_.settingsMenu);
+
+  _.createMenuForSettings();
+};
+
+ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
+  var _ = this;
+  _.menuAreas.forEach(function updateReferences(current) {
+    if (current.name === 'File') {
+      return;
+    }
+    current.objects = _[current.name.toLowerCase()];
+  });
 
   var createSettings = function createSettings(object, template, prefix) {
     var form = template.querySelector('form');
@@ -658,24 +677,14 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(not
     if (form.classList.length === 0) {
       return;
     }
-    _.menuAreas.forEach(function checkIfUpdate() {
-      
+    _.menuAreas.forEach(function checkIfUpdate(current) {
+      var exploded = form.className.split("-");
+      var formPrefix = exploded[0];
+      if (formPrefix === current.prefix) {
+        var name = form.querySelector('input[name="' + formPrefix + '-name"]');
+        _.updateObject(current.objects, e.target, name.value);
+      }
     });
-    if (form && form.classList.contains('light-form')) {
-      var lightName = form.querySelector('input[name="light-name"]').value;
-      _.updateObject(_.lights, e.target, lightName);
-    } else if (form && form.classList.contains('material-form')) {
-      var materialName = form.querySelector('input[name="material-name"]').value;
-      _.updateObject(_.materials, e.target, materialName);
-    } else if (form && form.classList.contains('camera-form')) {
-      var cameraName = form.querySelector('input[name="camera-name"]').value;
-      _.updateObject([_.camera], e.target, cameraName);
-      /* Update cube locations */
-      //_.updateCubes();
-    } else if (form && form.classList.contains('renderer-form')) {
-      var rendererName = form.querySelector('input[name="renderer-name"]').value;
-      _.updateObject([_.renderer], e.target, rendererName);
-    }
     /* Update materials just in case */
     _.scene.traverse(function setUpdate(child) {
       if (child.material) {
@@ -735,6 +744,9 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(not
           selectDiv.append(selectSpan, select);
           var saveLight = createButton('save-light', 'save-light', 'Save');
           var form = templateClone.querySelector('form');
+          form.addEventListener('submit', function onSubmit(e) {
+            e.preventDefault();
+          });
           form.prepend(saveLight, selectDiv, div);
           templateClone.classList.remove('template', 'hidden');
           menu.holder.prepend(templateClone);
@@ -774,6 +786,36 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(not
         });
         menu.holder.append(exportButton, importButton);
         break;
+      case 'annotation':
+        var createAnnotation = createButton('button create-annotation', 'create-annotation', 'New annotation');
+        createAnnotation.addEventListener('click', function onCreateAnnotation(e) {
+          var self = this;
+          _.settingsMenu.removeEventListener('change', updateFunction);
+          var annotationClone = menu.template.cloneNode(true);
+          createSettings(_.annotationTemplate, annotationClone, menu.prefix + '-');
+          annotationClone.classList.remove('template', 'hidden');
+          self.classList.add('hidden');
+          menu.holder.prepend(annotationClone);
+          menu.holder.querySelector('input[name="annotation-name"]').removeAttribute('readonly');
+          var positionCheck = createButton('button get-position', 'get-position', 'Set position');
+          positionCheck.addEventListener('click', function onRaycastClick(ev) {
+            console.log(ev);
+          });
+          var saveAnnotation = createButton('button annotation-save', 'save-annotation', 'Save');
+          annotationClone.append(saveAnnotation);
+
+          saveAnnotation.addEventListener('click', function onSaveAnnotation() {
+            annotationClone.remove();
+            self.classList.remove('hidden');
+            var templateClone = Object.assign({}, _.annotationTemplate);
+            _.createObjectToScene(templateClone);
+            _.settingsMenu.addEventListener('change', updateFunction);
+            _.createMenuForSettings();
+          });
+
+        });
+        menu.holder.append(createAnnotation);
+        break;
       }
     }
 
@@ -802,9 +844,6 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings(not
     menu.done = true;
   });
   _.settingsMenu.addEventListener('change', updateFunction);
-  if (notInitial) {
-    return;
-  }
 };
 
 var allowedProperties = [
@@ -815,17 +854,34 @@ var allowedProperties = [
   'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
   'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
   'gammaInput', 'gammaOutput', 'physicallyCorrectLights', 'outputEncoding',
-  'shininess', 'quaternion'
+  'shininess', 'quaternion', 'texts', 'renderOrder', 'scale', 'clearcoat',
+  'clearcoatRoughness', 'normalScale'
 ];
 
 var allowedSubProperties = [
-  'x', 'y', 'z', 'r', 'g', 'b', '_x', '_y', '_z', '_w', 'encoding'
+  'x', 'y', 'z', 'r', 'g', 'b', '_x', '_y', '_z', '_w', 'encoding', 'en', 'fi', 'sv'
+];
+
+var readOnly = [
+  'name',
+  'type'
+];
+
+var encodingTypes = [
+  'encoding',
+  'outputEncoding'
+];
+
+var colorKeys = [
+  'color',
+  'groundColor'
 ];
 
 ModelViewer.prototype.createElement = function createElement(object, key, prefix) {
   if (!allowedProperties.includes(key) || object[key] === null) {
     return;
   }
+  var _ = this;
   var type = typeof object[key];
   var objValue = object[key];
   var div = createDiv('setting-child');
@@ -837,10 +893,18 @@ ModelViewer.prototype.createElement = function createElement(object, key, prefix
     div.append(createSelect(booleanOptions, prefix + key, '' + objValue));
     break;
   case 'number':
-    div.append(createInput('number', prefix + key, objValue));
+    if (encodingTypes.includes(key)) {
+      div.append(createSelect(_.encodingMappings, prefix + key, objValue));
+    } else {
+      div.append(createInput('number', prefix + key, objValue));
+    }
     break;
   case 'string':
-    div.append(createInput('text', prefix + key, objValue));
+    var input = createInput('text', prefix + key, objValue);
+    if (readOnly.includes(key)) {
+      input.setAttribute('readonly', 'readonly');
+    }
+    div.append(input);
     break;
   case 'object':
     var subKeys = Object.keys(objValue);
@@ -873,10 +937,18 @@ ModelViewer.prototype.createElement = function createElement(object, key, prefix
   return div;
 };
 
+/**
+ * Get settings from a JSON object
+ * 
+ * @param {object} $settings JSON settings
+ */
 ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(settings) {
   var _ = this;
   var importFunction = function importFunction(targets, imported) {
     imported.forEach(function checkMatch(current) {
+      if (current.name === 'Meshes') {
+        return;
+      }
       var found = targets.find(function findMaterial(element) {
         return element.name === current.name;
       });
@@ -884,7 +956,7 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
         return element.type === current.value;
       });
       if (!found && isLight) {
-        _.createLightToScene(current);
+        _.createObjectToScene(current);
         found = targets.find(function findMaterial(element) {
           return element.name === current.name;
         });
@@ -893,11 +965,11 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
         var keys = Object.keys(current);
         for (var i = 0; i < keys.length; i++) {
           var key = keys[i];
-          if (['type', 'name'].includes(key)) {
+          if (readOnly.includes(key)) {
             continue;
           }
           if (typeof found[key] !== 'undefined') {
-            if (['color', 'groundColor'].includes(key)) {
+            if (colorKeys.includes(key)) {
               found[key] = new THREE.Color(current[key]);
             } else if (typeof found[key] === 'object') {
               var subKeys = Object.keys(current[key]);
@@ -927,6 +999,10 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
 
 /**
  * Update a light in the scene
+ * 
+ * @param {array} objects array of objects
+ * @param {HTMLInputElement} input element containing data
+ * @param {string} name name of the wanted object 
  */
 ModelViewer.prototype.updateObject = function updateObject(objects, input, name) {
   var _ = this;
@@ -947,6 +1023,13 @@ ModelViewer.prototype.updateObject = function updateObject(objects, input, name)
   }
 };
 
+/**
+ * If value is not a string, then cast it to the proper format
+ * 
+ * @param {*} to   To value to check type and cast to
+ * @param {*} from From what value to cast to
+ * 
+ */
 ModelViewer.prototype.castValueTo = function castValueTo(to, from) {
   var typeTo = typeof to;
   var typeFrom = typeof from;
@@ -984,7 +1067,7 @@ ModelViewer.prototype.addLight = function addLight(form) {
   _.createMenuForSettings(true);
 };
 
-ModelViewer.prototype.createLightToScene = function createLightToScene(object) {
+ModelViewer.prototype.createObjectToScene = function createObjectToScene(object) {
   var _ = this;
   var newLight;
   switch (object.type) {
@@ -1014,6 +1097,21 @@ ModelViewer.prototype.createLightToScene = function createLightToScene(object) {
     newLight = new THREE.PointLight( 0xff0000, 1, 100 );
     newLight.position.set(0, 0, 0);
     newLight.name = object.name;
+    break;
+  case 'PlaneGeometry':
+    var map = new THREE.TextureLoader().load(_.poiTexturePath);
+    var material = new THREE.SpriteMaterial({map: map, depthTest: false});
+    var sprite = new THREE.Sprite( material );
+    sprite.onMouseClicked = function onAnnotationClicked(e) {
+      console.log(this.texts);
+    };
+    sprite.position.set(0, 0, 0);
+    sprite.renderOrder = 5;
+    _.scene.add(sprite);
+    sprite.name = object.name;
+    sprite.texts = object.texts;
+    sprite.customName = object.customName;
+    _.annotations.push(sprite);
     break;
   default:
     break;
@@ -1074,7 +1172,7 @@ ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
   var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(json);
   var downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute("href", dataStr);
-  downloadAnchorNode.setAttribute("download", "lightsettings.json");
+  downloadAnchorNode.setAttribute("download", "scenesettings.json");
   document.body.appendChild(downloadAnchorNode); // required for firefox
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
