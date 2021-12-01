@@ -6,6 +6,21 @@ var dracoLoader;
 // Cache for holdings already loaded scenes, prevent multiple loads
 var sceneCache = {};
 
+var lightTypeMappings = [
+  {name: 'SpotLight', value: 'SpotLight'},
+  {name: 'DirectionalLight', value: 'DirectionalLight'},
+  {name: 'AmbientLight', value: 'AmbientLight'},
+  {name: 'PointLight', value: 'PointLight'},
+  {name: 'HemisphereLight', value: 'HemisphereLight'}
+];
+
+// Boolean options
+var booleanOptions = [
+  {value: 'true', name: 'true'},
+  {value: 'false', name: 'false'}
+];
+
+
 /**
  * Check if fullscreen is supported
  */
@@ -469,6 +484,17 @@ ModelViewer.prototype.initMesh = function initMesh()
           var box = new THREE.BoxHelper(obj, 0xffff00);
           _.scene.add( box );
         }
+      } else {
+        var isLight = false;
+        lightTypeMappings.forEach(function getType(current) {
+          if (isLight) {
+            return;
+          }
+          if (current.value === obj.type) {
+            _.lights.push(obj);
+            isLight = true;
+          }
+        });
       }
     });
     // Next part gets the center vector, so we can move it properly towards 0
@@ -520,21 +546,7 @@ ModelViewer.prototype.createLights = function createLights()
   light.name = 'directional_finna';
   light.position.set(0.2, 0, 0.2); // ~60º
   _.scene.add(light);
-  _.lights.push(hemiLight, ambientLight, light);
 };
-
-var lightTypeMappings = [
-  {name: 'SpotLight', value: 'SpotLight'},
-  {name: 'DirectionalLight', value: 'DirectionalLight'},
-  {name: 'AmbientLight', value: 'AmbientLight'},
-  {name: 'PointLight', value: 'PointLight'},
-  {name: 'HemisphereLight', value: 'HemisphereLight'}
-];
-
-var booleanOptions = [
-  {value: 'true', name: 'true'},
-  {value: 'false', name: 'false'}
-];
 
 var createInput = function createInput(inputType, name, value) {
   var input = document.createElement('input');
@@ -788,7 +800,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
         break;
       case 'annotation':
         var createAnnotation = createButton('button create-annotation', 'create-annotation', 'New annotation');
-        createAnnotation.addEventListener('click', function onCreateAnnotation(e) {
+        createAnnotation.addEventListener('click', function onCreateAnnotation(/*e*/) {
           var self = this;
           _.settingsMenu.removeEventListener('change', updateFunction);
           var annotationClone = menu.template.cloneNode(true);
@@ -797,10 +809,6 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
           self.classList.add('hidden');
           menu.holder.prepend(annotationClone);
           menu.holder.querySelector('input[name="annotation-name"]').removeAttribute('readonly');
-          var positionCheck = createButton('button get-position', 'get-position', 'Set position');
-          positionCheck.addEventListener('click', function onRaycastClick(ev) {
-            console.log(ev);
-          });
           var saveAnnotation = createButton('button annotation-save', 'save-annotation', 'Save');
           annotationClone.append(saveAnnotation);
 
@@ -1102,7 +1110,7 @@ ModelViewer.prototype.createObjectToScene = function createObjectToScene(object)
     var map = new THREE.TextureLoader().load(_.poiTexturePath);
     var material = new THREE.SpriteMaterial({map: map, depthTest: false});
     var sprite = new THREE.Sprite( material );
-    sprite.onMouseClicked = function onAnnotationClicked(e) {
+    sprite.onMouseClicked = function onAnnotationClicked(/*e*/) {
       console.log(this.texts);
     };
     sprite.position.set(0, 0, 0);
