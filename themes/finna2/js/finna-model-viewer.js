@@ -20,6 +20,48 @@ var booleanOptions = [
   {value: 'false', name: 'false'}
 ];
 
+// Default lights in finna viewer
+var defaultLights = [
+  'directional_finna',
+  'ambient_finna',
+  'hemisphere_finna'
+];
+
+// Allowed properties to display in viewer menu
+var allowedProperties = [
+  'name', 'type', 'position', 'color', 'groundColor',
+  'intensity', 'roughness', 'clipIntersection', 'clipShadows',
+  'depthWrite', 'dithering', 'emissive', 'emissiveIntensity',
+  'flatShading', 'metalness', 'morphNormals', 'morphTargets',
+  'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
+  'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
+  'gammaInput', 'gammaOutput', 'physicallyCorrectLights', 'outputEncoding',
+  'shininess', 'quaternion', 'texts', 'renderOrder', 'scale', 'clearcoat',
+  'clearcoatRoughness', 'normalScale'
+];
+
+// Allowed subproperties to display in viewer menu
+var allowedSubProperties = [
+  'x', 'y', 'z', 'r', 'g', 'b', '_x', '_y', '_z', '_w', 'encoding', 'en', 'fi', 'sv'
+];
+
+// Inputs which are readonly
+var readOnly = [
+  'name',
+  'type'
+];
+
+// Encoding types
+var encodingTypes = [
+  'encoding',
+  'outputEncoding'
+];
+
+// Keys for colors, requires creating three color
+var colorKeys = [
+  'color',
+  'groundColor'
+];
 
 /**
  * Check if fullscreen is supported
@@ -506,6 +548,14 @@ ModelViewer.prototype.initMesh = function initMesh()
         obj.position.x += newCenterVector.x;
         obj.position.y += newCenterVector.y;
         obj.position.z += newCenterVector.z;
+      } else {
+        lightTypeMappings.forEach(function getType(current) {
+          if (current.value === obj.type && !defaultLights.includes(obj.name)) {
+            obj.position.x += newCenterVector.x;
+            obj.position.y += newCenterVector.y;
+            obj.position.z += newCenterVector.z;
+          }
+        });
       }
     });
 
@@ -591,12 +641,6 @@ var createButton = function createButton(className, value, text) {
   return button;
 };
 
-var defaultLights = [
-  'directional_finna',
-  'ambient_finna',
-  'hemisphere_finna'
-];
-
 ModelViewer.prototype.initMenu = function initMenu() {
   var _ = this;
   _.raycaster = new THREE.Raycaster();
@@ -604,14 +648,14 @@ ModelViewer.prototype.initMenu = function initMenu() {
   _.raycaster.near = 1;
   _.mouse = new THREE.Vector2();
   _.menuAreas = [
-    {done: false, name: 'File', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: []},
-    {done: false, name: 'Renderers', prefix: 'renderer', holder: undefined, template: undefined, objects: _.renderers, created: []},
-    {done: false, name: 'Scenes', prefix: 'scene', holder: undefined, template: undefined, objects: _.scenes, created: []},
-    {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: _.cameras, created: []},
-    {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: _.meshes, created: []},
-    {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: []},
-    {done: false, name: 'Annotations', prefix: 'annotation', holder: undefined, template: undefined, objects: _.annotations, created: []},
-    {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: []},
+    {done: false, name: 'File', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: [], canDelete: false, canExport: false},
+    {done: false, name: 'Renderers', prefix: 'renderer', holder: undefined, template: undefined, objects: _.renderers, created: [], canDelete: false, canExport: true},
+    {done: false, name: 'Scenes', prefix: 'scene', holder: undefined, template: undefined, objects: _.scenes, created: [], canDelete: false, canExport: true},
+    {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: _.cameras, created: [], canDelete: false, canExport: true},
+    {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: _.meshes, created: [], canDelete: false, canExport: false},
+    {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: [], canDelete: false, canExport: true},
+    {done: false, name: 'Annotations', prefix: 'annotation', holder: undefined, template: undefined, objects: _.annotations, created: [], canDelete: true, canExport: true},
+    {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: [], canDelete: true, canExport: true},
   ];
   _.encodingMappings = [
     {name: 'LinearEncoding', value: THREE.LinearEncoding},
@@ -626,7 +670,7 @@ ModelViewer.prototype.initMenu = function initMenu() {
   ];
   _.annotationTemplate = {
     name: 'template',
-    type: 'PlaneGeometry',
+    type: 'Sprite',
     customName: 'Annotation',
     position: {
       x: 0,
@@ -743,6 +787,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
           var selfBtn = this;
           selfBtn.classList.add('hidden');
           _.settingsMenu.removeEventListener('change', updateFunction);
+          console.log('yeoaaa');
           var templateClone = menu.template.cloneNode(true);
           var div = createDiv('setting-child');
           var span = document.createElement('span');
@@ -803,6 +848,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
         createAnnotation.addEventListener('click', function onCreateAnnotation(/*e*/) {
           var self = this;
           _.settingsMenu.removeEventListener('change', updateFunction);
+          console.log('yeo');
           var annotationClone = menu.template.cloneNode(true);
           createSettings(_.annotationTemplate, annotationClone, menu.prefix + '-');
           annotationClone.classList.remove('template', 'hidden');
@@ -811,7 +857,10 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
           menu.holder.querySelector('input[name="annotation-name"]').removeAttribute('readonly');
           var saveAnnotation = createButton('button annotation-save', 'save-annotation', 'Save');
           annotationClone.append(saveAnnotation);
-
+          var form = annotationClone.querySelector('form');
+          form.addEventListener('submit', function onSubmit(e) {
+            e.preventDefault();
+          });
           saveAnnotation.addEventListener('click', function onSaveAnnotation() {
             annotationClone.remove();
             self.classList.remove('hidden');
@@ -820,8 +869,8 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
             _.settingsMenu.addEventListener('change', updateFunction);
             _.createMenuForSettings();
           });
-
         });
+
         menu.holder.append(createAnnotation);
         break;
       }
@@ -834,19 +883,17 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
       createSettings(current, templateClone, menu.prefix + '-');
       menu.holder.append(templateClone);
       menu.created.push(templateClone);
-      switch (menu.prefix) {
-      case 'light':
-        if (!defaultLights.includes(current.name)) {
-          var deleteButton = createButton('delete-light', 'delete-light', 'Delete');
-          deleteButton.addEventListener('click', function removeLight(e) {
-            var form = e.target.parentNode.querySelector('form');
-            if (form) {
-              _.deleteLight(form);
-            }
-          });
-          templateClone.append(deleteButton);
-        }
-        break;
+
+      if (menu.canDelete && !defaultLights.includes(current.name)) {
+        var value = 'delete-' + current.prefix;
+        var deleteButton = createButton(value, value, 'Delete');
+        deleteButton.addEventListener('click', function removeLight(e) {
+          var form = e.target.parentNode.querySelector('form');
+          if (form) {
+            _.deleteObject(form, menu.prefix, menu.name);
+          }
+        });
+        templateClone.append(deleteButton);
       }
     });
     menu.done = true;
@@ -854,37 +901,15 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
   _.settingsMenu.addEventListener('change', updateFunction);
 };
 
-var allowedProperties = [
-  'name', 'type', 'position', 'color', 'groundColor',
-  'intensity', 'roughness', 'clipIntersection', 'clipShadows',
-  'depthWrite', 'dithering', 'emissive', 'emissiveIntensity',
-  'flatShading', 'metalness', 'morphNormals', 'morphTargets',
-  'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
-  'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
-  'gammaInput', 'gammaOutput', 'physicallyCorrectLights', 'outputEncoding',
-  'shininess', 'quaternion', 'texts', 'renderOrder', 'scale', 'clearcoat',
-  'clearcoatRoughness', 'normalScale'
-];
-
-var allowedSubProperties = [
-  'x', 'y', 'z', 'r', 'g', 'b', '_x', '_y', '_z', '_w', 'encoding', 'en', 'fi', 'sv'
-];
-
-var readOnly = [
-  'name',
-  'type'
-];
-
-var encodingTypes = [
-  'encoding',
-  'outputEncoding'
-];
-
-var colorKeys = [
-  'color',
-  'groundColor'
-];
-
+/**
+ * Creates a menuelement for given object
+ * 
+ * @param {object} object To create menu for
+ * @param {string} key    Key for the input name
+ * @param {string} prefix Prefix for the input name
+ * 
+ * @return {HTMLDivElement}
+ */
 ModelViewer.prototype.createElement = function createElement(object, key, prefix) {
   if (!allowedProperties.includes(key) || object[key] === null) {
     return;
@@ -945,6 +970,15 @@ ModelViewer.prototype.createElement = function createElement(object, key, prefix
   return div;
 };
 
+var creatableObjects = [
+  'HemisphereLight',
+  'AmbientLight',
+  'PointLight',
+  'DirectionalLight',
+  'SpotLight',
+  'Sprite'
+];
+
 /**
  * Get settings from a JSON object
  * 
@@ -954,20 +988,20 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
   var _ = this;
   var importFunction = function importFunction(targets, imported) {
     imported.forEach(function checkMatch(current) {
-      if (current.name === 'Meshes') {
-        return;
-      }
       var found = targets.find(function findMaterial(element) {
         return element.name === current.name;
       });
-      var isLight = lightTypeMappings.find(function findLightPreset(element) {
-        return element.type === current.value;
-      });
-      if (!found && isLight) {
-        _.createObjectToScene(current);
-        found = targets.find(function findMaterial(element) {
-          return element.name === current.name;
+
+      if (!found) {
+        var create = creatableObjects.find(function findLightPreset(type) {
+          return type === current.type;
         });
+        if (create) {
+          _.createObjectToScene(current);
+          found = targets.find(function findMaterial(element) {
+            return element.name === current.name;
+          });
+        }
       }
       if (found) {
         var keys = Object.keys(current);
@@ -995,6 +1029,9 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
   };
   var keys = Object.keys(settings);
   keys.forEach(function saveSection(section) {
+    if (['Meshes', 'File'].includes(section)) {
+      return;
+    }
     var menu = _.menuAreas.find(function menuObject(obj) {
       return obj.name === section;
     });
@@ -1006,7 +1043,7 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
 };
 
 /**
- * Update a light in the scene
+ * Update an object in the scene
  * 
  * @param {array} objects array of objects
  * @param {HTMLInputElement} input element containing data
@@ -1018,6 +1055,9 @@ ModelViewer.prototype.updateObject = function updateObject(objects, input, name)
   var object = objects.find(function find(element) {
     return element.name === name;
   });
+  if (!object) {
+    return;
+  }
   var value = input.value;
   if (['true', 'false'].includes(value)) {
     value = (value === 'true');
@@ -1075,6 +1115,11 @@ ModelViewer.prototype.addLight = function addLight(form) {
   _.createMenuForSettings(true);
 };
 
+/**
+ * Creates a visual object to the scene from a js object
+ * 
+ * @param {object} object To create visual object from
+ */
 ModelViewer.prototype.createObjectToScene = function createObjectToScene(object) {
   var _ = this;
   var newLight;
@@ -1106,7 +1151,7 @@ ModelViewer.prototype.createObjectToScene = function createObjectToScene(object)
     newLight.position.set(0, 0, 0);
     newLight.name = object.name;
     break;
-  case 'PlaneGeometry':
+  case 'Sprite':
     var map = new THREE.TextureLoader().load(_.poiTexturePath);
     var material = new THREE.SpriteMaterial({map: map, depthTest: false});
     var sprite = new THREE.Sprite( material );
@@ -1134,17 +1179,23 @@ ModelViewer.prototype.createObjectToScene = function createObjectToScene(object)
 /**
  * Delete a light from the scene
  */
-ModelViewer.prototype.deleteLight = function deleteLight(form) {
+ModelViewer.prototype.deleteObject = function deleteObject(form, prefix, menuName) {
   var _ = this;
-  var name = form.querySelector('input[name="light-name"]');
+  var name = form.querySelector('input[name="' + prefix + '-name"]');
   if (name) {
-    var light = _.scene.getObjectByName(name.value);
-    if (light) {
-      _.scene.remove(light);
-      _.lights = _.lights.filter(function findLight(element) {
-        return element.name !== name.value;
+    var found = _.scene.getObjectByName(name.value);
+    if (found) {
+      _.scene.remove(found);
+      _.menuAreas.forEach(function filterProperly(current) {
+        if (current.prefix !== prefix) {
+          return;
+        }
+        current.objects = current.objects.filter(function getElements(element) {
+          return element.name !== name.value;
+        });
+        _[menuName.toLowerCase()] = current.objects;
       });
-      _.createMenuForSettings(true);
+      _.createMenuForSettings();
     }
   }
 };
@@ -1170,6 +1221,9 @@ ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
     });
   };
   _.menuAreas.forEach(function saveSection(section) {
+    if (!section.canExport) {
+      return;
+    }
     if (!object[section.name]) {
       object[section.name] = [];
     }
