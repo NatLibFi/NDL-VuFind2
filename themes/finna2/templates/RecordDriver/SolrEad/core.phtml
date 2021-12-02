@@ -84,24 +84,30 @@
         }
       ?>
       <?php if (!empty($summExtended)): ?>
-        <div class="truncate-field wide recordSummary">
-          <p class="summary">
-            <?php foreach ($summExtended as $i => $item): ?>
-              <?= $i > 0 ? '<br/>' : '' ?>
-              <?= $this->escapeHtml($item['text']) ?>
-              <?php $url = $item['url'] ?? ''; if (!empty($url)): ?>
-                (<a target="_blank" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url))?>"><?=$this->escapeHtml($this->truncateUrl($url))?></a>)
-              <?php endif; ?>
-            <?php endforeach; ?>
-          </p>
+        <div class="truncate-field wide summary recordSummary">
+          <?php foreach ($summExtended as $i => $item): ?>
+            <?php
+              $text = $this->recordFieldMarkdown()->toHtml($item['text']);
+              if (!empty($url = $item['url'] ?? '')) {
+                $link = ' (<a target="_blank" href="'
+                  . $this->escapeHtmlAttr($this->proxyUrl($url))
+                  . '">' . $this->escapeHtml($this->truncateUrl($url)) . '</a>)';
+                $text = trim($text);
+                if ('</p>' === substr($text, -4)) {
+                  $text = substr($text, 0, strlen($text) - 4) . $link . '</p>';
+                } else {
+                  $text .= $link;
+                }
+              }
+            ?>
+            <?= $text ?>
+          <?php endforeach; ?>
         </div>
       <?php elseif (!empty($summ)): ?>
-        <div class="truncate-field wide recordSummary">
-          <p class="summary">
-            <?php foreach ($summ as $field): ?>
-              <?=$this->escapeHtml($field)?><br/>
-            <?php endforeach; ?>
-          </p>
+        <div class="truncate-field wide summary recordSummary">
+          <?php foreach ($summ as $field): ?>
+            <?= $this->recordFieldMarkdown()->toHtml($field) ?>
+          <?php endforeach; ?>
         </div>
       <?php endif; ?>
 
