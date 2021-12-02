@@ -37,7 +37,8 @@ var allowedProperties = [
   'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
   'gammaInput', 'gammaOutput', 'physicallyCorrectLights', 'outputEncoding',
   'shininess', 'quaternion', 'texts', 'renderOrder', 'scale', 'clearcoat',
-  'clearcoatRoughness', 'normalScale'
+  'clearcoatRoughness', 'normalScale', 'ior', 'sheen', 'sheenRoughness', 'sheenColor',
+  'transmission', 'bumpScale', 'envMapIntensity'
 ];
 
 // Allowed subproperties to display in viewer menu
@@ -60,7 +61,18 @@ var encodingTypes = [
 // Keys for colors, requires creating three color
 var colorKeys = [
   'color',
-  'groundColor'
+  'groundColor',
+  'sheenColor'
+];
+
+// Creatable object types
+var creatableObjects = [
+  'HemisphereLight',
+  'AmbientLight',
+  'PointLight',
+  'DirectionalLight',
+  'SpotLight',
+  'Sprite'
 ];
 
 /**
@@ -104,14 +116,12 @@ function ModelViewer(trigger, options, scripts)
   _.trigger = $(trigger);
   _.texturePath = options.texturePath;
   _.poiTexturePath = options.poiTexturePath;
-  if (typeof options.popup === 'undefined' || options.popup === false) {
-    _.inlineId = 'inline-viewer';
-  }
-  _.disableDefaultLights = options.disableDefaultLights || false;
+  _.inlineId = 'inline-viewer';
+  _.defaultSettings = JSON.parse(options.settings);
   _.debug = options.debug || false;
-  _.ambientIntensity = +options.ambientIntensity || 1;
-  _.hemisphereIntensity = +options.hemisphereIntensity || 0.3;
-  _.viewerPaddingAngle = +options.viewerPaddingAngle || 35;
+  _.ambientIntensity = 1;
+  _.hemisphereIntensity = 0.3;
+  _.viewerPaddingAngle = 35;
   _.lights = [];
   _.materials = [];
   _.meshes = [];
@@ -122,16 +132,6 @@ function ModelViewer(trigger, options, scripts)
   _.loadInfo = options.modelload;
   _.loaded = false;
   _.isFileInput = _.trigger.is('input');
-  _.defaultLightObject = {
-    name: 'originalname',
-    type: 'type',
-    color: 0xffffff
-  };
-  _.defaultMaterialObject = {
-    name: 'originalname',
-    metalness: 0,
-    roughness: 0,
-  };
   _.createTrigger(options, scripts);
 }
 
@@ -147,7 +147,7 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
   _.trigger.finnaPopup({
     id: options.idOverride || 'modelViewer',
     cycle: false,
-    parent: _.isFileInput ? 'debugViewerArea' : _.inlineId || undefined,
+    parent: _.isFileInput ? 'debugViewerArea' : _.inlineId,
     overrideEvents: _.isFileInput ? 'change' : undefined,
     classes: 'model-viewer',
     translations: options.translations,
@@ -155,9 +155,7 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
     beforeOpen: function onBeforeOpen() {
       var popup = this;
       $.fn.finnaPopup.closeOpen(popup.id);
-      if (_.inlineId) {
-        _.trigger.trigger('viewer-show');
-      }
+      _.trigger.trigger('viewer-show');
     },
     onPopupOpen: function onPopupOpen() {
       var popup = this;
@@ -177,7 +175,9 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.informationsArea = _.root.find('.statistics-table');
           _.root.find('.model-stats').attr('id', 'model-stats');
           _.root.find('.model-help').attr('id', 'model-help');
-          _.root.find('.model-settings').attr('id', 'model-settings');
+          if (!options.viewOnly) {
+            _.root.find('.model-settings').attr('id', 'model-settings');
+          }
           _.informationsArea.toggle(false);
           _.trigger.addClass('open');
         }
@@ -388,9 +388,8 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
         _.createControls();
         _.createLights();
         _.initMesh();
-        if (!_.debugLights) {
-          _.initMenu();
-        }
+        _.initMenu();
+        _.getSettingsFromJson(_.defaultSettings);
         _.viewerStateInfo.hide();
         _.optionsArea.toggle(true);
         if (!fullscreenSupported()) {
@@ -443,12 +442,11 @@ ModelViewer.prototype.adjustScene = function adjustScene(scene)
   if (_.loaded) {
     return;
   }
-
   _.scene = scene;
-  _.scenes.push(_.scene);
   _.scene.background = _.background;
+  _.scenes.push(_.scene);
   if (_.debug) {
-    var axesHelper = new THREE.AxesHelper( 5 );
+    var axesHelper = new THREE.AxesHelper(5);
     _.scene.add( axesHelper );
   }
 };
@@ -506,6 +504,7 @@ ModelViewer.prototype.initMesh = function initMesh()
         // Bumpscale and depthwrite settings
         meshMaterial.depthWrite = !meshMaterial.transparent;
         meshMaterial.bumpScale = 0;
+        meshMaterial.envMap = _.background;
 
         // Apply encodings so glb looks better and update it if needed
         if (meshMaterial.map) meshMaterial.map.encoding = _.encoding;
@@ -682,6 +681,11 @@ ModelViewer.prototype.initMenu = function initMenu() {
       en: 'test',
       sv: 'testen'
     }
+  };
+  _.defaultLightObject = {
+    name: 'templatelight',
+    type: 'type',
+    color: 0xffffff
   };
 
   window.addEventListener('mousemove', function checkForAnnotation(event) {
@@ -968,15 +972,6 @@ ModelViewer.prototype.createElement = function createElement(object, key, prefix
   return div;
 };
 
-var creatableObjects = [
-  'HemisphereLight',
-  'AmbientLight',
-  'PointLight',
-  'DirectionalLight',
-  'SpotLight',
-  'Sprite'
-];
-
 /**
  * Get settings from a JSON object
  * 
@@ -1246,7 +1241,6 @@ ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
 ModelViewer.prototype.loadBackground = function loadBackground()
 {
   var _ = this;
-  var tempLoader = new THREE.TextureLoader();
   if (_.loaded) {
     _.createRenderer();
     _.viewerStateInfo.hide();
@@ -1259,8 +1253,16 @@ ModelViewer.prototype.loadBackground = function loadBackground()
     _.setEvents();
     return;
   }
-  tempLoader.load(
-    _.texturePath,
+  var cubeLoader = new THREE.CubeTextureLoader();
+  cubeLoader.setPath(VuFind.path + '/themes/finna2/images/')
+    .load([
+      'px.png',
+      'nx.png',
+      'py.png',
+      'ny.png',
+      'pz.png',
+      'nz.png'
+    ],
     function onSuccess(texture) {
       _.background = texture;
       _.scene = new THREE.Scene();
@@ -1271,7 +1273,7 @@ ModelViewer.prototype.loadBackground = function loadBackground()
     function onFailure(/*error*/) {
       // Leave empty for debugging purposes
     }
-  );
+    );
 };
 
 (function modelModule($) {

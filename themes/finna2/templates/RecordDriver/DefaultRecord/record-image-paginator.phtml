@@ -42,7 +42,6 @@
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "VuFind.addTranslations($translations);", 'SET');
     $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
     $modelSettings = $this->driver->getModelSettings();
-    $modelSettings['texturePath'] = $this->imageSrc()->getSourceAddress('model_background.jpg', true);
     $modelSettings['poiTexturePath'] = $this->imageSrc()->getSourceAddress('poi.png', true);
     $previewImages = $this->driver->allowModelPreviewImages();
     foreach ($models as $index => $model):

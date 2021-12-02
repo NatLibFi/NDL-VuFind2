@@ -147,13 +147,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $modelViewerSettings = [
-        'popup',
-        'ambientIntensity',
-        'hemisphereIntensity',
-        'viewerPaddingAngle',
         'debug',
         'fileInput',
-        'disableDefaultLights'
+        'viewOnly'
     ];
 
     /**
@@ -816,6 +812,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getModelSettings(): array
     {
         $settings = [];
+        $datasource = $this->getDataSource();
         $iniData = $this->recordConfig->Models ?? [];
         foreach ($this->modelViewerSettings as $setting) {
             if (!empty($iniData->$setting)) {
@@ -823,6 +820,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
         $settings['previewImages'] = $this->allowModelPreviewImages();
+        $dataSourceSettings = $this->mainConfig->Models->settings ?? [];
+        $settings['settings'] = $dataSourceSettings[$datasource]
+            ?? $dataSourceSettings['default'] ?? [];
         return $settings;
     }
 
