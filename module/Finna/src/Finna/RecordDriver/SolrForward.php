@@ -746,7 +746,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Loop through all the authors and save them into a cache
+     * Loop through all the authors and return them in an associative array
      *
      * @param array specifications Specifications for the authors
      *
@@ -1127,6 +1127,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         return $results;
     }
 
+    /**
+     * Loop through all production events and return them in an associative array
+     * 
+     * @return array
+     */
     protected function getProductionEvents(): array
     {
         $cacheKey = __FUNCTION__;
