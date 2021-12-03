@@ -158,6 +158,17 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Uncredited creator attributes
+     *
+     * @var array
+     */
+    protected $uncreditedCreatorAttributes = [
+        'elokuva-elokreditoimatontekija-nimi'
+    ];
+
+    
+
+    /**
      * Content descriptors
      *
      * @var array
@@ -501,13 +512,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getDistributors()
     {
-        return $this->getAgentsWithActivityAttribute(
-            'finna-activity-code=fds',
-            [
-                'date' => 'elokuva-elolevittaja-vuosi',
-                'method' => 'elokuva-elolevittaja-levitystapa'
-            ]
-        );
+        $authors = $this->getAuthors();
+        return $authors['distributors'] ?? [];
     }
 
     /**
@@ -517,13 +523,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getFunders()
     {
-        return $this->getAgentsWithActivityAttribute(
-            'finna-activity-code=fnd',
-            [
-                'amount' => 'elokuva-elorahoitusyhtio-summa',
-                'fundingType' => 'elokuva-elorahoitusyhtio-rahoitustapa'
-            ]
-        );
+        $authors = $this->getAuthors();
+        return $authors['funders'] ?? [];
     }
 
     /**
@@ -585,13 +586,37 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get presenters as an assoc array
+     *
+     * @return array
+     */
+    public function getPresenters(): array
+    {
+        $authors = $this->getAuthors();
+        return $authors['presenters'] ?? [];
+    }
+
+    /**
      * Get all primary authors apart from presenters
      *
      * @return array
      */
     public function getNonPresenterPrimaryAuthors()
     {
-        return $this->getNonPresenterAuthors(true);
+        $authors = $this->getAuthors();
+        return $authors['primaryAuthors']  ?? [];
+    }
+
+
+    /**
+     * Get all authors apart from presenters
+     *
+     * @return array
+     */
+    public function getNonPresenterAuthors($primary = null): array
+    {
+        $authors = $this->getAuthors();
+        return $authors['nonPresenters'] ?? [];
     }
 
     /**
@@ -601,69 +626,245 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getNonPresenterSecondaryAuthors()
     {
-        $authors = $this->getNonPresenterAuthors(false);
-        $uncredited = [];
-        $credited = [];
-        $uncreditedEnsembles = [];
-
-        foreach ($authors as $author) {
-            if ($author['uncredited']) {
-                if ($author['type'] === 'elonet_kokoonpano') {
-                    $uncreditedEnsembles[] = $author;
-                } else {
-                    $uncredited[] = $author;
-                }
-            } else {
-                $credited[] = $author;
-            }
-        }
-        return compact('credited', 'uncredited', 'uncreditedEnsembles');
+        $authors = $this->getAuthors();
+        return $authors['nonPresenterSecondaryAuthors'] ?? [];
     }
 
     /**
-     * Get all authors apart from presenters
-     *
-     * @param mixed $primary Whether to return only primary or secondary authors or
-     * all (null)
-     *
+     * Identification strings for where should the author be saved in the results
+     * 
+     * @var array
+     */
+    protected $presenterIdentifications = [
+        'elonet_henkilo|act|credited' => ['presenters' => 'credited'],
+        'elonet_henkilo|act|uncredited' => ['presenters' => 'uncredited'],
+        'elonet_kokoonpano|any_value|credited'
+            => ['presenters' => 'actingEnsemble'],
+        'elonet_henkilo|no_value|credited' => ['presenters' => 'performer'],
+        'elonet_henkilo|no_value|uncredited'
+            => ['presenters' => 'uncreditedPerformer'],
+        'any_value|no_value|credited' => ['presenters' => 'other'],
+        'no_value|muutesiintyjät|credited' => ['presenters' => 'other'],
+        'elonet_kokoonpano|no_value|credited'
+            => ['presenters' => 'performingEnsemble'],
+        'no_value|avustajat|credited' => ['presenters' => 'assistant'],
+    ];
+
+    /**
+     * Identification strings for where should the author be saved in the results
+     * 
+     * @var array
+     */
+    protected $nonPresenterIdentifications = [
+        'elonet_kokoonpano|any_value|credited'
+            => ['nonPresenterSecondaryAuthors' => 'uncreditedEnsembles'],
+        'any_value|any_value|uncredited'
+            => ['nonPresenterSecondaryAuthors' => 'uncredited'],
+        'any_value|any_value|credited'
+            => ['nonPresenterSecondaryAuthors' => 'credited'],
+        'elonet_henkilo|any_value|credited'
+            => ['nonPresenterSecondaryAuthors' => 'credited']
+    ];
+
+    /**
+     * Values to preserve when forming identification string
+     * 
+     * @var array
+     */
+    protected $valuesToPreserve = [
+        'no_value',
+        'act',
+        'elonet_henkilo',
+        'elonet_kokoonpano',
+        'muutesiintyjät',
+        'avustajat'
+    ];
+
+    /**
+     * Loop through all the authors and save them into a cache
+     * 
+     * @param array specifications Specifications for the authors
+     * 
      * @return array
      */
-    public function getNonPresenterAuthors($primary = null): array
+    public function getAuthors(): array
     {
-        $filters = [
-            'a99' => [
-                'tags' => ['avustajat']
-            ],
-            'oth' => [
-                'types' => ['elonet_kokoonpano']
-            ],
-            'exclude' => true
+        $cacheKey = __FUNCTION__;
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+        $xml = $this->getRecordXML();
+        $idx = 0;
+        $results = [
+            'all' => [],
+            'primaryAuthors' => [],
+            'producers' => [],
         ];
+        $primaryAuthors = [];
 
-        $authors = [];
-        if (null === $this->nonPresenterAuthorsCache) {
-            $this->nonPresenterAuthorsCache = $this->getAuthorsByRelators(
-                $this->nonPresenterAuthorRelators,
-                $filters
+        $createIdentificationString = function (
+            string $type,
+            string $role,
+            bool $uncredited
+        ): string {
+            return implode(
+                '|',
+                [
+                    in_array(
+                        $type,
+                        $this->valuesToPreserve
+                    ) ? $type : 'any_value',
+                    in_array(
+                        $role,
+                        $this->valuesToPreserve
+                    ) ? $role : 'any_value',
+                    $uncredited === true ? 'uncredited' : 'credited'
+                ]
             );
-        }
-        $authors = $this->nonPresenterAuthorsCache;
+        };
 
-        if (null === $primary) {
-            return $authors;
-        }
-        $result = [];
-        foreach ($authors as $author) {
-            $isPrimary = isset($author['role'])
-                && in_array(
-                    strtolower($author['role']),
-                    $this->primaryAuthorRelators
-                );
-            if ($isPrimary === $primary) {
-                $result[] = $author;
+        foreach ($xml->HasAgent as $agent) {
+            $result = [
+                'tag' => ((string)$agent['elonet-tag'] ?? ''),
+                'name' => '',
+                'role' => '',
+                'id' => '',
+                'type' => '',
+                'roleName' => '',
+                'description' => '',
+                'uncredited' => '',
+                'idx' => ''
+            ];
+
+            $tag = ($agent['elonet-tag'] ?? '');
+            $identification = [];
+            if (!empty($agent->Activity)) {
+                $activity = $agent->Activity;
+                $relator = (string)$activity;
+                $primary = $relator === 'D02';
+                if (null === ($role = $this->getAuthorRole($agent, $relator))) {
+                    continue;
+                }
+                if (in_array($role, $this->filteredRoles)) {
+                    $result['role'] = '';
+                } else {
+                    $result['role'] = $role;
+                }
+                $attributes = $activity->attributes();
+                foreach ($attributes as $key => $value) {
+                    $result[$key] = (string)$value;
+                }
+                $result['relator'] = (string)$activity;
             }
+            if (!empty($agent->AgentName)) {
+                $agentName = $agent->AgentName;
+                $attributes = $agentName->attributes();
+                $result['name'] = (string)$agentName;
+                foreach ($attributes as $key => $value) {
+                    $valueString = (string)$value;
+                    $result[$key] = $valueString;
+                    if (empty($result['name'])) {
+                        if (in_array($key, $this->uncreditedNameAttributes)) {
+                            $result['name'] = $valueString;
+                        }
+                    }
+                    if (in_array($key, $this->roleAttributes)) {
+                        $result['roleName'] = $valueString;
+                        continue;
+                    }
+                    if (in_array($key, $this->uncreditedRoleAttributes)) {
+                        $result['roleName'] = $valueString;
+                        $result['uncredited'] = true;
+                        continue;
+                    }
+                    if (in_array($key, $this->uncreditedCreatorAttributes)) {
+                        $result['uncredited'] = true;
+                        continue;
+                    }
+                    if (in_array($key, $this->roleDescriptions)) {
+                        $result['description'] = $valueString;
+                        continue;
+                    }
+                }
+            }
+            if (!empty($agent->AgentIdentifier)) {
+                $authType = (string)$agent->AgentIdentifier->IDTypeName;
+                $idValue = (string)$agent->AgentIdentifier->IDValue;
+                $authId = "{$authType}_{$idValue}";
+                $result['id'] = $authId;
+                $result['type'] = $authType;
+            }
+            $idx++;
+            $result['idx'] = $primary ? $idx : 10000 * $idx;
+
+            $isUncredited = ($result['uncredited'] ?? false) === true;
+            $type = $result['type'] ?? 'no_value';
+            // Create identification string for saving to correct array
+            $id = $createIdentificationString(
+                $type,
+                $role,
+                $isUncredited
+            );
+
+            $lRelator = mb_strtolower($result['relator'] ?? '');
+            if (in_array($lRelator, $this->primaryAuthorRelators)) {
+                $results['primaryAuthors'][] = $result;
+            }
+            // Save presenter
+            if (in_array($lRelator, $this->presenterAuthorRelators)) {
+                if ($storage = $this->presenterIdentifications[$id] ?? []) {
+                    foreach($storage as $key => $value) {
+                        if (!isset($results[$key])) {
+                            $results[$key] = [$value => ['presenters' => []]];
+                        }
+                        $results[$key][$value]['presenters'][] = $result;
+                    }
+                }
+            }
+            // Save nonpresenter author
+            if (in_array($lRelator, $this->nonPresenterAuthorRelators)) {
+                if ($storage = $this->nonPresenterIdentifications[$id] ?? []) {
+                    foreach($storage as $key => $value) {
+
+                        if (!isset($results[$key])) {
+                            $results[$key] = [$value => []];
+                        }
+                        $results[$key][$value][] = $result;
+                    }
+                }
+                if (!isset($results['nonPresenters'])) {
+                    $results['nonPresenters'] = [];
+                }
+                $results['nonPresenters'][] = $result;
+            }
+
+            // Save producers
+            if ('E10' === ($result['finna-activity-code'] ?? '')
+                || isset($result['elokuva-elotuotantoyhtio'])
+            ) {
+                $results['producers'][] = $result;
+            }
+
+            // Save distributors
+            if ('fds' === ($result['finna-activity-code'] ?? '')) {
+                $result['date'] = $result['elokuva-elolevittaja-vuosi'] ?? '';
+                $result['method']
+                    = $result['elokuva-elolevittaja-levitystapa'] ?? '';
+                $results['distributors'][] = $result;
+            }
+
+            // Save distributors
+            if ('fnd' === ($result['finna-activity-code'] ?? '')) {
+                $result['amount'] = $result['elokuva-elorahoitusyhtio-summa'] ?? '';
+                $result['fundingType']
+                    = $result['elokuva-elorahoitusyhtio-rahoitustapa'] ?? '';
+                $results['funders'][] = $result;
+            }
+
+
+            $results['all'][] = $result;
         }
-        return $result;
+        return $this->cache[$cacheKey] = $results;
     }
 
     /**
@@ -717,110 +918,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get presenters as an assoc array
-     *
-     * @return array
-     */
-    public function getPresenters(): array
-    {
-        $filters = [
-            'a99' => [
-                'tags' => ['avustajat']
-            ],
-            'oth' => [
-                'types' => ['elonet_kokoonpano']
-            ],
-            'exclude' => false
-        ];
-        $presenters = $this->getAuthorsByRelators(
-            $this->presenterAuthorRelators,
-            $filters
-        );
-
-        // Lets arrange the results as an assoc array with easy to read results
-        $result = [
-            'credited' => [
-                'presenters' => []
-            ],
-            'uncredited' => [
-                'presenters' => []
-            ],
-            'actingEnsemble' => [
-                'presenters' => []
-            ],
-            'performer' => [
-                'presenters' => []
-            ],
-            'uncreditedPerformer' => [
-                'presenters' => []
-            ],
-            'other' => [
-                'presenters' => []
-            ],
-            'performingEnsemble' => [
-                'presenters' => []
-            ],
-            'assistant' => [
-                'presenters' => []
-            ]
-        ];
-
-        foreach ($presenters as $presenter) {
-            $role = $presenter['role'] ?? '';
-
-            switch ($presenter['type']) {
-            case 'elonet_henkilo':
-                if ($role === 'act') {
-                    if (!empty($presenter['uncredited'])
-                        && $presenter['uncredited']
-                    ) {
-                        $result['uncredited']['presenters'][] = $presenter;
-                    } else {
-                        $result['credited']['presenters'][] = $presenter;
-                    }
-                } elseif (empty($role)) {
-                    if (!empty($presenter['uncredited'])
-                        && $presenter['uncredited']
-                    ) {
-                        $result['uncreditedPerformer']['presenters'][]
-                            = $presenter;
-                    } else {
-                        $result['performer']['presenters'][] = $presenter;
-                    }
-                }
-                break;
-            case 'elonet_kokoonpano':
-                if (empty($role)) {
-                    $result['performingEnsemble']['presenters'][] = $presenter;
-                } else {
-                    $result['actingEnsemble']['presenters'][] = $presenter;
-                }
-
-                break;
-            default:
-                if (empty($role)) {
-                    $result['other']['presenters'][] = $presenter;
-                } elseif ($role === 'avustajat') {
-                    $result['assistant']['presenters'][] = $presenter;
-                }
-                break;
-            }
-        }
-
-        // Filter out empty sub-arrays
-        foreach ($result as $key => $current) {
-            if (is_array($current)) {
-                $current = array_filter($current);
-            }
-            if (empty($current)) {
-                unset($result[$key]);
-            }
-        }
-
-        return $result;
-    }
-
-    /**
      * Return press review
      *
      * @return string
@@ -842,12 +939,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getProducers()
     {
-        $result = $this->getAgentsWithActivityAttribute('elokuva-elotuotantoyhtio');
-        $result = array_merge(
-            $result,
-            $this->getAgentsWithActivityAttribute('finna-activity-code=E10')
-        );
-        return $result;
+        $authors = $this->getAuthors();
+        return $authors['producers'] ?? [];
     }
 
     /**
@@ -927,80 +1020,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get all agents that have the given attribute in Activity element
-     *
-     * @param string $attribute    Attribute (and option value) to look for
-     * @param array  $includeAttrs Attributes to include from AgentName
-     *
-     * @return array
-     */
-    protected function getAgentsWithActivityAttribute($attribute, $includeAttrs = [])
-    {
-        if (strpos($attribute, '=') > 0) {
-            [$attribute, $requiredValue] = explode('=', $attribute, 2);
-        }
-        $result = [];
-        $xml = $this->getRecordXML();
-        foreach ($xml->HasAgent as $agent) {
-            $attributes = $agent->Activity->attributes();
-            if (!empty($attributes->{$attribute})
-                && (empty($requiredValue)
-                || $attributes->{$attribute} == $requiredValue)
-            ) {
-                $authId = isset($agent->AgentIdentifier)
-                    ? (string)$agent->AgentIdentifier->IDTypeName . '_' .
-                    (string)$agent->AgentIdentifier->IDValue
-                    : null;
-                $authType = (string)$agent->AgentIdentifier->IDTypeName ?? null;
-
-                $item = [
-                    'name' => (string)$agent->AgentName,
-                    'id' => $authId,
-                    'type' => $authType
-                ];
-                $agentAttrs = $agent->AgentName->attributes();
-                foreach ($includeAttrs as $key => $attr) {
-                    if (!empty($agentAttrs->{$attr})) {
-                        $item[$key] = (string)$agentAttrs->{$attr};
-                    }
-                }
-                $result[] = $item;
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Get all agents that have the given attribute in AgentName element
-     *
-     * @param string $attribute    Attribute to look for
-     * @param array  $includeAttrs Attributes to include from AgentName
-     *
-     * @return array
-     */
-    protected function getAgentsWithNameAttribute($attribute, $includeAttrs = [])
-    {
-        $result = [];
-        $xml = $this->getRecordXML();
-        foreach ($xml->HasAgent as $agent) {
-            $attributes = $agent->AgentName->attributes();
-            if (!empty($attributes->{$attribute})) {
-                $item = [
-                    'name' => (string)$agent->AgentName
-                ];
-                $agentAttrs = $agent->AgentName->attributes();
-                foreach ($includeAttrs as $key => $attr) {
-                    if (!empty($agentAttrs->{$attr})) {
-                        $item[$key] = (string)$agentAttrs->{$attr};
-                    }
-                }
-                $result[] = $item;
-            }
-        }
-        return $result;
-    }
-
-    /**
      * Get all original records as a SimpleXML object
      *
      * @return SimpleXMLElement The record as SimpleXML
@@ -1014,131 +1033,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $this->lazyRecordXML = is_array($records) ? $records : [$records];
         }
         return $this->lazyRecordXML;
-    }
-
-    /**
-     * Get authors by relator codes
-     *
-     * @param array $relators Array of relator codes
-     * @param array $filters  Array of filter rules
-     *
-     * @return array
-     */
-    protected function getAuthorsByRelators(array $relators, array $filters = [])
-    : array
-    {
-        $result = [];
-        $xml = $this->getRecordXML();
-        $idx = 0;
-        foreach ($xml->HasAgent as $agent) {
-            $relator = (string)$agent->Activity;
-            $lRelator = strtolower($relator);
-            if (!in_array($lRelator, $relators)) {
-                continue;
-            }
-
-            if (null === ($role = $this->getAuthorRole($agent, $relator))) {
-                continue;
-            }
-
-            $authType = (string)$agent->AgentIdentifier->IDTypeName;
-            $authId = (string)$agent->AgentIdentifier->IDTypeName . '_' .
-                (string)$agent->AgentIdentifier->IDValue;
-
-            if (!empty($filters) && in_array($lRelator, array_keys($filters))) {
-                $filter = $filters[strtolower($relator)];
-                $matchFound = false;
-
-                if (!empty($filter['types'])
-                    && in_array($authType, $filter['types'])
-                ) {
-                    $matchFound = true;
-                }
-                if (!empty($filter['tags']) && !$matchFound) {
-                    $agentAttrs = $agent->attributes();
-
-                    if (!empty($agentAttrs->{'elonet-tag'})) {
-                        $tag = (string)$agentAttrs->{'elonet-tag'};
-                        $matchFound = in_array($tag, $filter['tags']);
-                    }
-                }
-                if ($filters['exclude'] === $matchFound) {
-                    continue;
-                }
-            }
-
-            $normalizedRelator = mb_strtoupper($relator, 'UTF-8');
-            $primary = $normalizedRelator == 'D02'; // Director
-            $nameAttrs = $agent->AgentName->attributes();
-            $roleName = '';
-            $uncredited = false;
-
-            foreach ($this->roleAttributes as $attr) {
-                if (!empty($nameAttrs->{$attr})) {
-                    $roleName = (string)$nameAttrs->{$attr};
-                    break;
-                }
-            }
-
-            if (empty($roleName)) {
-                foreach ($this->uncreditedRoleAttributes as $attr) {
-                    if (!empty($nameAttrs->{$attr})) {
-                        $roleName = (string)$nameAttrs->{$attr};
-                        $uncredited = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!empty($nameAttrs->{'elokuva-elokreditoimatontekija-nimi'})) {
-                $uncredited = true;
-            }
-
-            $description = '';
-            foreach ($this->roleDescriptions as $desc) {
-                if (!empty($nameAttrs->{$desc})) {
-                    $description = (string)$nameAttrs->{$desc};
-                    break;
-                }
-            }
-
-            $name = (string)$agent->AgentName;
-            if (empty($name)) {
-                foreach ($this->uncreditedNameAttributes as $value) {
-                    if (!empty($nameAttrs->{$value})) {
-                        $name = (string)$nameAttrs->{$value};
-                        break;
-                    }
-                }
-            }
-
-            // Remove unwanted roles here
-            if (in_array($role, $this->filteredRoles)) {
-                $role = '';
-            }
-
-            ++$idx;
-            $result[] = [
-                'name' => $name,
-                'role' => $role,
-                'id' => $authId,
-                'type' => $authType,
-                'roleName' => $roleName,
-                'description' => $description,
-                'uncredited' => $uncredited,
-                'idx' => $primary ? $idx : 10000 * $idx
-            ];
-        }
-
-        // Sort the primary authors first using the idx
-        usort(
-            $result,
-            function ($a, $b) {
-                return $a['idx'] - $b['idx'];
-            }
-        );
-
-        return $result;
     }
 
     /**
