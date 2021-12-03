@@ -48,6 +48,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
+    protected $howmanyloops = 0;
+
     /**
      * Non-presenter author relator codes.
      *
@@ -209,20 +211,20 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $inspectionAttributes = [
-        'number' => 'elokuva-tarkastus-tarkastusnro',
-        'inspectiontype' => 'elokuva-tarkastus-tarkastamolaji',
-        'length' => 'elokuva-tarkastus-pituus',
-        'taxclass' => 'elokuva-tarkastus-veroluokka',
-        'agerestriction' => 'elokuva-tarkastus-ikaraja',
-        'format' => 'elokuva-tarkastus-formaatti',
-        'part' => 'elokuva-tarkastus-osalkm',
-        'office' => 'elokuva-tarkastus-tarkastuttaja',
-        'runningtime' => 'elokuva-tarkastus-kesto',
-        'subject' => 'elokuva-tarkastus-tarkastusaihe',
-        'reason' => 'elokuva-tarkastus-perustelut',
-        'additional' => 'elokuva-tarkastus-muuttiedot',
-        'notification' => 'elokuva-tarkastus-tarkastusilmoitus',
-        'inspector' => 'elokuva-tarkastus-tarkastuselin'
+        'elokuva-tarkastus-tarkastusnro' => 'number',
+        'elokuva-tarkastus-tarkastamolaji' => 'inspectiontype',
+        'elokuva-tarkastus-pituus' => 'length',
+        'elokuva-tarkastus-veroluokka' => 'taxclass',
+        'elokuva-tarkastus-ikaraja' => 'agerestriction',
+        'elokuva-tarkastus-formaatti' => 'format',
+        'elokuva-tarkastus-osalkm' => 'part',
+        'elokuva-tarkastus-tarkastuttaja' => 'office',
+        'elokuva-tarkastus-kesto' => 'runningtime',
+        'elokuva-tarkastus-tarkastusaihe' => 'subject',
+        'elokuva-tarkastus-perustelut' => 'reason',
+        'elokuva-tarkastus-muuttiedot' => 'additional',
+        'elokuva-tarkastus-tarkastusilmoitus' => 'notification',
+        'elokuva-tarkastus-tarkastuselin' => 'inspector'
     ];
 
     /**
@@ -255,6 +257,150 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'elokuva-elonayttelija-selitys',
         'elokuva-elokreditoimatonnayttelija-selitys',
         'elokuva-elokreditoimatontekija-selitys'
+    ];
+
+
+    /**
+     * Identification strings for where should the author be saved in the results
+     * 
+     * @var array
+     */
+    protected $presenterIdentifications = [
+        'elonet_henkilo|act|credited' => ['presenters' => 'credited'],
+        'elonet_henkilo|act|uncredited' => ['presenters' => 'uncredited'],
+        'elonet_kokoonpano|any_value|credited'
+            => ['presenters' => 'actingEnsemble'],
+        'elonet_henkilo|no_value|credited' => ['presenters' => 'performer'],
+        'elonet_henkilo|no_value|uncredited'
+            => ['presenters' => 'uncreditedPerformer'],
+        'any_value|no_value|credited' => ['presenters' => 'other'],
+        'no_value|muutesiintyjät|credited' => ['presenters' => 'other'],
+        'elonet_kokoonpano|no_value|credited'
+            => ['presenters' => 'performingEnsemble'],
+        'no_value|avustajat|credited' => ['presenters' => 'assistant'],
+    ];
+
+    /**
+     * Identification strings for where should the author be saved in the results
+     * 
+     * @var array
+     */
+    protected $nonPresenterIdentifications = [
+        'elonet_kokoonpano|any_value|credited'
+            => ['nonPresenterSecondaryAuthors' => 'uncreditedEnsembles'],
+        'any_value|any_value|uncredited'
+            => ['nonPresenterSecondaryAuthors' => 'uncredited'],
+        'any_value|any_value|credited'
+            => ['nonPresenterSecondaryAuthors' => 'credited'],
+        'elonet_henkilo|any_value|credited'
+            => ['nonPresenterSecondaryAuthors' => 'credited']
+    ];
+
+    /**
+     * Values to preserve when forming identification string
+     * 
+     * @var array
+     */
+    protected $valuesToPreserve = [
+        'no_value',
+        'act',
+        'elonet_henkilo',
+        'elonet_kokoonpano',
+        'muutesiintyjät',
+        'avustajat'
+    ];
+
+        /**
+     * Mappings to save production attribute as a string
+     * 
+     * @var array
+     */
+    protected $productionAttributeMappings = [
+        'elokuva-kuvasuhde' => 'AspectRatio',
+        'elokuva-alkupvari' => 'Color',
+        'elokuva-alkupvarijarjestelma' => 'ColorSystem',
+        'elokuva-alkuperaisteos' => 'OriginalWork',
+        'elokuva-alkupkesto' => 'PlayingTimes',
+        'elokuva-alkupaani' => 'Sound',
+        'elokuva-alkupaanijarjestelma' => 'SoundSystem',
+        'elokuva-tuotantokustannukset' => 'ProductionCost',
+        'elokuva-teatterikopioidenlkm' => 'NumberOfCopies',
+        'elokuva-kuvausaika' => 'FilmingDate',
+        'elokuva-arkistoaineisto' => 'ArchiveFilms'
+    ];
+
+    /**
+     * Mappings to save production elements as values
+     * 
+     * @var array
+     */
+    protected $productionEventMappings = [
+        'elokuva_laji2fin' => 'Type',
+        'elokuva_huomautukset' => 'GeneralNotes',
+        'elokuva_musiikki' => 'MusicInfo',
+        'elokuva_lehdistoarvio' => 'PressReview',
+        'elokuva_ulkokuvat' => 'Exteriors',
+        'elokuva_sisakuvat' => 'Interiors',
+        'elokuva_studiot' => 'Studios',
+        'elokuva_kuvauspaikkahuomautus' => 'LocationNotes',
+    ];
+
+    /**
+     * Mappings to get proper broadcasting information
+     * 
+     * @var array
+     */
+    protected $broadcastingInfoMappings = [
+        'elokuva-elotelevisioesitys-esitysaika' => 'time',
+        'elokuva-elotelevisioesitys-paikka' => 'place',
+        'elokuva-elotelevisioesitys-katsojamaara' => 'viewers'
+    ];
+
+    /**
+     * Mappings to get proper festival subjects
+     * 
+     * @var array
+     */
+    protected $festivalSubjectHeaders = [
+        'elokuva-elofestivaaliosallistuminen-aihe' => true
+    ];
+
+    /**
+     * Mappings to get proper distributor headers
+     * 
+     * @var array
+     */
+    protected $foreignDistributorHeaders = [
+        'elokuva-eloulkomaanmyynti-levittaja' => true
+    ];
+
+    /**
+     * Mappings to get proper other screening headers
+     * 
+     * @var array
+     */
+    protected $otherScreeningHeaders = [
+        'elokuva-muuesitys-aihe' => true
+    ];
+
+    /**
+     * Mappings to get inspection values
+     * 
+     * @var array
+     */
+    protected $inspectionAttributeHeaders = [
+        'elokuva-tarkastus-tarkastusnro' => 'number',
+        'elokuva-tarkastus-tarkastuselin' => true,
+        'elokuva-tarkastus-tarkastusilmoitus' => true
+    ];
+
+    /**
+     * Headers for access restrictions
+     * 
+     * @var array
+     */
+    protected $accessRestrictionHeaders = [
+        'finna-kayttooikeus' => 1
     ];
 
     /**
@@ -297,18 +443,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAccessRestrictions()
     {
-        $results = [];
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                if ($event->ProductionEventType) {
-                    $attributes = $event->ProductionEventType->attributes();
-                    if (!empty($attributes['finna-kayttooikeus'])) {
-                        $results[(string)$attributes['finna-kayttooikeus']] = 1;
-                    }
-                }
-            }
-        }
-        return array_keys($results);
+        $events = $this->getProductionEvents();
+        return array_keys($events['AccessRestrictions'] ?? []);
     }
 
     /**
@@ -323,20 +459,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAccessRestrictionsType($language)
     {
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                if ($event->ProductionEventType) {
-                    $attributes = $event->ProductionEventType->attributes();
-                    if (!empty($attributes['finna-kayttooikeus'])) {
-                        $type = (string)$attributes['finna-kayttooikeus'];
-                        $result = ['copyright' => $type];
-                        if ($link = $this->getRightsLink($type, $language)) {
-                            $result['link'] = $link;
-                        }
-                        return $result;
-                    }
-                }
+        $events = $this->getProductionEvents();
+        foreach (array_keys($events['AccessRestrictions'] ?? []) as $type) {
+            $result = ['copyright' => $type];
+            if ($link = $this->getRightsLink($type, $language)) {
+                $result['link'] = $link;
             }
+            return $result;
         }
         return false;
     }
@@ -443,7 +572,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAspectRatio()
     {
-        return $this->getProductionEventAttribute('elokuva-kuvasuhde');
+        $events = $this->getProductionEvents();
+        return $events['AspectRatio'] ?? '';
     }
 
     /**
@@ -453,8 +583,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getType()
     {
-        $type = $this->getProductionEventElement('elokuva_laji2fin');
-        return trim(implode(', ', $type));
+        $events = $this->getProductionEvents();
+        return trim(implode(', ', $events['Type'] ?? []));
     }
 
     /**
@@ -464,7 +594,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getColor()
     {
-        return $this->getProductionEventAttribute('elokuva-alkupvari');
+        $events = $this->getProductionEvents();
+        return $events['Color'] ?? '';
     }
 
     /**
@@ -474,7 +605,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getColorSystem()
     {
-        return $this->getProductionEventAttribute('elokuva-alkupvarijarjestelma');
+        $events = $this->getProductionEvents();
+        return $events['ColorSystem'] ?? '';
     }
 
     /**
@@ -534,7 +666,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getGeneralNotes()
     {
-        return $this->getProductionEventElement('elokuva_huomautukset');
+        $events = $this->getProductionEvents();
+        return $events['GeneralNotes'] ?? '';
     }
 
     /**
@@ -573,14 +706,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getMusicInfo()
     {
-        $result = $this->getProductionEventElement('elokuva_musiikki');
-        $result = reset($result);
-        if (!$result) {
-            return '';
-        }
-        $result = preg_replace('/(\d+\. )/', '<br/>\1', $result);
-        if (strncmp($result, '<br/>', 5) == 0) {
-            $result = substr($result, 5);
+        $events = $this->getProductionEvents();
+        $results = $events['MusicInfo'] ?? [];
+        if ($result = reset($results) ?? '') {
+            $result = preg_replace('/(\d+\. )/', '<br/>\1', $result);
+            if (strncmp($result, '<br/>', 5) == 0) {
+                $result = substr($result, 5);
+            }
         }
         return $result;
     }
@@ -629,56 +761,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $authors = $this->getAuthors();
         return $authors['nonPresenterSecondaryAuthors'] ?? [];
     }
-
-    /**
-     * Identification strings for where should the author be saved in the results
-     * 
-     * @var array
-     */
-    protected $presenterIdentifications = [
-        'elonet_henkilo|act|credited' => ['presenters' => 'credited'],
-        'elonet_henkilo|act|uncredited' => ['presenters' => 'uncredited'],
-        'elonet_kokoonpano|any_value|credited'
-            => ['presenters' => 'actingEnsemble'],
-        'elonet_henkilo|no_value|credited' => ['presenters' => 'performer'],
-        'elonet_henkilo|no_value|uncredited'
-            => ['presenters' => 'uncreditedPerformer'],
-        'any_value|no_value|credited' => ['presenters' => 'other'],
-        'no_value|muutesiintyjät|credited' => ['presenters' => 'other'],
-        'elonet_kokoonpano|no_value|credited'
-            => ['presenters' => 'performingEnsemble'],
-        'no_value|avustajat|credited' => ['presenters' => 'assistant'],
-    ];
-
-    /**
-     * Identification strings for where should the author be saved in the results
-     * 
-     * @var array
-     */
-    protected $nonPresenterIdentifications = [
-        'elonet_kokoonpano|any_value|credited'
-            => ['nonPresenterSecondaryAuthors' => 'uncreditedEnsembles'],
-        'any_value|any_value|uncredited'
-            => ['nonPresenterSecondaryAuthors' => 'uncredited'],
-        'any_value|any_value|credited'
-            => ['nonPresenterSecondaryAuthors' => 'credited'],
-        'elonet_henkilo|any_value|credited'
-            => ['nonPresenterSecondaryAuthors' => 'credited']
-    ];
-
-    /**
-     * Values to preserve when forming identification string
-     * 
-     * @var array
-     */
-    protected $valuesToPreserve = [
-        'no_value',
-        'act',
-        'elonet_henkilo',
-        'elonet_kokoonpano',
-        'muutesiintyjät',
-        'avustajat'
-    ];
 
     /**
      * Loop through all the authors and save them into a cache
@@ -807,10 +889,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             );
 
             $lRelator = mb_strtolower($result['relator'] ?? '');
+            // Get primary authors
             if (in_array($lRelator, $this->primaryAuthorRelators)) {
                 $results['primaryAuthors'][] = $result;
             }
-            // Save presenter
+            // Save presenter authors
             if (in_array($lRelator, $this->presenterAuthorRelators)) {
                 if ($storage = $this->presenterIdentifications[$id] ?? []) {
                     foreach($storage as $key => $value) {
@@ -821,7 +904,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
             }
-            // Save nonpresenter author
+            // Save nonpresenter authors
             if (in_array($lRelator, $this->nonPresenterAuthorRelators)) {
                 if ($storage = $this->nonPresenterIdentifications[$id] ?? []) {
                     foreach($storage as $key => $value) {
@@ -853,7 +936,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $results['distributors'][] = $result;
             }
 
-            // Save distributors
+            // Save funders
             if ('fnd' === ($result['finna-activity-code'] ?? '')) {
                 $result['amount'] = $result['elokuva-elorahoitusyhtio-summa'] ?? '';
                 $result['fundingType']
@@ -903,7 +986,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getOriginalWork()
     {
-        return $this->getProductionEventAttribute('elokuva-alkuperaisteos');
+        $events = $this->getProductionEvents();
+        return $events['OriginalWork'] ?? '';
     }
 
     /**
@@ -913,7 +997,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getPlayingTimes()
     {
-        $str = $this->getProductionEventAttribute('elokuva-alkupkesto');
+        $events = $this->getProductionEvents();
+        $str = $events['PlayingTimes'] ?? '';
         return $str ? [$str] : [];
     }
 
@@ -924,12 +1009,12 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getPressReview()
     {
-        $result = $this->getProductionEventElement('elokuva_lehdistoarvio');
-        $result = reset($result);
-        if (!$result) {
-            return '';
+        $events = $this->getProductionEvents();
+        $results = $events['PressReview'] ?? [];
+        if ($result = reset($results)) {
+            return $result;
         }
-        return $result;
+        return '';
     }
 
     /**
@@ -950,7 +1035,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getSound()
     {
-        return $this->getProductionEventAttribute('elokuva-alkupaani');
+        $events = $this->getProductionEvents();
+        return $events['Sound'] ?? '';
     }
 
     /**
@@ -960,7 +1046,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getSoundSystem()
     {
-        return $this->getProductionEventAttribute('elokuva-alkupaanijarjestelma');
+        $events = $this->getProductionEvents();
+        return $events['SoundSystem'] ?? '';
     }
 
     /**
@@ -1059,44 +1146,97 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         return $results;
     }
 
-    /**
-     * Return a production event attribute
-     *
-     * @param string $attribute Attribute name
-     *
-     * @return string
-     */
-    protected function getProductionEventAttribute($attribute)
-    {
-        $xml = $this->getRecordXML();
-        foreach ($xml->ProductionEvent as $event) {
-            $attributes = $event->ProductionEventType->attributes();
-            if (!empty($attributes->{$attribute})) {
-                return (string)$attributes->{$attribute};
-            }
-        }
-        return '';
-    }
 
-    /**
-     * Return a production event element contents as an array
-     *
-     * @param string $element Element name
-     *
-     * @return array
-     */
-    protected function getProductionEventElement($element)
+    protected function getProductionEvents(): array
     {
-        $results = [];
+        $cacheKey = __FUNCTION__;
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
+        $results = [
+            'BroadcastingInfo' => [],
+            'FestivalInfo' => [],
+            'ForeignDistribution' => [],
+            'OtherScreenings' => [],
+            'InspectionDetails' => [],
+            'AccessRestrictions' => []
+        ];
         $xml = $this->getRecordXML();
         foreach ($xml->ProductionEvent as $event) {
-            if (!empty($event->$element)) {
-                foreach ($event->$element as $item) {
-                    $results[] = (string)$item;
+            $type = (string)($event->ProductionEventType ?? '');
+            $regionName = (string)($event->Region->RegionName ?? '');
+            $dateText = (string)($event->DateText ?? '');
+            // Get premiere theater information
+            if ($type === 'PRE') {
+                $theater = $regionName;
+                $results['PremiereTheater'] = explode(';', $theater);
+                $results['PremiereTime'] = $dateText;
+            }
+
+            $attributes = $event->ProductionEventType->attributes();
+            $broadcastingResult = [];
+            $inspectionResult = [];
+            foreach ($attributes as $key => $value) {;
+                $stringValue = (string)$value;
+                // Get production attribute
+                if ($storage = $this->productionAttributeMappings[$key] ?? '') {
+                    $results[$storage] = $stringValue;
+                }
+                // Get broadcasting information
+                if ($info = $this->broadcastingInfoMappings[$key] ?? '') {
+                    $broadcastingResult[$info] = $stringValue;
+                }
+                // Get festival info
+                if ($festival = $this->festivalSubjectHeaders[$key] ?? '') {
+                    $results['FestivalInfo'][] = [
+                        'name' => $stringValue,
+                        'region' => $regionName,
+                        'date' => $dateText
+                    ];
+                }
+                // Get foreign distribution info
+                if ($distributor = $this->foreignDistributorHeaders[$key] ?? '') {
+                    $results['ForeignDistribution'][] = [
+                        'name' => $stringValue,
+                        'region' => $regionName
+                    ];
+                }
+                // Get other screening info
+                if ($screening = $this->otherScreeningHeaders[$key] ?? '') {
+                    $results['OtherScreenings'][] = [
+                        'name' => $stringValue,
+                        'region' => $regionName,
+                        'date' => $dateText
+                    ];
+                }
+                // Get inspection detail
+                if ($inspection = $this->inspectionAttributes[$key] ?? '') {
+                    $inspectionResult[$inspection] = $stringValue;
+                }
+                // Get access restriction details
+                if ($restriction = $this->accessRestrictionHeaders[$key] ?? '') {
+                    $results['AccessRestrictions'][$stringValue] = 1;
+                }
+            }
+            // Check if we have found something to save
+            if ($broadcastingResult) {
+                $results['BroadcastingInfo'][] = $broadcastingResult;
+            }
+            if ($inspectionResult) {
+                if (strpos($dateText, '0000') === false) {
+                    $inspectionResult['date'] = $dateText;
+                }
+                $results['InspectionDetails'][] = $inspectionResult;
+            }
+            $children = $event->children();
+            foreach ($children as $childKey => $childValue) {
+                if ($storage = $this->productionEventMappings[$childKey] ?? []) {
+                    $results[$storage][] = (string)$childValue;
                 }
             }
         }
-        return $results;
+        return $this->cache[$cacheKey] = $results;
     }
 
     /**
@@ -1275,7 +1415,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getProductionCost()
     {
-        return $this->getProductionEventAttribute('elokuva-tuotantokustannukset');
+        $events = $this->getProductionEvents();
+        return $events['ProductionCost'] ?? '';
     }
 
     /**
@@ -1285,16 +1426,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getPremiereTheaters()
     {
-        $results = [];
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                if ($event->ProductionEventType == 'PRE') {
-                    $theater = (string)$event->Region->RegionName;
-                    $results = explode(';', $theater);
-                }
-            }
-        }
-        return $results;
+        $events = $this->getProductionEvents();
+        return $events['PremiereTheater'] ?? [];
     }
 
     /**
@@ -1304,15 +1437,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getPremiereTime()
     {
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                if ($event->ProductionEventType == 'PRE') {
-                    $time = (string)$event->DateText;
-                    return $time;
-                }
-            }
-        }
-        return '';
+        $events = $this->getProductionEvents();
+        return $events['PremiereTime'] ?? [];
     }
 
     /**
@@ -1322,37 +1448,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getBroadcastingInfo()
     {
-        $results = [];
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                $time = $place = $viewers = '';
-                $attributes = $event->ProductionEventType->attributes();
-                if (!empty($attributes->{'elokuva-elotelevisioesitys-esitysaika'})) {
-                    $time = (string)$attributes
-                        ->{'elokuva-elotelevisioesitys-esitysaika'};
-                }
-                if (!empty($attributes->{'elokuva-elotelevisioesitys-paikka'})) {
-                    $place = (string)$attributes
-                        ->{'elokuva-elotelevisioesitys-paikka'};
-                }
-                if (!empty($attributes->{'elokuva-elotelevisioesitys-katsojamaara'})
-                ) {
-                    $viewers = (string)$attributes
-                        ->{'elokuva-elotelevisioesitys-katsojamaara'};
-                }
-                if (empty($attributes->{'elokuva-elotelevisioesitys-esitysaika'})) {
-                    continue;
-                }
-
-                $results[] = [
-                    'time' => $time,
-                    'place' => $place,
-                    'viewers' => $viewers
-                ];
-            }
-        }
-        $results = array_filter($results);
-        return $results;
+        $events = $this->getProductionEvents();
+        return $events['BroadcastingInfo'] ?? [];
     }
 
     /**
@@ -1362,26 +1459,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getFestivalInfo()
     {
-        $results = [];
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                $atr = $event->ProductionEventType->attributes();
-                if (empty($atr->{'elokuva-elofestivaaliosallistuminen-aihe'})) {
-                    continue;
-                }
-                $name = (string)$atr->{'elokuva-elofestivaaliosallistuminen-aihe'};
-                $region = !empty($event->Region->RegionName)
-                    ? ((string)$event->Region->RegionName) : '';
-                $date = !empty($event->DateText)
-                    ? ((string)$event->DateText) : '';
-                $results[] = [
-                    'name' => $name,
-                    'region' => $region,
-                    'date' => $date
-                ];
-            }
-        }
-        return $results;
+        $events = $this->getProductionEvents();
+        return $events['FestivalInfo'] ?? [];
     }
 
     /**
@@ -1391,25 +1470,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getForeignDistribution()
     {
-        $results = [];
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                $atr = $event->ProductionEventType->attributes();
-                if (empty($atr->{'elokuva-eloulkomaanmyynti-levittaja'})) {
-                    continue;
-                }
-                $name = (string)$atr->{
-                    'elokuva-eloulkomaanmyynti-levittaja'
-                };
-                $region = !empty($event->Region->RegionName)
-                    ? ((string)$event->Region->RegionName) : '';
-                $results[] = [
-                    'name' => $name,
-                    'region' => $region
-                ];
-            }
-        }
-        return $results;
+        $events = $this->getProductionEvents();
+        return $events['ForeignDistribution'] ?? [];
     }
 
     /**
@@ -1419,7 +1481,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getNumberOfCopies()
     {
-        return $this->getProductionEventAttribute('elokuva-teatterikopioidenlkm');
+        $events = $this->getProductionEvents();
+        return $events['NumberOfCopies'] ?? '';
     }
 
     /**
@@ -1429,26 +1492,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getOtherScreenings()
     {
-        $results = [];
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                $atr = $event->ProductionEventType->attributes();
-                if (empty($atr->{'elokuva-muuesitys-aihe'})) {
-                    continue;
-                }
-                $name = (string)$atr->{'elokuva-muuesitys-aihe'};
-                $region = !empty($event->Region->RegionName)
-                    ? ((string)$event->Region->RegionName) : '';
-                $date = !empty($event->DateText)
-                    ? ((string)$event->DateText) : '';
-                $results[] = [
-                    'name' => $name,
-                    'region' => $region,
-                    'date' => $date
-                ];
-            }
-        }
-        return $results;
+        $events = $this->getProductionEvents();
+        return $events['OtherScreenings'] ?? [];
     }
 
     /**
@@ -1458,30 +1503,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getInspectionDetails()
     {
-        $results = [];
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                $atr = $event->ProductionEventType->attributes();
-                if (!empty($atr->{'elokuva-tarkastus-tarkastusnro'})
-                    || !empty($atr->{'elokuva-tarkastus-tarkastuselin'})
-                    || !empty($atr->{'elokuva-tarkastus-tarkastusilmoitus'})
-                ) {
-                    $result = [];
-                    foreach ($this->inspectionAttributes as $key => $value) {
-                        if (!empty($atr->{$value})) {
-                            $result[$key] = (string)$atr->{$value};
-                        }
-                    }
-                    if (!empty($event->DateText)
-                        && strpos($event->DateText, '0000') == false
-                    ) {
-                        $result['date'] = (string)$event->DateText;
-                    }
-                    $results[] = $result;
-                }
-            }
-        }
-        return $results;
+        $events = $this->getProductionEvents();
+        return $events['InspectionDetails'] ?? [];
     }
 
     /**
@@ -1516,31 +1539,34 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     /**
      * Return exteriors
      *
-     * @return string
+     * @return array
      */
     public function getExteriors()
     {
-        return $this->getProductionEventElement('elokuva_ulkokuvat');
+        $events = $this->getProductionEvents();
+        return $events['Exteriors'] ?? '';
     }
 
     /**
      * Return interiors
      *
-     * @return string
+     * @return array
      */
     public function getInteriors()
     {
-        return $this->getProductionEventElement('elokuva_sisakuvat');
+        $events = $this->getProductionEvents();
+        return $events['Interiors'] ?? '';
     }
 
     /**
      * Return studios
      *
-     * @return string
+     * @return array
      */
     public function getStudios()
     {
-        return $this->getProductionEventElement('elokuva_studiot');
+        $events = $this->getProductionEvents();
+        return $events['Studios'] ?? '';
     }
 
     /**
@@ -1550,7 +1576,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getLocationNotes()
     {
-        return $this->getProductionEventElement('elokuva_kuvauspaikkahuomautus');
+        $events = $this->getProductionEvents();
+        return $events['LocationNotes'] ?? '';
     }
 
     /**
@@ -1560,7 +1587,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getFilmingDate()
     {
-        return $this->getProductionEventAttribute('elokuva-kuvausaika');
+        $events = $this->getProductionEvents();
+        return $events['FilmingDate'] ?? '';
     }
 
     /**
@@ -1570,7 +1598,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      */
     public function getArchiveFilms()
     {
-        return $this->getProductionEventAttribute('elokuva-arkistoaineisto');
+        $events = $this->getProductionEvents();
+        return $events['ArchiveFilms'] ?? '';
     }
 
     /**
