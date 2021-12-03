@@ -168,8 +168,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'elokuva-elokreditoimatontekija-nimi'
     ];
 
-    
-
     /**
      * Content descriptors
      *
@@ -259,10 +257,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'elokuva-elokreditoimatontekija-selitys'
     ];
 
-
     /**
      * Identification strings for where should the author be saved in the results
-     * 
+     *
      * @var array
      */
     protected $presenterIdentifications = [
@@ -282,7 +279,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Identification strings for where should the author be saved in the results
-     * 
+     *
      * @var array
      */
     protected $nonPresenterIdentifications = [
@@ -298,7 +295,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Values to preserve when forming identification string
-     * 
+     *
      * @var array
      */
     protected $valuesToPreserve = [
@@ -310,9 +307,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'avustajat'
     ];
 
-        /**
+    /**
      * Mappings to save production attribute as a string
-     * 
+     *
      * @var array
      */
     protected $productionAttributeMappings = [
@@ -331,7 +328,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Mappings to save production elements as values
-     * 
+     *
      * @var array
      */
     protected $productionEventMappings = [
@@ -347,7 +344,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Mappings to get proper broadcasting information
-     * 
+     *
      * @var array
      */
     protected $broadcastingInfoMappings = [
@@ -358,7 +355,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Mappings to get proper festival subjects
-     * 
+     *
      * @var array
      */
     protected $festivalSubjectHeaders = [
@@ -367,7 +364,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Mappings to get proper distributor headers
-     * 
+     *
      * @var array
      */
     protected $foreignDistributorHeaders = [
@@ -376,7 +373,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Mappings to get proper other screening headers
-     * 
+     *
      * @var array
      */
     protected $otherScreeningHeaders = [
@@ -385,7 +382,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Mappings to get inspection values
-     * 
+     *
      * @var array
      */
     protected $inspectionAttributeHeaders = [
@@ -396,7 +393,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Headers for access restrictions
-     * 
+     *
      * @var array
      */
     protected $accessRestrictionHeaders = [
@@ -736,9 +733,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterPrimaryAuthors()
     {
         $authors = $this->getAuthors();
-        return $authors['primaryAuthors']  ?? [];
+        return $authors['primaryAuthors'] ?? [];
     }
-
 
     /**
      * Get all authors apart from presenters
@@ -764,9 +760,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Loop through all the authors and save them into a cache
-     * 
+     *
      * @param array specifications Specifications for the authors
-     * 
+     *
      * @return array
      */
     public function getAuthors(): array
@@ -896,7 +892,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             // Save presenter authors
             if (in_array($lRelator, $this->presenterAuthorRelators)) {
                 if ($storage = $this->presenterIdentifications[$id] ?? []) {
-                    foreach($storage as $key => $value) {
+                    foreach ($storage as $key => $value) {
                         if (!isset($results[$key])) {
                             $results[$key] = [$value => ['presenters' => []]];
                         }
@@ -907,8 +903,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             // Save nonpresenter authors
             if (in_array($lRelator, $this->nonPresenterAuthorRelators)) {
                 if ($storage = $this->nonPresenterIdentifications[$id] ?? []) {
-                    foreach($storage as $key => $value) {
-
+                    foreach ($storage as $key => $value) {
                         if (!isset($results[$key])) {
                             $results[$key] = [$value => []];
                         }
@@ -943,7 +938,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     = $result['elokuva-elorahoitusyhtio-rahoitustapa'] ?? '';
                 $results['funders'][] = $result;
             }
-
 
             $results['all'][] = $result;
         }
@@ -1146,7 +1140,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         return $results;
     }
 
-
     protected function getProductionEvents(): array
     {
         $cacheKey = __FUNCTION__;
@@ -1177,7 +1170,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $attributes = $event->ProductionEventType->attributes();
             $broadcastingResult = [];
             $inspectionResult = [];
-            foreach ($attributes as $key => $value) {;
+            foreach ($attributes as $key => $value) {
                 $stringValue = (string)$value;
                 // Get production attribute
                 if ($storage = $this->productionAttributeMappings[$key] ?? '') {
