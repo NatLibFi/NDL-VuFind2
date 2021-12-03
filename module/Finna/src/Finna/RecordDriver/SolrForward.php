@@ -728,7 +728,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    public function getNonPresenterAuthors($primary = null): array
+    public function getNonPresenterAuthors(): array
     {
         $authors = $this->getAuthors();
         return $authors['nonPresenters'] ?? [];
@@ -747,8 +747,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Loop through all the authors and return them in an associative array
-     *
-     * @param array specifications Specifications for the authors
      *
      * @return array
      */
@@ -1129,7 +1127,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Loop through all production events and return them in an associative array
-     * 
+     *
      * @return array
      */
     protected function getProductionEvents(): array
