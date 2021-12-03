@@ -48,8 +48,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
-    protected $howmanyloops = 0;
-
     /**
      * Non-presenter author relator codes.
      *
