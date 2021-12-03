@@ -381,17 +381,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Mappings to get inspection values
-     *
-     * @var array
-     */
-    protected $inspectionAttributeHeaders = [
-        'elokuva-tarkastus-tarkastusnro' => 'number',
-        'elokuva-tarkastus-tarkastuselin' => true,
-        'elokuva-tarkastus-tarkastusilmoitus' => true
-    ];
-
-    /**
      * Headers for access restrictions
      *
      * @var array
