@@ -388,13 +388,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'Synopsis' => 'synopsis'
     ];
 
-    protected $videoAttributeMappings = [
-        'elokuva-elonet-materiaali-video-url' => 'videoURL',
-        'elokuva-elonet-materiaali-video-kieli' => 'videoLanguage',
-        'elokuva-elonet-url' => 'elonetURL',
-        'vimeo-id' => 'vimeoID'
-    ];
-
     /**
      * Record metadata
      *
