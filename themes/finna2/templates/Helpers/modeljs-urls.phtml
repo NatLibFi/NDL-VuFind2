@@ -12,6 +12,12 @@ echo json_encode([
         '',
         ''
     ),
+    'js-gltfexporter' => $this->headScript()->itemToString(
+        $this->headScript()->createData('text/javascript', ['src' => 'vendor/GLTFExporter.js', 'id' => 'js-gltfloader']),
+        '',
+        '',
+        ''
+    ),
     'js-orbitcontrols' => $this->headScript()->itemToString(
         $this->headScript()->createData('text/javascript', ['src' => 'vendor/OrbitControls.js', 'id' => 'js-orbitcontrols']),
         '',

@@ -822,11 +822,37 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
         });
         break;
       case 'custom':
-        var exportButton = createButton('button export-settings', 'export', 'Export');
-        var importButton = createButton('button import-settings', 'import', 'Import');
+        var exportButton = createButton('button export-settings', 'export', 'Export .json');
+        var exportGLBButton = createButton('button export-settings', 'export', 'Export .glb');
+        var importButton = createButton('button import-settings', 'import', 'Import .json');
         var inputLights = document.querySelector('input[name="light-file-input"]');
         exportButton.addEventListener('click', function startExport() {
           _.saveSettingsAsJson(_.settingsMenu);
+        });
+        exportGLBButton.addEventListener('click', function startExport() {
+          var exporter = new THREE.GLTFExporter();
+          // Parse the input and generate the glTF output
+          exporter.parse(
+            _.scene,
+            // called when the gltf has been generated
+            function onParseDone(gltf) {
+              var url = URL.createObjectURL(new Blob([gltf], {type: 'application/octet-stream'}));
+              var downloadAnchorNode = document.createElement('a');
+              downloadAnchorNode.setAttribute("href", url);
+              downloadAnchorNode.setAttribute("download", "object.glb");
+              document.body.appendChild(downloadAnchorNode); // required for firefox
+              downloadAnchorNode.click();
+              downloadAnchorNode.remove();
+              URL.revokeObjectURL(url);
+            },
+            // called when there is an error in the generation
+            function onParseError(error ) {
+              console.log(error);
+            },
+            {
+              binary: true
+            }
+          );
         });
         importButton.addEventListener('click', function openFileDialog() {
           inputLights.click();
@@ -844,7 +870,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
             reader.readAsText(file);
           }
         });
-        menu.holder.append(exportButton, importButton);
+        menu.holder.append(exportButton, exportGLBButton, importButton);
         break;
       case 'annotation':
         var createAnnotation = createButton('button create-annotation', 'create-annotation', 'New annotation');
