@@ -1137,7 +1137,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         $largeImageFormats = [
             '0/Image/',
             '0/PhysicalObject/',
-            '0/WorkOfArt/'
+            '0/WorkOfArt/',
+            '0/Video/',
         ];
         if (array_intersect($formats, $largeImageFormats)) {
             return true;
