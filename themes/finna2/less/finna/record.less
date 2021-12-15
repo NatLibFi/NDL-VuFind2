@@ -908,8 +908,9 @@ a.authority {
 }
 
 .record-main .recordProvidedBy {
-  &:extend(.sidebar .recordProvidedBy all);
-  h2:extend(.sidebar > h2) {};
+  h2 {
+    font-size: 20px;
+  }
   @media (min-width: @screen-sm-min) {
     max-width: 300px;
   }

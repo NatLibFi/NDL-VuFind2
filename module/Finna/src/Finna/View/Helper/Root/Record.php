@@ -1099,4 +1099,66 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return $label;
     }
+
+    /**
+     * Check if large image layout should be used for the record
+     *
+     * @return bool
+     */
+    public function hasLargeImageLayout(): bool
+    {
+        $language = $this->getView()->layout()->userLang;
+
+        $imageTypes = ['small', 'medium', 'large', 'master'];
+        $images = $this->getAllImages($language, false, false, false);
+        $hasValidImages = false;
+        foreach ($images as $image) {
+            $validTypes = array_intersect(
+                array_keys($image['urls'] ?? []),
+                $imageTypes
+            );
+            if ($validTypes) {
+                $hasValidImages = true;
+                break;
+            }
+        }
+        if (!$hasValidImages) {
+            return false;
+        }
+
+        // Always large image for LIDO, FORWARD and FORWARD authority:
+        $recordFormat = $this->driver->tryMethod('getRecordFormat');
+        if (in_array($recordFormat, ['lido', 'forward', 'forwardAuthority'])) {
+            return true;
+        }
+
+        $formats = $this->driver->tryMethod('getFormats');
+        // Use for certain formats:
+        $largeImageFormats = [
+            '0/Image/',
+            '0/PhysicalObject/',
+            '0/WorkOfArt/'
+        ];
+        if (array_intersect($formats, $largeImageFormats)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the organisation menu position for the record
+     *
+     * @return string|false 'sidebar', 'inline' or false for no menu
+     */
+    public function getOrganisationMenuPosition()
+    {
+        $localSources = ['Solr', 'SolrAuth', 'L1', 'R2'];
+        $source = $this->driver->getSourceIdentifier();
+        if (!in_array($source, $localSources)) {
+            return false;
+        }
+        return ('SolrAuth' === $source || $this->hasLargeImageLayout())
+            ? 'inline' : 'sidebar';
+    }
 }
