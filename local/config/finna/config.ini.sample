@@ -1408,6 +1408,17 @@ repository_library_request_in_holdings = true
 ; Whether to display repository library request in organisation info box:
 repository_library_request_in_organisation_info = true
 
+; Record formats (metadata schemas) that always use the large image layout
+; regardless of material type when images are available (default is "lido",
+; "forward" and "forwardAuthority"):
+;large_image_record_formats[] = "lido"
+;large_image_record_formats[] = "qdc"
+
+; Formats (material types) that use the large image layout when images are available
+; (default is "0/Image/", "0/PhysicalObject/", "0/WorkOfArt/" and "0/Video/"):
+;large_image_formats[] = "0/Image/"
+;large_image_formats[] = "0/Map/"
+
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
 ; This setting controls how many headings are displayed on each page of results:

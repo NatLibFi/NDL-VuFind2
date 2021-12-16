@@ -1113,11 +1113,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $images = $this->getAllImages($language, false, false, false);
         $hasValidImages = false;
         foreach ($images as $image) {
-            $validTypes = array_intersect(
-                array_keys($image['urls'] ?? []),
-                $imageTypes
-            );
-            if ($validTypes) {
+            if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {
                 $hasValidImages = true;
                 break;
             }
@@ -1126,20 +1122,27 @@ class Record extends \VuFind\View\Helper\Root\Record
             return false;
         }
 
-        // Always large image for LIDO, FORWARD and FORWARD authority:
+        // Check for record formats that always use large image layout:
+        $largeImageRecordFormats
+            = isset($this->config->Record->large_image_record_formats)
+            ? $this->config->Record->large_image_record_formats->toArray()
+            : ['lido', 'forward', 'forwardAuthority'];
         $recordFormat = $this->driver->tryMethod('getRecordFormat');
-        if (in_array($recordFormat, ['lido', 'forward', 'forwardAuthority'])) {
+        if (in_array($recordFormat, $largeImageRecordFormats)) {
             return true;
         }
 
+        // Check for formats that use large image layout:
+        $largeImageFormats
+            = isset($this->config->Record->large_image_formats)
+            ? $this->config->Record->large_image_formats->toArray()
+            : [
+                '0/Image/',
+                '0/PhysicalObject/',
+                '0/WorkOfArt/',
+                '0/Video/',
+            ];
         $formats = $this->driver->tryMethod('getFormats');
-        // Use for certain formats:
-        $largeImageFormats = [
-            '0/Image/',
-            '0/PhysicalObject/',
-            '0/WorkOfArt/',
-            '0/Video/',
-        ];
         if (array_intersect($formats, $largeImageFormats)) {
             return true;
         }
