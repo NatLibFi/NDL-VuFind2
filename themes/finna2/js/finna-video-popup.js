@@ -130,10 +130,6 @@ finna.videoPopup = (function finnaVideoPopup() {
       $('.inline-video-container').insertAfter($('.search-form-container'));
       $('.inline-video-container').removeClass('hidden');
     }
-    if (inline.length !== 1) {
-      var buttons = _container.querySelector('.video-buttons.hidden');
-      buttons.classList.remove('hidden');
-    }
 
     var translations = {
       close: VuFind.translate('close'),
