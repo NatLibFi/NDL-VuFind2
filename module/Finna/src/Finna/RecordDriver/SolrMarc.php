@@ -670,6 +670,55 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get extended composition information from field 382.
+     *
+     * Returns an array where each entry contains a set of subfields with a type code
+     * (see $typeMap below).
+     *
+     * @return array
+     */
+    public function getExtendedMusicCompositions()
+    {
+        $results = [];
+        $typeMap = [
+            'a' => 'medium',
+            'b' => 'soloist',
+            'd' => 'doublingInstrument',
+            'e' => 'numEnsemblesOfSameType',
+            'n' => 'numPerformersOfSameMedium',
+            'p' => 'altMedium',
+            'r' => 'numIndividualPerformers',
+            's' => 'numPerformers',
+            't' => 'numEnsembles',
+            'v' => 'note',
+            '3' => 'materials'
+        ];
+        $marc = $this->getMarcReader();
+        foreach ($marc->getFields('382') as $field) {
+            $allSubfields = $this->getAllSubfields($field);
+            $items = [];
+            foreach ($allSubfields as $subfield) {
+                $code = $subfield['code'];
+                if (!($type = $typeMap[$code] ?? false)) {
+                    continue;
+                }
+                $contents = trim($subfield['data']);
+                if ('' === $contents) {
+                    continue;
+                }
+                $items[] = compact('type', 'contents');
+            }
+            if ($items) {
+                $results[] = [
+                    'partial' => $field['i1'] === '1',
+                    'items' => $items,
+                ];
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get an array of all extent information.
      *
      * @return array

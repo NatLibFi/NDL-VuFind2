@@ -1166,6 +1166,35 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'record-composition']
             ]
         );
+
+        $getExtendedMusicCompositions = function ($data, $options) {
+            $final = [];
+            $pos = $options['pos'];
+            foreach ($data as $field) {
+                $label = $field['partial']
+                    ? 'Partial Medium of Performance'
+                    : 'Medium of Performance';
+                $final[] = [
+                    'label' => $label,
+                    'values' => $field['items'],
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-music-composition.phtml',
+                        'context' => [
+                            'class' => 'record-composition',
+                        ],
+                    ],
+                ];
+            }
+            return $final;
+        };
+        $setMultiTemplateLine(
+            'Music Compositions Extended',
+            'getExtendedMusicCompositions',
+            $getExtendedMusicCompositions
+        );
+
         $setTemplateLine(
             'Notated Music Format',
             'getNotatedMusicFormat',
