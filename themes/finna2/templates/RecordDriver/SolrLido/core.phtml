@@ -2,7 +2,6 @@
 <?php
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
-  $documents = $this->driver->getDocuments();
   $urls = $this->record($this->driver)->getLinkDetails();
   if (!empty($urls)){
       $videoUrls = [];
@@ -99,7 +98,7 @@
         <?php endif; ?>
       </div>
 
-      <?php if (!empty($documents)): ?>
+      <?php if ($documents = $this->driver->getDocuments()): ?>
         <div class="record-links">
           <div class="recordURLs local-available-online-record">
             <ul class="truncate-field outer" data-rows="4">
