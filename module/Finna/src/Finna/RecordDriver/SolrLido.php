@@ -1619,6 +1619,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
         }
         $urls = $this->resolveUrlTypes($urls);
+        $urls = array_merge($urls, $this->getAudios(), $this->getVideos());
         return $urls;
     }
 
