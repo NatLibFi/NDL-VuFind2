@@ -488,10 +488,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 if (!$url || !$this->isUrlLoadable($url, $this->getUniqueID())) {
                     continue;
                 }
-                $format = (string)$linkResource['formatResource'] ?? '';
+                $format = (string)($linkResource['formatResource'] ?? '');
 
                 // Representation without a type is handled as a single image
-                if (!($type = (string)$representation['type'] ?? '')) {
+                if (!($type = (string)($representation['type'] ?? ''))) {
                     // We already have URL's, store them in the
                     // final results first. This shouldn't
                     // happen unless there are multiple
