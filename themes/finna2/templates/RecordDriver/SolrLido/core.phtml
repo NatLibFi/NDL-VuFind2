@@ -2,11 +2,22 @@
 <?php
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
-
   $documents = $this->driver->getDocuments();
-  $videoUrls = $this->driver->getVideos();
-  $audioUrls = $this->driver->getAudios();
-  $getOtherUrls = $this->record($this->driver)->getLinkDetails();
+  $urls = $this->record($this->driver)->getLinkDetails();
+  if (!empty($urls)){
+      $videoUrls = [];
+      $audioUrls = [];
+      $otherUrls = [];
+      foreach ($urls as $url){
+          if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
+            array_push($videoUrls, $url);
+          } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
+            array_push($audioUrls, $url);
+          } else {
+            array_push($otherUrls, $url);
+          }
+      }
+  }
 
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
@@ -21,7 +32,7 @@
     <?php endif; ?>
 
     <?php if (!empty($audioUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls, 'type' => 'SolrLido']);?>
+      <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
     <?php endif; ?>
 
     <?php if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
@@ -92,12 +103,12 @@
         <div class="record-links">
           <div class="recordURLs local-available-online-record">
             <ul class="truncate-field outer" data-rows="4">
-              <?php foreach ($documents as $i => $document): ?>
+              <?php foreach ($documents as $document): ?>
                 <?php
-                  $description = $this->translate('download_file_with_type', ['%%type%%' => $document['type']]);
+                  $description = $document['description'] ?: $document['url'];
                 ?>
                 <li class="fulltextField">
-                    <a href="<?=$this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']])?>"
+                    <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($document['url'])) ?>"
                       target="_blank" download>
                       <i class="fa fa-download"></i>
                       <?= $this->escapeHtml($description) ?>
