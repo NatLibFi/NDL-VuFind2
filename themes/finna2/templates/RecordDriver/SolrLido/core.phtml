@@ -102,14 +102,13 @@
         <div class="record-links">
           <div class="recordURLs local-available-online-record">
             <ul class="truncate-field outer" data-rows="4">
-              <?php foreach ($documents as $document): ?>
+              <?php foreach ($documents as $i => $document): ?>
                 <?php
-                  $description = $document['description'] ?: $document['url'];
+                  $description = $document['description'] ?: $this->translate('download_file_with_type', ['%%type%%' => $document['type']]);
                 ?>
                 <li class="fulltextField">
-                  <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($document['url'])) ?>"
-                    target="_blank" download>
-                    <i class="fa fa-download"></i>
+                  <a href="<?=$this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']])?>" target="_blank" download>
+                    <i class="fa fa-download" aria-hidden="true"></i>
                     <?=$this->escapeHtml($description)?>
                   </a>
                   (<?=$this->escapeHtml($document['format'])?>)
