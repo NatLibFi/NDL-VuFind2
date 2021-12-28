@@ -699,11 +699,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
             $items = [];
             foreach ($allSubfields as $subfield) {
                 $code = $subfield['code'];
-                if (!($type = $typeMap[$code] ?? false)) {
-                    continue;
-                }
-                $contents = trim($subfield['data']);
-                if ('' === $contents) {
+                if (!($type = $typeMap[$code] ?? false)
+                    || (!$contents = trim($subfield['data']))
+                ) {
                     continue;
                 }
                 $items[] = compact('type', 'contents');
