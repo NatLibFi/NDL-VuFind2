@@ -9,9 +9,6 @@ var sceneCache = {};
 var lightTypeMappings = [
   {name: 'SpotLight', value: 'SpotLight'},
   {name: 'DirectionalLight', value: 'DirectionalLight'},
-  {name: 'AmbientLight', value: 'AmbientLight'},
-  {name: 'PointLight', value: 'PointLight'},
-  {name: 'HemisphereLight', value: 'HemisphereLight'}
 ];
 
 // Boolean options
@@ -20,26 +17,24 @@ var booleanOptions = [
   {value: 'false', name: 'false'}
 ];
 
-// Default lights in finna viewer
-var defaultLights = [
-  'directional_finna',
-  'ambient_finna',
-  'hemisphere_finna'
-];
-
 // Allowed properties to display in viewer menu
-var allowedProperties = [
-  'name', 'type', 'position', 'color', 'groundColor',
-  'intensity', 'roughness', 'clipIntersection', 'clipShadows',
-  'depthWrite', 'dithering', 'emissive', 'emissiveIntensity',
-  'flatShading', 'metalness', 'morphNormals', 'morphTargets',
-  'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
-  'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
-  'gammaInput', 'gammaOutput', 'physicallyCorrectLights', 'outputEncoding',
-  'shininess', 'quaternion', 'texts', 'renderOrder', 'scale', 'clearcoat',
-  'clearcoatRoughness', 'normalScale', 'ior', 'sheen', 'sheenRoughness', 'sheenColor',
-  'transmission', 'bumpScale', 'envMapIntensity'
-];
+var allowedProperties = {
+  advanced: [
+    'name', 'type', 'position', 'color', 'groundColor',
+    'intensity', 'roughness', 'clipIntersection', 'clipShadows',
+    'depthWrite', 'dithering', 'emissive', 'emissiveIntensity',
+    'flatShading', 'metalness', 'morphNormals', 'morphTargets',
+    'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
+    'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
+    'physicallyCorrectLights', 'outputEncoding',
+    'shininess', 'quaternion', 'texts', 'renderOrder', 'scale', 'clearcoat',
+    'clearcoatRoughness', 'normalScale', 'ior', 'sheen', 'sheenRoughness', 'sheenColor',
+    'transmission', 'bumpScale', 'envMapIntensity'
+  ],
+  basic: [
+    'name', 'intensity', 'roughness', 'metalness', 'envMapIntensity'
+  ]
+};
 
 // Allowed subproperties to display in viewer menu
 var allowedSubProperties = [
@@ -67,9 +62,6 @@ var colorKeys = [
 
 // Creatable object types
 var creatableObjects = [
-  'HemisphereLight',
-  'AmbientLight',
-  'PointLight',
   'DirectionalLight',
   'SpotLight',
   'Sprite'
@@ -118,7 +110,6 @@ function ModelViewer(trigger, options, scripts)
   _.poiTexturePath = options.poiTexturePath;
   _.inlineId = 'inline-viewer';
   _.defaultSettings = JSON.parse(options.settings);
-  _.debug = options.debug || false;
   _.ambientIntensity = 1;
   _.hemisphereIntensity = 0.3;
   _.viewerPaddingAngle = 35;
@@ -128,7 +119,6 @@ function ModelViewer(trigger, options, scripts)
   _.cameras = [];
   _.renderers = [];
   _.scenes = [];
-  _.annotations = [];
   _.loadInfo = options.modelload;
   _.loaded = false;
   _.isFileInput = _.trigger.is('input');
@@ -309,22 +299,21 @@ ModelViewer.prototype.createRenderer = function createRenderer()
   _.renderers.push(_.renderer);
   // These are the settings to make glb files look good with threejs
   _.renderer.physicallyCorrectLights = true;
-  _.renderer.gammaOutput = true;
-  _.renderer.gammaInput = true;
-  _.renderer.gammaFactor = 2.2;
   _.renderer.toneMapping = THREE.ReinhardToneMapping;
-  _.encoding = THREE.LinearEncoding;
+  _.encoding = THREE.sRGBEncoding;
   _.renderer.outputEncoding = _.encoding;
-  
+
   _.renderer.shadowMap.enabled = true;
-  _.renderer.setClearColor(0x000000);
+  _.renderer.setClearColor(0xEEEEEE, 0);
   _.renderer.setPixelRatio(window.devicePixelRatio);
   _.renderer.setSize(_.size.x, _.size.y);
   _.canvasParent.append(_.renderer.domElement);
+  _.renderer.domElement.setAttribute('draggable', 'false');
   _.renderer.name = 'main_renderer';
   if (!_.loaded) {
     // Create camera now.
     _.camera = new THREE.PerspectiveCamera(50, _.size.x / _.size.y, 0.1, 1000);
+    _.camera.userData.viewerInitDone = true;
     _.cameras.push(_.camera);
     _.camera.name = 'main_camera';
     _.cameraPosition = new THREE.Vector3(0, 0, 0);
@@ -384,12 +373,10 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
     loader.load(
       _.modelPath,
       function onLoad (obj) {
-        _.adjustScene(obj.scene);
+        _.initMesh(obj);
         _.createControls();
         _.createLights();
-        _.initMesh();
         _.initMenu();
-        _.getSettingsFromJson(_.defaultSettings);
         _.viewerStateInfo.hide();
         _.optionsArea.toggle(true);
         if (!fullscreenSupported()) {
@@ -408,9 +395,9 @@ ModelViewer.prototype.loadGLTF = function loadGLTF()
           _.viewerStateInfo.html(loaded);
         }
       },
-      function onError(/*error*/) {
+      function onError(error) {
         if (_.viewerStateInfo) {
-          _.viewerStateInfo.html('Error');
+          _.viewerStateInfo.html(error);
         }
       }
     );
@@ -431,27 +418,6 @@ ModelViewer.prototype.displayInformation = function displayInformation() {
 };
 
 /**
- * Adjust scene
- * 
- * @param {Object} scene
- */
-ModelViewer.prototype.adjustScene = function adjustScene(scene)
-{
-  var _ = this;
-
-  if (_.loaded) {
-    return;
-  }
-  _.scene = scene;
-  _.scene.background = _.background;
-  _.scenes.push(_.scene);
-  if (_.debug) {
-    var axesHelper = new THREE.AxesHelper(5);
-    _.scene.add( axesHelper );
-  }
-};
-
-/**
  * Create the animation loop for the viewer
  */
 ModelViewer.prototype.animationLoop = function animationLoop()
@@ -461,6 +427,9 @@ ModelViewer.prototype.animationLoop = function animationLoop()
   // Animation loop, required for constant updating
   _.loop = function animate() {
     if (_.renderer) {
+      if (_.controls) {
+        _.controls.update();
+      }
       _.renderer.render(_.scene, _.camera);
       requestAnimationFrame(animate);
     }
@@ -480,6 +449,7 @@ ModelViewer.prototype.createControls = function createControls()
 
   // Should be THREE.Vector3(0,0,0)
   _.controls.target = new THREE.Vector3();
+  _.camera.position.set(0, 0, 40);
   _.controls.screenSpacePanning = true;
   _.controls.update();
 };
@@ -487,77 +457,84 @@ ModelViewer.prototype.createControls = function createControls()
 /**
  * Adjust mesh so it looks better in the viewer
  */
-ModelViewer.prototype.initMesh = function initMesh()
+ModelViewer.prototype.initMesh = function initMesh(loadedObj)
 {
   var _ = this;
   var meshMaterial;
-  var newBox = new THREE.Box3();
   if (!_.loaded) {
     _.vertices = 0;
     _.triangles = 0;
     _.meshCount = 0;
-    _.scene.traverse(function traverseMeshes(obj) {
+    var newBox = new THREE.Box3();
+    while (loadedObj.scene.children.length > 0) {
+      var cur = loadedObj.scene.children[0];
+      if (cur.type === 'Object3D') {
+        _.scene.add(cur.children);
+        loadedObj.scene.remove(cur);
+      } else {
+        _.scene.add(cur);
+        if (cur.target) {
+          _.scene.add(cur.target);
+        }
+      }
+    }
+    _.scene.traverse(function initObj(obj) {
       if (obj.type === 'Mesh') {
+        meshMaterial = obj.material;
+        meshMaterial.envMap = _.background;
+        if (meshMaterial.userData.envMapIntensity) {
+          meshMaterial.envMapIntensity = meshMaterial.userData.envMapIntensity;
+        }
+        if (meshMaterial.userData.normalScale) {
+          meshMaterial.normalScale.x = meshMaterial.userData.normalScale.x;
+          meshMaterial.normalScale.y = meshMaterial.userData.normalScale.y;
+        }
+        if (!obj.userData.viewerSet) {
+          meshMaterial.name = 'material_' + _.meshCount;
+          // Apply encodings so glb looks better and update it if needed
+          if (meshMaterial.map) meshMaterial.map.encoding = _.encoding;
+          if (meshMaterial.emissiveMap) meshMaterial.emissiveMap.encoding = _.encoding;
+          if (meshMaterial.normalMap) meshMaterial.normalMap.encoding = _.encoding;
+        }
+        if (meshMaterial.map || meshMaterial.envMap || meshMaterial.emissiveMap || meshMaterial.normalMap) meshMaterial.needsUpdate = true;
         _.meshCount++;
         _.meshes.push(obj);
-        meshMaterial = obj.material;
-        // Bumpscale and depthwrite settings
-        meshMaterial.depthWrite = !meshMaterial.transparent;
-        meshMaterial.bumpScale = 0;
-        meshMaterial.envMap = _.background;
-
-        // Apply encodings so glb looks better and update it if needed
-        if (meshMaterial.map) meshMaterial.map.encoding = _.encoding;
-        if (meshMaterial.emissiveMap) meshMaterial.emissiveMap.encoding = _.encoding;
-        if (meshMaterial.normalMap) meshMaterial.normalMap.encoding = _.encoding;
-        if (meshMaterial.map || meshMaterial.envMap || meshMaterial.emissiveMap || meshMaterial.normalMap) meshMaterial.needsUpdate = true;
-  
         // Lets get available information about the model here so we can show them properly in information screen
         var geo = obj.geometry;
-        if (typeof geo.isBufferGeometry !== 'undefined' && geo.isBufferGeometry) {
+        if (geo.isBufferGeometry) {
           _.vertices += +geo.attributes.position.count;
           _.triangles += +geo.index.count / 3;
         }
-        meshMaterial.name = 'material_' + _.meshCount;
+
         newBox.expandByObject(obj);
         _.materials.push(meshMaterial);
-        if (_.debug) {
-          var box = new THREE.BoxHelper(obj, 0xffff00);
-          _.scene.add( box );
-        }
       } else {
-        var isLight = false;
-        lightTypeMappings.forEach(function getType(current) {
-          if (isLight) {
-            return;
-          }
-          if (current.value === obj.type) {
-            _.lights.push(obj);
-            isLight = true;
-          }
+        var isLight = lightTypeMappings.find(function checkLight(mapping) {
+          return mapping.value === obj.type;
         });
+        if (isLight) {
+          var newPosVector = new THREE.Vector3(obj.position.x, obj.position.y, obj.position.z);
+          obj.position = newPosVector;
+          _.lights.push(obj);
+        }
       }
     });
-    // Next part gets the center vector, so we can move it properly towards 0
     var newCenterVector = new THREE.Vector3();
     newBox.getCenter(newCenterVector);
     newCenterVector.negate();
-    _.scene.traverse(function centerObjects(obj) {
-      if (obj.type === 'Mesh') {
+    _.scene.children.forEach(function tryToCenter(obj) {
+      if (obj.userData.viewerSet) {
+        return;
+      }
+      var isLight = lightTypeMappings.find(function checkLight(mapping) {
+        return mapping.value === obj.type;
+      });
+      if (isLight || obj.type === 'Mesh') {
         obj.position.x += newCenterVector.x;
         obj.position.y += newCenterVector.y;
         obj.position.z += newCenterVector.z;
-      } else {
-        lightTypeMappings.forEach(function getType(current) {
-          if (current.value === obj.type && !defaultLights.includes(obj.name)) {
-            obj.position.x += newCenterVector.x;
-            obj.position.y += newCenterVector.y;
-            obj.position.z += newCenterVector.z;
-          }
-        });
       }
     });
-
     // Set camera and position to center from the newly created object
     var objectHeight = (newBox.max.y - newBox.min.y) * 1.01;
     var objectWidth = (newBox.max.x - newBox.min.x) * 1.01;
@@ -570,8 +547,6 @@ ModelViewer.prototype.initMesh = function initMesh()
     _.cameraPosition = result;
     _.camera.position.set(0, 0, _.cameraPosition);
     _.loaded = true;
-  } else {
-    _.camera.position.set(0, 0, _.cameraPosition);
   }
 };
 
@@ -581,20 +556,39 @@ ModelViewer.prototype.initMesh = function initMesh()
 ModelViewer.prototype.createLights = function createLights()
 {
   var _ = this;
-  if (_.disableDefaultLights) {
+  if (_.lights.length > 0) {
     return;
   }
-  var hemiLight = new THREE.HemisphereLight(0xffffbb, 0x080820, _.hemisphereIntensity);
-  hemiLight.name = 'hemisphere_finna';
-  _.scene.add(hemiLight);
-  // Ambient light basically just is there all the time
-  var ambientLight = new THREE.AmbientLight(0xFFFFFF, _.ambientIntensity); // soft white light
-  ambientLight.name = 'ambient_finna';
-  _.scene.add(ambientLight);
-  var light = new THREE.DirectionalLight(0xffffff, 0.3 * Math.PI);
-  light.name = 'directional_finna';
-  light.position.set(0.2, 0, 0.2); // ~60º
-  _.scene.add(light);
+  var lightFront = new THREE.DirectionalLight(0xffffff, 1);
+  lightFront.name = 'directional_finna_front';
+  lightFront.userData.name = 'directional_finna_front';
+  lightFront.position.set(0, 25, 25);
+  lightFront.userData.viewerSet = true;
+  var lightLeft = new THREE.DirectionalLight(0xffffff, 1);
+  lightLeft.name = 'directional_finna_left';
+  lightLeft.userData.name = 'directional_finna_left';
+  lightLeft.position.set(-25, 25, 0);
+  lightLeft.userData.viewerSet = true;
+  var lightRight = new THREE.DirectionalLight(0xffffff, 1);
+  lightRight.name = 'directional_finna_right';
+  lightRight.userData.name = 'directional_finna_right';
+  lightRight.position.set(25, 25, 0);
+  lightRight.userData.viewerSet = true;
+  var lightBack = new THREE.DirectionalLight(0xffffff, 1);
+  lightBack.name = 'directional_finna_back';
+  lightBack.userData.name = 'directional_finna_back';
+  lightBack.position.set(0, 25, -25);
+  lightBack.userData.viewerSet = true;
+
+  _.lights.push(lightBack);
+  _.lights.push(lightFront);
+  _.lights.push(lightLeft);
+  _.lights.push(lightRight);
+
+  _.scene.add(lightFront);
+  _.scene.add(lightBack);
+  _.scene.add(lightLeft);
+  _.scene.add(lightRight);
 };
 
 var createInput = function createInput(inputType, name, value) {
@@ -646,16 +640,23 @@ ModelViewer.prototype.initMenu = function initMenu() {
   _.raycaster.far = 1000;
   _.raycaster.near = 1;
   _.mouse = new THREE.Vector2();
-  _.menuAreas = [
-    {done: false, name: 'File', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: [], canDelete: false, canExport: false},
-    {done: false, name: 'Renderers', prefix: 'renderer', holder: undefined, template: undefined, objects: _.renderers, created: [], canDelete: false, canExport: true},
-    {done: false, name: 'Scenes', prefix: 'scene', holder: undefined, template: undefined, objects: _.scenes, created: [], canDelete: false, canExport: true},
-    {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: _.cameras, created: [], canDelete: false, canExport: true},
-    {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: _.meshes, created: [], canDelete: false, canExport: false},
-    {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: [], canDelete: false, canExport: true},
-    {done: false, name: 'Annotations', prefix: 'annotation', holder: undefined, template: undefined, objects: _.annotations, created: [], canDelete: true, canExport: true},
-    {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: [], canDelete: true, canExport: true},
-  ];
+  _.menuMode = 'basic';
+  _.menuAreas = {
+    advanced: [
+      {done: false, name: 'File', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: [], canDelete: false, canExport: false},
+      {done: false, name: 'Renderers', prefix: 'renderer', holder: undefined, template: undefined, objects: _.renderers, created: [], canDelete: false, canExport: true},
+      {done: false, name: 'Scenes', prefix: 'scene', holder: undefined, template: undefined, objects: _.scenes, created: [], canDelete: false, canExport: true},
+      {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: _.cameras, created: [], canDelete: false, canExport: true},
+      {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: _.meshes, created: [], canDelete: false, canExport: false},
+      {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: [], canDelete: false, canExport: true},
+      {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: [], canDelete: true, canExport: true},
+    ],
+    basic: [
+      {done: false, name: 'File', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: [], canDelete: false, canExport: false},
+      {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: [], canDelete: false, canExport: true},
+      {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: [], canDelete: false, canExport: true},
+    ]
+  };
   _.encodingMappings = [
     {name: 'LinearEncoding', value: THREE.LinearEncoding},
     {name: 'sRGBEncoding', value: THREE.sRGBEncoding},
@@ -667,42 +668,11 @@ ModelViewer.prototype.initMenu = function initMenu() {
     {name: 'BasicDepthPacking', value: THREE.BasicDepthPacking},
     {name: 'RGBADepthPacking', value: THREE.RGBADepthPacking}
   ];
-  _.annotationTemplate = {
-    name: 'template',
-    type: 'Sprite',
-    customName: 'Annotation',
-    position: {
-      x: 0,
-      y: 0,
-      z: 0
-    },
-    texts: {
-      fi: 'testi',
-      en: 'test',
-      sv: 'testen'
-    }
-  };
   _.defaultLightObject = {
     name: 'templatelight',
     type: 'type',
     color: 0xffffff
   };
-
-  window.addEventListener('mousemove', function checkForAnnotation(event) {
-    if (event.target.tagName !== 'CANVAS') {
-      return;
-    }
-    event.preventDefault();
-    var rect = _.renderer.domElement.getBoundingClientRect();
-    _.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    _.mouse.y = - ((event.clientY - rect.top) / rect.height) * 2 + 1;
-    _.raycaster.setFromCamera(_.mouse, _.camera);
-
-    var intersects = _.raycaster.intersectObjects(_.annotations, true);
-    if (intersects.length > 0) {
-      intersects[0].object.onMouseClicked();
-    }
-  });
   _.settingsMenu = createDiv('model-settings collapse');
   _.settingsMenu.id = 'model-settings';
   var viewer = document.querySelector('.model-viewer.modal-holder');
@@ -713,7 +683,8 @@ ModelViewer.prototype.initMenu = function initMenu() {
 
 ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
   var _ = this;
-  _.menuAreas.forEach(function updateReferences(current) {
+  _.renderer.renderLists.dispose();
+  _.menuAreas[_.menuMode].forEach(function updateReferences(current) {
     if (current.name === 'File') {
       return;
     }
@@ -737,7 +708,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
     if (form.classList.length === 0) {
       return;
     }
-    _.menuAreas.forEach(function checkIfUpdate(current) {
+    _.menuAreas[_.menuMode].forEach(function checkIfUpdate(current) {
       var exploded = form.className.split("-");
       var formPrefix = exploded[0];
       if (formPrefix === current.prefix) {
@@ -753,7 +724,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
     });
   };
 
-  _.menuAreas.forEach(function createAreaForMenu(menu) {    
+  _.menuAreas[_.menuMode].forEach(function createAreaForMenu(menu) {    
     if (!menu.done) {
       var holderRoot = createDiv(menu.prefix + '-root');
       var titleSpan = document.createElement('span');
@@ -825,11 +796,31 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
         var exportButton = createButton('button export-settings', 'export', 'Export .json');
         var exportGLBButton = createButton('button export-settings', 'export', 'Export .glb');
         var importButton = createButton('button import-settings', 'import', 'Import .json');
+        var toggleMode = createButton('button toggle-mode', 'toggle-mode', 'Toggle mode');
         var inputLights = document.querySelector('input[name="light-file-input"]');
         exportButton.addEventListener('click', function startExport() {
           _.saveSettingsAsJson(_.settingsMenu);
         });
+        toggleMode.addEventListener('click', function changeViewerMode() {
+          _.menuMode = _.menuMode === 'basic' ? 'advanced' : 'basic';
+          _.menuAreas[_.menuMode].forEach(function resetArea(current) {
+            current.done = false;
+            while (_.settingsMenu.firstChild) {
+              _.settingsMenu.removeChild(_.settingsMenu.firstChild);
+            }
+            current.created = [];
+          });
+          _.createMenuForSettings(); 
+        });
         exportGLBButton.addEventListener('click', function startExport() {
+          _.settingsMenu.removeEventListener('change', updateFunction);
+          _.scene.children.forEach(function markAsExported(cur) {
+            cur.userData.viewerSet = true;
+            if (cur.type === 'Mesh') {
+              cur.material.userData.envMapIntensity = cur.material.envMapIntensity;
+              cur.material.userData.normalScale = cur.material.normalScale;
+            }
+          }); 
           var exporter = new THREE.GLTFExporter();
           // Parse the input and generate the glTF output
           exporter.parse(
@@ -844,13 +835,16 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
               downloadAnchorNode.click();
               downloadAnchorNode.remove();
               URL.revokeObjectURL(url);
+              _.settingsMenu.addEventListener('change', updateFunction);
             },
             // called when there is an error in the generation
-            function onParseError(error ) {
-              console.log(error);
+            function onParseError(/*error*/) {
+
             },
             {
-              binary: true
+              binary: true,
+              embedImages: true,
+              maxTextureSize: 4096
             }
           );
         });
@@ -870,36 +864,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
             reader.readAsText(file);
           }
         });
-        menu.holder.append(exportButton, exportGLBButton, importButton);
-        break;
-      case 'annotation':
-        var createAnnotation = createButton('button create-annotation', 'create-annotation', 'New annotation');
-        createAnnotation.addEventListener('click', function onCreateAnnotation(/*e*/) {
-          var self = this;
-          _.settingsMenu.removeEventListener('change', updateFunction);
-          var annotationClone = menu.template.cloneNode(true);
-          createSettings(_.annotationTemplate, annotationClone, menu.prefix + '-');
-          annotationClone.classList.remove('template', 'hidden');
-          self.classList.add('hidden');
-          menu.holder.prepend(annotationClone);
-          menu.holder.querySelector('input[name="annotation-name"]').removeAttribute('readonly');
-          var saveAnnotation = createButton('button annotation-save', 'save-annotation', 'Save');
-          annotationClone.append(saveAnnotation);
-          var form = annotationClone.querySelector('form');
-          form.addEventListener('submit', function onSubmit(e) {
-            e.preventDefault();
-          });
-          saveAnnotation.addEventListener('click', function onSaveAnnotation() {
-            annotationClone.remove();
-            self.classList.remove('hidden');
-            var templateClone = Object.assign({}, _.annotationTemplate);
-            _.createObjectToScene(templateClone);
-            _.settingsMenu.addEventListener('change', updateFunction);
-            _.createMenuForSettings();
-          });
-        });
-
-        menu.holder.append(createAnnotation);
+        menu.holder.append(exportButton, exportGLBButton, importButton, toggleMode);
         break;
       }
     }
@@ -911,8 +876,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
       createSettings(current, templateClone, menu.prefix + '-');
       menu.holder.append(templateClone);
       menu.created.push(templateClone);
-
-      if (menu.canDelete && !defaultLights.includes(current.name)) {
+      if (menu.canDelete) {
         var value = 'delete-' + current.prefix;
         var deleteButton = createButton(value, value, 'Delete');
         deleteButton.addEventListener('click', function removeLight(e) {
@@ -939,10 +903,10 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
  * @return {HTMLDivElement}
  */
 ModelViewer.prototype.createElement = function createElement(object, key, prefix) {
-  if (!allowedProperties.includes(key) || object[key] === null) {
+  var _ = this;
+  if (!allowedProperties[_.menuMode].includes(key) || object[key] === null) {
     return;
   }
-  var _ = this;
   var type = typeof object[key];
   var objValue = object[key];
   var div = createDiv('setting-child');
@@ -1051,7 +1015,7 @@ ModelViewer.prototype.getSettingsFromJson = function getSettingsFromJson(setting
     if (['Meshes', 'File'].includes(section)) {
       return;
     }
-    var menu = _.menuAreas.find(function menuObject(obj) {
+    var menu = _.menuAreas[_.menuMode].find(function menuObject(obj) {
       return obj.name === section;
     });
     if (menu) {
@@ -1088,6 +1052,7 @@ ModelViewer.prototype.updateObject = function updateObject(objects, input, name)
     value = _.castValueTo(object[pointers[1]], value);
     object[pointers[1]] = value;
   }
+
 };
 
 /**
@@ -1150,41 +1115,9 @@ ModelViewer.prototype.createObjectToScene = function createObjectToScene(object)
     newLight.lookAt(new THREE.Vector3());
     break;
   case 'DirectionalLight':
-    newLight = new THREE.DirectionalLight(object.color, 1);
+    newLight = new THREE.DirectionalLight(object.color, object.intensity || 1);
     newLight.position.set(0, 0, 0);
     newLight.name = object.name;
-    break;
-  case 'AmbientLight':
-    newLight = new THREE.AmbientLight(object.color);
-    newLight.name = object.name;
-    break;
-  case 'HemisphereLight':
-    if (typeof object.groundColor === 'undefined') {
-      object.groundColor = 0x080820;
-    }
-    newLight = new THREE.HemisphereLight(object.color, object.groundColor, 1);
-    newLight.name = object.name;
-    break;
-  case 'PointLight':
-    newLight = new THREE.PointLight( 0xff0000, 1, 100 );
-    newLight.position.set(0, 0, 0);
-    newLight.name = object.name;
-    break;
-  case 'Sprite':
-    var map = new THREE.TextureLoader().load(_.poiTexturePath);
-    var material = new THREE.SpriteMaterial({map: map, depthTest: false});
-    var sprite = new THREE.Sprite( material );
-    sprite.onMouseClicked = function onAnnotationClicked(/*e*/) {
-      // Not implemented yet
-      //console.log(this.texts);
-    };
-    sprite.position.set(0, 0, 0);
-    sprite.renderOrder = 5;
-    _.scene.add(sprite);
-    sprite.name = object.name;
-    sprite.texts = object.texts;
-    sprite.customName = object.customName;
-    _.annotations.push(sprite);
     break;
   default:
     break;
@@ -1192,6 +1125,7 @@ ModelViewer.prototype.createObjectToScene = function createObjectToScene(object)
   if (!newLight) {
     return;
   }
+  newLight.userData.viewerSet = true;
   _.scene.add(newLight);
   _.lights.push(newLight);
 };
@@ -1206,7 +1140,7 @@ ModelViewer.prototype.deleteObject = function deleteObject(form, prefix, menuNam
     var found = _.scene.getObjectByName(name.value);
     if (found) {
       _.scene.remove(found);
-      _.menuAreas.forEach(function filterProperly(current) {
+      _.menuAreas[_.menuMode].forEach(function filterProperly(current) {
         if (current.prefix !== prefix) {
           return;
         }
@@ -1232,7 +1166,7 @@ ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
       var current = Object.assign({}, tempObject);
       for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
-        if (!allowedProperties.includes(key)) {
+        if (!allowedProperties[_.menuMode].includes(key)) {
           continue;
         }
         current[key] = el[key];
@@ -1240,7 +1174,7 @@ ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
       object[holder].push(current);
     });
   };
-  _.menuAreas.forEach(function saveSection(section) {
+  _.menuAreas[_.menuMode].forEach(function saveSection(section) {
     if (!section.canExport) {
       return;
     }
@@ -1291,10 +1225,14 @@ ModelViewer.prototype.loadBackground = function loadBackground()
     ],
     function onSuccess(texture) {
       _.background = texture;
-      _.scene = new THREE.Scene();
+      if (!_.scene) {
+        _.scene = new THREE.Scene();
+      }
       _.scene.background = _.background;
-      _.createRenderer();
-      _.getModelPath();
+      if (!_.renderer) {
+        _.createRenderer();
+        _.getModelPath();
+      }
     },
     function onFailure(/*error*/) {
       // Leave empty for debugging purposes
