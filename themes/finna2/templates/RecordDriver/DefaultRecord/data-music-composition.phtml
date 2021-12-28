@@ -40,7 +40,7 @@
           if ($heading && !$first) {
             $heading = ". $heading";
           }
-          $output = $heading ? "$heading: $output" : " $output";
+          $output = $heading ? "$heading $output" : " $output";
         }
         echo $this->escapeHtml($output);
         $first = false;
