@@ -107,7 +107,7 @@
                   $description = $document['description'] ?: $this->translate('download_file_with_type', ['%%type%%' => $document['type']]);
                 ?>
                 <li class="fulltextField">
-                  <a href="<?=$this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']])?>" target="_blank" download>
+                  <a href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']]))?>" target="_blank" download>
                     <i class="fa fa-download" aria-hidden="true"></i>
                     <?=$this->escapeHtml($description)?>
                   </a>
