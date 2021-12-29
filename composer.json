@@ -118,13 +118,7 @@
         "process-timeout": 0
     },
     "replace": {
-        "laminas/laminas-cache-storage-adapter-apc": "*",
-        "laminas/laminas-cache-storage-adapter-dba": "*",
-        "laminas/laminas-cache-storage-adapter-memcache": "*",
-        "laminas/laminas-cache-storage-adapter-mongodb": "*",
-        "laminas/laminas-cache-storage-adapter-wincache": "*",
-        "laminas/laminas-cache-storage-adapter-xcache": "*",
-        "vufind/vufind-theme": "self.version"
+        "vufind/vufind-theme": "7.1.2"
     },
     "extra": {
         "merge-plugin": {
