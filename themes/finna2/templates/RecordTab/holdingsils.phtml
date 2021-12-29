@@ -293,20 +293,24 @@
     }
 
     // N.B. $holdingsDetails also affects request checks in finna-record
-    switch ($this->holdings()->getDetailsMode())
-    {
-    case 'collapse':
+    $holdingsDetails = $holdingsGroup == 1 ? 'expanded' : 'collapsed';
+    $detailsModes = array_map('trim', explode(',', $this->holdings()->getDetailsMode()));
+    foreach ($detailsModes as $mode) {
+      switch ($mode) {
+      case 'collapse':
         $holdingsDetails = 'collapsed';
         break;
-    case 'expand-all':
+      case 'expand-all':
         $holdingsDetails = 'expanded';
         break;
-    default:
-        $holdingsDetails = $holdingsGroup == 1 ? 'expanded' : 'collapsed';
+      case 'collapse-journals':
+        if ($journal || in_array('0/Journal/', $this->driver->getFormats())) {
+            $holdingsDetails = 'collapsed';
+        }
         break;
+      }
     }
-  ?>
-  <?php
+
     $callnumbers = $this->holdings()->getGroupedCallNumbers($holding['items']);
     $dialogTitle = ': ' . $this->driver->getTitle();
     $titleLocation = $this->transEscWithPrefix('location_', $holding['location']);

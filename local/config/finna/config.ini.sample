@@ -1220,10 +1220,12 @@ hide_holdings[] = "World Wide Web"
 
 ; You can use this setting to specify how grouped holdings details are displayed
 ; by default. Available options:
-;    collapse     - Collapse all details
-;    expand-first - Expand first group, collapse others (default)
-;    expand-all   - Expand all groups
-;holdings_details = collapse
+;    "collapse"            - Collapse all details
+;    "expand-first"        - Expand first group, collapse others (default)
+;    "expand-all"          - Expand all groups
+;    "collapse-journals"   - Used with other options (separated with a comma) to
+;                            always collapse journals
+;holdings_details = "expand-first,collapse-journals"
 
 ; This array controls which Related modules are used to display sidebars on the
 ; record view page.
