@@ -42,7 +42,6 @@
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "VuFind.addTranslations($translations);", 'SET');
     $modelScripts = $this->partial('Helpers/modeljs-urls.phtml');
     $modelSettings = $this->driver->getModelSettings();
-    $modelSettings['poiTexturePath'] = $this->imageSrc()->getSourceAddress('poi.png', true);
     $previewImages = $this->driver->allowModelPreviewImages();
     foreach ($models as $index => $model):
       foreach ($model as $format => $data):
@@ -137,21 +136,4 @@
     <button type="button" class="show-less-images"><?= $this->transEsc('less') ?> <i class="fa fa-arrow-up"></i></button>
   </div>
 <?php endif;?>
-<?php if (!empty($modelSettings['fileInput'])): ?>
-  <input class="template hidden" type="file" name="light-file-input" accept=".json"/>
-  <div class="debug-model-viewer">
-    <div id="debugViewerArea"></div>
-    <input type="file" class="model-viewer-input">
-  </div>
-  <?php
-  $modelSettings['idOverride'] = 'debugViewer';
-  $conversion = json_encode($modelSettings);
-  $script = <<<JS
-
-  new ModelViewer($('.model-viewer-input')[0], $conversion, $modelScripts);
-JS;
-?>
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET') ?>
-<?php endif; ?>
-
 <!-- END of: finna - RecordDriver/DefaultRecord/record-image-paginator.phtml -->

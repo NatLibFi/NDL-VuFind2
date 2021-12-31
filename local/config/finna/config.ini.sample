@@ -1725,5 +1725,5 @@ cacheTime = 604800
 ;fileInput = false
 ; Array of institutions which have proper preview images to show
 ;previewImages['museovirasto_testi'] = true
-; Json styled default settings for viewer.
-settings[default] = '{"Materials":[{"name":"material_1","type":"MeshStandardMaterial","side":2,"flatShading":false,"opacity":1,"transparent":false,"depthWrite":true,"clipIntersection":false,"clipShadows":false,"dithering":false,"premultipliedAlpha":false,"visible":true,"toneMapped":true,"color":16777215,"roughness":1,"metalness":0.4,"emissive":0,"emissiveIntensity":1,"bumpScale":0,"normalScale":{"x":1,"y":1},"envMapIntensity":1,"wireframe":false,"wireframeLinewidth":1,"morphTargets":false,"morphNormals":false}],"Lights":[{"name":"hemisphere_finna","type":"HemisphereLight","position":{"x":0,"y":1,"z":0},"quaternion":{"_x":0,"_y":0,"_z":0,"_w":1},"scale":{"x":1,"y":1,"z":1},"visible":true,"renderOrder":0,"color":16777147,"intensity":0.2,"groundColor":526368},{"name":"ambient_finna","type":"AmbientLight","position":{"x":0,"y":0,"z":0},"quaternion":{"_x":0,"_y":0,"_z":0,"_w":1},"scale":{"x":1,"y":1,"z":1},"visible":true,"renderOrder":0,"color":16777215,"intensity":0.1},{"name":"directional_finna","type":"DirectionalLight","position":{"x":0.2,"y":0,"z":0.2},"quaternion":{"_x":0,"_y":0,"_z":0,"_w":1},"scale":{"x":1,"y":1,"z":1},"visible":true,"renderOrder":0,"color":16777215,"intensity":0.9424777960769379}]}'
+; Json styled default settings for viewer. Settings can be exported from the viewer.
+;settings[default] = '{}'

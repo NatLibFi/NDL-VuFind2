@@ -107,11 +107,8 @@ function ModelViewer(trigger, options, scripts)
   var _ = this;
   _.trigger = $(trigger);
   _.texturePath = options.texturePath;
-  _.poiTexturePath = options.poiTexturePath;
   _.inlineId = 'inline-viewer';
   _.defaultSettings = JSON.parse(options.settings);
-  _.ambientIntensity = 1;
-  _.hemisphereIntensity = 0.3;
   _.viewerPaddingAngle = 35;
   _.lights = [];
   _.materials = [];
@@ -200,6 +197,22 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
       _.informationsArea = null;
     }
   });
+  if (options.fileInput && !_.inputViewerDone) {
+    _.inputViewerDone = true;
+    var selectFileDiv = document.createElement('div');
+    selectFileDiv.classList.add('debug-model-viewer');
+    var viewerHolderDiv = document.createElement('div');
+    viewerHolderDiv.id = 'debugViewerArea';
+    var fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.classList.add('model-viewer-input');
+    selectFileDiv.append(viewerHolderDiv, fileInput);
+    _.trigger.closest('.recordcover-holder').append(selectFileDiv);
+    var copySettings = Object.assign({}, options);
+    copySettings.idOverride = 'debugViewer';
+    delete copySettings.fileInput;
+    new ModelViewer(fileInput, copySettings, scripts);
+  }
 };
 
 /**
@@ -484,6 +497,8 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
         meshMaterial.envMap = _.background;
         if (meshMaterial.userData.envMapIntensity) {
           meshMaterial.envMapIntensity = meshMaterial.userData.envMapIntensity;
+        } else {
+          meshMaterial.envMapIntensity = 0.2;
         }
         if (meshMaterial.userData.normalScale) {
           meshMaterial.normalScale.x = meshMaterial.userData.normalScale.x;
@@ -556,7 +571,7 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
 ModelViewer.prototype.createLights = function createLights()
 {
   var _ = this;
-  if (_.lights.length > 0) {
+  if (_.lights.length > 0 || _.defaultSettings) {
     return;
   }
   var lightFront = new THREE.DirectionalLight(0xffffff, 1);
@@ -677,7 +692,9 @@ ModelViewer.prototype.initMenu = function initMenu() {
   _.settingsMenu.id = 'model-settings';
   var viewer = document.querySelector('.model-viewer.modal-holder');
   viewer.prepend(_.settingsMenu);
-
+  if (_.defaultSettings) {
+    _.getSettingsFromJson(_.defaultSettings);
+  }
   _.createMenuForSettings();
 };
 
@@ -798,6 +815,15 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
         var importButton = createButton('button import-settings', 'import', 'Import .json');
         var toggleMode = createButton('button toggle-mode', 'toggle-mode', 'Toggle mode');
         var inputLights = document.querySelector('input[name="light-file-input"]');
+        if (!inputLights) {
+          var newInput = document.createElement('input');
+          newInput.classList.add('template', 'hidden');
+          newInput.type = 'file';
+          newInput.name = 'light-file-input';
+          newInput.setAttribute('accept', '.json');
+          document.body.appendChild(newInput);
+          inputLights = newInput;
+        }
         exportButton.addEventListener('click', function startExport() {
           _.saveSettingsAsJson(_.settingsMenu);
         });
@@ -891,6 +917,23 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
     menu.done = true;
   });
   _.settingsMenu.addEventListener('change', updateFunction);
+};
+
+ModelViewer.prototype.setMenuMode = function setMenuMode(mode) {
+  var _ = this;
+  if (mode) {
+    _.menuMode = mode;
+  } else {
+    _.menuMode = _.menuMode === 'basic' ? 'advanced' : 'basic';
+  }
+  _.menuAreas[_.menuMode].forEach(function resetArea(current) {
+    current.done = false;
+    while (_.settingsMenu.firstChild) {
+      _.settingsMenu.removeChild(_.settingsMenu.firstChild);
+    }
+    current.created = [];
+  });
+  _.createMenuForSettings();
 };
 
 /**
@@ -1158,7 +1201,8 @@ ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
   var _ = this;
   var json = '';
   var object = {};
-
+  var oldMode = _.menuMode;
+  _.setMenuMode('advanced');
   var assignFunction = function assignObjects(objects, holder) {
     objects.forEach(function getInputsAsObject(el) {
       var keys = Object.keys(el);
@@ -1192,7 +1236,7 @@ ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
   document.body.appendChild(downloadAnchorNode); // required for firefox
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
-  _.createMenuForSettings(true);
+  _.setMenuMode(oldMode);
 };
 
 /**
