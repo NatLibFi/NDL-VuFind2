@@ -28,7 +28,6 @@
  */
 namespace Finna\Controller;
 
-use Finna\Search\Solr\Options;
 use VuFindCode\ISBN;
 use VuFindSearch\Backend\Exception\BackendException;
 
@@ -105,16 +104,6 @@ class SearchController extends \VuFind\Controller\SearchController
     }
 
     /**
-     * Browse databases.
-     *
-     * @return mixed
-     */
-    public function databaseAction()
-    {
-        return $this->browse('Database');
-    }
-
-    /**
      * Redirection for VuFind 1 DualResults action
      *
      * @return mixed
@@ -122,16 +111,6 @@ class SearchController extends \VuFind\Controller\SearchController
     public function dualResultsAction()
     {
         return $this->forwardTo('Combined', 'Results');
-    }
-
-    /**
-     * Browse journals.
-     *
-     * @return mixed
-     */
-    public function journalAction()
-    {
-        return $this->browse('Journal');
     }
 
     /**
@@ -194,7 +173,6 @@ class SearchController extends \VuFind\Controller\SearchController
 
         $this->initCombinedViewFilters();
         $view = parent::resultsAction();
-        $view->browse = false;
         $this->initSavedTabs();
         $view->fromStreetSearch = $this->getRequest()->getQuery()
             ->get('streetsearch', false);
@@ -239,75 +217,6 @@ class SearchController extends \VuFind\Controller\SearchController
 
         // Convert author-id facet labels to readable names
         $view->data = $authorityHelper->formatFacetList($view->facet, $view->data);
-        return $view;
-    }
-
-    /**
-     * Handler for database and journal browse actions.
-     *
-     * @param string $type Browse type
-     *
-     * @return mixed
-     */
-    protected function browse($type)
-    {
-        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class)
-            ->get('browse');
-        if (!isset($config['General'][$type]) || !$config['General'][$type]) {
-            throw new \Exception("Browse action $type is disabled");
-        }
-
-        if (!isset($config[$type])) {
-            throw new \Exception("Missing configuration for browse action: $type");
-        }
-
-        // Preserve last result view
-        $config = $config[$type];
-        $query = $this->getRequest()->getQuery();
-        if (!$query->get('limit')) {
-            $query->set('limit', $config['resultLimit'] ?: 100);
-        }
-        if (!$query->get('sort')) {
-            $query->set('sort', $config['sort'] ?: 'title');
-        }
-        if (!$query->get('type')) {
-            $query->set('type', $config['type'] ?: 'Title');
-        }
-        $queryType = $query->get('type');
-
-        $query->set('hiddenFilters', $config['filter']->toArray() ?: []);
-        $query->set(
-            'recommendOverride',
-            ['side' => ["SideFacets:Browse{$type}:CheckboxFacets:facets-browse"]]
-        );
-
-        $view = $this->forwardTo('Search', 'Results');
-
-        $this->getViewRenderer()->plugin('headTitle')->append(
-            $this->translate("browse_extended_$type") . ' '
-        );
-
-        $type = strtolower($type);
-        $view->browse = $type;
-        $view->defaultBrowseHandler = $config['type'];
-
-        $view->results->getParams()->setBrowseHandler($queryType);
-
-        // Get rid of the hidden filters from search and url params so that they
-        // they don't linger around and cause trouble with the mechanism that
-        // adds hidden filters to the searchbox for search tabs.
-        $view->results->getParams()->clearHiddenFilters();
-        $query->set('hiddenFilters', []);
-
-        // Update last search URL
-        $view->results->getParams()->getOptions()
-            ->setBrowseAction("browse-$type");
-        $this->getSearchMemory()->forgetSearch();
-        $this->rememberSearch($view->results);
-
-        $view->results->getParams()->setView('condensed');
-        $view->results->getParams()->getQuery()->setHandler($queryType);
-
         return $view;
     }
 

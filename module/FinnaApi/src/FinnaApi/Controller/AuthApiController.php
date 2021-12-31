@@ -218,8 +218,177 @@ class AuthApiController extends \VuFindApi\Controller\ApiController
      */
     public function getSwaggerSpecFragment()
     {
-        // Auth API endpoints are not published
-        return '{}';
+        $spec = [];
+        if (!$this->isAccessDenied('access.finna.api.auth.backendlist')) {
+            $spec['paths']['/auth/getLoginTargets']['get'] = [
+                'summary' => 'Get login targets',
+                'description' => 'Lists the possible login targets.',
+                'parameters' => [],
+                'tags' => ['auth'],
+                'responses' => [
+                    '200' => [
+                        'description' => 'List of targets',
+                        'type' => 'object',
+                        'schema' => [
+                            'properties' => [
+                                'targets' => [
+                                    'description' => 'Login targets',
+                                    'type' => 'array',
+                                    'items' => [
+                                        'type' => 'object',
+                                        'properties' => [
+                                            'id' => [
+                                                'description' => 'Target identifier',
+                                                'type' => 'string'
+                                            ],
+                                            'name' => [
+                                                'description' => 'Target name',
+                                                'type' => 'string'
+                                            ],
+                                        ],
+                                    ]
+                                ],
+                                'status' => [
+                                    'description' => 'Status code',
+                                    'type' => 'string',
+                                    'enum' => ['OK']
+                                ]
+                            ],
+                            'required' => ['resultCount', 'status']
+                        ]
+                    ],
+                    'default' => [
+                        'description' => 'Error',
+                        'schema' => [
+                            '$ref' => '#/definitions/Error'
+                        ]
+                    ]
+                ]
+            ];
+        }
+        if (!$this->isAccessDenied('access.finna.api.auth.backendlist')) {
+            $spec['paths']['/auth/getLoginTargets']['get'] = [
+                'summary' => 'Get login targets',
+                'description' => 'Lists the possible login targets.',
+                'parameters' => [],
+                'tags' => ['auth'],
+                'responses' => [
+                    '200' => [
+                        'description' => 'List of targets',
+                        'schema' => [
+                            'properties' => [
+                                'targets' => [
+                                    'description' => 'Login targets',
+                                    'type' => 'array',
+                                    'items' => [
+                                        'type' => 'object',
+                                        'properties' => [
+                                            'id' => [
+                                                'description' => 'Target identifier',
+                                                'type' => 'string'
+                                            ],
+                                            'name' => [
+                                                'description' => 'Target name',
+                                                'type' => 'string'
+                                            ],
+                                        ],
+                                    ]
+                                ],
+                                'status' => [
+                                    'description' => 'Status code',
+                                    'type' => 'string',
+                                    'enum' => ['OK']
+                                ]
+                            ],
+                            'required' => ['resultCount', 'status']
+                        ]
+                    ],
+                    'default' => [
+                        'description' => 'Error',
+                        'schema' => [
+                            '$ref' => '#/definitions/Error'
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+        if (!$this->isAccessDenied('access.finna.api.auth.librarycardlogin')) {
+            $spec['paths']['/auth/libraryCardLogin']['post'] = [
+                'summary' => 'Check login with a library card',
+                'description'
+                    => 'Returns a success or failure for given credentials',
+                'consumes' => [
+                    'application/x-www-form-urlencoded'
+                ],
+                'parameters' => [
+                    [
+                        'name' => 'target',
+                        'in' => 'formData',
+                        'description'
+                            => 'Login target (backend from getLoginTargets)',
+                        'required' => true,
+                        'type' => 'string'
+                    ],
+                    [
+                        'name' => 'username',
+                        'in' => 'formData',
+                        'description' => 'Library card number',
+                        'required' => true,
+                        'type' => 'string'
+                    ],
+                    [
+                        'name' => 'password',
+                        'in' => 'formData',
+                        'description' => 'Password',
+                        'required' => true,
+                        'type' => 'string'
+                    ]
+                ],
+                'tags' => ['auth'],
+                'responses' => [
+                    '200' => [
+                        'description' => 'List of targets',
+                        'schema' => [
+                            'properties' => [
+                                'result' => [
+                                    'description' => 'Login result',
+                                    'type' => 'string',
+                                    'enum' => ['success', 'failure'],
+                                ],
+                                'status' => [
+                                    'description' => 'Status code',
+                                    'type' => 'string',
+                                    'enum' => ['OK']
+                                ]
+                            ],
+                            'required' => ['resultCount', 'status']
+                        ]
+                    ],
+                    '500' => [
+                        'description' => 'Processing of the login request failed',
+                        'schema' => [
+                            '$ref' => '#/definitions/Error'
+                        ]
+                    ],
+                    '503' => [
+                        'description'
+                            => 'Connection to the backend system (ILS) failed',
+                        'schema' => [
+                            '$ref' => '#/definitions/Error'
+                        ]
+                    ],
+                    'default' => [
+                        'description' => 'Error',
+                        'schema' => [
+                            '$ref' => '#/definitions/Error'
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+        return json_encode($spec);
     }
 
     /**

@@ -52,15 +52,12 @@
 
 .ils-purchase-history {
     padding: 8px 15px;
-    @media(min-width: @screen-sm) {
-        .title {
-            width: 33.333%;
-            float:left;
-        }
-        .history {
-            width: 66.666%;
-            float: left;
-        }
+    display: flex;
+    .title {
+        width: 33.333%;
+    }
+    .history {
+        width: 66.666%;
     }
 }
 
@@ -111,13 +108,12 @@
 
 // Record view holdings styles
 .holdings-tab {
-    .library_card, .placehold.btn, .placeStorageRetrievalRequest.btn, .placeILLRequest.btn {
+    .library_card, .placehold.btn, .placeStorageRetrievalRequest.btn, .placeILLRequest.btn, .repository-library-request-order {
         margin-bottom: 5px;
         margin-left: 5px;
     }
-    .placehold.btn, .placeStorageRetrievalRequest.btn, .placeILLRequest.btn  {
+    .placehold.btn, .placeStorageRetrievalRequest.btn, .placeILLRequest.btn, .repository-library-request-order  {
         white-space: normal;
-        height: auto;
         margin-top: 2px;
     }
     .place-hold-wrapper {
@@ -474,6 +470,11 @@
     .actions {
         float: right;
         .title-hold {
+            float: right;
+            margin-top: 10px;
+            margin-left: 10px;
+        }
+        .request {
             float: right;
             margin-top: 10px;
         }

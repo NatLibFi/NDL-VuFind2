@@ -349,7 +349,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         // Set up CSRF:
-        $csrfValidator = $this->serviceLocator->get(\VuFind\Validator\Csrf::class);
+        $csrfValidator = $this->serviceLocator
+            ->get(\VuFind\Validator\CsrfInterface::class);
 
         if ($this->formWasSubmitted('submit', false)) {
             $csrf = $this->getRequest()->getPost()->get('csrf');
@@ -680,6 +681,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             } else {
                 $this->flashMessenger()->addMessage('list_order_saved', 'success');
             }
+            if ($this->inLightbox()) {
+                return $this->getRefreshResponse();
+            }
         }
 
         // If we got this far, we just need to display the favorites:
@@ -735,7 +739,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         if ($this->formWasSubmitted('saveUserProfile')) {
             // Do CSRF check
-            $csrf = $this->serviceLocator->get(\VuFind\Validator\Csrf::class);
+            $csrf = $this->serviceLocator
+                ->get(\VuFind\Validator\CsrfInterface::class);
             if (!$csrf->isValid($this->getRequest()->getPost()->get('csrf'))) {
                 throw new \VuFind\Exception\BadRequest(
                     'error_inconsistent_parameters'

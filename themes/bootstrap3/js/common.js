@@ -10,6 +10,8 @@ var VuFind = (function VuFind() {
   var _initialized = false;
   var _submodules = [];
   var _cspNonce = '';
+
+  var _icons = {};
   var _translations = {};
 
   // Emit a custom event
@@ -73,7 +75,7 @@ var VuFind = (function VuFind() {
     }
   };
   var translate = function translate(op, _replacements) {
-    var replacements = _replacements || [];
+    var replacements = _replacements || {};
     var translation = _translations[op] || op;
     if (replacements) {
       for (var key in replacements) {
@@ -83,6 +85,34 @@ var VuFind = (function VuFind() {
       }
     }
     return translation;
+  };
+
+  var addIcons = function addIcons(s) {
+    for (var i in s) {
+      if (Object.prototype.hasOwnProperty.call(s, i)) {
+        _icons[i] = s[i];
+      }
+    }
+  };
+  var icon = function icon(name) {
+    if (typeof _icons[name] == "undefined") {
+      console.error("JS icon missing: " + name);
+      return name;
+    }
+
+    var html = _icons[name];
+
+    return html;
+  };
+  // Icon shortcut methods
+  var spinner = function spinner(extraClass = "") {
+    let className = ("loading-spinner " + extraClass).trim();
+    return '<span class="' + className + '">' + icon('spinner') + '</span>';
+  };
+  var loading = function loading(text = null, extraClass = "") {
+    let className = ("loading-spinner " + extraClass).trim();
+    let string = translate(text === null ? "loading" : text);
+    return '<span class="' + className + '">' + icon('spinner') + string + '...</span>';
   };
 
   /**
@@ -134,15 +164,19 @@ var VuFind = (function VuFind() {
     defaultSearchBackend: defaultSearchBackend,
     path: path,
 
+    addIcons: addIcons,
     addTranslations: addTranslations,
     init: init,
     emit: emit,
     getCspNonce: getCspNonce,
+    icon: icon,
     listen: listen,
     refreshPage: refreshPage,
     register: register,
     setCspNonce: setCspNonce,
+    spinner: spinner,
     loadHtml: loadHtml,
+    loading: loading,
     translate: translate,
     updateCspNonce: updateCspNonce
   };
@@ -488,19 +522,6 @@ $(document).ready(function commonDocReady() {
   var url = window.location.href;
   if (url.indexOf('?print=') !== -1 || url.indexOf('&print=') !== -1) {
     $("link[media='print']").attr("media", "all");
-    $(document).ajaxStop(function triggerPrint() {
-      // Print dialogs cause problems during testing, so disable them
-      // when the "test mode" cookie is set. This should never happen
-      // under normal usage outside of the Phing startup process.
-      if (document.cookie.indexOf('VuFindTestSuiteRunning=') === -1) {
-        window.addEventListener("afterprint", function goBackAfterPrint() { history.back(); }, { once: true });
-        window.print();
-      } else {
-        console.log("Printing disabled due to test mode."); // eslint-disable-line no-console
-      }
-    });
-    // Make an ajax call to ensure that ajaxStop is triggered
-    $.getJSON(VuFind.path + '/AJAX/JSON', {method: 'keepAlive'});
   }
 
   setupIeSupport();

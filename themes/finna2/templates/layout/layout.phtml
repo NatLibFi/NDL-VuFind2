@@ -23,8 +23,19 @@
     <?php endif ?>
 
     <?=$this->headMeta()?>
-    <?=$this->headTitle()?>
     <?php
+      // Format the page title using the translation system:
+      $siteConfig = $this->config()->get('config')->Site;
+      $fullTitle = $this->translate(
+          'title_wrapper',
+          [
+            '%%pageTitle%%' => $this->headTitle()->renderTitle(),
+            '%%siteTitle%%' => $siteConfig->title,
+            '%%titleSeparator%%' => $siteConfig->titleSeparator ?? '|'
+          ]
+      );
+      echo $this->headTitle($fullTitle, \Laminas\View\Helper\Placeholder\Container\AbstractContainer::SET);
+
       // Set up OpenSearch link:
       $this->headLink(
           [
@@ -34,6 +45,10 @@
               'rel' => 'search'
           ]
       );
+      // We need to generate the icons early, because they may add some stylesheets;
+      // if we render them after the headLink / headStyle calls, some dependencies
+      // may not load correctly. Thus, we render early, but use this later.
+      $icons = !isset($this->renderingError) ? $this->render('js-icons.phtml') : '{}';
 
       $finnaSurvey = in_array($this->layout()->templateDir, ['search', 'record']) && $this->finnaSurvey()->isEnabled();
 
@@ -110,6 +125,7 @@
 VuFind.path = '{$root}';
 VuFind.defaultSearchBackend = '{$dsb}';
 VuFind.addTranslations({$translations});
+VuFind.addIcons({$icons});
 VuFind.setCspNonce('{$cspNonce}');
 JS;
       $this->headScript()->appendScript(implode("\n", $appendScripts));
@@ -223,7 +239,15 @@ JS;
         <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
           <?=$this->layout()->skiplink ?>
         <?php endif; ?>
-        <a class="sr-only sr-only-focusable" href="#content"><?=$this->transEsc('Skip to content') // skip to content ?></a>
+        <?php
+          $contentElementId = 'content';
+          if (!empty($this->layout()->finnaMainHeader)) {
+            $contentElementId = 'content-heading';
+          } elseif (!empty($this->layout()->finnaMainTabs)) {
+            $contentElementId = 'content-main-tabs';
+          }
+        ?>
+        <a class="sr-only sr-only-focusable" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
         <?=$this->render('navibar.phtml')?>
       </div>
     </header>
@@ -296,14 +320,14 @@ JS;
         <?=$this->layout()->finnaStreetBar?>
       <?php endif; ?>
       <?php if (!empty($this->layout()->finnaMainHeader)): ?>
-        <div class="finna-main-header">
+        <div id="content-heading" class="finna-main-header">
           <div class="container">
             <?=$this->layout()->finnaMainHeader?>
           </div>
         </div>
       <?php endif; ?>
       <?php if (!empty($this->layout()->finnaMainTabs)): ?>
-        <div class="finna-main-tabs">
+        <div id="content-main-tabs" class="finna-main-tabs">
           <div class="container">
             <?=$this->layout()->finnaMainTabs?>
           </div>

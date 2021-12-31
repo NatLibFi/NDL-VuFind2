@@ -170,7 +170,7 @@ class Captcha extends \VuFind\Controller\Plugin\Captcha
         if (!$passed && $this->errorMode != 'none') {
             $error = str_replace(
                 '%%interval%%',
-                $this->actionInterval,
+                max($this->actionInterval - (time() - $timestamp), 1),
                 $this->translator->translate('protected_action_interval_not_passed')
             );
 

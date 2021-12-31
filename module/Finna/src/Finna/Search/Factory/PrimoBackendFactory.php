@@ -45,6 +45,13 @@ class PrimoBackendFactory
     extends \VuFind\Search\Factory\PrimoBackendFactory
 {
     /**
+     * Primo connector class
+     *
+     * @var string
+     */
+    protected $connectorClass = Connector::class;
+
+    /**
      * Create the Primo Central connector.
      *
      * Finna: Add hidden filters and set cache manager
@@ -55,29 +62,7 @@ class PrimoBackendFactory
      */
     protected function createConnector()
     {
-        // Get the PermissionHandler
-        $permHandler = $this->getPermissionHandler();
-
-        // Load url and credentials:
-        if (!isset($this->primoConfig->General->url)) {
-            throw new \Exception('Missing url in Primo.ini');
-        }
-        $instCode = isset($permHandler)
-            ? $permHandler->getInstCode()
-            : null;
-
-        // Build HTTP client:
-        $client = $this->serviceLocator->get(\VuFindHttp\HttpService::class)
-            ->createClient();
-        $timeout = $this->primoConfig->General->timeout ?? 30;
-        $client->setOptions(['timeout' => $timeout]);
-
-        $connector = new Connector(
-            $this->primoConfig->General->url,
-            $instCode,
-            $client
-        );
-        $connector->setLogger($this->logger);
+        $connector = parent::createConnector();
 
         $connector->setCacheManager(
             $this->serviceLocator->get(\VuFind\Cache\Manager::class)

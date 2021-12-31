@@ -285,7 +285,6 @@ if (!$disableTitleHold
     $offlineMode = $this->ils()->getOfflineMode();
     $ilsLoginAvailable = $this->ils()->loginAvailable();
 ?>
-    <div class="title-hold">
 <?php
     if ($account->loginEnabled() && $offlineMode != 'ils-offline' && $ilsLoginAvailable) {
       $logged = $account->isLoggedIn();
@@ -303,20 +302,37 @@ if (!$disableTitleHold
       if ($link) {
         if ($logged) {
 ?>
+    <div class="title-hold">
       <a href="<?=$link?>" class="placehold btn btn-primary hidden-print" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $driver->getTitle()) ?>" data-lightbox><?=$this->transEsc('title_hold_place')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
+    </div>
 <?php
         } else {
 ?>
+    <div class="title-hold">
       <a href="<?=$link?>" class="login btn btn-primary hidden-print" data-lightbox><?=$this->transEsc('title_hold_login')?><span class="sr-only">: <?=$this->escapeHtml($driver->getTitle())?></span></a>
+    </div>
 <?php
         }
       }
     }
-?>
-    </div>
-<?php
 }
 ?>
+
+<?php if ($this->record($driver)->repositoryLibraryRequestEnabled('results')): ?>
+  <div class="request">
+    <?php $user = $this->auth()->isLoggedIn(); if ($user): ?>
+      <?php if ($user->getLibraryCards()->count()): ?>
+        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <?php else: ?>
+        <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <?php endif; ?>
+    <?php else: ?>
+      <a href="?login=true&catalogLogin=true" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
+    <?php endif; ?>
+  </div>
+  <div class="clearfix"></div>
+<?php endif; ?>
+
 <?php if ($this->holdings()->showLinkToRecordPage()): ?>
   <div class="all-holdings">
     <a href="<?=$this->escapeHtmlAttr($holdingsLink)?>"><?=$this->transEsc('See all holdings')?></a>

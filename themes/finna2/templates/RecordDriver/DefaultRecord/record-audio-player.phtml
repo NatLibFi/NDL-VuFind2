@@ -14,7 +14,7 @@ $this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
       <?php if (!empty($url['desc'])): ?>
         <strong><?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?></strong>
       <?php else: ?>
-        <strong><?=$this->transEsc('format_Sound') ?></strong>
+        <strong><?=$this->transEsc('format_Sound')?></strong>
       <?php endif ?>
       </div>
     </div>
