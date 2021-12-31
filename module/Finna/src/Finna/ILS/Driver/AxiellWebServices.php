@@ -76,13 +76,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     protected $defaultPickUpLocation;
 
     /**
-     * Excluded pickup locations
-     *
-     * @var array
-     */
-    protected $excludePickUpLocations;
-
-    /**
      * Default request group
      *
      * @var bool|string
@@ -280,6 +273,22 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     protected $titleListCacheSettings = [];
 
     /**
+     * Pick up location block list
+     *
+     * @var array
+     */
+    protected $excludedPickUpLocations = [
+        'regional' => [
+            'organisation' => [],
+            'unit' => []
+        ],
+        'normal' => [
+            'organisation' => [],
+            'unit' => []
+        ]
+    ];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter object
@@ -366,13 +375,50 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $this->defaultPickUpLocation
             = $this->config['Holds']['defaultPickUpLocation'] ?? false;
 
+        $holds = $this->config['Holds'];
+        // Bc for older setting
+        $excludedPickUpLocationsBc
+            = isset($holds['excludePickUpLocations'])
+            ? explode(':', $holds['excludePickUpLocations']) : [];
+
+        $excludedNormalLocations
+            = isset($holds['excludeLocationsFromNormalHoldPickUp'])
+            ? array_merge(
+                explode(':', $holds['excludeLocationsFromNormalHoldPickUp']),
+                $excludedPickUpLocationsBc
+            ) : $excludedPickUpLocationsBc;
+
+        $excludedRegionalLocations
+            = isset($holds['excludeLocationsFromRegionalHoldPickUp'])
+            ? array_merge(
+                explode(':', $holds['excludeLocationsFromRegionalHoldPickUp']),
+                $excludedPickUpLocationsBc
+            ) : $excludedPickUpLocationsBc;
+
+        $excludedNormalOrganisations
+            = isset($holds['excludeOrganisationsFromNormalHoldPickUp'])
+            ? explode(':', $holds['excludeOrganisationsFromNormalHoldPickUp'])
+            : [];
+
+        $excludedRegionalOrganisations
+            = isset($holds['excludeOrganisationsFromRegionalHoldPickUp'])
+            ? explode(':', $holds['excludeOrganisationsFromRegionalHoldPickUp'])
+            : [];
+
+        $this->excludedPickUpLocations = [
+            'normal' => [
+                'unit' => $excludedNormalLocations,
+                'organisation' => $excludedNormalOrganisations
+            ],
+            'regional' => [
+                'unit' => $excludedRegionalLocations,
+                'organisation' => $excludedRegionalOrganisations
+            ]
+        ];
+
         if ($this->defaultPickUpLocation == '0') {
             $this->defaultPickUpLocation = false;
         }
-
-        $this->excludePickUpLocations
-            = isset($this->config['Holds']['excludePickUpLocations'])
-            ? explode(':', $this->config['Holds']['excludePickUpLocations']) : [];
 
         $this->defaultRequestGroup
             = $this->config['Holds']['defaultRequestGroup'] ?? false;
@@ -569,34 +615,36 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             }
 
             $organisationID = $organisation->id;
+            if (!empty($this->excludedPickUpLocations[$holdType])
+                && in_array(
+                    $organisationID,
+                    $this->excludedPickUpLocations[$holdType]['organisation'] ?? []
+                )
+            ) {
+                continue;
+            }
 
             // TODO: Make it configurable whether organisation names
             // should be included in the location name
-
-            if (is_object($organisation->branches->branch)) {
+            $branches = is_object($organisation->branches->branch)
+                ? [$organisation->branches->branch]
+                : $organisation->branches->branch;
+            foreach ($branches as $branch) {
                 $locationID
-                    = $organisationID . '.' . $organisation->branches->branch->id;
-                if (in_array($locationID, $this->excludePickUpLocations)) {
+                    = $organisationID . '.' . $branch->id;
+                if (!empty($this->excludedPickUpLocations[$holdType])
+                    && in_array(
+                        $locationID,
+                        $this->excludedPickUpLocations[$holdType]['unit'] ?? []
+                    )
+                ) {
                     continue;
                 }
 
                 $locationsList[] = [
                     'locationID' => $locationID,
-                    'locationDisplay' => $organisation->branches->branch->name
-                        ?? $locationID
+                    'locationDisplay' => $branch->name
                 ];
-            } else {
-                foreach ($organisation->branches->branch as $branch) {
-                    $locationID = $organisationID . '.' . $branch->id;
-                    if (in_array($locationID, $this->excludePickUpLocations)) {
-                        continue;
-                    }
-
-                    $locationsList[] = [
-                        'locationID' => $locationID,
-                        'locationDisplay' => $branch->name
-                    ];
-                }
             }
         }
 

@@ -28,7 +28,14 @@ autoConfigure = "0"
 ; not possible (i.e. during sitemap generation at the command line).
 ;url = "http://localhost:8081/vufind2"
 email           = finna-posti@helsinki.fi
+; The title of your site, used in some messages and (by default) page <title> tags.
+; Including site title in page titles is recommended to improve browser tab
+; navigation for users with screen readers. However, if you wish to remove this from
+; titles or change the order/layout, you can customize the title_wrapper translation
+; in your language files to remove or relocate the %%siteTitle%% token.
 title           = "Finna"
+; The separator used between page name and site name in the <title> tag of pages.
+titleSeparator = "|"
 ; This is the default theme for non-mobile devices (or all devices if mobile_theme
 ; is disabled below)
 theme           = finna2
@@ -1213,10 +1220,12 @@ hide_holdings[] = "World Wide Web"
 
 ; You can use this setting to specify how grouped holdings details are displayed
 ; by default. Available options:
-;    collapse     - Collapse all details
-;    expand-first - Expand first group, collapse others (default)
-;    expand-all   - Expand all groups
-;holdings_details = collapse
+;    "collapse"            - Collapse all details
+;    "expand-first"        - Expand first group, collapse others (default)
+;    "expand-all"          - Expand all groups
+;    "collapse-journals"   - Used with other options (separated with a comma) to
+;                            always collapse journals
+;holdings_details = "expand-first,collapse-journals"
 
 ; This array controls which Related modules are used to display sidebars on the
 ; record view page.
@@ -1389,6 +1398,28 @@ allowed_url_schemes[] = 'maps'
 ; 3. Datasource of the new record.
 ; 4. (optional) Solr field that contains the identifier in the new record (default is ctrlnum).
 ; missing_record_redirect[] = "/^lusto\.(.+)/###(knp)$1###lusto-new"
+
+; Sources available for repository library request:
+repository_library_request_sources[] = vaari
+; Form used for repository library request:
+repository_library_request_form = RepositoryLibraryRequest
+; Whether to display repository library request in search results:
+repository_library_request_in_results = true
+; Whether to display repository library request in holdings:
+repository_library_request_in_holdings = true
+; Whether to display repository library request in organisation info box:
+repository_library_request_in_organisation_info = true
+
+; Record formats (metadata schemas) that always use the large image layout
+; regardless of material type when images are available (default is "lido",
+; "forward" and "forwardAuthority"):
+;large_image_record_formats[] = "lido"
+;large_image_record_formats[] = "qdc"
+
+; Formats (material types) that use the large image layout when images are available
+; (default is "0/Image/", "0/PhysicalObject/", "0/WorkOfArt/" and "0/Video/"):
+;large_image_formats[] = "0/Image/"
+;large_image_formats[] = "0/Map/"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
@@ -1582,9 +1613,9 @@ count = 2
 ;WorldCat = WorldCat
 ;SolrWeb = "Library Website"
 
-; Use Piwik for visitor tracking
-[Piwik]
-url = https://piwik.jotain.jossain/
+; Use Matomo for visitor tracking
+[Matomo]
+url = https://analytics.jotain.jossain/
 ;site_id = 1
 ;token_auth = ...
 custom_variables = 1

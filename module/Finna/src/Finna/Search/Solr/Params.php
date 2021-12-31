@@ -45,13 +45,6 @@ class Params extends \VuFind\Search\Solr\Params
     use \Finna\Search\FinnaParams;
 
     /**
-     * Search handler for browse actions
-     *
-     * @var string
-     */
-    protected $browseHandler;
-
-    /**
      * Date converter
      *
      * @var \Vufind\Date\Converter
@@ -163,45 +156,6 @@ class Params extends \VuFind\Search\Solr\Params
                 }
             }
         }
-    }
-
-    /**
-     * Support method for initSearch() -- handle basic settings.
-     *
-     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
-     * request.
-     *
-     * @return boolean True if search settings were found, false if not.
-     */
-    protected function initBasicSearch($request)
-    {
-        if ($handler = $request->get('browseHandler')) {
-            $this->setBrowseHandler($handler);
-        }
-        return parent::initBasicSearch($request);
-    }
-
-    /**
-     * Return the selected search handler (null for complex searches which have no
-     * single handler)
-     *
-     * @return string|null
-     */
-    public function getSearchHandler()
-    {
-        return $this->browseHandler ?: parent::getSearchHandler();
-    }
-
-    /**
-     * Set search handler for browse actions
-     *
-     * @param string $handler Hander
-     *
-     * @return string|null
-     */
-    public function setBrowseHandler($handler)
-    {
-        return $this->browseHandler = $handler;
     }
 
     /**

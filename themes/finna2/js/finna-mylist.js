@@ -1,19 +1,14 @@
-/*global VuFind, finna */
+/*global VuFind, finna, Sortable */
 finna.myList = (function finnaMyList() {
 
   var mdEditable = null;
   var editableSettings = {'minWidth': 200, 'addToHeight': 100};
   var save = false;
-  var listUrl = null;
   var refreshLists = null;
 
   // This is duplicated in image-popup.js to avoid dependency
   function getActiveListId() {
     return $('input[name="listID"]').val();
-  }
-
-  function onCustomOrderSaved(/*ev, data*/) {
-    location.href = listUrl;
   }
 
   function toggleErrorMessage(mode) {
@@ -429,14 +424,18 @@ finna.myList = (function finnaMyList() {
       });
   };
 
-  function initFavoriteOrderingFunctionality(url) {
-    listUrl = url;
-
-    $('#sortable').sortable({cursor: 'move', opacity: 0.7});
-
+  function initFavoriteOrderingFunctionality() {
+    var el = document.getElementById('sortable');
+    var sortable = Sortable.create(el);
     $('#sort_form').on('submit', function onSubmitSortForm(/*event*/) {
-      var listOfItems = $('#sortable').sortable('toArray');
-      $('#sort_form input[name="orderedList"]').val(JSON.stringify(listOfItems));
+      var list = [];
+      var children = sortable.el.children;
+      if (children.length > 0) {
+        for (var i = 0; i < children.length; i++) {
+          list.push(children[i].id);
+        }
+      }
+      this.querySelector('input[name="orderedList"]').value = JSON.stringify(list);
       return true;
     });
   }
@@ -490,7 +489,6 @@ finna.myList = (function finnaMyList() {
   }
 
   var my = {
-    onCustomOrderSaved: onCustomOrderSaved,
     initFavoriteOrderingFunctionality: initFavoriteOrderingFunctionality,
     init: function init() {
       initEditComponents();

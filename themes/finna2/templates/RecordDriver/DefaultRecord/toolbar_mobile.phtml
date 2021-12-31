@@ -20,6 +20,7 @@
   $currentSource = $this->driver->tryMethod('getDataSource');
   $mergedData = $this->driver->tryMethod('getMergedRecordData');
   $dedupData = $this->driver->getDedupData();
+  $cart = $this->cart();
 ?>
 <div class="visible-xs">
   <div class="mobile-toolbar">
@@ -65,8 +66,21 @@
           <?php if (count($this->driver->getCitationFormats()) > 0): ?>
           <li><a class="cite-record-mobile" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><i class="fa fa-asterisk"></i> <span class="sr-only"><?=$this->transEsc('Cite this')?></span></a></li>
           <?php endif; ?>
-
-          <li class="hidden-xs hidden-sm"><a href="javascript:window.print()"><i class="fa fa-print" rel="nofollow"></i> <?=$this->transEsc('Print')?></a></li>
+          <?php if ($cart->isActive()): ?>
+            <?php $cartId = $this->driver->getSourceIdentifier() . '|' . $this->driver->getUniqueId(); ?>
+            <li class="btn-bookbag-toggle" data-cart-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-cart-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
+              <a class="cart-add-mobile cart-add<?php if(!$cart->contains($cartId)): ?> correct<?php endif ?>" title="<?=$this->transEsc('Add to Book Bag')?>" rel="nofollow" href="#">
+                <i class="fa fa-suitcase" aria-hidden="true"></i>
+                <span class="sr-only"><?=$this->transEsc('Add to Book Bag')?></span>
+              </a>
+              <a class="cart-remove-mobile cart-remove<?php if($cart->contains($cartId)): ?> correct<?php endif ?>" title="<?=$this->transEsc('Remove from Book Bag')?>" rel="nofollow" href="#">
+                <i class="fa fa-suitcase" aria-hidden="true"></i>
+                <i class="fa fa-close" aria-hidden="true"></i>
+                <span class="sr-only"><?=$this->transEsc('Remove from Book Bag')?></span>
+                <div class="blinker"></div>
+              </a>
+            </li>
+          <?php endif; ?>
     </ul>
     <ul class="nav nav-pills library-link">
       <li class="hidden">

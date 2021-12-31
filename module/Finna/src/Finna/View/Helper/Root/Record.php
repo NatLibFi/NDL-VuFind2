@@ -209,17 +209,26 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Is repository library request form enabled for this record.
      *
-     * @return boolean
+     * @param string $context Context
+     *
+     * @return bool
      */
-    public function repositoryLibraryRequestEnabled() : bool
-    {
+    public function repositoryLibraryRequestEnabled(
+        string $context = 'organisation_info'
+    ) : bool {
         if (!isset($this->config->Record->repository_library_request_sources)) {
             return false;
         }
-        return in_array(
+        $enabled = in_array(
             $this->driver->tryMethod('getDataSource'),
             $this->config->Record->repository_library_request_sources->toArray()
         ) && $this->getRepositoryLibraryRequestFormId();
+
+        if (!$enabled) {
+            return false;
+        }
+        $setting = "repository_library_request_in_$context";
+        return $this->config->Record->$setting ?? false;
     }
 
     /**
@@ -1089,5 +1098,71 @@ class Record extends \VuFind\View\Helper\Root\Record
             }
         }
         return $label;
+    }
+
+    /**
+     * Check if large image layout should be used for the record
+     *
+     * @return bool
+     */
+    public function hasLargeImageLayout(): bool
+    {
+        $language = $this->getView()->layout()->userLang;
+
+        $imageTypes = ['small', 'medium', 'large', 'master'];
+        $images = $this->getAllImages($language, false, false, false);
+        $hasValidImages = false;
+        foreach ($images as $image) {
+            if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {
+                $hasValidImages = true;
+                break;
+            }
+        }
+        if (!$hasValidImages) {
+            return false;
+        }
+
+        // Check for record formats that always use large image layout:
+        $largeImageRecordFormats
+            = isset($this->config->Record->large_image_record_formats)
+            ? $this->config->Record->large_image_record_formats->toArray()
+            : ['lido', 'forward', 'forwardAuthority'];
+        $recordFormat = $this->driver->tryMethod('getRecordFormat');
+        if (in_array($recordFormat, $largeImageRecordFormats)) {
+            return true;
+        }
+
+        // Check for formats that use large image layout:
+        $largeImageFormats
+            = isset($this->config->Record->large_image_formats)
+            ? $this->config->Record->large_image_formats->toArray()
+            : [
+                '0/Image/',
+                '0/PhysicalObject/',
+                '0/WorkOfArt/',
+                '0/Video/',
+            ];
+        $formats = $this->driver->tryMethod('getFormats');
+        if (array_intersect($formats, $largeImageFormats)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the organisation menu position for the record
+     *
+     * @return string|false 'sidebar', 'inline' or false for no menu
+     */
+    public function getOrganisationMenuPosition()
+    {
+        $localSources = ['Solr', 'SolrAuth', 'L1', 'R2'];
+        $source = $this->driver->getSourceIdentifier();
+        if (!in_array($source, $localSources)) {
+            return false;
+        }
+        return ('SolrAuth' === $source || $this->hasLargeImageLayout())
+            ? 'inline' : 'sidebar';
     }
 }

@@ -38,7 +38,7 @@
 
     <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
 
-    <?php if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
       <div class="organisation-menu">
         <?=$this->render('record/record-organisation-menu.phtml') ?>
       </div>

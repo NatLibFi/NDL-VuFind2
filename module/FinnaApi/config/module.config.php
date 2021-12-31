@@ -4,10 +4,8 @@ namespace FinnaApi\Module\Configuration;
 $config = [
     'controllers' => [
         'factories' => [
-            'FinnaApi\Controller\AdminApiController' => 'FinnaApi\Controller\Factory::getAdminApiController',
-            'FinnaApi\Controller\ApiController' => 'FinnaApi\Controller\Factory::getApiController',
-            'FinnaApi\Controller\AuthApiController' => 'FinnaApi\Controller\Factory::getAuthApiController',
-            'FinnaApi\Controller\SearchApiController' => 'FinnaApi\Controller\Factory::getSearchApiController',
+            'FinnaApi\Controller\AdminApiController' => 'VuFindApi\Controller\AdminApiControllerFactory',
+            'FinnaApi\Controller\AuthApiController' => 'FinnaApi\Controller\AuthApiControllerFactory',
         ],
         'aliases' => [
             'AdminApi' => 'FinnaApi\Controller\AdminApiController',
@@ -15,10 +13,19 @@ $config = [
 
             'adminapi' => 'AdminApi',
             'authapi' => 'AuthApi',
-
-            // Overrides:
-            'VuFindApi\Controller\ApiController' => 'FinnaApi\Controller\ApiController',
-            'VuFindApi\Controller\SearchApiController' => 'FinnaApi\Controller\SearchApiController',
+        ]
+    ],
+    'service_manager' => [
+        'factories' => [
+            'FinnaApi\Formatter\RecordFormatter' => 'FinnaApi\Formatter\RecordFormatterFactory',
+        ],
+        'aliases' => [
+            'VuFindApi\Formatter\RecordFormatter' => 'FinnaApi\Formatter\RecordFormatter'
+        ],
+    ],
+    'vufind_api' => [
+        'register_controllers' => [
+            \FinnaApi\Controller\AuthApiController::class,
         ]
     ],
     'router' => [
