@@ -39,7 +39,7 @@
     <?php endforeach; ?>
   </div>
 </div>
-<div class="video-buttons">
+<div class="video-buttons<?=$inlineVideo && count($videoUrls) === 1 ? ' hidden' : ''?>">
   <div class="video-accordion <?= $inlineVideo ? 'container' : ''?>">
     <?php $i = 0; ?>
     <?php foreach ($videoUrls as $url): ?>

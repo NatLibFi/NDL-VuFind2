@@ -142,15 +142,15 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     });
   }
 
-  function initSearch() {
-    var count = Object.keys(organisationList).length;
+  function initSearch(list) {
+    var count = Object.keys(list).length;
     var translation = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', count);
 
     $(document).ready(function initSelect() {
       var select = document.querySelector('#office-search');
       var placeholder = document.createElement('option');
       select.append(placeholder);
-      $.each(organisationList, function addToSelect(id, el) {
+      $.each(list, function addToSelect(id, el) {
         var option = document.createElement('option');
         option.appendChild(document.createTextNode(el.name));
         if (el.address && el.address.city) {
@@ -191,7 +191,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
             id = Object.keys(organisationList)[0];
           } else {
             // IE opens Delay initing autocomplete menu to prevent IE from opening it automatically at
-            initSearch();
+            initSearch(response.list);
           }
 
           if (typeof id != 'undefined' && id) {

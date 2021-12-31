@@ -35,10 +35,9 @@ use Finna\Search\Solr\SolrExtensionsListener;
 
 use FinnaSearch\Backend\Solr\LuceneSyntaxHelper;
 use FinnaSearch\Backend\Solr\QueryBuilder;
+use FinnaSearch\Backend\Solr\Response\Json\RecordCollection;
 
 use VuFindSearch\Backend\Solr\Backend;
-use VuFindSearch\Backend\Solr\Connector;
-use VuFindSearch\Backend\Solr\Response\Json\RecordCollectionFactory;
 
 /**
  * Abstract factory for SOLR backends.
@@ -68,29 +67,11 @@ class SolrDefaultBackendFactory
     protected $backendClass = \FinnaSearch\Backend\Solr\Backend::class;
 
     /**
-     * Create the SOLR backend.
+     * Record collection class for RecordCollectionFactory
      *
-     * @param Connector $connector Connector
-     *
-     * @return Backend
+     * @var string
      */
-    protected function createBackend(Connector $connector)
-    {
-        $backend = new $this->backendClass($connector);
-        $backend->setQueryBuilder($this->createQueryBuilder());
-        $backend->setSimilarBuilder($this->createSimilarBuilder());
-        if ($this->logger) {
-            $backend->setLogger($this->logger);
-        }
-        $manager
-            = $this->serviceLocator->get(\Finna\RecordDriver\PluginManager::class);
-        $factory = new RecordCollectionFactory(
-            [$manager, $this->createRecordMethod],
-            'FinnaSearch\Backend\Solr\Response\Json\RecordCollection'
-        );
-        $backend->setRecordCollectionFactory($factory);
-        return $backend;
-    }
+    protected $recordCollectionClass = RecordCollection::class;
 
     /**
      * Create listeners.
@@ -130,23 +111,19 @@ class SolrDefaultBackendFactory
      */
     protected function createQueryBuilder()
     {
+        $specs  = $this->loadSpecs();
         $config = $this->config->get('config');
-        $search = $this->config->get($this->searchConfig);
-
-        $specs   = $this->loadSpecs();
         $defaultDismax = $config->Index->default_dismax_handler ?? 'dismax';
-        $maxSpellcheckWords = $search->General->max_spellcheck_words ?? 5;
-        $builder = new QueryBuilder($specs, $defaultDismax, $maxSpellcheckWords);
+        $builder = new QueryBuilder($specs, $defaultDismax);
 
         // Configure builder:
-        $caseSensitiveBooleans
-            = $search->General->case_sensitive_bools ?? true;
-        $caseSensitiveRanges
-            = $search->General->case_sensitive_ranges ?? true;
+        $search = $this->config->get($this->searchConfig);
+        $caseSensitiveBooleans = $search->General->case_sensitive_bools ?? true;
+        $caseSensitiveRanges = $search->General->case_sensitive_ranges ?? true;
         $unicodeNormalizationForm
             = $search->General->unicode_normalization_form ?? 'NFKC';
-        $searchFilters
-            = $config->Index->search_filters ?? [];
+        $searchFilters = isset($config->Index->search_filters)
+            ? $config->Index->search_filters->toArray() : [];
         $helper = new LuceneSyntaxHelper(
             $caseSensitiveBooleans,
             $caseSensitiveRanges,

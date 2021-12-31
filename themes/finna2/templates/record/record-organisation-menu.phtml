@@ -1,9 +1,10 @@
 <!-- START of: finna - record/record-organisation-menu.phtml -->
-<?php $currentSource = $this->driver->tryMethod('getDataSource');
-   $currentSourceTranslated = $this->transEsc("source_$currentSource", null, $currentSource);
-   $mergedData = $this->driver->tryMethod('getMergedRecordData');
-   $recordType = $this->driver->tryMethod('getRecordFormat');
-   $sector = $this->driver->tryMethod('getSector');
+<?php
+  $currentSource = $this->driver->tryMethod('getDataSource');
+  $currentSourceTranslated = $this->transEsc("source_$currentSource", null, $currentSource);
+  $mergedData = $this->driver->tryMethod('getMergedRecordData');
+  $recordType = $this->driver->tryMethod('getRecordFormat');
+  $sector = $this->driver->tryMethod('getSector');
 ?>
 <div class="recordProvidedBy">
   <h2 class="record-organisation-header">

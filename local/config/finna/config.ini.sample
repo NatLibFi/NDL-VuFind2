@@ -1220,10 +1220,12 @@ hide_holdings[] = "World Wide Web"
 
 ; You can use this setting to specify how grouped holdings details are displayed
 ; by default. Available options:
-;    collapse     - Collapse all details
-;    expand-first - Expand first group, collapse others (default)
-;    expand-all   - Expand all groups
-;holdings_details = collapse
+;    "collapse"            - Collapse all details
+;    "expand-first"        - Expand first group, collapse others (default)
+;    "expand-all"          - Expand all groups
+;    "collapse-journals"   - Used with other options (separated with a comma) to
+;                            always collapse journals
+;holdings_details = "expand-first,collapse-journals"
 
 ; This array controls which Related modules are used to display sidebars on the
 ; record view page.
@@ -1407,6 +1409,17 @@ repository_library_request_in_results = true
 repository_library_request_in_holdings = true
 ; Whether to display repository library request in organisation info box:
 repository_library_request_in_organisation_info = true
+
+; Record formats (metadata schemas) that always use the large image layout
+; regardless of material type when images are available (default is "lido",
+; "forward" and "forwardAuthority"):
+;large_image_record_formats[] = "lido"
+;large_image_record_formats[] = "qdc"
+
+; Formats (material types) that use the large image layout when images are available
+; (default is "0/Image/", "0/PhysicalObject/", "0/WorkOfArt/" and "0/Video/"):
+;large_image_formats[] = "0/Image/"
+;large_image_formats[] = "0/Map/"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]

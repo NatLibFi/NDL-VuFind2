@@ -75,7 +75,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Item Description', 'Item History', 'Keywords',
             'Language', 'Language Notes', 'Learning Resource Type',
             'Location', 'Manufacturer', 'Measurements',
-            'Medium of Performance', 'Methodology', 'New Title',
+            'Methodology', 'Music Compositions Extended', 'New Title',
             'Notated Music Format', 'Notes', 'Objective and Content',
             'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID',
@@ -177,7 +177,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Event Notice', 'Events', 'Exterior Images',
             'Film Copies', 'Film Festivals', 'Filming Date',
             'Filming Location Notes', 'Finding Aid', 'First Lyrics',
-            'Foreign Distribution', 'Funding', 'Genre', 'Identifiers',
+            'Foreign Distribution', 'Funding', 'Genre',
             'Inscriptions', 'Inspection Details', 'Interior Images',
             'Inventory ID', 'ISBN', 'ISSN', 'Item Description',
             'Item History', 'Keywords', 'Language',
@@ -202,7 +202,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subject Date', 'Subject Detail', 'Subject Place',
             'Subjects', 'subjects_extended', 'System Format',
             'Terms of Use', 'Time Period', 'Time Period of Creation',
-            'Trade Availability Note', 'Type', 'Uncontrolled Title',
+            'Trade Availability Note', 'Uncontrolled Title',
             'Uniform Title', 'Unit ID', 'Unit IDs'
         ];
 

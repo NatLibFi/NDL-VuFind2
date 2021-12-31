@@ -670,6 +670,52 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Get extended composition information from field 382.
+     *
+     * Returns an array where each entry contains a set of subfields with a type code
+     * (see $typeMap below).
+     *
+     * @return array
+     */
+    public function getExtendedMusicCompositions()
+    {
+        $results = [];
+        $typeMap = [
+            'a' => 'medium',
+            'b' => 'soloist',
+            'd' => 'doublingInstrument',
+            'e' => 'numEnsemblesOfSameType',
+            'n' => 'numPerformersOfSameMedium',
+            'p' => 'altMedium',
+            'r' => 'numIndividualPerformers',
+            's' => 'numPerformers',
+            't' => 'numEnsembles',
+            'v' => 'note',
+            '3' => 'materials'
+        ];
+        $marc = $this->getMarcReader();
+        foreach ($marc->getFields('382') as $field) {
+            $allSubfields = $this->getAllSubfields($field);
+            $items = [];
+            foreach ($allSubfields as $subfield) {
+                $code = $subfield['code'];
+                if (($type = $typeMap[$code] ?? false)
+                    && ($contents = trim($subfield['data']))
+                ) {
+                    $items[] = compact('type', 'contents');
+                }
+            }
+            if ($items) {
+                $results[] = [
+                    'partial' => $field['i1'] === '1',
+                    'items' => $items,
+                ];
+            }
+        }
+        return $results;
+    }
+
+    /**
      * Get an array of all extent information.
      *
      * @return array
@@ -688,22 +734,60 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
     /**
      * Return full record as filtered XML for public APIs.
      *
+     * This is not particularly beautiful, but the aim is to do the work with the
+     * least effort.
+     *
      * @return string
      */
     public function getFilteredXML()
     {
-        $record = clone $this->getMarcRecord();
-        $record->deleteFields('520');
-        $componentIds = $this->getFieldArray('979', 'a');
-        if ($componentIds) {
-            $record->deleteFields('979');
-            $subfields = [];
-            foreach ($componentIds as $id) {
-                $subfields[] = new \File_MARC_Subfield('a', $id);
+        $collection = new \DOMDocument();
+        $collection->preserveWhiteSpace = false;
+        $collection->loadXML($this->getMarcReader()->toFormat('MARCXML'));
+        $record = $collection->getElementsByTagName('record')->item(0);
+        $fieldsToRemove = [];
+        $componentPartIds = [];
+        foreach ($record->getElementsByTagName('datafield') as $field) {
+            $tag = $field->getAttribute('tag');
+            // Delete 520 (summary etc. may contain material under copyright) and
+            // 979 (we will add a new one with just component part ids):
+            if ('520' === $tag) {
+                $fieldsToRemove[] = $field;
+            } elseif ('979' === $tag) {
+                foreach ($field->getElementsByTagName('subfield') as $subfield) {
+                    if ('a' === $subfield->getAttribute('code')) {
+                        $componentPartIds[] = $subfield->textContent;
+                    }
+                }
+                $fieldsToRemove[] = $field;
             }
-            $record->appendField(new \File_MARC_Data_Field('979', $subfields));
         }
-        return $record->toXML();
+        foreach ($fieldsToRemove as $field) {
+            $record->removeChild($field);
+        }
+        if ($componentPartIds) {
+            $field = $collection->createElement('datafield');
+            $tag = $collection->createAttribute('tag');
+            $tag->value = '979';
+            $field->appendChild($tag);
+            $ind1 = $collection->createAttribute('ind1');
+            $ind1->value = ' ';
+            $field->appendChild($ind1);
+            $ind2 = $collection->createAttribute('ind2');
+            $ind2->value = ' ';
+            $field->appendChild($ind2);
+            foreach ($componentPartIds as $id) {
+                $subfield = $collection->createElement('subfield');
+                $code = $collection->createAttribute('code');
+                $code->value = 'a';
+                $subfield->appendChild($code);
+                $subfield->appendChild($collection->createTextNode($id));
+                $field->appendChild($subfield);
+            }
+            $record->appendChild($field);
+        }
+
+        return $collection->saveXML();
     }
 
     /**
@@ -946,7 +1030,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     $result[] = [
                         'name' => $this->stripTrailingPunctuation($subfields[0]),
                         'name_alt' => $altSubfields,
-                        'date' => !empty($dates) ? $dates[0] : '',
+                        'date' => !empty($dates)
+                            ? $this->stripTrailingPunctuation($dates[0]) : '',
                         'role' => $role,
                         'id' => $id ?: null,
                         'type' => in_array($fieldCode, ['100', '700'])
@@ -1012,6 +1097,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         $role = $this->getSubfield($field, 'e');
                     }
                     $role = mb_strtolower($role, 'UTF-8');
+                    $role = $this->stripTrailingPunctuation($role);
                     if (!$role
                         || !isset($this->mainConfig->Record->presenter_roles)
                         || !in_array(
@@ -1027,7 +1113,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                     if (!empty($subfields)) {
                         $result['presenters'][] = [
                             'name' => $this->stripTrailingPunctuation($subfields[0]),
-                            'date' => $dates ? $dates[0] : '',
+                            'date' => $dates
+                                ? $this->stripTrailingPunctuation($dates[0]) : '',
                             'role' => $role,
                             'id' => $id ?: null
                         ];

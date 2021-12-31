@@ -150,21 +150,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get an array of types for the record.
-     *
-     * @return array
-     */
-    public function getTypes(): array
-    {
-        $xml = $this->getXmlRecord();
-        $results = [];
-        foreach ($xml->type ?? [] as $type) {
-            $results[] = (string)$type;
-        }
-        return $results;
-    }
-
-    /**
      * Get an array of mediums for the record
      *
      * @return array

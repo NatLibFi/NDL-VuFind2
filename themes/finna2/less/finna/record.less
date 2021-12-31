@@ -20,6 +20,7 @@
     @media(max-width: @screen-xs-max) {
       display: block;
       width: 100%;
+      float: none;
     }
     .recordcover-container {
       position: relative;
@@ -907,8 +908,12 @@ a.authority {
 }
 
 .record-main .recordProvidedBy {
-  &:extend(.sidebar .recordProvidedBy all);
-  h2:extend(.sidebar > h2) {};
+  border: @sidebar-border;
+  padding: 0 15px 10px 15px;
+  margin-bottom: 10px;
+  h2 {
+    font-size: 20px;
+  }
   @media (min-width: @screen-sm-min) {
     max-width: 300px;
   }

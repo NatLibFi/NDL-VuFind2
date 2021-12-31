@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2019.
+ * Copyright (C) The National Library of Finland 2017-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
+use VuFind\Marc\MarcReader;
 
 /**
  * KohaRest ILS Driver for KohaSuomi
@@ -1595,7 +1596,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
      *
      * @param array $holding Holding
      *
-     * @return \File_MARCXML
+     * @return MarcReader
      */
     protected function getHoldingMarc(&$holding)
     {
@@ -1604,13 +1605,9 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
                 as $metadata
             ) {
                 if ('marcxml' === $metadata['format']
-                    && 'MARC21' === $metadata['marcflavour']
+                    && 'MARC21' === $metadata['schema']
                 ) {
-                    $marc = new \File_MARCXML(
-                        $metadata['metadata'],
-                        \File_MARCXML::SOURCE_STRING
-                    );
-                    $holding['_marcRecord'] = $marc->next();
+                    $holding['_marcRecord'] = new MarcReader($metadata['metadata']);
                     return $holding['_marcRecord'];
                 }
             }
@@ -1636,7 +1633,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         $marcDetails = [];
 
         // Get Notes
-        $data = $this->getMFHDData(
+        $data = $this->getMARCData(
             $marc,
             $this->config['Holdings']['notes']
             ?? '852z'
@@ -1646,7 +1643,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         }
 
         // Get Summary (may be multiple lines)
-        $data = $this->getMFHDData(
+        $data = $this->getMARCData(
             $marc,
             $this->config['Holdings']['summary']
             ?? '866a'
@@ -1657,7 +1654,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         // Get Supplements
         if (isset($this->config['Holdings']['supplements'])) {
-            $data = $this->getMFHDData(
+            $data = $this->getMARCData(
                 $marc,
                 $this->config['Holdings']['supplements']
             );
@@ -1668,7 +1665,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         // Get Indexes
         if (isset($this->config['Holdings']['indexes'])) {
-            $data = $this->getMFHDData(
+            $data = $this->getMARCData(
                 $marc,
                 $this->config['Holdings']['indexes']
             );
@@ -1679,7 +1676,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         // Get links
         if (isset($this->config['Holdings']['links'])) {
-            $data = $this->getMFHDData(
+            $data = $this->getMARCData(
                 $marc,
                 $this->config['Holdings']['links']
             );
@@ -1697,16 +1694,16 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get specified fields from an MFHD MARC Record
+     * Get specified fields from a MARC Record
      *
-     * @param object       $record     File_MARC object
+     * @param MarcReader   $record     Marc reader
      * @param array|string $fieldSpecs Array or colon-separated list of
      * field/subfield specifications (3 chars for field code and then subfields,
      * e.g. 866az)
      *
-     * @return string|string[] Results as a string if single, array if multiple
+     * @return string|array Results as a string if single, array if multiple
      */
-    protected function getMFHDData($record, $fieldSpecs)
+    protected function getMARCData(MarcReader $record, $fieldSpecs)
     {
         if (!is_array($fieldSpecs)) {
             $fieldSpecs = explode(':', $fieldSpecs);
@@ -1717,16 +1714,16 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
             $subfieldCodes = substr($fieldSpec, 3);
             if ($fields = $record->getFields($fieldCode)) {
                 foreach ($fields as $field) {
-                    if ($subfields = $field->getSubfields()) {
+                    if ($subfields = $field['subfields'] ?? []) {
                         $line = '';
-                        foreach ($subfields as $code => $subfield) {
-                            if (!strstr($subfieldCodes, $code)) {
+                        foreach ($subfields as $subfield) {
+                            if (!strstr($subfieldCodes, $subfield['code'])) {
                                 continue;
                             }
                             if ($line) {
                                 $line .= ' ';
                             }
-                            $line .= $subfield->getData();
+                            $line .= $subfield['data'];
                         }
                         if ($line) {
                             if (!$results) {
