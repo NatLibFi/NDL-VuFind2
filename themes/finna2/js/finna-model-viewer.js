@@ -108,7 +108,9 @@ function ModelViewer(trigger, options, scripts)
   _.trigger = $(trigger);
   _.texturePath = options.texturePath;
   _.inlineId = 'inline-viewer';
-  _.defaultSettings = JSON.parse(options.settings);
+  if (options.settings.length > 0) {
+    _.defaultSettings = JSON.parse(options.settings);
+  }
   _.viewerPaddingAngle = 35;
   _.lights = [];
   _.materials = [];
