@@ -148,8 +148,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected $modelViewerSettings = [
         'debug',
-        'fileInput',
-        'viewOnly'
+        'fileInput'
     ];
 
     /**

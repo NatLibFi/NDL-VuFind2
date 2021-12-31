@@ -164,9 +164,7 @@ ModelViewer.prototype.createTrigger = function createTrigger(options, scripts) {
           _.informationsArea = _.root.find('.statistics-table');
           _.root.find('.model-stats').attr('id', 'model-stats');
           _.root.find('.model-help').attr('id', 'model-help');
-          if (!options.viewOnly) {
-            _.root.find('.model-settings').attr('id', 'model-settings');
-          }
+          _.root.find('.model-settings').attr('id', 'model-settings');
           _.informationsArea.toggle(false);
           _.trigger.addClass('open');
         }
@@ -1257,6 +1255,7 @@ ModelViewer.prototype.loadBackground = function loadBackground()
     }
     _.displayInformation();
     _.setEvents();
+    _.initMenu();
     return;
   }
   var cubeLoader = new THREE.CubeTextureLoader();
