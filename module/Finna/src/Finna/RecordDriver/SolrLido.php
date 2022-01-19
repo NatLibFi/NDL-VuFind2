@@ -145,19 +145,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Supported document formats
-     *
-     * @var array
-     */
-    protected $supportedDocumentFormats = [
-        'pdf' => 'PDF',
-        'doc' => 'Word',
-        'docx' => 'Word',
-        'xlsx' => 'Excel',
-        'xls' => 'Excel'
-    ];
-
-    /**
      * Description type mappings
      *
      * @var array
@@ -884,16 +871,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         string $format,
         string $description
     ): array {
-        $format = strtolower($format);
-        if ($fileType = $this->supportedDocumentFormats[$format] ?? false) {
-            return [
-                'description' => $description ?: false,
-                'url' => $url,
-                'format' => $format,
-                'type' => $fileType
-            ];
-        }
-        return [];
+        return [
+            'description' => $description ?: false,
+            'url' => $url,
+            'format' => strtolower($format)
+        ];
     }
 
     /**

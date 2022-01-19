@@ -59,23 +59,6 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     protected $cacheManager;
 
     /**
-     * Mime type mappings
-     *
-     * @var array
-     */
-    protected $mimeTypeMappings = [
-        'mp3' => 'audio/mpeg',
-        'mp4' => 'video/mp4',
-        'wav' => 'audio/wav',
-        'xlsx' => 'application/vnd.openxmlformats-officedocument'
-            . '.spreadsheetml.sheet',
-        'xls' => 'application/vnd.ms-excel',
-        'docx' => 'application/vnd.openxmlformats-officedocument'
-            . '.wordprocessingml.document',
-        'doc' => 'application/msword'
-    ];
-
-    /**
      * Constructor
      *
      * @param CacheManager $cm     Cache Manager
@@ -96,8 +79,9 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
      */
     protected function getMimeType(string $format): string
     {
-        return $this->mimeTypeMappings[strtolower($format)]
-            ?? 'application/octet-stream';
+        $detector = new \League\MimeTypeDetection\FinfoMimeTypeDetector();
+        $mimeType = $detector->detectMimeTypeFromPath("foo.$format");
+        return $mimeType ?: 'application/octet-stream';
     }
 
     /**
@@ -167,6 +151,9 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         string $fileName,
         string $format
     ): bool {
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
         $client = $this->httpService->createClient(
             $url,
             \Laminas\Http\Request::METHOD_GET,
@@ -177,7 +164,6 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         header("Content-Type: {$contentType}");
         header("Content-disposition: attachment; filename=\"{$fileName}\"");
         header('Cache-Control: public');
-        header('Transfer-Encoding: gzip');
         $client->setOptions(['useragent' => 'VuFind']);
         $client->setStream();
         $adapter = new \Laminas\Http\Client\Adapter\Curl();
