@@ -116,6 +116,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
+     * Document types array
+     *
+     * @var array
+     */
+    protected $documentTypes = [
+        'preview_text' => 'document',
+        'provided_text' => 'document'
+    ];
+
+    /**
      * Supported audio formats
      *
      * @var array
@@ -132,6 +142,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected $supportedVideoFormats = [
         'mp4' => 'video/mp4'
+    ];
+
+    /**
+     * Description type mappings
+     *
+     * @var array
+     */
+    protected $descriptionTypeMappings = [
+        'preview_video' => 'displayLink',
+        'preview_audio' => 'displayLink',
+        'preview_text' => 'displayLink',
+        'provided_text' => 'displayLink'
     ];
 
     /**
@@ -369,6 +391,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get documents
+     *
+     * @return array
+     */
+    public function getDocuments(): array
+    {
+        $language = $this->getTranslatorLocale();
+        $representations = $this->getRepresentations($language);
+        return array_filter(array_column($representations, 'documents'));
+    }
+
+    /**
      * Parse given representations and return them in proper
      * associative array
      *
@@ -384,33 +418,37 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         }
 
         $defaultRights = $this->getImageRights($language, true);
+
         $imageTypeKeys = array_keys($this->imageTypes);
         $modelTypeKeys = array_keys($this->modelTypes);
         $audioTypeKeys = array_keys($this->audioTypes);
         $videoTypeKeys = array_keys($this->videoTypes);
-        $results = [];
+        $documentTypeKeys = array_keys($this->documentTypes);
 
+        $results = [];
         $addToResults = function (
-            array $imageData = [],
+            array $images = [],
             array $models = [],
             array $audios = [],
-            array $videos = []
+            array $videos = [],
+            array $documents = []
         ) use (&$results) {
-            if ($imageData) {
-                if (!isset($imageData['urls']['small'])) {
-                    $imageData['urls']['small'] = $imageData['urls']['medium']
-                        ?? $imageData['urls']['large'];
+            if ($images) {
+                if (!isset($images['urls']['small'])) {
+                    $images['urls']['small'] = $images['urls']['medium']
+                        ?? $images['urls']['large'];
                 }
-                if (!isset($imageData['urls']['medium'])) {
-                    $imageData['urls']['medium'] = $imageData['urls']['small'];
+                if (!isset($images['urls']['medium'])) {
+                    $images['urls']['medium'] = $images['urls']['small'];
                 }
             }
-            $results[] = [
-                'images' => $imageData,
-                'models' => $models,
-                'audios' => $audios,
-                'videos' => $videos
-            ];
+            $results[] = compact(
+                'images',
+                'models',
+                'audios',
+                'videos',
+                'documents'
+            );
         };
 
         foreach ($this->getXmlRecord()->xpath(
@@ -419,8 +457,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         ) as $resourceSet) {
             // Process rights first since we may need to duplicate them if there
             // are multiple representations in the set (non-standard)
-            $rights = $this->parseResourceRights($resourceSet, $language);
-            if (empty($rights)) {
+            if (!($rights = $this->getResourceRights($resourceSet, $language))) {
                 $rights = $defaultRights;
             }
 
@@ -428,79 +465,116 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             $modelUrls = [];
             $audioUrls = [];
             $videoUrls = [];
+            $documentUrls = [];
             $highResolution = [];
+
+            $descriptions = $this->getResourceDescriptions($resourceSet, $language);
             foreach ($resourceSet->resourceRepresentation as $representation) {
                 $linkResource = $representation->linkResource;
                 $url = trim((string)$linkResource);
-                if (empty($url)) {
+                if (!$url || !$this->isUrlLoadable($url, $this->getUniqueID())) {
                     continue;
                 }
-                if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
-                    continue;
-                }
-                $data = [
-                    'format' => (string)$linkResource->attributes()->formatResource,
-                    'type' => (string)$representation->attributes()->type,
-                    'url' => $url,
-                    'measurements' => $representation->resourceMeasurementsSet,
-                    'ID' => $resourceSet->resourceID ?? ''
-                ];
+                $format = (string)($linkResource['formatResource'] ?? '');
 
-                // Representation is an image, default is an image if no type is set
-                if (in_array($data['type'], $imageTypeKeys) || !$data['type']) {
-                    $parsedImage = $this->parseImage(
-                        $data,
-                        $language
-                    );
-                    if (!empty($parsedImage['url'])) {
-                        $imageUrls = array_merge($imageUrls, $parsedImage['url']);
-                        if (!empty($parsedImage['highResolution'])) {
+                // Representation without a type is handled as a single image
+                if (!($type = (string)($representation['type'] ?? ''))) {
+                    // We already have URL's, store them in the
+                    // final results first. This shouldn't
+                    // happen unless there are multiple
+                    // images without type in the same set.
+                    if (!$imageUrls) {
+                        $addToResults(
+                            [
+                                'urls' => $imageUrls,
+                                'description' => '',
+                                'rights' => $rights
+                            ]
+                        );
+                        $imageUrls = [];
+                    }
+                    $imageUrls['small'] = $imageUrls['medium']
+                        = $imageUrls['large'] = $url;
+                    continue;
+                }
+
+                // If there is a description set for the representation
+                // Try to find one with correct language, else get the first
+                $description = '';
+                if ($key = $this->descriptionTypeMappings[$type] ?? '') {
+                    if ($foundDescriptions = $descriptions[$key] ?? []) {
+                        $description
+                            = $foundDescriptions[$language]
+                                ?? reset($foundDescriptions);
+                    }
+                }
+
+                // Representation is an image
+                if (in_array($type, $imageTypeKeys)) {
+                    if ($image = $this->getImage(
+                        $url,
+                        $type,
+                        $language,
+                        $resourceSet->resourceID,
+                        $format,
+                        $representation->resourceMeasurementsSet
+                    )
+                    ) {
+                        $imageUrls
+                            = array_merge($imageUrls, $image['displayImage']);
+
+                        // Does image have a highresolution for download?
+                        if ($image['highResolution']) {
                             $highResolution = array_merge(
                                 $highResolution,
-                                $parsedImage['highResolution']
+                                $image['highResolution']
                             );
                         }
-                    } elseif (!empty($parsedImage['sizeless'])) {
-                        // We already have URL's, store them in the
-                        // final results first. This shouldn't
-                        // happen unless there are multiple
-                        // images without type in the same set.
-                        if (!empty($imageUrls)) {
-                            $addToResults(
-                                [
-                                    'urls' => $imageUrls,
-                                    'description' => '',
-                                    'rights' => $rights
-                                ]
-                            );
-                        }
-                        $imageUrls['small'] = $imageUrls['medium']
-                            = $imageUrls['large'] = $url;
                     }
+                    continue;
                 }
 
                 // Representation is a 3d model
-                if (in_array($data['type'], $modelTypeKeys)) {
-                    if ($parsedModel = $this->parseModel($data)) {
-                        $modelUrls = array_merge($modelUrls, $parsedModel);
+                if (in_array($type, $modelTypeKeys)) {
+                    if ($model = $this->getModel($url, $format, $type)) {
+                        $modelUrls = array_merge($modelUrls, $model);
                     }
+                    continue;
                 }
                 // Representation is an audio
-                if (in_array($data['type'], $audioTypeKeys)) {
-                    if ($parsedAudio = $this->parseAudio($data)) {
-                        $audioUrls = array_merge($audioUrls, $parsedAudio);
+                if (in_array($type, $audioTypeKeys)) {
+                    if ($audio = $this->getAudio($url, $format, $description)) {
+                        $audioUrls = array_merge($audioUrls, $audio);
                     }
+                    continue;
                 }
                 // Representation is a video
-                if (in_array($data['type'], $videoTypeKeys)) {
-                    if ($parsedVideo = $this->parseVideo($data)) {
-                        $videoUrls = array_merge($videoUrls, $parsedVideo);
+                if (in_array($type, $videoTypeKeys)) {
+                    if ($video = $this->getVideo($url, $format, $description)) {
+                        $videoUrls = array_merge($videoUrls, $video);
+                    }
+                    continue;
+                }
+                // Representation is a document
+                if (in_array($type, $documentTypeKeys)) {
+                    if ($document = $this->getDocument(
+                        $url,
+                        $format,
+                        $description
+                    )
+                    ) {
+                        $documentUrls = array_merge($documentUrls, $document);
                     }
                 }
             }
             // Save all the found results here as a new object
             // If current set has no links, continue to next one
-            if (!$imageUrls && !$modelUrls && !$audioUrls && !$videoUrls) {
+            if (!$imageUrls
+                && !$modelUrls
+                && !$audioUrls
+                && !$videoUrls
+                && !$documentUrls
+            ) {
                 continue;
             }
             $imageResult = [];
@@ -513,43 +587,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     'highResolution' => $highResolution
                 ];
 
-                if (!empty($resourceSet->resourceID)) {
-                    $imageResult['identifier'] = (string)$resourceSet->resourceID;
-                }
-                if (!empty($resourceSet->resourceType->term)) {
-                    $imageResult['type'] = (string)$this->getLanguageSpecificItem(
-                        $resourceSet->resourceType->term,
-                        $language
-                    );
-                }
-                foreach ($resourceSet->resourceRelType ?? [] as $relType) {
-                    if (!empty($relType->term)) {
-                        $imageResult['relationTypes'][]
-                            = (string)$this->getLanguageSpecificItem(
-                                $relType->term,
-                                $language
-                            );
-                    }
-                }
-                if (!empty($resourceSet->resourceDescription)) {
-                    $imageResult['description']
-                        = (string)$this->getLanguageSpecificItem(
-                            $resourceSet->resourceDescription,
-                            $language
-                        );
-                }
-                if (!empty($resourceSet->resourceDateTaken->displayDate)) {
-                    $imageResult['dateTaken']
-                        = (string)$resourceSet->resourceDateTaken->displayDate;
-                }
-                foreach ($resourceSet->resourcePerspective ?? [] as $perspective) {
-                    if (!empty($perspective->term)) {
-                        $imageResult['perspectives'][]
-                            = (string)$this->getLanguageSpecificItem(
-                                $perspective->term,
-                                $language
-                            );
-                    }
+                if ($extraDetails = $this->getExtraDetails(
+                    $resourceSet,
+                    $language
+                )
+                ) {
+                    $imageResult = array_merge($imageResult, $extraDetails);
                 }
 
                 // Trim resulting strings
@@ -566,7 +609,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 $imageResult,
                 $modelUrls,
                 $audioUrls,
-                $videoUrls
+                $videoUrls,
+                $documentUrls
             );
         }
 
@@ -575,43 +619,121 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Function to return model as associative array
-     * - format Model format as key
-     *   - type Model type preview_3d or provided_3d as key
-     *          url to model as value
+     * Return description as associative array
+     * - type Type of the description and text as the value
      *
-     * @param array $data Data of the representation
+     * @param SimpleXmlElement $resourceSet To get description from
+     * @param string           $language    Language to get
      *
      * @return array
      */
-    protected function parseModel(array $data): array
-    {
-        if (empty($data['type']) || empty($data['format'])) {
-            return [];
-        }
-        $type = $this->modelTypes[$data['type']];
-        $result = [];
-        $format = strtolower($data['format']);
-        switch ($type) {
-        case 'preview_3D':
-            if (in_array(
-                $data['format'],
-                $this->displayableModelFormats
-            )
-            ) {
-                $result[$format][$type] = $data['url'];
+    protected function getResourceDescriptions(
+        \SimpleXmlElement $resourceSet,
+        string $language
+    ): array {
+        $results = [];
+        foreach ($resourceSet->resourceDescription as $description) {
+            $text = trim((string)$description);
+            if ($type = (string)$description['type']) {
+                if ($lang = (string)$description['lang']) {
+                    $results[$type][$lang] = $description;
+                } else {
+                    $results[$type][] = $description;
+                }
             }
-            break;
-        default:
-            $result[$format][$type] = $data['url'];
-            break;
+        }
+        return $results;
+    }
+
+    /**
+     * Returns associative array for images extra details
+     * - identifier    resourceset id
+     * - type          language specific type
+     * - relationTypes language specific relation types
+     * - description   language specific description
+     * - dateTaken     date taken
+     * - perspectives  language specific perspectives
+     *
+     * @param SimpleXmlElement $resourceSet Current resource set
+     * @param string           $language    Language to information
+     *
+     * @return array
+     */
+    protected function getExtraDetails(
+        \SimpleXmlElement $resourceSet,
+        string $language
+    ): array {
+        $result = [];
+        if (!empty($resourceSet->resourceID)) {
+            $result['identifier'] = (string)$resourceSet->resourceID;
+        }
+        if (!empty($resourceSet->resourceType->term)) {
+            $result['type'] = (string)$this->getLanguageSpecificItem(
+                $resourceSet->resourceType->term,
+                $language
+            );
+        }
+        foreach ($resourceSet->resourceRelType ?? [] as $relType) {
+            if (!empty($relType->term)) {
+                $result['relationTypes'][]
+                    = (string)$this->getLanguageSpecificItem(
+                        $relType->term,
+                        $language
+                    );
+            }
+        }
+        if (!empty($resourceSet->resourceDescription)) {
+            $result['description']
+                = (string)$this->getLanguageSpecificItem(
+                    $resourceSet->resourceDescription,
+                    $language
+                );
+        }
+        if (!empty($resourceSet->resourceDateTaken->displayDate)) {
+            $result['dateTaken']
+                = (string)$resourceSet->resourceDateTaken->displayDate;
+        }
+        foreach ($resourceSet->resourcePerspective ?? [] as $perspective) {
+            if (!empty($perspective->term)) {
+                $result['perspectives'][]
+                    = (string)$this->getLanguageSpecificItem(
+                        $perspective->term,
+                        $language
+                    );
+            }
         }
         return $result;
     }
 
     /**
+     * Function to return model as associative array
+     * - format Model format as key
+     *   - type Model type preview_3d or provided_3d as key
+     *          url to model as value
+     *
+     * @param string $url    Model url
+     * @param string $format Model format
+     * @param string $type   Model type
+     *
+     * @return array
+     */
+    protected function getModel(string $url, string $format, string $type): array
+    {
+        $type = $this->modelTypes[$type];
+        $format = strtolower($format);
+        if ('preview_3D' === $type && !in_array(
+            $format,
+            $this->displayableModelFormats
+        )
+        ) {
+            return [];
+        }
+        return [$format => [$type => $url]];
+    }
+
+    /**
      * Function to return image in associative array
-     * - url
+     * - displayImage
      *  - small                 Image size with url as value
      *  - medium                Image size with url as value
      *  - large                 Image size with url as value
@@ -621,81 +743,78 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *          - data          Contains data like measurements
      *          - resourceID    ID to which resource belongs to
      *          - url           Url of the image
-     * - sizeless               If no size has been found
      *
-     * @param array  $data     Data of the representation
-     * @param string $language Language to get information
+     * @param string            $url          Url of the resourceset
+     * @param string            $type         Type of the image
+     * @param string            $language     Language to get information
+     * @param string            $id           ID of the resourceset
+     * @param string            $format       Format of the image
+     * @param \SimpleXmlElement $measurements Measurements SimpleXmlElement
      *
      * @return array
      */
-    protected function parseImage(array $data, string $language): array
-    {
+    protected function getImage(
+        string $url,
+        string $type,
+        string $language,
+        string $id = '',
+        string $format = '',
+        \SimpleXmlElement $measurements = null
+    ): array {
         // Check if the image is really an image
         // Original images can be any type and are not displayed
-        if (!empty($this->undisplayableFileFormats)
-            && !empty($data['format'])
-            && $data['type'] !== 'image_original'
-        ) {
-            $format = strtolower($data['format']);
-            if (in_array(
-                $format,
-                $this->undisplayableFileFormats
-            )
-            ) {
+        if ($this->undisplayableFileFormats && $type !== 'image_original') {
+            if (in_array($format, $this->undisplayableFileFormats)) {
                 return [];
             }
         }
-        $url = [];
-        $sizeless = false;
-        $highResolution = [];
-        $size = $this->imageTypes[$data['type']] ?? null;
-        if ($size) {
-            $url[$size] = $data['url'];
-        } else {
-            $sizeless = true;
-        }
 
+        $size = $this->imageTypes[$type];
+        $displayImage[$size] = $url;
+
+        $highResolution = [];
         if (in_array($size, ['master', 'original'])) {
             $currentHiRes = [
                 'data' => $this->formatImageMeasurements(
-                    $data['measurements'],
+                    $measurements,
                     $language
                 ),
-                'url' => $data['url']
+                'url' => $url
             ];
-            if (!empty($data['ID'])) {
-                $currentHiRes['resourceID']
-                    = (int)$data['ID'];
+            if ($id) {
+                $currentHiRes['resourceID'] = $id;
             }
-            $highResolution[$size][$data['format'] ?: 'jpg']
+            $highResolution[$size][$format ?: 'jpg']
                 = $currentHiRes;
         }
 
-        return compact('url', 'highResolution', 'sizeless');
+        return compact('displayImage', 'highResolution');
     }
 
     /**
      * Function to return an audio in associative array
-     * - desc   Always false
+     * - desc   Default is false
      * - url    Url to audio file
      * - codec  Codec type of the audio
      * - type   Type what type is the audio file
      * - embed  Type of embed is audio
      *
-     * @param array $data Data of representation
+     * @param string $url         Url of the audio
+     * @param string $format      Format of the audio
+     * @param string $description Description of the audio
      *
      * @return array
      */
-    protected function parseAudio(array $data): array
-    {
-        if (empty($data['format']) || empty($data['url'])) {
-            return [];
-        }
-        if ($codec = $this->supportedAudioFormats[$data['format']] ?? false) {
+    protected function getAudio(
+        string $url,
+        string $format,
+        string $description
+    ): array {
+        if ($codec = $this->supportedAudioFormats[$format] ?? false) {
             return [
-                'desc' => false,
-                'url' => $data['url'],
-                'codec' => $codec,
+                'desc' => $description ?: false,
+                'url' => $url,
+                'codec' => $format,
                 'type' => 'audio',
                 'embed' => 'audio'
             ];
@@ -712,27 +831,51 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *  - src           Different sources for the video
      *  - type          Codec type
      *
-     * @param array $data Data of representation
+     * @param string $url         Url of the video
+     * @param string $format      Format of the video
+     * @param string $description Description of the video
      *
      * @return array
      */
-    protected function parseVideo(array $data): array
-    {
-        if (empty($data['format']) || empty($data['url'])) {
-            return [];
-        }
-        if ($codec = $this->supportedVideoFormats[$data['format']] ?? false) {
+    protected function getVideo(
+        string $url,
+        string $format,
+        string $description
+    ): array {
+        if ($codec = $this->supportedVideoFormats[$format] ?? false) {
             return [
-                'desc' => false,
-                'url' => $data['url'],
+                'desc' => $description ?: false,
+                'url' => $url,
                 'embed' => 'video',
+                'format' => $format,
                 'videoSources' => [
-                    'src' => $data['url'],
+                    'src' => $url,
                     'type' => $codec,
                 ]
             ];
         }
         return [];
+    }
+
+    /**
+     * Function to return document in associative array
+     *
+     * @param string $url         Url of the document
+     * @param string $format      Format of the document
+     * @param string $description Description of the document
+     *
+     * @return array
+     */
+    protected function getDocument(
+        string $url,
+        string $format,
+        string $description
+    ): array {
+        return [
+            'description' => $description ?: false,
+            'url' => $url,
+            'format' => strtolower($format)
+        ];
     }
 
     /**
@@ -743,7 +886,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      *
      * @return array
      */
-    protected function parseResourceRights(
+    protected function getResourceRights(
         \SimpleXmlElement $resourceSet,
         string $language
     ): array {
