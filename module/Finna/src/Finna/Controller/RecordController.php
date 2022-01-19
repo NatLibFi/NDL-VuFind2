@@ -937,12 +937,6 @@ class RecordController extends \VuFind\Controller\RecordController
             case 'document':
                 $representations = $driver->tryMethod('getDocuments');
                 break;
-            case 'audio':
-                $representations = $driver->tryMethod('getAudios');
-                break;
-            case 'video':
-                $representations = $driver->tryMethod('getVideos');
-                break;
             default:
                 $response->setStatusCode(400);
                 break;
