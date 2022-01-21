@@ -669,6 +669,31 @@ class SolrEad extends SolrDefault
     }
 
     /**
+     * Get an array of alternative titles for the record.
+     *
+     * @return array
+     */
+    public function getAlternativeTitles()
+    {
+        $results = [];
+        // Main title might be already normalized, but do it again to make sure:
+        $mainTitle = \Normalizer::normalize($this->getTitle(), \Normalizer::FORM_KC);
+        $xml = $this->getXmlRecord();
+        foreach ($xml->did->unittitle ?? [] as $title) {
+            $title = trim((string)$title);
+            $normalized = \Normalizer::normalize($title, \Normalizer::FORM_KC);
+            // Compare with the beginning of main title since it may have additional
+            // information appended to it:
+            $len = mb_strlen($normalized, 'UTF-8');
+            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized) {
+                $results[] = $title;
+            }
+        }
+
+        return $results;
+    }
+
+    /**
      * Return an XML representation of the record using the specified format.
      * Return false if the format is unsupported.
      *
