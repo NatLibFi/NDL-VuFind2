@@ -1619,6 +1619,22 @@ url = https://analytics.jotain.jossain/
 ;site_id = 1
 ;token_auth = ...
 custom_variables = 1
+custom_dimensions[Facets] = 1
+custom_dimensions[FacetTypes] = 2
+custom_dimensions[SearchType] = 3
+custom_dimensions[SearchBackend] = 4
+custom_dimensions[Sort] = 5
+custom_dimensions[Page] = 6
+custom_dimensions[Limit] = 7
+custom_dimensions[View] = 8
+custom_dimensions[RecordFormat] = 9
+custom_dimensions[RecordData] = 10
+custom_dimensions[RecordInstitution] = 11
+custom_dimensions[Context] = 12
+custom_dimensions[RecordAvailableOnline] = 13
+custom_dimensions[RecordIndex] = 14
+custom_dimensions[RecordSource] = 15
+custom_dimensions[Language] = 16
 
 ; Normalization preview allows one to display an external record
 ; as it would be displayed in VuFind. This requires a backend,

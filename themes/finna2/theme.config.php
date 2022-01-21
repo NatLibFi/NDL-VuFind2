@@ -24,14 +24,13 @@ $config = [
             'Finna\View\Helper\Root\FileSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\FinnaSurvey' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
             'Finna\View\Helper\Root\Followup' => 'Finna\View\Helper\Root\FollowupFactory',
-            'Finna\View\Helper\Root\HtmlAttributes' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\HtmlElement' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Holdings' => 'Finna\View\Helper\Root\HelperWithMainConfigFactory',
             'Finna\View\Helper\Root\ImageSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\LayoutClass' => 'VuFind\View\Helper\Bootstrap3\LayoutClassFactory',
             'Finna\View\Helper\Root\LinkedEventsTabs' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Markdown' => 'VuFind\View\Helper\Root\MarkdownFactory',
-            'Finna\View\Helper\Root\Matomo' => 'VuFind\View\Helper\Root\MatomoFactory',
+            'Finna\View\Helper\Root\Matomo' => 'Finna\View\Helper\Root\MatomoFactory',
             'Finna\View\Helper\Root\MetaLib' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Navibar' => 'Finna\View\Helper\Root\NavibarFactory',
             'Finna\View\Helper\Root\R2' => 'Finna\View\Helper\Root\R2Factory',
@@ -94,7 +93,6 @@ $config = [
             'holdings' => 'Finna\View\Helper\Root\Holdings',
             // For back-compatibility
             'holdingsSettings' => 'Finna\View\Helper\Root\Holdings',
-            'htmlAttributes' => 'Finna\View\Helper\Root\HtmlAttributes',
             'htmlElement' => 'Finna\View\Helper\Root\HtmlElement',
             //use root highlight so search results use span instead of mark
             'highlight' => 'VuFind\View\Helper\Root\Highlight',

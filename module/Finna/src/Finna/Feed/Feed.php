@@ -472,7 +472,12 @@ EOT;
                         }
                         $link = $this->urlHelper->fromRoute(
                             'feed-content-page',
-                            ['page' => $id, 'element' => urlencode($itemId)]
+                            ['page' => $id, 'element' => urlencode($itemId)],
+                            [
+                                'query' => [
+                                    'lng' => $this->getTranslatorLocale()
+                                ]
+                            ]
                         );
                         $value = $link;
                     } elseif ($setting == 'id') {

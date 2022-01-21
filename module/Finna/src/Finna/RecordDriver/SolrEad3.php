@@ -724,6 +724,9 @@ class SolrEad3 extends SolrEad
         $result = $images = [];
         $xml = $this->getXmlRecord();
         if (isset($xml->did->daoset)) {
+            // All images have same lazy-fetched rights.
+            $rights = null;
+
             foreach ($xml->did->daoset as $daoset) {
                 if (!isset($daoset->dao)) {
                     continue;
@@ -759,6 +762,7 @@ class SolrEad3 extends SolrEad
                     } elseif (!$localtype) {
                         continue;
                     }
+                    $rights = $rights ?? $this->getImageRights($language, true);
                     $size = $size === self::IMAGE_FULLRES
                         ? self::IMAGE_LARGE : $size;
                     if (!isset($images[$size])) {
@@ -766,7 +770,7 @@ class SolrEad3 extends SolrEad
                     }
                     $images[$size][] = [
                         'description' => (string)$attr->linktitle,
-                        'rights' => null,
+                        'rights' => $rights,
                         'url' => $href,
                         'descId' => $descId,
                         'sort' => (string)$attr->label,
@@ -809,31 +813,6 @@ class SolrEad3 extends SolrEad
 
         $this->cache[$cacheKey] = $result;
         return $result;
-    }
-
-    /**
-     * Get an array of alternative titles for the record.
-     *
-     * @return array
-     */
-    public function getAlternativeTitles()
-    {
-        $results = [];
-        // Main title might be already normalized, but do it again to make sure:
-        $mainTitle = \Normalizer::normalize($this->getTitle(), \Normalizer::FORM_KC);
-        $xml = $this->getXmlRecord();
-        foreach ($xml->did->unittitle ?? [] as $title) {
-            $title = trim((string)$title);
-            $normalized = \Normalizer::normalize($title, \Normalizer::FORM_KC);
-            // Compare with the beginning of main title since it may have additional
-            // information appended to it:
-            $len = mb_strlen($normalized, 'UTF-8');
-            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized) {
-                $results[] = $title;
-            }
-        }
-
-        return $results;
     }
 
     /**
@@ -977,7 +956,7 @@ class SolrEad3 extends SolrEad
         $processNode = function ($access) use (&$restrictions) {
             $attr = $access->attributes();
             if (! isset($attr->encodinganalog)) {
-                $restriction['general'] = array_merge(
+                $restrictions['general'] = array_merge(
                     $restrictions['general'],
                     $this->getDisplayLabel($access, 'p', true)
                 );
@@ -1077,9 +1056,44 @@ class SolrEad3 extends SolrEad
      */
     public function getAccessRestrictionsType($language)
     {
-        if (! $restrictions = $this->getAccessRestrictions()) {
-            return false;
+        $xml = $this->getXmlRecord();
+        $restrictions = [];
+        foreach ($xml->userestrict as $node) {
+            if (!$node->p) {
+                continue;
+            }
+            foreach ($node->p as $p) {
+                if ($label = $this->getDisplayLabel($p, 'ref', true)) {
+                    if (empty($label[0])) {
+                        continue;
+                    }
+                    $restrictions[] = $label[0];
+                    break;
+                }
+            }
         }
+        if (empty($restrictions)) {
+            foreach ($xml->userestrict as $node) {
+                if (!$node->p) {
+                    continue;
+                }
+                foreach ($node->p as $p) {
+                    if ($label = $this->getDisplayLabel($p, 'ref')) {
+                        if (empty($label[0])) {
+                            continue;
+                        }
+                        $restrictions[] = $label[0];
+                        break;
+                    }
+                }
+            }
+        }
+        if (empty($restrictions)) {
+            if (! $restrictions = $this->getAccessRestrictions()) {
+                return false;
+            }
+        }
+
         $copyright = $this->getMappedRights($restrictions[0]);
         $data = [];
         $data['copyright'] = $copyright;
