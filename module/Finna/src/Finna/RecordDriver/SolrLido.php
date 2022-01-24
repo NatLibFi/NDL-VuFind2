@@ -433,12 +433,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             array $videos = [],
             array $documents = []
         ) use (&$results) {
-            if (!isset($images['urls']['small'])) {
-                $images['urls']['small'] = $images['urls']['medium']
-                    ?? $images['urls']['large'];
-            }
-            if (!isset($images['urls']['medium'])) {
-                $images['urls']['medium'] = $images['urls']['small'];
+            if ($images) {
+                if (!isset($images['urls']['small'])) {
+                    $images['urls']['small'] = $images['urls']['medium']
+                        ?? $images['urls']['large'];
+                }
+                if (!isset($images['urls']['medium'])) {
+                    $images['urls']['medium'] = $images['urls']['small'];
+                }
             }
 
             $results[] = compact(
