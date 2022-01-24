@@ -442,7 +442,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $images['urls']['medium'] = $images['urls']['small'];
                 }
             }
-
             $results[] = compact(
                 'images',
                 'models',
