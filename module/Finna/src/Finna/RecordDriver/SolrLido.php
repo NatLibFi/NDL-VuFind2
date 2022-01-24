@@ -433,15 +433,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             array $videos = [],
             array $documents = []
         ) use (&$results) {
-            if ($images) {
-                if (!isset($images['urls']['small'])) {
-                    $images['urls']['small'] = $images['urls']['medium']
-                        ?? $images['urls']['large'];
-                }
-                if (!isset($images['urls']['medium'])) {
-                    $images['urls']['medium'] = $images['urls']['small'];
-                }
+            if (!isset($images['urls']['small'])) {
+                $images['urls']['small'] = $images['urls']['medium']
+                    ?? $images['urls']['large'];
             }
+            if (!isset($images['urls']['medium'])) {
+                $images['urls']['medium'] = $images['urls']['small'];
+            }
+
             $results[] = compact(
                 'images',
                 'models',
@@ -483,7 +482,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     // final results first. This shouldn't
                     // happen unless there are multiple
                     // images without type in the same set.
-                    if (!$imageUrls) {
+                    if ($imageUrls) {
                         $addToResults(
                             [
                                 'urls' => $imageUrls,
