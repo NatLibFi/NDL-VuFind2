@@ -189,7 +189,11 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             return $config;
         }
         if ('getMyTransactionHistory' === $function) {
-            if (empty($this->config['getMyTransactionHistory']['enabled'])) {
+            if (empty($this->config['getMyTransactionHistory']['enabled'])
+                || (!empty($this->config['getMyTransactionHistory']['userDisabled'])
+                && isset($params['loan_history'])
+                && false === $params['loan_history'])
+            ) {
                 return false;
             }
             return [
