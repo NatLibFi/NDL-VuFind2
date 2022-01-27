@@ -206,6 +206,21 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Mappings from FORWARD author type and role to the results
+     * - Result storage root key
+     *     - storageKey => additional key to store authors into.
+     *       if omitted, save authors under root key.
+     *     $results[$rootkey]<[$storageKey]>[] = $author
+     *     - relators Which relator codes are taken into account.
+     *     - mappings In which key is the author saved.
+     *     elonet_henkilo => act => credited => example
+     *     $results[$rootKey]<[$storageKey]>[example][] = $author
+     *     - all Storage key for saving all the authors.
+     *     all => 'allAuthors'
+     *     $results[$rootKey]<[$storageKey]>[allAuthors]
+     *     - preservedValues Mappings to ease out identifying which
+     *     authors should go into which storage key, see mappings.
+     *     Affects authors role and type. If role or type is not
+     *     found in the preservedValues, will be default.
      *
      * @var array
      */
@@ -1048,7 +1063,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get descriptions
+     * Loop through all the descriptions and return them in an associative array
      *
      * @return array
      */
@@ -1094,6 +1109,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'accessRestrictions' => []
         ];
         $xml = $this->getRecordXML();
+        $config = $this->productionConfig;
         foreach ($xml->ProductionEvent as $event) {
             $type = (string)($event->ProductionEventType ?? '');
             $regionName = (string)($event->Region->RegionName ?? '');
@@ -1110,24 +1126,15 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             foreach ($attributes as $key => $value) {
                 $stringValue = (string)$value;
                 // Get production attribute
-                if ($storage
-                    = $this->productionConfig['productionAttributeMappings'][$key]
-                    ?? ''
-                ) {
+                if ($storage = $config['productionAttributeMappings'][$key] ?? '') {
                     $results[$storage] = $stringValue;
                 }
                 // Get broadcasting information
-                if ($info
-                    = $this->productionConfig['broadcastingInfoMappings'][$key]
-                    ?? ''
-                ) {
+                if ($info = $config['broadcastingInfoMappings'][$key] ?? '') {
                     $broadcastingResult[$info] = $stringValue;
                 }
                 // Get festival info
-                if ($festival
-                    = $this->productionConfig['festivalSubjectMappings'][$key]
-                    ?? ''
-                ) {
+                if ($festival = $config['festivalSubjectMappings'][$key] ?? '') {
                     $results[$festival][] = [
                         'name' => $stringValue,
                         'region' => $regionName,
@@ -1135,9 +1142,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     ];
                 }
                 // Get foreign distribution info
-                if ($distributor
-                    = $this->productionConfig['foreignDistributorMappings'][$key]
-                    ?? ''
+                if ($distributor = $config['foreignDistributorMappings'][$key] ?? ''
                 ) {
                     $results[$distributor][] = [
                         'name' => $stringValue,
@@ -1145,10 +1150,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     ];
                 }
                 // Get other screening info
-                if ($screening
-                    = $this->productionConfig['otherScreeningMappings'][$key]
-                    ?? ''
-                ) {
+                if ($screening = $config['otherScreeningMappings'][$key] ?? '') {
                     $results[$screening][] = [
                         'name' => $stringValue,
                         'region' => $regionName,
@@ -1156,16 +1158,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     ];
                 }
                 // Get inspection detail
-                if ($inspection
-                    = $this->productionConfig['inspectionAttributes'][$key]
-                    ?? ''
-                ) {
+                if ($inspection = $config['inspectionAttributes'][$key] ?? '') {
                     $inspectionResult[$inspection] = $stringValue;
                 }
                 // Get access restriction details
-                if ($restriction
-                    = $this->productionConfig['accessRestrictionMappings'][$key]
-                    ?? ''
+                if ($restriction = $config['accessRestrictionMappings'][$key] ?? ''
                 ) {
                     $results[$restriction][] = $stringValue;
                 }
@@ -1182,7 +1179,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             }
             $children = $event->children();
             foreach ($children as $childKey => $childValue) {
-                if ($storage = $this->productionEventMappings[$childKey] ?? []) {
+                if ($storage = $config['productionEventMappings'][$childKey] ?? []
+                ) {
                     $results[$storage][] = (string)$childValue;
                 }
             }
