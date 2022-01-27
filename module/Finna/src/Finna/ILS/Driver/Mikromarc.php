@@ -189,11 +189,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             return $config;
         }
         if ('getMyTransactionHistory' === $function) {
-            if (empty($this->config['getMyTransactionHistory']['enabled'])
-                || (!empty($this->config['getMyTransactionHistory']['userDisabled'])
-                && isset($params['loan_history'])
-                && false === $params['loan_history'])
-            ) {
+            if (empty($this->config['getMyTransactionHistory']['enabled'])) {
                 return false;
             }
             return [
@@ -1081,6 +1077,17 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getMyTransactionHistory($patron, $params)
     {
+        // Do not fetch loan history if userDisabled conditions are true
+        if (!empty($this->config['getMyTransactionHistory']['userDisabled'])
+            && isset($patron['loan_history'])
+            && false === $patron['loan_history']
+        ) {
+            return [
+                'count' => 0,
+                'transactions' => []
+            ];
+        }
+
         $sort = strpos($params['sort'], 'desc') ? 'desc' : 'asc';
         $request = [
             '$filter' => 'BorrowerId eq' . ' ' . $patron['id'],
