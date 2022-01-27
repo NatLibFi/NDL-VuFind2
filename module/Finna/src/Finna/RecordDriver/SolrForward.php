@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2017.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -35,6 +36,7 @@ namespace Finna\RecordDriver;
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -47,50 +49,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
-
-    /**
-     * Non-presenter author relator codes.
-     *
-     * @var array
-     */
-    protected $nonPresenterAuthorRelators = [
-        'a00', 'a01', 'a03', 'a06', 'a50', 'a99',
-        'b13',
-        'd01', 'd02', 'd99',
-        'e02', 'e03', 'e04', 'e05', 'e06', 'e08',
-        'f01', 'f02', 'f99',
-        'cmp', 'cph', 'exp', 'fds', 'fmp', 'rce', 'wst', 'oth', 'prn',
-        // These are copied from Marc
-        'act', 'anm', 'ann', 'arr', 'acp', 'ar', 'ard', 'aft', 'aud', 'aui', 'aus',
-        'bjd', 'bpd', 'cll', 'ctg', 'chr', 'cng', 'clb', 'clr', 'cwt', 'cmm', 'com',
-        'cpl', 'cpt', 'cpe', 'ccp', 'cnd', 'cos', 'cot', 'coe', 'cts', 'ctt', 'cte',
-        'ctb', 'crp', 'cst', 'cov', 'cur', 'dnc', 'dtc', 'dto', 'dfd', 'dft', 'dfe',
-        'dln', 'dpc', 'dsr', 'dis', 'drm', 'edt', 'elt', 'egr', 'etr', 'fac',
-        'fld', 'flm', 'frg', 'ilu', 'ill', 'ins', 'itr', 'ivr', 'ldr', 'lsa', 'led',
-        'lil', 'lit', 'lie', 'lel', 'let', 'lee', 'lbt', 'lgd', 'ltg', 'lyr', 'mrb',
-        'mte', 'msd', 'mus', 'nrt', 'opn', 'org', 'pta', 'pth', 'prf', 'pht', 'ptf',
-        'ptt', 'pte', 'prt', 'pop', 'prm', 'pro', 'pmn', 'prd', 'prg', 'pdr', 'pbd',
-        'ppt', 'ren', 'rpt', 'rth', 'rtm', 'res', 'rsp', 'rst', 'rse', 'rpy', 'rsg',
-        'rev', 'rbr', 'sce', 'sad', 'scr', 'scl', 'spy', 'std', 'sng', 'sds', 'spk',
-        'stm', 'str', 'stl', 'sht', 'ths', 'trl', 'tyd', 'tyg', 'vdg', 'voc', 'wde',
-        'wdc', 'wam'
-    ];
-
-    /**
-     * Primary author relator codes (mapped)
-     *
-     * @var array
-     */
-    protected $primaryAuthorRelators = ['drt'];
-
-    /**
-     * Presenter author relator codes.
-     *
-     * @var array
-     */
-    protected $presenterAuthorRelators = [
-        'e01', 'e99', 'cmm', 'a99', 'oth'
-    ];
 
     /**
      * Relator to RDA role mapping.
@@ -247,135 +205,179 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Identification strings for where should the author be saved in the results
+     * Mappings from FORWARD author type and role to the results
      *
      * @var array
      */
-    protected $presenterIdentifications = [
-        'elonet_henkilo|act|credited' => ['presenters' => 'credited'],
-        'elonet_henkilo|act|uncredited' => ['presenters' => 'uncredited'],
-        'elonet_kokoonpano|any_value|credited'
-            => ['presenters' => 'actingEnsemble'],
-        'elonet_henkilo|no_value|credited' => ['presenters' => 'performer'],
-        'elonet_henkilo|no_value|uncredited'
-            => ['presenters' => 'uncreditedPerformer'],
-        'any_value|no_value|credited' => ['presenters' => 'other'],
-        'no_value|muutesiintyjät|credited' => ['presenters' => 'other'],
-        'elonet_kokoonpano|no_value|credited'
-            => ['presenters' => 'performingEnsemble'],
-        'no_value|avustajat|credited' => ['presenters' => 'assistant'],
+    protected $authorConfig = [
+        'presenters' => [
+            'storageKey' => 'presenters',
+            'preservedValues' => [
+                'no_type',
+                'no_role',
+                'act',
+                'elonet_henkilo',
+                'elonet_kokoonpano',
+                'muutesiintyjät',
+                'avustajat'
+            ],
+            'relators' => [
+                'e01', 'e99', 'cmm', 'a99', 'oth'
+            ],
+            'mappings' => [
+                'elonet_henkilo' => [
+                    'act' => [
+                        'credited' => 'credited',
+                        'uncredited' => 'uncredited'
+                    ],
+                    'no_role' => [
+                        'credited' => 'performer',
+                        'uncredited' => 'uncreditedPerformer'
+                    ],
+                    'avustajat' => [
+                        'credited' => 'assistant'
+                    ]
+                ],
+                'elonet_kokoonpano' => [
+                    'default' => [
+                        'credited' => 'actingEnsemble',
+                    ],
+                    'no_role' => [
+                        'credited' => 'performingEnsemble'
+                    ]
+                ],
+                'default' => [
+                    'no_role' => [
+                        'credited' => 'other'
+                    ]
+                ],
+                'no_type' => [
+                    'muutesiintyjät' => [
+                        'credited' => 'other'
+                    ],
+                    'avustajat' => [
+                        'credited' => 'assistant'
+                    ]
+                ]
+            ]
+        ],
+        'nonPresenterSecondaryAuthors' => [
+            'preservedValues' => [
+                'no_type',
+                'no_role',
+                'act',
+                'elonet_henkilo',
+                'elonet_kokoonpano'
+            ],
+            'relators' => [
+                'a00', 'a01', 'a03', 'a06', 'a50', 'a99',
+                'b13',
+                'd01', 'd02', 'd99',
+                'e02', 'e03', 'e04', 'e05', 'e06', 'e08',
+                'f01', 'f02', 'f99',
+                'cmp', 'cph', 'exp', 'fds', 'fmp', 'rce', 'wst', 'oth', 'prn',
+                // These are copied from Marc
+                'act', 'anm', 'ann', 'arr', 'acp', 'ar', 'ard', 'aft', 'aud', 'aui',
+                'aus', 'bjd', 'bpd', 'cll', 'ctg', 'chr', 'cng', 'clb', 'clr',
+                'cwt', 'cmm', 'com', 'cpl', 'cpt', 'cpe', 'ccp', 'cnd', 'cos',
+                'cot', 'coe', 'cts', 'ctt', 'cte', 'ctb', 'crp', 'cst', 'cov',
+                'cur', 'dnc', 'dtc', 'dto', 'dfd', 'dft', 'dfe', 'dln', 'dpc',
+                'dsr', 'dis', 'drm', 'edt', 'elt', 'egr', 'etr', 'fac', 'fld',
+                'flm', 'frg', 'ilu', 'ill', 'ins', 'itr', 'ivr', 'ldr', 'lsa',
+                'led', 'lil', 'lit', 'lie', 'lel', 'let', 'lee', 'lbt', 'lgd',
+                'ltg', 'lyr', 'mrb', 'mte', 'msd', 'mus', 'nrt', 'opn', 'org',
+                'pta', 'pth', 'prf', 'pht', 'ptf', 'ptt', 'pte', 'prt', 'pop',
+                'prm', 'pro', 'pmn', 'prd', 'prg', 'pdr', 'pbd', 'ppt', 'ren',
+                'rpt', 'rth', 'rtm', 'res', 'rsp', 'rst', 'rse', 'rpy', 'rsg',
+                'rev', 'rbr', 'sce', 'sad', 'scr', 'scl', 'spy', 'std', 'sng',
+                'sds', 'spk', 'stm', 'str', 'stl', 'sht', 'ths', 'trl', 'tyd',
+                'tyg', 'vdg', 'voc', 'wde', 'wdc', 'wam'
+            ],
+            'mappings' => [
+                'elonet_kokoonpano' => [
+                    'default' => [
+                        'uncredited' => 'uncreditedEnsembles'
+                    ]
+                ],
+                'elonet_henkilo' => [
+                    'default' => [
+                        'credited' => 'credited'
+                    ]
+                ],
+                'default' => [
+                    'default' => [
+                        'credited' => 'credited',
+                        'uncredited' => 'uncredited'
+                    ]
+                ]
+            ],
+            'all' => 'nonPresenters'
+        ],
+        'primaryAuthors' => [
+            'relators' => [
+                'd02'
+            ],
+            'all' => 'primaryAuthors'
+        ]
     ];
 
-    /**
-     * Identification strings for where should the author be saved in the results
-     *
-     * @var array
-     */
-    protected $nonPresenterIdentifications = [
-        'elonet_kokoonpano|any_value|credited'
-            => ['nonPresenterSecondaryAuthors' => 'uncreditedEnsembles'],
-        'any_value|any_value|uncredited'
-            => ['nonPresenterSecondaryAuthors' => 'uncredited'],
-        'any_value|any_value|credited'
-            => ['nonPresenterSecondaryAuthors' => 'credited'],
-        'elonet_henkilo|any_value|credited'
-            => ['nonPresenterSecondaryAuthors' => 'credited']
-    ];
-
-    /**
-     * Values to preserve when forming identification string
-     *
-     * @var array
-     */
-    protected $valuesToPreserve = [
-        'no_value',
-        'act',
-        'elonet_henkilo',
-        'elonet_kokoonpano',
-        'muutesiintyjät',
-        'avustajat'
-    ];
-
-    /**
-     * Mappings to save production attribute as a string
-     *
-     * @var array
-     */
-    protected $productionAttributeMappings = [
-        'elokuva-kuvasuhde' => 'aspectRatio',
-        'elokuva-alkupvari' => 'color',
-        'elokuva-alkupvarijarjestelma' => 'colorSystem',
-        'elokuva-alkuperaisteos' => 'originalWork',
-        'elokuva-alkupkesto' => 'playingTimes',
-        'elokuva-alkupaani' => 'sound',
-        'elokuva-alkupaanijarjestelma' => 'soundSystem',
-        'elokuva-tuotantokustannukset' => 'productionCost',
-        'elokuva-teatterikopioidenlkm' => 'numberOfCopies',
-        'elokuva-kuvausaika' => 'filmingDate',
-        'elokuva-arkistoaineisto' => 'archiveFilms'
-    ];
-
-    /**
-     * Mappings to save production elements as values
-     *
-     * @var array
-     */
-    protected $productionEventMappings = [
-        'elokuva_laji2fin' => 'type',
-        'elokuva_huomautukset' => 'generalNotes',
-        'elokuva_musiikki' => 'musicInfo',
-        'elokuva_lehdistoarvio' => 'pressReview',
-        'elokuva_ulkokuvat' => 'exteriors',
-        'elokuva_sisakuvat' => 'interiors',
-        'elokuva_studiot' => 'studios',
-        'elokuva_kuvauspaikkahuomautus' => 'locationNotes',
-    ];
-
-    /**
-     * Mappings to get proper broadcasting information
-     *
-     * @var array
-     */
-    protected $broadcastingInfoMappings = [
-        'elokuva-elotelevisioesitys-esitysaika' => 'time',
-        'elokuva-elotelevisioesitys-paikka' => 'place',
-        'elokuva-elotelevisioesitys-katsojamaara' => 'viewers'
-    ];
-
-    /**
-     * Mappings to get proper festival subjects
-     *
-     * @var array
-     */
-    protected $festivalSubjectMappings = [
-        'elokuva-elofestivaaliosallistuminen-aihe' => true
-    ];
-
-    /**
-     * Mappings to get proper distributor headers
-     *
-     * @var array
-     */
-    protected $foreignDistributorMappings = [
-        'elokuva-eloulkomaanmyynti-levittaja' => true
-    ];
-
-    /**
-     * Mappings to get proper other screening headers
-     *
-     * @var array
-     */
-    protected $otherScreeningMappings = [
-        'elokuva-muuesitys-aihe' => true
-    ];
-
-    /**
-     * Mappings for access restrictions
-     *
-     * @var array
-     */
-    protected $accessRestrictionMappings = [
-        'finna-kayttooikeus' => 1
+    protected $productionConfig = [
+        'productionAttributeMappings' => [
+            'elokuva-kuvasuhde' => 'aspectRatio',
+            'elokuva-alkupvari' => 'color',
+            'elokuva-alkupvarijarjestelma' => 'colorSystem',
+            'elokuva-alkuperaisteos' => 'originalWork',
+            'elokuva-alkupkesto' => 'playingTimes',
+            'elokuva-alkupaani' => 'sound',
+            'elokuva-alkupaanijarjestelma' => 'soundSystem',
+            'elokuva-tuotantokustannukset' => 'productionCost',
+            'elokuva-teatterikopioidenlkm' => 'numberOfCopies',
+            'elokuva-kuvausaika' => 'filmingDate',
+            'elokuva-arkistoaineisto' => 'archiveFilms'
+        ],
+        'productionEventMappings' => [
+            'elokuva_laji2fin' => 'type',
+            'elokuva_huomautukset' => 'generalNotes',
+            'elokuva_musiikki' => 'musicInfo',
+            'elokuva_lehdistoarvio' => 'pressReview',
+            'elokuva_ulkokuvat' => 'exteriors',
+            'elokuva_sisakuvat' => 'interiors',
+            'elokuva_studiot' => 'studios',
+            'elokuva_kuvauspaikkahuomautus' => 'locationNotes',
+        ],
+        'broadcastingInfoMappings' => [
+            'elokuva-elotelevisioesitys-esitysaika' => 'time',
+            'elokuva-elotelevisioesitys-paikka' => 'place',
+            'elokuva-elotelevisioesitys-katsojamaara' => 'viewers'
+        ],
+        'festivalSubjectMappings' => [
+            'elokuva-elofestivaaliosallistuminen-aihe' => 'festivalInfo'
+        ],
+        'foreignDistributorMappings' => [
+            'elokuva-eloulkomaanmyynti-levittaja' => 'foreignDistribution'
+        ],
+        'otherScreeningMappings' => [
+            'elokuva-muuesitys-aihe' => 'otherScreenings'
+        ],
+        'inspectionAttributes' => [
+            'elokuva-tarkastus-tarkastusnro' => 'number',
+            'elokuva-tarkastus-tarkastamolaji' => 'inspectiontype',
+            'elokuva-tarkastus-pituus' => 'length',
+            'elokuva-tarkastus-veroluokka' => 'taxclass',
+            'elokuva-tarkastus-ikaraja' => 'agerestriction',
+            'elokuva-tarkastus-formaatti' => 'format',
+            'elokuva-tarkastus-osalkm' => 'part',
+            'elokuva-tarkastus-tarkastuttaja' => 'office',
+            'elokuva-tarkastus-kesto' => 'runningtime',
+            'elokuva-tarkastus-tarkastusaihe' => 'subject',
+            'elokuva-tarkastus-perustelut' => 'reason',
+            'elokuva-tarkastus-muuttiedot' => 'additional',
+            'elokuva-tarkastus-tarkastusilmoitus' => 'notification',
+            'elokuva-tarkastus-tarkastuselin' => 'inspector'
+        ],
+        'accessRestrictionMappings' => [
+            'finna-kayttooikeus' => 'accessRestrictions'
+        ]
     ];
 
     /**
@@ -422,7 +424,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getAccessRestrictions()
     {
         $events = $this->getProductionEvents();
-        return array_keys($events['accessRestrictions'] ?? []);
+        return $events['accessRestrictions'] ?? [];
     }
 
     /**
@@ -438,7 +440,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getAccessRestrictionsType($language)
     {
         $events = $this->getProductionEvents();
-        foreach (array_keys($events['accessRestrictions'] ?? []) as $type) {
+        foreach ($events['accessRestrictions'] ?? [] as $type) {
             $result = ['copyright' => $type];
             if ($link = $this->getRightsLink($type, $language)) {
                 $result['link'] = $link;
@@ -749,33 +751,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $xml = $this->getRecordXML();
         $idx = 0;
         $results = [
-            'all' => [],
             'primaryAuthors' => [],
             'producers' => [],
             'nonPresenters' => []
         ];
-        $primaryAuthors = [];
-
-        $createIdentificationString = function (
-            string $type,
-            string $role,
-            bool $uncredited
-        ): string {
-            return implode(
-                '|',
-                [
-                    in_array(
-                        $type,
-                        $this->valuesToPreserve
-                    ) ? $type : 'any_value',
-                    in_array(
-                        $role,
-                        $this->valuesToPreserve
-                    ) ? $role : 'any_value',
-                    $uncredited === true ? 'uncredited' : 'credited'
-                ]
-            );
-        };
 
         foreach ($xml->HasAgent as $agent) {
             $result = [
@@ -790,8 +769,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 'idx' => ''
             ];
 
-            $tag = ($agent['elonet-tag'] ?? '');
-            $identification = [];
             if (!empty($agent->Activity)) {
                 $activity = $agent->Activity;
                 $relator = (string)$activity;
@@ -804,17 +781,15 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 } else {
                     $result['role'] = $role;
                 }
-                $attributes = $activity->attributes();
-                foreach ($attributes as $key => $value) {
+                foreach ($activity->attributes() as $key => $value) {
                     $result[$key] = (string)$value;
                 }
                 $result['relator'] = (string)$activity;
             }
             if (!empty($agent->AgentName)) {
                 $agentName = $agent->AgentName;
-                $attributes = $agentName->attributes();
                 $result['name'] = (string)$agentName;
-                foreach ($attributes as $key => $value) {
+                foreach ($agentName->attributes() as $key => $value) {
                     $valueString = (string)$value;
                     $result[$key] = $valueString;
                     if (empty($result['name'])) {
@@ -850,64 +825,53 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $idx++;
             $result['idx'] = $primary ? $idx : 10000 * $idx;
 
-            $type = $result['type'] ?? 'no_value';
-            // Create identification string for saving to correct array
-            $id = $createIdentificationString(
-                $type,
-                $role,
-                $result['uncredited'] ?? false
-            );
+            $type = $result['type'] ?: 'no_type';
+            $role = $result['role'] ?: 'no_role';
+            $credited = $result['uncredited'] === true ? 'uncredited' : 'credited';
+            $lcRelator = mb_strtolower($result['relator'] ?? '', 'UTF-8');
+            foreach ($this->authorConfig as $storage => $data) {
+                if (in_array($lcRelator, $data['relators'])) {
+                    $valuesToPreserve = $data['preservedValues'] ?? [];
+                    $type = in_array($type, $valuesToPreserve) ? $type : 'default';
+                    $role = in_array($role, $valuesToPreserve) ? $role : 'default';
 
-            $lRelator = mb_strtolower($result['relator'] ?? '');
-            // Get primary authors
-            if (in_array($lRelator, $this->primaryAuthorRelators)) {
-                $results['primaryAuthors'][] = $result;
-            }
-            // Save presenter authors
-            if (in_array($lRelator, $this->presenterAuthorRelators)) {
-                if ($storage = $this->presenterIdentifications[$id] ?? []) {
-                    foreach ($storage as $key => $value) {
-                        if (!isset($results[$key])) {
-                            $results[$key] = [$value => ['presenters' => []]];
+                    if ($res = $data['mappings'][$type][$role][$credited] ?? '') {
+                        if ($k = $data['storageKey'] ?? '') {
+                            $results[$storage][$res][$k][] = $result;
+                        } else {
+                            $results[$storage][$res][] = $result;
                         }
-                        $results[$key][$value]['presenters'][] = $result;
+                    }
+                    if ($additional = $data['all'] ?? '') {
+                        if (!isset($results[$additional])) {
+                            $results[$additional] = [];
+                        }
+                        $results[$additional][] = $result;
                     }
                 }
             }
-            // Save nonpresenter authors
-            if (in_array($lRelator, $this->nonPresenterAuthorRelators)) {
-                if ($storage = $this->nonPresenterIdentifications[$id] ?? []) {
-                    foreach ($storage as $key => $value) {
-                        if (!isset($results[$key])) {
-                            $results[$key] = [$value => []];
-                        }
-                        $results[$key][$value][] = $result;
-                    }
-                }
-                $results['nonPresenters'][] = $result;
-            }
 
-            // Save producers
-            if ('E10' === ($result['finna-activity-code'] ?? '')
-                || isset($result['elokuva-elotuotantoyhtio'])
-            ) {
+            switch ($result['finna-activity-code'] ?? '') {
+            case 'E10':
                 $results['producers'][] = $result;
-            }
-
-            // Save distributors
-            if ('fds' === ($result['finna-activity-code'] ?? '')) {
+                break;
+            case 'fds':
                 $result['date'] = $result['elokuva-elolevittaja-vuosi'] ?? '';
                 $result['method']
                     = $result['elokuva-elolevittaja-levitystapa'] ?? '';
                 $results['distributors'][] = $result;
-            }
-
-            // Save funders
-            if ('fnd' === ($result['finna-activity-code'] ?? '')) {
+                break;
+            case 'fnd':
                 $result['amount'] = $result['elokuva-elorahoitusyhtio-summa'] ?? '';
                 $result['fundingType']
                     = $result['elokuva-elorahoitusyhtio-rahoitustapa'] ?? '';
                 $results['funders'][] = $result;
+                break;
+            default:
+                if (isset($result['elokuva-elotuotantoyhtio'])) {
+                    $results['producers'][] = $result;
+                }
+                break;
             }
         }
         return $this->cache[$cacheKey] = $results;
@@ -1102,12 +1066,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $type = (string)($description->DescriptionType ?? '');
             $lang = (string)$description->Language;
             if ($storage = $descriptionTypeMappings[$type] ?? false) {
-                if (!isset($results[$storage])) {
-                    $results[$storage] = ['all' => []];
-                }
-                if (!isset($results[$storage][$lang])) {
-                    $results[$storage][$lang] = [];
-                }
                 $results[$storage][$lang][] = $text;
                 $results[$storage]['all'][] = $text;
             }
@@ -1152,43 +1110,64 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             foreach ($attributes as $key => $value) {
                 $stringValue = (string)$value;
                 // Get production attribute
-                if ($storage = $this->productionAttributeMappings[$key] ?? '') {
+                if ($storage
+                    = $this->productionConfig['productionAttributeMappings'][$key]
+                    ?? ''
+                ) {
                     $results[$storage] = $stringValue;
                 }
                 // Get broadcasting information
-                if ($info = $this->broadcastingInfoMappings[$key] ?? '') {
+                if ($info
+                    = $this->productionConfig['broadcastingInfoMappings'][$key]
+                    ?? ''
+                ) {
                     $broadcastingResult[$info] = $stringValue;
                 }
                 // Get festival info
-                if ($festival = $this->festivalSubjectMappings[$key] ?? '') {
-                    $results['festivalInfo'][] = [
+                if ($festival
+                    = $this->productionConfig['festivalSubjectMappings'][$key]
+                    ?? ''
+                ) {
+                    $results[$festival][] = [
                         'name' => $stringValue,
                         'region' => $regionName,
                         'date' => $dateText
                     ];
                 }
                 // Get foreign distribution info
-                if ($distributor = $this->foreignDistributorMappings[$key] ?? '') {
-                    $results['foreignDistribution'][] = [
+                if ($distributor
+                    = $this->productionConfig['foreignDistributorMappings'][$key]
+                    ?? ''
+                ) {
+                    $results[$distributor][] = [
                         'name' => $stringValue,
                         'region' => $regionName
                     ];
                 }
                 // Get other screening info
-                if ($screening = $this->otherScreeningMappings[$key] ?? '') {
-                    $results['otherScreenings'][] = [
+                if ($screening
+                    = $this->productionConfig['otherScreeningMappings'][$key]
+                    ?? ''
+                ) {
+                    $results[$screening][] = [
                         'name' => $stringValue,
                         'region' => $regionName,
                         'date' => $dateText
                     ];
                 }
                 // Get inspection detail
-                if ($inspection = $this->inspectionAttributes[$key] ?? '') {
+                if ($inspection
+                    = $this->productionConfig['inspectionAttributes'][$key]
+                    ?? ''
+                ) {
                     $inspectionResult[$inspection] = $stringValue;
                 }
                 // Get access restriction details
-                if ($restriction = $this->accessRestrictionMappings[$key] ?? '') {
-                    $results['accessRestrictions'][$stringValue] = 1;
+                if ($restriction
+                    = $this->productionConfig['accessRestrictionMappings'][$key]
+                    ?? ''
+                ) {
+                    $results[$restriction][] = $stringValue;
                 }
             }
             // Check if we have found something to save
