@@ -1081,11 +1081,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'count' => 0,
             'transactions' => []
         ];
-        // Do not fetch loan history if userDisabled conditions are true
-        if (!empty($this->config['getMyTransactionHistory']['userDisabled'])
-            && isset($patron['loan_history'])
-            && false === $patron['loan_history']
-        ) {
+        // Do not fetch loan history if it is false or not set
+        if (!($patron['loan_history'] ?? false)) {
             return $history;
         }
 
