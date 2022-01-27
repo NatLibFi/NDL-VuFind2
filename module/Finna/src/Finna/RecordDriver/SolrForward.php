@@ -151,28 +151,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Inspection attributes
-     *
-     * @var array
-     */
-    protected $inspectionAttributes = [
-        'elokuva-tarkastus-tarkastusnro' => 'number',
-        'elokuva-tarkastus-tarkastamolaji' => 'inspectiontype',
-        'elokuva-tarkastus-pituus' => 'length',
-        'elokuva-tarkastus-veroluokka' => 'taxclass',
-        'elokuva-tarkastus-ikaraja' => 'agerestriction',
-        'elokuva-tarkastus-formaatti' => 'format',
-        'elokuva-tarkastus-osalkm' => 'part',
-        'elokuva-tarkastus-tarkastuttaja' => 'office',
-        'elokuva-tarkastus-kesto' => 'runningtime',
-        'elokuva-tarkastus-tarkastusaihe' => 'subject',
-        'elokuva-tarkastus-perustelut' => 'reason',
-        'elokuva-tarkastus-muuttiedot' => 'additional',
-        'elokuva-tarkastus-tarkastusilmoitus' => 'notification',
-        'elokuva-tarkastus-tarkastuselin' => 'inspector'
-    ];
-
-    /**
      * Roles to not display
      *
      * @var array
@@ -529,16 +507,21 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             if ($titleText == $identifyingTitle) {
                 continue;
             }
-            $rel = $title->TitleRelationship;
-            if ($rel && $type = $rel->attributes()->{'elokuva-elonimi-tyyppi'}) {
-                $titleText .= " ($type)";
-            } elseif ((string)$rel === 'working') {
-                $titleText .= ' (' . $this->translate('working title') . ')';
-            } elseif ($rel && (string)$rel == 'translated') {
-                $lang = $title->TitleText->attributes()->lang;
-                if ($lang) {
-                    $lang = $this->translate($lang);
-                    $titleText .= " ($lang)";
+            if ($rel = $title->TitleRelationship) {
+                switch ((string)$rel) {
+                case 'working':
+                    $titleText .= ' (' . $this->translate('working title') . ')';
+                    break;
+                case 'translated':
+                    if ($lang = $title->TitleRelationship->attributes()->lang) {
+                        $titleText .= ' ' . $this->translate($lang);
+                    }
+                    break;
+                default:
+                    if ($type = $rel->attributes()->{'elokuva-elonimi-tyyppi'}) {
+                        $titleText .= " ($type)";
+                    }
+                    break;
                 }
             }
             $result[] = $titleText;
@@ -687,7 +670,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 $rights['link'] = $type['link'];
             }
         }
-        return isset($rights['copyright']) ? $rights : false;
+        return $rights['copyright'] ?? false;
     }
 
     /**
