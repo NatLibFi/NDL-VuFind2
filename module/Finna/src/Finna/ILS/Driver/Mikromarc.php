@@ -1077,15 +1077,16 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getMyTransactionHistory($patron, $params)
     {
+        $history = [
+            'count' => 0,
+            'transactions' => []
+        ];
         // Do not fetch loan history if userDisabled conditions are true
         if (!empty($this->config['getMyTransactionHistory']['userDisabled'])
             && isset($patron['loan_history'])
             && false === $patron['loan_history']
         ) {
-            return [
-                'count' => 0,
-                'transactions' => []
-            ];
+            return $history;
         }
 
         $sort = strpos($params['sort'], 'desc') ? 'desc' : 'asc';
@@ -1097,10 +1098,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             ['odata', 'BorrowerServiceHistories'],
             $request
         );
-        $history = [
-            'count' => count($result),
-            'transactions' => []
-        ];
+        $history['count'] = count($result);
         $serviceCodeMap = [
             'Returned' => 'returndate',
             'OnLoan' => 'checkoutdate',
