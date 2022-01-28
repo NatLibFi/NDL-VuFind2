@@ -378,31 +378,6 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Subject Place',
-            'getSubjectPlaces',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Date',
-            'getSubjectDates',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Actor',
-            'getSubjectActors',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-
-        $setTemplateLine(
             'Organisation',
             'getInstitutions',
             'data-organisation.phtml',
@@ -473,34 +448,6 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'recordIdentifiers']
             ]
         );
-
-        $getEvents = function ($data, $options) {
-            $final = [];
-            $pos = $options['pos'];
-            foreach ($data as $eventType => $events) {
-                $final[] = [
-                    'values' => $events,
-                    'options' => [
-                        'pos' => $pos++,
-                        'renderType' => 'RecordDriverTemplate',
-                        'template' => 'data-mainFormat.phtml',
-                        'context' => ['class' => 'recordEvents'],
-                        'labelFunction'
-                            => function ($data, $driver) use ($eventType) {
-                                $mainFormat = $driver->getMainFormat();
-                                return "lido_event_type_{$mainFormat}_$eventType";
-                            },
-                    ],
-                ];
-            }
-            return $final;
-        };
-        $setMultiTemplateLine(
-            'Events',
-            'getEvents',
-            $getEvents
-        );
-
         $setTemplateLine(
             'Unit ID',
             'getUnitID',
@@ -579,6 +526,30 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Subject Place',
+            'getSubjectPlaces',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Date',
+            'getSubjectDates',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Actor',
+            'getSubjectActors',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
             'Subjects',
             'getAllSubjectHeadings',
             'data-allSubjectHeadings.phtml',
@@ -620,6 +591,34 @@ class RecordDataFormatterFactory
                 ]
             ]
         );
+
+        $getEvents = function ($data, $options) {
+            $final = [];
+            $pos = $options['pos'];
+            foreach ($data as $eventType => $events) {
+                $final[] = [
+                    'values' => $events,
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-mainFormat.phtml',
+                        'context' => ['class' => 'recordEvents'],
+                        'labelFunction'
+                            => function ($data, $driver) use ($eventType) {
+                                $mainFormat = $driver->getMainFormat();
+                                return "lido_event_type_{$mainFormat}_$eventType";
+                            },
+                    ],
+                ];
+            }
+            return $final;
+        };
+        $setMultiTemplateLine(
+            'Events',
+            'getEvents',
+            $getEvents
+        );
+
         $setTemplateLine(
             'Introduction',
             'getIntroduction',
