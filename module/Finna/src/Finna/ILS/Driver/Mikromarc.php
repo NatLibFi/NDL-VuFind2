@@ -604,6 +604,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 
         $transactions = [];
         foreach ($result as $entry) {
+
             $renewalCount = $entry['RenewalCount'];
             $dueDateTimeStr = $entry['DueTime'];
             if (strlen($dueDateTimeStr) === 10) {
@@ -775,6 +776,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'cancel_details' => $updateDetails,
                 'updateDetails' => $updateDetails,
             ];
+            echo "<pre>";
+            var_dump($entry);
+            echo "</pre>";
             if (!empty($entry['ResHeldUntil'])) {
                 $hold['last_pickup_date']
                     = $this->dateConverter->convertToDisplayDate(
@@ -2043,7 +2047,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
            'NoItemsAvailableByTerm' => 'hold_error_denied',
            'NoItemAvailable' => 'hold_error_denied',
            'NoTermsPermitLoanOrReservation' => 'hold_error_not_holdable',
-           'ReservedForOtherBorrower' => 'renew_item_requested'
+           'ReservedForOtherBorrower' => 'renew_item_requested',
+           'TermsDoNotAllowRenewal' => 'hold_error_not_holdable'
         ];
 
         if (isset($map[$message])) {
