@@ -604,7 +604,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 
         $transactions = [];
         foreach ($result as $entry) {
-
             $renewalCount = $entry['RenewalCount'];
             $dueDateTimeStr = $entry['DueTime'];
             if (strlen($dueDateTimeStr) === 10) {
@@ -776,9 +775,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'cancel_details' => $updateDetails,
                 'updateDetails' => $updateDetails,
             ];
-            echo "<pre>";
-            var_dump($entry);
-            echo "</pre>";
             if (!empty($entry['ResHeldUntil'])) {
                 $hold['last_pickup_date']
                     = $this->dateConverter->convertToDisplayDate(
