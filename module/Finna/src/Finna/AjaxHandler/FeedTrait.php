@@ -121,6 +121,18 @@ trait FeedTrait
             $feed['visualItems'] = $config->visualItems;
         }
 
+        // Add feed url to the item links:
+        if ($feedUrl) {
+            foreach ($feed['items'] as &$item) {
+                if ($item['link'] ?? false) {
+                    $item['link'] .= strpos($item['link'], '?') === false
+                        ? '?' : '&';
+                    $item['link'] .= 'feedUrl=' . urlencode($feedUrl);
+                }
+            }
+            unset($item);
+        }
+
         $template = strpos($type, 'carousel') !== false ? 'carousel' : $type;
         $html = $viewRenderer->partial("ajax/feed-$template.phtml", $feed);
 

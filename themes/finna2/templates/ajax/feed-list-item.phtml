@@ -1,0 +1,21 @@
+<!-- START of: finna - ajax/feed-list-item.phtml -->
+<?php if (isset($item['image']) && isset($item['image']['url'])): ?>
+  <img src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="" />
+<?php endif; ?>
+<span class="title"><?=$this->escapeHtml($item['title']) ?></span>
+<?php if (isset($item['xcal'])): ?>
+  <?php $xcal = $item['xcal'] ?? []; ?>
+  <div class="xcal-fields">
+    <?php if (isset($xcal['startDate'])): ?>
+      <p class="xcal"><i class="fa fa-calendar" aria-label="<?= $this->transEsc('xcal_date'); ?>"></i><?=$this->escapeHtml($xcal['startDate']) ?><?php if ($xcal['startDate'] !== $xcal['endDate']): ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endDate']) ?><?php endif;?></p>
+      <?php if (isset($xcal['startTime']) && $xcal['endDate'] === $xcal['startDate']): ?>
+        <p class="xcal"><i class="fa fa-clock-o" aria-label="<?= $this->transEsc('xcal_time'); ?>"></i><?=$this->escapeHtml($xcal['startTime']) ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endTime']) ?></p>
+      <?php endif; ?>
+    <?php endif; ?>
+    <?php if (isset($xcal['location'])): ?>
+      <p class="xcal"><i class="fa fa-map-marker" aria-label="<?= $this->transEsc('Location'); ?>"></i><?=$this->escapeHtml($xcal['location']) ?></p>
+    <?php endif; ?>
+  </div>
+<?php endif; ?>
+<?php if (isset($item['text'])): ?><span class="text"><?=$this->escapeHtml($item['text']) ?></span><?php endif; ?>
+<!-- END of: finna - ajax/feed-list-item.phtml -->

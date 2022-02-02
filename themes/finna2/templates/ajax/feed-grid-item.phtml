@@ -1,0 +1,30 @@
+<!-- START of: finna - ajax/feed-grid-item.phtml -->
+<?php if (isset($item['image']['url'])): ?>
+  <span class="grid-image <?= empty($item['image']['url']) ? 'no-image' : ''; ?>">
+    <?php if (!empty($item['image']['url'])): ?>
+      <img data-src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="" />
+    <?php else: ?>
+      <i class="fa fa-calendar-o image-placeholder"></i>
+    <?php endif; ?>
+  </span>
+<?php endif; ?>
+<span class="grid-info">
+  <?php if (isset($item['dateFull'])): ?>
+    <div><?=$this->escapeHtml($item['dateFull']) ?></div>
+  <?php endif; ?>
+  <div class="title"><?=$this->escapeHtml($this->truncate($item['title'], 40)) ?></div>
+  <?php $xcal = $item['xcal'] ?? []; ?>
+  <?php if (isset($xcal['startDate'])): ?>
+    <div class="xcal"><i class="fa fa-calendar" aria-label="<?= $this->transEsc('xcal_date') ?>"></i><?=$this->escapeHtml($xcal['startDate']) ?><?php if (isset($xcal['endDate']) && $xcal['endDate'] !== $xcal['startDate']): ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endDate']); endif; ?></div>
+  <?php endif; ?>
+  <?php if (isset($xcal['startTime']) && ((isset($xcal['startDate']) && isset($xcal['endDate']) && $xcal['startDate'] === $xcal['endDate']) || empty($xcal['endDate']))): ?>
+    <div class="xcal"><i class="fa fa-clock-o" aria-label="<?= $this->transEsc('xcal_time') ?>"></i><?=$this->escapeHtml($xcal['startTime']) ?><?php if (isset($xcal['endTime'])): ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endTime']) ?><?php endif; ?></div>
+  <?php endif; ?>
+  <?php if (!empty($xcal['location'])): ?>
+    <div class="xcal"><i class="fa fa-map-marker" aria-label="<?= $this->transEsc('Location') ?>"></i><?=$this->escapeHtml($xcal['location']) ?></div>
+  <?php endif; ?>
+  <?php if (isset($item['text'])): ?>
+    <div class="feed-text"><?=$this->escapeHtml($this->truncate($item['text'], 80)) ?></div>
+  <?php endif; ?>
+</span>
+<!-- END of: finna - ajax/feed-grid-item.phtml -->
