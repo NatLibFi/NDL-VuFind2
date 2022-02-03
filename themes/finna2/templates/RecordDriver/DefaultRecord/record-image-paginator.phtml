@@ -1,6 +1,7 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-image-paginator.phtml -->
 <?php
   $isList = ($type === 'list' || $type === 'list grid');
+  // Enable zoom only for LIDO, FORWARD, EAD, EAD3, QDC records
   $enableImageZoom = !empty($enableImagePopupZoom) && in_array($this->driver->tryMethod('getRecordFormat'), ['lido', 'forward', 'ead', 'ead3', 'qdc']);
 ?>
 <?php if ($type === 'record' || !$this->userAgent()->isBot()): ?>

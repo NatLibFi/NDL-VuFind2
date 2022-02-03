@@ -801,8 +801,7 @@ recordMap = openlayers
 ;mapLabels = file:geosearch_test_lookup.txt
 ;displayCoords = true
 
-; Enables zoom for images in the image popup, only applies to 
-; 'lido', 'forward', 'ead', 'ead3', 'qdc' records. Disabled by default.
+; Enables zoom for images in the image popup. Disabled by default.
 ;enableImagePopupZoom = true
 
 [QRCode]
