@@ -85,7 +85,7 @@
         'recordId' => $this->driver->getUniqueId(),
         'recordType' => $this->driver->tryMethod('getRecordFormat'),
         'recordSource' => $this->driver->tryMethod('getSourceIdentifier'),
-        'enableImageZoom' => $enableImagePopupZoom,
+        'enableImageZoom' => $this->record($this->driver)->getImagePopupZoom(),
         'maxRows' => 3,
         'iconlabelClass' => "format-" . $this->record($this->driver)->getFormatClass(end($formats)),
         'isList' => $type === 'list' || $type === 'list grid',

@@ -2,7 +2,6 @@
 <?php
   $isList = $type == 'list' || $type === 'list grid';
   $formats = $this->driver->tryMethod('getFormats');
-  $enableImagePopupZoom = $this->record($this->driver)->getImagePopupZoom();
   if (!$isList) {
     $models = $this->driver->tryMethod('getModels');
   }
@@ -13,8 +12,12 @@
       $this->record($this->driver)->renderTemplate(
           'record-image-paginator.phtml',
           [
-              'images' => $images, 'type' => $type, 'formats' => $formats, 'enableImagePopupZoom' => $enableImagePopupZoom,
-              'numOfImages' => $numOfImages ?? null, 'displayIcon' => $displayIcon ?? false, 'models' => $models ?? []
+              'images' => $images,
+              'type' => $type,
+              'formats' => $formats,
+              'numOfImages' => $numOfImages ?? null,
+              'displayIcon' => $displayIcon ?? false,
+              'models' => $models ?? []
           ]
       )
     ?>
