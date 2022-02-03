@@ -805,7 +805,7 @@ recordMap = openlayers
 ; record formats specified in zoomFormats key. Disabled by default.
 ;enableImagePopupZoom = true
 ; Formats which are allowed to use the zoom property, separated by :
-;zoomFormats = qdc:forward:ead3:ead:lido
+zoomFormats = qdc:forward:ead3:ead:lido
 
 [QRCode]
 ; This setting controls the image to display when no qrcode is available.
