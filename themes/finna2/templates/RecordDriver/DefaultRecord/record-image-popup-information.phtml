@@ -70,18 +70,18 @@ if ($otherTitles):?>
             <p><strong><?=$this->transEsc('Image') ?>:</strong> <?=$this->escapeHtml($imageDescription)?></p>
           </div>
         <?php endif; ?>
-        <?php if ($summaries = $this->driver->tryMethod('getDescriptions') ?? $this->driver->tryMethod('getSummary', [], [])): ?>
+        <?php if ($summaries = $this->driver->tryMethod('getDescriptions') ?? $this->driver->tryMethod('getSummary')): ?>
           <?php if ('qdc' === $recordType): ?>
             <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $summaries), "\n")?>
           <?php elseif (in_array($recordType, ['lido', 'ead'])): ?>
-            <?php foreach ($summaries as $field): ?>
-              <?= $this->recordFieldMarkdown()->toHtml($field) ?>
+            <?php foreach ($summaries as $summary): ?>
+              <?= $this->recordFieldMarkdown()->toHtml($summary) ?>
             <?php endforeach; ?>
           <?php elseif ('forward' === $recordType): ?>
-            <?php foreach ($summary as $item): ?>
-              <p><?=$this->cleanHtml($item)?></p>
+            <?php foreach ($summaries as $summary): ?>
+              <p><?=$this->cleanHtml($summary)?></p>
             <?php endforeach ?>
-          <?php elseif ($s = $summary[0] ?? false): ?>
+          <?php elseif ($summary = $summaries[0] ?? false): ?>
             <div class="truncate-field wide">
               <p class="summary"><?$this->cleanHtml($summary)?></p>
             </div>
