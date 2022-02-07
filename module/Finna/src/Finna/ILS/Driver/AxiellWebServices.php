@@ -749,9 +749,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $password = $holdDetails['patron']['cat_password'];
 
         try {
-            $validFromDate = date('Y-m-d');
-
-            $validToDate = isset($holdDetails['requiredBy'])
+            $validFromDate = !empty($holdDetails['startDate'])
+                ? $this->dateFormat->convertFromDisplayDate(
+                    'Y-m-d',
+                    $holdDetails['startDate']
+                )
+                : date('Y-m-d');
+            $validToDate = !empty($holdDetails['requiredBy'])
                 ? $this->dateFormat->convertFromDisplayDate(
                     'Y-m-d',
                     $holdDetails['requiredBy']
