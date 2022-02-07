@@ -78,6 +78,10 @@ final class RecordFieldMarkdownExtension implements ExtensionInterface
                 new \League\CommonMark\Inline\Parser\NewlineParser(),
                 200
             )
+            ->addInlineParser(
+                new \League\CommonMark\Inline\Parser\EntityParser(),
+                70
+            )
             ->addBlockRenderer(
                 \League\CommonMark\Block\Element\Document::class,
                 new \League\CommonMark\Block\Renderer\DocumentRenderer(),

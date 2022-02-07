@@ -178,14 +178,14 @@ if ($otherTitles):?>
   <?php if ($this->driver->getSourceIdentifier() !== 'SolrAuth'): ?>
     <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-rights.phtml', ['rights' => $rights, 'truncateLicense' => true]); ?>
   <?php endif ?>
-  <?php if ($this->resolver('record/record-organisation-menu.phtml')): ?>
-    <?=$this->render('record/record-organisation-menu.phtml') ?>
-  <?php endif; ?>
+  <?=$this->render('record/record-organisation-menu.phtml') ?>
   <div style="clear: both;"></div>
 </div>
 <?=
-$this->piwik([
-  'lightbox' => true, 'record' => $this->driver, 'action' => 'imagePopup',
+$this->matomo([
+  'context' => 'lightbox',
+  'record' => $this->driver,
+  'action' => 'imagePopup',
   'recordUrl' => $this->recordLinker()->getUrl($this->driver)
 ]);
 ?>

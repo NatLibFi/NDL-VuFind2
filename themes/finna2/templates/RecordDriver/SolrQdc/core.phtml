@@ -62,6 +62,12 @@
       <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
     <?php endif; ?>
 
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+      <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
+    <?php endif; ?>
+
     <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
   </div>
   <?php $thumbnail = ob_get_contents(); ?>
@@ -150,21 +156,17 @@
       </div>
 
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
-        <div class="truncate-field wide recordSummary">
-          <p class="summary">
+        <div class="truncate-field wide summary recordSummary">
           <?php if (isset($abstracts[$this->layout()->userLang])): ?>
-              <?=$this->escapeHtml($abstracts[$this->layout()->userLang])?>
-            <?php else: ?>
-              <?=implode('<br><br>', array_map([$this, 'escapeHtml'], $abstracts))?>
-            <?php endif; ?>
-          </p>
+            <?= $this->recordFieldMarkdown()->toHTML(($abstracts[$this->layout()->userLang]), "\n") ?>
+          <?php else: ?>
+            <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $abstracts), "\n") ?>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
       <?php if ($descriptions = $this->driver->getDescriptions()): ?>
-        <div class="truncate-field wide recordSummary">
-          <p class="summary">
-            <?=implode('<br><br>', array_map([$this, 'escapeHtml'], $descriptions))?>
-          </p>
+        <div class="truncate-field wide summary recordSummary">
+          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions), "\n") ?>
         </div>
       <?php endif; ?>
 

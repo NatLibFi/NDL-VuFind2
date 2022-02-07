@@ -31,7 +31,7 @@
         .heading {
             font-weight: bold;
         }
-        p.note-heading {
+        .note-heading p {
             margin: 0;
             text-transform: uppercase;
             font-size: 0.9em;
@@ -39,8 +39,11 @@
                 padding-right: 2px;
             }
         }
-        p.note-rows {
+        .note-rows p {
             margin-top: 3px;
+        }
+        .note-rows span {
+            margin-left: 5px;
         }
     }
 
@@ -74,8 +77,16 @@
     .condensed-notes {
         width: 100%;
     }
-    .note-overlay-condensed,
+
     .note-overlay-list {
+        .notes {
+            .note-rows p{
+                margin-top: 10px;
+            }
+        }
+    }
+
+    .note-overlay-condensed {
         color: #121212;
         overflow-x: hidden;
         overflow-y: auto;

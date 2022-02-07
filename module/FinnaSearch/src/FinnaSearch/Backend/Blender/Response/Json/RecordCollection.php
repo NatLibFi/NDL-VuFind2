@@ -131,6 +131,17 @@ class RecordCollection
 
         if (null === $primaryCollection || null === $secondaryCollection) {
             $this->errors = ['search_backend_partial_failure'];
+        } else {
+            $this->errors = array_merge(
+                $primaryCollection->getErrors(),
+                $secondaryCollection->getErrors()
+            );
+            if ($this->errors
+                && !($primaryCollection->getErrors()
+                && $secondaryCollection->getErrors())
+            ) {
+                array_unshift($this->errors, 'search_backend_partial_failure');
+            }
         }
     }
 

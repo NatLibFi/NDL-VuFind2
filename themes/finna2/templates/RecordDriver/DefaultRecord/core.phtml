@@ -53,6 +53,12 @@
       <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
     <?php endif; ?>
 
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+      <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
+    <?php endif; ?>
+
     <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
   </div>
   <?php $thumbnail = ob_get_contents(); ?>
@@ -112,7 +118,10 @@
         <?php if (!empty($otherUrls)): ?>
           <?php foreach ($otherUrls as $url): ?>
             <?php
-              $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
+              $desc = $url['desc'] ?? $url['url'];
+              if ($desc === $url['url']) {
+                $desc = $this->truncateUrl($desc);
+              }
               $icon = 'fa-external-link';
               if (!empty($url['desc'])) {
                 $map = ['Database Guide' => 'fa-info-database', 'Database Interface' => 'fa-browse-database'];
@@ -123,7 +132,7 @@
             ?>
             <div class="fulltextField">
               <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>>
-                <i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
+                <i class="fa <?=$icon?>"></i> <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
               </a>
               <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
             </div>

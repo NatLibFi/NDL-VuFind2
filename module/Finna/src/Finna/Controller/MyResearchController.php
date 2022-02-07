@@ -349,7 +349,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         // Set up CSRF:
-        $csrfValidator = $this->serviceLocator->get(\VuFind\Validator\Csrf::class);
+        $csrfValidator = $this->serviceLocator
+            ->get(\VuFind\Validator\CsrfInterface::class);
 
         if ($this->formWasSubmitted('submit', false)) {
             $csrf = $this->getRequest()->getPost()->get('csrf');
@@ -738,7 +739,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         if ($this->formWasSubmitted('saveUserProfile')) {
             // Do CSRF check
-            $csrf = $this->serviceLocator->get(\VuFind\Validator\Csrf::class);
+            $csrf = $this->serviceLocator
+                ->get(\VuFind\Validator\CsrfInterface::class);
             if (!$csrf->isValid($this->getRequest()->getPost()->get('csrf'))) {
                 throw new \VuFind\Exception\BadRequest(
                     'error_inconsistent_parameters'
@@ -748,7 +750,13 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
             // Update email
             $validator = new \Laminas\Validator\EmailAddress();
-            if ('' === $values->email || $validator->isValid($values->email)) {
+            // VuFind does not allow an empty email address, so handle that
+            // separately:
+            if ('' === $values->email) {
+                $user->email = '';
+                $user->user_provided_email = 1;
+                $user->save();
+            } elseif ($validator->isValid($values->email)) {
                 $this->getAuthManager()->updateEmail($user, $values->email);
                 // If we have a pending change, we need to send a verification email:
                 if (!empty($user->pending_email)) {

@@ -2327,7 +2327,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'balance' => $amount,
                 'createdate' => $debt->debtDate,
                 'payableOnline' => $payable,
-                'organization' => $debt->organisation ?? ''
+                'organization' => trim($debt->organisation ?? '')
             ];
             $finesList[] = $fine;
         }

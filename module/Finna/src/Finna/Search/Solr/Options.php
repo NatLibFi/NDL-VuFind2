@@ -44,18 +44,11 @@ class Options extends \VuFind\Search\Solr\Options
     use \Finna\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Browse route
-     *
-     * @var string
-     */
-    protected $browseAction = null;
-
-    /**
      * Date range visualization settings
      *
      * @var string
      */
-    protected $dateRangeVis = '';
+    protected $dateRangeVis;
 
     /**
      * Whether to display record versions
@@ -75,10 +68,8 @@ class Options extends \VuFind\Search\Solr\Options
     {
         parent::__construct($configLoader);
 
-        $facetSettings = $configLoader->get($this->facetsIni);
-        if (isset($facetSettings->SpecialFacets->dateRangeVis)) {
-            $this->dateRangeVis = $facetSettings->SpecialFacets->dateRangeVis;
-        }
+        $facetSettings = $this->configLoader->get($this->facetsIni);
+        $this->dateRangeVis = $facetSettings->SpecialFacets->dateRangeVis ?? '';
 
         // Back-compatibility for display_versions setting in config.ini:
         $searchSettings = $configLoader->get($this->searchIni);
@@ -89,18 +80,6 @@ class Options extends \VuFind\Search\Solr\Options
                     = (bool)$config->Record->display_versions;
             }
         }
-    }
-
-    /**
-     * Set the route name for the browse action.
-     *
-     * @param string $action Route
-     *
-     * @return void
-     */
-    public function setBrowseAction($action)
-    {
-        $this->browseAction = $action;
     }
 
     /**
@@ -140,15 +119,5 @@ class Options extends \VuFind\Search\Solr\Options
             return $result;
         }
         return $this->translate("search_field_$field", null, $field);
-    }
-
-    /**
-     * Return the route name for the search results action.
-     *
-     * @return string
-     */
-    public function getSearchAction()
-    {
-        return $this->browseAction ?: parent::getSearchAction();
     }
 }

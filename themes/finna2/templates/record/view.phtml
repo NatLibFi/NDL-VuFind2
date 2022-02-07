@@ -76,8 +76,7 @@
       $this->layout()->userLang,
       $params
   );
-  $noImage = empty($images[0]['urls']['medium']) && empty($images[0]['urls']['large']);
-  $largeImageLayout = !$noImage && in_array($this->driver->tryMethod('getRecordFormat'), ['lido', 'forward', 'ead', 'ead3', 'forwardAuthority', 'qdc']);
+  $largeImageLayout = $this->record($this->driver)->hasLargeImageLayout();
 
   if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
       echo $this->inlineScript(
@@ -105,7 +104,7 @@
   </div>
 
   <?php ob_start(); ?>
-    <?php if ($this->resolver('record/record-organisation-menu.phtml') && in_array($this->driver->getSourceIdentifier(), ['Solr', 'SolrAuth', 'L1', 'R2'])): ?>
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'sidebar'): ?>
       <div class="organisation-menu">
           <?=$this->render('record/record-organisation-menu.phtml') ?>
       </div>
@@ -121,11 +120,12 @@
   <?php $sidebar = ob_get_contents(); ?>
   <?php ob_end_clean(); ?>
 
-  <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
-    <?php if ($sidebar):?>
-        <?=$sidebar ?>
-    <?php endif; ?>
-  </div>
+  <?php if ($sidebar && !$largeImageLayout):?>
+    <?php // This sidebar is used for larger screens when not in large image layout ?>
+    <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
+      <?=$sidebar ?>
+    </div>
+  <?php endif; ?>
 
   <div class="clearfix hidden-lg hidden-md"></div>
 
@@ -208,11 +208,12 @@
     <div class="clearfix hidden-lg hidden-md"></div>
   </div>
 
-  <div class="sidebar left large-image-sidebar hidden <?= $largeImageLayout ? '' : 'visible-xs visible-sm'?>">
-    <?php if ($sidebar):?>
-        <?=$sidebar ?>
-    <?php endif; ?>
-  </div>
+  <?php if ($sidebar):?>
+    <?php // This sidebar is used for smaller screens and always in large image layout ?>
+    <div class="sidebar left large-image-sidebar<?=$largeImageLayout ? '' : ' visible-xs visible-sm'?>">
+      <?=$sidebar ?>
+    </div>
+  <?php endif; ?>
 
   </div>
 </div>

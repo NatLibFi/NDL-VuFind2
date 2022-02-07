@@ -1,9 +1,10 @@
 <!-- START of: finna - record/record-organisation-menu.phtml -->
-<?php $currentSource = $this->driver->tryMethod('getDataSource');
-   $currentSourceTranslated = $this->transEsc("source_$currentSource", null, $currentSource);
-   $mergedData = $this->driver->tryMethod('getMergedRecordData');
-   $recordType = $this->driver->tryMethod('getRecordFormat');
-   $sector = $this->driver->tryMethod('getSector');
+<?php
+  $currentSource = $this->driver->tryMethod('getDataSource');
+  $currentSourceTranslated = $this->transEsc("source_$currentSource", null, $currentSource);
+  $mergedData = $this->driver->tryMethod('getMergedRecordData');
+  $recordType = $this->driver->tryMethod('getRecordFormat');
+  $sector = $this->driver->tryMethod('getSector');
 ?>
 <div class="recordProvidedBy">
   <h2 class="record-organisation-header">
@@ -31,7 +32,7 @@
           <?php if ($this->organisationInfo() && $organisationInfoId = $this->driver->getOrganisationInfoId()): ?><li class="organisation-page-link" data-organisation="<?=$this->escapeHtmlAttr($organisationInfoId)?>" data-organisation-name="<?=$this->escapeHtmlAttr($currentSourceTranslated)?>" data-organisation-sector="<?=$this->escapeHtmlAttr($sector)?>"></li><?php endif; ?>
           <li class="material-questions-feedback"><?=$this->transEsc('material_questions_feedback')?></li>
           <li><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Feedback'))?>" data-lightbox class="btn btn-primary feedback-record"><?=$this->transEsc('Send feedback on record')?></a></li>
-          <?php if ($this->record($this->driver)->repositoryLibraryRequestEnabled()): ?>
+          <?php if ($this->record($this->driver)->repositoryLibraryRequestEnabled('organisation_info')): ?>
             <li class="repository-library-request"><?=$this->transEsc('repository_library_request')?></li>
             <li>
               <?php $user = $this->auth()->isLoggedIn(); if ($user): ?>

@@ -220,6 +220,7 @@ translated_facets[] = category_str_mv
 translated_facets[] = usage_rights_str_mv
 translated_facets[] = major_genre_str_mv
 translated_facets[] = format_ext_str_mv
+translated_facets[] = hierarchy_parent_title:hierarchy
 
 ; Prefix to be used in facet translation to avoid mixing facet strings with other
 ; translated content

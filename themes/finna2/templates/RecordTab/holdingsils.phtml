@@ -95,6 +95,7 @@
     if (isset($holdingsConfig['display_title_hold_in_holdings']) && !$holdingsConfig['display_title_hold_in_holdings']) {
       $disableTitleHold = true;
     }
+    $repositoryLibraryRequestAllowed = $this->record($this->driver)->repositoryLibraryRequestEnabled('holdings');
 ?>
 
 <?=($offlineMode == "ils-offline") ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
@@ -141,39 +142,52 @@
 </div>
 <?php endif; ?>
 
-<?php if ($holdsAllowed): ?>
+<?php if ($holdsAllowed || $repositoryLibraryRequestAllowed): ?>
   <div class="place-hold-wrapper text-right hidden-print">
-  <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn(), 'label' => 'Library Card']); ?>
-  <?php if ($illRequestLink): ?>
-    <a class="expandedCheckILLRequest placeILLRequest btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($illRequestLink))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('ill_request_place_text') . ': ' . $this->driver->getTitle()) ?>"><?=$this->transEsc("ill_request_check_text")?></a>
-  <?php endif; ?>
-  <?php if (!$disableTitleHold): ?>
-    <?php $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold'); if (!empty($holdingTitleHold)): ?>
-      <a class="placehold btn btn-primary hidden-print" data-lightbox data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $this->driver->getTitle()) ?>" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdingTitleHold))?>"> <?=$this->transEsc('title_hold_place')?></a>
-    <?php elseif ($user): ?>
-      <?php
-        $blocks = [];
-        if (!empty($holdings['blocks'])) {
-          $blocks = $holdings['blocks'];
-          // Check if we have hold-specific blocks. Add the general hold_error_blocked only if no other hold blocks to avoid repetition.
-          $holdBlocks = false;
-          foreach ($blocks as $block) {
-            if (mb_substr((string)$block, 0, 11, 'UTF-8') === 'hold_error_') {
-              $holdBlocks = true;
+    <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn(), 'label' => 'Library Card']); ?>
+    <?php if ($illRequestLink): ?>
+      <a class="expandedCheckILLRequest placeILLRequest btn btn-primary hidden-print" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($illRequestLink))?>" data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('ill_request_place_text') . ': ' . $this->driver->getTitle()) ?>"><?=$this->transEsc("ill_request_check_text")?></a>
+    <?php endif; ?>
+    <?php if ($holdsAllowed && !$disableTitleHold): ?>
+      <?php $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold'); if (!empty($holdingTitleHold)): ?>
+        <a class="placehold btn btn-primary hidden-print" data-lightbox data-lightbox-title="<?=$this->escapeHtmlAttr($this->translate('title_hold_place') . ': ' . $this->driver->getTitle()) ?>" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getRequestUrl($holdingTitleHold))?>"> <?=$this->transEsc('title_hold_place')?></a>
+      <?php elseif ($user): ?>
+        <?php
+          $blocks = [];
+          if (!empty($holdings['blocks'])) {
+            $blocks = $holdings['blocks'];
+            // Check if we have hold-specific blocks. Add the general hold_error_blocked only if no other hold blocks to avoid repetition.
+            $holdBlocks = false;
+            foreach ($blocks as $block) {
+              if (mb_substr((string)$block, 0, 11, 'UTF-8') === 'hold_error_') {
+                $holdBlocks = true;
+              }
             }
+            if (!$holdBlocks) {
+                $blocks[] = 'hold_error_blocked';
+            }
+          } elseif (!$illRequestLink && !$holdLinks && !$repositoryLibraryRequestAllowed) {
+            $blocks[] = 'title_cant_place_hold';
           }
-          if (!$holdBlocks) {
-              $blocks[] = 'hold_error_blocked';
-          }
-        } elseif (!$illRequestLink && !$holdLinks) {
-          $blocks[] = 'title_cant_place_hold';
-        }
-        if ($blocks):
-      ?>
-        <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $blocks]) ?>
+          if ($blocks):
+        ?>
+          <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $blocks]) ?>
+        <?php endif; ?>
       <?php endif; ?>
     <?php endif; ?>
-  <?php endif; ?>
+
+    <?php if ($repositoryLibraryRequestAllowed): ?>
+      <?php $user = $this->auth()->isLoggedIn(); if ($user): ?>
+        <?php if ($user->getLibraryCards()->count()): ?>
+          <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'RepositoryLibraryRequest'))?>" data-lightbox class="btn btn-primary repository-library-request-order"><?=$this->transEsc('repository_library_request_order')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
+        <?php else: ?>
+          <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
+        <?php endif; ?>
+      <?php else: ?>
+        <a href="?login=true&catalogLogin=true" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($this->driver->getTitle())?></span></a>
+      <?php endif; ?>
+    <?php endif; ?>
+
   </div>
 <?php endif; ?>
 
@@ -279,20 +293,24 @@
     }
 
     // N.B. $holdingsDetails also affects request checks in finna-record
-    switch ($this->holdings()->getDetailsMode())
-    {
-    case 'collapse':
+    $holdingsDetails = $holdingsGroup == 1 ? 'expanded' : 'collapsed';
+    $detailsModes = array_map('trim', explode(',', $this->holdings()->getDetailsMode()));
+    foreach ($detailsModes as $mode) {
+      switch ($mode) {
+      case 'collapse':
         $holdingsDetails = 'collapsed';
         break;
-    case 'expand-all':
+      case 'expand-all':
         $holdingsDetails = 'expanded';
         break;
-    default:
-        $holdingsDetails = $holdingsGroup == 1 ? 'expanded' : 'collapsed';
+      case 'collapse-journals':
+        if ($journal || in_array('0/Journal/', $this->driver->getFormats())) {
+            $holdingsDetails = 'collapsed';
+        }
         break;
+      }
     }
-  ?>
-  <?php
+
     $callnumbers = $this->holdings()->getGroupedCallNumbers($holding['items']);
     $dialogTitle = ': ' . $this->driver->getTitle();
     $titleLocation = $this->transEscWithPrefix('location_', $holding['location']);

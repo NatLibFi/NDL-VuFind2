@@ -1,6 +1,7 @@
 <!-- START of: finna - Helpers/copyright-icons.phtml -->
 <?php
   $displayIcons = [
+    'CC0' => ['cc-cc', 'cc-zero'],
     'CCBY' => ['cc-cc', 'cc-by'],
     'CCBYSA' => ['cc-cc', 'cc-by', 'cc-sa'],
     'CCBYND' => ['cc-cc', 'cc-by', 'cc-nd'],
@@ -15,7 +16,10 @@
     'NOCOKLR' => ['rs-noc'],
     'CNE' => ['rs-other'],
   ];
-  $key = strtoupper(preg_replace('/[^A-Za-z]/', '', $this->copyright));
+  $key = strtoupper($this->copyright);
+  if ('CC0' !== $key) {
+    $key = preg_replace('/[^A-Za-z]/', '', $key);
+  }
 ?>
 <?php if (isset($displayIcons[$key])): ?>
   <?php foreach ($displayIcons[$key] as $icon): ?>

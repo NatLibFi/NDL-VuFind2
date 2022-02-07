@@ -102,6 +102,34 @@
         background-color: rgba(255, 255, 255, 0.2);
       }
     }
+    li.btn-bookbag-toggle a{
+      position: relative;
+
+      .blinker {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: transparent;
+      }
+
+      .fa-close {
+        position: absolute;
+        top: 6px;
+        right: 4px;
+        font-size: 11px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px @sidebar-background;
+      }
+
+      &:hover {
+        .fa-close {
+          transition: box-shadow .2s ease-in-out;
+          box-shadow: 0 0 0 3px screen(@sidebar-background, rgba(255, 255, 255, 0.2));
+        }
+      }
+    }
   }
   section.template-name-results .sidebar,
   section.template-name-search .sidebar,

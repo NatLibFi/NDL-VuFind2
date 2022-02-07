@@ -150,16 +150,33 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get an array of types for the record.
+     * Get an array of mediums for the record
      *
      * @return array
      */
-    public function getTypes(): array
+    public function getPhysicalMediums(): array
     {
         $xml = $this->getXmlRecord();
         $results = [];
-        foreach ($xml->type ?? [] as $type) {
-            $results[] = (string)$type;
+        foreach ($xml->medium as $medium) {
+            $results[] = trim((string)$medium);
+        }
+        return $results;
+    }
+
+    /**
+     * Get an array of formats/extents for the record
+     *
+     * @return array
+     */
+    public function getPhysicalDescriptions(): array
+    {
+        $xml = $this->getXmlRecord();
+        $results = [];
+        foreach ([$xml->format, $xml->extent] as $nodes) {
+            foreach ($nodes as $node) {
+                $results[] = trim((string)$node);
+            }
         }
         return $results;
     }
@@ -501,6 +518,12 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $trimmed = trim((string)$relation);
 
             if ($key = $this->seriesInfoMappings[$type] ?? false) {
+                // Initialize the result so that it contains the required elements:
+                if (!isset($results[$lang])) {
+                    $results[$lang] = [
+                        'name' => ''
+                    ];
+                }
                 if (empty($results[$lang][$key])) {
                     $results[$lang][$key] = $trimmed;
                 }

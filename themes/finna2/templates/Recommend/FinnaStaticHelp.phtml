@@ -1,0 +1,18 @@
+<!-- START of: finna - Recommend/FinnaStaticHelp.phtml -->
+<?php
+    $searchHelpPage = 'help-' . ('advanced' === $this->recommend->getSearchType() ? 'advanced' : 'basic');
+    $placeholders = array_map(
+        [$this, 'escapeHtmlAttr'],
+        [
+          '%%helpLink%%' => $this->url('content-page', ['page' => 'help']),
+          '%%searchHelpLink%%' => $this->url('content-page', ['page' => $searchHelpPage]),
+          '%%feedbackLink%%' => $this->url('feedback-home'),
+          '%%baseUrl%%' => $this->url('home'),
+        ]
+    );
+?>
+<div class="noresults alert alert-info finna-static-help">
+  <h4><?=$this->transEsc('finna_static_help_recommendation_title')?></h4>
+  <div class="text"><?=$this->translate('finna_static_help_recommendation_html', $placeholders)?></div>
+</div>
+<!-- END of: finna - Recommend/FinnaStaticHelp.phtml -->
