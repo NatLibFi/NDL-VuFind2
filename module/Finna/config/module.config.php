@@ -960,8 +960,7 @@ $staticRoutes = [
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
     'Record/DownloadModel',
-    'Record/DownloadFile',
-    'Record/DownloadImage'
+    'Record/DownloadFile'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
