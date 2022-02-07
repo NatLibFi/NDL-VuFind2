@@ -29,9 +29,9 @@ if ($otherTitles):?>
       <p>
         <?php if ($author = $this->driver->getPrimaryAuthor()): ?>
           <?=$this->escapeHtml($author) ?>
-          <?php endif; ?>
-          <?php if ($dates = $this->driver->tryMethod('getResultDateRange')): ?>
-            <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
+        <?php endif; ?>
+        <?php if ($dates = $this->driver->tryMethod('getResultDateRange')): ?>
+          <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
         <?php else: ?>
           <?php foreach ($this->driver->getPublicationDates() as $date): ?>
             <?=$this->escapeHtml($date) ?>
