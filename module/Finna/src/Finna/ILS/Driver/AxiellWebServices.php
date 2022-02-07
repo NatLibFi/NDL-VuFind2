@@ -913,7 +913,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
             if (isset($fields['requiredByTS'])) {
                 $updateRequest['validToDate']
-                    = gmdate('Y-m-d', $fields['requiredByTS']);
+                    = date('Y-m-d', $fields['requiredByTS']);
             }
             if (isset($fields['frozen'])) {
                 if ($fields['frozen']) {
@@ -928,7 +928,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                             = $updateRequest['validToDate'];
                     }
                 } else {
-                    $updateRequest['validFromDate'] = gmdate('Y-m-d');
+                    $updateRequest['validFromDate'] = date('Y-m-d');
                 }
             } elseif ($updateRequest['validFromDate'] > $updateRequest['validToDate']
             ) {
