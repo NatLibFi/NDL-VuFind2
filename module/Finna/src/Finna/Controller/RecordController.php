@@ -956,7 +956,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 $response->setStatusCode(400);
                 break;
             }
-            
+
             if ($url = $representation['url'] ?? false) {
                 $fileName = $representation['description']
                     ?? $representation['desc']
