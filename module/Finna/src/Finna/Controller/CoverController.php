@@ -184,6 +184,7 @@ class CoverController extends \VuFind\Controller\CoverController
     {
         return $this->forwardTo('Record', 'DownloadFile');
     }
+
     /**
      * Convert image parameters into an array for use by the image loader.
      *
