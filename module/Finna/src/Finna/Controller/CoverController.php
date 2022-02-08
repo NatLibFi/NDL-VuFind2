@@ -175,17 +175,6 @@ class CoverController extends \VuFind\Controller\CoverController
     }
 
     /**
-     * Function to download images from the provider instead of cache.
-     * BC.
-     *
-     * @return \Laminas\Http\Response
-     */
-    public function downloadAction()
-    {
-        return $this->forwardTo('Record', 'DownloadFile');
-    }
-
-    /**
      * Convert image parameters into an array for use by the image loader.
      *
      * @return array

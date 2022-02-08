@@ -178,6 +178,16 @@ $config = [
                     ]
                 ],
             ],
+            'cover-download' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/Cover/Download',
+                    'defaults' => [
+                        'controller' => 'Record',
+                        'action'     => 'DownloadFile',
+                    ]
+                ]
+            ],
             'robots-txt' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
@@ -944,7 +954,6 @@ $dynamicRoutes = [
 ];
 
 $staticRoutes = [
-    'Cover/Download',
     'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',
