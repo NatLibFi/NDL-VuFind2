@@ -649,12 +649,11 @@ var createButton = function createButton(className, value, text) {
   return button;
 };
 
+/**
+ * Initialize the menu. Assign variables.
+ */
 ModelViewer.prototype.initMenu = function initMenu() {
   var _ = this;
-  _.raycaster = new THREE.Raycaster();
-  _.raycaster.far = 1000;
-  _.raycaster.near = 1;
-  _.mouse = new THREE.Vector2();
   _.menuMode = 'basic';
   _.menuAreas = {
     advanced: [
@@ -698,6 +697,9 @@ ModelViewer.prototype.initMenu = function initMenu() {
   _.createMenuForSettings();
 };
 
+/**
+ * Create UI for the settings.
+ */
 ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
   var _ = this;
   _.renderer.renderLists.dispose();
@@ -1174,7 +1176,11 @@ ModelViewer.prototype.createObjectToScene = function createObjectToScene(object)
 };
 
 /**
- * Delete a light from the scene
+ * Delete an object from the scene
+ * 
+ * @param {HTMLFormElement} form Containing the data for the object.
+ * @param {string} prefix        Prefix for the menu area.
+ * @param {string} menuName      Name of the menu. 
  */
 ModelViewer.prototype.deleteObject = function deleteObject(form, prefix, menuName) {
   var _ = this;
@@ -1197,6 +1203,9 @@ ModelViewer.prototype.deleteObject = function deleteObject(form, prefix, menuNam
   }
 };
 
+/**
+ * Save current scene as a json file. Useful for creating base for viewer.
+ */
 ModelViewer.prototype.saveSettingsAsJson = function saveSettingsAsJson() {
   var _ = this;
   var json = '';
