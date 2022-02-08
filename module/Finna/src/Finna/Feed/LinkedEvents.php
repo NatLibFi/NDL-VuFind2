@@ -185,71 +185,70 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
             $responseData = !isset($response['data'])
                 ? [$response]
                 : $response['data'];
-            if (!empty($responseData)) {
-                foreach ($responseData as $eventData) {
-                    $link = $this->url->fromRoute('linked-events-content')
-                        . '?id=' . $eventData['id'];
+            foreach ($responseData ?: [] as $eventData) {
+                $link = $this->url->fromRoute('linked-events-content')
+                    . '?id=' . $eventData['id'];
 
-                    $providerLink = $this->getField($eventData, 'provider_link');
-                    if ($providerLink
-                        && !preg_match('/^https?:\/\//', $providerLink)
-                    ) {
-                        $providerLink = 'http://' . $providerLink;
-                    }
+                $providerLink = $this->getField($eventData, 'provider_link');
+                if ($providerLink
+                    && !preg_match('/^https?:\/\//', $providerLink)
+                ) {
+                    $providerLink = 'http://' . $providerLink;
+                }
 
-                    $event = [
-                        'id' => $eventData['id'],
-                        'title' => $this->getField($eventData, 'name'),
-                        'description' => ($this->cleanHtml)(
-                            $this->getField($eventData, 'description')
-                        ),
-                        'image' => ['url' => $eventData['images'][0]['url'] ?? ''],
-                        'short_description' =>
-                            $this->getField($eventData, 'short_description'),
-                        'xcal' => [
-                            'startTime' =>
-                                $this->formatTime($eventData['start_time']),
-                            'endTime' => $this->formatTime($eventData['end_time']),
-                            'startDate' =>
-                                $this->formatDate($eventData['start_time']),
-                            'endDate' => $this->formatDate($eventData['end_time']),
-                            'location' =>
-                                $this->getField($eventData, 'location_extra_info'),
-                        ],
-                        'info_url' => $this->getField($eventData, 'info_url'),
-                        'location-info' =>
+                $startDate = $this->formatDate($eventData['start_time']);
+                $endDate = $this->formatDate($eventData['end_time']);
+                $event = [
+                    'id' => $eventData['id'],
+                    'title' => $this->getField($eventData, 'name'),
+                    'description' => ($this->cleanHtml)(
+                        $this->getField($eventData, 'description')
+                    ),
+                    'image' => ['url' => $eventData['images'][0]['url'] ?? ''],
+                    'short_description' =>
+                        $this->getField($eventData, 'short_description'),
+                    'xcal' => [
+                        'startTime' => $this->formatTime($eventData['start_time']),
+                        'endTime' => $this->formatTime($eventData['end_time']),
+                        'startDate' => $startDate,
+                        'endDate' => $endDate,
+                        'singleDay' => $startDate === $endDate,
+                        'location' =>
                             $this->getField($eventData, 'location_extra_info'),
-                        'location' => $this->getField($eventData, 'location'),
-                        'phone' => $this->getField($eventData, 'provider_phone'),
-                        'email' => $this->getField($eventData, 'provider_email'),
-                        'address' =>
-                            $this->getField(
-                                $eventData['location'],
-                                'street_address'
-                            ),
-                        'price' => $this->getField($eventData, 'offers'),
-                        'audience' => $this->getField($eventData, 'audience'),
-                        'provider' => $this->getField($eventData, 'provider_name'),
-                        'providerLink' => $providerLink,
-                        'link' => $link,
-                        'keywords' => $this->getField($eventData, 'keywords'),
-                        'superEvent' => $eventData['super_event'],
-                        'subEvents' => $eventData['sub_events']
-                    ];
+                    ],
+                    'info_url' => $this->getField($eventData, 'info_url'),
+                    'location-info' =>
+                        $this->getField($eventData, 'location_extra_info'),
+                    'location' => $this->getField($eventData, 'location'),
+                    'phone' => $this->getField($eventData, 'provider_phone'),
+                    'email' => $this->getField($eventData, 'provider_email'),
+                    'address' =>
+                        $this->getField(
+                            $eventData['location'],
+                            'street_address'
+                        ),
+                    'price' => $this->getField($eventData, 'offers'),
+                    'audience' => $this->getField($eventData, 'audience'),
+                    'provider' => $this->getField($eventData, 'provider_name'),
+                    'providerLink' => $providerLink,
+                    'link' => $link,
+                    'keywords' => $this->getField($eventData, 'keywords'),
+                    'superEvent' => $eventData['super_event'],
+                    'subEvents' => $eventData['sub_events']
+                ];
 
-                    $events[] = $event;
-                    if (($eventData['super_event'] !== null
-                        || !empty($eventData['sub_events']))
-                        && !empty($paramArray['id'])
-                    ) {
-                        $superEventId
-                            = $eventData['super_event']['id'] ?? $eventData['id'];
-                        $newApiUrl = $this->apiUrl . 'event/?super_event='
-                            . $superEventId . '&page_size='
-                            . $this->relatedEventsAmount;
-                        $relatedEvents = $this->getEvents(['url' => $newApiUrl]);
-                        $events['relatedEvents'] = $relatedEvents['events'];
-                    }
+                $events[] = $event;
+                if (($eventData['super_event'] !== null
+                    || !empty($eventData['sub_events']))
+                    && !empty($paramArray['id'])
+                ) {
+                    $superEventId
+                        = $eventData['super_event']['id'] ?? $eventData['id'];
+                    $newApiUrl = $this->apiUrl . 'event/?super_event='
+                        . $superEventId . '&page_size='
+                        . $this->relatedEventsAmount;
+                    $relatedEvents = $this->getEvents(['url' => $newApiUrl]);
+                    $events['relatedEvents'] = $relatedEvents['events'];
                 }
             }
             if (isset($response['meta'])) {
@@ -315,7 +314,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
     /**
      * Format date
      *
-     * @param string $date date to format
+     * @param string $date Date to format
      *
      * @return string|null
      */
@@ -330,7 +329,7 @@ class LinkedEvents implements \VuFindHttp\HttpServiceAwareInterface,
     /**
      * Format time
      *
-     * @param string $time time to format
+     * @param string $time Time to format
      *
      * @return string|null
      */

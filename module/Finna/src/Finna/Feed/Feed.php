@@ -472,7 +472,7 @@ EOT;
                         if (!($itemId = $item->getId())) {
                             $itemId = $cnt;
                         }
-                        $link = $this->urlHelper->fromRoute(
+                        $value = $this->urlHelper->fromRoute(
                             'feed-content-page',
                             ['page' => $id, 'element' => urlencode($itemId)],
                             [
@@ -481,7 +481,6 @@ EOT;
                                 ]
                             ]
                         );
-                        $value = $link;
                     } elseif ($setting == 'id') {
                         if (!$value) {
                             $value = $cnt;
@@ -536,6 +535,8 @@ EOT;
                 }
                 $data['xcal']['startDate'] = $dateStart->format($fullDateFormat);
                 $data['xcal']['endDate'] = $dateEnd->format($fullDateFormat);
+                $data['xcal']['singleDay']
+                    = $data['xcal']['startDate'] === $data['xcal']['endDate'];
             }
 
             // Make sure that we have something to display
