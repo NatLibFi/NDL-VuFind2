@@ -752,13 +752,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $validFromDate = !empty($holdDetails['startDateTS'])
                 ? \DateTime::createFromFormat(
                     'U',
-                    $fields['startDateTS']
+                    $holdDetails['startDateTS']
                 )
                 : date('Y-m-d');
             $validToDate = !empty($holdDetails['requiredByTS'])
                 ? \DateTime::createFromFormat(
                     'U',
-                    $fields['requiredByTS']
+                    $holdDetails['requiredByTS']
                 )
                 : date('Y-m-d', $this->getDefaultRequiredByDate());
         } catch (DateException $e) {
