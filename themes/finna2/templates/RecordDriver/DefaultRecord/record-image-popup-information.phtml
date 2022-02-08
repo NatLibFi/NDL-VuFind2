@@ -62,7 +62,7 @@ if ($otherTitles):?>
   </div>
   <div class="summary loading">
     <div data-rows="6" class="truncate-field">
-      <?php if ($recordType == 'marc'): ?>
+      <?php if ('marc' !== $recordType): ?>
         <p></p>
       <?php else: ?>
         <?php if ($imageDescription): ?>
