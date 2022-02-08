@@ -753,7 +753,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                                 'size' => $size,
                                 'format' => $data['format'] ?? 'jpg',
                                 'key' => $key,
-                                'type' => 'highresolution'
+                                'type' => 'highresimg'
                             ];
                         }
                     }

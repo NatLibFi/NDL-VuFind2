@@ -30,7 +30,7 @@
                                 }
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;
                             ?>
-                            <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$dimensions?></span> <span class="image-size"><?=$imageSize?></span>  <?=$info['format'] ?? ''?></a></li>
+                            <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$this->escapeHtml($dimensions)?></span> <span class="image-size"><?=$this->escapeHtml($imageSize)?></span>  <?=$this->escapeHtml($info['format'] ?? '')?></a></li>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>

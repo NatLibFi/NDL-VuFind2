@@ -939,7 +939,7 @@ class RecordController extends \VuFind\Controller\RecordController
             $formedFilename = "$id-$index.$format";
             $representation = [];
             switch ($type) {
-            case 'highresolution':
+            case 'highresimg':
                 $size = $params->fromQuery('size');
                 $key = $params->fromQuery('key', -1);
                 $representations = $driver->tryMethod('getAllImages');
