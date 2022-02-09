@@ -148,7 +148,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         'uncredited' => [
             'elokuva-elokreditoimatonnayttelija-rooli' => 'roleName',
             'elokuva-elokreditoimatonesiintyja-maare' => 'roleName',
-            'elokuva-elokreditoimatontekija-nimi' => 'uncredited',
             'elokuva-elokreditoimatontekija-nimi' => 'name',
             'elokuva-elokreditoimatonnayttelija-nimi' => 'name',
             'elokuva-elokreditoimatonnayttelija-selitys' => 'description',
