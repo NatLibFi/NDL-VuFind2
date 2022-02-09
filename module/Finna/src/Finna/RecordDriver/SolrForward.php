@@ -133,7 +133,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * Mappings for saving author name attributes into proper keys.
      * - credited Credited authors
      * - uncredited Uncredited authors
-     * 
+     *
      * @var array
      */
     protected $authorNameAttributes = [
