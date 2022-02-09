@@ -136,7 +136,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      *
      * @var array
      */
-    protected $authorNameAttributes = [
+    protected $authorNameConfig = [
         'credited' => [
             'elokuva-elotekija-selitys' => 'description',
             'elokuva-elonayttelija-selitys' => 'description',
@@ -763,7 +763,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 foreach ($agentName->attributes() as $key => $value) {
                     $valueString = (string)$value;
                     $result[$key] = $valueString;
-                    foreach ($this->authorNameAttributes as $creditType => $data) {
+                    foreach ($this->authorNameConfig as $creditType => $data) {
                         if ($val = $data[$key] ?? false) {
                             if ('name' === $val && !empty($result['name'])) {
                                 break;
