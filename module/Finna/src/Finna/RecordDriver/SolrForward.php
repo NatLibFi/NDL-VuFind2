@@ -757,8 +757,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 }
                 $result['relator'] = (string)$activity;
             }
-            if (isset($agent->AgentName)) {
-                $agentName = $agent->AgentName;
+            if ($agentName = $agent->AgentName ?? false) {
                 $result['name'] = (string)$agentName;
                 foreach ($agentName->attributes() as $key => $value) {
                     $valueString = (string)$value;
