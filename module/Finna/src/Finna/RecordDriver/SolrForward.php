@@ -760,8 +760,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             if ($agentName = $agent->AgentName ?? false) {
                 $result['name'] = (string)$agentName;
                 foreach ($agentName->attributes() as $key => $value) {
-                    $valueString = (string)$value;
-                    $result[$key] = $valueString;
+                    $result[$key] = $valueString = (string)$value;
                     foreach ($this->authorNameConfig as $credited => $attrs) {
                         if ($val = $attrs[$key] ?? false) {
                             if ('name' === $val && !empty($result['name'])) {
