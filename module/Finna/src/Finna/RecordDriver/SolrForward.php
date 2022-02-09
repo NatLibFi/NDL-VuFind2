@@ -94,37 +94,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Role attributes
-     *
-     * @var array
-     */
-    protected $roleAttributes = [
-        'elokuva-elotekija-rooli',
-        'elokuva-elonayttelija-rooli',
-        'elokuva-eloesiintyja-maare',
-        'elokuva-elonayttelijakokoonpano-tehtava'
-    ];
-
-    /**
-     * Uncredited role attributes
-     *
-     * @var array
-     */
-    protected $uncreditedRoleAttributes = [
-        'elokuva-elokreditoimatonnayttelija-rooli',
-        'elokuva-elokreditoimatonesiintyja-maare'
-    ];
-
-    /**
-     * Uncredited creator attributes
-     *
-     * @var array
-     */
-    protected $uncreditedCreatorAttributes = [
-        'elokuva-elokreditoimatontekija-nimi'
-    ];
-
-    /**
      * Content descriptors
      *
      * @var array
@@ -161,25 +130,30 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * Uncredited name attributes
-     *
+     * Mappings for saving author name attributes into proper keys.
+     * - credited Credited authors
+     * - uncredited Uncredited authors
+     * 
      * @var array
      */
-    protected $uncreditedNameAttributes = [
-        'elokuva-elokreditoimatontekija-nimi',
-        'elokuva-elokreditoimatonnayttelija-nimi'
-    ];
-
-    /**
-     * Descriptions
-     *
-     * @var array
-     */
-    protected $roleDescriptions = [
-        'elokuva-elotekija-selitys',
-        'elokuva-elonayttelija-selitys',
-        'elokuva-elokreditoimatonnayttelija-selitys',
-        'elokuva-elokreditoimatontekija-selitys'
+    protected $authorNameAttributes = [
+        'credited' => [
+            'elokuva-elotekija-selitys' => 'description',
+            'elokuva-elonayttelija-selitys' => 'description',
+            'elokuva-elotekija-rooli' => 'roleName',
+            'elokuva-elonayttelija-rooli' => 'roleName',
+            'elokuva-eloesiintyja-maare' => 'roleName',
+            'elokuva-elonayttelijakokoonpano-tehtava' => 'roleName'
+        ],
+        'uncredited' => [
+            'elokuva-elokreditoimatonnayttelija-rooli' => 'roleName',
+            'elokuva-elokreditoimatonesiintyja-maare' => 'roleName',
+            'elokuva-elokreditoimatontekija-nimi' => 'uncredited',
+            'elokuva-elokreditoimatontekija-nimi' => 'name',
+            'elokuva-elokreditoimatonnayttelija-nimi' => 'name',
+            'elokuva-elokreditoimatonnayttelija-selitys' => 'description',
+            'elokuva-elokreditoimatontekija-selitys' => 'description'
+        ]
     ];
 
     /**
@@ -784,33 +758,23 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 }
                 $result['relator'] = (string)$activity;
             }
-            if (!empty($agent->AgentName)) {
+            if (isset($agent->AgentName)) {
                 $agentName = $agent->AgentName;
                 $result['name'] = (string)$agentName;
                 foreach ($agentName->attributes() as $key => $value) {
                     $valueString = (string)$value;
                     $result[$key] = $valueString;
-                    if (empty($result['name'])) {
-                        if (in_array($key, $this->uncreditedNameAttributes)) {
-                            $result['name'] = $valueString;
+                    foreach ($this->authorNameAttributes as $creditType => $data) {
+                        if ($val = $data[$key] ?? false) {
+                            if ('name' === $val && !empty($result['name'])) {
+                                break;
+                            }
+                            $result[$val] = $valueString;
+                            if ('uncredited' === $creditType) {
+                                $result['uncredited'] = true;
+                            }
+                            break;
                         }
-                    }
-                    if (in_array($key, $this->roleAttributes)) {
-                        $result['roleName'] = $valueString;
-                        continue;
-                    }
-                    if (in_array($key, $this->uncreditedRoleAttributes)) {
-                        $result['roleName'] = $valueString;
-                        $result['uncredited'] = true;
-                        continue;
-                    }
-                    if (in_array($key, $this->uncreditedCreatorAttributes)) {
-                        $result['uncredited'] = true;
-                        continue;
-                    }
-                    if (in_array($key, $this->roleDescriptions)) {
-                        $result['description'] = $valueString;
-                        continue;
                     }
                 }
             }
