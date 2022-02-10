@@ -194,6 +194,15 @@ finna.layout = (function finnaLayout() {
   }
 
   function initSearchboxFunctions() {
+    var searchForm = document.querySelector('.searchForm.navbar-form');
+    var submitButton = searchForm.querySelector('button[type="submit"]');
+    submitButton.addEventListener('auxclick', function listenToMiddleClick(e) {
+      if (e.button === 1) {
+        searchForm.setAttribute('target', '_blank');
+        searchForm.submit();
+        searchForm.removeAttribute('target');
+      }
+    });
     if ($('.navbar-form .checkbox')[0]) {
       $('.autocomplete-results').addClass('checkbox-active');
     }
