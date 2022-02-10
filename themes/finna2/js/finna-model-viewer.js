@@ -509,7 +509,6 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
           meshMaterial.normalScale.y = meshMaterial.userData.normalScale.y;
         }
         if (!obj.userData.viewerSet) {
-          meshMaterial.name = 'material_' + _.meshCount;
           // Apply encodings so glb looks better and update it if needed
           if (meshMaterial.map) meshMaterial.map.encoding = _.encoding;
           if (meshMaterial.emissiveMap) meshMaterial.emissiveMap.encoding = _.encoding;
@@ -743,7 +742,7 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
         var name = form.querySelector('input[name="' + formPrefix + '-name"]');
         var pairInput = ['range', 'number'];
         var input = e.target;
-        if ((pairInput).includes(input.type)) {
+        if ((pairInput).includes(input.type) && 'basic' === _.menuMode) {
           // Now find another value to update
           var second = form.querySelector('input[name="' + input.name + '"]:not([type="' + input.type + '"])');
           second.value = input.value;
