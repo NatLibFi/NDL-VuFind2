@@ -486,7 +486,9 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
     while (loadedObj.scene.children.length > 0) {
       var cur = loadedObj.scene.children[0];
       if (cur.type === 'Object3D') {
-        _.scene.add(cur.children);
+        while (cur.children.length > 0) {
+          _.scene.add(cur.children[0]);
+        }
         loadedObj.scene.remove(cur);
       } else {
         _.scene.add(cur);
