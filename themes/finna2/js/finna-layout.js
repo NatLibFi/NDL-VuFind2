@@ -195,7 +195,7 @@ finna.layout = (function finnaLayout() {
 
   function initSearchboxFunctions() {
     var searchForm = document.querySelector('.searchForm.navbar-form');
-    var submitButton = searchForm.querySelector('.searchForm button[type="submit"]');
+    var submitButton = searchForm.querySelector('button[type="submit"]');
     if (submitButton) {
       submitButton.addEventListener('auxclick', function listenToMiddleClick(e) {
         if (e.button === 1) {
