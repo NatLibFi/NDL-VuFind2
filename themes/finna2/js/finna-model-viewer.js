@@ -53,6 +53,10 @@ var encodingTypes = [
   'outputEncoding'
 ];
 
+var rangeTypes = [
+  'intensity', 'roughness', 'envMapIntensity', 'metalness'
+];
+
 // Keys for colors, requires creating three color
 var colorKeys = [
   'color',
@@ -610,6 +614,11 @@ var createInput = function createInput(inputType, name, value) {
   var input = document.createElement('input');
   input.type = inputType;
   input.name = name;
+  if ('range' === inputType) {
+    input.min = 0;
+    input.max = 1;
+    input.step = 0.01;
+  }
   input.value = value;
   return input;
 };
@@ -732,6 +741,13 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
       var formPrefix = exploded[0];
       if (formPrefix === current.prefix) {
         var name = form.querySelector('input[name="' + formPrefix + '-name"]');
+        var pairInput = ['range', 'number'];
+        var input = e.target;
+        if ((pairInput).includes(input.type)) {
+          // Now find another value to update
+          var second = form.querySelector('input[name="' + input.name + '"]:not([type="' + input.type + '"])');
+          second.value = input.value;
+        }
         _.updateObject(current.objects, e.target, name.value);
       }
     });
@@ -775,6 +791,9 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
     if (!menu.done) {
       switch (menu.prefix) {
       case 'light':
+        if ('basic' === _.menuMode) {
+          break;
+        }
         var addLightButton = createButton('add-light', 'add-light', 'Add light');
         menu.holder.append(addLightButton);
         addLightButton.addEventListener('click', function createNewLightTemplate(/*e*/) {
@@ -955,18 +974,23 @@ ModelViewer.prototype.createElement = function createElement(object, key, prefix
   var type = typeof object[key];
   var objValue = object[key];
   var div = createDiv('setting-child');
+  var groupDiv = createDiv('setting-group');
+  div.append(groupDiv);
   var span = document.createElement('span');
   span.append(document.createTextNode(key));
-  div.append(span);
+  groupDiv.append(span);
   switch (type) {
   case 'boolean':
-    div.append(createSelect(booleanOptions, prefix + key, '' + objValue));
+    groupDiv.append(createSelect(booleanOptions, prefix + key, '' + objValue));
     break;
   case 'number':
     if (encodingTypes.includes(key)) {
-      div.append(createSelect(_.encodingMappings, prefix + key, objValue));
+      groupDiv.append(createSelect(_.encodingMappings, prefix + key, objValue));
     } else {
-      div.append(createInput('number', prefix + key, objValue));
+      groupDiv.append(createInput('number', prefix + key, objValue));
+      if ('basic' === _.menuMode && rangeTypes.includes(key)) {
+        div.append(createInput('range', prefix + key, objValue));
+      }
     }
     break;
   case 'string':
@@ -974,7 +998,7 @@ ModelViewer.prototype.createElement = function createElement(object, key, prefix
     if (readOnly.includes(key)) {
       input.setAttribute('readonly', 'readonly');
     }
-    div.append(input);
+    groupDiv.append(input);
     break;
   case 'object':
     var subKeys = Object.keys(objValue);
@@ -987,18 +1011,19 @@ ModelViewer.prototype.createElement = function createElement(object, key, prefix
       var subValue = objValue[subKey];
       var subSpan = document.createElement('span');
       var subPrefix = prefix + key + '-' + subKey;
-
+      var subGroupDiv = createDiv('setting-group child');
       subSpan.append(document.createTextNode(subKey));
-      div.append(subSpan);
+      subGroupDiv.append(subSpan);
+      div.append(subGroupDiv);
       switch (subKeyType) {
       case 'number':
-        div.append(createInput('number', subPrefix, subValue));
+        subGroupDiv.append(createInput('number', subPrefix, subValue));
         break;
       case 'string':
-        div.append(createInput('text', subPrefix, subValue));
+        subGroupDiv.append(createInput('text', subPrefix, subValue));
         break;
       case 'boolean':
-        div.append(createSelect(booleanOptions, subPrefix, '' + subValue));
+        subGroupDiv.append(createSelect(booleanOptions, subPrefix, '' + subValue));
         break;
       }
     }

@@ -1035,6 +1035,13 @@ a.authority {
   .holder-title {
     border-bottom: 1px solid black;
   }
+  .custom-holder {
+    display: flex;
+    flex-flow: column;
+    button {
+      padding-bottom: 2px;
+    }
+  }
   form {
     display: flex;
     flex-flow: column;
@@ -1046,6 +1053,26 @@ a.authority {
     div.setting-child {
       display: flex;
       flex-flow: column;
+      div.setting-group {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 2px;
+        &.child {
+          margin-left: 20px;
+        }
+        input {
+          min-width: 0;
+          margin-left: 2px;
+          border: none;
+          border-bottom: 1px solid #2f2f2f;
+          border-radius: 0;
+          &[type=number] {
+            max-width: 50px;
+          }
+        }
+      }
     }
   }
 }
