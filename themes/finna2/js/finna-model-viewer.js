@@ -322,7 +322,7 @@ ModelViewer.prototype.createRenderer = function createRenderer()
 
   _.renderer.shadowMap.enabled = true;
   _.renderer.setClearColor(0xEEEEEE, 0);
-  _.renderer.setPixelRatio(window.devicePixelRatio);
+
   _.renderer.setSize(_.size.x, _.size.y);
   _.canvasParent.append(_.renderer.domElement);
   _.renderer.domElement.setAttribute('draggable', 'false');
@@ -447,12 +447,12 @@ ModelViewer.prototype.animationLoop = function animationLoop()
       if (_.controls) {
         _.controls.update();
       }
-      _.renderer.render(_.scene, _.camera);
       requestAnimationFrame(animate);
+      _.renderer.render(_.scene, _.camera);
     }
   };
 
-  window.setTimeout(_.loop, 1000 / 30);
+  window.setTimeout(_.loop, 1000 / 60);
 };
 
 /**
@@ -676,11 +676,9 @@ ModelViewer.prototype.initMenu = function initMenu() {
   _.menuAreas = {
     advanced: [
       {done: false, name: 'File', prefix: 'custom', holder: undefined, template: undefined, objects: [], created: [], canDelete: false, canExport: false},
-      {done: false, name: 'Renderers', prefix: 'renderer', holder: undefined, template: undefined, objects: _.renderers, created: [], canDelete: false, canExport: true},
-      {done: false, name: 'Scenes', prefix: 'scene', holder: undefined, template: undefined, objects: _.scenes, created: [], canDelete: false, canExport: true},
       {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: _.cameras, created: [], canDelete: false, canExport: true},
       {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: _.meshes, created: [], canDelete: false, canExport: false},
-      {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: [], canDelete: false, canExport: true},
+      {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: _.materials, created: [], canDelete: false, canExport: false},
       {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: _.lights, created: [], canDelete: true, canExport: true},
     ],
     basic: [
