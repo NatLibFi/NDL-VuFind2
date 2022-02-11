@@ -477,6 +477,7 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
 {
   var _ = this;
   var meshMaterial;
+  var cameraPosition;
   if (!_.loaded) {
     _.vertices = 0;
     _.triangles = 0;
@@ -488,6 +489,9 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
         while (cur.children.length > 0) {
           _.scene.add(cur.children[0]);
         }
+        if (cur.name === 'camera_stash') {
+          cameraPosition = cur.position;
+        }
         loadedObj.scene.remove(cur);
       } else {
         _.scene.add(cur);
@@ -496,9 +500,7 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
         }
       }
     }
-    var cameraPosition;
     _.scene.traverse(function initObj(obj) {
-      console.log(obj);
       if (obj.type === 'Mesh') {
         meshMaterial = obj.material;
         meshMaterial.envMap = _.background;
@@ -556,20 +558,23 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
         obj.position.z += newCenterVector.z;
       }
     });
-    // Set camera and position to center from the newly created object
-    var objectHeight = (newBox.max.y - newBox.min.y);
-    var objectWidth = (newBox.max.x - newBox.min.x);
-    var result = 0;
-    if (objectHeight >= objectWidth) {
-      result = objectHeight / getTanDeg(_.viewerPaddingAngle);
+    if (!cameraPosition) {
+      // Set camera and position to center from the newly created object
+      var objectHeight = (newBox.max.y - newBox.min.y);
+      var objectWidth = (newBox.max.x - newBox.min.x);
+      var result = 0;
+      if (objectHeight >= objectWidth) {
+        result = objectHeight / getTanDeg(_.viewerPaddingAngle);
+      } else {
+        result = objectWidth / getTanDeg(_.viewerPaddingAngle);
+      }
+      _.cameraPosition = result;
+      _.camera.position.set(0, 0, _.cameraPosition);
+      _.loaded = true;
     } else {
-      result = objectWidth / getTanDeg(_.viewerPaddingAngle);
-      console.log(objectWidth);
-      console.log(getTanDeg(_.viewerPaddingAngle));
+      _.cameraPosition = cameraPosition.z;
+      _.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
     }
-    _.cameraPosition = result;
-    _.camera.position.set(0, 0, _.cameraPosition);
-    _.loaded = true;
   }
 };
 
@@ -873,6 +878,12 @@ ModelViewer.prototype.createMenuForSettings = function createMenuForSettings() {
             }
           }); 
           var exporter = new THREE.GLTFExporter();
+          // Save camera settings
+          var cameraSave = new THREE.Object3D();
+          cameraSave.name = 'camera_stash';
+          var cameraPos = _.camera.position;
+          cameraSave.position.set(cameraPos.x, cameraPos.y, cameraPos.z);
+          _.scene.add(cameraSave);
           // Parse the input and generate the glTF output
           exporter.parse(
             _.scene,

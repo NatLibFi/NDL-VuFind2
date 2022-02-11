@@ -416,7 +416,6 @@
 			const color = new THREE.Color( 0xffffff );
 			if ( lightDef.color !== undefined ) color.fromArray( lightDef.color );
 			const range = lightDef.range !== undefined ? lightDef.range : 0;
-			console.log(lightIndex);
 			switch ( lightDef.type ) {
 
 				case 'directional':
