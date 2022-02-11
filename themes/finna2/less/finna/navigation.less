@@ -102,6 +102,12 @@
     color: @header-text-color;
     padding: 0 10px;
   }
+  // remove exclamation mark from fines row
+  .fines-status .badge.overdue {
+    &:before {
+      content:"";
+    }
+  }
 }
 
 /* Finna breadcrumbs */

@@ -538,14 +538,19 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
             $pm = $this->getMockPluginManager();
         }
         $cookies = new \VuFind\Cookie\CookieManager([]);
-        $csrf = new \VuFind\Validator\Csrf(
+        $csrf = new \VuFind\Validator\SessionCsrf(
             [
                 'session' => new \Laminas\Session\Container('csrf', $sessionManager),
                 'salt' => 'csrftest'
             ]
         );
         return new Manager(
-            $config, $userTable, $sessionManager, $pm, $cookies, $csrf
+            $config,
+            $userTable,
+            $sessionManager,
+            $pm,
+            $cookies,
+            $csrf
         );
     }
 
@@ -596,10 +601,10 @@ class ManagerTest extends \PHPUnit\Framework\TestCase
         $mockShib = $this->getMockBuilder(\VuFind\Auth\Shibboleth::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $pm->setService('VuFind\Auth\ChoiceAuth', $mockChoice);
-        $pm->setService('VuFind\Auth\Database', $mockDb);
-        $pm->setService('VuFind\Auth\MultiILS', $mockMulti);
-        $pm->setService('VuFind\Auth\Shibboleth', $mockShib);
+        $pm->setService(\VuFind\Auth\ChoiceAuth::class, $mockChoice);
+        $pm->setService(\VuFind\Auth\Database::class, $mockDb);
+        $pm->setService(\VuFind\Auth\MultiILS::class, $mockMulti);
+        $pm->setService(\VuFind\Auth\Shibboleth::class, $mockShib);
         return $pm;
     }
 

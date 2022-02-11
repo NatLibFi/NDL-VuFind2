@@ -263,7 +263,7 @@ class HorizonXMLAPI extends Horizon implements \VuFindHttp\HttpServiceAwareInter
                     ];
                 }
             } catch (\Exception $e) {
-                throw new ILSException($e->getMessage());
+                $this->throwAsIlsException($e);
             }
         } elseif (isset($this->wsPickUpLocations)) {
             foreach ($this->wsPickUpLocations as $code => $library) {
@@ -324,14 +324,14 @@ class HorizonXMLAPI extends Horizon implements \VuFindHttp\HttpServiceAwareInter
                     $defaultPickUpLocation = $row['LOCATION'];
                     return $defaultPickUpLocation;
                 }
-                // If we didn't return above, there were no values.
-                return null;
             } catch (\Exception $e) {
-                throw new ILSException($e->getMessage());
+                $this->throwAsIlsException($e);
             }
         } elseif (isset($this->wsDefaultPickUpLocation)) {
             return $this->wsDefaultPickUpLocation;
         }
+        // If we didn't return above, there were no values.
+        return null;
     }
 
     /**
@@ -461,7 +461,8 @@ class HorizonXMLAPI extends Horizon implements \VuFindHttp\HttpServiceAwareInter
     {
         // Register Account
         $session = $this->registerUser(
-            $patron['cat_username'], $patron['cat_password']
+            $patron['cat_username'],
+            $patron['cat_password']
         );
         if ($session) {
             $params = [
@@ -650,6 +651,7 @@ class HorizonXMLAPI extends Horizon implements \VuFindHttp\HttpServiceAwareInter
                         "GetXML"     => "true"
                         ];
 
+        $cancelData = [];
         foreach ($data as $values) {
             $cancelData[] = $values['bib_id'] . ':' . $values['item_id'];
         }
@@ -658,6 +660,7 @@ class HorizonXMLAPI extends Horizon implements \VuFindHttp\HttpServiceAwareInter
 
         $response = $this->makeRequest($params);
 
+        $count = 0;
         // No Indication of Success or Failure
         if ($response !== false && !$response->error->message) {
             $keys = [];
@@ -669,7 +672,6 @@ class HorizonXMLAPI extends Horizon implements \VuFindHttp\HttpServiceAwareInter
                 }
             }
 
-            $count = 0;
             // Go through the submited bib ids and look for a match
             foreach ($data as $values) {
                 $itemID = $values['item_id'];
@@ -817,15 +819,16 @@ class HorizonXMLAPI extends Horizon implements \VuFindHttp\HttpServiceAwareInter
 
                 // Convert Horizon Format to display format
                 if (!empty($dueDate)) {
-                    $currentDueDate = $this->dateFormat->convertToDisplayDate(
-                        $this->wsDateFormat, $dueDate
+                    $dueDate = $this->dateFormat->convertToDisplayDate(
+                        $this->wsDateFormat,
+                        $dueDate
                     );
                 }
 
                 if ($currentRenewals > $origRenewals) {
                     $response['details'][$ikey] = [
                         'item_id' => $ikey,
-                        'new_date' =>  $currentDueDate,
+                        'new_date' =>  $dueDate,
                         'success' => true
                     ];
                 } else {
@@ -876,7 +879,9 @@ class HorizonXMLAPI extends Horizon implements \VuFindHttp\HttpServiceAwareInter
                 $renewData = $this->renewItems($session, $renewItemKeys);
                 if ($renewData) {
                     $response = $this->processRenewals(
-                        $renewIDs, $origData, $renewData
+                        $renewIDs,
+                        $origData,
+                        $renewData
                     );
                     return $response;
                 }

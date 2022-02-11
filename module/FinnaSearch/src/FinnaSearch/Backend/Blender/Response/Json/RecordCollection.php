@@ -91,9 +91,12 @@ class RecordCollection
      *
      * @return void
      */
-    public function initBlended(RecordCollectionInterface $primaryCollection = null,
+    public function initBlended(
+        RecordCollectionInterface $primaryCollection = null,
         RecordCollectionInterface $secondaryCollection = null,
-        $offset, $limit, $blockSize
+        $offset,
+        $limit,
+        $blockSize
     ) {
         $this->response = static::$template;
         $this->response['response']['numFound']
@@ -119,13 +122,26 @@ class RecordCollection
         }
 
         $this->records = array_slice(
-            $records, $offset, $limit
+            $records,
+            $offset,
+            $limit
         );
 
         $this->mergeFacets($primaryCollection, $secondaryCollection);
 
         if (null === $primaryCollection || null === $secondaryCollection) {
             $this->errors = ['search_backend_partial_failure'];
+        } else {
+            $this->errors = array_merge(
+                $primaryCollection->getErrors(),
+                $secondaryCollection->getErrors()
+            );
+            if ($this->errors
+                && !($primaryCollection->getErrors()
+                && $secondaryCollection->getErrors())
+            ) {
+                array_unshift($this->errors, 'search_backend_partial_failure');
+            }
         }
     }
 
@@ -203,7 +219,8 @@ class RecordCollection
      *
      * @return void
      */
-    protected function mergeFacets($primaryCollection = null,
+    protected function mergeFacets(
+        $primaryCollection = null,
         $secondaryCollection = null
     ) {
         $facets = $primaryCollection

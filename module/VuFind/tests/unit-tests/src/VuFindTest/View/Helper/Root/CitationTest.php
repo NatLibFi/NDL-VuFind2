@@ -371,7 +371,7 @@ class CitationTest extends \PHPUnit\Framework\TestCase
         $driver = new \VuFindTest\RecordDriver\TestHarness();
         foreach ($this->citations as $current) {
             $driver->setRawData($current['raw']);
-            $cb = $citation->__invoke($driver);
+            $cb = $citation($driver);
 
             // Normalize whitespace:
             $apa = trim(preg_replace("/\s+/", " ", $cb->getCitation('APA')));
@@ -386,6 +386,7 @@ class CitationTest extends \PHPUnit\Framework\TestCase
             $this->assertEquals($current['chicago'], $chicago);
         }
 
+        $cb = $citation($driver);
         // Test a couple of illegal citation formats:
         $this->assertEquals('', $cb->getCitation(''));
         $this->assertEquals('', $cb->getCitation('Citation'));

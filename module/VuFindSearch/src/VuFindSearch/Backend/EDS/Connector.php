@@ -28,7 +28,6 @@
  */
 namespace VuFindSearch\Backend\EDS;
 
-use Laminas\Http\Client\Adapter\Curl as CurlAdapter;
 use Laminas\Http\Client as HttpClient;
 use Laminas\Log\LoggerAwareInterface;
 
@@ -53,22 +52,6 @@ class Connector extends Base implements LoggerAwareInterface
     protected $client;
 
     /**
-     * Print a message if debug is enabled.
-     *
-     * @param string $msg Message to print
-     *
-     * @return void
-     */
-    protected function debugPrint($msg)
-    {
-        if ($this->logger) {
-            $this->logger->debug("$msg\n");
-        } else {
-            parent::debugPrint($msg);
-        }
-    }
-
-    /**
      * Constructor
      *
      * Sets up the EDS API Client
@@ -80,23 +63,12 @@ class Connector extends Base implements LoggerAwareInterface
      *      <li>orgid - Organization making calls to the EDS API</li>
      *      <li>timeout - HTTP timeout value (default = 120)</li>
      *    </ul>
-     * @param HttpClient $client   HTTP client object (optional)
+     * @param HttpClient $client   HTTP client object
      */
-    public function __construct($settings = [], $client = null)
+    public function __construct($settings, $client)
     {
         parent::__construct($settings);
-        $this->client = is_object($client) ? $client : new HttpClient();
-        $this->client->setOptions(['timeout' => $settings['timeout'] ?? 120]);
-        $adapter = new CurlAdapter();
-        $adapter->setOptions(
-            [
-                'curloptions' => [
-                    CURLOPT_SSL_VERIFYPEER => false,
-                    CURLOPT_FOLLOWLOCATION => true,
-                ]
-            ]
-        );
-        $this->client->setAdapter($adapter);
+        $this->client = $client;
     }
 
     /**
@@ -112,8 +84,13 @@ class Connector extends Base implements LoggerAwareInterface
      * @throws ApiException
      * @return string               HTTP response body
      */
-    protected function httpRequest($baseUrl, $method, $queryString, $headers,
-        $messageBody = null, $messageFormat = "application/json; charset=utf-8"
+    protected function httpRequest(
+        $baseUrl,
+        $method,
+        $queryString,
+        $headers,
+        $messageBody = null,
+        $messageFormat = "application/json; charset=utf-8"
     ) {
         $this->debugPrint("{$method}: {$baseUrl}?{$queryString}");
 
@@ -136,5 +113,21 @@ class Connector extends Base implements LoggerAwareInterface
             throw new ApiException($decodedError ? $decodedError : $error);
         }
         return $result->getBody();
+    }
+
+    /**
+     * Print a message if debug is enabled.
+     *
+     * @param string $msg Message to print
+     *
+     * @return void
+     */
+    protected function debugPrint($msg)
+    {
+        if ($this->logger) {
+            $this->logger->debug("$msg\n");
+        } else {
+            parent::debugPrint($msg);
+        }
     }
 }

@@ -31,10 +31,8 @@ namespace VuFindTest\Backend\Solr;
 
 use InvalidArgumentException;
 use Laminas\Http\Client\Adapter\Test as TestAdapter;
-
 use Laminas\Http\Client as HttpClient;
 use PHPUnit\Framework\TestCase;
-
 use VuFindSearch\Backend\Solr\Connector;
 use VuFindSearch\Backend\Solr\HandlerMap;
 
@@ -114,20 +112,6 @@ class ConnectorTest extends TestCase
     }
 
     /**
-     * Test InvalidArgumentException invalid adapter object.
-     *
-     * @return void
-     */
-    public function testSetAdapterThrowsInvalidObject()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('AdapterInterface');
-
-        $conn = $this->createConnector('single-record');
-        $conn->setAdapter($this);
-    }
-
-    /**
      * Test writing a CSV document.
      *
      * @return void
@@ -136,20 +120,19 @@ class ConnectorTest extends TestCase
     {
         $csvData = 'a,b,c';
         $map = new HandlerMap();
-        $client = $this->getMockBuilder(\Laminas\Http\Client::class)
+        $client = $this->getMockBuilder(HttpClient::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['setEncType', 'setRawBody'])
             ->getMock();
-        $client->expects($this->once())->method('setEncType')
-            ->with($this->equalTo('text/csv'));
+        // The client will be reset before it is given the expected mime type:
+        $client->expects($this->exactly(2))->method('setEncType')
+            ->withConsecutive(['application/x-www-form-urlencoded'], ['text/csv']);
         $client->expects($this->once())->method('setRawBody')
             ->with($this->equalTo($csvData));
         $conn = $this->getMockBuilder(Connector::class)
-            ->onlyMethods(['createClient', 'send'])
-            ->setConstructorArgs(['http://foo', $map])
+            ->onlyMethods(['send'])
+            ->setConstructorArgs(['http://foo', $map, $client, 'id'])
             ->getMock();
-        $conn->expects($this->once())->method('createClient')
-            ->will($this->returnValue($client));
         $conn->expects($this->once())->method('send')
             ->with($this->equalTo($client));
         $csv = new \VuFindSearch\Backend\Solr\Document\RawCSVDocument($csvData);
@@ -165,20 +148,21 @@ class ConnectorTest extends TestCase
     {
         $jsonData = '[1,2,3]';
         $map = new HandlerMap();
-        $client = $this->getMockBuilder(\Laminas\Http\Client::class)
+        $client = $this->getMockBuilder(HttpClient::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['setEncType', 'setRawBody'])
             ->getMock();
-        $client->expects($this->once())->method('setEncType')
-            ->with($this->equalTo('application/json'));
+        // The client will be reset before it is given the expected mime type:
+        $client->expects($this->exactly(2))->method('setEncType')->withConsecutive(
+            ['application/x-www-form-urlencoded'],
+            ['application/json']
+        );
         $client->expects($this->once())->method('setRawBody')
             ->with($this->equalTo($jsonData));
         $conn = $this->getMockBuilder(Connector::class)
-            ->onlyMethods(['createClient', 'send'])
-            ->setConstructorArgs(['http://foo', $map])
+            ->onlyMethods(['send'])
+            ->setConstructorArgs(['http://foo', $map, $client, 'id'])
             ->getMock();
-        $conn->expects($this->once())->method('createClient')
-            ->will($this->returnValue($client));
         $conn->expects($this->once())->method('send')
             ->with($this->equalTo($client));
         $json = new \VuFindSearch\Backend\Solr\Document\RawJSONDocument($jsonData);
@@ -235,32 +219,62 @@ class ConnectorTest extends TestCase
         $url = 'http://example.tld/';
         $map  = new HandlerMap(['select' => ['fallback' => true]]);
         $key = 'foo';
-        $conn = new Connector($url, $map, $key);
+        $conn = new Connector($url, $map, new \Laminas\Http\Client(), $key);
         $this->assertEquals($url, $conn->getUrl());
         $this->assertEquals($map, $conn->getMap());
         $this->assertEquals($key, $conn->getUniqueKey());
     }
 
     /**
-     * Test default timeout value
+     * Test callWithHttpOptions.
      *
      * @return void
      */
-    public function testDefaultTimeout()
+    public function testCallWithHttpOptions()
     {
-        $this->assertEquals(30, $this->createConnector()->getTimeout());
+        $this->response
+            = $this->getFixture('solr/response/single-record', 'VuFindSearch');
+
+        $client = $this->getMockBuilder(HttpClient::class)
+            ->onlyMethods(['setOptions'])
+            ->getMock();
+        $client->expects($this->exactly(1))->method('setOptions')
+            ->with(['timeout' => 60]);
+        $adapter = new TestAdapter();
+        $adapter->setResponse($this->response);
+        $client->setAdapter($adapter);
+        $conn = $this->createConnector('single-record', $client);
+
+        // Normal request:
+        $resp = $conn->callWithHttpOptions([], 'retrieve', 'id');
+        $this->assertIsString($resp);
+        json_decode($resp, true);
+        $this->assertEquals(\JSON_ERROR_NONE, json_last_error());
+
+        // Normal request with options:
+        $resp = $conn->callWithHttpOptions(['timeout' => 60], 'retrieve', 'id');
+        $this->assertIsString($resp);
+        json_decode($resp, true);
+        $this->assertEquals(\JSON_ERROR_NONE, json_last_error());
+
+        // Try to call a protected method:
+        $this->expectException(
+            \VuFindSearch\Exception\InvalidArgumentException::class
+        );
+        $conn->callWithHttpOptions([], 'trySolrUrls', []);
     }
 
     /**
      * Create connector with fixture file.
      *
-     * @param string $fixture Fixture file
+     * @param string     $fixture Fixture file
+     * @param HttpClient $client  HTTP client
      *
      * @return Connector
      *
      * @throws InvalidArgumentException Fixture file does not exist
      */
-    protected function createConnector($fixture = null)
+    protected function createConnector($fixture = null, $client = null)
     {
         if ($fixture) {
             $this->response
@@ -268,22 +282,25 @@ class ConnectorTest extends TestCase
         }
 
         $map  = new HandlerMap(['select' => ['fallback' => true]]);
-        $conn = new Connector('http://example.tld/', $map);
-        $conn->setProxy($this);
-        return $conn;
+        return new Connector(
+            'http://example.tld/',
+            $map,
+            $client ?: $this->createClient(),
+            'id'
+        );
     }
 
     /**
-     * Set test adapter with prepared response.
+     * Set up HTTP client using test adapter with prepared response.
      *
-     * @param HttpClient $client HTTP client to mock
-     *
-     * @return void
+     * @return HttpClient
      */
-    public function proxify(HttpClient $client)
+    protected function createClient()
     {
+        $client = new HttpClient();
         $adapter = new TestAdapter();
         $adapter->setResponse($this->response);
         $client->setAdapter($adapter);
+        return $client;
     }
 }

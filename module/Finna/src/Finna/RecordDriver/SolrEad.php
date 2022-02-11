@@ -48,9 +48,9 @@ namespace Finna\RecordDriver;
 class SolrEad extends SolrDefault
     implements \Laminas\Log\LoggerAwareInterface
 {
-    use SolrFinnaTrait;
-    use XmlReaderTrait;
-    use UrlCheckTrait;
+    use Feature\SolrFinnaTrait;
+    use Feature\FinnaXmlReaderTrait;
+    use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     // add-data > parent elements with these level-attributes are archive series
@@ -69,7 +69,9 @@ class SolrEad extends SolrDefault
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
@@ -79,7 +81,7 @@ class SolrEad extends SolrDefault
     /**
      * Get access restriction notes for the record.
      *
-     * @return string[] Notes
+     * @return mixed Notes
      */
     public function getAccessRestrictions()
     {
@@ -140,6 +142,11 @@ class SolrEad extends SolrDefault
      */
     public function getAllImages($language = 'fi', $includePdf = true)
     {
+        $cacheKey = __FUNCTION__ . "/$language/" . ($includePdf ? '1' : '0');
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
+
         $result = [];
         // All images have same rights..
         $rights = $this->getImageRights($language, true);
@@ -193,6 +200,7 @@ class SolrEad extends SolrDefault
             ];
         }
 
+        $this->cache[$cacheKey] = $result;
         return $result;
     }
 
@@ -208,7 +216,8 @@ class SolrEad extends SolrDefault
         foreach ($record->xpath('//bibliography') as $node) {
             // Filter out Portti links since they're displayed in links
             $match = preg_match(
-                '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/', (string)$node->p
+                '/(.+) (http:\/\/wiki\.narc\.fi\/portti.*)/',
+                (string)$node->p
             );
             if (!$match) {
                 $bibliography[] = (string)$node->p;
@@ -484,7 +493,7 @@ class SolrEad extends SolrDefault
                 continue;
             }
 
-            $desc = $url;
+            $desc = '';
             if ($node->daodesc) {
                 if ($node->daodesc->p) {
                     $desc = (string)$node->daodesc->p;
@@ -496,6 +505,7 @@ class SolrEad extends SolrDefault
                     $desc = (string)$p[0];
                 }
             }
+            $desc = empty($desc) ? $url : $desc;
             if (!$this->urlBlocked($url, $desc)) {
                 $urls[] = [
                     'url' => $url,
@@ -582,7 +592,7 @@ class SolrEad extends SolrDefault
         if ($levels && !empty(array_diff($levels, self::SERIES_LEVELS))) {
             return [];
         }
-        return $this->fields['hierarchy_parent_id'] ?? [];
+        return (array)($this->fields['hierarchy_parent_id'] ?? []);
     }
 
     /**
@@ -597,7 +607,7 @@ class SolrEad extends SolrDefault
         if ($levels && !empty(array_diff($levels, self::SERIES_LEVELS))) {
             return [];
         }
-        return $this->fields['hierarchy_parent_title'] ?? [];
+        return (array)($this->fields['hierarchy_parent_title'] ?? []);
     }
 
     /**
@@ -657,6 +667,31 @@ class SolrEad extends SolrDefault
             return (string)$unitdate[0];
         }
         return '';
+    }
+
+    /**
+     * Get an array of alternative titles for the record.
+     *
+     * @return array
+     */
+    public function getAlternativeTitles()
+    {
+        $results = [];
+        // Main title might be already normalized, but do it again to make sure:
+        $mainTitle = \Normalizer::normalize($this->getTitle(), \Normalizer::FORM_KC);
+        $xml = $this->getXmlRecord();
+        foreach ($xml->did->unittitle ?? [] as $title) {
+            $title = trim((string)$title);
+            $normalized = \Normalizer::normalize($title, \Normalizer::FORM_KC);
+            // Compare with the beginning of main title since it may have additional
+            // information appended to it:
+            $len = mb_strlen($normalized, 'UTF-8');
+            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized) {
+                $results[] = $title;
+            }
+        }
+
+        return $results;
     }
 
     /**

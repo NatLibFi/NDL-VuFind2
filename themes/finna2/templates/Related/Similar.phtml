@@ -4,7 +4,7 @@
   <ul class="list-group">
     <?php foreach ($similarRecords as $data): ?>
       <li class="list-group-item">
-        <a href="<?=$this->recordLink()->getUrl($data)?>">
+        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($data))?>">
           <?=$this->escapeHtml($data->getTitle())?>
         </a>
         <div class="details">

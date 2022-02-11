@@ -2,14 +2,13 @@
 <?php
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
-
   $urls = $this->record($this->driver)->getLinkDetails();
   if (!empty($urls)){
       $videoUrls = [];
       $audioUrls = [];
       $otherUrls = [];
       foreach ($urls as $url){
-          if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
+          if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'){
             array_push($videoUrls, $url);
           } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
             array_push($audioUrls, $url);
@@ -35,7 +34,7 @@
       <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
     <?php endif; ?>
 
-    <?php if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
       <div class="organisation-menu">
         <?=$this->render('record/record-organisation-menu.phtml') ?>
       </div>
@@ -50,9 +49,9 @@
   ob_start();
 ?>
 <?php if (!empty($summaries)): ?>
-  <div class="truncate-field wide recordSummary">
+  <div class="truncate-field wide summary recordSummary">
     <?php foreach ($summaries as $s): ?>
-      <p class="summary"><?=preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($s)); /* Allow <br> tag */ ?></p>
+      <?= $this->recordFieldMarkdown()->toHtml($s) ?>
     <?php endforeach; ?>
   </div>
 <?php endif; ?>
@@ -99,6 +98,27 @@
         <?php endif; ?>
       </div>
 
+      <?php if ($documents = $this->driver->getDocuments()): ?>
+        <div class="record-links">
+          <div class="recordURLs local-available-online-record">
+            <ul class="truncate-field outer" data-rows="4">
+              <?php foreach ($documents as $i => $document): ?>
+                <?php
+                  $description = $document['description'] ?: $this->translate('Download the file');
+                ?>
+                <li class="fulltextField">
+                  <a href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']]))?>" target="_blank" download>
+                    <i class="fa fa-download" aria-hidden="true"></i>
+                    <?=$this->escapeHtml($description)?>
+                  </a>
+                  (<?=$this->escapeHtml($document['format'])?>)
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        </div>
+      <?php endif; ?>
+
       <?php if ($summaryContent): ?>
         <div class="truncate-wrapper hidden-xs">
           <?=$summaryContent?>
@@ -116,7 +136,8 @@
       <?php
         $formatter = $this->recordDataFormatter();
         $coreFields = $formatter->getData(
-            $driver, $formatter->filterLidoFields($formatter->getDefaults('core'))
+            $driver,
+            $formatter->filterLidoFields($formatter->getDefaults('core'))
         );
       ?>
       <?php if (!empty($coreFields)): ?>

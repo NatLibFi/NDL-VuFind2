@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2017.
+ * Copyright (C) The National Library of Finland 2015-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -27,7 +27,6 @@
  */
 namespace FinnaApi\Formatter;
 
-use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\View\HelperPluginManager;
 
 /**
@@ -42,24 +41,26 @@ use Laminas\View\HelperPluginManager;
 class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
 {
     /**
-     * Translator
+     * User locale
      *
-     * @var TranslatorInterface
+     * @var string
      */
-    protected $translator;
+    protected $locale;
 
     /**
      * Constructor
      *
      * @param array               $recordFields  Record field definitions
      * @param HelperPluginManager $helperManager View helper plugin manager
-     * @param TranslatorInterface $translator    Translator
+     * @param string              $locale        User locale
      */
-    public function __construct($recordFields, HelperPluginManager $helperManager,
-        TranslatorInterface $translator
+    public function __construct(
+        $recordFields,
+        HelperPluginManager $helperManager,
+        string $locale
     ) {
         parent::__construct($recordFields, $helperManager);
-        $this->translator = $translator;
+        $this->locale = $locale;
     }
 
     /**
@@ -71,12 +72,14 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
      */
     protected function getExtendedImages($record)
     {
-        $lang = $this->translator->getLocale();
         $imageHelper = $this->helperManager->get('recordImage');
         $recordHelper = $this->helperManager->get('record');
         $translate = $this->helperManager->get('translate');
         $images = $imageHelper($recordHelper($record))->getAllImagesAsCoverLinks(
-            $lang, [], false, false
+            $this->locale,
+            [],
+            false,
+            false
         );
         foreach ($images as &$image) {
             if (empty($image['rights']['copyright'])) {
@@ -113,8 +116,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
      */
     protected function getImageRights($record)
     {
-        $lang = $this->translator->getLocale();
-        $rights = $record->tryMethod('getImageRights', [$lang]);
+        $rights = $record->tryMethod('getImageRights', [$this->locale]);
         return $rights ? $rights : null;
     }
 
@@ -170,7 +172,9 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
                 $result[] = [
                     'value' => $institution,
                     'translated' => $translate(
-                        "0/$institution/", null, $institution
+                        "0/$institution/",
+                        null,
+                        $institution
                     )
                 ];
             }
@@ -188,7 +192,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
      */
     protected function getOnlineURLs($record)
     {
-        $urls = $record->getOnlineURLs();
+        $urls = $record->tryMethod('getOnlineURLs');
 
         if ($urls) {
             $translate = $this->helperManager->get('translate');
@@ -198,7 +202,9 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
                         $translated = [];
                         foreach ($url['source'] as $source) {
                             $translated[] = $translate->translate(
-                                "source_$source", null, $source
+                                "source_$source",
+                                null,
+                                $source
                             );
                         }
                     } else {
@@ -354,7 +360,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         }
 
         if ($serviceUrls) {
-            $source = $record->getDataSource();
+            $source = $record->tryMethod('getDataSource');
             foreach ($serviceUrls as &$url) {
                 if (isset($url['desc'])
                     && !$translationEmpty($source . '_' . $url['desc'])

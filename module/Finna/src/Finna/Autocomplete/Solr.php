@@ -106,8 +106,10 @@ class Solr extends \VuFind\Autocomplete\Solr
      * @param \Laminas\Config\Config $facetConfig  Facet configuration
      * @param \Laminas\Config\Config $searchConfig Search configuration
      */
-    public function __construct(\VuFind\Search\Results\PluginManager $results,
-        $facetConfig, $searchConfig
+    public function __construct(
+        \VuFind\Search\Results\PluginManager $results,
+        $facetConfig,
+        $searchConfig
     ) {
         $settings = [];
         $facets = isset($searchConfig->Autocomplete_Sections->facets)
@@ -154,7 +156,8 @@ class Solr extends \VuFind\Autocomplete\Solr
         $this->orFacets = [];
         if (isset($this->facetConfig->Results_Settings->orFacets)) {
             $this->orFacets = array_map(
-                'trim', explode(',', $this->facetConfig->Results_Settings->orFacets)
+                'trim',
+                explode(',', $this->facetConfig->Results_Settings->orFacets)
             );
         }
         parent::__construct($results);
@@ -224,7 +227,8 @@ class Solr extends \VuFind\Autocomplete\Solr
             $this->initSearchObject();
             $this->searchObject->getOptions()->disableHighlighting();
             $this->searchObject->getParams()->setBasicSearch(
-                $this->mungeQuery($query), $this->handler
+                $this->mungeQuery($query),
+                $this->handler
             );
             $this->searchObject->getParams()->setSort($this->sortField);
             foreach ($this->filters as $current) {
@@ -232,18 +236,24 @@ class Solr extends \VuFind\Autocomplete\Solr
             }
             foreach ($this->hierarchicalFacets as $facet) {
                 $this->searchObject->getParams()->addFacet(
-                    $facet, null, $this->useOrFacet($facet)
+                    $facet,
+                    null,
+                    $this->useOrFacet($facet)
                 );
             }
             $hierachicalFacets = $this->searchObject->getFullFieldFacets(
                 array_intersect($this->hierarchicalFacets, $allFacets),
-                false, -1, 'count'
+                false,
+                -1,
+                'count'
             );
             foreach ($hierachicalFacets as $field => $data) {
                 $filtered = $this->filterFacetValues($field, $data['data']['list']);
                 foreach ($filtered as $data) {
                     $values = $this->extractFacetData(
-                        $field, $data['values'], true
+                        $field,
+                        $data['values'],
+                        true
                     );
                     $facetResults[$data['pos']] = $values;
                 }
@@ -339,12 +349,17 @@ class Solr extends \VuFind\Autocomplete\Solr
      * @return array Filtered values
      */
     protected function extractFacetData(
-        $facet, $values, $hierarchicalFacet = false
+        $facet,
+        $values,
+        $hierarchicalFacet = false
     ) {
         $orFacet = $this->useOrFacet($facet);
         $checkboxFacet = $this->isCheckboxFacet($facet);
         $fn = function ($value) use (
-            $facet, $hierarchicalFacet, $orFacet, $checkboxFacet
+            $facet,
+            $hierarchicalFacet,
+            $orFacet,
+            $checkboxFacet
         ) {
             $label = $value['value'];
             $key = "autocomplete_$facet:$label";

@@ -61,8 +61,12 @@ trait FeedTrait
      *   html (string)    Rendered feed content
      *   settings (array) Feed settings
      */
-    protected function formatFeed($feed, Config $config,
-        RendererInterface $viewRenderer, $feedUrl = false, $touchDevice = false
+    protected function formatFeed(
+        $feed,
+        Config $config,
+        RendererInterface $viewRenderer,
+        $feedUrl = false,
+        $touchDevice = false
     ) {
         $channel = $feed['channel'];
         $items = $feed['items'];
@@ -115,6 +119,18 @@ trait FeedTrait
 
         if (isset($config->visualItems)) {
             $feed['visualItems'] = $config->visualItems;
+        }
+
+        // Add feed url to the item links:
+        if ($feedUrl) {
+            foreach ($feed['items'] as &$item) {
+                if ($item['link'] ?? false) {
+                    $item['link'] .= strpos($item['link'], '?') === false
+                        ? '?' : '&';
+                    $item['link'] .= 'feedUrl=' . urlencode($feedUrl);
+                }
+            }
+            unset($item);
         }
 
         $template = strpos($type, 'carousel') !== false ? 'carousel' : $type;

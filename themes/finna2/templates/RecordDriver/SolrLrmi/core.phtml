@@ -13,6 +13,13 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment?>">
     <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'displayIcon' => true, 'source' => 'L1', 'imageClick' => 'none']);?>
+
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+      <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
+    <?php endif; ?>
+
     <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
   </div>
   <?php $thumbnail = ob_get_contents(); ?>
@@ -104,11 +111,18 @@
       <?php if ($rights || !empty($coreFields)): ?>
         <table class="table table-finna-record record-details record-field-groups">
           <?php if ($rights): ?>
-            <?= $this->record($this->driver)->renderTemplate('core-field-group-fields.phtml',
-              ['data' => [[
-                'label' => 'Image Rights',
-                'value' => $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights])
-              ]]]);
+            <?=
+              $this->record($this->driver)->renderTemplate(
+                  'core-field-group-fields.phtml',
+                  [
+                      'data' => [
+                          [
+                              'label' => 'Image Rights',
+                              'value' => $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights])
+                          ]
+                      ]
+                  ]
+              )
             ?>
           <?php endif; ?>
           <?=$this->record($this->driver)->renderTemplate('core-field-groups.phtml', ['data' => $coreFields]);?>

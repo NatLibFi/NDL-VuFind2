@@ -45,6 +45,25 @@ use VuFindHttp\HttpServiceInterface;
 class ProxySoapClient extends \BeSimple\SoapClient\SoapClient
 {
     /**
+     * HTTP Service
+     *
+     * @var HttpServiceInterface
+     */
+    protected $httpService;
+
+    /**
+     * Create the Curl client
+     *
+     * @param array $options Client options
+     *
+     * @return Curl
+     */
+    protected function createCurlClient(array $options = [])
+    {
+        return new ProxyCurl($this->httpService, $options);
+    }
+
+    /**
      * Constructor.
      *
      * @param HttpServiceInterface $httpService HTTP Service
@@ -53,50 +72,12 @@ class ProxySoapClient extends \BeSimple\SoapClient\SoapClient
      *
      * @throws \SoapFault
      */
-    public function __construct(HttpServiceInterface $httpService, $wsdl,
+    public function __construct(
+        HttpServiceInterface $httpService,
+        $wsdl,
         array $options = []
     ) {
-        // tracing enabled: store last request/response header and body
-        if (isset($options['trace']) && true === $options['trace']) {
-            $this->tracingEnabled = true;
-        }
-        // store SOAP version
-        if (isset($options['soap_version'])) {
-            $this->soapVersion = $options['soap_version'];
-        }
-
-        $this->curl = new ProxyCurl($httpService, $options);
-
-        if (isset($options['extra_options'])) {
-            unset($options['extra_options']);
-        }
-
-        $wsdlFile = $this->loadWsdl($wsdl, $options);
-        // TODO $wsdlHandler = new WsdlHandler($wsdlFile, $this->soapVersion);
-        $this->soapKernel = new \BeSimple\SoapClient\SoapKernel();
-        // set up type converter and mime filter
-        $this->configureMime($options);
-        // we want the exceptions option to be set
-        $options['exceptions'] = true;
-        // disable obsolete trace option for native SoapClient as we need to do our
-        // own tracing anyways
-        $options['trace'] = false;
-        // disable WSDL caching as we handle WSDL caching for remote URLs ourself
-        $options['cache_wsdl'] = WSDL_CACHE_NONE;
-
-        try {
-            // Kludge to call grandparent's constructor
-            call_user_func(
-                [get_parent_class(get_parent_class($this)), '__construct'],
-                $wsdlFile, $options
-            );
-        } catch (\SoapFault $soapFault) {
-            // Discard cached WSDL file if there's a problem with it
-            if ('WSDL' === $soapFault->faultcode) {
-                unlink($wsdlFile);
-            }
-
-            throw $soapFault;
-        }
+        $this->httpService = $httpService;
+        parent::__construct($wsdl, $options);
     }
 }

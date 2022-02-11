@@ -193,7 +193,7 @@ abstract class AbstractBase implements \VuFind\Db\Table\DbTableAwareInterface,
         } catch (AuthException $e) {
             return false;
         }
-        return isset($user) && $user instanceof User;
+        return $user instanceof User;
     }
 
     /**
@@ -413,7 +413,9 @@ abstract class AbstractBase implements \VuFind\Db\Table\DbTableAwareInterface,
                 }
             } else {
                 $result = preg_match(
-                    "/({$policy['pattern']})/", $password, $matches
+                    "/({$policy['pattern']})/",
+                    $password,
+                    $matches
                 );
                 if ($result === false) {
                     throw new \Exception(

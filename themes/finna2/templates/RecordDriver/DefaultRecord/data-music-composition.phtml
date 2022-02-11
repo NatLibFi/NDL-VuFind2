@@ -1,0 +1,50 @@
+<?php //Don't add START and END comments ?>
+<?php if (!empty($data)): ?>
+  <div class="truncate-field" data-rows="5">
+    <?php
+      $first = true;
+      foreach ($data as $field) {
+        $output = $field['contents'];
+        switch ($field['type']) {
+        case 'medium':
+          if (!$first) {
+            $output = ", $output";
+          }
+          break;
+        case 'soloist':
+          $heading = $this->translate('music_composition_' . $field['type'], [], '');
+          if ($heading && !$first) {
+            $heading = ". $heading";
+          }
+          $output = $heading ? "$heading $output" : " $output";
+          if (!$first) {
+            $output = ", $output";
+          }
+          break;
+        case 'numEnsemblesOfSameType':
+        case 'numPerformersOfSameMedium':
+          $output = " ($output)";
+          break;
+        case 'altMedium':
+          $output = ' ' . $this->translate('music_composition_or') . " $output";
+          break;
+        case 'doublingInstrument':
+          $output = " / $output";
+          break;
+        case 'note':
+          $output = " [$note]";
+          break;
+        default:
+          $output = " $output";
+          $heading = $this->translate('music_composition_' . $field['type'], [], '');
+          if ($heading && !$first) {
+            $heading = ". $heading";
+          }
+          $output = $heading ? "$heading $output" : " $output";
+        }
+        echo $this->escapeHtml($output);
+        $first = false;
+      }
+    ?>
+  </div>
+<?php endif; ?>

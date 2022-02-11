@@ -69,7 +69,9 @@ class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
      * @param \Laminas\Config\Config $permissions Permissions configuration
      * @param IpAddressUtils         $ipUtils     IP address utils
      */
-    public function __construct(Config $config, Config $permissions,
+    public function __construct(
+        Config $config,
+        Config $permissions,
         IpAddressUtils $ipUtils
     ) {
         parent::__construct($config);

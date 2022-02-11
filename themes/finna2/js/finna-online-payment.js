@@ -6,7 +6,7 @@ finna.onlinePayment = (function finnaOnlinePayment() {
     $.ajax({
       type: 'POST',
       url: url,
-      data: jQuery.parseJSON(params),
+      data: params,
       dataType: 'json'
     })
       .done(function onRegisterPaymentDone() {

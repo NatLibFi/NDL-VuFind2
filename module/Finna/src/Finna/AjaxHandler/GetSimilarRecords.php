@@ -73,7 +73,9 @@ class GetSimilarRecords extends \VuFind\AjaxHandler\AbstractBase
      * @param Similar           $similar  Similar record handler
      * @param RendererInterface $renderer View renderer
      */
-    public function __construct(SessionSettings $ss, Loader $loader,
+    public function __construct(
+        SessionSettings $ss,
+        Loader $loader,
         Similar $similar,
         RendererInterface $renderer
     ) {

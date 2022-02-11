@@ -39,18 +39,25 @@ defaultPickUpLocation = ""
 ; This setting can be used to exclude locations from the pickup location list
 ;excludePickupLocations = 1:6:10:15:29:32:34:37:38:39:53:79:87:88
 
-; Optional help texts that can be displayed on the hold form
-;helpText = "Help text for all languages."
-;helpText[en-gb] = "Help text for English language."
-
-; Optional label for the "acceptTerms" extra field
-;acceptTermsText = "I accept the terms in any language."
-;acceptTermsText[en-gb] = "I accept the terms in English."
-
 ; Fields that can be updated for holds (unless the hold is already in transit or
 ; available for pickup). Supported values are "frozen", "frozenThrough" and
 ; "pickUpLocation"
 updateFields = frozen:frozenThrough:pickUpLocation
+
+; Optional help texts that can be displayed on the hold form. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;helpText[*] = "Default help text used if not overridden."
+;helpText[en-gb] = "Help text for British English localization."
+
+; Optional help texts that can be displayed on the hold update form. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;updateHelpText[*] = "Hold update default help text used if not overridden."
+;updateHelpText[en-gb] = "Hold update help text for British English localization."
+
+; Optional label for the "acceptTerms" extra field. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;acceptTermsText[*] = "I accept the terms in any language."
+;acceptTerms[en-gb] = "I accept the terms in English."
 
 ; This section controls article request behavior. To enable, uncomment (at minimum)
 ; the HMACKeys and extraFields settings below.
@@ -67,13 +74,15 @@ updateFields = frozen:frozenThrough:pickUpLocation
 ; "item-issue" and "acceptTerms"
 ;extraFields = item-issue:pickUpLocation
 
-; Optional help texts that can be displayed on the request form
-;helpText = "Help text for all languages."
-;helpText[en-gb] = "Help text for English language."
+; Optional help texts that can be displayed on the hold form. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;helpText[*] = "Default help text used if not overridden."
+;helpText[en-gb] = "Help text for British English localization."
 
-; Optional label for the "acceptTerms" extra field
-;acceptTermsText = "I accept the terms in any language."
-;acceptTermsText[en-gb] = "I accept the terms in English."
+; Optional label for the "acceptTerms" extra field. Displayed as is;
+; HTML tags can be used, and everything needs to be properly escaped.
+;acceptTermsText[*] = "I accept the terms in any language."
+;acceptTerms[en-gb] = "I accept the terms in English."
 
 ; This setting can be used to exclude locations from the pickup location list
 ;excludePickupLocations = "BRANCH:MOBILE"

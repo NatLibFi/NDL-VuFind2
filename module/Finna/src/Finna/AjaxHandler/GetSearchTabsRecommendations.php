@@ -94,8 +94,12 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
      * @param RendererInterface $renderer View renderer
      * @param SearchRunner      $sr       Search runner
      */
-    public function __construct(SessionSettings $ss, Config $config,
-        SearchTable $st, ResultsManager $results, RendererInterface $renderer,
+    public function __construct(
+        SessionSettings $ss,
+        Config $config,
+        SearchTable $st,
+        ResultsManager $results,
+        RendererInterface $renderer,
         SearchRunner $sr
     ) {
         $this->sessionSettings = $ss;
@@ -129,10 +133,12 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
         $search = $this->searchTable->select(['id' => $id])->current();
         if (empty($search)) {
             return $this->formatResponse(
-                'Search not found', self::STATUS_HTTP_BAD_REQUEST
+                'Search not found',
+                self::STATUS_HTTP_BAD_REQUEST
             );
         }
 
+        $html = '';
         $minSO = $search->getSearchObject();
         $savedSearch = $minSO->deminify($this->resultsManager);
         $searchParams = $savedSearch->getParams();
@@ -143,16 +149,16 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
             || $searchClass == 'Combined'
             || $searchParams->getSearchType() != 'basic'
         ) {
-            return $this->formatResponse('');
+            return $this->formatResponse(compact('html'));
         }
 
         $query = $searchParams->getQuery();
         if (!($query instanceof \VuFindSearch\Query\Query)) {
-            return $this->formatResponse('');
+            return $this->formatResponse(compact('html'));
         }
         $lookfor = $query->getString();
         if (!$lookfor) {
-            return $this->formatResponse('');
+            return $this->formatResponse(compact('html'));
         }
 
         $view = $this->renderer;
@@ -165,7 +171,6 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase
             $searchParams->getQuery()->getHandler()
         );
 
-        $html = '';
         $recommendations = array_map(
             'trim',
             explode(',', $recommendationsConfig[$searchClass])

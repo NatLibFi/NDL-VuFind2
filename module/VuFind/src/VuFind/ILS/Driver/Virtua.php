@@ -79,7 +79,8 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
                ')';
         $this->db = new \VuFind\Connection\Oracle(
             $this->config['Catalog']['user'],
-            $this->config['Catalog']['password'], $tns
+            $this->config['Catalog']['password'],
+            $tns
         );
     }
 
@@ -564,6 +565,7 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
         $sorted = []; // We'll put items from the patron's location in here
         $return = []; // Everything else in here
         foreach ($holdings as $h) {
+            $item_loc_code = null;
             // Super Users (eg. Off-Camp, and Lending) can request anything
             if ($super_user) {
                 $h['req_allowed'] = true;
@@ -592,7 +594,8 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
                             // ... can this user borrow on loan items at this
                             // location?
                             $can_req = in_array(
-                                $location, $unavailable_locs[$item_loc_code]
+                                $location,
+                                $unavailable_locs[$item_loc_code]
                             );
                         }
                     } else {
@@ -611,7 +614,8 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
                                 // ... can the user borrow available items at this
                                 // location?
                                 $can_req = in_array(
-                                    $location, $available_locs[$item_loc_code]
+                                    $location,
+                                    $available_locs[$item_loc_code]
                                 );
                             }
                         }
@@ -977,10 +981,10 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
         $sort_set = [];
         // Loop through each sequence
         foreach ($data_set as $row) {
-            $sort = '';
             $tag  = '';
             $data = [];
-
+            $sort_rule = '';
+            $sort_order = '';
             // And each subfield
             foreach ($row as $subfield) {
                 // Found the '8' subfield
@@ -999,7 +1003,6 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
                     ];
                 }
             }
-
             $sort_set[$sort_rule . "." . $sort_order] = [
                 'tag'  => $tag,
                 'data' => $data
@@ -1614,7 +1617,7 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
      */
     public function getCancelHoldDetails($holdDetails, $patron = [])
     {
-        // TODO: implement me.
+        throw new \Exception('TODO: implement getCancelHoldDetails.');
     }
 
     /**
@@ -1634,6 +1637,7 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
     {
         // TODO: implement standard VuFind holds API; utilize cancelHold()
         // below as a support method.
+        throw new \Exception('cancelHolds() is not supported yet.');
     }
 
     /**
@@ -1730,7 +1734,7 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
      */
     public function getRenewDetails($checkOutDetails)
     {
-        // TODO: implement me
+        throw new \Exception('TODO: implement getRenewDetails');
     }
 
     /**
@@ -1890,7 +1894,7 @@ class Virtua extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterfa
             }
             $result = $client->setMethod($method)->send();
         } catch (\Exception $e) {
-            throw new ILSException($e->getMessage());
+            $this->throwAsIlsException($e);
         }
 
         if (!$result->isSuccess()) {

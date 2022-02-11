@@ -33,6 +33,7 @@ use Laminas\Http\Response;
 use PHPUnit\Framework\TestCase;
 use VuFindSearch\Backend\Exception\RemoteErrorException;
 use VuFindSearch\Backend\Solr\Backend;
+use VuFindSearch\Backend\Solr\Document\CommitDocument;
 use VuFindSearch\Backend\Solr\HandlerMap;
 use VuFindSearch\Backend\Solr\Response\Json\RecordCollection;
 use VuFindSearch\ParamBag;
@@ -375,6 +376,35 @@ class BackendTest extends TestCase
         $this->assertEquals('dummy', $back->random(new Query('foo'), 1, $params));
     }
 
+    /**
+     * Test writeDocument
+     *
+     * @return void
+     */
+    public function testWriteDocument()
+    {
+        $doc = new CommitDocument();
+        $client = $this->getMockBuilder(\Laminas\Http\Client::class)
+            ->onlyMethods(['setOptions'])
+            ->getMock();
+        $client->expects($this->exactly(1))->method('setOptions')
+            ->with(['timeout' => 60]);
+        $connector = $this->getConnectorMock(['getUrl', 'write'], $client);
+        $connector->expects($this->once())->method('write')
+            ->with(
+                $this->equalTo($doc),
+                $this->equalTo('update'),
+                $this->isNull()
+            );
+        $connector->expects($this->once())->method('getUrl')
+            ->will($this->returnValue('http://localhost:8983/solr/core/biblio'));
+        $backend = new Backend($connector);
+        $this->assertEquals(
+            ['core' => 'biblio'],
+            $backend->writeDocument($doc, 60)
+        );
+    }
+
     /// Internal API
 
     /**
@@ -414,16 +444,18 @@ class BackendTest extends TestCase
     /**
      * Return connector mock.
      *
-     * @param array $mock Functions to mock
+     * @param array      $mock   Functions to mock
+     * @param HttpClient $client HTTP Client (optional)
      *
      * @return Connector
      */
-    protected function getConnectorMock(array $mock = [])
+    protected function getConnectorMock(array $mock = [], $client = null)
     {
         $map = new HandlerMap(['select' => ['fallback' => true]]);
+        $client = $client ?? new \Laminas\Http\Client();
         return $this->getMockBuilder(\VuFindSearch\Backend\Solr\Connector::class)
             ->onlyMethods($mock)
-            ->setConstructorArgs(['http://example.org/', $map])
+            ->setConstructorArgs(['http://example.org/', $map, $client])
             ->getMock();
     }
 }

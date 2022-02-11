@@ -61,7 +61,8 @@ class CustomElementRendererBase
      * @param CustomElementRendererInterface $renderer Renderer
      */
     public function __construct(
-        array $elements, CustomElementRendererInterface $renderer
+        array $elements,
+        CustomElementRendererInterface $renderer
     ) {
         $this->customElements = $elements;
         $this->customElementRenderer = $renderer;

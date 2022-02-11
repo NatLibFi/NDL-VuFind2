@@ -57,7 +57,8 @@ class ILSAuthenticator extends \VuFind\Auth\ILSAuthenticator
     {
         try {
             $result = $this->catalog->patronLogin(
-                $username, $password
+                $username,
+                $password
             );
         } catch (ILSException $e) {
             return false;

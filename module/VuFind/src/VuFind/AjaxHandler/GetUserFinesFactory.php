@@ -60,13 +60,15 @@ class GetUserFinesFactory extends AbstractIlsAndUserActionFactory
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $helper = $container->get('ViewHelperManager')->get('safeMoneyFormat');
-        return parent::__invoke($container, $requestedName, [$helper]);
+        $formatter = $container->get(\VuFind\Service\CurrencyFormatter::class);
+        return parent::__invoke($container, $requestedName, [$formatter]);
     }
 }

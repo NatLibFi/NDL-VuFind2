@@ -68,8 +68,10 @@ class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
      *
      * @return void
      */
-    public function __construct(array $specs = [],
-        $defaultDismaxHandler = 'dismax', $maxSpellcheckWords = 5
+    public function __construct(
+        array $specs = [],
+        $defaultDismaxHandler = 'dismax',
+        $maxSpellcheckWords = 5
     ) {
         parent::__construct($specs, $defaultDismaxHandler);
         $this->maxSpellcheckWords = $maxSpellcheckWords;
@@ -120,7 +122,8 @@ class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
     {
         if ($component instanceof QueryGroup) {
             $reduced = array_map(
-                [$this, 'reduceQueryGroupComponents'], $component->getQueries()
+                [$this, 'reduceQueryGroupComponents'],
+                $component->getQueries()
             );
             $searchString = $component->isNegated() ? 'NOT ' : '';
             $reduced = array_filter(
@@ -131,7 +134,8 @@ class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
             );
             if ($reduced) {
                 $searchString .= sprintf(
-                    '(%s)', implode(" {$component->getOperator()} ", $reduced)
+                    '(%s)',
+                    implode(" {$component->getOperator()} ", $reduced)
                 );
             }
         } else {

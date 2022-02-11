@@ -10,9 +10,12 @@
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
   $images = $img->getAllImagesAsCoverLinks(
-      $this->layout()->userLang, $params
+      $this->layout()->userLang,
+      $params
   );
-
+  $audioUrls = [];
+  $videoUrls = [];
+  $otherUrls = [];
   $hasOnlineURLs =
       $this->record($this->driver)->containsNonImageURL($urls, $images)
       || $this->record($this->driver)->containsNonImageURL($onlineURLs, $images)
@@ -20,11 +23,8 @@
   ;
 
   if (!empty($urls)) {
-    $videoUrls = [];
-    $audioUrls = [];
-    $otherUrls = [];
     foreach ($urls as $url) {
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLink()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
         array_push($videoUrls, $url);
       } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
         array_push($audioUrls, $url);
@@ -35,9 +35,6 @@
   }
 
   if (!empty($onlineURLs)) {
-    if (empty($audioUrls)) {
-      $audioUrls = [];
-    }
     $tempUrlArray = [];
     foreach ($onlineURLs as $url) {
       if (!empty($url['embed']) && $url['embed'] == 'audio') {
@@ -65,6 +62,12 @@
       <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
     <?php endif; ?>
 
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+      <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
+    <?php endif; ?>
+
     <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
   </div>
   <?php $thumbnail = ob_get_contents(); ?>
@@ -78,11 +81,6 @@
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-      <div class="description">
-        <span id="description_text" data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>">
-          <i class="fa fa-spinner fa-spin"></i>
-        </span>
-      </div>
 
       <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php if ($hasOnlineURLs || $openUrlActive): ?>
@@ -134,21 +132,21 @@
         </div>
         <?php endif; ?>
 
-        <?php $publications = $this->driver->getPublicationDetails(); if (!empty($publications)): ?>
-        <div class="recordPublications">
-        <?php foreach ($publications as $field): ?>
-            <span property="publisher" typeof="Organization">
-            <?php $pubPlace = $field->getPlace(); if (!empty($pubPlace)): ?>
-              <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
-            <?php endif; ?>
-            <?php $pubName = $field->getName(); if (!empty($pubName)): ?>
-              <span property="name"><?=$this->escapeHtml($pubName)?></span>
-            <?php endif; ?>
-            <?php $pubDate = $field->getDate(); if (!empty($pubDate)): ?>
-              <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
-            <?php endif; ?>
-            </span>
-          <?php endforeach; ?>
+        <?php if ($publications = $this->driver->getPublicationDetails()): ?>
+          <div class="recordPublications">
+            <?php foreach ($publications as $field): ?>
+              <span property="publisher" typeof="Organization">
+                <?php if ($pubPlace = $field->getPlace()): ?>
+                  <span property="location"><?=$this->escapeHtml($pubPlace)?></span>
+                <?php endif; ?>
+                <?php if ($pubName = $field->getName()): ?>
+                  <span property="name"><?=$this->escapeHtml($pubName)?></span>
+                <?php endif; ?>
+                <?php if ($pubDate = $field->getDate()): ?>
+                  <span property="datePublished"><?=$this->escapeHtml($pubDate)?></span>
+                <?php endif; ?>
+              </span>
+            <?php endforeach; ?>
           </div>
         <?php endif; ?>
 
@@ -158,22 +156,18 @@
       </div>
 
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
-        <div class="truncate-field wide recordSummary">
-          <p class="summary">
+        <div class="truncate-field wide summary recordSummary">
           <?php if (isset($abstracts[$this->layout()->userLang])): ?>
-              <?=$this->escapeHtml($abstracts[$this->layout()->userLang])?>
-            <?php else: ?>
-              <?=implode('<br><br>', array_map([$this, 'escapeHtml'], $abstracts))?>
-            <?php endif; ?>
-          </p>
+            <?= $this->recordFieldMarkdown()->toHTML(($abstracts[$this->layout()->userLang]), "\n") ?>
+          <?php else: ?>
+            <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $abstracts), "\n") ?>
+          <?php endif; ?>
         </div>
-      <?php else: ?>
-        <?php $summary = $this->driver->getSummary(); $summary = isset($summary[0]) ? $this->escapeHtml($summary[0]) : false; ?>
-        <?php if ($summary): ?>
-        <div class="truncate-field wide recordSummary">
-            <p class="summary"><?=$summary ?></p>
+      <?php endif; ?>
+      <?php if ($descriptions = $this->driver->getDescriptions()): ?>
+        <div class="truncate-field wide summary recordSummary">
+          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $descriptions), "\n") ?>
         </div>
-        <?php endif; ?>
       <?php endif; ?>
 
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
@@ -187,7 +181,8 @@
       <?php
         $formatter = $this->recordDataFormatter();
         $coreFields = $formatter->getData(
-            $driver, $formatter->filterQDCFields($formatter->getDefaults('core'))
+            $driver,
+            $formatter->filterQDCFields($formatter->getDefaults('core'))
         );
       ?>
       <?php if (!empty($coreFields)): ?>

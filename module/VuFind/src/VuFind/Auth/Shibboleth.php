@@ -123,7 +123,8 @@ class Shibboleth extends AbstractBase
      * @param \Laminas\Http\PhpEnvironment\Request $request             Http
      * request object
      */
-    public function __construct(\Laminas\Session\ManagerInterface $sessionManager,
+    public function __construct(
+        \Laminas\Session\ManagerInterface $sessionManager,
         ConfigurationLoaderInterface $configurationLoader,
         \Laminas\Http\PhpEnvironment\Request $request
     ) {
@@ -355,8 +356,10 @@ class Shibboleth extends AbstractBase
         }
         $password = $shib['cat_password'] ?? null;
         $connectingUser->saveLibraryCard(
-            null, $shib['prefix'],
-            $username, $password
+            null,
+            $shib['prefix'],
+            $username,
+            $password
         );
     }
 
@@ -445,9 +448,9 @@ class Shibboleth extends AbstractBase
      * @param \Laminas\Http\PhpEnvironment\Request $request   Request object
      * @param string                               $attribute Attribute name
      *
-     * @return string attribute value
+     * @return ?string attribute value
      */
-    protected function getAttribute($request, $attribute)
+    protected function getAttribute($request, $attribute): ?string
     {
         if ($this->useHeaders) {
             $header = $request->getHeader($attribute);

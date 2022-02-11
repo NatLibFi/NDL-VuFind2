@@ -65,7 +65,11 @@ class Results extends \VuFind\Search\Base\Results
         $offset = $this->getStartRecord() - 1;
         $params = $this->getParams()->getBackendParameters();
         $collection = $this->getSearchService()->search(
-            $this->backendId, $query, $offset, $limit, $params
+            $this->backendId,
+            $query,
+            $offset,
+            $limit,
+            $params
         );
         if (null != $collection) {
             $this->responseFacets = $collection->getFacets();
@@ -119,6 +123,7 @@ class Results extends \VuFind\Search\Base\Results
                 }
 
                 // Should we translate values for the current facet?
+                $transTextDomain = '';
                 if ($translate = in_array($field, $translatedFacets)) {
                     $transTextDomain = $this->getOptions()
                         ->getTextDomainForTranslatedFacet($field);

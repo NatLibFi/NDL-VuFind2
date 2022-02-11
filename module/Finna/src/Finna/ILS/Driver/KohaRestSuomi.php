@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2019.
+ * Copyright (C) The National Library of Finland 2017-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
+use VuFind\Marc\MarcReader;
 
 /**
  * KohaRest ILS Driver for KohaSuomi
@@ -107,7 +108,8 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         if (isset($this->config['Holdings']['holdings_branch_order'])) {
             $values = explode(
-                ':', $this->config['Holdings']['holdings_branch_order']
+                ':',
+                $this->config['Holdings']['holdings_branch_order']
             );
             foreach ($values as $i => $value) {
                 $parts = explode('=', $value, 2);
@@ -241,19 +243,26 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     public function getMyProfile($patron)
     {
         $result = $this->makeRequest(
-            ['v1', 'patrons', $patron['id']], false, 'GET', $patron
+            ['v1', 'patrons', $patron['id']],
+            false,
+            'GET',
+            $patron
         );
 
         $expirationDate = !empty($result['dateexpiry'])
             ? $this->dateConverter->convertToDisplayDate(
-                'Y-m-d', $result['dateexpiry']
+                'Y-m-d',
+                $result['dateexpiry']
             ) : '';
 
         $guarantor = [];
         $guarantees = [];
         if (!empty($result['guarantorid'])) {
             $guarantorRecord = $this->makeRequest(
-                ['v1', 'patrons', $result['guarantorid']], false, 'GET', $patron
+                ['v1', 'patrons', $result['guarantorid']],
+                false,
+                'GET',
+                $patron
             );
             if ($guarantorRecord) {
                 $guarantor['firstname'] = $guarantorRecord['firstname'];
@@ -262,7 +271,9 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         } else {
             // Assume patron can have guarantees only if there is no guarantor
             $guaranteeRecords = $this->makeRequest(
-                ['v1', 'patrons'], ['guarantorid' => $patron['id']], 'GET',
+                ['v1', 'patrons'],
+                ['guarantorid' => $patron['id']],
+                'GET',
                 $patron
             );
             foreach ($guaranteeRecords as $guarantee) {
@@ -735,7 +746,10 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $request = [
@@ -1582,7 +1596,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
      *
      * @param array $holding Holding
      *
-     * @return \File_MARCXML
+     * @return MarcReader
      */
     protected function getHoldingMarc(&$holding)
     {
@@ -1591,13 +1605,9 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
                 as $metadata
             ) {
                 if ('marcxml' === $metadata['format']
-                    && 'MARC21' === $metadata['marcflavour']
+                    && 'MARC21' === $metadata['schema']
                 ) {
-                    $marc = new \File_MARCXML(
-                        $metadata['metadata'],
-                        \File_MARCXML::SOURCE_STRING
-                    );
-                    $holding['_marcRecord'] = $marc->next();
+                    $holding['_marcRecord'] = new MarcReader($metadata['metadata']);
                     return $holding['_marcRecord'];
                 }
             }
@@ -1623,7 +1633,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         $marcDetails = [];
 
         // Get Notes
-        $data = $this->getMFHDData(
+        $data = $this->getMARCData(
             $marc,
             $this->config['Holdings']['notes']
             ?? '852z'
@@ -1633,7 +1643,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         }
 
         // Get Summary (may be multiple lines)
-        $data = $this->getMFHDData(
+        $data = $this->getMARCData(
             $marc,
             $this->config['Holdings']['summary']
             ?? '866a'
@@ -1644,7 +1654,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         // Get Supplements
         if (isset($this->config['Holdings']['supplements'])) {
-            $data = $this->getMFHDData(
+            $data = $this->getMARCData(
                 $marc,
                 $this->config['Holdings']['supplements']
             );
@@ -1655,7 +1665,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         // Get Indexes
         if (isset($this->config['Holdings']['indexes'])) {
-            $data = $this->getMFHDData(
+            $data = $this->getMARCData(
                 $marc,
                 $this->config['Holdings']['indexes']
             );
@@ -1666,7 +1676,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         // Get links
         if (isset($this->config['Holdings']['links'])) {
-            $data = $this->getMFHDData(
+            $data = $this->getMARCData(
                 $marc,
                 $this->config['Holdings']['links']
             );
@@ -1684,16 +1694,16 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get specified fields from an MFHD MARC Record
+     * Get specified fields from a MARC Record
      *
-     * @param object       $record     File_MARC object
+     * @param MarcReader   $record     Marc reader
      * @param array|string $fieldSpecs Array or colon-separated list of
      * field/subfield specifications (3 chars for field code and then subfields,
      * e.g. 866az)
      *
-     * @return string|string[] Results as a string if single, array if multiple
+     * @return string|array Results as a string if single, array if multiple
      */
-    protected function getMFHDData($record, $fieldSpecs)
+    protected function getMARCData(MarcReader $record, $fieldSpecs)
     {
         if (!is_array($fieldSpecs)) {
             $fieldSpecs = explode(':', $fieldSpecs);
@@ -1704,16 +1714,16 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
             $subfieldCodes = substr($fieldSpec, 3);
             if ($fields = $record->getFields($fieldCode)) {
                 foreach ($fields as $field) {
-                    if ($subfields = $field->getSubfields()) {
+                    if ($subfields = $field['subfields'] ?? []) {
                         $line = '';
-                        foreach ($subfields as $code => $subfield) {
-                            if (!strstr($subfieldCodes, $code)) {
+                        foreach ($subfields as $subfield) {
+                            if (!strstr($subfieldCodes, $subfield['code'])) {
                                 continue;
                             }
                             if ($line) {
                                 $line .= ' ';
                             }
-                            $line .= $subfield->getData();
+                            $line .= $subfield['data'];
                         }
                         if ($line) {
                             if (!$results) {

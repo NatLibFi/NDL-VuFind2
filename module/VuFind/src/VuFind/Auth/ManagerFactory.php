@@ -58,7 +58,9 @@ class ManagerFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException&\Throwable if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
@@ -89,11 +91,16 @@ class ManagerFactory implements FactoryInterface
         $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
         $pm = $container->get(\VuFind\Auth\PluginManager::class);
         $cookies = $container->get(\VuFind\Cookie\CookieManager::class);
-        $csrf = $container->get(\VuFind\Validator\Csrf::class);
+        $csrf = $container->get(\VuFind\Validator\CsrfInterface::class);
 
         // Build the object and make sure account credentials haven't expired:
         $manager = new $requestedName(
-            $config, $userTable, $sessionManager, $pm, $cookies, $csrf
+            $config,
+            $userTable,
+            $sessionManager,
+            $pm,
+            $cookies,
+            $csrf
         );
         $manager->checkForExpiredCredentials();
         return $manager;

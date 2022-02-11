@@ -27,9 +27,14 @@
  */
 namespace VuFindTest\Solr;
 
+use Laminas\Http\Client as HttpClient;
+use PHPUnit\Framework\MockObject\MockObject;
 use VuFind\Db\Table\ChangeTracker;
 use VuFind\Search\BackendManager;
 use VuFind\Solr\Writer;
+use VuFindSearch\Backend\Solr\Document\CommitDocument;
+use VuFindSearch\Backend\Solr\Document\OptimizeDocument;
+use VuFindSearch\Backend\Solr\HandlerMap;
 
 /**
  * Solr Utils Test Class
@@ -42,6 +47,8 @@ use VuFind\Solr\Writer;
  */
 class WriterTest extends \PHPUnit\Framework\TestCase
 {
+    use \VuFindTest\Feature\SearchServiceTrait;
+
     /**
      * Test commit
      *
@@ -49,12 +56,13 @@ class WriterTest extends \PHPUnit\Framework\TestCase
      */
     public function testCommit()
     {
-        $bm = $this->getBackendManagerWithMockSolr();
+        $bm = $this->getBackendManagerWithMockSolr(
+            $this->getMockHttpClientExpectingOnlySetTimeout(60 * 60)
+        );
         $connector = $bm->get('Solr')->getConnector();
-        $connector->expects($this->exactly(2))->method('setTimeout')
-            ->withConsecutive([60 * 60], [30]);
-        $connector->expects($this->once())->method('write')->with($this->isInstanceOf('VuFindSearch\Backend\Solr\Document\CommitDocument'));
-        $writer = new Writer($bm, $this->getMockChangeTracker());
+        $connector->expects($this->once())->method('write')
+            ->with($this->isInstanceOf(CommitDocument::class));
+        $writer = new Writer($this->getSearchService($bm), $this->getMockChangeTracker());
         $writer->commit('Solr');
     }
 
@@ -72,9 +80,11 @@ class WriterTest extends \PHPUnit\Framework\TestCase
             ->with(
                 $this->equalTo($commit),
                 $this->equalTo('update'),
-                $this->equalTo(null)
+                $this->callback(function ($params) {
+                    return count($params) === 0;
+                })
             );
-        $writer = new Writer($bm, $this->getMockChangeTracker());
+        $writer = new Writer($this->getSearchService($bm), $this->getMockChangeTracker());
         $writer->save('Solr', $commit);
     }
 
@@ -95,7 +105,7 @@ class WriterTest extends \PHPUnit\Framework\TestCase
                 $this->equalTo('customUpdateHandler'),
                 $this->equalTo($params)
             );
-        $writer = new Writer($bm, $this->getMockChangeTracker());
+        $writer = new Writer($this->getSearchService($bm), $this->getMockChangeTracker());
         $writer->save('Solr', $csv, 'customUpdateHandler', $params);
     }
 
@@ -106,12 +116,13 @@ class WriterTest extends \PHPUnit\Framework\TestCase
      */
     public function testOptimize()
     {
-        $bm = $this->getBackendManagerWithMockSolr();
+        $bm = $this->getBackendManagerWithMockSolr(
+            $this-> getMockHttpClientExpectingOnlySetTimeout(60 * 60 * 24)
+        );
         $connector = $bm->get('Solr')->getConnector();
-        $connector->expects($this->exactly(2))->method('setTimeout')
-            ->withConsecutive([60 * 60 * 24], [30]);
-        $connector->expects($this->once())->method('write')->with($this->isInstanceOf('VuFindSearch\Backend\Solr\Document\OptimizeDocument'));
-        $writer = new Writer($bm, $this->getMockChangeTracker());
+        $connector->expects($this->once())->method('write')
+            ->with($this->isInstanceOf(OptimizeDocument::class));
+        $writer = new Writer($this->getSearchService($bm), $this->getMockChangeTracker());
         $writer->optimize('Solr');
     }
 
@@ -128,7 +139,7 @@ class WriterTest extends \PHPUnit\Framework\TestCase
             return trim($i->getContent()) == "<?xml version=\"1.0\"?>\n<delete><query>*:*</query></delete>";
         };
         $connector->expects($this->once())->method('write')->with($this->callback($callback));
-        $writer = new Writer($bm, $this->getMockChangeTracker());
+        $writer = new Writer($this->getSearchService($bm), $this->getMockChangeTracker());
         $writer->deleteAll('Solr');
     }
 
@@ -148,31 +159,55 @@ class WriterTest extends \PHPUnit\Framework\TestCase
         $ct = $this->getMockChangeTracker();
         $ct->expects($this->exactly(2))->method('markDeleted')
             ->withConsecutive(['biblio', 'foo'], ['biblio', 'bar']);
-        $writer = new Writer($bm, $ct);
+        $writer = new Writer($this->getSearchService($bm), $ct);
         $writer->deleteRecords('Solr', ['foo', 'bar']);
     }
 
     /**
      * Get mock backend manager
      *
+     * @param HttpClient $client HTTP Client (optional)
+     *
      * @return BackendManager
      */
-    protected function getBackendManagerWithMockSolr()
+    protected function getBackendManagerWithMockSolr($client = null)
     {
         $sm = new \Laminas\ServiceManager\ServiceManager();
         $pm = new BackendManager($sm);
         $mockBackend = $this->getMockBuilder(\VuFindSearch\Backend\Solr\Backend::class)
             ->disableOriginalConstructor()
+            ->onlyMethods(['getConnector', 'getIdentifier'])
+            ->getMock();
+        $handlerMap = new HandlerMap();
+        $client = $client ?? $this->getMockBuilder(\Laminas\Http\Client::class)
+            ->onlyMethods([])
             ->getMock();
         $mockConnector = $this->getMockBuilder(\VuFindSearch\Backend\Solr\Connector::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getUrl', 'getTimeout', 'setTimeout', 'write'])
+            ->setConstructorArgs(['http://localhost:8983/solr/biblio', $handlerMap, $client])
+            ->onlyMethods(['write'])
             ->getMock();
         $mockBackend->expects($this->any())->method('getConnector')->will($this->returnValue($mockConnector));
-        $mockConnector->expects($this->any())->method('getTimeout')->will($this->returnValue(30));
-        $mockConnector->expects($this->any())->method('getUrl')->will($this->returnValue('http://localhost:8983/solr/biblio'));
+        $mockBackend->expects($this->any())->method('getIdentifier')->will($this->returnValue('Solr'));
         $sm->setService('Solr', $mockBackend);
         return $pm;
+    }
+
+    /**
+     * Get a mock HTTP Client that only expects its setTimeout() to be called once.
+     *
+     * @param int $timeout Expected timeout
+     *
+     * @return MockObject
+     */
+    protected function getMockHttpClientExpectingOnlySetTimeout(
+        int $timeout
+    ): MockObject {
+        $client = $this->getMockBuilder(\Laminas\Http\Client::class)
+            ->onlyMethods(['setOptions'])
+            ->getMock();
+        $client->expects($this->exactly(1))->method('setOptions')
+            ->with(['timeout' => $timeout]);
+        return $client;
     }
 
     /**

@@ -137,6 +137,13 @@ class Loader extends \VuFind\ImageLoader
     protected $ismn = null;
 
     /**
+     * User UUID parameter
+     *
+     * @var string
+     */
+    protected $uuid = null;
+
+    /**
      * User record id number parameter
      *
      * @var string
@@ -181,8 +188,11 @@ class Loader extends \VuFind\ImageLoader
      * @param string                  $baseDir     Directory to store downloaded
      * images (set to system temp dir if not otherwise specified)
      */
-    public function __construct($config, ApiManager $manager,
-        \VuFindTheme\ThemeInfo $theme, \VuFindHttp\HttpService $httpService,
+    public function __construct(
+        $config,
+        ApiManager $manager,
+        \VuFindTheme\ThemeInfo $theme,
+        \VuFindHttp\HttpService $httpService,
         $baseDir = null
     ) {
         $this->setThemeInfo($theme);
@@ -255,6 +265,7 @@ class Loader extends \VuFind\ImageLoader
             'source' => null,
             'nbn' => null,
             'ismn' => null,
+            'uuid' => null,
         ];
     }
 
@@ -303,6 +314,7 @@ class Loader extends \VuFind\ImageLoader
         $this->recordid = $settings['recordid'];
         $this->source = $settings['source'];
         $this->nbn = $settings['nbn'];
+        $this->uuid = $settings['uuid'];
         $this->type = preg_replace('/[^a-zA-Z]/', '', $settings['type']);
         $this->size = $settings['size'];
     }
@@ -315,7 +327,8 @@ class Loader extends \VuFind\ImageLoader
      * 'type' (content type), 'title' (title of book, for dynamic covers), 'author'
      * (author of book, for dynamic covers), 'callnumber' (unique ID, for dynamic
      * covers), 'issn' (ISSN), 'oclc' (OCLC number), 'upc' (UPC number),
-     * 'nbn' (national bibliography number), 'ismn' (ISMN).
+     * 'nbn' (national bibliography number), 'ismn' (ISMN), 'uuid' (Universally
+     *  unique identifier).
      *
      * @return void
      */
@@ -342,7 +355,9 @@ class Loader extends \VuFind\ImageLoader
             if ($this->generator) {
                 $this->generator->setOptions($this->getCoverGeneratorSettings());
                 $this->image = $this->generator->generate(
-                    $settings['title'], $settings['author'], $settings['callnumber']
+                    $settings['title'],
+                    $settings['author'],
+                    $settings['callnumber']
                 );
                 $this->contentType = 'image/png';
             } else {
@@ -401,6 +416,8 @@ class Loader extends \VuFind\ImageLoader
             return $this->getCachePath($this->size, 'NBN' . $ids['nbn']);
         } elseif (isset($ids['ismn'])) {
             return $this->getCachePath($this->size, 'ISMN' . $ids['ismn']->get13());
+        } elseif (isset($ids['uuid'])) {
+            return $this->getCachePath($this->size, 'UUID' . $ids['uuid']);
         } elseif (isset($ids['recordid']) && isset($ids['source'])) {
             return $this->getCachePath(
                 $this->size,
@@ -436,6 +453,9 @@ class Loader extends \VuFind\ImageLoader
         if ($this->ismn && $this->ismn->isValid()) {
             $ids['ismn'] = $this->ismn;
         }
+        if ($this->uuid && strlen($this->uuid) > 0) {
+            $ids['uuid'] = $this->uuid;
+        }
         if ($this->recordid && strlen($this->recordid) > 0) {
             $ids['recordid'] = $this->recordid;
         }
@@ -469,7 +489,9 @@ class Loader extends \VuFind\ImageLoader
             $urls = $this->getCoverUrls();
             foreach ($urls as $url) {
                 $success = $this->processImageURLForSource(
-                    $url['url'], $url['handler']->isCacheAllowed(), $url['apiName']
+                    $url['url'],
+                    $url['handler']->isCacheAllowed(),
+                    $url['apiName']
                 );
                 if ($success) {
                     return true;

@@ -106,6 +106,13 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $tabManager;
 
     /**
+     * Form
+     *
+     * @var \Finna\Form\Form
+     */
+    protected $form;
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config              $config           VuFind config
@@ -117,6 +124,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param \VuFind\View\Helper\Root\RecordLink $recordLinkHelper Record link
      * helper
      * @param \VuFind\RecordTab\TabManager        $tabManager       Tab manager
+     * @param \Finna\Form\Form                    $form             Form
      */
     public function __construct(
         \Laminas\Config\Config $config,
@@ -125,7 +133,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         \Finna\Search\Solr\AuthorityHelper $authorityHelper,
         \VuFind\View\Helper\Root\Url $urlHelper,
         \VuFind\View\Helper\Root\RecordLink $recordLinkHelper,
-        \VuFind\RecordTab\TabManager $tabManager
+        \VuFind\RecordTab\TabManager $tabManager,
+        \Finna\Form\Form $form
     ) {
         parent::__construct($config);
         $this->loader = $loader;
@@ -134,6 +143,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $this->urlHelper = $urlHelper;
         $this->recordLinkHelper = $recordLinkHelper;
         $this->tabManager = $tabManager;
+        $this->form = $form;
     }
 
     /**
@@ -197,6 +207,63 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Is repository library request form enabled for this record.
+     *
+     * @param string $context Context
+     *
+     * @return bool
+     */
+    public function repositoryLibraryRequestEnabled(string $context = '') : bool
+    {
+        if (!isset($this->config->Record->repository_library_request_sources)) {
+            return false;
+        }
+        $enabled = in_array(
+            $this->driver->tryMethod('getDataSource'),
+            $this->config->Record->repository_library_request_sources->toArray()
+        ) && $this->getRepositoryLibraryRequestFormId();
+
+        if (!$enabled) {
+            return false;
+        }
+        if (!$context) {
+            // Context not specified, check for any:
+            foreach (['holdings', 'organisation_info', 'results'] as $ctx) {
+                $setting = "repository_library_request_in_$ctx";
+                if ($this->config->Record->$setting ?? false) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        $setting = "repository_library_request_in_$context";
+        return $this->config->Record->$setting ?? false;
+    }
+
+    /**
+     * Get repository library request form id.
+     *
+     * @return string|null
+     */
+    public function getRepositoryLibraryRequestFormId()
+    {
+        $formId = $this->config->Record->repository_library_request_form ?? null;
+        if ($formId) {
+            try {
+                if ($this->form->getFormId() !== $formId) {
+                    $this->form->setFormId($formId);
+                }
+                if (!$this->form->isEnabled()) {
+                    $formId = null;
+                }
+            } catch (\VuFind\Exception\RecordMissing $e) {
+                $formId = null;
+            }
+        }
+        return $formId;
+    }
+
+    /**
      * Return record driver
      *
      * @return \VuFind\RecordDriver\AbstractBase
@@ -247,7 +314,10 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @return string
      */
     public function getLink(
-        $type, $lookfor, $params = [], $withInfo = false,
+        $type,
+        $lookfor,
+        $params = [],
+        $withInfo = false,
         $searchTabsFilters = true
     ) {
         if (is_array($lookfor)) {
@@ -263,7 +333,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (isset($params['id'])) {
             // Add namespace to id
             $authId = $params['id'] = $this->driver->getAuthorityId(
-                $params['id'], $type
+                $params['id'],
+                $type
             );
         }
 
@@ -289,7 +360,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             ]
         );
         $result = $this->renderTemplate(
-            'link-' . $type . '.phtml', $params
+            'link-' . $type . '.phtml',
+            $params
         );
 
         if ($searchTabsFilters) {
@@ -341,7 +413,10 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @return string HTML
      */
     public function getAuthorityLinkElement(
-        $type, $lookfor, $data, $params = []
+        $type,
+        $lookfor,
+        $data,
+        $params = []
     ) {
         $id = $data['id'] ?? null;
         $linkType = $this->getAuthorityLinkType($type);
@@ -350,7 +425,10 @@ class Record extends \VuFind\View\Helper\Root\Record
         $preserveSearchTabsFilters = $linkType !== AuthorityHelper::LINK_TYPE_PAGE;
 
         [$escapedUrl, $urlType] = $this->getLink(
-            $type, $lookfor, $params + compact('id', 'linkType'), true,
+            $type,
+            $lookfor,
+            $params + compact('id', 'linkType'),
+            true,
             $preserveSearchTabsFilters
         );
 
@@ -524,7 +602,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             $context['formAttr'] = $formAttr;
         }
         return $this->contextHelper->renderInContext(
-            'record/checkbox.phtml', $context
+            'record/checkbox.phtml',
+            $context
         );
     }
 
@@ -557,8 +636,13 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getImagePopupZoom()
     {
-        return isset($this->config->Content->enableImagePopupZoom)
-            && $this->config->Content->enableImagePopupZoom === '1';
+        if (!($this->config->Content->enableImagePopupZoom ?? false)) {
+            return false;
+        }
+        return in_array(
+            $this->driver->tryMethod('getRecordFormat'),
+            explode(':', $this->config->Content->zoomFormats ?? '')
+        );
     }
 
     /**
@@ -800,7 +884,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param array $urls Array of rendered URLs
      *
-     * @return array
+     * @return void
      */
     public function setRenderedUrls($urls)
     {
@@ -897,10 +981,14 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $id = $this->driver->getUniqueID();
         $authorCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id, AuthorityHelper::AUTHOR2_ID_FACET, true
+            $id,
+            AuthorityHelper::AUTHOR2_ID_FACET,
+            true
         );
         $topicCnt = $this->authorityHelper->getRecordsByAuthorityId(
-            $id, AuthorityHelper::TOPIC_ID_FACET, true
+            $id,
+            AuthorityHelper::TOPIC_ID_FACET,
+            true
         );
 
         $tabs = array_keys($this->tabManager->getTabsForRecord($this->driver));
@@ -910,7 +998,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'cnt' => $authorCnt,
                 'tabUrl' => in_array('AuthorityRecordsAuthor', $tabs)
                     ? $this->recordLinkHelper->getTabUrl(
-                        $this->driver, 'AuthorityRecordsAuthor'
+                        $this->driver,
+                        'AuthorityRecordsAuthor'
                     )
                     : null
             ],
@@ -918,7 +1007,8 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'cnt' => $topicCnt,
                 'tabUrl' => in_array('AuthorityRecordsTopic', $tabs)
                     ? $this->recordLinkHelper->getTabUrl(
-                        $this->driver, 'AuthorityRecordsTopic'
+                        $this->driver,
+                        'AuthorityRecordsTopic'
                     )
                     : null
             ]
@@ -995,8 +1085,98 @@ class Record extends \VuFind\View\Helper\Root\Record
         } catch (\Laminas\View\Exception\RuntimeException $e) {
             // Data source specific template does not exist.
             return $this->renderTemplate(
-                'external-rating-link.phtml', ['externalRatingLink' => $url]
+                'external-rating-link.phtml',
+                ['externalRatingLink' => $url]
             );
         }
+    }
+
+    /**
+     * Returns a translated copyright text.
+     *
+     * @param string $copyright Copyright
+     *
+     * @return string
+     */
+    public function translateCopyright(string $copyright) : string
+    {
+        $transEsc = $this->getView()->plugin('transEsc');
+
+        $label = $transEsc($copyright);
+        if ($copyright === 'Luvanvarainen käyttö / ei tiedossa') {
+            $label = $transEsc('usage_F');
+        } else {
+            $translationEmpty = $this->getView()->plugin('translationEmpty');
+            if (!$translationEmpty("rightsstatement_$copyright")) {
+                $label = $transEsc("rightsstatement_$copyright");
+            }
+        }
+        return $label;
+    }
+
+    /**
+     * Check if large image layout should be used for the record
+     *
+     * @return bool
+     */
+    public function hasLargeImageLayout(): bool
+    {
+        $language = $this->getView()->layout()->userLang;
+
+        $imageTypes = ['small', 'medium', 'large', 'master'];
+        $images = $this->getAllImages($language, false, false, false);
+        $hasValidImages = false;
+        foreach ($images as $image) {
+            if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {
+                $hasValidImages = true;
+                break;
+            }
+        }
+        if (!$hasValidImages) {
+            return false;
+        }
+
+        // Check for record formats that always use large image layout:
+        $largeImageRecordFormats
+            = isset($this->config->Record->large_image_record_formats)
+            ? $this->config->Record->large_image_record_formats->toArray()
+            : ['lido', 'forward', 'forwardAuthority'];
+        $recordFormat = $this->driver->tryMethod('getRecordFormat');
+        if (in_array($recordFormat, $largeImageRecordFormats)) {
+            return true;
+        }
+
+        // Check for formats that use large image layout:
+        $largeImageFormats
+            = isset($this->config->Record->large_image_formats)
+            ? $this->config->Record->large_image_formats->toArray()
+            : [
+                '0/Image/',
+                '0/PhysicalObject/',
+                '0/WorkOfArt/',
+                '0/Video/',
+            ];
+        $formats = $this->driver->tryMethod('getFormats');
+        if (array_intersect($formats, $largeImageFormats)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the organisation menu position for the record
+     *
+     * @return string|false 'sidebar', 'inline' or false for no menu
+     */
+    public function getOrganisationMenuPosition()
+    {
+        $localSources = ['Solr', 'SolrAuth', 'L1', 'R2'];
+        $source = $this->driver->getSourceIdentifier();
+        if (!in_array($source, $localSources)) {
+            return false;
+        }
+        return ('SolrAuth' === $source || $this->hasLargeImageLayout())
+            ? 'inline' : 'sidebar';
     }
 }

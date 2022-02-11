@@ -21,6 +21,11 @@
           'image' => 'kavi.jpg',
         ],
         [
+          'name' => '0/KAVI/',
+          'domain' => 'kavi.finna.fi/elavamuisti',
+          'image' => 'elavamuisti.jpg',
+        ],
+        [
           'name' => '0/SLS/',
           'domain' => 'sls.finna.fi',
           'image' => 'sls.jpg',
@@ -88,14 +93,19 @@
           'image' => 'joka.jpg'
         ],
         [
-          'name' => '0/Suomen kansallismuseo/',
-          'domain' => 'suomenkansallismuseo.finna.fi',
-          'image' => 'kansallismuseo.jpg'
+          'name' => '0/JTM/',
+          'domain' => 'jyvaskylantaidemuseo.finna.fi/maisema_ymparisto_luonnos',
+          'image' => 'maisemaymparistoluonnos.jpg'
         ],
         [
           'name' => '0/KERAVAMUSEO/',
           'domain' => 'muistaja.finna.fi/keravan_museopalvelut',
           'image' => 'keravanmuseopalvelut.jpg'
+        ],
+        [
+          'name' => '0/KSM/',
+          'domain' => 'keskisuomenmuseo.finna.fi',
+          'image' => 'ksm.jpg'
         ],
         [
           'name' => '0/KHRM/',
@@ -106,6 +116,16 @@
           'name' => '0/LPRMUSEOT/',
           'domain' => 'lappeenrannanmuseot.finna.fi',
           'image' => 'lappeenrannanmuseot.jpg'
+        ],
+        [
+          'name' => '0/loviisankaupunginmuseo/',
+          'domain' => 'loviisankaupunginmuseo.finna.fi',
+          'image' => 'loviisankaupunginmuseo.jpg'
+        ],
+        [
+          'name' => '0/ITE/',
+          'domain' => 'maaseudunsivistysliitto.finna.fi',
+          'image' => 'ite.jpg'
         ],
         [
           'name' => 'Museums',
@@ -148,6 +168,11 @@
           'image' => 'ilmailumuseo.jpg'
         ],
         [
+          'name' => '0/Suomen kansallismuseo/',
+          'domain' => 'suomenkansallismuseo.finna.fi',
+          'image' => 'kansallismuseo.jpg'
+        ],
+        [
           'name' => '0/KELLOMUSEO/',
           'domain' => 'kellomuseo.finna.fi',
           'image' => 'kellomuseo.jpg'
@@ -186,6 +211,16 @@
           'name' => '0/VARKAUDENMUSEOT/',
           'domain' => 'piipunjuurella.finna.fi',
           'image' => 'piipunjuurella.jpg'
+        ],
+        [
+          'name' => '0/VillaGyllenberg/',
+          'domain' => 'villagyllenberg.finna.fi',
+          'image' => 'villagyllenberg.jpg'
+        ],
+        [
+          'name' => '0/AboAkademi/',
+          'domain' => 'saa.finna.fi',
+          'image' => 'saa.jpg'
         ],
       ]
     ],
@@ -260,7 +295,7 @@
         ],
         [
           'name' => '0/OAMK/',
-          'domain' => 'oamk.finna.fi',
+          'domain' => 'oy.finna.fi/oamk',
           'image' => 'oamk.jpg'
         ],
         [
@@ -308,6 +343,11 @@
           'name' => '0/FINLIT/',
           'domain' => 'finlit.finna.fi',
           'image' => 'finlit.jpg'
+        ],
+        [
+          'name' => '0/CUTE/',
+          'domain' => 'cute.finna.fi',
+          'image' => 'cute.jpg'
         ],
         [
           'name' => '0/STAT/',
@@ -437,6 +477,16 @@
           'image' => 'outi.jpg'
         ],
         [
+          'name' => '0/Piki/',
+          'domain' => 'piki.finna.fi',
+          'image' => 'piki.jpg'
+        ],
+        [
+          'name' => '0/Ratamo/',
+          'domain' => 'ratamo.finna.fi',
+          'image' => 'ratamo.jpg'
+        ],
+        [
           'name' => '0/Satakirjastot/',
           'domain' => 'satakirjastot.finna.fi',
           'image' => 'satakirjastot.jpg'
@@ -465,6 +515,11 @@
           'name' => '0/Vaasankirjasto/',
           'domain' => 'vaasankirjasto.finna.fi',
           'image' => 'vaasa.jpg'
+        ],
+        [
+          'name' => '0/Vanamo/',
+          'domain' => 'vanamo.finna.fi',
+          'image' => 'vanamo.jpg'
         ],
         [
           'name' => '0/Vaski/',
@@ -541,6 +596,29 @@
 <?php foreach ($groups as $group): ?>
   <div class="organisation-list-group">
     <h4 id="<?=$this->escapeHtmlAttr($group['id'])?>"><?=$this->transEsc($group['heading'])?></h4>
+
+    <?php
+      // Sort by translated name:
+      $collator = \Collator::create($this->layout()->userLang);
+      usort(
+          $group['items'],
+          function ($a, $b) use ($collator) {
+              $aName = $this->translate($a['name']);
+              $bName = $this->translate($b['name']);
+              if (strncmp($aName, 'The ', 4) === 0) {
+                  $aName = substr($aName, 4);
+              }
+              if (strncmp($bName, 'The ', 4) === 0) {
+                  $bName = substr($bName, 4);
+              }
+              return $collator->compare(
+                  $aName,
+                  $bName
+              );
+          }
+      );
+    ?>
+
     <div class="organisation-list-inner-row">
       <?php foreach ($group['items'] as $current): ?>
         <div class="organisation-list-item">

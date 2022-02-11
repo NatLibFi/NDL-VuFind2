@@ -102,6 +102,13 @@ class Params extends \VuFind\Search\Base\Params
     protected $facetHelper;
 
     /**
+     * Are we searching by ID only (instead of a normal query)?
+     *
+     * @var bool
+     */
+    protected $searchingById = false;
+
+    /**
      * Config sections to search for facet labels if no override configuration
      * is set.
      *
@@ -125,7 +132,9 @@ class Params extends \VuFind\Search\Base\Params
      * @param \VuFind\Config\PluginManager $configLoader Config loader
      * @param HierarchicalFacetHelper      $facetHelper  Hierarchical facet helper
      */
-    public function __construct($options, \VuFind\Config\PluginManager $configLoader,
+    public function __construct(
+        $options,
+        \VuFind\Config\PluginManager $configLoader,
         HierarchicalFacetHelper $facetHelper = null
     ) {
         parent::__construct($options, $configLoader);
@@ -425,6 +434,7 @@ class Params extends \VuFind\Search\Base\Params
             return '"' . addcslashes($i, '"') . '"';
         };
         $ids = array_map($callback, $ids);
+        $this->searchingById = true;
         $this->setOverrideQuery('id:(' . implode(' OR ', $ids) . ')');
     }
 
@@ -491,7 +501,8 @@ class Params extends \VuFind\Search\Base\Params
 
         // Spellcheck
         $backendParams->set(
-            'spellcheck', $this->getOptions()->spellcheckEnabled() ? 'true' : 'false'
+            'spellcheck',
+            $this->getOptions()->spellcheckEnabled() ? 'true' : 'false'
         );
 
         // Facets
@@ -538,7 +549,7 @@ class Params extends \VuFind\Search\Base\Params
             $sortFields = explode(',', $sort);
             $allTerms = trim($this->getQuery()->getAllTerms());
             if ('relevance' === $sortFields[0]
-                && ('' === $allTerms || '*:*' === $allTerms)
+                && ('' === $allTerms || '*:*' === $allTerms || $this->searchingById)
                 && ($relOv = $this->getOptions()->getEmptySearchRelevanceOverride())
             ) {
                 $sort = $relOv;
@@ -596,7 +607,10 @@ class Params extends \VuFind\Search\Base\Params
     protected function formatFilterListEntry($field, $value, $operator, $translate)
     {
         $filter = parent::formatFilterListEntry(
-            $field, $value, $operator, $translate
+            $field,
+            $value,
+            $operator,
+            $translate
         );
 
         $hierarchicalFacets = $this->getOptions()->getHierarchicalFacets();

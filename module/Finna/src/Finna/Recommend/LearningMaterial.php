@@ -50,14 +50,14 @@ class LearningMaterial implements RecommendInterface
      *
      * @var string
      */
-    const LEARNING_MATERIAL_FILTER_VALUE = 'LearningMaterial';
+    public const LEARNING_MATERIAL_FILTER_VALUE = 'LearningMaterial';
 
     /**
      * Array of filter fields checked for the the learning material value.
      *
      * @var array
      */
-    const LEARNING_MATERIAL_FILTER_FIELDS = [
+    public const LEARNING_MATERIAL_FILTER_FIELDS = [
         'format',
         'format_ext_str_mv'
     ];

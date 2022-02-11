@@ -203,7 +203,12 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         $failed = $this->transactionTable->getFailedTransactions($minimumPaidAge);
         foreach ($failed as $t) {
             $this->processTransaction(
-                $t, $report, $registeredCnt, $expiredCnt, $failedCnt, $user
+                $t,
+                $report,
+                $registeredCnt,
+                $expiredCnt,
+                $failedCnt,
+                $user
             );
         }
 
@@ -245,10 +250,15 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
      * @param int         $failedCnt     Number of failed transactions.
      * @param User        $user          User object.
      *
-     * @return boolean success
+     * @return bool success
      */
     protected function processTransaction(
-        $t, &$report, &$registeredCnt, &$expiredCnt, &$failedCnt, &$user
+        $t,
+        &$report,
+        &$registeredCnt,
+        &$expiredCnt,
+        &$failedCnt,
+        &$user
     ) {
         $this->msg(
             "  Registering transaction id {$t->id} / {$t->transaction_id}"
@@ -304,7 +314,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                         $cardUser->cat_username = $card['cat_username'];
                         $cardUser->cat_pass_enc = $card['cat_pass_enc'];
                         $patron = $this->catalog->patronLogin(
-                            $card['cat_username'], $cardUser->getCatPassword()
+                            $card['cat_username'],
+                            $cardUser->getCatPassword()
                         );
 
                         if ($patron) {
@@ -332,7 +343,10 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
 
             try {
                 $this->catalog->markFeesAsPaid(
-                    $patron, $t->amount, $t->transaction_id, $t->id
+                    $patron,
+                    $t->amount,
+                    $t->transaction_id,
+                    $t->id
                 );
                 $result = $this->transactionTable->setTransactionRegistered(
                     $t->transaction_id
@@ -358,7 +372,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 $this->logException($e);
 
                 $result = $this->transactionTable->setTransactionRegistrationFailed(
-                    $t->transaction_id, $e->getMessage()
+                    $t->transaction_id,
+                    $e->getMessage()
                 );
                 if (!$result) {
                     $this->err(
@@ -371,6 +386,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 return false;
             }
         }
+
+        return true;
     }
 
     /**
@@ -416,7 +433,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         foreach ($report as $driver => $cnt) {
             if ($cnt) {
                 $settings = $this->catalog->getConfig(
-                    'onlinePayment', ['id' => "$driver.123"]
+                    'onlinePayment',
+                    ['id' => "$driver.123"]
                 );
                 if (!$settings || !isset($settings['errorEmail'])) {
                     if (!empty($this->datasourceConfig[$driver]['feedbackEmail'])) {
@@ -456,7 +474,10 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                 try {
                     $this->mailer->setMaxRecipients(0);
                     $this->mailer->send(
-                        $email, $this->fromEmail, $messageSubject, $message
+                        $email,
+                        $this->fromEmail,
+                        $messageSubject,
+                        $message
                     );
                 } catch (\Exception $e) {
                     $this->err(

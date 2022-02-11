@@ -109,7 +109,7 @@ class AddUsingTemplateCommand extends AbstractCommand
             if (!$sourceDir) {
                 return 1;
             }
-            $sourceCallback = function ($full) use ($domain, & $tokens) {
+            $sourceCallback = function ($full) use (& $tokens) {
                 $strings = $this->reader->getTextDomain($full, false);
                 foreach ($tokens as & $current) {
                     $sourceKey = $current['key'];
@@ -124,7 +124,10 @@ class AddUsingTemplateCommand extends AbstractCommand
 
         // Fill in template, write results:
         $targetCallback = function ($full) use (
-            $output, $template, $targetKey, $lookups
+            $output,
+            $template,
+            $targetKey,
+            $lookups
         ) {
             $lang = basename($full);
             $in = $out = [];
@@ -139,7 +142,9 @@ class AddUsingTemplateCommand extends AbstractCommand
                 }
             }
             $this->addLineToFile(
-                $full, $targetKey, str_replace($in, $out, $template)
+                $full,
+                $targetKey,
+                str_replace($in, $out, $template)
             );
             $this->normalizer->normalizeFile($full);
         };

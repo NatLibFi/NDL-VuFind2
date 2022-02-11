@@ -58,15 +58,17 @@ class SafeMoneyFormatFactory implements FactoryInterface
      * creating a service.
      * @throws ContainerException&\Throwable if any other error occurs
      */
-    public function __invoke(ContainerInterface $container, $requestedName,
+    public function __invoke(
+        ContainerInterface $container,
+        $requestedName,
         array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
-        $defaultCurrency = $config->Site->defaultCurrency ?? null;
-        return new $requestedName($defaultCurrency);
+        return new $requestedName(
+            $container->get(\VuFind\Service\CurrencyFormatter::class),
+            $container->get('ViewHelperManager')->get('escapeHtml')
+        );
     }
 }

@@ -211,8 +211,10 @@ class Initializer
         $selectedUI = null;
         if (isset($request)) {
             $selectedUI = $request->getPost()->get(
-                'ui', $request->getQuery()->get(
-                    'ui', $request->getCookie()->ui ?? null
+                'ui',
+                $request->getQuery()->get(
+                    'ui',
+                    $request->getCookie()->ui ?? null
                 )
             );
         }
@@ -339,6 +341,17 @@ class Initializer
             }
         }
 
+        // Determine doctype and apply it:
+        $doctype = 'HTML5';
+        foreach ($themes as $key => $currentThemeInfo) {
+            if (isset($currentThemeInfo['doctype'])) {
+                $doctype = $currentThemeInfo['doctype'];
+                break;
+            }
+        }
+        $loader = $this->serviceManager->get('ViewHelperManager');
+        ($loader->get('doctype'))($doctype);
+
         // Apply the loaded theme settings in reverse for proper inheritance:
         foreach ($themes as $key => $currentThemeInfo) {
             if (isset($currentThemeInfo['helpers'])) {
@@ -372,7 +385,7 @@ class Initializer
 
         // Inject the path stack generated above into the resolver:
         $resolver = $this->serviceManager->get(TemplatePathStack::class);
-        $resolver->setPaths($templatePathStack);
+        $resolver->addPaths($templatePathStack);
 
         // Add theme specific language files for translation
         $this->updateTranslator($themes);

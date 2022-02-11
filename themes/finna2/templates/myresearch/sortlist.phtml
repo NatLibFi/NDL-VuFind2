@@ -1,6 +1,5 @@
 <!-- START of: finna - myresearch/sortlist.phtml -->
 <?php
-  $this->headScript()->appendFile('vendor/jquery-ui-custom.min.js');
   $this->headScript()->appendFile('finna-mylist.js');
   $list = $this->results->getListObject();
   $user = $this->auth()->isLoggedIn();
@@ -16,16 +15,15 @@
 <h2><?=$this->transEsc('Sort manually') ?></h2>
 
 <?=$this->flashmessages()?>
-<form method="post" id="sort_form" name="sortForm" data-lightbox-onclose="finna.myList.onCustomOrderSaved">
-  <input type="hidden" name="user_id" value="<?=$user->id ?>">
-  <input type="hidden" name="list_id" value="<?=$list->id ?>">
-  <input type="hidden" name="list_url" value="<?= $this->url('userList', ['id' => $list->id])?>">
+<form method="post" id="sort_form" name="sortForm">
+  <input type="hidden" name="user_id" value="<?=$this->escapeHtmlAttr($user->id) ?>">
+  <input type="hidden" name="list_id" value="<?=$this->escapeHtmlAttr($list->id) ?>">
   <input type="hidden" id="orderedList" name="orderedList" value="">
 
   <div>
     <div class="own-favorite-list-button-area">
-      <input id="save_order_btn" name="saveOrdering" type="submit" value="<?=$this->transEsc('Save Order') ?>" class="btn btn-primary">
-      <input id="cancel_order_btn" name="cancelOrdering" type="submit" data-dismiss="modal" value="<?=$this->transEsc('Reset') ?>" class="btn btn-primary" />
+      <input id="save_order_btn" name="saveOrdering" type="submit" value="<?=$this->transEscAttr('Save Order') ?>" class="btn btn-primary">
+      <input id="cancel_order_btn" name="cancelOrdering" type="submit" data-dismiss="modal" value="<?=$this->transEscAttr('Reset') ?>" class="btn btn-primary" />
     </div>
     <div class="clearfix"></div>
   </div>
@@ -39,10 +37,10 @@
 <?php
 $script = <<<EOT
 if ($.isReady) {
-  finna.myList.initFavoriteOrderingFunctionality('{$this->listUrl}');
+  finna.myList.initFavoriteOrderingFunctionality();
 } else {
   $(document).ready(function(){
-    finna.myList.initFavoriteOrderingFunctionality('{$this->listUrl}');
+    finna.myList.initFavoriteOrderingFunctionality();
   });
 }
 EOT;

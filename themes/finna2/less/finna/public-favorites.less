@@ -3,6 +3,9 @@
 .public-list-embed {
     .public-list-desc {
         word-wrap: break-word;
+    }
+
+    .public-list-desc, .notes {
         ul, ol {
             margin-left: 25px;
         }
@@ -18,12 +21,11 @@
         margin: 10px 0;
     }
 
-    .public-list-view {
-        margin-top: 20px;
-    }
-
     .public-list-info {
         color: @gray-light;
+    }
+    .public-list-view {
+        margin-top: 20px;
     }
 
     .notes {
@@ -32,7 +34,7 @@
         .heading {
             font-weight: bold;
         }
-        p.note-heading {
+        .note-heading p {
             margin: 0;
             text-transform: uppercase;
             font-size: 0.9em;
@@ -40,8 +42,11 @@
                 padding-right: 2px;
             }
         }
-        p.note-rows {
+        .note-rows p {
             margin-top: 3px;
+        }
+        .note-rows span {
+            margin-left: 5px;
         }
     }
 
@@ -57,8 +62,7 @@
         align-items: center;
         align-self: flex-end;
         >i {
-            margin-right: 2px;
-            margin-left: 2px;
+            margin-right: 4px;
         }
         &.note-show {
             >.caret {
@@ -76,6 +80,15 @@
     .condensed-notes {
         width: 100%;
     }
+
+    .note-overlay-list {
+        .notes {
+            .note-rows p{
+                margin-top: 10px;
+            }
+        }
+    }
+
     .note-overlay-condensed {
         color: #121212;
         overflow-x: hidden;
@@ -117,5 +130,8 @@
         &.note-show {
             display: block;
         }
+    }
+    .finna-panel {
+        margin-bottom: 12px;
     }
 }

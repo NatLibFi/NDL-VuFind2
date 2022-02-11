@@ -69,14 +69,16 @@ trait LiveDatabaseTrait
                 . '/module/VuFind/config/module.config.php';
             $container = new \VuFindTest\Container\MockContainer($this);
             $configManager = new \VuFind\Config\PluginManager(
-                $container, $config['vufind']['config_reader']
+                $container,
+                $config['vufind']['config_reader']
             );
             $container->set(\VuFind\Config\PluginManager::class, $configManager);
             $adapterFactory = new \VuFind\Db\AdapterFactory(
                 $configManager->get('config')
             );
             $container->set(
-                \Laminas\Db\Adapter\Adapter::class, $adapterFactory->getAdapter()
+                \Laminas\Db\Adapter\Adapter::class,
+                $adapterFactory->getAdapter()
             );
             $container->set(\VuFind\Tags::class, new \VuFind\Tags());
             $container->set('config', $config);
@@ -85,10 +87,12 @@ trait LiveDatabaseTrait
                 new \VuFind\Db\Row\PluginManager($container, [])
             );
             $this->liveTableManager = new \VuFind\Db\Table\PluginManager(
-                $container, []
+                $container,
+                []
             );
             $container->set(
-                \VuFind\Db\Table\PluginManager::class, $this->liveTableManager
+                \VuFind\Db\Table\PluginManager::class,
+                $this->liveTableManager
             );
         }
         return $this->liveTableManager;
@@ -118,7 +122,7 @@ trait LiveDatabaseTrait
         // Fail if the test does not include the LiveDetectionTrait.
         if (!$test->hasLiveDetectionTrait ?? false) {
             self::fail(
-                'Test requires LiveDatabaseTrait, but it is not used.'
+                'Test requires LiveDetectionTrait, but it is not used.'
             );
         }
         // If CI is not running, all tests were skipped, so no work is necessary:
@@ -152,7 +156,7 @@ trait LiveDatabaseTrait
         // Fail if the test does not include the LiveDetectionTrait.
         if (!$test->hasLiveDetectionTrait ?? false) {
             self::fail(
-                'Test requires LiveDatabaseTrait, but it is not used.'
+                'Test requires LiveDetectionTrait, but it is not used.'
             );
         }
         // If CI is not running, all tests were skipped, so no work is necessary:

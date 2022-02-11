@@ -67,7 +67,12 @@ class LocationServiceController extends \VuFind\Controller\AbstractBase
             ->get(\Laminas\Mvc\I18n\Translator::class)->getLocale();
 
         $config = $locationService->getConfig(
-            $source, $title, $callnumber, $collection, $location, $language
+            $source,
+            $title,
+            $callnumber,
+            $collection,
+            $location,
+            $language
         );
         if ($config) {
             $view = $this->createViewModel();

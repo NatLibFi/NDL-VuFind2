@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2020.
+ * Copyright (C) The National Library of Finland 2017-2021.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@ namespace Finna\ILS\Driver;
 
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
+use VuFind\Marc\MarcReader;
 
 /**
  * VuFind Driver for Koha, using REST API
@@ -50,7 +51,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected $messagingPrefTypeMap = [
         'Advance_Notice' => 'dueDateAlert',
+        'Auto_Renewals' => 'autoRenewal',
         'Hold_Filled' => 'pickUpNotice',
+        'Hold_Reminder' => 'pickUpReminder',
         'Item_Check_in' => 'checkinNotice',
         'Item_Checkout' => 'checkoutNotice',
         'Item_Due' => 'dueDateNotice'
@@ -110,7 +113,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         if (isset($this->config['Holdings']['holdings_branch_order'])) {
             $values = explode(
-                ':', $this->config['Holdings']['holdings_branch_order']
+                ':',
+                $this->config['Holdings']['holdings_branch_order']
             );
             foreach ($values as $i => $value) {
                 $parts = explode('=', $value, 2);
@@ -280,6 +284,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         if ($this->config['Profile']['messagingSettings'] ?? true) {
             foreach ($result['messaging_preferences'] as $type => $prefs) {
                 $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
+                if (!$typeName) {
+                    continue;
+                }
                 $settings = [
                     'type' => $typeName
                 ];
@@ -654,7 +661,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @throws ILSException
      * @return boolean success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $request = [
@@ -809,7 +819,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $bibId = $holdDetails['id'] ?? null;
         $itemId = $holdDetails['item_id'] ?? false;
-        $requestId = $holdDetails['requestId'] ?? false;
+        $requestId = $holdDetails['reqnum'] ?? false;
         $requestType
             = array_key_exists('StorageRetrievalRequest', $holdDetails ?? [])
                 ? 'StorageRetrievalRequests' : 'Holds';
@@ -1165,12 +1175,18 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $entry = $this->createSerialEntry($subscription, $i);
 
                     foreach ($statuses as &$status) {
-                        if ($status['location'] === $entry['location']) {
+                        if ($status['callnumber'] === $entry['callnumber']
+                            && $status['location'] === $entry['location']
+                        ) {
                             $status['purchase_history'] = $issues;
-                            continue 2;
+                            $entry = null;
+                            break;
                         }
                     }
                     unset($status);
+                    if (null === $entry) {
+                        continue;
+                    }
                     $entry['purchase_history'] = $issues;
                     $statuses[] = $entry;
                 }
@@ -1192,24 +1208,24 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 $notes = [];
                 if ($fields = $marc->getFields('852')) {
                     foreach ($fields as $field) {
-                        if ($subfield = $field->getSubfield('z')) {
-                            $notes[] = $subfield->getData();
+                        if ($subfield = $marc->getSubfield($field, 'z')) {
+                            $notes[] = $subfield;
                         }
                     }
                 }
                 if ($fields = $marc->getFields('856')) {
                     foreach ($fields as $field) {
-                        if ($subfields = $field->getSubfields()) {
+                        if ($subfields = $field['subfields'] ?? []) {
                             $urls = [];
                             $desc = [];
                             $parts = [];
-                            foreach ($subfields as $code => $subfield) {
-                                if ('u' === $code) {
-                                    $urls[] = $subfield->getData();
-                                } elseif ('3' === $code) {
-                                    $parts[] = $subfield->getData();
-                                } elseif (in_array($code, ['y', 'z'])) {
-                                    $desc[] = $subfield->getData();
+                            foreach ($subfields as $subfield) {
+                                if ('u' === $subfield['code']) {
+                                    $urls[] = $subfield['data'];
+                                } elseif ('3' === $subfield['code']) {
+                                    $parts[] = $subfield['data'];
+                                } elseif (in_array($subfield['code'], ['y', 'z'])) {
+                                    $desc[] = $subfield['data'];
                                 }
                             }
                             foreach ($urls as $url) {
@@ -1364,16 +1380,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     protected function createHoldingsEntry($id, $holdings, $sortKey)
     {
         $location = $this->getLibraryName($holdings['holding_library_id']);
-        $callnumber = '';
-        if (!empty($holdings['collection_code'])
-            && !empty($this->config['Holdings']['display_ccode'])
-        ) {
-            $callnumber = $this->translateCollection(
-                $holdings['collection_code'],
-                $holdings['collection_code_description']
-                ?? $holdings['collection_code']
-            );
-        }
 
         if ($this->groupHoldingsByLocation) {
             $holdingLoc = $this->translateLocation(
@@ -1387,21 +1393,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 }
                 $location .= $holdingLoc;
             }
-        } else {
-            if ($callnumber) {
-                $callnumber .= ', ';
-            }
-            $callnumber .= $this->translateLocation(
-                $holdings['location'],
-                !empty($holdings['location_description'])
-                    ? $holdings['location_description']
-                    : $holdings['location']
-            );
         }
-        if ($holdings['callnumber']) {
-            $callnumber .= ' ' . $holdings['callnumber'];
-        }
-        $callnumber = trim($callnumber);
+
+        $callnumber = $this->getItemCallNumber($holdings);
         $libraryId = $holdings['holding_library_id'];
         $locationId = $holdings['location'];
 
@@ -1492,8 +1486,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         ) {
             $result[] = $item['callnumber'];
         }
-        $str = implode(', ', $result);
-        return $str;
+        return implode(', ', $result);
     }
 
     /**
@@ -1501,7 +1494,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      *
      * @param array $holding Holding
      *
-     * @return \File_MARCXML
+     * @return MarcReader
      */
     protected function getHoldingMarc(&$holding)
     {
@@ -1512,11 +1505,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 if ('marcxml' === $metadata['format']
                     && 'MARC21' === $metadata['schema']
                 ) {
-                    $marc = new \File_MARCXML(
-                        $metadata['metadata'],
-                        \File_MARCXML::SOURCE_STRING
-                    );
-                    $holding['_marcRecord'] = $marc->next();
+                    $holding['_marcRecord'] = new MarcReader($metadata['metadata']);
                     return $holding['_marcRecord'];
                 }
             }
@@ -1605,14 +1594,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     /**
      * Get specified fields from a MARC Record
      *
-     * @param object       $record     File_MARC object
+     * @param MarcReader   $record     Marc reader
      * @param array|string $fieldSpecs Array or colon-separated list of
      * field/subfield specifications (3 chars for field code and then subfields,
      * e.g. 866az)
      *
      * @return string|array Results as a string if single, array if multiple
      */
-    protected function getMARCData($record, $fieldSpecs)
+    protected function getMARCData(MarcReader $record, $fieldSpecs)
     {
         if (!is_array($fieldSpecs)) {
             $fieldSpecs = explode(':', $fieldSpecs);
@@ -1623,16 +1612,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $subfieldCodes = substr($fieldSpec, 3);
             if ($fields = $record->getFields($fieldCode)) {
                 foreach ($fields as $field) {
-                    if ($subfields = $field->getSubfields()) {
+                    if ($subfields = $field['subfields'] ?? []) {
                         $line = '';
-                        foreach ($subfields as $code => $subfield) {
-                            if (!strstr($subfieldCodes, $code)) {
+                        foreach ($subfields as $subfield) {
+                            if (!strstr($subfieldCodes, $subfield['code'])) {
                                 continue;
                             }
                             if ($line) {
                                 $line .= ' ';
                             }
-                            $line .= $subfield->getData();
+                            $line .= $subfield['data'];
                         }
                         if ($line) {
                             if (!$results) {
@@ -1660,7 +1649,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     protected function getHoldingsSummary($holdings)
     {
-        $availableTotal = $itemsTotal = $reservationsTotal = 0;
+        $availableTotal = $itemsTotal = 0;
         $requests = 0;
         $locations = [];
 
@@ -1758,10 +1747,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         case 'Patron::Debt':
         case 'Patron::DebtGuarantees':
             $count = isset($details['current_outstanding'])
-                ? $this->safeMoneyFormat->__invoke($details['current_outstanding'])
+                ? $this->formatMoney($details['current_outstanding'])
                 : '-';
             $limit = isset($details['max_outstanding'])
-                ? $this->safeMoneyFormat->__invoke($details['max_outstanding'])
+                ? $this->formatMoney($details['max_outstanding'])
                 : '-';
             $params = [
                 '%%blockCount%%' => $count,
@@ -1858,7 +1847,8 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                     $entry['renewability_blocks']
                 );
                 $permanent = in_array(
-                    $entry['renewability_blocks'], $this->permanentRenewalBlocks
+                    $entry['renewability_blocks'],
+                    $this->permanentRenewalBlocks
                 );
                 if ($permanent) {
                     $renewals = null;

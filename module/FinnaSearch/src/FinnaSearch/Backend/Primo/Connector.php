@@ -226,7 +226,8 @@ class Connector extends \VuFindSearch\Backend\Primo\Connector
 
         // Register the 'sear' namespace at the top level to avoid problems:
         $sxe->registerXPathNamespace(
-            'sear', 'http://www.exlibrisgroup.com/xsd/jaguar/search'
+            'sear',
+            'http://www.exlibrisgroup.com/xsd/jaguar/search'
         );
 
         // Get the available namespaces. The Primo API uses multiple namespaces.

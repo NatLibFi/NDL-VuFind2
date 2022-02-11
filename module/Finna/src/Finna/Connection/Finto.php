@@ -130,7 +130,8 @@ class Finto implements LoggerAwareInterface
 
         // Set Accept header
         $this->client->getRequest()->getHeaders()->addHeaderLine(
-            'Accept', 'application/json'
+            'Accept',
+            'application/json'
         );
     }
 
@@ -160,7 +161,9 @@ class Finto implements LoggerAwareInterface
      * @throws \Exception
      */
     public function search(
-        string $query, ?string $lang = null, ?array $other = null
+        string $query,
+        ?string $lang = null,
+        ?array $other = null
     ): array {
         // Set default values for parameters.
         $params = [
@@ -192,7 +195,10 @@ class Finto implements LoggerAwareInterface
      * @throws \Exception
      */
     public function narrower(
-        string $vocid, string $uri, ?string $lang = null, bool $sort = false
+        string $vocid,
+        string $uri,
+        ?string $lang = null,
+        bool $sort = false
     ): array {
         // Set parameters.
         $params = ['vocid' => $vocid, 'uri' => $uri];
@@ -231,7 +237,9 @@ class Finto implements LoggerAwareInterface
      * @throws \Exception
      */
     public function extendedSearch(
-        string $query, ?string $lang = null, ?array $other = null,
+        string $query,
+        ?string $lang = null,
+        ?array $other = null,
         bool $narrower = true
     ): array {
         // Set up extended results array.
@@ -269,7 +277,10 @@ class Finto implements LoggerAwareInterface
                 // The result is not a non-descriptor so we will make an additional
                 // API call to see if there are narrower concepts.
                 if ($narrowerResults = $this->narrower(
-                    $result['vocab'], $result['uri'], $result['lang'], true
+                    $result['vocab'],
+                    $result['uri'],
+                    $result['lang'],
+                    true
                 )
                 ) {
                     $extendedResults[Finto::RESULT_TYPE] = Finto::TYPE_HYPONYM;
@@ -301,7 +312,9 @@ class Finto implements LoggerAwareInterface
      * @throws \Exception
      */
     protected function makeRequest(
-        array $hierarchy, ?array $params = null, string $method = 'GET'
+        array $hierarchy,
+        ?array $params = null,
+        string $method = 'GET'
     ): array {
         // Set up the request
         $apiUrl = $this->config->get('base_url', 'https://api.finto.fi/rest/v1');

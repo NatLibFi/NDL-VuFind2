@@ -27,7 +27,7 @@
  */
 namespace VuFind\RecordDriver;
 
-use VuFind\View\Helper\Root\RecordLink;
+use VuFind\View\Helper\Root\RecordLinker;
 use VuFindCode\ISBN;
 
 /**
@@ -60,7 +60,9 @@ class DefaultRecord extends AbstractBase
      * @param \Laminas\Config\Config $searchSettings Search-specific configuration
      * file
      */
-    public function __construct($mainConfig = null, $recordConfig = null,
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
         $searchSettings = null
     ) {
         // Turn on highlighting as needed:
@@ -490,7 +492,9 @@ class DefaultRecord extends AbstractBase
         // Create a map of de-highlighted valeus => highlighted values.
         foreach ($this->getRawAuthorHighlights() as $current) {
             $dehighlighted = str_replace(
-                ['{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'], '', $current
+                ['{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'],
+                '',
+                $current
             );
             $highlights[$dehighlighted] = $current;
         }
@@ -1230,11 +1234,15 @@ class DefaultRecord extends AbstractBase
         if ($ismn = $this->getCleanISMN()) {
             $arr['ismn'] = $ismn;
         }
+        if ($uuid = $this->getCleanUuid()) {
+            $arr['uuid'] = $uuid;
+        }
 
         // If an ILS driver has injected extra details, check for IDs in there
         // to fill gaps:
         if ($ilsDetails = $this->getExtraDetail('ils_details')) {
-            foreach (['isbn', 'issn', 'oclc', 'upc', 'nbn', 'ismn'] as $key) {
+            $idTypes = ['isbn', 'issn', 'oclc', 'upc', 'nbn', 'ismn', 'uuid'];
+            foreach ($idTypes as $key) {
                 if (!isset($arr[$key]) && isset($ilsDetails[$key])) {
                     $arr[$key] = $ilsDetails[$key];
                 }
@@ -1305,6 +1313,30 @@ class DefaultRecord extends AbstractBase
     public function getUPC()
     {
         return (array)($this->fields['upc_str_mv'] ?? []);
+    }
+
+    /**
+     * Get UUIDs (Universally unique identifier). These are commonly used in, for
+     * example, digital library or repository systems and can be a useful match
+     * point with third party systems.
+     *
+     * @return array
+     */
+    public function getUuids()
+    {
+        return (array)($this->fields['uuid_str_mv'] ?? []);
+    }
+
+    /**
+     * Get just the first listed UUID (Universally unique identifier), or false if
+     * none available.
+     *
+     * @return mixed
+     */
+    public function getCleanUuid()
+    {
+        $uuids = $this->getUuids();
+        return empty($uuids) ? false : $uuids[0];
     }
 
     /**
@@ -1422,16 +1454,16 @@ class DefaultRecord extends AbstractBase
      * Return an XML representation of the record using the specified format.
      * Return false if the format is unsupported.
      *
-     * @param string     $format     Name of format to use (corresponds with OAI-PMH
-     * metadataPrefix parameter).
-     * @param string     $baseUrl    Base URL of host containing VuFind (optional;
+     * @param string       $format  Name of format to use (corresponds with
+     * OAI-PMH metadataPrefix parameter).
+     * @param string       $baseUrl Base URL of host containing VuFind (optional;
      * may be used to inject record URLs into XML when appropriate).
-     * @param RecordLink $recordLink Record link helper (optional; may be used to
+     * @param RecordLinker $linker  Record linker helper (optional; may be used to
      * inject record URLs into XML when appropriate).
      *
-     * @return mixed         XML, or false if format unsupported.
+     * @return mixed XML, or false if format unsupported.
      */
-    public function getXML($format, $baseUrl = null, $recordLink = null)
+    public function getXML($format, $baseUrl = null, $linker = null)
     {
         // For OAI-PMH Dublin Core, produce the necessary XML:
         if ($format == 'oai_dc') {
@@ -1462,11 +1494,13 @@ class DefaultRecord extends AbstractBase
             }
             foreach ($this->getAllSubjectHeadings() as $subj) {
                 $xml->addChild(
-                    'subject', htmlspecialchars(implode(' -- ', $subj)), $dc
+                    'subject',
+                    htmlspecialchars(implode(' -- ', $subj)),
+                    $dc
                 );
             }
-            if (null !== $baseUrl && null !== $recordLink) {
-                $url = $baseUrl . $recordLink->getUrl($this);
+            if (null !== $baseUrl && null !== $linker) {
+                $url = $baseUrl . $linker->getUrl($this);
                 $xml->addChild('identifier', $url, $dc);
             }
 

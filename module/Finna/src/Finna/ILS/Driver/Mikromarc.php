@@ -55,7 +55,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
-    use \VuFind\ILS\Driver\CacheTrait;
+    use \VuFind\Cache\CacheTrait;
 
     /**
      * Date converter object
@@ -312,18 +312,30 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         );
         [$code, $patronId] = $this->makeRequest(
             ['odata', 'Borrowers', 'Default.Authenticate'],
-            $request, 'POST', true
+            $request,
+            'POST',
+            true
         );
         if (($code != 200 && $code != 403) || empty($patronId)) {
             return null;
-        } elseif ($code == 403 && !empty($patronId['error']['code'])
-            && $patronId['error']['code'] == 'Defaulted'
-        ) {
-            $defaultedPatron = $this->makeRequest(
-                ['odata', 'Borrowers', 'Default.AuthenticateDebtor'],
-                $request, 'POST', false
-            );
-            $patronId = $defaultedPatron['BorrowerId'];
+        } elseif ($code == 403) {
+            if (!empty($patronId['error']['code'])
+                && $patronId['error']['code'] == 'Defaulted'
+            ) {
+                $defaultedPatron = $this->makeRequest(
+                    ['odata', 'Borrowers', 'Default.AuthenticateDebtor'],
+                    $request,
+                    'POST',
+                    false
+                );
+                if (!empty($defaultedPatron['BorrowerId'])) {
+                    $patronId = $defaultedPatron['BorrowerId'];
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         }
         $patron = [
             'cat_username' => $username,
@@ -402,7 +414,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $payableIds = array_map(
                 function ($fine) {
                     return $fine['Id'];
-                }, $payableFines
+                },
+                $payableFines
             );
         }
         $paymentConfig = $this->getConfig('onlinePayment');
@@ -412,7 +425,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         foreach ($allFines as $entry) {
             $createDate = !empty($entry['DebtDate'])
                 ? $this->dateConverter->convertToDisplayDate(
-                    'U', strtotime($entry['DebtDate'])
+                    'U',
+                    strtotime($entry['DebtDate'])
                 )
                 : '';
             $typeCode = $entry['AccountCodeId'] ?? null;
@@ -467,7 +481,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $result = $this->makeRequest(['odata', 'Borrowers(' . $patron['id'] . ')']);
         $expirationDate = !empty($result['Expires'])
             ? $this->dateConverter->convertToDisplayDate(
-                'Y-m-d', $result['Expires']
+                'Y-m-d',
+                $result['Expires']
             ) : '';
 
         $name = explode(',', $result['Name'], 2);
@@ -608,7 +623,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'checkout_id' => $entry['Id'],
                 'item_id' => $entry['ItemId'],
                 'duedate' => $this->dateConverter->convertToDisplayDate(
-                    'U', $dueDate
+                    'U',
+                    $dueDate
                 ),
                 'dueStatus' => $dueStatus,
                 'renew' => $renewalCount,
@@ -655,7 +671,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $checkedOutId = $id;
             [$code, $result] = $this->makeRequest(
                 ['odata', "BorrowerLoans($checkedOutId)", 'Default.RenewLoan'],
-                false, 'POST', true
+                false,
+                'POST',
+                true
             );
             if ($code != 200 || $result['ServiceCode'] != 'LoanRenewed') {
                 $currentResult = $this->convertError($code, $result);
@@ -668,7 +686,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 }
             } else {
                 $newDate = $this->dateConverter->convertToDisplayDate(
-                    'U', strtotime($result['DueTime'])
+                    'U',
+                    strtotime($result['DueTime'])
                 );
                 $details[$checkedOutId] = [
                     'item_id' => $checkedOutId,
@@ -677,8 +696,10 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 ];
                 $this->putCachedData(
                     $this->getPatronCacheKey(
-                        $renewDetails['patron'], 'transactionHistory'
-                    ), null
+                        $renewDetails['patron'],
+                        'transactionHistory'
+                    ),
+                    null
                 );
             }
         }
@@ -712,8 +733,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $holds = [];
         foreach ($result as $entry) {
             $available = $entry['ServiceCode'] === 'ReservationArrived'
-                    || $entry['ServiceCode'] === 'ReservationNoticeSent';
-            $frozen = !$entry['ResActiveToday'] && !$available;
+                || $entry['ServiceCode'] === 'ReservationNoticeSent';
+            $inProcess = $entry['ServiceCode'] === 'Picked';
+            $frozen = !$entry['ResActiveToday'] && !$available && !$inProcess;
             $frozenThrough = '';
             if ($frozen && $entry['ResPausedTo']
                 && $entry['ResPausedTo'] != $entry['ResValidUntil']
@@ -724,21 +746,24 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 );
             }
 
-            $updateDetails = !$available
+            $updateDetails = !$available && !$inProcess
                 ? $entry['Id'] . '|' . $entry['ResValidUntil']
                 : '';
             $hold = [
                 'id' => $entry['MarcRecordId'],
                 'item_id' => $entry['Id'],
                 'location' =>
-                   $this->getLibraryUnitName($entry['DeliverAtLocalUnitId']),
+                    $this->getLibraryUnitName($entry['DeliverAtLocalUnitId']),
                 'create' => $this->dateConverter->convertToDisplayDate(
-                    'U', strtotime($entry['ResTime'])
+                    'U',
+                    strtotime($entry['ResTime'])
                 ),
                 'expire' => $this->dateConverter->convertToDisplayDate(
-                    'U', strtotime($entry['ResValidUntil'])
+                    'U',
+                    strtotime($entry['ResValidUntil'])
                 ),
-                'position' => $entry['NumberInQueue'],
+                'position' => $inProcess ? $this->translate('hold_in_process')
+                    : $entry['NumberInQueue'],
                 'available' => $available,
                 'reqnum' => $entry['Id'],
                 'frozen' => $frozen,
@@ -753,7 +778,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             if (!empty($entry['ResHeldUntil'])) {
                 $hold['last_pickup_date']
                     = $this->dateConverter->convertToDisplayDate(
-                        'U', strtotime($entry['ResHeldUntil'])
+                        'U',
+                        strtotime($entry['ResHeldUntil'])
                     );
             }
             if (!empty($entry['MarcRecordTitle'])) {
@@ -868,7 +894,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             [$requestId] = explode('|', $details);
             [$resultCode] = $this->makeRequest(
                 ['odata', 'BorrowerReservations(' . $requestId . ')'],
-                false, 'DELETE', true
+                false,
+                'DELETE',
+                true
             );
             if ($resultCode != 204) {
                 $response[$requestId] = [
@@ -898,7 +926,10 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      *
      * @return array Associative array of the results
      */
-    public function updateHolds(array $holdsDetails, array $fields, array $patron
+    public function updateHolds(
+        array $holdsDetails,
+        array $fields,
+        array $patron
     ): array {
         $results = [];
         foreach ($holdsDetails as $details) {
@@ -1046,6 +1077,15 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getMyTransactionHistory($patron, $params)
     {
+        $history = [
+            'count' => 0,
+            'transactions' => []
+        ];
+        // Do not fetch loan history if it is false or not set
+        if (!($patron['loan_history'] ?? false)) {
+            return $history;
+        }
+
         $sort = strpos($params['sort'], 'desc') ? 'desc' : 'asc';
         $request = [
             '$filter' => 'BorrowerId eq' . ' ' . $patron['id'],
@@ -1055,10 +1095,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             ['odata', 'BorrowerServiceHistories'],
             $request
         );
-        $history = [
-            'count' => count($result),
-            'transactions' => []
-        ];
+        $history['count'] = count($result);
         $serviceCodeMap = [
             'Returned' => 'returndate',
             'OnLoan' => 'checkoutdate',
@@ -1075,7 +1112,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             ];
 
             $entryTime = $this->dateConverter->convertToDisplayDate(
-                'U', strtotime($entry['ServiceTime'])
+                'U',
+                strtotime($entry['ServiceTime'])
             );
 
             $transaction[$serviceCodeMap[$code]] = $entryTime;
@@ -1110,7 +1148,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     public function updatePhone($patron, $phone)
     {
         $code = $this->updatePatronInfo(
-            $patron, ['MainPhone' => $phone, 'Mobile' => $phone]
+            $patron,
+            ['MainPhone' => $phone, 'Mobile' => $phone]
         );
         if ($code !== 200) {
             return  [
@@ -1202,7 +1241,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     public function updateTransactionHistoryState($patron, $state)
     {
         $code = $this->updatePatronInfo(
-            $patron, ['StoreBorrowerHistory' => $state == 1]
+            $patron,
+            ['StoreBorrowerHistory' => $state == 1]
         );
 
         if ($code !== 200) {
@@ -1441,7 +1481,10 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @throws ILSException
      * @return bool success
      */
-    public function markFeesAsPaid($patron, $amount, $transactionId,
+    public function markFeesAsPaid(
+        $patron,
+        $amount,
+        $transactionId,
         $transactionNumber
     ) {
         $userId = $patron['id'];
@@ -1449,12 +1492,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $paymentConfig = $this->getConfig('onlinePayment');
         $fines = $this->getMyFines($patron);
         $payableFines = array_filter(
-            $fines, function ($fine) {
+            $fines,
+            function ($fine) {
                 return $fine['payableOnline'];
             }
         );
         $total = array_reduce(
-            $payableFines, function ($carry, $fine) {
+            $payableFines,
+            function ($carry, $fine) {
                 $carry += $fine['balance'];
                 return $carry;
             }
@@ -1485,7 +1530,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             [$code, $result] = $this->makeRequest(
                 ['BorrowerDebts', $patron['cat_username'], $fineId],
                 json_encode($request),
-                'POST', true
+                'POST',
+                true
             );
             if ($code !== 200) {
                 $error = "Registration error for fine $fineId, user"
@@ -1523,7 +1569,9 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @return array
      */
     public function getRequestGroups(
-        int $bibId, array $patronId, array $holdDetails = null
+        int $bibId,
+        array $patronId,
+        array $holdDetails = null
     ): array {
         return [
             [
@@ -1552,7 +1600,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @return string       The default request group for the patron.
      */
     public function getDefaultRequestGroup(
-        array $patron = [], array $holdDetails = null
+        array $patron = [],
+        array $holdDetails = null
     ): string {
         return $this->defaultRequestGroup;
     }
@@ -1768,7 +1817,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     protected function getLibraryUnits()
     {
         $cacheKey = implode(
-            '|', [
+            '|',
+            [
                'mikromarc', 'libraryUnits',
                $this->config['Catalog']['base'], $this->config['Catalog']['unit']
             ]
@@ -1903,7 +1953,10 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             if ($adapter instanceof \Laminas\Http\Client\Adapter\Socket) {
                 $context = $adapter->getStreamContext();
                 $res = stream_context_set_option(
-                    $context, 'ssl', 'verify_peer_name', false
+                    $context,
+                    'ssl',
+                    'verify_peer_name',
+                    false
                 );
                 if (!$res) {
                     throw new \Exception('Unable to set sslverifypeername option');
@@ -1926,7 +1979,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
 
         // Set Accept header
         $client->getRequest()->getHeaders()->addHeaderLine(
-            'Accept', 'application/json'
+            'Accept',
+            'application/json'
         );
 
         return $client;
@@ -1995,7 +2049,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
            'NoItemsAvailableByTerm' => 'hold_error_denied',
            'NoItemAvailable' => 'hold_error_denied',
            'NoTermsPermitLoanOrReservation' => 'hold_error_not_holdable',
-           'ReservedForOtherBorrower' => 'renew_item_requested'
+           'ReservedForOtherBorrower' => 'renew_item_requested',
+           'TermsDoNotAllowRenewal' => 'hold_error_not_holdable'
         ];
 
         if (isset($map[$message])) {
@@ -2024,7 +2079,10 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      * @return mixed JSON response decoded to an associative array or null on
      * authentication error
      */
-    protected function makeRequest($hierarchy, $params = false, $method = 'GET',
+    protected function makeRequest(
+        $hierarchy,
+        $params = false,
+        $method = 'GET',
         $returnCode = false
     ) {
         // Set up the request
@@ -2217,7 +2275,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         // the same item
         if (preg_match('/^(\d{4}-\d{2}-\d{2})/', $dateString, $matches)) {
             return $this->dateConverter->convertToDisplayDate(
-                'Y-m-d', $matches[1]
+                'Y-m-d',
+                $matches[1]
             );
         }
 

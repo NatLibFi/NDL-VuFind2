@@ -67,8 +67,10 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
      * @param ConfigManager   $config  Config loader
      * @param ResultsManager  $results Results manager
      */
-    public function __construct(SessionSettings $ss,
-        ConfigManager $config, ResultsManager $results
+    public function __construct(
+        SessionSettings $ss,
+        ConfigManager $config,
+        ResultsManager $results
     ) {
         $this->sessionSettings = $ss;
         $this->configManager = $config;
@@ -86,8 +88,10 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
     {
         $this->disableSessionWrites();  // avoid session write timing bug
 
-        $backend = $params->fromQuery('backend');
-        if (!$backend) {
+        $backend = $params->fromQuery('backend', 'Solr');
+        if ($backend) {
+            $backend = ucfirst($backend);
+        } else {
             $backend = 'Solr';
         }
         $isSolr = in_array($backend, ['Solr', 'R2']);

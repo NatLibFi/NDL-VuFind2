@@ -108,7 +108,6 @@ class Map extends \VuFind\RecordTab\Map
      */
     protected function envelopeToArray($envelope)
     {
-        $array = [];
         $envelope = preg_replace('/.*\((.+)\).*/', '\\1', $envelope);
         [$minX, $maxX, $maxY, $minY] = explode(',', trim($envelope));
         return [
@@ -138,12 +137,19 @@ class Map extends \VuFind\RecordTab\Map
         $type = strtolower(trim(substr($location, 0, $p)));
 
         if ($p > 0 && in_array($type, $wktTypes)) {
-            return ['wkt' => $location];
+            $shape = \geoPHP\geoPHP::load($location, 'wkt');
+            $geoJsonAdapter = new \geoPHP\Adapter\GeoJSON();
+            return [
+                'geojson' => $geoJsonAdapter->getArray($shape)
+            ];
         }
 
         if ($type == 'point' || $type == 'multipoint') {
             $isPoint = preg_match_all(
-                '/\((.+)\s+?(.+)\)/', $location, $matches, PREG_SET_ORDER
+                '/\((.+)\s+?(.+)\)/',
+                $location,
+                $matches,
+                PREG_SET_ORDER
             );
             if ($isPoint) {
                 $results = [];

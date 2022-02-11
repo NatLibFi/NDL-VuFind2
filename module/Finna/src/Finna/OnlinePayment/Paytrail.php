@@ -45,9 +45,9 @@ use Finna\OnlinePayment\Paytrail\PaytrailE2;
  */
 class Paytrail extends BaseHandler
 {
-    const PAYMENT_SUCCESS = 'success';
-    const PAYMENT_FAILURE = 'failure';
-    const PAYMENT_NOTIFY = 'notify';
+    public const PAYMENT_SUCCESS = 'success';
+    public const PAYMENT_FAILURE = 'failure';
+    public const PAYMENT_NOTIFY = 'notify';
 
     /**
      * Return payment response parameters.
@@ -59,7 +59,8 @@ class Paytrail extends BaseHandler
     public function getPaymentResponseParams($request)
     {
         $params = array_merge(
-            $request->getQuery()->toArray(), $request->getPost()->toArray()
+            $request->getQuery()->toArray(),
+            $request->getPost()->toArray()
         );
 
         $required = [
@@ -99,8 +100,16 @@ class Paytrail extends BaseHandler
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl, $ajaxUrl, $user, $patron, $driver, $amount, $transactionFee,
-        $fines, $currency, $statusParam
+        $finesUrl,
+        $ajaxUrl,
+        $user,
+        $patron,
+        $driver,
+        $amount,
+        $transactionFee,
+        $fines,
+        $currency,
+        $statusParam
     ) {
         $patronId = $patron['cat_username'];
         $orderNumber = $this->generateTransactionId($patronId);
@@ -199,18 +208,30 @@ class Paytrail extends BaseHandler
                 if (!empty($fine['title'])) {
                     $fineDesc .= ' ('
                         . mb_substr(
-                            $fine['title'], 0, 255 - 4 - strlen($fineDesc), 'UTF-8'
+                            $fine['title'],
+                            0,
+                            255 - 4 - strlen($fineDesc),
+                            'UTF-8'
                         ) . ')';
                 }
                 $module->addProduct(
-                    $fineDesc, $code, 1, $fine['balance'], 0, PaytrailE2::TYPE_NORMAL
+                    $fineDesc,
+                    $code,
+                    1,
+                    $fine['balance'],
+                    0,
+                    PaytrailE2::TYPE_NORMAL
                 );
             }
             if ($transactionFee) {
                 $code = $this->config->transactionFeeProductCode ?? $productCode;
                 $module->addProduct(
-                    'Palvelumaksu / Serviceavgift / Transaction fee', $code, 1,
-                    $transactionFee, 0, PaytrailE2::TYPE_HANDLING
+                    'Palvelumaksu / Serviceavgift / Transaction fee',
+                    $code,
+                    1,
+                    $transactionFee,
+                    0,
+                    PaytrailE2::TYPE_HANDLING
                 );
             }
         }
@@ -243,6 +264,7 @@ class Paytrail extends BaseHandler
             : 'https://payment.paytrail.com/e2';
 
         $this->redirectToPaymentForm($paytrailUrl, $formData);
+        return '';
     }
 
     /**
@@ -331,7 +353,9 @@ class Paytrail extends BaseHandler
         }
 
         return new PaytrailE2(
-            $this->config->merchantId, $this->config->secret, $paytrailLocale
+            $this->config->merchantId,
+            $this->config->secret,
+            $paytrailLocale
         );
     }
 

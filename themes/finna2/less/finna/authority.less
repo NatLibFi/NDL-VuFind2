@@ -126,66 +126,69 @@ a.authority-link {
     padding-bottom: 15px;
   }
 
- .authoritybox {
-   border: 1px solid @gray-lighter;
-   background-color: @gray-ultralight;
-   margin-bottom: 20px;
-   padding: 10px;
-   overflow: hidden;
-   display: flex;
-   flex-wrap: wrap;
-   flex-direction: row;
+  .authoritybox {
+    border: 1px solid @gray-lighter;
+    background-color: @gray-ultralight;
+    margin-bottom: 20px;
+    padding: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
 
-   @media (min-width: @screen-md) {
-     .media-left {
-       width: initial;
-     }
-   }
-   .media-left {
-     flex-direction: column;
-     width: initial;
-     flex: 1 1 100%;
-   }
-   .media-right {
-     flex-direction: column;
-     flex: 1 1 100%;
-     font-size: 12px;
-     .access-rights {
-       .cc-rights {
-         padding: 0;
-         margin: 0;
-       }
-     }
-   }
-   @media (min-width: @screen-sm) {
-     .media-left {
-       flex-basis: 60%;
-     }
-     .media-right {
-       flex-basis: 40%;
-     }
-   }
-   &.filtered {
-     border-top: none;
-   }
-   .roles {
-     margin-top: 1em;
-     margin-bottom: 1em;
-   }
-   .record-details th {
-     width: 20%;
-   }
-   .resultItemFormat {
-     margin-bottom: 0.3em;
-     i {
-       vertical-align: middle;
-       font-size: @iconFontSize;
-     }
-   }
-   h3 {
-     margin-top: 0.3em;
-     margin-bottom: 0.3em;
-   }
+    @media (min-width: @screen-md) {
+      .media-left {
+        width: initial;
+      }
+    }
+    .media-left {
+      flex-direction: column;
+      width: initial;
+      flex: 1 1 100%;
+    }
+    .media-right {
+      flex-direction: column;
+      flex: 1 1 100%;
+      font-size: 12px;
+      .access-rights {
+        .cc-rights {
+          padding: 0;
+          margin: 0;
+        }
+      }
+    }
+    @media (min-width: @screen-sm) {
+      .media-left {
+        flex-basis: 60%;
+      }
+      .media-right {
+        flex-basis: 40%;
+      }
+    }
+    &.filtered {
+      border-top: none;
+    }
+    .roles {
+      margin-top: 1em;
+      margin-bottom: 1em;
+    }
+    .record-details th {
+      width: 20%;
+    }
+    .resultItemFormat {
+      margin-bottom: 0.3em;
+      i {
+        vertical-align: middle;
+        font-size: @iconFontSize;
+      }
+    }
+    h3 {
+      margin-top: 0.3em;
+      margin-bottom: 0.3em;
+    }
+    div:first-child {
+      margin-right: 0.3em;
+    }
   }
   .tabs-table {
     ul.nav-tabs {

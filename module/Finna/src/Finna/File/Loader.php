@@ -71,6 +71,20 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
+     * Convert format to mime
+     *
+     * @param string $format Format to convert.
+     *
+     * @return string
+     */
+    protected function getMimeType(string $format): string
+    {
+        $detector = new \League\MimeTypeDetection\FinfoMimeTypeDetector();
+        $mimeType = $detector->detectMimeTypeFromPath("foo.$format");
+        return $mimeType ?: 'application/octet-stream';
+    }
+
+    /**
      * Download a file to cache
      *
      * @param string $url           Url to download
@@ -81,8 +95,10 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
      * @return array
      */
     public function getFile(
-        string $url, string $fileName,
-        string $configSection, string $cacheFolder
+        string $url,
+        string $fileName,
+        string $configSection,
+        string $cacheFolder
     ): array {
         $cacheDir = $this->cacheManager->getCache($cacheFolder ?? 'public')
             ->getOptions()->getCacheDir();
@@ -92,7 +108,9 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         $error = '';
         if (!file_exists($path) || time() - filemtime($path) > $maxAge * 60) {
             $client = $this->httpService->createClient(
-                $url, \Laminas\Http\Request::METHOD_GET, 300
+                $url,
+                \Laminas\Http\Request::METHOD_GET,
+                300
             );
             $client->setOptions(['useragent' => 'VuFind']);
             $client->setStream();
@@ -117,5 +135,58 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         }
 
         return compact('result', 'path', 'error');
+    }
+
+    /**
+     * Proxy a file and set proper headers, useful if download has no information
+     *
+     * @param string $url      Url to load the file from
+     * @param string $fileName Display name of the file to download
+     * @param string $format   File format
+     *
+     * @return bool True if success, false if not
+     */
+    public function proxyFileLoad(
+        string $url,
+        string $fileName,
+        string $format
+    ): bool {
+        if (ob_get_level()) {
+            ob_end_clean();
+        }
+        $client = $this->httpService->createClient(
+            $url,
+            \Laminas\Http\Request::METHOD_GET,
+            300
+        );
+        $contentType = $this->getMimeType($format);
+        header('Pragma: public');
+        header("Content-Type: {$contentType}");
+        header("Content-disposition: attachment; filename=\"{$fileName}\"");
+        header('Cache-Control: public');
+        $client->setOptions(['useragent' => 'VuFind']);
+        $client->setStream();
+        $adapter = new \Laminas\Http\Client\Adapter\Curl();
+        $adapter->setOptions(
+            [
+                'curloptions' => [
+                    CURLOPT_WRITEFUNCTION => function ($ch, $str) {
+                        echo $str;
+                        return strlen($str);
+                    },
+                    CURLOPT_HEADER => true,
+                    CURLOPT_RETURNTRANSFER => 1
+                ]
+            ]
+        );
+        $client->setAdapter($adapter);
+        $result = $client->send();
+
+        if (!$result->isSuccess()) {
+            $this->debug("Failed to retrieve file from $url");
+            return false;
+        }
+
+        return true;
     }
 }
