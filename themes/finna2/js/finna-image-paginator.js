@@ -961,6 +961,10 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   } else if (_.settings.triggerClick === 'open') {
     return;
   }
+  // Draggable="false" doesn't work...
+  _.trigger.off('dragstart').on('dragstart', function preventDrag(e) {
+    e.preventDefault();
+  });
   var imageType = imagePopup.data('type');
   if (imageType === 'model') {
     _.trigger.addClass('model-trigger');

@@ -107,7 +107,7 @@
           <div class="paginator-info"><span class="image-index"></span></div>
           <img src="<?=$this->imageSrc()->getDataPixel()?>" data-src="<?=$this->url('cover-unavailable')?>" class="recordcover<?= ($images[0]['pdf'] ?? false) ? ' pdf-cover' : ''?>" alt="<?=$this->transEsc('No Cover Image')?>"/>
           <?php if (!$isList): ?>
-            <div draggable="false" id="inline-viewer"></div>
+            <div id="inline-viewer"></div>
           <?php endif; ?>
         </a>
         <span class="hidden-trigger" hidden></span>
