@@ -182,8 +182,10 @@ if ($otherTitles):?>
   <div style="clear: both;"></div>
 </div>
 <?=
-$this->piwik([
-  'lightbox' => true, 'record' => $this->driver, 'action' => 'imagePopup',
+$this->matomo([
+  'context' => 'lightbox',
+  'record' => $this->driver,
+  'action' => 'imagePopup',
   'recordUrl' => $this->recordLinker()->getUrl($this->driver)
 ]);
 ?>

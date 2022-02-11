@@ -384,12 +384,16 @@ class Form extends \VuFind\Form\Form
 
         $params = $this->mapRequestParamsToFieldValues($postParams);
 
-        $recipient = $params[$recipientField] ?? null;
-        return $recipient ?
-            [
-                'email' => $recipient['value'],
-                'name' => $recipient['valueLabel']
-            ] : null;
+        foreach ($params as $param) {
+            if ($recipientField === $param['name']) {
+                return [
+                    'email' => $param['value'],
+                    'name' => $this->translate($param['valueLabel'])
+                ];
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -504,13 +508,13 @@ class Form extends \VuFind\Form\Form
         if ($this->userCatUsername) {
             $preParagraphs[] = $this->translate(
                 'feedback_library_card_barcode_html',
-                ['%%barcode%%' => $this->userCatUsername]
+                ['%%barcode%%' => $escapeHtml($this->userCatUsername)]
             );
         }
         if ($this->userCatId) {
             $postParagraphs[] = $this->translate(
                 'feedback_library_patron_id_html',
-                ['%%id%%' => $this->userCatId]
+                ['%%id%%' => $escapeHtml($this->userCatId)]
             );
         }
 
@@ -581,7 +585,7 @@ class Form extends \VuFind\Form\Form
                 ) : $this->translate('feedback_user_anonymous');
 
             $label = $this->translate('feedback_user_login_method');
-            $params[$label] = [
+            $params[] = [
                 'name' => 'userLoginMethod',
                 'type' => 'text',
                 'label' => $label,
@@ -590,7 +594,7 @@ class Form extends \VuFind\Form\Form
 
             if ($this->user) {
                 $label = $this->translate('feedback_user_roles');
-                $params[$label] = [
+                $params[] = [
                     'name' => 'userRoles',
                     'type' => 'text',
                     'label' => $label,

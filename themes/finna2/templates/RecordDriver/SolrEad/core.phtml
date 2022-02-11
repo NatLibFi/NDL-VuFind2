@@ -130,6 +130,8 @@
         $coreFields = $driver->getRecordFormat() === 'ead3'
             ? $formatter->filterEAD3Fields($coreFields)
             : $formatter->filterEADFields($coreFields);
+        $coreFields['Access Restrictions Extended']['hideSubheadings']
+            = ['access_restrictions_general'];
         $coreFieldGroups = $formatter->getGroupedData($driver, $formatter->getGroupedFields([
           ['label' => 'Context',
            'lines' => ['Archive Origination', 'Archive', 'Archive Series', 'Archive File']
@@ -139,8 +141,12 @@
              'subjects_extended', 'Dates', 'Material Condition']
           ],
           ['label' => 'access_restrictions_general',
-           'lines' => ['Access Restrictions Extended']]
-          ], $coreFields));
+           'lines' => ['Access Restrictions Extended']
+          ],
+          [
+           'lines' => ['Access Restrictions']
+          ]
+        ], $coreFields));
       ?>
       <?php if (!empty($coreFieldGroups)): ?>
         <table class="table table-finna-record record-details record-field-groups">

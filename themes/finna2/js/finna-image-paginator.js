@@ -559,7 +559,6 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
         $(image).parents('.grid').addClass('no-image');
       }
       if (!_.settings.isList && _.images.length <= 1) {
-        _.root.closest('.media-left').not('.audio').addClass('hidden-xs');
         _.root.css('display', 'none');
         _.root.siblings('.image-details-container:not(:has(.image-rights))').addClass('hidden');
       }
