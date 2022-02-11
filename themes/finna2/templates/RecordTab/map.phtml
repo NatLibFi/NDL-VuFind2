@@ -1,16 +1,11 @@
 <!-- START of: finna - RecordTab/map.phtml -->
-<?php
-  $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'vendor/leaflet-omnivore.min.js');
-  echo $this->inlineScript();
-?>
-
 <div class="map-canvas"></div>
 
 <?php
   $markers = $this->tab->getMapMarkers();
   $script = <<<JS
 $(document).ready(function() {
-  var tileLayer = L.tileLayer('//map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
+  var tileLayer = L.tileLayer('https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png', {
     maxZoom: 18,
     tileSize: 256,
     attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
@@ -27,8 +22,8 @@ $(document).ready(function() {
   for (var i = 0; i < markersData.length; i++) {
     var marker = markersData[i];
     var item = null;
-    if (marker.wkt) {
-      item = omnivore.wkt.parse(marker.wkt);
+    if (marker.geojson) {
+      item = L.geoJson(marker.geojson);
     } else if (marker.polygon) {
       item = L.polygon(marker.polygon);
     } else if (marker.multipolygon) {

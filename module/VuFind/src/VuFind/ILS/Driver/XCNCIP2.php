@@ -153,6 +153,15 @@ class XCNCIP2 extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
     protected $disableRenewals = false;
 
     /**
+     * Which subelements of Problem element show to user when placing hold fails.
+     * Possible values are: 'ProblemType', 'ProblemDetail', 'ProblemElement',
+     * 'ProblemValue'
+     *
+     * @var string[]
+     */
+    protected $holdProblemsDisplay = ['ProblemType'];
+
+    /**
      * Schemes preset for certain elements. See implementation profile:
      * http://www.ncip.info/uploads/7/1/4/6/7146749/z39-83-2-2012_ncip.pdf
      *
@@ -332,13 +341,25 @@ class XCNCIP2 extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
         }
 
         if (isset($this->config['Catalog']['otherAcceptedHttpStatusCodes'])) {
-            $this->otherAcceptedHttpStatusCodes
+            $otherAcceptedHttpStatusCodes
                 = explode(
                     ',',
                     $this->config['Catalog']['otherAcceptedHttpStatusCodes']
                 );
+            $this->otherAcceptedHttpStatusCodes = array_map(
+                'trim',
+                $otherAcceptedHttpStatusCodes
+            );
         }
         $this->maxNumberOfPages = $this->config['Catalog']['maxNumberOfPages'] ?? 0;
+        if (isset($this->config['Catalog']['holdProblemsDisplay'])) {
+            $holdProblemsDisplay
+                = explode(
+                    ',',
+                    $this->config['Catalog']['holdProblemsDisplay']
+                );
+            $this->holdProblemsDisplay = array_map('trim', $holdProblemsDisplay);
+        }
     }
 
     /**
@@ -1116,7 +1137,7 @@ class XCNCIP2 extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
                 $itemRequest = $this->getLookupItemRequest($itemId, $itemType);
                 $itemResponse = $this->sendRequest($itemRequest);
             }
-            if ($bibId === null) {
+            if ($bibId === null && isset($itemResponse)) {
                 $bibId = $itemResponse->xpath(
                     'ns1:LookupItemResponse/ns1:ItemOptionalFields/' .
                     'ns1:BibliographicDescription/ns1:BibliographicItemId/' .
@@ -1130,7 +1151,7 @@ class XCNCIP2 extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
                 // temporarily until consortial functionality is enabled.
                 $bibId = !empty($bibId) ? (string)$bibId[0] : "1";
             }
-            if ($itemAgencyId === null) {
+            if ($itemAgencyId === null && isset($itemResponse)) {
                 $itemAgencyId = $itemResponse->xpath(
                     'ns1:LookupItemResponse/ns1:ItemOptionalFields/' .
                     'ns1:BibliographicDescription/ns1:BibliographicRecordId/' .
@@ -1141,7 +1162,7 @@ class XCNCIP2 extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
                 $itemAgencyId = !empty($itemAgencyId)
                     ? (string)$itemAgencyId[0] : null;
             }
-            if (empty($due)) {
+            if (empty($due) && isset($itemResponse)) {
                 $rawDueDate = $itemResponse->xpath(
                     'ns1:LookupItemResponse/ns1:ItemOptionalFields/' .
                     'ns1:DateDue'
@@ -1814,7 +1835,7 @@ class XCNCIP2 extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
             $failureReturn = ['success' => false];
             $problemDescription = $this->getProblemDescription(
                 $response,
-                ['ProblemType'],
+                $this->holdProblemsDisplay,
                 false
             );
             if (!empty($problemDescription)) {

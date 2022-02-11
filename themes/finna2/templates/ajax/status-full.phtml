@@ -318,7 +318,7 @@ if (!$disableTitleHold
 }
 ?>
 
-<?php if ($this->record($driver)->repositoryLibraryRequestEnabled('results')): ?>
+<?php if ($driver && $this->record($driver)->repositoryLibraryRequestEnabled('results')): ?>
   <div class="request">
     <?php $user = $this->auth()->isLoggedIn(); if ($user): ?>
       <?php if ($user->getLibraryCards()->count()): ?>

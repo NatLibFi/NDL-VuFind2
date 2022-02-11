@@ -14,6 +14,19 @@ AliasMatch ^/vufind2/themes/([0-9a-zA-Z-_]*)/js/(.*)$ /path-to/NDL-VuFind2/theme
   AllowOverride All
 </Directory>
 
+# Configuration for public cache (used for asset pipeline minification)
+AliasMatch ^/vufind2/cache/(.*)$ /path-to/NDL-VuFind2/local/cache/public/$1
+<Directory /path-to/NDL-VuFind2/local/cache/public/>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+  </IfModule>
+  <IfModule mod_authz_core.c>
+    Require all granted
+  </IfModule>
+  AllowOverride All
+</Directory>
+
 # Configuration for general VuFind base:
 Alias /vufind2 /path-to/NDL-VuFind2/public
 <Directory /path-to/NDL-VuFind2/public/>

@@ -805,4 +805,35 @@ class Params extends \VuFind\Search\Solr\Params
             $this->addFilter($rangeFacet);
         }
     }
+
+    /**
+     * Set the sorting value (note: sort will be set to default if an illegal
+     * or empty value is passed in).
+     *
+     * @param string $sort  New sort value (null for default)
+     * @param bool   $force Set sort value without validating it?
+     *
+     * @return void
+     */
+    public function setSort($sort, $force = false)
+    {
+        if (!$force) {
+            // Check if we need to convert the sort to a currently valid option
+            // (it must be a prefix of a currently valid option):
+            $validOptions = array_keys($this->getOptions()->getSortOptions());
+            if (!empty($sort) && !in_array($sort, $validOptions)) {
+                $sortLen = strlen($sort);
+                foreach ($validOptions as $valid) {
+                    if (strlen($valid) > $sortLen
+                        && strncmp($sort, $valid, $sortLen) === 0
+                    ) {
+                        $sort = $valid;
+                        break;
+                    }
+                }
+            }
+        }
+
+        parent::setSort($sort, $force);
+    }
 }

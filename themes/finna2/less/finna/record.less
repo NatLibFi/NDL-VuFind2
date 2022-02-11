@@ -113,6 +113,9 @@
   }
   .label {
     display: inline-block;
+    @media print {
+      border: 0;
+    }
   }
   .record-versions {
     font-size: 0.9em;
@@ -672,6 +675,12 @@ a.authority {
   }
   .template-name-view .record .record-title {
     margin-top: 10px;
+  }
+}
+
+@media print {
+  .template-dir-record .search-filters {
+    display: none;
   }
 }
 

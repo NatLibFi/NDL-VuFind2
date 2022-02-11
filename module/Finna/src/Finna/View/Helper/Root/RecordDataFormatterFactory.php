@@ -1127,6 +1127,12 @@ class RecordDataFormatterFactory
                 $values = $useSubHeadings && $values
                     ? array_values($values) : $values;
                 $label = $useSubHeadings ? "access_restrictions_$type" : null;
+                if ($useSubHeadings
+                    && isset($options['hideSubheadings'])
+                    && in_array($label, $options['hideSubheadings'])
+                ) {
+                    $label = null;
+                }
                 $final[] = [
                     'label' => $label,
                     'values' => $values,

@@ -1,44 +1,40 @@
 <!-- START of: finna - ajax/feed-list.phtml -->
 <div class="list-feed<?= $this->images ? ' with-image' : ''; ?>">
-<?php if ($this->title || $this->translateTitle): ?><h2 class="feed-header"><?= $this->translateTitle ? $this->transEsc($this->translateTitle) : $this->title; ?></h2><?php endif; ?>
-<?php if (isset($this->description)): ?><p class="additional-description"><?= $this->translate($this->description)?></p><?php endif; ?>
+<?php if ($this->title || $this->translateTitle): ?><h2 class="feed-header"><?= $this->translateTitle ? $this->transEsc($this->translateTitle) : $this->escapeHtml($this->title) ?></h2><?php endif; ?>
+<?php if (isset($this->description)): ?><p class="additional-description"><?= $this->translate($this->description) // HTML, intentionally left unescaped ?></p><?php endif; ?>
   <ul>
     <?php $items = isset($this->visualItems) ? array_splice($this->items, 0, $this->visualItems) : $this->items; ?>
-    <?php foreach($items as $item): ?>
-    <li>
-      <?php if (isset($item['date'])): ?>
-        <span class="date"<?php if (isset($item['dateFull'])):?> title="<?=$item['dateFull']?>"<?php endif; ?>>
-          <?= $item['date']; ?>
-        </span>
-      <?php endif; ?>
-      <?php if (isset($item['link'])):?>
-      <a<?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($item['link']) . ($this->feedUrl ? '?feedUrl=' . $this->escapeHtmlAttr(urlencode($this->feedUrl)) : '')?>"<?=$item['modal'] ? ' data-lightbox="" data-lightbox-title="' . $this->escapeHtmlAttr($item['title']) . '"' : ''?> data-feed="<?=$this->escapeHtmlAttr($this->feedUrl)?>"><?php endif; ?>
-        <?php if (isset($item['image']) && isset($item['image']['url'])): ?>
-          <img src="<?= $item['image']['url']; ?>" alt="" />
+    <?php foreach ($items as $item): ?>
+      <li>
+        <?php if (isset($item['date'])): ?>
+          <span class="date"<?php if (isset($item['dateFull'])):?> title="<?=$this->escapeHtmlAttr($item['dateFull'])?>"<?php endif; ?>></span>
         <?php endif; ?>
-        <span class="title"><?= $item['title']; ?></span>
-        <?php if (isset($item['xcal'])): ?>
-          <div class="xcal-fields">
-            <?php if (isset($item['xcal']['startDate'])): ?>
-              <p class="xcal"><i class="fa fa-calendar" aria-label="<?= $this->transEsc('xcal_date'); ?>"></i><?= $item['xcal']['startDate']; ?><?php if ($item['xcal']['startDate'] !== $item['xcal']['endDate']): ?>&nbsp;&ndash;&nbsp;<?= $item['xcal']['endDate'] ?><?php endif;?></p>
-              <?php if (isset($item['xcal']['startTime']) && $item['xcal']['endDate'] === $item['xcal']['startDate']): ?>
-                <p class="xcal"><i class="fa fa-clock-o" aria-label="<?= $this->transEsc('xcal_time'); ?>"></i><?= $item['xcal']['startTime']; ?>&nbsp;&ndash;&nbsp;<?= $item['xcal']['endTime'] ?></p>
-              <?php endif; ?>
-            <?php endif; ?>
-            <?php if (isset($item['xcal']['location'])): ?>
-              <p class="xcal"><i class="fa fa-map-marker" aria-label="<?= $this->transEsc('Location'); ?>"></i><?= $item['xcal']['location']; ?></p>
-            <?php endif; ?>
-          </div>
+        <?php if (isset($item['link'])):?>
+          <?php
+            $linkElement = [
+              'href' => $item['link']
+            ];
+            if ($this->linkTarget) {
+              $linkElement['target'] = $this->linkTarget;
+            }
+            if ($item['modal']) {
+              $linkElement['data-lightbox'] = '';
+              $linkElement['data-lightbox-title'] = $item['title'];
+            }
+          ?>
+          <a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedUrl)?>">
+            <?=$this->partial('ajax/feed-list-item.phtml', compact('item'))?>
+          </a>
+        <?php else: ?>
+          <?=$this->partial('ajax/feed-list-item.phtml', compact('item'))?>
         <?php endif; ?>
-        <?php if (isset($item['text'])): ?><span class="text"><?= $item['text']; ?></span><?php endif; ?>
-        <?php if (isset($item['link'])):?></a><?php endif; ?>
-    </li>
+      </li>
     <?php endforeach; ?>
 
     <?php if ($this->moreLink): ?>
-    <li class="more-link">
-      <a<?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><?= $this->transEsc('More'); ?>&hellip;</a>
-    </li>
+      <li class="more-link">
+        <a<?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><?= $this->transEsc('More'); ?>&hellip;</a>
+      </li>
     <?php endif; ?>
   </ul>
 </div>

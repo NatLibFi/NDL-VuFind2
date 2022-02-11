@@ -518,6 +518,12 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $trimmed = trim((string)$relation);
 
             if ($key = $this->seriesInfoMappings[$type] ?? false) {
+                // Initialize the result so that it contains the required elements:
+                if (!isset($results[$lang])) {
+                    $results[$lang] = [
+                        'name' => ''
+                    ];
+                }
                 if (empty($results[$lang][$key])) {
                     $results[$lang][$key] = $trimmed;
                 }
