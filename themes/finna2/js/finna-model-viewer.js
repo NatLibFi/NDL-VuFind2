@@ -466,7 +466,6 @@ ModelViewer.prototype.createControls = function createControls()
 
   // Should be THREE.Vector3(0,0,0)
   _.controls.target = new THREE.Vector3();
-  _.camera.position.set(0, 0, 40);
   _.controls.screenSpacePanning = true;
   _.controls.update();
 };
@@ -497,7 +496,9 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
         }
       }
     }
+    var cameraPosition;
     _.scene.traverse(function initObj(obj) {
+      console.log(obj);
       if (obj.type === 'Mesh') {
         meshMaterial = obj.material;
         meshMaterial.envMap = _.background;
@@ -556,13 +557,15 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
       }
     });
     // Set camera and position to center from the newly created object
-    var objectHeight = (newBox.max.y - newBox.min.y) * 1.01;
-    var objectWidth = (newBox.max.x - newBox.min.x) * 1.01;
+    var objectHeight = (newBox.max.y - newBox.min.y);
+    var objectWidth = (newBox.max.x - newBox.min.x);
     var result = 0;
     if (objectHeight >= objectWidth) {
       result = objectHeight / getTanDeg(_.viewerPaddingAngle);
     } else {
       result = objectWidth / getTanDeg(_.viewerPaddingAngle);
+      console.log(objectWidth);
+      console.log(getTanDeg(_.viewerPaddingAngle));
     }
     _.cameraPosition = result;
     _.camera.position.set(0, 0, _.cameraPosition);
