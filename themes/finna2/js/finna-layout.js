@@ -195,16 +195,25 @@ finna.layout = (function finnaLayout() {
 
   function initSearchboxFunctions() {
     var searchForm = document.querySelector('.searchForm.navbar-form');
-    var submitButton = searchForm.querySelector('button[type="submit"]');
-    if (submitButton) {
-      submitButton.addEventListener('auxclick', function listenToMiddleClick(e) {
-        if (1 === e.button) {
-          searchForm.setAttribute('target', '_blank');
-          searchForm.submit();
-          searchForm.removeAttribute('target');
-        }
-      });
+    if (searchForm) {
+      var submitButton = searchForm.querySelector('button[type="submit"]');
+      if (submitButton) {
+        var mouseUp = function onMouseUp(ev) {
+          if (1 === ev.button) {
+            searchForm.setAttribute('target', '_blank');
+            searchForm.submit();
+            searchForm.removeAttribute('target');
+          }
+        };
+        submitButton.addEventListener('mousedown', function listenToMiddleClick(e) {
+          if (1 === e.button) {
+            submitButton.removeEventListener('mouseup', mouseUp);
+            submitButton.addEventListener('mouseup', mouseUp);
+          }
+        });
+      }
     }
+
     if ($('.navbar-form .checkbox')[0]) {
       $('.autocomplete-results').addClass('checkbox-active');
     }
