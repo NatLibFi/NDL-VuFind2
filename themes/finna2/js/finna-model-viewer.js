@@ -322,10 +322,8 @@ ModelViewer.prototype.createRenderer = function createRenderer()
 
   _.renderer.shadowMap.enabled = true;
   _.renderer.setClearColor(0xEEEEEE, 0);
-
   _.renderer.setSize(_.size.x, _.size.y);
   _.canvasParent.append(_.renderer.domElement);
-  _.renderer.domElement.setAttribute('draggable', 'false');
   _.renderer.name = 'main_renderer';
   if (!_.loaded) {
     // Create camera now.
@@ -513,13 +511,13 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
           meshMaterial.normalScale.x = meshMaterial.userData.normalScale.x;
           meshMaterial.normalScale.y = meshMaterial.userData.normalScale.y;
         }
-        if (!obj.userData.viewerSet) {
-          // Apply encodings so glb looks better and update it if needed
-          if (meshMaterial.map) meshMaterial.map.encoding = _.encoding;
-          if (meshMaterial.emissiveMap) meshMaterial.emissiveMap.encoding = _.encoding;
-          if (meshMaterial.normalMap) meshMaterial.normalMap.encoding = _.encoding;
-        }
+
+        // Apply encodings so glb looks better and update it if needed
+        if (meshMaterial.map) meshMaterial.map.encoding = _.encoding;
+        if (meshMaterial.emissiveMap) meshMaterial.emissiveMap.encoding = _.encoding;
+        if (meshMaterial.normalMap) meshMaterial.normalMap.encoding = _.encoding;
         if (meshMaterial.map || meshMaterial.envMap || meshMaterial.emissiveMap || meshMaterial.normalMap) meshMaterial.needsUpdate = true;
+
         _.meshCount++;
         _.meshes.push(obj);
         // Lets get available information about the model here so we can show them properly in information screen
