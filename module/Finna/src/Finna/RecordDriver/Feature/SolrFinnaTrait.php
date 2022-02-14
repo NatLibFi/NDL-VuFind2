@@ -583,10 +583,12 @@ trait SolrFinnaTrait
             if ($isbn = $this->getFirstISBN()) {
                 $result['invisbn'] = $isbn;
             }
+        } elseif (is_string($result)
+            && !$this->isUrlLoadable($result, $this->getUniqueID())
+        ) {
+            $result = false;
         }
-
-        $this->cache[$cacheKey] = $result;
-        return $result;
+        return $this->cache[$cacheKey] = $result;
     }
 
     /**
