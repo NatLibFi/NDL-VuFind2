@@ -584,6 +584,7 @@ trait SolrFinnaTrait
                 $result['invisbn'] = $isbn;
             }
         } elseif (is_string($result)
+            && is_callable([$this, 'isUrlLoadable'])
             && !$this->isUrlLoadable($result, $this->getUniqueID())
         ) {
             $result = false;
