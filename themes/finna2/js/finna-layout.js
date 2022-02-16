@@ -199,16 +199,17 @@ finna.layout = (function finnaLayout() {
       var submitButton = searchForm.querySelector('button[type="submit"]');
       if (submitButton) {
         var mouseUp = function onMouseUp(ev) {
-          if (1 === ev.button) {
+          if (1 === ev.button && ev.target === submitButton || submitButton.contains(ev.target)) {
             searchForm.setAttribute('target', '_blank');
             searchForm.submit();
             searchForm.removeAttribute('target');
           }
+          document.removeEventListener('mouseup', mouseUp);
         };
         submitButton.addEventListener('mousedown', function listenToMiddleClick(e) {
           if (1 === e.button) {
-            submitButton.removeEventListener('mouseup', mouseUp);
-            submitButton.addEventListener('mouseup', mouseUp);
+            document.removeEventListener('mouseup', mouseUp);
+            document.addEventListener('mouseup', mouseUp);
           }
         });
       }
