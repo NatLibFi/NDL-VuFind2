@@ -1,11 +1,11 @@
-<?= $this->translate('due_date_hello') ?>
+<?= $this->translate('due_date_hello', ['%%firstname%%' => $this->user->firstname]) ?>
 
 
 <?php if (!empty($this->loans)): ?>
 <?= $this->translate('due_date_email_txt' . (count($this->loans) == 1 ? '_singular' : ''), ['%%loancount%%' => count($loans)]) ?>
 
 <?php endif; ?>
-<?php if (!empty($this->loans)):  ?>
+<?php if (!empty($this->loans)): ?>
 
 <?php foreach ($this->loans as $loan): ?>
 <?php

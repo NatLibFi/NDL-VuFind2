@@ -25,18 +25,18 @@ if ($otherTitles):?>
     </div>
   <?php endif; ?>
   <div class="author-and-dates">
-    <?php if ($recordType != 'lido'): ?>
+    <?php if ('lido' !== $recordType): ?>
       <p>
-      <?php if ($author = $this->driver->getPrimaryAuthor()): ?>
-        <?=$this->escapeHtml($author) ?>
+        <?php if ($author = $this->driver->getPrimaryAuthor()): ?>
+          <?=$this->escapeHtml($author) ?>
         <?php endif; ?>
         <?php if ($dates = $this->driver->tryMethod('getResultDateRange')): ?>
           <?=$this->escapeHtml($dates[0]);?><?php if (isset($dates[1]) && $dates[1] != $dates[0]): ?>&ndash;<?=$this->escapeHtml($dates[1])?><?php endif; ?>
-      <?php else: ?>
-        <?php foreach ($this->driver->getPublicationDates() as $date): ?>
-        <?=$this->escapeHtml($date) ?>
-        <?php endforeach ?>
-      <?php endif; ?>
+        <?php else: ?>
+          <?php foreach ($this->driver->getPublicationDates() as $date): ?>
+            <?=$this->escapeHtml($date) ?>
+          <?php endforeach ?>
+        <?php endif; ?>
       </p>
     <?php else: ?>
       <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
@@ -62,29 +62,41 @@ if ($otherTitles):?>
   </div>
   <div class="summary loading">
     <div data-rows="6" class="truncate-field">
-    <?php if ($recordType == 'marc'): ?>
-      <p></p>
-    <?php else: ?>
-      <?php if ($imageDescription): ?>
-        <div id="popup-image-description" class="image-description">
-          <p><strong><?=$this->transEsc('Image') ?>:</strong> <?=$this->escapeHtml($imageDescription) ?></p>
-        </div>
-      <?php endif; ?>
-      <?php if ($summary = $this->driver->getSummary()): ?>
-        <?php foreach ($this->driver->getSummary() as $item): ?>
-          <p><?=$recordType == 'forward' ? $item : preg_replace('/&lt;br\/?&gt;/', '<br>', $this->escapeHtml($item)) /* Allow <br> tag */ ?></p>
-        <?php endforeach ?>
+      <?php if ('marc' === $recordType): ?>
+        <p></p>
+      <?php else: ?>
+        <?php if ($imageDescription): ?>
+          <div id="popup-image-description" class="image-description">
+            <p><strong><?=$this->transEsc('Image') ?>:</strong> <?=$this->escapeHtml($imageDescription)?></p>
+          </div>
+        <?php endif; ?>
+        <?php if ($summaries = $this->driver->tryMethod('getDescriptions') ?? $this->driver->tryMethod('getSummary')): ?>
+          <?php if ('qdc' === $recordType): ?>
+            <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $summaries), "\n")?>
+          <?php elseif (in_array($recordType, ['lido', 'ead'])): ?>
+            <?php foreach ($summaries as $summary): ?>
+              <?= $this->recordFieldMarkdown()->toHtml($summary) ?>
+            <?php endforeach; ?>
+          <?php elseif ('forward' === $recordType): ?>
+            <?php foreach ($summaries as $summary): ?>
+              <p><?=$this->cleanHtml($summary)?></p>
+            <?php endforeach ?>
+          <?php elseif ($summary = $summaries[0] ?? false): ?>
+            <div class="truncate-field wide">
+              <p class="summary"><?$this->cleanHtml($summary)?></p>
+            </div>
+          <?php endif; ?>
+        <?php endif; ?>
       <?php endif ?>
-    <?php endif ?>
     </div>
   </div>
-  <?php if (isset($listNotes) && $listNotes): ?>
+  <?php if (!empty($listNotes)): ?>
     <div class="list-notes">
       <strong><?=$this->transEsc('Note')?>:</strong>
       <ul>
-      <?php foreach ($listNotes as $note): ?>
-        <li><?=$this->markdown()->toHtml($note) ?></li>
-      <?php endforeach; ?>
+        <?php foreach ($listNotes as $note): ?>
+          <li><?=$this->markdown()->toHtml($note) ?></li>
+        <?php endforeach; ?>
       </ul>
     </div>
   <?php endif; ?>

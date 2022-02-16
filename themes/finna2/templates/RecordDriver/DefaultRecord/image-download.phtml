@@ -10,7 +10,7 @@
         <i aria-hidden="true" class="fa fa-download"></i>
         <div class="dropdown">
             <button class="btn btn-default dropdown-toggle download" type="button" id="downloadMenu-<?=$index?>" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <?=$this->transEsc('Download the image') ?> <span class="caret"></span>
+                <?=$this->transEsc('Download the image')?> <span class="caret"></span>
             </button>
             <ul class="dropdown-menu download" aira-labelledby="downloadMenu-<?=$index?>">
                 <?php if (isset($urls['large'])): ?>
@@ -30,7 +30,7 @@
                                 }
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;
                             ?>
-                            <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('cover-download', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$dimensions?></span> <span class="image-size"><?=$imageSize?></span>  <?=$key?></a></li>
+                            <li><a download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$this->escapeHtml($dimensions)?></span> <span class="image-size"><?=$this->escapeHtml($imageSize)?></span>  <?=$this->escapeHtml($info['format'] ?? '')?></a></li>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
