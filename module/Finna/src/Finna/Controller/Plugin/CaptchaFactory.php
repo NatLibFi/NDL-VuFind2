@@ -4,8 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2019.
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) Villanova University 2020.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,7 +22,7 @@
  * @category VuFind
  * @package  Controller_Plugins
  * @author   Demian Katz <demian.katz@villanova.edu>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Mario Trojan <mario.trojan@uni-tuebingen.de>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
@@ -41,7 +40,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
  * @category VuFind
  * @package  Controller_Plugins
  * @author   Demian Katz <demian.katz@villanova.edu>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Mario Trojan <mario.trojan@uni-tuebingen.de>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
@@ -59,7 +58,7 @@ class CaptchaFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -70,20 +69,22 @@ class CaptchaFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
 
-        $config
-            = $container->get(\VuFind\Config\PluginManager::class)->get('config');
+        $config = $container->get(\VuFind\Config\PluginManager::class)
+            ->get('config');
+
+        // Force Interval captcha for Finna:
+        //$captchaTypes = $config->Captcha->types ?? [];
+        $captchaTypes = ['Interval'];
+
         $captchas = [];
-        if (!empty($config->Captcha->forms)) {
+        foreach ($captchaTypes as $captchaType) {
             $captchas[] = $container->get(\VuFind\Captcha\PluginManager::class)
-                ->get('Recaptcha');
+                ->get(trim($captchaType));
         }
 
         return new $requestedName(
             $config,
-            $captchas,
-            $container->get(\VuFind\Auth\Manager::class),
-            $container->get(\Laminas\Session\SessionManager::class),
-            $container->get(\Laminas\Mvc\I18n\Translator::class)
+            $captchas
         );
     }
 }

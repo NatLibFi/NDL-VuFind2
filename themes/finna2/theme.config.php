@@ -43,7 +43,6 @@ $config = [
             'Finna\View\Helper\Root\Piwik' => 'VuFind\View\Helper\Root\PiwikFactory',
             'Finna\View\Helper\Root\Primo' => 'Finna\View\Helper\Root\PrimoFactory',
             'Finna\View\Helper\Root\ProxyUrl' => 'Finna\View\Helper\Root\ProxyUrlFactory',
-            'Finna\View\Helper\Root\Recaptcha' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Record' => 'Finna\View\Helper\Root\RecordFactory',
             'Finna\View\Helper\Root\RecordDataFormatter' => 'Finna\View\Helper\Root\RecordDataFormatterFactory',
             'Finna\View\Helper\Root\RecordFieldMarkdown' => 'Finna\View\Helper\Root\RecordFieldMarkdownFactory',
@@ -109,8 +108,6 @@ $config = [
             'organisationsList' => 'Finna\View\Helper\Root\OrganisationsList',
             'personaAuth' => 'Finna\View\Helper\Root\PersonaAuth',
             'primo' => 'Finna\View\Helper\Root\Primo',
-            // recaptcha only exists for back-compatibility
-            'recaptcha' => 'Finna\View\Helper\Root\Recaptcha',
             'recordFieldMarkdown' => 'Finna\View\Helper\Root\RecordFieldMarkdown',
             'recordImage' => 'Finna\View\Helper\Root\RecordImage',
             'scriptSrc' => 'Finna\View\Helper\Root\ScriptSrc',
