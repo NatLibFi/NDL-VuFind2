@@ -217,7 +217,7 @@ JS;
       <?php if (!$this->cookie()->get('cookieConsent')): ?>
         <?=$this->partial('Helpers/cookie-consent.phtml');?>
       <?php endif; ?>
-      <?php if (!empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(?i)Trident\/[4.0-7.0]/', $_SERVER['HTTP_USER_AGENT'])): ?>
+      <?php if (!empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(?i)Trident\/[0-7]/', $_SERVER['HTTP_USER_AGENT'])): ?>
         <div class="container-fluid system-messages">
           <?=$this->translate('outdated_browser_message_html');?>
         </div>
