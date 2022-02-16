@@ -178,6 +178,16 @@ $config = [
                     ]
                 ],
             ],
+            'cover-download' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/Cover/Download',
+                    'defaults' => [
+                        'controller' => 'Record',
+                        'action'     => 'DownloadFile',
+                    ]
+                ]
+            ],
             'robots-txt' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
@@ -940,7 +950,6 @@ $dynamicRoutes = [
 ];
 
 $staticRoutes = [
-    'Cover/Download',
     'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',
@@ -956,7 +965,8 @@ $staticRoutes = [
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
-    'Record/DownloadModel', 'Record/DownloadFile'
+    'Record/DownloadModel',
+    'Record/DownloadFile'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

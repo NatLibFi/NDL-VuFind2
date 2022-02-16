@@ -779,13 +779,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $measurements,
                     $language
                 ),
-                'url' => $url
+                'url' => $url,
+                'format' => $format ?: 'jpg'
             ];
             if ($id) {
                 $currentHiRes['resourceID'] = $id;
             }
-            $highResolution[$size][$format ?: 'jpg']
-                = $currentHiRes;
+            $highResolution[$size][] = $currentHiRes;
         }
 
         return compact('displayImage', 'highResolution');
