@@ -105,7 +105,7 @@
     <?/* End Main Details */?>
   </div>
   <?php ob_start(); ?>
-    <?php if ($this->resolver('record/record-organisation-menu.phtml') && in_array($this->driver->getSourceIdentifier(), ['Solr', 'R2'])): ?>
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'sidebar'): ?>
       <div class="organisation-menu">
           <?=$this->render('record/record-organisation-menu.phtml') ?>
       </div>

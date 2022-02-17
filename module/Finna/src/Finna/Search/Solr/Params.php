@@ -45,13 +45,6 @@ class Params extends \VuFind\Search\Solr\Params
     use \Finna\Search\FinnaParams;
 
     /**
-     * Search handler for browse actions
-     *
-     * @var string
-     */
-    protected $browseHandler;
-
-    /**
      * Date converter
      *
      * @var \Vufind\Date\Converter
@@ -163,45 +156,6 @@ class Params extends \VuFind\Search\Solr\Params
                 }
             }
         }
-    }
-
-    /**
-     * Support method for initSearch() -- handle basic settings.
-     *
-     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
-     * request.
-     *
-     * @return boolean True if search settings were found, false if not.
-     */
-    protected function initBasicSearch($request)
-    {
-        if ($handler = $request->get('browseHandler')) {
-            $this->setBrowseHandler($handler);
-        }
-        return parent::initBasicSearch($request);
-    }
-
-    /**
-     * Return the selected search handler (null for complex searches which have no
-     * single handler)
-     *
-     * @return string|null
-     */
-    public function getSearchHandler()
-    {
-        return $this->browseHandler ?: parent::getSearchHandler();
-    }
-
-    /**
-     * Set search handler for browse actions
-     *
-     * @param string $handler Hander
-     *
-     * @return string|null
-     */
-    public function setBrowseHandler($handler)
-    {
-        return $this->browseHandler = $handler;
     }
 
     /**
@@ -850,5 +804,36 @@ class Params extends \VuFind\Search\Solr\Params
                 = $this->buildFullDateRangeFilter('first_indexed', $from, '*');
             $this->addFilter($rangeFacet);
         }
+    }
+
+    /**
+     * Set the sorting value (note: sort will be set to default if an illegal
+     * or empty value is passed in).
+     *
+     * @param string $sort  New sort value (null for default)
+     * @param bool   $force Set sort value without validating it?
+     *
+     * @return void
+     */
+    public function setSort($sort, $force = false)
+    {
+        if (!$force) {
+            // Check if we need to convert the sort to a currently valid option
+            // (it must be a prefix of a currently valid option):
+            $validOptions = array_keys($this->getOptions()->getSortOptions());
+            if (!empty($sort) && !in_array($sort, $validOptions)) {
+                $sortLen = strlen($sort);
+                foreach ($validOptions as $valid) {
+                    if (strlen($valid) > $sortLen
+                        && strncmp($sort, $valid, $sortLen) === 0
+                    ) {
+                        $sort = $valid;
+                        break;
+                    }
+                }
+            }
+        }
+
+        parent::setSort($sort, $force);
     }
 }

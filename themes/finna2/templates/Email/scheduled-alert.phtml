@@ -1,3 +1,6 @@
+<?=$this->translate('scheduled_alert_hello', ['%%firstname%%' => $this->user->firstname]) ?>
+
+
 <?=$this->translate('New results found for search') ?>:
   <?=empty($info['description']) ? $this->translate('history_empty_search') : $this->escapeHtml($info['description'])?>
 

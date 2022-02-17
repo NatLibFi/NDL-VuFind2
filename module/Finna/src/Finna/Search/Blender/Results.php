@@ -27,6 +27,8 @@
  */
 namespace Finna\Search\Blender;
 
+use FinnaSearch\Command\SearchCommand;
+
 /**
  * Blender aspect of the Search Multi-class (Results)
  *
@@ -60,18 +62,31 @@ class Results extends \Finna\Search\Solr\Results
         $searchService = $this->getSearchService();
 
         try {
-            $collection = $searchService
-                ->search($this->backendId, $query, $offset, $limit, $params);
+            $command = new SearchCommand(
+                $this->backendId,
+                $query,
+                $offset,
+                $limit,
+                $params
+            );
+            $searchService->invoke($command);
+            $collection = $command->getResult();
         } catch (\VuFindSearch\Backend\Exception\BackendException $e) {
             // If the query caused a parser error, see if we can clean it up:
             if ($e->hasTag('VuFind\Search\ParserError')
                 && $newQuery = $this->fixBadQuery($query)
             ) {
-                // We need to get a fresh set of $params, since the previous one was
-                // manipulated by the previous search() call.
-                $params = $this->getParams()->getBackendParameters();
-                $collection = $searchService
-                    ->search($this->backendId, $newQuery, $offset, $limit, $params);
+                // We need to get a fresh command, since the previous one was
+                // manipulated by the previous search.
+                $command = new SearchCommand(
+                    $this->backendId,
+                    $newQuery,
+                    $offset,
+                    $limit,
+                    $params
+                );
+                $searchService->invoke($command);
+                $collection = $command->getResult();
             } else {
                 throw $e;
             }

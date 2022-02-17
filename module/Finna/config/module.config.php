@@ -30,6 +30,26 @@ namespace Finna\Module\Configuration;
 $config = [
     'router' => [
         'routes' => [
+            'browse-database' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/Browse/Database',
+                    'defaults' => [
+                        'controller' => 'BrowseSearch',
+                        'action'     => 'Database',
+                    ]
+                ],
+            ],
+            'browse-journal' => [
+                'type' => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/Browse/Journal',
+                    'defaults' => [
+                        'controller' => 'BrowseSearch',
+                        'action'     => 'Journal',
+                    ]
+                ],
+            ],
             'comments-inappropriate' => [
                 'type'    => 'Laminas\Router\Http\Segment',
                 'options' => [
@@ -148,34 +168,6 @@ $config = [
                     ]
                 ],
             ],
-            'record-feedback' => [
-                'type'    => 'Laminas\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/Record/[:id]/Feedback',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ],
-                    'defaults' => [
-                        'controller' => 'Record',
-                        'action'     => 'Feedback',
-                    ]
-                ]
-            ],
-            'record-repositorylibraryrequest' => [
-                'type'    => 'Laminas\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/Record/[:id]/RepositoryLibraryRequest',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ],
-                    'defaults' => [
-                        'controller' => 'Record',
-                        'action'     => 'RepositoryLibraryRequest',
-                    ]
-                ]
-            ],
             'record-preview' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
@@ -186,6 +178,16 @@ $config = [
                     ]
                 ],
             ],
+            'cover-download' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/Cover/Download',
+                    'defaults' => [
+                        'controller' => 'Record',
+                        'action'     => 'DownloadFile',
+                    ]
+                ]
+            ],
             'robots-txt' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
@@ -195,34 +197,6 @@ $config = [
                         'action'     => 'get',
                     ]
                 ],
-            ],
-            'solrrecord-feedback' => [
-                'type'    => 'Laminas\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/Record/[:id]/Feedback',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ],
-                    'defaults' => [
-                        'controller' => 'Record',
-                        'action'     => 'Feedback',
-                    ]
-                ]
-            ],
-            'solrauthrecord-feedback' => [
-                'type'    => 'Laminas\Router\Http\Segment',
-                'options' => [
-                    'route'    => '/AuthorityRecord/[:id]/Feedback',
-                    'constraints' => [
-                        'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
-                    ],
-                    'defaults' => [
-                        'controller' => 'AuthorityRecord',
-                        'action'     => 'Feedback',
-                    ]
-                ]
             ],
         ],
     ],
@@ -237,7 +211,7 @@ $config = [
             'Finna\Controller\AuthorityController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\AuthorityRecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\BarcodeController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\BrowseController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\BrowseSearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\CartController' => 'VuFind\Controller\CartControllerFactory',
             'Finna\Controller\CollectionController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\CombinedController' => 'VuFind\Controller\AbstractBaseFactory',
@@ -275,6 +249,7 @@ $config = [
             'AuthorityRecord' => 'Finna\Controller\AuthorityRecordController',
             'Barcode' => 'Finna\Controller\BarcodeController',
             'barcode' => 'Finna\Controller\BarcodeController',
+            'BrowseSearch' => 'Finna\Controller\BrowseSearchController',
             'Comments' => 'Finna\Controller\CommentsController',
             'comments' => 'Finna\Controller\CommentsController',
             'FeedContent' => 'Finna\Controller\FeedContentController',
@@ -305,7 +280,6 @@ $config = [
             // Overrides:
             'VuFind\Controller\AuthorityController' => 'Finna\Controller\AuthorityController',
             'VuFind\Controller\AjaxController' => 'Finna\Controller\AjaxController',
-            'VuFind\Controller\BrowseController' => 'Finna\Controller\BrowseController',
             'VuFind\Controller\CartController' => 'Finna\Controller\CartController',
             'VuFind\Controller\CombinedController' => 'Finna\Controller\CombinedController',
             'VuFind\Controller\CollectionController' => 'Finna\Controller\CollectionController',
@@ -331,10 +305,7 @@ $config = [
     ],
     'controller_plugins' => [
         'factories' => [
-            'Finna\Controller\Plugin\Captcha' => 'Finna\Controller\Plugin\CaptchaFactory',
-        ],
-        'aliases' => [
-            'VuFind\Controller\Plugin\Captcha' => 'Finna\Controller\Plugin\Captcha'
+            'VuFind\Controller\Plugin\Captcha' => 'Finna\Controller\Plugin\CaptchaFactory',
         ],
     ],
     'service_manager' => [
@@ -375,7 +346,6 @@ $config = [
             'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
 
-            'VuFind\Search\SearchTabsHelper' => 'Finna\Search\SearchTabsHelperFactory',
             'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
             'Laminas\Session\SessionManager' => 'Finna\Session\ManagerFactory',
@@ -651,6 +621,7 @@ $config = [
                     'VuFind\Recommend\SideFacets' => 'Finna\Recommend\Factory::getSideFacets',
                     'Finna\Recommend\AuthorityRecommend' => 'Finna\Recommend\AuthorityRecommendFactory',
                     'Finna\Recommend\Feedback' => 'Finna\Recommend\FeedbackFactory',
+                    'Finna\Recommend\FinnaStaticHelp' => 'Laminas\ServiceManager\Factory\InvokableFactory',
                     'Finna\Recommend\FinnaSuggestions' => 'Finna\Recommend\FinnaSuggestionsFactory',
                     'Finna\Recommend\FinnaSuggestionsDeferred' => 'Finna\Recommend\FinnaSuggestionsDeferredFactory',
                     'Finna\Recommend\LearningMaterial' => 'Finna\Recommend\LearningMaterialFactory',
@@ -661,6 +632,7 @@ $config = [
                 'aliases' => [
                     'authorityrecommend' => 'Finna\Recommend\AuthorityRecommend',
                     'feedback' => 'Finna\Recommend\Feedback',
+                    'finnastatichelp' => 'Finna\Recommend\FinnaStaticHelp',
                     'finnasuggestions' => 'Finna\Recommend\FinnaSuggestions',
                     'finnasuggestionsdeferred' => 'Finna\Recommend\FinnaSuggestionsDeferred',
                     'learningmaterial' => 'Finna\Recommend\LearningMaterial',
@@ -681,13 +653,14 @@ $config = [
             ],
             'search_backend' => [
                 'factories' => [
-                    'R2' => 'Finna\Search\Factory\R2BackendFactory',
-                    'R2Collection' => 'Finna\Search\Factory\R2BackendFactory',
-                    'Primo' => 'Finna\Search\Factory\PrimoBackendFactory',
-                    'Solr' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
-                    'SolrAuth' => 'Finna\Search\Factory\SolrAuthBackendFactory',
                     'Blender' => 'Finna\Search\Factory\BlenderBackendFactory',
                     'L1' => 'Finna\Search\Factory\L1BackendFactory',
+                    'Primo' => 'Finna\Search\Factory\PrimoBackendFactory',
+                    'R2' => 'Finna\Search\Factory\R2BackendFactory',
+                    'R2Collection' => 'Finna\Search\Factory\R2BackendFactory',
+                    'Solr' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
+                    'SolrAuth' => 'Finna\Search\Factory\SolrAuthBackendFactory',
+                    'SolrBrowse' => 'Finna\Search\Factory\SolrDefaultBackendFactory',
                 ],
             ],
             'search_facetcache' => [
@@ -708,6 +681,7 @@ $config = [
                     'Finna\Search\Primo\Options' => 'VuFind\Search\OptionsFactory',
                     'Finna\Search\Solr\Options' => 'VuFind\Search\OptionsFactory',
                     'Finna\Search\SolrAuth\Options' => 'VuFind\Search\OptionsFactory',
+                    'Finna\Search\SolrBrowse\Options' => 'VuFind\Search\OptionsFactory',
 
                     'Finna\Search\L1\Options' => 'VuFind\Search\OptionsFactory',
                 ],
@@ -727,6 +701,7 @@ $config = [
                     'R2' => 'Finna\Search\R2\Options',
                     'R2Collection' => 'VuFind\Search\SolrCollection\Options',
                     'SolrAuth' => 'Finna\Search\SolrAuth\Options',
+                    'SolrBrowse' => 'Finna\Search\SolrBrowse\Options',
                     'L1' => 'Finna\Search\L1\Options',
                 ]
             ],
@@ -743,6 +718,7 @@ $config = [
                     'Finna\Search\MixedList\Params' => 'VuFind\Search\Params\ParamsFactory',
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
+                    'Finna\Search\SolrBrowse\Params' => 'Finna\Search\Solr\ParamsFactory',
 
                     'Finna\Search\L1\Params' => 'Finna\Search\Solr\ParamsFactory',
                 ],
@@ -773,6 +749,7 @@ $config = [
                     'Finna\Search\Primo\Results' => 'VuFind\Search\Results\ResultsFactory',
                     'Finna\Search\Solr\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrAuth\Results' => 'VuFind\Search\Solr\ResultsFactory',
+                    'Finna\Search\SolrBrowse\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\L1\Results' => 'Finna\Search\L1\ResultsFactory',
                 ],
                 'aliases' => [
@@ -783,9 +760,10 @@ $config = [
                     'VuFind\Search\SolrAuth\Results' => 'Finna\Search\SolrAuth\Results',
 
                     'Blender' => 'Finna\Search\Blender\Results',
+                    'L1' => 'Finna\Search\L1\Results',
                     'R2' => 'Finna\Search\R2\Results',
                     'R2Collection' => 'Finna\Search\R2Collection\Results',
-                    'L1' => 'Finna\Search\L1\Results',
+                    'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ]
             ],
             'content_covers' => [
@@ -951,10 +929,16 @@ $config = [
 $recordRoutes = [
     'metalibrecord' => 'MetaLibRecord',
     'solrauthrecord' => 'AuthorityRecord',
+    'solrbrowserecord' => 'Record',
     'r2record' => 'R2Record',
     'r2collection' => 'R2Collection',
     'r2collectionrecord' => 'R2Record',
     'l1record' => 'L1Record'
+];
+
+// Define non tab record actions
+$nonTabRecordActions = [
+    'Feedback', 'RepositoryLibraryRequest',
 ];
 
 // Define dynamic routes -- controller => [route name => action]
@@ -966,7 +950,6 @@ $dynamicRoutes = [
 ];
 
 $staticRoutes = [
-    'Browse/Database', 'Browse/Journal', 'Cover/Download',
     'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',
@@ -982,15 +965,17 @@ $staticRoutes = [
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
-    'Record/DownloadModel'
+    'Record/DownloadModel',
+    'Record/DownloadFile'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
+$routeGenerator->addNonTabRecordActions($config, $nonTabRecordActions);
 $routeGenerator->addRecordRoutes($config, $recordRoutes);
 $routeGenerator->addDynamicRoutes($config, $dynamicRoutes);
 $routeGenerator->addStaticRoutes($config, $staticRoutes);
 
-// This needs to be defined after VuFind's record routes...
+// These need to be defined after VuFind's record routes:
 $config['router']['routes']['l1record-feedback'] = [
     'type'    => 'Laminas\Router\Http\Segment',
     'options' => [
@@ -1005,7 +990,6 @@ $config['router']['routes']['l1record-feedback'] = [
         ]
     ]
 ];
-
 $config['router']['routes']['r2record-feedback'] = [
     'type'    => 'Laminas\Router\Http\Segment',
     'options' => [
@@ -1016,6 +1000,34 @@ $config['router']['routes']['r2record-feedback'] = [
         ],
         'defaults' => [
             'controller' => 'R2Record',
+            'action'     => 'Feedback',
+        ]
+    ]
+];
+$config['router']['routes']['solrrecord-feedback'] = [
+    'type'    => 'Laminas\Router\Http\Segment',
+    'options' => [
+        'route'    => '/Record/[:id]/Feedback',
+        'constraints' => [
+            'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+            'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+        ],
+        'defaults' => [
+            'controller' => 'Record',
+            'action'     => 'Feedback',
+        ]
+    ]
+];
+$config['router']['routes']['solrauthrecord-feedback'] = [
+    'type'    => 'Laminas\Router\Http\Segment',
+    'options' => [
+        'route'    => '/AuthorityRecord/[:id]/Feedback',
+        'constraints' => [
+            'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+            'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
+        ],
+        'defaults' => [
+            'controller' => 'AuthorityRecord',
             'action'     => 'Feedback',
         ]
     ]

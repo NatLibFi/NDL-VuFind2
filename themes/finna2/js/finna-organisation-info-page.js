@@ -142,15 +142,15 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     });
   }
 
-  function initSearch() {
-    var count = Object.keys(organisationList).length;
+  function initSearch(list) {
+    var count = Object.keys(list).length;
     var translation = VuFind.translate('organisationInfoAutocomplete').replace('%%count%%', count);
 
     $(document).ready(function initSelect() {
       var select = document.querySelector('#office-search');
       var placeholder = document.createElement('option');
       select.append(placeholder);
-      $.each(organisationList, function addToSelect(id, el) {
+      $.each(list, function addToSelect(id, el) {
         var option = document.createElement('option');
         option.appendChild(document.createTextNode(el.name));
         if (el.address && el.address.city) {
@@ -191,7 +191,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
             id = Object.keys(organisationList)[0];
           } else {
             // IE opens Delay initing autocomplete menu to prevent IE from opening it automatically at
-            initSearch();
+            initSearch(response.list);
           }
 
           if (typeof id != 'undefined' && id) {
@@ -467,7 +467,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     parent = finna.common.getField(options, 'id');
     consortiumInfo = finna.common.getField(options, 'consortiumInfo') === 1;
     var buildings = finna.common.getField(options, 'buildings');
-    var mapTileUrl = '//map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
+    var mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
     var attribution =
       '<i class="fa fa-map-marker marker open"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_open') + '</span>' +
       '<i class="fa fa-map-marker marker closed"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_closed') + '</span>' +

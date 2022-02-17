@@ -15,20 +15,23 @@
 
   $noteDesc = $this->transEsc('Note');
 ?>
-<?php if ($view === 'condensed' || $view === 'list'): ?>
-  <button class="note-button condensed" aria-hidden="true" title="<?=$noteDesc?>"><i class="fa fa-file-text-o"></i><?=$noteDesc?><span class="caret"></span></button>
+<?php if ($view === 'condensed'): ?>
+  <button class="note-button condensed" aria-hidden="true" title="<?=$noteDesc?>"><i class="fa fa-file-text-o" aria-hidden=“true”></i><?=$noteDesc?><span class="caret"></span></button>
 <?php endif; ?>
-<div class="<?= in_array($view, ['grid', 'condensed', 'list']) ? "note-overlay-$view note-hide" : '' ?>">
+<div class="<?= in_array($view, ['grid', 'condensed']) ? "note-overlay-$view note-hide" : 'note-overlay-list' ?>">
   <div class="notes">
     <?php if ($view === 'grid'): ?>
       <br/>
     <?php endif; ?>
     <div class="note-rows">
+      <?php if ($view === 'list' || $view === 'compact'): ?>
+        <i class="fa fa-file-text-o" aria-hidden=“true”></i><span><?=$noteDesc?>:</span>
+      <?php endif; ?>
       <?=$note;?>
     </div>
   </div>
 </div>
 <?php if ($view === 'grid'): ?>
-  <button class="note-button" aria-hidden="true" title="<?=$noteDesc?>"><i class="fa fa-file-text-o"></i><?=$noteDesc?><span class="caret"></span></button>
+  <button class="note-button" aria-hidden="true" title="<?=$noteDesc?>"><i class="fa fa-file-text-o" aria-hidden=“true”></i><?=$noteDesc?><span class="caret"></span></button>
 <?php endif; ?>
 <!-- END of: finna - list/list-notes.phtml -->

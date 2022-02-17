@@ -43,7 +43,7 @@
     <div class="login-col">
       <div class="register-description">
         <p class="register-info">
-          <?=$this->translate('email_registration_infobox_html', ['%%target%%' => $targetName])?>
+          <?=$this->translate('email_registration_infobox_html', ['%%target%%' => $this->escapeHtml($targetName)])?>
         </p>
       </div>
     </div>

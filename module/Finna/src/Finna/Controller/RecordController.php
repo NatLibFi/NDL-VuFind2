@@ -104,16 +104,16 @@ class RecordController extends \VuFind\Controller\RecordController
     }
 
     /**
-     * Load a normalized record from RecordManager for preview
+     * Load normalized record metadata from RecordManager for preview
      *
      * @param string $data   Record Metadata
      * @param string $format Metadata format
      * @param string $source Data source
      *
-     * @return AbstractRecordDriver
+     * @return array
      * @throw  \Exception
      */
-    protected function loadPreviewRecord($data, $format, $source)
+    protected function loadPreviewRecordData($data, $format, $source): array
     {
         $config = $this->getConfig();
         if (empty($config->NormalizationPreview->url)) {
@@ -159,10 +159,8 @@ class RecordController extends \VuFind\Controller\RecordController
             $body = $response->getBody();
             $metadata = json_decode($body, true);
         }
-        $recordFactory = $this->serviceLocator
-            ->get(\VuFind\RecordDriver\PluginManager::class);
-        $this->driver = $recordFactory->getSolrRecord($metadata);
-        return $this->driver;
+
+        return $metadata;
     }
 
     /**
@@ -183,42 +181,32 @@ class RecordController extends \VuFind\Controller\RecordController
         if ($id != '0') {
             return parent::loadRecord($params, $force);
         }
-        $data = $this->params()->fromPost(
-            'data',
-            $this->params()->fromQuery('data', '')
+
+        $data = $this->params()->fromPost('data')
+            ?: $this->params()->fromQuery('data');
+        $format = $this->params()->fromPost('format')
+            ?: $this->params()->fromQuery('format');
+        $source = $this->params()->fromPost('source')
+            ?: $this->params()->fromQuery('source');
+
+        $manager
+            = $this->serviceLocator->get(\Laminas\Session\SessionManager::class);
+        $sessionContainer = new \Laminas\Session\Container(
+            'RecordPreview',
+            $manager
         );
-        $format = $this->params()->fromPost(
-            'format',
-            $this->params()->fromQuery('format', '')
-        );
-        $source = $this->params()->fromPost(
-            'source',
-            $this->params()->fromQuery('source', '')
-        );
-        if (!$data) {
-            // Support marc parameter for backwards-compatibility
-            $format = 'marc';
-            if (!$source) {
-                $source = '_marc_preview';
-            }
-            $data = $this->params()->fromPost(
-                'marc',
-                $this->params()->fromQuery('marc')
-            );
-            $marc = new \File_MARC($data, \File_MARC::SOURCE_STRING);
-            $record = $marc->next();
-            if (false === $record) {
-                throw new \Exception('Missing record data');
-            }
-            $data = $record->toXML();
-            $data = preg_replace('/[\x00-\x09,\x11,\x12,\x14-\x1f]/', '', $data);
-            $data = iconv('UTF-8', 'UTF-8//IGNORE', $data);
-        }
-        if (!$data || !$format || !$source) {
+        if ($data && $format && $source) {
+            $metadata = $this->loadPreviewRecordData($data, $format, $source);
+            $sessionContainer['metadata'] = $metadata;
+        } elseif (null === $data && !empty($sessionContainer['metadata'])) {
+            // Use cached record for tab support:
+            $metadata = $sessionContainer['metadata'];
+        } else {
             throw new \Exception('Missing parameters');
         }
-
-        return $this->loadPreviewRecord($data, $format, $source);
+        $recordFactory = $this->serviceLocator
+            ->get(\VuFind\RecordDriver\PluginManager::class);
+        return $this->driver = $recordFactory->getSolrRecord($metadata);
     }
 
     /**
@@ -814,6 +802,20 @@ class RecordController extends \VuFind\Controller\RecordController
                 }
             }
         );
+        $searchConfig = $this->getConfig('searches');
+        if (!empty($searchConfig->Records->sources)) {
+            foreach (explode(',', $searchConfig->Records->sources)
+                as $priority => $id
+            ) {
+                foreach ($sources as &$source) {
+                    if ($id === $source['id']) {
+                        $source['priority'] = $priority;
+                        break;
+                    }
+                }
+                unset($source);
+            }
+        }
         usort(
             $sources,
             function ($a, $b) {
@@ -907,6 +909,66 @@ class RecordController extends \VuFind\Controller\RecordController
                         ob_end_clean();
                     }
                     readfile($file['path']);
+                }
+            } else {
+                $response->setStatusCode(404);
+            }
+        } else {
+            $response->setStatusCode(400);
+        }
+
+        return $response;
+    }
+
+    /**
+     * Download a file
+     *
+     * @return \Laminas\Http\Response
+     */
+    public function downloadFileAction()
+    {
+        $params = $this->params();
+        $index = $params->fromQuery('index');
+        $format = $params->fromQuery('format');
+        $type = $params->fromQuery('type');
+
+        $response = $this->getResponse();
+        if ($type && $format && isset($index)) {
+            $driver = $this->loadRecord();
+            $id = urlencode($driver->getUniqueID());
+            $formedFilename = "$id-$index.$format";
+            $representation = [];
+            switch ($type) {
+            case 'highresimg':
+                $size = $params->fromQuery('size');
+                $key = $params->fromQuery('key', -1);
+                $representations = $driver->tryMethod('getAllImages');
+                $representation
+                    = $representations[$index]['highResolution'][$size][$key]
+                    ?? [];
+                $formedFilename = "$id-$index-$size.$format";
+                break;
+            case 'document':
+                $representations = $driver->tryMethod('getDocuments');
+                $representation = $representations[$index] ?? [];
+                break;
+            default:
+                $response->setStatusCode(400);
+                break;
+            }
+
+            if ($url = $representation['url'] ?? false) {
+                $fileName = $representation['description']
+                    ?? $representation['desc']
+                    ?? $formedFilename;
+                $fileLoader = $this->serviceLocator->get(\Finna\File\Loader::class);
+                $file = $fileLoader->proxyFileLoad(
+                    $url,
+                    $fileName,
+                    $format
+                );
+                if (empty($file['result'])) {
+                    $response->setStatusCode(500);
                 }
             } else {
                 $response->setStatusCode(404);

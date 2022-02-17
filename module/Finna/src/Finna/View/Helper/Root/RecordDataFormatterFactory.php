@@ -1051,14 +1051,6 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'extendedAccess']
             ]
         );
-        $setTemplateLine(
-            'Type',
-            'getTypes',
-            'data-escapeHtml',
-            [
-                'context' => ['class' => 'record-type']
-            ]
-        );
 
         $setTemplateLine(
             'Terms of Use',
@@ -1135,6 +1127,12 @@ class RecordDataFormatterFactory
                 $values = $useSubHeadings && $values
                     ? array_values($values) : $values;
                 $label = $useSubHeadings ? "access_restrictions_$type" : null;
+                if ($useSubHeadings
+                    && isset($options['hideSubheadings'])
+                    && in_array($label, $options['hideSubheadings'])
+                ) {
+                    $label = null;
+                }
                 $final[] = [
                     'label' => $label,
                     'values' => $values,
@@ -1174,6 +1172,35 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'record-composition']
             ]
         );
+
+        $getExtendedMusicCompositions = function ($data, $options) {
+            $final = [];
+            $pos = $options['pos'];
+            foreach ($data as $field) {
+                $label = $field['partial']
+                    ? 'Partial Medium of Performance'
+                    : 'Medium of Performance';
+                $final[] = [
+                    'label' => $label,
+                    'values' => $field['items'],
+                    'options' => [
+                        'pos' => $pos++,
+                        'renderType' => 'RecordDriverTemplate',
+                        'template' => 'data-music-composition.phtml',
+                        'context' => [
+                            'class' => 'record-composition',
+                        ],
+                    ],
+                ];
+            }
+            return $final;
+        };
+        $setMultiTemplateLine(
+            'Music Compositions Extended',
+            'getExtendedMusicCompositions',
+            $getExtendedMusicCompositions
+        );
+
         $setTemplateLine(
             'Notated Music Format',
             'getNotatedMusicFormat',
@@ -1397,6 +1424,22 @@ class RecordDataFormatterFactory
             'data-otherRelatedMaterial.phtml',
             [
                 'context' => ['class' => 'other-related-material']
+            ]
+        );
+        $setTemplateLine(
+            'Audience Characteristics',
+            'getAudienceCharacteristics',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'audience-characteristics']
+            ]
+        );
+        $setTemplateLine(
+            'Creator Characteristics',
+            'getCreatorCharacteristics',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'creator-characteristics']
             ]
         );
 

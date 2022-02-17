@@ -28,10 +28,12 @@
 namespace FinnaSearch\Backend\Blender;
 
 use FinnaSearch\Backend\Blender\Response\Json\RecordCollection;
+use FinnaSearch\Command\SearchCommand;
 use Laminas\EventManager\EventInterface;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\EventManagerInterface;
 use VuFindSearch\Backend\AbstractBackend;
+use VuFindSearch\Backend\BackendInterface;
 use VuFindSearch\Feature\RetrieveBatchInterface;
 use VuFindSearch\ParamBag;
 use VuFindSearch\Query\AbstractQuery;
@@ -455,7 +457,7 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
     }
 
     /**
-     * Set up filter for excluding merge children.
+     * Trigger pre-search events for both backends.
      *
      * @param EventInterface $event Event
      *
@@ -463,27 +465,27 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
      */
     public function onSearchPre(EventInterface $event)
     {
-        $backend = $event->getParam('backend');
-
-        if ($backend !== $this->getIdentifier()) {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() !== $this->getIdentifier()) {
             return $event;
         }
 
-        $event->setParam('backend', $this->primaryBackend->getIdentifier());
-        $event->setTarget($this->primaryBackend);
+        // Trigger the event for the primary backend:
+        $this->convertSearchEvent($event, $this->primaryBackend);
         $this->events->triggerEvent($event);
 
-        $event->setParam('backend', $this->secondaryBackend->getIdentifier());
-        $event->setTarget($this->secondaryBackend);
+        // Trigger the event for the secondary backend with the results from the
+        // primary one:
+        $this->convertSearchEvent($event, $this->secondaryBackend);
         $this->events->triggerEvent($event);
 
-        $event->setParam('backend', $backend);
-        $event->setTarget($this);
+        // Put it all back together:
+        $this->convertSearchEvent($event, $this);
         return $event;
     }
 
     /**
-     * Fetch appropriate dedup child
+     * Trigger post-search events for both backends.
      *
      * @param EventInterface $event Event
      *
@@ -491,19 +493,41 @@ class Backend extends AbstractBackend implements RetrieveBatchInterface
      */
     public function onSearchPost(EventInterface $event)
     {
-        $backend = $event->getParam('backend');
-
-        if ($backend !== $this->getIdentifier()) {
+        $command = $event->getParam('command');
+        if ($command->getTargetIdentifier() !== $this->getIdentifier()) {
             return $event;
         }
 
-        $event->setParam('backend', $this->primaryBackend->getIdentifier());
-        $this->events->triggerEvent($event);
+        $this->events->triggerEvent(
+            $this->convertSearchEvent($event, $this->primaryBackend)
+        );
 
-        $event->setParam('backend', $this->secondaryBackend->getIdentifier());
-        $this->events->triggerEvent($event);
+        $this->events->triggerEvent(
+            $this->convertSearchEvent($event, $this->secondaryBackend)
+        );
 
-        $event->setParam('backend', $backend);
+        return $this->convertSearchEvent($event, $this);
+    }
+
+    /**
+     * Convert a search event to another backend
+     *
+     * @param EventInterface   $event   Event
+     * @param BackendInterface $backend Target backend
+     *
+     * @return EventInterface
+     */
+    protected function convertSearchEvent(
+        EventInterface $event,
+        BackendInterface $backend
+    ): EventInterface {
+        $command = $event->getParam('command');
+        if (!($command instanceof SearchCommand)) {
+            throw new \Exception('Invalid command class');
+        }
+        $command->setTargetIdentifier($backend->getIdentifier());
+        $event->setParam('backend', $backend->getIdentifier());
+        $event->setTarget($backend);
         return $event;
     }
 }

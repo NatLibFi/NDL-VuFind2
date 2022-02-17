@@ -7,6 +7,7 @@
   <p>Kirjastokortin tunnuksilla kirjauduttaessa palveluun tallennetaan kirjastokortin tunnus, PIN-koodi, käyttäjän etu- ja sukunimet, sähköpostiosoite ja kotikirjasto. Tiedot siirretään automaattisesti kortin myöntäneen kirjaston järjestelmästä Finna-palveluun.</p>
   <p>Haka-tunnuksilla kirjauduttaessa tallennetaan Finna-palveluun automaattisesti kirjautujan käyttäjätunnus, nimi ja sähköpostiosoite.</p>
   <p>Finna-tunnuksella kirjauduttaessa tallennetaan Finna-palveluun tiedot, jotka on annettu tunnuksen luomisen yhteydessä eli sähköpostiosoite ja käyttäjätunnus. Alle 13-vuotiailla tulee olla huoltajan suostumus tunnuksen luomiselle.</p>
+  <p>Sähköpostiosoitteella kirjauduttaessa tallennetaan kirjautujan nimi, sähköpostiosoite ja kotikirjasto.</p>
   <p>Tietoja käsitellään Finna-palvelun toteuttamiseen Kansalliskirjastossa ja CSC – Tieteen tietotekniikan keskus Oy:ssä (palvelun tuottajat).</p>
   <p>Tietoja tallennetaan seuraaviin käyttötarkoituksiin:</p>
   <table class="content-table">
@@ -20,7 +21,7 @@
     </tr>
     <tr>
       <th>Sähköpostiosoite</th>
-      <td>Oletusosoite sähköpostin lähetystä varten, käyttäjän muokattavissa Finnassa</td>
+      <td>Oletusosoite sähköpostin lähetystä varten, käyttäjän muokattavissa Finnassa. Sähköpostilla kirjauduttaessa: kirjautumislinkin lähettäminen kirjaston asiakastietoihin tallennettuun sähköpostiosoitteeseen.</td>
     </tr>
     <tr>
       <th>Etunimi</th>
@@ -47,7 +48,7 @@
   </p>
   <p>Edellä mainittujen tietojen lisäksi Finna-palveluun voidaan tallentaa tietoja seurauksena käyttäjän toiminnasta Finnassa. Tällaisia tietoja ovat mm. käyttökieli, eräpäivämuistutusten käyttöönotto, uutuusvahdit, omiin listoihin tallennetut tietueet, itse lisätyt kirjastokortit ja sosiaalinen metadata (kommentit, arvostelut, avainsanat).
   </p>
-  <p>Muissa käyttäjän tietoja käsittelevissä toiminnoissa, kuten lainojen, varausten ja maksujen selauksessa sekä varausten teossa ja lainojen uusimisessa käytetään kirjastojärjestelmän palvelurajapintoja, eikä näitä tietoja tallenneta Finna-palveluun lukuun ottamatta valinnaisia eräpäivämuistutuksia. Eräpäivämuistutusten lähetyksen yhteydessä tallennetaan lainan ID-numero ja eräpäivä. Näiden avulla voidaan varmistua siitä, että kukin eräpäivämuistutus lähetetään vain kerran.
+  <p>Muissa käyttäjän tietoja käsittelevissä toiminnoissa, kuten lainojen, varausten ja maksujen selauksessa, varausten teossa ja lainojen uusimisessa sekä asiakkaaksi ilmoittautumisessa käytetään kirjastojärjestelmän palvelurajapintoja, eikä näitä tietoja tallenneta Finna-palveluun lukuun ottamatta valinnaisia eräpäivämuistutuksia. Eräpäivämuistutusten lähetyksen yhteydessä tallennetaan lainan ID-numero ja eräpäivä. Näiden avulla voidaan varmistua siitä, että kukin eräpäivämuistutus lähetetään vain kerran.
   </p>
   <p>Kirjastokortti-, Finna- ja Haka-tunnuksia käyttäen luodut Finna-tilit ovat toisistaan erillisiä, vaikka niihin sisältyisi sama yksilöivä tunniste.
   </p>
@@ -58,9 +59,6 @@
   <p>Finna-palvelun (Finna.fi-sivuston, Finna-alustalle rakennetun verkkokirjaston tai muun Finna-näkymän) kautta löydettäviksi tarjottavista aineistoista ja niitä kuvailevista tiedoista vastaa aineistot palveluun tuonut organisaatio. Aineistoissa ja kuvailutiedoissa saattaa olla henkilötietoja, kuten henkilönimiä tai -kuvia. Jos aineistoon tai sen kuvailutietoihin liittyvistä henkilötiedoista on tarve esittää kysymyksiä tai esimerkiksi tehdä tietoihin oikaisuja tai vaatia tietojen poistoa, Finna-palvelun käyttäjä voi olla yhteydessä siihen arkistoon, kirjastoon tai museoon, joka on tarjonnut aineiston palveluun. Aineiston tarjoajan tavoittaminen onnistuu Finna.fi-sivustolla kunkin aineiston yhteydestä löytyvällä Ota yhteyttä -lomakkeella. Jos lomake puuttuu Finna-verkkokirjastosta tai muusta Finna-näkymästä, tarkoitukseen voi käyttää verkkokirjaston tai näkymän omaa palautelomaketta.
   </p>
   <p>Jos Finna-palvelun aineistojen käyttäjäkommenteissa on henkilötietoa, jota on tarpeen esim. oikaista tai vaatia poistettavaksi, voi pyynnön esittää kommenttien yhteydestä löytyvällä lomakkeella.
-  </p>
-  <h2>Yhteislainatilaajan (kaukolainatilaajan) tietojen käsittely</h2>
-  <p>Osassa Finna-alustalle rakennetuista verkkokirjastoista on mahdollista tehdä yhteislainatilaus eli kaukolainatilaus. Kirjastolle, jonne yhteislainatilaus tehdään, luovutetaan seuraavat tilaajan tiedot automaattisesti tilaajan kotikirjaston järjestelmästä: nimi, henkilötunnus, yhteystiedot, tiedot kirjastokortista ja kirjaston asiakastunnus. Tiedot siirtyvät suoraan yhden kirjaston järjestelmästä toisen kirjaston järjestelmään. Finna-palvelu ei käsittele eikä palveluun tallennu tilauksen yhteydessä tietoa. Yhteislainatilaajan tiedot poistetaan tilauksen vastaanottaneen kirjaston järjestelmästä, kun tilaajalla ei enää ole voimassaolevia varauksia, lainoja tai maksamattomia sakkoja ko. kirjastoon.
   </p>
   <h2 id="cookies">Eväs­tei­den käyt­tö</h2>
   <p>Sivuston käyttöä seurataan, jotta palvelua voidaan parantaa. Seurannassa käytetään evästeitä (cookies). Evästeet eivät sisällä mitään sellaista tietoa, jolla käyttäjän voisi yksilöidä tai tunnistaa. Eväste ei vaikuta tietoturvaan, eikä se voi levittää viruksia tai haittaohjelmia. Vierailemalla sivustolla hyväksyt evästeiden käytön.
