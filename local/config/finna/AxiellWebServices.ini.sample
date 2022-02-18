@@ -46,7 +46,7 @@ HMACKeys = id:item_id:holdtype:level
 defaultRequiredDate = 0:0:1
 
 ; extraHoldFields - A colon-separated list used to display extra visible fields in the
-; place holds form. Supported values are "comments", "requiredByDate",
+; place holds form. Supported values are "comments", "startDate", "requiredByDate",
 ; "pickUpLocation", "requestGroup" and "acceptTerms"
 extraHoldFields = pickUpLocation
 

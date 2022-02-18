@@ -178,6 +178,16 @@ $config = [
                     ]
                 ],
             ],
+            'cover-download' => [
+                'type'    => 'Laminas\Router\Http\Literal',
+                'options' => [
+                    'route'    => '/Cover/Download',
+                    'defaults' => [
+                        'controller' => 'Record',
+                        'action'     => 'DownloadFile',
+                    ]
+                ]
+            ],
             'robots-txt' => [
                 'type' => 'Laminas\Router\Http\Literal',
                 'options' => [
@@ -295,10 +305,7 @@ $config = [
     ],
     'controller_plugins' => [
         'factories' => [
-            'Finna\Controller\Plugin\Captcha' => 'Finna\Controller\Plugin\CaptchaFactory',
-        ],
-        'aliases' => [
-            'VuFind\Controller\Plugin\Captcha' => 'Finna\Controller\Plugin\Captcha'
+            'VuFind\Controller\Plugin\Captcha' => 'Finna\Controller\Plugin\CaptchaFactory',
         ],
     ],
     'service_manager' => [
@@ -339,7 +346,6 @@ $config = [
             'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
 
-            'VuFind\Search\SearchTabsHelper' => 'Finna\Search\SearchTabsHelperFactory',
             'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
             'Laminas\Session\SessionManager' => 'Finna\Session\ManagerFactory',
@@ -944,7 +950,6 @@ $dynamicRoutes = [
 ];
 
 $staticRoutes = [
-    'Cover/Download',
     'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',
@@ -960,7 +965,8 @@ $staticRoutes = [
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',
-    'Record/DownloadModel', 'Record/DownloadFile'
+    'Record/DownloadModel',
+    'Record/DownloadFile'
 ];
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();

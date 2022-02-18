@@ -493,7 +493,7 @@ class SolrEad extends SolrDefault
                 continue;
             }
 
-            $desc = $url;
+            $desc = '';
             if ($node->daodesc) {
                 if ($node->daodesc->p) {
                     $desc = (string)$node->daodesc->p;
@@ -505,6 +505,7 @@ class SolrEad extends SolrDefault
                     $desc = (string)$p[0];
                 }
             }
+            $desc = empty($desc) ? $url : $desc;
             if (!$this->urlBlocked($url, $desc)) {
                 $urls[] = [
                     'url' => $url,

@@ -467,7 +467,7 @@ finna.organisationInfoPage = (function finnaOrganisationInfoPage() {
     parent = finna.common.getField(options, 'id');
     consortiumInfo = finna.common.getField(options, 'consortiumInfo') === 1;
     var buildings = finna.common.getField(options, 'buildings');
-    var mapTileUrl = '//map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
+    var mapTileUrl = 'https://map-api.finna.fi/v1/rendered/{z}/{x}/{y}.png';
     var attribution =
       '<i class="fa fa-map-marker marker open"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_open') + '</span>' +
       '<i class="fa fa-map-marker marker closed"></i><span class="map-marker-text">' + VuFind.translate('organisation_info_is_closed') + '</span>' +

@@ -70,8 +70,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $imageMimeTypes = [
-        'image/jpeg',
-        'image/png'
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png'
     ];
 
     /**
@@ -209,7 +209,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         $xml = $this->getXmlRecord();
         $thumbnails = [];
         $otherSizes = [];
-
+        $highResolution = [];
         $rightsStmt = $this->getMappedRights((string)($xml->rights ?? ''));
         $rights = [
             'copyright' => $rightsStmt,
@@ -231,7 +231,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $attributes = $node->attributes();
             $type = $attributes->type ?? '';
             if (!empty($attributes->type)
-                && !in_array($type, $this->imageMimeTypes)
+                && !in_array($type, array_keys($this->imageMimeTypes))
             ) {
                 continue;
             }
@@ -251,6 +251,14 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 // images so take only first in this situation
                 $size = $this->imageSizeMappings[$bundle] ?? false;
                 if ($size && !isset($otherSizes[$size])) {
+                    if (in_array($size, ['master', 'original'])) {
+                        $currentHiRes = [
+                            'data' => [],
+                            'url' => $url,
+                            'format' => $this->imageMimeTypes[$type] ?? 'jpg'
+                        ];
+                        $highResolution[$size][] = $currentHiRes;
+                    }
                     $otherSizes[$size] = $url;
                 }
             }
@@ -271,7 +279,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 [
                     'urls' => $otherSizes,
                     'description' => '',
-                    'rights' => $rights
+                    'rights' => $rights,
+                    'highResolution' => $highResolution
                 ]
             );
         }
