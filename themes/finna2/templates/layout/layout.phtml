@@ -182,7 +182,7 @@ JS;
                   foreach ($filter as $value) {
                     [$filterKey, $filterValue] = explode(':', $value, 2);
                     $filterValue = trim($filterValue, '"');
-                    if (isset($filters[$filterKey])) {
+                    if (array_key_exists($filterKey, $filters)) {
                       $filters[$filterKey][] = $filterValue;
                     } else {
                       $filters[$filterKey] = [$filterValue];
