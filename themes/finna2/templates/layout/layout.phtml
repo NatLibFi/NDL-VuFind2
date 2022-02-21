@@ -291,7 +291,7 @@ JS;
       <?=$this->render($template)?>
     <?php endif; ?>
     </section>
-    <?php if (!empty($this->layout()->showBreadcrumbs) && !empty($this->layout()->breadcrumbs)): ?>
+    <?php if (!empty($this->layout()->showBreadcrumbs ?? true) && !empty($this->layout()->breadcrumbs)): ?>
       <nav class="breadcrumbs hidden-print" aria-label="<?=$this->transEsc('Breadcrumbs') ?>">
         <div class="container">
           <ul class="breadcrumb"><?=$this->layout()->breadcrumbs ?></ul>
