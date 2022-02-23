@@ -142,37 +142,6 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
-     * An array of non-presentable images
-     *
-     * @var array
-     */
-    protected $originalImageMimetypes;
-
-    /**
-     * Constructor
-     *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
-     * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
-     * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
-     * file
-     */
-    public function __construct(
-        $mainConfig = null,
-        $recordConfig = null,
-        $searchSettings = null
-    ) {
-        parent::__construct($mainConfig, $recordConfig, $searchSettings);
-
-        $this->originalImageMimetypes = explode(
-            ':',
-            $mainConfig->Record->ead_original_image_mimetypes
-            ?? 'image/tiff'
-        );
-    }
-
-    /**
      * Get the institutions holding the record.
      *
      * @return array
@@ -848,9 +817,11 @@ class SolrEad3 extends SolrEad
                                 'highResolution' => []
                             ];
                         }
+                        $exploded = explode('/', $role);
                         // Image might be original, can not be displayed in browser.
-                        if (in_array($role, $this->originalImageMimetypes)) {
-                            [$start, $format] = explode('/', $role);
+                        if (!empty($exploded[1])
+                            && $this->isUndisplayableFormat($exploded[1])
+                        ) {
                             $displayImage['highResolution']['original'][] = [
                                 'data' => [],
                                 'url' => $url,
