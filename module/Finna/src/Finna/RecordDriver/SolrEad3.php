@@ -801,7 +801,11 @@ class SolrEad3 extends SolrEad
                         if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                             continue;
                         }
-                        $type = (string)($attr->localtype ?? self::IMAGE_LARGE);
+                        $type = (string)(
+                            $attr->localtype
+                            ?? $parentType
+                            ?? self::IMAGE_LARGE
+                        );
                         $role = (string)($attr->linkrole ?? '');
                         $sort = (string)($attr->label ?? '');
 
@@ -830,6 +834,9 @@ class SolrEad3 extends SolrEad
                             continue;
                         }
                         if ($size = self::IMAGE_MAP[$type] ?? false || $parentSize) {
+                            if (false === $size) {
+                                $size = $parentSize;
+                            }
                             $rights = $rights
                                 ?? $this->getImageRights($language, true);
                             $size = $size === self::IMAGE_FULLRES
