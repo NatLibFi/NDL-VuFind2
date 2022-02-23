@@ -142,6 +142,37 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
+     * An array of non-presentable images
+     *
+     * @var array
+     */
+    protected $originalImageMimetypes;
+
+    /**
+     * Constructor
+     *
+     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * for built-in defaults)
+     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * file (omit to use $mainConfig as $recordConfig)
+     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * file
+     */
+    public function __construct(
+        $mainConfig = null,
+        $recordConfig = null,
+        $searchSettings = null
+    ) {
+        parent::__construct($mainConfig, $recordConfig, $searchSettings);
+
+        $this->originalImageMimetypes = explode(
+            ':',
+            $mainConfig->Record->ead_original_image_mimetypes
+            ?? 'image/tiff'
+        );
+    }
+
+    /**
      * Get the institutions holding the record.
      *
      * @return array
@@ -690,7 +721,6 @@ class SolrEad3 extends SolrEad
             $result['items']['physicalItems'] = $physicalItems;
         }
         $result['digitized'] = $digitized;
-
         return $result;
     }
 
@@ -716,103 +746,171 @@ class SolrEad3 extends SolrEad
         $language = 'fi',
         $includePdf = false
     ) {
+        $result = $this->getRepresentations($language, $includePdf);
+        return $result['displayImages'] ?? [];
+    }
+
+    /**
+     * Return an associated array with all the presentetion types.
+     * - displayImages Images to be displayed in the front end.
+     * - ocr           Ocr images.
+     * - fullres       Fullres images.
+     * 
+     * @param string $language   Language for copyright information
+     * @param bool   $includePdf Whether to include first PDF file when no image
+     * links are found
+     *
+     * @return array
+     */
+    protected function getRepresentations(
+        string $language = 'fi',
+        bool $includePdf = false
+    ) {
         $cacheKey = __FUNCTION__ . "/$language/" . ($includePdf ? '1' : '0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
-
-        $result = $images = [];
+        $result = [
+            'displayImages' => [],
+            'ocr' => [],
+            'fullres' => []
+        ];
+        $highResolution = [];
         $xml = $this->getXmlRecord();
-        if (isset($xml->did->daoset)) {
+        $addToResults = function ($imageData) use (&$result) {
+            $sizes = ['small', 'medium', 'large'];
+            $formatted = $imageData;
+            if (!empty($imageData['urls'])) {
+                foreach ($sizes as $size) {
+                    if (!isset($imageData['urls'][$size])) {
+                        $formatted['urls'][$size] = reset($imageData['urls']);
+                    }
+                    if (!isset($imageData['pdf'][$size])) {
+                        $formatted['pdf'][$size] = reset($imageData['pdf']);
+                    }
+                }
+            }
+            $result['displayImages'][] = $formatted;
+        };
+
+        if (!empty($xml->did->daoset) || !empty($xml->did->dao)) {
             // All images have same lazy-fetched rights.
             $rights = null;
-
-            foreach ($xml->did->daoset as $daoset) {
-                if (!isset($daoset->dao)) {
-                    continue;
-                }
-                $attr = $daoset->attributes();
-                // localtype could be defined for daoset or for dao-element (below)
-                $localtype = (string)($attr->localtype ?? null);
-                $localtype = self::IMAGE_MAP[$localtype] ?? self::IMAGE_LARGE;
-                $size = $localtype === self::IMAGE_FULLRES
-                      ? self::IMAGE_LARGE : $localtype;
-                if (!isset($images[$size])) {
-                    $image[$size] = [];
-                }
-
-                $descId = isset($daoset->descriptivenote->p)
-                    ? (string)$daoset->descriptivenote->p : null;
-
-                foreach ($daoset->dao as $dao) {
-                    $attr = $dao->attributes();
-                    if (!isset($attr->linktitle) || !$attr->href) {
+            $images = [];
+            $ocrImages = [];
+            $fullResImages = [];
+            foreach ([$xml->did, $xml->did->daoset] as $root) {
+                foreach ($root as $daoset) {
+                    if (!isset($daoset->dao)) {
                         continue;
                     }
-                    $href = (string)$attr->href;
-                    if (!$this->isUrlLoadable($href, $this->getUniqueID())) {
-                        continue;
+                    $attr = $daoset->attributes();
+                    $descId = (string)($daoset->descriptivenote->p ?? null);
+                    $additional = $descId
+                        ? $this->getAlternativeItems($descId)
+                        : [];
+                    if (empty($ocrImages['info']) && empty($fullResImages['info'])) {
+                        $ocrImages['info'] = $fullResImages['info'] = $additional;
+                        if ($format = $additional['format'] ?? null) {
+                            $ocrImages['info'][] = $format;
+                            $fullResImages['info'][] = $format;
+                        }
                     }
-                    if (isset($attr->localtype)) {
-                        $localtype = (string)$attr->localtype;
-                        if (!isset(self::IMAGE_MAP[$localtype])) {
+                    // localtype could be defined for daoset or for dao-element
+                    $parentType = (string)($attr->localtype ?? null);
+                    $parentType = self::IMAGE_MAP[$parentType] ?? self::IMAGE_LARGE;
+                    $parentSize = $parentType === self::IMAGE_FULLRES
+                            ? self::IMAGE_LARGE : $parentType;
+                    $displayImage = [];
+                    foreach ($daoset->dao as $dao) {
+                        $attr = $dao->attributes();
+                        if (!($title = (string)($attr->linktitle ?? ''))
+                            || !($url = (string)($attr->href ?? ''))
+                        ) {
                             continue;
                         }
-                        $size = self::IMAGE_MAP[$localtype];
-                    } elseif (!$localtype) {
-                        continue;
+                        if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
+                            continue;
+                        }
+                        $type = (string)($attr->localtype ?? self::IMAGE_LARGE);
+                        $role = (string)($attr->linkrole ?? '');
+                        $sort = (string)($attr->label ?? '');
+
+                        if (empty($displayImage)) {
+                            $displayImage = [
+                                'urls' => [],
+                                'description' => $title,
+                                'rights' => $rights,
+                                'descId' => $descId,
+                                'sort' => $sort,
+                                'type' => $type,
+                                'pdf' => [],
+                                'highResolution' => []
+                            ];
+                        }
+                        // Image might be original, can not be displayed in browser.
+                        if (in_array($role, $this->originalImageMimetypes)) {
+                            [$start, $format] = explode('/', $role);
+                            $displayImage['highResolution']['original'][] = [
+                                'data' => [],
+                                'url' => $url,
+                                'format' => $format
+                            ];
+                            continue;
+                        }
+                        if ($size = self::IMAGE_MAP[$type] ?? false || $parentSize) {
+                            $rights = $rights
+                                ?? $this->getImageRights($language, true);
+                            $size = $size === self::IMAGE_FULLRES
+                                ? self::IMAGE_LARGE : $size;
+
+                            if (isset($displayImage['urls'][$size])) {
+                                // Add old stash to results.
+                                $addToResults($displayImage);
+                                $displayImage['urls'] = [];
+                                $displayImage['pdf'] = [];
+                                $displayImage['highResolution'] = [];
+                            }
+                            $displayImage['urls'][$size] = $url;
+                            $displayImage['pdf'][$size]
+                                = $role === 'application/pdf';
+                        }
+                        if (self::IMAGE_OCR === $type
+                            && false === strpos($title, 'Kuva/Aukeama')
+                        ) {
+                            $ocrImages['items'][] = [
+                                'label' => $desc,
+                                'url' => $href,
+                                'sort' => $sort
+                            ];
+                        } elseif (self::IMAGE_FULLRES === $type) {
+                            $fullResImages['items'][] = [
+                                'label' => $title,
+                                'url' => $url
+                            ];
+                        }
                     }
-                    $rights = $rights ?? $this->getImageRights($language, true);
-                    $size = $size === self::IMAGE_FULLRES
-                        ? self::IMAGE_LARGE : $size;
-                    if (!isset($images[$size])) {
-                        $image[$size] = [];
+                    if (!empty($displayImage)) {
+                        $images[] = $displayImage;
+                        $info = [];
                     }
-                    $images[$size][] = [
-                        'description' => (string)$attr->linktitle,
-                        'rights' => $rights,
-                        'url' => $href,
-                        'descId' => $descId,
-                        'sort' => (string)$attr->label,
-                        'type' => $localtype,
-                        'pdf' => (string)$attr->linkrole === 'application/pdf'
-                    ];
                 }
             }
 
-            if (empty($images)) {
-                return [];
+            if (!empty($images)) {
+                foreach ($images as $image) {
+                    $addToResults($image);
+                }
             }
-
-            foreach ($images as $size => &$sizeImages) {
-                $this->sortImageUrls($sizeImages);
+            if (!empty($ocrImages['items'])) {
+                $this->sortImageUrls($ocrImages['items']);
+                $result['ocr'] = $ocrImages;
             }
-
-            foreach ($images['large'] ?? $images['medium'] as $id => $img) {
-                $large = $images['large'][$id] ?? ['url' => '', 'pdf' => false];
-                $medium = $images['medium'][$id] ?? ['url' => '', 'pdf' => false];
-
-                $data = $img;
-                $data['urls'] = [
-                    'small' => $medium['url'] ?: $large['url'] ?: null,
-                    'medium' => $medium['url'] ?: $large['url'] ?: null,
-                    'large' => $large['url'] ?: $medium['url'] ?: null,
-                ];
-
-                $data['pdf'] = [
-                    'medium' => ($medium['url'] && $medium['pdf'])
-                        || (!$medium['url'] && $large['url'] && $large['pdf']),
-                    'large' => ($large['url'] && $large['pdf'])
-                        || (!$large['url'] && $medium['url'] && $medium['pdf'])
-                ];
-                $data['pdf']['small'] = $data['pdf']['medium'];
-
-                $result[] = $data;
+            if (!empty($fullResImages['items'])) {
+                $result['fullres'] = $fullResImages;
             }
         }
-
-        $this->cache[$cacheKey] = $result;
-        return $result;
+        return $this->cache[$cacheKey] = $result;
     }
 
     /**
@@ -1601,26 +1699,9 @@ class SolrEad3 extends SolrEad
      */
     protected function getFullResImages()
     {
-        $images = $this->getAllImages();
-        $items = [];
-        foreach ($images as $img) {
-            if (!isset($img['type']) || $img['type'] !== self::IMAGE_FULLRES) {
-                continue;
-            }
-            $items[]
-                = ['label' => $img['description'], 'url' => $img['urls']['large']];
-        }
-        $info = [];
-
-        if (isset($images[0]['descId'])) {
-            $altItem = $this->getAlternativeItems($images[0]['descId']);
-            if (isset($altItem['format'])) {
-                $info[] = $altItem['format'];
-            }
-        }
-
-        $items = $items ? compact('info', 'items') : [];
-        return $items;
+        $locale = $this->getLocale();
+        $result = $this->getRepresentations($locale);
+        return $result['fullres'] ?? [];
     }
 
     /**
@@ -1630,52 +1711,9 @@ class SolrEad3 extends SolrEad
      */
     protected function getOCRImages()
     {
-        $items = [];
-        $xml = $this->getXmlRecord();
-        $descId = null;
-        if (isset($xml->did->daoset)) {
-            foreach ($xml->did->daoset as $daoset) {
-                if (!isset($daoset->dao)) {
-                    continue;
-                }
-                $attr = $daoset->attributes();
-                $localtype = (string)$attr->localtype ?? null;
-                if ($localtype !== self::IMAGE_OCR) {
-                    continue;
-                }
-                if (isset($daoset->descriptivenote->p)) {
-                    $descId = (string)$daoset->descriptivenote->p;
-                }
-
-                foreach ($daoset->dao as $idx => $dao) {
-                    $attr = $dao->attributes();
-                    if (! isset($attr->linktitle)
-                        || strpos((string)$attr->linktitle, 'Kuva/Aukeama') !== 0
-                        || ! $attr->href
-                    ) {
-                        continue;
-                    }
-                    $href = (string)$attr->href;
-                    $desc = (string)$attr->linktitle;
-                    $sort = (string)$attr->label;
-                    $items[] = [
-                        'label' => $desc, 'url' => $href, 'sort' => $sort
-                    ];
-                }
-            }
-        }
-
-        $this->sortImageUrls($items);
-
-        $info = [];
-        if ($descId) {
-            $altItem = $this->getAlternativeItems($descId);
-            if ($format = $altItem['format'] ?? null) {
-                $info[] = $format;
-            }
-        }
-
-        return !empty($items) ? compact('info', 'items') : [];
+        $locale = $this->getLocale();
+        $result = $this->getRepresentations($locale);
+        return $result['ocr'] ?? [];
     }
 
     /**
