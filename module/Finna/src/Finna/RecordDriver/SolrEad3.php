@@ -703,19 +703,19 @@ class SolrEad3 extends SolrEad
      */
     public function getExternalData()
     {
-        $fullResImages = $this->getFullResImages();
-        $ocrImages = $this->getOCRImages();
+        $locale = $this->getLocale();
+        $result = $this->getImagesAsAssoc($locale);
         $physicalItems = $this->getPhysicalItems();
         $digitized
             = !empty($fullResImages) || !empty($ocrImages)
             || !empty($this->getAllImages());
 
         $result = [];
-        if (!empty($fullResImages)) {
-            $result['items']['fullResImages'] = $fullResImages;
+        if (!empty($result['fullres'])) {
+            $result['items']['fullResImages'] = $result['fullres'];
         }
-        if (!empty($ocrImages)) {
-            $result['items']['OCRImages'] = $ocrImages;
+        if (!empty($result['ocr'])) {
+            $result['items']['OCRImages'] = $result['ocr'];
         }
         if (!empty($physicalItems)) {
             $result['items']['physicalItems'] = $physicalItems;
@@ -746,7 +746,7 @@ class SolrEad3 extends SolrEad
         $language = 'fi',
         $includePdf = false
     ) {
-        $result = $this->getRepresentations($language, $includePdf);
+        $result = $this->getImagesAsAssoc($language, $includePdf);
         return $result['displayImages'] ?? [];
     }
 
@@ -762,7 +762,7 @@ class SolrEad3 extends SolrEad
      *
      * @return array
      */
-    protected function getRepresentations(
+    protected function getImagesAsAssoc(
         string $language = 'fi',
         bool $includePdf = false
     ) {
@@ -1690,30 +1690,6 @@ class SolrEad3 extends SolrEad
     {
         $xml = $this->getXmlRecord();
         return (string)($xml->did->container ?? '');
-    }
-
-    /**
-     * Get fullresolution images.
-     *
-     * @return array
-     */
-    protected function getFullResImages()
-    {
-        $locale = $this->getLocale();
-        $result = $this->getRepresentations($locale);
-        return $result['fullres'] ?? [];
-    }
-
-    /**
-     * Get OCR images.
-     *
-     * @return array
-     */
-    protected function getOCRImages()
-    {
-        $locale = $this->getLocale();
-        $result = $this->getRepresentations($locale);
-        return $result['ocr'] ?? [];
     }
 
     /**
