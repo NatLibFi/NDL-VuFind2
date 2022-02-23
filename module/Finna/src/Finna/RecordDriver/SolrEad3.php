@@ -836,11 +836,12 @@ class SolrEad3 extends SolrEad
                         if ($size = self::IMAGE_MAP[$type] ?? false || $parentSize) {
                             if (false === $size) {
                                 $size = $parentSize;
+                            } else {
+                                $size = $size === self::IMAGE_FULLRES
+                                    ? self::IMAGE_LARGE : $size;
                             }
                             $rights = $rights
                                 ?? $this->getImageRights($language, true);
-                            $size = $size === self::IMAGE_FULLRES
-                                ? self::IMAGE_LARGE : $size;
 
                             if (isset($displayImage['urls'][$size])) {
                                 // Add old stash to results.
