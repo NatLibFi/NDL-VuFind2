@@ -850,8 +850,8 @@ class SolrEad3 extends SolrEad
                             && false === strpos($title, 'Kuva/Aukeama')
                         ) {
                             $ocrImages['items'][] = [
-                                'label' => $desc,
-                                'url' => $href,
+                                'label' => $title,
+                                'url' => $url,
                                 'sort' => $sort
                             ];
                         } elseif (self::IMAGE_FULLRES === $type) {
