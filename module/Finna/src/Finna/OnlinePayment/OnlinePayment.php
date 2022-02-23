@@ -28,7 +28,7 @@
  */
 namespace Finna\OnlinePayment;
 
-use VuFind\I18n\Locale\LocaleSettings;
+use Finna\OnlinePayment\Handler\PluginManager as HandlerPluginManager;
 
 /**
  * Online payment service
@@ -40,58 +40,34 @@ use VuFind\I18n\Locale\LocaleSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class OnlinePayment implements \VuFind\I18n\Translator\TranslatorAwareInterface,
-    \VuFindHttp\HttpServiceAwareInterface
+class OnlinePayment
 {
-    use \VuFind\I18n\Translator\TranslatorAwareTrait;
-    use \VuFindHttp\HttpServiceAwareTrait;
-
     /**
-     * Table manager
+     * Online payment handler plugin manager
      *
-     * @var \VuFind\Db\Table\PluginManager
+     * @var HandlerPluginManager
      */
-    protected $tableManager;
+    protected $handlerManager;
 
     /**
-     * Logger
-     *
-     * @var \VuFind\Log\Logger
-     */
-    protected $logger;
-
-    /**
-     * Configuration
+     * Data source configuration
      *
      * @var \Laminas\Config\Config
      */
     protected $config;
 
     /**
-     * Locale settings
-     *
-     * @var LocaleSettings
-     */
-    protected $localeSettings;
-
-    /**
      * Constructor.
      *
-     * @param DbTablePluginManager $tableManager Table manager
-     * @param Logger               $logger       Logger
-     * @param Config               $config       Configuration
-     * @param LocaleSettings       $locale       Locale settings
+     * @param HandlerPluginManager   $handlerManager Handler plugin manager
+     * @param \Laminas\Config\Config $config         Data source configuration
      */
     public function __construct(
-        \VuFind\Db\Table\PluginManager $tableManager,
-        \VuFind\Log\Logger $logger,
-        \Laminas\Config\Config $config,
-        LocaleSettings $locale
+        HandlerPluginManager $handlerManager,
+        \Laminas\Config\Config $config
     ) {
-        $this->tableManager = $tableManager;
-        $this->logger = $logger;
+        $this->handlerManager = $handlerManager;
         $this->config = $config;
-        $this->localeSettings = $locale;
     }
 
     /**
@@ -103,21 +79,17 @@ class OnlinePayment implements \VuFind\I18n\Translator\TranslatorAwareInterface,
      */
     public function getHandler($source)
     {
-        $handler = $this->getHandlerName($source);
-        $class = "Finna\OnlinePayment\\$handler";
-        if (!class_exists($class)) {
+        if (!($handlerName = $this->getHandlerName($source))) {
+            throw new \Exception("Online payment handler not defined for $source");
+        }
+        if (!$this->handlerManager->has($handlerName)) {
             throw new \Exception(
-                "Online payment handler $class not found for $source"
+                "Online payment handler $handlerName not found for $source"
             );
         }
-        $handler = new $class(
-            $this->getConfig($source),
-            $this->httpService,
-            $this->translator,
-            $this->localeSettings
-        );
-        $handler->setDbTableManager($this->tableManager);
-        $handler->setLogger($this->logger);
+
+        $handler = $this->handlerManager->get($handlerName);
+        $handler->init($this->getConfig($source));
         return $handler;
     }
 
@@ -126,14 +98,14 @@ class OnlinePayment implements \VuFind\I18n\Translator\TranslatorAwareInterface,
      *
      * @param string $source Datasource
      *
-     * @return boolean
+     * @return string
      */
     public function getHandlerName($source)
     {
         if ($config = $this->getConfig($source)) {
-            return $config['handler'];
+            return $config['handler'] ?? '';
         }
-        return false;
+        return '';
     }
 
     /**
@@ -141,7 +113,7 @@ class OnlinePayment implements \VuFind\I18n\Translator\TranslatorAwareInterface,
      *
      * @param string $source Datasource
      *
-     * @return boolean
+     * @return bool
      */
     public function isEnabled($source)
     {
@@ -153,10 +125,10 @@ class OnlinePayment implements \VuFind\I18n\Translator\TranslatorAwareInterface,
      *
      * @param string $source Datasource
      *
-     * @return mixed null|array
+     * @return array
      */
     protected function getConfig($source)
     {
-        return $this->config[$source]['onlinePayment'] ?? null;
+        return $this->config[$source]['onlinePayment'] ?? [];
     }
 }

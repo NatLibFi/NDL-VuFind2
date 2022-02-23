@@ -85,7 +85,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
      * @param string $patronId       Patron catalog username
      * @param int    $amount         Amount (excluding transaction fee)
      * @param int    $transactionFee Transaction fee
-     * @param sting  $currency       Currency
+     * @param string $currency       Currency
      *
      * @return Finna\Db\Row\Transaction
      */

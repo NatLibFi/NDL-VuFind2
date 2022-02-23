@@ -147,7 +147,7 @@ trait FinnaOnlinePaymentControllerTrait
     protected function handleOnlinePayment($patron, $fines, $view)
     {
         $view->onlinePaymentEnabled = false;
-        if (!$paymentHandler = $this->getOnlinePaymentHandler($patron['source'])) {
+        if (!($paymentHandler = $this->getOnlinePaymentHandler($patron['source']))) {
             return;
         }
 

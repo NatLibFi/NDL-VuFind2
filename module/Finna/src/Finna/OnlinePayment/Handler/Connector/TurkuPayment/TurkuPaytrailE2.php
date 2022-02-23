@@ -25,9 +25,9 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment\TurkuPayment;
+namespace Finna\OnlinePayment\Handler\Connector\TurkuPayment;
 
-use Finna\OnlinePayment\Paytrail\PaytrailE2;
+use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailE2;
 
 /**
  * Turku Paytrail client
@@ -187,7 +187,7 @@ class TurkuPaytrailE2 extends PaytrailE2
      *
      * @param string $url to make request
      *
-     * @return void
+     * @return string Error if the request could not be processed
      */
     public function sendRequest($url)
     {
@@ -205,6 +205,7 @@ class TurkuPaytrailE2 extends PaytrailE2
                 exit();
             }
         }
+        return $response['response'];
     }
 
     /**

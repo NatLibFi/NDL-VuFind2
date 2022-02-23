@@ -25,9 +25,9 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment;
+namespace Finna\OnlinePayment\Handler;
 
-use Finna\OnlinePayment\TurkuPayment\TurkuPaytrailE2;
+use Finna\OnlinePayment\Handler\Connector\TurkuPayment\TurkuPaytrailE2;
 
 /**
  * Turku online payment handler module.
@@ -38,7 +38,7 @@ use Finna\OnlinePayment\TurkuPayment\TurkuPaytrailE2;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class TurkuPayment extends AbstractHandler
+class TurkuPayment extends AbstractBase
 {
     /**
      * Mappings from VuFind language codes to Paytrail
@@ -176,7 +176,13 @@ class TurkuPayment extends AbstractHandler
         if (!$success) {
             return false;
         }
-        $module->sendRequest($this->config->url);
+        // This will redirect if successful:
+        $result = $module->sendRequest($this->config->url);
+        $this->logPaymentError(
+            'error sending payment request: ' . $result,
+            compact('user', 'patron', 'fines', 'module')
+        );
+        $this->getTransaction($transactionId)->setCanceled();
         return '';
     }
 

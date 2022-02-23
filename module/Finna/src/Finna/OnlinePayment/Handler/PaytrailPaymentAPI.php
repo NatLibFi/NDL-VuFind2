@@ -1,10 +1,10 @@
 <?php
 /**
- * Paytrail E2 (legacy) payment handler
+ * Paytrail Payment API handler
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2022.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,39 +21,44 @@
  *
  * @category VuFind
  * @package  OnlinePayment
- * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-namespace Finna\OnlinePayment;
+namespace Finna\OnlinePayment\Handler;
 
-use Finna\OnlinePayment\Paytrail\PaytrailE2;
+use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client;
+use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Customer;
+use Paytrail\SDK\Model\CallbackUrl;
+use Paytrail\SDK\Model\Item;
+use Paytrail\SDK\Request\PaymentRequest;
+use Paytrail\SDK\Util\Signature;
 
 /**
- * Paytrail E2 (legacy) payment handler module.
+ * Paytrail Payment API handler module.
  *
  * @category VuFind
  * @package  OnlinePayment
- * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-class Paytrail extends AbstractHandler
+class PaytrailPaymentAPI extends AbstractBase
 {
+    public const PAYMENT_SUCCESS = 'success';
+    public const PAYMENT_CANCEL = 'cancel';
+
     /**
      * Mappings from VuFind language codes to Paytrail
      *
      * @var array
      */
     protected $languageMap = [
-        'fi' => 'fi_FI',
-        'sv' => 'sv_SE',
-        'en' => 'en_US'
+        'fi' => 'FI',
+        'sv' => 'SV',
+        'en' => 'EN'
     ];
 
     /**
@@ -87,8 +92,6 @@ class Paytrail extends AbstractHandler
         $patronId = $patron['cat_username'];
         $transactionId = $this->generateTransactionId($patronId);
 
-        $module = $this->initPaytrail($transactionId, $currency);
-
         $returnUrl = $this->addQueryParams(
             $returnBaseUrl,
             [$paymentParam => $transactionId]
@@ -98,60 +101,45 @@ class Paytrail extends AbstractHandler
             [$paymentParam => $transactionId]
         );
 
-        $module->setUrls($returnUrl, $returnUrl, $notifyUrl);
-        $module->setOrderNumber($transactionId);
-        $module->setCurrency($currency);
+        $returnUrls = (new CallbackUrl())
+            ->setSuccess($returnUrl)
+            ->setCancel($returnUrl);
 
-        if (!empty($this->config->paymentDescription)) {
-            $module->setMerchantDescription(
-                $this->config->paymentDescription . " - $patronId"
-            );
-        } else {
-            $module->setMerchantDescription($patronId);
-        }
+        $callbackUrls = (new CallbackUrl())
+            ->setSuccess($notifyUrl)
+            ->setCancel($notifyUrl);
 
-        $lastname = trim($user->lastname);
-        if (!empty($user->firstname)) {
-            $module->setFirstName(trim($user->firstname));
-        } else {
-            // We don't have both names separately, try to extract first name from
-            // last name.
-            if (strpos($lastname, ',') > 0) {
-                // Lastname, Firstname
-                [$lastname, $firstname] = explode(',', $lastname, 2);
-            } else {
-                // First Middle Last
-                if (preg_match('/^(.*) (.*?)$/', $lastname, $matches)) {
-                    $firstname = $matches[1];
-                    $lastname = $matches[2];
-                } else {
-                    $firstname = '';
-                }
-            }
-            $lastname = trim($lastname);
-            $firstname = trim($firstname);
-            $module->setFirstName(empty($firstname) ? 'ei tietoa' : $firstname);
-        }
-        $module->setLastName(empty($lastname) ? 'ei tietoa' : $lastname);
+        $names = $this->extractUserNames($user);
+        $customer = (new Customer())
+            ->setFirstName($names['firstname'] ?: 'ei tietoa')
+            ->setLastName($names['lastname'] ?: 'ei tietoa')
+            ->setEmail(trim($user->email));
 
-        $email = trim($user->email);
-        if ($email) {
-            $module->setEmail($email);
-        }
+        $language = $this->languageMap[$this->getCurrentLanguageCode()] ?? 'EN';
+        $paymentRequest = (new PaymentRequest())
+            ->setStamp($transactionId)
+            ->setRedirectUrls($returnUrls)
+            ->setCallbackUrls($callbackUrls)
+            ->setReference("$transactionId - $patronId")
+            ->setCurrency($currency)
+            ->setLanguage($language)
+            ->setAmount($amount + $transactionFee)
+            ->setCustomer($customer);
+        // Payment description in $this->config->paymentDescription is not supported
 
-        if (!isset($this->config->productCode)
-            && !isset($this->config->transactionFeeProductCode)
-            && !isset($this->config->productCodeMappings)
-            && !isset($this->config->organizationProductCodeMappings)
+        if (isset($this->config->productCode)
+            || isset($this->config->transactionFeeProductCode)
+            || isset($this->config->productCodeMappings)
+            || isset($this->config->organizationProductCodeMappings)
         ) {
-            $module->setTotalAmount($amount + $transactionFee);
-        } else {
+            // Map fines to items:
             $productCode = !empty($this->config->productCode)
                 ? $this->config->productCode : '';
             $productCodeMappings = $this->getProductCodeMappings();
             $organizationProductCodeMappings
                 = $this->getOrganizationProductCodeMappings();
 
+            $items = [];
             foreach ($fines as $fine) {
                 $fineType = $fine['fine'] ?? '';
                 $fineOrg = $fine['organization'] ?? '';
@@ -167,7 +155,7 @@ class Paytrail extends AbstractHandler
                     $code = $organizationProductCodeMappings[$fineOrg]
                         . ($productCodeMappings[$fineType] ?? '');
                 }
-                $code = mb_substr($code, 0, 16, 'UTF-8');
+                $code = mb_substr($code, 0, 100, 'UTF-8');
 
                 $fineDesc = '';
                 if (!empty($fineType)) {
@@ -181,44 +169,46 @@ class Paytrail extends AbstractHandler
                     }
                 }
                 if (!empty($fine['title'])) {
-                    $fineDesc .= ' ('
-                        . mb_substr(
-                            $fine['title'],
-                            0,
-                            255 - 4 - strlen($fineDesc),
-                            'UTF-8'
-                        ) . ')';
+                    $title = mb_substr(
+                        $fine['title'],
+                        0,
+                        1000 - 4 - mb_strlen($fineDesc, 'UTF-8'),
+                        'UTF-8'
+                    );
+                    $fineDesc .= " ($title)";
                 }
-                $module->addProduct(
-                    $fineDesc,
-                    $code,
-                    1,
-                    $fine['balance'],
-                    0,
-                    PaytrailE2::TYPE_NORMAL
-                );
+                $item = (new Item())
+                    ->setDescription($fineDesc)
+                    ->setProductCode($code)
+                    ->setUnitPrice($fine['balance'])
+                    ->setUnits(1)
+                    ->setVatPercentage(0);
+                $items[] = $item;
             }
             if ($transactionFee) {
                 $code = $this->config->transactionFeeProductCode ?? $productCode;
-                $module->addProduct(
-                    'Palvelumaksu / Serviceavgift / Transaction fee',
-                    $code,
-                    1,
-                    $transactionFee,
-                    0,
-                    PaytrailE2::TYPE_HANDLING
-                );
+                $item = (new Item())
+                    ->setDescription(
+                        'Palvelumaksu / Serviceavgift / Transaction fee'
+                    )
+                    ->setProductCode($code)
+                    ->setUnitPrice($transactionFee)
+                    ->setUnits(1)
+                    ->setVatPercentage(0);
+                $items[] = $item;
             }
+            $paymentRequest->setItems($items);
         }
 
         try {
-            $formData = $module->createPaymentFormData();
+            $paymentResponse = $this->initClient()->createPayment($paymentRequest);
         } catch (\Exception $e) {
+            $request = json_encode($paymentRequest, JSON_PRETTY_PRINT);
             $this->logPaymentError(
-                'error creating payment form data: ' . $e->getMessage(),
-                compact('user', 'patron', 'fines', 'module')
+                'exception sending payment: ' . $e->getMessage(),
+                compact('user', 'patron', 'fines', 'request')
             );
-            return false;
+            return '';
         }
 
         $success = $this->createTransaction(
@@ -235,10 +225,8 @@ class Paytrail extends AbstractHandler
             return false;
         }
 
-        $paytrailUrl = !empty($this->config->e2url) ? $this->config->e2url
-            : 'https://payment.paytrail.com/e2';
+        $this->redirectToPayment($paymentResponse->getHref());
 
-        $this->redirectToPaymentForm($paytrailUrl, $formData);
         return '';
     }
 
@@ -265,28 +253,35 @@ class Paytrail extends AbstractHandler
             ];
         }
 
-        $status = $params['STATUS'];
-        $timestamp = $params['TIMESTAMP'];
-
-        if ('PAID' === $status) {
-            $transaction->setPaid($timestamp);
+        $status = $params['checkout-status'];
+        switch ($status) {
+        case 'ok':
+            $transaction->setPaid();
             return [
                 'success' => true,
                 'markFeesAsPaid' => true,
                 'message' => ''
             ];
-        } elseif ('CANCELLED' === $status) {
+        case 'fail':
             $transaction->setCanceled();
             return [
                 'success' => true,
                 'markFeesAsPaid' => false,
                 'message' => 'online_payment_canceled'
             ];
+        case 'new':
+        case 'pending':
+        case 'delayed':
+            return [
+                'success' => true,
+                'markFeesAsPaid' => false,
+                'message' => 'online_payment_in_progress'
+            ];
         }
 
-        $this->logPaymentError("unknown status $status");
+        $transaction->setRegistrationFailed("unknown status $status");
         return [
-            'success' => false,
+            'success' => true,
             'markFeesAsPaid' => false,
             'message' => 'online_payment_failed'
         ];
@@ -297,61 +292,54 @@ class Paytrail extends AbstractHandler
      *
      * @param Laminas\Http\Request $request Request
      *
-     * @return array
+     * @return array|false
      */
-    protected function getPaymentResponseParams($request)
+    public function getPaymentResponseParams($request)
     {
-        if (!($module = $this->initPaytrail())) {
-            return false;
-        }
-
-        $params = array_merge(
-            $request->getQuery()->toArray(),
-            $request->getPost()->toArray()
-        );
+        $params = $request->getQuery()->toArray();
 
         $required = [
-            'ORDER_NUMBER', 'PAYMENT_ID', 'TIMESTAMP', 'STATUS', 'RETURN_AUTHCODE'
+            'checkout-reference',
+            'checkout-stamp',
+            'checkout-status',
+            'signature'
         ];
 
         foreach ($required as $name) {
-            if (!isset($params[$name])) {
+            if (empty($params[$name])) {
                 $this->logPaymentError(
-                    "missing parameter $name in payment response",
+                    "missing or empty parameter $name in payment response",
                     compact('params')
                 );
                 return false;
             }
         }
 
-        $success = $module->validateRequest(
-            $params['ORDER_NUMBER'],
-            $params['PAYMENT_ID'],
-            $params['TIMESTAMP'],
-            $params['STATUS'],
-            $params['RETURN_AUTHCODE']
-        );
-        if (!$success) {
-            $this->logPaymentError(
-                'error processing response: invalid checksum',
-                compact('request', 'params')
+        // Validate the parameters:
+        try {
+            Signature::validateHmac(
+                $params,
+                '',
+                $params['signature'],
+                $this->config['secret'] ?? ''
             );
-            return [
-                'success' => false,
-                'markFeesAsPaid' => false,
-                'error' => 'online_payment_failed'
-            ];
+        } catch (\Exception $e) {
+            $this->logPaymentError(
+                'parameter signature validation failed',
+                compact('params')
+            );
+            return false;
         }
 
         return $params;
     }
 
     /**
-     * Initialize the Paytrail module
+     * Initialize the Paytrail client
      *
-     * @return PaytrailE2
+     * @return Client
      */
-    protected function initPaytrail()
+    protected function initClient(): Client
     {
         foreach (['merchantId', 'secret'] as $req) {
             if (!isset($this->config[$req])) {
@@ -360,57 +348,13 @@ class Paytrail extends AbstractHandler
             }
         }
 
-        return new PaytrailE2(
+        $client = new Client(
             $this->config->merchantId,
             $this->config->secret,
-            $this->languageMap[$this->getCurrentLanguageCode()] ?? 'en_US'
+            'Finna'
         );
-    }
-
-    /**
-     * Redirect to payment handler.
-     *
-     * @param string $url      URL
-     * @param array  $formData Form fields
-     *
-     * @return void
-     */
-    protected function redirectToPaymentForm($url, $formData)
-    {
-        // Output a minimal form and submit it automatically
-        $formFields = '';
-        foreach ($formData as $key => $value) {
-            $formFields .= '<input type="hidden" name="' . htmlentities($key)
-                . '" value="' . htmlentities($value) . '">';
-        }
-        $lang = $this->getCurrentLanguageCode();
-        $title = $this->translator->translate('online_payment_go_to_pay');
-        $title = str_replace('%%amount%%', '', $title);
-        $jsRequired = $this->translator->translate('Please enable JavaScript.');
-        echo <<<EOT
-<!DOCTYPE html>
-<html lang="$lang">
-<head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>$title</title>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('paytrail-form').submit();
-        });
-    </script>
-</head>
-<body>
-    <noscript>
-        $jsRequired
-    </noscript>
-    <form id="paytrail-form" action="$url" method="POST">
-        $formFields
-    </form>
-</body>
-</html>
-EOT;
-        exit();
+        $client->setHttpService($this->http);
+        $client->setLogger($this->logger);
+        return $client;
     }
 }

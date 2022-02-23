@@ -28,11 +28,11 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment;
+namespace Finna\OnlinePayment\Handler;
 
-require_once 'Cpu/Client.class.php';
-require_once 'Cpu/Client/Payment.class.php';
-require_once 'Cpu/Client/Product.class.php';
+use Finna\OnlinePayment\Handler\Connector\Cpu\Client;
+use Finna\OnlinePayment\Handler\Connector\Cpu\Payment;
+use Finna\OnlinePayment\Handler\Connector\Cpu\Product;
 
 /**
  * CPU payment handler module.
@@ -46,7 +46,7 @@ require_once 'Cpu/Client/Product.class.php';
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class CPU extends AbstractHandler
+class CPU extends AbstractBase
 {
     public const STATUS_SUCCESS = 1;
     public const STATUS_CANCELLED = 0;
@@ -95,7 +95,7 @@ class CPU extends AbstractHandler
             [$paymentParam => $transactionId]
         );
 
-        $payment = new \Cpu_Client_Payment($transactionId);
+        $payment = new Payment($transactionId);
         $email = trim($user->email);
         if ($email) {
             $payment->Email = $email;
@@ -190,7 +190,7 @@ class CPU extends AbstractHandler
                 $fineDesc = str_replace("'", ' ', $fineDesc);
                 // Sanitize before limiting the length, otherwise the sanitization
                 // process may blow the string through the limit
-                $fineDesc = \Cpu_Client::sanitize($fineDesc);
+                $fineDesc = Client::sanitize($fineDesc);
                 // Make sure that description length does not exceed CPU max limit of
                 // 100 characters.
                 $fineDesc = mb_substr($fineDesc, 0, 100, 'UTF-8');
@@ -202,7 +202,7 @@ class CPU extends AbstractHandler
                     . ($productCodeMappings[$fineType] ?? '');
             }
             $code = mb_substr($code, 0, 25, 'UTF-8');
-            $product = new \Cpu_Client_Product(
+            $product = new Product(
                 $code,
                 1,
                 $fine['balance'],
@@ -212,7 +212,7 @@ class CPU extends AbstractHandler
         }
         if ($transactionFee) {
             $code = $this->config->transactionFeeProductCode ?? $productCode;
-            $product = new \Cpu_Client_Product(
+            $product = new Product(
                 $code,
                 1,
                 $transactionFee,
@@ -430,7 +430,7 @@ class CPU extends AbstractHandler
     /**
      * Init CPU module with configured merchantId, secret and URL.
      *
-     * @return \Cpu_Client
+     * @return Client
      */
     protected function initCpu()
     {
@@ -441,7 +441,7 @@ class CPU extends AbstractHandler
             }
         }
 
-        $module = new \Cpu_Client(
+        $module = new Client(
             $this->config['url'],
             $this->config['merchantId'],
             $this->config['secret']

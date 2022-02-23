@@ -26,7 +26,7 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-namespace Finna\OnlinePayment\Paytrail;
+namespace Finna\OnlinePayment\Handler\Connector\Paytrail;
 
 /**
  * Paytrail E2 client

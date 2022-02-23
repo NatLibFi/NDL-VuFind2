@@ -1,10 +1,10 @@
 <?php
 /**
- * OnlinePayment handler interface
+ * Online payment handler interface
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2017.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -27,13 +27,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment;
-
-use Laminas\I18n\Translator\TranslatorInterface;
-use VuFind\I18n\Locale\LocaleSettings;
+namespace Finna\OnlinePayment\Handler;
 
 /**
- * OnlinePayment handler interface.
+ * Online payment handler interface.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -43,23 +40,8 @@ use VuFind\I18n\Locale\LocaleSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-interface OnlinePaymentHandlerInterface
+interface HandlerInterface
 {
-    /**
-     * Constructor
-     *
-     * @param \Laminas\Config\Config  $config     Configuration as key-value pairs.
-     * @param \VuFindHttp\HttpService $http       HTTP service
-     * @param TranslatorInterface     $translator Translator
-     * @param LocaleSettings          $locale     Locale settings
-     */
-    public function __construct(
-        \Laminas\Config\Config $config,
-        \VuFindHttp\HttpService $http,
-        TranslatorInterface $translator,
-        LocaleSettings $locale
-    );
-
     /**
      * Start transaction.
      *

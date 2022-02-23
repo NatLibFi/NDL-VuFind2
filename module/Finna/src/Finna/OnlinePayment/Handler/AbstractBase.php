@@ -28,11 +28,13 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-namespace Finna\OnlinePayment;
+namespace Finna\OnlinePayment\Handler;
 
-use Laminas\I18n\Translator\TranslatorInterface;
+use Finna\Db\Table\Fee;
+use Finna\Db\Table\Transaction;
 use Laminas\Log\LoggerAwareInterface;
 use VuFind\I18n\Locale\LocaleSettings;
+use VuFind\I18n\Translator\TranslatorAwareInterface;
 
 /**
  * Abstract payment handler
@@ -45,13 +47,11 @@ use VuFind\I18n\Locale\LocaleSettings;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-abstract class AbstractHandler implements OnlinePaymentHandlerInterface,
-    LoggerAwareInterface
+abstract class AbstractBase implements HandlerInterface,
+    LoggerAwareInterface, TranslatorAwareInterface
 {
-    use \VuFind\Db\Table\DbTableAwareTrait {
-        getDbTable as getTable;
-    }
     use \VuFind\Log\LoggerAwareTrait;
+    use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
      * Configuration.
@@ -68,13 +68,6 @@ abstract class AbstractHandler implements OnlinePaymentHandlerInterface,
     protected $http;
 
     /**
-     * Translator
-     *
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * Locale settings
      *
      * @var LocaleSettings
@@ -82,23 +75,49 @@ abstract class AbstractHandler implements OnlinePaymentHandlerInterface,
     protected $localeSettings;
 
     /**
+     * Transaction table
+     *
+     * @var Transaction
+     */
+    protected $transactionTable;
+
+    /**
+     * Fee table
+     *
+     * @var Fee
+     */
+    protected $feeTable;
+
+    /**
      * Constructor
      *
-     * @param \Laminas\Config\Config  $config     Configuration as key-value pairs.
-     * @param \VuFindHttp\HttpService $http       HTTP service
-     * @param TranslatorInterface     $translator Translator
-     * @param LocaleSettings          $locale     Locale settings
+     * @param \VuFindHttp\HttpService $http             HTTP service
+     * @param LocaleSettings          $locale           Locale settings
+     * @param Transaction             $transactionTable Transaction table
+     * @param Fee                     $feeTable         Fee table
      */
     public function __construct(
-        \Laminas\Config\Config $config,
         \VuFindHttp\HttpService $http,
-        TranslatorInterface $translator,
-        LocaleSettings $locale
+        LocaleSettings $locale,
+        Transaction $transactionTable,
+        Fee $feeTable,
     ) {
-        $this->config = $config;
         $this->http = $http;
-        $this->translator = $translator;
         $this->localeSettings = $locale;
+        $this->transactionTable = $transactionTable;
+        $this->feeTable = $feeTable;
+    }
+
+    /**
+     * Initialize the handler
+     *
+     * @param \Laminas\Config\Config $config Online payment configuration
+     *
+     * @return void
+     */
+    public function init(\Laminas\Config\Config $config): void
+    {
+        $this->config = $config;
     }
 
     /**
@@ -164,7 +183,7 @@ abstract class AbstractHandler implements OnlinePaymentHandlerInterface,
         $currency,
         $fines
     ) {
-        $t = $this->getTable('transaction')->createTransaction(
+        $t = $this->transactionTable->createTransaction(
             $transactionId,
             $driver,
             $userId,
@@ -182,12 +201,11 @@ abstract class AbstractHandler implements OnlinePaymentHandlerInterface,
             return false;
         }
 
-        $feeTable = $this->getTable('fee');
         foreach ($fines as $fine) {
             // Sanitize fine strings
             $fine['fine'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['fine'] ?? '');
             $fine['title'] = iconv('UTF-8', 'UTF-8//IGNORE', $fine['title'] ?? '');
-            if (!$feeTable->addFee($t->id, $fine, $t->user_id, $t->currency)) {
+            if (!$this->feeTable->addFee($t->id, $fine, $t->user_id, $t->currency)) {
                 $this->logError(
                     'error adding fee to transaction',
                     compact('userId', 'patronId', 'fines', 'fine')
@@ -208,10 +226,9 @@ abstract class AbstractHandler implements OnlinePaymentHandlerInterface,
      */
     protected function getTransaction($id)
     {
-        $table = $this->getTable('transaction');
-        if (($t = $table->getTransaction($id)) === false) {
+        if (!($t = $this->transactionTable->getTransaction($id))) {
             $this->logError(
-                "error retrieving started transaction $id: transaction not found"
+                "error retrieving transaction $id: transaction not found"
             );
             return null;
         }
@@ -343,11 +360,6 @@ abstract class AbstractHandler implements OnlinePaymentHandlerInterface,
             if (is_object($value)) {
                 if (method_exists($value, 'toArray')) {
                     $value = $value->toArray();
-                } elseif ($value instanceof \Cpu_Client_Payment
-                    || $value instanceof \Finna\OnlinePayment\Paytrail\PaytrailE2
-                    || $value instanceof \Finna\OnlinePayment\TurkuPayment
-                ) {
-                    $value = var_export($value, true);
                 } else {
                     $key = "$key: " . get_class($value);
                     $value = get_object_vars($value);
