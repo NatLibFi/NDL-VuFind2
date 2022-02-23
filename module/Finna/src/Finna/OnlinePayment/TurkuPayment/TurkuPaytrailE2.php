@@ -40,7 +40,7 @@ use Finna\OnlinePayment\Paytrail\PaytrailE2;
  */
 class TurkuPaytrailE2 extends PaytrailE2
 {
-    use \Finna\OnlinePayment\OnlinePaymentModuleTrait;
+    use \Finna\OnlinePayment\OnlinePaymentPostRequestTrait;
 
     /**
      * Name of the connecting application
@@ -263,21 +263,40 @@ class TurkuPaytrailE2 extends PaytrailE2
      * Validate payment return and notify requests.
      *
      * @param string $orderNumber Order number
-     * @param string $paid        Payment signature
      * @param int    $timeStamp   Timestamp
+     * @param string $paid        Payment signature
      * @param string $method      Payment method
      * @param string $authCode    Returned authentication code
      *
      * @return bool
      */
-    public function validateRequest(
+    public function validateSuccessRequest(
         $orderNumber,
-        $paid,
         $timeStamp,
+        $paid,
         $method,
         $authCode
     ) {
         $response = "$orderNumber|$timeStamp|$paid|$method|{$this->secret}";
+        $hash = strtoupper(md5($response));
+        return $authCode === $hash;
+    }
+
+    /**
+     * Validate a cancel request.
+     *
+     * @param string $orderNumber Order number
+     * @param int    $timeStamp   Timestamp
+     * @param string $authCode    Returned authentication code
+     *
+     * @return bool
+     */
+    public function validateCancelRequest(
+        $orderNumber,
+        $timeStamp,
+        $authCode
+    ) {
+        $response = "$orderNumber|$timeStamp|{$this->secret}";
         $hash = strtoupper(md5($response));
         return $authCode === $hash;
     }

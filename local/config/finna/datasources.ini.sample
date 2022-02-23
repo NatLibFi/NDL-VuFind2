@@ -29,16 +29,31 @@ institution = Library
 staffUiUrl = "https://server-address/cgi-bin/koha/catalogue/detail.pl?biblionumber=%%id%%"
 
 
-; Online payment
-onlinePayment['handler'] = ''
+; # Online payment settings
+
+; ## Payment service specific settings:
+
+; ### CPU (Ceepos):
+onlinePayment['handler'] = 'CPU'
+; Payment service url:
 onlinePayment['url'] = ''
-; Paytrail API:
-; e2url is optional. Default is https://payment.paytrail.com/e2.
+
+; ### Paytrail Payment API (current interface):
+onlinePayment['handler'] = 'PaytrailPaymentAPI'
+
+; ### Paytrail E2 (legacy interface):
+onlinePayment['handler'] = 'Paytrail'
+; E2 interface url (optional, default is https://payment.paytrail.com/e2):
 ;onlinePayment['e2url'] = '...'
+
+; ## Common settings for all services:
+
+; Merchant identifier:
 onlinePayment['merchantId'] = ''
+; Merchant secret:
 onlinePayment['secret'] = ''
 
-; The following settings are mandatory for CPU and optional for Paytrail.
+; The following settings are mandatory for CPU and optional for Paytrail services.
 ; With Paytrail only a total amount to pay is defined if productCode,
 ; transactionFeeProductCode and productCodeMappings are undefined, and empty values
 ; can be defined to make the system use default values.

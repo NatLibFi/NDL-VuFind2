@@ -530,7 +530,6 @@ $config = [
                     'Finna\Db\Row\Search' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Transaction' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\User' => 'Finna\Db\Row\UserFactory',
-                    'Finna\Db\Row\UserCard' => 'Finna\Db\Row\UserCardFactory',
                     'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory'
                 ],
                 'aliases' => [
@@ -539,7 +538,6 @@ $config = [
                     'VuFind\Db\Row\Search' => 'Finna\Db\Row\Search',
                     'VuFind\Db\Row\Transaction' => 'Finna\Db\Row\Transaction',
                     'VuFind\Db\Row\User' => 'Finna\Db\Row\User',
-                    'VuFind\Db\Row\UserCard' => 'Finna\Db\Row\UserCard',
                     'VuFind\Db\Row\UserList' => 'Finna\Db\Row\UserList',
 
                     // Aliases for table classes without a row class counterpart

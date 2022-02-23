@@ -192,7 +192,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
         $transactionId,
         $transactionNumber
     ) {
-        if ((rand() % 10) > 8) {
+        if ($this->isFailing(__METHOD__, 10)) {
             throw new ILSException('online_payment_registration_failed');
         }
 

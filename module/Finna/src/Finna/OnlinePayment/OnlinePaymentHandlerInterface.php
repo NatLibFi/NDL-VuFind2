@@ -30,6 +30,7 @@
 namespace Finna\OnlinePayment;
 
 use Laminas\I18n\Translator\TranslatorInterface;
+use VuFind\I18n\Locale\LocaleSettings;
 
 /**
  * OnlinePayment handler interface.
@@ -50,41 +51,34 @@ interface OnlinePaymentHandlerInterface
      * @param \Laminas\Config\Config  $config     Configuration as key-value pairs.
      * @param \VuFindHttp\HttpService $http       HTTP service
      * @param TranslatorInterface     $translator Translator
+     * @param LocaleSettings          $locale     Locale settings
      */
     public function __construct(
         \Laminas\Config\Config $config,
         \VuFindHttp\HttpService $http,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        LocaleSettings $locale
     );
-
-    /**
-     * Return payment response parameters.
-     *
-     * @param Laminas\Http\Request $request Request
-     *
-     * @return array
-     */
-    public function getPaymentResponseParams($request);
 
     /**
      * Start transaction.
      *
-     * @param string             $finesUrl       Return URL to MyResearch/Fines
-     * @param string             $ajaxUrl        Base URL for AJAX-actions
+     * @param string             $returnBaseUrl  Return URL
+     * @param string             $notifyBaseUrl  Notify URL
      * @param \Finna\Db\Row\User $user           User
      * @param array              $patron         Patron information
      * @param string             $driver         Patron MultiBackend ILS source
      * @param int                $amount         Amount (excluding transaction fee)
      * @param int                $transactionFee Transaction fee
      * @param array              $fines          Fines data
-     * @param strin              $currency       Currency
-     * @param string             $statusParam    Payment status URL parameter
+     * @param string             $currency       Currency
+     * @param string             $paymentParam   Payment status URL parameter
      *
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl,
-        $ajaxUrl,
+        $returnBaseUrl,
+        $notifyBaseUrl,
         $user,
         $patron,
         $driver,
@@ -92,20 +86,22 @@ interface OnlinePaymentHandlerInterface
         $transactionFee,
         $fines,
         $currency,
-        $statusParam
+        $paymentParam
     );
 
     /**
      * Process the response from payment service.
      *
-     * @param Laminas\Http\Request $request Request
+     * @param \Finna\Db\Row\Transaction $transaction Transaction
+     * @param \Laminas\Http\Request     $request     Request
      *
-     * @return string error message (not translated)
-     *   or associative array with keys:
-     *     'markFeesAsPaid' (boolean) true if payment was successful and fees
-     *     should be registered as paid.
-     *     'transactionId' (string) Transaction ID.
-     *     'amount' (int) Amount to be registered (does not include transaction fee).
+     * @return associative array with keys:
+     *     'success'        (bool)   Whether the response was successfully processed.
+     *     'markFeesAsPaid' (bool)   true if fees should be registered as paid.
+     *     'message'        (string) Any message. 'success' defines the type.
      */
-    public function processResponse($request);
+    public function processPaymentResponse(
+        \Finna\Db\Row\Transaction $transaction,
+        \Laminas\Http\Request $request
+    ): array;
 }

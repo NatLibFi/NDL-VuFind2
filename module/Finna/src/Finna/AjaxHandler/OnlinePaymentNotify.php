@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -51,7 +51,55 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
      */
     public function handleRequest(Params $params)
     {
-        $res = $this->processPayment($params->getController()->getRequest());
+        $request = $params->getController()->getRequest();
+
+        $reqParams = array_merge(
+            $request->getQuery()->toArray(),
+            $request->getPost()->toArray()
+        );
+
+        if (empty($reqParams['finna_payment_id'])) {
+            $this->logError(
+                'Error processing payment: finna_payment_id not provided'
+            );
+            return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
+        }
+        $transactionId = $reqParams['finna_payment_id'];
+        if (!($t = $this->transactionTable->getTransaction($transactionId))) {
+            $this->logError(
+                "Error processing payment: transaction $transactionId not found"
+            );
+            return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
+        }
+
+        if ($t->isRegistered()) {
+            // Already registered, treat as success:
+            return $this->formatResponse('');
+        }
+
+        $handler = $this->getOnlinePaymentHandler($t->driver);
+        if (!$handler) {
+            $this->logError(
+                'Error processing payment: could not initialize payment handler '
+                . $t->driver
+            );
+            return $this->formatResponse('', self::STATUS_HTTP_ERROR);
+        }
+
+        // Process the payment request regardless of whether patron login succeeds to
+        // update the status properly
+        $paymentResult = $handler->processPaymentResponse($t, $request);
+
+        if (!$paymentResult['success']) {
+            return $this->formatResponse('', self::STATUS_HTTP_ERROR);
+        }
+
+        if (!$paymentResult['markFeesAsPaid']) {
+            return $this->formatResponse('');
+        }
+
+        $this->markFeesAsPaid($t);
+
         return $this->formatResponse('');
     }
 }

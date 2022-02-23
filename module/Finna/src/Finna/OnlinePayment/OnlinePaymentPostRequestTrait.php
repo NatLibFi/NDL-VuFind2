@@ -1,6 +1,6 @@
 <?php
 /**
- * OnlinePayment module trait.
+ * Online payment POST request trait.
  *
  * PHP version 7
  *
@@ -30,7 +30,7 @@ namespace Finna\OnlinePayment;
 use Laminas\Stdlib\Parameters;
 
 /**
- * OnlinePayment module trait.
+ * Online payment POST request trait.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -38,7 +38,7 @@ use Laminas\Stdlib\Parameters;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-trait OnlinePaymentModuleTrait
+trait OnlinePaymentPostRequestTrait
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -71,10 +71,11 @@ trait OnlinePaymentModuleTrait
      * @param string $username Username for HTTP basic authentication.
      * @param string $password Password for HTTP basic authentication.
      *
-     * @return false on error, otherwise array with keys:
+     * @return bool|array false on error, otherwise an array with keys:
      * - httpCode => Response status code
      * - contentType => Response content type
      * - response => Response body
+     * - headers => Response headers
      */
     protected function postRequest(
         $url,
@@ -109,7 +110,9 @@ trait OnlinePaymentModuleTrait
                 "Error posting request: " . $e->getMessage()
                 . ", url: $url, body: $body, headers: " . var_export($headers, true)
             );
-            $this->logger->logException($e, new Parameters());
+            if ($this->logger instanceof \VuFind\Log\Logger) {
+                $this->logger->logException($e, new Parameters());
+            }
             return false;
         }
 
@@ -126,9 +129,9 @@ trait OnlinePaymentModuleTrait
         }
 
         return [
-           'httpCode' => $status,
-           'contentType' => $response->getContent(),
-           'response' => $content
+            'httpCode' => $status,
+            'response' => $content,
+            'headers' => $response->getHeaders()->toArray()
         ];
     }
 }

@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2016.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -147,8 +147,11 @@ trait FinnaOnlinePaymentControllerTrait
     protected function handleOnlinePayment($patron, $fines, $view)
     {
         $view->onlinePaymentEnabled = false;
-        $session = $this->getOnlinePaymentSession();
+        if (!$paymentHandler = $this->getOnlinePaymentHandler($patron['source'])) {
+            return;
+        }
 
+        $session = $this->getOnlinePaymentSession();
         $catalog = $this->getILS();
 
         // Check if online payment configuration exists for the ILS driver
@@ -180,23 +183,6 @@ trait FinnaOnlinePaymentControllerTrait
 
         $payableOnline = $catalog->getOnlinePayableAmount($patron, $fines);
 
-        // Check if there is a payment in progress
-        // or if the user has unregistered payments
-        $transactionMaxDuration
-            = $paymentConfig['transactionMaxDuration']
-            ?? 30
-        ;
-
-        $tr = $this->getTable('transaction');
-        $paymentPermittedForUser = $tr->isPaymentPermitted(
-            $patron['cat_username'],
-            $transactionMaxDuration
-        );
-
-        if (!$paymentHandler = $this->getOnlinePaymentHandler($patron['source'])) {
-            return;
-        }
-
         $callback = function ($fine) {
             return $fine['payableOnline'];
         };
@@ -210,14 +196,11 @@ trait FinnaOnlinePaymentControllerTrait
         $view->payableTotal = $payableOnline['amount'] + $view->transactionFee;
         $view->payableOnlineCnt = count($payableFines);
         $view->nonPayableFines = count($fines) != count($payableFines);
+        $view->registerPayment = false;
 
-        $paymentParam = 'payment';
-        $request = $this->getRequest();
+        $trTable = $this->getTable('transaction');
+        $transactionIdParam = 'finna_payment_id';
         $pay = $this->formWasSubmitted('pay-confirm');
-        $payment = $request->getQuery()->get(
-            $paymentParam,
-            $request->getPost($paymentParam)
-        );
         if ($pay && $session && $payableOnline
             && $payableOnline['payable'] && $payableOnline['amount']
         ) {
@@ -227,12 +210,13 @@ trait FinnaOnlinePaymentControllerTrait
                 && $this->checkIfFinesUpdated($patron, $payableOnline['amount'])
             ) {
                 // Fines updated, redirect and show updated list.
-                $session->payment_fines_changed = true;
+                $this->flashMessenger()
+                    ->addErrorMessage('online_payment_fines_changed');
                 header("Location: " . $this->getServerUrl('myresearch-fines'));
                 exit();
             }
-            $finesUrl = $this->getServerUrl('myresearch-fines');
-            $ajaxUrl = $this->getServerUrl('home') . 'AJAX';
+            $returnUrl = $this->getServerUrl('myresearch-fines');
+            $notifyUrl = $this->getServerUrl('home') . 'AJAX/onlinePaymentNotify';
             [$driver, ] = explode('.', $patron['cat_username'], 2);
 
             $user = $this->getUser();
@@ -247,8 +231,8 @@ trait FinnaOnlinePaymentControllerTrait
 
             // Start payment
             $result = $paymentHandler->startPayment(
-                $finesUrl,
-                $ajaxUrl,
+                $returnUrl,
+                $notifyUrl,
                 $user,
                 $patronProfile,
                 $driver,
@@ -256,7 +240,7 @@ trait FinnaOnlinePaymentControllerTrait
                 $view->transactionFee,
                 $payableFines,
                 $paymentConfig['currency'],
-                $paymentParam
+                $transactionIdParam
             );
             $this->flashMessenger()->addMessage(
                 $result ? $result : 'online_payment_failed',
@@ -264,63 +248,79 @@ trait FinnaOnlinePaymentControllerTrait
             );
             header("Location: " . $this->getServerUrl('myresearch-fines'));
             exit();
-        } elseif ($payment) {
-            // Payment response received.
+        }
 
-            // AJAX/onlinePaymentNotify was called before the user returned to Finna.
-            // Display success message and return since the transaction is already
-            // processed.
-            if (!$payableOnline) {
-                $this->flashMessenger()->addMessage(
-                    'online_payment_successful',
-                    'success'
+        $request = $this->getRequest();
+        $transactionId = $request->getQuery()->get($transactionIdParam);
+        if ($transactionId
+            && ($transaction = $trTable->getTransaction($transactionId))
+        ) {
+            if ($transaction->isRegistered()) {
+                // Already registered, treat as success:
+                $this->flashMessenger()
+                    ->addSuccessMessage('online_payment_successful');
+            } else {
+                // Process payment response:
+                $result = $paymentHandler->processPaymentResponse(
+                    $transaction,
+                    $this->getRequest()
                 );
-                $view->paymentRegistered = true;
-                return;
+                if ($result['success']) {
+                    if ($result['message']) {
+                        $this->flashMessenger()
+                            ->addSuccessMessage($result['message']);
+                    }
+                    if ($result['markFeesAsPaid']) {
+                        // Display page and mark fees as paid via AJAX:
+                        $view->registerPayment = true;
+                        $view->registerPaymentParams = [
+                            'transactionId' => $transaction->transaction_id
+                        ];
+                    }
+                } else {
+                    if ($result['message']) {
+                        $this->flashMessenger()->addErrorMessage($result['message']);
+                    }
+                }
             }
+        }
 
-            //  Display page and process via AJAX.
-            $view->registerPayment = true;
-            $view->registerPaymentParams
-                = $this->getRequest()->getQuery()->toArray();
-        } else {
-            $allowPayment
-                = $paymentPermittedForUser === true && $payableOnline
+        if (!$view->registerPayment) {
+            // Check if there is a payment in progress
+            // or if the user has unregistered payments
+            $transactionMaxDuration = $paymentConfig['transactionMaxDuration'] ?? 30;
+            $paymentPermittedForUser = $trTable->isPaymentPermitted(
+                $patron['cat_username'],
+                $transactionMaxDuration
+            );
+            $allowPayment = $paymentPermittedForUser === true && $payableOnline
                 && $payableOnline['payable'] && $payableOnline['amount'];
 
-            // Display possible warning and store fines to session.
+            // Store current fines to session:
             $this->storeFines($patron, $payableOnline['amount']);
             $session = $this->getOnlinePaymentSession();
             $view->transactionId = $session->sessionId;
 
-            if (!empty($session->payment_fines_changed)) {
-                $view->paymentFinesChanged = true;
-                $this->flashMessenger()->addMessage(
-                    'online_payment_fines_changed',
-                    'error'
-                );
-                unset($session->payment_fines_changed);
-            } elseif (!empty($session->paymentOk)) {
+            if (!empty($session->paymentOk)) {
                 $this->flashMessenger()->addMessage(
                     'online_payment_successful',
                     'success'
                 );
                 unset($session->paymentOk);
-            } else {
-                $view->onlinePaymentEnabled = $allowPayment;
-                if ($paymentPermittedForUser !== true) {
-                    $this->flashMessenger()->addMessage(
-                        strip_tags($paymentPermittedForUser),
-                        'error'
-                    );
-                } elseif (!empty($payableOnline['reason'])) {
-                    $view->nonPayableReason = $payableOnline['reason'];
-                } elseif ($this->formWasSubmitted('pay')) {
-                    $view->setTemplate(
-                        'Helpers/OnlinePayment/terms-' . $view->paymentHandler
-                        . '.phtml'
-                    );
-                }
+            }
+
+            $view->onlinePaymentEnabled = $allowPayment;
+            if ($paymentPermittedForUser !== true) {
+                $this->flashMessenger()->addErrorMessage(
+                    strip_tags($paymentPermittedForUser)
+                );
+            } elseif (!empty($payableOnline['reason'])) {
+                $view->nonPayableReason = $payableOnline['reason'];
+            } elseif ($this->formWasSubmitted('pay')) {
+                $view->setTemplate(
+                    'Helpers/OnlinePayment/terms-' . $view->paymentHandler
+                    . '.phtml'
+                );
             }
         }
     }
@@ -364,7 +364,7 @@ trait FinnaOnlinePaymentControllerTrait
     {
         $this->setLogger($this->serviceLocator->get(\VuFind\Log\Logger::class));
         if (PHP_SAPI !== 'cli') {
-            if (is_callable([$this->logger, 'logException'])) {
+            if ($this->logger instanceof \VuFind\Log\Logger) {
                 $this->logger->logException($e, new Parameters());
             }
         } else {

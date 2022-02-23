@@ -10,7 +10,7 @@
  */
 class Cpu_Client
 {
-    use \Finna\OnlinePayment\OnlinePaymentModuleTrait;
+    use \Finna\OnlinePayment\OnlinePaymentPostRequestTrait;
 
     /**
      * Url of eCommerce service where payment data will be sent.

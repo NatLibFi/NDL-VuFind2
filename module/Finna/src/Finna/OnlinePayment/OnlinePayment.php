@@ -28,6 +28,8 @@
  */
 namespace Finna\OnlinePayment;
 
+use VuFind\I18n\Locale\LocaleSettings;
+
 /**
  * Online payment service
  *
@@ -45,13 +47,6 @@ class OnlinePayment implements \VuFind\I18n\Translator\TranslatorAwareInterface,
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Configuration.
-     *
-     * @var \Laminas\Config\Config
-     */
-    protected $config;
-
-    /**
      * Table manager
      *
      * @var \VuFind\Db\Table\PluginManager
@@ -66,20 +61,37 @@ class OnlinePayment implements \VuFind\I18n\Translator\TranslatorAwareInterface,
     protected $logger;
 
     /**
+     * Configuration
+     *
+     * @var \Laminas\Config\Config
+     */
+    protected $config;
+
+    /**
+     * Locale settings
+     *
+     * @var LocaleSettings
+     */
+    protected $localeSettings;
+
+    /**
      * Constructor.
      *
      * @param DbTablePluginManager $tableManager Table manager
      * @param Logger               $logger       Logger
      * @param Config               $config       Configuration
+     * @param LocaleSettings       $locale       Locale settings
      */
     public function __construct(
         \VuFind\Db\Table\PluginManager $tableManager,
         \VuFind\Log\Logger $logger,
-        \Laminas\Config\Config $config
+        \Laminas\Config\Config $config,
+        LocaleSettings $locale
     ) {
         $this->tableManager = $tableManager;
         $this->logger = $logger;
         $this->config = $config;
+        $this->localeSettings = $locale;
     }
 
     /**
@@ -101,7 +113,8 @@ class OnlinePayment implements \VuFind\I18n\Translator\TranslatorAwareInterface,
         $handler = new $class(
             $this->getConfig($source),
             $this->httpService,
-            $this->translator
+            $this->translator,
+            $this->localeSettings
         );
         $handler->setDbTableManager($this->tableManager);
         $handler->setLogger($this->logger);

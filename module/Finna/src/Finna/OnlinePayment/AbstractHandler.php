@@ -1,10 +1,10 @@
 <?php
 /**
- * Payment base handler
+ * Abstract payment handler
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2018.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,9 +32,10 @@ namespace Finna\OnlinePayment;
 
 use Laminas\I18n\Translator\TranslatorInterface;
 use Laminas\Log\LoggerAwareInterface;
+use VuFind\I18n\Locale\LocaleSettings;
 
 /**
- * Payment base handler
+ * Abstract payment handler
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -44,7 +45,7 @@ use Laminas\Log\LoggerAwareInterface;
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-abstract class BaseHandler implements OnlinePaymentHandlerInterface,
+abstract class AbstractHandler implements OnlinePaymentHandlerInterface,
     LoggerAwareInterface
 {
     use \VuFind\Db\Table\DbTableAwareTrait {
@@ -74,20 +75,30 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
     protected $translator;
 
     /**
+     * Locale settings
+     *
+     * @var LocaleSettings
+     */
+    protected $localeSettings;
+
+    /**
      * Constructor
      *
      * @param \Laminas\Config\Config  $config     Configuration as key-value pairs.
      * @param \VuFindHttp\HttpService $http       HTTP service
      * @param TranslatorInterface     $translator Translator
+     * @param LocaleSettings          $locale     Locale settings
      */
     public function __construct(
         \Laminas\Config\Config $config,
         \VuFindHttp\HttpService $http,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        LocaleSettings $locale
     ) {
         $this->config = $config;
         $this->http = $http;
         $this->translator = $translator;
+        $this->localeSettings = $locale;
     }
 
     /**
@@ -113,9 +124,24 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
     }
 
     /**
+     * Add query parameters to an url
+     *
+     * @param string $url    URL
+     * @param array  $params Parameters to add
+     *
+     * @return string
+     */
+    protected function addQueryParams(string $url, array $params): string
+    {
+        $url .= strpos($url, '?') === false ? '?' : '&';
+        $url .= http_build_query($params);
+        return $url;
+    }
+
+    /**
      * Store transaction to database.
      *
-     * @param string $orderNumber    ID
+     * @param string $transactionId  Transaction ID
      * @param string $driver         Patron MultiBackend ILS source
      * @param int    $userId         User ID
      * @param string $patronId       Patron's catalog username
@@ -129,7 +155,7 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
      * @return boolean success
      */
     protected function createTransaction(
-        $orderNumber,
+        $transactionId,
         $driver,
         $userId,
         $patronId,
@@ -139,7 +165,7 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
         $fines
     ) {
         $t = $this->getTable('transaction')->createTransaction(
-            $orderNumber,
+            $transactionId,
             $driver,
             $userId,
             $patronId,
@@ -174,32 +200,23 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
     }
 
     /**
-     * Return started transaction from database.
+     * Return transaction from database.
      *
      * @param string $id Transaction ID
      *
-     * @return array Array:
-     * - true|false success
-     * - string|Finna\Db\Table\Row\Transaction
-     * Transaction or error message (translation key).
+     * @return ?\Finna\Db\Row\Transaction
      */
-    protected function getStartedTransaction($id)
+    protected function getTransaction($id)
     {
         $table = $this->getTable('transaction');
-        if (!$table->isTransactionInProgress($id)) {
-            return [
-                false, 'online_payment_transaction_already_processed_or_unknown'
-            ];
-        }
-
         if (($t = $table->getTransaction($id)) === false) {
             $this->logError(
                 "error retrieving started transaction $id: transaction not found"
             );
-            return [false, 'transaction_found'];
+            return null;
         }
 
-        return [true, $t];
+        return $t;
     }
 
     /**
@@ -213,56 +230,6 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
     {
         header("Location: $url", true, 302);
         exit();
-    }
-
-    /**
-     * Set transaction paid.
-     *
-     * @param string $orderNum  Transaction ID.
-     * @param string $timestamp Time stamp.
-     *
-     * @return void
-     */
-    protected function setTransactionPaid($orderNum, $timestamp = null)
-    {
-        if (!$timestamp) {
-            $timestamp = time();
-        }
-        $table = $this->getTable('transaction');
-        if (!$table->setTransactionPaid($orderNum, $timestamp)) {
-            $this->logError("error updating transaction $orderNum to paid");
-        }
-    }
-
-    /**
-     * Set transaction cancelled.
-     *
-     * @param string $orderNum Transaction ID.
-     *
-     * @return void
-     */
-    protected function setTransactionCancelled($orderNum)
-    {
-        $table = $this->getTable('transaction');
-        if (!$table->setTransactionCancelled($orderNum)) {
-            $this->logError("error updating transaction $orderNum to cancelled");
-        }
-    }
-
-    /**
-     * Set transaction failed.
-     *
-     * @param string $orderNum Transaction ID.
-     * @param string $msg      Message
-     *
-     * @return void
-     */
-    protected function setTransactionFailed($orderNum, $msg = null)
-    {
-        $table = $this->getTable('transaction');
-        if (!$table->setTransactionRegistrationFailed($orderNum, $msg)) {
-            $this->logError("error updating transaction $orderNum to failed");
-        }
     }
 
     /**
@@ -324,6 +291,39 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
     }
 
     /**
+     * Extract first name and last name from user
+     *
+     * @param \Finna\Db\Row\User $user User
+     *
+     * @return array Associative array with 'firstname' and 'lastname'
+     */
+    protected function extractUserNames(\Finna\Db\Row\User $user): array
+    {
+        $lastname = trim($user->lastname);
+        if (!empty($user->firstname)) {
+            $firstname = trim($user->firstname);
+        } else {
+            // We don't have both names separately, try to extract first name from
+            // last name.
+            if (strpos($lastname, ',') > 0) {
+                // Lastname, Firstname
+                [$lastname, $firstname] = explode(',', $lastname, 2);
+            } else {
+                // First Middle Last
+                if (preg_match('/^(.*) (.*?)$/', $lastname, $matches)) {
+                    $firstname = $matches[1];
+                    $lastname = $matches[2];
+                } else {
+                    $firstname = '';
+                }
+            }
+            $lastname = trim($lastname);
+            $firstname = trim($firstname);
+        }
+        return compact('firstname', 'lastname');
+    }
+
+    /**
      * Dump a data array with mixed content
      *
      * @param array  $data   Data array
@@ -363,5 +363,16 @@ abstract class BaseHandler implements OnlinePaymentHandlerInterface,
         }
 
         return $indent . implode(",\n$indent", $results);
+    }
+
+    /**
+     * Get two character language code from user's current locale
+     *
+     * @return string
+     */
+    protected function getCurrentLanguageCode()
+    {
+        [$lang] = explode('-', $this->localeSettings->getUserLocale(), 2);
+        return $lang;
     }
 }

@@ -40,7 +40,7 @@ namespace Finna\OnlinePayment\Paytrail;
  */
 class PaytrailE2
 {
-    use \Finna\OnlinePayment\OnlinePaymentModuleTrait;
+    use \Finna\OnlinePayment\OnlinePaymentPostRequestTrait;
 
     public const TYPE_NORMAL = 1;
     public const TYPE_SHIPPING = 2;

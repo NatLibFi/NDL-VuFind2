@@ -72,7 +72,8 @@ class OnlinePaymentFactory implements FactoryInterface
         return new $requestedName(
             $container->get(\VuFind\Db\Table\PluginManager::class),
             $container->get(\VuFind\Log\Logger::class),
-            $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
+            $container->get(\VuFind\Config\PluginManager::class)->get('datasources'),
+            $container->get(\VuFind\I18n\Locale\LocaleSettings::class)
         );
     }
 }
