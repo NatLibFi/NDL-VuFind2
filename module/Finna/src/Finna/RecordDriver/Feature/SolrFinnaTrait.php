@@ -60,14 +60,12 @@ trait SolrFinnaTrait
      */
     protected $cache = [];
 
-
     /**
      * An array of non-displayable formats
      *
      * @var array
      */
     protected $undisplayableFormats;
-
 
     /**
      * Return an array of image URLs associated with this record with keys:
@@ -774,9 +772,9 @@ trait SolrFinnaTrait
 
     /**
      * Can the format be properly displayed?
-     * 
+     *
      * @param string $format Format to check.
-     * 
+     *
      * @return bool
      */
     public function isUndisplayableFormat(string $format): bool

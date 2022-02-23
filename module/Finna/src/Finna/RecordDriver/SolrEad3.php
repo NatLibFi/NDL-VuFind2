@@ -724,7 +724,7 @@ class SolrEad3 extends SolrEad
      * - displayImages Images to be displayed in the front end.
      * - ocr           Ocr images.
      * - fullres       Fullres images.
-     * 
+     *
      * @param string $language   Language for copyright information
      * @param bool   $includePdf Whether to include first PDF file when no image
      * links are found
