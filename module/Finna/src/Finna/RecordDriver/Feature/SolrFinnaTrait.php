@@ -771,7 +771,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Can the format be properly displayed?
+     * Can the format not be properly displayed?
      *
      * @param string $format Format to check.
      *
