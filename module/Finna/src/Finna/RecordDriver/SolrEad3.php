@@ -675,21 +675,20 @@ class SolrEad3 extends SolrEad
         $locale = $this->getLocale();
         $result = $this->getImagesAsAssoc($locale);
         $physicalItems = $this->getPhysicalItems();
-        $digitized
-            = !empty($fullResImages) || !empty($ocrImages)
-            || !empty($result['displayImages']);
 
         $result = [];
-        if (!empty($result['fullres'])) {
+        if (!empty($result['fullres']['items'])) {
             $result['items']['fullResImages'] = $result['fullres'];
         }
-        if (!empty($result['ocr'])) {
+        if (!empty($result['ocr']['items'])) {
             $result['items']['OCRImages'] = $result['ocr'];
         }
         if (!empty($physicalItems)) {
             $result['items']['physicalItems'] = $physicalItems;
         }
-        $result['digitized'] = $digitized;
+        $result['digitized'] = !empty($result['displayImages'])
+            || !empty($result['fullres']['items'])
+            || !empty($result['ocr']['items']);
         return $result;
     }
 
