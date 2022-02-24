@@ -61,7 +61,10 @@ class Demo extends \VuFind\ILS\Driver\Demo
     public function getConfig($function, $params = null)
     {
         if ($function == 'onlinePayment') {
-            $functionConfig = $this->config['OnlinePayment'] ?? [];
+            // Lower-case o is used in all other drivers, so use it here as well by
+            // default but allow OnlinePayment as a fallback:
+            $functionConfig = $this->config['onlinePayment']
+                ?? $this->config['OnlinePayment'] ?? [];
             if ($functionConfig) {
                 $functionConfig['exactBalanceRequired'] = true;
             }
