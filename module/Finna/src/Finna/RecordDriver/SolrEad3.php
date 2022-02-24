@@ -763,7 +763,7 @@ class SolrEad3 extends SolrEad
             $result['displayImages'][] = $formatted;
         };
 
-        if (!empty($xml->did->daoset) || !empty($xml->did->dao)) {
+        if (isset($xml->did->daoset) || isset($xml->did->dao)) {
             // All images have same lazy-fetched rights.
             $rights = null;
             $images = [];
