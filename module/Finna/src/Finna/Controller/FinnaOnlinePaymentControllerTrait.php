@@ -148,6 +148,9 @@ trait FinnaOnlinePaymentControllerTrait
     {
         $view->onlinePaymentEnabled = false;
         if (!($paymentHandler = $this->getOnlinePaymentHandler($patron['source']))) {
+            $this->handleDebugMsg(
+                "No online payment handler defined for {$patron['source']}"
+            );
             return;
         }
 
@@ -157,6 +160,9 @@ trait FinnaOnlinePaymentControllerTrait
         // Check if online payment configuration exists for the ILS driver
         $paymentConfig = $catalog->getConfig('onlinePayment', $patron);
         if (empty($paymentConfig)) {
+            $this->handleDebugMsg(
+                "No online payment ILS configuration for {$patron['source']}"
+            );
             return;
         }
 
@@ -164,11 +170,17 @@ trait FinnaOnlinePaymentControllerTrait
         $onlinePayment = $this->serviceLocator
             ->get(\Finna\OnlinePayment\OnlinePayment::class);
         if (!$onlinePayment->isEnabled($patron['source'])) {
+            $this->handleDebugMsg(
+                "Online payment not enabled for {$patron['source']}"
+            );
             return;
         }
 
         // Check if online payment is enabled for the ILS driver
         if (!$catalog->checkFunction('markFeesAsPaid', compact('patron'))) {
+            $this->handleDebugMsg(
+                "markFeesAsPaid not available for {$patron['source']}"
+            );
             return;
         }
 
@@ -219,8 +231,7 @@ trait FinnaOnlinePaymentControllerTrait
             $notifyUrl = $this->getServerUrl('home') . 'AJAX/onlinePaymentNotify';
             [$driver, ] = explode('.', $patron['cat_username'], 2);
 
-            $user = $this->getUser();
-            if (!$user) {
+            if (!($user = $this->getUser())) {
                 return;
             }
 
@@ -341,6 +352,18 @@ trait FinnaOnlinePaymentControllerTrait
     }
 
     /**
+     * Make sure that logger is available.
+     *
+     * @return void
+     */
+    protected function ensureLogger(): void
+    {
+        if (null === $this->getLogger()) {
+            $this->setLogger($this->serviceLocator->get(\VuFind\Log\Logger::class));
+        }
+    }
+
+    /**
      * Log error message.
      *
      * @param string $msg Error message.
@@ -349,8 +372,21 @@ trait FinnaOnlinePaymentControllerTrait
      */
     protected function handleError($msg)
     {
-        $this->setLogger($this->serviceLocator->get(\VuFind\Log\Logger::class));
+        $this->ensureLogger();
         $this->logError($msg);
+    }
+
+    /**
+     * Log a debug message.
+     *
+     * @param string $msg Debug message.
+     *
+     * @return void
+     */
+    protected function handleDebugMsg($msg)
+    {
+        $this->ensureLogger();
+        $this->logger->debug($msg);
     }
 
     /**
@@ -362,7 +398,7 @@ trait FinnaOnlinePaymentControllerTrait
      */
     protected function handleException($e)
     {
-        $this->setLogger($this->serviceLocator->get(\VuFind\Log\Logger::class));
+        $this->ensureLogger();
         if (PHP_SAPI !== 'cli') {
             if ($this->logger instanceof \VuFind\Log\Logger) {
                 $this->logger->logException($e, new Parameters());
