@@ -735,7 +735,8 @@ class SolrEad3 extends SolrEad
         string $language = 'fi',
         bool $includePdf = false
     ) {
-        $cacheKey = __FUNCTION__ . "/$language/" . ($includePdf ? '1' : '0');
+        // Do not include pdf bool to cachekey as it does not change results
+        $cacheKey = __FUNCTION__ . "/$language";
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -804,7 +805,7 @@ class SolrEad3 extends SolrEad
                         $type = (string)(
                             $attr->localtype
                             ?? $parentType
-                            ?? self::IMAGE_LARGE
+                            ?? 'none'
                         );
                         $role = (string)($attr->linkrole ?? '');
                         $sort = (string)($attr->label ?? '');
