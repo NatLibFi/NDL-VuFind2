@@ -100,7 +100,7 @@ abstract class AbstractBase implements HandlerInterface,
         \VuFindHttp\HttpService $http,
         LocaleSettings $locale,
         Transaction $transactionTable,
-        Fee $feeTable,
+        Fee $feeTable
     ) {
         $this->http = $http;
         $this->localeSettings = $locale;
