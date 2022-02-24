@@ -677,7 +677,7 @@ class SolrEad3 extends SolrEad
         $physicalItems = $this->getPhysicalItems();
         $digitized
             = !empty($fullResImages) || !empty($ocrImages)
-            || !empty($this->getAllImages());
+            || !empty($result['displayImages']);
 
         $result = [];
         if (!empty($result['fullres'])) {
@@ -1195,7 +1195,7 @@ class SolrEad3 extends SolrEad
      */
     public function getImageRights($language, $skipImageCheck = false)
     {
-        if (!$skipImageCheck && !$this->getAllImages()) {
+        if (!$skipImageCheck && !$this->getAllImages($language)) {
             return false;
         }
 
