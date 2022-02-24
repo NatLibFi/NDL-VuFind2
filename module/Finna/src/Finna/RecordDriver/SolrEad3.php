@@ -821,11 +821,11 @@ class SolrEad3 extends SolrEad
                                 'highResolution' => []
                             ];
                         }
-                        $exploded = explode('/', $role);
+                        [$fileType, $format] = strpos($role, '/') > 0
+                            ? explode('/', $role, 2)
+                            : ['image', 'jpg'];
                         // Image might be original, can not be displayed in browser.
-                        if (!empty($exploded[1])
-                            && $this->isUndisplayableFormat($exploded[1])
-                        ) {
+                        if ($this->isUndisplayableFormat($format)) {
                             $displayImage['highResolution']['original'][] = [
                                 'data' => [],
                                 'url' => $url,
