@@ -81,24 +81,24 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
         if (!$handler) {
             $this->logError(
                 'Error processing payment: could not initialize payment handler '
-                . $t->driver
+                . $t->driver . " for $transactionId"
             );
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
         }
 
-        // Process the payment request regardless of whether patron login succeeds to
-        // update the status properly
         $paymentResult = $handler->processPaymentResponse($t, $request);
 
-        if (!$paymentResult['success']) {
+        $this->logger->info(
+            "Online payment notify handler for $transactionId result: $paymentResult"
+        );
+
+        if ($handler::PAYMENT_FAILURE == $paymentResult) {
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
         }
 
-        if (!$paymentResult['markFeesAsPaid']) {
-            return $this->formatResponse('');
+        if ($handler::PAYMENT_SUCCESS === $paymentResult) {
+            $this->markFeesAsPaid($t);
         }
-
-        $this->markFeesAsPaid($t);
 
         return $this->formatResponse('');
     }

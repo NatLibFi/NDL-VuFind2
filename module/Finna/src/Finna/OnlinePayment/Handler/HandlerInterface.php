@@ -77,13 +77,10 @@ interface HandlerInterface
      * @param \Finna\Db\Row\Transaction $transaction Transaction
      * @param \Laminas\Http\Request     $request     Request
      *
-     * @return associative array with keys:
-     *     'success'        (bool)   Whether the response was successfully processed.
-     *     'markFeesAsPaid' (bool)   true if fees should be registered as paid.
-     *     'message'        (string) Any message. 'success' defines the type.
+     * @return int One of the result codes defined in AbstractBase
      */
     public function processPaymentResponse(
         \Finna\Db\Row\Transaction $transaction,
         \Laminas\Http\Request $request
-    ): array;
+    ): int;
 }

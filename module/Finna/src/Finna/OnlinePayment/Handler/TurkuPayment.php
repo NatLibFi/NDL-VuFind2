@@ -192,39 +192,28 @@ class TurkuPayment extends AbstractBase
      * @param \Finna\Db\Row\Transaction $transaction Transaction
      * @param \Laminas\Http\Request     $request     Request
      *
-     * @return associative array with keys:
-     *     'success'        (bool)   Whether the response was successfully processed.
-     *     'markFeesAsPaid' (bool)   true if fees should be registered as paid.
-     *     'message'        (string) Any message. 'success' defines the type.
+     * @return int One of the result codes defined in AbstractBase
      */
     public function processPaymentResponse(
         \Finna\Db\Row\Transaction $transaction,
         \Laminas\Http\Request $request
-    ): array {
+    ): int {
         if (!($params = $this->getPaymentResponseParams($request))) {
-            return [
-                'success' => false,
-                'markFeesAsPaid' => false,
-                'message' => 'online_payment_failed'
-            ];
+            return self::PAYMENT_FAILURE;
+        }
+
+        // Make sure the transaction IDs match:
+        if ($transaction->transaction_id !== $params['ORDER_NUMBER']) {
+            return self::PAYMENT_FAILURE;
         }
 
         if (!empty($params['PAID'])) {
             $transaction->setPaid($params['TIMESTAMP']);
-
-            return [
-                'success' => true,
-                'markFeesAsPaid' => true,
-                'message' => 'online_payment_successful'
-            ];
+            return self::PAYMENT_SUCCESS;
         }
 
         $transaction->setCanceled();
-        return [
-            'success' => true,
-            'markFeesAsPaid' => false,
-            'message' => 'online_payment_canceled'
-        ];
+        return self::PAYMENT_CANCEL;
     }
 
     /**

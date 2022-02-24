@@ -276,22 +276,24 @@ trait FinnaOnlinePaymentControllerTrait
                     $transaction,
                     $this->getRequest()
                 );
-                if ($result['success']) {
-                    if ($result['message']) {
-                        $this->flashMessenger()
-                            ->addSuccessMessage($result['message']);
-                    }
-                    if ($result['markFeesAsPaid']) {
-                        // Display page and mark fees as paid via AJAX:
-                        $view->registerPayment = true;
-                        $view->registerPaymentParams = [
-                            'transactionId' => $transaction->transaction_id
-                        ];
-                    }
-                } else {
-                    if ($result['message']) {
-                        $this->flashMessenger()->addErrorMessage($result['message']);
-                    }
+                $this->ensureLogger();
+                $this->logger->info(
+                    "Online payment response for $transactionId result: $result"
+                );
+                if ($paymentHandler::PAYMENT_SUCCESS === $result) {
+                    $this->flashMessenger()
+                        ->addSuccessMessage('online_payment_successful');
+                    // Display page and mark fees as paid via AJAX:
+                    $view->registerPayment = true;
+                    $view->registerPaymentParams = [
+                        'transactionId' => $transaction->transaction_id
+                    ];
+                } elseif ($paymentHandler::PAYMENT_CANCEL === $result) {
+                    $this->flashMessenger()
+                        ->addSuccessMessage('online_payment_canceled');
+                } elseif ($paymentHandler::PAYMENT_FAILURE === $result) {
+                    $this->flashMessenger()
+                        ->addErrorMessage('online_payment_failed');
                 }
             }
         }

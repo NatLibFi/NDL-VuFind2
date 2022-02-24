@@ -54,6 +54,16 @@ abstract class AbstractBase implements HandlerInterface,
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
+     * Result codes for processPaymentResponse
+     *
+     * @var int
+     */
+    public const PAYMENT_SUCCESS = 0; // Successful payment, mark fees paid
+    public const PAYMENT_CANCEL = 1;  // Payment canceled
+    public const PAYMENT_FAILURE = 2; // Payment failed
+    public const PAYMENT_PENDING = 3; // Payment in progress
+
+    /**
      * Configuration.
      *
      * @var \Laminas\Config\Config
