@@ -809,6 +809,22 @@ class SolrEad3 extends SolrEad
                         $role = (string)($attr->linkrole ?? '');
                         $sort = (string)($attr->label ?? '');
 
+                        // Save image to another array if match is found
+                        if (self::IMAGE_OCR === $type
+                            && false === strpos($title, 'Kuva/Aukeama')
+                        ) {
+                            $ocrImages['items'][] = [
+                                'label' => $title,
+                                'url' => $url,
+                                'sort' => $sort
+                            ];
+                        } elseif (self::IMAGE_FULLRES === $type) {
+                            $fullResImages['items'][] = [
+                                'label' => $title,
+                                'url' => $url
+                            ];
+                        }
+
                         if (empty($displayImage)) {
                             $displayImage = [
                                 'urls' => [],
@@ -834,12 +850,11 @@ class SolrEad3 extends SolrEad
                             continue;
                         }
                         if ($size = self::IMAGE_MAP[$type] ?? false || $parentSize) {
-                            if (false === $size) {
-                                $size = $parentSize;
-                            } else {
-                                $size = $size === self::IMAGE_FULLRES
-                                    ? self::IMAGE_LARGE : $size;
-                            }
+                            $size = (false === $size)
+                                ? $parentSize
+                                : (($size === self::IMAGE_FULLRES)
+                                ? self::IMAGE_LARGE : $size);
+
                             $rights = $rights
                                 ?? $this->getImageRights($language, true);
 
@@ -853,20 +868,6 @@ class SolrEad3 extends SolrEad
                             $displayImage['urls'][$size] = $url;
                             $displayImage['pdf'][$size]
                                 = $role === 'application/pdf';
-                        }
-                        if (self::IMAGE_OCR === $type
-                            && false === strpos($title, 'Kuva/Aukeama')
-                        ) {
-                            $ocrImages['items'][] = [
-                                'label' => $title,
-                                'url' => $url,
-                                'sort' => $sort
-                            ];
-                        } elseif (self::IMAGE_FULLRES === $type) {
-                            $fullResImages['items'][] = [
-                                'label' => $title,
-                                'url' => $url
-                            ];
                         }
                     }
                     if (!empty($displayImage)) {
