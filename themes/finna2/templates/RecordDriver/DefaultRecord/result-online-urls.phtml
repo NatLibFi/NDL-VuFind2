@@ -3,7 +3,7 @@
     $openUrl = $this->openUrl($this->driver, 'results');
     $openUrlActive = $openUrl->isActive();
     $context = $this->context ?? 'results';
-    $popupMaxLinksCount = 4;
+    $maxLinksCount = 4;
 
     $images = $this->record($this->driver)->getAllRecordImageUrls();
     $urls = $this->driver->getURLs();
@@ -32,7 +32,7 @@
             if (isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') {
               continue;
             }
-            if ('popup' === $context && count($renderedURLs) >= $popupMaxLinksCount) {
+            if ('popup' === $context && count($renderedURLs) >= $maxLinksCount) {
               break;
             }
             $renderedURLs[] = $url['url'];
@@ -68,14 +68,13 @@
           </a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
         <?php endforeach; ?>
-
+        <?php if ('popup' === $context && count($renderedURLs) >= $maxLinksCount): ?>
+          <div>...</div>
+        <?php endif; ?>
         <?php foreach ($mergedData['urls'] ?? $onlineURLs ?? [] as $i => $url): ?>
           <?php
             if ((isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') || in_array($url['url'], $renderedURLs)) {
               continue;
-            }
-            if ('popup' === $context && count($renderedURLs) >= $popupMaxLinksCount) {
-              break;
             }
             $currentUrl = [
               'href' => $this->proxyUrl($url['url']),
@@ -98,9 +97,6 @@
             <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
           <?php endif; ?>
         <?php endforeach; ?>
-        <?php if ('popup' === $context && count($renderedURLs) >= $popupMaxLinksCount): ?>
-          <div>...</div>
-        <?php endif; ?>
       </div>
       <?php if ($openUrlActive): ?>
         <?=$openUrl->renderTemplate()?>
