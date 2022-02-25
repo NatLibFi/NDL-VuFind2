@@ -217,11 +217,9 @@ JS;
       <?php if (!$this->cookie()->get('cookieConsent')): ?>
         <?=$this->partial('Helpers/cookie-consent.phtml');?>
       <?php endif; ?>
-      <?php if (!empty($_SERVER['HTTP_USER_AGENT']) && preg_match('/(?i)Trident\/[0-7]/', $_SERVER['HTTP_USER_AGENT'])): ?>
-        <div class="container-fluid system-messages">
-          <?=$this->translate('outdated_browser_message_html');?>
-        </div>
-      <?php endif; ?>
+      <div id="old-browser-message" class="container-fluid system-messages <?php if (!empty($_SERVER['HTTP_USER_AGENT']) && !preg_match('/(?i)Trident\/[0-7]/', $_SERVER['HTTP_USER_AGENT'])): ?>hidden<?php endif; ?>">
+        <?=$this->translate('outdated_browser_message_html');?>
+      </div>
       <?=$this->render('Helpers/pre-production-warning.phtml')?>
       <?php if ($messages = $this->systemMessages()): ?>
         <div class="container-fluid system-messages">
