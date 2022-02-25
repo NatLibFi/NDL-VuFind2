@@ -19,10 +19,9 @@ var finna = (function finnaModule() {
       let { c, d } = b;
       // Spread operator
       let e = [...d, 4];
-      window.isES6 = true;
     } catch (error) {
       console.log(error);
-      var oldBrowser = document.findElementById("#old-browser-message");
+      var oldBrowser = document.findElementById('old-browser-message');
       if (oldBrowser) {
         oldBrowser.classList.remove('hidden');
       }
