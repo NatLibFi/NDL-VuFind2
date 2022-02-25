@@ -744,7 +744,6 @@ class SolrEad3 extends SolrEad
             'ocr' => [],
             'fullres' => []
         ];
-        $highResolution = [];
         $xml = $this->getXmlRecord();
         $addToResults = function ($imageData) use (&$result) {
             $sizes = ['small', 'medium', 'large'];
@@ -790,14 +789,12 @@ class SolrEad3 extends SolrEad
                 $parentSize = $parentType === self::IMAGE_FULLRES
                         ? self::IMAGE_LARGE : $parentType;
                 $displayImage = [];
+                $highResolution = [];
                 foreach ($set->dao as $dao) {
                     $attr = $dao->attributes();
                     if (!($title = (string)($attr->linktitle ?? ''))
                         || !($url = (string)($attr->href ?? ''))
                     ) {
-                        continue;
-                    }
-                    if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                         continue;
                     }
                     $type = (string)(
@@ -823,8 +820,15 @@ class SolrEad3 extends SolrEad
                             'url' => $url
                         ];
                     }
-
-                    if (empty($displayImage)) {
+                    if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
+                        continue;
+                    }
+                    [$fileType, $format] = strpos($role, '/') > 0
+                        ? explode('/', $role, 2)
+                        : ['image', 'jpg'];
+                    if (empty($displayImage)
+                        && !$this->isUndisplayableFormat($format)
+                    ) {
                         $displayImage = [
                             'urls' => [],
                             'description' => $title,
@@ -836,12 +840,9 @@ class SolrEad3 extends SolrEad
                             'highResolution' => []
                         ];
                     }
-                    [$fileType, $format] = strpos($role, '/') > 0
-                        ? explode('/', $role, 2)
-                        : ['image', 'jpg'];
                     // Image might be original, can not be displayed in browser.
                     if ($this->isUndisplayableFormat($format)) {
-                        $displayImage['highResolution']['original'][] = [
+                        $highResolution['original'][] = [
                             'data' => [],
                             'url' => $url,
                             'format' => $format
@@ -859,10 +860,11 @@ class SolrEad3 extends SolrEad
 
                         if (isset($displayImage['urls'][$size])) {
                             // Add old stash to results.
+                            $displayImage['highResolution'] = $highResolution;
                             $addToResults($displayImage);
                             $displayImage['urls'] = [];
                             $displayImage['pdf'] = [];
-                            $displayImage['highResolution'] = [];
+                            $displayImage['highResolution'] = $highResolution = [];
                         }
                         $displayImage['urls'][$size] = $url;
                         $displayImage['pdf'][$size]
@@ -870,14 +872,22 @@ class SolrEad3 extends SolrEad
                     }
                 }
                 if (!empty($displayImage)) {
+                    $displayImage['highResolution'] = $highResolution;
                     $images[] = $displayImage;
                     $displayImage = [];
+                    $highResolution = [];
                 }
             }
         }
 
         if (!empty($images)) {
             foreach ($images as $image) {
+                // If there is any leftover highresolution images,
+                // save them just in case
+                if (!empty($highResolution)) {
+                    $image['highResolution'] = $highResolution;
+                    $highResolution = [];
+                }
                 $addToResults($image);
             }
         }
