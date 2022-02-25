@@ -673,22 +673,22 @@ class SolrEad3 extends SolrEad
     public function getExternalData()
     {
         $locale = $this->getLocale();
-        $result = $this->getImagesAsAssoc($locale);
+        $images = $this->getImagesAsAssoc($locale);
         $physicalItems = $this->getPhysicalItems();
 
         $result = [];
-        if (!empty($result['fullres']['items'])) {
-            $result['items']['fullResImages'] = $result['fullres'];
+        if (!empty($images['fullres']['items'])) {
+            $result['items']['fullResImages'] = $images['fullres'];
         }
-        if (!empty($result['ocr']['items'])) {
-            $result['items']['OCRImages'] = $result['ocr'];
+        if (!empty($images['ocr']['items'])) {
+            $result['items']['OCRImages'] = $images['ocr'];
         }
         if (!empty($physicalItems)) {
             $result['items']['physicalItems'] = $physicalItems;
         }
-        $result['digitized'] = !empty($result['displayImages'])
-            || !empty($result['fullres']['items'])
-            || !empty($result['ocr']['items']);
+        $result['digitized'] = !empty($images['displayImages'])
+            || !empty($images['fullres']['items'])
+            || !empty($images['ocr']['items']);
         return $result;
     }
 
