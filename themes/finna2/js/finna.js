@@ -28,8 +28,9 @@ var finna = (function finnaModule() {
       }
     };
     /* eslint-enable */
+    /* jshint ignore:end */
   };
-  /* jshint ignore:end */
+
   var my = {
     init: function init() {
       // Check if the browser is supported
