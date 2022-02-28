@@ -298,6 +298,9 @@ finna.layout = (function finnaLayout() {
           holder.addClass('opened');
           VuFind.itemStatuses.check(holder);
           finna.itemStatus.initDedupRecordSelection(holder);
+          onSlideComplete = function handleSlideComplete() {
+            holder.find('.recordcover').trigger('unveil');
+          };
         }
 
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear', onSlideComplete);

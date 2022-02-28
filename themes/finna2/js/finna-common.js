@@ -6,6 +6,8 @@ finna.common = (function finnaCommon() {
     SameSite: 'Lax'
   };
 
+  let lazyImageObserver;
+
   function decodeHtml(str) {
     return $("<textarea/>").html(str).text();
   }
@@ -70,12 +72,22 @@ finna.common = (function finnaCommon() {
    * 
    * @param {NodeList} images 
    */
-  function doHunt(images) {
-    if (images) {
-      new Hunt(images, {
-        enter: (image) => image.src = image.dataset.src
+  function observeImages(images) {
+    if (!lazyImageObserver) {
+      lazyImageObserver = new IntersectionObserver((entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            let lazyImage = entry.target;
+            lazyImage.src = lazyImage.dataset.src;
+            delete lazyImage.dataset.src;
+            obs.unobserve(lazyImage);
+          }
+        }); 
       });
     }
+    images.forEach((image) => {
+      lazyImageObserver.observe(image);
+    });
   }
 
   var my = {
@@ -89,7 +101,7 @@ finna.common = (function finnaCommon() {
     setCookie: setCookie,
     removeCookie: removeCookie,
     setCookieSettings: setCookieSettings,
-    doHunt: doHunt
+    observeImages: observeImages
   };
 
   return my;
