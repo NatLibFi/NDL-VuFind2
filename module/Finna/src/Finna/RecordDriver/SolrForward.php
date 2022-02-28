@@ -795,9 +795,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     $valuesToPreserve = $data['preservedValues'] ?? [];
                     $type = in_array($type, $valuesToPreserve) ? $type : 'default';
                     $role = in_array($role, $valuesToPreserve) ? $role : 'default';
-                    if ('nonPresenterSecondaryAuthors' === $storage) {
-                        //var_dump($credited);
-                    }
                     if ($res = $data['mappings'][$type][$role][$credited] ?? '') {
                         if ($k = $data['storageKey'] ?? '') {
                             $results[$storage][$res][$k][] = $result;
