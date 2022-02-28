@@ -74,6 +74,9 @@ finna.common = (function finnaCommon() {
    * @param {NodeList} images 
    */
   function observeImages(images) {
+    if (!images.length) {
+      return;
+    }
     if (!('IntersectionObserver' in window) ||
       !('IntersectionObserverEntry' in window) ||
       !('isIntersecting' in window.IntersectionObserverEntry.prototype) ||
