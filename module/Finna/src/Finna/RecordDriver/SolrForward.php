@@ -799,7 +799,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         //var_dump($credited);
                     }
                     if ($res = $data['mappings'][$type][$role][$credited] ?? '') {
-
                         if ($k = $data['storageKey'] ?? '') {
                             $results[$storage][$res][$k][] = $result;
                         } else {
