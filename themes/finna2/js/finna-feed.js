@@ -265,7 +265,8 @@ finna.feed = (function finnaFeed() {
         if (onFeedLoaded) {
           onFeedLoaded();
         }
-        holder.find('img').unveil();
+        let images = holder[0].querySelectorAll('img[data-src]');
+        finna.common.doHunt(images);
       })
       .fail(function loadFeedFail(response/*, textStatus, err*/) {
         var err = '<!-- Feed could not be loaded';

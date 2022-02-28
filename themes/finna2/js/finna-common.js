@@ -1,4 +1,4 @@
-/*global VuFind, finna */
+/*global VuFind, finna, Hunt */
 finna.common = (function finnaCommon() {
   var cookieSettings = {
     path: '/',
@@ -65,6 +65,19 @@ finna.common = (function finnaCommon() {
     window.Cookies.remove(cookie, _getCookieSettings());
   }
 
+  /**
+   * Start observing given nodelist for lazyloading.
+   * 
+   * @param {NodeList} images 
+   */
+  function doHunt(images) {
+    if (images) {
+      new Hunt(images, {
+        enter: (image) => image.src = image.dataset.src
+      });
+    }
+  }
+
   var my = {
     decodeHtml: decodeHtml,
     getField: getField,
@@ -76,6 +89,7 @@ finna.common = (function finnaCommon() {
     setCookie: setCookie,
     removeCookie: removeCookie,
     setCookieSettings: setCookieSettings,
+    doHunt: doHunt
   };
 
   return my;

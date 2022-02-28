@@ -29,7 +29,8 @@ finna.linkedEvents = (function finnaLinkedEvents() {
       .done(function onGetEventsDone(response) {
         if (response.data) {
           callback(response.data, append, container);
-          container.find('img').unveil();
+          let images = container[0].querySelectorAll('img[data-src]');
+          finna.common.doHunt(images);
         } else {
           var err = $('<div></div>').attr('class', 'linked-events-noresults infobox').text(VuFind.translate('nohit_heading'));
           container.find($('.linked-events-content')).html(err);
