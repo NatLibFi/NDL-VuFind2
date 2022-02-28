@@ -1,4 +1,4 @@
-/*global VuFind, finna, Hunt */
+/*global VuFind, finna*/
 finna.common = (function finnaCommon() {
   var cookieSettings = {
     path: '/',
@@ -68,7 +68,8 @@ finna.common = (function finnaCommon() {
   }
 
   /**
-   * Start observing given nodelist for lazyloading.
+   * Start observing given nodelist. Used for lazyloading images.
+   * Images must contain data-src attribute.
    * 
    * @param {NodeList} images 
    */
