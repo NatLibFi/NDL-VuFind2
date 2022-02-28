@@ -162,8 +162,8 @@ finna.videoPopup = (function finnaVideoPopup() {
             $('.active-video').removeClass('active-video');
             this.currentTrigger().addClass('active-video');
             $('.video-warning').addClass('hidden');
-            finna.common.observeImages(warnings[0].querySelectorAll('img[data-src]'));
             if (warnings[0]) {
+              finna.common.observeImages(warnings[0].querySelectorAll('img[data-src]'));
               warnings.removeClass('hidden');
             }
           } else {
@@ -173,7 +173,6 @@ finna.videoPopup = (function finnaVideoPopup() {
               clone.appendTo(this.modalHolder);
               clone.removeClass('hidden');
               finna.common.observeImages(clone[0].querySelectorAll('img[data-src]'));
-              
               setTimeout(function startFade() {
                 clone.fadeOut(2000);
               }, 3000);
