@@ -1385,7 +1385,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      *
      * @return string
      */
-    public function getAmountOfViewers()
+    public function getAmountOfViewers(): string
     {
         $events = $this->getProductionEvents();
         return $events['amountOfViewers'] ?? '';
