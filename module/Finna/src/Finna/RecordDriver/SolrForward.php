@@ -504,7 +504,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     break;
                 }
             }
-            var_dump($titleText);
             $result[] = $titleTextStr;
         }
         return $result;
