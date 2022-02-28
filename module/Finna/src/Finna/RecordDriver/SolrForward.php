@@ -267,7 +267,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 ],
                 'elonet_henkilo' => [
                     'default' => [
-                        'credited' => 'credited'
+                        'credited' => 'credited',
+                        'uncredited' => 'uncredited'
                     ]
                 ],
                 'default' => [
@@ -298,6 +299,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'elokuva-alkupaanijarjestelma' => 'soundSystem',
             'elokuva-tuotantokustannukset' => 'productionCost',
             'elokuva-teatterikopioidenlkm' => 'numberOfCopies',
+            'elokuva-katsojaluku' => 'numberOfViewers',
             'elokuva-kuvausaika' => 'filmingDate',
             'elokuva-arkistoaineisto' => 'archiveFilms'
         ],
@@ -763,13 +765,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     $result[$key] = $valueString = (string)$value;
                     foreach ($this->authorNameConfig as $credited => $attrs) {
                         if ($fieldType = $attrs[$key] ?? false) {
+                            if ('uncredited' === $credited) {
+                                $result['uncredited'] = true;
+                            }
                             if ('name' === $fieldType && !empty($result['name'])) {
                                 break;
                             }
                             $result[$fieldType] = $valueString;
-                            if ('uncredited' === $credited) {
-                                $result['uncredited'] = true;
-                            }
                             break;
                         }
                     }
@@ -793,8 +795,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     $valuesToPreserve = $data['preservedValues'] ?? [];
                     $type = in_array($type, $valuesToPreserve) ? $type : 'default';
                     $role = in_array($role, $valuesToPreserve) ? $role : 'default';
-
+                    if ('nonPresenterSecondaryAuthors' === $storage) {
+                        //var_dump($credited);
+                    }
                     if ($res = $data['mappings'][$type][$role][$credited] ?? '') {
+
                         if ($k = $data['storageKey'] ?? '') {
                             $results[$storage][$res][$k][] = $result;
                         } else {
@@ -1060,8 +1065,12 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $dateText = (string)($event->DateText ?? '');
             // Get premiere theater information
             if ('PRE' === $type) {
-                $results['premiereTheater'] = explode(';', $regionName);
-                $results['premiereTime'] = $dateText;
+                if (!empty($regionName)) {
+                    $results['premiereTheater'] = explode(';', $regionName);
+                }
+                if (!empty($dateText)) {
+                    $results['premiereTime'] = $dateText;
+                }
             }
 
             $attributes = $event->ProductionEventType->attributes();
@@ -1365,6 +1374,17 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     {
         $events = $this->getProductionEvents();
         return $events['numberOfCopies'] ?? '';
+    }
+
+    /**
+     * Return number of viewer
+     *
+     * @return string
+     */
+    public function getNumberOfViewers()
+    {
+        $events = $this->getProductionEvents();
+        return $events['numberOfViewers'] ?? '';
     }
 
     /**
