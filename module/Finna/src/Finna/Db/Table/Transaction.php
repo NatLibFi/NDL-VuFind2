@@ -114,7 +114,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
     }
 
     /**
-     * Check if payment is permitted for the patron.
+     * Check if payment is in progress for the patron.
      *
      * Payment is not permitted if:
      *   - patron has a transaction in progress and translation maximum duration
@@ -122,29 +122,12 @@ class Transaction extends \VuFind\Db\Table\Gateway
      *   - patron has a paid transaction that has not been registered as paid
      *     to the ILS
      *
-     * @param string $patronId               Patron's Catalog username (barcode).
-     * @param int    $transactionMaxDuration Maximum wait time (in minutes) after
-     * which a started, and not processed, transaction is considered to have been
-     * interrupted by the user.
+     * @param string $patronId Patron's Catalog username (barcode).
      *
-     * @return mixed true if payment is permitted,
-     * error message if payment is not permitted
+     * @return bool
      */
-    public function isPaymentPermitted($patronId, $transactionMaxDuration)
+    public function isPaymentInProgress(string $patronId): bool
     {
-        $callback = function ($select) use ($patronId, $transactionMaxDuration) {
-            $select->where->equalTo('cat_username', $patronId);
-            $select->where->equalTo('complete', self::STATUS_PROGRESS);
-            $select->where(
-                "NOW() < DATE_ADD(created, INTERVAL $transactionMaxDuration MINUTE)"
-            );
-        };
-
-        if ($this->select($callback)->count()) {
-            // Transaction still in progress
-            return 'online_payment_in_progress';
-        }
-
         $statuses = [
             self::STATUS_PAID,
             self::STATUS_REGISTRATION_FAILED,
@@ -157,13 +140,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
             $select->where('complete in (' . implode(',', $statuses) . ')');
         };
 
-        if ($this->select($callback)->count()) {
-            // Transaction could not be registered
-            // and is waiting to be resolved manually.
-            return 'online_payment_registration_failed';
-        }
-
-        return true;
+        return $this->select($callback)->count() ? true : false;
     }
 
     /**

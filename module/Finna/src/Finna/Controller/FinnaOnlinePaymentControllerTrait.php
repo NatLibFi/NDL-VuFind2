@@ -299,41 +299,38 @@ trait FinnaOnlinePaymentControllerTrait
         }
 
         if (!$view->registerPayment) {
-            // Check if there is a payment in progress
-            // or if the user has unregistered payments
-            $transactionMaxDuration = $paymentConfig['transactionMaxDuration'] ?? 30;
-            $paymentPermittedForUser = $trTable->isPaymentPermitted(
-                $patron['cat_username'],
-                $transactionMaxDuration
-            );
-            $allowPayment = $paymentPermittedForUser === true && $payableOnline
-                && $payableOnline['payable'] && $payableOnline['amount'];
+            $paymentInProgress
+                = $trTable->isPaymentInProgress($patron['cat_username']);
+            if ($paymentInProgress) {
+                $this->flashMessenger()
+                    ->addErrorMessage('online_payment_in_progress');
+            } else {
+                // Check if payment is permitted:
+                $allowPayment = $payableOnline
+                    && $payableOnline['payable'] && $payableOnline['amount'];
 
-            // Store current fines to session:
-            $this->storeFines($patron, $payableOnline['amount']);
-            $session = $this->getOnlinePaymentSession();
-            $view->transactionId = $session->sessionId;
+                // Store current fines to session:
+                $this->storeFines($patron, $payableOnline['amount']);
+                $session = $this->getOnlinePaymentSession();
+                $view->transactionId = $session->sessionId;
 
-            if (!empty($session->paymentOk)) {
-                $this->flashMessenger()->addMessage(
-                    'online_payment_successful',
-                    'success'
-                );
-                unset($session->paymentOk);
-            }
+                if (!empty($session->paymentOk)) {
+                    $this->flashMessenger()->addMessage(
+                        'online_payment_successful',
+                        'success'
+                    );
+                    unset($session->paymentOk);
+                }
 
-            $view->onlinePaymentEnabled = $allowPayment;
-            if ($paymentPermittedForUser !== true) {
-                $this->flashMessenger()->addErrorMessage(
-                    strip_tags($paymentPermittedForUser)
-                );
-            } elseif (!empty($payableOnline['reason'])) {
-                $view->nonPayableReason = $payableOnline['reason'];
-            } elseif ($this->formWasSubmitted('pay')) {
-                $view->setTemplate(
-                    'Helpers/OnlinePayment/terms-' . $view->paymentHandler
-                    . '.phtml'
-                );
+                $view->onlinePaymentEnabled = $allowPayment;
+                if (!empty($payableOnline['reason'])) {
+                    $view->nonPayableReason = $payableOnline['reason'];
+                } elseif ($this->formWasSubmitted('pay')) {
+                    $view->setTemplate(
+                        'Helpers/OnlinePayment/terms-' . $view->paymentHandler
+                        . '.phtml'
+                    );
+                }
             }
         }
     }
