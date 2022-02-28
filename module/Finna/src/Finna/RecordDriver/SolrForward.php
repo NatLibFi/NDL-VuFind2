@@ -225,6 +225,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'credited' => 'assistant'
                     ]
                 ]
+            ],
+            'skipTags' => [
+                'elotekijakokoonpano' => true
             ]
         ],
         'nonPresenterSecondaryAuthors' => [
@@ -262,7 +265,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'mappings' => [
                 'elonet_kokoonpano' => [
                     'default' => [
-                        'uncredited' => 'uncreditedEnsembles'
+                        'credited' => 'ensembles',
+                        'uncredited' => 'ensembles'
                     ]
                 ],
                 'elonet_henkilo' => [
@@ -299,7 +303,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'elokuva-alkupaanijarjestelma' => 'soundSystem',
             'elokuva-tuotantokustannukset' => 'productionCost',
             'elokuva-teatterikopioidenlkm' => 'numberOfCopies',
-            'elokuva-katsojaluku' => 'numberOfViewers',
+            'elokuva-katsojaluku' => 'amountOfViewers',
             'elokuva-kuvausaika' => 'filmingDate',
             'elokuva-arkistoaineisto' => 'archiveFilms'
         ],
@@ -478,28 +482,30 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $identifyingTitle = (string)$xml->IdentifyingTitle;
         $result = [];
         foreach ($xml->Title as $title) {
-            $titleText = (string)$title->TitleText;
-            if ($titleText == $identifyingTitle) {
+            $titleText = $title->TitleText;
+            $titleTextStr = (string)$title->TitleText;
+            if ($titleTextStr == $identifyingTitle) {
                 continue;
             }
             if ($rel = $title->TitleRelationship) {
                 switch ((string)$rel) {
                 case 'working':
-                    $titleText .= ' (' . $this->translate('working title') . ')';
+                    $titleTextStr .= ' (' . $this->translate('working title') . ')';
                     break;
                 case 'translated':
-                    if ($lang = $title->TitleRelationship->attributes()->lang) {
-                        $titleText .= ' ' . $this->translate($lang);
+                    if ($lang = $titleText->attributes()->lang) {
+                        $titleTextStr .= ' (' . $this->translate($lang) . ')';
                     }
                     break;
                 default:
                     if ($type = $rel->attributes()->{'elokuva-elonimi-tyyppi'}) {
-                        $titleText .= " ($type)";
+                        $titleTextStr .= " ($type)";
                     }
                     break;
                 }
             }
-            $result[] = $titleText;
+            var_dump($titleText);
+            $result[] = $titleTextStr;
         }
         return $result;
     }
@@ -791,6 +797,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $credited = $result['uncredited'] === true ? 'uncredited' : 'credited';
             $lcRelator = mb_strtolower($result['relator'] ?? '', 'UTF-8');
             foreach ($this->authorConfig as $storage => $data) {
+                if ($skip = $data['skipTags'][$result['tag']] ?? false) {
+                    continue;
+                }
                 if (in_array($lcRelator, $data['relators'])) {
                     $valuesToPreserve = $data['preservedValues'] ?? [];
                     $type = in_array($type, $valuesToPreserve) ? $type : 'default';
@@ -1377,10 +1386,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      *
      * @return string
      */
-    public function getNumberOfViewers()
+    public function getAmountOfViewers()
     {
         $events = $this->getProductionEvents();
-        return $events['numberOfViewers'] ?? '';
+        return $events['amountOfViewers'] ?? '';
     }
 
     /**

@@ -695,7 +695,7 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Amount of Viewers',
-            'getNumberOfViewers',
+            'getAmountOfViewers',
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'record-number-of-viewers']
