@@ -282,6 +282,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     ]
                 ]
             ],
+            'skipTags' => [
+                'elonayttelijakokoonpano' => true
+            ],
             'all' => 'nonPresenters'
         ],
         'primaryAuthors' => [
