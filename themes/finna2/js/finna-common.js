@@ -74,21 +74,32 @@ finna.common = (function finnaCommon() {
    * @param {NodeList} images 
    */
   function observeImages(images) {
-    if (!lazyImageObserver) {
-      lazyImageObserver = new IntersectionObserver((entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            let lazyImage = entry.target;
-            lazyImage.src = lazyImage.dataset.src;
-            delete lazyImage.dataset.src;
-            obs.unobserve(lazyImage);
-          }
-        }); 
+    if (!('IntersectionObserver' in window) ||
+      !('IntersectionObserverEntry' in window) ||
+      !('isIntersecting' in window.IntersectionObserverEntry.prototype) ||
+      !('intersectionRatio' in window.IntersectionObserverEntry.prototype)
+    ) {
+      images.forEach((image) => {
+        image.src = image.dataset.src;
+        delete image.dataset.src;
+      });
+    } else {
+      if (!lazyImageObserver) {
+        lazyImageObserver = new IntersectionObserver((entries, obs) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              let lazyImage = entry.target;
+              lazyImage.src = lazyImage.dataset.src;
+              delete lazyImage.dataset.src;
+              obs.unobserve(lazyImage);
+            }
+          }); 
+        });
+      }
+      images.forEach((image) => {
+        lazyImageObserver.observe(image);
       });
     }
-    images.forEach((image) => {
-      lazyImageObserver.observe(image);
-    });
   }
 
   var my = {
