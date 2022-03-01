@@ -1023,8 +1023,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 continue;
             }
             $type = (string)($description->DescriptionType ?? '');
-            $lang = (string)$description->Language;
-            if ($storage = $descriptionTypeMappings[$type] ?? false) {
+            $lang = (string)($description->Language ?? 'no_lang');
+            if ($storage = $this->descriptionTypeMappings[$type] ?? false) {
                 $results[$storage][$lang][] = $text;
                 $results[$storage]['all'][] = $text;
             }

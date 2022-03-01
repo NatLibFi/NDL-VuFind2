@@ -370,39 +370,6 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Subject Detail',
-            'getSubjectDetails',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Place',
-            'getSubjectPlaces',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Date',
-            'getSubjectDates',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Actor',
-            'getSubjectActors',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-
-        $setTemplateLine(
             'Organisation',
             'getInstitutions',
             'data-organisation.phtml',
@@ -576,6 +543,38 @@ class RecordDataFormatterFactory
             'data-classification.phtml',
             [
                 'context' => ['class' => 'recordClassifications']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Detail',
+            'getSubjectDetails',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Place',
+            'getSubjectPlaces',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Date',
+            'getSubjectDates',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Actor',
+            'getSubjectActors',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
             ]
         );
         $setTemplateLine(
