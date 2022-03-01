@@ -1,6 +1,6 @@
 /*global VuFind, finna*/
 finna.common = (function finnaCommon() {
-  var cookieSettings = {
+  let cookieSettings = {
     path: '/',
     domain: false,
     SameSite: 'Lax'
