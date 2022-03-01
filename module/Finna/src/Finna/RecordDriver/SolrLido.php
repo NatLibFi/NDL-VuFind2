@@ -726,7 +726,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     ): array {
         // Check if the image is really an image
         // Original images can be any type and are not displayed
-        if ($this->isUndisplayableFormat($format) && $type !== 'image_original') {
+        if ('image_original' !== $type && $this->isUndisplayableFormat($format)) {
             return [];
         }
 

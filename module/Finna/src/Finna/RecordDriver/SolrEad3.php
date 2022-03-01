@@ -141,6 +141,12 @@ class SolrEad3 extends SolrEad
         'Diaarinumero', 'Asiaryhmän numero'
     ];
 
+    // If any of these values are found in ocr image title, do not place
+    // the image into ocr key.
+    public const EXCLUDE_OCR_TITLE_PARTS = [
+        'Kuva/Aukeama'
+    ];
+
     /**
      * Get the institutions holding the record.
      *
@@ -719,7 +725,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Return an associated array with all the presentetion types.
+     * Return an associated array with all the presentation types.
      * - displayImages Images to be displayed in the front end.
      * - ocr           Ocr images.
      * - fullres       Fullres images.
@@ -760,9 +766,16 @@ class SolrEad3 extends SolrEad
             }
             $result['displayImages'][] = $formatted;
         };
-
+        $hasExcludeTitlePart = function ($title) {
+            foreach (self::EXCLUDE_OCR_TITLE_PARTS as $part) {
+                if (false !== strpos($title, $part)) {
+                    return true;
+                }
+            }
+            return false;
+        };
         // All images have same lazy-fetched rights.
-        $rights = null;
+        $rights = $this->getImageRights($language, true);
         $images = [];
         $ocrImages = [];
         $fullResImages = [];
@@ -797,18 +810,12 @@ class SolrEad3 extends SolrEad
                     ) {
                         continue;
                     }
-                    $type = (string)(
-                        $attr->localtype
-                        ?? $parentType
-                        ?? 'none'
-                    );
+                    $type = (string)($attr->localtype ?? $parentType ?? 'none');
                     $role = (string)($attr->linkrole ?? '');
                     $sort = (string)($attr->label ?? '');
 
                     // Save image to another array if match is found
-                    if (self::IMAGE_OCR === $type
-                        && false === strpos($title, 'Kuva/Aukeama')
-                    ) {
+                    if (self::IMAGE_OCR === $type && !$hasExcludeTitlePart($title)) {
                         $ocrImages['items'][] = [
                             'label' => $title,
                             'url' => $url,
@@ -826,9 +833,16 @@ class SolrEad3 extends SolrEad
                     [$fileType, $format] = strpos($role, '/') > 0
                         ? explode('/', $role, 2)
                         : ['image', 'jpg'];
-                    if (empty($displayImage)
-                        && !$this->isUndisplayableFormat($format)
-                    ) {
+                    // Image might be original, can not be displayed in browser.
+                    if ($this->isUndisplayableFormat($format)) {
+                        $highResolution['original'][] = [
+                            'data' => [],
+                            'url' => $url,
+                            'format' => $format
+                        ];
+                        continue;
+                    }
+                    if (empty($displayImage)) {
                         $displayImage = [
                             'urls' => [],
                             'description' => $title,
@@ -840,35 +854,33 @@ class SolrEad3 extends SolrEad
                             'highResolution' => []
                         ];
                     }
-                    // Image might be original, can not be displayed in browser.
-                    if ($this->isUndisplayableFormat($format)) {
-                        $highResolution['original'][] = [
-                            'data' => [],
-                            'url' => $url,
-                            'format' => $format
-                        ];
-                        continue;
-                    }
-                    if ($size = self::IMAGE_MAP[$type] ?? false || $parentSize) {
-                        $size = (false === $size)
-                            ? $parentSize
-                            : (($size === self::IMAGE_FULLRES)
-                            ? self::IMAGE_LARGE : $size);
 
-                        $rights = $rights
-                            ?? $this->getImageRights($language, true);
+                    if ($size = self::IMAGE_MAP[$type] ?? false || $parentSize) {
+                        if (false === $size) {
+                            $size = $parentSize;
+                        } else {
+                            $size = ($size === self::IMAGE_FULLRES)
+                                ? self::IMAGE_LARGE
+                                : $size;
+                        }
 
                         if (isset($displayImage['urls'][$size])) {
                             // Add old stash to results.
                             $displayImage['highResolution'] = $highResolution;
                             $addToResults($displayImage);
-                            $displayImage['urls'] = [];
-                            $displayImage['pdf'] = [];
-                            $displayImage['highResolution'] = $highResolution = [];
+                            $displayImage = [
+                                'urls' => [],
+                                'description' => $title,
+                                'rights' => $rights,
+                                'descId' => $descId,
+                                'sort' => $sort,
+                                'type' => $type,
+                                'pdf' => [],
+                                'highResolution' => []
+                            ];
                         }
                         $displayImage['urls'][$size] = $url;
-                        $displayImage['pdf'][$size]
-                            = $role === 'application/pdf';
+                        $displayImage['pdf'][$size] = $role === 'application/pdf';
                     }
                 }
                 if (!empty($displayImage)) {
