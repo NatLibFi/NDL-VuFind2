@@ -169,6 +169,7 @@ finna.layout = (function finnaLayout() {
       narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
     }
   }
+
   function initMobileCartIndicator() {
     $('.btn-bookbag-toggle a').on('click', function onClickMobileCart() {
       if ($(this).hasClass('cart-add')){
