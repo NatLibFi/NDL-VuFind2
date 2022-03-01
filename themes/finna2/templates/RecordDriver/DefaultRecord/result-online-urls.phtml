@@ -22,20 +22,22 @@
   <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
   <div class="available-online-links">
     <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-      <?php if (!in_array($context, ['popup'])): ?>
+      <?php if ('popup' !== $context): ?>
         <strong class="available-online-header <?=(!empty($onlineURLs) || !empty($mergedData['urls']) || !empty($urls)) ? '' : 'hidden'; ?>"><?=$this->transEsc('Available Online') ?>:</strong>
       <?php endif; ?>
       <div class="truncate-field">
-        <?php $renderedURLs = []; ?>
+        <?php
+          $renderedURLs = [];
+          $amountOfLinks = 0;
+        ?>
         <?php foreach ($urls ?? [] as $i => $url): ?>
           <?php
             if (isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') {
               continue;
             }
-            if ('popup' === $context && count($renderedURLs) >= $maxLinksCount) {
+            if (++$amountOfLinks > $maxLinksCount) {
               break;
             }
-            $renderedURLs[] = $url['url'];
           ?>
           <?=$i > 0 ? '<br/>' : ''?>
           <?php
@@ -62,13 +64,14 @@
             if ($desc === $url['url']) {
               $desc = $this->truncateUrl($desc);
             }
+            $renderedURLs[] = $url['url'];
           ?>
           <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
             <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
           </a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
         <?php endforeach; ?>
-        <?php if ('popup' === $context && count($renderedURLs) >= $maxLinksCount): ?>
+        <?php if ('popup' === $context && $amountOfLinks > $maxLinksCount): ?>
           <div>...</div>
         <?php endif; ?>
         <?php foreach ($mergedData['urls'] ?? $onlineURLs ?? [] as $i => $url): ?>
