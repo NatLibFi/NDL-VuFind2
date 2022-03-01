@@ -16,7 +16,11 @@
       'class' => 'fulltext',
       'target' => '_blank'
     ];
+    $videoBase = [
+      'class' => 'videourl fulltext btn btn-primary'
+    ];
     $this->htmlElement()->addAttributeTemplate('url-base', $urlBase);
+    $this->htmlElement()->addAttributeTemplate('video-base', $videoBase);
   ?>
 
   <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
@@ -46,19 +50,19 @@
               'title' => $url['url']
             ];
             if (!empty($url['videoSources'])) {
-              $videoData = [
-                'data-video-sources' => json_encode($url['videoSources']),
-                'data-scripts' => $videoScripts
-              ];
-              $currentUrl = array_merge($currentUrl, $videoData);
+              $currentUrl['data-video-sources'] = json_encode($url['videoSources']);
+              $currentUrl['data-scripts'] = $videoScripts;
             }
             if (!empty($url['posterUrl'])) {
               $currentUrl['data-poster-url'] = $url['posterUrl'];
             }
-            if (!empty($url['embed']) && $url['embed'] === 'video') {
+            switch ($url['embed'] ?? '') {
+            case 'video':
               $currentUrl['data-embed-video'] = '';
-            } elseif (!empty($url['embed']) && $url['embed'] === 'iframe') {
+              break;
+            case 'iframe':
               $currentUrl['data-embed-iframe'] = '';
+              break;
             }
             $desc = $url['desc'] ?? $url['url'];
             if ($desc === $url['url']) {
@@ -66,9 +70,15 @@
             }
             $renderedURLs[] = $url['url'];
           ?>
-          <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
-            <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
-          </a>
+          <?php if ('popup' === $context && $url['embed'] ?? false): ?>
+            <button <?= $this->htmlElement()->getAttributes($currentUrl, 'video-base') ?>>
+                <i class="fa fa-external-link"></i> <?=$desc?>
+              </button>
+          <?php else: ?>
+            <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
+              <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
+            </a>
+          <?php endif; ?>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
         <?php endforeach; ?>
         <?php if ('popup' === $context && $amountOfLinks > $maxLinksCount): ?>
@@ -83,7 +93,7 @@
               'href' => $this->proxyUrl($url['url']),
               'title' => $url['url'],
             ];
-            if (!empty($url['embed']) && $url['embed'] === 'iframe') {
+            if ('iframe' === $url['embed'] ?? '') {
               $currentUrl['data-embed-iframe'] = '';
             }
             $desc = $url['text'] ?? $url['url'];
