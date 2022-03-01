@@ -136,9 +136,19 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  function initMobileNavigation() {
+    $('.mobile-navigation .sidebar-navigation, .sidebar h1').off('click').on('click', function onClickMobileNav(e) {
+      if ($(e.target).attr('class') !== 'fa-arrow-down') {
+        $('.sidebar').toggleClass('open');
+      }
+      $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
+      $('body').toggleClass('prevent-scroll');
+    });
+  }
+
   function initMobileNarrowSearch() {
     $('.narrowsearch-navigation .sidebar-navigation, .sidebar h1').off('click').on('click', function onClickMobileNav(e) {
-      if ($(e.target).attr('class') !== 'fa fa-info-big') {
+      if ($(e.target).attr('class') !== 'fa-times') {
         $('.sidebar').toggleClass('open');
       }
       $('body').toggleClass('prevent-scroll');
@@ -146,18 +156,19 @@ finna.layout = (function finnaLayout() {
     $('.narrowsearch-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
       $('.sidebar').scrollTop(0);
     });
-    const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
-    const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
-    const narrowSearchMobileObserver = new IntersectionObserver((entries) => {
+    if ($('.narrowsearch-navigation-trigger')[0]) {
+      const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
+      const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
+      const narrowSearchMobileObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
           narrowSearchMobile.classList.remove("sticky","shadow");
         } else {
           narrowSearchMobile.classList.add("sticky","shadow")
         }
-    });
-    narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
+      });
+      narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
+    }
   }
-
   function initMobileCartIndicator() {
     $('.btn-bookbag-toggle a').on('click', function onClickMobileCart() {
       if ($(this).hasClass('cart-add')){
@@ -829,6 +840,7 @@ finna.layout = (function finnaLayout() {
       initAnchorNavigationLinks();
       initTruncate();
       initContentNavigation();
+      initMobileNavigation();
       initMobileNarrowSearch();
       initMobileCartIndicator();
       initCheckboxClicks();

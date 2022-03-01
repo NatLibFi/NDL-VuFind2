@@ -137,20 +137,21 @@
   section.template-name-mylist .sidebar,
   section.template-dir-collection.template-name-view .sidebar {
     position: fixed;
-    top: 120%;
-    transition: top 0.5s ease;
     background: @body-bg;
     z-index: 1030;
     width: 100%;
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
+    right: 0;
     -webkit-overflow-scrolling: touch;
+    opacity: 0;
     padding-left: 0px;
     padding-right: 0px;
     padding-bottom: 40px;
     &.open {
       top: 0;
       right: 0;
+      opacity: 100%;
     }
     .list-group.facet:last-child {
       margin-bottom: 44px;
