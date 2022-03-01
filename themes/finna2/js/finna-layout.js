@@ -163,7 +163,7 @@ finna.layout = (function finnaLayout() {
         if (entries[0].isIntersecting) {
           narrowSearchMobile.classList.remove("sticky", "shadow");
         } else {
-          narrowSearchMobile.classList.add("sticky", "shadow")
+          narrowSearchMobile.classList.add("sticky", "shadow");
         }
       });
       narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
