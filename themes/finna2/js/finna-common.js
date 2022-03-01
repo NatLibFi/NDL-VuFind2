@@ -82,7 +82,8 @@ finna.common = (function finnaCommon() {
       !('isIntersecting' in window.IntersectionObserverEntry.prototype) ||
       !('intersectionRatio' in window.IntersectionObserverEntry.prototype)
     ) {
-      // Fallback: display images instantly on little older devices
+      // Fallback: display images instantly on browsers which does not support
+      // observer properly
       images.forEach((image) => {
         image.src = image.dataset.src;
         delete image.dataset.src;
