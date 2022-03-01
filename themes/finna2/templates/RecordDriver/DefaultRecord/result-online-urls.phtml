@@ -35,7 +35,7 @@
             if (isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') {
               continue;
             }
-            if (++$amountOfLinks > $maxLinksCount) {
+            if ('popup' === $context && ++$amountOfLinks > $maxLinksCount) {
               break;
             }
           ?>
