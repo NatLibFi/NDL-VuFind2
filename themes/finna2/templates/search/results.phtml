@@ -108,6 +108,20 @@
 
   $topRecommendations = $this->results->getRecommendations('top');
 ?>
+<?php if (($recordTotal = $this->results->getResultTotal()) > 0): ?>
+  <div class="narrowsearch-navigation-trigger"></div>
+  <div class="narrowsearch-navigation visible-xs hidden-print">
+    <div class="sidebar-navigation">
+      <div class="narrow-search-link btn btn-primary btn-narrow-search">
+        <?=$this->transEsc('Narrow Search')?>
+          <?php if ($filterCount > 0): ?>
+            <span class="active-filter-count">(<?=$filterCount?>)</span>
+          <?php endif; ?>
+      </div>
+    </div>
+  </div>
+<?php endif; ?>
+
 <?php $urlQuery = $results->getUrlQuery(); ?>
 
 <?php if (isset($filterList)): ?>
@@ -299,23 +313,7 @@
   </div>
 </div>
 <?php endif; ?>
-<div class="mobile-navigation visible-xs hidden-print">
-  <ul>
-    <li class="sidebar-navigation">
-      <span class="narrow-search-link">
-        <i class="fa fa-arrow-up"></i> <?=$this->transEsc('Narrow Search')?>
-      </span>
-      <?php if ($filterCount > 0): ?>
-        <span class="active-filters">
-          <?=$this->transEsc('Active filters')?>: <span class="active-filter-count"><?=$filterCount?></span>
-        </span>
-      <?php endif; ?>
-    </li>
-  </ul>
-</div>
 <?php // Re-open the container div closed above: ?>
 <div class="container">
-
-<!-- END of: finna - search/results.phtml -->
 
 <!-- END of: finna - search/results.phtml -->

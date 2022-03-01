@@ -149,7 +149,7 @@
     padding-right: 0px;
     padding-bottom: 40px;
     &.open {
-      top: 0%;
+      top: 0;
       right: 0;
     }
     .list-group.facet:last-child {
@@ -186,6 +186,31 @@
     span.active-filters {
       float: right;
       max-width: 55%;
+    }
+  }
+  .narrowsearch-navigation {
+    &.sticky {
+      position: fixed;
+      top: @navbar-height;
+      left: 0;
+      padding-left: 15px;
+      padding-right: 15px;
+      width: 100%;
+    }
+    &.shadow {
+      box-shadow:
+      0 6px 10px 0 rgba(0, 0, 0, 0.1),
+      0 1px 18px 0 rgba(0, 0, 0, 0.1),
+      0 3px 5px -1px rgba(0, 0, 0, 0.4);
+    }
+    padding-top: 12px;
+    padding-bottom: 12px;
+    z-index: 1000;
+    background: #fff;
+    .sidebar-navigation {
+      .btn-narrow-search {
+        width: 100%;
+      }
     }
   }
 }
