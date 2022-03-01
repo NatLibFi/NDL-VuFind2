@@ -93,7 +93,7 @@
               'href' => $this->proxyUrl($url['url']),
               'title' => $url['url'],
             ];
-            if ('iframe' === $url['embed'] ?? '') {
+            if ('iframe' === ($url['embed'] ?? '')) {
               $currentUrl['data-embed-iframe'] = '';
             }
             $desc = $url['text'] ?? $url['url'];
