@@ -1019,6 +1019,24 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Set lazy record xml via param. Useful for test purposes.
+     *
+     * @param string $xmlText Text to be inserted as lazy record xml.
+     * 
+     * @return array
+     */
+    public function setLazyRecordXml(string $xmlText = ''): array
+    {
+        if ($this->lazyRecordXML === null) {
+            $xml = new \SimpleXMLElement($xmlText);
+            $records = (array)$xml->children();
+            $records = reset($records);
+            $this->lazyRecordXML = is_array($records) ? $records : [$records];
+        }
+        return $this->lazyRecordXML;
+    }
+
+    /**
      * Loop through all the descriptions and return them in an associative array
      *
      * @return array
@@ -1486,7 +1504,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getLocationNotes()
     {
         $events = $this->getProductionEvents();
-        return $events['locationNotes'] ?? '';
+        if ($results = $events['locationNotes'] ?? []) {
+            return reset($results);
+        }
+        return '';
     }
 
     /**
