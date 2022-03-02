@@ -303,7 +303,7 @@ trait FinnaOnlinePaymentControllerTrait
                 = $trTable->isPaymentInProgress($patron['cat_username']);
             if ($paymentInProgress) {
                 $this->flashMessenger()
-                    ->addErrorMessage('online_payment_in_progress');
+                    ->addErrorMessage('online_payment_registration_failed');
             } else {
                 // Check if payment is permitted:
                 $allowPayment = $payableOnline

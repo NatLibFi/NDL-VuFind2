@@ -272,12 +272,12 @@ class TurkuPaytrailE2 extends PaytrailE2
      * @return bool
      */
     public function validateSuccessRequest(
-        $orderNumber,
-        $timeStamp,
-        $paid,
-        $method,
-        $authCode
-    ) {
+        string $orderNumber,
+        int $timeStamp,
+        string $paid,
+        string $method,
+        string $authCode
+    ): bool {
         $response = "$orderNumber|$timeStamp|$paid|$method|{$this->secret}";
         $hash = strtoupper(md5($response));
         return $authCode === $hash;
@@ -293,10 +293,10 @@ class TurkuPaytrailE2 extends PaytrailE2
      * @return bool
      */
     public function validateCancelRequest(
-        $orderNumber,
-        $timeStamp,
-        $authCode
-    ) {
+        string $orderNumber,
+        int $timeStamp,
+        string $authCode
+    ): bool {
         $response = "$orderNumber|$timeStamp|{$this->secret}";
         $hash = strtoupper(md5($response));
         return $authCode === $hash;
