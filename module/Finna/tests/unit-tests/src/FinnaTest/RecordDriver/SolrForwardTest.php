@@ -30,7 +30,7 @@ namespace FinnaTest\RecordDriver;
 use Finna\RecordDriver\SolrForward;
 
 /**
- * SolrDefault Record Driver Test Class
+ * SolrForward Record Driver Test Class
  *
  * @category VuFind
  * @package  Tests
