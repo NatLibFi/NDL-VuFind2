@@ -157,6 +157,7 @@ finna.layout = (function finnaLayout() {
       $('.sidebar').scrollTop(0);
     });
     if ($('.narrowsearch-navigation-trigger')[0]) {
+      $('#content').css('marginTop', 0);
       const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
       const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
       const narrowSearchMobileObserver = new IntersectionObserver((entries) => {
