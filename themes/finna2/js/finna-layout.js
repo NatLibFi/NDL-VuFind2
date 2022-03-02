@@ -162,9 +162,9 @@ finna.layout = (function finnaLayout() {
       const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
       const narrowSearchMobileObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          narrowSearchMobile.classList.remove("sticky", "shadow");
+          narrowSearchMobile.classList.remove("sticky");
         } else {
-          narrowSearchMobile.classList.add("sticky", "shadow");
+          narrowSearchMobile.classList.add("sticky");
         }
       });
       narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
