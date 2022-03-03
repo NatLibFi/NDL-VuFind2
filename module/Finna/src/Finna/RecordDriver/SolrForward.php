@@ -682,6 +682,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getPresenters(): array
     {
         $authors = $this->getAuthors();
+        //print_r($authors['presenters']);
         return $authors['presenters'] ?? [];
     }
 
@@ -1022,7 +1023,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * Set lazy record xml via param. Useful for test purposes.
      *
      * @param string $xmlText Text to be inserted as lazy record xml.
-     * 
+     *
      * @return array
      */
     public function setLazyRecordXml(string $xmlText = ''): array
@@ -1499,15 +1500,12 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     /**
      * Return location notes
      *
-     * @return string
+     * @return array
      */
     public function getLocationNotes()
     {
         $events = $this->getProductionEvents();
-        if ($results = $events['locationNotes'] ?? []) {
-            return reset($results);
-        }
-        return '';
+        return $events['locationNotes'] ?? [];
     }
 
     /**

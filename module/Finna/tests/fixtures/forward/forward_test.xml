@@ -46,33 +46,6 @@
         <IDValue>2</IDValue>
       </AgentIdentifier>
     </HasAgent>
-    <HasAgent elonet-tag="elotekija">
-      <Activity tehtava="tuottaja" finna-activity-code="fmp">fmp</Activity>
-      <AgentName>Tuo T. Taja</AgentName>
-      <AgentIdentifier>
-        <AgentIDType>01</AgentIDType>
-        <IDTypeName>elonet_henkilo</IDTypeName>
-        <IDValue>3</IDValue>
-      </AgentIdentifier>
-    </HasAgent>
-    <HasAgent elonet-tag="elotekija">
-      <Activity tehtava="tuotantokonsultti" finna-activity-code="A99" finna-activity-text="tuotantokonsultti" elokuva-elotekija-tehtava="tuotantokonsultti">A99</Activity>
-      <AgentName>Konsul Tti</AgentName>
-      <AgentIdentifier>
-        <AgentIDType>01</AgentIDType>
-        <IDTypeName>elonet_henkilo</IDTypeName>
-        <IDValue>4</IDValue>
-      </AgentIdentifier>
-    </HasAgent>
-    <HasAgent elonet-tag="elotekija">
-      <Activity tehtava="tuotantoassistentti" finna-activity-code="A99" finna-activity-text="tuotantoassistentti" elokuva-elotekija-tehtava="tuotantoassistentti">A99</Activity>
-      <AgentName>Assis Tentti</AgentName>
-      <AgentIdentifier>
-        <AgentIDType>01</AgentIDType>
-        <IDTypeName>elonet_henkilo</IDTypeName>
-        <IDValue>5</IDValue>
-      </AgentIdentifier>
-    </HasAgent>
     <HasAgent elonet-tag="elotekijakokoonpano">
       <Activity tehtava="kuoro" finna-activity-code="A99" finna-activity-text="kuoro" elokuva-elotekijakokoonpano-tehtava="kuoro">A99</Activity>
       <AgentName>Joku kuoro</AgentName>
@@ -129,20 +102,11 @@
     </HasAgent>
     <HasAgent elonet-tag="elorahoitusyhtio">
       <Activity finna-activity-code="fnd">fnd</Activity>
-      <AgentName elokuva-elorahoitusyhtio-henkilo="Eila Werning" elokuva-elorahoitusyhtio-rahoitustapa="yhteistyö">Rahoitus yhteistyö</AgentName>
+      <AgentName elokuva-elorahoitusyhtio-henkilo="Raho Ittaja" elokuva-elorahoitusyhtio-rahoitustapa="yhteistyö">Rahoitus yhteistyö</AgentName>
       <AgentIdentifier>
         <AgentIDType>01</AgentIDType>
         <IDTypeName>elonet_yhtio</IDTypeName>
         <IDValue>710074</IDValue>
-      </AgentIdentifier>
-    </HasAgent>
-    <HasAgent elonet-tag="elolevittaja">
-      <Activity finna-activity-code="fds">fds</Activity>
-      <AgentName elokuva-elolevittaja-vuosi="2001" elokuva-elolevittaja-levitystapa="teatterilevitys">Levittäjä Oy</AgentName>
-      <AgentIdentifier>
-        <AgentIDType>01</AgentIDType>
-        <IDTypeName>elonet_yhtio</IDTypeName>
-        <IDValue>210941</IDValue>
       </AgentIdentifier>
     </HasAgent>
     <HasAgent elonet-tag="elolaboratorio">
@@ -152,15 +116,6 @@
         <AgentIDType>01</AgentIDType>
         <IDTypeName>elonet_yhtio</IDTypeName>
         <IDValue>1006153</IDValue>
-      </AgentIdentifier>
-    </HasAgent>
-    <HasAgent elonet-tag="elokreditoimatontekija">
-      <Activity tehtava="valokuvat" finna-activity-code="A99" finna-activity-text="valokuvat" elokuva-elokreditoimatontekija-tehtava="valokuvat">A99</Activity>
-      <AgentName elokuva-elokreditoimatontekija-nimi="Valo K. Uvaus">Valo K. Uvaus</AgentName>
-      <AgentIdentifier>
-        <AgentIDType>01</AgentIDType>
-        <IDTypeName>elonet_henkilo</IDTypeName>
-        <IDValue>107674</IDValue>
       </AgentIdentifier>
     </HasAgent>
     <HasAgent elonet-tag="elokreditoimatonesiintyja">
@@ -179,6 +134,64 @@
         <AgentIDType>01</AgentIDType>
         <IDTypeName>elonet_henkilo</IDTypeName>
         <IDValue>1486496</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elonayttelija">
+      <Activity finna-activity-code="E01">E01</Activity>
+      <AgentName elokuva-elonayttelija-rooli="Debug Duck">Ami Kunkka</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>255464</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elokreditoimatonnayttelija">
+      <Activity finna-activity-code="E01" finna-activity-text="kreditoimatonn&#xE4;yttelij&#xE4;">E01</Activity>
+      <AgentName elokuva-elokreditoimatonnayttelija-nimi="Kreditoimaton näyttelijä" elokuva-elokreditoimatonnayttelija-rooli="vankilavieras">Kreditoimaton näyttelijä</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>164393</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elonayttelijakokoonpano">
+      <Activity tehtava="Esitti yhtyettä" finna-activity-code="A99" finna-activity-text="Esitti yhtyettä" elokuva-elonayttelijakokoonpano-tehtava="Esitti yhtyettä">A99</Activity>
+      <AgentName>Celsiukset miinuksella ja soitellaan.</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_kokoonpano</IDTypeName>
+        <IDValue>1417980</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elolevittaja">
+      <Activity finna-activity-code="fds">fds</Activity>
+      <AgentName elokuva-elolevittaja-vuosi="2001" elokuva-elolevittaja-levitystapa="teatterilevitys">Levittäjä Oy</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_yhtio</IDTypeName>
+        <IDValue>210941</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elokreditoimatontekija">
+      <Activity tehtava="valokuvat" finna-activity-code="A99" finna-activity-text="valokuvat" elokuva-elokreditoimatontekija-tehtava="valokuvat">A99</Activity>
+      <AgentName elokuva-elokreditoimatontekija-nimi="Valo K. Uvaus">Valo K. Uvaus</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>107674</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="avustajat">
+      <Activity finna-activity-code="A99" finna-activity-text="avustajat" elokuva-avustajat="avustajat">A99</Activity>
+      <AgentName>Matti, Miia, Mietos, Miro, Maria. (Sulkeet)</AgentName>
+    </HasAgent>
+    <HasAgent elonet-tag="elonayttelijakokoonpano">
+      <Activity tehtava="Esitti yhtyettä" finna-activity-code="A99">A99</Activity>
+      <AgentName>Soittokunta.</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_kokoonpano</IDTypeName>
+        <IDValue>1417980</IDValue>
       </AgentIdentifier>
     </HasAgent>
     <ProductionEvent elonet-tag="elotelevisioesitys">
