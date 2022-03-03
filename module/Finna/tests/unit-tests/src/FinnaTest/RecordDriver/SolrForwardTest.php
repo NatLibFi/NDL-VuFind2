@@ -505,7 +505,6 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
     public function testGetDistributors(): void
     {
         $driver = $this->getDriver();
-        var_dump($driver->getDistributors());
         $this->assertEquals(
             [
                 [

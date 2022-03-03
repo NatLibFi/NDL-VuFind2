@@ -682,7 +682,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     public function getPresenters(): array
     {
         $authors = $this->getAuthors();
-        //print_r($authors['presenters']);
         return $authors['presenters'] ?? [];
     }
 
