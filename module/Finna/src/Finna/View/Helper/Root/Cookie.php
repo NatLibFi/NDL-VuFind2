@@ -90,7 +90,7 @@ class Cookie extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get cookie SameSite attribute (null if unset).
+     * Get cookie SameSite attribute.
      *
      * @return string
      */

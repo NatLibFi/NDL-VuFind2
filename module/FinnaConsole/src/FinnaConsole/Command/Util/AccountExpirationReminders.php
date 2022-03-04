@@ -544,38 +544,42 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
         $authMethod = $this->currentSiteConfig['Authentication']['method'] ?? '';
         if ('ChoiceAuth' === $authMethod) {
-            $choiceAuthOptions = explode(
+            $authOptions = explode(
                 ',',
                 $this->currentSiteConfig['ChoiceAuth']['choice_order'] ?? ''
             );
-            $match = false;
-            foreach ($choiceAuthOptions as $option) {
-                if (strcasecmp($user->auth_method, $option) === 0) {
-                    $match = true;
-                    break;
-                }
+        } else {
+            $authOptions = [$authMethod];
+        }
+        // Map user's authentication method 'email' to 'ils' or 'multiils'
+        // accordingly:
+        $userAuthMethod = $user->auth_method;
+        if ('email' === $userAuthMethod) {
+            if (in_array('ILS', $authOptions)) {
+                $userAuthMethod = 'ils';
+            } elseif (in_array('MultiILS', $authOptions)) {
+                $userAuthMethod = 'multiils';
             }
-            if (!$match) {
-                $this->msg(
-                    "User {$user->username} (id {$user->id}) institution"
-                    . " $userInstitution: user's authentication method "
-                    . " '{$user->auth_method}' is not in available authentication"
-                    . ' methods (' . implode(',', $choiceAuthOptions)
-                    . '), bypassing expiration reminder'
-                );
-                return false;
+        }
+        $match = false;
+        foreach ($authOptions as $option) {
+            if (strcasecmp($userAuthMethod, $option) === 0) {
+                $match = true;
+                break;
             }
-        } elseif (strcasecmp($user->auth_method, $authMethod) !== 0) {
+        }
+        if (!$match) {
             $this->msg(
                 "User {$user->username} (id {$user->id}) institution"
-                . " $userInstitution: user's authentication method ,"
-                . " '{$user->auth_method}' does not match the current method"
-                . " '$authMethod', bypassing expiration reminder"
+                . " $userInstitution: user's authentication method "
+                . " '$userAuthMethod' is not in available authentication"
+                . ' methods (' . implode(',', $authOptions)
+                . '), bypassing expiration reminder'
             );
             return false;
         }
 
-        if (strcasecmp($user->auth_method, 'multiils') === 0) {
+        if (strcasecmp($userAuthMethod, 'multiils') === 0) {
             [$target] = explode('.', $userName);
             if (empty($this->currentMultiBackendConfig['Drivers'][$target])) {
                 $this->msg(
@@ -656,7 +660,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
         }
 
         $params = [
-            'loginMethod' => strtolower($user->auth_method),
+            'loginMethod' => strtolower($userAuthMethod),
             'username' => $userName,
             'firstname' => $firstName,
             'expirationDate' =>  $expirationDatetime->format('d.m.Y'),

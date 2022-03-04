@@ -474,9 +474,10 @@ EOT;
                         }
                         $value = $this->urlHelper->fromRoute(
                             'feed-content-page',
-                            ['page' => $id, 'element' => urlencode($itemId)],
+                            ['page' => $id],
                             [
                                 'query' => [
+                                    'element' => $itemId,
                                     'lng' => $this->getTranslatorLocale()
                                 ]
                             ]

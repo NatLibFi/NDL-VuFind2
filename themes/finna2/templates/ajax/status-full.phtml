@@ -290,7 +290,9 @@ if (!$disableTitleHold
       $logged = $account->isLoggedIn();
       $link = null;
       if (!$logged) {
-        $link = $this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true&target=' . $source);
+        if (!$this->record($driver)->repositoryLibraryRequestEnabled('results')) {
+          $link = $this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true&target=' . $source);
+        }
       } elseif ($journal) {
         $link = $this->escapeHtmlAttr($holdingsLink);
       } else {
@@ -327,7 +329,7 @@ if (!$disableTitleHold
         <a href="<?=$this->url('editLibraryCard', ['id' => 'NEW'])?>" class="btn btn-primary login-link hidden-print"><?=$this->transEsc('repository_library_request_add_library_card')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
       <?php endif; ?>
     <?php else: ?>
-      <a href="?login=true&catalogLogin=true" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
+      <a href="<?=$this->escapeHtmlAttr($holdingsLink . '?login=true&catalogLogin=true&target=' . $source)?>" class="btn btn-primary login-link hidden-print" data-lightbox><?=$this->transEsc('repository_library_request_login')?><span class="sr-only"> - <?=$this->escapeHtml($driver->getTitle())?></span></a>
     <?php endif; ?>
   </div>
   <div class="clearfix"></div>
