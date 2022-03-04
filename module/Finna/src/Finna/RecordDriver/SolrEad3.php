@@ -766,7 +766,7 @@ class SolrEad3 extends SolrEad
             }
             $result['displayImages'][] = $formatted;
         };
-        $hasExcludeTitlePart = function ($title) {
+        $isExcludedFromOCR = function ($title) {
             foreach (self::EXCLUDE_OCR_TITLE_PARTS as $part) {
                 if (false !== strpos($title, $part)) {
                     return true;
@@ -815,7 +815,7 @@ class SolrEad3 extends SolrEad
                     $sort = (string)($attr->label ?? '');
 
                     // Save image to another array if match is found
-                    if (self::IMAGE_OCR === $type && !$hasExcludeTitlePart($title)) {
+                    if (self::IMAGE_OCR === $type && !$isExcludedFromOCR($title)) {
                         $ocrImages['items'][] = [
                             'label' => $title,
                             'url' => $url,
