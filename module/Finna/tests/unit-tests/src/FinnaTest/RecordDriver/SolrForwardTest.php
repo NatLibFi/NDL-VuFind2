@@ -769,7 +769,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test nonpresenter secondaryauthors.
+     * Test events with string values as return types.
      *
      * @param string $function Function of the driver to test.
      * @param string $expected Result to be expected.
@@ -791,7 +791,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test nonpresenter secondaryauthors.
+     * Test events with array values as return types.
      *
      * @param string $function Function of the driver to test.
      * @param array  $expected Result to be expected.
@@ -828,8 +828,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
             null,
             new \Laminas\Config\Config($searchConfig)
         );
-        $record->setRawData($fixture);
-        $record->setLazyRecordXml($fixture);
+        $record->setRawData(['fullrecord' => $fixture]);
         return $record;
     }
 }
