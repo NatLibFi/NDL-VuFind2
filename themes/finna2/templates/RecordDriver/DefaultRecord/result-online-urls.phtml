@@ -72,8 +72,8 @@
           ?>
           <?php if ('popup' === $context && $url['embed'] ?? false): ?>
             <button <?= $this->htmlElement()->getAttributes($currentUrl, 'video-base') ?>>
-                <i class="fa fa-external-link"></i> <?=$desc?>
-              </button>
+              <i class="fa fa-external-link"></i> <?=$desc?>
+            </button>
           <?php else: ?>
             <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
               <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
