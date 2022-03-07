@@ -101,9 +101,8 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
             return $this->formatResponse('', self::STATUS_HTTP_ERROR);
         }
 
-        if ($handler::PAYMENT_SUCCESS === $paymentResult) {
-            $this->markFeesAsPaid($t);
-        }
+        // This handler does not mark fees as paid since that happens in the response
+        // handler or online payment monitor.
 
         return $this->formatResponse('');
     }
