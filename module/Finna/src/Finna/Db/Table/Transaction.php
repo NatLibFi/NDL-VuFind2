@@ -47,7 +47,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
     public const STATUS_PROGRESS              = 0;
     public const STATUS_COMPLETE              = 1;
 
-    public const STATUS_CANCELLED             = 2;
+    public const STATUS_CANCELED              = 2;
     public const STATUS_PAID                  = 3;
     public const STATUS_PAYMENT_FAILED        = 4;
 
@@ -85,7 +85,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
      * @param string $patronId       Patron catalog username
      * @param int    $amount         Amount (excluding transaction fee)
      * @param int    $transactionFee Transaction fee
-     * @param sting  $currency       Currency
+     * @param string $currency       Currency
      *
      * @return Finna\Db\Row\Transaction
      */
@@ -114,7 +114,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
     }
 
     /**
-     * Check if payment is permitted for the patron.
+     * Check if payment is in progress for the patron.
      *
      * Payment is not permitted if:
      *   - patron has a transaction in progress and translation maximum duration
@@ -122,29 +122,12 @@ class Transaction extends \VuFind\Db\Table\Gateway
      *   - patron has a paid transaction that has not been registered as paid
      *     to the ILS
      *
-     * @param string $patronId               Patron's Catalog username (barcode).
-     * @param int    $transactionMaxDuration Maximum wait time (in minutes) after
-     * which a started, and not processed, transaction is considered to have been
-     * interrupted by the user.
+     * @param string $patronId Patron's Catalog username (barcode).
      *
-     * @return mixed true if payment is permitted,
-     * error message if payment is not permitted
+     * @return bool
      */
-    public function isPaymentPermitted($patronId, $transactionMaxDuration)
+    public function isPaymentInProgress(string $patronId): bool
     {
-        $callback = function ($select) use ($patronId, $transactionMaxDuration) {
-            $select->where->equalTo('cat_username', $patronId);
-            $select->where->equalTo('complete', self::STATUS_PROGRESS);
-            $select->where(
-                "NOW() < DATE_ADD(created, INTERVAL $transactionMaxDuration MINUTE)"
-            );
-        };
-
-        if ($this->select($callback)->count()) {
-            // Transaction still in progress
-            return 'online_payment_in_progress';
-        }
-
         $statuses = [
             self::STATUS_PAID,
             self::STATUS_REGISTRATION_FAILED,
@@ -157,13 +140,7 @@ class Transaction extends \VuFind\Db\Table\Gateway
             $select->where('complete in (' . implode(',', $statuses) . ')');
         };
 
-        if ($this->select($callback)->count()) {
-            // Transaction could not be registered
-            // and is waiting to be resolved manually.
-            return 'online_payment_registration_failed';
-        }
-
-        return true;
+        return $this->select($callback)->count() ? true : false;
     }
 
     /**
@@ -238,207 +215,11 @@ class Transaction extends \VuFind\Db\Table\Gateway
     }
 
     /**
-     * Check if transaction is in progress.
-     *
-     * @param string $transactionId Transaction ID.
-     *
-     * @return boolean success
-     */
-    public function isTransactionInProgress($transactionId)
-    {
-        if (!$t = $this->getTransaction($transactionId)) {
-            return false;
-        }
-
-        return in_array(
-            $t->complete,
-            [self::STATUS_PROGRESS, self::STATUS_REGISTRATION_FAILED]
-        );
-    }
-
-    /**
-     * Update transaction status to paid.
-     *
-     * @param string   $transactionId Transaction ID.
-     * @param datetime $timestamp     Timestamp
-     *
-     * @return boolean success
-     */
-    public function setTransactionPaid($transactionId, $timestamp)
-    {
-        return $this->updateTransactionStatus(
-            $transactionId,
-            $timestamp,
-            self::STATUS_PAID,
-            'paid'
-        );
-    }
-
-    /**
-     * Update transaction status to cancelled.
-     *
-     * @param string $transactionId Transaction ID.
-     *
-     * @return boolean success
-     */
-    public function setTransactionCancelled($transactionId)
-    {
-        return $this->updateTransactionStatus(
-            $transactionId,
-            false,
-            self::STATUS_CANCELLED,
-            'cancel'
-        );
-    }
-
-    /**
-     * Update transaction status to registered.
-     *
-     * @param string $transactionId Transaction ID.
-     *
-     * @return boolean success
-     */
-    public function setTransactionRegistered($transactionId)
-    {
-        return $this->updateTransactionStatus(
-            $transactionId,
-            false,
-            self::STATUS_COMPLETE,
-            'register_ok'
-        );
-    }
-
-    /**
-     * Update transaction status to registering failed.
-     *
-     * @param string $transactionId Transaction ID.
-     * @param string $msg           Error message
-     *
-     * @return boolean success
-     */
-    public function setTransactionRegistrationFailed($transactionId, $msg)
-    {
-        return $this->updateTransactionStatus(
-            $transactionId,
-            false,
-            self::STATUS_REGISTRATION_FAILED,
-            $msg
-        );
-    }
-
-    /**
-     * Update transaction status to expired.
-     *
-     * @param string   $transactionId Transaction ID.
-     * @param datetime $timestamp     Timestamp
-     *
-     * @return boolean success
-     */
-    public function setTransactionExpired($transactionId, $timestamp)
-    {
-        return $this->updateTransactionStatus(
-            $transactionId,
-            false,
-            self::STATUS_REGISTRATION_EXPIRED
-        );
-    }
-
-    /**
-     * Update transaction status to resolved.
-     *
-     * @param string $transactionId Transaction ID.
-     *
-     * @return boolean success
-     */
-    public function setTransactionResolved($transactionId)
-    {
-        return $this->updateTransactionStatus(
-            $transactionId,
-            false,
-            self::STATUS_REGISTRATION_RESOLVED
-        );
-    }
-
-    /**
-     * Update transaction status payable fines updated.
-     *
-     * @param string $transactionId Transaction ID.
-     *
-     * @return boolean success
-     */
-    public function setTransactionFinesUpdated($transactionId)
-    {
-        return $this->updateTransactionStatus(
-            $transactionId,
-            false,
-            self::STATUS_FINES_UPDATED,
-            'fines_updated'
-        );
-    }
-
-    /**
-     * Update transaction reported times.
-     *
-     * @param string $transactionId Transaction ID.
-     *
-     * @return boolean success
-     */
-    public function setTransactionReported($transactionId)
-    {
-        if (!$t = $this->getTransaction($transactionId)) {
-            return false;
-        }
-        $t->reported = date("Y-m-d H:i:s", time());
-        $t->save();
-        return true;
-    }
-
-    /**
-     * Updates transaction status.
-     *
-     * @param string   $transactionId Transaction ID.
-     * @param datetime $timestamp     Timestamp
-     * @param int      $status        Status
-     * @param string   $statusMsg     Status message
-     *
-     * @return boolean success
-     */
-    protected function updateTransactionStatus(
-        $transactionId,
-        $timestamp,
-        $status,
-        $statusMsg = false
-    ) {
-        if (!$t = $this->getTransaction($transactionId)) {
-            return false;
-        }
-
-        if ($status !== false) {
-            if ($timestamp === false) {
-                $timestamp = time();
-            }
-            $dateStr = date("Y-m-d H:i:s", $timestamp);
-            if ($status == self::STATUS_PAID) {
-                $t->paid = $dateStr;
-            } elseif ($status == self::STATUS_COMPLETE) {
-                $t->registered = $dateStr;
-            }
-
-            $t->complete = $status;
-        }
-        if ($statusMsg) {
-            $t->status = $statusMsg;
-        }
-        $t->save();
-        return true;
-    }
-
-    /**
      * Get transaction.
      *
      * @param string $transactionId Transaction ID.
      *
-     * @return Transaction transaction or false on error
+     * @return \Finna\Db\Row\Transaction transaction or false on error
      */
     public function getTransaction($transactionId)
     {

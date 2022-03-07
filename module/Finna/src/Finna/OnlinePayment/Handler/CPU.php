@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2019.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,11 +28,11 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment;
+namespace Finna\OnlinePayment\Handler;
 
-require_once 'Cpu/Client.class.php';
-require_once 'Cpu/Client/Payment.class.php';
-require_once 'Cpu/Client/Product.class.php';
+use Finna\OnlinePayment\Handler\Connector\Cpu\Client;
+use Finna\OnlinePayment\Handler\Connector\Cpu\Payment;
+use Finna\OnlinePayment\Handler\Connector\Cpu\Product;
 
 /**
  * CPU payment handler module.
@@ -46,20 +46,20 @@ require_once 'Cpu/Client/Product.class.php';
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class CPU extends BaseHandler
+class CPU extends AbstractBase
 {
-    public const STATUS_SUCCESS = 1;
-    public const STATUS_CANCELLED = 0;
-    public const STATUS_PENDING = 2;
-    public const STATUS_ID_EXISTS = 97;
-    public const STATUS_ERROR = 98;
-    public const STATUS_INVALID_REQUEST = 99;
+    public const CPU_STATUS_SUCCESS = 1;
+    public const CPU_STATUS_CANCELLED = 0;
+    public const CPU_STATUS_PENDING = 2;
+    public const CPU_STATUS_ID_EXISTS = 97;
+    public const CPU_STATUS_ERROR = 98;
+    public const CPU_STATUS_INVALID_REQUEST = 99;
 
     /**
      * Start transaction.
      *
-     * @param string             $finesUrl       Return URL to MyResearch/Fines
-     * @param string             $ajaxUrl        Base URL for AJAX-actions
+     * @param string             $returnBaseUrl  Return URL
+     * @param string             $notifyBaseUrl  Notify URL
      * @param \Finna\Db\Row\User $user           User
      * @param array              $patron         Patron information
      * @param string             $driver         Patron MultiBackend ILS source
@@ -67,13 +67,13 @@ class CPU extends BaseHandler
      * @param int                $transactionFee Transaction fee
      * @param array              $fines          Fines data
      * @param string             $currency       Currency
-     * @param string             $statusParam    Payment status URL parameter
+     * @param string             $paymentParam   Payment status URL parameter
      *
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl,
-        $ajaxUrl,
+        $returnBaseUrl,
+        $notifyBaseUrl,
         $user,
         $patron,
         $driver,
@@ -81,20 +81,21 @@ class CPU extends BaseHandler
         $transactionFee,
         $fines,
         $currency,
-        $statusParam
+        $paymentParam
     ) {
         $patronId = $patron['cat_username'];
-        $orderNumber = $this->generateTransactionId($patronId);
+        $transactionId = $this->generateTransactionId($patronId);
 
-        $returnUrl
-            = "{$finesUrl}?driver={$driver}"
-            . "&{$statusParam}=1";
+        $returnUrl = $this->addQueryParams(
+            $returnBaseUrl,
+            [$paymentParam => $transactionId]
+        );
+        $notifyUrl = $this->addQueryParams(
+            $notifyBaseUrl,
+            [$paymentParam => $transactionId]
+        );
 
-        $notifyUrl
-            = "{$ajaxUrl}/onlinePaymentNotify?driver={$driver}"
-            . "&{$statusParam}=1";
-
-        $payment = new \Cpu_Client_Payment($orderNumber);
+        $payment = new Payment($transactionId);
         $email = trim($user->email);
         if ($email) {
             $payment->Email = $email;
@@ -123,8 +124,7 @@ class CPU extends BaseHandler
         }
         $payment->LastName = empty($lastname) ? 'ei tietoa' : $lastname;
 
-        $locale = $this->translator->getLocale();
-        [$lang] = explode('-', $locale);
+        $lang = $this->getCurrentLanguageCode();
         if (!empty($this->config->supportedLanguages)) {
             $languageMappings = [];
             foreach (explode(':', $this->config->supportedLanguages) as $item) {
@@ -139,8 +139,7 @@ class CPU extends BaseHandler
             }
         }
 
-        $payment->Description
-            = $this->config->paymentDescription ?? '';
+        $payment->Description = $this->config->paymentDescription ?? '';
 
         $payment->ReturnAddress = $returnUrl;
         $payment->NotificationAddress = $notifyUrl;
@@ -191,7 +190,7 @@ class CPU extends BaseHandler
                 $fineDesc = str_replace("'", ' ', $fineDesc);
                 // Sanitize before limiting the length, otherwise the sanitization
                 // process may blow the string through the limit
-                $fineDesc = \Cpu_Client::sanitize($fineDesc);
+                $fineDesc = Client::sanitize($fineDesc);
                 // Make sure that description length does not exceed CPU max limit of
                 // 100 characters.
                 $fineDesc = mb_substr($fineDesc, 0, 100, 'UTF-8');
@@ -203,7 +202,7 @@ class CPU extends BaseHandler
                     . ($productCodeMappings[$fineType] ?? '');
             }
             $code = mb_substr($code, 0, 25, 'UTF-8');
-            $product = new \Cpu_Client_Product(
+            $product = new Product(
                 $code,
                 1,
                 $fine['balance'],
@@ -213,7 +212,7 @@ class CPU extends BaseHandler
         }
         if ($transactionFee) {
             $code = $this->config->transactionFeeProductCode ?? $productCode;
-            $product = new \Cpu_Client_Product(
+            $product = new Product(
                 $code,
                 1,
                 $transactionFee,
@@ -259,7 +258,11 @@ class CPU extends BaseHandler
         }
 
         $status = intval($response->Status);
-        if (in_array($status, [self::STATUS_ERROR, self::STATUS_INVALID_REQUEST])) {
+        $error = in_array(
+            $status,
+            [self::CPU_STATUS_ERROR, self::CPU_STATUS_INVALID_REQUEST]
+        );
+        if ($error) {
             // System error or Request failed.
             $this->logPaymentError(
                 'error starting transaction',
@@ -269,7 +272,7 @@ class CPU extends BaseHandler
         }
 
         $params = [
-            $orderNumber, $status,
+            $transactionId, $status,
             $response->Reference, $response->PaymentAddress
         ];
         if (!$this->verifyHash($params, $response->Hash)) {
@@ -280,7 +283,7 @@ class CPU extends BaseHandler
             return '';
         }
 
-        if ($status === self::STATUS_SUCCESS) {
+        if ($status === self::CPU_STATUS_SUCCESS) {
             // Already processed
             $this->logPaymentError(
                 'error starting transaction, transaction already processed',
@@ -289,7 +292,7 @@ class CPU extends BaseHandler
             return '';
         }
 
-        if ($status === self::STATUS_ID_EXISTS) {
+        if ($status === self::CPU_STATUS_ID_EXISTS) {
             // Order exists
             $this->logPaymentError(
                 'error starting transaction, order exists',
@@ -298,7 +301,7 @@ class CPU extends BaseHandler
             return '';
         }
 
-        if ($status === self::STATUS_CANCELLED) {
+        if ($status === self::CPU_STATUS_CANCELLED) {
             // Cancelled
             $this->logPaymentError(
                 'error starting transaction, order cancelled',
@@ -307,11 +310,11 @@ class CPU extends BaseHandler
             return '';
         }
 
-        if ($status === self::STATUS_PENDING) {
+        if ($status === self::CPU_STATUS_PENDING) {
             // Pending
 
             $success = $this->createTransaction(
-                $orderNumber,
+                $transactionId,
                 $driver,
                 $user->id,
                 $patronId,
@@ -329,13 +332,47 @@ class CPU extends BaseHandler
     }
 
     /**
-     * Return payment response parameters.
+     * Process the response from payment service.
+     *
+     * @param \Finna\Db\Row\Transaction $transaction Transaction
+     * @param \Laminas\Http\Request     $request     Request
+     *
+     * @return int One of the result codes
+     */
+    public function processPaymentResponse(
+        \Finna\Db\Row\Transaction $transaction,
+        \Laminas\Http\Request $request
+    ): int {
+        if (!($params = $this->getPaymentResponseParams($request))) {
+            return self::PAYMENT_FAILURE;
+        }
+
+        // Make sure the transaction IDs match:
+        if ($transaction->transaction_id !== $params['Id']) {
+            return self::PAYMENT_FAILURE;
+        }
+
+        $status = intval($params['Status']);
+        if ($status === self::CPU_STATUS_SUCCESS) {
+            $transaction->setPaid();
+            return self::PAYMENT_SUCCESS;
+        } elseif ($status === self::CPU_STATUS_CANCELLED) {
+            $transaction->setCanceled();
+            return self::PAYMENT_CANCEL;
+        }
+
+        $this->logPaymentError("unknown status $status");
+        return self::PAYMENT_FAILURE;
+    }
+
+    /**
+     * Validate and return payment response parameters.
      *
      * @param Laminas\Http\Request $request Request
      *
      * @return array
      */
-    public function getPaymentResponseParams($request)
+    protected function getPaymentResponseParams($request)
     {
         $params = array_merge(
             $request->getQuery()->toArray(),
@@ -364,69 +401,26 @@ class CPU extends BaseHandler
             return false;
         }
 
-        $result = array_merge($response, $params);
-        $result['transaction'] = $result['Id'];
-
-        return $result;
-    }
-
-    /**
-     * Process the response from payment service.
-     *
-     * @param Laminas\Http\Request $request Request
-     *
-     * @return string error message (not translated)
-     *   or associative array with keys:
-     *     'markFeesAsPaid' (boolean) true if payment was successful and fees
-     *     should be registered as paid.
-     *     'transactionId' (string) Transaction ID.
-     *     'amount' (int) Amount to be registered (does not include transaction fee).
-     */
-    public function processResponse($request)
-    {
-        if (!$params = $this->getPaymentResponseParams($request)) {
-            return 'online_payment_failed';
-        }
-
-        $id = $params['Id'];
-        $status = intval($params['Status']);
-        $reference = $params['Reference'];
-        $orderNum = $params['transaction'];
-        $hash = $params['Hash'];
-
-        if (!$this->verifyHash([$id, $status, $reference], $hash)) {
-            $this->setTransactionFailed($orderNum, 'invalid checksum');
+        $hashParams = [
+            $response['Id'],
+            intval($response['Status']),
+            $response['Reference']
+        ];
+        if (!$this->verifyHash($hashParams, $response['Hash'])) {
             $this->logPaymentError(
                 'error processing response: invalid checksum',
                 compact('request', 'params')
             );
-            return 'online_payment_failed';
+            return false;
         }
 
-        [$success, $data] = $this->getStartedTransaction($orderNum);
-        if (!$success) {
-            return $data;
-        }
-
-        if ($status === self::STATUS_SUCCESS) {
-            $this->setTransactionPaid($orderNum);
-            return [
-               'markFeesAsPaid' => true,
-               'transactionId' => $orderNum,
-               'amount' => $data->amount
-            ];
-        } elseif ($status === self::STATUS_CANCELLED) {
-            $this->setTransactionCancelled($orderNum);
-            return 'online_payment_canceled';
-        } else {
-            return 'online_payment_failed';
-        }
+        return array_merge($response, $params);
     }
 
     /**
      * Init CPU module with configured merchantId, secret and URL.
      *
-     * @return \Cpu_Client
+     * @return Client
      */
     protected function initCpu()
     {
@@ -437,7 +431,7 @@ class CPU extends BaseHandler
             }
         }
 
-        $module = new \Cpu_Client(
+        $module = new Client(
             $this->config['url'],
             $this->config['merchantId'],
             $this->config['secret']

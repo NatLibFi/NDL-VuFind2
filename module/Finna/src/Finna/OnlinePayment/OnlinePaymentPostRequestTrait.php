@@ -1,10 +1,10 @@
 <?php
 /**
- * OnlinePayment module trait.
+ * Online payment POST request trait.
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,6 +22,7 @@
  * @category VuFind
  * @package  OnlinePayment
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
@@ -30,15 +31,16 @@ namespace Finna\OnlinePayment;
 use Laminas\Stdlib\Parameters;
 
 /**
- * OnlinePayment module trait.
+ * Online payment POST request trait.
  *
  * @category VuFind
  * @package  OnlinePayment
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-trait OnlinePaymentModuleTrait
+trait OnlinePaymentPostRequestTrait
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -71,10 +73,11 @@ trait OnlinePaymentModuleTrait
      * @param string $username Username for HTTP basic authentication.
      * @param string $password Password for HTTP basic authentication.
      *
-     * @return false on error, otherwise array with keys:
+     * @return bool|array false on error, otherwise an array with keys:
      * - httpCode => Response status code
      * - contentType => Response content type
      * - response => Response body
+     * - headers => Response headers
      */
     protected function postRequest(
         $url,
@@ -109,9 +112,17 @@ trait OnlinePaymentModuleTrait
                 "Error posting request: " . $e->getMessage()
                 . ", url: $url, body: $body, headers: " . var_export($headers, true)
             );
-            $this->logger->logException($e, new Parameters());
+            if ($this->logger instanceof \VuFind\Log\Logger) {
+                $this->logger->logException($e, new Parameters());
+            }
             return false;
         }
+
+        $this->logger->info(
+            "Online payment request: url: $url, body: $body, headers: "
+            . var_export($headers, true) . ', response: '
+            . (string)$response
+        );
 
         $status = $response->getStatusCode();
         $content = $response->getBody();
@@ -126,9 +137,9 @@ trait OnlinePaymentModuleTrait
         }
 
         return [
-           'httpCode' => $status,
-           'contentType' => $response->getContent(),
-           'response' => $content
+            'httpCode' => $status,
+            'response' => $content,
+            'headers' => $response->getHeaders()->toArray()
         ];
     }
 }

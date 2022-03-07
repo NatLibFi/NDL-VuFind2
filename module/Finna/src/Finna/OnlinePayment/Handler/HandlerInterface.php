@@ -1,10 +1,10 @@
 <?php
 /**
- * OnlinePayment handler interface
+ * Online payment handler interface
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2017.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -27,12 +27,10 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment;
-
-use Laminas\I18n\Translator\TranslatorInterface;
+namespace Finna\OnlinePayment\Handler;
 
 /**
- * OnlinePayment handler interface.
+ * Online payment handler interface.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -42,49 +40,27 @@ use Laminas\I18n\Translator\TranslatorInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-interface OnlinePaymentHandlerInterface
+interface HandlerInterface
 {
-    /**
-     * Constructor
-     *
-     * @param \Laminas\Config\Config  $config     Configuration as key-value pairs.
-     * @param \VuFindHttp\HttpService $http       HTTP service
-     * @param TranslatorInterface     $translator Translator
-     */
-    public function __construct(
-        \Laminas\Config\Config $config,
-        \VuFindHttp\HttpService $http,
-        TranslatorInterface $translator
-    );
-
-    /**
-     * Return payment response parameters.
-     *
-     * @param Laminas\Http\Request $request Request
-     *
-     * @return array
-     */
-    public function getPaymentResponseParams($request);
-
     /**
      * Start transaction.
      *
-     * @param string             $finesUrl       Return URL to MyResearch/Fines
-     * @param string             $ajaxUrl        Base URL for AJAX-actions
+     * @param string             $returnBaseUrl  Return URL
+     * @param string             $notifyBaseUrl  Notify URL
      * @param \Finna\Db\Row\User $user           User
      * @param array              $patron         Patron information
      * @param string             $driver         Patron MultiBackend ILS source
      * @param int                $amount         Amount (excluding transaction fee)
      * @param int                $transactionFee Transaction fee
      * @param array              $fines          Fines data
-     * @param strin              $currency       Currency
-     * @param string             $statusParam    Payment status URL parameter
+     * @param string             $currency       Currency
+     * @param string             $paymentParam   Payment status URL parameter
      *
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl,
-        $ajaxUrl,
+        $returnBaseUrl,
+        $notifyBaseUrl,
         $user,
         $patron,
         $driver,
@@ -92,20 +68,19 @@ interface OnlinePaymentHandlerInterface
         $transactionFee,
         $fines,
         $currency,
-        $statusParam
+        $paymentParam
     );
 
     /**
      * Process the response from payment service.
      *
-     * @param Laminas\Http\Request $request Request
+     * @param \Finna\Db\Row\Transaction $transaction Transaction
+     * @param \Laminas\Http\Request     $request     Request
      *
-     * @return string error message (not translated)
-     *   or associative array with keys:
-     *     'markFeesAsPaid' (boolean) true if payment was successful and fees
-     *     should be registered as paid.
-     *     'transactionId' (string) Transaction ID.
-     *     'amount' (int) Amount to be registered (does not include transaction fee).
+     * @return int One of the result codes defined in AbstractBase
      */
-    public function processResponse($request);
+    public function processPaymentResponse(
+        \Finna\Db\Row\Transaction $transaction,
+        \Laminas\Http\Request $request
+    ): int;
 }

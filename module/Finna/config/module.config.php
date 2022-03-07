@@ -330,6 +330,7 @@ $config = [
             'Finna\LocationService\LocationService' => 'Finna\LocationService\LocationServiceFactory',
             'Finna\Mailer\Mailer' => 'VuFind\Mailer\Factory',
             'Finna\OAI\Server' => 'VuFind\OAI\ServerFactory',
+            'Finna\OnlinePayment\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\OnlinePayment\OnlinePayment' => 'Finna\OnlinePayment\OnlinePaymentFactory',
             'Finna\OnlinePayment\Session' => 'Finna\OnlinePayment\OnlinePaymentSessionFactory',
             'Finna\OrganisationInfo\OrganisationInfo' => 'Finna\OrganisationInfo\OrganisationInfoFactory',
@@ -530,7 +531,6 @@ $config = [
                     'Finna\Db\Row\Search' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Transaction' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\User' => 'Finna\Db\Row\UserFactory',
-                    'Finna\Db\Row\UserCard' => 'Finna\Db\Row\UserCardFactory',
                     'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory'
                 ],
                 'aliases' => [
@@ -539,7 +539,6 @@ $config = [
                     'VuFind\Db\Row\Search' => 'Finna\Db\Row\Search',
                     'VuFind\Db\Row\Transaction' => 'Finna\Db\Row\Transaction',
                     'VuFind\Db\Row\User' => 'Finna\Db\Row\User',
-                    'VuFind\Db\Row\UserCard' => 'Finna\Db\Row\UserCard',
                     'VuFind\Db\Row\UserList' => 'Finna\Db\Row\UserList',
 
                     // Aliases for table classes without a row class counterpart
@@ -615,6 +614,7 @@ $config = [
                     'VuFind\ILS\Driver\SierraRest' => 'Finna\ILS\Driver\SierraRest',
                 ]
             ],
+            'onlinepayment_handler' => [ /* see Finna\OnlinePayment\Handler\PluginManager for defaults */ ],
             'recommend' => [
                 'factories' => [
                     'VuFind\Recommend\CollectionSideFacets' => 'Finna\Recommend\Factory::getCollectionSideFacets',

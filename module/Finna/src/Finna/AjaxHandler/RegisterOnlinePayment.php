@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -51,7 +51,25 @@ class RegisterOnlinePayment extends AbstractOnlinePaymentAction
      */
     public function handleRequest(Params $params)
     {
-        $res = $this->processPayment($params->getController()->getRequest());
+        $transactionId = $params->fromPost('transactionId')
+            ?? $params->fromQuery('transactionId');
+        if (!$transactionId) {
+            return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
+        }
+        $transaction = $this->transactionTable->getTransaction($transactionId);
+        if (!$transaction) {
+            return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
+        }
+        if ($transaction->isRegistered()) {
+            // Already registered, return success:
+            return $this->formatResponse('');
+        }
+        if (!$transaction->needsRegistration()) {
+            // Bad status, return error:
+            return $this->formatResponse('', self::STATUS_HTTP_ERROR);
+        }
+
+        $res = $this->markFeesAsPaid($transaction);
         return $res['success']
             ? $this->formatResponse('')
             : $this->formatResponse('', self::STATUS_HTTP_ERROR);

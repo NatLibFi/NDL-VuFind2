@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2018.
+ * Copyright (C) The National Library of Finland 2014-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -25,9 +25,9 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment;
+namespace Finna\OnlinePayment\Handler;
 
-use Finna\OnlinePayment\TurkuPayment\TurkuPaytrailE2;
+use Finna\OnlinePayment\Handler\Connector\TurkuPayment\TurkuPaytrailE2;
 
 /**
  * Turku online payment handler module.
@@ -38,28 +38,38 @@ use Finna\OnlinePayment\TurkuPayment\TurkuPaytrailE2;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-class TurkuPayment extends Paytrail
+class TurkuPayment extends AbstractBase
 {
+    /**
+     * Mappings from VuFind language codes to Paytrail
+     *
+     * @var array
+     */
+    protected $languageMap = [
+        'fi' => 'fi_FI',
+        'sv' => 'sv_SE',
+        'en' => 'en_US'
+    ];
+
     /**
      * Start transaction.
      *
-     * @param string             $finesUrl       Return URL to MyResearch/Fines
-     * @param string             $ajaxUrl        Base URL for AJAX-actions
+     * @param string             $returnBaseUrl  Return URL
+     * @param string             $notifyBaseUrl  Notify URL
      * @param \Finna\Db\Row\User $user           User
      * @param array              $patron         Patron information
      * @param string             $driver         Patron MultiBackend ILS source
-     * @param int                $amount         Amount
-     *                                           (excluding transaction fee)
+     * @param int                $amount         Amount (excluding transaction fee)
      * @param int                $transactionFee Transaction fee
      * @param array              $fines          Fines data
      * @param string             $currency       Currency
-     * @param string             $statusParam    Payment status URL parameter
+     * @param string             $paymentParam   Payment status URL parameter
      *
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl,
-        $ajaxUrl,
+        $returnBaseUrl,
+        $notifyBaseUrl,
         $user,
         $patron,
         $driver,
@@ -67,7 +77,7 @@ class TurkuPayment extends Paytrail
         $transactionFee,
         $fines,
         $currency,
-        $statusParam
+        $paymentParam
     ) {
         $required = ['merchantId', 'secret', 'sapCode', 'oId', 'applicationName'];
         foreach ($required as $req) {
@@ -78,19 +88,21 @@ class TurkuPayment extends Paytrail
         }
 
         $patronId = $patron['cat_username'];
-        $orderNumber = $this->generateTransactionId($patronId);
+        $transactionId = $this->generateTransactionId($patronId);
 
         $module = $this->initTurkuPaytrail();
 
-        $successUrl = "$finesUrl?driver=$driver&$statusParam="
-            . self::PAYMENT_SUCCESS;
-        $cancelUrl = "$finesUrl?driver=$driver&$statusParam="
-            . self::PAYMENT_FAILURE;
-        $notifyUrl = "$ajaxUrl/onlinePaymentNotify?driver=$driver&$statusParam="
-            . self::PAYMENT_NOTIFY;
+        $returnUrl = $this->addQueryParams(
+            $returnBaseUrl,
+            [$paymentParam => $transactionId]
+        );
+        $notifyUrl = $this->addQueryParams(
+            $notifyBaseUrl,
+            [$paymentParam => $transactionId]
+        );
 
-        $module->setUrls($successUrl, $cancelUrl, $notifyUrl);
-        $module->setOrderNumber($orderNumber);
+        $module->setUrls($returnUrl, $returnUrl, $notifyUrl);
+        $module->setOrderNumber($transactionId);
         $module->setCurrency($currency);
         $module->setOid($this->config->oId);
         $module->setApplicationName($this->config->applicationName);
@@ -152,7 +164,7 @@ class TurkuPayment extends Paytrail
         }
 
         $success = $this->createTransaction(
-            $orderNumber,
+            $transactionId,
             $driver,
             $user->id,
             $patronId,
@@ -164,10 +176,111 @@ class TurkuPayment extends Paytrail
         if (!$success) {
             return false;
         }
-        $module->setHttpService($this->http);
-        $module->setLogger($this->logger);
-        $module->sendRequest($this->config->url);
+        // This will redirect if successful:
+        $result = $module->sendRequest($this->config->url);
+        $this->logPaymentError(
+            'error sending payment request: ' . $result,
+            compact('user', 'patron', 'fines', 'module')
+        );
+        $this->getTransaction($transactionId)->setCanceled();
         return '';
+    }
+
+    /**
+     * Process the response from payment service.
+     *
+     * @param \Finna\Db\Row\Transaction $transaction Transaction
+     * @param \Laminas\Http\Request     $request     Request
+     *
+     * @return int One of the result codes defined in AbstractBase
+     */
+    public function processPaymentResponse(
+        \Finna\Db\Row\Transaction $transaction,
+        \Laminas\Http\Request $request
+    ): int {
+        if (!($params = $this->getPaymentResponseParams($request))) {
+            return self::PAYMENT_FAILURE;
+        }
+
+        // Make sure the transaction IDs match:
+        if ($transaction->transaction_id !== $params['ORDER_NUMBER']) {
+            return self::PAYMENT_FAILURE;
+        }
+
+        if (!empty($params['PAID'])) {
+            $transaction->setPaid($params['TIMESTAMP']);
+            return self::PAYMENT_SUCCESS;
+        }
+
+        $transaction->setCanceled();
+        return self::PAYMENT_CANCEL;
+    }
+
+    /**
+     * Validate and return payment response parameters.
+     *
+     * @param Laminas\Http\Request $request Request
+     *
+     * @return array
+     */
+    protected function getPaymentResponseParams($request)
+    {
+        if (!($module = $this->initTurkuPaytrail())) {
+            return false;
+        }
+
+        $params = array_merge(
+            $request->getQuery()->toArray(),
+            $request->getPost()->toArray()
+        );
+
+        $required = [
+            'ORDER_NUMBER', 'TIMESTAMP', 'RETURN_AUTHCODE'
+        ];
+
+        foreach ($required as $name) {
+            if (!isset($params[$name])) {
+                $this->logPaymentError(
+                    "missing parameter $name in payment response",
+                    compact('params')
+                );
+                return false;
+            }
+        }
+
+        if (!empty($params['PAID'])) {
+            // Validate a 'success' request:
+            $success = $module->validateSuccessRequest(
+                $params['ORDER_NUMBER'],
+                $params['TIMESTAMP'],
+                $params['PAID'],
+                $params['METHOD'] ?? '',
+                $params['RETURN_AUTHCODE']
+            );
+            if (!$success) {
+                $this->logPaymentError(
+                    'error processing success response: invalid checksum',
+                    compact('request', 'params')
+                );
+                return false;
+            }
+        } else {
+            // Validate a 'cancel' request:
+            $success = $module->validateCancelRequest(
+                $params['ORDER_NUMBER'],
+                $params['TIMESTAMP'],
+                $params['RETURN_AUTHCODE']
+            );
+            if (!$success) {
+                $this->logPaymentError(
+                    'error processing success response: invalid checksum',
+                    compact('request', 'params')
+                );
+                return false;
+            }
+        }
+
+        return $params;
     }
 
     /**
@@ -177,82 +290,14 @@ class TurkuPayment extends Paytrail
      */
     protected function initTurkuPaytrail()
     {
-        $locale = $this->translator->getLocale();
-        $localeParts = explode('-', $locale);
-        $paytrailLocale = 'fi_FI';
-        if ('sv' === $localeParts[0]) {
-            $paytrailLocale = 'sv_SE';
-        } elseif ('en' === $localeParts[0]) {
-            $paytrailLocale = 'en_US';
-        }
-
-        return new TurkuPaytrailE2(
+        $module = new TurkuPaytrailE2(
             $this->config->merchantId,
             $this->config->secret,
-            $paytrailLocale
+            $this->languageMap[$this->getCurrentLanguageCode()] ?? 'en_US'
         );
-    }
+        $module->setHttpService($this->http);
+        $module->setLogger($this->logger);
 
-    /**
-     * Process the response from payment service.
-     *
-     * @param Laminas\Http\Request $request Request
-     *
-     * @return string error message (not translated)
-     *   or associative array with keys:
-     *     'markFeesAsPaid' (boolean) true if payment was successful and fees
-     *     should be registered as paid.
-     *     'transactionId' (string) Transaction ID.
-     *     'amount' (int) Amount to be registered (does not include transaction fee).
-     */
-    public function processResponse($request)
-    {
-        $params = $this->getPaymentResponseParams($request);
-        $status = $params['payment'];
-        $orderNum = $params['transaction'];
-        $timestamp = $params['TIMESTAMP'];
-
-        [$success, $data] = $this->getStartedTransaction($orderNum);
-        if (!$success) {
-            return $data;
-        }
-
-        $t = $data;
-
-        $amount = $t->amount;
-        if ($status === self::PAYMENT_SUCCESS || $status === self::PAYMENT_NOTIFY) {
-            if (!$module = $this->initTurkuPaytrail()) {
-                return 'online_payment_failed';
-            }
-
-            $success = $module->validateRequest(
-                $params['ORDER_NUMBER'],
-                $params['PAID'],
-                $params['TIMESTAMP'],
-                $params['METHOD'],
-                $params['RETURN_AUTHCODE']
-            );
-            if (!$success) {
-                $this->logPaymentError(
-                    'error processing response: invalid checksum',
-                    compact('params', 'module')
-                );
-                $this->setTransactionFailed($orderNum, 'invalid checksum');
-                return 'online_payment_failed';
-            }
-            $this->setTransactionPaid($orderNum, $timestamp);
-
-            return [
-                'markFeesAsPaid' => true,
-                'transactionId' => $orderNum,
-                'amount' => $amount
-            ];
-        } elseif ($status === self::PAYMENT_FAILURE) {
-            $this->setTransactionCancelled($orderNum);
-            return 'online_payment_canceled';
-        } else {
-            $this->setTransactionFailed($orderNum, "unknown status $status");
-            return 'online_payment_failed';
-        }
+        return $module;
     }
 }

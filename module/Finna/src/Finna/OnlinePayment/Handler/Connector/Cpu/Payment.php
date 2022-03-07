@@ -1,12 +1,14 @@
 <?php
 // @codingStandardsIgnoreStart
+namespace Finna\OnlinePayment\Handler\Connector\Cpu;
+
 /**
  * Payment data to be sent to CPU payment gateway.
  *
  * @since 2015-05-19 MB, Version 1.0 created
  * @version 1.0
  */
-class Cpu_Client_Payment
+class Payment
 {
     /**
      * eCommerce integration.
@@ -36,7 +38,7 @@ class Cpu_Client_Payment
      *
      * @var string
      */
-    public $Mode = Cpu_Client_Payment::MODE_ECOMMERCE;
+    public $Mode = Payment::MODE_ECOMMERCE;
 
     /**
      * Description of payment. Max length 100 chars.
@@ -49,7 +51,7 @@ class Cpu_Client_Payment
     /**
      * List of products.
      *
-     * @see Cpu_Client_Product
+     * @see Product
      * @var array
      */
     public $Products = [];
@@ -110,18 +112,18 @@ class Cpu_Client_Payment
      */
     public function __construct($id = null)
     {
-        $this->Id = Cpu_Client::sanitize($id);
+        $this->Id = Client::sanitize($id);
     }
 
     /**
      * Adds product into payment data.
      * Checks validity of product data before including it.
      *
-     * @see Cpu_Client_Product::isValid()
-     * @param Cpu_Client_Product $product Product
-     * @return Cpu_Client_Payment
+     * @see Product::isValid()
+     * @param Product $product Product
+     * @return Payment
      */
-    public function addProduct(Cpu_Client_Product $product)
+    public function addProduct(Product $product)
     {
         if ($product->isValid()) {
             $this->Products[] = $product;
@@ -171,8 +173,8 @@ class Cpu_Client_Payment
      */
     public function calculateHash($source, $secret_key)
     {
-        $source     = Cpu_Client::sanitize($source);
-        $secret_key = Cpu_Client::sanitize($secret_key);
+        $source     = Client::sanitize($source);
+        $secret_key = Client::sanitize($secret_key);
         $separator  = '&';
         $string     = '';
 
@@ -187,7 +189,7 @@ class Cpu_Client_Payment
             }
 
             foreach ($this->Products as $product) {
-                if ($product instanceof Cpu_Client_Product) {
+                if ($product instanceof Product) {
                     $string .= str_replace(';', '', $product->Code) . $separator;
 
                     if ($product->Amount != null) {

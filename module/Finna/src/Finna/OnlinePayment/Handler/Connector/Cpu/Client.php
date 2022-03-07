@@ -1,5 +1,6 @@
 <?php
 // @codingStandardsIgnoreStart
+namespace Finna\OnlinePayment\Handler\Connector\Cpu;
 
 /**
  * Client example of CPU Verkkomaksu API.
@@ -8,9 +9,9 @@
  * @since 2015-05-19 MB, Version 1.0 created
  * @version 1.0
  */
-class Cpu_Client
+class Client
 {
-    use \Finna\OnlinePayment\OnlinePaymentModuleTrait;
+    use \Finna\OnlinePayment\OnlinePaymentPostRequestTrait;
 
     /**
      * Url of eCommerce service where payment data will be sent.
@@ -57,10 +58,10 @@ class Cpu_Client
      *
      * Redirect customer to PaymentAddress after validating response data.
      *
-     * @param Cpu_Client_Payment $payment Payment data
+     * @param Payment $payment Payment data
      * @return mixed array containing an errormessage, JSON response from eCommerce or false
      */
-    public function sendPayment(Cpu_Client_Payment $payment)
+    public function sendPayment(Payment $payment)
     {
         $valid = $payment->isValid();
 
@@ -73,7 +74,7 @@ class Cpu_Client
             // Prepare data to be sent.
             $data = $payment->convertToArray();
             $data['Source'] = $this->source;
-            $data['Hash']   = Cpu_Client::calculateHash($payment, $this->source, $this->secret_key);
+            $data['Hash']   = self::calculateHash($payment, $this->source, $this->secret_key);
 
             $json_data = json_encode($data);
 
@@ -109,15 +110,15 @@ class Cpu_Client
      * Calculates sha256 signature.
      * Only mandatory properties and properties with values are used in calculation.
      *
-     * @param Cpu_Client_Payment $payment Payment object
+     * @param Payment $payment Payment object
      * @param string $source Source identification given by CPU
      * @param string $secret_key Secret Key identification given by CPU
      * @return string sha256 hash signature
      */
-    public static function calculateHash(Cpu_Client_Payment $payment, $source, $secret_key)
+    public static function calculateHash(Payment $payment, $source, $secret_key)
     {
-        $source     = Cpu_Client::sanitize($source);
-        $secret_key = Cpu_Client::sanitize($secret_key);
+        $source     = self::sanitize($source);
+        $secret_key = self::sanitize($secret_key);
         $separator  = '&';
         $string     = '';
 
@@ -132,7 +133,7 @@ class Cpu_Client
             }
 
             foreach ($payment->Products as $product) {
-                if ($product instanceof Cpu_Client_Product) {
+                if ($product instanceof Product) {
                     $string .= str_replace(';', '', $product->Code) . $separator;
 
                     if ($product->Amount != null) {
