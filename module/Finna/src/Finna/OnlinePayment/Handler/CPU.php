@@ -48,12 +48,12 @@ use Finna\OnlinePayment\Handler\Connector\Cpu\Product;
  */
 class CPU extends AbstractBase
 {
-    public const STATUS_SUCCESS = 1;
-    public const STATUS_CANCELLED = 0;
-    public const STATUS_PENDING = 2;
-    public const STATUS_ID_EXISTS = 97;
-    public const STATUS_ERROR = 98;
-    public const STATUS_INVALID_REQUEST = 99;
+    public const CPU_STATUS_SUCCESS = 1;
+    public const CPU_STATUS_CANCELLED = 0;
+    public const CPU_STATUS_PENDING = 2;
+    public const CPU_STATUS_ID_EXISTS = 97;
+    public const CPU_STATUS_ERROR = 98;
+    public const CPU_STATUS_INVALID_REQUEST = 99;
 
     /**
      * Start transaction.
@@ -258,7 +258,11 @@ class CPU extends AbstractBase
         }
 
         $status = intval($response->Status);
-        if (in_array($status, [self::STATUS_ERROR, self::STATUS_INVALID_REQUEST])) {
+        $error = in_array(
+            $status,
+            [self::CPU_STATUS_ERROR, self::CPU_STATUS_INVALID_REQUEST]
+        );
+        if ($error) {
             // System error or Request failed.
             $this->logPaymentError(
                 'error starting transaction',
@@ -279,7 +283,7 @@ class CPU extends AbstractBase
             return '';
         }
 
-        if ($status === self::STATUS_SUCCESS) {
+        if ($status === self::CPU_STATUS_SUCCESS) {
             // Already processed
             $this->logPaymentError(
                 'error starting transaction, transaction already processed',
@@ -288,7 +292,7 @@ class CPU extends AbstractBase
             return '';
         }
 
-        if ($status === self::STATUS_ID_EXISTS) {
+        if ($status === self::CPU_STATUS_ID_EXISTS) {
             // Order exists
             $this->logPaymentError(
                 'error starting transaction, order exists',
@@ -297,7 +301,7 @@ class CPU extends AbstractBase
             return '';
         }
 
-        if ($status === self::STATUS_CANCELLED) {
+        if ($status === self::CPU_STATUS_CANCELLED) {
             // Cancelled
             $this->logPaymentError(
                 'error starting transaction, order cancelled',
@@ -306,7 +310,7 @@ class CPU extends AbstractBase
             return '';
         }
 
-        if ($status === self::STATUS_PENDING) {
+        if ($status === self::CPU_STATUS_PENDING) {
             // Pending
 
             $success = $this->createTransaction(
@@ -349,10 +353,10 @@ class CPU extends AbstractBase
         }
 
         $status = intval($params['Status']);
-        if ($status === self::STATUS_SUCCESS) {
+        if ($status === self::CPU_STATUS_SUCCESS) {
             $transaction->setPaid();
             return self::PAYMENT_SUCCESS;
-        } elseif ($status === self::STATUS_CANCELLED) {
+        } elseif ($status === self::CPU_STATUS_CANCELLED) {
             $transaction->setCanceled();
             return self::PAYMENT_CANCEL;
         }

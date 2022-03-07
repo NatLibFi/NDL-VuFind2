@@ -116,6 +116,12 @@ trait OnlinePaymentPostRequestTrait
             return false;
         }
 
+        $this->logger->info(
+            "Online payment request: url: $url, body: $body, headers: "
+            . var_export($headers, true) . ', response: '
+            . (string)$response
+        );
+
         $status = $response->getStatusCode();
         $content = $response->getBody();
 

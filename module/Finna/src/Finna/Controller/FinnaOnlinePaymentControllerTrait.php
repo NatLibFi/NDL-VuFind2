@@ -136,7 +136,7 @@ trait FinnaOnlinePaymentControllerTrait
     }
 
     /**
-     * Support for handling online payments.
+     * Support method for handling online payments.
      *
      * @param array     $patron Patron
      * @param array     $fines  Listing of fines
@@ -266,6 +266,12 @@ trait FinnaOnlinePaymentControllerTrait
         if ($transactionId
             && ($transaction = $trTable->getTransaction($transactionId))
         ) {
+            $this->ensureLogger();
+            $this->logger->info(
+                'Online payment response handler called. Request: '
+                . (string)$request
+            );
+
             if ($transaction->isRegistered()) {
                 // Already registered, treat as success:
                 $this->flashMessenger()
@@ -276,7 +282,6 @@ trait FinnaOnlinePaymentControllerTrait
                     $transaction,
                     $this->getRequest()
                 );
-                $this->ensureLogger();
                 $this->logger->info(
                     "Online payment response for $transactionId result: $result"
                 );

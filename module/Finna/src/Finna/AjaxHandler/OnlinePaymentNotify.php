@@ -53,6 +53,11 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
     {
         $request = $params->getController()->getRequest();
 
+        $this->logger->info(
+            'Online payment notify handler called. Request: '
+            . (string)$request
+        );
+
         $reqParams = array_merge(
             $request->getQuery()->toArray(),
             $request->getPost()->toArray()
