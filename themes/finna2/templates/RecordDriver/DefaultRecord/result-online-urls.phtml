@@ -3,7 +3,7 @@
     $openUrl = $this->openUrl($this->driver, 'results');
     $openUrlActive = $openUrl->isActive();
     $context = $this->context ?? 'results';
-    $maxLinksCount = 4;
+    $maxLinkCount = 4;
 
     $images = $this->record($this->driver)->getAllRecordImageUrls();
     $urls = $this->driver->getURLs();
@@ -39,7 +39,7 @@
             if (isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') {
               continue;
             }
-            if ('popup' === $context && ++$linkCount > $maxLinksCount) {
+            if ('popup' === $context && ++$linkCount > $maxLinkCount) {
               break;
             }
           ?>
@@ -81,7 +81,7 @@
           <?php endif; ?>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
         <?php endforeach; ?>
-        <?php if ('popup' === $context && $linkCount > $maxLinksCount): ?>
+        <?php if ('popup' === $context && $linkCount > $maxLinkCount): ?>
           <div>...</div>
         <?php endif; ?>
         <?php foreach ($mergedData['urls'] ?? $onlineURLs ?? [] as $i => $url): ?>
