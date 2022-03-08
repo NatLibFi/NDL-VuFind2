@@ -156,19 +156,16 @@ finna.layout = (function finnaLayout() {
     $('.narrowsearch-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
       $('.sidebar').scrollTop(0);
     });
-    if ($('.narrowsearch-navigation-trigger')[0]) {
-      $('#content').css('marginTop', 0);
-      const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
-      const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
-      const narrowSearchMobileObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          narrowSearchMobile.classList.remove("sticky");
-        } else {
-          narrowSearchMobile.classList.add("sticky");
-        }
-      });
-      narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
-    }
+    const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
+    const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
+    const narrowSearchMobileObserver = new IntersectionObserver(
+      ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
+      {
+        threshold: [1],
+        rootMargin: '-64px',
+      }
+    );
+    narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
   }
 
   function initMobileCartIndicator() {
