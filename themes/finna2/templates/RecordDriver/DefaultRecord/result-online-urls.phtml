@@ -32,14 +32,14 @@
       <div class="truncate-field">
         <?php
           $renderedURLs = [];
-          $amountOfLinks = 0;
+          $linkCount = 0;
         ?>
         <?php foreach ($urls ?? [] as $i => $url): ?>
           <?php
             if (isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') {
               continue;
             }
-            if ('popup' === $context && ++$amountOfLinks > $maxLinksCount) {
+            if ('popup' === $context && ++$linkCount > $maxLinksCount) {
               break;
             }
           ?>
@@ -81,7 +81,7 @@
           <?php endif; ?>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
         <?php endforeach; ?>
-        <?php if ('popup' === $context && $amountOfLinks > $maxLinksCount): ?>
+        <?php if ('popup' === $context && $linkCount > $maxLinksCount): ?>
           <div>...</div>
         <?php endif; ?>
         <?php foreach ($mergedData['urls'] ?? $onlineURLs ?? [] as $i => $url): ?>
