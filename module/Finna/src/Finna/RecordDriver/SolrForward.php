@@ -1402,12 +1402,12 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     /**
      * Return location notes
      *
-     * @return string
+     * @return array
      */
     public function getLocationNotes()
     {
         $events = $this->getProductionEvents();
-        return $events['locationNotes'] ?? '';
+        return $events['locationNotes'] ?? [];
     }
 
     /**

@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+<ExchangeSet schemaLocation="http://project-forward.eu/schemas/EN15907-forward http://forward.cineca.it/schema/EN15907-forward-v1.0.xsd">
+  <CinematographicWork>
+    <Identifier scheme="KAVI" IDTypeName="elonet_elokuva">992118</Identifier>
+    <RecordSource>
+      <SourceName>Finna Test Institution</SourceName>
+    </RecordSource>
+    <Title>
+      <TitleText>The Zoo</TitleText>
+      <TitleRelationship>original</TitleRelationship>
+    </Title>
+    <Title>
+      <TitleText lang="swe">Zoo</TitleText>
+      <TitleRelationship>translated</TitleRelationship>
+    </Title>
+    <Title>
+      <TitleText>Animals</TitleText>
+      <TitleRelationship>working</TitleRelationship>
+    </Title>
+    <Title>
+      <TitleText>Park</TitleText>
+      <TitleRelationship elokuva-elonimi-tyyppi="test name">Placeholder</TitleRelationship>
+    </Title>
+    <IdentifyingTitle>The Zoo</IdentifyingTitle>
+    <CountryOfReference>
+      <Country>
+        <RegionName elokuva-elomaa-maakoodi="FI">Suomi</RegionName>
+      </Country>
+    </CountryOfReference>
+    <YearOfReference elokuva-valmistumisvuodenlahde="lopputeksti">2022</YearOfReference>
+    <HasAgent elonet-tag="elotekija">
+      <Activity tehtava="ohjaus" finna-activity-code="D02">D02</Activity>
+      <AgentName>Juha Kuoma</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>1</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elotekija">
+      <Activity tehtava="käsikirjoitus" finna-activity-code="aus">aus</Activity>
+      <AgentName>Kuha Luoma</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>2</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elotekijakokoonpano">
+      <Activity tehtava="kuoro" finna-activity-code="A99" finna-activity-text="kuoro" elokuva-elotekijakokoonpano-tehtava="kuoro">A99</Activity>
+      <AgentName>Joku kuoro</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_kokoonpano</IDTypeName>
+        <IDValue>1480640</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elotekijayhtio">
+      <Activity tehtava="Yhtiön tehtävä" finna-activity-code="A99" finna-activity-text="Yhtiön tehtävä" elokuva-elotekijayhtio-tehtava="Yhtiön tehtävä">A99</Activity>
+      <AgentName>Tekevä Yhtiö Oy</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_yhtio</IDTypeName>
+        <IDValue>956916</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="eloesiintyja">
+      <Activity finna-activity-code="E99" finna-activity-text="dokumentti-esiintyj&#xE4;">E99</Activity>
+      <AgentName>Esiin Tyjä</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>1312480</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="eloesiintyja">
+      <Activity finna-activity-code="E99" finna-activity-text="dokumentti-esiintyj&#xE4;">E99</Activity>
+      <AgentName elokuva-eloesiintyja-maare="Tämä on määre">Ääre M. Es</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>1320375</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elotuotantoyhtio">
+      <Activity finna-activity-code="E10">E10</Activity>
+      <AgentName>Finna-filmi Oy</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_yhtio</IDTypeName>
+        <IDValue>218057</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elorahoitusyhtio">
+      <Activity finna-activity-code="fnd">fnd</Activity>
+      <AgentName elokuva-elorahoitusyhtio-rahoitustapa="tuotantotuki" elokuva-elorahoitusyhtio-summa="159 779 €">Rahoitus tuotantotuki</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_yhtio</IDTypeName>
+        <IDValue>11</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elorahoitusyhtio">
+      <Activity finna-activity-code="fnd">fnd</Activity>
+      <AgentName elokuva-elorahoitusyhtio-henkilo="Raho Ittaja" elokuva-elorahoitusyhtio-rahoitustapa="yhteistyö">Rahoitus yhteistyö</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_yhtio</IDTypeName>
+        <IDValue>710074</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elolaboratorio">
+      <Activity finna-activity-code="A99" finna-activity-text="laboratorio" elokuva-elolaboratorio="laboratorio">A99</Activity>
+      <AgentName>Finna-Lab Oy</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_yhtio</IDTypeName>
+        <IDValue>1006153</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elokreditoimatonesiintyja">
+      <Activity finna-activity-code="E99" finna-activity-text="kreditoimaton-dokumentti-esiintyj&#xE4;">E99</Activity>
+      <AgentName elokuva-elokreditoimatonesiintyja-nimi="Doku M. Entti" elokuva-elokreditoimatonesiintyja-maare="Kreditöimätön esiintyjä">Doku M. Entti</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>1344654</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elokreditoimatonesiintyja">
+      <Activity finna-activity-code="E99" finna-activity-text="kreditoimaton-dokumentti-esiintyj&#xE4;">E99</Activity>
+      <AgentName elokuva-elokreditoimatonesiintyja-nimi="Doku M. Entti II" elokuva-elokreditoimatonesiintyja-maare="Kreditöimätön esiintyjä nr. 2">Doku M. Entti II</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>1486496</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elonayttelija">
+      <Activity finna-activity-code="E01">E01</Activity>
+      <AgentName elokuva-elonayttelija-rooli="Debug Duck">Ami Kunkka</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>255464</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elokreditoimatonnayttelija">
+      <Activity finna-activity-code="E01" finna-activity-text="kreditoimatonn&#xE4;yttelij&#xE4;">E01</Activity>
+      <AgentName elokuva-elokreditoimatonnayttelija-nimi="Kreditoimaton näyttelijä" elokuva-elokreditoimatonnayttelija-rooli="vankilavieras">Kreditoimaton näyttelijä</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>164393</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elonayttelijakokoonpano">
+      <Activity tehtava="Esitti yhtyettä" finna-activity-code="A99" finna-activity-text="Esitti yhtyettä" elokuva-elonayttelijakokoonpano-tehtava="Esitti yhtyettä">A99</Activity>
+      <AgentName>Celsiukset miinuksella ja soitellaan.</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_kokoonpano</IDTypeName>
+        <IDValue>1417980</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elolevittaja">
+      <Activity finna-activity-code="fds">fds</Activity>
+      <AgentName elokuva-elolevittaja-vuosi="2001" elokuva-elolevittaja-levitystapa="teatterilevitys">Levittäjä Oy</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_yhtio</IDTypeName>
+        <IDValue>210941</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elokreditoimatontekija">
+      <Activity tehtava="valokuvat" finna-activity-code="A99" finna-activity-text="valokuvat" elokuva-elokreditoimatontekija-tehtava="valokuvat">A99</Activity>
+      <AgentName elokuva-elokreditoimatontekija-nimi="Valo K. Uvaus">Valo K. Uvaus</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>107674</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="avustajat">
+      <Activity finna-activity-code="A99" finna-activity-text="avustajat" elokuva-avustajat="avustajat">A99</Activity>
+      <AgentName>Matti, Miia, Mietos, Miro, Maria. (Sulkeet)</AgentName>
+    </HasAgent>
+    <HasAgent elonet-tag="elonayttelijakokoonpano">
+      <Activity tehtava="Esitti yhtyettä" finna-activity-code="A99">A99</Activity>
+      <AgentName>Soittokunta.</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_kokoonpano</IDTypeName>
+        <IDValue>1417980</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <ProductionEvent elonet-tag="elotelevisioesitys">
+      <ProductionEventType elokuva-elotelevisioesitys-esitysaika="7.05.1995" elokuva-elotelevisioesitys-paikka="Kanava 1" elokuva-elotelevisioesitys-katsojamaara="1 000 (mediaani)">BRO</ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="elotelevisioesitys">
+      <ProductionEventType elokuva-elotelevisioesitys-esitysaika="15.05.2011" elokuva-elotelevisioesitys-paikka="Kanava 2" elokuva-elotelevisioesitys-katsojamaara="5 000">BRO</ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="tarkastus">
+      <ProductionEventType elokuva-tarkastus-tarkastuselin="T" elokuva-tarkastus-tarkastusnro="A-5" elokuva-tarkastus-formaatti="1 mm" elokuva-tarkastus-pituus="1 m" elokuva-tarkastus-kesto="1 min" elokuva-tarkastus-ikaraja="S" elokuva-tarkastus-kuvakoko="laaja 1:1,75" elokuva-tarkastus-muuttiedot="Tarkastajat: Tarkastajat OY" elokuva-tarkastus-tarkastuttaja="Finna-filmit Oy">CEN</ProductionEventType>
+      <DateText>15.02.2001</DateText>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="elofestivaaliosallistuminen">
+      <ProductionEventType elokuva-elofestivaaliosallistuminen-aihe="Ensimmäinen festivaaliosallistuminen">FSC</ProductionEventType>
+      <Region>
+        <RegionName>Leppävaara, Suomi</RegionName>
+      </Region>
+      <DateText>1990</DateText>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="elofestivaaliosallistuminen">
+      <ProductionEventType elokuva-elofestivaaliosallistuminen-aihe="Toinen festivaaliosallistuminen">FSC</ProductionEventType>
+      <Region>
+        <RegionName>Lahti, Suomi</RegionName>
+      </Region>
+      <DateText>1991</DateText>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="ensiesityspaiva">
+      <ProductionEventType>PRE</ProductionEventType>
+      <DateText>01.01.2001</DateText>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="ensiesityspaikat">
+      <ProductionEventType>PRE</ProductionEventType>
+      <Region>
+        <RegionName>Leppävaara: Sellosali 1;Karjaa: Bio Pallas</RegionName>
+      </Region>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="eloulkomaanmyynti">
+      <ProductionEventType elokuva-eloulkomaanmyynti-levittaja="Mat">PRL</ProductionEventType>
+      <Region>
+        <RegionName>Ruotsi</RegionName>
+      </Region>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="eloulkomaanmyynti">
+      <ProductionEventType elokuva-eloulkomaanmyynti-levittaja="Pat">PRL</ProductionEventType>
+      <Region>
+        <RegionName>Norja</RegionName>
+      </Region>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="teatterikopioidenlkm">
+      <ProductionEventType elokuva-teatterikopioidenlkm="1">SCR</ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="katsojaluku">
+      <ProductionEventType elokuva-katsojaluku="1 100">SCR</ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="muuesitys">
+      <ProductionEventType elokuva-muuesitys-aihe="ennakkoesitys">SCR</ProductionEventType>
+      <Region>
+        <RegionName>Mordor, Keskimaa</RegionName>
+      </Region>
+      <DateText>03.03.2000</DateText>
+    </ProductionEvent>
+    <SubjectTerms>
+      <Term>Testi</Term>
+      <Term>Unit</Term>
+      <Term>Forward</Term>
+    </SubjectTerms>
+    <Award>Paras elokuva.</Award>
+    <Award>Best movie.</Award>
+    <Award>Good movie.</Award>
+    <ContentDescription>
+      <DescriptionType>Synopsis</DescriptionType>
+      <DescriptionText>Tämä on synopsis.</DescriptionText>
+      <Language>fi</Language>
+    </ContentDescription>
+    <ContentDescription>
+      <DescriptionType>Content description</DescriptionType>
+      <DescriptionText>Tämä on sisällön kuvaus.</DescriptionText>
+      <Language>fi</Language>
+    </ContentDescription>
+    <ProductionEvent elonet-tag="musiikki">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_musiikki>&lt;br/&gt;Tästä musiikki-infosta poistuu br merkki alusta.</elokuva_musiikki>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="laji2fin">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_laji2fin>kauhu</elokuva_laji2fin>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="laji2fin">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_laji2fin>draama</elokuva_laji2fin>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="genre">
+      <ProductionEventType elokuva-genre="kauhuelokuva">DESCRIPTION</ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="genre">
+      <ProductionEventType elokuva-genre="erittäin kauhuelokuva">DESCRIPTION</ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="lehdistoarvio">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_lehdistoarvio>Tässä on lehdistöarvio.</elokuva_lehdistoarvio>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="huomautukset">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_huomautukset>Tässä on huomautukset.</elokuva_huomautukset>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="skftunniste">
+      <ProductionEventType elokuva-skftunniste="2001/6">DESCRIPTION</ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="kuvausaika">
+      <ProductionEventType elokuva-kuvausaika="10.6.1996 - syksy 2000 (L&#xE4;hde: ctrl+c 22.2.2010).">DESCRIPTION</ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="ulkokuvat">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_ulkokuvat>Tässä on tietoa ulkokuvista.</elokuva_ulkokuvat>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="sisakuvat">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_sisakuvat>Tässä on tietoa sisäkuvista.</elokuva_sisakuvat>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="kuvauspaikkahuomautus">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_kuvauspaikkahuomautus>Tässä on tietoa kuvauspaikkahuomautuksista.</elokuva_kuvauspaikkahuomautus>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="testijuttu">
+      <ProductionEventType elokuva-arkistoaineisto="Infoa arkistoaineistosta." elokuva-alkuperaisteos="lotr"></ProductionEventType>
+    </ProductionEvent>
+    <ProductionEvent>
+      <ProductionEventType elokuva-alkupvari="v&#xE4;ri" elokuva-alkupvarijarjestelma="rgb" elokuva-alkupaani="&#xE4;&#xE4;ni" elokuva-alkupaanijarjestelma="6+1" elokuva-kuvasuhde="1,75:1" elokuva-alkupkesto="1 min" elokuva-laji1fin="pitk&#xE4;" elokuva-tuotantokustannukset="5 &#x20AC;" elokuva-muut_tekniset_tiedot="Muita teknisiä tietoja.">MISC</ProductionEventType>
+    </ProductionEvent>
+    <Manifestation>
+      <Identifier scheme="KAVI">992118</Identifier>
+    </Manifestation>
+  </CinematographicWork>
+</ExchangeSet>
