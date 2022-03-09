@@ -1174,7 +1174,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         if (!($handler = $this->videoHandler->getHandler($source))) {
             return $this->cache[$cacheKey] = [];
         }
-        $videoUrls = [];
         $videos = [];
         foreach ($this->getAllRecordsXML() as $xml) {
             if (!($production = $xml->ProductionEvent->ProductionEventType ?? '')) {

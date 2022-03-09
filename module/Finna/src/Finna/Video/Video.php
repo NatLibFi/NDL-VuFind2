@@ -57,13 +57,6 @@ class Video
     protected $config;
 
     /**
-     * Record configuration
-     *
-     * @var \Laminas\Config\Config
-     */
-    protected $recordConfig;
-
-    /**
      * Constructor.
      *
      * @param HandlerPluginManager   $pluginManager Instanciated Handler
@@ -104,7 +97,7 @@ class Video
     }
 
     /**
-     * Get stream handler name.
+     * Get video handler name.
      *
      * @param string $source Datasource
      *
@@ -119,7 +112,7 @@ class Video
     }
 
     /**
-     * Check if stream is enabled for a datasource.
+     * Check if video is enabled for a datasource.
      *
      * @param string $source Datasource
      *
@@ -131,7 +124,7 @@ class Video
     }
 
     /**
-     * Get stream handler configuration for a datasource.
+     * Get video handler configuration for a datasource.
      *
      * @param string $source Datasource
      *
