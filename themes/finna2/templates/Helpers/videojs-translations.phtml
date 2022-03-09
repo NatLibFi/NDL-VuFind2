@@ -1,4 +1,4 @@
-<?php/*Don't add start or end tags*/?>
+<?php /*Don't add start or end tags*/ ?>
 <?php
     $translations = $this->jsTranslations()
         ->getJSONFromArray(
@@ -9,4 +9,4 @@
         );
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "VuFind.addTranslations($translations);", 'SET');
 ?>
-<?php/*Don't add start or end tags*/?>
+<?php /*Don't add start or end tags*/ ?>
