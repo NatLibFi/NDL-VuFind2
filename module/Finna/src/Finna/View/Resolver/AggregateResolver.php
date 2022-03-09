@@ -1,6 +1,6 @@
 <?php
 /**
- * Finna PHP template renderer.
+ * Finna aggregate resolver.
  *
  * PHP version 7
  *
@@ -20,52 +20,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category VuFind
- * @package  Renderers
+ * @package  Resolvers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\Renderer;
+namespace Finna\View\Resolver;
 
-use Laminas\View\Model\ModelInterface as Model;
+use Laminas\View\Renderer\RendererInterface as Renderer;
 
 /**
- * Finna PHP template renderer.
+ * Finna aggregate resolver.
  *
  * @category VuFind
- * @package  Renderers
+ * @package  Resolvers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class PhpRenderer extends \Laminas\View\Renderer\PhpRenderer
+class AggregateResolver extends \Laminas\View\Resolver\AggregateResolver
 {
     /**
-     * Processes a view script and returns the output.
+     * Resolve a template/pattern name to a resource the renderer can consume
      *
-     * @param string|Model           $nameOrModel Either the template to use, or a
-     * ViewModel. The ViewModel must have the template as an option in order to be
-     * valid.
-     * @param null|array|Traversable $values      Values to use when rendering. If
-     * none provided, uses those in the composed variables container.
+     * @param string        $name     Name
+     * @param null|Renderer $renderer Renderer
      *
-     * @return string The script output.
-     * @throws Exception\DomainException if a ViewModel is passed, but does not
-     *                                   contain a template option.
-     * @throws Exception\InvalidArgumentException if the values passed are not
-     *                                            an array or ArrayAccess object
-     * @throws Exception\RuntimeException if the template cannot be rendered
+     * @return false|string
      */
-    public function render($nameOrModel, $values = null)
+    public function resolve($name, Renderer $renderer = null)
     {
-        if ($nameOrModel instanceof Model) {
-            $nameOrModel->setTemplate(
-                $this->expandName($nameOrModel->getTemplate())
-            );
-        } else {
-            $nameOrModel = $this->expandName($nameOrModel);
-        }
-        return parent::render($nameOrModel, $values);
+        return parent::resolve($this->expandName($name), $renderer);
     }
 
     /**

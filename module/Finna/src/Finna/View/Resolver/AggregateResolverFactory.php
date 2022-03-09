@@ -1,6 +1,6 @@
 <?php
 /**
- * Finna PHP template renderer factory.
+ * Finna aggregate resolver factory.
  *
  * PHP version 7
  *
@@ -20,26 +20,28 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  * @category VuFind
- * @package  Renderers
+ * @package  Resolvers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\View\Renderer;
+namespace Finna\View\Resolver;
 
 use Interop\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
+use Laminas\View\Resolver as ViewResolver;
+use Laminas\View\Resolver\ResolverInterface;
 
 /**
- * Finna PHP template renderer factory.
+ * Finna aggregate resolver factory.
  *
  * @category VuFind
- * @package  Renderers
+ * @package  Resolvers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://github.com/NatLibFi/admininterface3
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class PhpRendererFactory implements FactoryInterface
+class AggregateResolverFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -48,7 +50,7 @@ class PhpRendererFactory implements FactoryInterface
      * @param string             $requestedName Requested name
      * @param null|array         $options       Options
      *
-     * @return PhpRenderer
+     * @return AggregateResolver
      * @throws ServiceNotFoundException If unable to resolve the service.
      * @throws ServiceNotCreatedException If an exception is raised when
      *     creating a service.
@@ -59,10 +61,25 @@ class PhpRendererFactory implements FactoryInterface
         $requestedName,
         ?array $options = null
     ) {
-        $renderer = new PhpRenderer();
-        $renderer->setHelperPluginManager($container->get('ViewHelperManager'));
-        $renderer->setResolver($container->get('ViewResolver'));
+        $resolver = new AggregateResolver();
 
-        return $renderer;
+        /* @var $mapResolver ResolverInterface */
+        $mapResolver             = $container->get('ViewTemplateMapResolver');
+        /* @var $pathResolver ResolverInterface */
+        $pathResolver            = $container->get('ViewTemplatePathStack');
+        /* @var $prefixPathStackResolver ResolverInterface */
+        $prefixPathStackResolver = $container->get('ViewPrefixPathStackResolver');
+
+        $resolver
+            ->attach($mapResolver)
+            ->attach($pathResolver)
+            ->attach($prefixPathStackResolver)
+            ->attach(new ViewResolver\RelativeFallbackResolver($mapResolver))
+            ->attach(new ViewResolver\RelativeFallbackResolver($pathResolver))
+            ->attach(
+                new ViewResolver\RelativeFallbackResolver($prefixPathStackResolver)
+            );
+
+        return $resolver;
     }
 }
