@@ -143,7 +143,7 @@
           <div class="note-info <?= $notes ? '' : ' hide' ?>"><strong><?=$this->transEsc('Note')?>:</strong></div>
           <?php if ($list_id): ?>
             <?php $markdown = $notes ? $this->markdown()->replaceDeprecatedTags($notes) : ''; ?>
-            <?= $this->render('components/organisms/widgets/finna-md-editable/finna-md-editable.phtml', [
+            <?= $this->render('components/organisms/widgets/finna-md-editable', [
                 'attributes' => ['class' => 'resource-note'],
                 'markdown' => $markdown,
                 'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',

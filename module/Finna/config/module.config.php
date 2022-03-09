@@ -350,6 +350,7 @@ $config = [
             'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
             'Laminas\Session\SessionManager' => 'Finna\Session\ManagerFactory',
+            'Laminas\View\Renderer\PhpRenderer' => 'Finna\View\Renderer\PhpRendererFactory',
             'League\CommonMark\MarkdownConverterInterface' => 'Finna\Service\MarkdownFactory',
         ],
         'aliases' => [
