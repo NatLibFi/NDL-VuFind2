@@ -158,7 +158,7 @@ finna.layout = (function finnaLayout() {
     });
     const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
     const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
-    if (('IntersectionObserver' in window) && (document.body.contains(document.querySelector('.narrowsearch-navigation')))) {
+    if (('IntersectionObserver' in window) && (document.body.contains(narrowSearchMobile))) {
       const narrowSearchMobileObserver = new IntersectionObserver(
         ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
         {
