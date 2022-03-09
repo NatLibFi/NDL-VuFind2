@@ -373,13 +373,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected $lazyRecordXML;
 
     /**
-     * Nonpresenter authors cache
-     *
-     * @var array
-     */
-    protected $nonPresenterAuthorsCache = null;
-
-    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
