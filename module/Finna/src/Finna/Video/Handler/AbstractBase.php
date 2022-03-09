@@ -71,7 +71,6 @@ abstract class AbstractBase implements \Laminas\Log\LoggerAwareInterface
     public function getData(array $data): array
     {
         $sourceConfig = $this->getSourceConfig();
-        var_dump($sourceConfig);
         $results = [];
         foreach ($data as $media) {
             if (empty($media['url'])) {
@@ -113,7 +112,6 @@ abstract class AbstractBase implements \Laminas\Log\LoggerAwareInterface
                 'warnings' => $media['warnings']
             ];
         }
-        var_dump($results);
         return $results;
     }
 
@@ -169,7 +167,6 @@ abstract class AbstractBase implements \Laminas\Log\LoggerAwareInterface
     {
         $results = [];
         $sourcePriority = 0;
-        var_dump($this->config);
         foreach ($this->config['video_sources'] ?? [] as $current) {
             $settings = explode('|', $current, 3);
             if (!isset($settings[0])) {
