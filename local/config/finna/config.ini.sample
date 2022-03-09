@@ -1773,10 +1773,3 @@ viewerPaddingAngle = 35
 ;debug = true
 ; Array of institutions which have proper preview images to show
 ;previewImages['museovirasto_testi'] = true
-
-; Settings for Video on demand service
-[VOD]
-;testUrl = "https://testurl.for.vod.fi/"
-;url = "https://productionurl.for.vod.fi/"
-;secret = "yourVODsecret"
-;timestampPrecision = 3000
