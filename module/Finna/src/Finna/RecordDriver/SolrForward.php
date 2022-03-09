@@ -380,27 +380,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     protected $nonPresenterAuthorsCache = null;
 
     /**
-     * VOD secret
-     *
-     * @var string
-     */
-    protected $VODSecret;
-
-    /**
-     * VOD production url
-     *
-     * @var string
-     */
-    protected $VODUrl;
-
-    /**
-     * Timestamp precision
-     *
-     * @var int
-     */
-    protected $timestampPrecision;
-
-    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
@@ -416,14 +395,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $searchSettings = null
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
-        if (strpos($_SERVER['HTTP_HOST'], "finna-pre") !== false) {
-            $this->VODUrl = $this->recordConfig->VOD->testUrl ?? '';
-        } else {
-            $this->VODUrl = $this->recordConfig->VOD->url ?? '';
-        }
-        $this->VODSecret = $this->recordConfig->VOD->secret ?? '';
-        $this->timestampPrecision
-            = $this->recordConfig->VOD->timestampPrecision ?? 3000;
         $this->searchSettings = $searchSettings;
     }
 
@@ -1206,32 +1177,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
-        // Get video URLs, if any
-        if (empty($this->recordConfig->Record->video_sources)) {
-            return [];
-        }
         $source = $this->getSource();
-        $sourceConfigs = [];
-        $sourcePriority = 0;
-        foreach ($this->recordConfig->Record->video_sources as $current) {
-            $settings = explode('|', $current, 4);
-            if (!isset($settings[2]) || $source !== $settings[0]) {
-                continue;
-            }
-            $sourceConfigs[] = [
-                'mediaType' => $settings[1],
-                'src' => $settings[2],
-                'sourceTypes' => explode(',', $settings[3] ?? 'mp4'),
-                'priority' => $sourcePriority++
-            ];
+        $handler = $this->videoHandler->getHandler($source);
+        if (!$handler) {
+            return $this->cache[$cacheKey] = [];
         }
-        if (!$sourceConfigs) {
-            return [];
-        }
-        $posterSource = $this->recordConfig->Record->poster_sources[$source] ?? '';
-        $vimeo_url = $this->recordConfig->Record->vimeo_url ?? '';
-
         $videoUrls = [];
+        $videos = [];
         foreach ($this->getAllRecordsXML() as $xml) {
             if (!($production = $xml->ProductionEvent->ProductionEventType ?? '')) {
                 continue;
@@ -1240,34 +1192,18 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $eventAttrs = $production->attributes();
             $url = (string)$eventAttrs->{'elokuva-elonet-materiaali-video-url'};
             $vimeoID = (string)$eventAttrs->{'vimeo-id'};
-            $vimeoURL = $this->recordConfig->Record->vimeo_url;
-            if (!$url && (!$vimeoID || !$vimeoURL)) {
-                continue;
-            }
             foreach ($xml->Title as $title) {
                 if (!isset($title->TitleText)) {
                     continue;
                 }
-
                 $videoURL = (string)$title->TitleText;
-                $videoSources = [];
                 $sourceType = strtolower(pathinfo($videoURL, PATHINFO_EXTENSION));
-
-                $poster = '';
                 $videoType = 'elokuva';
                 $warnings = [];
                 if ($titleValue = $title->PartDesignation->Value ?? '') {
                     $attributes = $titleValue->attributes();
                     $videoType
                         = (string)($attributes->{'video-tyyppi'} ?? 'elokuva');
-
-                    if ($posterFilename = (string)$titleValue) {
-                        $poster = str_replace(
-                            '{filename}',
-                            $posterFilename,
-                            $posterSource
-                        );
-                    }
 
                     // Check for warnings
                     if (!empty($attributes->{'video-rating'})) {
@@ -1284,123 +1220,19 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
 
-                if ($vimeoID && $vimeoURL) {
-                    $videoURLs[] = [
-                        'url' => str_replace(
-                            '{videoid}',
-                            $vimeoID,
-                            $vimeoURL
-                        ),
-                        'posterUrl' => $poster,
-                        // Include both 'text' and 'desc' for online and normal urls
-                        'text' => $videoType,
-                        'desc' => $videoType,
-                        'source' => $source,
-                        'embed' => 'iframe',
-                        'warnings' => $warnings
-                    ];
-                } elseif ($vimeo && $this->VODUrl) {
-                    $result = [
-                        'text' => $description ?: $videoType,
-                        'desc' => $description ?: $videoType,
-                        'source' => $source,
-                        'embed' => 'video',
-                        'warnings' => $warnings
-                    ];
-                    $videoUrls[] = array_merge($result, $this->getVODData($vimeo));
-                }
-
-                foreach ($sourceConfigs as $config) {
-                    if (!in_array($sourceType, $config['sourceTypes'])) {
-                        continue;
-                    }
-                    $videoSources[] = [
-                        'src' => str_replace(
-                            '{videoname}',
-                            $videoURL,
-                            $config['src']
-                        ),
-                        'type' => $config['mediaType'],
-                        'priority' => $config['priority']
-                    ];
-                }
-
-                if (!$videoSources) {
-                    continue;
-                }
-
-                usort(
-                    $videoSources,
-                    function ($a, $b) {
-                        return $a['priority'] - $b['priority'];
-                    }
-                );
-
-                $videoURLs[] = [
-                    'url' => $url,
-                    'posterUrl' => $poster,
-                    'videoSources' => $videoSources,
-                    'posterUrl' => $poster,
-                    'url' => $url,
-                    // Include both 'text' and 'desc' for online and normal urls
+                $videos[] = [
+                    'id' => $vimeoID,
+                    'url' => $videoURL,
+                    'posterName' => (string)$titleValue,
+                    'type' => $videoType,
+                    'description' => $videoType,
                     'text' => $videoType,
-                    'desc' => $videoType,
                     'source' => $source,
-                    'embed' => 'video',
                     'warnings' => $warnings
                 ];
             }
         }
-        return $this->cache[$cacheKey] = $videoURLs;
-    }
-
-    /**
-     * Get url with hashed signature for VODs
-     *
-     * @param string $path Path to video location after base url
-     *
-     * @return string
-     */
-    protected function getVODUrl($path): string
-    {
-        $now = time();
-        // Round the timestamp to the wanted precision to allow CDN caching by not
-        // generating unique URLs for every response.
-        $timestamp = $now - $now % $this->timestampPrecision;
-        $hashable = implode(':', [$path, (string)$timestamp]);
-        $signature = hash_hmac('sha256', $hashable, $this->VODSecret);
-        return sprintf(
-            '%s%s?ts=%s&sig=%s',
-            $this->VODUrl,
-            $path,
-            $timestamp,
-            $signature
-        );
-    }
-
-    /**
-     * Return VOD data as associative array for video
-     *  - url          Generated VOD url
-     *  - posterUrl    Generated poster url
-     *  - videoSources Videosources for video js
-     *
-     * @param string $videoId Video id for vimeo
-     *
-     * @return array
-     */
-    public function getVODData($videoId): array
-    {
-        $isChrome = stripos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
-        $format = $isChrome ? 'mpd' : 'm3u8';
-        $url = $this->getVODUrl('/playlist/' . $videoId . '.' . $format);
-        $posterUrl = $this->getVODUrl('/picture/' . $videoId . '.1280.jpg');
-        $videoSources = [
-            'src' => $url,
-            'type' => $format === 'mpd'
-                ? 'application/dash+xml'
-                : 'application/x-mpegURL'
-        ];
-        return compact('url', 'posterUrl', 'videoSources');
+        return $this->cache[$cacheKey] = $handler->getData($videos);
     }
 
     /**

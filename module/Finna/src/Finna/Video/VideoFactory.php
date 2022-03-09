@@ -1,11 +1,10 @@
 <?php
 /**
- * Factory for SolrDefault record drivers.
+ * Video handler factory.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2018.
- * Copyright (C) The National Library of Finland 2018-2022.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,35 +20,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  RecordDrivers
- * @author   Demian Katz <demian.katz@villanova.edu>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Video
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\RecordDriver;
+namespace Finna\Video;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Factory for SolrDefault record drivers.
+ * Video handler factory.
  *
  * @category VuFind
- * @package  RecordDrivers
- * @author   Demian Katz <demian.katz@villanova.edu>
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  Video
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class SolrDefaultFactory
-    extends \VuFind\RecordDriver\SolrDefaultWithoutSearchServiceFactory
+class VideoFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -70,14 +63,12 @@ class SolrDefaultFactory
         $requestedName,
         array $options = null
     ) {
-        $driver = parent::__invoke($container, $requestedName, $options);
-        $driver->attachSearchService($container->get(\VuFindSearch\Service::class));
-        $driver->attachDateConverter($container->get(\VuFind\Date\Converter::class));
-        $driver->attachDatasourceSettings(
+        if (!empty($options)) {
+            throw new \Exception('Unexpected options passed to factory.');
+        }
+        return new $requestedName(
+            $container->get(\Finna\Video\Handler\PluginManager::class),
             $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
         );
-        $driver->attachVideoHandler($container->get(\Finna\Video\Video::class));
-
-        return $driver;
     }
 }
