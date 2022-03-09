@@ -158,12 +158,12 @@ finna.layout = (function finnaLayout() {
     });
     const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
     const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
-    if (('IntersectionObserver' in window) && (document.body.contains(narrowSearchMobile))) {
+    if (('IntersectionObserver' in window) && null !== narrowSearchMobile) {
       const narrowSearchMobileObserver = new IntersectionObserver(
         ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
         {
           threshold: [1],
-          rootMargin: '-64px',
+          rootMargin:  '-' + narrowSearchMobile.offsetHeight + 'px',
         }
       );
       narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
