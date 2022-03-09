@@ -1777,6 +1777,6 @@ viewerPaddingAngle = 35
 ; Settings for Video on demand service
 [VOD]
 ;testUrl = "https://testurl.for.vod.fi/"
-;url = "https://url.for.vod.fi/"
+;url = "https://productionurl.for.vod.fi/"
 ;secret = "yourVODsecret"
 ;timestampPrecision = 3000
