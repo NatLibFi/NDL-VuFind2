@@ -52,8 +52,8 @@ class MultiSelect extends HTMLElement {
     fieldSet.append(ul);
 
     const clearButton = document.createElement('button');
-    clearButton.classList.add('clear');
-    clearButton.innerHTML = 'Clear';
+    clearButton.classList.add('clear', 'btn', 'btn-link');
+    clearButton.innerHTML = this.dataset.clearText;
     this.clear = clearButton;
     fieldSet.append(clearButton);
 
