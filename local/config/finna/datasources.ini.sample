@@ -78,7 +78,7 @@ onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 ; ### Vimeo:
 video['handler'] = 'Vimeo'
 video['url] = 'https://vimeo.com/{videoid}'
-stream['posterUrl'] = 'https://link.to.posterUrl/{filename}'
+video['posterUrl'] = 'https://link.to.posterUrl/{filename}'
 
 ; ### Elonet:
 video['handler'] = 'Elonet'
