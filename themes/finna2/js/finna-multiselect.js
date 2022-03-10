@@ -11,7 +11,6 @@ class MultiSelect extends HTMLElement {
       'labelText': 'Label text for label: (data-label-text)',
       'entries': 'Entries for multiselect: (data-entries)'
     };*/
-    this.verifyData();
     this.entries = JSON.parse(this.dataset.entries);
     delete(this.dataset.entries);
     this.regExp = new RegExp(/[a-öA-Ö0-9-_ ]/);
@@ -76,21 +75,21 @@ class MultiSelect extends HTMLElement {
       const option = document.createElement('option');
       option.value = document.createTextNode(entry.value).nodeValue;
       option.innerHTML = innerValue;
-      if (entry.selected) {
-        option.setAttribute('selected', 'selected');
-      }
-
+      const isSelected = entry.selected;
       this.select.append(option);
 
       const multiOption = document.createElement('li');
       multiOption.classList.add('option');
       multiOption.setAttribute('id', `${this.id}_opt_${index++}`);
       multiOption.reference = option;
-      multiOption.setAttribute('aria-selected', option.getAttribute('selected') === 'selected');
+
       multiOption.innerHTML = innerValue;
       multiOption.dataset.formatted = innerValue;
-
-
+      if (isSelected) {
+        option.setAttribute('selected', 'selected');
+        multiOption.classList.add('selected');
+      }
+      multiOption.setAttribute('aria-selected', option.getAttribute('selected') === 'selected');
       if (entry.level) {
         const level = parseInt(entry.level);
         if (levelCache < level) {
