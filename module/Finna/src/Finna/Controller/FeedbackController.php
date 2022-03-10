@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -49,31 +49,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
     use LoggerAwareTrait;
 
     /**
-     * True if form was submitted successfully.
-     *
-     * @var bool
-     */
-    protected $submitOk = false;
-
-    /**
-     * Show response after form submit.
-     *
-     * @param View    $view     View
-     * @param Form    $form     Form
-     * @param boolean $success  Was email sent successfully?
-     * @param string  $errorMsg Error message (optional)
-     *
-     * @return void
-     */
-    protected function showResponse($view, $form, $success, $errorMsg = null)
-    {
-        if ($success) {
-            $this->submitOk = true;
-        }
-        parent::showResponse($view, $form, $success, $errorMsg);
-    }
-
-    /**
      * Handles rendering and submit of dynamic forms.
      * Form configurations are specified in FeedbackForms.yaml.
      *
@@ -110,19 +85,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         }
         $view->form->populateValues($data);
 
-        if (!$this->submitOk) {
-            return $view;
-        }
-
-        // Reset flashmessages set by VuFind
-        $msg = $this->flashMessenger();
-        $namespaces = ['error', 'info', 'success'];
-        foreach ($namespaces as $ns) {
-            $msg->setNamespace($ns);
-            $msg->clearCurrentMessages();
-        }
-
-        $view->setTemplate('feedback/response');
         return $view;
     }
 
@@ -202,7 +164,17 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
         }
 
         if ($form->getSendMethod() === Form::HANDLER_EMAIL) {
-            return parent::sendEmail(...func_get_args());
+            // We may have modified the params, so state them explicitly:
+            return parent::sendEmail(
+                $recipientName,
+                $recipientEmail,
+                $senderName,
+                $senderEmail,
+                $replyToName,
+                $replyToEmail,
+                $emailSubject,
+                $emailMessage
+            );
         } elseif ($form->getSendMethod() === Form::HANDLER_DATABASE) {
             $this->saveToDatabase(
                 $form,
@@ -274,12 +246,32 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
 
         $url = rtrim($this->getServerUrl('home'), '/');
 
-        $message = $form->getContentsAsArray((array)$this->params()->fromPost());
-        $paramMap = [
+        $recordParamMap = [
+            'record' => 'record',
             'record_id' => 'recordId',
             'record_info' => 'recordInfo'
         ];
-        foreach ($paramMap as $from => $to) {
+
+        $postParams = (array)$this->params()->fromPost();
+        $message = $form->getContentsAsArray($postParams);
+        foreach ($form->mapRequestParamsToFieldValues($postParams) as $field) {
+            if (in_array($field['name'], array_keys($recordParamMap))) {
+                continue;
+            }
+            $details = [
+                'type' => $field['type'],
+                'label' => $field['label'] ?? '',
+                'labelTranslated' => $this->translate($field['label'] ?? ''),
+                'value' => $field['value'] ?? '',
+            ];
+            if (isset($field['valueLabel'])) {
+                $details['valueLabel'] = $field['valueLabel'];
+                $details['valueLabelTranslated']
+                    = $this->translate($field['valueLabel']);
+            }
+            $message['fields'][$field['name']] = $details;
+        }
+        foreach ($recordParamMap as $from => $to) {
             if (isset($message[$from])) {
                 $message[$to] = $message[$from];
                 unset($message[$from]);
@@ -330,8 +322,23 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
             }
         }
 
-        $messageJson = json_encode($message);
         $apiSettings = $form->getApiSettings();
+        if ('test' === $apiSettings['url']) {
+            if ($this->inLightbox()) {
+                $this->flashMessenger()->addErrorMessage(
+                    json_encode($message, JSON_PRETTY_PRINT)
+                );
+                return [
+                    false,
+                    'Simulated API request not sent'
+                ];
+            } else {
+                header('Content-type: application/json');
+                echo json_encode($message, JSON_PRETTY_PRINT);
+                exit(0);
+            }
+        }
+        $messageJson = json_encode($message);
         $httpService = $this->serviceLocator->get(\VuFindHttp\HttpService::class);
         $client = $httpService->createClient(
             $apiSettings['url'],

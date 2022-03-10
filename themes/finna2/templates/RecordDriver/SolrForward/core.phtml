@@ -38,7 +38,7 @@
 
     <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
 
-    <?php if ($this->resolver('record/record-organisation-menu.phtml') && $this->driver->getSourceIdentifier() == 'Solr'): ?>
+    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
       <div class="organisation-menu">
         <?=$this->render('record/record-organisation-menu.phtml') ?>
       </div>
@@ -235,7 +235,7 @@
             'options' => ['context' => ['class' => 'field-group-production']]],
           ['label' => 'Distribution Information',
             'lines' => ['Distribution', 'Premiere Night', 'Premiere Theaters',
-              'Film Copies', 'Other Screenings', 'Broadcasting Dates', 'Awards',
+              'Film Copies', 'Number of Viewers', 'Other Screenings', 'Broadcasting Dates', 'Awards',
               'Film Festivals', 'Foreign Distribution'
             ],
             'options' => ['context' => ['class' => 'field-group-distribution']]],

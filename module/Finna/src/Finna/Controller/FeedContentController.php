@@ -52,7 +52,8 @@ class FeedContentController extends ContentController
         $event = $this->getEvent();
         $routeMatch = $event->getRouteMatch();
         $page = $routeMatch->getParam('page');
-        $element = $routeMatch->getParam('element');
+        $element = $routeMatch->getParam('element')
+            ?? $this->params()->fromQuery('element');
         $feedUrl = $this->params()->fromQuery('feedUrl', false);
         $rssConfig = $this->serviceLocator->get(\VuFind\Config\PluginManager::class)
             ->get($feedUrl ? 'rss-organisation-page' : 'rss');

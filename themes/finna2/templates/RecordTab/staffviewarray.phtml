@@ -15,13 +15,12 @@
     }
   ?>
   <h2><?=$this->transEsc('Metadata')?> (<?=$this->escapeHtml($format)?>)</h2>
-  <pre id="record-data">
   <?php
     $dom = new DOMDocument('1.0');
     $dom->preserveWhiteSpace = false;
     $dom->formatOutput = true;
     if ($dom->loadXML($rawFieldData['fullrecord'])) {
-      echo $this->escapeHtml($dom->saveXML());
+      echo '<pre id="record-data">' . $this->escapeHtml($dom->saveXML()) . '</pre>';
       $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'vendor/highlight.pack.js');
       echo $this->inlineScript();
       $script = <<<JS
@@ -33,10 +32,9 @@
 JS;
       echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
     } else {
-      echo $this->escapeHtml($rawFieldData['fullrecord']);
+      echo '<pre id="record-data">' . $this->escapeHtml($rawFieldData['fullrecord']) . '</pre>';
     }
   ?>
-</pre>
 <h2><?=$this->transEsc('staff_view_finna_index')?></h2>
 <?php endif; ?>
 <table class="citation table table-striped">

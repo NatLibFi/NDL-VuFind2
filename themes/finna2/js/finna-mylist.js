@@ -4,16 +4,11 @@ finna.myList = (function finnaMyList() {
   var mdEditable = null;
   var editableSettings = {'minWidth': 200, 'addToHeight': 100};
   var save = false;
-  var listUrl = null;
   var refreshLists = null;
 
   // This is duplicated in image-popup.js to avoid dependency
   function getActiveListId() {
     return $('input[name="listID"]').val();
-  }
-
-  function onCustomOrderSaved(/*ev, data*/) {
-    location.href = listUrl;
   }
 
   function toggleErrorMessage(mode) {
@@ -391,7 +386,7 @@ finna.myList = (function finnaMyList() {
     // hide/show notes on images
     $('.note-button:not(.inited)').each(function initNotes() {
       var btn = $(this);
-      var noteOverlay = btn.siblings('.note-overlay-grid, .note-overlay-condensed, .note-overlay-list').first();
+      var noteOverlay = btn.siblings('.note-overlay-grid, .note-overlay-condensed').first();
       btn.off('click').on('click', function onClick(e) {
         e.stopPropagation();
         btn.add(noteOverlay).toggleClass('note-show', !btn.hasClass('note-show'));
@@ -437,10 +432,10 @@ finna.myList = (function finnaMyList() {
       var children = sortable.el.children;
       if (children.length > 0) {
         for (var i = 0; i < children.length; i++) {
-          list.push(children[i].innerHTML);
+          list.push(children[i].id);
         }
       }
-      $('#sort_form input[name="orderedList"]').val(JSON.stringify(list));
+      this.querySelector('input[name="orderedList"]').value = JSON.stringify(list);
       return true;
     });
   }
@@ -494,7 +489,6 @@ finna.myList = (function finnaMyList() {
   }
 
   var my = {
-    onCustomOrderSaved: onCustomOrderSaved,
     initFavoriteOrderingFunctionality: initFavoriteOrderingFunctionality,
     init: function init() {
       initEditComponents();

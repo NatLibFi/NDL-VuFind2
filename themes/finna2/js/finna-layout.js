@@ -149,6 +149,17 @@ finna.layout = (function finnaLayout() {
     });
   }
 
+  function initMobileCartIndicator() {
+    $('.btn-bookbag-toggle a').on('click', function onClickMobileCart() {
+      if ($(this).hasClass('cart-add')){
+        $('.navbar-toggle').removeClass('activated');
+        setTimeout(function triggerAnimation() {
+          $('.navbar-toggle').addClass('activated');
+        }, 100);
+      }
+    });
+  }
+
   function initCheckboxClicks() {
     $('.template-name-mylist input.checkbox-select-item').on('click', function onClickCheckbox() {
       var actions = $('.mylist-functions button, .mylist-functions select');
@@ -183,6 +194,27 @@ finna.layout = (function finnaLayout() {
   }
 
   function initSearchboxFunctions() {
+    var searchForm = document.querySelector('.searchForm.navbar-form');
+    if (searchForm) {
+      var submitButton = searchForm.querySelector('button[type="submit"]');
+      if (submitButton) {
+        var mouseUp = function onMouseUp(ev) {
+          if (1 === ev.button && ev.target === submitButton || submitButton.contains(ev.target)) {
+            searchForm.setAttribute('target', '_blank');
+            searchForm.submit();
+            searchForm.removeAttribute('target');
+          }
+          document.removeEventListener('mouseup', mouseUp);
+        };
+        submitButton.addEventListener('mousedown', function listenToMiddleClick(e) {
+          if (1 === e.button) {
+            document.removeEventListener('mouseup', mouseUp);
+            document.addEventListener('mouseup', mouseUp);
+          }
+        });
+      }
+    }
+
     if ($('.navbar-form .checkbox')[0]) {
       $('.autocomplete-results').addClass('checkbox-active');
     }
@@ -266,9 +298,6 @@ finna.layout = (function finnaLayout() {
           holder.addClass('opened');
           VuFind.itemStatuses.check(holder);
           finna.itemStatus.initDedupRecordSelection(holder);
-          onSlideComplete = function handleSlideComplete() {
-            holder.find('.recordcover').trigger('unveil');
-          };
         }
 
         $(this).nextAll('.condensed-collapse-data').first().slideToggle(120, 'linear', onSlideComplete);
@@ -306,6 +335,9 @@ finna.layout = (function finnaLayout() {
     // Add count descriptor to every facet value node for accessibility
     tree.find('.facet').each(function appendDescriptors() {
       var badge = $(this).find('.badge');
+      if (badge.length === 0) {
+        return;
+      }
       badge.attr('aria-hidden', 'true');
       if ($(this).find('.facet-value .sr-only').length > 0) {
         return;
@@ -751,6 +783,16 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  function initPrintTriggers() {
+    $('[data-trigger-print]').off('click').on(
+      'click',
+      function printWindow() {
+        window.print();
+        return false;
+      }
+    );
+  }
+
   var my = {
     getOrganisationPageLink: getOrganisationPageLink,
     isTouchDevice: isTouchDevice,
@@ -776,6 +818,7 @@ finna.layout = (function finnaLayout() {
       initTruncate();
       initContentNavigation();
       initMobileNarrowSearch();
+      initMobileCartIndicator();
       initCheckboxClicks();
       initToolTips();
       initModalToolTips();
@@ -800,6 +843,7 @@ finna.layout = (function finnaLayout() {
       setImagePaginatorTranslations();
       initImagePaginators();
       initHelpTabs();
+      initPrintTriggers();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };

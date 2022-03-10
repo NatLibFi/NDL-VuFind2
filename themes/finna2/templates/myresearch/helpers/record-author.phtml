@@ -1,13 +1,21 @@
 <!-- START of: finna - myresearch/helpers/record-author.phtml -->
 <?php
+  $author = null;
   $authors = $record->tryMethod('getNonPresenterAuthors', [], false);
-  if (!empty($authors[0])):
+  if (!empty($authors[0])) {
     $author = $authors[0];
+  } else {
+    $presenters = $record->tryMethod('getPresenters', [], false);
+    if (!empty($presenters['presenters'][0])) {
+      $author = $presenters['presenters'][0];
+    }
+  }
+  if (null !== $author):
 ?>
   <?=$this->record($record)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?><br/>
 <?php elseif (false === $authors):?>
   <?php
-    // Fallback for missing records
+    // Fallback for missing records that don't support getNonPresenterAuthors/getPresenters
     $listAuthor = $record->tryMethod('getPrimaryAuthor');
     if (!empty($listAuthor)):
   ?>

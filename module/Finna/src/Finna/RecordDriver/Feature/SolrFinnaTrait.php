@@ -61,6 +61,13 @@ trait SolrFinnaTrait
     protected $cache = [];
 
     /**
+     * An array of non-displayable formats
+     *
+     * @var array
+     */
+    protected $undisplayableFormats;
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - urls        Image URLs
      *   - small     Small image (mandatory)
@@ -583,10 +590,13 @@ trait SolrFinnaTrait
             if ($isbn = $this->getFirstISBN()) {
                 $result['invisbn'] = $isbn;
             }
+        } elseif (is_string($result)
+            && is_callable([$this, 'isUrlLoadable'])
+            && !$this->isUrlLoadable($result, $this->getUniqueID())
+        ) {
+            $result = false;
         }
-
-        $this->cache[$cacheKey] = $result;
-        return $result;
+        return $this->cache[$cacheKey] = $result;
     }
 
     /**
@@ -758,6 +768,25 @@ trait SolrFinnaTrait
     public function isAuthorityRecord()
     {
         return false;
+    }
+
+    /**
+     * Can the format not be properly displayed?
+     *
+     * @param string $format Format to check.
+     *
+     * @return bool
+     */
+    public function isUndisplayableFormat(string $format): bool
+    {
+        if (!isset($this->undisplayableFormats)) {
+            $this->undisplayableFormats = explode(
+                ':',
+                $this->mainConfig->Record->undisplayable_file_formats
+                ?? 'tif:tiff:3d-pdf:3d model:glb:obj:gltf'
+            );
+        }
+        return in_array($format, $this->undisplayableFormats);
     }
 
     /**

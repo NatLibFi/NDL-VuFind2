@@ -20,6 +20,7 @@
     @media(max-width: @screen-xs-max) {
       display: block;
       width: 100%;
+      float: none;
     }
     .recordcover-container {
       position: relative;
@@ -112,6 +113,9 @@
   }
   .label {
     display: inline-block;
+    @media print {
+      border: 0;
+    }
   }
   .record-versions {
     font-size: 0.9em;
@@ -559,6 +563,7 @@ a.authority {
 .summary {
   color: @gray-light;
   font-size: 1.05em;
+  line-height: 1.35em;
   margin-bottom: 10px;
 }
 .show-details-button, .hide-details-button, .toggle-image-information {
@@ -670,6 +675,12 @@ a.authority {
   }
   .template-name-view .record .record-title {
     margin-top: 10px;
+  }
+}
+
+@media print {
+  .template-dir-record .search-filters {
+    display: none;
   }
 }
 
@@ -906,8 +917,12 @@ a.authority {
 }
 
 .record-main .recordProvidedBy {
-  &:extend(.sidebar .recordProvidedBy all);
-  h2:extend(.sidebar > h2) {};
+  border: @sidebar-border;
+  padding: 0 15px 10px 15px;
+  margin-bottom: 10px;
+  h2 {
+    font-size: 20px;
+  }
   @media (min-width: @screen-sm-min) {
     max-width: 300px;
   }
