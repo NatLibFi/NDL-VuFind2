@@ -592,3 +592,59 @@
 .template-dir-primo .template-name-advanced .adv-group {
   margin-bottom: 20px;
 }
+
+finna-multiselect {
+  display: block;
+  .search {
+    width: 100%;
+    border-radius: 4px 4px 0 0;
+  }
+  .clear {
+    padding: 2px 0;
+  }
+  ul.list {
+    height: 200px;
+    background-color: white;
+    overflow-y: scroll;
+    border: 1px solid lightgray;
+    border-radius: 0 0 4px 4px;
+    margin: 0;
+    border-top: none;
+    position: relative;
+    padding-left: 5px;
+    list-style: initial;
+    .option {
+      &::before {
+        content: '\f096';
+        font-family: 'FontAwesome';
+        margin: 0px 4px;
+        font-weight: initial;
+        display: inline-block;
+        width: 12px;
+        font-size: 16px;
+      }
+      &[aria-selected="true"] {
+        &::before {
+          content: '\f046';
+        }
+      }
+    }
+
+
+    .option.option-child {
+      .generate-hierarchy(6);
+      .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
+        &.child-width-@{i} {
+          padding: 0 0 0 ((@i) * 10px);
+        }
+        .generate-hierarchy(@n, (@i + 1));
+      }
+    }
+    .option.active {
+      background-color: lightgray;
+    }
+  }
+  .parent-holder {
+
+  }
+}

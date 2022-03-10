@@ -1,346 +1,372 @@
-/* global finna, VuFind, jsHelper */
+/* global finna */
+class MultiSelect extends HTMLElement {
+  constructor()
+  {
+    // Always call super first
+    super();
+    /*{
+      'labelId': 'Id for the label: (data-label-id)',
+      'placeholder': 'Placeholder for the search: (data-placeholder)',
+      'label': 'Label for multiselect: (data-label)',
+      'labelText': 'Label text for label: (data-label-text)',
+      'entries': 'Entries for multiselect: (data-entries)'
+    };*/
+    this.verifyData();
+    this.entries = JSON.parse(this.dataset.entries);
+    delete(this.dataset.entries);
+    this.regExp = new RegExp(/[a-öA-Ö0-9-_ ]/);
+    this.words = [];
+    this.wordCache = [];
 
-finna.multiSelect = (function multiSelect() {
-  var i = 0;
-  var regExp = new RegExp(/[a-öA-Ö0-9-_ ]/);
+    const fieldSet = document.createElement('fieldset');
+    this.append(fieldSet);
 
-  function MultiSelect(select, id) {
-    var _ = this;
-    _.id = id;
-    _.select = select;
-    _.select.classList.remove('init');
-    _.createElements();
-    _.select.style.display = 'none';
-    _.deleteButton = _.select.parentNode.querySelector('button.clear');
-    _.words = [];
-    _.wordCache = [];
-    _.charCache = "";
-    _.wasClicked = false;
-    _.active = null;
-    _.createList();
+    const label = document.createElement('label');
+    label.setAttribute('id', this.dataset.labelId);
+    label.innerHTML = this.dataset.labelText;
+    this.label = label;
+    fieldSet.append(label);
+
+    const select = document.createElement('select');
+    select.style.display = 'none';
+    select.setAttribute('name', 'filter[]');
+    select.setAttribute('multiple', 'multiple');
+    this.select = select;
+    fieldSet.append(select);
+
+    const searchForm = document.createElement('input');
+    searchForm.classList.add('search');
+    searchForm.setAttribute('type', 'text');
+    searchForm.setAttribute('placeholder', this.dataset.placeholder);
+    searchForm.setAttribute('aria-labelledby', this.label.id);
+    this.search = searchForm;
+    fieldSet.append(searchForm);
+
+    const ul = document.createElement('ul');
+    ul.classList.add('list');
+    ul.setAttribute('aria-label', this.dataset.label);
+    ul.setAttribute('aria-multiselectable', 'true');
+    ul.setAttribute('role', 'listbox');
+    ul.setAttribute('aria-activedescendant', '');
+    ul.setAttribute('tabindex', '0');
+    this.multiSelect = ul;
+    fieldSet.append(ul);
+
+    const clearButton = document.createElement('button');
+    clearButton.classList.add('clear');
+    clearButton.innerHTML = 'Clear';
+    this.clear = clearButton;
+    fieldSet.append(clearButton);
+
+    this.createSelect();
+    this.setEvents();
   }
 
-  MultiSelect.prototype.createElements = function createElements() {
-    var _ = this;
-    _.ul = jsHelper.createElement('ul', 'finna-multiselect done', {
-      'aria-label': _.select.getAttribute('data-label'),
-      'aria-multiselectable': 'true',
-      'role': 'listbox',
-      'aria-activedescendant': '',
-      'tabindex': '0'
-    });
-    _.searchField = jsHelper.createElement('input', 'finna-multiselect search form-control', {
-      'type': 'text',
-      'placeholder': _.select.getAttribute('data-placeholder'),
-      'aria-labelledby': _.select.getAttribute('aria-labelledby')
-    });
-    _.deleteButton = jsHelper.createElement('button', 'finna-multiselect clear btn btn-link');
-    _.deleteButton.innerHTML = VuFind.translate('clearCaption');
-    _.select.insertAdjacentElement('afterend', _.searchField);
-    _.searchField.insertAdjacentElement('afterend', _.ul);
-    _.ul.insertAdjacentElement('afterend', _.deleteButton);
-  };
+  /**
+   * Create select and multiselect elements.
+   */
+  createSelect()
+  {
+    let index = 0;
+    let levelCache = 0;
+    let previousElement;
+    let currentParent;
+    this.entries.forEach((entry) => {
+      const innerValue = document.createTextNode(entry.displayText).nodeValue;
+      const option = document.createElement('option');
+      option.value = document.createTextNode(entry.value).nodeValue;
+      option.innerHTML = innerValue;
+      if (entry.selected) {
+        option.setAttribute('selected', 'selected');
+      }
 
-  MultiSelect.prototype.createList = function createList() {
-    var _ = this;
-    var k = 0;
-    var currentParent;
-    var previousElement;
-    var beforeLevel;
-    for (var ind = 0; ind < _.select.children.length; ind++) {
-      var cur = _.select.children[ind];
-      cur.setAttribute('data-id', k);
-      var formattedHtml = cur.innerHTML;
+      this.select.append(option);
 
-      var optionClone = jsHelper.createElement('li', 'option', {
-        'data-target': k,
-        'id': _.id + '_opt_' + k++,
-        'aria-selected': cur.selected,
-        'data-formatted': formattedHtml,
-        'role': 'option'
-      });
+      const multiOption = document.createElement('li');
+      multiOption.classList.add('option');
+      multiOption.setAttribute('id', `${this.id}_opt_${index++}`);
+      multiOption.reference = option;
+      multiOption.setAttribute('aria-selected', option.getAttribute('selected') === 'selected');
+      multiOption.innerHTML = innerValue;
+      multiOption.dataset.formatted = innerValue;
 
-      var value = document.createElement('div');
-      value.innerHTML = formattedHtml;
-      value.classList.add('value');
-      optionClone.insertAdjacentElement('afterbegin', value);
 
-      var level = cur.getAttribute('data-level');
-      if (level) {
-        level = parseInt(level);
-        if (beforeLevel < level) {
-          var ulGroup = document.createElement('ul');
-          ulGroup.classList.add('parent-holder');
-          ulGroup.setAttribute('role', 'group');
-          previousElement.insertAdjacentElement('beforeend', ulGroup);
-          currentParent = ulGroup;
-        } else if (beforeLevel > level && level !== 0) {
-          currentParent = jsHelper.findParent(currentParent, 'ul.parent-holder');
+      if (entry.level) {
+        const level = parseInt(entry.level);
+        if (levelCache < level) {
+          const group = document.createElement('ul');
+          group.classList.add('parent-holder');
+          group.setAttribute('role', 'group');
+
+          const previousClone = previousElement.cloneNode();
+
+          previousClone.innerHTML = previousElement.innerHTML;
+          previousClone.reference = previousElement.reference;
+
+          previousElement.innerHTML = '';
+          previousElement.removeAttribute('aria-selected');
+          previousElement.removeAttribute('id');
+          previousElement.classList.remove('option');
+          previousElement.append(previousClone);
+
+          this.words.pop();
+          this.words.push(previousClone);
+          previousElement.insertAdjacentElement('beforeend', group);
+          currentParent = group;
+        } else if (levelCache > level && level !== 0) {
+          currentParent = currentParent.closest('ul.parent-holder');
         }
         if (level === 0) {
-          _.ul.append(optionClone);
+          this.multiSelect.append(multiOption);
         } else {
-          if (beforeLevel !== level) {
-            if (beforeLevel === 0) {
+          if (levelCache !== level) {
+            if (levelCache === 0) {
               previousElement.classList.add('root');
             }
             previousElement.classList.add('option-parent');
             previousElement.setAttribute('aria-expanded', 'true');
           }
-          var line = jsHelper.createElement('div', 'line');
-          optionClone.insertAdjacentElement('afterbegin', line);
-          optionClone.classList.add('option-child');
-          optionClone.classList.add('child-width-' + level);
-          currentParent.insertAdjacentElement('beforeend', optionClone);
+          multiOption.classList.add('option-child');
+          multiOption.classList.add('child-width-' + level);
+          currentParent.insertAdjacentElement('beforeend', multiOption);
+
         }
-        beforeLevel = level;
+        levelCache = level;
       } else {
-        _.ul.append(optionClone);
+        this.multiSelect.append(multiOption);
       }
-      _.words.push(optionClone);
-      previousElement = optionClone;
-    }
-
-    _.setEvents();
-  };
-
-  MultiSelect.prototype.setEvents = function setEvents() {
-    var _ = this;
+      this.words.push(multiOption);
+      previousElement = multiOption;
+    });
+  }
+  
+  setEvents()
+  {
     // Record when the user clicks the list element
-    _.ul.addEventListener('mousedown', function preventFocus(e) {
+    this.multiSelect.addEventListener('mousedown', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      _.wasClicked = true;
-      this.focus();
+      this.clicked = true;
+      this.multiSelect.focus();
     });
 
     // Record when the user touches the list element
-    _.ul.addEventListener('touchstart', function preventFocus(e) {
+    this.multiSelect.addEventListener('touchstart', (e) => {
       e.stopPropagation();
-      _.wasClicked = true;
-      this.focus();
+      this.clicked = true;
+      this.multiSelect.focus();
     });
 
     // When the user focuses to the list element
-    _.ul.addEventListener('focusin', function setFirstActive() {
-      if (_.wasClicked) {
-        _.wasClicked = false;
+    this.multiSelect.addEventListener('focusin', () => {
+      if (this.clicked) {
+        this.clicked = false;
         return;
       }
 
-      if (_.active === null) {
-        _.setActive(this.parentNode.querySelector('.option:not(.hidden)'));
-        _.scrollList(true);
+      if (this.active === null) {
+        this.setActive(this.parentNode.querySelector('.option:not(.hidden)'));
+        this.scrollList(true);
       }
     });
 
     // Add dynamic listener to the list element, to check when the user clicks an option
-    jsHelper.addDynamicListener(_.ul, '.option', 'click', function optionClick() {
-      _.setActive(this);
-      _.setSelected();
+    this.multiSelect.addEventListener('click', (e) => {
+      if (e.target && e.target.classList.contains('option')){
+        this.setActive(e.target);
+        this.setSelected();
+      }
     });
 
-    // Event when the user focuses out of the element
-    _.ul.addEventListener('focusout', function clearState() {
-      _.clearActives();
-      _.clearCaches();
+    this.multiSelect.addEventListener('focusout', () => {
+      this.clearActives();
+      this.clearCaches();
     });
-    
-    // Check for keypresses in the list element
-    _.ul.addEventListener('keyup', function charMatches(e) {
+
+    this.multiSelect.addEventListener('keyup', (e) => {
       e.preventDefault();
-      var keyLower = e.key.toLowerCase();
-      if (regExp.test(keyLower) === false) {
+      const keyLower = e.key.toLowerCase();
+      if (this.regExp.test(keyLower) === false) {
         return;
       }
-      if (_.charCache !== keyLower) {
-        _.clearCaches();
+      if (this.charCache !== keyLower) {
+        this.clearCaches();
       }
 
-      var hasActive = _.active ? _.active.getAttribute('data-formatted')[0].toLowerCase() === keyLower : false;
+      const hasActive = this.active ? this.active.dataset.formatted[0].toLowerCase() === keyLower : false;
 
-      if (_.wordCache.length === 0) {
-        _.words.forEach(function appendToUl(option) {
-          var char = option.getAttribute('data-formatted')[0].toLowerCase();
+      if (this.wordCache.length === 0) {
+        this.words.forEach((option) => {
+          const char = option.dataset.formatted[0].toLowerCase();
           if (char === keyLower && !option.classList.contains('hidden')) {
-            _.wordCache.push(option);
+            this.wordCache.push(option);
           }
         });
       }
 
-      if (_.wordCache.length === 0) {
+      if (this.wordCache.length === 0) {
         return;
       }
 
       if (hasActive === false) {
-        _.clearActives();
-        _.setActive(_.wordCache[0]);
-        _.scrollList(true);
+        this.clearActives();
+        this.setActive(this.wordCache[0]);
+        this.scrollList(true);
       } else {
-        var lookFor = 0;
-        for (var k = 0; k < _.wordCache.length && k > -1; k++) {
-          var current = _.wordCache[k];
-          if (current.classList.contains('active')) {
-            lookFor = jsHelper.keepIndexInBounds(k + 1, 0, _.wordCache.length - 1, true);
-            if (_.wordCache[lookFor]) {
-              _.setActive(_.wordCache[lookFor]);
-              _.scrollList(true);
-              break;
-            }
-          }
+        let lookFor = this.wordCache.indexOf(this.active) + 1;
+        if (lookFor > this.wordCache.length - 1) {
+          lookFor = 0;
+        }
+        const current = this.wordCache[lookFor];
+        if (current) {
+          this.setActive(current);
+          this.scrollList(true);
         }
       }
-      _.charCache = keyLower;
+      this.charCache = keyLower;
 
       if (e.key !== 'Enter' && e.key !== ' ') {
         return;
       }
 
-      _.setSelected();
+      this.setSelected();
     });
-    _.ul.addEventListener('keydown', function scrollArea(e) {
-      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown' && e.key !== 'Enter' && e.key !== ' ') {
+    this.multiSelect.addEventListener('keydown', (e) => {
+      if (!['ArrowUp', 'ArrowDown', 'Enter', ' '].includes(e.key)) {
         return;
       }
       e.preventDefault();
+      if (['ArrowUp', 'ArrowDown'].includes(e.key)) {
+        if (this.charCache) {
+          this.clearCaches();
+        }
+        if (this.wordCache.length === 0) {
+          this.words.forEach((option) => {
+            if (!option.classList.contains('hidden')) {
+              this.wordCache.push(option);
+            }
+          });
+        }
+        let direction = (e.key === 'ArrowUp') ? -1 : 1;
+        let lookFor = +this.wordCache.indexOf(this.active) + direction;
+        if (lookFor > this.wordCache.length - 1) {
+          lookFor = 0;
+        }
+        if (lookFor < 0) {
+          lookFor = this.wordCache.length - 1;
+        }
 
-      if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-        var found = null;
-        var index = +_.active.getAttribute('data-target');
-        var direction = 1;
-        if (e.key === 'ArrowUp') {
-          direction = -1;
-        }
-        index = jsHelper.keepIndexInBounds(index + direction, 0, _.words.length, true);
-        for (; index < _.words.length && index > -1; index += direction) {
-          var current = _.words[index];
-          if (+current.getAttribute('data-target') === index && !current.classList.contains('hidden')) {
-            found = current;
-            break;
-          }
-        }
-  
-        if (found) {
-          _.setActive(found);
-          _.scrollList(false);
+        const current = this.wordCache[lookFor];
+        if (current) {
+          this.setActive(current);
+          this.scrollList(true);
         }
       } else {
-        _.setSelected();
+        this.setSelected();
       }
     });
-    _.deleteButton.addEventListener('click', function clearSelections(e) {
-      e.preventDefault();
-      _.words.forEach(function clearAll(option) {
-        option.setAttribute('aria-selected', 'false');
-      });
 
-      var selected = _.select.parentNode.querySelectorAll('option:checked');
-      selected.forEach(function clearAll(selection) {
-        selection.selected = false;
+    this.clear.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.words.forEach((option) => {
+        option.setAttribute('aria-selected', 'false');
+        option.reference.selected = false;
       });
     });
+
     var searchInterval = false;
-    _.searchField.addEventListener('keyup', function filterOptions() {
+    this.search.addEventListener('keyup', () => {
       clearInterval(searchInterval);
-      searchInterval = setTimeout(function doSearch() {
-        if (_.wordCache.length !== 0) {
-          _.clearCaches();
+      searchInterval = setTimeout(() => {
+        if (this.wordCache.length !== 0) {
+          this.clearCaches();
         }
-        var curVal = _.searchField.value.toLowerCase();
-        if (curVal.length === 0) {
-          for (var o = 0; o < _.words.length; o++) {
-            var option = _.words[o];
+        const value = this.search.value.toLowerCase();
+        if (value.length === 0) {
+          this.words.forEach((option) => {
             option.classList.remove('hidden');
-            if (option.classList.contains('option-parent')) {
-              option.setAttribute('aria-expanded', 'true');
-            }
-          }
+          });
         } else {
-          for (var k = 0; k < _.words.length; k++) {
-            var child = _.words[k];
-            var lookFor = child.getAttribute('data-formatted').toLowerCase();
-            if (String(lookFor).indexOf(curVal) !== -1) {
-              child.classList.remove('hidden');
-              // If a child node has a parent node, then we need to keep them also displayed
-              if (child.classList.contains('option-child')) {
-                var parents = jsHelper.getParentsUntil(child, "li.root");
-                parents.forEach(function showParent(parent) {
-                  parent.classList.remove('hidden');
-                  if (parent.classList.contains('option-parent')) {
-                    parent.setAttribute('aria-expanded', 'true');
-                  }
-                });
-              }
-            } else {
-              child.classList.add('hidden');
-              if (child.classList.contains('option-parent')) {
-                child.setAttribute('aria-expanded', 'false');
-              }
-            }
-          }
+          this.words.forEach((option) => {
+            const lookFor = option.dataset.formatted.toLowerCase();
+            option.classList.toggle('hidden', String(lookFor).indexOf(value) === -1);
+          });
         }
       }, 200);
     });
-  };
+  }
 
-  MultiSelect.prototype.scrollList = function scrollList(clipTo) {
-    var _ = this;
-    var top = jsHelper.getPosition(_.active).top;
-    if (typeof clipTo !== 'undefined' && clipTo === true) {
-      _.ul.scrollTop = top;
+  /**
+   * Set HTMLElement as selected.
+   *
+   * @param {HTMLElement} element 
+   */
+  setActive(element) {
+    this.clearActives();
+    this.active = element;
+    this.active.classList.add('active');
+    this.multiSelect.setAttribute('aria-activedescendant', element.id);
+  }
+
+  /**
+   * Set active as selected.
+   */
+  setSelected() {
+    const selected = !this.active.reference.selected;
+    this.active.reference.selected = selected;
+    this.active.setAttribute('aria-selected', selected);
+    this.active.classList.toggle('selected', selected);
+  }
+
+  /**
+   * Clear active selection.
+   */
+  clearActives() {
+    this.multiSelect.setAttribute('aria-activedescendant', '');
+    var options = this.multiSelect.parentNode.querySelectorAll('.option.active');
+    options.forEach((opt) => {
+      opt.classList.remove('active');
+    });
+    this.active = null;
+  }
+
+  /**
+   * Scroll the list.
+   *
+   * @param {bool} clip Need to clip.
+   */
+  scrollList(clip) {
+    const style = window.getComputedStyle(this.active);
+    let top = style.getPropertyValue('margin-top');
+    top = this.active.offsetTop - parseFloat(top);
+
+    if (clip) {
+      this.multiSelect.scrollTop = top;
       return;
     }
 
-    if (top < _.ul.scrollTop) {
-      _.ul.scrollTop = top;
-    } else if (top >= _.ul.scrollTop) {
-      _.ul.scrollTop = top;
-    }
-  };
-
-  MultiSelect.prototype.clearCaches = function clearCaches() {
-    var _ = this;
-    _.wordCache = [];
-    _.charCache = "";
-  };
-
-  MultiSelect.prototype.clearActives = function clearActives() {
-    var _ = this;
-    _.ul.setAttribute('aria-activedescendant', '');
-    var options = _.ul.parentNode.querySelectorAll('.option.active');
-    options.forEach(function removeActive(opt) {
-      opt.classList.remove('active');
-    }, options);
-    _.active = null;
-  };
-
-  MultiSelect.prototype.setActive = function setActive(element) {
-    var _ = this;
-    _.clearActives();
-    _.active = element;
-    _.active.classList.add('active');
-    _.ul.setAttribute('aria-activedescendant', _.active.getAttribute('id'));
-  };
-
-  MultiSelect.prototype.setSelected = function setSelected() {
-    var _ = this;
-    var original = _.select.parentNode.querySelector('option[data-id="' + _.active.getAttribute('data-target') + '"]');
-    var isSelected = original.selected;
-    original.selected = !isSelected;
-    _.active.setAttribute('aria-selected', !isSelected);
-  };
-
-  function init() {
-    var elems = document.querySelectorAll('.finna-multiselect.init');
-
-    for (var u = 0; u < elems.length; u++) {
-      new MultiSelect(elems[u], i++);
+    if (top < this.multiSelect.scrollTop) {
+      this.multiSelect.scrollTop = top;
+    } else if (top >= this.multiSelect.scrollTop) {
+      this.multiSelect.scrollTop = top;
     }
   }
 
-  var my = {
-    init: init
-  };
+  /**
+   * Clear the caches.
+   */
+  clearCaches() {
+    var _ = this;
+    _.wordCache = [];
+    _.charCache = "";
+  }
+}
 
-  return my;
+
+finna.multiSelect = (function multiSelect() {
+  return {
+    init: () => {
+      customElements.define('finna-multiselect', MultiSelect);
+    }
+  };
 }());
