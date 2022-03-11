@@ -61,7 +61,7 @@ class AggregateResolverFactory implements FactoryInterface
         $requestedName,
         ?array $options = null
     ) {
-        $resolver = new AggregateResolver();
+        $resolver = new $requestedName;
 
         /* @var $mapResolver ResolverInterface */
         $mapResolver             = $container->get('ViewTemplateMapResolver');
