@@ -316,6 +316,7 @@ class MultiSelect extends HTMLElement {
               return;
             }
             if (element.classList.contains('option-parent')) {
+              element.setAttribute('aria-expanded', 'true');
               const child = element.firstChild;
               if (child) {
                 child.classList.remove('hidden');
@@ -328,6 +329,12 @@ class MultiSelect extends HTMLElement {
               showParent(element.parentNode);
             }
           };
+          const parents = this.multiSelect.querySelectorAll('.option-parent[aria-expanded]');
+          if (parents.length) {
+            parents.forEach((parent) => {
+              parent.setAttribute('aria-expanded', 'false');
+            });
+          }
           this.words.forEach((option) => {
             const lookFor = option.dataset.formatted.toLowerCase();
             let matches = String(lookFor).indexOf(value) !== -1;
