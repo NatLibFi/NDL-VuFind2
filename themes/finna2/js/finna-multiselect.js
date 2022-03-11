@@ -402,9 +402,7 @@ class MultiSelect extends HTMLElement {
       return;
     }
 
-    if (top < this.multiSelect.scrollTop) {
-      this.multiSelect.scrollTop = top;
-    } else if (top >= this.multiSelect.scrollTop) {
+    if (top < this.multiSelect.scrollTop || top >= this.multiSelect.scrollTop) {
       this.multiSelect.scrollTop = top;
     }
   }
