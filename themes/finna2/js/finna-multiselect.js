@@ -9,8 +9,10 @@ class MultiSelect extends HTMLElement {
    * data-label-text: Translation for the label element.
    * data-label: Aria-label for the UL element.
    * data-placeholder: Placeholder text for search input.
-   * data-entries: Array of objects. Objects must have the next values:
-   * 
+   * data-entries: Array of objects. 
+   * use htmlspecialchars(json_encode($list), ENT_QUOTES, 'UTF-8'); to convert into
+   * proper object in php
+   * Objects must have the next values:
    * {
    *  displayText: Text to display for the option,
    *  value:       Option value.
@@ -32,6 +34,7 @@ class MultiSelect extends HTMLElement {
     this.words = [];
     this.wordCache = [];
     this.active = null;
+    this.clicked = false;
 
     const fieldSet = document.createElement('fieldset');
     this.append(fieldSet);
@@ -39,7 +42,7 @@ class MultiSelect extends HTMLElement {
 
     const label = document.createElement('label');
     label.setAttribute('id', this.dataset.labelId);
-    label.innerHTML = this.dataset.labelText;
+    label.textContent = this.dataset.labelText;
     this.label = label;
     fieldSet.append(label);
 
@@ -70,7 +73,7 @@ class MultiSelect extends HTMLElement {
 
     const clearButton = document.createElement('button');
     clearButton.classList.add('clear', 'btn', 'btn-link');
-    clearButton.innerHTML = this.dataset.clearText;
+    clearButton.textContent = this.dataset.clearText;
     this.clear = clearButton;
     fieldSet.append(clearButton);
 
@@ -91,7 +94,7 @@ class MultiSelect extends HTMLElement {
       const innerValue = document.createTextNode(entry.displayText).nodeValue;
       const option = document.createElement('option');
       option.value = document.createTextNode(entry.value).nodeValue;
-      option.innerHTML = innerValue;
+      option.textContent = innerValue;
       const isSelected = entry.selected;
       this.select.append(option);
 
@@ -100,7 +103,7 @@ class MultiSelect extends HTMLElement {
       multiOption.setAttribute('id', `${this.id}_opt_${index++}`);
       multiOption.reference = option;
 
-      multiOption.innerHTML = innerValue;
+      multiOption.textContent = innerValue;
       multiOption.dataset.formatted = innerValue;
       if (isSelected) {
         option.setAttribute('selected', 'selected');
@@ -116,13 +119,14 @@ class MultiSelect extends HTMLElement {
 
           const previousClone = previousElement.cloneNode();
 
-          previousClone.innerHTML = previousElement.innerHTML;
+          previousClone.textContent = previousElement.innerHTML;
           previousClone.reference = previousElement.reference;
 
-          previousElement.innerHTML = '';
+          previousElement.textContent = '';
           previousElement.removeAttribute('aria-selected');
           previousElement.removeAttribute('id');
-          previousElement.classList.remove('option');
+          previousElement.classList.remove('option', 'option-child');
+          delete previousElement.dataset.formatted;
           previousElement.append(previousClone);
 
           this.words.pop();
@@ -174,7 +178,7 @@ class MultiSelect extends HTMLElement {
       e.stopPropagation();
       this.clicked = true;
       this.multiSelect.focus();
-    });
+    }, {passive: true});
 
     // When the user focuses to the list element
     this.multiSelect.addEventListener('focusin', () => {
@@ -198,6 +202,7 @@ class MultiSelect extends HTMLElement {
     });
 
     this.multiSelect.addEventListener('focusout', () => {
+      this.clicked = false;
       this.clearActives();
       this.clearCaches();
     });
@@ -306,9 +311,30 @@ class MultiSelect extends HTMLElement {
             option.classList.remove('hidden');
           });
         } else {
+          const showParent = (element) => {
+            if (!element.classList) {
+              return;
+            }
+            if (element.classList.contains('option-parent')) {
+              const child = element.firstChild;
+              if (child) {
+                child.classList.remove('hidden');
+              }
+            }
+            if (element.classList.contains('root')) {
+              return;
+            }
+            if (element.parentNode && this.multiSelect.contains(element.parentNode)) {
+              showParent(element.parentNode);
+            }
+          };
           this.words.forEach((option) => {
             const lookFor = option.dataset.formatted.toLowerCase();
-            option.classList.toggle('hidden', String(lookFor).indexOf(value) === -1);
+            let matches = String(lookFor).indexOf(value) !== -1;
+            option.classList.toggle('hidden', !matches);
+            if (matches && option.parentNode) {
+              showParent(option.parentNode);
+            }
           });
         }
       }, 200);
@@ -321,6 +347,9 @@ class MultiSelect extends HTMLElement {
    * @param {HTMLElement} element 
    */
   setActive(element) {
+    if (!element) {
+      return;
+    }
     this.clearActives();
     this.active = element;
     this.active.classList.add('active');
@@ -342,11 +371,10 @@ class MultiSelect extends HTMLElement {
    */
   clearActives() {
     this.multiSelect.setAttribute('aria-activedescendant', '');
-    var options = this.multiSelect.parentNode.querySelectorAll('.option.active');
-    options.forEach((opt) => {
-      opt.classList.remove('active');
-    });
-    this.active = null;
+    if (this.active) {
+      this.active.classList.remove('active');
+      this.active = null;
+    }
   }
 
   /**
@@ -355,6 +383,9 @@ class MultiSelect extends HTMLElement {
    * @param {bool} clip Need to clip.
    */
   scrollList(clip) {
+    if (!this.active) {
+      return;
+    }
     const style = window.getComputedStyle(this.active);
     let top = style.getPropertyValue('margin-top');
     top = this.active.offsetTop - parseFloat(top);
