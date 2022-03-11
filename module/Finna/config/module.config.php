@@ -351,7 +351,7 @@ $config = [
 
             'Laminas\Session\SessionManager' => 'Finna\Session\ManagerFactory',
             'League\CommonMark\MarkdownConverterInterface' => 'Finna\Service\MarkdownFactory',
-            'ViewResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
+            'Finna\View\Resolver\AggregateResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
         ],
         'aliases' => [
             'VuFind\Autocomplete\PluginManager' => 'Finna\Autocomplete\PluginManager',
@@ -372,6 +372,8 @@ $config = [
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
             'VuFind\Search\Memory' => 'Finna\Search\Memory',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
+
+            'ViewResolver' => 'Finna\View\Resolver\AggregateResolver',
         ]
     ],
     // This section contains all VuFind-specific settings (i.e. configurations
