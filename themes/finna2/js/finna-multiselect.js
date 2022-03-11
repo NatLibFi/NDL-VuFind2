@@ -1,24 +1,41 @@
 /* global finna */
 class MultiSelect extends HTMLElement {
+  /**
+   * Constructor for finna-multiselect component.
+   * 
+   * Required data attributes are:
+   * data-clear-text: Translation for clear button text.
+   * data-label-id: Identifier for label, must be unique.
+   * data-label-text: Translation for the label element.
+   * data-label: Aria-label for the UL element.
+   * data-placeholder: Placeholder text for search input.
+   * data-entries: Array of objects. Objects must have the next values:
+   * 
+   * {
+   *  displayText: Text to display for the option,
+   *  value:       Option value.
+   *  selected:    Should the option be selected when created.
+   *  
+   *  (optional):
+   *  level: Used to create hierarchy.
+   *  Level 0 is root. Level 1 is immediate child option. 
+   *  Level 2 is child option for level 1 etc.
+   * }
+   */
   constructor()
   {
     // Always call super first
     super();
-    /*{
-      'labelId': 'Id for the label: (data-label-id)',
-      'placeholder': 'Placeholder for the search: (data-placeholder)',
-      'label': 'Label for multiselect: (data-label)',
-      'labelText': 'Label text for label: (data-label-text)',
-      'entries': 'Entries for multiselect: (data-entries)'
-    };*/
     this.entries = JSON.parse(this.dataset.entries);
     delete(this.dataset.entries);
     this.regExp = new RegExp(/[a-öA-Ö0-9-_ ]/);
     this.words = [];
     this.wordCache = [];
+    this.active = null;
 
     const fieldSet = document.createElement('fieldset');
     this.append(fieldSet);
+    this.id = `${this.dataset.labelId}_fms`;
 
     const label = document.createElement('label');
     label.setAttribute('id', this.dataset.labelId);
@@ -139,6 +156,9 @@ class MultiSelect extends HTMLElement {
     });
   }
   
+  /**
+   * Assign click and key events.
+   */
   setEvents()
   {
     // Record when the user clicks the list element
@@ -164,7 +184,7 @@ class MultiSelect extends HTMLElement {
       }
 
       if (this.active === null) {
-        this.setActive(this.parentNode.querySelector('.option:not(.hidden)'));
+        this.setActive(this.multiSelect.querySelector('.option:not(.hidden)'));
         this.scrollList(true);
       }
     });

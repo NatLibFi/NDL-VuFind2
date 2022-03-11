@@ -553,7 +553,7 @@ finna-multiselect {
       .generate-hierarchy(6);
       .generate-hierarchy(@n, @i: 1) when (@i =< @n) {
         &.child-width-@{i} {
-          padding: 0 0 0 ((@i) * 10px);
+          padding: 0 0 0 ((@i) * 15px);
         }
         .generate-hierarchy(@n, (@i + 1));
       }
