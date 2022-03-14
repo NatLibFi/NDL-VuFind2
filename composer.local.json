@@ -11,6 +11,13 @@
         "natlibfi/besimple-soap": "2.0.0",
         "swen100/geophp": "^1.0.8"
     },
+    "extra": {
+        "merge-plugin": {
+            "include": [
+                "composer.components.json"
+            ]
+        }
+    },
     "scripts": {
         "create-translation-files": "touch local/languages/finna/fi-datasources.ini; touch local/languages/finna/sv-datasources.ini; touch local/languages/finna/en-gb-datasources.ini",
         "post-install-cmd": ["@phing-install-dependencies", "@create-translation-files"],

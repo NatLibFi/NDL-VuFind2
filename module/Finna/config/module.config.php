@@ -376,6 +376,11 @@ $config = [
             'ViewResolver' => 'Finna\View\Resolver\AggregateResolver',
         ]
     ],
+    'view_manager' => [
+        'template_path_stack' => [
+            APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
+        ],
+    ],
     // This section contains all VuFind-specific settings (i.e. configurations
     // unrelated to specific framework components).
     'vufind' => [
