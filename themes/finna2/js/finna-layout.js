@@ -136,37 +136,24 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-  function initMobileNavigation() {
-    $('.mobile-navigation .sidebar-navigation, .sidebar h1').off('click').on('click', function onClickMobileNav(e) {
-      if ($(e.target).attr('class') !== 'fa-arrow-down') {
-        $('.sidebar').toggleClass('open');
-      }
-      $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
-      $('body').toggleClass('prevent-scroll');
-    });
-  }
-
-  function initMobileNarrowSearch() {
-    $('.narrowsearch-navigation .sidebar-navigation, .sidebar h1').off('click').on('click', function onClickMobileNav(e) {
-      if ($(e.target).attr('class') !== 'fa-times') {
+  function initMobileSidebar() {
+    $('.btn-mobile-sidebar, .sidebar h1 .sidebar-close-btn').off('click').on('click', function onClickMobileSidebar(e) {
+      if ($(e.target).attr('class') !== 'icon-close') {
         $('.sidebar').toggleClass('open');
       }
       $('body').toggleClass('prevent-scroll');
     });
-    $('.narrowsearch-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
-      $('.sidebar').scrollTop(0);
-    });
-    const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
-    const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
-    if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
-      const narrowSearchMobileObserver = new IntersectionObserver(
-        ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
+    const stickyMobileBtnTrigger = document.querySelector('.mobile-sidebar-toggle-trigger');
+    const stickyMobileBtn = document.querySelector('.mobile-sidebar-toggle');
+    if (stickyMobileBtnTrigger  && stickyMobileBtn && ('IntersectionObserver' in window)) {
+      const stickyMobileBtnObserver = new IntersectionObserver(
+        ([e]) => stickyMobileBtn.classList.toggle('sticky', e.intersectionRatio < 1),
         {
           threshold: [1],
-          rootMargin:  '-' + narrowSearchMobile.offsetHeight + 'px',
+          rootMargin: '-' + stickyMobileBtn.offsetHeight + 'px',
         }
       );
-      narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
+      stickyMobileBtnObserver.observe(stickyMobileBtnTrigger);
     }
   }
 
@@ -445,7 +432,7 @@ finna.layout = (function finnaLayout() {
     document.addEventListener('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
       finna.dateRangeVis.init();
       initToolTips($('.sidebar'));
-      initMobileNarrowSearch();
+      initMobileSidebar();
       VuFind.lightbox.bind($('.sidebar'));
     });
     document.addEventListener('VuFind.sidefacets.treenodeloaded', function onTreeNodeLoaded(e) {
@@ -825,7 +812,7 @@ finna.layout = (function finnaLayout() {
     initLocationService: initLocationService,
     initHierarchicalFacet: initHierarchicalFacet,
     initJumpMenus: initJumpMenus,
-    initMobileNarrowSearch: initMobileNarrowSearch,
+    initMobileSidebar: initMobileSidebar,
     initOrganisationPageLinks: initOrganisationPageLinks,
     initSecondaryLoginField: initSecondaryLoginField,
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
@@ -841,8 +828,7 @@ finna.layout = (function finnaLayout() {
       initAnchorNavigationLinks();
       initTruncate();
       initContentNavigation();
-      initMobileNavigation();
-      initMobileNarrowSearch();
+      initMobileSidebar();
       initMobileCartIndicator();
       initCheckboxClicks();
       initToolTips();

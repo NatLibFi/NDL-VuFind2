@@ -13,7 +13,7 @@
   }
 ?>
 <ul class="dropdown-menu subtabs collapse in" role="presentation">
-  <li><h1 class="visible-xs visible-sm"><i class="fa fa-arrow-down pull-left"></i> <?=$this->transEsc('Your Lists')?></h1></li>
+  <li class="visible-xs visible-sm hidden-print"><h1><?=$this->transEsc('Your Lists')?><span role="button" class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><i class="fa fa-lg fa-times icon-close" aria-hidden="true"></i></span></h1></li>
   <li role="none" class="favorites-menulist-item">
     <a role="menuitem" href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">
       <div class="favorite-list-holder">

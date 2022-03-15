@@ -33,6 +33,8 @@
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => isset($list) ? 'list' . $list['id'] : 'favorites']); ?>
 
+<div class="mylist-mobile visible-xs visible-sm hidden-print"><?=$this->transEsc('Your Lists') ?>: <div class="btn btn-primary btn-mobile-sidebar btn-mylist"><?=$this->transEsc('Choose a List') ?> <b class="caret" aria-hidden="true"></b></div></div>
+
 <?php foreach ($this->results->getRecommendations('side') as $current): ?>
   <?=$this->recommend($current)?>
 <?php endforeach; ?>
@@ -155,10 +157,5 @@
     </ul>
   </form>
 <?php endif; ?>
-<div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
-  <ul>
-    <li class="sidebar-navigation"><i class="fa fa-arrow-up"></i> <?=$this->transEsc('Your Lists')?></li>
-  </ul>
-</div>
 
 <!-- END of: finna - myresearch/mylist.phtml -->

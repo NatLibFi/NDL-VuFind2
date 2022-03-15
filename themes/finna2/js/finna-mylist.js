@@ -303,8 +303,8 @@ finna.myList = (function finnaMyList() {
       updateBulkActionsToolbar();
     }
 
-    //Init mobile navigation collapse after list has been reloaded
-    finna.layout.initMobileNarrowSearch();
+    // Init mobile collapse after list has been reloaded
+    finna.layout.initMobileSidebar();
 
     if (!isDefaultList) {
       toggleTitleEditable(true);
