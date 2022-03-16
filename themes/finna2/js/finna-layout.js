@@ -137,7 +137,7 @@ finna.layout = (function finnaLayout() {
   }
 
   function initMobileNarrowSearch() {
-    $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .finna-collection-filter-toggle .btn-search-filter, .sidebar h1, .sidebar h2').off('click').on('click', function onClickMobileNav(e) {
+    $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn, .mylist-bar h1').off('click').on('click', function onClickMobileNav(e) {
       if ($(e.target).attr('class') !== 'fa fa-times' || 'fa fa-info-big') {
         $('.sidebar').toggleClass('open');
       }
