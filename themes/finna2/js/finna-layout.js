@@ -137,10 +137,8 @@ finna.layout = (function finnaLayout() {
   }
 
   function initMobileNarrowSearch() {
-    $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn, .mylist-bar h1').off('click').on('click', function onClickMobileNav(e) {
-      if ($(e.target).attr('class') !== 'fa fa-times' || 'fa fa-info-big') {
-        $('.sidebar').toggleClass('open');
-      }
+    $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn, .sidebar .mylist-bar h1').off('click').on('click', function onClickMobileNav() {
+      $('.sidebar').toggleClass('open');
       $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
       $('body').toggleClass('prevent-scroll');
     });
