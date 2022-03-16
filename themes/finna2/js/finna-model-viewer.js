@@ -27,7 +27,7 @@ var allowedProperties = {
     'opacity', 'premultipliedAlpha', 'roughness', 'side', 'toneMapped',
     'transparent', 'visible', 'wireframe', 'wireframeLinewidth', 'gammaFactor',
     'physicallyCorrectLights', 'outputEncoding',
-    'shininess', 'quaternion', 'texts', 'renderOrder', 'scale', 'clearcoat',
+    'shininess', 'rotation', 'texts', 'renderOrder', 'scale', 'clearcoat',
     'clearcoatRoughness', 'normalScale', 'ior', 'sheen', 'sheenRoughness', 'sheenColor',
     'transmission', 'bumpScale', 'envMapIntensity'
   ],
@@ -438,7 +438,6 @@ ModelViewer.prototype.displayInformation = function displayInformation() {
 ModelViewer.prototype.animationLoop = function animationLoop()
 {
   var _ = this;
-
   // Animation loop, required for constant updating
   _.loop = function animate() {
     if (_.renderer) {
@@ -502,7 +501,7 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
       if (obj.type === 'Mesh') {
         meshMaterial = obj.material;
         meshMaterial.envMap = _.background;
-        if (meshMaterial.userData.envMapIntensity) {
+        if (typeof meshMaterial.userData.envMapIntensity !== 'undefined') {
           meshMaterial.envMapIntensity = meshMaterial.userData.envMapIntensity;
         } else {
           meshMaterial.envMapIntensity = 0.2;
