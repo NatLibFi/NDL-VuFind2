@@ -153,15 +153,17 @@
       right: 0;
       opacity: 100%;
     }
-    .list-group.facet:last-child {
-      margin-bottom: 44px;
-    }
     .list-group-item.active i.fa.fa-check-square-o:before {
       content: "\f00c" !important;
     }
     .list-group.facet {
-      margin: 0 10px;
-      margin-bottom: 5px;
+      margin: 0 10px 5px 10px;
+      &:first-of-type {
+        margin-top: 10px;
+      }
+      &:last-child {
+        margin-bottom: 44px;
+      }
     }
   }
   .mobile-navigation {
@@ -189,7 +191,7 @@
       max-width: 55%;
     }
   }
-  .narrowsearch-navigation {
+  .finna-search-filter-toggle {
     position: sticky;
     top: @navbar-height;
     &.sticky {
@@ -201,12 +203,10 @@
     padding-right: (@grid-gutter-width / 2);
     padding-top: 12px;
     padding-bottom: 12px;
-    z-index: 1000;
+    z-index: 500;
     background: #fff;
-    .sidebar-navigation {
-      .btn-narrow-search {
-        width: 100%;
-      }
+    .btn-search-filter {
+      width: 100%;
     }
   }
 }

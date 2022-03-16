@@ -136,28 +136,18 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-  function initMobileNavigation() {
-    $('.mobile-navigation .sidebar-navigation, .sidebar h1').off('click').on('click', function onClickMobileNav(e) {
-      if ($(e.target).attr('class') !== 'fa-arrow-down') {
-        $('.sidebar').toggleClass('open');
-      }
-      $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
-      $('body').toggleClass('prevent-scroll');
-    });
-  }
-
   function initMobileNarrowSearch() {
-    $('.narrowsearch-navigation .sidebar-navigation, .sidebar h1').off('click').on('click', function onClickMobileNav(e) {
+    $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .finna-collection-filter-toggle .btn-search-filter, .sidebar h1, .sidebar h2').off('click').on('click', function onClickMobileNav(e) {
       if ($(e.target).attr('class') !== 'fa-times') {
         $('.sidebar').toggleClass('open');
       }
       $('body').toggleClass('prevent-scroll');
     });
-    $('.narrowsearch-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
+    $('.mobile-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
       $('.sidebar').scrollTop(0);
     });
-    const narrowSearchMobileTrigger = document.querySelector('.narrowsearch-navigation-trigger');
-    const narrowSearchMobile = document.querySelector('.narrowsearch-navigation');
+    const narrowSearchMobileTrigger = document.querySelector('.finna-search-filter-toggle-trigger');
+    const narrowSearchMobile = document.querySelector('.finna-search-filter-toggle');
     if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
       const narrowSearchMobileObserver = new IntersectionObserver(
         ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
@@ -841,7 +831,6 @@ finna.layout = (function finnaLayout() {
       initAnchorNavigationLinks();
       initTruncate();
       initContentNavigation();
-      initMobileNavigation();
       initMobileNarrowSearch();
       initMobileCartIndicator();
       initCheckboxClicks();

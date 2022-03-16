@@ -59,6 +59,15 @@
   <?php endif; ?>
 
   <?php if (($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
+    <div class="finna-search-filter-toggle-trigger visible-xs hidden-print"></div>
+    <div class="finna-search-filter-toggle visible-xs hidden-print">
+      <div class="btn btn-primary btn-search-filter">
+        <?=$this->transEsc('Filter Collection')?>
+        <?php if ($filterCount > 0): ?>
+          <span class="active-filter-count">(<?=$filterCount?>)</span>
+        <?php endif; ?>
+      </div>
+    </div>
     <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $results])?>
 
     <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
@@ -80,16 +89,4 @@
   <?php endforeach; ?>
 </div>
 <div class="clearfix"></div>
-<div class="mobile-navigation visible-xs hidden-print">
-  <ul>
-    <li class="sidebar-navigation">
-      <i class="fa fa-arrow-up"></i> <?=$this->transEsc('Filter Collection')?>
-      <?php if (!empty($filterCount)): ?>
-        <span class="active-filters">
-          <?=$this->transEsc('Active filters')?>: <span class='active-filter-count'><?=$filterCount?></span>
-        </span>
-      <?php endif; ?>
-    </li>
-  </ul>
-</div>
 <!-- END of: finna - RecordTab/collectionlist.phtml -->
