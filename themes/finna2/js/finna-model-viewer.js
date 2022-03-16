@@ -54,7 +54,7 @@ var encodingTypes = [
 ];
 
 var rangeTypes = [
-  'intensity', 'roughness', 'envMapIntensity', 'metalness'
+  'intensity', 'roughness', 'envMapIntensity', 'metalness', 'rotation'
 ];
 
 // Keys for colors, requires creating three color
@@ -1126,6 +1126,21 @@ ModelViewer.prototype.updateObject = function updateObject(objects, input, name)
   var value = input.value;
   if (['true', 'false'].includes(value)) {
     value = (value === 'true');
+  }
+
+  if (typeof pointers[2] !== 'undefined' && ['rotation'].includes(pointers[1])) {
+    switch (pointers[2]) {
+    case '_x':
+      object.rotation.x = THREE.Math.degToRad(value);
+      break;
+    case '_y':
+      object.rotation.y = THREE.Math.degToRad(value);
+      break;
+    case '_z':
+      object.rotation.z = THREE.Math.degToRad(value);
+      break;
+    }
+    return;
   }
   if (pointers.length === 3) {
     value = _.castValueTo(object[pointers[1]][pointers[2]], value);
