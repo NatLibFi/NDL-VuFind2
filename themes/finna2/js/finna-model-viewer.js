@@ -311,8 +311,10 @@ ModelViewer.prototype.createRenderer = function createRenderer()
   var _ = this;
   _.getParentSize();
   _.renderer = new THREE.WebGLRenderer({
+    alpha: true,
     antialias: true
   });
+  _.renderer.setPixelRatio(window.devicePixelRatio);
   _.renderers.push(_.renderer);
   // These are the settings to make glb files look good with threejs
   _.renderer.physicallyCorrectLights = true;
