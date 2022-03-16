@@ -574,7 +574,7 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
     }
     setImageProperties(this);
   });
-  img.unveil(100);
+  finna.common.observeImages(img[0].parentNode.querySelectorAll('img[data-src]'));
 };
 
 FinnaPaginator.prototype.showImageDetails = function showImageDetails(imagePopup) {

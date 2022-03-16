@@ -21,7 +21,7 @@ $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
         <?=$this->render('list/list-notes.phtml')?>
       <?php endif ?>
       <?php $img = $this->recordImage($this->record($this->driver))?>
-      <?=$img->render('list grid', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 600, 'h' => 600]]) ?>
+      <?=$img->render('list grid', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]]) ?>
     </div>
     <?php if (!$openUrlActive && empty($urls)): ?>
       <?php if ($this->driver->supportsAjaxStatus()): ?>

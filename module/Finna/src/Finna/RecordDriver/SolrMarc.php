@@ -238,7 +238,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc
                         'small' => $address,
                         'medium' => $address,
                         'large' => $address
-                        ],
+                    ],
                     'description' => '',
                     'rights' => [],
                     'pdf' => $pdf

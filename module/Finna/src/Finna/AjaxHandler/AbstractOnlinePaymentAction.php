@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2018.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,10 +28,11 @@
  */
 namespace Finna\AjaxHandler;
 
+use Finna\Db\Row\Transaction as TransactionRow;
 use Finna\Db\Table\Transaction as TransactionTable;
 use Finna\OnlinePayment\OnlinePayment;
 use Laminas\Session\Container as SessionContainer;
-use VuFind\Db\Table\UserCard as UserCardTable;
+use VuFind\Db\Table\User as UserTable;
 use VuFind\ILS\Connection;
 use VuFind\Session\Settings as SessionSettings;
 
@@ -65,11 +66,11 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
     protected $transactionTable;
 
     /**
-     * UserCard table
+     * User table
      *
-     * @var UserCardTable
+     * @var UserTable
      */
-    protected $userCardTable;
+    protected $userTable;
 
     /**
      * Online payment manager
@@ -91,7 +92,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
      * @param SessionSettings  $ss  Session settings
      * @param Connection       $ils ILS connection
      * @param TransactionTable $tt  Transaction table
-     * @param UserCardTable    $uc  UserCard table
+     * @param UserTable        $ut  User table
      * @param OnlinePayment    $op  Online payment manager
      * @param SessionContainer $os  Online payment session
      */
@@ -99,83 +100,41 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         SessionSettings $ss,
         Connection $ils,
         TransactionTable $tt,
-        UserCardTable $uc,
+        UserTable $ut,
         OnlinePayment $op,
         SessionContainer $os
     ) {
         $this->sessionSettings = $ss;
         $this->ils = $ils;
         $this->transactionTable = $tt;
-        $this->userCardTable = $uc;
+        $this->userTable = $ut;
         $this->onlinePayment = $op;
         $this->onlinePaymentSession = $os;
     }
 
     /**
-     * Process payment request.
+     * Mark fees paid for the given transaction
      *
-     * @param Laminas\Http\Request $request Request
+     * @param TransactionRow $t Transaction
      *
-     * @return array Associative array with keys
-     *   - 'success' (boolean)
-     *   - 'msg' (string) error message if payment could not be processed.
+     * @return array
      */
-    protected function processPayment(\Laminas\Http\Request $request)
+    protected function markFeesAsPaid(TransactionRow $t): array
     {
-        $params = array_merge(
-            $request->getQuery()->toArray(),
-            $request->getPost()->toArray()
-        );
-
-        if (!isset($params['driver'])) {
-            $this->logError(
-                'Error processing payment: missing parameter "driver" in response.'
-            );
-            return ['success' => false];
+        $userCard = null;
+        $user = $this->userTable->getById($t->user_id);
+        foreach ($user->getLibraryCards() as $card) {
+            if ($card->cat_username === $t->cat_username) {
+                $userCard = $user->getLibraryCard($card->id);
+                break;
+            }
         }
-
-        $driver = $params['driver'];
-
-        $handler = $this->getOnlinePaymentHandler($driver);
-        if (!$handler) {
-            $this->logError(
-                'Error processing payment: could not initialize payment'
-                . " handler $driver"
-            );
-            return ['success' => false];
-        }
-
-        $params = $handler->getPaymentResponseParams($request);
-        if (false === $params) {
-            return ['success' => false];
-        }
-        $transactionId = $params['transaction'];
-
-        if (!$t = $this->transactionTable->getTransaction($transactionId)) {
-            $this->logError(
-                "Error processing payment: transaction $transactionId not found"
-            );
-            return ['success' => false];
-        }
-
-        if (!$this->transactionTable->isTransactionInProgress($transactionId)) {
-            $this->logger->info(
-                "Processing payment: transaction $transactionId already processed."
-            );
-            return ['success' => true];
-        }
-
-        $driver = $t['driver'];
-
-        $userCard = $this->userCardTable->select(
-            ['user_id' => $t['user_id'], 'cat_username' => $t['cat_username']]
-        )->current();
 
         if (!$userCard) {
             $this->logError(
-                'Error processing transaction id ' . $t['id']
-                . ': user card not found (cat_username: ' . $t['cat_username']
-                . ', user id: ' . $t['user_id'] . ')'
+                'Error processing transaction id ' . $t->id
+                . ': user card not found (cat_username: ' . $t->cat_username
+                . ', user id: ' . $t->user_id . ')'
             );
             return ['success' => false];
         }
@@ -183,36 +142,24 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         $patron = null;
         try {
             $patron = $this->ils->patronLogin(
-                $userCard['cat_username'],
-                $userCard->getCatPassword()
+                $userCard->cat_username,
+                $userCard->cat_password
             );
         } catch (\Exception $e) {
-            $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
-        }
-
-        // Process the payment request regardless of whether patron login succeeds to
-        // update the status properly
-        $res = $handler->processResponse($request);
-
-        if (!is_array($res) || empty($res['markFeesAsPaid'])) {
-            return ['success' => false, 'msg' => $res];
+            $this->logException($e);
         }
 
         if (!$patron) {
             $this->logError(
-                'Error processing transaction id ' . $t['id']
-                . ': patronLogin error (cat_username: ' . $t['cat_username']
-                . ', user id: ' . $t['user_id'] . ')'
+                'Error processing transaction id ' . $t->id
+                . ': patronLogin error (cat_username: ' . $t->cat_username
+                . ', user id: ' . $t->user_id . ')'
             );
 
-            $this->transactionTable->setTransactionRegistrationFailed(
-                $t['transaction_id'],
-                'patronLogin error'
-            );
+            $t->setRegistrationFailed('patron login error');
             return ['success' => false];
         }
 
-        $tId = $res['transactionId'];
         $paymentConfig = $this->ils->getConfig('onlinePayment', $patron);
         if (($paymentConfig['exactBalanceRequired'] ?? true)
             || !empty($paymentConfig['creditUnsupported'])
@@ -221,31 +168,25 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
                 $fines = $this->ils->getMyFines($patron);
                 $finesAmount = $this->ils->getOnlinePayableAmount($patron, $fines);
             } catch (\Exception $e) {
-                $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
+                $this->logException($e);
                 return ['success' => false];
             }
 
             // Check that payable sum has not been updated
             $exact = $paymentConfig['exactBalanceRequired'] ?? true;
-            $noCredit = ($paymentConfig['exactBalanceRequired'] ?? true)
-                || !empty($paymentConfig['creditUnsupported']);
-            if ($finesAmount['payable']
-                && !empty($finesAmount['amount']) && !empty($res['amount'])
-                && (($exact && $res['amount'] != $finesAmount['amount'])
-                || ($noCredit && $res['amount'] > $finesAmount['amount']))
+            $noCredit = $exact || !empty($paymentConfig['creditUnsupported']);
+            if ($finesAmount['payable'] && !empty($finesAmount['amount'])
+                && (($exact && $t->amount != $finesAmount['amount'])
+                || ($noCredit && $t->amount > $finesAmount['amount']))
             ) {
                 // Payable sum updated. Skip registration and inform user
                 // that payment processing has been delayed.
                 $this->logError(
-                    "Transaction $transactionId: payable sum updated. Paid amount: "
-                    . $res['amount'] . ', payable: ' . print_r($finesAmount, true)
+                    'Transaction ' . $t->transaction_id . ': payable sum updated.'
+                    . ' Paid amount: ' . $t->amount . ', payable: '
+                    . print_r($finesAmount, true)
                 );
-                if (!$this->transactionTable->setTransactionFinesUpdated($tId)) {
-                    $this->logError(
-                        "Error updating transaction $transactionId"
-                        . " status: payable sum updated"
-                    );
-                }
+                $t->setFinesUpdated();
                 return [
                     'success' => false,
                     'msg' => 'online_payment_registration_failed'
@@ -254,30 +195,22 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         }
 
         try {
-            $this->ils->markFeesAsPaid($patron, $res['amount'], $tId, $t['id']);
-            if (!$this->transactionTable->setTransactionRegistered($tId)) {
-                $this->logError(
-                    "Error updating transaction $transactionId status: registered"
-                );
-            }
+            $this->ils->markFeesAsPaid(
+                $patron,
+                $t->amount,
+                $t->transaction_id,
+                $t->id
+            );
+            $t->setRegistered();
             $this->onlinePaymentSession->paymentOk = true;
         } catch (\Exception $e) {
             $this->logError(
                 'Payment registration error (patron ' . $patron['id'] . '): '
                 . $e->getMessage()
             );
-            $this->logger->logException($e, new \Laminas\Stdlib\Parameters());
+            $this->logException($e);
 
-            $result = $this->transactionTable->setTransactionRegistrationFailed(
-                $tId,
-                $e->getMessage()
-            );
-            if (!$result) {
-                $this->logError(
-                    "Error updating transaction $transactionId status: "
-                    . 'registering failed'
-                );
-            }
+            $t->setRegistrationFailed($e->getMessage());
             return ['success' => false, 'msg' => $e->getMessage()];
         }
         return ['success' => true];
@@ -304,6 +237,21 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
                 . ' (' . $e->getMessage() . ')'
             );
             return false;
+        }
+    }
+
+    /**
+     * Log an exception
+     *
+     * @param \Exception $exception Exception to log
+     *
+     * @return void
+     */
+    public function logException(\Exception $exception): void
+    {
+        if ($this->logger instanceof \VuFind\Log\Logger) {
+            $this->logger
+                ->logException($exception, new \Laminas\Stdlib\Parameters());
         }
     }
 }

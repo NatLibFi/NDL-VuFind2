@@ -330,6 +330,7 @@ $config = [
             'Finna\LocationService\LocationService' => 'Finna\LocationService\LocationServiceFactory',
             'Finna\Mailer\Mailer' => 'VuFind\Mailer\Factory',
             'Finna\OAI\Server' => 'VuFind\OAI\ServerFactory',
+            'Finna\OnlinePayment\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\OnlinePayment\OnlinePayment' => 'Finna\OnlinePayment\OnlinePaymentFactory',
             'Finna\OnlinePayment\Session' => 'Finna\OnlinePayment\OnlinePaymentSessionFactory',
             'Finna\OrganisationInfo\OrganisationInfo' => 'Finna\OrganisationInfo\OrganisationInfoFactory',
@@ -350,6 +351,7 @@ $config = [
 
             'Laminas\Session\SessionManager' => 'Finna\Session\ManagerFactory',
             'League\CommonMark\MarkdownConverterInterface' => 'Finna\Service\MarkdownFactory',
+            'Finna\View\Resolver\AggregateResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
         ],
         'aliases' => [
             'VuFind\Autocomplete\PluginManager' => 'Finna\Autocomplete\PluginManager',
@@ -370,7 +372,14 @@ $config = [
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
             'VuFind\Search\Memory' => 'Finna\Search\Memory',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
+
+            'ViewResolver' => 'Finna\View\Resolver\AggregateResolver',
         ]
+    ],
+    'view_manager' => [
+        'template_path_stack' => [
+            APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
+        ],
     ],
     // This section contains all VuFind-specific settings (i.e. configurations
     // unrelated to specific framework components).
@@ -530,7 +539,6 @@ $config = [
                     'Finna\Db\Row\Search' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Transaction' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\User' => 'Finna\Db\Row\UserFactory',
-                    'Finna\Db\Row\UserCard' => 'Finna\Db\Row\UserCardFactory',
                     'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory'
                 ],
                 'aliases' => [
@@ -539,7 +547,6 @@ $config = [
                     'VuFind\Db\Row\Search' => 'Finna\Db\Row\Search',
                     'VuFind\Db\Row\Transaction' => 'Finna\Db\Row\Transaction',
                     'VuFind\Db\Row\User' => 'Finna\Db\Row\User',
-                    'VuFind\Db\Row\UserCard' => 'Finna\Db\Row\UserCard',
                     'VuFind\Db\Row\UserList' => 'Finna\Db\Row\UserList',
 
                     // Aliases for table classes without a row class counterpart
@@ -615,6 +622,7 @@ $config = [
                     'VuFind\ILS\Driver\SierraRest' => 'Finna\ILS\Driver\SierraRest',
                 ]
             ],
+            'onlinepayment_handler' => [ /* see Finna\OnlinePayment\Handler\PluginManager for defaults */ ],
             'recommend' => [
                 'factories' => [
                     'VuFind\Recommend\CollectionSideFacets' => 'Finna\Recommend\Factory::getCollectionSideFacets',

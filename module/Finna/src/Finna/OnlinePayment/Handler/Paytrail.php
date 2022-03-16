@@ -1,10 +1,10 @@
 <?php
 /**
- * Paytrail payment handler
+ * Paytrail E2 (legacy) payment handler
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2021.
+ * Copyright (C) The National Library of Finland 2014-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -28,80 +28,54 @@
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-namespace Finna\OnlinePayment;
+namespace Finna\OnlinePayment\Handler;
 
-use Finna\OnlinePayment\Paytrail\PaytrailE2;
+use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailE2;
 
 /**
- * Paytrail payment handler module.
+ * Paytrail E2 (legacy) payment handler module.
  *
  * @category VuFind
  * @package  OnlinePayment
  * @author   Leszek Manicki <leszek.z.manicki@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  * @link     http://docs.paytrail.com/ Paytrail API documentation
  */
-class Paytrail extends BaseHandler
+class Paytrail extends AbstractBase
 {
-    public const PAYMENT_SUCCESS = 'success';
-    public const PAYMENT_FAILURE = 'failure';
-    public const PAYMENT_NOTIFY = 'notify';
-
     /**
-     * Return payment response parameters.
+     * Mappings from VuFind language codes to Paytrail
      *
-     * @param Laminas\Http\Request $request Request
-     *
-     * @return array
+     * @var array
      */
-    public function getPaymentResponseParams($request)
-    {
-        $params = array_merge(
-            $request->getQuery()->toArray(),
-            $request->getPost()->toArray()
-        );
-
-        $required = [
-            'ORDER_NUMBER', 'TIMESTAMP', 'RETURN_AUTHCODE'
-        ];
-
-        foreach ($required as $name) {
-            if (!isset($params[$name])) {
-                $this->logPaymentError(
-                    "missing parameter $name in payment response",
-                    compact('params')
-                );
-                return false;
-            }
-        }
-
-        $params['transaction'] = $params['ORDER_NUMBER'];
-
-        return $params;
-    }
+    protected $languageMap = [
+        'fi' => 'fi_FI',
+        'sv' => 'sv_SE',
+        'en' => 'en_US'
+    ];
 
     /**
      * Start transaction.
      *
-     * @param string             $finesUrl       Return URL to MyResearch/Fines
-     * @param string             $ajaxUrl        Base URL for AJAX-actions
+     * @param string             $returnBaseUrl  Return URL
+     * @param string             $notifyBaseUrl  Notify URL
      * @param \Finna\Db\Row\User $user           User
      * @param array              $patron         Patron information
      * @param string             $driver         Patron MultiBackend ILS source
-     * @param int                $amount         Amount
-     * (excluding transaction fee)
+     * @param int                $amount         Amount (excluding transaction fee)
      * @param int                $transactionFee Transaction fee
      * @param array              $fines          Fines data
      * @param string             $currency       Currency
-     * @param string             $statusParam    Payment status URL parameter
+     * @param string             $paymentParam   Payment status URL parameter
      *
      * @return string Error message on error, otherwise redirects to payment handler.
      */
     public function startPayment(
-        $finesUrl,
-        $ajaxUrl,
+        $returnBaseUrl,
+        $notifyBaseUrl,
         $user,
         $patron,
         $driver,
@@ -109,22 +83,24 @@ class Paytrail extends BaseHandler
         $transactionFee,
         $fines,
         $currency,
-        $statusParam
+        $paymentParam
     ) {
         $patronId = $patron['cat_username'];
-        $orderNumber = $this->generateTransactionId($patronId);
+        $transactionId = $this->generateTransactionId($patronId);
 
-        $module = $this->initPaytrail($orderNumber, $currency);
+        $module = $this->initPaytrail($transactionId, $currency);
 
-        $successUrl = "$finesUrl?driver=$driver&$statusParam="
-            . self::PAYMENT_SUCCESS;
-        $cancelUrl = "$finesUrl?driver=$driver&$statusParam="
-            . self::PAYMENT_FAILURE;
-        $notifyUrl = "$ajaxUrl/onlinePaymentNotify?driver=$driver&$statusParam="
-            . self::PAYMENT_NOTIFY;
+        $returnUrl = $this->addQueryParams(
+            $returnBaseUrl,
+            [$paymentParam => $transactionId]
+        );
+        $notifyUrl = $this->addQueryParams(
+            $notifyBaseUrl,
+            [$paymentParam => $transactionId]
+        );
 
-        $module->setUrls($successUrl, $cancelUrl, $notifyUrl);
-        $module->setOrderNumber($orderNumber);
+        $module->setUrls($returnUrl, $returnUrl, $notifyUrl);
+        $module->setOrderNumber($transactionId);
         $module->setCurrency($currency);
 
         if (!empty($this->config->paymentDescription)) {
@@ -247,7 +223,7 @@ class Paytrail extends BaseHandler
         }
 
         $success = $this->createTransaction(
-            $orderNumber,
+            $transactionId,
             $driver,
             $user->id,
             $patronId,
@@ -257,7 +233,7 @@ class Paytrail extends BaseHandler
             $fines
         );
         if (!$success) {
-            return false;
+            return '';
         }
 
         $paytrailUrl = !empty($this->config->e2url) ? $this->config->e2url
@@ -270,63 +246,91 @@ class Paytrail extends BaseHandler
     /**
      * Process the response from payment service.
      *
-     * @param Laminas\Http\Request $request Request
+     * @param \Finna\Db\Row\Transaction $transaction Transaction
+     * @param \Laminas\Http\Request     $request     Request
      *
-     * @return string error message (not translated)
-     *   or associative array with keys:
-     *     'markFeesAsPaid' (boolean) true if payment was successful and fees
-     *     should be registered as paid.
-     *     'transactionId' (string) Transaction ID.
-     *     'amount' (int) Amount to be registered (does not include transaction fee).
+     * @return int One of the result codes defined in AbstractBase
      */
-    public function processResponse($request)
-    {
-        $params = $this->getPaymentResponseParams($request);
-        $status = $params['payment'];
-        $orderNum = $params['transaction'];
+    public function processPaymentResponse(
+        \Finna\Db\Row\Transaction $transaction,
+        \Laminas\Http\Request $request
+    ): int {
+        if (!($params = $this->getPaymentResponseParams($request))) {
+            return self::PAYMENT_FAILURE;
+        }
+
+        // Make sure the transaction IDs match:
+        if ($transaction->transaction_id !== $params['ORDER_NUMBER']) {
+            return self::PAYMENT_FAILURE;
+        }
+
+        $status = $params['STATUS'];
         $timestamp = $params['TIMESTAMP'];
 
-        [$success, $data] = $this->getStartedTransaction($orderNum);
-        if (!$success) {
-            return $data;
+        if ('PAID' === $status) {
+            $transaction->setPaid($timestamp);
+            return self::PAYMENT_SUCCESS;
+        } elseif ('CANCELLED' === $status) {
+            $transaction->setCanceled();
+            return self::PAYMENT_CANCEL;
         }
 
-        $t = $data;
+        $this->logPaymentError("unknown status $status");
+        return self::PAYMENT_FAILURE;
+    }
 
-        $amount = $t->amount;
-        if ($status === self::PAYMENT_SUCCESS || $status === self::PAYMENT_NOTIFY) {
-            if (!$module = $this->initPaytrail()) {
-                return 'online_payment_failed';
-            }
-            $success = $module->validateRequest(
-                $params['ORDER_NUMBER'],
-                $params['PAYMENT_ID'],
-                $params['TIMESTAMP'],
-                $params['STATUS'],
-                $params['RETURN_AUTHCODE']
-            );
-            if (!$success) {
+    /**
+     * Validate and return payment response parameters.
+     *
+     * @param Laminas\Http\Request $request Request
+     *
+     * @return array
+     */
+    protected function getPaymentResponseParams($request)
+    {
+        if (!($module = $this->initPaytrail())) {
+            return false;
+        }
+
+        $params = array_merge(
+            $request->getQuery()->toArray(),
+            $request->getPost()->toArray()
+        );
+
+        $required = [
+            'ORDER_NUMBER', 'PAYMENT_ID', 'TIMESTAMP', 'STATUS', 'RETURN_AUTHCODE'
+        ];
+
+        foreach ($required as $name) {
+            if (!isset($params[$name])) {
                 $this->logPaymentError(
-                    'error processing response: invalid checksum',
-                    compact('request', 'params')
+                    "missing parameter $name in payment response",
+                    compact('params')
                 );
-                $this->setTransactionFailed($orderNum, 'invalid checksum');
-                return 'online_payment_failed';
+                return false;
             }
-            $this->setTransactionPaid($orderNum, $timestamp);
-
-            return [
-                'markFeesAsPaid' => true,
-                'transactionId' => $orderNum,
-                'amount' => $amount
-            ];
-        } elseif ($status === self::PAYMENT_FAILURE) {
-            $this->setTransactionCancelled($orderNum);
-            return 'online_payment_canceled';
-        } else {
-            $this->setTransactionFailed($orderNum, "unknown status $status");
-            return 'online_payment_failed';
         }
+
+        $success = $module->validateRequest(
+            $params['ORDER_NUMBER'],
+            $params['PAYMENT_ID'],
+            $params['TIMESTAMP'],
+            $params['STATUS'],
+            $params['RETURN_AUTHCODE']
+        );
+        if (!$success) {
+            $this->logPaymentError(
+                'error processing response: invalid checksum',
+                compact('request', 'params')
+            );
+            return [
+                'success' => false,
+                'markFeesAsPaid' => false,
+                'error' => 'online_payment_failed'
+            ];
+        }
+
+        return $params;
     }
 
     /**
@@ -343,19 +347,10 @@ class Paytrail extends BaseHandler
             }
         }
 
-        $locale = $this->translator->getLocale();
-        $localeParts = explode('-', $locale);
-        $paytrailLocale = 'fi_FI';
-        if ('sv' === $localeParts[0]) {
-            $paytrailLocale = 'sv_SE';
-        } elseif ('en' === $localeParts[0]) {
-            $paytrailLocale = 'en_US';
-        }
-
         return new PaytrailE2(
             $this->config->merchantId,
             $this->config->secret,
-            $paytrailLocale
+            $this->languageMap[$this->getCurrentLanguageCode()] ?? 'en_US'
         );
     }
 
@@ -375,8 +370,7 @@ class Paytrail extends BaseHandler
             $formFields .= '<input type="hidden" name="' . htmlentities($key)
                 . '" value="' . htmlentities($value) . '">';
         }
-        $locale = $this->translator->getLocale();
-        [$lang] = explode('-', $locale);
+        $lang = $this->getCurrentLanguageCode();
         $title = $this->translator->translate('online_payment_go_to_pay');
         $title = str_replace('%%amount%%', '', $title);
         $jsRequired = $this->translator->translate('Please enable JavaScript.');

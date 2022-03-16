@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2016-2020.
+ * Copyright (C) The National Library of Finland 2016-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -271,120 +271,83 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         $diff = $now->diff($paid_time);
         $diffHours = ($diff->days * 24) + $diff->h;
         if ($diffHours > $this->expireHours) {
+            // Transaction has expired
             if (!isset($report[$t->driver])) {
                 $report[$t->driver] = 0;
             }
             $report[$t->driver]++;
             $expiredCnt++;
 
-            $result = $this->transactionTable->setTransactionReported(
-                $t->transaction_id
-            );
-            if (!$result) {
-                $this->err(
-                    '    Failed to update transaction ' . $t->transaction_id
-                        . ' as reported',
-                    'Failed to update a transaction as reported'
-                );
-            }
+            $t->setReportedAndExpired();
 
-            $t->complete = Transaction::STATUS_REGISTRATION_EXPIRED;
-            if (!$t->save()) {
-                $this->err(
-                    '    Failed to update transaction ' . $t->transaction_id
-                        . ' as expired',
-                    'Failed to update a transaction as expired'
-                );
-            } else {
-                $this->msg('    Transaction ' . $t->transaction_id . ' expired.');
-                return true;
-            }
-        } else {
-            if ($user === false || $t->user_id != $user->id) {
-                $user = $this->userTable->getById($t->user_id);
-            }
+            $this->msg('    Transaction ' . $t->transaction_id . ' expired.');
+            return true;
+        }
 
-            $patron = null;
-            foreach ($user->getLibraryCards() as $card) {
-                $card = $user->getLibraryCard($card['id']);
+        if ($user === false || $t->user_id != $user->id) {
+            $user = $this->userTable->getById($t->user_id);
+        }
 
-                if ($card['cat_username'] == $t->cat_username) {
-                    try {
-                        $cardUser = $this->userTable->createRow();
-                        $cardUser->cat_username = $card['cat_username'];
-                        $cardUser->cat_pass_enc = $card['cat_pass_enc'];
-                        $patron = $this->catalog->patronLogin(
-                            $card['cat_username'],
-                            $cardUser->getCatPassword()
-                        );
+        $patron = null;
+        foreach ($user->getLibraryCards() as $card) {
+            $card = $user->getLibraryCard($card['id']);
 
-                        if ($patron) {
-                            break;
-                        }
-                    } catch (\Exception $e) {
-                        $this->err(
-                            'Patron login error: ' . $e->getMessage(),
-                            'Patron login failed for a user'
-                        );
-                        $this->logException($e);
+            if ($card['cat_username'] == $t->cat_username) {
+                try {
+                    $cardUser = $this->userTable->createRow();
+                    $cardUser->cat_username = $card['cat_username'];
+                    $cardUser->cat_pass_enc = $card['cat_pass_enc'];
+                    $patron = $this->catalog->patronLogin(
+                        $card['cat_username'],
+                        $cardUser->getCatPassword()
+                    );
+
+                    if ($patron) {
+                        break;
                     }
+                } catch (\Exception $e) {
+                    $this->err(
+                        'Patron login error: ' . $e->getMessage(),
+                        'Patron login failed for a user'
+                    );
+                    $this->logException($e);
                 }
             }
+        }
 
-            if (!$patron) {
-                $this->warn(
-                    "Catalog login failed for user {$user->username}"
+        if (!$patron) {
+            $this->warn(
+                "Catalog login failed for user {$user->username}"
+                . " (id {$user->id}), card {$card->cat_username}"
+                . " (id {$card->id})"
+            );
+            $failedCnt++;
+            return false;
+        }
+
+        try {
+            $this->catalog->markFeesAsPaid(
+                $patron,
+                $t->amount,
+                $t->transaction_id,
+                $t->id
+            );
+            $t->setRegistered();
+            $registeredCnt++;
+        } catch (\Exception $e) {
+            $this->err(
+                '    Registration of transaction '
+                    . $t->transaction_id . " failed for user {$user->username}"
                     . " (id {$user->id}), card {$card->cat_username}"
-                    . " (id {$card->id})"
-                );
-                $failedCnt++;
-                return false;
-            }
+                    . " (id {$card->id})",
+                ''
+            );
+            $this->err('      ' . $e->getMessage());
+            $this->logException($e);
 
-            try {
-                $this->catalog->markFeesAsPaid(
-                    $patron,
-                    $t->amount,
-                    $t->transaction_id,
-                    $t->id
-                );
-                $result = $this->transactionTable->setTransactionRegistered(
-                    $t->transaction_id
-                );
-                if (!$result) {
-                    $this->err(
-                        '    Failed to update transaction ' . $t->transaction_id
-                            . ' as registered',
-                        'Failed to update a transaction as expired'
-                    );
-                }
-                $registeredCnt++;
-                return true;
-            } catch (\Exception $e) {
-                $this->err(
-                    '    Registration of transaction '
-                        . $t->transaction_id . " failed for user {$user->username}"
-                        . " (id {$user->id}), card {$card->cat_username}"
-                        . " (id {$card->id})",
-                    ''
-                );
-                $this->err('      ' . $e->getMessage());
-                $this->logException($e);
-
-                $result = $this->transactionTable->setTransactionRegistrationFailed(
-                    $t->transaction_id,
-                    $e->getMessage()
-                );
-                if (!$result) {
-                    $this->err(
-                        'Error updating transaction ' . $t->transaction_id
-                            . ' status: registration failed',
-                        'Failed to update a transaction status: registration failed'
-                    );
-                }
-                $failedCnt++;
-                return false;
-            }
+            $t->setRegistrationFailed($e->getMessage());
+            $failedCnt++;
+            return false;
         }
 
         return true;

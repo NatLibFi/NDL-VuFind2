@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2014-2020.
+ * Copyright (C) The National Library of Finland 2014-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,12 +22,13 @@
  * @category VuFind
  * @package  OnlinePayment
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
-namespace Finna\OnlinePayment\TurkuPayment;
+namespace Finna\OnlinePayment\Handler\Connector\TurkuPayment;
 
-use Finna\OnlinePayment\Paytrail\PaytrailE2;
+use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailE2;
 
 /**
  * Turku Paytrail client
@@ -35,12 +36,13 @@ use Finna\OnlinePayment\Paytrail\PaytrailE2;
  * @category VuFind
  * @package  OnlinePayment
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 class TurkuPaytrailE2 extends PaytrailE2
 {
-    use \Finna\OnlinePayment\OnlinePaymentModuleTrait;
+    use \Finna\OnlinePayment\OnlinePaymentPostRequestTrait;
 
     /**
      * Name of the connecting application
@@ -187,7 +189,7 @@ class TurkuPaytrailE2 extends PaytrailE2
      *
      * @param string $url to make request
      *
-     * @return void
+     * @return string Error if the request could not be processed
      */
     public function sendRequest($url)
     {
@@ -205,6 +207,7 @@ class TurkuPaytrailE2 extends PaytrailE2
                 exit();
             }
         }
+        return $response['response'];
     }
 
     /**
@@ -263,21 +266,40 @@ class TurkuPaytrailE2 extends PaytrailE2
      * Validate payment return and notify requests.
      *
      * @param string $orderNumber Order number
-     * @param string $paid        Payment signature
      * @param int    $timeStamp   Timestamp
+     * @param string $paid        Payment signature
      * @param string $method      Payment method
      * @param string $authCode    Returned authentication code
      *
      * @return bool
      */
-    public function validateRequest(
-        $orderNumber,
-        $paid,
-        $timeStamp,
-        $method,
-        $authCode
-    ) {
+    public function validateSuccessRequest(
+        string $orderNumber,
+        int $timeStamp,
+        string $paid,
+        string $method,
+        string $authCode
+    ): bool {
         $response = "$orderNumber|$timeStamp|$paid|$method|{$this->secret}";
+        $hash = strtoupper(md5($response));
+        return $authCode === $hash;
+    }
+
+    /**
+     * Validate a cancel request.
+     *
+     * @param string $orderNumber Order number
+     * @param int    $timeStamp   Timestamp
+     * @param string $authCode    Returned authentication code
+     *
+     * @return bool
+     */
+    public function validateCancelRequest(
+        string $orderNumber,
+        int $timeStamp,
+        string $authCode
+    ): bool {
+        $response = "$orderNumber|$timeStamp|{$this->secret}";
         $hash = strtoupper(md5($response));
         return $authCode === $hash;
     }

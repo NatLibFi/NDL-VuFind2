@@ -225,6 +225,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'credited' => 'assistant'
                     ]
                 ]
+            ],
+            'skipTags' => [
+                'elotekijakokoonpano' => true
             ]
         ],
         'nonPresenterSecondaryAuthors' => [
@@ -262,12 +265,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'mappings' => [
                 'elonet_kokoonpano' => [
                     'default' => [
-                        'uncredited' => 'uncreditedEnsembles'
+                        'credited' => 'ensembles',
+                        'uncredited' => 'ensembles'
                     ]
                 ],
                 'elonet_henkilo' => [
                     'default' => [
-                        'credited' => 'credited'
+                        'credited' => 'credited',
+                        'uncredited' => 'uncredited'
                     ]
                 ],
                 'default' => [
@@ -276,6 +281,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                         'uncredited' => 'uncredited'
                     ]
                 ]
+            ],
+            'skipTags' => [
+                'elonayttelijakokoonpano' => true
             ],
             'all' => 'nonPresenters'
         ],
@@ -298,6 +306,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             'elokuva-alkupaanijarjestelma' => 'soundSystem',
             'elokuva-tuotantokustannukset' => 'productionCost',
             'elokuva-teatterikopioidenlkm' => 'numberOfCopies',
+            'elokuva-katsojaluku' => 'amountOfViewers',
             'elokuva-kuvausaika' => 'filmingDate',
             'elokuva-arkistoaineisto' => 'archiveFilms'
         ],
@@ -476,28 +485,29 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
         $identifyingTitle = (string)$xml->IdentifyingTitle;
         $result = [];
         foreach ($xml->Title as $title) {
-            $titleText = (string)$title->TitleText;
-            if ($titleText == $identifyingTitle) {
+            $titleText = $title->TitleText;
+            $titleTextStr = (string)$title->TitleText;
+            if ($titleTextStr == $identifyingTitle) {
                 continue;
             }
             if ($rel = $title->TitleRelationship) {
                 switch ((string)$rel) {
                 case 'working':
-                    $titleText .= ' (' . $this->translate('working title') . ')';
+                    $titleTextStr .= ' (' . $this->translate('working title') . ')';
                     break;
                 case 'translated':
-                    if ($lang = $title->TitleRelationship->attributes()->lang) {
-                        $titleText .= ' ' . $this->translate($lang);
+                    if ($lang = $titleText->attributes()->lang) {
+                        $titleTextStr .= ' (' . $this->translate($lang) . ')';
                     }
                     break;
                 default:
                     if ($type = $rel->attributes()->{'elokuva-elonimi-tyyppi'}) {
-                        $titleText .= " ($type)";
+                        $titleTextStr .= " ($type)";
                     }
                     break;
                 }
             }
-            $result[] = $titleText;
+            $result[] = $titleTextStr;
         }
         return $result;
     }
@@ -763,13 +773,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                     $result[$key] = $valueString = (string)$value;
                     foreach ($this->authorNameConfig as $credited => $attrs) {
                         if ($fieldType = $attrs[$key] ?? false) {
+                            if ('uncredited' === $credited) {
+                                $result['uncredited'] = true;
+                            }
                             if ('name' === $fieldType && !empty($result['name'])) {
                                 break;
                             }
                             $result[$fieldType] = $valueString;
-                            if ('uncredited' === $credited) {
-                                $result['uncredited'] = true;
-                            }
                             break;
                         }
                     }
@@ -789,11 +799,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $credited = $result['uncredited'] === true ? 'uncredited' : 'credited';
             $lcRelator = mb_strtolower($result['relator'] ?? '', 'UTF-8');
             foreach ($this->authorConfig as $storage => $data) {
+                if ($skip = $data['skipTags'][$result['tag']] ?? false) {
+                    continue;
+                }
                 if (in_array($lcRelator, $data['relators'])) {
                     $valuesToPreserve = $data['preservedValues'] ?? [];
                     $type = in_array($type, $valuesToPreserve) ? $type : 'default';
                     $role = in_array($role, $valuesToPreserve) ? $role : 'default';
-
                     if ($res = $data['mappings'][$type][$role][$credited] ?? '') {
                         if ($k = $data['storageKey'] ?? '') {
                             $results[$storage][$res][$k][] = $result;
@@ -1060,8 +1072,12 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
             $dateText = (string)($event->DateText ?? '');
             // Get premiere theater information
             if ('PRE' === $type) {
-                $results['premiereTheater'] = explode(';', $regionName);
-                $results['premiereTime'] = $dateText;
+                if (!empty($regionName)) {
+                    $results['premiereTheater'] = explode(';', $regionName);
+                }
+                if (!empty($dateText)) {
+                    $results['premiereTime'] = $dateText;
+                }
             }
 
             $attributes = $event->ProductionEventType->attributes();
@@ -1368,6 +1384,17 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Return number of viewer
+     *
+     * @return string
+     */
+    public function getAmountOfViewers(): string
+    {
+        $events = $this->getProductionEvents();
+        return $events['amountOfViewers'] ?? '';
+    }
+
+    /**
      * Return other screening occasions
      *
      * @return array
@@ -1454,12 +1481,12 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     /**
      * Return location notes
      *
-     * @return string
+     * @return array
      */
     public function getLocationNotes()
     {
         $events = $this->getProductionEvents();
-        return $events['locationNotes'] ?? '';
+        return $events['locationNotes'] ?? [];
     }
 
     /**

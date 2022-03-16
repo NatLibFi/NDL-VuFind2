@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -246,12 +246,32 @@ class FeedbackController extends \VuFind\Controller\FeedbackController
 
         $url = rtrim($this->getServerUrl('home'), '/');
 
-        $message = $form->getContentsAsArray((array)$this->params()->fromPost());
-        $paramMap = [
+        $recordParamMap = [
+            'record' => 'record',
             'record_id' => 'recordId',
             'record_info' => 'recordInfo'
         ];
-        foreach ($paramMap as $from => $to) {
+
+        $postParams = (array)$this->params()->fromPost();
+        $message = $form->getContentsAsArray($postParams);
+        foreach ($form->mapRequestParamsToFieldValues($postParams) as $field) {
+            if (in_array($field['name'], array_keys($recordParamMap))) {
+                continue;
+            }
+            $details = [
+                'type' => $field['type'],
+                'label' => $field['label'] ?? '',
+                'labelTranslated' => $this->translate($field['label'] ?? ''),
+                'value' => $field['value'] ?? '',
+            ];
+            if (isset($field['valueLabel'])) {
+                $details['valueLabel'] = $field['valueLabel'];
+                $details['valueLabelTranslated']
+                    = $this->translate($field['valueLabel']);
+            }
+            $message['fields'][$field['name']] = $details;
+        }
+        foreach ($recordParamMap as $from => $to) {
             if (isset($message[$from])) {
                 $message[$to] = $message[$from];
                 unset($message[$from]);

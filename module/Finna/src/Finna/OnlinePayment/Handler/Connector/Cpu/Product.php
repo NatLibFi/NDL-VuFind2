@@ -1,5 +1,7 @@
 <?php
 // @codingStandardsIgnoreStart
+namespace Finna\OnlinePayment\Handler\Connector\Cpu;
+
 /**
  * Product data wrapper to make it easier to use and validate products.
  *
@@ -7,7 +9,7 @@
  * @version 1.0
  *
  */
-class Cpu_Client_Product
+class Product
 {
     /**
      * Product code. Max. length 25 chars.
@@ -61,18 +63,18 @@ class Cpu_Client_Product
      */
     public function __construct($code, $amount = null, $price = null, $description = null)
     {
-        $this->Code = Cpu_Client::sanitize($code);
+        $this->Code = Client::sanitize($code);
 
         if ($amount) {
-            $this->Amount = Cpu_Client::sanitize($amount);
+            $this->Amount = Client::sanitize($amount);
         }
 
         if ($price) {
-            $this->Price = Cpu_Client::sanitize($price);
+            $this->Price = Client::sanitize($price);
         }
 
         if ($description) {
-            $this->Description = Cpu_Client::sanitize($description);
+            $this->Description = Client::sanitize($description);
         }
     }
 

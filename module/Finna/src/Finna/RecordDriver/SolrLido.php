@@ -62,16 +62,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     ];
 
     /**
-     * List of undisplayable file formats
-     *
-     * @var array
-     */
-    protected $undisplayableFileFormats = [
-        'tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb',
-        'obj', 'mp3', 'wav', 'mp4'
-    ];
-
-    /**
      * Image types array
      *
      * @var array
@@ -175,33 +165,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'viewerPaddingAngle',
         'debug'
     ];
-
-    /**
-     * Constructor
-     *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
-     * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
-     * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
-     * file
-     */
-    public function __construct(
-        $mainConfig = null,
-        $recordConfig = null,
-        $searchSettings = null
-    ) {
-        parent::__construct($mainConfig, $recordConfig, $searchSettings);
-
-        // Keep old setting name for back-compatibility:
-        $formatBlockList = $mainConfig['Content']['lidoFileFormatBlockList']
-            ?? $mainConfig['Content']['lidoFileFormatBlackList']
-            ?? '';
-
-        if (!empty($formatBlockList)) {
-            $this->undisplayableFileFormats = explode(',', $formatBlockList);
-        }
-    }
 
     /**
      * Return access restriction notes for the record.
@@ -763,10 +726,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     ): array {
         // Check if the image is really an image
         // Original images can be any type and are not displayed
-        if ($this->undisplayableFileFormats && $type !== 'image_original') {
-            if (in_array($format, $this->undisplayableFileFormats)) {
-                return [];
-            }
+        if ('image_original' !== $type && $this->isUndisplayableFormat($format)) {
+            return [];
         }
 
         $size = $this->imageTypes[$type];

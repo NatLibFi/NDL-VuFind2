@@ -2,6 +2,8 @@
   <?php
     $openUrl = $this->openUrl($this->driver, 'results');
     $openUrlActive = $openUrl->isActive();
+    $context = $this->context ?? 'results';
+    $maxLinkCount = 4;
 
     $images = $this->record($this->driver)->getAllRecordImageUrls();
     $urls = $this->driver->getURLs();
@@ -14,84 +16,100 @@
       'class' => 'fulltext',
       'target' => '_blank'
     ];
+    $videoBase = [
+      'class' => 'videourl fulltext btn btn-primary'
+    ];
     $this->htmlElement()->addAttributeTemplate('url-base', $urlBase);
+    $this->htmlElement()->addAttributeTemplate('video-base', $videoBase);
   ?>
 
   <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
   <div class="available-online-links">
     <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-      <strong class="available-online-header <?=(!empty($onlineURLs) || !empty($mergedData['urls']) || !empty($urls)) ? '' : 'hidden'; ?>"><?=$this->transEsc('Available Online') ?>:</strong>
+      <?php if ('popup' !== $context): ?>
+        <strong class="available-online-header <?=(!empty($onlineURLs) || !empty($mergedData['urls']) || !empty($urls)) ? '' : 'hidden'; ?>"><?=$this->transEsc('Available Online') ?>:</strong>
+      <?php endif; ?>
       <div class="truncate-field">
-        <?php $renderedURLs = []; ?>
-        <?php if (!empty($urls)): ?>
-          <?php foreach ($urls as $i => $url): ?>
-            <?php
-              if (isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') {
-                continue;
-              }
-              $renderedURLs[] = $url['url'];
-            ?>
-            <?=$i > 0 ? '<br/>' : '' ?>
-            <?php
-              $currentUrl = [
-                'href' => $this->proxyUrl($url['url']),
-                'title' => $url['url']
-              ];
-              if (!empty($url['videoSources'])) {
-                $videoData = [
-                  'data-video-sources' => json_encode($url['videoSources']),
-                  'data-scripts' => $videoScripts
-                ];
-                $currentUrl = array_merge($currentUrl, $videoData);
-              }
-              if (!empty($url['posterUrl'])) {
-                $currentUrl['data-poster-url'] = $url['posterUrl'];
-              }
-              if (!empty($url['embed']) && $url['embed'] === 'video') {
-                $currentUrl['data-embed-video'] = '';
-              } elseif (!empty($url['embed']) && $url['embed'] === 'iframe') {
-                $currentUrl['data-embed-iframe'] = '';
-              }
-              $desc = $url['desc'] ?? $url['url'];
-              if ($desc === $url['url']) {
-                $desc = $this->truncateUrl($desc);
-              }
-            ?>
+        <?php
+          $renderedURLs = [];
+          $linkCount = 0;
+        ?>
+        <?php foreach ($urls ?? [] as $i => $url): ?>
+          <?php
+            if (isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') {
+              continue;
+            }
+            if ('popup' === $context && ++$linkCount > $maxLinkCount) {
+              break;
+            }
+          ?>
+          <?=$i > 0 ? '<br/>' : ''?>
+          <?php
+            $currentUrl = [
+              'href' => $this->proxyUrl($url['url']),
+              'title' => $url['url']
+            ];
+            if (!empty($url['videoSources'])) {
+              $currentUrl['data-video-sources'] = json_encode($url['videoSources']);
+              $currentUrl['data-scripts'] = $videoScripts;
+            }
+            if (!empty($url['posterUrl'])) {
+              $currentUrl['data-poster-url'] = $url['posterUrl'];
+            }
+            switch ($url['embed'] ?? '') {
+            case 'video':
+              $currentUrl['data-embed-video'] = '';
+              break;
+            case 'iframe':
+              $currentUrl['data-embed-iframe'] = '';
+              break;
+            }
+            $desc = $url['desc'] ?? $url['url'];
+            if ($desc === $url['url']) {
+              $desc = $this->truncateUrl($desc);
+            }
+            $renderedURLs[] = $url['url'];
+          ?>
+          <?php if ('popup' === $context && $url['embed'] ?? false): ?>
+            <button <?= $this->htmlElement()->getAttributes($currentUrl, 'video-base') ?>>
+              <i class="fa fa-external-link"></i> <?=$desc?>
+            </button>
+          <?php else: ?>
             <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
               <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
             </a>
-            <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
-          <?php endforeach; ?>
+          <?php endif; ?>
+          <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
+        <?php endforeach; ?>
+        <?php if ('popup' === $context && $linkCount > $maxLinkCount): ?>
+          <div>...</div>
         <?php endif; ?>
-
-        <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-          <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $i => $url): ?>
-            <?php
-              if ((isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') || in_array($url['url'], $renderedURLs)) {
-                continue;
-              }
-              $currentUrl = [
-                'href' => $this->proxyUrl($url['url']),
-                'title' => $url['url'],
-              ];
-              if (!empty($url['embed']) && $url['embed'] === 'iframe') {
-                $currentUrl['data-embed-iframe'] = '';
-              }
-              $desc = $url['text'] ?? $url['url'];
-              if ($desc === $url['url']) {
-                $desc = $this->truncateUrl($desc);
-              }
-            ?>
-            <?=count($renderedURLs) || $i > 0 ? '<br/>' : '' ?>
-            <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
-              <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
-            </a>
-            <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
-            <?php if ($url['source']): ?>
-              <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
-            <?php endif; ?>
-          <?php endforeach; ?>
-        <?php endif; ?>
+        <?php foreach ($mergedData['urls'] ?? $onlineURLs ?? [] as $i => $url): ?>
+          <?php
+            if ((isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf') || in_array($url['url'], $renderedURLs)) {
+              continue;
+            }
+            $currentUrl = [
+              'href' => $this->proxyUrl($url['url']),
+              'title' => $url['url'],
+            ];
+            if ('iframe' === ($url['embed'] ?? '')) {
+              $currentUrl['data-embed-iframe'] = '';
+            }
+            $desc = $url['text'] ?? $url['url'];
+            if ($desc === $url['url']) {
+              $desc = $this->truncateUrl($desc);
+            }
+          ?>
+          <?=count($renderedURLs) || $i > 0 ? '<br/>' : '' ?>
+          <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><i class="fa fa-external-link" aria-hidden="true"></i>
+            <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
+          </a>
+          <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
+          <?php if ($url['source']): ?>
+            <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
+          <?php endif; ?>
+        <?php endforeach; ?>
       </div>
       <?php if ($openUrlActive): ?>
         <?=$openUrl->renderTemplate()?>
