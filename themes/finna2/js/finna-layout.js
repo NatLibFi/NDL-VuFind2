@@ -138,9 +138,10 @@ finna.layout = (function finnaLayout() {
 
   function initMobileNarrowSearch() {
     $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .finna-collection-filter-toggle .btn-search-filter, .sidebar h1, .sidebar h2').off('click').on('click', function onClickMobileNav(e) {
-      if ($(e.target).attr('class') !== 'fa-times') {
+      if ($(e.target).attr('class') !== 'fa fa-times' || 'fa fa-info-big') {
         $('.sidebar').toggleClass('open');
       }
+      $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
       $('body').toggleClass('prevent-scroll');
     });
     $('.mobile-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
