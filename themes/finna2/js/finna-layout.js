@@ -154,7 +154,7 @@ finna.layout = (function finnaLayout() {
         ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
         {
           threshold: [1],
-          rootMargin:  '-' + narrowSearchMobile.offsetHeight + 'px',
+          rootMargin: '-' + narrowSearchMobile.offsetHeight + 'px',
         }
       );
       narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
