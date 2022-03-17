@@ -514,11 +514,9 @@ ModelViewer.prototype.initMesh = function initMesh(loadedObj)
         }
 
         // Apply encodings so glb looks better and update it if needed
-        if (meshMaterial.map) meshMaterial.map.encoding = _.encoding;
         if (meshMaterial.emissiveMap) meshMaterial.emissiveMap.encoding = _.encoding;
-        if (meshMaterial.normalMap) meshMaterial.normalMap.encoding = _.encoding;
+        if (meshMaterial.envMap) meshMaterial.envMap.encoding = _.encoding;
         if (meshMaterial.map || meshMaterial.envMap || meshMaterial.emissiveMap || meshMaterial.normalMap) meshMaterial.needsUpdate = true;
-
         _.meshCount++;
         _.meshes.push(obj);
         // Lets get available information about the model here so we can show them properly in information screen
