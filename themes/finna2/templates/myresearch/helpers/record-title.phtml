@@ -1,3 +1,4 @@
+<!-- START of: finna - myresearch/helpers/record-title.phtml -->
 <?php
   $ilsDetails = $record->getExtraDetail('ils_details');
   if (is_a($record, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($record, 'VuFind\\RecordDriver\\Missing')) :
@@ -21,3 +22,4 @@
 <?php else: ?>
   <span class="record-title"><?=$this->transEsc('Title not available')?></span>
 <?php endif; ?>
+<!-- END of: finna - myresearch/helpers/record-title.phtml -->
