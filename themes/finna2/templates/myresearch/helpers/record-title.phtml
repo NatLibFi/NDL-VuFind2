@@ -1,0 +1,23 @@
+<?php
+  $ilsDetails = $record->getExtraDetail('ils_details');
+  if (is_a($record, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($record, 'VuFind\\RecordDriver\\Missing')) :
+    $title = '';
+    $ilsTitle = !empty($ilsDetails['title']) ? trim($ilsDetails['title'], '/: ') : '';
+    $indexTitle = '';
+    if ($indexTitle = $record->getTitle()) {
+      $indexTitle = $this->escapeHtml($title);
+      if ($sub = $record->getSubtitle()) {
+        $indexTitle .= " : {$this->escapeHtml($sub)}";
+      }
+    }
+    $title = strlen($ilsTitle) > strlen($indexTitle) ? $ilsTitle : $indexTitle;
+    if (empty($title)) {
+      $title = $this->transEsc('Title not available'); 
+    }
+?>
+  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($record))?>" class="record-title"><?=$title?>
+<?php elseif (!empty($ilsDetails['title'])) : ?>
+  <span class="record-title"><?=$this->escapeHtml($ilsDetails['title'])?></span>
+<?php else: ?>
+  <span class="record-title"><?=$this->transEsc('Title not available')?></span>
+<?php endif; ?>
