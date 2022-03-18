@@ -450,7 +450,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
             $attrs = $relation->attributes();
             if ('ispartof' === (string)($attrs->type ?? '')) {
                 $result[] = (string)$relation;
-            } 
+            }
         }
         return $result;
     }
