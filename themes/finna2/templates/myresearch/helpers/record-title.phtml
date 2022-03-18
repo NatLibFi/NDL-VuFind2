@@ -13,7 +13,7 @@
     }
     $title = strlen($ilsTitle) > strlen($indexTitle) ? $ilsTitle : $indexTitle;
     if (empty($title)) {
-      $title = $this->transEsc('Title not available'); 
+      $title = $this->transEsc('Title not available');
     }
 ?>
   <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($record))?>" class="record-title"><?=$title?>
