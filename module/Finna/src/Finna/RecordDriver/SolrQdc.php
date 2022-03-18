@@ -436,7 +436,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
 
     /**
      * Get contained in information
-     * 
+     *
      * @return array
      */
     public function getContainedIn(): array
