@@ -169,7 +169,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Aspect Ratio', 'Audience', 'Author Notes',
             'Available Online', 'Awards', 'Bibliography',
             'Broadcasting Dates', 'child_records', 'Classification',
-            'Collection', 'Color', 'Content Description',
+            'Collection', 'Color', 'Content Description', 'Contained In',
             'Copyright Notes', 'Date', 'Description FWD',
             'Dissertation Note', 'Distribution', 'DOI',
             'Edition', 'Educational Level', 'Educational Role',

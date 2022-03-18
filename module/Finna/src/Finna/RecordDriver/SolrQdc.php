@@ -435,6 +435,27 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
+     * Get contained in information
+     * 
+     * @return array
+     */
+    public function getContainedIn(): array
+    {
+        $result = [];
+        $xml = $this->getXmlRecord();
+        foreach ($xml->isPartOf ?? [] as $isPartOF) {
+            $result[] = (string)$isPartOF;
+        }
+        foreach ($xml->relation ?? [] as $relation) {
+            $attrs = $relation->attributes();
+            if ('ispartof' === (string)($attrs->type ?? '')) {
+                $result[] = (string)$relation;
+            } 
+        }
+        return $result;
+    }
+
+    /**
      * Return keywords
      *
      * @return array
