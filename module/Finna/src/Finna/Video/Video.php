@@ -102,7 +102,7 @@ class Video
      *
      * @return string
      */
-    public function getHandlerName($source): string
+    public function getHandlerName(string $source): string
     {
         if ($config = $this->getConfig($source)) {
             return $config['handler'] ?? '';
@@ -117,7 +117,7 @@ class Video
      *
      * @return bool
      */
-    public function isEnabled($source): bool
+    public function isEnabled(string $source): bool
     {
         return $this->getConfig($source) ? true : false;
     }
@@ -129,7 +129,7 @@ class Video
      *
      * @return array
      */
-    protected function getConfig($source): array
+    protected function getConfig(string $source): array
     {
         if ($config = $this->config[$source]['video'] ?? []) {
             $config = $config->toArray();
