@@ -118,24 +118,14 @@ abstract class AbstractBase implements \Laminas\Log\LoggerAwareInterface
     /**
      * Init the module.
      *
-     * @param array $config Datasource config
-     *
-     * @return void
-     */
-    public function init(array $config): void
-    {
-        $this->config = $config;
-    }
-
-    /**
-     * Set source identifier.
-     *
+     * @param array  $config Datasource config
      * @param string $source Source identifier
      *
      * @return void
      */
-    public function setSource(string $source): void
+    public function init(array $config, string $source): void
     {
+        $this->config = $config;
         $this->source = $source;
     }
 

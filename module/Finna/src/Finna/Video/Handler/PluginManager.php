@@ -55,9 +55,9 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $factories = [
-        Elonet::class => AbstractBaseFactory::class,
-        Vimeo::class => AbstractBaseFactory::class,
-        DefaultVideo::class => AbstractBaseFactory::class
+        Elonet::class => 'Laminas\ServiceManager\Factory\InvokableFactory',
+        Vimeo::class => 'Laminas\ServiceManager\Factory\InvokableFactory',
+        DefaultVideo::class => 'Laminas\ServiceManager\Factory\InvokableFactory',
     ];
 
     /**

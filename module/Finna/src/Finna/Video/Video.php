@@ -77,7 +77,7 @@ class Video
      *
      * @return Handler\AbstractBase || null
      */
-    public function getHandler($source): ?Handler\AbstractBase
+    public function getHandler(string $source): ?Handler\AbstractBase
     {
         if (!($handlerName = $this->getHandlerName($source))) {
             $handlerName = 'Default';
@@ -88,8 +88,7 @@ class Video
         }
 
         $handler = $this->pluginManager->get($handlerName);
-        $handler->init($this->getConfig($source));
-        $handler->setSource($source);
+        $handler->init($this->getConfig($source), $source);
         if ($handler->verifyConfig()) {
             return $handler;
         }
@@ -103,7 +102,7 @@ class Video
      *
      * @return string
      */
-    public function getHandlerName($source)
+    public function getHandlerName(string $source)
     {
         if ($config = $this->getConfig($source)) {
             return $config['handler'] ?? '';
@@ -118,7 +117,7 @@ class Video
      *
      * @return bool
      */
-    public function isEnabled($source)
+    public function isEnabled(string $source)
     {
         return $this->getConfig($source) ? true : false;
     }
@@ -130,7 +129,7 @@ class Video
      *
      * @return array
      */
-    protected function getConfig($source)
+    protected function getConfig(string $source)
     {
         if ($config = $this->config[$source]['video'] ?? []) {
             $config = $config->toArray();
