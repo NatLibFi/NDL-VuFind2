@@ -6,7 +6,7 @@
     $ilsTitle = !empty($ilsDetails['title']) ? trim($ilsDetails['title'], '/: ') : '';
     $indexTitle = '';
     if ($indexTitle = $record->getTitle()) {
-      $indexTitle = $this->escapeHtml($title);
+      $indexTitle = $this->escapeHtml($indexTitle);
       if ($sub = $record->getSubtitle()) {
         $indexTitle .= " : {$this->escapeHtml($sub)}";
       }
