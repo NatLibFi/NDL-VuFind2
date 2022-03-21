@@ -107,12 +107,8 @@ class SolrEad extends SolrDefault
     public function getAccessRestrictionsType($language)
     {
         $record = $this->getXmlRecord();
-        $restrict = (string)(
-            $record->userestrict->p
-            ?? $record->accessrestrict->p
-            ?? ''
-        );
-        if (empty($restrict)) {
+        $restrict = $record->userestrict->p ?? $record->accessrestrict->p ?? '';
+        if (!($restrict = trim((string)$restrict))) {
             return false;
         }
         $data = [];
