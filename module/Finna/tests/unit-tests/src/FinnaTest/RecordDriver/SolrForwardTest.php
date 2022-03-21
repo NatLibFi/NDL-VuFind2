@@ -591,6 +591,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                 [
                     'Zoo (swe)',
                     'Animals (language name)',
+                    'Animals Working (working title)',
                     'Park (test name)'
                 ]
             ],
