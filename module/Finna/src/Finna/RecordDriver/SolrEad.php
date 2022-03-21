@@ -108,11 +108,11 @@ class SolrEad extends SolrDefault
     {
         $record = $this->getXmlRecord();
         $restricts = [
-            $record->accessrestrict->p ?? '',
-            $record->userestrict->p ?? ''
+            $record->userestrict->p ?? '',
+            $record->accessrestrict->p ?? ''
         ];
         foreach ($restricts as $restrict) {
-            if (!$restrict) {
+            if (empty($restrict)) {
                 continue;
             }
             $data = [];
