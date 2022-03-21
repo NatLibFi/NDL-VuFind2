@@ -15,7 +15,7 @@
     </Title>
     <Title>
       <TitleText>Animals</TitleText>
-      <TitleRelationship>working</TitleRelationship>
+      <TitleRelationship elokuva-elonimi-tyyppi="language name">working</TitleRelationship>
     </Title>
     <Title>
       <TitleText>Park</TitleText>

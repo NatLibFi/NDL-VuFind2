@@ -491,20 +491,19 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
                 continue;
             }
             if ($rel = $title->TitleRelationship) {
-                switch ((string)$rel) {
-                case 'working':
-                    $titleTextStr .= ' (' . $this->translate('working title') . ')';
-                    break;
-                case 'translated':
-                    if ($lang = $titleText->attributes()->lang) {
-                        $titleTextStr .= ' (' . $this->translate($lang) . ')';
+                if ($type = $rel->attributes()->{'elokuva-elonimi-tyyppi'}) {
+                    $titleTextStr .= " ($type)";
+                } else {
+                    switch ((string)$rel) {
+                    case 'working':
+                        $titleTextStr .= " ({$this->translate('working title')})";
+                        break;
+                    case 'translated':
+                        if ($lang = $titleText->attributes()->lang) {
+                            $titleTextStr .= " ({$this->translate($lang)})";
+                        }
+                        break;
                     }
-                    break;
-                default:
-                    if ($type = $rel->attributes()->{'elokuva-elonimi-tyyppi'}) {
-                        $titleTextStr .= " ($type)";
-                    }
-                    break;
                 }
             }
             $result[] = $titleTextStr;
