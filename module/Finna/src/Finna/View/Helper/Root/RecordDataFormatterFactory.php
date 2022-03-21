@@ -733,6 +733,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Thanks',
+            'getThanks',
+            'data-escapeHtml.phtml',
+            [
+               'context' => ['class' => 'record-thanks']
+            ]
+        );
+        $setTemplateLine(
             'Exterior Images',
             'getExteriors',
             'data-forwardFields.phtml',
