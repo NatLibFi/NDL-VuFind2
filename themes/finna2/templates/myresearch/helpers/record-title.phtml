@@ -5,7 +5,7 @@
     $title = '';
     $ilsTitle = !empty($ilsDetails['title']) ? trim($ilsDetails['title'], '/: ') : '';
     if ($indexTitle = $record->getTitle()) {
-      $indexTitle = $this->escapeHtml($title);
+      $indexTitle = $this->escapeHtml($indexTitle);
     }
     $title = strlen($ilsTitle) > strlen($indexTitle) ? $ilsTitle : $indexTitle;
     if (empty($title)) {
