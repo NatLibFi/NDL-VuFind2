@@ -4,12 +4,8 @@
   if (is_a($record, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($record, 'VuFind\\RecordDriver\\Missing')) :
     $title = '';
     $ilsTitle = !empty($ilsDetails['title']) ? trim($ilsDetails['title'], '/: ') : '';
-    $indexTitle = '';
     if ($indexTitle = $record->getTitle()) {
       $indexTitle = $this->escapeHtml($title);
-      if ($sub = $record->getSubtitle()) {
-        $indexTitle .= " : {$this->escapeHtml($sub)}";
-      }
     }
     $title = strlen($ilsTitle) > strlen($indexTitle) ? $ilsTitle : $indexTitle;
     if (empty($title)) {
