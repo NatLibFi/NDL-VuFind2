@@ -1868,7 +1868,6 @@ class SolrEad3 extends SolrEad
                 }
             }
         }
-
         if (!$returnItems) {
             return $stringResult;
         }
@@ -1939,8 +1938,7 @@ class SolrEad3 extends SolrEad
                 $languageResults[] = $name;
             }
         }
-
-        if ($obeyPreferredLanguage) {
+        if ($obeyPreferredLanguage && $lang) {
             return $languageResults;
         }
         if (! empty($languageResults)) {
