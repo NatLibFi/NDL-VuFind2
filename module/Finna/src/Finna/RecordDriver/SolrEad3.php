@@ -1939,6 +1939,7 @@ class SolrEad3 extends SolrEad
                 $languageResults[] = $name;
             }
         }
+
         if ($obeyPreferredLanguage && $lang) {
             return $languageResults;
         }
