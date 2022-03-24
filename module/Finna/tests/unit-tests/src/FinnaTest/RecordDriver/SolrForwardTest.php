@@ -691,7 +691,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
             [
-                'getThanks',
+                'getMovieThanks',
                 [
                     'Kiitos, thanks, tack.'
                 ]

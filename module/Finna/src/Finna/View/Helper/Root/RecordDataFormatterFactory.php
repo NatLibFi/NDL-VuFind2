@@ -733,8 +733,8 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Thanks',
-            'getThanks',
+            'Movie Thanks',
+            'getMovieThanks',
             'data-escapeHtml.phtml',
             [
                'context' => ['class' => 'record-thanks']

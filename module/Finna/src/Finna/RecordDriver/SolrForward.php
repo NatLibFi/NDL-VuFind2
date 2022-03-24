@@ -1418,11 +1418,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Return credit thanks
+     * Return Movie Thanks
      *
      * @return array
      */
-    public function getThanks(): array
+    public function getMovieThanks(): array
     {
         $events = $this->getProductionEvents();
         return $events['thanks'] ?? [];

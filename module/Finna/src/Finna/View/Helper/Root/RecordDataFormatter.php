@@ -464,7 +464,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Item Description FWD', 'Item History', 'Keywords',
             'Language', 'Language Notes', 'Learning Resource Type',
             'Location', 'Manufacturer', 'Measurements',
-            'Medium of Performance', 'Methodology', 'Music',
+            'Medium of Performance', 'Methodology', 'Movie Thanks', 'Music',
             'New Title', 'Notated Music Format', 'Notes', 'Number of Viewers',
             'Objective and Content', 'Online Access', 'Original Work',
             'original_work_language', 'Other Classification',
@@ -482,7 +482,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Source of Acquisition', 'Standard Codes', 'Studios',
             'Subject Actor', 'Subject Date', 'Subject Detail',
             'Subject Place', 'Subjects', 'subjects_extended',
-            'System Format', 'Terms of Use', 'Thanks', 'Time Period',
+            'System Format', 'Terms of Use', 'Time Period',
             'Time Period of Creation', 'Trade Availability Note',
             'Uncontrolled Title', 'Uniform Title', 'Unit ID', 'Unit IDs'
         ];
