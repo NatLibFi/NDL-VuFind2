@@ -78,9 +78,38 @@
          <?=$this->record($this->driver)->getFormatList()?><br/>
        </div>
     <?php endif; ?>
-    <div class="truncate-field wide">
-      <?=implode('<br><br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
-    </div>
+    <?php
+      if (!($summExtended = $this->driver->tryMethod('getSummaryExtended'))) {
+        $summ = $this->driver->tryMethod('getSummary');
+      }
+    ?>
+    <?php if (!empty($summExtended)): ?>
+      <div class="truncate-field wide summary recordSummary">
+        <?php foreach ($summExtended as $i => $item): ?>
+          <?php
+            $text = $this->recordFieldMarkdown()->toHtml($item['text']);
+            if (!empty($url = $item['url'] ?? '')) {
+              $link = ' (<a target="_blank" href="'
+                . $this->escapeHtmlAttr($this->proxyUrl($url))
+                . '">' . $this->escapeHtml($this->truncateUrl($url)) . '</a>)';
+              $text = trim($text);
+              if ('</p>' === substr($text, -4)) {
+                $text = substr($text, 0, strlen($text) - 4) . $link . '</p>';
+              } else {
+                $text .= $link;
+              }
+            }
+          ?>
+          <?= $text ?>
+        <?php endforeach; ?>
+      </div>
+    <?php elseif (!empty($summ)): ?>
+      <div class="truncate-field wide summary recordSummary">
+        <?php foreach ($summ as $field): ?>
+          <?= $this->recordFieldMarkdown()->toHtml($field) ?>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
     <?/* Display Main Details from records */?>
     <?php
       $formatter = $this->recordDataFormatter();
