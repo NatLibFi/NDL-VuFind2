@@ -2304,18 +2304,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $payable = $amount > 0;
             if ($payable) {
                 foreach ($blockedTypes as $blockedType) {
-                    if (strncmp($blockedType, '/', 1) === 0
+                    if ($blockedType === $description
+                        || (strncmp($blockedType, '/', 1) === 0
                         && substr_compare($blockedType, '/', -1) === 0
+                        && preg_match($blockedType, $description))
                     ) {
-                        if (preg_match($blockedType, $description)) {
-                            $payable = false;
-                            break;
-                        }
-                    } else {
-                        if ($blockedType === $description) {
-                            $payable = false;
-                            break;
-                        }
+                        $payable = false;
+                        break;
                     }
                 }
             }
