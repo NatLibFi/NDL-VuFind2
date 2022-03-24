@@ -78,7 +78,7 @@
          <?=$this->record($this->driver)->getFormatList()?><br/>
        </div>
     <?php endif; ?>
-    <?php if (!($summary = $this->driver->tryMethod('getSummaryExtended'))): ?>
+    <?php if ($summary = $this->driver->tryMethod('getSummaryExtended')): ?>
       <div class="truncate-field wide summary recordSummary">
         <?php foreach ($summary as $i => $item): ?>
           <?php
@@ -98,7 +98,7 @@
           <?= $html ?>
         <?php endforeach; ?>
       </div>
-    <?php elseif (!($summary = $this->driver->tryMethod('getSummary'))): ?>
+    <?php elseif ($summary = $this->driver->tryMethod('getSummary')): ?>
       <div class="truncate-field wide summary recordSummary">
         <?php foreach ($summary as $field): ?>
           <?= $this->recordFieldMarkdown()->toHtml($field) ?>
