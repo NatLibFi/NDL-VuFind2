@@ -80,6 +80,9 @@ class Elonet extends \Finna\Video\Handler\AbstractBase
     {
         $results = parent::getData($data);
         foreach ($data as $media) {
+            if (empty($media['id'])) {
+                continue;
+            }
             $isChrome = stripos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false;
             $format = $isChrome ? 'mpd' : 'm3u8';
             $url = $this->getUrl("/playlist/{$media['id']}.$format");
