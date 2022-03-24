@@ -78,34 +78,29 @@
          <?=$this->record($this->driver)->getFormatList()?><br/>
        </div>
     <?php endif; ?>
-    <?php
-      if (!($summExtended = $this->driver->tryMethod('getSummaryExtended'))) {
-        $summ = $this->driver->tryMethod('getSummary');
-      }
-    ?>
-    <?php if (!empty($summExtended)): ?>
+    <?php if (!($summary = $this->driver->tryMethod('getSummaryExtended'))): ?>
       <div class="truncate-field wide summary recordSummary">
-        <?php foreach ($summExtended as $i => $item): ?>
+        <?php foreach ($summary as $i => $item): ?>
           <?php
-            $text = $this->recordFieldMarkdown()->toHtml($item['text']);
+            $html = $this->recordFieldMarkdown()->toHtml($item['text']);
             if (!empty($url = $item['url'] ?? '')) {
               $link = ' (<a target="_blank" href="'
                 . $this->escapeHtmlAttr($this->proxyUrl($url))
                 . '">' . $this->escapeHtml($this->truncateUrl($url)) . '</a>)';
-              $text = trim($text);
-              if ('</p>' === substr($text, -4)) {
-                $text = substr($text, 0, strlen($text) - 4) . $link . '</p>';
+              $html = trim($html);
+              if ('</p>' === substr($html, -4)) {
+                $html = substr($html, 0, strlen($html) - 4) . $link . '</p>';
               } else {
-                $text .= $link;
+                $html .= $link;
               }
             }
           ?>
-          <?= $text ?>
+          <?= $html ?>
         <?php endforeach; ?>
       </div>
-    <?php elseif (!empty($summ)): ?>
+    <?php elseif (!($summary = $this->driver->tryMethod('getSummary'))): ?>
       <div class="truncate-field wide summary recordSummary">
-        <?php foreach ($summ as $field): ?>
+        <?php foreach ($summary as $field): ?>
           <?= $this->recordFieldMarkdown()->toHtml($field) ?>
         <?php endforeach; ?>
       </div>
