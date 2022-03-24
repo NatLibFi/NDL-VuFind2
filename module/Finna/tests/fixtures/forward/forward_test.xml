@@ -324,5 +324,14 @@
     <Manifestation>
       <Identifier scheme="KAVI">992118</Identifier>
     </Manifestation>
+    <HasAgent elonet-tag="eloesiintyja">
+      <Activity finna-activity-code="E99" finna-activity-text="esiintyj&#xE4;">E99</Activity>
+      <AgentName>Ei Roolia</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>55113344</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
   </CinematographicWork>
 </ExchangeSet>

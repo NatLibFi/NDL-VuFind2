@@ -125,6 +125,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault
      * @var array
      */
     protected $filteredRoles = [
+        'esiintyjä',
         'prf',
         'oth'
     ];
