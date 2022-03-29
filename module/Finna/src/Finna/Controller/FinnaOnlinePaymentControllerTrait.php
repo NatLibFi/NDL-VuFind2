@@ -267,7 +267,7 @@ trait FinnaOnlinePaymentControllerTrait
             && ($transaction = $trTable->getTransaction($transactionId))
         ) {
             $this->ensureLogger();
-            $this->logger->info(
+            $this->logger->warn(
                 'Online payment response handler called. Request: '
                 . (string)$request
             );
@@ -282,7 +282,7 @@ trait FinnaOnlinePaymentControllerTrait
                     $transaction,
                     $this->getRequest()
                 );
-                $this->logger->info(
+                $this->logger->warn(
                     "Online payment response for $transactionId result: $result"
                 );
                 if ($paymentHandler::PAYMENT_SUCCESS === $result) {

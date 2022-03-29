@@ -289,10 +289,14 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         }
 
         $patron = null;
+        $matches = false;
         foreach ($user->getLibraryCards() as $card) {
             $card = $user->getLibraryCard($card['id']);
 
-            if ($card['cat_username'] == $t->cat_username) {
+            $match = mb_strtolower($card['cat_username'], 'UTF-8')
+                === mb_strtolower($t->cat_username, 'UTF-8');
+            if ($match) {
+                $matches = true;
                 try {
                     $cardUser = $this->userTable->createRow();
                     $cardUser->cat_username = $card['cat_username'];
@@ -315,12 +319,23 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             }
         }
 
+        if (!$matches) {
+            $this->warn(
+                "Library card not found for user {$user->username}"
+                . " (id {$user->id}), card {$t->cat_username}"
+            );
+            $t->setRegistrationFailed('card not found');
+            $failedCnt++;
+            return false;
+        }
+
         if (!$patron) {
             $this->warn(
                 "Catalog login failed for user {$user->username}"
                 . " (id {$user->id}), card {$card->cat_username}"
                 . " (id {$card->id})"
             );
+            $t->setRegistrationFailed('patron login error');
             $failedCnt++;
             return false;
         }
@@ -356,10 +371,10 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     /**
      * Process an unresolved transaction.
      *
-     * @param Transaction $t         Transaction
-     * @param array       $report    Transactions to be reported.
-     * @param int         $remindCnt Number of transactions to be
-     *                               reported as unresolved.
+     * @param \Finna\Db\Row\Transaction $t         Transaction
+     * @param array                     $report    Transactions to be reported.
+     * @param int                       $remindCnt Number of transactions to be
+     * reported as unresolved.
      *
      * @return void
      */
@@ -367,13 +382,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
     {
         $this->msg("  Transaction id {$t->transaction_id} still unresolved.");
 
-        if (!$this->transactionTable->setTransactionReported($t->transaction_id)) {
-            $this->err(
-                '    Failed to update transaction ' . $t->transaction_id
-                    . ' as reported',
-                'Failed to update a transaction as reported'
-            );
-        }
+        $t->setReportedAndExpired();
         if (!isset($report[$t->driver])) {
             $report[$t->driver] = 0;
         }
@@ -399,7 +408,7 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
                     'onlinePayment',
                     ['id' => "$driver.123"]
                 );
-                if (!$settings || !isset($settings['errorEmail'])) {
+                if (!$settings || empty($settings['errorEmail'])) {
                     if (!empty($this->datasourceConfig[$driver]['feedbackEmail'])) {
                         $settings['errorEmail']
                             = $this->datasourceConfig[$driver]['feedbackEmail'];

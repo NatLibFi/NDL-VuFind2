@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -2301,17 +2301,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             }
             $description = $debt->debtType . ' - ' . $debt->debtNote;
-            $payable = true;
-            foreach ($blockedTypes as $blockedType) {
-                if (strncmp($blockedType, '/', 1) === 0
-                    && substr_compare($blockedType, '/', -1) === 0
-                ) {
-                    if (preg_match($blockedType, $description)) {
-                        $payable = false;
-                        break;
-                    }
-                } else {
-                    if ($blockedType === $description) {
+            $payable = $amount > 0;
+            if ($payable) {
+                foreach ($blockedTypes as $blockedType) {
+                    if ($blockedType === $description
+                        || (strncmp($blockedType, '/', 1) === 0
+                        && substr_compare($blockedType, '/', -1) === 0
+                        && preg_match($blockedType, $description))
+                    ) {
                         $payable = false;
                         break;
                     }

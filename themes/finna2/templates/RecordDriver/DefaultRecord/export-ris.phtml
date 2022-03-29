@@ -64,7 +64,8 @@ foreach ($this->driver->tryMethod('getNonPresenterAuthors', [], []) as $author) 
     echo "AU  - {$author['name']}\r\n";
 }
 
-foreach ($this->driver->tryMethod('getPresenterAuthors', [], []) as $author) {
+$presenters = $this->driver->tryMethod('getPresenters', [], []);
+foreach ($presenters['presenters'] ?? [] as $author) {
     echo "A2  - {$author['name']}\r\n";
 }
 
