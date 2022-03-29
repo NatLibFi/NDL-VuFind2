@@ -187,7 +187,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             $payable = false;
             if (!empty($paymentConfig['enabled'])) {
                 $type = (string)$fee->type;
-                $payable = !in_array($type, $blockedTypes);
+                $payable = !in_array($type, $blockedTypes)
+                    && $fee->balance > 0;
             }
             $feeType = $this->feeTypeMappings[(string)$fee->type]
                 ?? (string)$fee->type['desc'];
@@ -413,7 +414,9 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         // Mark payable fines as long as amount remains. If there's any left over
         // send it as a generic payment.
         foreach ($fines as $fine) {
-            if ($fine['payableOnline'] && $fine['balance'] <= $amountRemaining) {
+            if ($fine['payableOnline'] && $fine['balance'] > 0
+                && $fine['balance'] <= $amountRemaining
+            ) {
                 $getParams = [
                     'op' => 'pay',
                     'amount' => sprintf('%0.02F', $fine['balance'] / 100),

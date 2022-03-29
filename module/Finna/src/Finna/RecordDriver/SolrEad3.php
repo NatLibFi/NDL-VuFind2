@@ -197,10 +197,12 @@ class SolrEad3 extends SolrEad
     public function getURLs()
     {
         $urls = $localeUrls = [];
-        $url = '';
         $record = $this->getXmlRecord();
+        if (!isset($record->did)) {
+            return [];
+        }
         $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
-        foreach ($record->did->xpath('//daoset') as $daoset) {
+        foreach ($record->did->xpath('//daoset') ?? [] as $daoset) {
             $localtype = (string)$daoset->attributes()->localtype;
 
             if ($localtype && in_array($localtype, self::EXTERNAL_DATA_URLS)) {
@@ -1940,7 +1942,7 @@ class SolrEad3 extends SolrEad
             }
         }
 
-        if ($obeyPreferredLanguage) {
+        if ($obeyPreferredLanguage && $lang) {
             return $languageResults;
         }
         if (! empty($languageResults)) {

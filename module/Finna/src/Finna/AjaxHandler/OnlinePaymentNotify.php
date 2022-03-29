@@ -53,7 +53,7 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
     {
         $request = $params->getController()->getRequest();
 
-        $this->logger->info(
+        $this->logger->warn(
             'Online payment notify handler called. Request: '
             . (string)$request
         );
@@ -65,8 +65,16 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
 
         if (empty($reqParams['finna_payment_id'])) {
             $this->logError(
-                'Error processing payment: finna_payment_id not provided'
+                'Error processing payment: finna_payment_id not provided. Query: '
+                . $request->getQuery()->toString()
+                . ', post parameters: ' . $request->getPost()->toString()
             );
+            // If this is an old (invalid) request, return success:
+            if (!empty($reqParams['driver'])
+                && '1' == ($reqParams['payment'] ?? '')
+            ) {
+                return $this->formatResponse('');
+            }
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }
         $transactionId = $reqParams['finna_payment_id'];
@@ -93,7 +101,7 @@ class OnlinePaymentNotify extends AbstractOnlinePaymentAction
 
         $paymentResult = $handler->processPaymentResponse($t, $request);
 
-        $this->logger->info(
+        $this->logger->warn(
             "Online payment notify handler for $transactionId result: $paymentResult"
         );
 

@@ -2,11 +2,12 @@
 echo $this->record($this->driver)->getExportFormat('endnote');
 
 foreach ($this->driver->tryMethod('getNonPresenterAuthors', [], []) as $author) {
-    echo "A% {$author['name']}\n";
+    echo "%A {$author['name']}\n";
 }
 
-foreach ($this->driver->tryMethod('getPresenterAuthors', [], []) as $author) {
-    echo "E% {$author['name']}\n";
+$presenters = $this->driver->tryMethod('getPresenters', [], []);
+foreach ($presenters['presenters'] ?? [] as $author) {
+    echo "%E {$author['name']}\n";
 }
 
 $pubPlaces = $this->driver->tryMethod('getPlacesOfPublication');

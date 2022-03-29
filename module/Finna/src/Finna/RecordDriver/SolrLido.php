@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -164,6 +164,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'hemisphereIntensity',
         'viewerPaddingAngle',
         'debug'
+    ];
+
+    /**
+     * Events used for author information.
+     *
+     * Key is event type, value is priority (lower is more important),
+     *
+     * @var array
+     */
+    protected $authorEvents = [
+        'suunnittelu' => 0,
+        'valmistus' => 1,
     ];
 
     /**
@@ -1417,12 +1429,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterAuthors()
     {
         $authors = [];
+        $index = 0;
         foreach ($this->getXmlRecord()->xpath(
             '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
         ) as $node) {
-            if (!isset($node->eventActor) || $node->eventType->term != 'valmistus') {
+            $eventType = (string)($node->eventType->term ?? '');
+            $priority = $this->authorEvents[$eventType] ?? null;
+            if (null === $priority || !isset($node->eventActor)) {
                 continue;
             }
+            ++$index;
             foreach ($node->eventActor as $actor) {
                 if (isset($actor->actorInRole->actor->nameActorSet->appellationValue)
                     && trim(
@@ -1430,7 +1446,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     ) != ''
                 ) {
                     $role = $actor->actorInRole->roleActor->term ?? '';
-                    $authors[] = [
+                    $authors["$priority/$index"] = [
                         'name' => $actor->actorInRole->actor->nameActorSet
                             ->appellationValue,
                         'role' => $role
@@ -1438,7 +1454,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
-        return $authors;
+        ksort($authors);
+        return array_values($authors);
     }
 
     /**
