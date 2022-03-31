@@ -1,6 +1,12 @@
 <!-- START of: finna - search/home/home-3.phtml -->
 <div><h2>home-3.phtml</h2><p>Nämä ovat esimerkkejä, lisää tyhjä home-3.phtml custom/search/home -kansioon, jos et käytä tiedostoa</p></div>
-<div class="home-column"><?= $this->feed("news2"); ?></div>
+<?=$this->feedTabs(['title' => 'Tapahtumaotsikko_kaikki_tapahtumat', 'ids' => ['Valilehti_1_kaikki' => 'kaikki_tapahtumat_kirjallisuus', 'Valilehti_2_kaikki' => 'kaikki_tapahtumat_esitys', 'Valilehti_3_kaikki' => 'kaikki_tapahtumat_muu_tapahtuma', 'Valilehti_4_kaikki' => 'kaikki_tapahtumat_nayttely']])?>
 <?=$this->render("Helpers/login-helper.phtml");?>
 <div class="home-column"><?= $this->feed("carousel-vertical"); ?></div>
+<?= $this->linkedEventsTabs(['tabs' => [
+        ['title' => 'Kirjallisuus', 'params' => ['keyword' => 'pori:topic:literature']],
+        ['title' => 'Muut tapahtumat', 'params' => ['keyword' => 'pori:topic:lectures,pori:topic:others,pori:topics:workshop,pori:topic:recycling,pori:topics:ilmasto,pori:topics:education,pori:topic:movies,pori:topic:music,pori:topic:sports']],
+        ['title' => 'Näyttelyt', 'params' => ['keyword' => 'pori:topic:exhibitions']]
+    ], 'searchTools' => 'show', 'limit' => 6
+    ]); ?>
 <!-- END of: finna - search/home/home-3.phtml -->

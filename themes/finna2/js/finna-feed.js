@@ -1,5 +1,10 @@
 /*global VuFind, finna */
 finna.feed = (function finnaFeed() {
+
+  class FeedElement extends HTMLElement {
+    
+  }
+
   function calculateScrollSpeed(scrollCnt, scrollSpeed) {
     return scrollSpeed * Math.max(1, (scrollCnt / 5));
   }

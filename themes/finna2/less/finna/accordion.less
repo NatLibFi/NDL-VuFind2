@@ -87,6 +87,89 @@
     }
   }
 }
+
+finna-feed-tab, finna-linkedevent-tab {
+  display: block;
+  .tabs-container {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    .tabs-holder {
+      margin: 12px 0 12px 6px;
+      display: flex;
+      border-bottom: 1px solid @gray-lighter;
+      padding-left: 0;
+      list-style: none;
+      
+      > .tab {
+        margin-bottom: -1px;
+        font-size: 1.1em;
+        font-weight: 500;
+        background-color: transparent;
+        color: @nav-tabs-text-color;
+        border-bottom: 1px solid transparent;
+        margin: 0;
+        padding: .6em 0 0 0;
+        cursor: pointer;
+        > .tab-anchor {
+          margin-right: 0px;
+          height: 100%;
+          &.active {
+
+          }
+          cursor: initial;
+          &,
+          &:hover,
+          &:focus {
+            background-color: @body-bg;
+            color: @text-color;
+            margin-bottom: -1px;
+            border-bottom: none;
+            transition: 0s;
+          }
+        }
+        &.active {
+          > .tab-anchor {
+            background: #FFF;
+            border-color: @brand-primary;
+            border-bottom: 0;
+            text-decoration: none;
+            z-index: 5;
+          }
+        }
+      }
+    }
+  }
+  .tab-content {
+    margin-bottom: 0;
+  }
+  .accordions-title {
+    font-size: 1.9em;
+    @media (min-width: @screen-sm-max) {
+      display: none;
+    }
+  }
+  .accordion {
+    @media(min-width: @screen-md) {
+      display: none;
+    }
+    display: flex;
+    @media print {
+      border: none;
+      i {
+        display: none;
+      }
+    }
+    border: 1px solid @gray-lighter;
+    border-left: 4px solid @gray-lighter;
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: @content-headings-line-height;
+    width: 100%;
+  }
+}
+
 // RSS-feed accordions
 .feed-accordions {
   .tab-content {
@@ -101,14 +184,11 @@
   .accordion {
     list-style-type: none;
     cursor: pointer;
-    padding: 15px 10px;
     margin-bottom: 5px;
     font-size: 1em;
     font-weight: 500;
     background-color: @gray-ultralight;
-    border-top: 1px solid @gray-lighter;
-    border-right: 1px solid @gray-lighter;
-    border-bottom: 1px solid @gray-lighter;
+    border: 1px solid @gray-lighter;
     border-left: 4px solid @gray-lighter;
     @media(min-width: @screen-md) {
       display: none;
@@ -124,7 +204,7 @@
     align-items: center;
     overflow: hidden;
     text-overflow: ellipsis;
-    line-height: @content-headings-line-height;
+    height: 40px;
     width: 100%;
     .title {
       flex: 1;
@@ -139,6 +219,15 @@
       font-style: normal;
     }
     
+    >.feed-accordion-anchor {
+      display: block;
+      width: 100%;
+      height: 100%;
+      line-height: 40px;
+      color: @nav-tabs-text-color;
+      padding-left: 2px;
+    }
+
     &.accordion-details{
       @media(max-width: @screen-sm-max) {
         display: @accordion-details-display;
