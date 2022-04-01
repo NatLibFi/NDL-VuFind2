@@ -443,8 +443,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     {
         $result = [];
         $xml = $this->getXmlRecord();
-        foreach ($xml->isPartOf ?? [] as $isPartOF) {
-            $result[] = (string)$isPartOF;
+        foreach ($xml->isPartOf ?? [] as $isPartOf) {
+            $result[] = (string)$isPartOf;
         }
         foreach ($xml->relation ?? [] as $relation) {
             $attrs = $relation->attributes();
