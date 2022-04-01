@@ -981,8 +981,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     ? (string)$attributes->label : '';
                 $term = !empty($node->relatedWorkRelType->term)
                     ? (string)$node->relatedWorkRelType->term : '';
-                if (in_array(strtolower($term), $publicationTypes)) {
-                    $term = strtolower($term) != 'julkaisu' ? $term : '';
+                $termLC = mb_strtolower($term, 'UTF-8');
+                if (in_array($termLC, $publicationTypes)) {
+                    $term = $termLC != 'julkaisu' ? $term : '';
                     $results[] = [
                       'title' => $title,
                       'label' => $label ?: $term
