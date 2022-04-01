@@ -737,7 +737,10 @@ class RecordDataFormatterFactory
             'getMovieThanks',
             'data-escapeHtml.phtml',
             [
-               'context' => ['class' => 'record-thanks']
+               'context' => [
+                   'class' => 'record-thanks',
+                   'title' => 'movie_thanks'
+                ]
             ]
         );
         $setTemplateLine(
