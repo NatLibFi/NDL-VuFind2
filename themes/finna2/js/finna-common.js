@@ -6,8 +6,6 @@ finna.common = (function finnaCommon() {
     SameSite: 'Lax'
   };
 
-  let lazyImageObserver;
-
   function decodeHtml(str) {
     return $("<textarea/>").html(str).text();
   }
@@ -77,33 +75,24 @@ finna.common = (function finnaCommon() {
     if (!images.length) {
       return;
     }
-    if (!('IntersectionObserver' in window) ||
-      !('IntersectionObserverEntry' in window) ||
-      !('isIntersecting' in window.IntersectionObserverEntry.prototype) ||
-      !('intersectionRatio' in window.IntersectionObserverEntry.prototype)
-    ) {
-      // Fallback: display images instantly on browsers that don't support the observer properly
-      images.forEach((image) => {
+    const observerController = finna.observer.get();
+    observerController.createIntersectionObserver('images',
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            let lazyImage = entry.target;
+            lazyImage.src = lazyImage.dataset.src;
+            delete lazyImage.dataset.src;
+            obs.unobserve(lazyImage);
+          }
+        }); 
+      },
+      (image) => {
         image.src = image.dataset.src;
         delete image.dataset.src;
-      });
-    } else {
-      if (!lazyImageObserver) {
-        lazyImageObserver = new IntersectionObserver((entries, obs) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              let lazyImage = entry.target;
-              lazyImage.src = lazyImage.dataset.src;
-              delete lazyImage.dataset.src;
-              obs.unobserve(lazyImage);
-            }
-          }); 
-        });
       }
-      images.forEach((image) => {
-        lazyImageObserver.observe(image);
-      });
-    }
+    );
+    observerController.addObservable('images', images);
   }
 
   var my = {

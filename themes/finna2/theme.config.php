@@ -247,7 +247,9 @@ $config = [
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
         'vendor/js.cookie.js',
-        'finna-multiselect.js'
+        'finna-observer.js',
+        'finna-multiselect.js',
+        'finna-abstract-tab.js'
     ],
     'less' => [
         'active' => false
