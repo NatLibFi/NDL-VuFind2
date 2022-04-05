@@ -1,6 +1,5 @@
 /*global VuFind, finna */
 finna.feed = (function finnaFeed() {
-
   function calculateScrollSpeed(scrollCnt, scrollSpeed) {
     return scrollSpeed * Math.max(1, (scrollCnt / 5));
   }
