@@ -131,55 +131,6 @@
   }
 }
 
-// RSS-feed tabs
-.asdasdfeed-tabs .nav-tabs {
-  border-bottom: 1px solid @nav-tabs-border-color;
-  margin-left: 6px;
-  > li {
-    // Make the list-items overlay the bottom border
-    margin-bottom: -1px;
-    font-size: 1.1em;
-    font-weight: 500;
-    background-color: transparent;
-    color: @nav-tabs-text-color;
-    border-bottom: 1px solid transparent;
-    margin: 0;
-    padding: .6em 0 0 0;
-    cursor: pointer;
-    @media (min-width: @screen-sm-min) and (max-width: @screen-sm-max) {
-      i {
-        display: block;
-        text-align: center;
-      }
-    }
-    @media (max-width: @screen-sm-max) {
-      font-size: .9em;
-    }
-    &:hover {
-      color: @nav-tabs-link-hover-color;
-      border-color: transparent;
-    }
-    // Active state, and its :hover to override normal :hover
-    &.active {
-      cursor: initial;
-      &,
-      &:hover,
-      &:focus {
-        background-color: @body-bg;
-        color: @text-color;
-        margin-bottom: -1px;
-        border-bottom: none;
-        transition: 0s;
-      }
-    }
-    a {
-      margin-right: 0px;
-      height: 100%;
-    }
-  }
-}
-
-
 .useraccount-nav.nav-tabs {
   border-bottom: none;
   // style 5 tabs to make sure they stay as tabs
