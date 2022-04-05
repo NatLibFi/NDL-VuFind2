@@ -1,7 +1,4 @@
-
-
-
-class TabsBase extends HTMLElement {
+class AbstractTabs extends HTMLElement {
 
   /**
    * Variables observed if changed
@@ -83,9 +80,13 @@ class TabsBase extends HTMLElement {
     titleWrapper.append(mobileTitle);
     this.mobile.append(titleWrapper);
 
+    this.contentWrapper = document.createElement('li');
+    this.contentWrapper.className = 'content-wrapper';
+    this.mobile.append(this.contentWrapper);
+
     this.content = document.createElement('div');
     this.content.className = `${this.tabsType}-tab-content tab-content`;
-    this.append(this.content);
+    this.contentWrapper.append(this.content);
 
     const contentContainer = document.createElement('div');
     contentContainer.className = `${this.tabsType}-container content-container`;
@@ -114,11 +115,17 @@ class TabsBase extends HTMLElement {
     this.initialLoad();
   }
 
+  /**
+   * Empty function for use when before creation manipulation is needed.
+   */
+  beforeCreate() { }
+
   attributeChangedCallback(name, oldValue, newValue)
   {
     switch (name) {
     case 'lazyload':
       if (newValue === 'inview') {
+        this.beforeCreate();
         this.createElement();
         this.removeAttribute('lazyload');
       }
@@ -153,14 +160,13 @@ class TabsBase extends HTMLElement {
         }
       });
     });
+  }
 
-    this.addEventListener('click', (e) => {
-      const found = this.anchors.find((element) => e.target === element);
-      if (found) {
-        this.opentab = found.dataset.tab;
-        found.focus();
-      }
-    });
+  onLinkClicked(link)
+  {
+    if (link) {
+      this.opentab = link.parentNode.dataset.tab;
+    }
   }
 
   /**
@@ -176,7 +182,6 @@ class TabsBase extends HTMLElement {
       this.opentab = anchor.dataset.tab;
       return;
     }
-    console.log(this.active);
     if (this.active) {
       this.opentab = this.active;
     }
@@ -187,7 +192,6 @@ class TabsBase extends HTMLElement {
    */
   createTabElements()
   {
-    const self = this;
     for (const [key, value] of Object.entries(this.tabs)) {
       const accordionClone = this.anchorElement.cloneNode(true);
       const tabClone = this.tabElement.cloneNode(true);
@@ -204,7 +208,7 @@ class TabsBase extends HTMLElement {
    */
   adjustTab(el, key, value)
   {
-    const name = value.replace(/\W/, '-');
+    const name = value.replace(/^\W/, '-');
     const tabID = `${this.identifier}-${value}`;
     const isActive = value === this.active;
     el.dataset.tab = name;
@@ -218,6 +222,10 @@ class TabsBase extends HTMLElement {
     a.href = `#${tabID}`;
     a.id = `${tabID}-tab`;
     a.setAttribute('aria-label', key);
+    const parent = this;
+    a.addEventListener('click', function asd(e) {
+      parent.onLinkClicked(this);
+    });
   }
 
   /**
@@ -225,7 +233,7 @@ class TabsBase extends HTMLElement {
    */
   adjustAccordion(el, key, value)
   {
-    const name = value.replace(/\W/, '-');
+    const name = value.replace(/^\W/, '-');
     const tabID = `${this.identifier}-${value}`;
     const isActive = value === this.active;
     el.dataset.tab = name;
@@ -239,12 +247,14 @@ class TabsBase extends HTMLElement {
     a.href = `#${tabID}`;
     a.id = `${tabID}-accordion`;
     a.setAttribute('aria-label', key);
+    const parent = this;
+    a.addEventListener('click', function asd(e) {
+      parent.onLinkClicked(this);
+    });
   }
 
   /**
    * Set proper tab as active.
-   *
-   * @param {object} event
    */
   setActive()
   {
@@ -253,6 +263,9 @@ class TabsBase extends HTMLElement {
         const isTab = anchor.dataset.tab === this.opentab;
         anchor.classList.toggle('active', isTab);
         anchor.setAttribute('aria-selected', isTab);
+        if (isTab && anchor.classList.contains('accordion')) {
+          anchor.after(this.contentWrapper);
+        }
       });
     }
   }

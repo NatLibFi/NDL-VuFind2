@@ -1,25 +1,10 @@
 /*global finna */
 finna.feedTabs = (() => {
-  class FeedTabElement extends TabsBase {
+  class FeedTabElement extends AbstractTabs {
     constructor()
     {
       super();
       this.tabsType = 'feed';
-      console.log(this.tabsType);
-    }
-
-    /**
-     * Overwrite this function if needed. When the tab link is clicked.
-     * 
-     * @param {object} event Event object.
-     */
-    onLinkClicked(event)
-    {
-      const root = this.closest(`finna-${this.tabsType}-tab`);
-      console.log(`finna-${this.tabsType}-tab`);
-      if (root) {
-        root.opentab = this.dataset.tab;
-      }
     }
 
     loadContent()

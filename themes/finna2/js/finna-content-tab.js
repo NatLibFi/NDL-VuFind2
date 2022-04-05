@@ -1,62 +1,97 @@
 /*global finna */
-finna.feedTabs = (() => {
-  class FeedTabElement extends TabsBase {
+finna.contentTabs = (() => {
+  class ContentTabElement extends AbstractTabs {
     constructor()
     {
       super();
-      this.tabsType = 'feed';
+      this.tabsType = 'content';
+      this.contents = [];
     }
-  
+
     /**
-     * Overwrite this function to do personal stuff.
-     * 
-     * @param {object} event Event object.
+     * Get all the divs for showing as content.
      */
-    onLinkClicked(event)
+    beforeCreate ()
     {
-      const root = this.closest('finna-feed-tab');
-      if (root) {
-        root.opentab = this.dataset.tab;
-      }
+      [...this.children].forEach((div) => {
+        const wrapper = document.createElement('li');
+        wrapper.append(div);
+        this.contents.push(wrapper);
+      });
     }
-  
+
+    /**
+     * When the content is set to be loaded.
+     */
     loadContent()
     {
-      this.content.innerHTML = '';
-      delete this.content.dataset.init;
-      this.content.dataset.feed = this.opentab;
-      finna.feed.loadFeed(this.content);
+      this.contents.forEach((content) => {
+        if (content.dataset.reference === this.opentab) {
+          content.style.display = null;
+        } else {
+          content.style.display = 'none';
+        }
+      });
+    }
+
+    /**
+     * Function to create tab elements.
+     */
+    createTabElements()
+    {
+      let i = 0;
+      for (const [key, value] of Object.entries(this.tabs)) {
+        const accordionClone = this.anchorElement.cloneNode(true);
+        const tabClone = this.tabElement.cloneNode(true);
+        this.adjustAccordion(accordionClone, key, value);
+        this.adjustTab(tabClone, key, value);
+
+        this.desktop.append(tabClone);
+        this.mobile.append(accordionClone);
+        const currentContent = this.contents[i++];
+        currentContent.dataset.reference = value;
+        this.mobile.append(currentContent);
+        this.anchors.push(tabClone, accordionClone);
+      }
+      this.contentWrapper.remove();
+    }
+    /**
+     * Set proper tab as active.
+     */
+    setActive()
+    {
+      if (this.opentab) {
+        this.anchors.forEach((anchor) => {
+          const isTab = anchor.dataset.tab === this.opentab;
+          anchor.classList.toggle('active', isTab);
+          anchor.setAttribute('aria-selected', isTab);
+        });
+      }
     }
   }
   
-  let lazyTabObserver;
+
   /**
    * Init feedtabs
    */
   function init() {
-    customElements.define('finna-content-tab', FeedTabElement);
+    customElements.define('finna-content-tab', ContentTabElement);
     const containers = document.querySelectorAll('finna-content-tab');
-    finna.observer.get().create()
-    if (!('IntersectionObserver' in window) ||
-      !('IntersectionObserverEntry' in window) ||
-      !('isIntersecting' in window.IntersectionObserverEntry.prototype) ||
-      !('intersectionRatio' in window.IntersectionObserverEntry.prototype)
-    ) {
-      // Fallback: display images instantly on browsers that don't support the observer properly
-      containers.forEach((container) => container.lazyload = 'inview');
-    } else {
-      if (!lazyTabObserver) {
-        lazyTabObserver = new IntersectionObserver((entries, obs) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.lazyload = 'inview';
-              obs.unobserve(entry.target);
-            }
-          }); 
-        });
+    const observerController = finna.observer.get();
+    observerController.createIntersectionObserver('contenttabs',
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.lazyload = 'inview';
+            obs.unobserve(entry.target);
+          }
+        }); 
+      },
+      (container) => {
+        container.lazyload = 'inview';
       }
-      containers.forEach((container) => lazyTabObserver.observe(container));
-    }
+    );
+    observerController.addObservable('contenttabs', containers);
   }
   
   return {
