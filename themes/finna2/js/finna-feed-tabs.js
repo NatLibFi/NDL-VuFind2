@@ -1,6 +1,6 @@
 /*global finna, AbstractTabs */
 finna.feedTabs = (() => {
-  class FeedTabElement extends AbstractTabs {
+  class FeedTabsElement extends AbstractTabs {
     constructor()
     {
       super();
@@ -24,7 +24,7 @@ finna.feedTabs = (() => {
    * Init feedtabs
    */
   function init() {
-    customElements.define('finna-feed-tabs', FeedTabElement);
+    customElements.define('finna-feed-tabs', FeedTabsElement);
     const containers = document.querySelectorAll('finna-feed-tabs');
     finna.observer.createIntersectionObserver('feedtabs',
       (entries, obs) => {

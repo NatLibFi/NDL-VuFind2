@@ -1,6 +1,6 @@
 /*global finna, AbstractTabs */
 finna.contentTabs = (() => {
-  class ContentTabElement extends AbstractTabs {
+  class ContentTabsElement extends AbstractTabs {
     constructor()
     {
       super();
@@ -75,7 +75,7 @@ finna.contentTabs = (() => {
    * Init feedtabs
    */
   function init() {
-    customElements.define('finna-content-tabs', ContentTabElement);
+    customElements.define('finna-content-tabs', ContentTabsElement);
     const containers = document.querySelectorAll('finna-content-tabs');
     finna.observer.createIntersectionObserver('contenttabs',
       (entries, obs) => {
