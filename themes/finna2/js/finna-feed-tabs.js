@@ -1,4 +1,4 @@
-/*global finna */
+/*global finna, AbstractTabs */
 finna.feedTabs = (() => {
   class FeedTabElement extends AbstractTabs {
     constructor()

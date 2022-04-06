@@ -148,7 +148,7 @@ class AbstractTabs extends HTMLElement {
       var hash = ref.getTabFromLocationHash();
       if (!hash
         || !hash.includes(this.identifier)
-        || ref.isLoading
+        || ref.isLoading
       ) {
         return;
       }
@@ -225,7 +225,7 @@ class AbstractTabs extends HTMLElement {
     a.id = `${tabID}-tab`;
     a.setAttribute('aria-label', key);
     const parent = this;
-    a.addEventListener('click', function asd(e) {
+    a.addEventListener('click', function onAnchorClick() {
       parent.onLinkClicked(this);
     });
   }
@@ -250,7 +250,7 @@ class AbstractTabs extends HTMLElement {
     a.id = `${tabID}-accordion`;
     a.setAttribute('aria-label', key);
     const parent = this;
-    a.addEventListener('click', function asd(e) {
+    a.addEventListener('click', function onAnchorClick() {
       parent.onLinkClicked(this);
     });
   }
