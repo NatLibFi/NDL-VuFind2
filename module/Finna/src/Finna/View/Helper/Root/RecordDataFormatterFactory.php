@@ -733,6 +733,17 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Movie Thanks',
+            'getMovieThanks',
+            'data-escapeHtml.phtml',
+            [
+               'context' => [
+                   'class' => 'record-thanks',
+                   'title' => 'movie_thanks'
+                ]
+            ]
+        );
+        $setTemplateLine(
             'Exterior Images',
             'getExteriors',
             'data-forwardFields.phtml',

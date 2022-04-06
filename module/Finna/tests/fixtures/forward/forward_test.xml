@@ -325,6 +325,10 @@
     <ProductionEvent>
       <ProductionEventType elokuva-alkupvari="v&#xE4;ri" elokuva-alkupvarijarjestelma="rgb" elokuva-alkupaani="&#xE4;&#xE4;ni" elokuva-alkupaanijarjestelma="6+1" elokuva-kuvasuhde="1,75:1" elokuva-alkupkesto="1 min" elokuva-laji1fin="pitk&#xE4;" elokuva-tuotantokustannukset="5 &#x20AC;" elokuva-muut_tekniset_tiedot="Muita teknisiä tietoja.">MISC</ProductionEventType>
     </ProductionEvent>
+    <ProductionEvent elonet-tag="kiitokset">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_kiitokset>Kiitos, thanks, tack.</elokuva_kiitokset>
+    </ProductionEvent>
     <Manifestation>
       <Identifier scheme="KAVI">992118</Identifier>
     </Manifestation>

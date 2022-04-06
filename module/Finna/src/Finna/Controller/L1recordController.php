@@ -50,7 +50,7 @@ class L1RecordController extends RecordController
      */
     public function __construct(ServiceLocatorInterface $sm, Config $config)
     {
-        $this->searchClassId = 'L1';
+        $this->sourceId = 'L1';
         $this->fallbackDefaultTab = 'Description';
         parent::__construct($sm, $config);
     }

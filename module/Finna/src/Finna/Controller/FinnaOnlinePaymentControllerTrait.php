@@ -216,7 +216,12 @@ trait FinnaOnlinePaymentControllerTrait
         if ($pay && $session && $payableOnline
             && $payableOnline['payable'] && $payableOnline['amount']
         ) {
-            // Payment started, check that fee list has not been updated
+            // Payment requested, do preliminary checks:
+            if ($trTable->isPaymentInProgress($patron['cat_username'])) {
+                $this->flashMessenger()->addErrorMessage('online_payment_failed');
+                header("Location: " . $this->getServerUrl('myresearch-fines'));
+                exit();
+            }
             if ((($paymentConfig['exactBalanceRequired'] ?? true)
                 || !empty($paymentConfig['creditUnsupported']))
                 && $this->checkIfFinesUpdated($patron, $payableOnline['amount'])

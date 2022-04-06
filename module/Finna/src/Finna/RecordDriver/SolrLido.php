@@ -969,6 +969,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getRelatedPublications()
     {
         $results = [];
+        $publicationTypes = ['kirjallisuus', 'lähteet', 'julkaisu'];
         foreach ($this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet'
@@ -980,7 +981,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     ? (string)$attributes->label : '';
                 $term = !empty($node->relatedWorkRelType->term)
                     ? (string)$node->relatedWorkRelType->term : '';
-                if (in_array($term, ['kirjallisuus', 'lähteet'])) {
+                $termLC = mb_strtolower($term, 'UTF-8');
+                if (in_array($termLC, $publicationTypes)) {
+                    $term = $termLC != 'julkaisu' ? $term : '';
                     $results[] = [
                       'title' => $title,
                       'label' => $label ?: $term

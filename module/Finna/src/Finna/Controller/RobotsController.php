@@ -84,15 +84,16 @@ class RobotsController extends \VuFind\Controller\AbstractBase
         $response = $this->getResponse();
         $headers = $response->getHeaders();
         $headers->addHeaderLine('Content-type', 'text/plain; charset=UTF-8');
-        if (!file_exists(ORIGINAL_WORKING_DIRECTORY . '/robots.txt')) {
+        $robotsTxtFile = getcwd() . '/robots.txt';
+        if (!file_exists($robotsTxtFile)) {
             $response->setStatusCode(404);
             $response->setContent('404 Not Found');
             return $response;
         }
-        $robots = file_get_contents(ORIGINAL_WORKING_DIRECTORY . '/robots.txt');
+        $robots = file_get_contents($robotsTxtFile);
 
         foreach ($this->indexFileNames as $indexFileName) {
-            if (file_exists(ORIGINAL_WORKING_DIRECTORY . '/' . $indexFileName)) {
+            if (file_exists(getcwd() . '/' . $indexFileName)) {
                 $parsed = $this->parseRobotsTxt($robots);
                 $parsed['*'][] = "Sitemap: $requestPath/$indexFileName";
                 $robots = $this->renderRobotsTxt($parsed);

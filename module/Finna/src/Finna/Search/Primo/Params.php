@@ -63,12 +63,16 @@ class Params extends \VuFind\Search\Primo\Params
     /**
      * Get information on the current state of the boolean checkbox facets.
      *
-     * @param array $allowed List of checkbox filters to return (null for all)
+     * @param array $include        List of checkbox filters to return (null for all)
+     * @param bool  $includeDynamic Should we include dynamically-generated
+     * checkboxes that are not part of the include list above?
      *
      * @return array
      */
-    public function getCheckboxFacets(array $allowed = null)
-    {
+    public function getCheckboxFacets(
+        array $include = null,
+        bool $includeDynamic = true
+    ) {
         // Build up an array of checkbox facets with status booleans and
         // toggle URLs.
         $res = [];
@@ -76,7 +80,7 @@ class Params extends \VuFind\Search\Primo\Params
             foreach ($facets as $facet) {
                 // If the current filter is not allowed, skip it (but accept
                 // everything if the list of allowed facets is empty).
-                if (!empty($allowed) && !in_array($facet['filter'], $allowed)) {
+                if (!empty($include) && !in_array($facet['filter'], $include)) {
                     continue;
                 }
                 if ($this->hasHiddenFilter($facet['filter'])) {

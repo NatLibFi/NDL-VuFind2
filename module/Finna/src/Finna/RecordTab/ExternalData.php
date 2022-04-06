@@ -63,9 +63,7 @@ class ExternalData extends \VuFind\RecordTab\AbstractBase
     public function isActive()
     {
         $data = $this->driver->tryMethod('getExternalData');
-        if (empty($data)
-            || (empty($data['items']) && $data['digitized'])
-        ) {
+        if (empty($data['items'])) {
             $this->enabled = false;
         }
         return $this->enabled;

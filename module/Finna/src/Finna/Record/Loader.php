@@ -105,7 +105,7 @@ class Loader extends \VuFind\Record\Loader
             if ($tolerateMissing) {
                 $record = $this->recordFactory->get('Missing');
                 $record->setRawData(['id' => $id]);
-                $record->setSourceIdentifier($source);
+                $record->setSourceIdentifiers($source);
                 return $record;
             }
             throw new RecordMissingException(

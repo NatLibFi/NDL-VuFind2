@@ -6,7 +6,7 @@
         "ezyang/htmlpurifier": "4.12.0",
         "league/mime-type-detection": "1.9.0",
         "paquettg/php-html-parser": "3.1.0",
-        "paytrail/paytrail-php-sdk": "1.0.1",
+        "paytrail/paytrail-php-sdk": "1.1.0",
         "picqer/php-barcode-generator": "2.0.1",
         "natlibfi/besimple-soap": "2.0.0",
         "swen100/geophp": "^1.0.8"
