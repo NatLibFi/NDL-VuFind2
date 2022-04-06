@@ -251,7 +251,9 @@ $config = [
         'vendor/js.cookie.js',
         'finna-observer.js',
         'finna-multiselect.js',
-        'finna-abstract-tab.js'
+        'finna-abstract-tabs.js',
+        'finna-feed-tabs.js',
+        'finna-content-tabss.js'
     ],
     'less' => [
         'active' => false

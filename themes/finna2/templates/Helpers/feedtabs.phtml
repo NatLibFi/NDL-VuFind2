@@ -1,9 +1,9 @@
 <!-- START of: finna - Helpers/feedtabs.phtml -->
-<finna-feed-tab
+<finna-feed-tabs
   active="<?=$this->escapeHtmlAttr($this->active)?>"
   title="<?=$this->escapeHtmlAttr($this->translate($this->title))?>"
   identifier="<?=$this->escapeHtmlAttr($this->id)?>"
   tabs="<?=htmlspecialchars(json_encode($this->feedIds ?? []), ENT_QUOTES, 'UTF-8');?>"
 >
-</finna-feed-tab>
+</finna-feed-tabs>
 <!-- END of: finna - Helpers/feedtabs.phtml -->

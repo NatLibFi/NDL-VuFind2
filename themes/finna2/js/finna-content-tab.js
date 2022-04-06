@@ -75,8 +75,8 @@ finna.contentTabs = (() => {
    * Init feedtabs
    */
   function init() {
-    customElements.define('finna-content-tab', ContentTabElement);
-    const containers = document.querySelectorAll('finna-content-tab');
+    customElements.define('finna-content-tabs', ContentTabElement);
+    const containers = document.querySelectorAll('finna-content-tabs');
     finna.observer.createIntersectionObserver('contenttabs',
       (entries, obs) => {
         entries.forEach((entry) => {

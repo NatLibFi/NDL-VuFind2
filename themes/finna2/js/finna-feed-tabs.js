@@ -24,8 +24,8 @@ finna.feedTabs = (() => {
    * Init feedtabs
    */
   function init() {
-    customElements.define('finna-feed-tab', FeedTabElement);
-    const containers = document.querySelectorAll('finna-feed-tab');
+    customElements.define('finna-feed-tabs', FeedTabElement);
+    const containers = document.querySelectorAll('finna-feed-tabs');
     finna.observer.createIntersectionObserver('feedtabs',
       (entries, obs) => {
         entries.forEach((entry) => {

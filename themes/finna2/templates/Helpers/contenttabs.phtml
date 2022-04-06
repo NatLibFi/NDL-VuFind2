@@ -1,5 +1,5 @@
 <!-- START of: finna - Helpers/contenttabs.phtml -->
-<finna-content-tab
+<finna-content-tabs
   active="<?=$this->escapeHtmlAttr($this->active)?>"
   title="<?=$this->escapeHtmlAttr($this->translate($this->title))?>"
   identifier="<?=$this->escapeHtmlAttr($this->id)?>"
@@ -8,5 +8,5 @@
   <?php foreach ($this->contents as $key => $value): ?>
     <?= $this->partial("content/{$this->escapeHtml($value)}") ?>
   <?php endforeach; ?>
-</finna-content-tab>
+</finna-content-tabs>
 <!-- END of: finna - Helpers/contenttabs.phtml -->
