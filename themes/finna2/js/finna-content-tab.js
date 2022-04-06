@@ -1,4 +1,4 @@
-/*global finna */
+/*global finna, AbstractTabs */
 finna.contentTabs = (() => {
   class ContentTabElement extends AbstractTabs {
     constructor()
@@ -77,8 +77,7 @@ finna.contentTabs = (() => {
   function init() {
     customElements.define('finna-content-tab', ContentTabElement);
     const containers = document.querySelectorAll('finna-content-tab');
-    const observerController = finna.observer.get();
-    observerController.createIntersectionObserver('contenttabs',
+    finna.observer.createIntersectionObserver('contenttabs',
       (entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -91,7 +90,7 @@ finna.contentTabs = (() => {
         container.lazyload = 'inview';
       }
     );
-    observerController.addObservable('contenttabs', containers);
+    finna.observer.observe('contenttabs', containers);
   }
   
   return {

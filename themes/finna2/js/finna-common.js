@@ -75,8 +75,7 @@ finna.common = (function finnaCommon() {
     if (!images.length) {
       return;
     }
-    const observerController = finna.observer.get();
-    observerController.createIntersectionObserver('images',
+    finna.observer.createIntersectionObserver('images',
       (entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -92,7 +91,7 @@ finna.common = (function finnaCommon() {
         delete image.dataset.src;
       }
     );
-    observerController.addObservable('images', images);
+    finna.observer.observe('images', images);
   }
 
   var my = {

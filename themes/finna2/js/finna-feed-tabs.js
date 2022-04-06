@@ -14,7 +14,7 @@ finna.feedTabs = (() => {
       this.content.dataset.feed = this.opentab;
       const self = this;
       this.isLoading = true;
-      finna.feed.loadFeed(this.content, () =>  {
+      finna.feed.loadFeed(this.content, () => {
         self.isLoading = false;
       });
     }
@@ -26,8 +26,7 @@ finna.feedTabs = (() => {
   function init() {
     customElements.define('finna-feed-tab', FeedTabElement);
     const containers = document.querySelectorAll('finna-feed-tab');
-    const observerController = finna.observer.get();
-    observerController.createIntersectionObserver('feedtabs',
+    finna.observer.createIntersectionObserver('feedtabs',
       (entries, obs) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -40,7 +39,7 @@ finna.feedTabs = (() => {
         container.lazyload = 'inview';
       }
     );
-    observerController.addObservable('feedtabs', containers);
+    finna.observer.observe('feedtabs', containers);
   }
   
   return {

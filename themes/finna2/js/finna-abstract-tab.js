@@ -1,3 +1,5 @@
+/* exported AbstractTabs */
+
 class AbstractTabs extends HTMLElement {
 
   /**

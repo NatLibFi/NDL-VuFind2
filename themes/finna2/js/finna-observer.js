@@ -1,77 +1,59 @@
-/* use finna */
+/* global finna */
 
 finna.observer = (() => {
-  class ObserverController
-  {
-    /**
-     * Constructor for ObserverController.
-     */
-    constructor()
-    {
-      this.observers = {};
-      this.supported = {
-        IntersectionObserver: ('IntersectionObserver' in window) ||
-          ('IntersectionObserverEntry' in window) ||
-          ('isIntersecting' in window.IntersectionObserverEntry.prototype) ||
-          ('intersectionRatio' in window.IntersectionObserverEntry.prototype)
-      };
-    }
+  const supported = {
+    IntersectionObserver: ('IntersectionObserver' in window) ||
+      ('IntersectionObserverEntry' in window) ||
+      ('isIntersecting' in window.IntersectionObserverEntry.prototype) ||
+      ('intersectionRatio' in window.IntersectionObserverEntry.prototype)
+  };
+  const observers = {};
 
-    /**
-     * Create an Observer of certain type.
-     *
-     * @param {string}   identifier     Identifier for the observer.
-     * @param {function} onEnterScreen  Function when element enters viewport.
-     * @param {function} onNoSupport    Function if the observer is not supported.
-     * @param {object}   observerParams Params for the observer.
-     */
-    createIntersectionObserver(
-      identifier,
-      onEnterScreen,
-      onNoSupport,
-      observerParams = {}
-    ) {
-      if (!this.observers[identifier]) {
-        if (!this.supported.IntersectionObserver) {
-          this.observers[identifier] = new IntersectionObserver(
-            onEnterScreen,
-            observerParams
-          );
-        } else {
-          this.observers[identifier] = onNoSupport;
-        }
+  /**
+   * Create an Observer of certain type.
+   *
+   * @param {string}   identifier     Identifier for the observer.
+   * @param {function} onEnterScreen  Function when element enters viewport.
+   * @param {function} onNoSupport    Function if the observer is not supported.
+   * @param {object}   observerParams Params for the observer.
+   */
+  function createIntersectionObserver(
+    identifier,
+    onEnterScreen,
+    onNoSupport,
+    observerParams = {}
+  ) {
+    if (!observers[identifier]) {
+      if (!supported.IntersectionObserver) {
+        observers[identifier] = new IntersectionObserver(
+          onEnterScreen,
+          observerParams
+        );
+      } else {
+        observers[identifier] = onNoSupport;
       }
-    }
-
-    /**
-     * Add observable elements to certain observer.
-     *
-     * @param {string} identifier 
-     * @param {NodeList} observable 
-     */
-    addObservable(identifier, observable)
-    {
-      observable.forEach((element) => {
-        if (typeof this.observers[identifier] === 'function') {
-          this.observers[identifier](element);
-        } else {
-          this.observers[identifier].observe(element);
-        }
-      });
     }
   }
 
   /**
-   * Singleton for the ObserverController.
+   * Add observable elements to certain observer.
+   *
+   * @param {string} identifier 
+   * @param {NodeList} observable 
    */
-  let instance;
+  function observe(identifier, observable)
+  {
+    observable.forEach((element) => {
+      if (typeof observers[identifier] === 'function') {
+        observers[identifier](element);
+      } else {
+        observers[identifier].observe(element);
+      }
+    });
+  }
 
   return {
-    get: () => {
-      if (!instance) {
-        instance = new ObserverController();
-      }
-      return instance;
-    }
+    createIntersectionObserver,
+    observe
   };
 })();
