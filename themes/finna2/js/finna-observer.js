@@ -24,7 +24,7 @@ finna.observer = (() => {
     observerParams = {}
   ) {
     if (!observers[identifier]) {
-      if (!supported.IntersectionObserver) {
+      if (supported.IntersectionObserver) {
         observers[identifier] = new IntersectionObserver(
           onEnterScreen,
           observerParams
