@@ -122,6 +122,13 @@ class AbstractTabs extends HTMLElement {
    */
   beforeCreate() { }
 
+  /**
+   * When an attribute declared in observedAttributes changes.
+   *
+   * @param {string} name     Name of the attribute which changed.
+   * @param {string} oldValue Old value of the attribute.
+   * @param {string} newValue New value of the attribute.
+   */
   attributeChangedCallback(name, oldValue, newValue)
   {
     switch (name) {
@@ -141,6 +148,9 @@ class AbstractTabs extends HTMLElement {
     }
   }
 
+  /**
+   * Set event listeners.
+   */
   setEvents()
   {
     const ref = this;
@@ -164,6 +174,11 @@ class AbstractTabs extends HTMLElement {
     });
   }
 
+  /**
+   * When a link has been clicked.
+   *
+   * @param {HTMLAnchorElement} link 
+   */
   onLinkClicked(link)
   {
     if (link) {
