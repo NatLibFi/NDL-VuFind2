@@ -253,7 +253,7 @@ $config = [
         'finna-multiselect.js',
         'finna-abstract-tabs.js',
         'finna-feed-tabs.js',
-        'finna-content-tabss.js'
+        'finna-content-tabs.js'
     ],
     'less' => [
         'active' => false
