@@ -705,6 +705,12 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     'Tässä on tietoa kuvauspaikkahuomautuksista.'
                 ]
             ],
+            [
+                'getMovieThanks',
+                [
+                    'Kiitos, thanks, tack.'
+                ]
+            ]
         ];
     }
 
