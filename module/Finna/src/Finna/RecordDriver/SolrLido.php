@@ -1842,7 +1842,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         foreach ($this->getXmlRecord()->lido->descriptiveMetadata
             ->objectIdentificationWrap->displayStateEditionWrap
             ->displayEdition as $edition) {
-                $results[] = (string)$edition;
+            $results[] = (string)$edition;
         }
         return $results;
     }
