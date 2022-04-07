@@ -546,6 +546,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Display Edition',
+            'getDisplayEdition',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordDisplayEdition']
+            ]
+        );
+        $setTemplateLine(
             'Subject Detail',
             'getSubjectDetails',
             'data-escapeHtml.phtml',

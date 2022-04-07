@@ -117,7 +117,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Awards', 'Bibliography', 'Broadcasting Dates',
             'child_records', 'Classification', 'Collection',
             'Color', 'Content Description', 'Copyright Notes',
-            'Date', 'Description FWD', 'Dissertation Note',
+            'Date', 'Description FWD', 'Display Edition', 'Dissertation Note',
             'Distribution', 'DOI', 'Edition',
             'Educational Level', 'Educational Role', 'Educational Subject',
             'Educational Use', 'Education Programs', 'Event Notice',

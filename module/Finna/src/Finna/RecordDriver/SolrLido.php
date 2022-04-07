@@ -1827,4 +1827,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         return self::LANGUAGE_CODES[$this->preferredLanguage]
             ?? self::LANGUAGE_CODES['fi'];
     }
+
+    /**
+     * Get the display edition of the current record.
+     *
+     * @return array
+     */
+    public function getDisplayEdition()
+    {
+        $results = [];
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectIdentificationWrap->displayStateEditionWrap
+            ->displayEdition as $edition) {
+                $results[] = (string)$edition;
+        }
+        return $results;
+    }
 }
