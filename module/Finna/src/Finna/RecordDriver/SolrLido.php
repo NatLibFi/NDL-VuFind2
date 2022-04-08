@@ -1108,7 +1108,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
             }
-            $method = (string)($node->eventMethod->term ?? '');
+            $methods = [];
+            foreach ($node->eventMethod ?? [] as $eventMethod) {
+                foreach ($eventMethod->term ?? [] as $term) {
+                    if ($method = trim((string)$term)) {
+                        $methods[] = $method;
+                    }
+                }
+            }
             $materials = [];
 
             if (isset($node->eventMaterialsTech->displayMaterialsTech)) {
@@ -1210,7 +1217,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'type' => $type,
                 'name' => $name,
                 'date' => $date,
-                'method' => $method,
+                'methods' => $methods,
                 'materials' => $materials,
                 'places' => $places,
                 'actors' => $actors,
