@@ -135,6 +135,9 @@
     margin: 20px 0px;
     border: 1px solid @record-holdings-border-color;
     border-top: none;
+    @media print {
+        display: none;
+    }
     .headers {
         display: flex;
         width: 100%;
