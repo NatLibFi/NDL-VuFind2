@@ -187,7 +187,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Notated Music Format', 'Notes', 'Objective and Content',
             'original_work_language', 'Other Classification',
             'Other Classifications', 'Other ID',
-            'Other Links', 'Other Screenings', 'Other Titles',
+            'Other Links', 'Other Screenings',
             'Physical Description', 'Physical Medium',
             'Place of Origin', 'Playing Time',
             'Premiere Night', 'Premiere Theaters', 'Presenters',

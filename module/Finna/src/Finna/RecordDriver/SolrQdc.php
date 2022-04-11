@@ -110,7 +110,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
      */
     public function getAbstracts()
     {
-        $abstractValues = [];
         $abstracts = [];
         $abstract = '';
         $lang = '';
@@ -125,6 +124,16 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         }
 
         return $abstracts;
+    }
+
+    /**
+     * Get an array of alternative titles for the record.
+     *
+     * @return array
+     */
+    public function getAlternativeTitles()
+    {
+        return $this->fields['title_alt'] ?? [];
     }
 
     /**
