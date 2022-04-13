@@ -546,8 +546,8 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Display Edition',
-            'getDisplayEdition',
+            'lido_editions',
+            'getEditions',
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'recordDisplayEdition']
