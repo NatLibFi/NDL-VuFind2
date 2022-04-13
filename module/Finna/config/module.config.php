@@ -250,6 +250,9 @@ $config = [
             'Barcode' => 'Finna\Controller\BarcodeController',
             'barcode' => 'Finna\Controller\BarcodeController',
             'BrowseSearch' => 'Finna\Controller\BrowseSearchController',
+            // Alias for the browse record route (that must not clash with normal
+            // record route for getMatchedRouteName to return correct value):
+            'BrowseRecord' => 'Record',
             'Comments' => 'Finna\Controller\CommentsController',
             'comments' => 'Finna\Controller\CommentsController',
             'FeedContent' => 'Finna\Controller\FeedContentController',
@@ -940,7 +943,9 @@ $config = [
 $recordRoutes = [
     'metalibrecord' => 'MetaLibRecord',
     'solrauthrecord' => 'AuthorityRecord',
-    'solrbrowserecord' => 'Record',
+    // BrowseRecord is practically just the same as Record, but the route must be
+    // distinct so that getMatchedRouteName returns the correct one:
+    'solrbrowserecord' => 'BrowseRecord',
     'r2record' => 'R2Record',
     'r2collection' => 'R2Collection',
     'r2collectionrecord' => 'R2Record',
