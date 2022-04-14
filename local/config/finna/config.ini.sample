@@ -1763,9 +1763,3 @@ showLabels[Primo] = true
 cacheTime = 604800
 ; If debug is uncommented and true, will display additional data on the viewer
 ;debug = true
-; If fileInput is set to true, adds a developer tool for testing models
-;fileInput = false
-; Array of institutions which have proper preview images to show
-;previewImages['museovirasto_testi'] = true
-; Json styled default settings for viewer. Settings can be exported from the viewer.
-;settings[default] = '{}'
