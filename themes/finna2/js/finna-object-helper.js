@@ -100,10 +100,12 @@ class ObjectHelper {
     });
     const createSettings = (object, template, prefix) => {
       const form = template.querySelector('form');
-      for (const [key, value] of object) {
-        const div = this.createElement(object, key, prefix);
-        if (div) {
-          form.append(div);
+      for (const key in object) {
+        if (object.hasOwnProperty(key)) {
+          const div = this.createElement(object, key, prefix);
+          if (div) {
+            form.append(div);
+          }
         }
       }
     };
