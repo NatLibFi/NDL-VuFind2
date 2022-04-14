@@ -375,7 +375,6 @@ class ModelViewerClass extends HTMLElement {
     this.loadInfo.classList.add('state', 'btn', 'btn-primary');
     this.loadInfo.textContent = this.translations['view model'] || 'View model';
     this.loadInfo.addEventListener('click', () => {
-      console.log(this.dependenciesLoaded);
       if (!this.dependenciesLoaded) {
         return;
       }
