@@ -917,15 +917,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModelSettings(): array
     {
-        $settings = [];
+        
         $datasource = $this->getDataSource();
-        $iniData = $this->recordConfig->Models ?? [];
-        foreach (['debug'] as $setting) {
-            if (!empty($iniData->$setting)) {
-                $settings[$setting] = $iniData->$setting;
-            }
+        $settings = [];
+        if ($iniData = $this->recordConfig->Models ?? []) {
+            $settings = [
+                'debug' => boolval($iniData->debug ?? 0),
+                'previewImages' => $this->allowModelPreviewImages()
+            ];
         }
-        $settings['previewImages'] = $this->allowModelPreviewImages();
+
         return $settings;
     }
 
