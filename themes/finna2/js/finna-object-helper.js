@@ -100,7 +100,7 @@ class ObjectHelper {
     });
     const createSettings = (object, template, prefix) => {
       const form = template.querySelector('form');
-      for (const key in object) {
+      for (const [key, value] of object) {
         const div = this.createElement(object, key, prefix);
         if (div) {
           form.append(div);
@@ -251,7 +251,7 @@ class ObjectHelper {
           subGroupDiv.append(this.createInput('text', ...subParams));
           break;
         case 'boolean':
-          subGroupDiv.append(this.createSelect(booleanOptions, ...subParams));
+          subGroupDiv.append(this.createSelect(this.booleanOptions, ...subParams));
           break;
         }
       }
