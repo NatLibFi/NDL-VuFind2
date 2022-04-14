@@ -440,6 +440,8 @@ class ModelViewerClass extends HTMLElement {
     if (scripts) {
       const head = document.querySelector('head');
       head.append(...scripts);
+    } else {
+      this.dependenciesLoaded = true;
     }
   }
 
