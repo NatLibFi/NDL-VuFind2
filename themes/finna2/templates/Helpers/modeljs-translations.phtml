@@ -1,0 +1,31 @@
+<?php // No start or end tags
+    $from =
+        [
+            'information',
+            'vertices',
+            'triangles',
+            'desktop help',
+            'mobile help',
+            'loading file',
+            'view model',
+            'lights',
+            'materials',
+            'file',
+            'intensity',
+            'name',
+            'type',
+            'save',
+            'spotlight',
+            'directionallight',
+            'add light',
+            'export .glb',
+            'toggle mode',
+            'metalness',
+            'roughness',
+            'envmapintensity'
+        ];
+    $translations = [];
+    foreach ($from as $t) {
+        $translations[$t] = $this->translate("model_{$t}");
+    }
+echo json_encode($translations);

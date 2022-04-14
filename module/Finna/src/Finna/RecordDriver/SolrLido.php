@@ -164,16 +164,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $displayableModelFormats = ['gltf', 'glb'];
 
     /**
-     * Recognized model viewer settings
-     *
-     * @var array
-     */
-    protected $modelViewerSettings = [
-        'debug',
-        'fileInput'
-    ];
-
-    /**
      * Constructor
      *
      * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
@@ -956,15 +946,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         $settings = [];
         $datasource = $this->getDataSource();
         $iniData = $this->recordConfig->Models ?? [];
-        foreach ($this->modelViewerSettings as $setting) {
+        foreach (['debug'] as $setting) {
             if (!empty($iniData->$setting)) {
                 $settings[$setting] = $iniData->$setting;
             }
         }
         $settings['previewImages'] = $this->allowModelPreviewImages();
-        $dataSourceSettings = $this->mainConfig->Models->settings ?? [];
-        $settings['settings'] = $dataSourceSettings[$datasource]
-            ?? $dataSourceSettings['default'] ?? [];
         return $settings;
     }
 
