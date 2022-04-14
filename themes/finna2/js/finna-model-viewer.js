@@ -165,7 +165,7 @@ class ModelViewerClass extends HTMLElement {
         'name',
         'type'
       ],
-      onAttributeChanged: (e) => {
+      onAttributeChanged: () => {
         thisClass.scene.traverse((child) => {
           if (child.materal) {
             child.materal.needsUpdate = true;
@@ -276,7 +276,7 @@ class ModelViewerClass extends HTMLElement {
             return;
           }
           const toggleMode = this.createButton('button toggle-mode', 'toggle-mode', this.translate('Toggle mode'));
-          toggleMode.addEventListener('click', (e) => {
+          toggleMode.addEventListener('click', () => {
             this.menumode = this.menumode === 'basic' ? 'advanced' : 'basic';
             this.getMenus().forEach((area) => {
               area.done = false;
@@ -410,7 +410,7 @@ class ModelViewerClass extends HTMLElement {
   {
     this.decoder = `${this.scripts}draco/`;
     const ref = this;
-    const loaded = function onScriptLoad(e) {
+    const loaded = function onScriptLoad() {
       delete ref.loadScrips[this.reference];
       if (Object.keys(ref.loadScrips).length < 1) {
         ref.dependenciesLoaded = true;
@@ -857,7 +857,7 @@ class ModelViewerClass extends HTMLElement {
 
   getSize()
   {
-    if (this.classList.contains('fullscreen')) {
+    if (this.classList.contains('fullscreen')) {
       if (!this.oldSize) {
         this.oldSize = this.size;
       }
@@ -868,7 +868,7 @@ class ModelViewerClass extends HTMLElement {
     } else if (this.oldSize) {
       this.size = this.oldSize;
       delete this.oldSize;
-    } else {
+    } else {
       const computed = getComputedStyle(this.parentElement);
       this.size = {
         x: this.parentElement.offsetWidth,
