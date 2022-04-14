@@ -375,6 +375,7 @@ class ModelViewerClass extends HTMLElement {
     this.loadInfo.classList.add('state', 'btn', 'btn-primary');
     this.loadInfo.textContent = this.translations['view model'] || 'View model';
     this.loadInfo.addEventListener('click', () => {
+      console.log(this.dependenciesLoaded);
       if (!this.dependenciesLoaded) {
         return;
       }
@@ -437,7 +438,8 @@ class ModelViewerClass extends HTMLElement {
     found.forEach((key) => {
       delete this.loadScrips[key];
     });
-    if (scripts) {
+    
+    if (scripts.length) {
       const head = document.querySelector('head');
       head.append(...scripts);
     } else {
