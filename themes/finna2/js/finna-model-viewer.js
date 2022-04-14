@@ -1,4 +1,4 @@
-/* global finna, THREE, VuFind*/
+/* global THREE, ObjectHelper */
 
 /**
  * Get tangent
@@ -52,10 +52,11 @@ class ModelViewerClass extends HTMLElement {
   }
 
   set translations(newValue) {
-    if (typeof newValue !== 'object')  {
-      newValue = JSON.parse(newValue);
+    let cast = newValue;
+    if (typeof cast !== 'object') {
+      cast = JSON.parse(newValue);
     }
-    this.translationsObj = newValue;
+    this.translationsObj = cast;
   }
 
   get translations() {
@@ -149,15 +150,15 @@ class ModelViewerClass extends HTMLElement {
       menuAreas: {
         advanced: [
           {done: false, name: 'File', prefix: 'file', holder: undefined, template: undefined, objects: [], created: [], canDelete: false, canExport: false},
-          {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: thisClass.cameras, created: [], canDelete: false, canExport: true, updateFunction: () => { return thisClass.cameras; }, assignFunction: (e) => {thisClass.cameras = e;}},
-          {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: thisClass.meshes, created: [], canDelete: false, canExport: false, updateFunction: () => { return thisClass.meshes; }, assignFunction: (e) => {thisClass.meshes = e;}},
-          {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: thisClass.materials, created: [], canDelete: false, canExport: false, updateFunction: () => { return thisClass.materials; }, assignFunction: (e) => {thisClass.materials = e;}},
-          {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: thisClass.lights, created: [], canDelete: true, canExport: true, updateFunction: () => { return thisClass.lights; }, assignFunction: (e) => {thisClass.lights = e;}},
+          {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: thisClass.cameras, created: [], canDelete: false, canExport: true, updateFunction: () => { return thisClass.cameras; }, assignFunction: (e) => { thisClass.cameras = e; }},
+          {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: thisClass.meshes, created: [], canDelete: false, canExport: false, updateFunction: () => { return thisClass.meshes; }, assignFunction: (e) => { thisClass.meshes = e; }},
+          {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: thisClass.materials, created: [], canDelete: false, canExport: false, updateFunction: () => { return thisClass.materials; }, assignFunction: (e) => { thisClass.materials = e; }},
+          {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: thisClass.lights, created: [], canDelete: true, canExport: true, updateFunction: () => { return thisClass.lights; }, assignFunction: (e) => { thisClass.lights = e; }},
         ],
         basic: [
           {done: false, name: 'File', prefix: 'file', holder: undefined, template: undefined, objects: [], created: [], canDelete: false, canExport: false},
-          {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: thisClass.materials, created: [], canDelete: false, canExport: true, updateFunction: () => { return thisClass.materials; }, assignFunction: (e) => {thisClass.materials = e;}},
-          {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: thisClass.lights, created: [], canDelete: false, canExport: true, updateFunction: () => { return thisClass.lights; }, assignFunction: (e) => {thisClass.lights = e;}},
+          {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: thisClass.materials, created: [], canDelete: false, canExport: true, updateFunction: () => { return thisClass.materials; }, assignFunction: (e) => { thisClass.materials = e; }},
+          {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: thisClass.lights, created: [], canDelete: false, canExport: true, updateFunction: () => { return thisClass.lights; }, assignFunction: (e) => { thisClass.lights = e; }},
         ]
       },
       readOnly: [
@@ -250,7 +251,7 @@ class ModelViewerClass extends HTMLElement {
             exporter.parse(
               thisClass.scene,
               (gltf) => {
-                const url = URL.createObjectURL(new Blob([gltf], {type: 'model/gltf-binary'}));
+                const url = URL.createObjectURL(new Blob([gltf], { type: 'model/gltf-binary' }));
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = 'object.glb';
@@ -392,10 +393,10 @@ class ModelViewerClass extends HTMLElement {
     case 'proxy':
       if (!this.src) {
         fetch(newValue)
-        .then(response => response.json())
-        .then(data => {
-          this.src = data.data.url;
-        });
+          .then(response => response.json())
+          .then(data => {
+            this.src = data.data.url;
+          });
       }
       break;
     case 'scripts':
@@ -644,10 +645,8 @@ class ModelViewerClass extends HTMLElement {
         }
         newBox.expandByObject(obj);
         this.materials.push(obj.material);
-      } else {
-        if (this.lightTypeMappings.find((m) => {return m.value === obj.type;})) {
-          this.lights.push(obj);
-        }
+      } else if (this.lightTypeMappings.find((m) => { return m.value === obj.type; })) {
+        this.lights.push(obj);
       }
     });
     let zero = new THREE.Vector3();
@@ -657,7 +656,7 @@ class ModelViewerClass extends HTMLElement {
       if (obj.userData.viewerSet) {
         return;
       }
-      if (obj.type === 'Mesh' || this.lightTypeMappings.find((m) => {return m.value === obj.type;})) {
+      if (obj.type === 'Mesh' || this.lightTypeMappings.find((m) => { return m.value === obj.type; })) {
         obj.position.x += zero.x;
         obj.position.y += zero.y;
         obj.position.z += zero.z;
@@ -797,10 +796,10 @@ class ModelViewerClass extends HTMLElement {
     });
     window.addEventListener("dragover", (e) => {
       e.preventDefault();
-    },false);
+    }, false);
     window.addEventListener("drop", (e) => {
       e.preventDefault();
-    },false);
+    }, false);
     this.root.addEventListener('drop', (e) => {
       this.src = URL.createObjectURL(e.dataTransfer.files[0]);
       this.restartViewer();

@@ -1,3 +1,5 @@
+/* exported ObjectHelper */
+
 class ObjectHelper {
   constructor(menuHolder, options = {})
   {
