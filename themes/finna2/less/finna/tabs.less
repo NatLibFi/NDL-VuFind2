@@ -273,6 +273,11 @@
     .record-tab.versions {
       display: none;
     }
+    li.record-tab.active {
+      > a {
+        border-bottom-color: @nav-tabs-background-color;
+      }
+    }
   }
   li.tab-right {
     float:right
@@ -287,7 +292,7 @@
   width: 100%;
   .dropdown-toggle {
     line-height: 50px;
-    margin: 15px 0;
+    margin-top: 15px;
     background-color: @main-tabs-active-color;
     color: mix(@main-tabs-active-color, contrast(@main-tabs-active-color), 5%);
     padding: 0 15px;
@@ -305,6 +310,8 @@
       margin-right: 10px;
     }
     .more {
+      display: flex;
+      align-items: center;
       font-size: 85%;
       padding-left: 10px;
       white-space: nowrap;

@@ -65,7 +65,8 @@ foreach ($this->driver->tryMethod('getNonPresenterAuthors', [], []) as $author) 
     echo "A1 {$author['name']}\n";
 }
 
-foreach ($this->driver->tryMethod('getPresenterAuthors', [], []) as $author) {
+$presenters = $this->driver->tryMethod('getPresenters', [], []);
+foreach ($presenters['presenters'] ?? [] as $author) {
     echo "A2 {$author['name']}\n";
 }
 

@@ -370,39 +370,6 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
-            'Subject Detail',
-            'getSubjectDetails',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Place',
-            'getSubjectPlaces',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Date',
-            'getSubjectDates',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-        $setTemplateLine(
-            'Subject Actor',
-            'getSubjectActors',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordSubjects']
-            ]
-        );
-
-        $setTemplateLine(
             'Organisation',
             'getInstitutions',
             'data-organisation.phtml',
@@ -579,6 +546,38 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Subject Detail',
+            'getSubjectDetails',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Place',
+            'getSubjectPlaces',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Date',
+            'getSubjectDates',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
+            'Subject Actor',
+            'getSubjectActors',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordSubjects']
+            ]
+        );
+        $setTemplateLine(
             'Subjects',
             'getAllSubjectHeadings',
             'data-allSubjectHeadings.phtml',
@@ -694,6 +693,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'Number of Viewers',
+            'getAmountOfViewers',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'record-number-of-viewers']
+            ]
+        );
+        $setTemplateLine(
             'Film Festivals',
             'getFestivalInfo',
             'data-festival-info.phtml',
@@ -723,6 +730,17 @@ class RecordDataFormatterFactory
             'data-other-screenings.phtml',
             [
                'context' => ['class' => 'record-other-screenings']
+            ]
+        );
+        $setTemplateLine(
+            'Movie Thanks',
+            'getMovieThanks',
+            'data-escapeHtml.phtml',
+            [
+               'context' => [
+                   'class' => 'record-thanks',
+                   'title' => 'movie_thanks'
+                ]
             ]
         );
         $setTemplateLine(

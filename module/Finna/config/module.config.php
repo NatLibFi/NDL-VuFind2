@@ -250,6 +250,9 @@ $config = [
             'Barcode' => 'Finna\Controller\BarcodeController',
             'barcode' => 'Finna\Controller\BarcodeController',
             'BrowseSearch' => 'Finna\Controller\BrowseSearchController',
+            // Alias for the browse record route (that must not clash with normal
+            // record route for getMatchedRouteName to return correct value):
+            'BrowseRecord' => 'Record',
             'Comments' => 'Finna\Controller\CommentsController',
             'comments' => 'Finna\Controller\CommentsController',
             'FeedContent' => 'Finna\Controller\FeedContentController',
@@ -330,6 +333,7 @@ $config = [
             'Finna\LocationService\LocationService' => 'Finna\LocationService\LocationServiceFactory',
             'Finna\Mailer\Mailer' => 'VuFind\Mailer\Factory',
             'Finna\OAI\Server' => 'VuFind\OAI\ServerFactory',
+            'Finna\OnlinePayment\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\OnlinePayment\OnlinePayment' => 'Finna\OnlinePayment\OnlinePaymentFactory',
             'Finna\OnlinePayment\Session' => 'Finna\OnlinePayment\OnlinePaymentSessionFactory',
             'Finna\OrganisationInfo\OrganisationInfo' => 'Finna\OrganisationInfo\OrganisationInfoFactory',
@@ -345,11 +349,14 @@ $config = [
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
             'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'Finna\Video\Video' => 'Finna\Video\VideoFactory',
 
             'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
             'Laminas\Session\SessionManager' => 'Finna\Session\ManagerFactory',
             'League\CommonMark\MarkdownConverterInterface' => 'Finna\Service\MarkdownFactory',
+            'Finna\View\Resolver\AggregateResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
         ],
         'aliases' => [
             'VuFind\Autocomplete\PluginManager' => 'Finna\Autocomplete\PluginManager',
@@ -370,7 +377,14 @@ $config = [
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
             'VuFind\Search\Memory' => 'Finna\Search\Memory',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
+
+            'ViewResolver' => 'Finna\View\Resolver\AggregateResolver',
         ]
+    ],
+    'view_manager' => [
+        'template_path_stack' => [
+            APPLICATION_PATH . '/vendor/natlibfi/finna-ui-components/source',
+        ],
     ],
     // This section contains all VuFind-specific settings (i.e. configurations
     // unrelated to specific framework components).
@@ -530,7 +544,6 @@ $config = [
                     'Finna\Db\Row\Search' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Transaction' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\User' => 'Finna\Db\Row\UserFactory',
-                    'Finna\Db\Row\UserCard' => 'Finna\Db\Row\UserCardFactory',
                     'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory'
                 ],
                 'aliases' => [
@@ -539,7 +552,6 @@ $config = [
                     'VuFind\Db\Row\Search' => 'Finna\Db\Row\Search',
                     'VuFind\Db\Row\Transaction' => 'Finna\Db\Row\Transaction',
                     'VuFind\Db\Row\User' => 'Finna\Db\Row\User',
-                    'VuFind\Db\Row\UserCard' => 'Finna\Db\Row\UserCard',
                     'VuFind\Db\Row\UserList' => 'Finna\Db\Row\UserList',
 
                     // Aliases for table classes without a row class counterpart
@@ -615,6 +627,8 @@ $config = [
                     'VuFind\ILS\Driver\SierraRest' => 'Finna\ILS\Driver\SierraRest',
                 ]
             ],
+            'onlinepayment_handler' => [ /* see Finna\OnlinePayment\Handler\PluginManager for defaults */ ],
+            'video_handler' => [ /* see Finna\Video\Handler\PluginManager for defaults */ ],
             'recommend' => [
                 'factories' => [
                     'VuFind\Recommend\CollectionSideFacets' => 'Finna\Recommend\Factory::getCollectionSideFacets',
@@ -929,7 +943,9 @@ $config = [
 $recordRoutes = [
     'metalibrecord' => 'MetaLibRecord',
     'solrauthrecord' => 'AuthorityRecord',
-    'solrbrowserecord' => 'Record',
+    // BrowseRecord is practically just the same as Record, but the route must be
+    // distinct so that getMatchedRouteName returns the correct one:
+    'solrbrowserecord' => 'BrowseRecord',
     'r2record' => 'R2Record',
     'r2collection' => 'R2Collection',
     'r2collectionrecord' => 'R2Record',
@@ -961,7 +977,7 @@ $staticRoutes = [
     'MyResearch/R2AccessRights',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
-    'R2/Home', 'R2/Results', 'R2/Advanced',
+    'R2/Advanced', 'R2/FacetList', 'R2/Home', 'R2/Results',
     'Search/StreetSearch',
     'Barcode/Show', 'Search/MapFacet', 'Search/Blended',
     'L1/Advanced', 'L1/FacetList', 'L1/Home', 'L1/Results',

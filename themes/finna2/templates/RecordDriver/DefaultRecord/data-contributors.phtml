@@ -13,10 +13,10 @@
         <?=($index++ > 0 ? '<br/> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author, 'description' => $author['description'] ?? ''])?>
       <?php endforeach; ?>
     <?php endif; ?>
-    <?php if (!empty($data['uncreditedEnsembles'])): ?>
+    <?php if (!empty($data['ensembles'])): ?>
       <div class="subheading"><?=$this->translate("Ensembles")?></div>
       <?php
-      foreach ($data['uncreditedEnsembles'] as $index => $author): ?>
+      foreach ($data['ensembles'] as $index => $author): ?>
         <?=($index++ > 0 ? '<br/> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $author])?>
       <?php endforeach; ?>
     <?php endif; ?>

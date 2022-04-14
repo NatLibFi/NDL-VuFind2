@@ -50,6 +50,17 @@ class Options extends \Finna\Search\Solr\Options
     }
 
     /**
+     * Return the route name for the facet list action. Returns false to cover
+     * unimplemented support.
+     *
+     * @return string|bool
+     */
+    public function getFacetListAction()
+    {
+        return 'r2-facetlist';
+    }
+
+    /**
      * Return the route name for the search results action.
      *
      * @return string

@@ -1,0 +1,290 @@
+<?php // This template is a JSON fragment of a complete OpenAPI specification ?>
+{
+    "components": {
+        "schemas": {
+            "AuthorWithRoleAndDate": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "Name",
+                        "type": "string"
+                    },
+                    "date": {
+                        "description": "Date associated with the author",
+                        "type": "string"
+                    },
+                    "role": {
+                        "description": "Role",
+                        "type": "string"
+                    }
+                }
+            },
+            "AverageRating": {
+                "description": "Average rating",
+                "type": "object",
+                "properties": {
+                    "average": {
+                        "description": "Average rating",
+                        "type": "integer"
+                    },
+                    "count": {
+                        "description": "Number of ratings",
+                        "type": "integer"
+                    }
+                }
+            },
+            "ComponentPart": {
+                "type": "object",
+                "properties": {
+                    "number": {
+                        "description": "Order number in the host record",
+                        "type": "string"
+                    },
+                    "id": {
+                        "description": "Record id",
+                        "type": "string"
+                    },
+                    "title": {
+                        "description": "Title",
+                        "type": "string"
+                    },
+                    "uniformTitle": {
+                        "description": "Uniform title",
+                        "type": "string"
+                    },
+                    "authors": {
+                        "description": "Main authors",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "presenters": {
+                        "description": "Presenters",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "arrangers": {
+                        "description": "Arrangers",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "otherAuthors": {
+                        "description": "Other authors",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "Event": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "description": "Type of the event",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Event name",
+                        "type": "string"
+                    },
+                    "date": {
+                        "description": "Date",
+                        "type": "string"
+                    },
+                    "method": {
+                        "description": "Method used",
+                        "type": "string"
+                    },
+                    "materials": {
+                        "description": "Materials used",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "places": {
+                        "description": "Places",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "actors": {
+                        "description": "Actors in the event",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "culture": {
+                        "description": "Cultural context",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Event description",
+                        "type": "string"
+                    }
+                }
+            },
+            "Events": {
+                "description": "Events related to the described object (e.g. creation, use, exhibition)",
+                "type": "object",
+                "properties": {
+                    "Event name": {
+                        "$ref": "#/components/schemas/Event"
+                    }
+                }
+            },
+            "Image": {
+                "type": "object",
+                "properties": {
+                    "urls": {
+                        "description": "Image URLs (different sizes are subject to availability)",
+                        "type": "object",
+                        "properties": {
+                            "small": {
+                                "description": "Small image",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "medium": {
+                                "description": "Medium image",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "large": {
+                                "description": "Large image",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "description": {
+                        "description": "Image description",
+                        "type": "string"
+                    },
+                    "rights": {
+                        "description": "Image access and usage rights",
+                        "type": "object",
+                        "properties": {
+                            "copyright": {
+                                "description": "License",
+                                "type": "string"
+                            },
+                            "description": {
+                                "description": "Human-readable description",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            },
+                            "link": {
+                                "description": "Link to copyright information",
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
+            "Inscription": {
+                "type": "object",
+                "properties": {
+                    "content": {
+                        "description": "Inscription content",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Inscription type",
+                        "type": "string"
+                    }
+                }
+            },
+            "OnlineLink": {
+                "type": "object",
+                "properties": {
+                    "url": {
+                        "description": "Link URL",
+                        "type": "string"
+                    },
+                    "text": {
+                        "description": "Link text",
+                        "type": "string"
+                    },
+                    "source": {
+                        "description": "Link source (data source)",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/TranslatedField"
+                        }
+                    }
+                }
+            },
+            "OtherRecordLink": {
+                "type": "object",
+                "properties": {
+                    "heading": {
+                        "description": "Link heading",
+                        "type": "string"
+                    },
+                    "title": {
+                        "description": "Title used for linking",
+                        "type": "string"
+                    },
+                    "author": {
+                        "description": "Author used for linking",
+                        "type": "string"
+                    },
+                    "isn": {
+                        "description": "ISBN or ISSN used for linking",
+                        "type": "string"
+                    }
+                }
+            },
+            "RecordLink": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "description": "Link title",
+                        "type": "string"
+                    },
+                    "translated": {
+                        "description": "Translated link title",
+                        "type": "string"
+                    },
+                    "value": {
+                        "description": "Link value",
+                        "type": "string"
+                    },
+                    "link": {
+                        "$ref": "#/components/schemas/Link"
+                    }
+                }
+            },
+            "TranslatedField": {
+                "type": "object",
+                "properties": {
+                    "value": {
+                        "description": "Field value",
+                        "type": "string"
+                    },
+                    "translated": {
+                        "description": "Translated field value",
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}
