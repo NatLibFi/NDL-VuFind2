@@ -789,12 +789,14 @@ class ModelViewerClass extends HTMLElement {
     };
     const unhighlight = () => {
       this.root.classList.remove('filedrop');
-    }
-    ['dragenter', 'dragover'].forEach(eventName => {
+    };
+
+    const dragStarts = ['dragenter', 'dragover'];
+    dragStarts.forEach(eventName => {
       this.root.addEventListener(eventName, highlight, false);
     });
-    
-    ['dragleave', 'drop'].forEach(eventName => {
+    const dragEnds = ['dragleave', 'drop'];
+    dragEnds.forEach(eventName => {
       this.root.addEventListener(eventName, unhighlight, false);
     });
     window.addEventListener("dragover", (e) => {
