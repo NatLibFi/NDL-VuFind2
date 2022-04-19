@@ -153,7 +153,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     protected $displayableModelFormats = ['gltf', 'glb'];
 
-
     /**
      * Events used for author information.
      *
@@ -917,7 +916,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModelSettings(): array
     {
-        
         $datasource = $this->getDataSource();
         $settings = [];
         if ($iniData = $this->recordConfig->Models ?? []) {
