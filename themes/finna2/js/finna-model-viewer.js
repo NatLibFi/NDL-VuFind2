@@ -166,6 +166,9 @@ class ModelViewerClass extends HTMLElement {
         'type',
         'id'
       ],
+      hiddenProperties: [
+        'uuid'
+      ],
       onAttributeChanged: () => {
         thisClass.scene.traverse((child) => {
           if (child.materal) {

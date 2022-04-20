@@ -212,10 +212,13 @@ class ObjectHelper {
     const value = object[key];
     const div = this.createDiv('setting-child');
     const groupDiv = this.createDiv('setting-group');
+    const isHidden = typeof this.options.hiddenProperties !== 'undefined' && this.options.hiddenProperties.includes(key);
     div.append(groupDiv);
-    const span = document.createElement('span');
-    span.textContent = this.transEsc(key);
-    groupDiv.append(span);
+    if (!isHidden) {
+      const span = document.createElement('span');
+      span.textContent = this.transEsc(key);
+      groupDiv.append(span);
+    }
     const params = [`${prefix}${this.escape(key)}`, `${this.escape(value)}`];
     switch (type) {
     case 'boolean':
@@ -231,6 +234,9 @@ class ObjectHelper {
       var input = this.createInput('text', ...params);
       if (this.options.readOnly.includes(key)) {
         input.setAttribute('readonly', 'readonly');
+      }
+      if (isHidden) {
+        input.type = 'hidden';
       }
       groupDiv.append(input);
       break;
