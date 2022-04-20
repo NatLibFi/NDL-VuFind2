@@ -682,7 +682,7 @@ class ModelViewerClass extends HTMLElement {
       this.cameraPosition = cameraPosition;
       this.camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
     }
-    this.setInformation(this.translations.vertices || 'Vertices', this.vertices);
+    this.setInformation(this.translations.vertices || 'Vertices', this.vertices);
     this.setInformation(this.translations.triangles || 'Triangles', this.triangles);
   }
 
