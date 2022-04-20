@@ -385,6 +385,31 @@ class ModelViewerClass extends HTMLElement {
       this.createElement();
     });
     this.root.append(this.loadInfo);
+    const highlight = () => {
+      this.root.classList.add('filedrop');
+    };
+    const unhighlight = () => {
+      this.root.classList.remove('filedrop');
+    };
+
+    const dragStarts = ['dragenter', 'dragover'];
+    dragStarts.forEach(eventName => {
+      this.root.addEventListener(eventName, highlight, false);
+    });
+    const dragEnds = ['dragleave', 'drop'];
+    dragEnds.forEach(eventName => {
+      this.root.addEventListener(eventName, unhighlight, false);
+    });
+    window.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    }, false);
+    window.addEventListener("drop", (e) => {
+      e.preventDefault();
+    }, false);
+    this.root.addEventListener('drop', (e) => {
+      this.src = URL.createObjectURL(e.dataTransfer.files[0]);
+      this.restartViewer();
+    });
   }
 
   attributeChangedCallback(name, oldValue, newValue)
@@ -783,31 +808,6 @@ class ModelViewerClass extends HTMLElement {
           }
         });
       }
-    });
-    const highlight = () => {
-      this.root.classList.add('filedrop');
-    };
-    const unhighlight = () => {
-      this.root.classList.remove('filedrop');
-    };
-
-    const dragStarts = ['dragenter', 'dragover'];
-    dragStarts.forEach(eventName => {
-      this.root.addEventListener(eventName, highlight, false);
-    });
-    const dragEnds = ['dragleave', 'drop'];
-    dragEnds.forEach(eventName => {
-      this.root.addEventListener(eventName, unhighlight, false);
-    });
-    window.addEventListener("dragover", (e) => {
-      e.preventDefault();
-    }, false);
-    window.addEventListener("drop", (e) => {
-      e.preventDefault();
-    }, false);
-    this.root.addEventListener('drop', (e) => {
-      this.src = URL.createObjectURL(e.dataTransfer.files[0]);
-      this.restartViewer();
     });
   }
 
