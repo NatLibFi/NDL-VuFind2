@@ -444,24 +444,46 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
     }
 
     /**
-     * Get contained in information
+     * Get all record links related to the current record. Each link is returned as
+     * array.
+     * Format:
+     * array(
+     *        array(
+     *               'title' => label_for_title
+     *               'value' => link_name
+     *               'link'  => link_URI
+     *        ),
+     *        ...
+     * )
      *
-     * @return array
+     * @return null|array
      */
-    public function getContainedIn(): array
+    public function getAllRecordLinks()
     {
-        $result = [];
         $xml = $this->getXmlRecord();
+        $relations = [];
         foreach ($xml->isPartOf ?? [] as $isPartOf) {
-            $result[] = (string)$isPartOf;
+            $relations[] = [
+                'value' => (string)$isPartOf,
+                'link' => [
+                    'value' => (string)$isPartOf,
+                    'type' => 'AllFields'
+                ]
+            ];
         }
         foreach ($xml->relation ?? [] as $relation) {
             $attrs = $relation->attributes();
             if ('ispartof' === (string)($attrs->type ?? '')) {
-                $result[] = (string)$relation;
+                $relations[] = [
+                    'value' => (string)$relation,
+                    'link' => [
+                        'value' => (string)$relation,
+                        'type' => 'AllFields'
+                    ]
+                ];
             }
         }
-        return $result;
+        return $relations;
     }
 
     /**

@@ -1144,7 +1144,7 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Contained In',
-            'getContainedIn',
+            'getAllRecordLinks',
             'data-containedIn.phtml',
             [
                 'context' => ['class' => 'isPartOf']

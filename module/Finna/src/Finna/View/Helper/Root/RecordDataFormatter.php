@@ -195,7 +195,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Production Credits', 'Projected Publication Date',
             'Publication Frequency', 'Publications',
             'Publication_Place', 'Published in',
-            'Publisher or Distributor Number', 'Record Links', 'Related Items',
+            'Publisher or Distributor Number', 'Related Items',
             'Related Places', 'Scale', 'Secondary Authors',
             'Series', 'Sound', 'Source of Acquisition',
             'Standard Codes', 'Studios', 'Subject Actor',
