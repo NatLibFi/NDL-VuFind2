@@ -59,6 +59,10 @@
         <div class="flash-message alert alert-warning">
           <?=$this->transEsc('patron_status_card_expires_soon', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
         </div>
+      <?php elseif (!empty($this->profile['expired']) && !empty($this->profile['expiration_date'])): ?>
+        <div class="flash-message alert alert-danger">
+          <?=$this->transEsc('patron_status_card_expired', ['%%expirationDate%%' => $this->profile['expiration_date']])?>
+        </div>
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
       <?php if (is_array($this->profile)): ?>

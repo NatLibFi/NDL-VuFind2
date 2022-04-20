@@ -10,6 +10,7 @@
   $formats = $this->driver->tryMethod('getFormats');
   $translatedFormat = $this->transEsc(end($formats));
   $recordType = $this->driver->tryMethod('getRecordFormat');
+  $this->partial('Helpers/videojs-translations.phtml');
   $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 ?>
 <div id="popup-content-collapse" class="content">

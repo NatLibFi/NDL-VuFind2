@@ -68,13 +68,17 @@ trait FinnaParams
     /**
      * Get information on the current state of the boolean checkbox facets.
      *
-     * @param array $allowed List of checkbox filters to return (null for all)
+     * @param array $include        List of checkbox filters to return (null for all)
+     * @param bool  $includeDynamic Should we include dynamically-generated
+     * checkboxes that are not part of the include list above?
      *
      * @return array
      */
-    public function getCheckboxFacets(array $allowed = null)
-    {
-        $facets = parent::getCheckboxFacets($allowed);
+    public function getCheckboxFacets(
+        array $include = null,
+        bool $includeDynamic = true
+    ) {
+        $facets = parent::getCheckboxFacets($include, $includeDynamic);
 
         // Hide checkboxfacets that are
         // configured as SearchTabsFilters

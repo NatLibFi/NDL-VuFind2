@@ -546,6 +546,14 @@ class RecordDataFormatterFactory
             ]
         );
         $setTemplateLine(
+            'lido_editions',
+            'getEditions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordDisplayEdition']
+            ]
+        );
+        $setTemplateLine(
             'Subject Detail',
             'getSubjectDetails',
             'data-escapeHtml.phtml',
@@ -730,6 +738,17 @@ class RecordDataFormatterFactory
             'data-other-screenings.phtml',
             [
                'context' => ['class' => 'record-other-screenings']
+            ]
+        );
+        $setTemplateLine(
+            'Movie Thanks',
+            'getMovieThanks',
+            'data-escapeHtml.phtml',
+            [
+               'context' => [
+                   'class' => 'record-thanks',
+                   'title' => 'movie_thanks'
+                ]
             ]
         );
         $setTemplateLine(

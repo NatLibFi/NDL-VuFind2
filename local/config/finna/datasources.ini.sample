@@ -70,3 +70,25 @@ onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 ; already a product code from other mappings above, this value is prepended to it
 ; without any delimiter.
 ;onlinePayment['organizationProductCodeMappings'] = 'Helsinki=demo_003:Tampere=demo_004'
+
+; # Video on demand settings
+
+; ## Video provider specific settings:
+
+; ### Vimeo:
+video['handler'] = "Vimeo"
+video['url'] = "https://vimeo.com/{videoid}"
+video['posterUrl'] = "https://link.to.posterUrl/{filename}"
+
+; ### Elonet:
+video['handler'] = "Elonet"
+video['secret'] = "secretkey"
+video['timestampPrecision'] = 3000
+video['url'] = "https://link.to.video/{filename}"
+video['posterUrl'] = "https://link.to.posterUrl/{filename}"
+
+; Videosources to check, if an url can be provided for a video
+; ### Default:
+video_sources[] = "application/x-mpegURL|https://link.to.video/{videoname}.m3u8|smil"
+video_sources[] = "application/x-mpegURL|https://link.to.video/{videoname}.m3u8"
+video_sources[] = "application/dash+xml|https://link.to.video/{videoname}.mpd"

@@ -250,6 +250,9 @@ $config = [
             'Barcode' => 'Finna\Controller\BarcodeController',
             'barcode' => 'Finna\Controller\BarcodeController',
             'BrowseSearch' => 'Finna\Controller\BrowseSearchController',
+            // Alias for the browse record route (that must not clash with normal
+            // record route for getMatchedRouteName to return correct value):
+            'BrowseRecord' => 'Record',
             'Comments' => 'Finna\Controller\CommentsController',
             'comments' => 'Finna\Controller\CommentsController',
             'FeedContent' => 'Finna\Controller\FeedContentController',
@@ -346,6 +349,8 @@ $config = [
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
             'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'Finna\Video\Video' => 'Finna\Video\VideoFactory',
 
             'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
@@ -623,6 +628,7 @@ $config = [
                 ]
             ],
             'onlinepayment_handler' => [ /* see Finna\OnlinePayment\Handler\PluginManager for defaults */ ],
+            'video_handler' => [ /* see Finna\Video\Handler\PluginManager for defaults */ ],
             'recommend' => [
                 'factories' => [
                     'VuFind\Recommend\CollectionSideFacets' => 'Finna\Recommend\Factory::getCollectionSideFacets',
@@ -937,7 +943,9 @@ $config = [
 $recordRoutes = [
     'metalibrecord' => 'MetaLibRecord',
     'solrauthrecord' => 'AuthorityRecord',
-    'solrbrowserecord' => 'Record',
+    // BrowseRecord is practically just the same as Record, but the route must be
+    // distinct so that getMatchedRouteName returns the correct one:
+    'solrbrowserecord' => 'BrowseRecord',
     'r2record' => 'R2Record',
     'r2collection' => 'R2Collection',
     'r2collectionrecord' => 'R2Record',

@@ -124,7 +124,9 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
         $userCard = null;
         $user = $this->userTable->getById($t->user_id);
         foreach ($user->getLibraryCards() as $card) {
-            if ($card->cat_username === $t->cat_username) {
+            $match = mb_strtolower($card->cat_username, 'UTF-8')
+                === mb_strtolower($t->cat_username, 'UTF-8');
+            if ($match) {
                 $userCard = $user->getLibraryCard($card->id);
                 break;
             }

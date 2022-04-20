@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -164,6 +164,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'hemisphereIntensity',
         'viewerPaddingAngle',
         'debug'
+    ];
+
+    /**
+     * Events used for author information.
+     *
+     * Key is event type, value is priority (lower is more important),
+     *
+     * @var array
+     */
+    protected $authorEvents = [
+        'suunnittelu' => 0,
+        'valmistus' => 1,
     ];
 
     /**
@@ -957,6 +969,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getRelatedPublications()
     {
         $results = [];
+        $publicationTypes = ['kirjallisuus', 'lähteet', 'julkaisu'];
         foreach ($this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet'
@@ -968,7 +981,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     ? (string)$attributes->label : '';
                 $term = !empty($node->relatedWorkRelType->term)
                     ? (string)$node->relatedWorkRelType->term : '';
-                if (in_array($term, ['kirjallisuus', 'lähteet'])) {
+                $termLC = mb_strtolower($term, 'UTF-8');
+                if (in_array($termLC, $publicationTypes)) {
+                    $term = $termLC != 'julkaisu' ? $term : '';
                     $results[] = [
                       'title' => $title,
                       'label' => $label ?: $term
@@ -1093,7 +1108,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
             }
-            $method = (string)($node->eventMethod->term ?? '');
+            $methods = [];
+            foreach ($node->eventMethod ?? [] as $eventMethod) {
+                foreach ($eventMethod->term ?? [] as $term) {
+                    if ($method = trim((string)$term)) {
+                        $methods[] = $method;
+                    }
+                }
+            }
             $materials = [];
 
             if (isset($node->eventMaterialsTech->displayMaterialsTech)) {
@@ -1195,7 +1217,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'type' => $type,
                 'name' => $name,
                 'date' => $date,
-                'method' => $method,
+                'methods' => $methods,
                 'materials' => $materials,
                 'places' => $places,
                 'actors' => $actors,
@@ -1417,12 +1439,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterAuthors()
     {
         $authors = [];
+        $index = 0;
         foreach ($this->getXmlRecord()->xpath(
             '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
         ) as $node) {
-            if (!isset($node->eventActor) || $node->eventType->term != 'valmistus') {
+            $eventType = (string)($node->eventType->term ?? '');
+            $priority = $this->authorEvents[$eventType] ?? null;
+            if (null === $priority || !isset($node->eventActor)) {
                 continue;
             }
+            ++$index;
             foreach ($node->eventActor as $actor) {
                 if (isset($actor->actorInRole->actor->nameActorSet->appellationValue)
                     && trim(
@@ -1430,7 +1456,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     ) != ''
                 ) {
                     $role = $actor->actorInRole->roleActor->term ?? '';
-                    $authors[] = [
+                    $authors["$priority/$index"] = [
                         'name' => $actor->actorInRole->actor->nameActorSet
                             ->appellationValue,
                         'role' => $role
@@ -1438,7 +1464,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
-        return $authors;
+        ksort($authors);
+        return array_values($authors);
     }
 
     /**
@@ -1809,5 +1836,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         return self::LANGUAGE_CODES[$this->preferredLanguage]
             ?? self::LANGUAGE_CODES['fi'];
+    }
+
+    /**
+     * Get the display edition of the current record.
+     *
+     * @return array
+     */
+    public function getEditions()
+    {
+        $results = [];
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectIdentificationWrap->displayStateEditionWrap
+            ->displayEdition as $edition) {
+            $results[] = (string)$edition;
+        }
+        return $results;
     }
 }

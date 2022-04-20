@@ -1,10 +1,10 @@
 <?php
 /**
- * Abstract base class for commands that take relative paths as parameters.
+ * Mink test class for alphabetic browse.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2020.
+ * Copyright (C) Villanova University 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,41 +20,40 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Console
+ * @package  Tests
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org Main Page
  */
-namespace VuFindConsole\Command;
-
-use Symfony\Component\Console\Command\Command;
+namespace VuFindTest\Mink;
 
 /**
- * Abstract base class for commands that take relative paths as parameters.
+ * Mink test class for alphabetic browse.
  *
  * @category VuFind
- * @package  Console
+ * @package  Tests
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development Wiki
+ * @link     https://vufind.org Main Page
+ * @retry    4
  */
-abstract class RelativeFileAwareCommand extends Command
+class AlphabrowseTest extends \VuFindTest\Integration\MinkTestCase
 {
     /**
-     * Constructor
+     * Test that extra attributes are escaped correctly.
      *
-     * @param string|null $name The name of the command; passing null means it
-     * must be set in configure()
+     * @return void
      */
-    public function __construct($name = null)
+    public function testExtraAttributeEscaping()
     {
-        // Switch the context back to the original working directory so that
-        // relative paths work as expected. (This constant is set in
-        // public/index.php)
-        if (defined('ORIGINAL_WORKING_DIRECTORY')) {
-            chdir(ORIGINAL_WORKING_DIRECTORY);
-        }
-
-        parent::__construct($name);
+        $session = $this->getMinkSession();
+        $session->visit($this->getVuFindUrl() . '/Alphabrowse/Home?source=lcc&from=PS3552.R878+T47+2011');
+        $page = $session->getPage();
+        $extras = $this->findCss($page, 'table.alphabrowse td.lcc ~ td');
+        $text = $extras->getText();
+        $this->assertTrue(
+            strpos($text, '<HTML> The Basics') !== false,
+            "Could not find '<HTML> The Basics' in '$text'"
+        );
     }
 }

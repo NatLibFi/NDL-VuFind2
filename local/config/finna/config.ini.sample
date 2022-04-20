@@ -801,7 +801,7 @@ recordMap = openlayers
 ;mapLabels = file:geosearch_test_lookup.txt
 ;displayCoords = true
 
-; Enables zoom for images in the image popup, only applies to 
+; Enables zoom for images in the image popup, only applies to
 ; record formats specified in zoomFormats key. Disabled by default.
 ;enableImagePopupZoom = true
 ; A colon-separated list of formats that are enabled for image zoom function
@@ -1773,3 +1773,16 @@ viewerPaddingAngle = 35
 ;debug = true
 ; Array of institutions which have proper preview images to show
 ;previewImages['museovirasto_testi'] = true
+
+; These settings control VuFind's APIs.
+; See https://vufind.org/wiki/development:apis for more information.
+[API]
+; Description of the API displayed in the OpenAPI specification and Swagger UI
+; (may contain Markdown, see https://spec.commonmark.org/):
+description = "Finna REST API is a read-only interface to Finna's search index.
+
+Most methods return the data as UTF-8 encoded JSON, served using the application/json MIME type.
+
+The API supports Cross-Origin Resource Sharing by setting the Access-Control-Allow-Origin HTTP header to "*" for all requests."
+; URL pointing to a Terms of Service page (optional, default is none):
+termsOfServiceUrl = "https://www.kiwi.fi/display/Finna/Finna+API+Terms+of+Use"

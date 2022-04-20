@@ -136,3 +136,10 @@
     border-top-color: @gray-lighter;
   }
 }
+
+// Disable status tooltip on touch device
+#account-icon.fa-user {
+  @media (pointer:coarse) {
+      pointer-events: none;
+  }
+}

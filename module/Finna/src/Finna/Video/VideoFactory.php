@@ -1,10 +1,10 @@
 <?php
 /**
- * Summon record fallback loader factory
+ * Video handler factory.
  *
  * PHP version 7
  *
- * Copyright (C) Villanova University 2018.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Record
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Video
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
-namespace VuFind\Record\FallbackLoader;
+namespace Finna\Video;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -34,15 +34,15 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 /**
- * Summon record fallback loader factory
+ * Video handler factory.
  *
  * @category VuFind
- * @package  Record
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Video
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org Main Site
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class SummonFactory implements FactoryInterface
+class VideoFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -56,7 +56,7 @@ class SummonFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException&\Throwable if any other error occurs
+     * @throws ContainerException if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
@@ -67,8 +67,8 @@ class SummonFactory implements FactoryInterface
             throw new \Exception('Unexpected options passed to factory.');
         }
         return new $requestedName(
-            $container->get(\VuFind\Db\Table\PluginManager::class)->get('resource'),
-            $container->get(\VuFindSearch\Service::class)
+            $container->get(\Finna\Video\Handler\PluginManager::class),
+            $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
         );
     }
 }

@@ -81,6 +81,11 @@
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 property="name" class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <?php if ($results = $this->driver->getAlternativeTitles()): ?>
+        <div class="recordAltTitles record-alt-titles">
+          <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
+        </div>
+      <?php endif; ?>
 
       <?php if (!empty($urls) || $openUrlActive || !empty($onlineURLs) || !empty($mergedData['urls'])): ?>
         <?php if ($hasOnlineURLs || $openUrlActive): ?>

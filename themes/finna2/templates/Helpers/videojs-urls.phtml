@@ -1,21 +1,20 @@
 <?php // No start or end tags
-echo json_encode([
-    'js-videojs' => $this->headScript()->itemToString(
-        $this->headScript()->createData('text/javascript', ['src' => 'vendor/video.min.js', 'id' => 'js-videojs']),
+$files = [
+    'js-videojs' => 'vendor/video.min.js',
+    'js-videojs-hotkeys' => 'vendor/videojs.hotkeys.min.js',
+    'js-videojs-quality' => 'vendor/videojs-contrib-quality-levels.js',
+    'js-videojs-airplay' => 'vendor/silvermine-videojs-airplay.min.js',
+    // Disable Chromecast sender for now:
+    //'js-videojs-chromecast' => 'vendor/silvermine-videojs-chromecast.min.js',
+    //'js-cast-sender' => 'https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1',
+];
+$scripts = [];
+foreach ($files as $id => $file) {
+    $scripts[$id] = $this->headScript()->itemToString(
+        $this->headScript()->createData('text/javascript', ['src' => $file, 'id' => $id]),
         '',
         '',
         ''
-    ),
-    'js-videojs-hotkeys' => $this->headScript()->itemToString(
-        $this->headScript()->createData('text/javascript', ['src' => 'vendor/videojs.hotkeys.min.js', 'id' => 'js-videojs-hotkeys']),
-        '',
-        '',
-        ''
-    ),
-    'js-videojs-quality' => $this->headScript()->itemToString(
-        $this->headScript()->createData('text/javascript', ['src' => 'vendor/videojs-contrib-quality-levels.js', 'id' => 'js-videojs-quality']),
-        '',
-        '',
-        ''
-    )
-]);
+    );
+}
+echo json_encode($scripts);

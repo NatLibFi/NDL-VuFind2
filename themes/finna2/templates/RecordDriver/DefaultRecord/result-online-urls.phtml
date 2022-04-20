@@ -10,6 +10,7 @@
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
     $mergedData = $this->driver->tryMethod('getMergedRecordData');
 
+    $this->partial('Helpers/videojs-translations.phtml');
     $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
 
     $urlBase = [

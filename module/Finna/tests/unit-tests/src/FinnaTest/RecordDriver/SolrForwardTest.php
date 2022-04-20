@@ -231,6 +231,20 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                             'relator' => 'E99',
                             'elokuva-eloesiintyja-maare' => 'Tämä on määre',
                         ],
+                        [
+                            'tag' => 'eloesiintyja',
+                            'name' => 'Ei Roolia',
+                            'role' => '',
+                            'id' => 'elonet_henkilo_55113344',
+                            'type' => 'elonet_henkilo',
+                            'roleName' => '',
+                            'description' => '',
+                            'uncredited' => '',
+                            'idx' => 190000,
+                            'finna-activity-code' => 'E99',
+                            'finna-activity-text' => 'esiintyjä',
+                            'relator' => 'E99'
+                        ],
                     ],
                 ],
             ],
@@ -590,7 +604,8 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                 'getAlternativeTitles',
                 [
                     'Zoo (swe)',
-                    'Animals (working title)',
+                    'Animals (language name)',
+                    'Animals Working (working title)',
                     'Park (test name)'
                 ]
             ],
@@ -690,6 +705,12 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     'Tässä on tietoa kuvauspaikkahuomautuksista.'
                 ]
             ],
+            [
+                'getMovieThanks',
+                [
+                    'Kiitos, thanks, tack.'
+                ]
+            ]
         ];
     }
 

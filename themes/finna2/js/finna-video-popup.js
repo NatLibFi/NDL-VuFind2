@@ -5,17 +5,29 @@ finna.videoPopup = (function finnaVideoPopup() {
     var $container = $(_container);
     var $videoElem = $(_container).find('video');
 
-    // Use a fairly small buffer for faster quality changes
-    videojs.Hls.GOAL_BUFFER_LENGTH = 10;
-    videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
-    var player = videojs($videoElem.get(0), {
+    var options = {
+      preload: 'metadata',
+      autoplay: false,
+      controls: true,
+      preloadWebComponents: true,
+      nativeControlsForTouch: true,
+      techOrder: [ 'chromecast', 'html5' ],
+      plugins: {
+        airPlay: { addButtonToControlBar: true }
+        // Disabled for now: , chromecast: { addButtonToControlBar: true }
+      },
       html5: {
-        hls: {
+        Vhs: {
           overrideNative: !videojs.browser.IS_SAFARI
         }
       }
-    });
- 
+    };
+
+    // Use a fairly small buffer for faster quality changes
+    videojs.Vhs.GOAL_BUFFER_LENGTH = 10;
+    videojs.Vhs.MAX_GOAL_BUFFER_LENGTH = 20;
+    var player = videojs($videoElem.get(0), options);
+
     player.ready(function onReady() {
       this.hotkeys({
         enableVolumeScroll: false,
@@ -25,7 +37,8 @@ finna.videoPopup = (function finnaVideoPopup() {
 
     player.src(videoSources);
     player.poster(posterUrl);
-
+    player.chromecast();
+    player.airPlay();
     var selectedBitrate = 'auto';
 
     player.qualityLevels().on('addqualitylevel', function onAddQualityLevel(event) {
@@ -93,6 +106,19 @@ finna.videoPopup = (function finnaVideoPopup() {
             .addClass('vjs-selected')
             .attr('aria-checked', 'true');
         }
+      }
+
+      var chromecast = $container.find('.vjs-chromecast-button');
+      if (chromecast) {
+        var chromecastTranslation = VuFind.translate('Open Chromecast menu');
+        chromecast.attr('title', chromecastTranslation);
+        chromecast.find('.vjs-control-text').html(chromecastTranslation);
+      }
+      var airPlay = $container.find('.vjs-airplay-button');
+      if (airPlay) {
+        var airPlayTranslation = VuFind.translate('Open AirPlay menu');
+        airPlay.attr('title', airPlayTranslation);
+        airPlay.find('.vjs-control-text').html(airPlayTranslation);
       }
     });
 
@@ -232,13 +258,13 @@ finna.videoPopup = (function finnaVideoPopup() {
             if (warnings[0]) {
               warnings.removeClass('hidden');
               finna.common.observeImages(warnings[0].querySelectorAll('img[data-src]'));
-            }      
+            }
           } else {
             this.content.css('height', '100%');
             if (warnings[0]) {
               var clone = warnings.clone();
               clone.removeClass('hidden');
-              clone.appendTo(this.modalHolder);              
+              clone.appendTo(this.modalHolder);
               finna.common.observeImages(clone[0].querySelectorAll('img[data-src]'));
               setTimeout(function startFade() {
                 clone.fadeOut(2000);
