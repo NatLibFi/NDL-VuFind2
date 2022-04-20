@@ -467,7 +467,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 'value' => (string)$isPartOf,
                 'link' => [
                     'value' => (string)$isPartOf,
-                    'type' => 'AllFields'
+                    'type' => 'allFields'
                 ]
             ];
         }
@@ -478,7 +478,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                     'value' => (string)$relation,
                     'link' => [
                         'value' => (string)$relation,
-                        'type' => 'AllFields'
+                        'type' => 'allFields'
                     ]
                 ];
             }
