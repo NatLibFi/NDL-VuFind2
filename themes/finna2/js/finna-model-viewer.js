@@ -737,7 +737,7 @@ class ModelViewerClass extends HTMLElement {
       50,
       this.size.x / this.size.y,
       0.1,
-      1000
+      5000
     );
 
     this.camera.name = 'main_camera';
