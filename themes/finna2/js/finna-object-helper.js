@@ -23,6 +23,27 @@ class ObjectHelper {
     this.menu.id = 'object-helper-settings';
     this.menuHolder.prepend(this.menu);
 
+    this.updateFunction = (e) => {
+      const form = e.target.closest('form');
+      if (form.classList.length === 0) {
+        return;
+      }
+      const exploded = form.className.split('-');
+      const formPrefix = exploded[0];
+      const updateArea = this.getMenus().find((area) => {
+        return formPrefix === area.prefix;
+      });
+      if (updateArea) {
+        const uuid = form.querySelector(`input[name="${formPrefix}-uuid"]`);
+        const input = e.target;
+        if (['range', 'number'].includes(input.type) && 'basic' === this.menumode) {
+          const second = form.querySelector(`input[name="${input.name}"]:not([type="${input.type}"])`);
+          second.value = input.value;
+        }
+        this.updateObject(updateArea.objects, input, uuid.value);
+      }
+    };
+
     this.createMenu();
   }
 
@@ -93,6 +114,7 @@ class ObjectHelper {
   }
 
   createMenu() {
+    const ref = this;
     this.getMenus().forEach((area) => {
       if (typeof area.updateFunction === 'function') {
         area.objects = area.updateFunction();
@@ -107,27 +129,6 @@ class ObjectHelper {
             form.append(div);
           }
         }
-      }
-    };
-
-    this.updateFunction = (e) => {
-      const form = e.target.closest('form');
-      if (form.classList.length === 0) {
-        return;
-      }
-      const exploded = form.className.split('-');
-      const formPrefix = exploded[0];
-      const updateArea = this.getMenus().find((area) => {
-        return formPrefix === area.prefix;
-      });
-      if (updateArea) {
-        const name = form.querySelector(`input[name="${formPrefix}-name"]`);
-        const input = e.target;
-        if (['range', 'number'].includes(input.type) && 'basic' === this.menumode) {
-          const second = form.querySelector(`input[name="${input.name}"]:not([type="${input.type}"])`);
-          second.value = input.value;
-        }
-        this.updateObject(updateArea.objects, input, name.value);
       }
     };
 
@@ -186,7 +187,7 @@ class ObjectHelper {
       }
       menu.done = true;
     });
-    this.menu.addEventListener('change', this.updateFunction);
+    this.menu.addEventListener('change', ref.updateFunction);
   }
 
   setMenuMode(mode)
@@ -262,10 +263,10 @@ class ObjectHelper {
     return div;
   }
 
-  updateObject(objects, input, name)
+  updateObject(objects, input, uuid)
   {
     const object = objects.find((current) => {
-      return current.name === name;
+      return current.uuid === uuid;
     });
     if (!object) {
       return;

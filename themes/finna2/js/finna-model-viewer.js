@@ -108,7 +108,7 @@ class ModelViewerClass extends HTMLElement {
     this.menuOptions = {
       allowedProperties: {
         advanced: [
-          'name', 'type', 'position', 'color', 'groundColor',
+          'uuid', 'name', 'type', 'position', 'color', 'groundColor',
           'intensity', 'roughness', 'clipIntersection', 'clipShadows',
           'depthWrite', 'dithering', 'emissive', 'emissiveIntensity',
           'flatShading', 'metalness', 'morphNormals', 'morphTargets',
@@ -120,7 +120,7 @@ class ModelViewerClass extends HTMLElement {
           'transmission', 'bumpScale', 'envMapIntensity'
         ],
         basic: [
-          'name', 'intensity', 'roughness', 'metalness', 'envMapIntensity'
+          'uuid', 'name', 'intensity', 'roughness', 'metalness', 'envMapIntensity'
         ]
       },
       allowedSubProperties: [
@@ -163,7 +163,8 @@ class ModelViewerClass extends HTMLElement {
       },
       readOnly: [
         'name',
-        'type'
+        'type',
+        'id'
       ],
       onAttributeChanged: () => {
         thisClass.scene.traverse((child) => {
@@ -194,11 +195,12 @@ class ModelViewerClass extends HTMLElement {
           if (this.menumode === 'basic') {
             return;
           }
+          const ref = this;
           const addLight = this.createButton('add-light', 'add-light', 'Add light');
           menu.holder.append(addLight);
           addLight.addEventListener('click', () => {
             addLight.style.display = 'none';
-            this.menu.removeEventListener('change', this.updateFunction);
+            ref.menu.removeEventListener('change', ref.updateFunction);
             const templateClone = menu.template.cloneNode(true);
             const div = this.createDiv('setting-child');
             const span = document.createElement('span');
@@ -221,7 +223,8 @@ class ModelViewerClass extends HTMLElement {
                 this.addLight(saveForm);
                 templateClone.parentNode.removeChild(templateClone);
                 addLight.style.display = null;
-                this.menu.addEventListener('change', this.updateFunction);
+                console.log(this);
+                ref.menu.addEventListener('change', ref.updateFunction);
               }
             });
           });
@@ -290,19 +293,11 @@ class ModelViewerClass extends HTMLElement {
           menu.holder.append(toggleMode);
         },
         addLight: function addLight(form) {
-          const inputList = form.querySelectorAll('input, select');
+          const type = form.querySelector('select[name="light-type"]');
           const name = form.querySelector('input[name="light-name"]');
-          const duplicate = thisClass.lights.find((light) => {
-            return light.name === name;
-          });
-          if (duplicate) {
-            return;
-          }
           const object = Object.assign({}, this.options.defaultLightObject);
           object.name = name.value;
-          inputList.forEach((input) => {
-            this.updateObject([object], input, name.value);
-          });
+          object.type = type.value;
           this.createObjectToScene(object);
           this.createMenu();
         },
@@ -329,6 +324,7 @@ class ModelViewerClass extends HTMLElement {
           newLight.userData.viewerSet = true;
           thisClass.scene.add(newLight);
           thisClass.lights.push(newLight);
+          return newLight;
         },
         onDelete: function onDelete(object) {
           thisClass.scene.remove(object);
