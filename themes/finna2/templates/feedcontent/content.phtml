@@ -22,7 +22,7 @@ JS;
   }
 ?>
 <?php if ($this->modal): ?><h2></h2><?php endif; ?>
-<div>
+<div class="clearfix">
   <div class="<?= $this->modal ? '' : 'page-content'?> feed-content" data-feed="<?=$this->escapeHtmlAttr($this->feed)?>" data-element="<?=$this->escapeHtmlAttr($this->element)?>" data-feed-url="<?=$this->escapeHtmlAttr($this->feedUrl)?>">
 
   <?php if (!$this->modal): ?>
@@ -51,6 +51,8 @@ JS;
       <div class="article-navigation-wrapper"></div>
     </div>
   <?php endif; ?>
-
 </div>
+<?php if ($this->resolver('content/Additions/feedContentEnd' . '-' . $feed . '.phtml')): ?>
+  <?=$this->render('content/Additions/feedContentEnd' . '-' . $feed . '.phtml')?>
+<?php endif; ?>
 <!-- END of: finna - feedcontent/content.phtml -->
