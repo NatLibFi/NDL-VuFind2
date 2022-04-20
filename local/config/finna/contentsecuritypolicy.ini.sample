@@ -53,3 +53,6 @@ base-uri[] = "'self'"
 manifest-src[] = "'self'"
 ; At least Chrome needs this for videos:
 media-src[] = "blob:"
+; Model viewer needs these
+;connect-src[] = "data:"
+;connect-src[] = "blob:"
