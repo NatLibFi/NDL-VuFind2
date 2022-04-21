@@ -59,7 +59,7 @@ finna.layout = (function finnaLayout() {
 
     var truncation = [];
     var rowHeight = [];
-    holder.find('.truncate-field').not('.truncate-done').each(function handleTruncate(index) {
+    $(holder).find('.truncate-field').not('.truncate-done').each(function handleTruncate(index) {
       var self = $(this);
       self.addClass('truncate-done');
 

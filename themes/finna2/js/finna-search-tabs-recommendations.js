@@ -7,14 +7,14 @@ finna.searchTabsRecommendations = (() => {
     }
     const params = new URLSearchParams({
       searchId: holder.dataset.searchId,
-      limit: holder.dataset.limit
+      limit: holder.dataset.limit || 20
     });
     const url = `${VuFind.path}/AJAX/JSON?method=getSearchTabsRecommendations&${params}`;
     fetch(url)
       .then(response => response.json())
       .then((data) => {
-        if (data.html) {
-          holder.innerHTML = VuFind.updateCspNonce(data.html);
+        if (data.data.html) {
+          holder.innerHTML = VuFind.updateCspNonce(data.data.html);
           finna.layout.initTruncate(holder);
           finna.openUrl.initLinks();
           VuFind.lightbox.bind(holder);
