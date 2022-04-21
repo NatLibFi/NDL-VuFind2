@@ -13,7 +13,7 @@ finna.searchTabsRecommendations = (() => {
     fetch(url)
       .then(response => response.json())
       .then((data) => {
-        if (data.data.html) {
+        if (data.data && data.data.html) {
           holder.innerHTML = VuFind.updateCspNonce(data.data.html);
           finna.layout.initTruncate(holder);
           finna.openUrl.initLinks();
