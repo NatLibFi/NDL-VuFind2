@@ -12,9 +12,9 @@ finna.searchTabsRecommendations = (() => {
     const url = `${VuFind.path}/AJAX/JSON?method=getSearchTabsRecommendations&${params}`;
     fetch(url)
       .then(response => response.json())
-      .then((data) => {
-        if (data.data && data.data.html) {
-          holder.innerHTML = VuFind.updateCspNonce(data.data.html);
+      .then((jsonResponse) => {
+        if (jsonResponse.data && jsonResponse.data.html) {
+          holder.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html);
           finna.layout.initTruncate(holder);
           finna.openUrl.initLinks();
           VuFind.lightbox.bind(holder);
