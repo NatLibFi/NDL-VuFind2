@@ -29,6 +29,7 @@
  */
 namespace Finna\Db\Row;
 
+use Laminas\Db\ResultSet\ResultSetInterface;
 use Laminas\Db\Sql\Expression;
 
 /**
@@ -202,5 +203,29 @@ class User extends \VuFind\Db\Row\User
 
         $userCard = $this->getDbTable('UserCard');
         return $userCard->select($callback);
+    }
+
+    /**
+     * Get library card data by user name
+     *
+     * @param string $catUserName User name
+     *
+     * @return ResultSetInterface
+     * @throws \VuFind\Exception\LibraryCard
+     */
+    public function getLibraryCardsByUserName(
+        string $catUserName
+    ): ResultSetInterface {
+        if (!$this->libraryCardsEnabled()) {
+            throw new \VuFind\Exception\LibraryCard('Library Cards Disabled');
+        }
+
+        $userCard = $this->getDbTable('UserCard');
+        return $userCard->select(
+            [
+                'user_id' => $this->id,
+                'cat_username' => $catUserName
+            ]
+        );
     }
 }

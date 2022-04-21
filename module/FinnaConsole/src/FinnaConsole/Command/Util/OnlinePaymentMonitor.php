@@ -289,37 +289,8 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
         }
 
         $patron = null;
-        $matches = false;
-        foreach ($user->getLibraryCards() as $card) {
-            $card = $user->getLibraryCard($card['id']);
-
-            $match = mb_strtolower($card['cat_username'], 'UTF-8')
-                === mb_strtolower($t->cat_username, 'UTF-8');
-            if ($match) {
-                $matches = true;
-                try {
-                    $cardUser = $this->userTable->createRow();
-                    $cardUser->cat_username = $card['cat_username'];
-                    $cardUser->cat_pass_enc = $card['cat_pass_enc'];
-                    $patron = $this->catalog->patronLogin(
-                        $card['cat_username'],
-                        $cardUser->getCatPassword()
-                    );
-
-                    if ($patron) {
-                        break;
-                    }
-                } catch (\Exception $e) {
-                    $this->err(
-                        'Patron login error: ' . $e->getMessage(),
-                        'Patron login failed for a user'
-                    );
-                    $this->logException($e);
-                }
-            }
-        }
-
-        if (!$matches) {
+        $cards = $user->getLibraryCardsByUserName($t->cat_username);
+        if (!$cards) {
             $this->warn(
                 "Library card not found for user {$user->username}"
                 . " (id {$user->id}), card {$t->cat_username}"
@@ -327,6 +298,24 @@ class OnlinePaymentMonitor extends AbstractUtilCommand
             $t->setRegistrationFailed('card not found');
             $failedCnt++;
             return false;
+        }
+        // Make sure to try all cards with a matching user name:
+        foreach ($cards as $card) {
+            // Read the card with a separate call to decrypt password:
+            $card = $user->getLibraryCard($card->id);
+            try {
+                $patron = $this->catalog
+                    ->patronLogin($card->cat_username, $card->cat_password);
+                if ($patron) {
+                    break;
+                }
+            } catch (\Exception $e) {
+                $this->err(
+                    'Patron login error: ' . $e->getMessage(),
+                    'Patron login failed for a user'
+                );
+                $this->logException($e);
+            }
         }
 
         if (!$patron) {

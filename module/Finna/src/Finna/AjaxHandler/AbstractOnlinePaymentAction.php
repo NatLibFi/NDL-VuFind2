@@ -121,18 +121,29 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
      */
     protected function markFeesAsPaid(TransactionRow $t): array
     {
-        $userCard = null;
-        $user = $this->userTable->getById($t->user_id);
-        foreach ($user->getLibraryCards() as $card) {
-            $match = mb_strtolower($card->cat_username, 'UTF-8')
+        $catUser = '';
+        $catPassword = '';
+        if ($user = $this->userTable->getById($t->user_id)) {
+            // Check if user's current credentials match (typical case):
+            $match = mb_strtolower($user->cat_username, 'UTF-8')
                 === mb_strtolower($t->cat_username, 'UTF-8');
             if ($match) {
-                $userCard = $user->getLibraryCard($card->id);
-                break;
+                $catUser = $user->cat_username;
+                $catPassword = $user->getCatPassword();
+            } else {
+                // Check for a matching library card:
+                $userCards = $user->getLibraryCardsByUserName($t->cat_username);
+                $first = $userCards->current();
+                // Read the card with a separate call to decrypt password:
+                $userCard = $first ? $user->getLibraryCard($first->id) : null;
+                if ($userCard) {
+                    $catUser = $userCard->cat_username;
+                    $catPassword = $userCard->cat_password;
+                }
             }
         }
 
-        if (!$userCard) {
+        if (!$catUser) {
             $this->logError(
                 'Error processing transaction id ' . $t->id
                 . ': user card not found (cat_username: ' . $t->cat_username
@@ -143,10 +154,7 @@ abstract class AbstractOnlinePaymentAction extends \VuFind\AjaxHandler\AbstractB
 
         $patron = null;
         try {
-            $patron = $this->ils->patronLogin(
-                $userCard->cat_username,
-                $userCard->cat_password
-            );
+            $patron = $this->ils->patronLogin($catUser, $catPassword);
         } catch (\Exception $e) {
             $this->logException($e);
         }
