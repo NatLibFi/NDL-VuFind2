@@ -172,7 +172,7 @@ $config = [
         'finna-flex-fallback.css::lt IE 10', // flex polyfill
     ],
     'js' => [
-        'finna-object-helper.js',
+        'finna-object-editor.js',
         'vendor/event-stub.js:lt IE 9',
         'account_ajax.js',
         'advanced_search.js',

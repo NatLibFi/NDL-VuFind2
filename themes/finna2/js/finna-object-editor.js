@@ -1,6 +1,6 @@
-/* exported ObjectHelper */
+/* exported ObjectEditor */
 
-class ObjectHelper {
+class ObjectEditor {
   constructor(menuHolder, options = {})
   {
     this.menuHolder = menuHolder;
@@ -19,8 +19,8 @@ class ObjectHelper {
       {value: 'false', name: 'false'}
     ];
 
-    this.menu = this.createDiv('object-helper collapse');
-    this.menu.id = 'object-helper-settings';
+    this.menu = this.createDiv('object-editor collapse');
+    this.menu.id = 'object-editor-settings';
     this.menuHolder.prepend(this.menu);
 
     this.updateFunction = (e) => {

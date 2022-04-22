@@ -1,4 +1,4 @@
-/* global THREE, ObjectHelper */
+/* global THREE, ObjectEditor */
 
 /**
  * Get tangent
@@ -510,7 +510,7 @@ class ModelViewerClass extends HTMLElement {
       {class: 'model-fullscreen', translation: 'asd', info: 'fa-fullscreen'},
       {class: 'model-statistics', target: '#model-statistics-area', translation: 'asd', info: 'fa-info-circle-hollow'},
       {class: 'model-help', target: '#model-help-area', translation: 'asd', info: 'fa-question-circle-o'},
-      {class: 'model-settings', target: '#object-helper-settings', translation: 'asd', info: 'fa-cog'},
+      {class: 'model-settings', target: '#object-editor-settings', translation: 'asd', info: 'fa-cog'},
     ];
 
     buttons.forEach((btn) => {
@@ -601,10 +601,10 @@ class ModelViewerClass extends HTMLElement {
       (obj) => {
         this.initMesh(obj);
         this.createLights();
-        if (typeof this.objectHelper === 'undefined') {
-          this.objectHelper = new ObjectHelper(this.root, this.menuOptions);
+        if (typeof this.objectEditor === 'undefined') {
+          this.objectEditor = new ObjectEditor(this.root, this.menuOptions);
         } else {
-          this.objectHelper.createMenu();
+          this.objectEditor.createMenu();
         }
         this.loadInfo.style.display = 'none';
         this.loaded = true;
@@ -735,7 +735,7 @@ class ModelViewerClass extends HTMLElement {
       50,
       this.size.x / this.size.y,
       0.1,
-      5000
+      2000
     );
 
     this.camera.name = 'main_camera';
@@ -819,7 +819,7 @@ class ModelViewerClass extends HTMLElement {
 
   createLights()
   {
-    if (this.lights.length > 0 || this.defaultSettings) {
+    if (this.lights.length > 0) {
       return;
     }
     var lightFront = new THREE.DirectionalLight(0xffffff, 1);
@@ -843,15 +843,8 @@ class ModelViewerClass extends HTMLElement {
     lightBack.position.set(0, 25, -25);
     lightBack.userData.viewerSet = true;
   
-    this.lights.push(lightBack);
-    this.lights.push(lightFront);
-    this.lights.push(lightLeft);
-    this.lights.push(lightRight);
-  
-    this.scene.add(lightFront);
-    this.scene.add(lightBack);
-    this.scene.add(lightLeft);
-    this.scene.add(lightRight);
+    this.lights.push(lightBack, lightFront, lightLeft, lightRight);
+    this.scene.add(lightBack, lightFront, lightLeft, lightRight);
   }
 
   getSize()
