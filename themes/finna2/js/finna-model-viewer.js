@@ -198,12 +198,12 @@ class ModelViewerClass extends HTMLElement {
           if (this.menumode === 'basic') {
             return;
           }
-          const ref = this;
+          const self = this;
           const addLight = this.createButton('add-light', 'add-light', 'Add light');
           menu.holder.append(addLight);
           addLight.addEventListener('click', () => {
             addLight.style.display = 'none';
-            ref.menu.removeEventListener('change', ref.updateFunction);
+            self.menu.removeEventListener('change', self.updateFunction);
             const templateClone = menu.template.cloneNode(true);
             const div = this.createDiv('setting-child');
             const span = document.createElement('span');
@@ -226,8 +226,7 @@ class ModelViewerClass extends HTMLElement {
                 this.addLight(saveForm);
                 templateClone.parentNode.removeChild(templateClone);
                 addLight.style.display = null;
-                console.log(this);
-                ref.menu.addEventListener('change', ref.updateFunction);
+                self.menu.addEventListener('change', self.updateFunction);
               }
             });
           });
@@ -432,11 +431,11 @@ class ModelViewerClass extends HTMLElement {
   load()
   {
     this.decoder = `${this.scripts}draco/`;
-    const ref = this;
+    const self = this;
     const loaded = function onScriptLoad() {
-      delete ref.loadScrips[this.reference];
-      if (Object.keys(ref.loadScrips).length < 1) {
-        ref.dependenciesLoaded = true;
+      delete self.loadScrips[this.reference];
+      if (Object.keys(self.loadScrips).length < 1) {
+        self.dependenciesLoaded = true;
       }
     };
     if (Object.keys(this.loadScrips).length < 1) {
@@ -659,9 +658,9 @@ class ModelViewerClass extends HTMLElement {
           obj.material.normalScale.x = obj.material.userData.normalScale.x;
           obj.material.normalScale.y = obj.material.userData.normalScale.y;
         }
-        if (obj.material.emissiveMap) {
-          obj.material.emissiveMap.encoding = this.encoding;
-        }
+
+        if (obj.material.emissiveMap) obj.material.emissiveMap.encoding = this.encoding;
+        if (obj.material.envMap) obj.material.envMap.encoding = this.encoding;
         obj.material.needsUpdate = true;
         this.meshCount++;
         this.meshes.push(obj);
