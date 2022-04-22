@@ -32,7 +32,7 @@
     $modelTranslations = $this->partial('Helpers/modeljs-translations.phtml');
     foreach ($models as $index => $model):
       foreach ($model as $format => $data):
-        $tmp = [
+        $modelData = [
           'type' => 'model',
           'format' => $format,
           'scripts' => '/themes/finna2/js/vendor/',
@@ -57,12 +57,12 @@
 
         if (!empty($paginatedLinks[$index])) {
           if ($modelSettings['previewImages'] ?? false) {
-            $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $tmp);
+            $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $modelData);
           } else {
-            $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $tmp, $override);
+            $paginatedLinks[$index] = array_merge($paginatedLinks[$index], $modelData, $override);
           }
         } else {
-          $paginatedLinks[] = array_merge($tmp, $override);
+          $paginatedLinks[] = array_merge($modelData, $override);
         }
       endforeach;
     endforeach;
