@@ -293,7 +293,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
                 ]
             );
         }
-        var_dump($results);
         // Attempt to find a PDF file to be converted to a coverimage
         if ($includePdf && empty($results)) {
             $urls = [];
