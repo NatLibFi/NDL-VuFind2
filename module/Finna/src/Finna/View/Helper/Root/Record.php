@@ -620,11 +620,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         $urls = [];
         foreach ($images as $image) {
-            $urls[] = $image['urls']['small'];
-            $urls[] = $image['urls']['medium'];
-            if (isset($image['urls']['large'])) {
-                $urls[] = $image['urls']['large'];
-            }
+            $urls += array_values($image['urls']);
         }
         return array_flip($urls);
     }
