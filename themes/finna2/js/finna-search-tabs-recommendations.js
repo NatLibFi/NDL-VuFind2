@@ -1,31 +1,32 @@
 /*global VuFind, finna, checkSaveStatuses */
-finna.searchTabsRecommendations = (function finnaSearchTabsRecommendations() {
+finna.searchTabsRecommendations = (() => {
   function initSearchTabsRecommendations() {
-    var holder = $('#search-tabs-recommendations-holder');
-    if (!holder[0]) {
+    const holder = document.getElementById('search-tabs-recommendations-holder');
+    if (!holder || !holder.dataset.searchId) {
       return;
     }
-    var url = VuFind.path + '/AJAX/JSON?method=getSearchTabsRecommendations';
-    var searchId = holder.data('searchId');
-    if (!searchId) {
-      return;
-    }
-    var limit = holder.data('limit');
-    $.getJSON(url, {searchId: searchId, limit: limit})
-      .done(function getRecommendationsDone(response) {
-        var container = $('#search-tabs-recommendations-holder');
-        container.html(VuFind.updateCspNonce(response.data.html));
-        finna.layout.initTruncate(container);
-        finna.openUrl.initLinks();
-        VuFind.lightbox.bind(container);
-        VuFind.itemStatuses.check(container);
-        finna.itemStatus.initDedupRecordSelection(container);
-        checkSaveStatuses(container);
+    const params = new URLSearchParams({
+      searchId: holder.dataset.searchId,
+      limit: holder.dataset.limit || 20
+    });
+    const url = `${VuFind.path}/AJAX/JSON?method=getSearchTabsRecommendations&${params}`;
+    fetch(url)
+      .then(response => response.json())
+      .then((jsonResponse) => {
+        if (jsonResponse.data && jsonResponse.data.html) {
+          holder.innerHTML = VuFind.updateCspNonce(jsonResponse.data.html);
+          finna.layout.initTruncate(holder);
+          finna.openUrl.initLinks();
+          VuFind.lightbox.bind(holder);
+          VuFind.itemStatuses.check(holder);
+          finna.itemStatus.initDedupRecordSelection(holder);
+          checkSaveStatuses(holder);
+        }
       });
   }
 
   var my = {
-    init: function init() {
+    init: () => {
       initSearchTabsRecommendations();
     }
   };

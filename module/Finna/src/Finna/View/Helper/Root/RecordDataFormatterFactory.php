@@ -1142,6 +1142,14 @@ class RecordDataFormatterFactory
                 'context' => ['class' => 'materialCondition']
             ]
         );
+        $setTemplateLine(
+            'Contained In',
+            'getAllRecordLinks',
+            'data-containedIn.phtml',
+            [
+                'context' => ['class' => 'isPartOf']
+            ]
+        );
 
         $getAccessRestrictions = function ($data, $options) {
             $final = [];
