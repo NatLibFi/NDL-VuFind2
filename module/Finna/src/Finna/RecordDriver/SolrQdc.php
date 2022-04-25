@@ -211,7 +211,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
-        
+
         $results = [];
         $rights = [];
         $pdf = false;
