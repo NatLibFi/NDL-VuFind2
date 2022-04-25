@@ -614,7 +614,8 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAllRecordImageUrls()
     {
-        $images = $this->driver->tryMethod('getAllImages', ['']);
+        $images = $this->driver->tryMethod('getAllImages', ['', false]);
+        var_dump($images);
         if (empty($images)) {
             return [];
         }
