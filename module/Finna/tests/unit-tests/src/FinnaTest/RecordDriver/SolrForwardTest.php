@@ -315,6 +315,27 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         ]
                     ]
                 ]
+            ],
+            'othersTest' => [
+                'other',
+                [
+                    'presenters' => [
+                        [
+                            'tag' => 'muutesiintyjat',
+                            'name' => 'Kolme tuhisevaa siiliä!',
+                            'role' => '',
+                            'id' => '',
+                            'type' => '',
+                            'roleName' => '',
+                            'description' => '',
+                            'uncredited' => '',
+                            'idx' => 200000,
+                            'finna-activity-code' => 'E99',
+                            'finna-activity-text' => 'dokumentti-muutesiintyjät',
+                            'relator' => 'E99'
+                        ]
+                    ]
+                ]
             ]
         ];
     }
@@ -390,6 +411,20 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         'elokuva-elolevittaja-vuosi' => '2001',
                         'elokuva-elolevittaja-levitystapa' => 'teatterilevitys'
                     ],
+                    [
+                        'tag' => 'muuttekijat',
+                        'name' => 'Paavo Pöllö, Martti Mäyrä,'
+                            . ' Kalle Kissa, Seppo Siili',
+                        'role' => '',
+                        'id' => '',
+                        'type' => '',
+                        'roleName' => '',
+                        'description' => '',
+                        'uncredited' => '',
+                        'idx' => 210000,
+                        'finna-activity-code' => 'oth',
+                        'relator' => 'oth',
+                    ]
                 ],
             ],
             'ensemblesTests' =>

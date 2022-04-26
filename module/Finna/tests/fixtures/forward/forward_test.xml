@@ -341,5 +341,13 @@
         <IDValue>55113344</IDValue>
       </AgentIdentifier>
     </HasAgent>
+    <HasAgent elonet-tag="muutesiintyjat">
+      <Activity finna-activity-code="E99" finna-activity-text="dokumentti-muutesiintyjät">E99</Activity>
+      <AgentName>Kolme tuhisevaa siiliä!</AgentName>
+    </HasAgent>
+    <HasAgent elonet-tag="muuttekijat">
+      <Activity finna-activity-code="oth">oth</Activity>
+      <AgentName>Paavo Pöllö, Martti Mäyrä, Kalle Kissa, Seppo Siili</AgentName>
+    </HasAgent>
   </CinematographicWork>
 </ExchangeSet>
