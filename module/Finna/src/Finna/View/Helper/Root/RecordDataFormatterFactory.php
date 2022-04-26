@@ -348,7 +348,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Language',
             'getLanguages',
-            'data-transEsc.phtml',
+            'data-transEscLang.phtml',
             [
                 'context' => ['class' => 'recordLanguage']
             ]
@@ -356,7 +356,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'original_work_language',
             'getOriginalLanguages',
-            'data-transEsc.phtml',
+            'data-transEscLang.phtml',
             [
                 'context' => ['class' => 'originalLanguage']
             ]
