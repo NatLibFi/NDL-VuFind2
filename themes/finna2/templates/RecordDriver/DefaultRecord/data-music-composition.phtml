@@ -32,7 +32,7 @@
           $output = " / $output";
           break;
         case 'note':
-          $output = " [{$field['note']}]";
+          $output = " [{$this->escapeHtml($field['note'])}]";
           break;
         default:
           $output = " $output";
