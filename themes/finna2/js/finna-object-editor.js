@@ -110,7 +110,7 @@ class ObjectEditor {
   }
 
   transEsc(s) {
-    return this.translate(this.escape(s));
+    return this.escape(this.translate(s));
   }
 
   createMenu() {
