@@ -384,6 +384,16 @@ finna.record = (function finnaRecord() {
     }
   }
 
+  function initPopovers() {
+    document.addEventListener('mouseup', function(e) {
+      document.querySelectorAll('.lateral-link.open').forEach((element) => {
+        if (!element.contains(e.target)) {
+          element.classList.remove('open');
+        }
+      });
+    });
+  }
+
   function init() {
     initHideDetails();
     initDescription();
@@ -395,6 +405,7 @@ finna.record = (function finnaRecord() {
     loadSimilarRecords();
     loadRecordDriverRelatedRecords();
     finna.authority.initAuthorityResultInfo();
+    initPopovers();
   }
 
   var my = {
