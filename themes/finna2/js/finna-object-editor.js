@@ -320,9 +320,7 @@ class ObjectEditor {
           if (typeof this.onDelete === 'function') {
             this.onDelete(found);
           }
-          menu.objects = menu.objects.filter((element) => {
-            return element.name !== name.value;
-          });
+          menu.objects = menu.objects.filter(element => element.name !== name.value);
           if (typeof menu.assignFunction === 'function') {
             menu.assignFunction(menu.objects);
           }
