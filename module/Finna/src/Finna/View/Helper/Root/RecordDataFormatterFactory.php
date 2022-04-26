@@ -1378,7 +1378,7 @@ class RecordDataFormatterFactory
         $setTemplateLine(
             'Uncontrolled Title',
             'getUncontrolledTitle',
-            'data-transEsc.phtml',
+            'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'record-uncontrolled-title']
             ]
