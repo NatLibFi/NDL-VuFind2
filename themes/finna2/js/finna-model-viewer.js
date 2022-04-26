@@ -198,12 +198,11 @@ class ModelViewerClass extends HTMLElement {
           if (this.menumode === 'basic') {
             return;
           }
-          const self = this;
           const addLight = this.createButton('add-light', 'add-light', 'Add light');
           menu.holder.append(addLight);
           addLight.addEventListener('click', () => {
             addLight.style.display = 'none';
-            self.menu.removeEventListener('change', self.updateFunction);
+            this.menu.removeEventListener('change', this.updateFunction);
             const templateClone = menu.template.cloneNode(true);
             const div = this.createDiv('setting-child');
             const span = document.createElement('span');
@@ -226,7 +225,7 @@ class ModelViewerClass extends HTMLElement {
                 this.addLight(saveForm);
                 templateClone.parentNode.removeChild(templateClone);
                 addLight.style.display = null;
-                self.menu.addEventListener('change', self.updateFunction);
+                this.menu.addEventListener('change', this.updateFunction);
               }
             });
           });
