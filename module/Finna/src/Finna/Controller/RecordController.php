@@ -42,6 +42,7 @@ use VuFindSearch\ParamBag;
 class RecordController extends \VuFind\Controller\RecordController
 {
     use FinnaRecordControllerTrait;
+    use \Finna\Statistics\ReporterTrait;
 
     /**
      * Create record feedback form and send feedback to correct recipient.
@@ -71,6 +72,18 @@ class RecordController extends \VuFind\Controller\RecordController
             throw new \Exception('Repository library request form not configured');
         }
         return $this->getRecordForm($formId);
+    }
+
+    /**
+     * Home (default) action -- forward to requested (or default) tab.
+     *
+     * @return mixed
+     */
+    public function homeAction()
+    {
+        $result = parent::homeAction();
+        $this->triggerStatsRecordView($result->driver ?? null);
+        return $result;
     }
 
     /**

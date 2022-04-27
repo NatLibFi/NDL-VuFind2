@@ -1,10 +1,10 @@
 <?php
 /**
- * Collection Controller
+ * EDS Record Controller
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2017-2018.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,49 +21,24 @@
  *
  * @category VuFind
  * @package  Controller
- * @author   Anna Niku <anna.niku@gofore.com>
- * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
 namespace Finna\Controller;
 
 /**
- * Collection Controller
+ * EDS Record Controller
  *
  * @category VuFind
  * @package  Controller
- * @author   Anna Niku <anna.niku@gofore.com>
- * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class CollectionController extends \VuFind\Controller\CollectionController
+class EdsrecordController extends \VuFind\Controller\EdsrecordController
 {
     use \Finna\Statistics\ReporterTrait;
-
-    /**
-     * Display a particular tab.
-     *
-     * @param string $tab  Name of tab to display
-     * @param bool   $ajax Are we in AJAX mode?
-     *
-     * @return mixed
-     */
-    protected function showTab($tab, $ajax = false)
-    {
-        // Call for login modal
-        if ($this->inLightbox()
-            && $this->params()->fromQuery('catalogLogin', 'false') == 'true'
-        ) {
-            return $this->catalogLogin();
-        }
-
-        $view = parent::showTab($tab, $ajax);
-
-        $this->getSearchMemory()->rememberScrollData($view->scrollData);
-        return $view;
-    }
 
     /**
      * Home (default) action -- forward to requested (or default) tab.

@@ -39,6 +39,7 @@ namespace Finna\Controller;
 class PrimorecordController extends \VuFind\Controller\PrimorecordController
 {
     use FinnaRecordControllerTrait;
+    use \Finna\Statistics\ReporterTrait;
 
     /**
      * Handle onDispatch event
@@ -55,5 +56,17 @@ class PrimorecordController extends \VuFind\Controller\PrimorecordController
         }
 
         return parent::onDispatch($e);
+    }
+
+    /**
+     * Home (default) action -- forward to requested (or default) tab.
+     *
+     * @return mixed
+     */
+    public function homeAction()
+    {
+        $result = parent::homeAction();
+        $this->triggerStatsRecordView($result->driver ?? null);
+        return $result;
     }
 }

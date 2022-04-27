@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -294,6 +294,33 @@ class Bootstrapper
             }
         };
 
+        $this->events->attach('dispatch', $callback, 9000);
+    }
+
+    /**
+     * Set up statistics event handler
+     *
+     * N.B. The event handler may have already been created by the database row
+     * session factory to ensure proper hookup before session events.
+     *
+     * @return void
+     */
+    protected function initStatisticsEventHandler()
+    {
+        if (PHP_SAPI === 'cli') {
+            return;
+        }
+
+        $sm = $this->event->getApplication()->getServiceManager();
+        $callback = function ($event) use ($sm) {
+            $routeMatch = $event->getRouteMatch();
+            $controller = strtolower($routeMatch->getParam('controller'));
+            $action = strtolower($routeMatch->getParam('action'));
+            if (!in_array($controller, ['ajax', 'cover', 'qrcode'])) {
+                $sm->get(\Finna\Statistics\EventHandler::class)
+                    ->pageView($controller, $action);
+            }
+        };
         $this->events->attach('dispatch', $callback, 9000);
     }
 
