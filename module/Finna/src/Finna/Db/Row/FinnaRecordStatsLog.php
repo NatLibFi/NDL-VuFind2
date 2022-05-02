@@ -49,7 +49,8 @@ class FinnaRecordStatsLog extends \VuFind\Db\Row\RowGateway
             [
                 'institution',
                 'view',
-                'date'
+                'date',
+                'record_id'
             ],
             'finna_record_stats_log',
             $adapter
