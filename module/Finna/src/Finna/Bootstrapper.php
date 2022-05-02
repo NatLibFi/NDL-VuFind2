@@ -313,12 +313,24 @@ class Bootstrapper
 
         $sm = $this->event->getApplication()->getServiceManager();
         $callback = function ($event) use ($sm) {
-            $routeMatch = $event->getRouteMatch();
+            if (!($routeMatch = $event->getRouteMatch())) {
+                return;
+            }
             $controller = strtolower($routeMatch->getParam('controller'));
             $action = strtolower($routeMatch->getParam('action'));
-            if (!in_array($controller, ['ajax', 'cover', 'qrcode'])) {
-                if ('ajaxtab' === $action) {
-                    $request = $event->getRequest();
+            if (!in_array($controller, ['cover', 'qrcode'])) {
+                if ('ajax' === $controller) {
+                    if ('json' !== $action || !($request = $event->getRequest())) {
+                        return;
+                    }
+                    $method = $request->getPost('method')
+                        ?? $request->getQuery('method');
+                    if (!in_array($method, ['getImageInformation'])) {
+                        return;
+                    }
+                    $action .= "/$method";
+                }
+                if ('ajaxtab' === $action && $request = $event->getRequest()) {
                     $tab = $request->getPost('tab') ?? $request->getQuery('tab');
                     if ($tab) {
                         $action .= "/$tab";
