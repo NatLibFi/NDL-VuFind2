@@ -88,7 +88,7 @@ class Database implements DriverInterface, LoggerAwareInterface
         FinnaSessionStats $sessionTable,
         FinnaPageViewStats $pageViewTable,
         FinnaRecordStats $recordTable,
-        FinnaRecordStatsLog $recordLogTable,
+        FinnaRecordStatsLog $recordLogTable
     ) {
         $this->sessionTable = $sessionTable;
         $this->pageViewTable = $pageViewTable;
