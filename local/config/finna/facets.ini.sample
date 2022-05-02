@@ -205,17 +205,18 @@ special_facets   = "daterange"
 ; translated facets, be sure that all of the necessary strings are included in the
 ; language files found in the web/lang directory.  By default, no facets are
 ; translated -- uncomment or add lines below to turn on this feature.
+; To use certain text domain, add :domainname after the facet.
 translated_facets[] = institution
 translated_facets[] = building
 translated_facets[] = building_sub_str_mv:department
 translated_facets[] = collection:collection
 translated_facets[] = format
-translated_facets[] = language
+translated_facets[] = language:langcode
 translated_facets[] = genre_facet
 translated_facets[] = sector_str_mv
 translated_facets[] = first_indexed
-translated_facets[] = original_lng_str_mv
-translated_facets[] = subtitle_lng_str_mv
+translated_facets[] = original_lng_str_mv:langcode
+translated_facets[] = subtitle_lng_str_mv:langcode
 translated_facets[] = category_str_mv
 translated_facets[] = usage_rights_str_mv
 translated_facets[] = major_genre_str_mv
