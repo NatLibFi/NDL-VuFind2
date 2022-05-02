@@ -136,7 +136,9 @@ class EventHandler
                 $this->view,
                 $driver->getSourceIdentifier(),
                 $source,
-                $driver->getUniqueID()
+                $driver->getUniqueID(),
+                $driver->tryMethod('getFormats', []),
+                $driver->tryMethod('getUsageRights', []),
             );
         }
     }

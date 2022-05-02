@@ -61,6 +61,8 @@ interface DriverInterface
      * @param string $backend     Backend ID
      * @param string $source      Record source
      * @param string $recordId    Record ID
+     * @param array  $formats     Record formats
+     * @param array  $rights      Record usage rights
      *
      * @return void
      */
@@ -69,7 +71,9 @@ interface DriverInterface
         string $view,
         string $backend,
         string $source,
-        string $recordId
+        string $recordId,
+        array $formats,
+        array $rights
     ): void;
 
     /**

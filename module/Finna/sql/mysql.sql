@@ -205,14 +205,15 @@ CREATE TABLE `finna_record_stats_log` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
   `date` DATE NOT NULL,
+  `backend` varchar(128) NOT NULL,
+  `source` varchar(255) NOT NULL,
   `record_id` varchar(255) NOT NULL,
-  `record_source` varchar(255) NOT NULL,
-  `record_format` varchar(255) NOT NULL,
-  `record_usage_rights` varchar(255) NOT NULL,
+  `formats` varchar(255) NOT NULL,
+  `usage_rights` varchar(255) NOT NULL,
   `extra_metadata` mediumtext DEFAULT NULL,
   `count` int(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`institution`, `view`, `date`, `record_id`),
-  KEY `record_source` (`record_source`)
+  KEY `record_source` (`source`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET character_set_client = @saved_cs_client */;

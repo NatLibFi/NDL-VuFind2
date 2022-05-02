@@ -29,6 +29,7 @@ namespace Finna\Statistics\Driver;
 
 use Finna\Db\Table\FinnaPageViewStats;
 use Finna\Db\Table\FinnaRecordStats;
+use Finna\Db\Table\FinnaRecordStatsLog;
 use Finna\Db\Table\FinnaSessionStats;
 use Laminas\Db\TableGateway\AbstractTableGateway;
 use Laminas\Log\LoggerAwareInterface;
@@ -62,27 +63,37 @@ class Database implements DriverInterface, LoggerAwareInterface
     protected $pageViewTable;
 
     /**
-     * Table for record statistics
+     * Table for record summary statistics
      *
      * @var FinnaRecordStats
      */
     protected $recordTable;
 
     /**
+     * Table for record view log
+     *
+     * @var FinnaRecordStatsLog
+     */
+    protected $recordLogTable;
+
+    /**
      * Constructor
      *
-     * @param FinnaSessionStats  $sessionTable  Session table
-     * @param FinnaPageViewStats $pageViewTable Page view table
-     * @param FinnaRecordStats   $recordTable   Record view table
+     * @param FinnaSessionStats   $sessionTable   Session table
+     * @param FinnaPageViewStats  $pageViewTable  Page view table
+     * @param FinnaRecordStats    $recordTable    Record view table
+     * @param FinnaRecordStatsLog $recordLogTable Record view log table
      */
     public function __construct(
         FinnaSessionStats $sessionTable,
         FinnaPageViewStats $pageViewTable,
-        FinnaRecordStats $recordTable
+        FinnaRecordStats $recordTable,
+        FinnaRecordStatsLog $recordLogTable,
     ) {
         $this->sessionTable = $sessionTable;
         $this->pageViewTable = $pageViewTable;
         $this->recordTable = $recordTable;
+        $this->recordLogTable = $recordLogTable;
     }
 
     /**
@@ -133,6 +144,8 @@ class Database implements DriverInterface, LoggerAwareInterface
      * @param string $backend     Backend ID
      * @param string $source      Record source
      * @param string $recordId    Record ID
+     * @param array  $formats     Record formats
+     * @param array  $rights      Record usage rights
      *
      * @return void
      */
@@ -141,11 +154,21 @@ class Database implements DriverInterface, LoggerAwareInterface
         string $view,
         string $backend,
         string $source,
-        string $recordId
+        string $recordId,
+        array $formats,
+        array $rights
     ): void {
         $date = date('Y-m-d');
+
+        // Summary log:
         $params = compact('institution', 'view', 'date', 'backend', 'source');
         $this->processAdd($this->recordTable, $params);
+
+        // Record log:
+        $params['record_id'] = $recordId;
+        $params['formats'] = implode('|', $formats);
+        $params['usage_rights'] = implode('|', $rights);
+        $this->processAdd($this->recordLogTable, $params);
     }
 
     /**

@@ -71,7 +71,8 @@ class DatabaseFactory implements FactoryInterface
         return new $requestedName(
             $tableManager->get('FinnaSessionStats'),
             $tableManager->get('FinnaPageViewStats'),
-            $tableManager->get('FinnaRecordStats')
+            $tableManager->get('FinnaRecordStats'),
+            $tableManager->get('FinnaRecordStatsLog')
         );
     }
 }
