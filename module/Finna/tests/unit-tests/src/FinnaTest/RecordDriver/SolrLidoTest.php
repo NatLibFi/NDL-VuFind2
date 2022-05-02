@@ -1,6 +1,6 @@
 <?php
 /**
- * SolrForward Test Class
+ * SolrLido Test Class
  *
  * PHP version 7
  *
@@ -30,7 +30,7 @@ namespace FinnaTest\RecordDriver;
 use Finna\RecordDriver\SolrLido;
 
 /**
- * SolrForward Record Driver Test Class
+ * SolrLido Record Driver Test Class
  *
  * @category VuFind
  * @package  Tests
