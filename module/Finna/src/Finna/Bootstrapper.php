@@ -317,6 +317,13 @@ class Bootstrapper
             $controller = strtolower($routeMatch->getParam('controller'));
             $action = strtolower($routeMatch->getParam('action'));
             if (!in_array($controller, ['ajax', 'cover', 'qrcode'])) {
+                if ('ajaxtab' === $action) {
+                    $request = $event->getRequest();
+                    $tab = $request->getPost('tab') ?? $request->getQuery('tab');
+                    if ($tab) {
+                        $action .= "/$tab";
+                    }
+                }
                 $sm->get(\Finna\Statistics\EventHandler::class)
                     ->pageView($controller, $action);
             }
