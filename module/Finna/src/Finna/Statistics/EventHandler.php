@@ -41,8 +41,6 @@ use VuFind\RecordDriver\AbstractBase as AbstractRecord;
  */
 class EventHandler
 {
-    public const EVENT_SESSION_START = 'SESSION_START';
-
     /**
      * Institution code
      *
