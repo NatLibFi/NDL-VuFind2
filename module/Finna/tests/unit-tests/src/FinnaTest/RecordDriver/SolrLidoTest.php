@@ -53,7 +53,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             [
                 'getModels',
                 [
-                    1 => [
+                    2 => [
                         'gltf' => [
                             'preview' => 'https://gltfmalli.gltf'
                         ],
@@ -104,6 +104,54 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ]
                         ],
                         'identifier' => '607642'
+                    ],
+                    [
+                        'urls' => [
+                            'large' => 'https://largekuvanlinkki2.com',
+                            'original' => 'https://originalKuvanLinkkiTif.com',
+                            'small' => 'https://thumbkuvanlinkki2.com',
+                            'medium' => 'https://thumbkuvanlinkki2.com',
+                            'master' => 'https://masterkuvanlinkki2.com'
+                        ],
+                        'description' => '',
+                        'rights' => [
+                            'copyright' => 'CC BY 4.0',
+                            'description' => [
+                                0 => 'Tässä on kuvien copyright.'
+                            ]
+                        ],
+                        'highResolution' => [
+                            'original' => [
+                                0 => [
+                                    'data' => [
+                                        'size' => [
+                                            'unit' => 'bytes',
+                                            'value' => '5'
+                                        ],
+                                        'width' => [
+                                            'unit' => 'pixel',
+                                            'value' => '5'
+                                        ],
+                                        'height' => [
+                                            'unit' => 'pixel',
+                                            'value' => '5'
+                                        ]
+                                    ],
+                                    'url' => 'https://originalKuvanLinkkiTif.com',
+                                    'format' => 'tif',
+                                    'resourceID' => '607643'
+                                ]
+                            ],
+                            'master' => [
+                                [
+                                    'url' => 'https://masterkuvanlinkki2.com',
+                                    'data' => false,
+                                    'format' => 'jpg',
+                                    'resourceID' => '607643'
+                                ]
+                            ]
+                        ],
+                        'identifier' => '607643'
                     ]
                 ]
             ],
@@ -132,12 +180,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             [
                 'getDocuments',
                 [
-                    4 => [
+                    5 => [
                         'description' => 'PDFTesti.pdf',
                         'url' => 'https://linkkiPDF.fi',
                         'format' => 'pdf'
                     ],
-                    5 => [
+                    6 => [
                         'description' => 'DocxTesti.docx',
                         'url' => 'https://linkkiDocx.fi',
                         'format' => 'docx'
