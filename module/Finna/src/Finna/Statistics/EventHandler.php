@@ -137,8 +137,8 @@ class EventHandler
                 $driver->getSourceIdentifier(),
                 $source,
                 $driver->getUniqueID(),
-                $driver->tryMethod('getFormats', []),
-                $driver->tryMethod('getUsageRights', []),
+                $driver->tryMethod('getFormats') ?? [],
+                $driver->tryMethod('getUsageRights') ?? [],
             );
         }
     }
