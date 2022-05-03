@@ -5,6 +5,7 @@ class ObjectEditor {
   {
     this.menuHolder = menuHolder;
     this.options = options;
+    this.owner = options.owner;
     this.translations = this.options.translations || {};
     this.menumode = 'basic';
     if (this.options.functions) {

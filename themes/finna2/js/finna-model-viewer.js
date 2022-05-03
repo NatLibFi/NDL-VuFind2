@@ -103,9 +103,9 @@ class ModelViewerClass extends HTMLElement {
       {name: 'SpotLight', value: 'SpotLight'},
       {name: 'DirectionalLight', value: 'DirectionalLight'},
     ];
-    const self = this;
 
     this.menuOptions = {
+      owner: this,
       allowedProperties: {
         advanced: [
           'uuid', 'name', 'type', 'position', 'color', 'groundColor',
@@ -149,16 +149,69 @@ class ModelViewerClass extends HTMLElement {
       ],
       menuAreas: {
         advanced: [
-          {done: false, name: 'File', prefix: 'file', holder: undefined, template: undefined, objects: [], created: [], canDelete: false},
-          {done: false, name: 'Cameras', prefix: 'camera', holder: undefined, template: undefined, objects: self.cameras, created: [], canDelete: false, updateFunction: () => { return self.cameras; }, assignFunction: (e) => { self.cameras = e; }},
-          {done: false, name: 'Meshes', prefix: 'mesh', holder: undefined, template: undefined, objects: self.meshes, created: [], canDelete: false, updateFunction: () => { return self.meshes; }, assignFunction: (e) => { self.meshes = e; }},
-          {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: self.materials, created: [], canDelete: false, updateFunction: () => { return self.materials; }, assignFunction: (e) => { self.materials = e; }},
-          {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: self.lights, created: [], canDelete: true, updateFunction: () => { return self.lights; }, assignFunction: (e) => { self.lights = e; }},
+          {
+            name: 'File',
+            prefix: 'file',
+            objects: [],
+            created: []
+          },
+          {
+            name: 'Cameras',
+            prefix: 'camera',
+            objects: this.cameras,
+            created: [],
+            updateFunction: () => this.cameras,
+            assignFunction: (e) => this.cameras = e
+          },
+          {
+            name: 'Meshes',
+            prefix: 'mesh',
+            objects: this.meshes,
+            created: [], 
+            updateFunction: () => this.meshes,
+            assignFunction: (e) => this.meshes = e
+          },
+          {
+            name: 'Materials',
+            prefix: 'material',
+            objects: this.materials,
+            created: [],
+            updateFunction: () => this.materials,
+            assignFunction: (e) => this.materials = e
+          },
+          {
+            name: 'Lights',
+            prefix: 'light',
+            objects: this.lights,
+            created: [],
+            canDelete: true,
+            updateFunction: () => this.lights,
+            assignFunction: (e) => this.lights = e
+          },
         ],
         basic: [
-          {done: false, name: 'File', prefix: 'file', holder: undefined, template: undefined, objects: [], created: [], canDelete: false},
-          {done: false, name: 'Materials', prefix: 'material', holder: undefined, template: undefined, objects: self.materials, created: [], canDelete: false, updateFunction: () => { return self.materials; }, assignFunction: (e) => { self.materials = e; }},
-          {done: false, name: 'Lights', prefix: 'light', holder: undefined, template: undefined, objects: self.lights, created: [], canDelete: false, updateFunction: () => { return self.lights; }, assignFunction: (e) => { self.lights = e; }},
+          {
+            name: 'File',
+            prefix: 'file',
+            objects: [],
+            created: []
+          },
+          {
+            name: 'Materials',
+            prefix: 'material',
+            objects: this.materials,
+            created: [],
+            updateFunction: () => this.materials,
+            assignFunction: (e) => this.materials = e
+          },
+          {
+            name: 'Lights',
+            prefix: 'light',
+            objects: this.lights,
+            created: [],
+            updateFunction: () => this.lights,
+            assignFunction: (e) => this.lights = e
+          },
         ]
       },
       readOnly: [
@@ -170,7 +223,7 @@ class ModelViewerClass extends HTMLElement {
         'uuid'
       ],
       onAttributeChanged: () => {
-        self.scene.traverse((child) => {
+        this.scene.traverse((child) => {
           if (child.materal) {
             child.materal.needsUpdate = true;
           }
@@ -234,26 +287,24 @@ class ModelViewerClass extends HTMLElement {
           const exportButton = this.createButton('button export-model', 'export', this.translate('Export .glb'));
           exportButton.addEventListener('click', () => {
             this.menu.removeEventListener('change', this.updateFunction);
-            self.scene.children.forEach((child) => {
-              child.userData.viewerSet = true;
+            this.owner.scene.children.forEach((child) => {
+              child.userData.this.viewerSet = true;
               if (child.type === 'Mesh') {
                 child.material.userData.envMapIntensity = child.material.envMapIntensity;
                 child.material.userData.normalScale = child.material.normalScale;
               }
             });
             const exporter = new THREE.GLTFExporter();
-            let cameraSave = self.scene.children.find((obj) => {
-              return obj.name === 'camera_stash';
-            });
+            let cameraSave = this.owner.scene.children.find((obj) => obj.name === 'camera_stash');
             if (!cameraSave) {
               cameraSave = new THREE.Object3D();
               cameraSave.name = 'camera_stash';
             }
-            const pos = self.camera.position;
+            const pos = this.owner.camera.position;
             cameraSave.position.set(pos.x, pos.y, pos.z);
-            self.scene.add(cameraSave);
+            this.owner.scene.add(cameraSave);
             exporter.parse(
-              self.scene,
+              this.owner.scene,
               (gltf) => {
                 const url = URL.createObjectURL(new Blob([gltf], { type: 'model/gltf-binary' }));
                 const a = document.createElement('a');
@@ -276,7 +327,7 @@ class ModelViewerClass extends HTMLElement {
             );
           });
           menu.holder.append(exportButton);
-          if (!self.debug) {
+          if (!this.owner.debug) {
             return;
           }
           const toggleMode = this.createButton('button toggle-mode', 'toggle-mode', this.translate('Toggle mode'));
@@ -323,12 +374,12 @@ class ModelViewerClass extends HTMLElement {
             return;
           }
           newLight.userData.viewerSet = true;
-          self.scene.add(newLight);
-          self.lights.push(newLight);
+          this.owner.scene.add(newLight);
+          this.owner.lights.push(newLight);
           return newLight;
         },
         onDelete: function onDelete(object) {
-          self.scene.remove(object);
+          this.owner.scene.remove(object);
         }
       }
     };

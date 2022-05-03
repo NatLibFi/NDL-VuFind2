@@ -25,7 +25,7 @@
             'envmapintensity' => 'env_map_intensity'
         ];
     $translations = [];
-    foreach ($from as $t) {
-        $translations[$t] = $this->translate("model_{$t}");
+    foreach ($from as $k => $t) {
+        $translations[$k] = $this->translate("model_{$t}");
     }
 echo json_encode($translations);
