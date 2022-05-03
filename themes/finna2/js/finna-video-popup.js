@@ -11,10 +11,9 @@ finna.videoPopup = (function finnaVideoPopup() {
       controls: true,
       preloadWebComponents: true,
       nativeControlsForTouch: true,
-      techOrder: [ 'chromecast', 'html5' ],
+      techOrder: [ 'html5' ],
       plugins: {
         airPlay: { addButtonToControlBar: true }
-        // Disabled for now: , chromecast: { addButtonToControlBar: true }
       },
       html5: {
         Vhs: {
@@ -37,7 +36,6 @@ finna.videoPopup = (function finnaVideoPopup() {
 
     player.src(videoSources);
     player.poster(posterUrl);
-    player.chromecast();
     player.airPlay();
     var selectedBitrate = 'auto';
 
@@ -108,12 +106,6 @@ finna.videoPopup = (function finnaVideoPopup() {
         }
       }
 
-      var chromecast = $container.find('.vjs-chromecast-button');
-      if (chromecast) {
-        var chromecastTranslation = VuFind.translate('Open Chromecast menu');
-        chromecast.attr('title', chromecastTranslation);
-        chromecast.find('.vjs-control-text').html(chromecastTranslation);
-      }
       var airPlay = $container.find('.vjs-airplay-button');
       if (airPlay) {
         var airPlayTranslation = VuFind.translate('Open AirPlay menu');
