@@ -467,8 +467,8 @@ class ModelViewerClass extends HTMLElement {
       if (!this.src) {
         fetch(newValue)
           .then(response => response.json())
-          .then(data => {
-            this.src = data.data.url;
+          .then(responseJSON => {
+            this.src = responseJSON.data.url;
           });
       }
       break;
