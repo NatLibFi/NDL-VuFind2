@@ -134,26 +134,26 @@ class EventHandler
     /**
      * Record view event
      *
-     * @param AbstractRecord $driver Record driver
+     * @param AbstractRecord $record Record driver
      *
      * @return void
      */
-    public function recordView(AbstractRecord $driver): void
+    public function recordView(AbstractRecord $record): void
     {
         if ($this->driver) {
-            if (!($source = $driver->tryMethod('getDatasource'))) {
-                [$source] = explode('.', $driver->getUniqueID(), 2);
+            if (!($source = $record->tryMethod('getDatasource'))) {
+                [$source] = explode('.', $record->getUniqueID(), 2);
             }
 
             $this->driver->addRecordView(
                 $this->institution,
                 $this->view,
                 $this->isCrawler(),
-                $driver->getSourceIdentifier(),
+                $record->getSourceIdentifier(),
                 $source,
-                $driver->getUniqueID(),
-                $driver->tryMethod('getFormats') ?? [],
-                $driver->tryMethod('getUsageRights') ?? [],
+                $record->getUniqueID(),
+                $record->tryMethod('getFormats') ?? [],
+                $record->tryMethod('getUsageRights') ?? [],
             );
         }
     }
