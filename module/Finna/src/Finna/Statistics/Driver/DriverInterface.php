@@ -43,6 +43,7 @@ interface DriverInterface
      *
      * @param string $institution Institution code
      * @param string $view        View code (empty string for default view)
+     * @param bool   $crawler     Whether the request comes from bot or crawler
      * @param array  $session     Session data
      *
      * @return void
@@ -50,6 +51,7 @@ interface DriverInterface
     public function addNewSession(
         string $institution,
         string $view,
+        bool $crawler,
         array $session
     ): void;
 
@@ -58,6 +60,7 @@ interface DriverInterface
      *
      * @param string $institution Institution code
      * @param string $view        View code (empty string for default view)
+     * @param bool   $crawler     Whether the request comes from bot or crawler
      * @param string $backend     Backend ID
      * @param string $source      Record source
      * @param string $recordId    Record ID
@@ -69,6 +72,7 @@ interface DriverInterface
     public function addRecordView(
         string $institution,
         string $view,
+        bool $crawler,
         string $backend,
         string $source,
         string $recordId,
@@ -81,6 +85,7 @@ interface DriverInterface
      *
      * @param string $institution Institution code
      * @param string $view        View code (empty string for default view)
+     * @param bool   $crawler     Whether the request comes from bot or crawler
      * @param string $controller  Controller
      * @param string $action      Action
      *
@@ -89,6 +94,7 @@ interface DriverInterface
     public function addPageView(
         string $institution,
         string $view,
+        bool $crawler,
         string $controller,
         string $action
     ): void;

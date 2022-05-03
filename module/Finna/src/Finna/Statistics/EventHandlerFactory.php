@@ -77,10 +77,16 @@ class EventHandlerFactory implements FactoryInterface
             $driver = $driverManager->get($config->Statistics->driver);
         }
 
+        $request = $container->get('Request');
+        $headers = $request->getHeaders();
+        $userAgent = $headers->has('User-Agent')
+            ? $headers->get('User-Agent')->toString() : '';
+
         return new $requestedName(
             $config->Site->institution ?? '',
             getenv('FINNA_BASE_URL') ?: '',
-            $driver
+            $driver,
+            $userAgent
         );
     }
 }

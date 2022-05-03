@@ -109,7 +109,8 @@ class Bootstrapper
                 return;
             }
             $agent = $headers->get('User-Agent')->toString();
-            if (!preg_match('/bot|crawl|slurp|spider/i', $agent)) {
+            $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
+            if (!$crawlerDetect->isCrawler($agent)) {
                 return;
             }
             // Check if the action should be prevented

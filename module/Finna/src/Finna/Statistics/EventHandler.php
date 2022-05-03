@@ -63,6 +63,13 @@ class EventHandler
     protected $driver;
 
     /**
+     * User agent
+     *
+     * @var string
+     */
+    protected $userAgent;
+
+    /**
      * Constructor
      *
      * Note that this must be called before any of the events to be handled is
@@ -70,15 +77,18 @@ class EventHandler
      * @param string      $institution Institution code
      * @param string      $view        View code
      * @param ?BaseDriver $driver      Statistics storage driver
+     * @param string      $userAgent   Client's user agent
      */
     public function __construct(
         string $institution,
         string $view,
-        ?DriverInterface $driver
+        ?DriverInterface $driver,
+        string $userAgent
     ) {
         $this->institution = $institution;
         $this->view = $view;
         $this->driver = $driver;
+        $this->userAgent = $userAgent;
     }
 
     /**
@@ -91,7 +101,12 @@ class EventHandler
     public function sessionStart(array $params): void
     {
         if ($this->driver) {
-            $this->driver->addNewSession($this->institution, $this->view, $params);
+            $this->driver->addNewSession(
+                $this->institution,
+                $this->view,
+                $this->isCrawler(),
+                $params
+            );
         }
     }
 
@@ -109,6 +124,7 @@ class EventHandler
             $this->driver->addPageView(
                 $this->institution,
                 $this->view,
+                $this->isCrawler(),
                 $controller,
                 $action
             );
@@ -132,6 +148,7 @@ class EventHandler
             $this->driver->addRecordView(
                 $this->institution,
                 $this->view,
+                $this->isCrawler(),
                 $driver->getSourceIdentifier(),
                 $source,
                 $driver->getUniqueID(),
@@ -139,5 +156,19 @@ class EventHandler
                 $driver->tryMethod('getUsageRights') ?? [],
             );
         }
+    }
+
+    /**
+     * Check if the request comes from a crawler or bot
+     *
+     * @return bool
+     */
+    protected function isCrawler(): bool
+    {
+        if (!$this->userAgent) {
+            return false;
+        }
+        $crawlerDetect = new \Jaybizzle\CrawlerDetect\CrawlerDetect();
+        return $crawlerDetect->isCrawler($this->userAgent);
     }
 }

@@ -165,11 +165,12 @@ CREATE TABLE `finna_feedback` (
 CREATE TABLE `finna_page_view_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
   `controller` varchar(128) NOT NULL,
   `action` varchar(128) NOT NULL,
   `date` DATE NOT NULL,
   `count` int(11) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`institution`, `view`, `controller`, `action`, `date`)
+  PRIMARY KEY (`institution`, `view`, `crawler`, `controller`, `action`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -178,9 +179,10 @@ CREATE TABLE `finna_page_view_stats` (
 CREATE TABLE `finna_session_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
   `date` DATE NOT NULL,
   `count` int(11) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`institution`, `view`, `date`)
+  PRIMARY KEY (`institution`, `view`, `crawler`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -189,11 +191,12 @@ CREATE TABLE `finna_session_stats` (
 CREATE TABLE `finna_record_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
   `date` DATE NOT NULL,
   `backend` varchar(128) NOT NULL,
   `source` varchar(128) NOT NULL,
   `count` int(11) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`institution`, `view`, `date`, `backend`, `source`),
+  PRIMARY KEY (`institution`, `view`, `crawler`, `date`, `backend`, `source`),
   KEY `record_backend` (`backend`),
   KEY `record_source` (`source`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -204,6 +207,7 @@ CREATE TABLE `finna_record_stats` (
 CREATE TABLE `finna_record_stats_log` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
   `date` DATE NOT NULL,
   `backend` varchar(128) NOT NULL,
   `source` varchar(255) NOT NULL,
@@ -212,7 +216,7 @@ CREATE TABLE `finna_record_stats_log` (
   `usage_rights` varchar(255) NOT NULL,
   `extra_metadata` mediumtext DEFAULT NULL,
   `count` int(11) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`institution`, `view`, `date`, `record_id`),
+  PRIMARY KEY (`institution`, `view`, `crawler`, `date`, `record_id`),
   KEY `record_source` (`source`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
