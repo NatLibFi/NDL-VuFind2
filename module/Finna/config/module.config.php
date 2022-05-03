@@ -794,7 +794,6 @@ $config = [
                 ]
             ],
             'statistics_driver' => [
-                //'abstract_factories' => ['Finna\Statistics\Driver\PluginFactory'],
                 'factories' => [
                     'Finna\Statistics\Driver\Database' => 'Finna\Statistics\Driver\DatabaseFactory',
                 ],
