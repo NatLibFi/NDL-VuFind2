@@ -172,6 +172,7 @@ $config = [
         'finna-flex-fallback.css::lt IE 10', // flex polyfill
     ],
     'js' => [
+        'finna-object-editor.js',
         'vendor/event-stub.js:lt IE 9',
         'account_ajax.js',
         'advanced_search.js',
@@ -193,7 +194,6 @@ $config = [
         'finna-autocomplete.js',
         'finna-authority.js',
         'finna-combined-results.js',
-        'finna-model-viewer.js',
         'finna-video-popup.js',
         'finna-image-paginator.js',
         'finna-menu-movement.js',
@@ -247,7 +247,8 @@ $config = [
         'vendor/leaflet.min.js',
         'vendor/leaflet.draw.min.js',
         'vendor/js.cookie.js',
-        'finna-multiselect.js'
+        'finna-multiselect.js',
+        'finna-model-viewer.js'
     ],
     'less' => [
         'active' => false

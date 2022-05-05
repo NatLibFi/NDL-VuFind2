@@ -209,7 +209,7 @@ $config = [
         'factories' => [
             'Finna\Controller\AjaxController' => 'VuFind\Controller\AjaxControllerFactory',
             'Finna\Controller\AuthorityController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\AuthorityRecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\AuthorityRecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\BarcodeController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\BrowseSearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\CartController' => 'VuFind\Controller\CartControllerFactory',
@@ -218,7 +218,8 @@ $config = [
             'Finna\Controller\CommentsController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ContentController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\CoverController' => 'Finna\Controller\CoverControllerFactory',
-            'Finna\Controller\EdsController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\EdsController' => 'Finna\Controller\AbstractBaseFactory',
+            'Finna\Controller\EdsrecordController' => 'Finna\Controller\AbstractBaseFactory',
             'Finna\Controller\ErrorController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ExternalAuthController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
@@ -226,7 +227,7 @@ $config = [
             'Finna\Controller\HoldsController' => 'VuFind\Controller\HoldsControllerFactory',
             'Finna\Controller\LibraryCardsController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\L1Controller' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\L1recordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\L1recordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
             'Finna\Controller\LocationServiceController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\MetaLibController' => 'VuFind\Controller\AbstractBaseFactory',
@@ -235,12 +236,12 @@ $config = [
             'Finna\Controller\OrganisationInfoController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PCIController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimoController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\PrimoRecordController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\PrimorecordController' => 'Finna\Controller\AbstractBaseFactory',
             'Finna\Controller\R2FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\R2RecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
-            'Finna\Controller\R2CollectionController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\R2RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\R2CollectionController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\R2SearchController' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\RecordController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationControllerFactory',
@@ -289,6 +290,7 @@ $config = [
             'VuFind\Controller\ContentController' => 'Finna\Controller\ContentController',
             'VuFind\Controller\CoverController' => 'Finna\Controller\CoverController',
             'VuFind\Controller\EdsController' => 'Finna\Controller\EdsController',
+            'VuFind\Controller\EdsrecordController' => 'Finna\Controller\EdsrecordController',
             'VuFind\Controller\ErrorController' => 'Finna\Controller\ErrorController',
             'VuFind\Controller\ExternalAuthController' => 'Finna\Controller\ExternalAuthController',
             'VuFind\Controller\FeedbackController' => 'Finna\Controller\FeedbackController',
@@ -296,7 +298,7 @@ $config = [
             'VuFind\Controller\LibraryCardsController' => 'Finna\Controller\LibraryCardsController',
             'VuFind\Controller\MyResearchController' => 'Finna\Controller\MyResearchController',
             'VuFind\Controller\PrimoController' => 'Finna\Controller\PrimoController',
-            'VuFind\Controller\PrimoRecordController' => 'Finna\Controller\PrimoRecordController',
+            'VuFind\Controller\PrimorecordController' => 'Finna\Controller\PrimorecordController',
             'VuFind\Controller\RecordController' => 'Finna\Controller\RecordController',
             'VuFind\Controller\SearchController' => 'Finna\Controller\SearchController',
             'VuFind\Controller\ShibbolethLogoutNotificationController' => 'Finna\Controller\ShibbolethLogoutNotificationController',
@@ -346,6 +348,8 @@ $config = [
             'Finna\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Service\R2SupportService' => 'Finna\Service\R2SupportServiceFactory',
             'Finna\Service\RecordFieldMarkdown' => 'Finna\Service\RecordFieldMarkdownFactory',
+            'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
             'Finna\Service\RemsService' => 'Finna\Service\RemsServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -354,7 +358,6 @@ $config = [
 
             'VuFindHttp\HttpService' => 'Finna\Service\HttpServiceFactory',
 
-            'Laminas\Session\SessionManager' => 'Finna\Session\ManagerFactory',
             'League\CommonMark\MarkdownConverterInterface' => 'Finna\Service\MarkdownFactory',
             'Finna\View\Resolver\AggregateResolver' => 'Finna\View\Resolver\AggregateResolverFactory',
         ],
@@ -539,9 +542,14 @@ $config = [
                     'Finna\Db\Row\Fee' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Feedback' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaCache' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaPageViewStats' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaRecordStats' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaRecordStatsLog' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\FinnaSessionStats' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\PrivateUser' => 'VuFind\Db\Row\UserFactory',
                     'Finna\Db\Row\Resource' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Search' => 'VuFind\Db\Row\RowGatewayFactory',
+                    'Finna\Db\Row\Session' => 'Finna\Db\Row\SessionFactory',
                     'Finna\Db\Row\Transaction' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\User' => 'Finna\Db\Row\UserFactory',
                     'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory'
@@ -550,13 +558,13 @@ $config = [
                     'VuFind\Db\Row\PrivateUser' => 'Finna\Db\Row\PrivateUser',
                     'VuFind\Db\Row\Resource' => 'Finna\Db\Row\Resource',
                     'VuFind\Db\Row\Search' => 'Finna\Db\Row\Search',
+                    'VuFind\Db\Row\Session' => 'Finna\Db\Row\Session',
                     'VuFind\Db\Row\Transaction' => 'Finna\Db\Row\Transaction',
                     'VuFind\Db\Row\User' => 'Finna\Db\Row\User',
                     'VuFind\Db\Row\UserList' => 'Finna\Db\Row\UserList',
 
                     // Aliases for table classes without a row class counterpart
                     'Finna\Db\Row\Comments' => 'VuFind\Db\Row\Comments',
-                    'Finna\Db\Row\Session' => 'VuFind\Db\Row\Session',
                     'Finna\Db\Row\UserResource' => 'VuFind\Db\Row\UserResource',
 
                     'commentsinappropriate' => 'Finna\Db\Row\CommentsInappropriate',
@@ -576,6 +584,10 @@ $config = [
                     'Finna\Db\Table\Fee' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\Feedback' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaCache' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaPageViewStats' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaRecordStats' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaRecordStatsLog' => 'VuFind\Db\Table\GatewayFactory',
+                    'Finna\Db\Table\FinnaSessionStats' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\Resource' => 'VuFind\Db\Table\ResourceFactory',
                     'Finna\Db\Table\Search' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\Session' => 'VuFind\Db\Table\GatewayFactory',
@@ -599,6 +611,10 @@ $config = [
                     'fee' => 'Finna\Db\Table\Fee',
                     'feedback' => 'Finna\Db\Table\Feedback',
                     'finnacache' => 'Finna\Db\Table\FinnaCache',
+                    'finnapageviewstats' => 'Finna\Db\Table\FinnaPageViewStats',
+                    'finnarecordstats' => 'Finna\Db\Table\FinnaRecordStats',
+                    'finnarecordstatslog' => 'Finna\Db\Table\FinnaRecordStatsLog',
+                    'finnasessionstats' => 'Finna\Db\Table\FinnaSessionStats',
                     'transaction' => 'Finna\Db\Table\Transaction',
                 ]
             ],
@@ -777,6 +793,14 @@ $config = [
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ]
             ],
+            'statistics_driver' => [
+                'factories' => [
+                    'Finna\Statistics\Driver\Database' => 'Finna\Statistics\Driver\DatabaseFactory',
+                ],
+                'aliases' => [
+                    'Database' => 'Finna\Statistics\Driver\Database',
+                ]
+            ],
             'content_covers' => [
                 'factories' => [
                     'Finna\Content\Covers\BTJ' => 'Finna\Content\Covers\BTJFactory',
@@ -934,7 +958,6 @@ $config = [
             ]
         ],
     ],
-
 ];
 
 $recordRoutes = [

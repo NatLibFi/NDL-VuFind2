@@ -201,20 +201,6 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
       toggleButtons(_.moreBtn, _.lessBtn);
       _.loadPage(0, null, _.settings.imagesPerRow);
     });
-
-    _.trigger.on('viewer-show', function hideSelf() {
-      _.triggerImage.css('display', 'none');
-      _.triggerImage.siblings('div.iconlabel').css('display', 'none');
-      _.trigger.trigger('removeclick.finna');
-      _.trigger.on('click', function preventClicks(e) {
-        e.preventDefault();
-      });
-    });
-    _.trigger.on('image-show', function hideSelf() {
-      _.triggerImage.css('display', '');
-      _.triggerImage.siblings('div.iconlabel').css('display', '');
-      $.fn.finnaPopup.closeOpen('modelViewer');
-    });
   } else {
     _.leftBtn.off('click').on('click', function setImage(){
       _.onListButton(-1);
@@ -826,7 +812,8 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
 
   if (image.type === 'model') {
     holder.attr({
-      'data-modelsettings': image.modelsettings,
+      'data-params': image.params,
+      'data-texture': image.texture,
       'data-scripts': image.scripts
     });
   }
@@ -936,14 +923,12 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
  */
 FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   var _ = this;
-  _.trigger.trigger('image-show');
-
-  if (imagePopup.attr('href')) {
-    _.trigger.removeClass('show-icon');
+  var imageType = imagePopup.data('type');
+  var img = _.trigger.find('img');
+  img.toggleClass('hidden', imageType === 'model');
+  if (imagePopup.attr('href') && imageType !== 'model') {
     _.changeTriggerImage(imagePopup);
   } else {
-    _.trigger.find('img').removeAttr('src');
-    _.trigger.addClass('show-icon');
     _.showImageDetails(imagePopup);
   }
   _.openImageIndex = imagePopup.attr('index');
@@ -961,12 +946,28 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   } else if (_.settings.triggerClick === 'open') {
     return;
   }
-  var imageType = imagePopup.data('type');
+  // Draggable="false" doesn't work...
+  _.trigger.off('dragstart').on('dragstart', function preventDrag(e) {
+    e.preventDefault();
+  });
+  if (_.viewer) {
+    _.viewer.parentNode.removeChild(_.viewer);
+    _.viewer = undefined;
+  }
   if (imageType === 'model') {
-    _.trigger.addClass('model-trigger');
-    _.trigger.finnaModel(imagePopup.data('modelsettings'), imagePopup.data('scripts'));
+    _.viewer = document.createElement('finna-model-viewer');
+    _.viewer.proxy = `${VuFind.path}/AJAX/JSON?${imagePopup.data('params')}`;
+    _.viewer.texture = `${VuFind.path}${imagePopup.data('texture')}`;
+    _.viewer.scripts = `${VuFind.path}${imagePopup.data('scripts')}`;
+    _.viewer.translations = _.settings.modelTranslations;
+    _.viewer.debug = _.settings.viewerDebug;
+    if (imagePopup.attr('href')) {
+      _.viewer.previewsrc = imagePopup.attr('href');
+    }
+    _.trigger.append(_.viewer);
+    _.trigger.trigger('removeclick.finna');
+    _.trigger.on('click', (e) => { e.preventDefault(); });
   } else {
-    _.trigger.removeClass('model-trigger');
     _.trigger.finnaPopup({
       modal: modal,
       id: 'paginator',

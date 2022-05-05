@@ -165,9 +165,6 @@ a.authority {
 
 .record-image-container {
   margin-bottom: 20px;
-  .show-3d {
-    display: none;
-  }
 }
 
 .image-details, .model-details {
@@ -218,48 +215,6 @@ a.authority {
             max-width: 200px;
           }
         }
-        .show-3d {
-          display: none;
-        }
-        &.model-trigger {
-          min-height: 100px;
-          .show-3d {
-            display: block;
-            position: absolute;
-            transform: translate(-50%,50%);
-            bottom: 50%;
-            left: 50%;
-            z-index: 2;
-          }
-          &.open .show-3d {
-            display: none;
-          }
-          &.show-icon {
-            .show-3d {
-              bottom: 20%;
-            }
-            >.fa-finna-3d {
-              display: block;
-              background-color: #e6e6e6;
-              &::before {
-                color: #969696;
-                -webkit-transform: translate(-50%,-50%);
-                transform: translate(-50%,-50%);
-                font-size: 130px;
-                margin-left: 0;
-                margin-top: 0;
-              }
-              &::after {
-                content: '';
-                display: block;
-                padding-bottom: 100%;
-              }
-            }
-            img {
-              display: none;
-            }
-          }
-        }
       }
       .open-link {
         margin-top: 10px;
@@ -283,14 +238,6 @@ a.authority {
     .mainbody.record-tabs {
       width: 100%;
     }
-  }
-}
-
-#inline-viewer {
-  position: initial;
-  z-index: 3;
-  >.model-viewer {
-    position: initial;
   }
 }
 
@@ -953,85 +900,134 @@ a.authority {
   }
 }
 
-.model-wrapper {
-  background-color: white;
-  min-height: 250px;
-  .viewer-options {
-    position: absolute;
-    top: 2px;
-    left: 0;
-    margin: 4px;
-    width: 40%;
-    max-width: 400px;
-    z-index: 101;
-    .viewer-controls {
-      margin-bottom: 4px;
-      text-align: left;
+finna-model-viewer {
+  display: flex;
+  min-height: 400px;
+  position: relative;
+  .wrapper {
+    flex: 1 1 100%;
+    background-color: #efefefcc;
+    img {
+      top: 50%;
+      transform: translateY(-50%);
     }
-    .viewer-btn {
+    &.filedrop {
+      box-shadow: 0px 0px 2px 2px @brand-primary;
+    }
+  }
+  .options {
+    position: absolute;
+    color: black;
+    width: 200px;
+    .statistics-area {
+      .model-stats, .model-help {
+        background-color: white;
+        padding: 2px;
+      }
+    }
+    .viewer-table {
+      width: 100%;
+    }
+    .buttons {
+      text-align: start;
+    }
+    button {
       appearance: none;
       -webkit-appearance: none;
       border: none;
-      padding: 2px;
+      padding: 0;
       background-color: #1f1f1f;
       color: white;
-      font-size: 20px;
+      height: 30px;
+      line-height: 30px;
+      width: 20px;
+      margin: 2px;
+      i {
+        cursor: pointer;
+      }
       &.collapsed {
         background-color: white;
         color: #1f1f1f;
       }
     }
-    .model-help {
-      background: white;
-      text-align: left;
-      padding: 2px;
-      color: black;
-      min-width: 300px;
-    }
-    .viewer-statistics {
-      .model-stats {
-        margin-bottom: 4px;
-      }
-      table {
-        background-color: white;
-        margin-bottom: 0;
-        th {
-          background-color: #1f1f1f;
-          color: white;
-        }
-        td {
-          color: #1f1f1f;
-        }
-      }
-      .viewer-btn {
-        width: 100%;
-      }
-    }
   }
-
-  .model-canvas-wrapper {
-    .viewer-state-wrapper {
-      position: absolute;
-      bottom: 20%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-size: 14px;
-      line-height: 1.5;
-      border-radius: 4px;
-      -webkit-transition: background 0.1s ease-in-out;
-      -o-transition: background 0.1s ease-in-out;
-      transition: background 0.1s ease-in-out;
-      border: 0;
-      padding: 10px 12px;
-      font-weight: 500;
-      min-width: 60px;
-      background-color: @brand-primary;
-    }
+  .state {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    height: 50px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: @brand-primary;
+    padding: 10px 12px;
+    font-weight: 500;
+    line-height: 1.5;
+    border-radius: 4px;
   }
   &.fullscreen {
     position: absolute;
     left: 0;
     z-index: 10000;
+  }
+}
+
+
+finna-model-viewer .object-editor {
+  position: absolute;
+  right: 0;
+  width: 200px;
+  color: black;
+  background-color: #f2f2f2;
+  overflow-y: scroll;
+  max-height: 100%;
+  text-align: center;
+  .holder-title {
+    border-bottom: 1px solid black;
+    cursor: pointer;
+  }
+  .custom-holder {
+    display: flex;
+    flex-flow: column;
+    button {
+      padding-bottom: 2px;
+    }
+  }
+  form {
+    display: flex;
+    flex-flow: column;
+    text-align: start;
+    color: black;
+    background: #f2f2f2;
+    border: 1px solid lightgray;
+    border-bottom: none;
+    padding: 2px;
+    div.setting-child {
+      display: flex;
+      flex-flow: column;
+      div.setting-group {
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 2px;
+        &.child {
+          margin-left: 20px;
+        }
+        input {
+          min-width: 0;
+          margin-left: 2px;
+          border: none;
+          border-bottom: 1px solid #2f2f2f;
+          border-radius: 0;
+          &[type=number] {
+            max-width: 50px;
+          }
+        }
+      }
+    }
   }
 }

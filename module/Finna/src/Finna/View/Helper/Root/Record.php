@@ -614,17 +614,13 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAllRecordImageUrls()
     {
-        $images = $this->driver->tryMethod('getAllImages', ['']);
+        $images = $this->driver->tryMethod('getAllImages', ['', false]);
         if (empty($images)) {
             return [];
         }
         $urls = [];
         foreach ($images as $image) {
-            $urls[] = $image['urls']['small'];
-            $urls[] = $image['urls']['medium'];
-            if (isset($image['urls']['large'])) {
-                $urls[] = $image['urls']['large'];
-            }
+            $urls = [...$urls, ...array_values($image['urls'])];
         }
         return array_flip($urls);
     }

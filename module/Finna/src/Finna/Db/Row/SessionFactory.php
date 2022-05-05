@@ -1,10 +1,10 @@
 <?php
 /**
- * Factory for instantiating Session Manager
+ * Factory for instantiating Session row
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -20,12 +20,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Session_Handlers
+ * @package  Db_Table
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace Finna\Session;
+namespace Finna\Db\Row;
 
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
@@ -33,17 +33,18 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 /**
- * Factory for instantiating Session Manager
+ * Factory for instantiating Session row
  *
  * @category VuFind
  * @package  Session_Handlers
+ * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  *
  * @codeCoverageIgnore
  */
-class ManagerFactory extends \VuFind\Session\ManagerFactory
+class SessionFactory extends \VuFind\Db\Row\RowGatewayFactory
 {
     /**
      * Create an object
@@ -64,11 +65,10 @@ class ManagerFactory extends \VuFind\Session\ManagerFactory
         $requestedName,
         array $options = null
     ) {
-        $sessionManager = parent::__invoke($container, $requestedName, $options);
-        $storage = new \Laminas\Session\Container('SessionState', $sessionManager);
-        if (empty($storage->sessionStartTime)) {
-            $storage->sessionStartTime = time();
-        }
-        return $sessionManager;
+        $result = parent::__invoke($container, $requestedName, $options);
+        $result->setStatisticsEventHandler(
+            $container->get(\Finna\Statistics\EventHandler::class)
+        );
+        return $result;
     }
 }

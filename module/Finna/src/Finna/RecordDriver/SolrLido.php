@@ -154,19 +154,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $displayableModelFormats = ['gltf', 'glb'];
 
     /**
-     * Recognized model viewer settings
-     *
-     * @var array
-     */
-    protected $modelViewerSettings = [
-        'popup',
-        'ambientIntensity',
-        'hemisphereIntensity',
-        'viewerPaddingAngle',
-        'debug'
-    ];
-
-    /**
      * Events used for author information.
      *
      * Key is event type, value is priority (lower is more important),
@@ -929,14 +916,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModelSettings(): array
     {
+        $datasource = $this->getDataSource();
         $settings = [];
-        $iniData = $this->recordConfig->Models ?? [];
-        foreach ($this->modelViewerSettings as $setting) {
-            if (!empty($iniData->$setting)) {
-                $settings[$setting] = $iniData->$setting;
-            }
+        if ($iniData = $this->recordConfig->Models ?? []) {
+            $settings = [
+                'debug' => boolval($iniData->debug ?? 0),
+                'previewImages' => $this->allowModelPreviewImages()
+            ];
         }
-        $settings['previewImages'] = $this->allowModelPreviewImages();
+
         return $settings;
     }
 

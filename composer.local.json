@@ -4,6 +4,7 @@
     ],
     "require": {
         "ezyang/htmlpurifier": "4.12.0",
+        "jaybizzle/crawler-detect": "^1.2.111",
         "league/mime-type-detection": "1.9.0",
         "paquettg/php-html-parser": "3.1.0",
         "paytrail/paytrail-php-sdk": "1.1.0",

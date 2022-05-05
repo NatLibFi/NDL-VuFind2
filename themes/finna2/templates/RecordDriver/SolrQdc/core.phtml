@@ -9,18 +9,14 @@
   $mergedData = $this->driver->tryMethod('getMergedRecordData');
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
-  $images = $img->getAllImagesAsCoverLinks(
-      $this->layout()->userLang,
-      $params
-  );
+  $images = $this->record($this->driver)->getAllRecordImageUrls();
   $audioUrls = [];
   $videoUrls = [];
   $otherUrls = [];
   $hasOnlineURLs =
       $this->record($this->driver)->containsNonImageURL($urls, $images)
       || $this->record($this->driver)->containsNonImageURL($onlineURLs, $images)
-      || !empty($mergedData['urls']) && $this->record($this->driver)->containsNonImageURL($mergedData['urls'], $images)
-  ;
+      || !empty($mergedData['urls']) && $this->record($this->driver)->containsNonImageURL($mergedData['urls'], $images);
 
   if (!empty($urls)) {
     foreach ($urls as $url) {
