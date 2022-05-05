@@ -843,10 +843,15 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $library = !empty($target)
                 ? $this->translate("source_$target", null, $target)
                 : $config->Site->title;
+            $userdata = $this->getTable('User')->select(['email' => $email]);
+            foreach ($userdata as $row) {
+                $user = $row;
+            }
             // Custom template for emails (text-only)
             $message = $renderer->render(
                 'Email/recover-library-card-password.phtml',
                 [
+                    'user' => $user,
                     'library' => $library,
                     'url' => $this->getServerUrl('librarycards-resetpassword')
                         . '?' . http_build_query($urlParams)
