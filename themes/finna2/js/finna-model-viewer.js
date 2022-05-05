@@ -784,7 +784,7 @@ class ModelViewerClass extends HTMLElement {
     this.camera = new THREE.PerspectiveCamera(
       50,
       this.size.x / this.size.y,
-      0.1,
+      0.001,
       2000
     );
 
