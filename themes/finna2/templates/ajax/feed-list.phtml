@@ -7,7 +7,7 @@
     <?php foreach ($items as $item): ?>
       <li>
         <?php if (isset($item['date'])): ?>
-          <span class="date"<?php if (isset($item['dateFull'])):?> title="<?=$this->escapeHtmlAttr($item['dateFull'])?>"<?php endif; ?>></span>
+          <span class="date"<?php if (isset($item['dateFull'])):?> title="<?=$this->escapeHtmlAttr($item['dateFull'])?>"<?php endif; ?>><?=$this->escapeHtml($item['date'])?></span>
         <?php endif; ?>
         <?php if (isset($item['link'])):?>
           <?php

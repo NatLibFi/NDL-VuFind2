@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library 2019.
+ * Copyright (C) The National Library 2019-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -24,6 +24,7 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
@@ -37,6 +38,7 @@ namespace Finna\RecordDriver\Feature;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  *
@@ -54,6 +56,13 @@ trait SolrCommonFinnaTrait
     protected $dateConverter = null;
 
     /**
+     * Video Handler
+     *
+     * @var \Finna\Video\Video
+     */
+    protected $videoHandler = null;
+
+    /**
      * Attach date converter
      *
      * @param \VuFind\Date\Converter $dateConverter Date Converter
@@ -63,6 +72,18 @@ trait SolrCommonFinnaTrait
     public function attachDateConverter($dateConverter)
     {
         $this->dateConverter = $dateConverter;
+    }
+
+    /**
+     * Attach video handler
+     *
+     * @param \Finna\Video\Video $videoHandler Video Handler
+     *
+     * @return void
+     */
+    public function attachVideoHandler(\Finna\Video\Video $videoHandler)
+    {
+        $this->videoHandler = $videoHandler;
     }
 
     /**

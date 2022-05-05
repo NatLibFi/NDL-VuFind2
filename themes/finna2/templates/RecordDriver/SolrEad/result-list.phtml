@@ -42,7 +42,10 @@ if ($img):
           </h2>
         </div>
         <div class="dateyeartype">
-          <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?> <?=$this->record($this->driver)->getSourceIdElement() ?></div>
+          <div class="resultItemFormat">
+            <?=$this->record($this->driver)->getFormatList() ?>
+            <?=$this->record($this->driver)->getLabelList() ?>
+          </div>
           <?=$this->render('record/labels.phtml', ['driver' => $this->driver]); ?>
           <?php $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
             <div class="truncate-field" data-rows="1">
@@ -103,10 +106,10 @@ if ($img):
         <?php if(!$this->driver->isCollection()): ?>
           <?php if ($snippet = $this->driver->getHighlightedSnippet()): ?>
             <?php if (!empty($snippet['caption'])): ?>
-              <strong><?=$this->transEsc($snippet['caption']) ?>:</strong> ';
+              <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
             <?php endif; ?>
             <?php if (!empty($snippet['snippet'])): ?>
-              <span class="quotestart">&#8220;</span>...<?=$this->highlight($snippet['snippet']) ?>...<span class="quoteend">&#8221;</span><br/>
+              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br/>
             <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>

@@ -11,7 +11,7 @@
       $__navAttributes->add('class', 'finna-nav-lg');
     }
   ?>
-  <?= $this->render('components/molecules/navigation/finna-nav/finna-nav.phtml', [
+  <?= $this->render('components/molecules/navigation/finna-nav', [
       'ariaCurrent' => $ariaCurrent ?? null,
       'attributes' => $__navAttributes,
       'items' => $items ?? [],

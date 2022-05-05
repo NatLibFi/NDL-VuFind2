@@ -1,0 +1,13 @@
+<?php //Don't add START and END comments ?>
+<?php if (!empty($data)): ?>
+  <div class="truncate-field" data-rows="5">
+    <?php foreach ($data as $part): ?>
+      <?php if (empty($part['link'])) { continue; } ?>
+      <div class="containedInLine" property="keywords">
+        <a class="backlink" title="<?=$this->escapeHtmlAttr($part['value'])?>" href="<?=$this->record($this->driver)->getLink($part['link']['type'] ?? 'allFields', $part['link']['value'])?>">
+          <?=trim($this->escapeHtml($part['value']))?>
+        </a>
+      </div>
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>

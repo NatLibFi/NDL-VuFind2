@@ -178,59 +178,6 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Loads an external image from provider and sends it to browser
-     * in chunks. Used for big image files
-     *
-     * @param string $url      to load
-     * @param string $format   type of the image to load
-     * @param string $filename filename for the downloaded image
-     *
-     * @return bool
-     */
-    public function loadExternalImage($url, $format, $filename)
-    {
-        $contentType = '';
-        switch ($format) {
-        case 'tif':
-        case 'tiff':
-            $contentType = 'image/tiff';
-            break;
-        default:
-            $contentType = 'image/jpeg';
-            break;
-        }
-        header("Content-Type: $contentType");
-        header("Content-disposition: attachment; filename=\"{$filename}\"");
-        $client = $this->httpService->createClient(
-            $url,
-            \Laminas\Http\Request::METHOD_GET,
-            300
-        );
-        $client->setOptions(['useragent' => 'VuFind']);
-        $client->setStream();
-        $adapter = new \Laminas\Http\Client\Adapter\Curl();
-        $client->setAdapter($adapter);
-        $adapter->setOptions(
-            [
-                'curloptions' => [
-                    CURLOPT_WRITEFUNCTION => function ($ch, $str) {
-                        echo $str;
-                        return strlen($str);
-                    }
-                ]
-            ]
-        );
-        $result = $client->send();
-
-        if (!$result->isSuccess()) {
-            $this->debug("Failed to retrieve image from $url");
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Load a record image.
      *
      * @param \Vufind\RecordDriver\SolrDefault $driver Record

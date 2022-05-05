@@ -29,16 +29,31 @@ institution = Library
 staffUiUrl = "https://server-address/cgi-bin/koha/catalogue/detail.pl?biblionumber=%%id%%"
 
 
-; Online payment
-onlinePayment['handler'] = ''
+; # Online payment settings
+
+; ## Payment service specific settings:
+
+; ### CPU (Ceepos):
+onlinePayment['handler'] = 'CPU'
+; Payment service url:
 onlinePayment['url'] = ''
-; Paytrail API:
-; e2url is optional. Default is https://payment.paytrail.com/e2.
+
+; ### Paytrail Payment API (current interface):
+onlinePayment['handler'] = 'PaytrailPaymentAPI'
+
+; ### Paytrail E2 (legacy interface):
+onlinePayment['handler'] = 'Paytrail'
+; E2 interface url (optional, default is https://payment.paytrail.com/e2):
 ;onlinePayment['e2url'] = '...'
+
+; ## Common settings for all services:
+
+; Merchant identifier:
 onlinePayment['merchantId'] = ''
+; Merchant secret:
 onlinePayment['secret'] = ''
 
-; The following settings are mandatory for CPU and optional for Paytrail.
+; The following settings are mandatory for CPU and optional for Paytrail services.
 ; With Paytrail only a total amount to pay is defined if productCode,
 ; transactionFeeProductCode and productCodeMappings are undefined, and empty values
 ; can be defined to make the system use default values.
@@ -55,3 +70,25 @@ onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 ; already a product code from other mappings above, this value is prepended to it
 ; without any delimiter.
 ;onlinePayment['organizationProductCodeMappings'] = 'Helsinki=demo_003:Tampere=demo_004'
+
+; # Video on demand settings
+
+; ## Video provider specific settings:
+
+; ### Vimeo:
+video['handler'] = "Vimeo"
+video['url'] = "https://vimeo.com/{videoid}"
+video['posterUrl'] = "https://link.to.posterUrl/{filename}"
+
+; ### Elonet:
+video['handler'] = "Elonet"
+video['secret'] = "secretkey"
+video['timestampPrecision'] = 3000
+video['url'] = "https://link.to.video/{filename}"
+video['posterUrl'] = "https://link.to.posterUrl/{filename}"
+
+; Videosources to check, if an url can be provided for a video
+; ### Default:
+video_sources[] = "application/x-mpegURL|https://link.to.video/{videoname}.m3u8|smil"
+video_sources[] = "application/x-mpegURL|https://link.to.video/{videoname}.m3u8"
+video_sources[] = "application/dash+xml|https://link.to.video/{videoname}.mpd"

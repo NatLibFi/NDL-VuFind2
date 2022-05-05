@@ -42,6 +42,7 @@ use VuFindSearch\ParamBag;
 class RecordController extends \VuFind\Controller\RecordController
 {
     use FinnaRecordControllerTrait;
+    use \Finna\Statistics\ReporterTrait;
 
     /**
      * Create record feedback form and send feedback to correct recipient.
@@ -71,6 +72,18 @@ class RecordController extends \VuFind\Controller\RecordController
             throw new \Exception('Repository library request form not configured');
         }
         return $this->getRecordForm($formId);
+    }
+
+    /**
+     * Home (default) action -- forward to requested (or default) tab.
+     *
+     * @return mixed
+     */
+    public function homeAction()
+    {
+        $result = parent::homeAction();
+        $this->triggerStatsRecordView($result->driver ?? null);
+        return $result;
     }
 
     /**
@@ -931,27 +944,36 @@ class RecordController extends \VuFind\Controller\RecordController
         $index = $params->fromQuery('index');
         $format = $params->fromQuery('format');
         $type = $params->fromQuery('type');
+
         $response = $this->getResponse();
         if ($type && $format && isset($index)) {
             $driver = $this->loadRecord();
-            $representations = [];
+            $id = urlencode($driver->getUniqueID());
+            $formedFilename = "$id-$index.$format";
+            $representation = [];
             switch ($type) {
+            case 'highresimg':
+                $size = $params->fromQuery('size');
+                $key = $params->fromQuery('key', -1);
+                $representations = $driver->tryMethod('getAllImages');
+                $representation
+                    = $representations[$index]['highResolution'][$size][$key]
+                    ?? [];
+                $formedFilename = "$id-$index-$size.$format";
+                break;
             case 'document':
                 $representations = $driver->tryMethod('getDocuments');
+                $representation = $representations[$index] ?? [];
                 break;
             default:
                 $response->setStatusCode(400);
                 break;
             }
-            if (!$representations) {
-                return $response;
-            }
-            $id = $driver->getUniqueID();
-            $representation = $representations[$index] ?? [];
+
             if ($url = $representation['url'] ?? false) {
                 $fileName = $representation['description']
                     ?? $representation['desc']
-                    ?? urlencode($id) . '-' . $index . '.' . $format;
+                    ?? $formedFilename;
                 $fileLoader = $this->serviceLocator->get(\Finna\File\Loader::class);
                 $file = $fileLoader->proxyFileLoad(
                     $url,

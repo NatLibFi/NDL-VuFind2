@@ -20,64 +20,67 @@
         </div>
       <?php endif; ?>
       <div class="resultOtherLinks">
-        <div class="resultItemFormat"><?=$this->record($this->driver)->getFormatList() ?> <?=$this->record($this->driver)->getSourceIdElement() ?></div>
-          <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
-            <?php $prevOtherLinkHeading = ''; ?>
-            <?php foreach ($results as $result): ?>
-              <?=$prevOtherLinkHeading != $result['heading'] ? $this->transEsc('default::link_' . $result['heading'], null, $result['heading']) : '&nbsp;' ?>
-              <?php if (!empty($result['isn'])): ?>
-                <?php $otherLinkTitle = !empty($result['title']) ? $result['title'] : $result['isn']; ?>
-                <a title="<?=$this->escapeHtmlAttr($otherLinkTitle) ?>" href="<?=$this->record($this->driver)->getLink('isn', $result['isn']) ?>">
-                  <?=$this->escapeHtml($otherLinkTitle); ?>
-                </a>
-              <?php elseif (!empty($result['title'])): ?>
-                <a title="<?=$this->escapeHtmlAttr($result['title']) ?>" href="<?=$this->record($this->driver)->getLink('title', $result['title']) ?>">
-                  <?=$this->escapeHtml($result['title']); ?>
-                </a>
-              <?php endif; ?>
-              <?php if (!empty($result['author'])): ?>
-                (<?=$this->escapeHtml($result['author']); ?>)
-              <?php endif; ?>
-            <?php endforeach; ?>
-          <?php endif; ?>
-          <?php if ($this->driver->isCollection()): ?>
-            <?=implode('<br>', $this->driver->getSummary()); ?>
-          <?php else: ?>
-            <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
-              <?php $author = $authors[0]; ?>
-              <?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
-              <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
-            <?php endif; ?>
-            <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
-            <?php if (!empty($journalTitle)): ?>
-              <?=!empty($summAuthor) ? '' : ' '?>
-              <?php
-                $parentSource = $this->driver->getSourceIdentifier();
-                $parentId = $this->driver->tryMethod('getHierarchyParentId');
-                $parentLink = false;
-                if ($parentId) {
-                  try {
-                    $parentLink = $this->escapeHtmlAttr($this->recordLinker()->getUrl("$parentSource|{$parentId[0]}"));
-                  } catch (Exception $e) {
-                    // Probably parent record doesn't exist, fall back to linking by title
-                  }
-                }
-                if ($parentLink === false) {
-                  $parentLink = $this->record($this->driver)->getLink('journaltitle', str_replace(['{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'], '', $journalTitle));
-                }
-              ?>
-              <?=/* TODO: handle highlighting more elegantly here */ $this->transEsc('Published in') . ' <a href="' . $parentLink . '">' . $this->highlight($journalTitle) . '</a>';?>
-              <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)): ?>
-                <?=$this->escapeHtml($ref); ?>
-              <?php else: ?>
-                <?=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
-              <?php endif; ?>
-            <?php elseif (!empty($summDate)): ?>
-              <?=!empty($summAuthor) ? '' : ' '?>
-              <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
-            <?php endif; ?>
-          <?php endif; ?>
+        <div class="resultItemFormat">
+          <?=$this->record($this->driver)->getFormatList() ?>
+          <?=$this->record($this->driver)->getLabelList() ?>
         </div>
+        <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
+          <?php $prevOtherLinkHeading = ''; ?>
+          <?php foreach ($results as $result): ?>
+            <?=$prevOtherLinkHeading != $result['heading'] ? $this->transEsc('default::link_' . $result['heading'], null, $result['heading']) : '&nbsp;' ?>
+            <?php if (!empty($result['isn'])): ?>
+              <?php $otherLinkTitle = !empty($result['title']) ? $result['title'] : $result['isn']; ?>
+              <a title="<?=$this->escapeHtmlAttr($otherLinkTitle) ?>" href="<?=$this->record($this->driver)->getLink('isn', $result['isn']) ?>">
+                <?=$this->escapeHtml($otherLinkTitle); ?>
+              </a>
+            <?php elseif (!empty($result['title'])): ?>
+              <a title="<?=$this->escapeHtmlAttr($result['title']) ?>" href="<?=$this->record($this->driver)->getLink('title', $result['title']) ?>">
+                <?=$this->escapeHtml($result['title']); ?>
+              </a>
+            <?php endif; ?>
+            <?php if (!empty($result['author'])): ?>
+              (<?=$this->escapeHtml($result['author']); ?>)
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+        <?php if ($this->driver->isCollection()): ?>
+          <?=implode('<br>', $this->driver->getSummary()); ?>
+        <?php else: ?>
+          <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
+            <?php $author = $authors[0]; ?>
+            <?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
+            <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
+          <?php endif; ?>
+          <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+          <?php if (!empty($journalTitle)): ?>
+            <?=!empty($summAuthor) ? '' : ' '?>
+            <?php
+              $parentSource = $this->driver->getSourceIdentifier();
+              $parentId = $this->driver->tryMethod('getHierarchyParentId');
+              $parentLink = false;
+              if ($parentId) {
+                try {
+                  $parentLink = $this->escapeHtmlAttr($this->recordLinker()->getUrl("$parentSource|{$parentId[0]}"));
+                } catch (Exception $e) {
+                  // Probably parent record doesn't exist, fall back to linking by title
+                }
+              }
+              if ($parentLink === false) {
+                $parentLink = $this->record($this->driver)->getLink('journaltitle', str_replace(['{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'], '', $journalTitle));
+              }
+            ?>
+            <?=/* TODO: handle highlighting more elegantly here */ $this->transEsc('Published in') . ' <a href="' . $parentLink . '">' . $this->highlight($journalTitle) . '</a>';?>
+            <?php $ref = $this->driver->getContainerReference(); if (!empty($ref)): ?>
+              <?=$this->escapeHtml($ref); ?>
+            <?php else: ?>
+              <?=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
+            <?php endif; ?>
+          <?php elseif (!empty($summDate)): ?>
+            <?=!empty($summAuthor) ? '' : ' '?>
+            <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
+          <?php endif; ?>
+        <?php endif; ?>
+      </div>
     </div>
     <div class="compact-links">
       <?=$this->record($this->driver)->getOnlineUrls('results')?>

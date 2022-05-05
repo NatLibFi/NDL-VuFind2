@@ -9,7 +9,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2007.
- * Copyright (C) The National Library of Finland 2014.
+ * Copyright (C) The National Library of Finland 2014-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -61,7 +61,10 @@ class Demo extends \VuFind\ILS\Driver\Demo
     public function getConfig($function, $params = null)
     {
         if ($function == 'onlinePayment') {
-            $functionConfig = $this->config['OnlinePayment'] ?? [];
+            // Lower-case o is used in all other drivers, so use it here as well by
+            // default but allow OnlinePayment as a fallback:
+            $functionConfig = $this->config['onlinePayment']
+                ?? $this->config['OnlinePayment'] ?? [];
             if ($functionConfig) {
                 $functionConfig['exactBalanceRequired'] = true;
             }
@@ -192,7 +195,7 @@ class Demo extends \VuFind\ILS\Driver\Demo
         $transactionId,
         $transactionNumber
     ) {
-        if ((rand() % 10) > 8) {
+        if ($this->isFailing(__METHOD__, 10)) {
             throw new ILSException('online_payment_registration_failed');
         }
 

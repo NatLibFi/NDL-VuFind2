@@ -5,8 +5,9 @@ $items = $data['items'] ?? [];
 $fullResImages = $items['fullResImages'] ?? null;
 $ocrImages = $items['OCRImages'] ?? null;
 $physicalItems = $items['physicalItems'] ?? null;
+$collection = $this->driver->tryMethod('isCollection');
 ?>
-<?php if (!$digitized): ?>
+<?php if (!$digitized && !$collection): ?>
   <p><?= $this->translate('external_data_not_digitized_html', ['%%url%%' => $this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Feedback'))]) ?></p>
 <?php endif ?>
 

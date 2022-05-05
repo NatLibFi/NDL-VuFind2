@@ -100,3 +100,20 @@
     }
   }
 }
+
+.vjs-airplay-button {
+   .vjs-icon-placeholder {
+      background:       @icon-airplay--default center center no-repeat;
+      background-size:  contain;
+      display:          inline-block;
+      height:           @icon-airplay-size;
+      width:            @icon-airplay-size;
+   }
+
+   &:hover {
+      cursor: pointer;
+      .vjs-icon-placeholder {
+         background-image: @icon-airplay--hover;
+      }
+   }
+}

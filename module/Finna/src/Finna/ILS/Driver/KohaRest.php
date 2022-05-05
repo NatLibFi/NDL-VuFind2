@@ -230,7 +230,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $fines = parent::getMyFines($patron);
         foreach ($fines as &$fine) {
-            $fine['payableOnline'] = true;
+            $fine['payableOnline'] = $fine['balance'] > 0;
         }
         return $fines;
     }
@@ -628,7 +628,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         if (!empty($fines)) {
             $amount = 0;
             foreach ($fines as $fine) {
-                $amount += $fine['balance'];
+                if ($fine['payableOnline']) {
+                    $amount += $fine['balance'];
+                }
             }
             $config = $this->getConfig('onlinePayment');
             $nonPayableReason = false;

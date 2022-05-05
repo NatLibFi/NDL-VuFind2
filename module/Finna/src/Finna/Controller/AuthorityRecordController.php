@@ -40,5 +40,10 @@ class AuthorityRecordController extends RecordController
 {
     use FinnaAuthorityControllerTrait;
 
-    protected $searchClassId = 'SolrAuth';
+    /**
+     * Type of record to display
+     *
+     * @var string
+     */
+    protected $sourceId = 'SolrAuth';
 }

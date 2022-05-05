@@ -65,7 +65,9 @@ class GetAccountNotifications
         $status = [
             'notifications' => false,
         ];
-        if (!empty($profile['expiration_soon']) || !empty($profile['messages'])) {
+        if (!empty($profile['expired']) || !empty($profile['expiration_soon'])
+            || !empty($profile['messages'])
+        ) {
             $status['notifications'] = true;
         } else {
             if ($this->ils->checkCapability('getAccountBlocks', compact('patron'))

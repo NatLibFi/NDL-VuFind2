@@ -68,13 +68,17 @@ trait FinnaParams
     /**
      * Get information on the current state of the boolean checkbox facets.
      *
-     * @param array $allowed List of checkbox filters to return (null for all)
+     * @param array $include        List of checkbox filters to return (null for all)
+     * @param bool  $includeDynamic Should we include dynamically-generated
+     * checkboxes that are not part of the include list above?
      *
      * @return array
      */
-    public function getCheckboxFacets(array $allowed = null)
-    {
-        $facets = parent::getCheckboxFacets($allowed);
+    public function getCheckboxFacets(
+        array $include = null,
+        bool $includeDynamic = true
+    ) {
+        $facets = parent::getCheckboxFacets($include, $includeDynamic);
 
         // Hide checkboxfacets that are
         // configured as SearchTabsFilters
@@ -110,7 +114,9 @@ trait FinnaParams
      */
     public function getFacetLabel($field, $value = null, $default = null)
     {
-        if ($this->isGeographicFilter($field)) {
+        if (is_callable([$this, 'isGeographicFilter'])
+            && $this->isGeographicFilter($field)
+        ) {
             return 'Geographical Area';
         }
         return parent::getFacetLabel($field, $value, $default);
@@ -125,6 +131,10 @@ trait FinnaParams
      */
     public function getGeographicFilters($filterList)
     {
+        if (!is_callable([$this, 'isGeographicFilter'])) {
+            return [];
+        }
+
         $results = [];
         foreach ($filterList as $filters) {
             foreach ($filters as $filter) {
@@ -134,19 +144,6 @@ trait FinnaParams
             }
         }
         return $results;
-    }
-
-    /**
-     * Check if the given filter is a geographic filter.
-     *
-     * @param string|array $filter Facet
-     *
-     * @return boolean
-     */
-    public function isGeographicFilter($filter)
-    {
-        $filter = $filter[0]['field'] ?? $filter;
-        return strncmp($filter, '{!geofilt', 9) === 0;
     }
 
     /**
@@ -198,6 +195,10 @@ trait FinnaParams
      */
     public function removeGeographicFilters($filterList)
     {
+        if (!is_callable([$this, 'isGeographicFilter'])) {
+            return $filterList;
+        }
+
         foreach ($filterList as $key => $filters) {
             foreach ($filters as $filterKey => $filter) {
                 if ($this->isGeographicFilter($filter['field'])) {
@@ -302,7 +303,9 @@ trait FinnaParams
         if ($this->isDateRangeFilter($field)) {
             return $this->formatDateRangeFilterListEntry($res, $field, $value);
         }
-        if ($this->isGeographicFilter($field)) {
+        if (is_callable([$this, 'isGeographicFilter'])
+            && $this->isGeographicFilter($field)
+        ) {
             return $this->formatGeographicFilterListEntry($res, $field, $value);
         }
         return $res;
