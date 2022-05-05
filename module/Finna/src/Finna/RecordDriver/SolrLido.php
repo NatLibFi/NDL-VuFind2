@@ -1197,8 +1197,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             }
             $culture = (string)($node->culture->term ?? '');
             $descriptions = [];
-            foreach ($node->eventDescriptionSet ?? [] as $description) {
-                if ($note = trim((string)($description->descriptiveNoteValue ?? ''))) {
+            foreach ($node->eventDescriptionSet ?? [] as $set) {
+                if ($note = trim((string)($set->descriptiveNoteValue ?? ''))) {
                     $descriptions[] = $note;
                 }
             }
