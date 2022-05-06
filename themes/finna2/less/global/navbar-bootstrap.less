@@ -69,6 +69,14 @@
   &:not(.collapsed) .fa.fa-bars {
     display: none;
   }
+  &.activated {
+    animation: bg-blinker .4s ease-in-out .2s 1;
+  }
+  @keyframes bg-blinker {
+    50%  {
+      background-color: screen(@brand-primary, rgba(255, 255, 255, 0.4));
+    }
+  }
 }
 
 .navbar-nav {

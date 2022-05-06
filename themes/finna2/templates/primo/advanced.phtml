@@ -70,7 +70,7 @@
               <option value="<?=$this->escapeHtmlAttr($searchVal)?>"<?=($currRow && $currRow->getOperator() == $searchVal)?' selected="selected"':''?>><?=$this->transEsc($searchDesc)?></option>
             <?php endforeach; ?>
             </select>
-            <input id="search_lookfor<?=$i?>_<?=$j?>" type="text" value="<?=$currRow?$this->escapeHtmlAttr($currRow->getString()):''?>" size="30" name="lookfor<?=$i?>[]" class="form-control form-inline responsive-field" placeholder="<?=$this->transEsc('Search words')?>..." />
+            <input id="search_lookfor<?=$i?>_<?=$j?>" type="text" value="<?=$currRow?$this->escapeHtmlAttr($currRow->getString()):''?>" size="30" name="lookfor<?=$i?>[]" class="form-control form-inline responsive-field" placeholder="<?=$this->transEscAttr('Search words')?><?=$this->transEscAttr('eol_ellipsis')?>" />
             <select id="search_type<?=$i?>_<?=$j?>" name="type<?=$i?>[]" class="form-control form-inline responsive-field">
             <?php foreach ($this->options->getAdvancedHandlers() as $searchVal => $searchDesc): ?>
               <option value="<?=$this->escapeHtmlAttr($searchVal)?>"<?=($currRow && $currRow->getHandler() == $searchVal)?' selected="selected"':''?>><?=$this->transEsc($searchDesc)?></option>

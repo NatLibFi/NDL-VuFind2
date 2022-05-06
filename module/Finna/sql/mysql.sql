@@ -139,7 +139,10 @@ CREATE TABLE `finna_cache` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `resource_id` (`resource_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `finna_feedback` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT null,
@@ -155,6 +158,67 @@ CREATE TABLE `finna_feedback` (
   KEY `url_status` (`ui_url`, `status`),
   KEY `form` (`form`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `finna_page_view_stats` (
+  `institution` varchar(255) NOT NULL,
+  `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
+  `controller` varchar(128) NOT NULL,
+  `action` varchar(128) NOT NULL,
+  `date` DATE NOT NULL,
+  `count` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`institution`, `view`, `crawler`, `controller`, `action`, `date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `finna_session_stats` (
+  `institution` varchar(255) NOT NULL,
+  `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
+  `date` DATE NOT NULL,
+  `count` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`institution`, `view`, `crawler`, `date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `finna_record_stats` (
+  `institution` varchar(255) NOT NULL,
+  `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
+  `date` DATE NOT NULL,
+  `backend` varchar(128) NOT NULL,
+  `source` varchar(128) NOT NULL,
+  `count` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`institution`, `view`, `crawler`, `date`, `backend`, `source`),
+  KEY `record_backend` (`backend`),
+  KEY `record_source` (`source`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `finna_record_stats_log` (
+  `institution` varchar(255) NOT NULL,
+  `view` varchar(255) NOT NULL,
+  `crawler` tinyint(1) NOT NULL,
+  `date` DATE NOT NULL,
+  `backend` varchar(128) NOT NULL,
+  `source` varchar(255) NOT NULL,
+  `record_id` varchar(255) NOT NULL,
+  `formats` varchar(255) NOT NULL,
+  `usage_rights` varchar(255) NOT NULL,
+  `extra_metadata` mediumtext DEFAULT NULL,
+  `count` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`institution`, `view`, `crawler`, `date`, `record_id`),
+  KEY `record_source` (`source`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 /*!40101 SET character_set_client = @saved_cs_client */;
 

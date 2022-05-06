@@ -546,7 +546,8 @@ class DueDateReminders extends AbstractUtilCommand
             'lastLogin' => $lastLogin->format($dateFormat),
             'loginMethod' => $loginMethod,
             'serviceName' => $serviceName,
-            'userInstitution' => $userInstitution
+            'userInstitution' => $userInstitution,
+            'user' => $user
         ];
 
         $urlHelper = $this->urlHelper;

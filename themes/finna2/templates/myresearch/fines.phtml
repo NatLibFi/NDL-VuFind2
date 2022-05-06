@@ -200,7 +200,6 @@
 </div>
 <?php
   if (!empty($this->registerPayment)) {
-    $this->headScript()->appendFile('finna-online-payment.js');
     $paramsJson = json_encode($registerPaymentParams);
     $js = <<<JS
 $(document).ready(function() {
@@ -208,8 +207,6 @@ $(document).ready(function() {
 });
 JS;
     echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $js, 'SET');
-  } elseif (!empty($this->paymentRegistered)) {
-    echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, '$(document).ready(function() { VuFind.account.clearCache(); });', 'SET');
   }
 ?>
 

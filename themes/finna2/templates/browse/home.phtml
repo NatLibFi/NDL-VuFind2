@@ -72,7 +72,7 @@
   <?php if (!empty($this->resultList)): ?>
     <div class="browse list-group" id="list4">
     <?php foreach($this->resultList as $result): ?>
-        <a class="list-group-item clearfix" href="<?=$SEARCH_BASE ?>?<?=$this->paramTitle ?><?=urlencode($result['value']) ?><?php if ($this->searchParams): foreach($this->searchParams as $var => $val): ?>&<?=$var ?>=<?=urlencode($val) ?><?php endforeach;endif; ?>">
+        <a class="list-group-item clearfix" href="<?=$SEARCH_BASE ?>?<?=$this->paramTitle ?><?=urlencode($result['value']) ?><?php if ($this->searchParams): foreach($this->searchParams as $var => $val): ?>&amp;<?=$var ?>=<?=urlencode($val) ?><?php endforeach;endif; ?>">
           <?=$this->escapeHtml($result['displayText'])?>
           <span> (<?=number_format($result['count']) ?>)</span>
         </a>

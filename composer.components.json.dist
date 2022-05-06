@@ -1,0 +1,17 @@
+{
+    "__comment__": [
+        "See https://github.com/wikimedia/composer-merge-plugin for more details."
+    ],
+    "require": {
+      "natlibfi/finna-ui-components": "@dev"
+    },
+    "repositories": {
+        "natlibfi/finna-ui-components": {
+            "type": "path",
+            "url": "../finna-ui-components",
+            "options": {
+                "symlink": true
+            }
+        }
+    }
+}

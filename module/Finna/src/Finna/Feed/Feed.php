@@ -29,6 +29,8 @@
 namespace Finna\Feed;
 
 use Laminas\Config\Config;
+use Laminas\Feed\Reader\Entry\AbstractEntry;
+use Laminas\Feed\Reader\Feed\AbstractFeed;
 use Laminas\Feed\Reader\Reader;
 use Laminas\Mvc\Controller\Plugin\Url;
 use VuFind\Cache\Manager as CacheManager;
@@ -257,8 +259,6 @@ class Feed implements \VuFind\I18n\Translator\TranslatorAwareInterface,
         $config = $feedConfig['result'];
         $url = trim($feedConfig['url']);
 
-        $type = $config->type;
-
         $cacheKey = (array)$feedConfig;
         $cacheKey['language'] = $this->translator->getLocale();
 
@@ -323,14 +323,15 @@ EOT;
                 }
             } else {
                 // Local file
-                if (!is_file($url)) {
-                    $this->logError("File $url could not be found");
+                $file = APPLICATION_PATH . '/' . ltrim($url, '/');
+                if (!is_file($file)) {
+                    $this->logError("File $file (from $url) could not be found");
                 }
                 try {
-                    $channel = Reader::importFile($url);
+                    $channel = Reader::importFile($file);
                 } catch (\Exception $e) {
                     $this->logError(
-                        "Error importing feed from file $url: " . $e->getMessage()
+                        "Error importing feed from file $file: " . $e->getMessage()
                     );
                 }
             }
@@ -351,7 +352,9 @@ EOT;
                 $channel = Reader::importString($feedStr);
             }
 
-            file_put_contents($localFile, $channel->saveXml());
+            if ($channel instanceof AbstractFeed) {
+                file_put_contents($localFile, $channel->saveXml());
+            }
         }
 
         if (!$channel) {
@@ -364,10 +367,10 @@ EOT;
     /**
      * Function to parse feed with config
      *
-     * @param string      $channel Feed channel
-     * @param array       $config  Feed config
-     * @param string|null $id      Feed ID (required when feed content is
-     *                             displayed on content-page or modal)
+     * @param AbstractFeed $channel Feed channel
+     * @param Config       $config  Feed config
+     * @param string|null  $id      Feed ID (required when feed content is
+     *                              displayed on content-page or modal)
      *
      * @return array
      */
@@ -423,7 +426,7 @@ EOT;
 
         foreach ($channel as $item) {
             if (!$xpath) {
-                $xpath = $item->getXpath();
+                $xpath = ($item instanceof AbstractEntry) ? $item->getXpath() : '';
             }
             $data = [];
             $data['modal'] = $modal;
@@ -432,7 +435,7 @@ EOT;
                     || $elements[$setting] != 0
                 ) {
                     $value = $item->{$method}();
-                    if (is_object($value)) {
+                    if (is_object($value) && !($value instanceof \DateTime)) {
                         $value = get_object_vars($value);
                     }
 
@@ -450,16 +453,16 @@ EOT;
                             }
                         }
                     } elseif ($setting == 'date') {
-                        if (isset($value['date'])) {
-                            $date = new \DateTime(($value['date']));
+                        if (null !== $value) {
+                            $date = $value;
                             if ($dateFormat) {
                                 $value = $date->format($dateFormat);
                             }
                             $data['dateFull'] = $date->format($fullDateFormat);
                         }
                     } elseif ($setting == 'contentDate') {
-                        if (isset($value['date'])) {
-                            $date = new \DateTime(($value['date']));
+                        if (null !== $value) {
+                            $date = $value;
                             if ($contentDateFormat) {
                                 $value = $date->format($contentDateFormat);
                             }
@@ -467,22 +470,25 @@ EOT;
                                 = $date->format($fullDateFormat);
                         }
                     } elseif ($setting == 'link' && $showFullContentOnSite) {
-                        if (!$itemId = $item->getId()) {
+                        if (!($itemId = $item->getId())) {
                             $itemId = $cnt;
                         }
-                        $link = $this->urlHelper->fromRoute(
+                        $value = $this->urlHelper->fromRoute(
                             'feed-content-page',
-                            ['page' => $id, 'element' => urlencode($itemId)]
+                            ['page' => $id],
+                            [
+                                'query' => [
+                                    'element' => $itemId,
+                                    'lng' => $this->getTranslatorLocale()
+                                ]
+                            ]
                         );
-                        $value = $link;
                     } elseif ($setting == 'id') {
                         if (!$value) {
                             $value = $cnt;
                         }
-                    } else {
-                        if (is_string($value)) {
-                            $value = strip_tags($value);
-                        }
+                    } elseif (is_string($value)) {
+                        $value = strip_tags($value);
                     }
                     if ($value) {
                         $data[$setting] = $value;
@@ -531,6 +537,8 @@ EOT;
                 }
                 $data['xcal']['startDate'] = $dateStart->format($fullDateFormat);
                 $data['xcal']['endDate'] = $dateEnd->format($fullDateFormat);
+                $data['xcal']['singleDay']
+                    = $data['xcal']['startDate'] === $data['xcal']['endDate'];
             }
 
             // Make sure that we have something to display
@@ -588,7 +596,7 @@ EOT;
                                     $styleProperties[] = $prop;
                                 }
                             }
-                            $el->removeAttribute("style");
+                            $el->removeAttribute('style');
                             $el->setAttribute(
                                 'style',
                                 implode(';', $styleProperties)

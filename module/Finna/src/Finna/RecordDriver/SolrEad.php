@@ -107,19 +107,17 @@ class SolrEad extends SolrDefault
     public function getAccessRestrictionsType($language)
     {
         $record = $this->getXmlRecord();
-        if (!isset($record->accessrestrict)) {
+        $restrict = $record->userestrict->p ?? $record->accessrestrict->p ?? '';
+        if (!($restrict = trim((string)$restrict))) {
             return false;
         }
-        if (isset($record->accessrestrict->p)) {
-            $copyright = $this->getMappedRights((string)$record->accessrestrict->p);
-            $data = [];
-            $data['copyright'] = $copyright;
-            if ($link = $this->getRightsLink($copyright, $language)) {
-                $data['link'] = $link;
-            }
-            return $data;
+        $data = [];
+        $data['copyright'] = $copyright
+            = $this->getMappedRights($restrict);
+        if ($link = $this->getRightsLink($copyright, $language)) {
+            $data['link'] = $link;
         }
-        return false;
+        return $data;
     }
 
     /**
@@ -493,7 +491,7 @@ class SolrEad extends SolrDefault
                 continue;
             }
 
-            $desc = $url;
+            $desc = '';
             if ($node->daodesc) {
                 if ($node->daodesc->p) {
                     $desc = (string)$node->daodesc->p;
@@ -505,6 +503,7 @@ class SolrEad extends SolrDefault
                     $desc = (string)$p[0];
                 }
             }
+            $desc = empty($desc) ? $url : $desc;
             if (!$this->urlBlocked($url, $desc)) {
                 $urls[] = [
                     'url' => $url,
@@ -666,6 +665,31 @@ class SolrEad extends SolrDefault
             return (string)$unitdate[0];
         }
         return '';
+    }
+
+    /**
+     * Get an array of alternative titles for the record.
+     *
+     * @return array
+     */
+    public function getAlternativeTitles()
+    {
+        $results = [];
+        // Main title might be already normalized, but do it again to make sure:
+        $mainTitle = \Normalizer::normalize($this->getTitle(), \Normalizer::FORM_KC);
+        $xml = $this->getXmlRecord();
+        foreach ($xml->did->unittitle ?? [] as $title) {
+            $title = trim((string)$title);
+            $normalized = \Normalizer::normalize($title, \Normalizer::FORM_KC);
+            // Compare with the beginning of main title since it may have additional
+            // information appended to it:
+            $len = mb_strlen($normalized, 'UTF-8');
+            if (mb_substr($mainTitle, 0, $len, 'UTF-8') !== $normalized) {
+                $results[] = $title;
+            }
+        }
+
+        return $results;
     }
 
     /**

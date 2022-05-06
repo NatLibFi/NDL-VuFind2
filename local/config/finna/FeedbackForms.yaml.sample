@@ -52,7 +52,7 @@
 #     api      Form data is sent as a JSON message to an external API
 #
 #   apiSettings:
-#     url          (string) URL to use with sendMethod api
+#     url          (string) URL to use with sendMethod api (use "test" to just output the API request)
 #     username     (string) Username for API authentication
 #     password     (string) Password for API authentication
 #     authMethod   (string) Authentication method (basic [default] or digest)

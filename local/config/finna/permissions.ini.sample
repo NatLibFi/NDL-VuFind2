@@ -124,6 +124,14 @@ ipRange[] = 127.0.0.1
 ipRange[] = ::1
 permission = finna.cache
 
+; Cache methods admin API permissions. Normally no local configuration override
+; needed.
+[api.Admin.Cache]
+permission[] = access.api.admin.cache
+require = ANY
+ipRange[] = '127.0.0.1'
+ipRange[] = '::1'
+
 ; Access to Finna API
 ;[finna.api]
 ;require = ANY

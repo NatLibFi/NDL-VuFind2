@@ -697,15 +697,35 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 = $this->getCheckoutInformation($entry);
 
             $dueStatus = false;
-            $now = time();
-            $dueTimeStamp = strtotime($entry['date_due']);
-            if (is_numeric($dueTimeStamp)) {
-                if ($now > $dueTimeStamp) {
-                    $dueStatus = 'overdue';
-                } elseif ($now > $dueTimeStamp - (1 * 24 * 60 * 60)) {
-                    $dueStatus = 'due';
+            if (!empty($entry['date_due'])) {
+                $now = time();
+                $dueTimeStamp = strtotime($entry['date_due']);
+                if (is_numeric($dueTimeStamp)) {
+                    if ($now > $dueTimeStamp) {
+                        $dueStatus = 'overdue';
+                    } elseif ($now > $dueTimeStamp - (1 * 24 * 60 * 60)) {
+                        $dueStatus = 'due';
+                    }
                 }
             }
+
+            $checkoutDate = !empty($entry['issuedate'])
+                ? $this->dateConverter->convertToDisplayDate(
+                    'Y-m-d\TH:i:sP',
+                    $entry['issuedate']
+                ) : '';
+
+            $dueDate = !empty($entry['date_due'])
+                ? $this->dateConverter->convertToDisplayDate(
+                    'Y-m-d\TH:i:sP',
+                    $entry['date_due']
+                ) : '';
+
+            $returnDate = !empty($entry['returndate'])
+                ? $this->dateConverter->convertToDisplayDate(
+                    'Y-m-d\TH:i:sP',
+                    $entry['returndate']
+                ) : '';
 
             $transaction = [
                 'id' => $biblionumber,
@@ -713,19 +733,10 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 'item_id' => $entry['itemnumber'],
                 'title' => $title,
                 'volume' => $volume,
-                'checkoutdate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP',
-                    $entry['issuedate']
-                ),
-                'duedate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP',
-                    $entry['date_due']
-                ),
+                'checkoutdate' => $checkoutDate,
+                'duedate' => $dueDate,
                 'dueStatus' => $dueStatus,
-                'returndate' => $this->dateConverter->convertToDisplayDate(
-                    'Y-m-d\TH:i:sP',
-                    $entry['returndate']
-                ),
+                'returndate' => $returnDate,
                 'renew' => $entry['renewals']
             ];
 

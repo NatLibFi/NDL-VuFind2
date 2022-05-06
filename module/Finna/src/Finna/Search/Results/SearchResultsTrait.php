@@ -50,16 +50,6 @@ trait SearchResultsTrait
     protected $request = null;
 
     /**
-     * Get backend ID
-     *
-     * @return string
-     */
-    public function getBackendId()
-    {
-        return $this->backendId ?? 'Solr';
-    }
-
-    /**
      * Get the URL helper for this object.
      *
      * Finna: Creates a Finna version and adds current search id.

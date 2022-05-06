@@ -1,38 +1,32 @@
 <!-- START of: finna - Helpers/feedtabs.phtml -->
 <div class="feed-tabs" id="feed-tabs-<?=$this->escapeHtmlAttr($this->id)?>">
   <?php if (count($this->feedIds) > 3): ?>
-  <div class="tabs-responsive">
+    <div class="tabs-responsive">
   <?php endif; ?>
-    <div class="visible-md visible-lg">
-      <div class="feed-tabs-container">
-        <h2 class="feed-tabs-title"><?= $this->transEsc($this->title);?></h2>
-        <ul class="nav nav-tabs" role="tablist">
-        <?php $tabNames = []; ?>
-        <?php foreach ($this->feedIds as $desc => $feed): ?>
-          <?php
-           $tabName = preg_replace("/\W/", "-", strtolower($feed));
-           $tabNames[] = $tabName;
-           $tabClasses = [ 'nav-item', 'feed-tab', $tabName ];
-           $isActive = 0 === strcasecmp($this->active, $feed);
-           if ($isActive) {
-              $tabClasses[] = 'active initial-active';
-           }
-           $tabId = $this->id . '-' . $feed;
-          ?>
-          <li class="<?=$this->escapeHtmlAttr(implode(' ', $tabClasses))?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"
-             aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>"
-             id="<?=$this->escapeHtmlAttr($tabId)?>-tab"
-             role="tab"
-             tabindex="0"
-             data-tab="<?=$this->escapeHtmlAttr($feed)?>"
-             aria-selected="<?= $isActive ? 'true' : 'false' ?>"><?= $this->transEsc($desc)?>
-          </li>
-          <?php endforeach; ?>
-        </ul>
-      </div>
+  <div class="visible-md visible-lg">
+    <div class="feed-tabs-container">
+      <h2 class="feed-tabs-title"><?= $this->transEsc($this->title);?></h2>
+      <ul class="nav nav-tabs" role="tablist">
+      <?php $tabNames = []; ?>
+      <?php $id = 0; ?>
+      <?php foreach ($this->feedIds as $desc => $feed): ?>
+        <?php
+          $tabName = preg_replace("/\W/", "-", strtolower($feed));
+          $tabNames[] = $tabName;
+          $isActive = 0 === strcasecmp($this->active, $feed);
+          $tabId = $this->id . '-' . $feed;
+        ?>
+        <li class="feed-tab <?=$isActive ? 'active' : ''?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>" role="tab" aria-selected="<?= $isActive ? 'true' : 'false' ?>">
+            <a class="feed-tab-anchor" tabindex="0" href="<?='#' . $this->escapeHtmlAttr($tabId)?>" id="<?=$this->escapeHtmlAttr($tabId) . '-tab'?>" data-tab="<?=$this->escapeHtmlAttr($feed)?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>" data-lightbox-ignore>
+              <?= $this->transEsc($desc)?>
+            </a>
+        </li>
+        <?php endforeach; ?>
+      </ul>
     </div>
-  <?php if (count($this->feedIds) > 3): ?>
   </div>
+  <?php if (count($this->feedIds) > 3): ?>
+    </div>
   <?php endif; ?>
 
   <div class="feed-accordions" role="tablist">
@@ -46,18 +40,16 @@
         }
         $tabId = $this->id . '-' . $feed;
       ?>
-      <div class="<?=$this->escapeHtmlAttr(implode(' ', $classes))?>"
-           data-tab="<?=$this->escapeHtmlAttr($feed)?>"
-           role="tab"
-           tabindex="0"
-           aria-selected="<?= $isActive ? 'true' : 'false' ?>">
-          <span class="title"><?=$this->transEsc($desc)?></span>
+      <div class="<?=$this->escapeHtmlAttr(implode(' ', $classes))?>" role="tab" aria-selected="<?= $isActive ? 'true' : 'false' ?>">
+           <a class="feed-accordion-anchor" tabindex="0" href="<?='#' . $this->escapeHtmlAttr($tabId)?>" id="<?=$this->escapeHtmlAttr($tabId) . '-accordion'?>" data-tab="<?=$this->escapeHtmlAttr($feed)?>" aria-label="<?=$this->escapeHtmlAttr($this->transEsc($desc))?>" data-lightbox-ignore>
+              <?= $this->transEsc($desc)?>
+            </a>
           <i class="icon"></i>
       </div>
     <?php endforeach; ?>
   </div>
 
-  <div class="tab-content" id="tab-content-<?=$this->escapeHtmlAttr($this->id)?>">
+  <div class="tab-content">
     <div class="feed-container" data-init="0"></div>
   </div>
 </div>

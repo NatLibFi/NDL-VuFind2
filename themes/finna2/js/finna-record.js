@@ -295,7 +295,7 @@ finna.record = (function finnaRecord() {
       ? window.location.hash.toLowerCase() : '';
 
     // Open tab in url hash
-    var $tab = $("a[data-tab='" + newTab.substr(1) + "']");
+    var $tab = $("a:not(.feed-tab-anchor,.feed-accordion-anchor)[data-tab='" + newTab.substr(1) + "']");
     var accordion = (newTab.length <= 1 || newTab === '#tabnav' || $tab.length === 0)
       ? $('.record-accordions .accordion.initiallyActive')
       : $tab.closest('.accordion');

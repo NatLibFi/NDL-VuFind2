@@ -4,7 +4,7 @@
   <img src="<?=$this->imageLink('online-payment-cpu.png')?>" id="cpu-logo" alt="CPU" />
   <div class="terms-of-service terms-of-service-text">
     <div class="terms-of-service-info-box">
-      <?=$this->translate('online_payment_terms_CPU_html', ['%%paymentHandler%%' => $paymentHandler])?>
+      <?=$this->translate('online_payment_terms_CPU_html', ['%%paymentHandler%%' => $this->escapeHtml($paymentHandler)])?>
     </div>
   </div>
   <input name="transactionId" type="hidden" value="<?=$this->escapeHtmlAttr($this->transactionId)?>">

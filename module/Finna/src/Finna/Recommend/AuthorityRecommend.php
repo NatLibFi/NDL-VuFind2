@@ -318,17 +318,16 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
             }
 
             $roles = $facets[AuthorityHelper::AUTHOR_ID_ROLE_FACET]['list'] ?? [];
-            if ($this->authorityHelper) {
-                foreach ($roles as &$role) {
-                    $authorityInfo = $this->authorityHelper->formatFacet(
-                        $role['displayText'],
-                        true
-                    );
-                    $role['displayText'] = $authorityInfo['displayText'];
-                    $role['role'] = $authorityInfo['role'];
-                    $role['enabled'] = in_array($role['value'], $authorIdFilters);
-                }
+            foreach ($roles as &$role) {
+                $authorityInfo = $this->authorityHelper->formatFacet(
+                    $role['displayText'],
+                    true
+                );
+                $role['displayText'] = $authorityInfo['displayText'];
+                $role['role'] = $authorityInfo['role'];
+                $role['enabled'] = in_array($role['value'], $authorIdFilters);
             }
+            unset($role);
         } catch (RequestErrorException $e) {
             return [];
         }

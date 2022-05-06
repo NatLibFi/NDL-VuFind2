@@ -28,7 +28,14 @@ autoConfigure = "0"
 ; not possible (i.e. during sitemap generation at the command line).
 ;url = "http://localhost:8081/vufind2"
 email           = finna-posti@helsinki.fi
+; The title of your site, used in some messages and (by default) page <title> tags.
+; Including site title in page titles is recommended to improve browser tab
+; navigation for users with screen readers. However, if you wish to remove this from
+; titles or change the order/layout, you can customize the title_wrapper translation
+; in your language files to remove or relocate the %%siteTitle%% token.
 title           = "Finna"
+; The separator used between page name and site name in the <title> tag of pages.
+titleSeparator = "|"
 ; This is the default theme for non-mobile devices (or all devices if mobile_theme
 ; is disabled below)
 theme           = finna2
@@ -392,24 +399,9 @@ choice_order = Database,Shibboleth,MultiILS
 ; This section will allow you to control whether VuFind should record usage
 ; statistics.
 [Statistics]
-; You can uncomment one or more of these lines to enable statistics tracking.
-; Each enabled mode will write stats to a different target (Solr stats index,
-; flat file, or database tables).  Some modes require additional settings below.
-;
-; Currently, VuFind stores statistics in two different contexts: searches and
-; record views.  By default, an enabled mode will log both types of stats.  If
-; you want to log different types of stats to different targets, you can use a
-; qualifier -- for example, "mode[] = Solr:Record" and "mode[] = Db:Search".
-; Multiple targets may be separated by commas.  Do not use qualifiers unless you
-; really need to -- logging all statistics to the same target makes reporting
-; more effective.
-;
-; Note: Statistics gathering includes browser detection.  For best results, make
-; sure you have a recent browscap.ini file configured in PHP.  See
-; http://php.net/manual/en/function.get-browser.php#refsect1-function.get-browser-notes
-;mode[] = Solr
-;mode[] = File
-;mode[] = Db
+; Currently only supported statistics driver is Database. Uncomment to enable
+; recording of statistics:
+;driver = Database
 
 ; When using the Solr mode, specify the address of a Solr server containing a
 ; "stats" core here; if no URL is specified, [Index]/url below will be used.
@@ -692,8 +684,8 @@ lastname = SHIB_sn
 ;coverimages     = Syndetics:MySyndeticsId,Amazon:MyAccessKeyId,Booksite,LibraryThing:MyLibraryThingId,Google,OpenLibrary,Summon:MySerialsSolutionsClientKey,Contentcafe:MyContentCafeID,NatLibFi,BookyFi,BTJ:customerId
 coverimages     = NatLibFi,OpenLibrary
 
-; List of blocked formats prevented from showing in LIDO records image section
-; lidoFileFormatBlockList = 'tif,tiff,3d-pdf,3d model,glb,obj,gltf'
+; List of undisplayable file formats
+; undisplayable_file_formats = 'tif:tiff:3d-pdf:3d model:glb:obj:gltf'
 
 ; This setting controls the image to display when no book cover is available.
 ; The path is relative to the base of your theme directory.
@@ -794,9 +786,11 @@ recordMap = openlayers
 ;mapLabels = file:geosearch_test_lookup.txt
 ;displayCoords = true
 
-; Enables zoom for images in the image popup, only applies to records using the large image
-; layout. Disabled by default.
-; enableImagePopupZoom = true
+; Enables zoom for images in the image popup, only applies to
+; record formats specified in zoomFormats key. Disabled by default.
+;enableImagePopupZoom = true
+; A colon-separated list of formats that are enabled for image zoom function
+zoomFormats = qdc:forward:ead3:ead:lido
 
 [QRCode]
 ; This setting controls the image to display when no qrcode is available.
@@ -1213,10 +1207,12 @@ hide_holdings[] = "World Wide Web"
 
 ; You can use this setting to specify how grouped holdings details are displayed
 ; by default. Available options:
-;    collapse     - Collapse all details
-;    expand-first - Expand first group, collapse others (default)
-;    expand-all   - Expand all groups
-;holdings_details = collapse
+;    "collapse"            - Collapse all details
+;    "expand-first"        - Expand first group, collapse others (default)
+;    "expand-all"          - Expand all groups
+;    "collapse-journals"   - Used with other options (separated with a comma) to
+;                            always collapse journals
+;holdings_details = "expand-first,collapse-journals"
 
 ; This array controls which Related modules are used to display sidebars on the
 ; record view page.
@@ -1389,6 +1385,28 @@ allowed_url_schemes[] = 'maps'
 ; 3. Datasource of the new record.
 ; 4. (optional) Solr field that contains the identifier in the new record (default is ctrlnum).
 ; missing_record_redirect[] = "/^lusto\.(.+)/###(knp)$1###lusto-new"
+
+; Sources available for repository library request:
+repository_library_request_sources[] = vaari
+; Form used for repository library request:
+repository_library_request_form = RepositoryLibraryRequest
+; Whether to display repository library request in search results:
+repository_library_request_in_results = true
+; Whether to display repository library request in holdings:
+repository_library_request_in_holdings = true
+; Whether to display repository library request in organisation info box:
+repository_library_request_in_organisation_info = true
+
+; Record formats (metadata schemas) that always use the large image layout
+; regardless of material type when images are available (default is "lido",
+; "forward" and "forwardAuthority"):
+;large_image_record_formats[] = "lido"
+;large_image_record_formats[] = "qdc"
+
+; Formats (material types) that use the large image layout when images are available
+; (default is "0/Image/", "0/PhysicalObject/", "0/WorkOfArt/" and "0/Video/"):
+;large_image_formats[] = "0/Image/"
+;large_image_formats[] = "0/Map/"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
@@ -1582,12 +1600,28 @@ count = 2
 ;WorldCat = WorldCat
 ;SolrWeb = "Library Website"
 
-; Use Piwik for visitor tracking
-[Piwik]
-url = https://piwik.jotain.jossain/
+; Use Matomo for visitor tracking
+[Matomo]
+url = https://analytics.jotain.jossain/
 ;site_id = 1
 ;token_auth = ...
 custom_variables = 1
+custom_dimensions[Facets] = 1
+custom_dimensions[FacetTypes] = 2
+custom_dimensions[SearchType] = 3
+custom_dimensions[SearchBackend] = 4
+custom_dimensions[Sort] = 5
+custom_dimensions[Page] = 6
+custom_dimensions[Limit] = 7
+custom_dimensions[View] = 8
+custom_dimensions[RecordFormat] = 9
+custom_dimensions[RecordData] = 10
+custom_dimensions[RecordInstitution] = 11
+custom_dimensions[Context] = 12
+custom_dimensions[RecordAvailableOnline] = 13
+custom_dimensions[RecordIndex] = 14
+custom_dimensions[RecordSource] = 15
+custom_dimensions[Language] = 16
 
 ; Normalization preview allows one to display an external record
 ; as it would be displayed in VuFind. This requires a backend,
@@ -1710,17 +1744,22 @@ showLabels[Primo] = true
 
 ; 3D model settings
 [Models]
-; If uncommented and set to true, will open in a popup
-;popup = false
 ; How long should the models be cached, defaults at 1 week
 cacheTime = 604800
-; Ambient light intensity
-ambientIntensity = 1
-; Hemisphere light intensity
-hemisphereIntensity = 0.3
-; Angle to adjust padding between border of viewer and model
-viewerPaddingAngle = 35
 ; If debug is uncommented and true, will display additional data on the viewer
 ;debug = true
 ; Array of institutions which have proper preview images to show
 ;previewImages['museovirasto_testi'] = true
+
+; These settings control VuFind's APIs.
+; See https://vufind.org/wiki/development:apis for more information.
+[API]
+; Description of the API displayed in the OpenAPI specification and Swagger UI
+; (may contain Markdown, see https://spec.commonmark.org/):
+description = "Finna REST API is a read-only interface to Finna's search index.
+
+Most methods return the data as UTF-8 encoded JSON, served using the application/json MIME type.
+
+The API supports Cross-Origin Resource Sharing by setting the Access-Control-Allow-Origin HTTP header to "*" for all requests."
+; URL pointing to a Terms of Service page (optional, default is none):
+termsOfServiceUrl = "https://www.kiwi.fi/display/Finna/Finna+API+Terms+of+Use"

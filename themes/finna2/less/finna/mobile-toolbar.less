@@ -102,6 +102,34 @@
         background-color: rgba(255, 255, 255, 0.2);
       }
     }
+    li.btn-bookbag-toggle a{
+      position: relative;
+
+      .blinker {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: transparent;
+      }
+
+      .fa-close {
+        position: absolute;
+        top: 6px;
+        right: 4px;
+        font-size: 11px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 3px @sidebar-background;
+      }
+
+      &:hover {
+        .fa-close {
+          transition: box-shadow .2s ease-in-out;
+          box-shadow: 0 0 0 3px screen(@sidebar-background, rgba(255, 255, 255, 0.2));
+        }
+      }
+    }
   }
   section.template-name-results .sidebar,
   section.template-name-search .sidebar,
@@ -109,30 +137,33 @@
   section.template-name-mylist .sidebar,
   section.template-dir-collection.template-name-view .sidebar {
     position: fixed;
-    top: 120%;
-    transition: top 0.5s ease;
     background: @body-bg;
     z-index: 1030;
     width: 100%;
     height: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
+    right: 0;
     -webkit-overflow-scrolling: touch;
+    opacity: 0;
     padding-left: 0px;
     padding-right: 0px;
     padding-bottom: 40px;
     &.open {
-      top: 0%;
-      right: 0;
-    }
-    .list-group.facet:last-child {
-      margin-bottom: 44px;
+      top: 0;
+      opacity: 100%;
     }
     .list-group-item.active i.fa.fa-check-square-o:before {
       content: "\f00c" !important;
     }
     .list-group.facet {
-      margin: 0 10px;
-      margin-bottom: 5px;
+      margin: 0 10px 5px 10px;
+      &:first-of-type {
+        margin-top: 5px;
+      }
+      &:last-child {
+        margin-bottom: 44px;
+      }
     }
   }
   .mobile-navigation {
@@ -141,7 +172,6 @@
     z-index: 60;
     i {
       font-size: 15px;
-      vertical-align: -2px;
     }
     li.sidebar-navigation {
       padding: 11px;
@@ -159,6 +189,24 @@
     span.active-filters {
       float: right;
       max-width: 55%;
+    }
+  }
+  .finna-search-filter-toggle {
+    position: sticky;
+    top: @navbar-height;
+    &.sticky {
+      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+    }
+    margin-left: -(@grid-gutter-width / 2);
+    margin-right: -(@grid-gutter-width / 2);
+    padding-left: (@grid-gutter-width / 2);
+    padding-right: (@grid-gutter-width / 2);
+    padding-top: 12px;
+    padding-bottom: 12px;
+    z-index: 500;
+    background: #fff;
+    .btn-search-filter {
+      width: 100%;
     }
   }
 }

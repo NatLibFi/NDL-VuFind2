@@ -5,6 +5,9 @@ merge_array_settings = true
 [Directives]
 ;script-src[] = "https://trusted.service.something"
 
+; Avointen oppimateriaalien kirjasto
+; frame-src[] = “https://aoe.fi”
+
 ; Boost.ai (universitiesfront)
 ;connect-src[] = "https://universitiesfront.boost.ai"
 ;connect-src[] = "https://static.aim.front.ai"
@@ -51,6 +54,10 @@ merge_array_settings = true
 ;script-src[] = "https://cdn.smilee.io"
 ;script-src[] = "https://saas.smilee.fi"
 ;connect-src[] = "https://saas.smilee.fi"
+;connect-src[] = "wss://saas.smilee.fi"
+
+; SoundCloud
+;frame-src[] = "*.soundcloud.com"
 
 ; Tawk
 ;script-src[] = "https://va.tawk.to"
@@ -58,13 +65,16 @@ merge_array_settings = true
 ;connect-src[] = "wss://*.tawk.to"
 
 ; Twitter
-frame-src[] = "https://*.twitter.com"
+;frame-src[] = "https://*.twitter.com"
 
 ; Vimeo
 ;frame-src[] = "https://player.vimeo.com"
 
 ; Youtube
 ;frame-src[] = "https://www.youtube.com"
+
+; Youtube nocookie
+; frame-src[] = “https://www.youtube-nocookie.com”
 
 ; Zendesk chat (Zopim) - https://developer.zendesk.com/documentation/classic-web-widget-sdks/web-widget/integrating-with-google/csp/
 ;; Uusi lataustapa, ei toimi Safarilla:

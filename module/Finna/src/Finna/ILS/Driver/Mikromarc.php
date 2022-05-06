@@ -1077,6 +1077,15 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getMyTransactionHistory($patron, $params)
     {
+        $history = [
+            'count' => 0,
+            'transactions' => []
+        ];
+        // Do not fetch loan history if it is false or not set
+        if (!($patron['loan_history'] ?? false)) {
+            return $history;
+        }
+
         $sort = strpos($params['sort'], 'desc') ? 'desc' : 'asc';
         $request = [
             '$filter' => 'BorrowerId eq' . ' ' . $patron['id'],
@@ -1086,10 +1095,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             ['odata', 'BorrowerServiceHistories'],
             $request
         );
-        $history = [
-            'count' => count($result),
-            'transactions' => []
-        ];
+        $history['count'] = count($result);
         $serviceCodeMap = [
             'Returned' => 'returndate',
             'OnLoan' => 'checkoutdate',
@@ -2043,7 +2049,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
            'NoItemsAvailableByTerm' => 'hold_error_denied',
            'NoItemAvailable' => 'hold_error_denied',
            'NoTermsPermitLoanOrReservation' => 'hold_error_not_holdable',
-           'ReservedForOtherBorrower' => 'renew_item_requested'
+           'ReservedForOtherBorrower' => 'renew_item_requested',
+           'TermsDoNotAllowRenewal' => 'hold_error_not_holdable'
         ];
 
         if (isset($map[$message])) {

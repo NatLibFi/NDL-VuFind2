@@ -1,10 +1,11 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-audio-player.phtml -->
 <?php
-$videoScripts = $this->partial('Helpers/videojs-urls.phtml');
-$audioElementBase = [
-  'data-scripts' => $videoScripts
-];
-$this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
+  $this->partial('Helpers/videojs-translations.phtml');
+  $videoScripts = $this->partial('Helpers/videojs-urls.phtml');
+  $audioElementBase = [
+    'data-scripts' => $videoScripts
+  ];
+  $this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
 ?>
 <div class="audio-accordion">
 <?php foreach ($audioUrls as $ind => $url): ?>
@@ -14,7 +15,7 @@ $this->htmlElement()->addAttributeTemplate('audio-base', $audioElementBase);
       <?php if (!empty($url['desc'])): ?>
         <strong><?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?></strong>
       <?php else: ?>
-        <strong><?=$this->transEsc('format_Sound') ?></strong>
+        <strong><?=$this->transEsc('format_Sound')?></strong>
       <?php endif ?>
       </div>
     </div>

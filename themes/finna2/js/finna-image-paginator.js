@@ -125,9 +125,6 @@ FinnaPaginator.prototype.init = function init() {
     _.setEvents();
     _.loadPage(0, _.openImageIndex);
     _.setTrigger(_.track.find('a[index=' + _.openImageIndex + ']'));
-    _.addDocumentLoadCallback(function showLeftsidebar() {
-      $('.large-image-sidebar').removeClass('hidden');
-    });
   } else {
     _.setEvents();
     _.setListTrigger(_.getImageFromArray(0));
@@ -203,20 +200,6 @@ FinnaPaginator.prototype.setEvents = function setEvents() {
     _.lessBtn.on('click', function setImages() {
       toggleButtons(_.moreBtn, _.lessBtn);
       _.loadPage(0, null, _.settings.imagesPerRow);
-    });
-
-    _.trigger.on('viewer-show', function hideSelf() {
-      _.triggerImage.css('display', 'none');
-      _.triggerImage.siblings('div.iconlabel').css('display', 'none');
-      _.trigger.trigger('removeclick.finna');
-      _.trigger.on('click', function preventClicks(e) {
-        e.preventDefault();
-      });
-    });
-    _.trigger.on('image-show', function hideSelf() {
-      _.triggerImage.css('display', '');
-      _.triggerImage.siblings('div.iconlabel').css('display', '');
-      $.fn.finnaPopup.closeOpen('modelViewer');
     });
   } else {
     _.leftBtn.off('click').on('click', function setImage(){
@@ -562,31 +545,22 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
         $(image).parents('.grid').addClass('no-image');
       }
       if (!_.settings.isList && _.images.length <= 1) {
-        _.root.closest('.media-left').not('.audio').addClass('hidden-xs');
-        _.root.closest('.media-left').find('.organisation-menu').hide();
         _.root.css('display', 'none');
-        _.root.siblings('.image-details-container:not(:has(.image-rights))').hide();
-        $('.record.large-image-layout').addClass('no-image-layout').removeClass('large-image-layout');
-        $('.large-image-sidebar').addClass('visible-xs visible-sm');
-        $('.record-main').addClass('mainbody left');
-        _.addDocumentLoadCallback(function hideSidebar() {
-          $('.large-image-sidebar').addClass('visible-xs visible-sm');
-        });
+        _.root.siblings('.image-details-container:not(:has(.image-rights))').addClass('hidden');
       }
     } else if (_.trigger.hasClass('no-image')) {
       _.trigger.removeClass('no-image');
     }
   }
 
-  if (!_.settings.isList) {
-    _.showImageDetails(imagePopup);
-  }
   _.imageDetail.html(imagePopup.data('description'));
   img.off('load').on('load', function handleImage() {
-
+    if (!_.settings.isList) {
+      _.showImageDetails(imagePopup);
+    }
     setImageProperties(this);
   });
-  img.unveil(100);
+  finna.common.observeImages(img[0].parentNode.querySelectorAll('img[data-src]'));
 };
 
 FinnaPaginator.prototype.showImageDetails = function showImageDetails(imagePopup) {
@@ -719,8 +693,11 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     }
     _.popup.collapseArea.find('[data-embed-video]').each(function initVideo() {
       var videoSources = $(this).data('videoSources');
-      var scripts = $(this).data('scripts');
       var posterUrl = $(this).data('posterUrl');
+      var scripts = $(this).data('scripts');
+      $.each(scripts, function updateNonces(key, value) {
+        scripts[key] = VuFind.updateCspNonce(value);
+      });
       $(this).finnaPopup({
         id: 'popupvideo',
         cycle: false,
@@ -835,7 +812,8 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image) {
 
   if (image.type === 'model') {
     holder.attr({
-      'data-modelsettings': image.modelsettings,
+      'data-params': image.params,
+      'data-texture': image.texture,
       'data-scripts': image.scripts
     });
   }
@@ -945,14 +923,12 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
  */
 FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   var _ = this;
-  _.trigger.trigger('image-show');
-
-  if (imagePopup.attr('href')) {
-    _.trigger.removeClass('show-icon');
+  var imageType = imagePopup.data('type');
+  var img = _.trigger.find('img');
+  img.toggleClass('hidden', imageType === 'model');
+  if (imagePopup.attr('href') && imageType !== 'model') {
     _.changeTriggerImage(imagePopup);
   } else {
-    _.trigger.find('img').removeAttr('src');
-    _.trigger.addClass('show-icon');
     _.showImageDetails(imagePopup);
   }
   _.openImageIndex = imagePopup.attr('index');
@@ -970,12 +946,28 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   } else if (_.settings.triggerClick === 'open') {
     return;
   }
-  var imageType = imagePopup.data('type');
+  // Draggable="false" doesn't work...
+  _.trigger.off('dragstart').on('dragstart', function preventDrag(e) {
+    e.preventDefault();
+  });
+  if (_.viewer) {
+    _.viewer.parentNode.removeChild(_.viewer);
+    _.viewer = undefined;
+  }
   if (imageType === 'model') {
-    _.trigger.addClass('model-trigger');
-    _.trigger.finnaModel(imagePopup.data('modelsettings'), imagePopup.data('scripts'));
+    _.viewer = document.createElement('finna-model-viewer');
+    _.viewer.proxy = `${VuFind.path}/AJAX/JSON?${imagePopup.data('params')}`;
+    _.viewer.texture = `${VuFind.path}${imagePopup.data('texture')}`;
+    _.viewer.scripts = `${VuFind.path}${imagePopup.data('scripts')}`;
+    _.viewer.translations = _.settings.modelTranslations;
+    _.viewer.debug = _.settings.viewerDebug;
+    if (imagePopup.attr('href')) {
+      _.viewer.previewsrc = imagePopup.attr('href');
+    }
+    _.trigger.append(_.viewer);
+    _.trigger.trigger('removeclick.finna');
+    _.trigger.on('click', (e) => { e.preventDefault(); });
   } else {
-    _.trigger.removeClass('model-trigger');
     _.trigger.finnaPopup({
       modal: modal,
       id: 'paginator',

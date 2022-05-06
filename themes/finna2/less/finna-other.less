@@ -84,6 +84,9 @@ section.main.template-dir-feedback.template-name-response {
     & >.container.main-content {
         margin-top: 10px;
         padding-bottom: 25px;
+        @media(max-width: @screen-xs-max) {
+            margin-top: 0px;
+          }
     }
     & .resultItemFormat {
         margin: 3px 0px;
@@ -277,6 +280,10 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     display: none;
     &.truncate-done {
         display: block;
+    }
+    &.summary,
+    & > :last-child {
+        margin-bottom: 0;
     }
 }
 .less-link i, .less-link-top i {

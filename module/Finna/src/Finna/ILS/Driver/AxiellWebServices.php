@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -74,13 +74,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
      * @var string
      */
     protected $defaultPickUpLocation;
-
-    /**
-     * Excluded pickup locations
-     *
-     * @var array
-     */
-    protected $excludePickUpLocations;
 
     /**
      * Default request group
@@ -280,6 +273,22 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
     protected $titleListCacheSettings = [];
 
     /**
+     * Pick up location block list
+     *
+     * @var array
+     */
+    protected $excludedPickUpLocations = [
+        'regional' => [
+            'organisation' => [],
+            'unit' => []
+        ],
+        'normal' => [
+            'organisation' => [],
+            'unit' => []
+        ]
+    ];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter object
@@ -366,13 +375,50 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $this->defaultPickUpLocation
             = $this->config['Holds']['defaultPickUpLocation'] ?? false;
 
+        $holds = $this->config['Holds'];
+        // Bc for older setting
+        $excludedPickUpLocationsBc
+            = isset($holds['excludePickUpLocations'])
+            ? explode(':', $holds['excludePickUpLocations']) : [];
+
+        $excludedNormalLocations
+            = isset($holds['excludeLocationsFromNormalHoldPickUp'])
+            ? array_merge(
+                explode(':', $holds['excludeLocationsFromNormalHoldPickUp']),
+                $excludedPickUpLocationsBc
+            ) : $excludedPickUpLocationsBc;
+
+        $excludedRegionalLocations
+            = isset($holds['excludeLocationsFromRegionalHoldPickUp'])
+            ? array_merge(
+                explode(':', $holds['excludeLocationsFromRegionalHoldPickUp']),
+                $excludedPickUpLocationsBc
+            ) : $excludedPickUpLocationsBc;
+
+        $excludedNormalOrganisations
+            = isset($holds['excludeOrganisationsFromNormalHoldPickUp'])
+            ? explode(':', $holds['excludeOrganisationsFromNormalHoldPickUp'])
+            : [];
+
+        $excludedRegionalOrganisations
+            = isset($holds['excludeOrganisationsFromRegionalHoldPickUp'])
+            ? explode(':', $holds['excludeOrganisationsFromRegionalHoldPickUp'])
+            : [];
+
+        $this->excludedPickUpLocations = [
+            'normal' => [
+                'unit' => $excludedNormalLocations,
+                'organisation' => $excludedNormalOrganisations
+            ],
+            'regional' => [
+                'unit' => $excludedRegionalLocations,
+                'organisation' => $excludedRegionalOrganisations
+            ]
+        ];
+
         if ($this->defaultPickUpLocation == '0') {
             $this->defaultPickUpLocation = false;
         }
-
-        $this->excludePickUpLocations
-            = isset($this->config['Holds']['excludePickUpLocations'])
-            ? explode(':', $this->config['Holds']['excludePickUpLocations']) : [];
 
         $this->defaultRequestGroup
             = $this->config['Holds']['defaultRequestGroup'] ?? false;
@@ -569,34 +615,36 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             }
 
             $organisationID = $organisation->id;
+            if (!empty($this->excludedPickUpLocations[$holdType])
+                && in_array(
+                    $organisationID,
+                    $this->excludedPickUpLocations[$holdType]['organisation'] ?? []
+                )
+            ) {
+                continue;
+            }
 
             // TODO: Make it configurable whether organisation names
             // should be included in the location name
-
-            if (is_object($organisation->branches->branch)) {
+            $branches = is_object($organisation->branches->branch)
+                ? [$organisation->branches->branch]
+                : $organisation->branches->branch;
+            foreach ($branches as $branch) {
                 $locationID
-                    = $organisationID . '.' . $organisation->branches->branch->id;
-                if (in_array($locationID, $this->excludePickUpLocations)) {
+                    = $organisationID . '.' . $branch->id;
+                if (!empty($this->excludedPickUpLocations[$holdType])
+                    && in_array(
+                        $locationID,
+                        $this->excludedPickUpLocations[$holdType]['unit'] ?? []
+                    )
+                ) {
                     continue;
                 }
 
                 $locationsList[] = [
                     'locationID' => $locationID,
-                    'locationDisplay' => $organisation->branches->branch->name
-                        ?? $locationID
+                    'locationDisplay' => $branch->name
                 ];
-            } else {
-                foreach ($organisation->branches->branch as $branch) {
-                    $locationID = $organisationID . '.' . $branch->id;
-                    if (in_array($locationID, $this->excludePickUpLocations)) {
-                        continue;
-                    }
-
-                    $locationsList[] = [
-                        'locationID' => $locationID,
-                        'locationDisplay' => $branch->name
-                    ];
-                }
             }
         }
 
@@ -701,13 +749,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
         $password = $holdDetails['patron']['cat_password'];
 
         try {
-            $validFromDate = date('Y-m-d');
-
-            $validToDate = isset($holdDetails['requiredBy'])
-                ? $this->dateFormat->convertFromDisplayDate(
-                    'Y-m-d',
-                    $holdDetails['requiredBy']
-                )
+            $validFromDate = !empty($holdDetails['startDateTS'])
+                ? date('Y-m-d', $holdDetails['startDateTS'])
+                : date('Y-m-d');
+            $validToDate = !empty($holdDetails['requiredByTS'])
+                ? date('Y-m-d', $holdDetails['requiredByTS'])
                 : date('Y-m-d', $this->getDefaultRequiredByDate());
         } catch (DateException $e) {
             // Hold Date is invalid
@@ -861,7 +907,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
 
             if (isset($fields['requiredByTS'])) {
                 $updateRequest['validToDate']
-                    = gmdate('Y-m-d', $fields['requiredByTS']);
+                    = date('Y-m-d', $fields['requiredByTS']);
             }
             if (isset($fields['frozen'])) {
                 if ($fields['frozen']) {
@@ -876,7 +922,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                             = $updateRequest['validToDate'];
                     }
                 } else {
-                    $updateRequest['validFromDate'] = gmdate('Y-m-d');
+                    $updateRequest['validFromDate'] = date('Y-m-d');
                 }
             } elseif ($updateRequest['validFromDate'] > $updateRequest['validToDate']
             ) {
@@ -2255,17 +2301,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 $amount = str_replace(',', '.', $debt->debtAmountFormatted) * 100;
             }
             $description = $debt->debtType . ' - ' . $debt->debtNote;
-            $payable = true;
-            foreach ($blockedTypes as $blockedType) {
-                if (strncmp($blockedType, '/', 1) === 0
-                    && substr_compare($blockedType, '/', -1) === 0
-                ) {
-                    if (preg_match($blockedType, $description)) {
-                        $payable = false;
-                        break;
-                    }
-                } else {
-                    if ($blockedType === $description) {
+            $payable = $amount > 0;
+            if ($payable) {
+                foreach ($blockedTypes as $blockedType) {
+                    if ($blockedType === $description
+                        || (strncmp($blockedType, '/', 1) === 0
+                        && substr_compare($blockedType, '/', -1) === 0
+                        && preg_match($blockedType, $description))
+                    ) {
                         $payable = false;
                         break;
                     }
@@ -2279,7 +2322,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
                 'balance' => $amount,
                 'createdate' => $debt->debtDate,
                 'payableOnline' => $payable,
-                'organization' => $debt->organisation ?? ''
+                'organization' => trim($debt->organisation ?? '')
             ];
             $finesList[] = $fine;
         }
@@ -3183,47 +3226,8 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase
             $b['location'] = $b['journalInfo']['location'];
             return $this->defaultHoldingsSortFunction($a, $b);
         } else {
-            $a = $this->parseJournalIssue($editionA);
-            $b = $this->parseJournalIssue($editionB);
-
-            if (empty($a)) {
-                return 1;
-            }
-            if (empty($b)) {
-                return -1;
-            }
-
-            if ($a === $b) {
-                return 0;
-            }
-
-            $cnt = min(count($a), count($b));
-            $a = array_slice($a, 0, $cnt);
-            $b = array_slice($b, 0, $cnt);
-
-            $f = function ($str) {
-                $parts = explode('-', $str);
-                return reset($parts);
-            };
-
-            $a = array_map($f, $a);
-            $b = array_map($f, $b);
-
-            return $a > $b ? -1 : 1;
+            return strnatcasecmp($editionB, $editionA);
         }
-    }
-
-    /**
-     * Utility function for parsing journal issue.
-     *
-     * @param string $issue Journal issue.
-     *
-     * @return array
-     */
-    protected function parseJournalIssue($issue)
-    {
-        $parts = explode(':', $issue);
-        return array_map('trim', $parts);
     }
 
     /**
