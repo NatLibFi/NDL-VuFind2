@@ -1336,12 +1336,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         ) as $inscriptions) {
             $group = [];
             foreach ($inscriptions->inscriptionDescription as $node) {
-                $content = (string)$node->descriptiveNoteValue;
+                $content = (string)$node->descriptiveNoteValue ?? '';
                 $type = $node->attributes()->type ?? '';
                 $label = $node->descriptiveNoteValue->attributes()->label ?? '';
-                $group[] = compact('type', 'label', 'content');
+                if ($content) {
+                    $group[] = compact('type', 'label', 'content');
+                }
             }
-            $results[] = $group;
+            if ($group) {
+                $results[] = $group;
+            }
         }
         return $results;
     }
