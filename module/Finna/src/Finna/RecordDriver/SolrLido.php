@@ -1030,8 +1030,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             . 'relatedWorkSet'
         ) as $node) {
             $term = $node->relatedWorkRelType->term ?? '';
-            if (in_array($term, $allowedTypes)) {
-                $results[] = (string)$node->relatedWork->displayObject;
+            $collection = (string)$node->relatedWork->displayObject ?? '';
+            if ($collection && in_array($term, $allowedTypes)) {
+                $results[] = $collection;
             }
         }
         return $results;
