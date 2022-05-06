@@ -46,5 +46,5 @@ class R2collectionController extends CollectionController
      *
      * @var string
      */
-    protected $searchClassId = 'R2';
+    protected $sourceId = 'R2';
 }

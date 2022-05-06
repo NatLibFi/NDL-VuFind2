@@ -107,10 +107,12 @@
 <?php if ($holdsAllowed && !$disableTitleHold && (($this->ils()->getHoldsMode() == 'driver' && !empty($holdings['holdings'])) || $this->ils()->getTitleHoldsMode() == 'driver')): ?>
   <?php if ($account->loginEnabled() && $offlineMode != 'ils-offline' && $ilsLoginAvailable): ?>
     <?php if (!$user): ?>
-      <div class="pull-right">
-        <a href="?login=true&amp;catalogLogin=true&amp;target=<?=$this->escapeHtmlAttr($recordSource ?? '')?>" class="btn btn-primary login-link" data-lightbox><?=$this->transEsc("title_hold_login")?></a>
-      </div>
-      <div class="clearfix"></div>
+      <?php if (!$repositoryLibraryRequestAllowed): ?>
+        <div class="pull-right">
+          <a href="?login=true&amp;catalogLogin=true&amp;target=<?=$this->escapeHtmlAttr($recordSource ?? '')?>" class="btn btn-primary login-link" data-lightbox><?=$this->transEsc("title_hold_login")?></a>
+        </div>
+        <div class="clearfix"></div>
+      <?php endif; ?>
     <?php elseif (!$user->cat_username): ?>
       <div class="alert alert-info">
         <?=$this->translate("hold_profile_html", ['%%url%%' => $this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, 'Holdings', ['catalogLogin' => 'true']))])?>
@@ -356,7 +358,7 @@
     <div class="clearfix"></div>
     <?php if (isset($holding['items'][0]['detailsGroupKey'])): ?>
       <div class="<?=$this->escapeHtmlAttr($holdingsDetails)?>GetDetails <?=$this->escapeHtmlAttr($holdingsDetails)?> hidden" data-key="<?=$this->escapeHtmlAttr($holding['items'][0]['detailsGroupKey'])?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
-        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('Loading')?>...
+        <i class="fa fa-spinner fa-spin"></i> <?=$this->transEsc('loading_ellipsis')?>
       </div>
     <?php endif; ?>
     <?php if (!$this->holdings()->showDetailsAfterLocationGroup()): ?>

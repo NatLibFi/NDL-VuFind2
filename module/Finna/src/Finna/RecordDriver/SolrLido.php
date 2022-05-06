@@ -4,7 +4,7 @@
  *
  * PHP version 7
  *
- * Copyright (C) The National Library of Finland 2015-2021.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -59,16 +59,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         'fi' => ['fi','fin'],
         'sv' => ['sv','swe'],
         'en-gb' => ['en','eng']
-    ];
-
-    /**
-     * List of undisplayable file formats
-     *
-     * @var array
-     */
-    protected $undisplayableFileFormats = [
-        'tif', 'tiff', '3d-pdf', '3d model', 'gltf', 'glb',
-        'obj', 'mp3', 'wav', 'mp4'
     ];
 
     /**
@@ -164,44 +154,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     protected $displayableModelFormats = ['gltf', 'glb'];
 
     /**
-     * Recognized model viewer settings
+     * Events used for author information.
+     *
+     * Key is event type, value is priority (lower is more important),
      *
      * @var array
      */
-    protected $modelViewerSettings = [
-        'popup',
-        'ambientIntensity',
-        'hemisphereIntensity',
-        'viewerPaddingAngle',
-        'debug'
+    protected $authorEvents = [
+        'suunnittelu' => 0,
+        'valmistus' => 1,
     ];
-
-    /**
-     * Constructor
-     *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
-     * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
-     * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
-     * file
-     */
-    public function __construct(
-        $mainConfig = null,
-        $recordConfig = null,
-        $searchSettings = null
-    ) {
-        parent::__construct($mainConfig, $recordConfig, $searchSettings);
-
-        // Keep old setting name for back-compatibility:
-        $formatBlockList = $mainConfig['Content']['lidoFileFormatBlockList']
-            ?? $mainConfig['Content']['lidoFileFormatBlackList']
-            ?? '';
-
-        if (!empty($formatBlockList)) {
-            $this->undisplayableFileFormats = explode(',', $formatBlockList);
-        }
-    }
 
     /**
      * Return access restriction notes for the record.
@@ -763,10 +725,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     ): array {
         // Check if the image is really an image
         // Original images can be any type and are not displayed
-        if ($this->undisplayableFileFormats && $type !== 'image_original') {
-            if (in_array($format, $this->undisplayableFileFormats)) {
-                return [];
-            }
+        if ('image_original' !== $type && $this->isUndisplayableFormat($format)) {
+            return [];
         }
 
         $size = $this->imageTypes[$type];
@@ -779,13 +739,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     $measurements,
                     $language
                 ),
-                'url' => $url
+                'url' => $url,
+                'format' => $format ?: 'jpg'
             ];
             if ($id) {
                 $currentHiRes['resourceID'] = $id;
             }
-            $highResolution[$size][$format ?: 'jpg']
-                = $currentHiRes;
+            $highResolution[$size][] = $currentHiRes;
         }
 
         return compact('displayImage', 'highResolution');
@@ -956,14 +916,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
      */
     public function getModelSettings(): array
     {
+        $datasource = $this->getDataSource();
         $settings = [];
-        $iniData = $this->recordConfig->Models ?? [];
-        foreach ($this->modelViewerSettings as $setting) {
-            if (!empty($iniData->$setting)) {
-                $settings[$setting] = $iniData->$setting;
-            }
+        if ($iniData = $this->recordConfig->Models ?? []) {
+            $settings = [
+                'debug' => boolval($iniData->debug ?? 0),
+                'previewImages' => $this->allowModelPreviewImages()
+            ];
         }
-        $settings['previewImages'] = $this->allowModelPreviewImages();
+
         return $settings;
     }
 
@@ -996,6 +957,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getRelatedPublications()
     {
         $results = [];
+        $publicationTypes = ['kirjallisuus', 'lähteet', 'julkaisu'];
         foreach ($this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
             . 'relatedWorkSet'
@@ -1007,7 +969,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     ? (string)$attributes->label : '';
                 $term = !empty($node->relatedWorkRelType->term)
                     ? (string)$node->relatedWorkRelType->term : '';
-                if (in_array($term, ['kirjallisuus', 'lähteet'])) {
+                $termLC = mb_strtolower($term, 'UTF-8');
+                if (in_array($termLC, $publicationTypes)) {
+                    $term = $termLC != 'julkaisu' ? $term : '';
                     $results[] = [
                       'title' => $title,
                       'label' => $label ?: $term
@@ -1132,7 +1096,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     }
                 }
             }
-            $method = (string)($node->eventMethod->term ?? '');
+            $methods = [];
+            foreach ($node->eventMethod ?? [] as $eventMethod) {
+                foreach ($eventMethod->term ?? [] as $term) {
+                    if ($method = trim((string)$term)) {
+                        $methods[] = $method;
+                    }
+                }
+            }
             $materials = [];
 
             if (isset($node->eventMaterialsTech->displayMaterialsTech)) {
@@ -1234,7 +1205,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'type' => $type,
                 'name' => $name,
                 'date' => $date,
-                'method' => $method,
+                'methods' => $methods,
                 'materials' => $materials,
                 'places' => $places,
                 'actors' => $actors,
@@ -1456,12 +1427,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     public function getNonPresenterAuthors()
     {
         $authors = [];
+        $index = 0;
         foreach ($this->getXmlRecord()->xpath(
             '/lidoWrap/lido/descriptiveMetadata/eventWrap/eventSet/event'
         ) as $node) {
-            if (!isset($node->eventActor) || $node->eventType->term != 'valmistus') {
+            $eventType = (string)($node->eventType->term ?? '');
+            $priority = $this->authorEvents[$eventType] ?? null;
+            if (null === $priority || !isset($node->eventActor)) {
                 continue;
             }
+            ++$index;
             foreach ($node->eventActor as $actor) {
                 if (isset($actor->actorInRole->actor->nameActorSet->appellationValue)
                     && trim(
@@ -1469,7 +1444,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                     ) != ''
                 ) {
                     $role = $actor->actorInRole->roleActor->term ?? '';
-                    $authors[] = [
+                    $authors["$priority/$index"] = [
                         'name' => $actor->actorInRole->actor->nameActorSet
                             ->appellationValue,
                         'role' => $role
@@ -1477,7 +1452,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 }
             }
         }
-        return $authors;
+        ksort($authors);
+        return array_values($authors);
     }
 
     /**
@@ -1848,5 +1824,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     {
         return self::LANGUAGE_CODES[$this->preferredLanguage]
             ?? self::LANGUAGE_CODES['fi'];
+    }
+
+    /**
+     * Get the display edition of the current record.
+     *
+     * @return array
+     */
+    public function getEditions()
+    {
+        $results = [];
+        foreach ($this->getXmlRecord()->lido->descriptiveMetadata
+            ->objectIdentificationWrap->displayStateEditionWrap
+            ->displayEdition ?? [] as $edition) {
+            $results[] = (string)$edition;
+        }
+        return $results;
     }
 }

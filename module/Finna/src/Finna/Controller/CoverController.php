@@ -85,48 +85,6 @@ class CoverController extends \VuFind\Controller\CoverController
     }
 
     /**
-     * Function to download images from the provider instead of cache
-     *
-     * @return \Laminas\Http\Response
-     */
-    public function downloadAction()
-    {
-        $this->sessionSettings->disableWrite(); // avoid session write timing bug
-        $allowedSizes = ['original', 'master'];
-        $params = $this->params();
-        $size = $params->fromQuery('size');
-        $format = $params->fromQuery('format', 'jpg');
-        $response = $this->getResponse();
-
-        if (($id = $params->fromQuery('id')) && in_array($size, $allowedSizes)) {
-            $driver = $this->recordLoader->load(
-                $id,
-                $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
-            );
-            $index = (int)$params->fromQuery('index');
-            $images = $driver->getAllImages();
-            $highResolution = $images[$index]['highResolution'] ?? [];
-            if (isset($highResolution[$size][$format]['url'])) {
-                $url = $highResolution[$size][$format]['url'];
-                $res = $this->loader->loadExternalImage(
-                    $url,
-                    $format,
-                    "{$id}_{$index}_{$size}.{$format}"
-                );
-                if (!$res) {
-                    $response->setStatusCode(500);
-                }
-            } else {
-                $response->setStatusCode(404);
-            }
-        } else {
-            $response->setStatusCode(400);
-        }
-
-        return $response;
-    }
-
-    /**
      * Send image data for display in the view
      *
      * @return \Laminas\Http\Response

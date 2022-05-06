@@ -88,29 +88,20 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
     {
         $this->disableSessionWrites();  // avoid session write timing bug
 
-        $backend = $params->fromQuery('backend', 'Solr');
-        if ($backend) {
-            $backend = ucfirst($backend);
-        } else {
-            $backend = 'Solr';
-        }
-        $isSolr = in_array($backend, ['Solr', 'R2']);
-
-        $configFile = $isSolr ? 'facets' : $backend;
-        $config = $this->configManager->get($configFile);
+        $backend = ucfirst($params->fromQuery('backend', 'Solr') ?: 'Solr');
+        $results = $this->resultsManager->get($backend);
+        $searchParams = $results->getParams();
+        $config = $this->configManager->get(
+            $searchParams->getOptions()->getFacetsIni()
+        );
         if (!isset($config->SpecialFacets->dateRangeVis)) {
             return $this->formatResponse([], self::STATUS_HTTP_ERROR);
         }
 
-        [$filterField, $facet]
-            = explode(':', $config->SpecialFacets->dateRangeVis);
+        [, $facet] = explode(':', $config->SpecialFacets->dateRangeVis);
 
-        $results = $this->resultsManager->get($backend);
-        $searchParams = $results->getParams();
-        $searchParams->addFacet($filterField);
         $searchParams->initFromRequest(new Parameters($params->fromQuery()));
-
-        if ($isSolr) {
+        if (method_exists($results, 'getPartialFieldFacets')) {
             $facets = $results->getFullFieldFacets(
                 [$facet],
                 false,
@@ -119,9 +110,9 @@ class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
             );
             $facetList = $facets[$facet]['data']['list'];
         } else {
-            $options = $results->getOptions();
-            $options->disableHighlighting();
-            $results->getParams()->setLimit(0);
+            $results->getOptions()->disableHighlighting();
+            $searchParams->setLimit(0);
+            $searchParams->addFacet($facet);
             $results->performAndProcessSearch();
             $facets = $results->getFacetlist([$facet => $facet]);
             $facetList = $facets[$facet]['list'] ?? [];

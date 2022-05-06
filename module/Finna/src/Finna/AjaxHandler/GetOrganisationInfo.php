@@ -250,7 +250,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase
             }
         }
 
-        $result = array_merge($museums, $libraries);
+        $result = array_merge($museums, $libraries ?: []);
         if (empty($result)) {
             $result = false;
         }

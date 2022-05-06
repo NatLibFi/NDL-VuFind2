@@ -614,17 +614,13 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAllRecordImageUrls()
     {
-        $images = $this->driver->tryMethod('getAllImages', ['']);
+        $images = $this->driver->tryMethod('getAllImages', ['', false]);
         if (empty($images)) {
             return [];
         }
         $urls = [];
         foreach ($images as $image) {
-            $urls[] = $image['urls']['small'];
-            $urls[] = $image['urls']['medium'];
-            if (isset($image['urls']['large'])) {
-                $urls[] = $image['urls']['large'];
-            }
+            $urls = [...$urls, ...array_values($image['urls'])];
         }
         return array_flip($urls);
     }
@@ -744,16 +740,16 @@ class Record extends \VuFind\View\Helper\Root\Record
                     ];
                     $image['urls'][$size] = $params;
                 }
-                if (isset($image['highResolution'])
-                    && !empty($image['highResolution'])
-                ) {
+                if (!empty($image['highResolution'])) {
                     foreach ($image['highResolution'] as $size => &$values) {
-                        foreach ($values as $format => &$data) {
+                        foreach ($values as $key => &$data) {
                             $data['params'] = [
                                 'id' => $recordId,
                                 'index' => $idx,
                                 'size' => $size,
-                                'format' => $format ?? 'jpg'
+                                'format' => $data['format'] ?? 'jpg',
+                                'key' => $key,
+                                'type' => 'highresimg'
                             ];
                         }
                     }
@@ -905,16 +901,12 @@ class Record extends \VuFind\View\Helper\Root\Record
      * Render a source id element if necessary
      *
      * @return string
+     *
+     * @deprecated Use getLabelList instead
      */
     public function getSourceIdElement()
     {
-        $view = $this->getView();
-        if (isset($view->results) && is_callable([$view->results, 'getBackendId'])) {
-            if ($view->results->getBackendId() === 'Blender') {
-                return $this->renderTemplate('source-id-label.phtml');
-            }
-        }
-        return '';
+        return $this->getLabelList();
     }
 
     /**

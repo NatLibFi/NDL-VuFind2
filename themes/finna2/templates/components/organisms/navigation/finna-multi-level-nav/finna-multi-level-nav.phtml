@@ -9,7 +9,7 @@
       $__tabsNavAttributes->add('class', 'finna-tabs-nav-lg');
     }
   ?>
-  <?= $this->render('components/organisms/navigation/finna-tabs-nav/finna-tabs-nav.phtml', [
+  <?= $this->render('components/organisms/navigation/finna-tabs-nav', [
       'ariaCurrent' => 'page',
       'ariaLabel' => $ariaLabel ?? null,
       'attributes' => $__tabsNavAttributes,
@@ -24,13 +24,13 @@
       $__navbarAttributes->add('class', 'finna-navbar-content');
     }
   ?>
-  <?= $this->render('components/organisms/navigation/finna-navbar/finna-navbar.phtml', [
+  <?= $this->render('components/organisms/navigation/finna-navbar', [
       'ariaLabel' => $ariaLabel ?? null,
       'attributes' => $__navbarAttributes,
       'brandContent' => $brandContent ?? null,
       'brandLink' => $brandLink ?? null,
       'brandSrOnly' => $brandSrOnly ?? null,
-      'collapseContent' => $this->render('components/molecules/navigation/finna-nav/finna-nav.phtml', [
+      'collapseContent' => $this->render('components/molecules/navigation/finna-nav', [
           'attributes' => ['class' => ['finna-nav-navbar']],
           'items' => $items ?? []
         ]),

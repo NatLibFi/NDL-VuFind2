@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<lidoWrap schemaLocation="http://www.lido-schema.org http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd">
+  <lido>
+    <lidoRecID type="Test">knp-247394</lidoRecID>
+    <administrativeMetadata>
+      <resourceWrap>
+        <resourceSet>
+          <resourceID type="ID">607642</resourceID>
+          <resourceRepresentation type="image_large">
+            <linkResource>https://largekuvanlinkki.com</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_original">
+            <linkResource formatResource="tif">https://originalKuvanLinkkiTif.com</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">bytes</measurementUnit>
+              <measurementValue>123</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">leveys</measurementType>
+              <measurementType lang="en">width</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>123</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">korkeus</measurementType>
+              <measurementType lang="en">height</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>123</measurementValue>
+            </resourceMeasurementsSet>
+          </resourceRepresentation>
+          <rightsResource>
+            <rightsType>
+              <conceptID type="copyright">CC BY 4.0</conceptID>
+              <term lang="fi">Tässä on kuvien copyright.</term>
+            </rightsType>
+          </rightsResource>
+        </resourceSet>
+        <resourceSet>
+          <resourceID type="ID">607643</resourceID>
+          <resourceRepresentation type="image_thumb">
+            <linkResource>https://thumbkuvanlinkki2.com</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_large">
+            <linkResource>https://largekuvanlinkki2.com</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_master">
+            <linkResource>https://masterkuvanlinkki2.com</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_original">
+            <linkResource formatResource="tif">https://originalKuvanLinkkiTif.com</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">bytes</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">leveys</measurementType>
+              <measurementType lang="en">width</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">korkeus</measurementType>
+              <measurementType lang="en">height</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+          </resourceRepresentation>
+          <rightsResource>
+            <rightsType>
+              <conceptID type="copyright">CC BY 4.0</conceptID>
+              <term lang="fi">Tässä on kuvien copyright.</term>
+            </rightsType>
+          </rightsResource>
+        </resourceSet>
+        <resourceSet>
+          <resourceRepresentation type="preview_3D">
+            <linkResource formatResource="glTF">https://gltfmalli.gltf</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="preview_3D">
+            <linkResource formatResource="glb">https://glbmalli.glb</linkResource>
+          </resourceRepresentation>
+        </resourceSet>
+        <resourceSet>
+          <resourceDescription type="displayLink">AudioTesti.mp3</resourceDescription>
+          <resourceRepresentation type="preview_audio">
+            <linkResource formatResource="mp3">https://linkkiaudioon.fi</linkResource>
+          </resourceRepresentation>
+        </resourceSet>
+        <resourceSet>
+          <resourceDescription type="displayLink">VideoTesti.mp4</resourceDescription>
+          <resourceRepresentation type="preview_video">
+            <linkResource formatResource="mp4">https://linkkivideoon.fi</linkResource>
+          </resourceRepresentation>
+        </resourceSet>
+        <resourceSet>
+          <resourceDescription type="displayLink">PDFTesti.pdf</resourceDescription>
+          <resourceRepresentation type="provided_text">
+            <linkResource formatResource="pdf">https://linkkiPDF.fi</linkResource>
+          </resourceRepresentation>
+        </resourceSet>
+        <resourceSet>
+          <resourceDescription type="displayLink">DocxTesti.docx</resourceDescription>
+          <resourceRepresentation type="provided_text">
+            <linkResource formatResource="docx">https://linkkiDocx.fi</linkResource>
+          </resourceRepresentation>
+        </resourceSet>
+      </resourceWrap>
+    </administrativeMetadata>
+  </lido>
+</lidoWrap>

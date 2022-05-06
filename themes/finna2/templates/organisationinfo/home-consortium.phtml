@@ -35,7 +35,7 @@
             </div>
           </div>
         <?php $content = ob_get_clean(); ?>
-        <?= $this->render('components/molecules/containers/finna-panel/finna-panel.phtml', [
+        <?= $this->render('components/molecules/containers/finna-panel', [
             'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel']],
             'heading' => $this->transEsc('organisation_info_navi_usage'),
             'headingLevel' => 4,
@@ -57,7 +57,7 @@
             </ul>
           </div>
         <?php $content = ob_get_clean(); ?>
-        <?= $this->render('components/molecules/containers/finna-panel/finna-panel.phtml', [
+        <?= $this->render('components/molecules/containers/finna-panel', [
             'attributes' => ['class' => ['finna-panel-default', 'organisation-info-panel', 'links-panel', 'hide']],
             'heading' => $this->transEsc('Links'),
             'headingLevel' => 4,

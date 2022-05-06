@@ -148,20 +148,25 @@ class R2FeedbackController extends FeedbackController
             }
 
             // Collect submitted params required by REMS form
+            $mappedParams = [];
+            foreach ($form->mapRequestParamsToFieldValues($params) as $param) {
+                $mappedParams[$param['name']] = $param['value'];
+            }
+
             $formParams = [];
-            $formParams['usage_purpose'] = $params['usage_purpose'];
-            $formParams['usage_purpose_text'] = $params['usage_purpose'];
-            if ($age = ($params['age'] ?? null)) {
+            $formParams['usage_purpose'] = $mappedParams['usage_purpose'];
+            $formParams['usage_purpose_text'] = $mappedParams['usage_purpose'];
+            if ($age = ($mappedParams['age'] ?? null)) {
                 $formParams['age'] = $age[0];
             }
-            if ($license = ($params['license'] ?? null)) {
+            if ($license = ($mappedParams['license'] ?? null)) {
                 $formParams['license'] = $license[0];
             }
 
             // Take firstname and lastname from profile
             $firstname = $user->firstname;
             $lastname = $user->lastname;
-            $email = $params['email'];
+            $email = $mappedParams['email'];
 
             try {
                 $rems->registerUser(
