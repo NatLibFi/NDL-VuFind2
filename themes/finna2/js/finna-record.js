@@ -74,11 +74,11 @@ finna.record = (() => {
     const recordId = elements[0].href.match(/\/Record\/([^/]+)\//)[1];
     const vars = [];
     elements.forEach(element => vars.push(getRequestLinkData(element, recordId)));
-    const params = new URLSearchParams({
+    const params = {
       id: recordId,
       requestType: requestType,
       data: vars
-    });
+    };
     console.log(vars);
     const url = `${VuFind.path}/AJAX/JSON?method=checkRequestsAreValid`;
     fetch(url, {
