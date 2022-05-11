@@ -1212,7 +1212,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
                 'places' => $places,
                 'actors' => $actors,
                 'culture' => $culture,
-                'descriptions' => $descriptions
+                'descriptions' => $descriptions,
+                // For backward compatibility
+                'description' => $descriptions[0] ?? ''
             ];
             // Only add the event if it has content
             foreach ($event as $key => $field) {
