@@ -1,57 +1,54 @@
 /*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab */
-finna.record = (function finnaRecord() {
-  var accordionTitleHeight = 64;
+finna.record = (() => {
+  const accordionTitleHeight = 64;
 
   function initDescription() {
-    var description = $('#description_text');
-    if (description.length) {
-      var id = description.data('id');
-      var url = VuFind.path + '/AJAX/JSON?method=getDescription&id=' + id;
-      $.getJSON(url)
-        .done(function onGetDescriptionDone(response) {
-          if (response.data.html.length > 0) {
-            description.html(VuFind.updateCspNonce(response.data.html));
-
-            // Make sure any links open in a new window
-            description.find('a').attr('target', '_blank');
-
-            description.wrapInner('<div class="truncate-field wide"><p class="summary"></p></div>');
-            finna.layout.initTruncate(description);
-            if (!$('.hide-details-button').hasClass('hidden')) {
-              $('.record-information .description').addClass('too-long');
-              $('.record-information .description .more-link.wide').click();
-            }
-          } else {
-            description.hide();
+    const description = document.getElementById('description_text');
+    if (description) {
+      const id = description.dataset.id;
+      const url = `${VuFind.path}/AJAX/JSON?method=getDescription&id=${id}`;
+      fetch(url)
+        .then(response => response.json())
+        .then(responseJSON => {
+          if (responseJSON.data.html.length) {
+            description.innerHTML = VuFind.updateCspNonce(responseJSON.data.html);
           }
         })
-        .fail(function onGetDescriptionFail() {
-          description.hide();
+        .catch(() => {
+          description.style.display = 'none';
         });
     }
   }
 
   function initHideDetails() {
-    $('.show-details-button').on('click', function onClickShowDetailsButton() {
-      $('.record-information .record-details-more').removeClass('hidden');
-      $(this).addClass('hidden');
-      $('.hide-details-button').removeClass('hidden');
-      $('.record .description .more-link.wide').click();
+    const showButton = document.getElementsByClassName('show-details-button')[0];
+    const hideButton = document.getElementsByClassName('hide-details-button')[0];
+    if (!showButton && !hideButton) {
+      return;
+    }
+    const moreArea = document.querySelector('.record-information .record-details-more');
+    showButton.addEventListener('click', () => {
+      if (moreArea) {
+        moreArea.classList.remove('hidden');
+      }
+      showButton.classList.add('hidden');
+      hideButton.classList.remove('hidden');
       sessionStorage.setItem('finna_record_details', '1');
     });
-    $('.hide-details-button').click (function onClickHideDetailsButton() {
-      $('.record-information .record-details-more').addClass('hidden');
-      $(this).addClass('hidden');
-      $('.show-details-button').removeClass('hidden');
-      $('.record .description .less-link.wide').click();
+    hideButton.addEventListener('click', () => {
+      if (moreArea) {
+        moreArea.classList.add('hidden');
+      }
+      hideButton.classList.add('hidden');
+      showButton.classList.remove('hidden');
       sessionStorage.removeItem('finna_record_details');
     });
-    if ($('.record-information').height() > 350 && $('.show-details-button')[0]) {
-      $('.record-information .description').addClass('too-long');
+    const recordInformation = document.querySelector('.record-information');
+    if (recordInformation && recordInformation.clientHeight > 350) {
       if (sessionStorage.getItem('finna_record_details')) {
-        $('.show-details-button').click();
+        showButton.click();
       } else {
-        $('.hide-details-button').click();
+        hideButton.click();
       }
     }
   }
@@ -74,130 +71,179 @@ finna.record = (function finnaRecord() {
     if (!elements[0]) {
       return;
     }
-    var recordId = elements[0].href.match(/\/Record\/([^/]+)\//)[1];
-
-    var vars = [];
-    $.each(elements, function handleElement(idx, element) {
-      vars.push(getRequestLinkData(element, recordId));
+    const recordId = elements[0].href.match(/\/Record\/([^/]+)\//)[1];
+    const vars = [];
+    elements.forEach(element => vars.push(getRequestLinkData(element, recordId)));
+    const params = new URLSearchParams({
+      id: recordId,
+      requestType: requestType,
+      data: vars
     });
-
-    var url = VuFind.path + '/AJAX/JSON?method=checkRequestsAreValid';
-    $.ajax({
-      dataType: 'json',
-      data: {id: recordId, requestType: requestType, data: vars},
+    console.log(vars);
+    const url = `${VuFind.path}/AJAX/JSON?method=checkRequestsAreValid`;
+    fetch(url, {
       method: 'POST',
-      cache: false,
-      url: url
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(params)
     })
-      .done(function onCheckRequestDone(responses) {
-        $.each(responses.data, function handleResponse(idx, response) {
-          var element = elements[idx];
+      .then(response => response.json())
+      .then(jsonResponse => {
+        console.log(jsonResponse.data);
+        jsonResponse.data.forEach((result, index) => {
+          const element = elements[index];
           if (response.status) {
-            $(element).removeClass('disabled')
-              .html(VuFind.updateCspNonce(response.msg));
+            element.classList.remove('disabled');
+            element.innerHTML = VuFind.updateCspNonce(result.msg);
           } else {
-            $(element).remove();
+            element.remove();
           }
         });
+      })
+      .catch(reason => {
+        console.error(reason);
       });
+  }
+
+  function startRequestCheck(group, identifier, requestType) {
+    const found = group.querySelectorAll(`${identifier}`);
+    if (found.length) {
+      found.forEach(e => e.classList.remove(identifier));
+      checkRequestsAreValid(found, requestType);
+    }
   }
 
   function fetchHoldingsDetails(elements) {
     if (!elements[0]) {
       return;
     }
-
-    $.each(elements, function handleElement(idx, element) {
-      $(element).removeClass('hidden');
-      var url = VuFind.path + '/AJAX/JSON?method=getHoldingsDetails';
-      $.ajax({
-        dataType: 'json',
-        data: $(element).data(),
+    elements.forEach((element) => {
+      element.classList.remove('hidden');
+      const url = `${VuFind.path}/AJAX/JSON?method=getHoldingsDetails`;
+      params = {
+        data: element.dataset,
+      };
+      fetch(url, {
         method: 'POST',
-        cache: false,
-        url: url
-      })
-        .done(function onGetDetailsDone(response) {
-          $(element).addClass('hidden');
-          var $group = $(element).parents('.holdings-group');
-          $group.find('.load-more-indicator-ajax').addClass('hidden');
-          // This can be called several times to load more items. Only update the hidden element.
-          $group.find('.holdings-details-ajax.hidden').html(VuFind.updateCspNonce(response.data.details)).removeClass('hidden');
-          var $itemsContainer = $group.find('.holdings-items-ajax.hidden');
-          $itemsContainer.html(VuFind.updateCspNonce(response.data.items)).removeClass('hidden');
-          checkRequestsAreValid($group.find('.expandedCheckRequest').removeClass('expandedCheckRequest'), 'Hold');
-          checkRequestsAreValid($group.find('.expandedCheckStorageRetrievalRequest').removeClass('expandedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest');
-          checkRequestsAreValid($group.find('.expandedCheckILLRequest').removeClass('expandedCheckILLRequest'), 'ILLRequest');
-          VuFind.lightbox.bind($itemsContainer);
-          $group.find('.load-more-items-ajax').on('click', function loadMore() {
-            var $elem = $(this);
-            $elem.addClass('hidden');
-            $elem.siblings('.load-more-indicator-ajax').removeClass('hidden');
-            fetchHoldingsDetails($elem.parent());
-          });
+        body: JSON.stringify(params),
+      }).then(response => response.json())
+        .then(responseJSON => {
+          element.classList.add('hidden');
+          const group = element.closest('.holdings-group');
+          const loading = group.getElementsByClassName('load-more-indicator-ajax')[0];
+          if (loading) {
+            loading.classList.add('hidden');
+          }
+          const details = group.getElementsByClassName('holdings-details-ajax hidden')[0];
+          if (details) {
+            details.innerHTML = VuFind.updateCspNonce(responseJSON.data.details);
+            details.classList.remove('hidden');
+          }
+          const itemContainer = group.getElementsByClassName('holdings-items-ajax hidden')[0];
+          if (itemContainer) {
+            itemContainer.innerHTML = VuFind.updateCspNonce(responseJson.data.items);
+            itemContainer.classList.remove('hidden');
+          }
+          startRequestCheck(group, 'expandedCheckRequest', 'Hold');
+          startRequestCheck(group, 'expandedCheckStorageRetrievalRequest', 'StorageRetrievalRequest');
+          startRequestCheck(group, 'expandedCheckILLRequest', 'ILLRequest');
+          VuFind.lightbox.bind(itemContainer);
+          const loadMoreItems = group.getElementsByClassName('load-more-items-ajax')[0];
+          if (loadMoreItems) {
+            loadMoreItems.addEventListener('click', (e) => {
+              loadMoreItems.classList.add('hidden');
+              loading.classList.remove('hidden');
+              fetchHoldingsDetails(loadMoreItems.parentElement);
+            });
+          }
         })
-        .fail(function onGetDetailsFail() {
-          $(element).text(VuFind.translate('error_occurred'));
+        .catch(() => {
+          element.textContent = VuFind.translate('error_occurred');
         });
     });
   }
 
   function setUpCheckRequest() {
-    checkRequestsAreValid($('.expandedCheckRequest').removeClass('expandedCheckRequest'), 'Hold');
-    checkRequestsAreValid($('.expandedCheckStorageRetrievalRequest').removeClass('expandedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest');
-    checkRequestsAreValid($('.expandedCheckILLRequest').removeClass('expandedCheckILLRequest'), 'ILLRequest');
-    fetchHoldingsDetails($('.expandedGetDetails').removeClass('expandedGetDetails'));
+    startRequestCheck(document, 'expandedCheckRequest', 'Hold');
+    startRequestCheck(document, 'expandedCheckStorageRetrievalRequest', 'StorageRetrievalRequest');
+    startRequestCheck(document, 'expandedCheckILLRequest', 'ILLRequest');
+    const expandedGetDetails = document.querySelectorAll('.expandedGetDetails');
+    expandedGetDetails.forEach(e => e.classList.remove('expandedGetDetails'));
+    fetchHoldingsDetails(expandedGetDetails);
   }
 
   function initHoldingsControls() {
-    $('.holdings-container-heading').on('click', function onClickHeading(e) {
-      if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')) {
-        return;
-      }
-      $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
-      if ($('.location .fa', this).hasClass('fa-arrow-down')) {
-        $('.location .fa', this).removeClass('fa-arrow-down');
-        $('.location .fa', this).addClass('fa-arrow-right');
-      }
-      else {
-        $('.location .fa', this).removeClass('fa-arrow-right');
-        $('.location .fa', this).addClass('fa-arrow-down');
-        var rows = $(this).nextUntil('.holdings-container-heading');
-        checkRequestsAreValid(rows.find('.collapsedCheckRequest').removeClass('collapsedCheckRequest'), 'Hold', 'holdBlocked');
-        checkRequestsAreValid(rows.find('.collapsedCheckStorageRetrievalRequest').removeClass('collapsedCheckStorageRetrievalRequest'), 'StorageRetrievalRequest', 'StorageRetrievalRequestBlocked');
-        checkRequestsAreValid(rows.find('.collapsedCheckILLRequest').removeClass('collapsedCheckILLRequest'), 'ILLRequest', 'ILLRequestBlocked');
-        fetchHoldingsDetails(rows.filter('.collapsedGetDetails').removeClass('collapsedGetDetails'));
-      }
-    });
+    const tables = document.querySelectorAll('.record-holdings-table:not(.electronic-holdings)');
+    if (tables.length) {
+      tables.forEach((table) => {
+        const headings = table.querySelectorAll('.holdings-container-heading');
+        headings.forEach((heading) => {
+          heading.addEventListener('click', (e) => {
+            if (e.target.closest('.location-service')) {
+              return;
+            }
+            const siblings = (element, selector) => {
+              let next = element.nextElementSibling;
+              const found = [];
+              while (next && !next.matches(selector)) {
+                found.push(next);
+                next = next.nextElementSibling;
+              }
+              return found;
+            };
+            const expandable = siblings(heading, '.holdings-container-heading');
+            expandable.forEach(t => t.classList.toggle('collapsed'));
+            const icon = heading.querySelector('.location .fa');
+            if (icon) {
+              icon.classList.toggle('fa-arrow-down');
+              icon.classList.toggle('fa-arrow-right');
+            }
+            const collapsedCheckRequest = [];
+            const collapsedCheckStorageRetrievalRequest = [];
+            const collapsedCheckILLRequest = [];
+            const filtered = [];
+            expandable.forEach(e => {
+              collapsedCheckRequest.push(...e.getElementsByClassName('collapsedCheckRequest'));
+              collapsedCheckStorageRetrievalRequest.push(...e.getElementsByClassName('collapsedCheckStorageRetrievalRequest'));
+              collapsedCheckILLRequest.push(...e.getElementsByClassName('collapsedCheckILLRequest'));
+              if (e.classList.contains('collapsedGetDetails')) {
+                filtered.push(e);
+              }
+            });
+            checkRequestsAreValid(collapsedCheckRequest, 'Hold', 'holdBlocked');
+            checkRequestsAreValid(collapsedCheckStorageRetrievalRequest, 'StorageRetrievalRequest', 'StorageRetrievalRequestBlocked');
+            checkRequestsAreValid(collapsedCheckILLRequest, 'ILLRequest', 'ILLRequestBlocked');
+            fetchHoldingsDetails(filtered); 
+          });
+        });
+      });
+    }
   }
 
   function augmentOnlineLinksFromHoldings() {
-    $('.electronic-holdings a').each(function handleLink() {
-      var $a = $(this);
-      var href = $a.attr('href');
-      var $recordUrls = $('.recordURLs');
-      var $existing = $recordUrls.find('a[href="' + href + '"]');
-      var desc = $a.text();
-      if ($existing.length === 0 || $existing.text() !== desc) {
-        // No existing link, prepend to the list
-        var newLink = $('.recordURLs .url-template').html();
-        newLink = newLink
-          .replace('HREF', href)
-          .replace('DESC', desc)
-          .replace('SOURCE', $('.record-holdings-table:not(.electronic-holdings) .holdings-title').text());
-
-        var $newLink = $(newLink)
-          .removeClass('url-template')
-          .removeClass('hidden');
-
-        if ($existing.length === 0) {
-          $newLink.prependTo($recordUrls);
+    const electronicLinks = document.querySelectorAll('.electronic-holdings a');
+    const recordURLs = document.querySelector('.recordURLs');
+    const template = recordURLs.querySelector('.url-template');
+    const title = document.querySelector('.record-holdings-table:not(.electronic-holdings) .holdings-title');
+    electronicLinks.forEach(link => {
+      const exists = recordURLs.querySelector(`a[href="${link.href}"]`);
+      if (!exists || exists.textContent !== link.textContent) {
+        const newLink = template.cloneNode(true);
+        let inner = newLink.innerHTML;
+        inner = inner.replace('HREF', link.href);
+        inner = inner.replace('DESC', link.textContent);
+        inner = inner.replace('SOURCE', title ? title.textContent : '');
+        newLink.innerHTML = inner;
+        if (!exists) {
+          recordURLs.prepend(newLink);
         } else {
-          $existing.replaceWith($newLink);
+          exists.parentNode.replaceWith(newLink);
         }
+        newLink.classList.remove('url-template', 'hidden');
       }
     });
-
   }
 
   function setupHoldingsTab() {
@@ -210,33 +256,53 @@ finna.record = (function finnaRecord() {
   }
 
   function setupLocationsEad3Tab() {
-    $('.holdings-container-heading').on('click', function onClickHeading() {
-      $(this).nextUntil('.holdings-container-heading').toggleClass('collapsed');
-      if ($('.location .fa', this).hasClass('fa-arrow-down')) {
-        $('.location .fa', this).removeClass('fa-arrow-down');
-        $('.location .fa', this).addClass('fa-arrow-right');
-      }
-      else {
-        $('.location .fa', this).removeClass('fa-arrow-right');
-        $('.location .fa', this).addClass('fa-arrow-down');
-      }
+    const containers = document.getElementsByClassName('holdings-container-heading');
+    containers.forEach(container => {
+      container.addEventListener('click', () => {
+        let elem = container.nextElementSibling;
+        while (elem) {
+          if (elem.matches('.holdings-container-heading')) {
+            break;
+          }
+          elem.classList.toggleClass('collapsed');
+          elem = elem.nextElementSibling;
+        }
+        const location = container.querySelector('.location .fa');
+        if (!location) {
+          return;
+        }
+        location.classList.toggle('fa-arrow-down');
+        location.classList.toggle('fa-arrow-right');
+      });
     });
   }
 
   function initRecordNaviHashUpdate() {
-    $(window).on('hashchange', function onHashChange() {
-      $('.pager a').each(function updateHash(i, a) {
-        a.hash = window.location.hash;
-      });
+    window.addEventListener('hashchange', () => {
+      const pagers = document.querySelectorAll('.pager a');
+      if (pagers.length) {
+        pagers.forEach(a => a.hash = window.location.hash);
+      }
     });
-    $(window).trigger('hashchange');
+    window.dispatchEvent(new HashChangeEvent('hashchange'));
   }
 
   function initAudioAccordion() {
-    $('.audio-accordion .audio-item-wrapper').first().addClass('active');
-    $('.audio-accordion .audio-title-wrapper').on('click', function audioAccordionClicker() {
-      $('.audio-accordion .audio-item-wrapper.active').removeClass('active');
-      $(this).parent().addClass('active');
+    const audioWrappers = document.querySelectorAll('.audio-item-wrapper');
+    audioWrappers.forEach((wrapper, index) => {
+      if (0 === index) {
+        wrapper.classList.add('active');
+      }
+      const title = wrapper.querySelector('.audio-title-wrapper');
+      if (title) {
+        title.addEventListener('click', () => {
+          const active = document.querySelector('.audio-item-wrapper.active');
+          if (active) {
+            active.classList.remove('active');
+          }
+          wrapper.classList.add('active');
+        });
+      }
     });
   }
 
