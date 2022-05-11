@@ -963,14 +963,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             . 'relatedWorkSet'
         ) as $node) {
             if (!empty($node->relatedWork->displayObject)) {
-                $title = (string)$node->relatedWork->displayObject;
+                $title = trim((string)$node->relatedWork->displayObject);
                 $attributes = $node->relatedWork->displayObject->attributes();
                 $label = !empty($attributes->label)
                     ? (string)$attributes->label : '';
                 $term = !empty($node->relatedWorkRelType->term)
                     ? (string)$node->relatedWorkRelType->term : '';
                 $termLC = mb_strtolower($term, 'UTF-8');
-                if (in_array($termLC, $publicationTypes)) {
+                if ($title && in_array($termLC, $publicationTypes)) {
                     $term = $termLC != 'julkaisu' ? $term : '';
                     $results[] = [
                       'title' => $title,
@@ -1030,7 +1030,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
             . 'relatedWorkSet'
         ) as $node) {
             $term = $node->relatedWorkRelType->term ?? '';
-            $collection = (string)$node->relatedWork->displayObject ?? '';
+            $collection = trim((string)$node->relatedWork->displayObject ?? '');
             if ($collection && in_array($term, $allowedTypes)) {
                 $results[] = $collection;
             }
@@ -1336,7 +1336,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
         ) as $inscriptions) {
             $group = [];
             foreach ($inscriptions->inscriptionDescription as $node) {
-                $content = (string)$node->descriptiveNoteValue ?? '';
+                $content = trim((string)$node->descriptiveNoteValue ?? '');
                 $type = $node->attributes()->type ?? '';
                 $label = $node->descriptiveNoteValue->attributes()->label ?? '';
                 if ($content) {
