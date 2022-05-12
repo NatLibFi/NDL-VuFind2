@@ -15,9 +15,9 @@
   $videoUrls = [];
   $otherUrls = [];
   $hasOnlineURLs =
-      !empty($recordHelper->filterImageUrls($urls))
-      || !empty($recordHelper->filterImageUrls($onlineURLs))
-      || !empty($mergedData['urls']) && !empty($recordHelper->filterImageUrls($mergedData['urls']));
+      !empty($recordHelper->filterImageURLs($urls))
+      || !empty($recordHelper->filterImageURLs($onlineURLs))
+      || !empty($mergedData['urls']) && !empty($recordHelper->filterImageURLs($mergedData['urls']));
 
   if (!empty($urls)) {
     foreach ($urls as $url) {
