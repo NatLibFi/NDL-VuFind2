@@ -82,7 +82,9 @@ finna.record = (() => {
     const params = new URLSearchParams(values);
     for (let i = 0; i < vars.length; i++) {
       for (let k in vars[i]) {
-        params.append(`data[${i}][${k}]`, vars[i][k]);
+        if (vars[i].hasOwnProperty(k)) {
+          params.append(`data[${i}][${k}]`, vars[i][k]);
+        }
       }
     }
 
@@ -120,14 +122,13 @@ finna.record = (() => {
   }
 
   function fetchHoldingsDetails(elements) {
-    console.log(elements);
     if (!elements[0]) {
       return;
     }
     elements.forEach((element) => {
       element.classList.remove('hidden');
       const url = `${VuFind.path}/AJAX/JSON?method=getHoldingsDetails`;
-      params = {
+      const params = {
         data: element.dataset,
       };
       fetch(url, {
@@ -148,7 +149,7 @@ finna.record = (() => {
           }
           const itemContainer = group.getElementsByClassName('holdings-items-ajax hidden')[0];
           if (itemContainer) {
-            itemContainer.innerHTML = VuFind.updateCspNonce(responseJson.data.items);
+            itemContainer.innerHTML = VuFind.updateCspNonce(responseJSON.data.items);
             itemContainer.classList.remove('hidden');
           }
           startRequestCheck(group, 'expandedCheckRequest', 'Hold');
@@ -157,7 +158,7 @@ finna.record = (() => {
           VuFind.lightbox.bind(itemContainer);
           const loadMoreItems = group.getElementsByClassName('load-more-items-ajax')[0];
           if (loadMoreItems) {
-            loadMoreItems.addEventListener('click', (e) => {
+            loadMoreItems.addEventListener('click', () => {
               loadMoreItems.classList.add('hidden');
               loading.classList.remove('hidden');
               fetchHoldingsDetails(loadMoreItems.parentElement);
@@ -209,13 +210,13 @@ finna.record = (() => {
             const collapsedCheckStorageRetrievalRequest = [];
             const collapsedCheckILLRequest = [];
             const filtered = [];
-            expandable.forEach(e => {
-              collapsedCheckRequest.push(...e.getElementsByClassName('collapsedCheckRequest'));
-              collapsedCheckStorageRetrievalRequest.push(...e.getElementsByClassName('collapsedCheckStorageRetrievalRequest'));
-              collapsedCheckILLRequest.push(...e.getElementsByClassName('collapsedCheckILLRequest'));
-              if (e.classList.contains('collapsedGetDetails')) {
-                e.classList.remove('collapsedGetDetails');
-                filtered.push(e);
+            expandable.forEach(g => {
+              collapsedCheckRequest.push(...g.getElementsByClassName('collapsedCheckRequest'));
+              collapsedCheckStorageRetrievalRequest.push(...g.getElementsByClassName('collapsedCheckStorageRetrievalRequest'));
+              collapsedCheckILLRequest.push(...g.getElementsByClassName('collapsedCheckILLRequest'));
+              if (g.classList.contains('collapsedGetDetails')) {
+                g.classList.remove('collapsedGetDetails');
+                filtered.push(g);
               }
             });
             checkRequestsAreValid(collapsedCheckRequest, 'Hold', 'holdBlocked');
@@ -291,7 +292,7 @@ finna.record = (() => {
   function initAudioAccordion() {
     const audioWrappers = document.querySelectorAll('.audio-item-wrapper');
     audioWrappers.forEach((wrapper, index) => {
-      if (0 === index) {
+      if (0 === index) {
         wrapper.classList.add('active');
       }
       const title = wrapper.querySelector('.audio-title-wrapper');
@@ -369,7 +370,7 @@ finna.record = (() => {
       const libraryLink = holdings.querySelectorAll('.library-link li');
       libraryLink.forEach(l => {
         l.classList.remove('hidden');
-        l.addEventListener('click', e => {
+        l.addEventListener('click', () => {
           const tabnav = document.getElementById('tabnav');
           if (tabnav) {
             document.body.animate([{scrollTop: tabnav.offsetTop - accordionTitleHeight}], {duration: 50});
@@ -458,7 +459,7 @@ finna.record = (() => {
       .then(response => response.json())
       .then(responseJSON => {
         if (responseJSON.data.html.length > 0) {
-          container.innerHTML = VuFind.updateCspNonce(response.data.html);
+          container.innerHTML = VuFind.updateCspNonce(responseJSON.data.html);
         }
         if (spinner) {
           spinner.classList.add('hidden');
