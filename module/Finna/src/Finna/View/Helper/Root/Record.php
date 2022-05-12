@@ -836,11 +836,11 @@ class Record extends \VuFind\View\Helper\Root\Record
         $images = $this->getAllRecordImageUrls();
         foreach ($urls as $url) {
             if ((isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf')
-                || in_array($url['url'], $this->renderedUrls[$cacheKey] ?? [])
+                || in_array($url['url'], $this->cache[$cacheKey] ?? [])
             ) {
                 continue;
             }
-            $this->renderedUrls[$cacheKey][] = $url['url'];
+            $this->cache[$cacheKey][] = $url['url'];
             $result[] = $url;
         }
         return $result;
