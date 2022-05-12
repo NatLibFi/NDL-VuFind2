@@ -10,7 +10,7 @@ finna.record = (() => {
       fetch(url)
         .then(response => response.json())
         .then(responseJSON => {
-          if (responseJSON.data.html.length) {
+          if (responseJSON.data && responseJSON.data.html.length) {
             description.innerHTML = VuFind.updateCspNonce(responseJSON.data.html);
           }
         })
@@ -43,7 +43,7 @@ finna.record = (() => {
       showButton.classList.remove('hidden');
       sessionStorage.removeItem('finna_record_details');
     });
-    const recordInformation = document.querySelector('.record-information');
+    const recordInformation = document.getElementsByClassName('record-information')[0];
     if (recordInformation && recordInformation.clientHeight > 350) {
       if (sessionStorage.getItem('finna_record_details')) {
         showButton.click();
@@ -74,27 +74,31 @@ finna.record = (() => {
     const recordId = elements[0].href.match(/\/Record\/([^/]+)\//)[1];
     const vars = [];
     elements.forEach(element => vars.push(getRequestLinkData(element, recordId)));
-    const params = {
+    const values = {
+      method: 'checkRequestsAreValid',
       id: recordId,
-      requestType: requestType,
-      data: vars
+      requestType: requestType
     };
-    console.log(vars);
-    const url = `${VuFind.path}/AJAX/JSON?method=checkRequestsAreValid`;
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json, text/plain, */*',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(params)
-    })
+    const params = new URLSearchParams(values);
+    for (let i = 0; i < vars.length; i++) {
+      for (let k in vars[i]) {
+        params.append(`data[${i}][${k}]`, vars[i][k]);
+      }
+    }
+
+    fetch(`${VuFind.path}/AJAX/JSON?method=checkRequestsAreValid`,
+      {
+        method: 'POST',
+        body: params,
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      })
       .then(response => response.json())
       .then(jsonResponse => {
-        console.log(jsonResponse.data);
         jsonResponse.data.forEach((result, index) => {
           const element = elements[index];
-          if (response.status) {
+          if (result.status) {
             element.classList.remove('disabled');
             element.innerHTML = VuFind.updateCspNonce(result.msg);
           } else {
@@ -116,6 +120,7 @@ finna.record = (() => {
   }
 
   function fetchHoldingsDetails(elements) {
+    console.log(elements);
     if (!elements[0]) {
       return;
     }
@@ -209,6 +214,7 @@ finna.record = (() => {
               collapsedCheckStorageRetrievalRequest.push(...e.getElementsByClassName('collapsedCheckStorageRetrievalRequest'));
               collapsedCheckILLRequest.push(...e.getElementsByClassName('collapsedCheckILLRequest'));
               if (e.classList.contains('collapsedGetDetails')) {
+                e.classList.remove('collapsedGetDetails');
                 filtered.push(e);
               }
             });
@@ -232,10 +238,9 @@ finna.record = (() => {
       if (!exists || exists.textContent !== link.textContent) {
         const newLink = template.cloneNode(true);
         let inner = newLink.innerHTML;
-        inner = inner.replace('HREF', link.href);
-        inner = inner.replace('DESC', link.textContent);
-        inner = inner.replace('SOURCE', title ? title.textContent : '');
-        newLink.innerHTML = inner;
+        newLink.innerHTML = inner.replace('HREF', link.href)
+          .replace('DESC', link.textContent)
+          .replace('SOURCE', title ? title.textContent : '');
         if (!exists) {
           recordURLs.prepend(newLink);
         } else {
@@ -260,19 +265,15 @@ finna.record = (() => {
     containers.forEach(container => {
       container.addEventListener('click', () => {
         let elem = container.nextElementSibling;
-        while (elem) {
-          if (elem.matches('.holdings-container-heading')) {
-            break;
-          }
+        while (elem && !elem.matches('.holdings-container-heading')) {
           elem.classList.toggleClass('collapsed');
           elem = elem.nextElementSibling;
         }
         const location = container.querySelector('.location .fa');
-        if (!location) {
-          return;
+        if (location) {
+          location.classList.toggle('fa-arrow-down');
+          location.classList.toggle('fa-arrow-right');
         }
-        location.classList.toggle('fa-arrow-down');
-        location.classList.toggle('fa-arrow-right');
       });
     });
   }
@@ -309,33 +310,45 @@ finna.record = (() => {
   // The accordion has a delicate relationship with the tabs. Handle with care!
   function _toggleAccordion(accordion, _initialLoad) {
     var initialLoad = typeof _initialLoad === 'undefined' ? false : _initialLoad;
-    var tabid = accordion.find('.accordion-toggle a').data('tab');
-    var $recordTabs = $('.record-tabs');
-    var $tabContent = $recordTabs.find('.tab-content');
-    if (initialLoad || !accordion.hasClass('active')) {
+    const accordionToggle = accordion.querySelector('.accordion-toggle a');
+    const recordTabs = document.querySelector('.record-tabs');
+
+    if (!accordionToggle || !recordTabs) {
+      return;
+    }
+    const tabid = accordionToggle.dataset.tab;
+    const tabContent = recordTabs.querySelector('.tab-content');
+    if (initialLoad || !accordion.classList.contains('active')) {
       // Move tab content under the correct accordion toggle
-      $tabContent.insertAfter(accordion);
-      if (accordion.hasClass('noajax') && !$recordTabs.find('.' + tabid + '-tab').length) {
+      accordion.insertAdjacentElement('afterend', tabContent);
+      const tab = recordTabs.querySelector(`.${tabid}-tab`);
+      if (accordion.classList.contains('noajax') && !tab) {
         return true;
       }
-      $('.record-accordions').find('.accordion.active').removeClass('active');
-      accordion.addClass('active');
-      $recordTabs.find('.tab-pane.active').removeClass('active');
-      if (!initialLoad && $('.record-accordions').is(':visible')) {
-        $('html, body').animate({scrollTop: accordion.offset().top - accordionTitleHeight}, 150);
+      const recordAccordion = document.querySelector('.record-accordions');
+      const recordAccordions = document.querySelectorAll('.record-accordions .accordion.active');
+      recordAccordions.forEach(a => a.classList.remove('active'));
+      accordion.classList.add('active');
+      const tabPanes = recordTabs.querySelectorAll('.tab-pane.active');
+      tabPanes.forEach(t => t.classList.remove('active'));
+
+      if (!initialLoad && (recordAccordion.offsetWidth > 0 || recordAccordion.offsetHeight > 0)) {
+        document.body.animate([{scrollTop: accordion.offsetTop - accordionTitleHeight}], {duration: 50});
       }
 
-      if ($recordTabs.find('.' + tabid + '-tab').length > 0) {
-        $recordTabs.find('.' + tabid + '-tab').addClass('active');
-        if (accordion.hasClass('initiallyActive')) {
+      if (tab) {
+        tab.classList.add('active');
+        if (accordion.classList.contains('initiallyActive')) {
           removeHashFromLocation();
         } else {
           window.location.hash = tabid;
         }
         return false;
       } else {
-        var newTab = getNewRecordTab(tabid).addClass('active');
-        $recordTabs.find('.tab-content').append(newTab);
+        // TODO: Remove jquery after upstream allows it.
+        const newTab = getNewRecordTab(tabid);
+        newTab.addClass('active');
+        tabContent.append(newTab[0]);
         return ajaxLoadTab(newTab, tabid, !$(this).parent().hasClass('initiallyActive'));
       }
     }
@@ -343,15 +356,26 @@ finna.record = (() => {
   }
 
   function initRecordAccordion() {
-    $('.record-accordions .accordion-toggle').on('click', function accordionClicked(e) {
-      return _toggleAccordion($(e.target).closest('.accordion'));
+    const accordions = document.querySelectorAll('.record-accordions .accordion-toggle');
+    accordions.forEach(a => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        return _toggleAccordion(e.target.closest('.accordion'));
+      });
     });
-    if ($('.mobile-toolbar').length > 0 && $('.accordion-holdings').length > 0) {
-      $('.mobile-toolbar .library-link li').removeClass('hidden');
-      $('.mobile-toolbar .library-link li').on('click', function onLinkClick(e) {
-        e.stopPropagation();
-        $('html, body').animate({scrollTop: $('#tabnav').offset().top - accordionTitleHeight}, 150);
-        _toggleAccordion($('.accordion-holdings'));
+    const toolbar = document.querySelector('.mobile-toolbar');
+    const holdings = document.querySelector('.accordion-holdings');
+    if (toolbar && holdings) {
+      const libraryLink = holdings.querySelectorAll('.library-link li');
+      libraryLink.forEach(l => {
+        l.classList.remove('hidden');
+        l.addEventListener('click', e => {
+          const tabnav = document.getElementById('tabnav');
+          if (tabnav) {
+            document.body.animate([{scrollTop: tabnav.offsetTop - accordionTitleHeight}], {duration: 50});
+            _toggleAccordion(holdings);
+          }
+        });
       });
     }
   }
@@ -359,19 +383,18 @@ finna.record = (() => {
   function applyRecordAccordionHash(callback) {
     var newTab = typeof window.location.hash !== 'undefined'
       ? window.location.hash.toLowerCase() : '';
-
     // Open tab in url hash
-    var $tab = $("a:not(.feed-tab-anchor,.feed-accordion-anchor)[data-tab='" + newTab.substr(1) + "']");
-    var accordion = (newTab.length <= 1 || newTab === '#tabnav' || $tab.length === 0)
-      ? $('.record-accordions .accordion.initiallyActive')
-      : $tab.closest('.accordion');
-    if (accordion.length > 0) {
+    const tab = document.querySelector(`a:not(.feed-tab-anchor,.feed-accordion-anchor)[data-tab="${newTab.substr(1)}"]`);
+    var accordion = (newTab.length <= 1 || newTab === '#tabnav' || !tab)
+      ? document.querySelector('.record-accordions .accordion.initiallyActive')
+      : tab.closest('.accordion');
+    if (accordion) {
       //onhashchange is an object, so we avoid that later
       if (typeof callback === 'function') {
         callback(accordion);
       } else {
-        var mobile = $('.mobile-toolbar');
-        var initialLoad = mobile.length > 0 ? !mobile.is(':visible') : true;
+        const mobile = document.querySelector('.mobile-toolbar');
+        const initialLoad = mobile ? !(mobile.offsetWidth > 0 || mobile.offsetHeight > 0) : true;
         _toggleAccordion(accordion, initialLoad);
       }
     }
@@ -379,20 +402,32 @@ finna.record = (() => {
 
   //Toggle accordion at the start so the accordions work properly
   function initialToggle(accordion) {
-    var $recordTabs = $('.record-tabs');
-    var $tabContent = $recordTabs.find('.tab-content');
-    var tabid = accordion.find('.accordion-toggle a').data('tab');
-    $tabContent.insertAfter(accordion);
-    if (accordion.hasClass('noajax') && !$recordTabs.find('.' + tabid + '-tab').length) {
+    const recordTabs = document.querySelector('.record-tabs');
+    const toggle = accordion.querySelector('.accordion-toggle a');
+    if (!recordTabs || !toggle) {
+      return;
+    }
+    const tabContent = recordTabs.querySelector('.tab-content');
+    const tabid = toggle.dataset.tab;
+    const tab = recordTabs.querySelector(`.${tabid}-tab`);
+    accordion.insertAdjacentElement('afterend', tabContent);
+    if (accordion.classList.contains('noajax') && !tab) {
       return true;
     }
+    const accordions = document.querySelector('.record-accordions');
+    const active = accordions.querySelector('.accordion.active');
+    if (active) {
+      active.classList.remove('active');
+    }
+    const pane = recordTabs.querySelector('.tab-pane.active');
+    if (pane) {
+      pane.classList.removeClass('active');
+    }
 
-    $('.record-accordions').find('.accordion.active').removeClass('active');
-    accordion.addClass('active');
-    $recordTabs.find('.tab-pane.active').removeClass('active');
-    if ($recordTabs.find('.' + tabid + '-tab').length > 0) {
-      $recordTabs.find('.' + tabid + '-tab').addClass('active');
-      if (accordion.hasClass('initiallyActive')) {
+    accordion.classList.add('active');
+    if (tab) {
+      tab.classList.add('active');
+      if (accordion.classList.contains('initiallyActive')) {
         removeHashFromLocation();
       }
     }
@@ -400,38 +435,51 @@ finna.record = (() => {
 
   function loadRecommendedRecords(container, method)
   {
-    if (container.length === 0) {
+    if (!container) {
       return;
     }
-    var spinner = container.find('.fa-spinner').removeClass('hide');
-    var data = {
-      method: method,
-      id: container.data('id')
-    };
-    if ('undefined' !== typeof container.data('source')) {
-      data.source = container.data('source');
+    const spinner = container.getElementsByClassName('fa-spinner')[0];
+    if (spinner) {
+      spinner.classList.remove('hidden');
     }
-    $.getJSON(VuFind.path + '/AJAX/JSON', data)
-      .done(function onGetRecordsDone(response) {
-        if (response.data.html.length > 0) {
-          container.html(VuFind.updateCspNonce(response.data.html));
+    const data = {
+      method: method,
+      id: container.dataset.id
+    };
+    if ('undefined' !== typeof container.dataset.source) {
+      data.source = container.dataset.source;
+    }
+    fetch(`${VuFind.path}/AJAX/JSON`, 
+      {
+        method: 'POST',
+        body: new URLSearchParams(data)
+      }
+    )
+      .then(response => response.json())
+      .then(responseJSON => {
+        if (responseJSON.data.html.length > 0) {
+          container.innerHTML = VuFind.updateCspNonce(response.data.html);
         }
-        spinner.addClass('hidden');
+        if (spinner) {
+          spinner.classList.add('hidden');
+        }
       })
-      .fail(function onGetRecordsFail() {
-        spinner.addClass('hidden');
-        container.text(VuFind.translate('error_occurred'));
+      .catch(() => {
+        if (spinner) {
+          spinner.classList.add('hidden');
+        }
+        container.textContent = VuFind.translate('error_occurred');
       });
   }
 
   function loadSimilarRecords()
   {
-    loadRecommendedRecords($('.sidebar .similar-records'), 'getSimilarRecords');
+    loadRecommendedRecords(document.querySelector('.sidebar .similar-records'), 'getSimilarRecords');
   }
 
   function loadRecordDriverRelatedRecords()
   {
-    loadRecommendedRecords($('.sidebar .record-driver-related-records'), 'getRecordDriverRelatedRecords');
+    loadRecommendedRecords(document.querySelector('.sidebar .record-driver-related-records'), 'getRecordDriverRelatedRecords');
   }
 
   function initRecordVersions(_holder) {
@@ -457,19 +505,19 @@ finna.record = (() => {
     initRecordAccordion();
     initAudioAccordion();
     applyRecordAccordionHash(initialToggle);
-    $(window).on('hashchange', applyRecordAccordionHash);
+    window.addEventListener('hashchange', applyRecordAccordionHash);
     loadSimilarRecords();
     loadRecordDriverRelatedRecords();
     finna.authority.initAuthorityResultInfo();
   }
 
   var my = {
-    checkRequestsAreValid: checkRequestsAreValid,
-    init: init,
-    setupHoldingsTab: setupHoldingsTab,
-    setupLocationsEad3Tab: setupLocationsEad3Tab,
-    initRecordVersions: initRecordVersions,
-    handleRedirect: handleRedirect
+    checkRequestsAreValid,
+    init,
+    setupHoldingsTab,
+    setupLocationsEad3Tab,
+    initRecordVersions,
+    handleRedirect
   };
 
   return my;
