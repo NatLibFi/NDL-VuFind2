@@ -92,11 +92,11 @@ class Record extends \VuFind\View\Helper\Root\Record
     protected $recordLinkHelper;
 
     /**
-     * Image cache
+     * Local cache
      *
      * @var array
      */
-    protected $cachedImages = [];
+    protected $cache = [];
 
     /**
      * Tab Manager
@@ -614,15 +614,16 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getAllRecordImageUrls()
     {
-        $images = $this->driver->tryMethod('getAllImages', ['', false]);
-        if (empty($images)) {
-            return [];
+        $cacheKey = __FUNCTION__ . "/{$this->driver->getUniqueID()}";
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
         }
+        $images = $this->driver->tryMethod('getAllImages', ['', false]);
         $urls = [];
         foreach ($images as $image) {
             $urls = [...$urls, ...array_values($image['urls'])];
         }
-        return array_flip($urls);
+        return $this->cache[$cacheKey] = array_flip($urls);
     }
 
     /**
@@ -697,10 +698,10 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $recordId = $this->driver->getUniqueID();
 
-        $cacheKey = "$recordId\t" . ($thumbnails ? '1' : '0')
+        $cacheKey = __FUNCTION__ . "$recordId\t" . ($thumbnails ? '1' : '0')
             . ($includePdf ? '1' : '0');
-        if (isset($this->cachedImages[$cacheKey])) {
-            return $this->cachedImages[$cacheKey];
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
         }
 
         $sizes = ['small', 'medium', 'large', 'master'];
@@ -756,7 +757,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
             }
         }
-        return $this->cachedImages[$cacheKey] = $images;
+        return $this->cache[$cacheKey] = $images;
     }
 
     /**
@@ -821,26 +822,28 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if the given array of URLs contain URLs that
-     * are not record images.
+     * Remove urls which are displayed as an image from the array.
      *
-     * @param array $urls      Array of URLs in the format returned by
-     *                         getURLs and getOnlineURLs.
-     * @param array $imageURLs Array of record image URLs as keys.
+     * @param array $urls Array of URLs in the format returned by
+     *                    getURLs and getOnlineURLs.
      *
-     * @return boolean
+     * @return array
      */
-    public function containsNonImageURL($urls, $imageURLs)
+    public function filterImageURLs($urls): array
     {
-        if (!$urls) {
-            return false;
-        }
+        $cacheKey = __FUNCTION__ . "/{$this->driver->getUniqueID()}/";
+        $result = [];
+        $images = $this->getAllRecordImageUrls();
         foreach ($urls as $url) {
-            if (!isset($imageURLs[$url['url']])) {
-                return true;
+            if ((isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf')
+                || in_array($url['url'], $this->renderedUrls[$cacheKey] ?? [])
+            ) {
+                continue;
             }
+            $this->renderedUrls[$cacheKey][] = $url['url'];
+            $result[] = $url;
         }
-        return false;
+        return $result;
     }
 
     /**
