@@ -829,9 +829,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     /**
      * Helper function for recoverAction
      *
-     * @param string $email     User's email address
-     * @param string $target    Login target
-     * @param array  $urlParams Recovery URL params
+     * @param string $catUsername User's cat_username
+     * @param string $email       User's email address
+     * @param string $target      Login target
+     * @param array  $urlParams   Recovery URL params
      *
      * @return void (sends email or adds error message)
      */
@@ -844,7 +845,11 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $library = !empty($target)
                 ? $this->translate("source_$target", null, $target)
                 : $config->Site->title;
-            $userdata = $this->getTable('User')->select(['cat_username' => $catUsername])->toArray();
+            $userdata = $this->getTable('User')->select(
+                [
+                    'cat_username' => $catUsername
+                ]
+            )->toArray();
             $firstname = (count($userdata) == 1)
                 ? $userdata[0]['firstname']
                 : '';
