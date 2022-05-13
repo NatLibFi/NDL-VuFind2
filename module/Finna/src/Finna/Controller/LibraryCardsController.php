@@ -239,6 +239,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 );
                 $row->save();
                 $this->sendRecoveryEmail(
+                    "$target.$username",
                     $email,
                     $target,
                     [
@@ -834,7 +835,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
      *
      * @return void (sends email or adds error message)
      */
-    protected function sendRecoveryEmail($email, $target, $urlParams)
+    protected function sendRecoveryEmail($catUsername, $email, $target, $urlParams)
     {
         // Attempt to send the email
         try {
@@ -843,15 +844,15 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $library = !empty($target)
                 ? $this->translate("source_$target", null, $target)
                 : $config->Site->title;
-            $userdata = $this->getTable('User')->select(['email' => $email]);
-            foreach ($userdata as $row) {
-                $user = $row;
-            }
+            $userdata = $this->getTable('User')->select(['cat_username' => $catUsername])->toArray();
+            $firstname = (count($userdata) == 1)
+                ? $userdata[0]['firstname']
+                : '';
             // Custom template for emails (text-only)
             $message = $renderer->render(
                 'Email/recover-library-card-password.phtml',
                 [
-                    'user' => $user,
+                    'firstname' => $firstname,
                     'library' => $library,
                     'url' => $this->getServerUrl('librarycards-resetpassword')
                         . '?' . http_build_query($urlParams)
