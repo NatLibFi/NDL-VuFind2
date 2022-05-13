@@ -28,7 +28,7 @@
 <?php endforeach; ?>
 <?php endif; ?>
 <?php if (!empty($this->errors)): ?>
-<?= $this->translate('due_date_email_login_error', ['%%lastLogin%%' => $this->lastLogin, '%%loginMethod%%' => $this->translate('due_date_login_method_' . $this->loginMethod, null, '..'), '%%serviceName%%' => $this->serviceName]) ?>
+<?= $this->translate('due_date_email_login_error', ['%%lastLogin%%' => $this->lastLogin, '%%loginMethod%%' => $this->translate('due_date_login_method_' . $this->loginMethod, null, ''), '%%serviceName%%' => $this->serviceName]) ?>
 
 <?php foreach ($this->errors as $error): ?>
 <?php $card = $error['card']; ?>
@@ -37,6 +37,8 @@
 <?php endforeach; ?>
 
 <?= $this->translate('due_date_failed_library' . (count(array_unique($cards)) >= 2 ? '_multi' : '')) . implode(', ', array_unique($cards)) ?>
+
+<?= $this->translate('due_date_email_login_error_footer', ['%%lastLogin%%' => $this->lastLogin, '%%loginMethod%%' => $this->translate('due_date_login_method_' . $this->loginMethod, null, '')]) ?>
 
 <?php else: ?>
 <?= $this->translate('due_date_email_link_title') ?>

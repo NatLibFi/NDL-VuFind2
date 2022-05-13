@@ -33,6 +33,8 @@
     <?=implode(' ; ', $displayActors); ?>
     <br>
   <?php endif; ?>
-  <?php if (!empty($event['description'])): ?><?=$this->escapeHtml($event['description'])?><br/><?php endif; ?>
+  <?php if (!empty($event['descriptions'])): ?>
+    <?=implode('<br/>', array_map([$this, 'escapeHtml'], $event['descriptions']))?><br/>
+  <?php endif; ?>
 <?php endforeach; ?>
 </div>

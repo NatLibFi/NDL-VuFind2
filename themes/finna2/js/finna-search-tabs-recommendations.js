@@ -20,7 +20,7 @@ finna.searchTabsRecommendations = (() => {
           VuFind.lightbox.bind(holder);
           VuFind.itemStatuses.check(holder);
           finna.itemStatus.initDedupRecordSelection(holder);
-          checkSaveStatuses(holder);
+          checkSaveStatuses($(holder));
         }
       });
   }
