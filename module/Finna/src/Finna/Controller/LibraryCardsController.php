@@ -850,9 +850,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     'cat_username' => $catUsername
                 ]
             )->current();
-            $firstname = $user
-                ? $user->firstname
-                : '';
+            $firstname = $user->firstname ?? '';
             // Custom template for emails (text-only)
             $message = $renderer->render(
                 'Email/recover-library-card-password.phtml',
