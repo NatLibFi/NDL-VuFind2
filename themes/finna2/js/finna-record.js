@@ -150,7 +150,7 @@ finna.record = (function finnaRecord() {
   }
 
   function initHoldingsControls() {
-    $('.holdings-container-heading').on('click', function onClickHeading(e) {
+    $('.record-holdings-table:not(.electronic-holdings) .holdings-container-heading').on('click', function onClickHeading(e) {
       if ($(e.target).hasClass('location-service') || $(e.target).parents().hasClass('location-service')) {
         return;
       }
