@@ -845,13 +845,13 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $library = !empty($target)
                 ? $this->translate("source_$target", null, $target)
                 : $config->Site->title;
-            $userdata = $this->getTable('User')->select(
+            $user = $this->getTable('User')->select(
                 [
                     'cat_username' => $catUsername
                 ]
-            )->toArray();
-            $firstname = (count($userdata) == 1)
-                ? $userdata[0]['firstname']
+            )->current();
+            $firstname = $user
+                ? $user->firstname
                 : '';
             // Custom template for emails (text-only)
             $message = $renderer->render(
