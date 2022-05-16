@@ -1408,6 +1408,10 @@ repository_library_request_in_organisation_info = true
 ;large_image_formats[] = "0/Image/"
 ;large_image_formats[] = "0/Map/"
 
+pop_overs = true
+pop_over_links[author] = "authority-page,search,search-author-mixed,search-topic-mixed"
+
+
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]
 ; This setting controls how many headings are displayed on each page of results:
@@ -1716,7 +1720,7 @@ url = "https://my.surveypal.com/Finnasurvey"
 
 ; Whether to change author-search links to authority-links.
 ; The link type is one of:
-;   - author         links to the authority page
+;   - page           links to the authority page
 ;   - search         performs a search filtered by authority ID
 ;   - search-subject performs an OR search by topic_id_str_mv and topic
 ; authority_links[*] can be used to set the link type for all authority types.
@@ -1724,9 +1728,6 @@ url = "https://my.surveypal.com/Finnasurvey"
 ; (author or subject), for example: authority_links[author] = page
 
 ; authority_links[*] = page
-
-; Uncomment to enable Authority info (displayed beside author links on record page)
-;authority_info = true
 
 ; Mapping to Finna authority record types
 ; typeMap[elonet_henkilo] = Personal Name

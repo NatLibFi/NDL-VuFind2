@@ -385,11 +385,64 @@ finna.record = (function finnaRecord() {
   }
 
   function initPopovers() {
-    document.addEventListener('mouseup', function(e) {
+    document.addEventListener('mouseup', function onMouseUp(e) {
       document.querySelectorAll('.lateral-link.open').forEach((element) => {
         if (!element.contains(e.target)) {
           element.classList.remove('open');
         }
+      });
+    });
+
+    var toggleHandle = function onToggleHandle(handle, open) {
+      handle
+        .removeClass(open ? 'fa-handle-open' : 'fa-handle-close')
+        .addClass(open ? 'fa-handle-close' : 'fa-handle-open');
+    };
+    $('div.ajax-content.lateral-link').each(function initLink() {
+      var $field = $(this);
+      $field.find('a.show-info').on('click', function onClickShowInfo() {
+        if (!$field.hasClass('open')) {
+          var $fieldInfo = $field.find('.field-info .content');
+          if (!$fieldInfo.hasClass('loaded')) {
+            $fieldInfo.addClass('loaded');
+            $.getJSON(
+              VuFind.path + '/AJAX/JSON',
+              {
+                method: 'getFieldInfo',
+                id: $field.data('id'),
+                type: $field.data('type'),
+                source: $field.data('source')
+              }
+            )
+              .done(function onGetAuthorityInfoDone(response) {
+                $fieldInfo.find('.fa-spinner').remove();
+                var desc = typeof response.data.html !== 'undefined' ? response.data.html : null;
+                if (desc && desc.trim()) {
+                  $fieldInfo.html(VuFind.updateCspNonce(desc));
+                  finna.layout.initTruncate($fieldInfo);
+                } else {
+                  $fieldInfo.find('.no-info').removeClass('hide');
+                }
+              })
+              .fail(function onGetFieldInfoFail() {
+                $fieldInfo.text(VuFind.translate('error_occurred'));
+              });
+          }
+          $field.addClass('open');
+          // trigger parent collapsed area open so that authority info is not hidden
+          $field.closest('.truncate-field.truncated').next('.more-link').click();
+          toggleHandle($(this).parent().find('i.handle'), true);
+        } else {
+          $field.removeClass('open');
+          toggleHandle($(this).parent().find('i.handle'), false);
+        }
+        return false;
+      });
+
+      $field.find('a.hide-info').on('click', function onClickHideInfo() {
+        $field.removeClass('open');
+        toggleHandle($field.find('i.handle'), false);
+        return false;
       });
     });
   }

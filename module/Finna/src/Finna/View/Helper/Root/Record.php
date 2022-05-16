@@ -402,6 +402,72 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Render a linked field.
+     *
+     * @param string $type    Link type
+     * @param string $lookfor Link label or string to search for
+     * @param array  $data    Additional link data
+     * @param array  $params  Optional array of parameters for the link template
+     *
+     * @return string HTML
+     */
+    public function getLinkedFieldElement(
+        $type,
+        $lookfor,
+        $data,
+        $params = []
+    ) {
+        if (empty($this->config->Record->pop_overs)) {
+            return $this->getAuthorityLinkElement($type, $lookfor, $data, $params);
+        }
+
+        $links = $this->config->Record->pop_over_links->{$type}
+            ?? $this->config->Record->pop_over_links->{'*'}
+            ?? '';
+
+        $fieldLinks = [];
+        foreach (explode(',', $links) as $linkType) {
+            // Discard search tabs hiddenFilters when jumping to Authority page
+            $preserveSearchTabsFilters = 'authority-page' !== $linkType;
+
+            [$escapedUrl, $urlType] = $this->getLink(
+                $type,
+                $lookfor,
+                $params + compact('id', 'linkType'),
+                true,
+                $preserveSearchTabsFilters
+            );
+
+            $fieldLinks[] = compact('linkType', 'urlType', 'escapedUrl');
+        }
+
+        $id = $data['id'] ?? null;
+        $authorityType = $params['authorityType'] ?? 'Personal Name';
+        $authorityType
+            = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
+
+        $elementParams = [
+           'escapedUrl' => trim($escapedUrl),
+           'record' => $this->driver,
+           'searchAction' => $params['searchAction'] ?? null,
+           'label' => $lookfor,
+           'id' => $this->driver->tryMethod('getAuthorityId', [$id, $type]),
+           'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
+           'type' => $type,
+           'authorityType' => $authorityType,
+           'title' => $params['title'] ?? null,
+           'classes' => $params['class'] ?? [],
+           'additionalData' => $params['additionalData'] ?? [],
+           'fieldLinks' => $fieldLinks,
+        ];
+        if (!empty($params['description']) && !empty($data['description'])) {
+            $elementParams['description'] = $data['description'];
+        }
+
+        return $this->renderTemplate('popover-link-element.phtml', $elementParams);
+    }
+
+    /**
      * Render a authority search link or fallback to Author search.
      *
      * @param string $type    Link type
@@ -432,15 +498,11 @@ class Record extends \VuFind\View\Helper\Root\Record
             $preserveSearchTabsFilters
         );
 
-        $showInlineInfo = !empty($params['showInlineInfo'])
-          && $this->isAuthorityInlineInfoEnabled() && $id;
-
         if (!$this->isAuthorityEnabled()
-            || (!$showInlineInfo
-            && !in_array(
+            || !in_array(
                 $urlType,
                 ['authority-search', 'authority-page', 'authority-search-subject']
-            ))
+            )
         ) {
             $author = [
                'name' => $data['name'] ?? null,
@@ -473,7 +535,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'label' => $lookfor,
            'id' => $authId,
            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
-           'showInlineInfo' => $showInlineInfo,
+           'showInlineInfo' => false,
            'recordSource' => $this->driver->getDataSource(),
            'type' => $type,
            'authorityType' => $authorityType,
@@ -565,17 +627,6 @@ class Record extends \VuFind\View\Helper\Root\Record
             return null;
         }
         return $this->authorityHelper->getAuthorityLinkType($type);
-    }
-
-    /**
-     * Is authority inline info enabled?
-     *
-     * @return bool
-     */
-    protected function isAuthorityInlineInfoEnabled()
-    {
-        return $this->driver->tryMethod('isAuthorityEnabled')
-            && ($this->config->Authority->authority_info ?? false);
     }
 
     /**

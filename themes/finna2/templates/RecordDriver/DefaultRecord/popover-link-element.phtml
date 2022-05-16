@@ -1,0 +1,27 @@
+<?php
+  $__attributes = $this->htmlAttributes(
+    [
+      'class' => $this->classes,
+      'href' => '#',
+    ]
+  );
+  $__attributes->add('classes', 'show-info');
+  if ($this->title) {
+    $__attributes->add('title', $this->title);
+  }
+?>
+<div class="ajax-content lateral-link" data-id="<?=$this->escapeHtmlAttr($this->id)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>">
+  <a<?=$attributes?>>
+    <span class="field-label"><?=$this->escapeHtml($this->label)?></span>
+  </a>
+  <div class="field-info lateral-popover">
+    <div class="content">
+      <?php foreach ($this->fieldLinks as $link): ?>
+
+      <?php endforeach; ?>
+      <i class="fa fa-spin fa-spinner"></i>
+      <div class="no-info hide alert alert-info"><?=$this->translate('field_no_info') ?></div>
+    </div>
+    <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?> <i class="fa fa-handle-close handle"></i></a>
+  </div>
+</div>
