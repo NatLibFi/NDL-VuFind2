@@ -84,7 +84,7 @@ class EventHandlerFactory implements FactoryInterface
 
         return new $requestedName(
             $config->Site->institution ?? '',
-            getenv('FINNA_BASE_URL') ?: '',
+            rtrim(getenv('FINNA_BASE_URL') ?: '', '/'),
             $driver,
             $userAgent
         );

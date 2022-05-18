@@ -403,24 +403,6 @@ choice_order = Database,Shibboleth,MultiILS
 ; recording of statistics:
 ;driver = Database
 
-; When using the Solr mode, specify the address of a Solr server containing a
-; "stats" core here; if no URL is specified, [Index]/url below will be used.
-;
-; Note: The stats core is disabled by default -- you will need to edit solr/solr.xml
-; to turn it on.
-;solr            = http://localhost:8080/solr
-
-; When using the File mode, specify a directory for saving stat files here:
-;file            = /usr/local/vufind/local/logs
-
-; When displaying search statistics in the Admin module, do you want to see a single
-; merged list, or separate grouped lists by module (Solr, Summon, etc.)
-searchesBySource = false
-
-; When display record view statistics in the Admin module, do you want to see a
-; single merged list, or separate grouped lists by module (Solr, Summon, etc.)
-recordsBySource = false
-
 ; This section requires no changes for most installations
 [Index]
 engine          = Solr

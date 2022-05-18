@@ -145,6 +145,13 @@ class EventHandler
                 [$source] = explode('.', $record->getUniqueID(), 2);
             }
 
+            $rawRecord = $record->getRawData();
+            $online = 0;
+            if (!empty($rawRecord['free_online_boolean'])) {
+                $online = 2;
+            } elseif (!empty($rawRecord['online_boolean'])) {
+                $online = 1;
+            }
             $this->driver->addRecordView(
                 $this->institution,
                 $this->view,
@@ -154,6 +161,7 @@ class EventHandler
                 $record->getUniqueID(),
                 $record->tryMethod('getFormats') ?? [],
                 $record->tryMethod('getUsageRights') ?? [],
+                $online
             );
         }
     }

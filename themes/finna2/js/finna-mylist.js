@@ -149,7 +149,7 @@ finna.myList = (function finnaMyList() {
     })
       .done(function onAddToListDone(/*data*/) {
         // Don't reload to avoid trouble with POST requests
-        location.href = location.href;
+        location.href = String(location.href);
       })
       .fail(function onAddToListFail() {
         toggleErrorMessage(true);

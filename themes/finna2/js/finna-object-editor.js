@@ -60,10 +60,10 @@ class ObjectEditor {
     input.value = value;
     return input;
   }
-  
+
   createSelect(options, name, selected) {
     var select = document.createElement('select');
-    select.name = name; 
+    select.name = name;
     for (var i = 0; i < options.length; i++) {
       var current = options[i];
       var option = document.createElement('option');
@@ -74,19 +74,19 @@ class ObjectEditor {
     select.value = selected;
     return select;
   }
-  
+
   createDiv(className) {
     var div = document.createElement('div');
     div.className = className;
     return div;
   }
-  
+
   createForm(formClass) {
     var form = document.createElement('form');
     form.className = formClass;
     return form;
   }
-  
+
   createButton(className, value, text) {
     var button = document.createElement('button');
     button.className = className;
@@ -124,7 +124,7 @@ class ObjectEditor {
     const createSettings = (object, template, prefix) => {
       const form = template.querySelector('form');
       for (const key in object) {
-        if (object.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(object, key)) {
           const div = this.createElement(object, key, prefix);
           if (div) {
             form.append(div);

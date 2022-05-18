@@ -441,7 +441,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       }
     }
 
-    if (visDateStart === false && typeof start != undefined && start !== false) {
+    if (visDateStart === false && typeof start !== 'undefined' && start !== false) {
       visDateStart = start;
     }
 
