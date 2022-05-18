@@ -6,7 +6,6 @@
     $context = $this->context ?? 'results';
     $maxLinkCount = 4;
     $recordHelper = $this->record($this->driver);
-    $images = $recordHelper->getAllRecordImageUrls();
 
     $urls = $this->driver->getURLs();
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs', [false, ['image']]);
@@ -37,7 +36,7 @@
         <?php
           $linkCount = 0;
         ?>
-        <?php foreach ($combined ?? [] as $i => $url): ?>
+        <?php foreach ($combined as $i => $url): ?>
           <?php
             if ('popup' === $context && ++$linkCount > $maxLinkCount) {
               break;

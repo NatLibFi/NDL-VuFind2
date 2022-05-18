@@ -1020,11 +1020,6 @@ trait SolrFinnaTrait
         return false;
     }
 
-    protected function filterURLs(array $urls): array
-    {
-
-    }
-
     /**
      * Resolve URL types.
      * Each URL is annotated with 'codec' field (taken from the file extension).

@@ -608,25 +608,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Return all record image urls as array keys.
-     *
-     * @return array
-     */
-    public function getAllRecordImageUrls()
-    {
-        $cacheKey = __FUNCTION__ . "/{$this->driver->getUniqueID()}";
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
-        }
-        $images = $this->driver->tryMethod('getAllImages', ['', false]);
-        $urls = [];
-        foreach ($images as $image) {
-            $urls = [...$urls, ...array_values($image['urls'])];
-        }
-        return $this->cache[$cacheKey] = array_flip($urls);
-    }
-
-    /**
      * Return if image popup zoom has been enabled in config
      *
      * @return boolean
@@ -819,6 +800,46 @@ class Record extends \VuFind\View\Helper\Root\Record
             );
         }
         return false;
+    }
+
+    /**
+     * This is here for backwards compability.
+     * Check if the given array of URLs contain URLs that
+     * are not record images.
+     *
+     * @param array $urls      Array of URLs in the format returned by
+     *                         getURLs and getOnlineURLs.
+     * @param array $imageURLs Array of record image URLs as keys.
+     *
+     * @return boolean
+     */
+    public function containsNonImageURL($urls, $imageURLs)
+    {
+        if (!$urls) {
+            return false;
+        }
+        foreach ($urls as $url) {
+            if (!isset($imageURLs[$url['url']])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * This is here for backwards compability.
+     * Return all record image urls as array keys.
+     *
+     * @return array
+     */
+    public function getAllRecordImageUrls()
+    {
+        $images = $this->driver->tryMethod('getAllImages', ['', false]);
+        $urls = [];
+        foreach ($images as $image) {
+            $urls = [...$urls, ...array_values($image['urls'])];
+        }
+        return array_flip($urls);
     }
 
     /**
