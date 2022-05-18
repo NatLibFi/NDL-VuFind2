@@ -5,7 +5,6 @@
     $openUrlActive = $openUrl->isActive();
     $context = $this->context ?? 'results';
     $maxLinkCount = 4;
-    $recordHelper = $this->record($this->driver);
 
     $urls = $this->driver->getURLs();
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
