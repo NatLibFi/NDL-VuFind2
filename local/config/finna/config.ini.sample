@@ -1408,8 +1408,10 @@ repository_library_request_in_organisation_info = true
 ;large_image_formats[] = "0/Image/"
 ;large_image_formats[] = "0/Map/"
 
-pop_overs = true
-pop_over_links[author] = "authority-page,search,search-author-mixed,search-topic-mixed"
+; Whether to enable popovers for lateral links in record metadata
+popovers = true
+; Links to display in the popover:
+popover_links[author] = "authority-page,keyword,search-id,search-author-mixed,search-topic-mixed"
 
 
 ; The following two sections control the Alphabetic Browse module.

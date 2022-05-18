@@ -20,7 +20,7 @@
       <?php $subject = trim($subject . ' ' . $subfield); ?>
       <?php if ($authId && $authType && $this->record($this->driver)->isAuthorityEnabled()): ?>
         <?php // Authority linking is enabled. Use Authority helper to render a link element, possibly together with inline authority info ?>
-        <?=$this->record($this->driver)->getAuthorityLinkElement('subject', $subfield, ['name' => $subject, 'id' => $authId, 'description' => $detail], ['authorityType' => $authType, 'class' => ['backlink'], 'title' => $subfield, 'showInlineInfo' => true])?>
+        <?=$this->record($this->driver)->getLinkedFieldElement('subject', $subfield, ['name' => $subject, 'id' => $authId, 'description' => $detail], ['authorityType' => $authType, 'class' => ['backlink'], 'title' => $subfield, 'showInlineInfo' => true])?>
       <?php else: ?>
         <?php // Authority linking is disabled. Use Record helper to render a subject or a subject-id search URL ?>
         <?php

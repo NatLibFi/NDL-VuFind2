@@ -398,11 +398,11 @@ finna.record = (function finnaRecord() {
         .removeClass(open ? 'fa-handle-open' : 'fa-handle-close')
         .addClass(open ? 'fa-handle-close' : 'fa-handle-open');
     };
-    $('div.ajax-content.lateral-link').each(function initLink() {
+    $('.ajax-content.lateral-link').each(function initLink() {
       var $field = $(this);
       $field.find('a.show-info').on('click', function onClickShowInfo() {
         if (!$field.hasClass('open')) {
-          var $fieldInfo = $field.find('.field-info .content');
+          var $fieldInfo = $field.find('.field-info .dynamic-content');
           if (!$fieldInfo.hasClass('loaded')) {
             $fieldInfo.addClass('loaded');
             $.getJSON(

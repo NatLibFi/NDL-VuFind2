@@ -310,6 +310,8 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param bool   $searchTabsFilters Include search tabs hiddenFilters in
      * the URL (needed when the link performs a search, but not when linking
      * to authority page).
+     * @param bool   $switchType        Whether to switch to authority search
+     * automatically
      *
      * @return string
      */
@@ -318,7 +320,8 @@ class Record extends \VuFind\View\Helper\Root\Record
         $lookfor,
         $params = [],
         $withInfo = false,
-        $searchTabsFilters = true
+        $searchTabsFilters = true,
+        $switchType = true
     ) {
         if (is_array($lookfor)) {
             $lookfor = $lookfor['name'];
@@ -343,11 +346,27 @@ class Record extends \VuFind\View\Helper\Root\Record
             && in_array($type, ['author', 'author-id', 'subject'])
             && $authId
         ) {
-            $type = "authority-$linkType";
-            $filter = $linkType === 'search'
-                ? $params['filter']
-                    ?? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
-                : $authId;
+            // Check that the link template exists:
+            $nameTemplate = "RecordDriver/%s/link-authority-$linkType.phtml";
+            $template = $this->resolveClassTemplate(
+                $nameTemplate,
+                get_class($this->driver),
+                $this->getView()->resolver()
+            );
+
+            if ($template) {
+                $type = "authority-$linkType";
+                if ($linkType === 'search') {
+                    $filter = $params['filter']
+                        ?? sprintf(
+                            '%s:"%s"',
+                            AuthorityHelper::AUTHOR2_ID_FACET,
+                            $authId
+                        );
+                } else {
+                    $filter = $authId;
+                }
+            }
         }
 
         $params = array_merge(
@@ -412,21 +431,22 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @return string HTML
      */
     public function getLinkedFieldElement(
-        $type,
-        $lookfor,
-        $data,
-        $params = []
-    ) {
-        if (empty($this->config->Record->pop_overs)) {
+        string $type,
+        string $lookfor,
+        array $data,
+        array $params = []
+    ): string {
+        if (empty($this->config->Record->popovers)) {
             return $this->getAuthorityLinkElement($type, $lookfor, $data, $params);
         }
 
-        $links = $this->config->Record->pop_over_links->{$type}
-            ?? $this->config->Record->pop_over_links->{'*'}
-            ?? '';
+        $id = $data['id'] ?? null;
+        $links = $this->config->Record->popover_links->{$type}
+            ?? $this->config->Record->popover_links->{'*'}
+            ?? 'keyword';
 
         $fieldLinks = [];
-        foreach (explode(',', $links) as $linkType) {
+        foreach ($links ? explode(',', $links) : [] as $linkType) {
             // Discard search tabs hiddenFilters when jumping to Authority page
             $preserveSearchTabsFilters = 'authority-page' !== $linkType;
 
@@ -435,19 +455,18 @@ class Record extends \VuFind\View\Helper\Root\Record
                 $lookfor,
                 $params + compact('id', 'linkType'),
                 true,
-                $preserveSearchTabsFilters
+                $preserveSearchTabsFilters,
+                false
             );
 
             $fieldLinks[] = compact('linkType', 'urlType', 'escapedUrl');
         }
 
-        $id = $data['id'] ?? null;
         $authorityType = $params['authorityType'] ?? 'Personal Name';
         $authorityType
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
 
         $elementParams = [
-           'escapedUrl' => trim($escapedUrl),
            'record' => $this->driver,
            'searchAction' => $params['searchAction'] ?? null,
            'label' => $lookfor,
@@ -457,9 +476,11 @@ class Record extends \VuFind\View\Helper\Root\Record
            'authorityType' => $authorityType,
            'title' => $params['title'] ?? null,
            'classes' => $params['class'] ?? [],
-           'additionalData' => $params['additionalData'] ?? [],
            'fieldLinks' => $fieldLinks,
         ];
+        if ($additionalData = $this->composeAdditionalData($data, $params)) {
+            $elementParams['additionalData'] = $additionalData;
+        }
         if (!empty($params['description']) && !empty($data['description'])) {
             $elementParams['description'] = $data['description'];
         }
@@ -542,30 +563,9 @@ class Record extends \VuFind\View\Helper\Root\Record
            'title' => $params['title'] ?? null,
            'classes' => $params['class'] ?? []
         ];
-
-        if (isset($params['additionalData'])) {
-            $elementParams['additionalData'] = $params['additionalData'];
-        } else {
-            // Special handling for backwards compatibility.
-            $additionalData = [];
-            if (isset($params['role'])) {
-                if (!empty($data['roleName'])) {
-                    $additionalData['role'] = $data['roleName'];
-                } elseif (!empty($data['role'])) {
-                    $translator = $this->getView()->plugin('translate');
-                    $additionalData['role']
-                        = $translator('CreatorRoles::' . $data['role']);
-                }
-            }
-            if (isset($params['date']) && !empty($data['date'])) {
-                $additionalData['date'] = $data['date'];
-            }
-            if (!empty($additionalData)) {
-                $elementParams['additionalData']
-                    = $this->getAuthorityLinkAdditionalData($additionalData);
-            }
+        if ($additionalData = $this->composeAdditionalData($data, $params)) {
+            $elementParams['additionalData'] = $additionalData;
         }
-
         if (!empty($params['description']) && !empty($data['description'])) {
             $elementParams['description'] = $data['description'];
         }
@@ -595,6 +595,39 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         return $this->isAuthorityEnabled()
             && ($this->config->Authority->authority_links ?? false);
+    }
+
+    /**
+     * Composer additional data string for a link
+     *
+     * @param array $data   Link data
+     * @param array $params Link params
+     *
+     * @return string
+     */
+    protected function composeAdditionalData(array $data, array $params): string
+    {
+        if (isset($params['additionalData'])) {
+            return $params['additionalData'];
+        }
+        // Additional author information fields:
+        $additionalData = [];
+        if (isset($params['role'])) {
+            if (!empty($data['roleName'])) {
+                $additionalData['role'] = $data['roleName'];
+            } elseif (!empty($data['role'])) {
+                $translator = $this->getView()->plugin('translate');
+                $additionalData['role']
+                = $translator('CreatorRoles::' . $data['role']);
+            }
+        }
+        if (isset($params['date']) && !empty($data['date'])) {
+            $additionalData['date'] = $data['date'];
+        }
+        if (!empty($additionalData)) {
+            return $this->getAuthorityLinkAdditionalData($additionalData);
+        }
+        return '';
     }
 
     /**

@@ -58,7 +58,7 @@
           <?php else: ?>
             <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles'); if (!empty($authors)): ?>
               <?php $author = $authors[0]; ?>
-                <?=$this->record($this->driver)->getAuthorityLinkElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
+                <?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
               <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
             <?php endif; ?>
             <?php $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>

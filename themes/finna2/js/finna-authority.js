@@ -113,7 +113,6 @@ finna.authority = (function finnaAuthority() {
 
   var my = {
     init: function init() {
-      initInlineInfoLinks();
     },
     initAuthorityRecommendTabs: initAuthorityRecommendTabs,
     initAuthorityResultInfo: initAuthorityResultInfo

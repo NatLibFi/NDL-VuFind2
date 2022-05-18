@@ -4,5 +4,5 @@
   }
 ?>
 <?php foreach ($data as $relation): ?>
-  <?=$helper->getAuthorityLinkElement('author', $relation['name'], $relation, ['role' => true, 'authorityType' => $relation['type'] ?? null])?><br>
+  <?=$helper->getLinkedFieldElement('author', $relation['name'], $relation, ['role' => true, 'authorityType' => $relation['type'] ?? null])?><br>
 <?php endforeach; ?>

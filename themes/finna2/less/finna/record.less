@@ -1033,6 +1033,7 @@ finna-model-viewer .object-editor {
 }
 
 .lateral-popover {
+  display: none;
   position: absolute;
   z-index: @zindex-tooltip;
   .reset-text();
@@ -1043,4 +1044,7 @@ finna-model-viewer .object-editor {
   border: 1px solid @modal-content-border-color;
   border-radius: @border-radius-base;
   box-shadow: 0px 0px 20px -10px @gray-light;
+}
+.open .lateral-popover {
+  display: block;
 }
