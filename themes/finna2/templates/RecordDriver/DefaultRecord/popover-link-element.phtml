@@ -13,7 +13,7 @@
 ?>
 <span class="ajax-content lateral-link" data-id="<?=$this->escapeHtmlAttr($this->id)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>">
   <a<?=$__attributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span></a><?=$additionalDataEl?>
-  <div class="field-info lateral-popover">
+  <div class="js-field-info lateral-popover">
     <div class="content">
       <?php foreach ($this->fieldLinks as $link): ?>
         <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkType'])?></a>

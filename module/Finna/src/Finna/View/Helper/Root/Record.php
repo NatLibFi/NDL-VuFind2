@@ -342,31 +342,16 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
 
         // Attempt to switch Author search link to Authority link.
-        if (null !== $linkType
+        if ($switchType
+            && null !== $linkType
             && in_array($type, ['author', 'author-id', 'subject'])
             && $authId
         ) {
-            // Check that the link template exists:
-            $nameTemplate = "RecordDriver/%s/link-authority-$linkType.phtml";
-            $template = $this->resolveClassTemplate(
-                $nameTemplate,
-                get_class($this->driver),
-                $this->getView()->resolver()
-            );
-
-            if ($template) {
-                $type = "authority-$linkType";
-                if ($linkType === 'search') {
-                    $filter = $params['filter']
-                        ?? sprintf(
-                            '%s:"%s"',
-                            AuthorityHelper::AUTHOR2_ID_FACET,
-                            $authId
-                        );
-                } else {
-                    $filter = $authId;
-                }
-            }
+            $type = "authority-$linkType";
+            $filter = $linkType === 'search'
+                ? $params['filter']
+                    ?? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
+                : $authId;
         }
 
         $params = array_merge(
