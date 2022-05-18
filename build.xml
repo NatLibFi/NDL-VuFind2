@@ -184,13 +184,13 @@
 
   <!-- Finna ESLint -->
   <target name="eslint-finna">
-    <exec command="eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js" escape="false" checkreturn="true" passthru="true" />
+    <exec command="npx eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js" escape="false" checkreturn="true" passthru="true" />
   </target>
   <target name="eslint-finna-fix">
-    <exec command="eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js --fix" escape="false" passthru="true" />
+    <exec command="npx eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js --fix" escape="false" passthru="true" />
   </target>
   <target name="eslint-finna-report">
-    <exec command="eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js --format checkstyle -o ${builddir}/reports/eslint-finna2.xml" escape="false" />
+    <exec command="npx eslint -c ${srcdir}/.eslintrc.js ${srcdir}/themes/finna2/js/*.js --format checkstyle -o ${builddir}/reports/eslint-finna2.xml" escape="false" />
   </target>
 
   <!-- JSHint -->
