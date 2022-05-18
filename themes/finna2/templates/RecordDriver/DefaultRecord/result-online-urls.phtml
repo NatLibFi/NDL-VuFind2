@@ -8,7 +8,7 @@
     $recordHelper = $this->record($this->driver);
 
     $urls = $this->driver->getURLs();
-    $onlineURLs = $this->driver->tryMethod('getOnlineURLs', [false, ['image']]);
+    $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
     $mergedData = $this->driver->tryMethod('getMergedRecordData');
     $combined = [...$urls, ...$onlineURLs, ...($mergedData['urls'] ?? [])];
 

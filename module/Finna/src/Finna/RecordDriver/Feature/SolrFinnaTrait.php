@@ -488,7 +488,7 @@ trait SolrFinnaTrait
      *
      * @return array
      */
-    public function getOnlineURLs($raw = false, $excludeTypes = [])
+    public function getOnlineURLs($raw = false, $excludeTypes = ['image'])
     {
         if (!isset($this->fields['online_urls_str_mv'])) {
             return [];
