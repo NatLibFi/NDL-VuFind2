@@ -822,31 +822,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Remove urls which are displayed as an image from the array.
-     *
-     * @param array $urls Array of URLs in the format returned by
-     *                    getURLs and getOnlineURLs.
-     *
-     * @return array
-     */
-    public function filterImageURLs($urls): array
-    {
-        $cacheKey = __FUNCTION__ . "/{$this->driver->getUniqueID()}/";
-        $result = [];
-        $images = $this->getAllRecordImageUrls();
-        foreach ($urls as $url) {
-            if ((isset($images[$url['url']]) && ($url['codec'] ?? '') !== 'pdf')
-                || in_array($url['url'], $this->cache[$cacheKey] ?? [])
-            ) {
-                continue;
-            }
-            $this->cache[$cacheKey][] = $url['url'];
-            $result[] = $url;
-        }
-        return $result;
-    }
-
-    /**
      * Check if given array of urls contains pdf links
      *
      * @param array $urls Array of urls in the format returned by

@@ -483,21 +483,34 @@ trait SolrFinnaTrait
     /**
      * Get online URLs
      *
-     * @param bool $raw Whether to return raw data
+     * @param bool  $raw          Whether to return raw data
+     * @param array $excludeTypes If set, will remove types of urls from result
      *
      * @return array
      */
-    public function getOnlineURLs($raw = false)
+    public function getOnlineURLs($raw = false, $excludeTypes = [])
     {
         if (!isset($this->fields['online_urls_str_mv'])) {
             return [];
         }
-        return $raw ? $this->fields['online_urls_str_mv'] : $this->resolveUrlTypes(
+
+        if ($raw) {
+            return $this->fields['online_urls_str_mv'];
+        }
+        $merged = $this->resolveUrlTypes(
             $this->mergeURLArray(
                 $this->fields['online_urls_str_mv'],
                 true
             )
         );
+        if (!$excludeTypes) {
+            return $merged;
+        }
+
+        $filterFunc = function (array $obj) use ($excludeTypes): bool {
+            return !in_array($obj['type'], $excludeTypes);
+        };
+        return array_filter($merged, $filterFunc);
     }
 
     /**
@@ -1005,6 +1018,11 @@ trait SolrFinnaTrait
             }
         }
         return false;
+    }
+
+    protected function filterURLs(array $urls): array
+    {
+
     }
 
     /**
