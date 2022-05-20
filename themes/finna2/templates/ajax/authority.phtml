@@ -1,7 +1,11 @@
-<?php //Don't add START and END comments ?>
-<?php
+<?php //Don't add START and END comments
+  $fields = [
+    'Other Forms of Name' => true,
+  ];
+
   $formatter = $this->recordDataFormatter();
-  $coreFields = $formatter->getData($driver, $formatter->getDefaults('authority'));
+  $fieldSpec = array_intersect_key($formatter->getDefaults('authority'), $fields);
+  $coreFields = $formatter->getData($driver, $fieldSpec);
 ?>
 
 <?php $summ = $this->driver->getSummary(); if (!empty($summ)): ?>

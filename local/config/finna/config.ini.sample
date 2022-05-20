@@ -1410,9 +1410,17 @@ repository_library_request_in_organisation_info = true
 
 ; Whether to enable popovers for lateral links in record metadata
 popovers = true
-; Links to display in the popover:
-popover_links[author] = "authority-page,keyword,search-id,search-author-mixed,search-topic-mixed"
-
+; Links to display in the popover per search type. A pipe-separated list of
+; translation keys and link templates.
+; Potentially useful link templates:
+; - author
+; - subject
+; - authority-search
+; - authority-search-mixed
+; - authority-search-subject
+; - authority-search-subject-id
+; - keyword
+popover_links[author] = "More Information:authority-page|search_as_author:authority-search|search_as_subject:authority-search-subject,keyword,search-id,search-author-mixed,search-topic-mixed"
 
 ; The following two sections control the Alphabetic Browse module.
 [AlphaBrowse]

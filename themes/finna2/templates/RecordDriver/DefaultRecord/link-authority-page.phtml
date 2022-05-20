@@ -1,1 +1,5 @@
-<?php // No ending line feed ?><?=$this->url('solrauthrecord', ['id' => $this->filter])?>
+<?php // No ending line feed
+if (!$this->id) {
+    return;
+}
+echo $this->url('solrauthrecord', ['id' => $this->id]);

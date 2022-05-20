@@ -5,7 +5,7 @@
  * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2022.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -329,7 +329,6 @@ class Record extends \VuFind\View\Helper\Root\Record
         $searchAction = !empty($this->getView()->browse)
             ? 'browse-' . $this->getView()->browse : $params['searchAction'] ?? '';
         $params = $params ?? [];
-        $filter = null;
 
         $linkType = $params['linkType'] ?? $this->getAuthorityLinkType($type);
         $authId = null;
@@ -348,10 +347,6 @@ class Record extends \VuFind\View\Helper\Root\Record
             && $authId
         ) {
             $type = "authority-$linkType";
-            $filter = $linkType === 'search'
-                ? $params['filter']
-                    ?? sprintf('%s:"%s"', AuthorityHelper::AUTHOR2_ID_FACET, $authId)
-                : $authId;
         }
 
         $params = array_merge(
@@ -360,7 +355,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'driver' => $this->driver,
                 'lookfor' => $lookfor,
                 'searchAction' => $searchAction,
-                'filter' => $filter
+                'id' => $authId,
             ]
         );
         $result = $this->renderTemplate(
@@ -431,20 +426,28 @@ class Record extends \VuFind\View\Helper\Root\Record
             ?? 'keyword';
 
         $fieldLinks = [];
-        foreach ($links ? explode(',', $links) : [] as $linkType) {
+        foreach ($links ? explode('|', $links) : [] as $linkDefinition) {
+            [$linkText, $linkType] = explode(':', "$linkDefinition:");
             // Discard search tabs hiddenFilters when jumping to Authority page
             $preserveSearchTabsFilters = 'authority-page' !== $linkType;
+            if (!$id && 'authority-page' === $linkType) {
+                continue;
+            }
 
             [$escapedUrl, $urlType] = $this->getLink(
-                $type,
+                $linkType,
                 $lookfor,
                 $params + compact('id', 'linkType'),
                 true,
                 $preserveSearchTabsFilters,
                 false
             );
+            if (!$escapedUrl) {
+                continue;
+            }
 
-            $fieldLinks[] = compact('linkType', 'urlType', 'escapedUrl');
+            $fieldLinks[]
+                = compact('linkText', 'linkType', 'urlType', 'escapedUrl');
         }
 
         $authorityType = $params['authorityType'] ?? 'Personal Name';

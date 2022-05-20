@@ -427,6 +427,8 @@ $config = [
                         'Finna\AjaxHandler\GetFacetDataFactory',
                     'Finna\AjaxHandler\GetFeed' =>
                         'Finna\AjaxHandler\GetFeedFactory',
+                    'Finna\AjaxHandler\GetFieldInfo' =>
+                        'Finna\AjaxHandler\GetFieldInfoFactory',
                     'Finna\AjaxHandler\GetHoldingsDetails' =>
                         'Finna\AjaxHandler\GetHoldingsDetailsFactory',
                     'Finna\AjaxHandler\GetImageInformation' =>
@@ -481,6 +483,7 @@ $config = [
                     'getModel' => 'Finna\AjaxHandler\GetModel',
                     'getDateRangeVisual' => 'Finna\AjaxHandler\GetDateRangeVisual',
                     'getFeed' => 'Finna\AjaxHandler\GetFeed',
+                    'getFieldInfo' => 'Finna\AjaxHandler\GetFieldInfo',
                     'getHoldingsDetails' => 'Finna\AjaxHandler\GetHoldingsDetails',
                     'getImageInformation' => 'Finna\AjaxHandler\GetImageInformation',
                     'getLinkedEvents' => 'Finna\AjaxHandler\GetLinkedEvents',

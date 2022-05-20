@@ -13,15 +13,18 @@
 ?>
 <span class="ajax-content lateral-link" data-id="<?=$this->escapeHtmlAttr($this->id)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>">
   <a<?=$__attributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span></a><?=$additionalDataEl?>
-  <div class="js-field-info lateral-popover">
+  <div class="field-info lateral-popover">
     <div class="content">
+      <h2><?=$this->escapeHtml($this->label)?></h2>
       <?php foreach ($this->fieldLinks as $link): ?>
-        <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkType'])?></a>
+        <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a><br>
       <?php endforeach; ?>
-      <div class="dynamic-content">
-        <i class="fa fa-spin fa-spinner"></i>
-      </div>
-      <div class="no-info hide alert alert-info"><?=$this->translate('field_no_info') ?></div>
+      <?php if ($this->id): ?>
+        <div class="dynamic-content">
+          <i class="fa fa-spin fa-spinner"></i>
+        </div>
+        <div class="no-info hide alert alert-info"><?=$this->translate('field_no_info') ?></div>
+      <?php endif; ?>
     </div>
     <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?> <i class="fa fa-handle-close handle"></i></a>
   </div>
