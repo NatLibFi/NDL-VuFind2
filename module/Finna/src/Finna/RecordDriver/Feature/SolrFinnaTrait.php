@@ -508,7 +508,7 @@ trait SolrFinnaTrait
         }
 
         $filterFunc = function (array $obj) use ($excludeTypes): bool {
-            return !in_array($obj['type'], $excludeTypes);
+            return !in_array($obj['type'] ?? '', $excludeTypes);
         };
         return array_filter($merged, $filterFunc);
     }
