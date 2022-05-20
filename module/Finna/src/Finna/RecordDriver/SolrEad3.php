@@ -1343,7 +1343,7 @@ class SolrEad3 extends SolrEad
             }
             $parts = [];
             foreach ($name->part ?? [] as $place) {
-                if ($p = trim((string)$place ?? '')) {
+                if ($p = trim((string)$place)) {
                     $parts[] = $p;
                 }
             }
