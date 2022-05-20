@@ -507,33 +507,8 @@ class Record extends \VuFind\View\Helper\Root\Record
             $preserveSearchTabsFilters
         );
 
-        if (!$this->isAuthorityEnabled()
-            || !in_array(
-                $urlType,
-                ['authority-search', 'authority-page', 'authority-search-subject']
-            )
-        ) {
-            $author = [
-               'name' => $data['name'] ?? null,
-               'date' => !empty($data['date']) ? $data['date'] : null,
-               'affiliation' => !empty($data['affiliation'])
-                   ? $data['affiliation'] : null,
-               'description' => $data['description'] ?? null
-            ];
-
-            if (!empty($params['displayRole'])) {
-                $role = $params['displayRole'];
-                $author[$role] = !empty($data[$role]) ? $data[$role] : null;
-            } else {
-                $author['role'] = !empty($data['role']) ? $data['role'] : null;
-            }
-            // NOTE: currently this fallbacks always to a author-link
-            // (extend to handle subject/topic fallbacks when needed).
-            return $this->getAuthorLinkElement($author);
-        }
-
         $authId = $this->driver->getAuthorityId($id, $type);
-        $authorityType = $params['authorityType'] ?? 'Personal Name';
+        $authorityType = $params['authorityType'] ?? '';
         $authorityType
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
 
