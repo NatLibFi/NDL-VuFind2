@@ -410,6 +410,7 @@ finna.record = (function finnaRecord() {
               {
                 method: 'getFieldInfo',
                 id: $field.data('id'),
+                authId: $field.data('authId'),
                 type: $field.data('type'),
                 source: $field.data('source')
               }

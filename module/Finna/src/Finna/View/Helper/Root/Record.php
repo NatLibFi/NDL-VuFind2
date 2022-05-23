@@ -420,7 +420,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             return $this->getAuthorityLinkElement($type, $lookfor, $data, $params);
         }
 
-        $id = $data['id'] ?? null;
+        $id = $data['id'] ?? '';
         $links = $this->config->Record->popover_links->{$type}
             ?? $this->config->Record->popover_links->{'*'}
             ?? 'keyword';
@@ -458,7 +458,8 @@ class Record extends \VuFind\View\Helper\Root\Record
            'record' => $this->driver,
            'searchAction' => $params['searchAction'] ?? null,
            'label' => $lookfor,
-           'id' => $this->driver->tryMethod('getAuthorityId', [$id, $type]),
+           'id' => $id,
+           'authId' => $this->driver->tryMethod('getAuthorityId', [$id, $type], ''),
            'authorityLink' => $id && $this->isAuthorityLinksEnabled(),
            'type' => $type,
            'authorityType' => $authorityType,
@@ -467,7 +468,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'fieldLinks' => $fieldLinks,
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
-            $elementParams['additionalData'] = $additionalData;
+            $elementParams['additionalDataHtml'] = $additionalData;
         }
         if (!empty($params['description']) && !empty($data['description'])) {
             $elementParams['description'] = $data['description'];
@@ -581,7 +582,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             } elseif (!empty($data['role'])) {
                 $translator = $this->getView()->plugin('translate');
                 $additionalData['role']
-                = $translator('CreatorRoles::' . $data['role']);
+                    = $translator('CreatorRoles::' . $data['role']);
             }
         }
         if (isset($params['date']) && !empty($data['date'])) {

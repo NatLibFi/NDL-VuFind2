@@ -1520,18 +1520,58 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault
     /**
      * Get subject places
      *
+     * @param bool $extended Whether to return a keyed array with the following
+     * keys:
+     * - heading: the actual subject heading chunks
+     * - type: heading type
+     * - source: source vocabulary
+     * - id: authority id (if defined)
+     * - authType: authority type (if id is defined)
+     * - externalId: ID in an external system
+     *
      * @return array
      */
-    public function getSubjectPlaces()
+    public function getSubjectPlaces(bool $extended = false)
     {
         $results = [];
         foreach ($this->getXmlRecord()->xpath(
             'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
-            . 'subjectSet/subject/subjectPlace/displayPlace'
-        ) as $node) {
-            $results[] = (string)$node;
+            . 'subjectSet/subject/subjectPlace'
+        ) as $subjectPlace) {
+            if (!($displayPlace = (string)($subjectPlace->displayPlace ?? ''))) {
+                continue;
+            }
+            if ($extended) {
+                $place = [
+                    'heading' => [$displayPlace],
+                ];
+                if ($placeId = ($subjectPlace->place->placeID ?? null)) {
+                    $type = (string)($placeId->attributes()->type ?? '');
+                    $id = (string)$placeId;
+                    if ($type) {
+                        $id = "($type)$id";
+                    }
+                    $place['type'] = $type;
+                    $place['id'] = $id;
+                    $place['authType'] = 'Place';
+                    $place['externalId'] = $id;
+                }
+                $results[] = $place;
+            } else {
+                $results[] = $displayPlace;
+            }
         }
         return $results;
+    }
+
+    /**
+     * Get extended subject places
+     *
+     * @return array
+     */
+    public function getSubjectPlacesExtended()
+    {
+        return $this->getSubjectPlaces(true);
     }
 
     /**

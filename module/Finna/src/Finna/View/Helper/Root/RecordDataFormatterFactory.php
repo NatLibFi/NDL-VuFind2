@@ -563,10 +563,13 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Subject Place',
-            'getSubjectPlaces',
-            'data-escapeHtml.phtml',
+            'getSubjectPlacesExtended',
+            'data-allSubjectHeadingsExtended.phtml',
             [
-                'context' => ['class' => 'recordSubjects']
+                'context' => [
+                    'class' => 'recordSubjects',
+                    'headingType' => 'place',
+                ]
             ]
         );
         $setTemplateLine(
