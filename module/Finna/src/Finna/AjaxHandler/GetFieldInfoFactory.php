@@ -71,7 +71,7 @@ class GetFieldInfoFactory
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Record\Loader::class),
-            $container->get('ViewRenderer')
+            $container->get('ViewRenderer')->plugin('record')
         );
         return $result;
     }

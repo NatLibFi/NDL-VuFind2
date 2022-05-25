@@ -386,7 +386,7 @@ finna.record = (function finnaRecord() {
 
   function initPopovers() {
     document.addEventListener('mouseup', function onMouseUp(e) {
-      document.querySelectorAll('.lateral-link.open').forEach((element) => {
+      document.querySelectorAll('.inline-linked-field.open').forEach((element) => {
         if (!element.contains(e.target)) {
           element.classList.remove('open');
         }
@@ -398,7 +398,23 @@ finna.record = (function finnaRecord() {
         .removeClass(open ? 'fa-handle-open' : 'fa-handle-close')
         .addClass(open ? 'fa-handle-close' : 'fa-handle-open');
     };
-    $('.ajax-content.lateral-link').each(function initLink() {
+    var fixPosition = function fixPosition(container) {
+      // Check container position and move to the left as necessary:
+      let infoBounds = container.getBoundingClientRect();
+      let maxWidth = window.innerWidth - 36;
+      if (infoBounds.width > window.innerWidth - 36) {
+        container.style.width = Math.max(200, maxWidth) + 'px';
+      }
+      infoBounds = container.getBoundingClientRect();
+      if (infoBounds.right > window.innerWidth - 8) {
+        //let marginLeft = -(container.clientWidth - Math.ceil(infoBounds.right - window.innerWidth)) - 8;
+        let marginLeft = window.innerWidth - infoBounds.right - 8;
+        console.log(marginLeft);
+        container.style.marginLeft = marginLeft + 'px';
+      }
+    };
+
+    $('.inline-linked-field').each(function initLink() {
       var $field = $(this);
       $field.find('a.show-info').on('click', function onClickShowInfo() {
         if (!$field.hasClass('open')) {
@@ -412,7 +428,8 @@ finna.record = (function finnaRecord() {
                 id: $field.data('id'),
                 authId: $field.data('authId'),
                 type: $field.data('type'),
-                source: $field.data('source')
+                source: $field.data('recordSource'),
+                recordId: $field.data('recordId')
               }
             )
               .done(function onGetAuthorityInfoDone(response) {
@@ -424,12 +441,15 @@ finna.record = (function finnaRecord() {
                 } else {
                   $fieldInfo.find('.no-info').removeClass('hide');
                 }
+                fixPosition($field.find('.field-info')[0]);
               })
               .fail(function onGetFieldInfoFail() {
                 $fieldInfo.text(VuFind.translate('error_occurred'));
               });
           }
           $field.addClass('open');
+          fixPosition($field.find('.field-info')[0]);
+
           // trigger parent collapsed area open so that authority info is not hidden
           $field.closest('.truncate-field.truncated').next('.more-link').click();
           toggleHandle($(this).parent().find('i.handle'), true);

@@ -28,9 +28,9 @@
 namespace Finna\AjaxHandler;
 
 use Laminas\Mvc\Controller\Plugin\Params;
-use Laminas\View\Renderer\RendererInterface;
 use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
+use VuFind\View\Helper\Root\Record;
 use VuFindSearch\ParamBag;
 
 /**
@@ -52,27 +52,27 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
     protected $loader;
 
     /**
-     * View renderer
+     * Record plugin
      *
-     * @var RendererInterface
+     * @var Record
      */
-    protected $renderer;
+    protected $recordPlugin;
 
     /**
      * Constructor
      *
      * @param SessionSettings   $ss       Session settings
      * @param Loader            $loader   Record loader
-     * @param RendererInterface $renderer View renderer
+     * @param Record            $rp       Record plugin
      */
     public function __construct(
         SessionSettings $ss,
         Loader $loader,
-        RendererInterface $renderer
+        Record $rp
     ) {
         $this->sessionSettings = $ss;
         $this->loader = $loader;
-        $this->renderer = $renderer;
+        $this->recordPlugin = $rp;
     }
 
     /**
@@ -87,7 +87,9 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
         $this->disableSessionWrites(); // avoid session write timing bug
 
         $id = $params->fromQuery('id');
+        $authId = $params->fromQuery('authId');
         $source = $params->fromQuery('source');
+        $recordId = $params->fromQuery('recordId');
         $type = $params->fromQuery('type');
 
         if (!$id || !$type) {
@@ -97,20 +99,28 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
         $params = new ParamBag();
         $params->set('authorityType', $type);
         $params->set('recordSource', $source);
+        $authority = null;
+        if ($authId) {
+            try {
+                $authority = $this->loader->load(
+                    $authId,
+                    'SolrAuth',
+                    false,
+                    $params
+                );
+            } catch (\VuFind\Exception\RecordMissing $e) {
+                return $this->formatResponse('');
+            }
+        }
         try {
-            $driver = $this->loader->load(
-                $id,
-                'SolrAuth',
-                false,
-                $params
-            );
+            $driver = $this->loader->load($recordId, $source);
         } catch (\VuFind\Exception\RecordMissing $e) {
             return $this->formatResponse('');
         }
 
-        $html = $this->renderer->partial(
-            'ajax/authority.phtml',
-            ['driver' => $driver]
+        $html = ($this->recordPlugin)($driver)->renderTemplate(
+            'ajax-field-info.phtml',
+            compact('id', 'authId', 'authority', 'type')
         );
 
         return $this->formatResponse(compact('html'));

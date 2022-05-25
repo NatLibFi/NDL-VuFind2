@@ -457,7 +457,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             = $this->config->Authority->typeMap->{$authorityType} ?? $authorityType;
 
         $elementParams = [
-           'record' => $this->driver,
+           'driver' => $this->driver,
            'searchAction' => $params['searchAction'] ?? null,
            'label' => $lookfor,
            'id' => $id,

@@ -1032,28 +1032,39 @@ finna-model-viewer .object-editor {
   }
 }
 
-.lateral-popover {
-  display: none;
-  position: absolute;
-  z-index: @zindex-tooltip;
-  .reset-text();
-  font-size: @font-size-base;
-  background-color: @modal-content-bg;
-  padding: 10px;
-  max-width: 400px;
-  border: 1px solid @modal-content-border-color;
-  border-radius: @border-radius-base;
-  box-shadow: 0px 0px 20px -10px @gray-light;
+.inline-linked-field {
+  display: inline-block;
 
-  .content {
-    margin-bottom: 1rem;
+  .field-popover {
+    display: none;
+    position: absolute;
+    z-index: @zindex-tooltip;
+    .reset-text();
+    font-size: @font-size-base;
+    background-color: @modal-content-bg;
+    padding: 10px;
+    min-width: 200px;
+    max-width: 400px;
+    margin-left: 8px;
+    margin-right: 8px;
+    border: 1px solid @modal-content-border-color;
+    border-radius: @border-radius-base;
+    box-shadow: 0px 0px 20px -10px @gray-light;
+
+    .content {
+      margin-bottom: 1rem;
+    }
+    h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1rem;
+    }
+
+    .additional-content {
+      margin-top: 1rem;
+    }
   }
-  h2 {
-    font-size: 1.5rem;
-    margin-top: 0;
-    margin-bottom: 1rem;
+  &.open .field-popover {
+    display: block;
   }
-}
-.open .lateral-popover {
-  display: block;
 }

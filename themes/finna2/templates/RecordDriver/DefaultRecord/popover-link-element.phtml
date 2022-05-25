@@ -11,9 +11,9 @@
   }
   $additionalDataElem = !empty($this->additionalData) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
 ?>
-<span class="ajax-content lateral-link" data-id="<?=$this->escapeHtmlAttr($this->id)?>" data-auth-id="<?=$this->escapeHtmlAttr($this->authId)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>">
+<div class="inline-linked-field" data-id="<?=$this->escapeHtmlAttr($this->id)?>" data-auth-id="<?=$this->escapeHtmlAttr($this->authId)?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>">
   <a<?=$__attributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span></a><?=$additionalDataElem?>
-  <div class="field-info lateral-popover">
+  <div class="field-info field-popover">
     <div class="content">
       <h2><?=$this->escapeHtml($this->label)?></h2>
       <?php foreach ($this->fieldLinks as $link): ?>
@@ -26,6 +26,6 @@
         <div class="no-info hide alert alert-info"><?=$this->translate('field_no_info') ?></div>
       <?php endif; ?>
     </div>
-    <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?> <i class="fa fa-handle-close handle"></i></a>
+    <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?></a>
   </div>
-</span>
+</div>

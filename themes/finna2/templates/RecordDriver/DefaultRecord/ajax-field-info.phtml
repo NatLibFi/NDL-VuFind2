@@ -1,0 +1,46 @@
+<?php //Don't add START and END comments
+  $fields = [
+    'Date of birth' => true,
+    'Other Forms of Name' => true,
+    'Identifiers' => true,
+  ];
+
+  if ($this->authority) {
+      $formatter = $this->recordDataFormatter();
+      $fieldSpec = array_intersect_key($formatter->getDefaults('authority'), $fields);
+      $coreFields = $formatter->getData($this->authority, $fieldSpec);
+  } else {
+      $coreFields = [];
+  }
+?>
+
+<?php if ($this->authority): ?>
+  <?php $summ = $this->authority->getSummary(); if (!empty($summ)): ?>
+    <div class="truncate-field description">
+      <p class="summary">
+        <?php foreach ($summ as $field): ?>
+          <?=$this->cleanHtml($field)?><br/>
+        <?php endforeach; ?>
+      </p>
+    </div>
+  <?php endif; ?>
+<?php endif; ?>
+
+<?php if (!empty($coreFields)): ?>
+  <table class="table table-finna-record record-details">
+    <?php foreach ($coreFields as $current): ?>
+      <tr<?=!empty($current['context']['class']) ? (' class="' . $current['context']['class'] . '"') : ''?>>
+        <th><?=$this->transEsc($current['label'])?>:</th>
+        <td><?=$current['value']?></td>
+      </tr>
+    <?php endforeach; ?>
+  </table>
+<?php endif; ?>
+
+<?php if (preg_match('/^\((mjr|rpr)\)(.+)/', $this->id, $matches)): ?>
+  <div class="additional-content">
+    <a href="https://www.kyppi.fi/palveluikkuna/mjreki/read/asp/r_kohde_det.aspx?KOHDE_ID=<?=$this->escapeHtmlAttr($matches[2])?>" target="_blank" aria-label="Kulttuuriympäristön palveluikkuna (<?=$this->transEscAttr('external_link')?>, <?=$this->transEscAttr('Open in a new window')?>)">
+      <i class="fa fa-external-link"></i> <?=$this->transEsc('external_link_kyppi')?>
+    </a>
+  </div>
+<?php endif; ?>
