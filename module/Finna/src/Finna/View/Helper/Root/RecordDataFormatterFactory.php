@@ -285,7 +285,7 @@ class RecordDataFormatterFactory
         );
         $setTemplateLine(
             'Archive Origination',
-            'getOrigination',
+            'getOriginationExtended',
             'data-origination.phtml',
             [
                 'context' => ['class' => 'record-origination']

@@ -608,7 +608,7 @@ finna.layout = (function finnaLayout() {
     // Check for required scripts that are not yet loaded
     if (scripts) {
       for (var item in scripts) {
-        if (scripts.hasOwnProperty(item) && $('#' + item).length === 0) {
+        if (Object.prototype.hasOwnProperty.call(scripts, item) && $('#' + item).length === 0) {
           needed[item] = scripts[item];
         }
       }
@@ -624,7 +624,7 @@ finna.layout = (function finnaLayout() {
         }
       };
       for (var itemNeeded in needed) {
-        if (needed.hasOwnProperty(itemNeeded)) {
+        if (Object.prototype.hasOwnProperty.call(needed, itemNeeded)) {
           $(needed[itemNeeded])
             .on('load', scriptLoaded)
             .attr('async', 'true')

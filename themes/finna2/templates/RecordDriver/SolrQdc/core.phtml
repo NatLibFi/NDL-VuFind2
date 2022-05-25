@@ -2,21 +2,18 @@
 <?php
 
   $openUrl = $this->openUrl($this->driver, 'record');
+  $recordHelper = $this->record($this->driver);
   $openUrlActive = $openUrl->isActive();
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-  $onlineURLs = $this->driver->getOnlineURLs();
+  $onlineURLs = $this->driver->getOnlineURLs(false, ['image']);
   $mergedData = $this->driver->tryMethod('getMergedRecordData');
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $img = $this->recordImage($this->record($this->driver));
-  $images = $this->record($this->driver)->getAllRecordImageUrls();
   $audioUrls = [];
   $videoUrls = [];
   $otherUrls = [];
-  $hasOnlineURLs =
-      $this->record($this->driver)->containsNonImageURL($urls, $images)
-      || $this->record($this->driver)->containsNonImageURL($onlineURLs, $images)
-      || !empty($mergedData['urls']) && $this->record($this->driver)->containsNonImageURL($mergedData['urls'], $images);
+  $hasOnlineURLs = !empty($urls) || !empty($onlineURLs) || !empty($mergedData['urls']);
 
   if (!empty($urls)) {
     foreach ($urls as $url) {

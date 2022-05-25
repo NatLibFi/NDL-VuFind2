@@ -326,15 +326,47 @@ class SolrEad extends SolrDefault
      */
     public function getOrigination()
     {
+        $originations = $this->getOriginations();
+        return $originations[0] ?? '';
+    }
+
+    /**
+     * Get all originations
+     *
+     * @return array
+     */
+    public function getOriginations()
+    {
+        return array_map(
+            function ($origination) {
+                return $origination['name'];
+            },
+            $this->getOriginationExtended()
+        );
+    }
+
+    /**
+     * Get extended origination
+     *
+     * @return array
+     */
+    public function getOriginationExtended()
+    {
         $record = $this->getXmlRecord();
-        if (isset($record->did->origination->corpname)) {
-            return (string)$record->did->origination->corpname;
-        } elseif (isset($record->did->origination->persname)) {
-            return (string)$record->did->origination->persname;
-        } elseif (isset($record->did->origination)) {
-            return (string)$record->did->origination;
+        $result = [];
+        foreach ($record->did->origination as $origination) {
+            $name = (string)($origination->corpname
+                ?? $origination->persname
+                ?? $origination
+                ?? '');
+            if ($name) {
+                $result[] = [
+                    'name' => $name,
+                    'date' => (string)($origination->ref->date ?? '')
+                ];
+            }
         }
-        return '';
+        return $result;
     }
 
     /**

@@ -1341,8 +1341,14 @@ class SolrEad3 extends SolrEad
             if (!empty($exclude) && in_array($relator, $exclude)) {
                 continue;
             }
-            if (isset($name->part)) {
-                $part = (string)$name->part;
+            $parts = [];
+            foreach ($name->part ?? [] as $place) {
+                if ($p = trim((string)$place)) {
+                    $parts[] = $p;
+                }
+            }
+            if ($parts) {
+                $part = implode(', ', $parts);
                 $data = ['data' => $part, 'detail' => $relator];
                 if ($attr->lang && in_array((string)$attr->lang, $languages)
                     && !in_array($part, $languageResult)

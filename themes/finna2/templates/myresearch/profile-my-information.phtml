@@ -20,7 +20,7 @@
           <label for="finna_nickname"><?=$this->transEsc("finna_nickname") ?>:</label>
         </div>
         <div class="my-profile-col">
-          <input id="finna_nickname" type="text" class="form-control profileinfo-fields" name="finna_nickname" value="<?=$this->escapeHtmlAttr(trim($user->finna_nickname))?>" pattern="^(?!.*[._\-\s]{2})[A-ZÅÄÖa-zåäö0-9._\-\s]{3,50}$" title="<?=$this->transEsc('finna_nickname_restrictions')?>"/>
+          <input id="finna_nickname" type="text" class="form-control profileinfo-fields" name="finna_nickname" value="<?=$this->escapeHtmlAttr(trim($user->finna_nickname ?? ''))?>" pattern="^(?!.*[._\-\s]{2})[A-ZÅÄÖa-zåäö0-9._\-\s]{3,50}$" title="<?=$this->transEsc('finna_nickname_restrictions')?>"/>
         </div>
         <div class="clearfix visible-xs"></div>
         <div class="my-profile-col">

@@ -214,12 +214,12 @@ CREATE TABLE `finna_record_stats_log` (
   `record_id` varchar(255) NOT NULL,
   `formats` varchar(255) NOT NULL,
   `usage_rights` varchar(255) NOT NULL,
+  `online` tinyint(1) NOT NULL,
   `extra_metadata` mediumtext DEFAULT NULL,
   `count` int(11) NOT NULL DEFAULT 1,
   PRIMARY KEY (`institution`, `view`, `crawler`, `date`, `record_id`),
   KEY `record_source` (`source`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

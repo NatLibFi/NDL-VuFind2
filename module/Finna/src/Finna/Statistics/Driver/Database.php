@@ -160,6 +160,8 @@ class Database implements DriverInterface, LoggerAwareInterface
      * @param string $recordId    Record ID
      * @param array  $formats     Record formats
      * @param array  $rights      Record usage rights
+     * @param int    $online      Whether the record is available online (0 = no,
+     * 1 = yes, 2 = freely)
      *
      * @return void
      */
@@ -171,7 +173,8 @@ class Database implements DriverInterface, LoggerAwareInterface
         string $source,
         string $recordId,
         array $formats,
-        array $rights
+        array $rights,
+        int $online
     ): void {
         $date = date('Y-m-d');
 
@@ -191,6 +194,7 @@ class Database implements DriverInterface, LoggerAwareInterface
         $params['record_id'] = $recordId;
         $params['formats'] = implode('|', $formats);
         $params['usage_rights'] = implode('|', $rights);
+        $params['online'] = $online;
         $this->processAdd($this->recordLogTable, $params);
     }
 
