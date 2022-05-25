@@ -409,7 +409,6 @@ finna.record = (function finnaRecord() {
       if (infoBounds.right > window.innerWidth - 8) {
         //let marginLeft = -(container.clientWidth - Math.ceil(infoBounds.right - window.innerWidth)) - 8;
         let marginLeft = window.innerWidth - infoBounds.right - 8;
-        console.log(marginLeft);
         container.style.marginLeft = marginLeft + 'px';
       }
     };

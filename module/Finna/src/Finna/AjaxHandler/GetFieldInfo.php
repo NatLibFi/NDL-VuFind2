@@ -61,9 +61,9 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Constructor
      *
-     * @param SessionSettings   $ss       Session settings
-     * @param Loader            $loader   Record loader
-     * @param Record            $rp       Record plugin
+     * @param SessionSettings $ss     Session settings
+     * @param Loader          $loader Record loader
+     * @param Record          $rp     Record plugin
      */
     public function __construct(
         SessionSettings $ss,
