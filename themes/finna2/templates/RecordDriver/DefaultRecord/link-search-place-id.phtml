@@ -1,0 +1,9 @@
+<?php // No ending line feed
+if (!($id = $this->id ?: $this->localId)) {
+    return;
+}
+echo $this->url(
+    $this->searchAction ?: $this->searchOptions($this->driver->getSourceIdentifier())->getSearchAction(),
+    [],
+    ['filter[]' => sprintf('%s:("%s")^100000', \Finna\Search\Solr\AuthorityHelper::GEOGRAPHIC_ID_FACET, $id)]
+);

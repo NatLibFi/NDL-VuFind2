@@ -333,6 +333,9 @@ class Record extends \VuFind\View\Helper\Root\Record
         $linkType = $params['linkType'] ?? $this->getAuthorityLinkType($type);
         $authId = null;
         if (isset($params['id'])) {
+            // For BC: put non-mangled id into localId and keep the prefixed id in
+            // 'id' element.
+            $params['localId'] = $params['id'];
             // Add namespace to id
             $authId = $params['id'] = $this->driver->getAuthorityId(
                 $params['id'],
@@ -355,7 +358,6 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'driver' => $this->driver,
                 'lookfor' => $lookfor,
                 'searchAction' => $searchAction,
-                'id' => $authId,
             ]
         );
         $result = $this->renderTemplate(
