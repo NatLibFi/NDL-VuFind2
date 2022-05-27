@@ -288,7 +288,7 @@ class ModelViewerClass extends HTMLElement {
           exportButton.addEventListener('click', () => {
             this.menu.removeEventListener('change', this.updateFunction);
             this.owner.scene.children.forEach((child) => {
-              child.userData.this.viewerSet = true;
+              child.userData.viewerSet = true;
               if (child.type === 'Mesh') {
                 child.material.userData.envMapIntensity = child.material.envMapIntensity;
                 child.material.userData.normalScale = child.material.normalScale;
