@@ -6,8 +6,8 @@ $config = [
         'factories' => [
             'FinnaApi\Controller\AdminApiController' => 'VuFindApi\Controller\AdminApiControllerFactory',
             'FinnaApi\Controller\AuthApiController' => 'FinnaApi\Controller\AuthApiControllerFactory',
-            'FinnaApi\Controller\SearchApiController' => 'VuFindApi\Controller\SearchApiControllerFactory',
             'FinnaApi\Controller\ListApiController' => 'FinnaApi\Controller\ListApiControllerFactory',
+            'FinnaApi\Controller\SearchApiController' => 'VuFindApi\Controller\SearchApiControllerFactory',
             'VuFindApi\Controller\ApiController' => 'FinnaApi\Controller\ApiControllerFactory',
         ],
         'aliases' => [
