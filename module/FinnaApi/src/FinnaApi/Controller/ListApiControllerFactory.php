@@ -27,7 +27,6 @@
  */
 namespace FinnaApi\Controller;
 
-use FinnaApi\Formatter\RecordFormatter;
 use Interop\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -67,11 +66,9 @@ class ListApiControllerFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        $recordFields = $container->get('VuFind\YamlReader')
-            ->get('SearchApiRecordFields.yaml');
-        $helperManager = $container->get('ViewHelperManager');
-        $translator = $container->get(\Laminas\Mvc\I18n\Translator::class);
-        $rf = new RecordFormatter($recordFields, $helperManager, $translator);
-        return new $requestedName($container, $rf);
+        return new $requestedName(
+            $container,
+            $container->get(\VuFindApi\Formatter\RecordFormatter::class)
+        );
     }
 }

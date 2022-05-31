@@ -86,12 +86,12 @@ class ListApiController extends ListController implements ApiInterface
     }
 
     /**
-     * Get Swagger specification JSON fragment for services provided by the
+     * Get API specification JSON fragment for services provided by the
      * controller
      *
      * @return string
      */
-    public function getSwaggerSpecFragment(): string
+    public function getApiSpecFragment()
     {
         $config = $this->getConfig();
         $results = $this->serviceLocator
